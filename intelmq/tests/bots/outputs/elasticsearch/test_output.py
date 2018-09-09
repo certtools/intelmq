@@ -144,7 +144,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         result_index_name = result["_index"]
 
         # Clean up test event and check that the index name was set correctly
-        self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('doc_type'), id=result['_id'])
+        self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('elastic_doctype'), id=result['_id'])
         self.assertEqual(result_index_name, expected_index_name)
 
     def test_index_detected_from_time_observation(self):
@@ -179,7 +179,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         result_index_name = result["_index"]
 
         # Clean up test event and check that the index name was set correctly
-        self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('doc_type'), id=result['_id'])
+        self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('elastic_doctype'), id=result['_id'])
         self.assertEqual(result_index_name, expected_index_name)
 
     # def test_index_detected_from_current_date(self):
