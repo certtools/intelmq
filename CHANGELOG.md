@@ -61,6 +61,7 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.misp`: Fix Object attribute (#1318).
 
 #### Experts
 
@@ -70,6 +71,7 @@ CHANGELOG
 ### Documentation
 
 ### Packaging
+- Change the maintainer from Sasche Wilde to Sebastian Wagner (#1320).
 
 ### Tests
 
