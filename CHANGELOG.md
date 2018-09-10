@@ -12,6 +12,7 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.misp`: Fix Object attribute (#1318).
 
 #### Experts
 
