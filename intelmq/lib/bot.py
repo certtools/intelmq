@@ -492,6 +492,7 @@ class Bot(object):
             self.description = params.get('description')
             self.group = params.get('group')
             self.module = params.get('module')
+            self.name = params.get('name')
 
         if reinitialize_logging:
             self.logger.handlers = []  # remove all existing handlers
