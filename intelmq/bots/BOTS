@@ -136,7 +136,6 @@
                 "name": "__FEED__",
                 "provider": "__PROVIDER__",
                 "ip": "<ip>",
-                "name": "TCP",
                 "port": "<port>"
             }
         },
