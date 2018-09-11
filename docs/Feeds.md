@@ -561,6 +561,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.collectors.blueliv.collector_crimeserver
 * **Configuration Parameters:**
+*  * `api_key`: `__APIKEY__`
 *  * `name`: `CrimeServer`
 *  * `provider`: `Blueliv`
 *  * `rate_limit`: `3600`
@@ -1390,7 +1391,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 # ShadowServer
 
-## FIXME
+## Custom
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1401,11 +1402,16 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv.zip`
-*  * `attach_unzip`: `true`
-*  * `name`: `FIXME`
+*  * `attach_unzip`: `True`
+*  * `folder`: `INBOX`
+*  * `mail_host`: `__HOST__`
+*  * `mail_password`: `__PASSWORD__`
+*  * `mail_ssl`: `True`
+*  * `mail_user`: `__USERNAME__`
+*  * `name`: `Custom`
 *  * `provider`: `ShadowServer`
 *  * `rate_limit`: `86400`
-*  * `subject_regex`: `FIXME - (see individual reports below)`
+*  * `subject_regex`: `__REGEX__`
 
 ### Parser
 
@@ -1793,9 +1799,14 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv`
 *  * `attach_unzip`: `False`
+*  * `folder`: `INBOX`
+*  * `mail_host`: `__HOST__`
+*  * `mail_password`: `__PASSWORD__`
+*  * `mail_ssl`: `True`
+*  * `mail_user`: `__USERNAME__`
 *  * `name`: `Defacements`
 *  * `provider`: `ZoneH`
-*  * `rate_limit`: `300`
+*  * `rate_limit`: `3600`
 *  * `sent_from`: `datazh@zone-h.org`
 *  * `subject_regex`: `Report`
 
