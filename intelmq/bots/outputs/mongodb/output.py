@@ -4,6 +4,7 @@ pymongo library automatically tries to reconnect if connection has been lost
 """
 
 from intelmq.lib.bot import Bot
+import dateutil.parser
 
 try:
     import pymongo
@@ -43,7 +44,10 @@ class MongoDBOutputBot(Bot):
         event = self.receive_message()
 
         try:
-            self.collection.insert(event.to_dict(hierarchical=self.parameters.hierarchical_output))
+            tmp_dict = event.to_dict(hierarchical=self.parameters.hierarchical_output)
+            tmp_dict["time"]["observation"] = dateutil.parser.parse(tmp_dict["time"]["observation"])
+            tmp_dict["time"]["source"] = dateutil.parser.parse(tmp_dict["time"]["source"])
+            self.collection.insert(tmp_dict)
         except pymongo.errors.AutoReconnect:
             self.logger.error('Connection Lost. Connecting again.')
             self.connect()
