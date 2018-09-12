@@ -139,9 +139,23 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
         self.base_check_expected_index_created(INPUT_TIME_OBSERVATION, expected_index_name)
 
+    def test_default_index_created(self):
+        """
+        Tests whether an event with no time information is indexed using the default value
+        :return:
+        """
+        self.sysconfig = {"flatten_fields": "extra",
+                          "elastic_index": "intelmq",
+                          "elastic_doctype": "events",
+                          "rotate_index": "true"}
+
+        expected_index_name = "{}-unknown-date".format(self.sysconfig.get('elastic_index'))
+        self.base_check_expected_index_created(INPUT1, expected_index_name)
+
     def test_index_falls_back_to_default(self):
         """
-        Tests whether an input event without a time.source or time.observation field is indexed using the default value.
+        Tests whether get_index returns an expected default value
+         if no time.source or time.observation is present.
         """
 
         self.sysconfig = {"flatten_fields": "extra",
@@ -153,38 +167,6 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         index = self.bot.get_index(INPUT1, 'test-default')
 
         self.assertEqual(index, 'intelmq-test-default')
-
-        # class FakeDatetime(datetime):
-        #     def now(self, **kwargs):
-        #         return datetime.strptime(TIMESTAMP_3, '%Y-%m-%dT%H:%M:%S+00:00')
-
-        # self.input_message = INPUT1
-        # expected_index_name = "{}-2018-09-09".format(self.sysconfig.get('elastic_index'))
-        #
-        # self.assertFalse(self.con.indices.exists(expected_index_name))  # Index should not already exist
-        #
-        # # Create the template mapping in Elasticsearch
-        # self.con.indices.put_template(name=self.sysconfig.get('elastic_index'), body=SAMPLE_TEMPLATE)
-        #
-        # # intelmq.bots.outputs.elasticsearch.output.ElasticsearchOutputBot
-        # # datetime.datetime
-        #
-        # with mock.patch('intelmq.bots.outputs.elasticsearch.output.datetime', autospec=True) as mock_date:
-        #     mock_date.datetime.today.return_value = datetime.strptime(TIMESTAMP_3, '%Y-%m-%dT%H:%M:%S+00:00')
-        #     mock_date.datetime.now.return_value = datetime.strptime(TIMESTAMP_3, '%Y-%m-%dT%H:%M:%S+00:00')
-        #     mock_date.side_effect = lambda *args, **kwargs: datetime.strptime(*args, **kwargs)
-        #     self.run_bot()
-        #
-        # time.sleep(1)  # Let ES store the event. Can also force this with ES API
-        #
-        # self.assertTrue(self.con.indices.exists(expected_index_name))
-        #
-        # result = self.con.search(index=expected_index_name, body=ES_SEARCH)['hits']['hits'][0]
-        # result_index_name = result["_index"]
-        #
-        # # Clean up test event and check that the index name was set correctly
-        # self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('elastic_doctype'), id=result['_id'])
-        # self.assertEqual(result_index_name, expected_index_name)
 
     def base_check_expected_index_created(self, input_event, expected_index_name):
         self.input_message = input_event
