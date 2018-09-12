@@ -68,25 +68,26 @@ class ElasticsearchOutputBot(Bot):
             if not self.es.indices.exists(self.elastic_index):
                 self.es.indices.create(index=self.elastic_index, ignore=400)
 
-    def get_index(self, event_dict):
+    def get_index(self, event_dict: dict, default: str="unknown-date"):
         """
         Returns the index name to use for the given event,
          based on the current bot's settings and the event's date fields.
         :param event_dict: The event (as a dict) to examine.
+        :param default: (Optional) The value to use if no time is available in the event. Default: 'unknown-date'.
         :return: A string containing the name of the index which should store the event.
         """
         # This function supports rotating indices based on timestamps.
         # If the bot should rotate indices, the index name will include a date stamp based on:
         #   - the time_source field - if one is available, else
         #   - the time_observation field - if one is available, else
-        #   - the current time, if neither of the above is available.
+        #   - the string given in the 'default' parameter, if neither date field is available
 
         if self.rotate_index:
             event_date = None
             # Try to use the the time information from the event.
             for t in [event_dict.get('time_source', None), event_dict.get('time_observation', None)]:
                 try:
-                    event_date = datetime.strptime(t, '%Y-%m-%dT%H:%M:%S+00:00').date()
+                    event_date = datetime.strptime(t, '%Y-%m-%dT%H:%M:%S+00:00').date().isoformat()
                     break
                 except (TypeError, ValueError):
                     # Ignore missing or invalid time_source or time_observation
@@ -94,8 +95,9 @@ class ElasticsearchOutputBot(Bot):
                     continue
 
             # If no time available in the event, use today's date.
-            event_date = event_date or datetime.today().date()
-            return "{}-{}".format(self.elastic_index, event_date.isoformat())
+            # event_date = event_date or datetime.today().date().isoformat()
+            event_date = event_date or default
+            return "{}-{}".format(self.elastic_index, event_date)
         else:
             # If the bot should NOT rotate indices, just use the index name
             return self.elastic_index
@@ -121,7 +123,7 @@ class ElasticsearchOutputBot(Bot):
         event_dict = replace_keys(event_dict,
                                   replacement=self.replacement_char)
 
-        self.es.index(index=self.get_index(event_dict),
+        self.es.index(index=self.get_index(event_dict, default=datetime.today().date().isoformat()),
                       doc_type=self.elastic_doctype,
                       body=event_dict)
         self.acknowledge_message()
