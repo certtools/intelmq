@@ -5,6 +5,7 @@ CHANGELOG
 ------------------
 
 ### Core
+- `lib/harmonization.py`: Change `parse_utc_isoformat` of `DateTime` class from private to public (related to #1322).
 
 ### Harmonization
 
