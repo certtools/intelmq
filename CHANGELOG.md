@@ -29,6 +29,7 @@ CHANGELOG
 ### Tools
 
 ### Contrib
+- elasticsearch/elasticmapper: Add tlp field (#1308).
 
 ### Known issues
 
