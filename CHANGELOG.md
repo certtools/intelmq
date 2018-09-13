@@ -6,6 +6,10 @@ CHANGELOG
 
 ### Core
 - `lib/harmonization.py`: Change `parse_utc_isoformat` of `DateTime` class from private to public (related to #1322).
+- `lib/utils.py`: Add new function `object_pair_hook_bots`.
+
+### Development
+- `bin/rewrite_config_files.py`: Fix ordering of BOTS file (#1327).
 
 ### Harmonization
 

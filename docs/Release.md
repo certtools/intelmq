@@ -55,6 +55,8 @@ Add a new empty changelog and news section. For the changelog:
 ```
 ### Core
 
+### Development
+
 ### Harmonization
 
 ### Bots
