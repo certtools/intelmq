@@ -152,8 +152,26 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
 
         self.prepare_bot()
         index = self.bot.get_index(INPUT1, 'test-default')
-
         self.assertEqual(index, 'intelmq-test-default')
+
+        class FakeDateTime(datetime):
+            fake_today = "2018-09-09"
+
+            def today(self):
+                return self
+
+            def date(self):
+                return self
+
+            def isoformat(self, sep: str = ..., timespec: str = ...):
+                return self
+
+            def __str__(self):
+                return self.fake_today
+
+        expected_index_name = "{}-{}".format(self.sysconfig.get('elastic_index'), FakeDateTime.fake_today)
+        with mock.patch('intelmq.bots.outputs.elasticsearch.output.datetime', new=FakeDateTime):
+            self.base_check_expected_index_created(INPUT1, expected_index_name)
 
     def base_check_expected_index_created(self, input_event, expected_index_name):
         self.input_message = input_event

@@ -58,13 +58,13 @@ class ElasticsearchOutputBot(Bot):
         self.es = Elasticsearch([{'host': self.elastic_host, 'port': self.elastic_port}], **kwargs)
 
         if self.rotate_index:
-            # Use time-based index names - check that the template exists
+            # Use rotating index names - check that the template exists
             if not self.es.indices.exists_template(name=self.elastic_index):
                 raise RuntimeError("No template with the name '{}' exists on the Elasticsearch host, "
                                    "but 'rotate_index' is set. Have you created the template?".format(self.elastic_index))
 
         else:
-            # Using a single named index. Check that it exists
+            # Using a single named index. Check that it exists and create it if it doesn't
             if not self.es.indices.exists(self.elastic_index):
                 self.es.indices.create(index=self.elastic_index, ignore=400)
 
