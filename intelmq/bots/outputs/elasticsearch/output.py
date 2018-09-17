@@ -94,8 +94,7 @@ class ElasticsearchOutputBot(Bot):
                     event_date = None
                     continue
 
-            # If no time available in the event, use today's date.
-            # event_date = event_date or datetime.today().date().isoformat()
+            # If no time available in the event, use the default
             event_date = event_date or default
             return "{}-{}".format(self.elastic_index, event_date)
         else:
