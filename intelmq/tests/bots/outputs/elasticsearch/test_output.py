@@ -157,7 +157,8 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         class FakeDateTime(datetime):
             fake_today = "2018-09-09"
 
-            def today(self):
+            @classmethod
+            def today(cls):
                 return self
 
             def date(self):
