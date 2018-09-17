@@ -139,19 +139,6 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
         self.base_check_expected_index_created(INPUT_TIME_OBSERVATION, expected_index_name)
 
-    def test_default_index_created(self):
-        """
-        Tests whether an event with no time information is indexed using the default value
-        :return:
-        """
-        self.sysconfig = {"flatten_fields": "extra",
-                          "elastic_index": "intelmq",
-                          "elastic_doctype": "events",
-                          "rotate_index": "true"}
-
-        expected_index_name = "{}-unknown-date".format(self.sysconfig.get('elastic_index'))
-        self.base_check_expected_index_created(INPUT1, expected_index_name)
-
     def test_index_falls_back_to_default(self):
         """
         Tests whether get_index returns an expected default value
