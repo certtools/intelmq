@@ -68,7 +68,7 @@ class ElasticsearchOutputBot(Bot):
             if not self.es.indices.exists(self.elastic_index):
                 self.es.indices.create(index=self.elastic_index, ignore=400)
 
-    def get_index(self, event_dict: dict, default: str="unknown-date"):
+    def get_index(self, event_dict: dict, default: str = "unknown-date"):
         """
         Returns the index name to use for the given event,
          based on the current bot's settings and the event's date fields.
