@@ -42,6 +42,7 @@ def __mapping_properties_from_harmonization(properties):
     del properties['extra']
     return properties
 
+
 def mapping_properties_from_harmonization(harmonization, replacement_char):
     properties = dict()
     err = None
@@ -60,9 +61,10 @@ def mapping_properties_from_harmonization(harmonization, replacement_char):
 
     return __mapping_properties_from_harmonization(properties), err
 
+
 def create_mapping(harmonization, index_type, replacement_char):
 
-    config = { "enabled": False }
+    config = {"enabled": False}
 
     properties, err = mapping_properties_from_harmonization(harmonization, replacement_char)
 
@@ -77,6 +79,7 @@ def create_mapping(harmonization, index_type, replacement_char):
 
     return data, err
 
+
 def send_mapping(host, index, data):
     err = None
     response = None
@@ -88,6 +91,7 @@ def send_mapping(host, index, data):
         err = -1
 
     return response, err
+
 
 def create_template(mapping, patterns=None):
     """
@@ -110,19 +114,28 @@ def create_template(mapping, patterns=None):
         "template": patterns[0],  # For backward compatibility with ES < 6.0.0. Ignored if ES >= 6.0.0
         # "settings": {
         #     "number_of_shards": 5,
+        #     ...
         # },
         "mappings": mapping.get("mappings")
     }
 
     return template
 
-def send_template(host, index, template):
+
+def send_template(host, name, template):
+    """
+    Send a mapping template to Elasticsearch
+    :param host: The Elasticsearch host
+    :param name: The name to use for the template
+    :param template: The template (as a dict) to send
+    :return: response, err as returned by the Elasticsearch client.
+    """
     err = None
     response = None
 
     try:
         es = Elasticsearch([host], verify_certs=True)
-        response = es.indices.put_template(name=index, body=template)
+        response = es.indices.put_template(name=name, body=template)
     except:
         err = -1
 
@@ -221,8 +234,10 @@ if __name__ == "__main__":
     if arguments.host:
 
         if arguments.index_template:
+            # Optionally, send the mapping as a template for new indices
             response, err = send_template(arguments.host, arguments.index, data)
         else:
+            # Default - create a mapping for only one named index
             response, err = send_mapping(arguments.host, arguments.index, data)
 
         if err:

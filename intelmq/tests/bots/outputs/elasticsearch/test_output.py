@@ -142,7 +142,8 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
     def test_index_falls_back_to_default(self):
         """
         Tests whether get_index returns an expected default value
-         if no time.source or time.observation is present.
+         if no time.source or time.observation is present, and
+         that the OutputBot will use the current date if none is present.
         """
 
         self.sysconfig = {"flatten_fields": "extra",
@@ -152,30 +153,19 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
 
         self.prepare_bot()
         index = self.bot.get_index(INPUT1, 'test-default')
-        self.assertEqual(index, 'intelmq-test-default')
+        self.assertEqual(index, 'intelmq-test-default')  # Check that get_index honors the supplied default string
 
         class FakeDateTime(datetime):
-            # fake_today = "2018-09-09"
-            # fake_today = '2018-09-09T01:23:45+00:00'
-
-            # def __init__(self, fake_date: datetime.date =None):
-            #     self.fake_date = fake_date
-
+            """
+            Passed to bot to force expected datetime value for test.
+            """
             @classmethod
             def today(cls):
                 return datetime.strptime('2018-09-09T01:23:45+00:00', '%Y-%m-%dT%H:%M:%S+00:00')
-                # return FakeDateTime(datetime.strptime(FakeDateTime.fake_today, '%Y-%m-%dT%H:%M:%S+00:00'))
-
-            # def date(self):
-            #     return self
-            #
-            # def isoformat(self, sep: str = ..., timespec: str = ...):
-            #     return self
-            #
-            # def __str__(self):
-            #     return self.fake_today
 
         expected_index_name = "{}-{}".format(self.sysconfig.get('elastic_index'), "2018-09-09")
+
+        # Patch datetime with FakeDateTime, run the bot, and check the created index.
         with mock.patch('intelmq.bots.outputs.elasticsearch.output.datetime', new=FakeDateTime):
             self.base_check_expected_index_created(INPUT1, expected_index_name)
 

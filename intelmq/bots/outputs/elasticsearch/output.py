@@ -76,7 +76,7 @@ class ElasticsearchOutputBot(Bot):
         :param default: (Optional) The value to use if no time is available in the event. Default: 'unknown-date'.
         :return: A string containing the name of the index which should store the event.
         """
-        # This function supports rotating indices based on timestamps.
+        # This function supports rotating indices based on event timestamps.
         # If the bot should rotate indices, the index name will include a date stamp based on:
         #   - the time_source field - if one is available, else
         #   - the time_observation field - if one is available, else
