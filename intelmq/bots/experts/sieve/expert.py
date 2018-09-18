@@ -76,7 +76,7 @@ class SieveExpertBot(Bot):
     def check(parameters):
         try:
             metamodel = SieveExpertBot.init_metamodel()
-            sieve = SieveExpertBot.read_sieve_file(parameters['file'], metamodel)
+            SieveExpertBot.read_sieve_file(parameters['file'], metamodel)
         except Exception as e:
             return [['error', str(e)]]
 

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import re
 from html.parser import HTMLParser
 
 from intelmq.lib import utils

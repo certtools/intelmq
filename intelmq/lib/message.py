@@ -4,7 +4,6 @@ Messages are the information packages in pipelines.
 
 Use MessageFactory to get a Message object (types Report and Event).
 """
-import functools
 import hashlib
 import json
 import re
@@ -307,7 +306,6 @@ class Message(dict):
         message = json.loads(message_string)
         return message
 
-#    @functools.lru_cache(maxsize=None)
     def __is_valid_key(self, key: str):
         try:
             class_name, subitem = self.__get_type_config(key)
@@ -349,7 +347,6 @@ class Message(dict):
         else:
             return class_reference().sanitize_subitem(value)
 
-#    @functools.lru_cache(maxsize=None)
     def __get_type_config(self, key: str):
         if key == '__type':
             return None, None
