@@ -163,7 +163,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
 
             @classmethod
             def today(cls):
-                return datetime.strptime('2018-09-09T01:23:45+00:00', '%Y-%m-%dT%H:%M:%S+00:00').date()
+                return datetime.strptime('2018-09-09T01:23:45+00:00', '%Y-%m-%dT%H:%M:%S+00:00')
                 # return FakeDateTime(datetime.strptime(FakeDateTime.fake_today, '%Y-%m-%dT%H:%M:%S+00:00'))
 
             # def date(self):
