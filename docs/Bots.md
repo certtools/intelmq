@@ -1263,7 +1263,6 @@ This output bot discards all incoming messages.
 * flatten_fields     : In ES, some query and aggregations work better if the fields are flat and not JSON. Here you can provide a list of fields to convert.
                        Can be a list of strings (fieldnames) or a string with field names separated by a comma (,). eg `extra,field2` or `['extra', 'field2']`
                        Default: ['extra']
-* * *
 
 See contrib/elasticsearch/elasticmapper for a utility for creating Elasticsearch mappings and templates.
 
@@ -1275,6 +1274,7 @@ The data in ES can be retrieved with the HTTP-Interface:
 ```bash
 > curl -XGET 'http://localhost:9200/intelmq/events/_search?pretty=True'
 ```
+* * *
 
 
 ### File
