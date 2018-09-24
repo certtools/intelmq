@@ -1115,9 +1115,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             else:
                 if orphan_queues:
                     if RETURN_TYPE == 'json':
-                        output.append(['warning', "Orphaned queues found: '%s'." % orphan_queues])
+                        output.append(['warning', "Orphaned queues found: '%s'. Possible leaftover from past reconfigurations "
+                                       "without cleanup. Have a look at the FAQ at "
+                                       "https://github.com/certtools/intelmq/blob/master/docs/FAQ.md" % orphan_queues])
                     else:
-                        self.logger.warning("Orphaned queues found: '%s'.", orphan_queues)
+                        self.logger.warning("Orphaned queues found: '%s'. Possible leaftover from past reconfigurations "
+                                            "without cleanup. Have a look at the FAQ at "
+                                            "https://github.com/certtools/intelmq/blob/master/docs/FAQ.md", orphan_queues)
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking harmonization configuration.'])

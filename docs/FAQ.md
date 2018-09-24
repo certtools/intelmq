@@ -36,3 +36,15 @@ See also this discussion on a possible enhanced load balancing: https://github.c
 ## My bot(s) died on startup with no errors logged
 
 Rather than starting your bot(s) with `intelmqctl start`, try `intelmqctl run [bot]`. This will provide valuable debug output you might not otherwise see, pointing to issues like configuration errors.
+
+## Orphaned Queues
+
+The `intelmqctl check` tool can search for orphaned queues. "Orphaned queues" are queues that have been used in the past and are no longer in use. For example you had a bot which you removed or renamed afterwards, but there were still messages in it's source queue. The source queue won't be renamed automatically and is now disconnected. As this queue is no longer configured, it won't show up in the list of IntelMQ's queues too. In case you are using redis as message broker, you can use the `redis-cli` tool to examine or remove these queues:
+
+```bash
+redis-cli -n 2
+keys * # lists all existing non-empty queues
+llen [queue-name] # shows the length of the queue [queue-name]
+lindex [queue-name] [index] # show the [index]'s message of the queue [queue-name]
+del [queue-name] # remove the queue [queue-name]
+```

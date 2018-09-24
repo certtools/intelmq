@@ -25,6 +25,7 @@ CHANGELOG
 - `intelmq.bots.outputs.redis`: Fix sending password to redis server.
 
 ### Documentation
+- FAQ: Explanation and solution on orphaned queues.
 
 ### Packaging
 - Change the maintainer from Sasche Wilde to Sebastian Wagner (#1320).
@@ -32,6 +33,7 @@ CHANGELOG
 ### Tests
 
 ### Tools
+- `intelmqctl check`: Shows more detailed information on orphaned queues.
 
 ### Contrib
 - elasticsearch/elasticmapper: Add tlp field (#1308).
