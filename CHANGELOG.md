@@ -26,6 +26,7 @@ CHANGELOG
 
 ### Documentation
 - FAQ: Explanation and solution on orphaned queues.
+- Add or fix the tables of contents for all documentation files.
 
 ### Packaging
 - Change the maintainer from Sasche Wilde to Sebastian Wagner (#1320).
