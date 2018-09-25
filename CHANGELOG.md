@@ -8,6 +8,7 @@ CHANGELOG
 ### Core
 - `lib/utils`
   - Function `unzip` to extract files from gzipped and/or tar-archives.
+  - New class `ListHandler`: new handler for logging purpose which saves the messages in a list.
 
 ### Harmonization
 
@@ -41,6 +42,7 @@ CHANGELOG
 - Travis: Change the ownership of `/opt/intelmq` to the current user.
 
 ### Tools
+- `intelmqctl check`: Now uses the new `ListHandler` from utils to handle the logging in JSON output mode.
 
 ### Contrib
 * `malware_name_mapping`: Added the script `apply_mapping_eventdb.py` to apply the mapping to an eventdb.

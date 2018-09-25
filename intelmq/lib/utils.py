@@ -230,6 +230,17 @@ class StreamHandler(logging.StreamHandler):
             self.handleError(record)
 
 
+class ListHandler(logging.StreamHandler):
+    """
+    Logging handler which saves the messages in a list which can be accessed with the
+    `buffer` attribute.
+    """
+    buffer = []
+
+    def emit(self, record):
+        self.buffer.append((record.levelname.lower(), record.getMessage()))
+
+
 def log(name: str, log_path: str = intelmq.DEFAULT_LOGGING_PATH, log_level: str = "DEBUG",
         stream: Optional[object] = None, syslog: Union[bool, str, list, tuple] = None,
         log_format_stream: str = LOG_FORMAT_STREAM):
