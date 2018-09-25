@@ -1,15 +1,22 @@
 ## Table of Contents
 
-1. [Overview](#overview)
-2. [Rules for keys](#rules)
-3. [Sections](#sections)
-4. [Data types](#basicdatatypes)
-5. [Fields List and data types](#fields-list-and-data-types)
-6. [Type/Taxonomy Mapping](#mapping)
-7. [Minimum required fields](#requirements)
+**Table of Contents:**
+- [Overview](#overview)
+- [Rules for keys](#rules-for-keys)
+- [Sections](#sections)
+- [Feed](#feed)
+- [Time](#time)
+- [Source Identity](#source-identity)
+  - [Source Geolocation Identity](#source-geolocation-identity)
+  - [Source Local Identity](#source-local-identity)
+- [Destination Identity](#destination-identity)
+  - [Destination Geolocation Identity](#destination-geolocation-identity)
+  - [Destination Local Identity](#destination-local-identity)
+- [Extra values](#extra-values)
+- [Fields List and data types](#fields-list-and-data-types)
+- [Classification](#classification)
+- [Minimum recommended requirements for events](#minimum-recommended-requirements-for-events)
 
-
-<a name="overview"></a>
 
 ## Overview
 
@@ -20,14 +27,11 @@ Every event **MUST** contain a timestamp field.
 
 [IOC](https://en.wikipedia.org/wiki/Indicator_of_compromise) (Indicator of compromise) is a single observation like a log line.
 
-<a name="rules"></a>
-
 ## Rules for keys
 
 The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`. Thus, keys must match `^[a-z_](.[a-z0-9_]+)*$`.
 
 
-<a name="sections"></a>
 ## Sections
 
 As stated above, every field is organized under some section. The following is a description of the sections and what they imply.
@@ -72,12 +76,10 @@ Some sources report an internal (NATed) IP address.
 ### Extra values
 Data which does not fit in the harmonization can be saved in the 'extra' namespace. All keys must begin with `extra.`, there are no other rules on key names and values. The values can be get/set like all other fields.
 
-<a name="fields-list-and-data-types"></a>
 ## Fields List and data types
 
 A list of allowed fields and data types can be found in [Harmonization-fields.md](Harmonization-fields.md)
 
-<a name="mapping"></a>
 ## Classification
 
 IntelMQ classifies events using three labels: taxonomy, type and identifier. This tuple of three values can be used for deduplication of events and describes what happened.
@@ -153,7 +155,6 @@ Example:
 
 If you know of an IP address that connects to a zeus c&c server, it's about the infected device, thus type malware and identifier zeus. If you want to complain about the c&c server, it's type c&c and identifier zeus. The `malware.name` can have the full name, eg. 'zeus_p2p'.
 
-<a name="requirements"></a>
 ## Minimum recommended requirements for events
 
 Below, we have enumerated the minimum recommended requirements for an actionable abuse event. These keys should to be present for the abuse report to make sense for the end recipient. Please note that if you choose to anonymize your sources, you can substitute **feed** with **feed.code** and that only one of the identity keys **ip**, **domain name**, **url**, **email address** must be present. All the rest of the keys are **optional**.

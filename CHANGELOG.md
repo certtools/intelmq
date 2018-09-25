@@ -54,6 +54,11 @@ CHANGELOG
 ------------------
 
 ### Core
+- `lib/harmonization.py`: Change `parse_utc_isoformat` of `DateTime` class from private to public (related to #1322).
+- `lib/utils.py`: Add new function `object_pair_hook_bots`.
+
+### Development
+- `bin/rewrite_config_files.py`: Fix ordering of BOTS file (#1327).
 
 ### Core
 
@@ -71,6 +76,8 @@ CHANGELOG
 - `intelmq.bots.outputs.redis`: Fix sending password to redis server.
 
 ### Documentation
+- FAQ: Explanation and solution on orphaned queues.
+- Add or fix the tables of contents for all documentation files.
 
 ### Packaging
 - Change the maintainer from Sasche Wilde to Sebastian Wagner (#1320).
@@ -78,8 +85,10 @@ CHANGELOG
 ### Tests
 
 ### Tools
+- `intelmqctl check`: Shows more detailed information on orphaned queues.
 
 ### Contrib
+- elasticsearch/elasticmapper: Add tlp field (#1308).
 
 ### Known issues
 

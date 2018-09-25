@@ -1,5 +1,14 @@
 # Release procedure
 
+**Table of Contents:**
+- [Documentation](#documentation)
+- [Commit, push, review and merge](#commit-push-review-and-merge)
+- [Tag and release](#tag-and-release)
+- [Tarballs and PyPI](#tarballs-and-pypi)
+- [Packages](#packages)
+- [Announcements](#announcements)
+- [Prepare new version](#prepare-new-version)
+
 Make sure the current state is really final ;)
 You can test most of the steps described here locally before doing it real.
 
@@ -54,6 +63,8 @@ Add a new empty changelog and news section. For the changelog:
 
 ```
 ### Core
+
+### Development
 
 ### Harmonization
 

@@ -21,9 +21,8 @@ from dateutil.parser import parse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.exceptions import InvalidArgument
+from intelmq.lib.exceptions import InvalidArgument, InvalidValue
 from intelmq.lib.harmonization import DateTime
-import intelmq.lib.exceptions as exceptions
 
 
 TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
@@ -92,8 +91,7 @@ class GenericCsvParserBot(ParserBot):
     def parse_line(self, row, report):
         event = self.new_event(report)
 
-        for key, value, required in zip(self.columns, row, self.columns_required):
-            keys = key.split('|') if '|' in key else [key, ]
+        for keygroup, value, required in zip(self.columns, row, self.columns_required):
             for key in keys:
                 if isinstance(value, str) and not value:  # empty string is never valid
                     break
@@ -128,7 +126,7 @@ class GenericCsvParserBot(ParserBot):
             else:
                 # if the value sill remains unadded we need to inform if the key is needed
                 if required:
-                    raise exceptions.InvalidValue(key, value)
+                    raise InvalidValue(key, value)
 
         if hasattr(self.parameters, 'type')\
                 and "classification.type" not in event:
