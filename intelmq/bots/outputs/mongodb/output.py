@@ -11,13 +11,13 @@ try:
 except ImportError:
     pymongo = None
 
-
 class MongoDBOutputBot(Bot):
 
     def init(self):
         if pymongo is None:
             raise ValueError('Could not import pymongo. Please install it.')
-
+        if self.parameters.replacement_char == '.':
+            raise ValueError('replacement_char should be different than .')
         self.connect()
 
     def connect(self):
@@ -44,10 +44,25 @@ class MongoDBOutputBot(Bot):
         event = self.receive_message()
 
         try:
-            tmp_dict = event.to_dict(hierarchical=self.parameters.hierarchical_output)
-            tmp_dict["time"]["observation"] = dateutil.parser.parse(tmp_dict["time"]["observation"])
-            tmp_dict["time"]["source"] = dateutil.parser.parse(tmp_dict["time"]["source"])
-            self.collection.insert(tmp_dict)
+            if self.parameters.hierarchical_output:
+                tmp_dict = event.to_dict(hierarchical=True)
+                if "observation" in tmp_dict["time"]:
+                    tmp_dict["time"]["observation"] = dateutil.parser.parse(tmp_dict["time"]["observation"])
+                if "source" in tmp_dict["time"]:
+                    tmp_dict["time"]["source"] = dateutil.parser.parse(tmp_dict["time"]["source"])
+                self.collection.insert(tmp_dict)
+            else:
+                # flat version
+                tmp_dict = event.to_dict(hierarchical=False)
+                # replace . in key by replacement_char
+                tmp_dict = {key.replace('.', self.parameters.replacement_char): tmp_dict.copy().pop(key) for key in tmp_dict.keys()}
+                time_obs = "time"+self.parameters.replacement_char+"observation"
+                if time_obs in tmp_dict:
+                    tmp_dict[time_obs] = dateutil.parser.parse(tmp_dict[time_obs])
+                time_src = "time"+self.parameters.replacement_char+"source"
+                if time_src in tmp_dict:
+                    tmp_dict[time_src] = dateutil.parser.parse(tmp_dict[time_obs])
+                self.collection.insert(tmp_dict)
         except pymongo.errors.AutoReconnect:
             self.logger.error('Connection Lost. Connecting again.')
             self.connect()
