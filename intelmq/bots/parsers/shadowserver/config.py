@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
+Copyright (c)2016-2018 by Bundesamt für Sicherheit in der Informationstechnik (BSI)
 
-Software engineering by Intevation GmbH
+Software engineering by BSI & Intevation GmbH
 
 This is a configuration File for the shadowserver parser
 
@@ -83,6 +83,8 @@ def get_feed(feedname, logger):
         "Open-SSDP": open_ssdp,
         "Open-TFTP": open_tftp,
         "Open-XDMCP": open_xdmcp,
+        "Outdated-DNSSEC-Key": outdated_dnssec_key,
+        "Outdated-DNSSEC-Key-IPv6": outdated_dnssec_key,  # same format as IPv4 report
         "Sandbox-URL": sandbox_url,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,
         "Spam-URL": spam_url,
@@ -1766,4 +1768,40 @@ accessible_adb = {
         'classification.identifier': 'accessible-adb',
         'protocol.application': 'adb',
     },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Outdated-DNSSEC-Key
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Outdated-DNSSEC-Key-IPv6
+outdated_dnssec_key = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+#        ('source.port', 'port'),  # not available
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname'),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port', convert_int),
+        ('destination.asn', 'dst_asn', convert_int),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.destination.naics', 'cc_naics', invalidate_zero),     # asked Shadowserver to change to 'dst_naics'
+        ('extra.destination.sic', 'cc_sic', invalidate_zero),         # asked Shadowserver to change to 'dst_sic'
+        ('extra.', 'sector', validate_to_none),
+        ('extra.destination.sector', 'cc_sector', validate_to_none),  # asked Shadowserver to change to 'dst_sector'
+        # ('classification.identifier', 'tag'),  # always set to 'outdated-dnssec-key' in constant_fields
+        ('extra.', 'public_source', validate_to_none),
+        ('protocol.transport', 'protocol'),
+    ],
+    'constant_fields': {
+        'protocol.application': 'dns',
+        'classification.taxonomy': 'vulnerable',     # taxonomy 'availability' would probably match better, but we
+        'classification.type': 'vulnerable service', # currently do not have a matching type ('outage' proposed)
+        'classification.identifier': 'outdated-dnssec-key',
+    }
 }
