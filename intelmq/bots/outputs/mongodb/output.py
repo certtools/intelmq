@@ -11,12 +11,14 @@ try:
 except ImportError:
     pymongo = None
 
+
 class MongoDBOutputBot(Bot):
 
     def init(self):
         if pymongo is None:
             raise ValueError('Could not import pymongo. Please install it.')
-        if self.parameters.replacement_char == '.':
+        self.replacement_char = getattr(self.parameters, 'replacement_char', '_')
+        if self.replacement_char == '.':
             raise ValueError('replacement_char should be different than .')
         self.connect()
 
@@ -43,26 +45,26 @@ class MongoDBOutputBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        try:
-            if self.parameters.hierarchical_output:
-                tmp_dict = event.to_dict(hierarchical=True)
+        if self.parameters.hierarchical_output:
+            tmp_dict = event.to_dict(hierarchical=True)
+            if "time"in tmp_dict:
                 if "observation" in tmp_dict["time"]:
                     tmp_dict["time"]["observation"] = dateutil.parser.parse(tmp_dict["time"]["observation"])
                 if "source" in tmp_dict["time"]:
                     tmp_dict["time"]["source"] = dateutil.parser.parse(tmp_dict["time"]["source"])
-                self.collection.insert(tmp_dict)
-            else:
-                # flat version
-                tmp_dict = event.to_dict(hierarchical=False)
-                # replace . in key by replacement_char
-                tmp_dict = {key.replace('.', self.parameters.replacement_char): tmp_dict.copy().pop(key) for key in tmp_dict.keys()}
-                time_obs = "time"+self.parameters.replacement_char+"observation"
-                if time_obs in tmp_dict:
-                    tmp_dict[time_obs] = dateutil.parser.parse(tmp_dict[time_obs])
-                time_src = "time"+self.parameters.replacement_char+"source"
-                if time_src in tmp_dict:
-                    tmp_dict[time_src] = dateutil.parser.parse(tmp_dict[time_obs])
-                self.collection.insert(tmp_dict)
+        else:
+            # flat version
+            # replace . in key by replacement_char
+            tmp_dict = {key.replace('.', self.replacement_char): value for key, value in event.to_dict().items()}
+            time_obs = "time%sobservation" % self.replacement_char
+            if time_obs in tmp_dict:
+                tmp_dict[time_obs] = dateutil.parser.parse(tmp_dict[time_obs])
+            time_src = "time%source" % self.replacement_char
+            if time_src in tmp_dict:
+                tmp_dict[time_src] = dateutil.parser.parse(tmp_dict[time_obs])
+
+        try:
+            self.collection.insert(tmp_dict)
         except pymongo.errors.AutoReconnect:
             self.logger.error('Connection Lost. Connecting again.')
             self.connect()
