@@ -23,6 +23,9 @@ CHANGELOG
 
 #### Outputs
 - `intelmq.bots.outputs.redis`: Fix sending password to redis server.
+- `intelmq.bots.outputs.mongodb`:
+  - New parameter `replacement_char` (default: `'_'`) for non-hierarchical output as dots in key names are not allowed (#1324, #1322).
+  - Save value of fields `time.observation` and `time.source` as native datetime object, not as string (#1322).
 
 ### Documentation
 
