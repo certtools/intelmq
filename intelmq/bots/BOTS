@@ -821,7 +821,7 @@
                 "hierarchical_output": true,
                 "host": "localhost",
                 "port": "27017",
-		"replacement_char": "_"
+                "replacement_char": "_"
             }
         },
         "PostgreSQL": {
