@@ -1747,10 +1747,10 @@ outdated_dnssec_key = {
         ('destination.geolocation.cc', 'dst_geo'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.destination.naics', 'cc_naics', invalidate_zero),     # asked Shadowserver to change to 'dst_naics'
-        ('extra.destination.sic', 'cc_sic', invalidate_zero),         # asked Shadowserver to change to 'dst_sic'
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sic', 'dst_sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
-        ('extra.destination.sector', 'cc_sector', validate_to_none),  # asked Shadowserver to change to 'dst_sector'
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
         # ('classification.identifier', 'tag'),  # always set to 'outdated-dnssec-key' in constant_fields
         ('extra.', 'public_source', validate_to_none),
         ('protocol.transport', 'protocol'),
