@@ -1757,8 +1757,8 @@ outdated_dnssec_key = {
     ],
     'constant_fields': {
         'protocol.application': 'dns',
-        'classification.taxonomy': 'vulnerable',     # taxonomy 'availability' would probably match better, but we
-        'classification.type': 'vulnerable service', # currently do not have a matching type ('outage' proposed)
+        'classification.taxonomy': 'availability',
+        'classification.type': 'other',  # change to "misconfiguration" when available
         'classification.identifier': 'outdated-dnssec-key',
     }
 }
