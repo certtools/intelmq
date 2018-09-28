@@ -820,7 +820,8 @@
                 "db_pass": null,
                 "hierarchical_output": true,
                 "host": "localhost",
-                "port": "27017"
+                "port": "27017",
+                "replacement_char": "_"
             }
         },
         "PostgreSQL": {

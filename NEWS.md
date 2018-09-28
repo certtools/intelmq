@@ -16,6 +16,9 @@ See the changelog for a full list of changes.
 
 ### Postgres databases
 
+### MongoDB databases
+In previous version the MongoDB Output Bot saved the fields `time.observation` and `time.source` as strings in ISO format. But MongoDB does support saving datetime objects directly which are converted to its native date format, enabling certain optimizations and features. The MongoDB Output Bot now saves these values as datetime objects.
+
 1.1.0 Feature release (2018-09-05)
 ----------------------------------
 ### Requirements

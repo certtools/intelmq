@@ -1270,6 +1270,8 @@ If the field used in the format string is not defined, `None` will be used as fa
 
 ### MongoDB
 
+Saves events in a MongoDB either as hierarchical structure or flat with full key names. `time.observation` and `time.source` are saved as datetime objects, not as ISO formatted string.
+
 #### Information:
 * `name:` mongodb
 * `lookup:` no
@@ -1286,6 +1288,7 @@ If the field used in the format string is not defined, `None` will be used as fa
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
 * `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionary in sub-dictionaries.
+* `replacement_char`: String (default `'_'`) used as replacement character for the dots in key names if hierarchical output is not used.
 
 #### Installation Requirements
 
