@@ -92,6 +92,7 @@ class GenericCsvParserBot(ParserBot):
         event = self.new_event(report)
 
         for keygroup, value, required in zip(self.columns, row, self.columns_required):
+            keys = keygroup.split('|') if '|' in keygroup else [keygroup, ]
             for key in keys:
                 if isinstance(value, str) and not value:  # empty string is never valid
                     break
