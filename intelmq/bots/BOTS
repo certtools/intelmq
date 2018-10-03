@@ -745,6 +745,13 @@
                 "policy": "del,drop,drop"
             }
         },
+        "RIPE": {
+            "description": "RIPE is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
+            "module": "intelmq.bots.experts.ripe.expert",
+            "parameters": {
+                "overwrite": false
+            }
+        },
         "RIPENCC": {
             "description": "RIPENCC is the bot responsible to get the correspondent abuse contact from source IP and destination IP of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
             "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
