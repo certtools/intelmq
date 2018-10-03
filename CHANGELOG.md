@@ -29,6 +29,8 @@ CHANGELOG
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).
 - added `intelmq.bots.experts.mcafee.expert_mar` (1265).
+- renamed `intelmq.bots.experts.ripencc_abuse_contact.expert` to `intelmq.bots.experts.ripe.expert`, compatibility shim will be removed in version 3.0.
+  - Added support for geolocation information in ripe expert with a new parameter `query_ripe_stat_geolocation` (#1317).
 
 #### Outputs
 - added `intelmq.bots.experts.mcafee.output_esm` (1265).

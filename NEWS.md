@@ -11,6 +11,7 @@ See the changelog for a full list of changes.
 ### Harmonization
 
 ### Configuration
+The bot `intelmq.bots.experts.ripencc_abuse_contact.expert` has been renamed to `intelmq.bots.experts.ripe.expert`, the compatibility shim will be removed in version 3.0. Adapt your `runtime.conf` accordingly.
 
 ### Libraries
 

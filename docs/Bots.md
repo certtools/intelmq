@@ -1286,9 +1286,9 @@ Sources:
 
 * * *
 
-### RipeNCC Abuse Contact
+### Ripe
 
-RIPE NCC online Abuse Contact Finder for IP addresses and Autonomous Systems.
+Online RIPE Abuse Contact and Geolocation Finder for IP addresses and Autonomous Systems.
 
 #### Information:
 * `name:` ripencc-abuse-contact
@@ -1305,6 +1305,7 @@ RIPE NCC online Abuse Contact Finder for IP addresses and Autonomous Systems.
 * `query_ripe_db_ip`: Query for ASNs at `http://rest.db.ripe.net/abuse-contact/as%s.json`, default `true`
 * `query_ripe_stat_asn`: Query for ASNs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
 * `query_ripe_stat_ip`: Query for IPs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
+* `query_ripe_stat_geolocation`: Query for IPs at `https://stat.ripe.net/data/maxmind-geo-lite/data.json?resource=%s`, default `true`
 
 * * *
 
