@@ -19,7 +19,7 @@ class RIPEExpertBot(Bot):
     URL_DB_IP = 'https://rest.db.ripe.net/abuse-contact/{}.json'
     URL_DB_AS = 'https://rest.db.ripe.net/abuse-contact/as{}.json'
     URL_STAT_CONTACT = ('https://stat.ripe.net/data/abuse-contact-finder/'
-                'data.json?resource={}')
+                        'data.json?resource={}')
     URL_STAT_GEOLOCATION = 'https://stat.ripe.net/data/maxmind-geo-lite/data.json?resource={}'
 
     def init(self):
