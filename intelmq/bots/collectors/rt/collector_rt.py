@@ -88,6 +88,7 @@ class RTCollectorBot(CollectorBot):
                 if urlmatch:
                     content = 'url'
                     url = urlmatch.group(0)
+                    self.logger.info('Matching URL found %r.', url)
                 else:
                     self.logger.debug('No matching attachment or URL found.')
                     continue
