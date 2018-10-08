@@ -21,6 +21,7 @@ CHANGELOG
 - `intelmq.bots.parsers.cymru.parser_cap_program`:
   - Add support for new format (extra data about botnet of 'bots').
   - Handle AS number 0.
+- `intelmq.bots.parsers.shadowserver.config`: Spam URL reports: remove `src_naics`, `src_sic` columns.
 
 #### Experts
 
