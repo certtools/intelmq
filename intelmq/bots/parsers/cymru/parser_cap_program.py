@@ -54,6 +54,7 @@ class CymruCAPProgramParserBot(ParserBot):
             comment_results = {}
             comment_key = None
             comment_value = []
+            event_comment = []
             for part in comment_split + [None]:  # iterate once more at end
                 if part in ['srcport', 'mwtype', 'destaddr', None]:
                     if comment_key and comment_value:
@@ -61,7 +62,11 @@ class CymruCAPProgramParserBot(ParserBot):
                     comment_key = part
                     comment_value.clear()
                 else:
-                    comment_value.append(part)
+                    if comment_key == 'destaddr' and len(comment_value) == 1:
+                            # line 9 in test case ('Avalanche Botnet' comment)
+                        event_comment.append(part)
+                    else:
+                        comment_value.append(part)
             for kind, value in comment_results.items():
                 if kind == 'srcport':
                     event['extra.source_port'] = int(value)
@@ -71,6 +76,8 @@ class CymruCAPProgramParserBot(ParserBot):
                     event['destination.ip'] = value
                 else:
                     raise ValueError('Unknown value in comment %r for report %r.' % (kind, report_type))
+            if event_comment:
+                event.add('event_description.text', ' '.join(event_comment))
         elif report_type == 'bruteforce':
             # bruteforce|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<PROTOCOL>|ASNAME
             event.add('classification.type', 'brute-force')
