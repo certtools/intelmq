@@ -15,6 +15,7 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.http.collector_http`: Fix parameter `extract_files` in BOTS (#1331).
 
 #### Parsers
 - `intelmq.bots.parsers.misp`: Fix Object attribute (#1318).
