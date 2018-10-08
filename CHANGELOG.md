@@ -18,7 +18,9 @@ CHANGELOG
 
 #### Parsers
 - `intelmq.bots.parsers.misp`: Fix Object attribute (#1318).
-- `intelmq.bots.parsers.cymru.parser_cap_program`: Add support for new format (extra data about botnet of 'bots').
+- `intelmq.bots.parsers.cymru.parser_cap_program`:
+  - Add support for new format (extra data about botnet of 'bots').
+  - Handle AS number 0.
 
 #### Experts
 

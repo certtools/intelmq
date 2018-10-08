@@ -21,7 +21,8 @@ class CymruCAPProgramParserBot(ParserBot):
         event = self.new_event(report)
 
         event.add('source.ip', ip)
-        event.add('source.asn', asn)
+        if asn != '0':
+            event.add('source.asn', asn)
         event.add('time.source', timestamp + ' GMT')
         event.add('source.as_name', asn_name)
         event.add('raw', self.recover_line(line))
@@ -48,7 +49,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event.add('classification.identifier', report_type)
             event.add('malware.name', report_type)
         elif report_type == 'bots':
-            # bots|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[srcport <PORT>] [mwtype <TYPE>] [destaddr <IPADDR>]|ASNAME
+            # bots|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[srcport <PORT>] [mwtype <TYPE>] [destaddr <IPADDR>] [comment]|ASNAME
             # TYPE can contain spaces -.-
             event.add('classification.type', 'infected system')
             comment_results = {}
