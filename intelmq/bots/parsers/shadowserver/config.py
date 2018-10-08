@@ -1312,8 +1312,6 @@ spam_url = {
         ('extra.', 'sender', validate_to_none),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'src_naics', invalidate_zero),
-        ('extra.', 'src_sic', invalidate_zero),
     ],
     'constant_fields': {
         'classification.taxonomy': 'abusive content',
