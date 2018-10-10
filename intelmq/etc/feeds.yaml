@@ -688,7 +688,7 @@ providers:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://www.autoshun.org/files/shunlist.html
+            http_url: https://www.autoshun.org/download/?api_key=__APIKEY__&format=html
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.autoshun.parser

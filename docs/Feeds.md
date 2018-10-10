@@ -224,7 +224,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://www.autoshun.org/files/shunlist.html`
+*  * `http_url`: `https://www.autoshun.org/download/?api_key=__APIKEY__&format=html`
 *  * `rate_limit`: `3600`
 
 ### Parser

@@ -69,6 +69,9 @@ CHANGELOG
 ### Bots
 #### Collectors
 - `intelmq.bots.http.collector_http`: Fix parameter `extract_files` in BOTS (#1331).
+- `intelmq.bots.collectos.mail.collector_mail_url`:
+  - Handle HTTP status codes != 2xx the same as HTTP timeouts: No exception, but graceful handling.
+  - Handle HTTP errors (bad status code and timeouts) with `error_procedure` == 'pass' but marking the mail as read and logging the error.
 
 #### Parsers
 - `intelmq.bots.parsers.misp`: Fix Object attribute (#1318).
@@ -91,6 +94,7 @@ CHANGELOG
 ### Documentation
 - FAQ: Explanation and solution on orphaned queues.
 - Add or fix the tables of contents for all documentation files.
+- Feeds: Fix Autoshun Feed URL (#1325).
 
 ### Packaging
 - Change the maintainer from Sasche Wilde to Sebastian Wagner (#1320).
