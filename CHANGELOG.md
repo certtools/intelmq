@@ -23,6 +23,7 @@ CHANGELOG
   - Add support for new format (extra data about botnet of 'bots').
   - Handle AS number 0.
 - `intelmq.bots.parsers.shadowserver.config`: Spam URL reports: remove `src_naics`, `src_sic` columns.
+  - fix parsing of 'spam' events in ShadowServer's 'Botnet Drone Hadoop' Report (#1271).
 
 #### Experts
 

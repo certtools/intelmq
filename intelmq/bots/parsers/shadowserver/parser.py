@@ -43,6 +43,10 @@ class ShadowserverParserBot(ParserBot):
 
         conf = self.sparser_config
 
+        # https://github.com/certtools/intelmq/issues/1271
+        if conf is config.drone and row.get('infection') == 'spam':
+            conf = config.botnet_drone_hadoop_spam
+
         # we need to copy here...
         fields = copy.copy(self.csv_fieldnames)
         # We will use this variable later.

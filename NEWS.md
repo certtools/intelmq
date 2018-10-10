@@ -15,6 +15,13 @@ See the changelog for a full list of changes.
 ### Libraries
 
 ### Postgres databases
+The following statements optionally update existing data.
+Please check if you did use these feed names and eventually adapt them for your setup!
+```SQL
+UPDATE events
+   SET "classification.taxonomy" = 'abusive content', "classification.type" = 'spam', "classification.identifier" = 'spam', "malware.name" = NULL, "source.fqdn" = "source.reverse_dns", "source.reverse_dns" = NULL, "source.url" = "destination.url", "destination.url" = NULL
+   WHERE "malware.name" = 'spam' AND "feed.name" = 'Drone';
+```
 
 ### MongoDB databases
 In previous version the MongoDB Output Bot saved the fields `time.observation` and `time.source` as strings in ISO format. But MongoDB does support saving datetime objects directly which are converted to its native date format, enabling certain optimizations and features. The MongoDB Output Bot now saves these values as datetime objects.
