@@ -41,6 +41,7 @@ CHANGELOG
 ### Documentation
 - FAQ: Explanation and solution on orphaned queues.
 - Add or fix the tables of contents for all documentation files.
+- Feeds: Fix Autoshun Feed URL (#1325).
 
 ### Packaging
 - Change the maintainer from Sasche Wilde to Sebastian Wagner (#1320).
