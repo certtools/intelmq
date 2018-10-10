@@ -1095,7 +1095,7 @@ drone = {
         # classification.identifier will be set to (harmonized) malware name by modify expert
     },
 }
-botnet_drone_hadoop_spam = {
+drone_spam = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -1107,14 +1107,15 @@ botnet_drone_hadoop_spam = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('source.fqdn', 'hostname'),
-        ('source.url', 'url'),
         ('protocol.transport', 'type'),
+        (False, 'infection'),  # is just 'spam'
+        ('source.url', 'url', convert_http_host_and_url, True),
         ('user_agent', 'agent'),
         ('destination.ip', 'cc_ip', validate_ip),
         ('destination.port', 'cc_port'),
         ('destination.asn', 'cc_asn'),
         ('destination.geolocation.cc', 'cc_geo'),
-        ('destination.fqdn', 'cc_dns'),
+        ('destination.fqdn', 'cc_dns', validate_fqdn),
         ('connection_count', 'count', convert_int),
         ('extra.', 'proxy', convert_bool),
         ('protocol.application', 'application'),
@@ -1126,8 +1127,8 @@ botnet_drone_hadoop_spam = {
         ('extra.', 'sic', invalidate_zero),
         ('extra.destination.naics', 'cc_naics', invalidate_zero),
         ('extra.destination.sic', 'cc_sic', invalidate_zero),
-        ('extra.', 'sector', validate_to_none),
         ('extra.destination.sector', 'cc_sector', validate_to_none),
+        ('extra.', 'sector', validate_to_none),
         ('extra.', 'ssl_cipher', validate_to_none),
         ('extra.', 'family', validate_to_none),
         ('extra.', 'tag', validate_to_none),

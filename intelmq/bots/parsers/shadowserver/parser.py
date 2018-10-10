@@ -45,7 +45,7 @@ class ShadowserverParserBot(ParserBot):
 
         # https://github.com/certtools/intelmq/issues/1271
         if conf is config.drone and row.get('infection') == 'spam':
-            conf = config.botnet_drone_hadoop_spam
+            conf = config.drone_spam
 
         # we need to copy here...
         fields = copy.copy(self.csv_fieldnames)
@@ -137,8 +137,12 @@ class ShadowserverParserBot(ParserBot):
                     extra[shadowkey] = value
                     fields.remove(shadowkey)
                     continue
-                elif intelmqkey.startswith('extra.'):
+                elif intelmqkey and intelmqkey.startswith('extra.'):
                     extra[intelmqkey.replace('extra.', '', 1)] = value
+                    fields.remove(shadowkey)
+                    continue
+                elif intelmqkey is False:
+                    # ignore it explicitly
                     fields.remove(shadowkey)
                     continue
                 try:

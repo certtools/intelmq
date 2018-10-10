@@ -241,7 +241,6 @@ EVENTS = [{'__type': 'Event',
            'source.url': 'https://www.example.com/foobar',
            'time.observation': '2015-01-01T00:00:00+00:00',
            'time.source': '2018-08-14T02:13:36+00:00',
-           'extra.infection': 'spam',
            'extra.tag': 'spam',
            },
           ]
