@@ -1095,6 +1095,51 @@ drone = {
         # classification.identifier will be set to (harmonized) malware name by modify expert
     },
 }
+drone_spam = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.fqdn', 'hostname'),
+        ('protocol.transport', 'type'),
+        (False, 'infection'),  # is just 'spam'
+        ('source.url', 'url', convert_http_host_and_url, True),
+        ('user_agent', 'agent'),
+        ('destination.ip', 'cc_ip', validate_ip),
+        ('destination.port', 'cc_port'),
+        ('destination.asn', 'cc_asn'),
+        ('destination.geolocation.cc', 'cc_geo'),
+        ('destination.fqdn', 'cc_dns', validate_fqdn),
+        ('connection_count', 'count', convert_int),
+        ('extra.', 'proxy', convert_bool),
+        ('protocol.application', 'application'),
+        ('os.name', 'p0f_genre'),
+        ('os.version', 'p0f_detail'),
+        ('extra.', 'machine_name', validate_to_none),
+        ('extra.', 'id', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.destination.naics', 'cc_naics', invalidate_zero),
+        ('extra.destination.sic', 'cc_sic', invalidate_zero),
+        ('extra.destination.sector', 'cc_sector', validate_to_none),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'ssl_cipher', validate_to_none),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'abusive content',
+        'classification.type': 'spam',
+        'classification.identifier': 'spam',
+    },
+}
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-XDMCP
 open_xdmcp = {
