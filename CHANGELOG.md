@@ -16,6 +16,9 @@ CHANGELOG
 ### Bots
 #### Collectors
 - `intelmq.bots.http.collector_http`: Fix parameter `extract_files` in BOTS (#1331).
+- `intelmq.bots.collectos.mail.collector_mail_url`:
+  - Handle HTTP status codes != 2xx the same as HTTP timeouts: No exception, but graceful handling.
+  - Handle HTTP errors (bad status code and timeouts) with `error_procedure` == 'pass' but marking the mail as read and logging the error.
 
 #### Parsers
 - `intelmq.bots.parsers.misp`: Fix Object attribute (#1318).

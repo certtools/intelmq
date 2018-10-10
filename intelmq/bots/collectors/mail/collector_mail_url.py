@@ -84,8 +84,11 @@ class MailURLCollectorBot(CollectorBot):
                             continue
 
                         if resp.status_code // 100 != 2:
-                            raise ValueError('HTTP response status code was {}.'
-                                             ''.format(resp.status_code))
+                            self.logger.error('HTTP response status code was {}.'
+                                              ''.format(resp.status_code))
+                            erroneous = True
+                            continue
+
                         if not resp.content:
                             self.logger.warning('Got empty reponse from server.')
                         else:
@@ -111,7 +114,16 @@ class MailURLCollectorBot(CollectorBot):
                 if not erroneous:
                     self.logger.info("Email report read.")
                 else:
-                    self.logger.error("Email report read with errors, the report was not processed.")
+                    if self.parameters.error_procedure == 'pass':
+                        try:
+                            mailbox.mark_seen(uid)
+                        except imaplib.abort:
+                            mailbox = self.connect_mailbox()
+                            mailbox.mark_seen(uid)
+                        self.logger.error("Download of report failed with above error, marked Email as read "
+                                          "(according to `error_procedure` parameter).")
+                    else:
+                        self.logger.error("Email report read with above errors, the report was not processed.")
         else:
             self.logger.debug("No unread mails to check.")
         mailbox.logout()
