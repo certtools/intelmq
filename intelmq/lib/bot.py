@@ -760,7 +760,8 @@ class ParserBot(Bot):
         out = io.StringIO()
         writer = csv.writer(out, **self.csv_params)
         writer.writerow(line)
-        return out.getvalue()
+        tempdata = '\r\n'.join(self.tempdata) + '\r\n' if self.tempdata else ''
+        return tempdata + out.getvalue()
 
     def recover_line_csv_dict(self, line: str):
         """
