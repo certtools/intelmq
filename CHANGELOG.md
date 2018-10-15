@@ -6,6 +6,8 @@ CHANGELOG
 - use pyupgrade to upgrade all files to python3-only syntax, e.g. use `super()` instead of `super(..., ...)` in all files. Migration from old to new string formatting has not been applied if the resulting code would be longer.
 
 ### Core
+- `lib/bot`:
+  - Dump messages locks the dump file using unix file locks (#574).
 - `lib/utils`
   - Function `unzip` to extract files from gzipped and/or tar-archives.
   - New class `ListHandler`: new handler for logging purpose which saves the messages in a list.
@@ -45,6 +47,7 @@ CHANGELOG
 
 ### Tools
 - `intelmqctl check`: Now uses the new `ListHandler` from utils to handle the logging in JSON output mode.
+- `intelmqdump`: Inspecting dumps locks the dump file using unix file locks (#574).
 
 ### Contrib
 * `malware_name_mapping`: Added the script `apply_mapping_eventdb.py` to apply the mapping to an eventdb.

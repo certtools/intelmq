@@ -574,6 +574,8 @@ recover (a)ll, delete (e)ntries, (d)elete file, (q)uit, (s)how by ids, (r)ecover
 Deleted file /opt/intelmq/var/log/dragon-research-group-ssh-parser.dump
 ```
 
+Bots and the intelmqdump tool use file locks to prevent writing to already opened files. Bots are trying to lock the file for up to 60 seconds if the dump file is locked already by another process (intelmqdump) and then give up. Intelmqdump does not wait and instead only shows an error message.
+
 ## Monitoring Logs
 
 All bots and `intelmqctl` log to `/opt/intelmq/var/log/`. In case of failures, messages are dumped to the same directory with the file ending `.dump`.

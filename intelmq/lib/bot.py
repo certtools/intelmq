@@ -4,6 +4,7 @@
 """
 import csv
 import datetime
+import fcntl
 import io
 import json
 import logging
@@ -198,7 +199,7 @@ class Bot(object):
                     self.logger.error("Bot has found a problem.")
 
                 if self.parameters.error_log_message:
-                    # Dump full message if explicitly requested by config
+                    # Print full message if explicitly requested by config
                     self.logger.info("Current Message(event): %r.",
                                      self.__current_message)
 
@@ -451,14 +452,32 @@ class Bot(object):
 
         new_dump_data[timestamp]["message"] = message.serialize()
 
-        try:
-            with open(dump_file, 'r') as fp:
+        if os.path.exists(dump_file):
+            # existing dump
+            mode = 'r+'
+        else:
+            # new dump file
+            mode = 'w'
+        with open(dump_file, mode) as fp:
+            for i in range(50):
+                try:
+                    fcntl.flock(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    if i == 0:
+                        self.logger.warning('Dump file is locked, waiting up to 60s.')
+                    time.sleep(1)
+                else:
+                    break
+            else:
+                raise ValueError('Dump file was locked for more than 60s, giving up now.')
+            if mode == 'r+':
                 dump_data = json.load(fp)
                 dump_data.update(new_dump_data)
-        except (ValueError, FileNotFoundError):
-            dump_data = new_dump_data
+            else:
+                dump_data = new_dump_data
 
-        with open(dump_file, 'w') as fp:
+            fp.seek(0)
+
             json.dump(dump_data, fp, indent=4, sort_keys=True)
 
         self.logger.debug('Message dumped.')
