@@ -81,11 +81,11 @@ class HTTPCollectorBot(CollectorBot):
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
-        if self.extract_files is not None:
-            if isinstance(self.extract_files, str):
+        if self.extract_files:
+            if isinstance(self.extract_files, str) and len(self.extract_files):
                 self.extract_files = self.extract_files.split(",")
-                self.logger.info('Extracting files from tar.gz:'
-                                 "'%s'.", "', '".join(self.extract_files()))
+                self.logger.info('Extracting files from tar.gz: '
+                                 "'%s'.", "', '".join(self.extract_files))
             else:
                 self.logger.info('Extracting all files from tar.gz.')
             raw_reports = [file for file in extract_tar(resp.content, self.extract_files)]
