@@ -73,6 +73,7 @@ class GenericCsvParserBot(ParserBot):
         raw_report = re.sub(r'(?m)\0', '', raw_report)
         # skip header
         if getattr(self.parameters, 'skip_header', False):
+            self.tempdata.append(raw_report[:raw_report.find('\n')])
             raw_report = raw_report[raw_report.find('\n') + 1:]
         for row in csv.reader(io.StringIO(raw_report),
                               delimiter=str(self.parameters.delimiter)):

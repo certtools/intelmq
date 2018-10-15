@@ -61,6 +61,7 @@ CHANGELOG
 ### Core
 - `lib/harmonization.py`: Change `parse_utc_isoformat` of `DateTime` class from private to public (related to #1322).
 - `lib/utils.py`: Add new function `object_pair_hook_bots`.
+- `lib.bot.py`: `ParserBot`'s method `recover_line_csv` now also handles given `tempdata`.
 
 ### Development
 - `bin/rewrite_config_files.py`: Fix ordering of BOTS file (#1327).
@@ -71,7 +72,9 @@ CHANGELOG
 
 ### Bots
 #### Collectors
-- `intelmq.bots.http.collector_http`: Fix parameter `extract_files` in BOTS (#1331).
+- `intelmq.bots.http.collector_http`:
+  - Fix parameter name `extract_files` in BOTS (#1331).
+  - Fix handling of `extract_files` parameter if the value is an empty string.
 - `intelmq.bots.collectos.mail.collector_mail_url`:
   - Handle HTTP status codes != 2xx the same as HTTP timeouts: No exception, but graceful handling.
   - Handle HTTP errors (bad status code and timeouts) with `error_procedure` == 'pass' but marking the mail as read and logging the error.
@@ -85,6 +88,7 @@ CHANGELOG
   - Spam URL reports: remove `src_naics`, `src_sic` columns.
   - fix parsing of 'spam' events in ShadowServer's 'Botnet Drone Hadoop' Report (#1271).
   - Add support in parser to ignore some columns in config file by using `False` as intelmq key.
+- `intelmq.bots.parsers.generic.parser_csv`: If the `skip_header` parameter was set to `True`, the header was not part of the `raw` field as returned by the `recover_line` method. The header is now saved and handled correctly by the fixed recovery method.
 
 #### Experts
 
