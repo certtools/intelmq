@@ -516,7 +516,7 @@ def object_pair_hook_bots(*args, **kwargs):
     return dict(sorted(*args), **kwargs)
 
 
-def seconds_to_human(seconds: float, precision: int=0) -> str:
+def seconds_to_human(seconds: float, precision: int = 0) -> str:
     """
     Converts second count to a human readable description.
     >>> seconds_to_human(60)
