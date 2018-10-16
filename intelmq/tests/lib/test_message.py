@@ -689,7 +689,8 @@ class TestMessageFactory(unittest.TestCase):
         """
         event = self.new_event()
         event["extra"] = {"a": {"x": 1}, "b": "foo"}
-        self.assertEqual(event['extra'], '{"a": {"x": 1}, "b": "foo"}')
+        self.assertEqual(json.loads(event['extra']),
+                         {"a": {"x": 1}, "b": "foo"})
         event.add("extra", {"a": {}}, overwrite=True)
         self.assertNotIn('extra', event)
 
