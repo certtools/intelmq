@@ -4,7 +4,6 @@ import re
 import zipfile
 from datetime import datetime, timedelta
 
-import requests
 from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
@@ -14,6 +13,10 @@ try:
     import rt
 except ImportError:
     rt = None
+try:
+    import requests
+except ImportError:
+    requests = None
 
 
 class RTCollectorBot(CollectorBot):
@@ -26,6 +29,8 @@ class RTCollectorBot(CollectorBot):
                          }
 
     def init(self):
+        if requests is None:
+            raise ValueError('Could not import requests. Please install it.')
         if rt is None:
             raise ValueError('Could not import rt. Please install it.')
 

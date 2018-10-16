@@ -20,7 +20,10 @@ import datetime
 import io
 import zipfile
 
-import requests
+try:
+    import requests
+except ImportError:
+    requests = None
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import extract_tar
@@ -34,6 +37,9 @@ class Time(object):
 class HTTPCollectorBot(CollectorBot):
 
     def init(self):
+        if requests is None:
+            raise ValueError('Could not import requests. Please install it.')
+
         self.set_request_parameters()
         self.extract_files = getattr(self.parameters, "extract_files", None)
 
