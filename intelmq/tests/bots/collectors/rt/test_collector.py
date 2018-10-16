@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 """
+import os
 import unittest
+import random
+import io
 
 import intelmq.lib.test as test
 from intelmq.bots.collectors.rt.collector_rt import RTCollectorBot
@@ -13,15 +16,15 @@ REPORT = {'__type': 'Report',
           'raw': 'bm90IGNvbXBsZXRlbHkgZW1wdHk=',
           }
 
+if os.environ.get('INTELMQ_TEST_EXOTIC'):
+    import rt
+
 
 @test.skip_internet()
 @test.skip_exotic()
 class TestRTCollectorBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for RtCollectorBot.
-
-    Search should result in ticket #1
-    http://demo.request-tracker.fr/Ticket/Display.html?id=1
     """
 
     @classmethod
@@ -45,7 +48,15 @@ class TestRTCollectorBot(test.BotTestCase, unittest.TestCase):
 
     def test_events(self):
         """ Test if correct Events have been produced. """
+        self.sysconfig['search_subject_like'] = 'test %s' % random.randint(0, 100000)
+        attachment = io.StringIO("not completely empty")
+
+        instance = rt.Rt(self.sysconfig['uri'])
+        instance.login(login=self.sysconfig['user'], password=self.sysconfig['password'])
+        ticket_id = instance.create_ticket(Queue=self.sysconfig['search_queue'], Subject=self.sysconfig['search_subject_like'], Owner=self.sysconfig['search_owner'], Status=self.sysconfig['search_status'], files=[('test.csv', attachment, 'text/csv')])
+
         self.run_bot()
+        REPORT['rtir_id'] = ticket_id
         self.assertMessageEqual(0, REPORT)
 
 
