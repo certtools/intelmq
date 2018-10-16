@@ -15,15 +15,22 @@ Options:
 &sep={TAB, comma, semicolon, pipe}  	Separator for the (output) CSV format
 """
 
-import requests
-
 from intelmq.lib.bot import Bot
+
+try:
+    import requests
+except ImportError:
+    requests = None
+
 
 URL = 'https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl'
 
 
 class NationalCERTContactCertATExpertBot(Bot):
     def init(self):
+        if requests is None:
+            raise ValueError('Could not import requests. Please install it.')
+
         self.set_request_parameters()
 
     def process(self):

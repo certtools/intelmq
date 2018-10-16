@@ -77,12 +77,20 @@ CHANGELOG
 
 ### Bots
 #### Collectors
-- `intelmq.bots.http.collector_http`:
+- `intelmq.bots.collectors.http.collector_http`:
   - Fix parameter name `extract_files` in BOTS (#1331).
   - Fix handling of `extract_files` parameter if the value is an empty string.
-- `intelmq.bots.collectos.mail.collector_mail_url`:
+  - Handle not installed dependency library `requests` gracefully.
+- `intelmq.bots.collectors.mail.collector_mail_url`:
   - Handle HTTP status codes != 2xx the same as HTTP timeouts: No exception, but graceful handling.
   - Handle HTTP errors (bad status code and timeouts) with `error_procedure` == 'pass' but marking the mail as read and logging the error.
+  - Handle not installed dependency library `requests` gracefully.
+- `intelmq.bots.collectors.http.collector_http_stream`:
+  - Handle not installed dependency library `requests` gracefully.
+- `intelmq.bots.collectors.microsoft.collector_interflow`:
+  - Handle not installed dependency library `requests` gracefully.
+- `intelmq.bots.collectors.rt.collector_rt`:
+  - Handle not installed dependency library `requests` gracefully.
 
 #### Parsers
 - `intelmq.bots.parsers.misp`: Fix Object attribute (#1318).
@@ -96,12 +104,18 @@ CHANGELOG
 - `intelmq.bots.parsers.generic.parser_csv`: If the `skip_header` parameter was set to `True`, the header was not part of the `raw` field as returned by the `recover_line` method. The header is now saved and handled correctly by the fixed recovery method.
 
 #### Experts
+- `intelmq.bots.experts.national_cert_contact_certat.expert`:
+  - Handle not installed dependency library `requests` gracefully.
+- `intelmq.bots.experts.ripencc_abuse_contact.expert`:
+  - Handle not installed dependency library `requests` gracefully.
 
 #### Outputs
 - `intelmq.bots.outputs.redis`: Fix sending password to redis server.
 - `intelmq.bots.outputs.mongodb`:
   - New parameter `replacement_char` (default: `'_'`) for non-hierarchical output as dots in key names are not allowed (#1324, #1322).
   - Save value of fields `time.observation` and `time.source` as native datetime object, not as string (#1322).
+- `intelmq.bots.outputs.restapi.output`:
+  - Handle not installed dependency library `requests` gracefully.
 
 ### Documentation
 - FAQ: Explanation and solution on orphaned queues.
@@ -112,6 +126,7 @@ CHANGELOG
 - Change the maintainer from Sasche Wilde to Sebastian Wagner (#1320).
 
 ### Tests
+- `intelmq.tests.lib.test_bot`: Skip `test_logging_level_other` on python 3.7 because of unclear behavior related to copies of loggers (#1269).
 
 ### Tools
 - `intelmqctl check`: Shows more detailed information on orphaned queues.

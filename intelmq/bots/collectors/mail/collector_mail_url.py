@@ -2,12 +2,15 @@
 import re
 import io
 import imaplib
-import requests
 
 try:
     import imbox
 except ImportError:
     imbox = None
+try:
+    import requests
+except ImportError:
+    requests = None
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.splitreports import generate_reports
@@ -18,6 +21,8 @@ class MailURLCollectorBot(CollectorBot):
     def init(self):
         if imbox is None:
             raise ValueError('Could not import imbox. Please install it.')
+        if requests is None:
+            raise ValueError('Could not import requests. Please install it.')
 
         # Build request
         self.set_request_parameters()
