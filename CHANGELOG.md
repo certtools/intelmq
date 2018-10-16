@@ -112,6 +112,9 @@ CHANGELOG
 
 ### Tools
 - `intelmqctl check`: Shows more detailed information on orphaned queues.
+- `intelmqctl`:
+  - Correctly determine the status of bots started with `intelmqctl run`.
+  - Fix output of errors during bot status determination, making it compatible to IntelMQ Manager.
 
 ### Contrib
 - elasticsearch/elasticmapper: Add tlp field (#1308).
