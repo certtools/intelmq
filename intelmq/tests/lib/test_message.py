@@ -683,6 +683,16 @@ class TestMessageFactory(unittest.TestCase):
         self.assertEqual(event['extra'], '{"foo": "bar"}')
         self.assertEqual(event['extra.foo'], 'bar')
 
+    def test_message_extra_set_oldstyle_dict_overwrite(self):
+        """
+        Test if extra accepts a dict and field can be get.
+        """
+        event = self.new_event()
+        event["extra"] = {"a": {"x": 1}, "b": "foo"}
+        self.assertEqual(event['extra'], '{"a": {"x": 1}, "b": "foo"}')
+        event.add("extra", {"a": {}}, overwrite=True)
+        self.assertNotIn('extra', event)
+
     def test_message_extra_set_dict_ignore_empty(self):
         """
         Test if extra accepts a dict and field can be get.

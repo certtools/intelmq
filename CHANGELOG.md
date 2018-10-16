@@ -8,6 +8,8 @@ CHANGELOG
 - `lib/harmonization.py`: Change `parse_utc_isoformat` of `DateTime` class from private to public (related to #1322).
 - `lib/utils.py`: Add new function `object_pair_hook_bots`.
 - `lib.bot.py`: `ParserBot`'s method `recover_line_csv` now also handles given `tempdata`.
+- `lib/message.py`:
+  - Fix add('extra', ..., overwrite=True): old data has not been delete previously (#1335).
 
 ### Development
 - `bin/rewrite_config_files.py`: Fix ordering of BOTS file (#1327).
