@@ -144,7 +144,6 @@ class Message(dict):
                     raise
 
     def __delitem__(self, item):
-        print('delitem', item)
         if item == 'extra':
             for key in [key for key in self.keys() if key.startswith('extra.')]:
                 del self[key]
@@ -261,7 +260,6 @@ class Message(dict):
         if class_name and class_name['type'] == 'JSONDict' and not subitem:
             # for backwards compatibility allow setting the extra field as string
             if overwrite and key in self:
-                print(overwrite, key in self, self[key])
                 del self[key]
             for extrakey, extravalue in json.loads(value).items():
                 if hasattr(extravalue, '__len__'):
