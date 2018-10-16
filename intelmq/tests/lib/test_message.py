@@ -683,14 +683,26 @@ class TestMessageFactory(unittest.TestCase):
         self.assertEqual(event['extra'], '{"foo": "bar"}')
         self.assertEqual(event['extra.foo'], 'bar')
 
-    def test_message_extra_set_dict_ignore_empty(self):
+    def test_message_extra_set_oldstyle_dict_overwrite_empty(self):
+        """
+        Test if extra behaves backwards compatible concerning overwrite and empty items
+        """
+        event = self.new_event()
+        event["extra"] = {"a": {"x": 1}, "b": "foo"}
+        self.assertEqual(json.loads(event['extra']),
+                         {"a": {"x": 1}, "b": "foo"})
+        event.add("extra", {"a": {}}, overwrite=True)
+        self.assertEqual(json.loads(event['extra']),
+                         {"a": {}})
+
+    def test_message_extra_set_dict_empty(self):
         """
         Test if extra accepts a dict and field can be get.
         """
         event = self.new_event()
         event.add('extra', {"foo": ''})
-        with self.assertRaises(KeyError):
-            event['extra.foo']
+        self.assertEqual(json.loads(event['extra']),
+                         {"foo": ''})
 
     def test_message_extra_in_backwardcomp(self):
         """
