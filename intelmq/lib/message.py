@@ -262,10 +262,11 @@ class Message(dict):
             if overwrite and key in self:
                 del self[key]
             for extrakey, extravalue in json.loads(value).items():
-                if hasattr(extravalue, '__len__'):
+                # For extra we must not ignore empty or invalid values because of backwards compatibility issues #1335
+                if key != 'extra' and hasattr(extravalue, '__len__'):
                     if not len(extravalue):  # ignore empty values
                         continue
-                if extravalue in self._IGNORED_VALUES:
+                if key != 'extra' and extravalue in self._IGNORED_VALUES:
                     continue
                 super(Message, self).__setitem__('%s.%s' % (key, extrakey),
                                                  extravalue)

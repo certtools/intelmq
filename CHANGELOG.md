@@ -9,7 +9,8 @@ CHANGELOG
 - `lib/utils.py`: Add new function `object_pair_hook_bots`.
 - `lib.bot.py`: `ParserBot`'s method `recover_line_csv` now also handles given `tempdata`.
 - `lib/message.py`:
-  - Fix add('extra', ..., overwrite=True): old data has not been delete previously (#1335).
+  - Fix add('extra', ..., overwrite=True): old extra fields have not been deleted previously (#1335).
+  - Do not ignore empty or ignored (as defined in `_IGNORED_VALUES`) values of `extra.*` fields for backwards compatibility (#1335).
 
 ### Development
 - `bin/rewrite_config_files.py`: Fix ordering of BOTS file (#1327).
