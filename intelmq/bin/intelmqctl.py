@@ -50,7 +50,7 @@ ERROR_MESSAGES = {
     'stopping': 'Bot %s failed to STOP.',
     'not found': 'Bot %s failed to START because the file cannot be found.',
     'access denied': 'Bot %s failed to %s because of missing permissions.',
-    'unknown': 'Status of Bot %s is unknown. Check above error messages.',
+    'unknown': 'Status of Bot %s is unknown: %r.',
 }
 
 LOG_LEVEL = OrderedDict([
@@ -133,7 +133,7 @@ class IntelMQProcessManager:
                 show_sent=None, loglevel=None):
         pid = self.__check_pid(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
-        status = self.__status_process(pid, module) if pid else False
+        status = self.__status_process(pid, module, bot_id) if pid else False
         if pid and status is True:
             self.logger.warning("Main instance of the bot is running in the background and will be stopped; "
                                 "when finished, we try to relaunch it again. "
@@ -173,7 +173,7 @@ class IntelMQProcessManager:
         pid = self.__check_pid(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         if pid:
-            status = self.__status_process(pid, module)
+            status = self.__status_process(pid, module, bot_id)
             if status is True:
                 log_bot_message('running', bot_id)
                 return 'running'
@@ -210,13 +210,13 @@ class IntelMQProcessManager:
             else:
                 log_bot_message('disabled', bot_id)
                 return 'disabled'
-        status = self.__status_process(pid, module)
+        status = self.__status_process(pid, module, bot_id)
         if status is False:
             self.__remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
             return 'stopped'
         elif status is not True:
-            log_bot_error('unknown', bot_id)
+            log_bot_error('unknown', bot_id, status)
             return 'unknown'
         log_bot_message('stopping', bot_id)
         proc = psutil.Process(int(pid))
@@ -228,13 +228,12 @@ class IntelMQProcessManager:
         else:
             if getstatus:
                 time.sleep(0.5)
-                status = self.__status_process(pid, module)
+                status = self.__status_process(pid, module, bot_id)
                 if status is True:
                     log_bot_error('running', bot_id)
                     return 'running'
                 elif status is not False:
-                    self.logger.error(status)
-                    log_bot_error('unknown', bot_id)
+                    log_bot_error('unknown', bot_id, status)
                     return 'unknown'
                 try:
                     self.__remove_pidfile(bot_id)
@@ -253,14 +252,13 @@ class IntelMQProcessManager:
             else:
                 log_bot_message('disabled', bot_id)
                 return 'disabled'
-        status = self.__status_process(pid, module)
+        status = self.__status_process(pid, module, bot_id)
         if status is False:
             self.__remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
             return 'stopped'
         elif status is not True:
-            self.logger.error(status)
-            log_bot_error('unknown', bot_id)
+            log_bot_error('unknown', bot_id, status)
             return 'unknown'
         log_bot_message('reloading', bot_id)
         proc = psutil.Process(int(pid))
@@ -272,7 +270,7 @@ class IntelMQProcessManager:
         else:
             if getstatus:
                 time.sleep(0.5)
-                status = self.__status_process(pid, module)
+                status = self.__status_process(pid, module, bot_id)
                 if status is True:
                     log_bot_message('running', bot_id)
                     return 'running'
@@ -280,8 +278,7 @@ class IntelMQProcessManager:
                     log_bot_error('stopped', bot_id)
                     return 'stopped'
                 else:
-                    self.logger.error(status)
-                    log_bot_error('unknown', bot_id)
+                    log_bot_error('unknown', bot_id, status)
                     return 'unknown'
 
     def bot_status(self, bot_id, *, proc=None):
@@ -292,13 +289,12 @@ class IntelMQProcessManager:
         else:
             pid = self.__check_pid(bot_id)
             module = self.__runtime_configuration[bot_id]['module']
-            status = self.__status_process(pid, module) if pid else False
+            status = self.__status_process(pid, module, bot_id) if pid else False
             if pid and status is True:
                 log_bot_message('running', bot_id)
                 return 'running'
             elif status is not False:
-                self.logger.error(status)
-                log_bot_error('unknown', bot_id)
+                log_bot_error('unknown', bot_id, status)
                 return 'unknown'
 
         if self.controller._is_enabled(bot_id):
@@ -330,13 +326,16 @@ class IntelMQProcessManager:
         filename = self.PIDFILE.format(bot_id)
         os.remove(filename)
 
-    def __status_process(self, pid, module):
+    def __status_process(self, pid, module, bot_id):
         which = shutil.which(module)
         if not which:
             return 'Could not get path to the excutable (%r). Check your PATH variable (%r).' % (module, os.environ.get('PATH'))
         try:
             proc = psutil.Process(int(pid))
             if len(proc.cmdline()) > 1 and proc.cmdline()[1] == shutil.which(module):
+                return True
+            elif (len(proc.cmdline()) > 3 and proc.cmdline()[1] == shutil.which('intelmqctl') and
+                  proc.cmdline()[2] == 'run' and proc.cmdline()[3] == bot_id):
                 return True
         except psutil.NoSuchProcess:
             return False
