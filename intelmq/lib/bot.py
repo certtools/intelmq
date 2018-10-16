@@ -278,7 +278,8 @@ class Bot(object):
         starttime = time.time()
         remaining = self.parameters.rate_limit
         while remaining > 0:
-            self.logger.info("Idling for {:.1f}s now.".format(remaining))
+            self.logger.info("Idling for {:.1f}s ({}) now.".format(remaining,
+                                                                   utils.seconds_to_human(remaining)))
             time.sleep(remaining)
             self.__handle_sighup()
             remaining = self.parameters.rate_limit - (time.time() - starttime)
