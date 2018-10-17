@@ -15,6 +15,9 @@ class BluelivCrimeserverCollectorBot(CollectorBot):
         if BluelivAPI is None:
             raise ValueError('Could not import sdk.blueliv_api.BluelivAPI. Please install it.')
 
+        if not hasattr(self.parameters, 'api_url'):
+            setattr(self.parameters, 'api_url', 'https://freeapi.blueliv.com')
+
     def process(self):
         self.logger.debug("Downloading report through API.")
         proxy = None

@@ -532,6 +532,7 @@ See the README.md
 
 * **Feed parameters** (see above)
 * `api_key`: location of information resource
+* `api_url`: The optional API endpoint, by default `https://freeapi.blueliv.com`.
 
 * * *
 
