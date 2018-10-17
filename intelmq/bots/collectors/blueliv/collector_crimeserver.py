@@ -21,7 +21,7 @@ class BluelivCrimeserverCollectorBot(CollectorBot):
         if self.parameters.http_proxy and self.parameters.https_proxy:
             proxy = {'http': self.parameters.http_proxy,
                      'https': self.parameters.https_proxy}
-        api = BluelivAPI(base_url='https://freeapi.blueliv.com',
+        api = BluelivAPI(base_url=self.parameters.api_url,
                          token=self.parameters.api_key,
                          log_level=logging.INFO,
                          proxy=proxy)
