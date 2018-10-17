@@ -7,4 +7,4 @@
 "2011-04-23 00:00:28","124.190.16.11",4095,1221,"AU","VICTORIA","MELBOURNE",,"tcp","sinkhole",,,"87.106.24.200",443,8560,"DE",,,,,"Windows","2000 SP4, XP SP1+",,,0,0,0,0,"Communications","Communications",,,,
 "2011-04-23 00:00:29","124.182.36.33",60837,1221,"AU","WESTERN AUSTRALIA","PERTH",,"tcp","sinkhole",,,"87.106.24.200",443,8560,"DE",,1,,,"Windows","XP/2000 (RFC1323+, w+, tstamp+)",,,0,0,517510,737415,,"Communications",,,,
 "2011-04-23 00:00:33","116.212.205.74",23321,9822,"AU","WESTERN AUSTRALIA","PERTH",,"tcp","sinkhole",,,"74.208.164.166",80,8560,"US",,1,,,"Windows","XP SP1+, 2000 SP3 (2)",,,541690,874899,517510,737415,,"Communications",,,,
-"2018-08-14 02:13:36","192.0.2.15",,65548,"AT","BURGENLAND","EISENSTADT","www.example.com","tcp","spam","https://www.example.com/foobar",,,,,,,,,,,,,,0,0,,,,,,,"spam",
+"2018-08-14 02:13:36","192.0.2.15",,65548,"AT","BURGENLAND","EISENSTADT",,"tcp","spam",,,,,,,,,,,,,,,0,0,,,,,,,"spam",
