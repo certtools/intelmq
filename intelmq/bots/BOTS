@@ -847,11 +847,12 @@
                 "elastic_host": "127.0.0.1",
                 "elastic_port": 9200,
                 "elastic_index": "intelmq",
+                "rotate_index": "never",
                 "elastic_doctype": "events",
                 "http_username": null,
                 "http_password": null,
                 "flatten_fields": "extra",
-                "replacement_char": "_"
+                "replacement_char": null
             }
         },
         "File": {

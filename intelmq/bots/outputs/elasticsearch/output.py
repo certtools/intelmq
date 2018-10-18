@@ -15,6 +15,15 @@ except ImportError:
 from intelmq.lib.bot import Bot
 
 
+ROTATE_OPTIONS = {
+    'never': None,
+    'daily': '%Y-%m-%d',
+    'weekly': '%Y-%W',
+    'monthly': '%Y-%m',
+    'yearly': '%Y'
+}
+
+
 def replace_keys(obj, key_char='.', replacement='_'):
     if isinstance(obj, Mapping):
         replacement_obj = {}
@@ -46,7 +55,7 @@ class ElasticsearchOutputBot(Bot):
         self.elastic_doctype = getattr(self.parameters,
                                        'elastic_doctype', 'events')
         self.replacement_char = getattr(self.parameters,
-                                        'replacement_char', '_')
+                                        'replacement_char', None)
         self.flatten_fields = getattr(self.parameters,
                                       'flatten_fields', ['extra'])
         if isinstance(self.flatten_fields, str):
@@ -55,6 +64,7 @@ class ElasticsearchOutputBot(Bot):
         kwargs = {}
         if self.http_username and self.http_password:
             kwargs = {'http_auth': (self.http_username, self.http_password)}
+
         self.es = Elasticsearch([{'host': self.elastic_host, 'port': self.elastic_port}], **kwargs)
 
         if self.rotate_index:
@@ -68,7 +78,7 @@ class ElasticsearchOutputBot(Bot):
             if not self.es.indices.exists(self.elastic_index):
                 self.es.indices.create(index=self.elastic_index, ignore=400)
 
-    def get_index(self, event_dict: dict, default: str = "unknown-date"):
+    def get_index(self, event_dict: dict, default: str = "unknown-date") -> str:
         """
         Returns the index name to use for the given event,
          based on the current bot's settings and the event's date fields.
@@ -82,12 +92,12 @@ class ElasticsearchOutputBot(Bot):
         #   - the time_observation field - if one is available, else
         #   - the string given in the 'default' parameter, if neither date field is available
 
-        if self.rotate_index:
+        if self.rotate_index and ROTATE_OPTIONS.get(self.rotate_index):
             event_date = None
             # Try to use the the time information from the event.
             for t in [event_dict.get('time_source', None), event_dict.get('time_observation', None)]:
                 try:
-                    event_date = datetime.strptime(t, '%Y-%m-%dT%H:%M:%S+00:00').date().isoformat()
+                    event_date = datetime.strptime(t, '%Y-%m-%dT%H:%M:%S+00:00').date().strftime(ROTATE_OPTIONS.get(self.rotate_index))
                     break
                 except (TypeError, ValueError):
                     # Ignore missing or invalid time_source or time_observation
@@ -119,8 +129,10 @@ class ElasticsearchOutputBot(Bot):
                         event_dict[field + '_' + key] = value
                     event_dict.pop(field)
 
-        event_dict = replace_keys(event_dict,
-                                  replacement=self.replacement_char)
+        # For ES 2.x, replace dots with a specified replacement character
+        if self.replacement_char and self.replacement_char != '.':
+            event_dict = replace_keys(event_dict,
+                                      replacement=self.replacement_char)
 
         self.es.index(index=self.get_index(event_dict, default=datetime.today().date().isoformat()),
                       doc_type=self.elastic_doctype,
