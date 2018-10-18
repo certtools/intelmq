@@ -82,8 +82,13 @@ class ElasticsearchOutputBot(Bot):
         """
         Returns the index name to use for the given event,
          based on the current bot's settings and the event's date fields.
+         - If the bot should rotate its Elasticsearch index, returns elastic_index-<timestamp>
+         based on the bot's rotation option and the time fields in the event.
+         - If the bot should rotate its Elasticsearch index, but no time information is available in the event,
+         this will return <elastic_index>-<default>, e.g. intelmq-unknown-date.
+         - If the bot should not rotate indices, returns elastic_index
         :param event_dict: The event (as a dict) to examine.
-        :param default: (Optional) The value to use if no time is available in the event. Default: 'unknown-date'.
+        :param default: (Optional) The value to append if no time is available in the event. Default: 'unknown-date'.
         :return: A string containing the name of the index which should store the event.
         """
         # This function supports rotating indices based on event timestamps.

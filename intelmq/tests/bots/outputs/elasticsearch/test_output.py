@@ -87,6 +87,14 @@ INPUT_TIME_OBSERVATION = {
     "extra": '{"foo.bar": "test"}'
 }
 
+ROTATE_OPTIONS = {
+    'never': None,
+    'daily': '%Y-%m-%d',
+    'weekly': '%Y-%W',
+    'monthly': '%Y-%m',
+    'yearly': '%Y'
+}
+
 
 @test.skip_database()
 class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
@@ -113,7 +121,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig = {"flatten_fields": "extra",
                           "elastic_index": "intelmq",
                           "elastic_doctype": "events",
-                          "rotate_index": "true"}
+                          "rotate_index": "daily"}
         self.assertRaises(RuntimeError, self.run_bot())
 
     def test_index_detected_from_time_source(self):
@@ -123,7 +131,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig = {"flatten_fields": "extra",
                           "elastic_index": "intelmq",
                           "elastic_doctype": "events",
-                          "rotate_index": "true"}
+                          "rotate_index": "daily"}
         expected_index_name = "{}-1869-12-02".format(self.sysconfig.get('elastic_index'))
         self.base_check_expected_index_created(INPUT_TIME_SOURCE, expected_index_name)
 
@@ -135,7 +143,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig = {"flatten_fields": "extra",
                           "elastic_index": "intelmq",
                           "elastic_doctype": "events",
-                          "rotate_index": "true"}
+                          "rotate_index": "daily"}
         expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
         self.base_check_expected_index_created(INPUT_TIME_OBSERVATION, expected_index_name)
 
@@ -149,7 +157,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig = {"flatten_fields": "extra",
                           "elastic_index": "intelmq",
                           "elastic_doctype": "events",
-                          "rotate_index": "true"}
+                          "rotate_index": "daily"}
 
         self.prepare_bot()
         index = self.bot.get_index(INPUT1, 'test-default')
