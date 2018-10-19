@@ -53,6 +53,7 @@ def get_feed(feedname, logger):
         "Accessible-CWMP": accessible_cwmp,
         "Accessible-Hadoop": accessible_hadoop,
         "Accessible-RDP": accessible_rdp,
+        "Accessible-Rsync": accessible_rsync,
         "Accessible-SMB": accessible_smb,
         "Accessible-Telnet": accessible_telnet,
         "Accessible-VNC": accessible_vnc,
@@ -1765,5 +1766,34 @@ accessible_adb = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-adb',
         'protocol.application': 'adb',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-rsync
+accessible_rsync = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-rsync' in constant_fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'module', validate_to_none),
+        ('extra.', 'motd', validate_to_none),
+        ('extra.', 'password', convert_bool),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-rsync',
+        'protocol.application': 'rsync',
     },
 }
