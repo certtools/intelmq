@@ -121,7 +121,9 @@ CHANGELOG
 ### Documentation
 - FAQ: Explanation and solution on orphaned queues.
 - Add or fix the tables of contents for all documentation files.
-- Feeds: Fix Autoshun Feed URL (#1325).
+- Feeds:
+  - Fix Autoshun Feed URL (#1325).
+  - Add parameters `name` and `provider` to `intelmq/etc/feeds.yaml`, `docs/Feeds.md` and `intelmq/bots/BOTS` (#1321).
 
 ### Packaging
 - Change the maintainer from Sasche Wilde to Sebastian Wagner (#1320).
@@ -138,6 +140,9 @@ CHANGELOG
 
 ### Contrib
 - elasticsearch/elasticmapper: Add tlp field (#1308).
+- `feeds-config-generator/intelmq_gen_feeds_conf`:
+  - Add parameters to write resulting configuration directly to files (#1321).
+  - Handle collector's `feed.name` and `feed.provider` (#1314).
 
 ### Known issues
 
