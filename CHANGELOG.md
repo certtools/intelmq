@@ -22,6 +22,7 @@ CHANGELOG
 - added `intelmq.bots.collectors.api`: collecting data using an HTTP API (#123, #1187).
 - added `intelmq.bots.collectors.rsync` (#1286).
 - `intelmq.bots.collectors.http.collector_http`: Add support for uncompressing of gzipped-files (#1270).
+- `intelmq.collectors.blueliv.collector_crimeserver`: Allow setting the API URL by parameter (#1336).
 
 #### Parsers
 - added `intelmq.bots.parsers.mcafee.parser_atd` (#1265).

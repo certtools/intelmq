@@ -512,6 +512,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Status:** on
 * **Revision:** 20-01-2018
 * **Description:** Blueliv Crimeserver Collector is the bot responsible to get the report through the API.
+* **Additional Information:** The service uses a different API for free users and paying subscribers. In 'CrimeServer' feed the difference lies in the data points present in the feed. The non-free API available from Blueliv contains, for this specific feed, following extra fields not present in the free API; "_id" - Internal unique ID "subType" - Subtype of the Crime Server "countryName" - Country name where the Crime Server is located, in English "city" - City where the Crime Server is located "domain" - Domain of the Crime Server "host" - Host of the Crime Server "createdAt" - Date when the Crime Server was added to Blueliv CrimeServer database "asnCidr" - Range of IPs that belong to an ISP (registered via Autonomous System Number (ASN)) "asnId" - Identifier of an ISP registered via ASN "asnDesc" Description of the ISP registered via ASN
 
 ### Collector
 
