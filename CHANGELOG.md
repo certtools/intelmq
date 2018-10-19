@@ -102,6 +102,7 @@ CHANGELOG
   - Spam URL reports: remove `src_naics`, `src_sic` columns.
   - fix parsing of 'spam' events in ShadowServer's 'Botnet Drone Hadoop' Report (#1271).
   - Add support in parser to ignore some columns in config file by using `False` as intelmq key.
+  - Add support for the `Outdated-DNSSEC-Key` and `Outdated-DNSSEC-Key-IPv6` feeds.
 - `intelmq.bots.parsers.generic.parser_csv`: If the `skip_header` parameter was set to `True`, the header was not part of the `raw` field as returned by the `recover_line` method. The header is now saved and handled correctly by the fixed recovery method.
 
 #### Experts
