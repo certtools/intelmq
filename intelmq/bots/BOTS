@@ -4,31 +4,32 @@
             "module": "intelmq.bots.collectors.calidog.collector_certstream",
             "description": "A bot to collect information from CertStream",
             "parameters": {
-                "name": "certstream"
+                "name": "CertStream",
+                "provider": "Calidog"
             }
         },
         "File": {
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
             "parameters": {
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
                 "chunk_replicate_header": true,
                 "chunk_size": null,
                 "delete_file": false,
-                "name": "FileCollector",
-                "provider": "",
                 "path": "/tmp/",
                 "postfix": ".csv",
                 "rate_limit": 300
             }
         },
-        "Generic Mail Attachment Fetcher": {
+        "Mail Attachment Fetcher": {
             "description": "Monitor IMAP mailboxes and retrieve mail attachments",
             "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
-                "name": "Mail Attachment",
-                "provider": "",
                 "folder": "INBOX",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
@@ -38,14 +39,14 @@
                 "subject_regex": "<subject>"
             }
         },
-        "Generic Mail URL Fetcher": {
+        "Mail URL Fetcher": {
             "description": "Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies",
             "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
                 "chunk_replicate_header": true,
                 "chunk_size": null,
-                "name": "Mail URL",
-                "provider": "",
                 "folder": "INBOX",
                 "http_password": null,
                 "http_username": null,
@@ -59,12 +60,12 @@
                 "ssl_client_certificate": null
             }
         },
-        "Generic URL Fetcher": {
+        "URL Fetcher": {
             "description": "Generic URL Fetcher is the bot responsible to get the report from an URL.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "name": "URL",
-                "provider": "",
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
                 "http_url": "<insert url of feed>",
                 "http_url_formatting": false,
                 "http_username": null,
@@ -74,12 +75,12 @@
                 "rate_limit": 3600
             }
         },
-        "Generic URL Stream Fetcher": {
+        "URL Stream Fetcher": {
             "description": "Opens a streaming connection to the URL and sends the received lines.",
             "module": "intelmq.bots.collectors.http.collector_http_stream",
             "parameters": {
-                "name": "URL Stream",
-                "provider": "",
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
                 "http_url": "<insert url of feed>",
                 "http_username": null,
                 "http_password": null,
@@ -92,8 +93,8 @@
             "description": "Collect events from a MISP server.",
             "module": "intelmq.bots.collectors.misp.collector",
             "parameters": {
-                "name": "misp_generic",
-                "provider": "",
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
                 "misp_key": "<insert MISP Authkey>",
                 "misp_tag_processed": "<insert MISP tag for processed events>",
                 "misp_tag_to_process": "<insert MISP tag for events to be processed>",
@@ -106,9 +107,9 @@
             "description": "Request Tracker Collector fetches attachments from an RTIR instance.",
             "module": "intelmq.bots.collectors.rt.collector_rt",
             "parameters": {
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
                 "attachment_regex": "\\.csv\\.zip$",
-                "name": "Request Tracker",
-                "provider": "",
                 "password": "password",
                 "rate_limit": 3600,
                 "search_not_older_than": null,
@@ -132,8 +133,9 @@
             "description": "TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance). Might not be working on Python3.4.6.",
             "module": "intelmq.bots.collectors.tcp.collector",
             "parameters": {
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
                 "ip": "<ip>",
-                "name": "TCP",
                 "port": "<port>"
             }
         },
@@ -141,9 +143,9 @@
             "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.",
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
                 "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
-                "name": "XMPP",
-                "provider": "",
                 "pass_full_xml": false,
                 "rate_limit": 3600,
                 "strip_message": true,
@@ -162,11 +164,11 @@
             "description": "AlienVault OTX Collector is the bot responsible to get the report through the API. Report could vary according to subscriptions.",
             "module": "intelmq.bots.collectors.alienvault_otx.collector",
             "parameters": {
+                "name": "OTX",
+                "provider": "AlienVault",
                 "api_key": "<insert your api key>",
                 "modified_pulses_only": false,
                 "interval": 24,
-                "name": "AlienVault OTX",
-                "provider": "AlienVault",
                 "rate_limit": 3600
             }
         },
@@ -174,9 +176,9 @@
             "description": "Blueliv Crimeserver Collector is the bot responsible to get the report through the API.",
             "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",
             "parameters": {
-                "api_key": "<insert your api key>",
-                "name": "Blueliv Crimeserver",
+                "name": "Crimeserver",
                 "provider": "Blueliv",
+                "api_key": "<insert your api key>",
                 "rate_limit": 3600
             }
         },
@@ -184,11 +186,11 @@
             "description": "",
             "module": "intelmq.bots.collectors.microsoft.collector_azure",
             "parameters": {
+                "name": "Azure",
+                "provider": "Microsoft",
                 "account_name": "",
                 "account_key": "",
                 "delete": true,
-                "name": "Microsoft Azure",
-                "provider": "microsoft",
                 "rate_limit": 3600
             }
         },
@@ -196,12 +198,12 @@
             "description": "",
             "module": "intelmq.bots.collectors.microsoft.collector_interflow",
             "parameters": {
+                "name": "Interflow",
+                "provider": "Microsoft",
                 "api_key": "",
-                "name": "Microsoft Interflow",
                 "file_match": null,
                 "http_timeout_sec": 300,
                 "not_older_than": "2 days",
-                "provider": "microsoft",
                 "rate_limit": 3600,
                 "redis_cache_db": "5",
                 "redis_cache_host": "127.0.0.1",
@@ -214,19 +216,19 @@
             "description": "Collects the shodan stream from the shodan API.",
             "module": "intelmq.bots.collectors.shodan.collector_stream",
             "parameters": {
+                "name": "__FEED__",
+                "provider": "Shodan",
                 "api_key": "<INSERT your API key>",
-                "countries": [],
-                "name": "Shodan Stream",
-                "provider": "Shodan"
+                "countries": []
             }
         },
         "Stomp": {
             "description": "Stomp Collector - e.g. for CERT.pl's N6 feed via STOMP. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.stomp.collector",
             "parameters": {
-                "exchange": "<INSERT your exchange point as given by CERT.pl>",
-                "name": "n6stomp",
+                "name": "Stomp",
                 "provider": "N6",
+                "exchange": "<INSERT your exchange point as given by CERT.pl>",
                 "port": 61614,
                 "server": "n6stream.cert.pl",
                 "ssl_ca_certificate": "<insert path to CA file for CERT.pl's n6>",
@@ -238,7 +240,8 @@
             "description": "Collects tweets from target_timelines. Maximum number of tweet_count from each timeline and up to timelimit back in time.",
             "module": "intelmq.bots.collectors.twitter.collector_twitter",
             "parameters": {
-                "name": "Twitter",
+                "name": "__FEED__",
+                "provider": "Twitter",
                 "target_timelines": "",
                 "tweet_count": "",
                 "timelimit": "",
