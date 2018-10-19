@@ -1,8 +1,8 @@
 {
     "Collector": {
         "CertStream": {
-            "module": "intelmq.bots.collectors.calidog.collector_certstream",
             "description": "A bot to collect information from CertStream",
+            "module": "intelmq.bots.collectors.calidog.collector_certstream",
             "parameters": {
                 "name": "CertStream",
                 "provider": "Calidog"
@@ -12,13 +12,13 @@
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
             "parameters": {
-                "name": "__FEED__",
-                "provider": "__PROVIDER__",
                 "chunk_replicate_header": true,
                 "chunk_size": null,
                 "delete_file": false,
+                "name": "__FEED__",
                 "path": "/tmp/",
                 "postfix": ".csv",
+                "provider": "__PROVIDER__",
                 "rate_limit": 300
             }
         },
@@ -26,8 +26,6 @@
             "description": "Monitor IMAP mailboxes and retrieve mail attachments",
             "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
-                "name": "__FEED__",
-                "provider": "__PROVIDER__",
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
                 "folder": "INBOX",
@@ -35,6 +33,8 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "mail_user": "<user>",
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
                 "rate_limit": 60,
                 "subject_regex": "<subject>"
             }
@@ -43,8 +43,6 @@
             "description": "Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies",
             "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
-                "name": "__FEED__",
-                "provider": "__PROVIDER__",
                 "chunk_replicate_header": true,
                 "chunk_size": null,
                 "folder": "INBOX",
@@ -54,52 +52,54 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "mail_user": "<user>",
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
                 "rate_limit": 60,
+                "ssl_client_certificate": null,
                 "subject_regex": "<subject>",
-                "url_regex": "http://",
-                "ssl_client_certificate": null
+                "url_regex": "http://"
             }
         },
         "URL Fetcher": {
             "description": "Generic URL Fetcher is the bot responsible to get the report from an URL.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "name": "__FEED__",
-                "provider": "__PROVIDER__",
+                "extract_files": "True or string of file names separated by ,",
+                "http_password": null,
                 "http_url": "<insert url of feed>",
                 "http_url_formatting": false,
                 "http_username": null,
-                "http_password": null,
-                "ssl_client_certificate": null,
-                "extract_files": "True or string of file names separated by ,",
-                "rate_limit": 3600
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
+                "rate_limit": 3600,
+                "ssl_client_certificate": null
             }
         },
         "URL Stream Fetcher": {
             "description": "Opens a streaming connection to the URL and sends the received lines.",
             "module": "intelmq.bots.collectors.http.collector_http_stream",
             "parameters": {
-                "name": "__FEED__",
-                "provider": "__PROVIDER__",
+                "http_password": null,
                 "http_url": "<insert url of feed>",
                 "http_username": null,
-                "http_password": null,
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
+                "rate_limit": 3600,
                 "ssl_client_certificate": null,
-                "strip_lines": true,
-                "rate_limit": 3600
+                "strip_lines": true
             }
         },
         "MISP Generic": {
             "description": "Collect events from a MISP server.",
             "module": "intelmq.bots.collectors.misp.collector",
             "parameters": {
-                "name": "__FEED__",
-                "provider": "__PROVIDER__",
                 "misp_key": "<insert MISP Authkey>",
                 "misp_tag_processed": "<insert MISP tag for processed events>",
                 "misp_tag_to_process": "<insert MISP tag for events to be processed>",
                 "misp_url": "<insert url of MISP server (with trailing '/')>",
                 "misp_verify": true,
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
                 "rate_limit": 3600
             }
         },
@@ -107,10 +107,12 @@
             "description": "Request Tracker Collector fetches attachments from an RTIR instance.",
             "module": "intelmq.bots.collectors.rt.collector_rt",
             "parameters": {
-                "name": "__FEED__",
-                "provider": "__PROVIDER__",
                 "attachment_regex": "\\.csv\\.zip$",
+                "http_password": null,
+                "http_username": null,
+                "name": "__FEED__",
                 "password": "password",
+                "provider": "__PROVIDER__",
                 "rate_limit": 3600,
                 "search_not_older_than": null,
                 "search_owner": "nobody",
@@ -119,56 +121,54 @@
                 "search_status": "new",
                 "search_subject_like": "Report",
                 "set_status": "open",
+                "ssl_client_certificate": null,
                 "take_ticket": true,
                 "unzip_attachment": true,
                 "uri": "http://localhost/rt/REST/1.0",
                 "url_regex": "https://dl.shadowserver.org/[a-zA-Z0-9?_-]*",
-                "user": "intelmq",
-                "http_username": null,
-                "http_password": null,
-                "ssl_client_certificate": null
+                "user": "intelmq"
             }
         },
         "TCP": {
             "description": "TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance). Might not be working on Python3.4.6.",
             "module": "intelmq.bots.collectors.tcp.collector",
             "parameters": {
-                "name": "__FEED__",
-                "provider": "__PROVIDER__",
                 "ip": "<ip>",
-                "port": "<port>"
+                "name": "__FEED__",
+                "port": "<port>",
+                "provider": "__PROVIDER__"
             }
         },
         "XMPP": {
             "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.",
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
-                "name": "__FEED__",
-                "provider": "__PROVIDER__",
                 "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
+                "name": "__FEED__",
                 "pass_full_xml": false,
+                "provider": "__PROVIDER__",
                 "rate_limit": 3600,
                 "strip_message": true,
-                "xmpp_user": "<xmpp username>",
-                "xmpp_server": "<xmpp server>",
+                "use_muc": false,
                 "xmpp_password": "<xmpp password>",
                 "xmpp_room": null,
                 "xmpp_room_nick": null,
                 "xmpp_room_password": null,
+                "xmpp_server": "<xmpp server>",
+                "xmpp_user": "<xmpp username>",
                 "xmpp_userlist": null,
-                "xmpp_whitelist_mode": false,
-                "use_muc": false
+                "xmpp_whitelist_mode": false
             }
         },
         "AlienVault OTX": {
             "description": "AlienVault OTX Collector is the bot responsible to get the report through the API. Report could vary according to subscriptions.",
             "module": "intelmq.bots.collectors.alienvault_otx.collector",
             "parameters": {
+                "api_key": "<insert your api key>",
+                "interval": 24,
+                "modified_pulses_only": false,
                 "name": "OTX",
                 "provider": "AlienVault",
-                "api_key": "<insert your api key>",
-                "modified_pulses_only": false,
-                "interval": 24,
                 "rate_limit": 3600
             }
         },
@@ -176,9 +176,9 @@
             "description": "Blueliv Crimeserver Collector is the bot responsible to get the report through the API.",
             "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",
             "parameters": {
+                "api_key": "<insert your api key>",
                 "name": "Crimeserver",
                 "provider": "Blueliv",
-                "api_key": "<insert your api key>",
                 "rate_limit": 3600
             }
         },
@@ -186,11 +186,11 @@
             "description": "",
             "module": "intelmq.bots.collectors.microsoft.collector_azure",
             "parameters": {
+                "account_key": "",
+                "account_name": "",
+                "delete": true,
                 "name": "Azure",
                 "provider": "Microsoft",
-                "account_name": "",
-                "account_key": "",
-                "delete": true,
                 "rate_limit": 3600
             }
         },
@@ -198,17 +198,17 @@
             "description": "",
             "module": "intelmq.bots.collectors.microsoft.collector_interflow",
             "parameters": {
-                "name": "Interflow",
-                "provider": "Microsoft",
                 "api_key": "",
                 "file_match": null,
                 "http_timeout_sec": 300,
+                "name": "Interflow",
                 "not_older_than": "2 days",
+                "provider": "Microsoft",
                 "rate_limit": 3600,
                 "redis_cache_db": "5",
                 "redis_cache_host": "127.0.0.1",
-                "redis_cache_port": 6379,
                 "redis_cache_password": null,
+                "redis_cache_port": 6379,
                 "redis_cache_ttl": 604800
             }
         },
@@ -216,20 +216,20 @@
             "description": "Collects the shodan stream from the shodan API.",
             "module": "intelmq.bots.collectors.shodan.collector_stream",
             "parameters": {
-                "name": "__FEED__",
-                "provider": "Shodan",
                 "api_key": "<INSERT your API key>",
-                "countries": []
+                "countries": [],
+                "name": "__FEED__",
+                "provider": "Shodan"
             }
         },
         "Stomp": {
             "description": "Stomp Collector - e.g. for CERT.pl's N6 feed via STOMP. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.stomp.collector",
             "parameters": {
-                "name": "Stomp",
-                "provider": "N6",
                 "exchange": "<INSERT your exchange point as given by CERT.pl>",
+                "name": "Stomp",
                 "port": 61614,
+                "provider": "N6",
                 "server": "n6stream.cert.pl",
                 "ssl_ca_certificate": "<insert path to CA file for CERT.pl's n6>",
                 "ssl_client_certificate": "<insert path to client cert file for CERT.pl's n6>",
@@ -240,18 +240,18 @@
             "description": "Collects tweets from target_timelines. Maximum number of tweet_count from each timeline and up to timelimit back in time.",
             "module": "intelmq.bots.collectors.twitter.collector_twitter",
             "parameters": {
+                "access_token_key": "",
+                "access_token_secret": "",
+                "consumer_key": "",
+                "consumer_secret": "",
+                "exclude_replies": "false",
+                "follow_urls": "",
+                "include_rts": "true",
                 "name": "__FEED__",
                 "provider": "Twitter",
                 "target_timelines": "",
-                "tweet_count": "",
                 "timelimit": "",
-                "include_rts": "true",
-                "exclude_replies": "false",
-                "follow_urls": "",
-                "consumer_key": "",
-                "consumer_secret": "",
-                "access_token_key": "",
-                "access_token_secret": ""
+                "tweet_count": ""
             }
         }
     },
@@ -281,6 +281,11 @@
             "module": "intelmq.bots.parsers.alienvault.parser_otx",
             "parameters": {}
         },
+        "AnubisNetworks Cyberfeed Stream": {
+            "description": "Parses single JSON-events from AnubisNetworks Cyberfeed stream.",
+            "module": "intelmq.bots.parsers.anubisnetworks.parser",
+            "parameters": {}
+        },
         "Autoshun": {
             "description": "Autoshun Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.autoshun.parser",
@@ -294,11 +299,6 @@
         "Bitcash Blocklist Feed": {
             "description": "Bitcash Blocklist parser is the bot responsible to parse and sanitize the information.",
             "module": "intelmq.bots.parsers.bitcash.parser",
-            "parameters": {}
-        },
-        "AnubisNetworks Cyberfeed Stream": {
-            "description": "Parses single JSON-events from AnubisNetworks Cyberfeed stream.",
-            "module": "intelmq.bots.parsers.anubisnetworks.parser",
             "parameters": {}
         },
         "Blocklist.de": {
@@ -326,14 +326,14 @@
             "module": "intelmq.bots.parsers.cleanmx.parser",
             "parameters": {}
         },
-        "Cymru Full Bogons": {
-            "description": "Cymru Full Bogons Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.cymru.parser_full_bogons",
-            "parameters": {}
-        },
         "Cymru CAP Program": {
             "description": "Cymru CAP Program Parser parses and sanitizes .",
             "module": "intelmq.bots.parsers.cymru.parser_cap_program",
+            "parameters": {}
+        },
+        "Cymru Full Bogons": {
+            "description": "Cymru Full Bogons Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.cymru.parser_full_bogons",
             "parameters": {}
         },
         "DShield AS": {
@@ -375,11 +375,11 @@
             "description": "Generic CSV Parser is a generic bot configurable to parse different csv collected files. Ignoring lines starting with character #. URLs without protocol can be prefixed with a default value.",
             "module": "intelmq.bots.parsers.generic.parser_csv",
             "parameters": {
+                "column_regex_search": {},
                 "columns": [
                     "",
                     "source.fqdn"
                 ],
-                "column_regex_search": {},
                 "default_url_protocol": "http://",
                 "delimiter": ",",
                 "filter_text": null,
@@ -526,9 +526,9 @@
             "description": "Twitter parser parses a report of tweets by extracting IOC. Currently only urls are supported, a whitelist of safe domains can be provided",
             "module": "intelmq.bots.parsers.twitter.parser",
             "parameters": {
+                "classification_type": "blacklist",
                 "domain_whitelist": "t.co",
-                "substitutions": " .net;[.]net",
-                "classification_type": "blacklist"
+                "substitutions": " .net;[.]net"
             }
         },
         "URLVir": {
@@ -566,8 +566,8 @@
             "parameters": {
                 "redis_cache_db": "5",
                 "redis_cache_host": "127.0.0.1",
-                "redis_cache_port": "6379",
                 "redis_cache_password": null,
+                "redis_cache_port": "6379",
                 "redis_cache_ttl": "86400"
             }
         },
@@ -586,8 +586,8 @@
             "parameters": {
                 "redis_cache_db": "5",
                 "redis_cache_host": "127.0.0.1",
-                "redis_cache_port": "6379",
                 "redis_cache_password": null,
+                "redis_cache_port": "6379",
                 "redis_cache_ttl": "86400"
             }
         },
@@ -599,8 +599,8 @@
                 "filter_type": "blacklist",
                 "redis_cache_db": "6",
                 "redis_cache_host": "127.0.0.1",
-                "redis_cache_port": "6379",
                 "redis_cache_password": null,
+                "redis_cache_port": "6379",
                 "redis_cache_ttl": "86400"
             }
         },
@@ -616,8 +616,8 @@
             "description": "The field reducer bot is capable of removing fields from events.",
             "module": "intelmq.bots.experts.field_reducer.expert",
             "parameters": {
-                "type": "<whitelist/blacklist>",
-                "keys": "<list of field names>"
+                "keys": "<list of field names>",
+                "type": "<whitelist/blacklist>"
             }
         },
         "Filter": {
@@ -675,8 +675,8 @@
             "description": "Modify bot can make nearly arbitrary changes to event's fields based on regex-rules on different values. See docs/Bots.md for some examples.",
             "module": "intelmq.bots.experts.modify.expert",
             "parameters": {
-                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf",
-                "case_sensitive": true
+                "case_sensitive": true,
+                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf"
             }
         },
         "RFC 1918": {
@@ -697,8 +697,8 @@
                 "query_ripe_stat": true,
                 "redis_cache_db": "10",
                 "redis_cache_host": "127.0.0.1",
-                "redis_cache_port": "6379",
                 "redis_cache_password": null,
+                "redis_cache_port": "6379",
                 "redis_cache_ttl": "86400"
             }
         },
@@ -706,18 +706,13 @@
             "description": "Reverse DNS is the bot responsible to get the correspondent domain name source IP and destination IP of the events.",
             "module": "intelmq.bots.experts.reverse_dns.expert",
             "parameters": {
+                "cache_ttl_invalid_response": "60",
                 "redis_cache_db": "7",
                 "redis_cache_host": "127.0.0.1",
-                "redis_cache_port": "6379",
                 "redis_cache_password": null,
-                "redis_cache_ttl": "86400",
-                "cache_ttl_invalid_response": "60"
+                "redis_cache_port": "6379",
+                "redis_cache_ttl": "86400"
             }
-        },
-        "Taxonomy": {
-            "description": "Taxonomy is the bot responsible to apply the eCSIRT Taxonomy to all events.",
-            "module": "intelmq.bots.experts.taxonomy.expert",
-            "parameters": {}
         },
         "Sieve": {
             "description": "This bot filters and modifies events based on a sieve-based language.",
@@ -726,18 +721,16 @@
                 "file": "/opt/intelmq/var/lib/bots/sieve/filter.sieve"
             }
         },
+        "Taxonomy": {
+            "description": "Taxonomy is the bot responsible to apply the eCSIRT Taxonomy to all events.",
+            "module": "intelmq.bots.experts.taxonomy.expert",
+            "parameters": {}
+        },
         "Tor Nodes": {
             "description": "Tor Nodes is the bot responsible to check if an IP is an Tor Exit Node.",
             "module": "intelmq.bots.experts.tor_nodes.expert",
             "parameters": {
                 "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat",
-                "overwrite": false
-            }
-        },
-        "url2fqdn": {
-            "description": "url2fqdn is the bot responsible to parsing the fqdn from the url.",
-            "module": "intelmq.bots.experts.url2fqdn.expert",
-            "parameters": {
                 "overwrite": false
             }
         },
@@ -752,6 +745,13 @@
                 "queue_port": 6379,
                 "queue_size": 0,
                 "sleep_time": null
+            }
+        },
+        "url2fqdn": {
+            "description": "url2fqdn is the bot responsible to parsing the fqdn from the url.",
+            "module": "intelmq.bots.experts.url2fqdn.expert",
+            "parameters": {
+                "overwrite": false
             }
         }
     },
@@ -781,13 +781,13 @@
             "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
             "module": "intelmq.bots.outputs.elasticsearch.output",
             "parameters": {
-                "elastic_host": "127.0.0.1",
-                "elastic_port": 9200,
-                "elastic_index": "intelmq",
                 "elastic_doctype": "events",
-                "http_username": null,
-                "http_password": null,
+                "elastic_host": "127.0.0.1",
+                "elastic_index": "intelmq",
+                "elastic_port": 9200,
                 "flatten_fields": "extra",
+                "http_password": null,
+                "http_username": null,
                 "replacement_char": "_"
             }
         },
@@ -806,11 +806,11 @@
             "description": "Files is the bot responsible for lockfree saving of events into separate files.",
             "module": "intelmq.bots.outputs.files.output",
             "parameters": {
-                "tmp": "/opt/intelmq/var/lib/bots/files-output/tmp",
                 "dir": "/opt/intelmq/var/lib/bots/files-output/incoming",
-                "suffix": ".json",
                 "hierarchical_output": false,
-                "single_key": null
+                "single_key": null,
+                "suffix": ".json",
+                "tmp": "/opt/intelmq/var/lib/bots/files-output/tmp"
             }
         },
         "MongoDB": {
@@ -819,8 +819,8 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
-                "db_user": null,
                 "db_pass": null,
+                "db_user": null,
                 "hierarchical_output": true,
                 "host": "localhost",
                 "port": "27017",
@@ -851,8 +851,8 @@
                 "auth_type": "<http_basic_auth/http_header>",
                 "hierarchical_output": false,
                 "host": "<host>",
-                "use_json": true,
-                "ssl_client_certificate": null
+                "ssl_client_certificate": null,
+                "use_json": true
             }
         },
         "Redis": {
@@ -901,8 +901,8 @@
             "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, another IntelMQ, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
-                "ip": "<ip>",
                 "hierarchical_output": false,
+                "ip": "<ip>",
                 "port": "<port>",
                 "separator": "<nothing or \n or sth>"
             }
@@ -925,15 +925,15 @@
             "parameters": {
                 "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
                 "hierarchical_output": false,
-                "xmpp_user": "<xmpp username>",
-                "xmpp_server": "<xmpp server>",
+                "use_muc": false,
                 "xmpp_password": "<xmpp password>",
-                "xmpp_to_user": "<destination username>",
-                "xmpp_to_server": "<destination server>",
                 "xmpp_room": null,
                 "xmpp_room_nick": null,
                 "xmpp_room_password": null,
-                "use_muc": false
+                "xmpp_server": "<xmpp server>",
+                "xmpp_to_server": "<destination server>",
+                "xmpp_to_user": "<destination username>",
+                "xmpp_user": "<xmpp username>"
             }
         }
     }
