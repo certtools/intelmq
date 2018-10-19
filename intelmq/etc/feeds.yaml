@@ -427,7 +427,7 @@ providers:
         The service uses a different API for free users and paying subscribers. In 'CrimeServer'
         feed the difference lies in the data points present in the feed. The non-free API
         available from Blueliv contains, for this specific feed, following extra fields not
-        present in the free API:
+        present in the free API;
           "_id" - Internal unique ID
           "subType" - Subtype of the Crime Server
           "countryName" - Country name where the Crime Server is located, in English
