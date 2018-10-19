@@ -106,14 +106,14 @@ if __name__ == "__main__":
                         dest="runtime_file",
                         metavar="<filepath>",
                         required=False,
-                        help='/tmp/runtime.conf')
+                        help="write runtime configuration to the given file (e.g. '/tmp/runtime.conf') instead of stdout")
 
     parser.add_argument('--pipeline-output-file',
                         action="store",
                         dest="pipeline_file",
                         metavar="<filepath>",
                         required=False,
-                        help='/tmp/pipeline.conf')
+                        help="write pipeline configuration to the given file (e.g. '/tmp/pipeline.conf') instead of stdout")
 
     arguments = parser.parse_args()
 
@@ -144,16 +144,16 @@ if __name__ == "__main__":
 
     if arguments.runtime_file:
         with open(arguments.runtime_file, "w") as fp:
-            json.dump(runtime_config, fp, indent=4)
+            json.dump(runtime_config, fp, indent=4, sort_keys=True, separators=(',', ': '))
         print("Runtime configuration written to: %s" % arguments.runtime_file)
     else:
         print("\nRuntime configuration:\n")
-        print(json.dumps(runtime_config, indent=4))
+        print(json.dumps(runtime_config, indent=4, sort_keys=True, separators=(',', ': ')))
 
     if arguments.pipeline_file:
         with open(arguments.pipeline_file, "w") as fp:
-            json.dump(pipeline_config, fp, indent=4)
+            json.dump(pipeline_config, fp, indent=4, sort_keys=True, separators=(',', ': '))
         print("Pipeline configuration written to: %s" % arguments.pipeline_file)
     else:
         print("\nPipeline configuration:\n")
-        print(json.dumps(pipeline_config, indent=4))
+        print(json.dumps(pipeline_config, indent=4, sort_keys=True, separators=(',', ': ')))
