@@ -143,6 +143,13 @@ class Message(dict):
                 else:
                     raise
 
+    def __delitem__(self, item):
+        if item == 'extra':
+            for key in [key for key in self.keys() if key.startswith('extra.')]:
+                del self[key]
+            return
+        return super().__delitem__(item)
+
     def get(self, key, default=None):
         try:
             return self[key]
@@ -252,11 +259,14 @@ class Message(dict):
         class_name, subitem = self.__get_type_config(key)
         if class_name and class_name['type'] == 'JSONDict' and not subitem:
             # for backwards compatibility allow setting the extra field as string
+            if overwrite and key in self:
+                del self[key]
             for extrakey, extravalue in json.loads(value).items():
-                if hasattr(extravalue, '__len__'):
+                # For extra we must not ignore empty or invalid values because of backwards compatibility issues #1335
+                if key != 'extra' and hasattr(extravalue, '__len__'):
                     if not len(extravalue):  # ignore empty values
                         continue
-                if extravalue in self._IGNORED_VALUES:
+                if key != 'extra' and extravalue in self._IGNORED_VALUES:
                     continue
                 super().__setitem__('{}.{}'.format(key, extrakey),
                                     extravalue)

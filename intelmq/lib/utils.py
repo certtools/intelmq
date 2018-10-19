@@ -25,6 +25,7 @@ import sys
 import tarfile
 import traceback
 from typing import Sequence, Optional, Union, Generator
+from dateutil.relativedelta import relativedelta
 
 import dateutil.parser
 import pytz
@@ -513,3 +514,21 @@ def object_pair_hook_bots(*args, **kwargs):
     if len(args[0]) and len(args[0][0]) and len(args[0][0][0]) and args[0][0][0] == 'Collector':
         return collections.OrderedDict(*args, **kwargs)
     return dict(sorted(*args), **kwargs)
+
+
+def seconds_to_human(seconds: float, precision: int = 0) -> str:
+    """
+    Converts second count to a human readable description.
+    >>> seconds_to_human(60)
+    "1m"
+    >>> seconds_to_human(3600)
+    "1h"
+    >>> seconds_to_human(3601)
+    "1h 0m 1s"
+    """
+    relative = relativedelta(seconds=seconds)
+    result = []
+    for frame in ('days', 'hours', 'minutes', 'seconds'):
+        if getattr(relative, frame):
+            result.append('%.{}f%s'.format(precision) % (getattr(relative, frame), frame[0]))
+    return ' '.join(result)

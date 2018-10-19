@@ -193,6 +193,7 @@
             "description": "Blueliv Crimeserver Collector is the bot responsible to get the report through the API.",
             "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",
             "parameters": {
+                "api_url": "https://freeapi.blueliv.com",
                 "api_key": "<insert your api key>",
                 "name": "Blueliv Crimeserver",
                 "provider": "Blueliv",

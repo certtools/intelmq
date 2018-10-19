@@ -4,8 +4,12 @@ Reference:
 https://stat.ripe.net/docs/data_api
 https://github.com/RIPE-NCC/whois/wiki/WHOIS-REST-API-abuse-contact
 '''
-import requests
 import json
+
+try:
+    import requests
+except ImportError:
+    requests = None
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
@@ -23,6 +27,9 @@ class RIPEExpertBot(Bot):
     URL_STAT_GEOLOCATION = 'https://stat.ripe.net/data/maxmind-geo-lite/data.json?resource={}'
 
     def init(self):
+        if requests is None:
+            raise ValueError('Could not import requests. Please install it.')
+
         if hasattr(self.parameters, 'query_ripe_stat'):
             self.logger.warning("The parameter 'query_ripe_stat' is deprecated and will be "
                                 "removed in 2.0. Use 'query_ripe_stat_asn' and "

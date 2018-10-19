@@ -32,8 +32,12 @@ import re
 from datetime import datetime, timedelta
 
 import pytz
-import requests
 from dateutil import parser
+
+try:
+    import requests
+except ImportError:
+    requests = None
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.cache import Cache
@@ -45,6 +49,9 @@ URL_DOWNLOAD = 'https://interflow.azure-api.net/file/api/file/download?fileName=
 
 class MicrosoftInterflowCollectorBot(CollectorBot):
     def init(self):
+        if requests is None:
+            raise ValueError('Could not import requests. Please install it.')
+
         self.set_request_parameters()
         self.http_header['Ocp-Apim-Subscription-Key'] = self.parameters.api_key
         if self.parameters.file_match:
