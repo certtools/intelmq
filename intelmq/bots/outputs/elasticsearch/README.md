@@ -1,9 +1,8 @@
 # Elasticsearch Output Bot
 
-### Output Bot that sends events to a Elasticsearch
+Output Bot that sends events to Elasticsearch
 
-
-Bot parameters:
+#### Configuration parameters:
 
 * elastic_host       : Name/IP for the Elasticsearch server, defaults to 127.0.0.1
 * elastic_port       : Port for the Elasticsearch server, defaults to 9200
