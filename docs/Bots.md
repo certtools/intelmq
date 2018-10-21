@@ -1425,6 +1425,7 @@ Output Bot that sends events to Elasticsearch
 * elastic_index      : Index for the Elasticsearch output, defaults to intelmq
 * rotate_index       : If set, will index events using the date information associated with the event.
                        Options: 'never', 'daily', 'weekly', 'monthly', 'yearly'. Using 'intelmq' as the elastic_index, the following are examples of the generated index names:
+
                        'never' --> intelmq
                        'daily' --> intelmq-2018-02-02
                        'weekly' --> intelmq-2018-42
