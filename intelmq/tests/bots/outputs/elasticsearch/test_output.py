@@ -198,6 +198,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.prepare_bot()
         index = self.bot.get_index(INPUT1, default_string='test-default')
         self.assertEqual(index, 'intelmq-test-default')  # Check that get_index honors the supplied default string
+        self.run_bot()  # Run to clear output queue. Will still index according to current date.
 
     def base_check_expected_index_created(self, input_event, expected_index_name):
         self.input_message = input_event
