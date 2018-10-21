@@ -31,16 +31,29 @@ OUTPUT1_REPLACEMENT_CHARS = {
     'source_asn': 64496,
     'source_ip': '192.0.2.1',
     }
-ES_SEARCH = {"query": {
-    "constant_score": {
-        "filter": {
-            "term": {
-                "source.asn": 64496
+ES_SEARCH = {
+    "query": {
+        "constant_score": {
+            "filter": {
+                "term": {
+                    "source.asn": 64496
+                }
             }
         }
     }
 }
+ES_SEARCH_REPLACEMENT_CHARS = {
+    "query": {
+        "constant_score": {
+            "filter": {
+                "term": {
+                    "source_asn": 64496
+                }
+            }
+        }
+    }
 }
+
 SAMPLE_TEMPLATE = {
     "mappings": {
         "events": {
@@ -153,12 +166,12 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         time.sleep(1)  # ES needs some time between inserting and searching
         result = self.con.search(index=self.sysconfig.get('elastic_index'),
-                                 body=ES_SEARCH)['hits']['hits'][0]
+                                 body=ES_SEARCH_REPLACEMENT_CHARS)['hits']['hits'][0]
 
         self.con.delete(index=self.sysconfig.get('elastic_index'),
                         doc_type=self.sysconfig.get('elastic_doctype'),
                         id=result['_id'])
-        
+
         self.assertDictEqual(OUTPUT1_REPLACEMENT_CHARS, result['_source'])
 
     def test_index_detected_from_time_source(self):
