@@ -28,7 +28,7 @@ ES_SEARCH = {"query": {
     "constant_score": {
         "filter": {
             "term": {
-                "source_asn": 64496
+                "source.asn": 64496
             }
         }
     }
@@ -130,9 +130,9 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         Test whether get_event_date detects the time.source and time.observation fields in an event.
         """
         self.assertEqual(get_event_date(INPUT_TIME_SOURCE),
-                         datetime.strptime(TIMESTAMP_1, '%Y-%m-%dT%H:%M:%S+00:00'))
+                         datetime.strptime(TIMESTAMP_1, '%Y-%m-%dT%H:%M:%S+00:00').date())
         self.assertEqual(get_event_date(INPUT_TIME_OBSERVATION),
-                         datetime.strptime(TIMESTAMP_2, '%Y-%m-%dT%H:%M:%S+00:00'))
+                         datetime.strptime(TIMESTAMP_2, '%Y-%m-%dT%H:%M:%S+00:00').date())
 
     def test_index_detected_from_time_source(self):
         """
