@@ -4,6 +4,7 @@
 """
 import csv
 import datetime
+import fcntl
 import io
 import json
 import logging
@@ -198,7 +199,7 @@ class Bot(object):
                     self.logger.error("Bot has found a problem.")
 
                 if self.parameters.error_log_message:
-                    # Dump full message if explicitly requested by config
+                    # Print full message if explicitly requested by config
                     self.logger.info("Current Message(event): %r.",
                                      self.__current_message)
 
@@ -277,7 +278,8 @@ class Bot(object):
         starttime = time.time()
         remaining = self.parameters.rate_limit
         while remaining > 0:
-            self.logger.info("Idling for {:.1f}s now.".format(remaining))
+            self.logger.info("Idling for {:.1f}s ({}) now.".format(remaining,
+                                                                   utils.seconds_to_human(remaining)))
             time.sleep(remaining)
             self.__handle_sighup()
             remaining = self.parameters.rate_limit - (time.time() - starttime)
@@ -451,14 +453,32 @@ class Bot(object):
 
         new_dump_data[timestamp]["message"] = message.serialize()
 
-        try:
-            with open(dump_file, 'r') as fp:
+        if os.path.exists(dump_file):
+            # existing dump
+            mode = 'r+'
+        else:
+            # new dump file
+            mode = 'w'
+        with open(dump_file, mode) as fp:
+            for i in range(50):
+                try:
+                    fcntl.flock(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    if i == 0:
+                        self.logger.warning('Dump file is locked, waiting up to 60s.')
+                    time.sleep(1)
+                else:
+                    break
+            else:
+                raise ValueError('Dump file was locked for more than 60s, giving up now.')
+            if mode == 'r+':
                 dump_data = json.load(fp)
                 dump_data.update(new_dump_data)
-        except (ValueError, FileNotFoundError):
-            dump_data = new_dump_data
+            else:
+                dump_data = new_dump_data
 
-        with open(dump_file, 'w') as fp:
+            fp.seek(0)
+
             json.dump(dump_data, fp, indent=4, sort_keys=True)
 
         self.logger.debug('Message dumped.')
@@ -760,7 +780,8 @@ class ParserBot(Bot):
         out = io.StringIO()
         writer = csv.writer(out, **self.csv_params)
         writer.writerow(line)
-        return out.getvalue()
+        tempdata = '\r\n'.join(self.tempdata) + '\r\n' if self.tempdata else ''
+        return tempdata + out.getvalue()
 
     def recover_line_csv_dict(self, line: str):
         """

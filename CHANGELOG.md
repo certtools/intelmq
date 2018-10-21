@@ -6,8 +6,13 @@ CHANGELOG
 - use pyupgrade to upgrade all files to python3-only syntax, e.g. use `super()` instead of `super(..., ...)` in all files. Migration from old to new string formatting has not been applied if the resulting code would be longer.
 
 ### Core
+- `lib/bot`:
+  - Dump messages locks the dump file using unix file locks (#574).
+  - Print idle/rate limit time also in human readable format (#1332).
 - `lib/utils`
   - Function `unzip` to extract files from gzipped and/or tar-archives.
+  - New class `ListHandler`: new handler for logging purpose which saves the messages in a list.
+  - Add function `seconds_to_human`.
 
 ### Harmonization
 
@@ -17,6 +22,7 @@ CHANGELOG
 - added `intelmq.bots.collectors.api`: collecting data using an HTTP API (#123, #1187).
 - added `intelmq.bots.collectors.rsync` (#1286).
 - `intelmq.bots.collectors.http.collector_http`: Add support for uncompressing of gzipped-files (#1270).
+- `intelmq.collectors.blueliv.collector_crimeserver`: Allow setting the API URL by parameter (#1336).
 
 #### Parsers
 - added `intelmq.bots.parsers.mcafee.parser_atd` (#1265).
@@ -28,6 +34,8 @@ CHANGELOG
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).
 - added `intelmq.bots.experts.mcafee.expert_mar` (1265).
+- renamed `intelmq.bots.experts.ripencc_abuse_contact.expert` to `intelmq.bots.experts.ripe.expert`, compatibility shim will be removed in version 3.0.
+  - Added support for geolocation information in ripe expert with a new parameter `query_ripe_stat_geolocation` (#1317).
 
 #### Outputs
 - added `intelmq.bots.experts.mcafee.output_esm` (1265).
@@ -41,6 +49,8 @@ CHANGELOG
 - Travis: Change the ownership of `/opt/intelmq` to the current user.
 
 ### Tools
+- `intelmqctl check`: Now uses the new `ListHandler` from utils to handle the logging in JSON output mode.
+- `intelmqdump`: Inspecting dumps locks the dump file using unix file locks (#574).
 
 ### Contrib
 * `malware_name_mapping`: Added the script `apply_mapping_eventdb.py` to apply the mapping to an eventdb.
@@ -52,6 +62,15 @@ CHANGELOG
 ------------------
 
 ### Core
+- `lib/harmonization.py`: Change `parse_utc_isoformat` of `DateTime` class from private to public (related to #1322).
+- `lib/utils.py`: Add new function `object_pair_hook_bots`.
+- `lib.bot.py`: `ParserBot`'s method `recover_line_csv` now also handles given `tempdata`.
+- `lib/message.py`:
+  - Fix add('extra', ..., overwrite=True): old extra fields have not been deleted previously (#1335).
+  - Do not ignore empty or ignored (as defined in `_IGNORED_VALUES`) values of `extra.*` fields for backwards compatibility (#1335).
+
+### Development
+- `bin/rewrite_config_files.py`: Fix ordering of BOTS file (#1327).
 
 ### Core
 
@@ -59,25 +78,72 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.http.collector_http`:
+  - Fix parameter name `extract_files` in BOTS (#1331).
+  - Fix handling of `extract_files` parameter if the value is an empty string.
+  - Handle not installed dependency library `requests` gracefully.
+- `intelmq.bots.collectors.mail.collector_mail_url`:
+  - Handle HTTP status codes != 2xx the same as HTTP timeouts: No exception, but graceful handling.
+  - Handle HTTP errors (bad status code and timeouts) with `error_procedure` == 'pass' but marking the mail as read and logging the error.
+  - Handle not installed dependency library `requests` gracefully.
+- `intelmq.bots.collectors.http.collector_http_stream`:
+  - Handle not installed dependency library `requests` gracefully.
+- `intelmq.bots.collectors.microsoft.collector_interflow`:
+  - Handle not installed dependency library `requests` gracefully.
+- `intelmq.bots.collectors.rt.collector_rt`:
+  - Handle not installed dependency library `requests` gracefully.
 
 #### Parsers
 - `intelmq.bots.parsers.misp`: Fix Object attribute (#1318).
+- `intelmq.bots.parsers.cymru.parser_cap_program`:
+  - Add support for new format (extra data about botnet of 'bots').
+  - Handle AS number 0.
+- `intelmq.bots.parsers.shadowserver`:
+  - Spam URL reports: remove `src_naics`, `src_sic` columns.
+  - fix parsing of 'spam' events in ShadowServer's 'Botnet Drone Hadoop' Report (#1271).
+  - Add support in parser to ignore some columns in config file by using `False` as intelmq key.
+  - Add support for the `Outdated-DNSSEC-Key` and `Outdated-DNSSEC-Key-IPv6` feeds.
+- `intelmq.bots.parsers.generic.parser_csv`: If the `skip_header` parameter was set to `True`, the header was not part of the `raw` field as returned by the `recover_line` method. The header is now saved and handled correctly by the fixed recovery method.
 
 #### Experts
+- `intelmq.bots.experts.national_cert_contact_certat.expert`:
+  - Handle not installed dependency library `requests` gracefully.
+- `intelmq.bots.experts.ripencc_abuse_contact.expert`:
+  - Handle not installed dependency library `requests` gracefully.
 
 #### Outputs
 - `intelmq.bots.outputs.redis`: Fix sending password to redis server.
+- `intelmq.bots.outputs.mongodb`:
+  - New parameter `replacement_char` (default: `'_'`) for non-hierarchical output as dots in key names are not allowed (#1324, #1322).
+  - Save value of fields `time.observation` and `time.source` as native datetime object, not as string (#1322).
+- `intelmq.bots.outputs.restapi.output`:
+  - Handle not installed dependency library `requests` gracefully.
 
 ### Documentation
+- FAQ: Explanation and solution on orphaned queues.
+- Add or fix the tables of contents for all documentation files.
+- Feeds:
+  - Fix Autoshun Feed URL (#1325).
+  - Add parameters `name` and `provider` to `intelmq/etc/feeds.yaml`, `docs/Feeds.md` and `intelmq/bots/BOTS` (#1321).
 
 ### Packaging
 - Change the maintainer from Sasche Wilde to Sebastian Wagner (#1320).
 
 ### Tests
+- `intelmq.tests.lib.test_bot`: Skip `test_logging_level_other` on python 3.7 because of unclear behavior related to copies of loggers (#1269).
+- `intelmq.tests.bots.collectors.rt.test_collector`: Make test more robust by creating the needed ticket in every test run.
 
 ### Tools
+- `intelmqctl check`: Shows more detailed information on orphaned queues.
+- `intelmqctl`:
+  - Correctly determine the status of bots started with `intelmqctl run`.
+  - Fix output of errors during bot status determination, making it compatible to IntelMQ Manager.
 
 ### Contrib
+- elasticsearch/elasticmapper: Add tlp field (#1308).
+- `feeds-config-generator/intelmq_gen_feeds_conf`:
+  - Add parameters to write resulting configuration directly to files (#1321).
+  - Handle collector's `feed.name` and `feed.provider` (#1314).
 
 ### Known issues
 
