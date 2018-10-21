@@ -24,6 +24,13 @@ OUTPUT1 = {'classification.type': 'botnet drone',
            'source.asn': 64496,
            'source.ip': '192.0.2.1',
            }
+OUTPUT1_REPLACEMENT_CHARS = {
+    'classification_type': 'botnet drone',
+    'extra_foo_bar': 'test',
+    'feed_name': 'Example Feed',
+    'source_asn': 64496,
+    'source_ip': '192.0.2.1',
+    }
 ES_SEARCH = {"query": {
     "constant_score": {
         "filter": {
@@ -133,6 +140,26 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
                          datetime.strptime(TIMESTAMP_1, '%Y-%m-%dT%H:%M:%S+00:00').date())
         self.assertEqual(get_event_date(INPUT_TIME_OBSERVATION),
                          datetime.strptime(TIMESTAMP_2, '%Y-%m-%dT%H:%M:%S+00:00').date())
+
+    def test_replacement_characters(self):
+        """
+        Checks that dots in field names are replaced with the replacement character if one is set.
+        """
+        self.sysconfig = {"flatten_fields": "extra",
+                          "elastic_index": "intelmq",
+                          "elastic_doctype": "events",
+                          "replacement_char": "_",
+                          "rotate_index": "never"}
+        self.run_bot()
+        time.sleep(1)  # ES needs some time between inserting and searching
+        result = self.con.search(index=self.sysconfig.get('elastic_index'),
+                                 body=ES_SEARCH)['hits']['hits'][0]
+
+        self.con.delete(index=self.sysconfig.get('elastic_index'),
+                        doc_type=self.sysconfig.get('elastic_doctype'),
+                        id=result['_id'])
+        
+        self.assertDictEqual(OUTPUT1_REPLACEMENT_CHARS, result['_source'])
 
     def test_index_detected_from_time_source(self):
         """
