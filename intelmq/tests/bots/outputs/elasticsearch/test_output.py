@@ -103,7 +103,8 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = ElasticsearchOutputBot
         cls.default_input_message = INPUT1
-        cls.sysconfig = {"flatten_fields": "extra"}
+        cls.sysconfig = {"flatten_fields": "extra",
+                         "rotate_index": "never"}
         if os.environ.get('INTELMQ_TEST_DATABASES'):
             cls.con = elasticsearch.Elasticsearch()
 
@@ -147,9 +148,9 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
         self.base_check_expected_index_created(INPUT_TIME_OBSERVATION, expected_index_name)
 
-    def test_index_falls_back_to_default(self):
+    def test_index_falls_back_to_default_date(self):
         """
-        Tests whether get_index returns an expected default value
+        Tests whether get_index returns an expected default date
          if no time.source or time.observation is present, and
          that the OutputBot will use the current date if none is present.
         """
@@ -158,10 +159,6 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
                           "elastic_index": "intelmq",
                           "elastic_doctype": "events",
                           "rotate_index": "daily"}
-
-        self.prepare_bot()
-        index = self.bot.get_index(INPUT1, 'test-default')
-        self.assertEqual(index, 'intelmq-test-default')  # Check that get_index honors the supplied default string
 
         class FakeDateTime(datetime):
             """
@@ -176,6 +173,22 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         # Patch datetime with FakeDateTime, run the bot, and check the created index.
         with mock.patch('intelmq.bots.outputs.elasticsearch.output.datetime', new=FakeDateTime):
             self.base_check_expected_index_created(INPUT1, expected_index_name)
+
+    def test_index_falls_back_to_default_string(self):
+        """
+        Tests whether get_index returns an expected default string
+         if no time.source or time.observation is present, and
+         that the OutputBot will use the current date if none is present.
+        """
+
+        self.sysconfig = {"flatten_fields": "extra",
+                          "elastic_index": "intelmq",
+                          "elastic_doctype": "events",
+                          "rotate_index": "daily"}
+
+        self.prepare_bot()
+        index = self.bot.get_index(INPUT1, default_string='test-default')
+        self.assertEqual(index, 'intelmq-test-default')  # Check that get_index honors the supplied default string
 
     def base_check_expected_index_created(self, input_event, expected_index_name):
         self.input_message = input_event
