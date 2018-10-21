@@ -92,54 +92,6 @@ class ElasticsearchOutputBot(Bot):
             if not self.es.indices.exists(self.elastic_index):
                 self.es.indices.create(index=self.elastic_index, ignore=400)
 
-    def get_index(self, event_dict: dict, default_date: datetime.date = None,
-                  default_string: str = "unknown-date") -> str:
-        """
-        Returns the index name to use for the given event,
-         based on the current bot's settings and the event's date fields.
-         - If the bot should rotate its Elasticsearch index, returns elastic_index-<timestamp>
-         based on the bot's rotation option and the time fields in the event, e.g. intelmq-2018.
-         - If the bot should rotate its Elasticsearch index, but no time information is available in the event,
-         this will return <elastic_index>-<default>, e.g. intelmq-unknown-date.
-         - If the bot should not rotate indices, returns elastic_index, e.g. intelmq.
-
-        :param event_dict: The event (as a dict) to examine.
-        :param default_date: (Optional) The default date to use for events with no time information
-          (e.g. datetime.today()). Default: None.
-        :param default_string: (Optional) The value to append if no time is available in the event.
-          Default: 'unknown-date'.
-        :return: A string containing the name of the index which should store the event.
-        """
-        # This function supports rotating indices based on event timestamps.
-        # If the bot should rotate indices, the index name will include a date stamp based on:
-        #   - the time_source field - if one is available, else
-        #   - the time_observation field - if one is available, else
-        #   - the string given in the 'default' parameter, if neither date field is available
-
-        if self.should_rotate():
-
-            # Extract date information from the event. If none is present, use the default_date parameter.
-            event_date = get_event_date(event_dict) or default_date
-
-            # event_date = None
-            # # Try to use the the time information from the event.
-            # for t in [event_dict.get('time_source', None), event_dict.get('time_observation', None)]:
-            #     try:
-            #         event_date = datetime.strptime(t,
-            # '%Y-%m-%dT%H:%M:%S+00:00').date().strftime(ROTATE_OPTIONS.get(self.rotate_index))
-            #         break
-            #     except (TypeError, ValueError):
-            #         # Ignore missing or invalid time_source or time_observation
-            #         event_date = None
-            #         continue
-
-            # If no time available in the event and no default date is given, use the default catchall string
-            event_date = event_date.strftime(ROTATE_OPTIONS.get(self.rotate_index)) if event_date else default_string
-            return "{}-{}".format(self.elastic_index, event_date)
-        else:
-            # If the bot should NOT rotate indices, just use the index name
-            return self.elastic_index
-
     def process(self):
         event = self.receive_message()
         event_dict = event.to_dict(hierarchical=False)
@@ -170,6 +122,42 @@ class ElasticsearchOutputBot(Bot):
 
     def should_rotate(self):
         return self.rotate_index and ROTATE_OPTIONS.get(self.rotate_index)
+
+    def get_index(self, event_dict: dict, default_date: datetime.date = None,
+                  default_string: str = "unknown-date") -> str:
+        """
+        Returns the index name to use for the given event,
+         based on the current bot's settings and the event's date fields.
+         - If the bot should rotate its Elasticsearch index, returns elastic_index-<timestamp>
+         based on the bot's rotation option and the time fields in the event, e.g. intelmq-2018.
+         - If the bot should rotate its Elasticsearch index, but no time information is available in the event,
+         this will return <elastic_index>-<default>, e.g. intelmq-unknown-date.
+         - If the bot should not rotate indices, returns elastic_index, e.g. intelmq.
+
+        :param event_dict: The event (as a dict) to examine.
+        :param default_date: (Optional) The default date to use for events with no time information
+          (e.g. datetime.today()). Default: None.
+        :param default_string: (Optional) The value to append if no time is available in the event.
+          Default: 'unknown-date'.
+        :return: A string containing the name of the index which should store the event.
+        """
+        # This function supports rotating indices based on event timestamps.
+        # If the bot should rotate indices, the index name will include a date stamp based on:
+        #   - the time_source field - if one is available, else
+        #   - the time_observation field - if one is available, else
+        #   - the string given in the 'default' parameter, if neither date field is available
+
+        if self.should_rotate():
+
+            # Extract date information from the event. If none is present, use the default_date parameter.
+            event_date = get_event_date(event_dict) or default_date
+
+            # If no time available in the event and no default date is given, use the default catchall string
+            event_date = event_date.strftime(ROTATE_OPTIONS.get(self.rotate_index)) if event_date else default_string
+            return "{}-{}".format(self.elastic_index, event_date)
+        else:
+            # If the bot should NOT rotate indices, just use the index name
+            return self.elastic_index
 
 
 BOT = ElasticsearchOutputBot
