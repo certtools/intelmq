@@ -36,7 +36,7 @@ def replace_keys(obj, key_char='.', replacement='_'):
 
 def get_event_date(event_dict: dict) -> datetime.date:
     event_date = None
-    for t in [event_dict.get('time_source', None), event_dict.get('time_observation', None)]:
+    for t in [event_dict.get('time.source', None), event_dict.get('time.observation', None)]:
         try:
             event_date = datetime.strptime(t, '%Y-%m-%dT%H:%M:%S+00:00').date()
             break
@@ -80,18 +80,20 @@ class ElasticsearchOutputBot(Bot):
 
         self.es = Elasticsearch([{'host': self.elastic_host, 'port': self.elastic_port}], **kwargs)
 
-        if self.rotate_index:
+        if self.should_rotate():
             # Use rotating index names - check that the template exists
             if not self.es.indices.exists_template(name=self.elastic_index):
                 raise RuntimeError("No template with the name '{}' exists on the Elasticsearch host, "
-                                   "but 'rotate_index' is set. Have you created the template?".format(self.elastic_index))
+                                   "but 'rotate_index' is set. "
+                                   "Have you created the template?".format(self.elastic_index))
 
         else:
             # Using a single named index. Check that it exists and create it if it doesn't
             if not self.es.indices.exists(self.elastic_index):
                 self.es.indices.create(index=self.elastic_index, ignore=400)
 
-    def get_index(self, event_dict: dict, default_date: datetime.date=None, default_string: str = "unknown-date") -> str:
+    def get_index(self, event_dict: dict, default_date: datetime.date = None,
+                  default_string: str = "unknown-date") -> str:
         """
         Returns the index name to use for the given event,
          based on the current bot's settings and the event's date fields.
@@ -114,7 +116,7 @@ class ElasticsearchOutputBot(Bot):
         #   - the time_observation field - if one is available, else
         #   - the string given in the 'default' parameter, if neither date field is available
 
-        if self.rotate_index and ROTATE_OPTIONS.get(self.rotate_index):
+        if self.should_rotate():
 
             # Extract date information from the event. If none is present, use the default_date parameter.
             event_date = get_event_date(event_dict) or default_date
@@ -123,7 +125,8 @@ class ElasticsearchOutputBot(Bot):
             # # Try to use the the time information from the event.
             # for t in [event_dict.get('time_source', None), event_dict.get('time_observation', None)]:
             #     try:
-            #         event_date = datetime.strptime(t, '%Y-%m-%dT%H:%M:%S+00:00').date().strftime(ROTATE_OPTIONS.get(self.rotate_index))
+            #         event_date = datetime.strptime(t,
+            # '%Y-%m-%dT%H:%M:%S+00:00').date().strftime(ROTATE_OPTIONS.get(self.rotate_index))
             #         break
             #     except (TypeError, ValueError):
             #         # Ignore missing or invalid time_source or time_observation
@@ -164,6 +167,9 @@ class ElasticsearchOutputBot(Bot):
                       doc_type=self.elastic_doctype,
                       body=event_dict)
         self.acknowledge_message()
+
+    def should_rotate(self):
+        return self.rotate_index and ROTATE_OPTIONS.get(self.rotate_index)
 
 
 BOT = ElasticsearchOutputBot

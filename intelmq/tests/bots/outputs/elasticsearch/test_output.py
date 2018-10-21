@@ -6,7 +6,7 @@ import unittest.mock as mock
 from datetime import datetime
 
 import intelmq.lib.test as test
-from intelmq.bots.outputs.elasticsearch.output import ElasticsearchOutputBot
+from intelmq.bots.outputs.elasticsearch.output import ElasticsearchOutputBot, get_event_date
 
 if os.environ.get('INTELMQ_TEST_DATABASES'):
     import elasticsearch
@@ -18,11 +18,11 @@ INPUT1 = {"__type": "Event",
           "feed.name": "Example Feed",
           "extra": '{"foo.bar": "test"}'
           }
-OUTPUT1 = {'classification_type': 'botnet drone',
-           'extra_foo_bar': 'test',
-           'feed_name': 'Example Feed',
-           'source_asn': 64496,
-           'source_ip': '192.0.2.1',
+OUTPUT1 = {'classification.type': 'botnet drone',
+           'extra.foo.bar': 'test',
+           'feed.name': 'Example Feed',
+           'source.asn': 64496,
+           'source.ip': '192.0.2.1',
            }
 ES_SEARCH = {"query": {
     "constant_score": {
@@ -38,22 +38,22 @@ SAMPLE_TEMPLATE = {
     "mappings": {
         "events": {
             "properties": {
-                "time_observation": {
+                "time.observation": {
                     "type": "date"
                 },
-                "time_source": {
+                "time.source": {
                     "type": "date"
                 },
-                "classification_type": {
+                "classification.type": {
                     "type": "keyword"
                 },
-                "source_asn": {
+                "source.asn": {
                     "type": "integer"
                 },
-                "feed_name": {
+                "feed.name": {
                     "type": "text"
                 },
-                "source_ip": {
+                "source.ip": {
                     "type": "ip"
                 }
             }
@@ -124,6 +124,15 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
                           "elastic_doctype": "events",
                           "rotate_index": "daily"}
         self.assertRaises(RuntimeError, self.run_bot())
+
+    def test_get_event_date(self):
+        """
+        Test whether get_event_date detects the time.source and time.observation fields in an event.
+        """
+        self.assertEqual(get_event_date(INPUT_TIME_SOURCE),
+                         datetime.strptime(TIMESTAMP_1, '%Y-%m-%dT%H:%M:%S+00:00'))
+        self.assertEqual(get_event_date(INPUT_TIME_OBSERVATION),
+                         datetime.strptime(TIMESTAMP_2, '%Y-%m-%dT%H:%M:%S+00:00'))
 
     def test_index_detected_from_time_source(self):
         """
