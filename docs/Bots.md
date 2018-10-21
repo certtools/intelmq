@@ -1,9 +1,169 @@
 # Bots Documentation
 
-1. [Collectors](#collectors)
-2. [Parsers](#parsers)
-3. [Experts](#experts)
-4. [Outputs](#outputs)
+**Table of Contents:**
+- [Bots Documentation](#bots-documentation)
+- [General remarks](#general-remarks)
+- [Initialization parameters](#initialization-parameters)
+- [Common parameters](#common-parameters)
+- [Collectors](#collectors)
+  - [Generic URL Fetcher](#generic-url-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic URL Stream Fetcher](#generic-url-stream-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic Mail URL Fetcher](#generic-mail-url-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic Mail Attachment Fetcher](#generic-mail-attachment-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Fileinput](#fileinput)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [MISP Generic](#misp-generic)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Request Tracker](#request-tracker)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Shodan Stream](#shodan-stream)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [TCP](#tcp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [XMPP collector](#xmpp-collector)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Alien Vault OTX](#alien-vault-otx)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Blueliv Crimeserver](#blueliv-crimeserver)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Microsoft Azure](#microsoft-azure)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Microsoft Interflow](#microsoft-interflow)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Additional functionalities](#additional-functionalities)
+  - [Stomp](#stomp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Twitter](#twitter)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [Parsers](#parsers)
+  - [Generic CSV Parser](#generic-csv-parser)
+    - [Configuration parameters](#configuration-parameters)
+  - [Cymru CAP Program](#cymru-cap-program)
+    - [Information:](#information)
+  - [Cymru Full Bogons](#cymru-full-bogons)
+    - [Information:](#information)
+  - [Twitter](#twitter)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Shodan](#shodan)
+    - [Information](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [Experts](#experts)
+  - [Abusix](#abusix)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [ASN Lookup](#asn-lookup)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Cymru Whois](#cymru-whois)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Domain Suffix](#domain-suffix)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Rule processing](#rule-processing)
+  - [Deduplicator](#deduplicator)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Field Reducer Bot](#field-reducer-bot)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+      - [Whitelist](#whitelist)
+      - [Blacklist](#blacklist)
+  - [Filter](#filter)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic DB Lookup](#generic-db-lookup)
+  - [Gethostbyname](#gethostbyname)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [IDEA](#idea)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [MaxMind GeoIP](#maxmind-geoip)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Modify](#modify)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Configuration File](#configuration-file)
+    - [Actions](#actions)
+    - [Examples](#examples)
+    - [Types](#types)
+  - [National CERT contact lookup by CERT.AT](#national-cert-contact-lookup-by-certat)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Reverse DNS](#reverse-dns)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [RFC1918](#rfc1918)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [RipeNCC Abuse Contact](#ripencc-abuse-contact)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Sieve](#sieve)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Taxonomy](#taxonomy)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Tor Nodes](#tor-nodes)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Url2FQDN](#url2fqdn)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Wait](#wait)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [Outputs](#outputs)
+  - [File](#file)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+      - [Filename formatting](#filename-formatting)
+  - [Files](#files)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [MongoDB](#mongodb)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Installation Requirements](#installation-requirements)
+  - [PostgreSQL](#postgresql)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Installation Requirements](#installation-requirements)
+    - [PostgreSQL Installation](#postgresql-installation)
+  - [REST API](#rest-api)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [SMTP Output Bot](#smtp-output-bot)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [TCP](#tcp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+
 
 ## General remarks
 
@@ -372,6 +532,7 @@ See the README.md
 
 * **Feed parameters** (see above)
 * `api_key`: location of information resource
+* `api_url`: The optional API endpoint, by default `https://freeapi.blueliv.com`.
 
 * * *
 
@@ -1126,9 +1287,9 @@ Sources:
 
 * * *
 
-### RipeNCC Abuse Contact
+### Ripe
 
-RIPE NCC online Abuse Contact Finder for IP addresses and Autonomous Systems.
+Online RIPE Abuse Contact and Geolocation Finder for IP addresses and Autonomous Systems.
 
 #### Information:
 * `name:` ripencc-abuse-contact
@@ -1145,6 +1306,7 @@ RIPE NCC online Abuse Contact Finder for IP addresses and Autonomous Systems.
 * `query_ripe_db_ip`: Query for ASNs at `http://rest.db.ripe.net/abuse-contact/as%s.json`, default `true`
 * `query_ripe_stat_asn`: Query for ASNs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
 * `query_ripe_stat_ip`: Query for IPs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
+* `query_ripe_stat_geolocation`: Query for IPs at `https://stat.ripe.net/data/maxmind-geo-lite/data.json?resource=%s`, default `true`
 
 * * *
 
@@ -1348,6 +1510,8 @@ If the field used in the format string is not defined, `None` will be used as fa
 
 ### MongoDB
 
+Saves events in a MongoDB either as hierarchical structure or flat with full key names. `time.observation` and `time.source` are saved as datetime objects, not as ISO formatted string.
+
 #### Information:
 * `name:` mongodb
 * `lookup:` no
@@ -1364,6 +1528,7 @@ If the field used in the format string is not defined, `None` will be used as fa
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
 * `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionary in sub-dictionaries.
+* `replacement_char`: String (default `'_'`) used as replacement character for the dots in key names if hierarchical output is not used.
 
 #### Installation Requirements
 

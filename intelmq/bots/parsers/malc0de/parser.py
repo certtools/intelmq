@@ -16,9 +16,9 @@ class Malc0deParserBot(ParserBot):
 
     IP_BLACKLIST = {'http://malc0de.com/bl/IP_Blacklist.txt',
                     'https://malc0de.com/bl/IP_Blacklist.txt'}
+    lastgenerated = None
 
     def parse_line(self, line, report):
-        lastgenerated = None
 
         if line.startswith('//') or len(line) == 0:
             self.tempdata.append(line)

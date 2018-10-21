@@ -19,7 +19,8 @@ EXAMPLE_REPORT = {"feed.name": "Sample CSV Feed",
                   }
 EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "__type": "Event",
-                 "raw": utils.base64_encode(SAMPLE_SPLIT[1].replace('"', '')+'\r\n'),
+                 "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\r\n' +
+                                            SAMPLE_SPLIT[1].replace('"', '')+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  "classification.type": "infected system",
                  "source.ip": "11.11.11.11",
@@ -29,7 +30,8 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
 
 EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
                  "__type": "Event",
-                 "raw": utils.base64_encode(SAMPLE_SPLIT[2].replace('"', '')+'\r\n'),
+                 "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\r\n' +
+                                            SAMPLE_SPLIT[2].replace('"', '')+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  "classification.type": "infected system",
                  "feed.name": "Sample CSV Feed",
@@ -59,8 +61,6 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         """ Test if correct Event has been produced. """
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
-
-        self.run_bot()
         self.assertMessageEqual(1, EXAMPLE_EVENT2)
 
 

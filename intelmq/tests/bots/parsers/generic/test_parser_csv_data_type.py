@@ -17,7 +17,7 @@ EXAMPLE_REPORT = {"feed.name": "Sample CSV Feed",
                   "time.observation": "2015-01-01T00:00:00+00:00"}
 EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "__type": "Event",
-                 "raw": "MTEuMTEuMTEuMTEsaHR0cDovL3Rlc3QuY29tLCJbIiJ0MSIiLCIidDIiIiwiInQzIiJdIg0K",
+                 "raw": utils.base64_encode(SAMPLE_FILE.replace('\n', '\r\n')),
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  "classification.type": "infected system",
                  "source.ip": "11.11.11.11",
