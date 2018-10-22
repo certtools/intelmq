@@ -433,6 +433,9 @@ class Bot(object):
         if self.__source_pipeline:
             self.__source_pipeline.acknowledge()
 
+        # free memory of last message
+        self.__current_message = None
+
     def _dump_message(self, error_traceback, message: dict):
         if message is None or getattr(self.parameters, 'testing', False):
             return
