@@ -13,6 +13,7 @@ CHANGELOG
 - `lib/message.py`:
   - Fix add('extra', ..., overwrite=True): old extra fields have not been deleted previously (#1335).
   - Do not ignore empty or ignored (as defined in `_IGNORED_VALUES`) values of `extra.*` fields for backwards compatibility (#1335).
+- `lib/pipeline.py` (`Redis.receive`): Wait in 1s steps if redis is busy loading its snapshot from disk (#1334).
 
 ### Development
 - `bin/rewrite_config_files.py`: Fix ordering of BOTS file (#1327).
