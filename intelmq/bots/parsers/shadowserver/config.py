@@ -1776,7 +1776,6 @@ outdated_dnssec_key = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-#        ('source.port', 'port'),  # not available
     ],
     'optional_fields': [
         ('source.asn', 'asn'),
