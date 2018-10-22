@@ -383,6 +383,10 @@ class Bot(object):
                                                     'but needed')
 
             self.logger.debug("Sending message.")
+
+            raw_message = libmessage.MessageFactory.serialize(message)
+            self.__destination_pipeline.send(raw_message, path=path)
+
             self.__message_counter += 1
             if not self.__message_counter_start:
                 self.__message_counter_start = datetime.datetime.now()
@@ -391,9 +395,6 @@ class Bot(object):
                 self.logger.info("Processed %d messages since last logging.", self.__message_counter)
                 self.__message_counter = 0
                 self.__message_counter_start = datetime.datetime.now()
-
-            raw_message = libmessage.MessageFactory.serialize(message)
-            self.__destination_pipeline.send(raw_message, path=path)
 
     def receive_message(self):
         self.logger.debug('Waiting for incoming message.')
