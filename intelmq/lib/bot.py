@@ -224,21 +224,16 @@ class Bot(object):
 
                         if error_on_message:
 
-                            delete_message = False
                             if self.parameters.error_dump_message:
                                 error_traceback = traceback.format_exception(*error_on_message)
                                 self._dump_message(error_traceback,
                                                    message=self.__current_message)
-                                delete_message = True
                             else:
                                 warnings.warn("Message will be removed from the pipeline and not dumped to the disk. "
                                               "Set `error_dump_message` to true to save the message on disk. "
                                               "This warning is only shown once in the runtime of a bot.")
                             if '_on_error' in self.__destination_queues:
                                 self.send_message(self.__current_message, path='_on_error')
-                                delete_message = True
-                            if delete_message:
-                                self.__current_message = None
 
                             # remove message from pipeline
                             self.acknowledge_message()
