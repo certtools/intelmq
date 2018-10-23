@@ -26,6 +26,7 @@ Possible feednames:
 * `Accessible-CWMP`
 * `Accessible-Hadoop`
 * `Accessible-RDP`
+* `Accessible-Rsync`
 * `Accessible-SMB`
 * `Accessible-Telnet`
 * `Accessible-VNC`
