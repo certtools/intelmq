@@ -10,10 +10,14 @@ CHANGELOG
 - `lib.bot.py`:
   - `ParserBot`'s method `recover_line_csv` now also handles given `tempdata`.
   - `Bot.acknowledge_message()` deletes `__current_message` to free the memory, saves memory in idling parsers with big reports.
+  - `process()`: Warn once per run if `error_dump_message` is set to false.
 - `lib/message.py`:
   - Fix add('extra', ..., overwrite=True): old extra fields have not been deleted previously (#1335).
   - Do not ignore empty or ignored (as defined in `_IGNORED_VALUES`) values of `extra.*` fields for backwards compatibility (#1335).
 - `lib/pipeline.py` (`Redis.receive`): Wait in 1s steps if redis is busy loading its snapshot from disk (#1334).
+
+### Default configuration
+- Set `error_dump_message` to true by default.
 
 ### Development
 - `bin/rewrite_config_files.py`: Fix ordering of BOTS file (#1327).
