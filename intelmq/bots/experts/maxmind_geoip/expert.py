@@ -43,8 +43,8 @@ class GeoIPExpertBot(Bot):
             try:
                 info = self.database.city(ip)
 
-                if info.country.iso_code:
-                    event.add(geo_key % "cc", info.country.iso_code,
+                if info.registered_country.iso_code:
+                    event.add(geo_key % "cc", info.registered_country.iso_code,
                               overwrite=self.parameters)
 
                 if info.location.latitude:
