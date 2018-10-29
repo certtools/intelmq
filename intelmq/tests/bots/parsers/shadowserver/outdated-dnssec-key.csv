@@ -1,0 +1,3 @@
+"timestamp","ip","asn","geo","region","city","hostname","dst_ip","dst_port","dst_asn","dst_geo","naics","sic","dst_naics","dst_sic","sector","dst_sector","tag","public_source","protocol"
+"2018-10-18 00:03:50","10.10.10.10",65536,"AT","WIEN","VIENNA","example.com","10.10.10.11",53,65537,"US",0,0,0,0,"Information Technology","Information Technology","outdated-dnssec-key","verisign","udp"
+"2018-10-18 05:08:36","fe80::1",65536,"AT",,,"example.com","fe80::2",53,65537,"US",,,,,,,"outdated-dnssec-key","verisign","udp"

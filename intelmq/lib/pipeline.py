@@ -154,7 +154,7 @@ class Redis(Pipeline):
 
     def set_queues(self, queues, queues_type):
         self.load_configurations(queues_type)
-        super(Redis, self).set_queues(queues, queues_type)
+        super().set_queues(queues, queues_type)
 
     def send(self, message, path="_default"):
         message = utils.encode(message)
@@ -183,7 +183,13 @@ class Redis(Pipeline):
         if self.source_queue is None:
             raise exceptions.ConfigurationError('pipeline', 'No source queue given.')
         try:
-            retval = self.pipe.lindex(self.internal_queue, -1)  # returns None if no value
+            while True:
+                try:
+                    retval = self.pipe.lindex(self.internal_queue, -1)  # returns None if no value
+                except redis.exceptions.BusyLoadingError:  # Just wait at redis' startup #1334
+                    time.sleep(1)
+                else:
+                    break
             if not retval:
                 retval = self.pipe.brpoplpush(self.source_queue,
                                               self.internal_queue, 0)
@@ -250,7 +256,7 @@ class Pythonlist(Pipeline):
         warnings.warn("'Pipeline.sleep' will be removed in version 2.0.", DeprecationWarning)
 
     def set_queues(self, queues, queues_type):
-        super(Pythonlist, self).set_queues(queues, queues_type)
+        super().set_queues(queues, queues_type)
         self.state[self.internal_queue] = []
         self.state[self.source_queue] = []
         for destination_queue in chain.from_iterable(self.destination_queues.values()):

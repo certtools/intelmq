@@ -8,7 +8,7 @@ TODO: clear_queues
 TODO: acknowledge
 TODO: check internal representation of data in redis (like with Pythonlist)
 """
-
+import os
 import unittest
 
 import intelmq.lib.pipeline as pipeline
@@ -100,6 +100,10 @@ class TestRedis(unittest.TestCase):
     def setUp(self):
         params = Parameters()
         params.broker = 'Redis'
+        setattr(params, 'source_pipeline_password', os.getenv('INTELMQ_TEST_REDIS_PASSWORD'))
+        setattr(params, 'source_pipeline_db', 4)
+        setattr(params, 'destination_pipeline_password', os.getenv('INTELMQ_TEST_REDIS_PASSWORD'))
+        setattr(params, 'destination_pipeline_db', 4)
         self.pipe = pipeline.PipelineFactory.create(params)
         self.pipe.set_queues('test', 'source')
         self.pipe.set_queues('test', 'destination')

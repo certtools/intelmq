@@ -85,9 +85,7 @@ class DummyParserBot(bot.ParserBot):
             line = line.split(',')
             event['time.source'] = line[0]
             event['source.fqdn'] = line[1]
-            print('pre-ip')
             event['source.ip'] = line[2]
-            print('post-ip')
             event['source.reverse_dns'] = line[3]
             event['event_description.text'] = line[4]
             event['source.account'] = line[5]
@@ -136,7 +134,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
     def run_bot(self):
         with mock.patch.object(bot.Bot, "_dump_message",
                                self.dump_message):
-            super(TestDummyParserBot, self).run_bot()
+            super().run_bot()
 
     def test_event(self):
         """ Test if correct Event has been produced. """

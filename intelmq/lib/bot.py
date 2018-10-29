@@ -4,6 +4,7 @@
 """
 import csv
 import datetime
+import fcntl
 import io
 import json
 import logging
@@ -198,7 +199,7 @@ class Bot(object):
                     self.logger.error("Bot has found a problem.")
 
                 if self.parameters.error_log_message:
-                    # Dump full message if explicitly requested by config
+                    # Print full message if explicitly requested by config
                     self.logger.info("Current Message(event): %r.",
                                      self.__current_message)
 
@@ -224,17 +225,16 @@ class Bot(object):
 
                         if error_on_message:
 
-                            delete_message = False
                             if self.parameters.error_dump_message:
                                 error_traceback = traceback.format_exception(*error_on_message)
                                 self._dump_message(error_traceback,
                                                    message=self.__current_message)
-                                delete_message = True
+                            else:
+                                warnings.warn("Message will be removed from the pipeline and not dumped to the disk. "
+                                              "Set `error_dump_message` to true to save the message on disk. "
+                                              "This warning is only shown once in the runtime of a bot.")
                             if '_on_error' in self.__destination_queues:
                                 self.send_message(self.__current_message, path='_on_error')
-                                delete_message = True
-                            if delete_message:
-                                self.__current_message = None
 
                             # remove message from pipeline
                             self.acknowledge_message()
@@ -277,7 +277,8 @@ class Bot(object):
         starttime = time.time()
         remaining = self.parameters.rate_limit
         while remaining > 0:
-            self.logger.info("Idling for {:.1f}s now.".format(remaining))
+            self.logger.info("Idling for {:.1f}s ({}) now.".format(remaining,
+                                                                   utils.seconds_to_human(remaining)))
             time.sleep(remaining)
             self.__handle_sighup()
             remaining = self.parameters.rate_limit - (time.time() - starttime)
@@ -384,6 +385,10 @@ class Bot(object):
                                                     'but needed')
 
             self.logger.debug("Sending message.")
+
+            raw_message = libmessage.MessageFactory.serialize(message)
+            self.__destination_pipeline.send(raw_message, path=path)
+
             self.__message_counter += 1
             if not self.__message_counter_start:
                 self.__message_counter_start = datetime.datetime.now()
@@ -392,9 +397,6 @@ class Bot(object):
                 self.logger.info("Processed %d messages since last logging.", self.__message_counter)
                 self.__message_counter = 0
                 self.__message_counter_start = datetime.datetime.now()
-
-            raw_message = libmessage.MessageFactory.serialize(message)
-            self.__destination_pipeline.send(raw_message, path=path)
 
     def receive_message(self):
         self.logger.debug('Waiting for incoming message.')
@@ -434,6 +436,9 @@ class Bot(object):
         if self.__source_pipeline:
             self.__source_pipeline.acknowledge()
 
+        # free memory of last message
+        self.__current_message = None
+
     def _dump_message(self, error_traceback, message: dict):
         if message is None or getattr(self.parameters, 'testing', False):
             return
@@ -452,14 +457,32 @@ class Bot(object):
 
         new_dump_data[timestamp]["message"] = message.serialize()
 
-        try:
-            with open(dump_file, 'r') as fp:
+        if os.path.exists(dump_file):
+            # existing dump
+            mode = 'r+'
+        else:
+            # new dump file
+            mode = 'w'
+        with open(dump_file, mode) as fp:
+            for i in range(50):
+                try:
+                    fcntl.flock(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    if i == 0:
+                        self.logger.warning('Dump file is locked, waiting up to 60s.')
+                    time.sleep(1)
+                else:
+                    break
+            else:
+                raise ValueError('Dump file was locked for more than 60s, giving up now.')
+            if mode == 'r+':
                 dump_data = json.load(fp)
                 dump_data.update(new_dump_data)
-        except (ValueError, FileNotFoundError):
-            dump_data = new_dump_data
+            else:
+                dump_data = new_dump_data
 
-        with open(dump_file, 'w') as fp:
+            fp.seek(0)
+
             json.dump(dump_data, fp, indent=4, sort_keys=True)
 
         self.logger.debug('Message dumped.')
@@ -617,7 +640,7 @@ class ParserBot(Bot):
     current_line = None
 
     def __init__(self, bot_id):
-        super(ParserBot, self).__init__(bot_id=bot_id)
+        super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'ParserBot':
             self.logger.error('ParserBot can\'t be started itself. '
                               'Possible Misconfiguration.')
@@ -761,7 +784,8 @@ class ParserBot(Bot):
         out = io.StringIO()
         writer = csv.writer(out, **self.csv_params)
         writer.writerow(line)
-        return out.getvalue()
+        tempdata = '\r\n'.join(self.tempdata) + '\r\n' if self.tempdata else ''
+        return tempdata + out.getvalue()
 
     def recover_line_csv_dict(self, line: str):
         """
@@ -789,7 +813,7 @@ class CollectorBot(Bot):
     Does some sanity checks on message sending.
     """
     def __init__(self, bot_id: str):
-        super(CollectorBot, self).__init__(bot_id=bot_id)
+        super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'CollectorBot':
             self.logger.error('CollectorBot can\'t be started itself. '
                               'Possible Misconfiguration.')
@@ -829,7 +853,7 @@ class CollectorBot(Bot):
         messages = filter(self.__filter_empty_report, messages)
         if auto_add:
             messages = map(self.__add_report_fields, messages)
-        super(CollectorBot, self).send_message(*messages, path=path)
+        super().send_message(*messages, path=path)
 
     def new_report(self):
         return libmessage.Report()

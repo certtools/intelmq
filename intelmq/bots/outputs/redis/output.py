@@ -15,7 +15,7 @@ class RedisOutputBot(Bot):
         self.password = self.parameters.redis_password
         self.timeout = int(self.parameters.redis_timeout)
 
-        self.conn = redis.ConnectionPool(host=self.host, port=self.port, db=self.db)
+        self.conn = redis.ConnectionPool(host=self.host, port=self.port, db=self.db, password=self.password)
         self.connect()
 
     def process(self):

@@ -18,7 +18,7 @@ _intelmqctl ()
     #echo "posice: $COMP_CWORD $COMP_WORDS";
     case $COMP_CWORD in
         1)
-            opts="start stop restart reload run status clear list check enable disable";
+            opts="start stop restart reload run status log clear list check enable disable";
             COMPREPLY=($(compgen -W "${opts} ${generic_pre} ${generic_post}" -- ${cur}));
             return 0
         ;;

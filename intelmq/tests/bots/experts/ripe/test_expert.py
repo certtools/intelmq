@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+"""
+Testing RIPE Expert
+"""
 
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.experts.ripencc_abuse_contact.expert import RIPENCCExpertBot
+from intelmq.bots.experts.ripencc_abuse_contact.expert import RIPEExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com
@@ -37,32 +40,66 @@ EMPTY_REPLACED = {"__type": "Event",
                   "source.ip": "127.0.0.1",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
+DB_404_AS = {"__type": "Event",
+             "source.asn": 7713,
+             "time.observation": "2015-01-01T00:00:00+00:00",
+             }
+GEOLOCA_INPUT1 = {"__type": "Event",
+                  "source.ip": "96.30.37.204"
+                  }
+GEOLOCA_INPUT2 = {"__type": "Event",
+                  "source.geolocation.cc": "IN",
+                  "source.ip": "96.30.37.204"
+                  }
+GEOLOCA_OUTPUT1 = {"__type": "Event",
+                   "source.ip": "96.30.37.204",
+                   "source.geolocation.cc": "US",
+                   "source.geolocation.city": "Lansing",
+                   "source.geolocation.latitude": 42.7257,
+                   "source.geolocation.longitude": -84.636
+                   }
+GEOLOCA_OUTPUT3 = {"__type": "Event",
+                   "source.ip": "96.30.37.204",
+                   "source.geolocation.cc": "IN",
+                   "source.geolocation.city": "Lansing",
+                   "source.geolocation.latitude": 42.7257,
+                   "source.geolocation.longitude": -84.636
+                   }
 
 
 @test.skip_internet()
-class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
+class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for AbusixExpertBot.
+    A TestCase for RIPEExpertBot.
     """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = RIPENCCExpertBot
+        cls.bot_reference = RIPEExpertBot
         cls.sysconfig = {'query_ripe_db_asn': True,
                          'query_ripe_db_ip': True,
+                         'query_ripe_stat_ip': False,
+                         'query_ripe_stat_asn': False,
+                         'redis_cache_db': 4,
+                         'query_ripe_stat_geolocation': False,
                          }
+        cls.use_cache = True
 
-    def test_ipv4_lookup(self):
+    def test_db_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
         self.allowed_warning_count = 1
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
+        self.assertEqual(self.cache.get('dbasn:35492'), b'["abuse@funkfeuer.at"]')
+        self.assertEqual(self.cache.get('dbip:93.184.216.34'), b'["abuse@verizondigitalmedia.com"]')
+        self.assertEqual(self.cache.get('dbip:193.238.157.5'), b'["abuse@funkfeuer.at"]')
 
-    def test_ipv6_lookup(self):
+    def test_db_ipv6_lookup(self):
         self.input_message = EXAMPLE_INPUT6
         self.allowed_warning_count = 1
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
+        self.assertEqual(self.cache.get('dbip:2001:62a:4:100:80::8'), b'["security.zid@univie.ac.at"]')
 
     def test_empty_lookup(self):
         """ No email is returned, event should be untouched. """
@@ -78,22 +115,24 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
                           'query_ripe_db_ip': False,
                           'query_ripe_stat_asn': True,
                           'query_ripe_stat_ip': True,
+                          'query_ripe_stat_geolocation': False,
                           }
         self.input_message = EMPTY_INPUT
         self.allowed_error_count = 1
         self.prepare_bot()
-        old = self.bot.URL_STAT
-        self.bot.URL_STAT = 'https://example.com/index.html?{}'
+        old = self.bot.URL_STAT_CONTACT
+        self.bot.URL_STAT_CONTACT = 'http://localhost/{}'
         self.run_bot(prepare=False)
         # internal json in < and >= 3.5 and simplejson
         self.assertLogMatches(pattern='.*(JSONDecodeError|ValueError|Expecting value|No JSON object could be decoded).*',
                               levelname='ERROR')
 
-        self.bot.URL_STAT = 'http://localhost/{}'
+        self.bot.URL_STAT_CONTACT = 'http://localhost/{}'
         self.run_bot(prepare=False)
-        self.bot.URL_STAT = old
+        self.bot.URL_STAT_CONTACT = old
         self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
+        self.cache.flushdb()  # collides with test_replace
 
     @test.skip_local_web()
     def test_ripe_db_as_errors(self):
@@ -102,6 +141,7 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
                           'query_ripe_db_ip': False,
                           'query_ripe_stat_ip': False,
                           'query_ripe_stat_asn': False,
+                          'query_ripe_stat_geolocation': False,
                           }
         self.input_message = EXAMPLE_INPUT
         self.allowed_error_count = 1
@@ -121,6 +161,7 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
                           'query_ripe_db_ip': True,
                           'query_ripe_stat_ip': False,
                           'query_ripe_stat_asn': False,
+                          'query_ripe_stat_geolocation': False,
                           }
         self.input_message = EXAMPLE_INPUT
         self.allowed_error_count = 1
@@ -134,10 +175,61 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
                               levelname='ERROR')
 
     def test_replace(self):
-        self.sysconfig = {'mode': 'replace'}
+        self.sysconfig = {'mode': 'replace',
+                          'query_ripe_db_asn': False,
+                          'query_ripe_db_ip': False,
+                          'query_ripe_stat_ip': True,
+                          'query_ripe_stat_asn': False,
+                          'query_ripe_stat_geolocation': False,
+                          }
         self.input_message = EMPTY_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EMPTY_REPLACED)
+        self.assertEqual(self.cache.get('stat:127.0.0.1'), b'__no_contact')
+        self.cache.flushdb()  # collides with test_ripe_stat_errors
+
+    def test_ripe_db_as_404(self):
+        """ Server returns a 404 which should not be raised. """
+        self.sysconfig = {'query_ripe_db_asn': True,
+                          'query_ripe_db_ip': False,
+                          'query_ripe_stat_ip': False,
+                          'query_ripe_stat_asn': False,
+                          'query_ripe_stat_geolocation': False,
+                          }
+        self.input_message = DB_404_AS
+        self.run_bot()
+        self.assertMessageEqual(0, DB_404_AS)
+
+    def test_geolocation(self):
+        self.input_message = GEOLOCA_INPUT1
+        self.sysconfig = {'query_ripe_db_asn': False,
+                          'query_ripe_db_ip': False,
+                          'query_ripe_stat_ip': False,
+                          'query_ripe_stat_asn': True,
+                          }
+        self.run_bot()
+        self.assertMessageEqual(0, GEOLOCA_OUTPUT1)
+
+    def test_geolocation_overwrite(self):
+        self.input_message = GEOLOCA_INPUT2
+        self.sysconfig = {'mode': 'replace',
+                          'query_ripe_db_asn': False,
+                          'query_ripe_db_ip': False,
+                          'query_ripe_stat_ip': False,
+                          'query_ripe_stat_asn': True,
+                          }
+        self.run_bot()
+        self.assertMessageEqual(0, GEOLOCA_OUTPUT1)
+
+    def test_geolocation_not_overwrite(self):
+        self.input_message = GEOLOCA_INPUT2
+        self.sysconfig = {'query_ripe_db_asn': False,
+                          'query_ripe_db_ip': False,
+                          'query_ripe_stat_ip': False,
+                          'query_ripe_stat_asn': True,
+                          }
+        self.run_bot()
+        self.assertMessageEqual(0, GEOLOCA_OUTPUT3)
 
 
 if __name__ == '__main__':  # pragma: no cover

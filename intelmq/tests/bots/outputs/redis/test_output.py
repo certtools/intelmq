@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os
 import unittest
 
 import redis
@@ -41,9 +42,9 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
         cls.default_input_message = EXAMPLE_EVENT
         cls.sysconfig = {"redis_server_ip": "127.0.0.1",
                          "redis_server_port": 6379,
-                         "redis_db": 10,
+                         "redis_db": 4,
                          "redis_queue": "test-redis-output-queue",
-                         "redis_password": "none",
+                         "redis_password": os.getenv('INTELMQ_TEST_REDIS_PASSWORD'),
                          "redis_timeout": "50000"}
 
     @test.skip_redis()
@@ -56,7 +57,7 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
         redis_password = self.sysconfig['redis_password']
         redis_timeout = self.sysconfig['redis_timeout']
         redis_conn = redis.ConnectionPool(host=redis_ip, port=redis_port,
-                                          db=redis_db)
+                                          db=redis_db, password=redis_password)
         redis_output = redis.StrictRedis(connection_pool=redis_conn,
                                          socket_timeout=redis_timeout,
                                          password=redis_password)

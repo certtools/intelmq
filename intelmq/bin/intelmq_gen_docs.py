@@ -126,6 +126,13 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
                 if bot_info['parameters']:
                     for key, value in sorted(bot_info['parameters'].items(), key=lambda x: x[0]):
+
+                        if value == "__FEED__":
+                            value = feed
+
+                        if value == "__PROVIDER__":
+                            value = provider
+
                         output += "*  * `%s`: `%s`\n" % (key, value)
 
                 output += '\n'

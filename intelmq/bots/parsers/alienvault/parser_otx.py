@@ -9,7 +9,6 @@ howto_use_python_otx_api.ipynb
 import json
 import urllib.parse as parse
 
-from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 
 HASHES = {

@@ -1,0 +1,18 @@
+#line
+#line
+#line
+#line
+#line
+#line
+#line
+#line
+
+:127.0.0.128:Blocked, $ on lists [cr], See: http://www.surbl.org/lists.html
+.domain1
+:127.0.0.128:Blocked, $ on lists [mw], See: http://www.surbl.org/lists.html
+.domain2
+0.0.0.0
+:127.0.0.128:Blocked, $ on lists [ph], See: http://www.surbl.org/lists.html
+.domain3
+
+#line
