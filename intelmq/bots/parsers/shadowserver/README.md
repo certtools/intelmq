@@ -42,7 +42,7 @@ Possible feednames:
 * `Open-Chargen`
 * `Open-Elasticsearch`
 * `Open-IPMI`
-* `Open-LDAP`
+* `Open-LDAP` (also parses the `Open-LDAP-TCP` feed)
 * `Open-mDNS`
 * `Open-Memcached`
 * `Open-MongoDB`
