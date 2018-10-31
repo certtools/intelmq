@@ -64,7 +64,7 @@
             "description": "Generic URL Fetcher is the bot responsible to get the report from an URL.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "extract_files": "True or string of file names separated by ,",
+                "extract_files": false,
                 "http_password": null,
                 "http_url": "<insert url of feed>",
                 "http_url_formatting": false,

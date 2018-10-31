@@ -30,6 +30,7 @@ CHANGELOG
   - Fix parameter name `extract_files` in BOTS (#1331).
   - Fix handling of `extract_files` parameter if the value is an empty string.
   - Handle not installed dependency library `requests` gracefully.
+  - Explain `extract_files` parameter in docs and use a sane default in BOTS file.
 - `intelmq.bots.collectors.mail.collector_mail_url`:
   - Handle HTTP status codes != 2xx the same as HTTP timeouts: No exception, but graceful handling.
   - Handle HTTP errors (bad status code and timeouts) with `error_procedure` == 'pass' but marking the mail as read and logging the error.

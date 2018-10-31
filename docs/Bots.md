@@ -266,6 +266,10 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
+* `extract_files`: To extract the archive:
+  * `true` for auto-detection / all files
+  * a string of file names separated by `,`
+  * otherwise `null` or `false` for no extraction
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
 * `http_url_formatting`: If `True` (default `False`) `{time[format]}` will be replaced by the current time formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2018` for the year 2018. Currently only the time in local timezone is available. Python's [Format Specification Mini-Language¶](https://docs.python.org/3/library/string.html) is used for this.
 
