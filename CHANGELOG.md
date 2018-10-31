@@ -89,6 +89,7 @@ CHANGELOG
   - Fix parameter name `extract_files` in BOTS (#1331).
   - Fix handling of `extract_files` parameter if the value is an empty string.
   - Handle not installed dependency library `requests` gracefully.
+  - Explain `extract_files` parameter in docs and use a sane default in BOTS file.
 - `intelmq.bots.collectors.mail.collector_mail_url`:
   - Handle HTTP status codes != 2xx the same as HTTP timeouts: No exception, but graceful handling.
   - Handle HTTP errors (bad status code and timeouts) with `error_procedure` == 'pass' but marking the mail as read and logging the error.
@@ -111,6 +112,7 @@ CHANGELOG
   - Add support in parser to ignore some columns in config file by using `False` as intelmq key.
   - Add support for the `Outdated-DNSSEC-Key` and `Outdated-DNSSEC-Key-IPv6` feeds.
   - Add support for the `Accessible-Rsync` feed.
+  - Document support for the `Open-LDAP-TCP` feed.
 - `intelmq.bots.parsers.generic.parser_csv`: If the `skip_header` parameter was set to `True`, the header was not part of the `raw` field as returned by the `recover_line` method. The header is now saved and handled correctly by the fixed recovery method.
 
 #### Experts
