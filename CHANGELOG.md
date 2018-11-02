@@ -82,7 +82,7 @@ CHANGELOG
 
 ### Tests
 - `intelmq.tests.lib.test_bot`: Skip `test_logging_level_other` on python 3.7 because of unclear behavior related to copies of loggers (#1269).
-- `intelmq.tests.bots.collectors.rt.test_collector`: Make test more robust by creating the needed ticket in every test run.
+- `intelmq.tests.bots.collectors.rt.test_collector`: Remove test because the REST interface of the instance has been closed (see also https://github.com/CZ-NIC/python-rt/issues/28).
 
 ### Tools
 - `intelmqctl check`: Shows more detailed information on orphaned queues.
