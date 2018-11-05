@@ -63,6 +63,7 @@ CHANGELOG
   - Handle not installed dependency library `requests` gracefully.
 - `intelmq.bots.experts.sieve.expert`:
   - check method: Add missing of the harmonization for the check, caused an error for every check.
+  - Add text and more context to error messages.
 
 #### Outputs
 - `intelmq.bots.outputs.redis`: Fix sending password to redis server.

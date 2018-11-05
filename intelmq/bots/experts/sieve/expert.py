@@ -8,6 +8,7 @@ Parameters:
 import ipaddress
 import os
 import re
+import traceback
 
 import intelmq.lib.exceptions as exceptions
 from intelmq import HARMONIZATION_CONF_FILE
@@ -81,7 +82,7 @@ class SieveExpertBot(Bot):
             metamodel = SieveExpertBot.init_metamodel()
             SieveExpertBot.read_sieve_file(parameters['file'], metamodel)
         except Exception as e:
-            return [['error', str(e)]]
+            return [['error', 'Validation of Sieve file failed with the following traceback: %r' % traceback.format_exc()]]
 
     def process(self):
         event = self.receive_message()
