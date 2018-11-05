@@ -75,6 +75,9 @@ class SieveExpertBot(Bot):
     @staticmethod
     def check(parameters):
         try:
+            harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
+            SieveExpertBot.harmonization = harmonization_config['event']
+
             metamodel = SieveExpertBot.init_metamodel()
             SieveExpertBot.read_sieve_file(parameters['file'], metamodel)
         except Exception as e:
