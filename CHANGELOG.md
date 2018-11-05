@@ -41,6 +41,8 @@ CHANGELOG
   - Handle not installed dependency library `requests` gracefully.
 - `intelmq.bots.collectors.rt.collector_rt`:
   - Handle not installed dependency library `requests` gracefully.
+- added `intelmq.bots.collectors.shodan.collector_stream` for collecting shodan stream data (#1096).
+  - Correctly check the version of the shodan library, it resulted in wrong comparisons with two digit numbers.
 
 #### Parsers
 - `intelmq.bots.parsers.misp`: Fix Object attribute (#1318).
