@@ -1178,10 +1178,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             bot_parameters.update(bot_config['parameters'])
             bot_check = bot.check(bot_parameters)
             if bot_check:
-                if RETURN_TYPE == 'json':
-                    output.extend(bot_check)
-                else:
-                    for log_line in bot_check:
+                for log_line in bot_check:
+                    if RETURN_TYPE == 'json':
+                        output.append([log_line[0], "Bot %r: %s" % (bot_id, log_line[1])])
+                    else:
                         getattr(self.logger, log_line[0])("Bot %r: %s" % (bot_id, log_line[1]))
         for group in files[BOTS_FILE].values():
             for bot_id, bot in group.items():

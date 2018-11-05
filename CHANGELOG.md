@@ -89,6 +89,7 @@ CHANGELOG
 - `intelmqctl`:
   - Correctly determine the status of bots started with `intelmqctl run`.
   - Fix output of errors during bot status determination, making it compatible to IntelMQ Manager.
+  - `check` subcommand: Show bot ID for messages also in JSON output.
 
 ### Contrib
 - elasticsearch/elasticmapper: Add tlp field (#1308).
