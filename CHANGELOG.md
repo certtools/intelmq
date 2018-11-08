@@ -95,6 +95,7 @@ CHANGELOG
   - Correctly determine the status of bots started with `intelmqctl run`.
   - Fix output of errors during bot status determination, making it compatible to IntelMQ Manager.
   - `check` subcommand: Show bot ID for messages also in JSON output.
+  - `run [bot-id] process -m [message]` works also with bots without a configured source pipeline (#1307).
 
 ### Contrib
 - elasticsearch/elasticmapper: Add tlp field (#1308).
