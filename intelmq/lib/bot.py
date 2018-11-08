@@ -256,7 +256,9 @@ class Bot(object):
                             self.__error_retries_counter = 0  # reset counter
                         # error_procedure: pass and pipeline problem
                         else:
-                            self.stop()
+                            # retry forever, see https://github.com/certtools/intelmq/issues/1333
+                            # https://lists.cert.at/pipermail/intelmq-users/2018-October/000085.html
+                            pass
 
                 # no errors, check for run mode: scheduled
                 elif self.run_mode == 'scheduled':

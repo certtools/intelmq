@@ -12,6 +12,7 @@ CHANGELOG
   - `Bot.acknowledge_message()` deletes `__current_message` to free the memory, saves memory in idling parsers with big reports.
   - `start()`: Warn once per run if `error_dump_message` is set to false.
   - `Bot.start()`, `ParserBot.process()`: If errors happen on bots without destination pipeline, the `on_error` path has been queried and lead to an exception being raised.
+  - `start()`: If `error_procedure` is pass and on pipeline errors, the bot retries forever (#1333).
 - `lib/message.py`:
   - Fix add('extra', ..., overwrite=True): old extra fields have not been deleted previously (#1335).
   - Do not ignore empty or ignored (as defined in `_IGNORED_VALUES`) values of `extra.*` fields for backwards compatibility (#1335).
