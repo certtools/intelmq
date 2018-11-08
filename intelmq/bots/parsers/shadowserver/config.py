@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
+Copyright (c)2016-2018 by Bundesamt für Sicherheit in der Informationstechnik (BSI)
 
-Software engineering by Intevation GmbH
+Software engineering by BSI & Intevation GmbH
 
 This is a configuration File for the shadowserver parser
 
@@ -53,6 +53,7 @@ def get_feed(feedname, logger):
         "Accessible-CWMP": accessible_cwmp,
         "Accessible-Hadoop": accessible_hadoop,
         "Accessible-RDP": accessible_rdp,
+        "Accessible-Rsync": accessible_rsync,
         "Accessible-SMB": accessible_smb,
         "Accessible-Telnet": accessible_telnet,
         "Accessible-VNC": accessible_vnc,
@@ -83,6 +84,8 @@ def get_feed(feedname, logger):
         "Open-SSDP": open_ssdp,
         "Open-TFTP": open_tftp,
         "Open-XDMCP": open_xdmcp,
+        "Outdated-DNSSEC-Key": outdated_dnssec_key,
+        "Outdated-DNSSEC-Key-IPv6": outdated_dnssec_key,  # same format as IPv4 report
         "Sandbox-URL": sandbox_url,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,
         "Spam-URL": spam_url,
@@ -1765,5 +1768,69 @@ accessible_adb = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-adb',
         'protocol.application': 'adb',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Outdated-DNSSEC-Key
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Outdated-DNSSEC-Key-IPv6
+outdated_dnssec_key = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname'),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port', convert_int),
+        ('destination.asn', 'dst_asn', convert_int),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sic', 'dst_sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        # ('classification.identifier', 'tag'),  # always set to 'outdated-dnssec-key' in constant_fields
+        ('extra.', 'public_source', validate_to_none),
+        ('protocol.transport', 'protocol'),
+    ],
+    'constant_fields': {
+        'protocol.application': 'dns',
+        'classification.taxonomy': 'availability',
+        'classification.type': 'other',  # change to "misconfiguration" when available
+        'classification.identifier': 'outdated-dnssec-key',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-rsync
+accessible_rsync = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-rsync' in constant_fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'module', validate_to_none),
+        ('extra.', 'motd', validate_to_none),
+        ('extra.', 'password', convert_bool),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-rsync',
+        'protocol.application': 'rsync',
     },
 }

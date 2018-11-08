@@ -225,17 +225,16 @@ class Bot(object):
 
                         if error_on_message:
 
-                            delete_message = False
                             if self.parameters.error_dump_message:
                                 error_traceback = traceback.format_exception(*error_on_message)
                                 self._dump_message(error_traceback,
                                                    message=self.__current_message)
-                                delete_message = True
+                            else:
+                                warnings.warn("Message will be removed from the pipeline and not dumped to the disk. "
+                                              "Set `error_dump_message` to true to save the message on disk. "
+                                              "This warning is only shown once in the runtime of a bot.")
                             if '_on_error' in self.__destination_queues:
                                 self.send_message(self.__current_message, path='_on_error')
-                                delete_message = True
-                            if delete_message:
-                                self.__current_message = None
 
                             # remove message from pipeline
                             self.acknowledge_message()
@@ -385,6 +384,10 @@ class Bot(object):
                                                     'but needed')
 
             self.logger.debug("Sending message.")
+
+            raw_message = libmessage.MessageFactory.serialize(message)
+            self.__destination_pipeline.send(raw_message, path=path)
+
             self.__message_counter += 1
             if not self.__message_counter_start:
                 self.__message_counter_start = datetime.datetime.now()
@@ -393,9 +396,6 @@ class Bot(object):
                 self.logger.info("Processed %d messages since last logging.", self.__message_counter)
                 self.__message_counter = 0
                 self.__message_counter_start = datetime.datetime.now()
-
-            raw_message = libmessage.MessageFactory.serialize(message)
-            self.__destination_pipeline.send(raw_message, path=path)
 
     def receive_message(self):
         self.logger.debug('Waiting for incoming message.')
@@ -434,6 +434,9 @@ class Bot(object):
         """
         if self.__source_pipeline:
             self.__source_pipeline.acknowledge()
+
+        # free memory of last message
+        self.__current_message = None
 
     def _dump_message(self, error_traceback, message: dict):
         if message is None or getattr(self.parameters, 'testing', False):
