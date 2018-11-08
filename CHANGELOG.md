@@ -68,6 +68,7 @@ CHANGELOG
 - `intelmq.bots.experts.sieve.expert`:
   - check method: Add missing of the harmonization for the check, caused an error for every check.
   - Add text and more context to error messages.
+  - README: Fix 'modify' to 'update' (#1340).
 
 #### Outputs
 - `intelmq.bots.outputs.redis`: Fix sending password to redis server.
