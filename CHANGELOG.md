@@ -67,7 +67,9 @@ CHANGELOG
 - `lib.bot.py`:
   - `ParserBot`'s method `recover_line_csv` now also handles given `tempdata`.
   - `Bot.acknowledge_message()` deletes `__current_message` to free the memory, saves memory in idling parsers with big reports.
-  - `process()`: Warn once per run if `error_dump_message` is set to false.
+  - `start()`: Warn once per run if `error_dump_message` is set to false.
+  - `Bot.start()`, `ParserBot.process()`: If errors happen on bots without destination pipeline, the `on_error` path has been queried and lead to an exception being raised.
+  - `start()`: If `error_procedure` is pass and on pipeline errors, the bot retries forever (#1333).
 - `lib/message.py`:
   - Fix add('extra', ..., overwrite=True): old extra fields have not been deleted previously (#1335).
   - Do not ignore empty or ignored (as defined in `_IGNORED_VALUES`) values of `extra.*` fields for backwards compatibility (#1335).
@@ -100,6 +102,8 @@ CHANGELOG
   - Handle not installed dependency library `requests` gracefully.
 - `intelmq.bots.collectors.rt.collector_rt`:
   - Handle not installed dependency library `requests` gracefully.
+- added `intelmq.bots.collectors.shodan.collector_stream` for collecting shodan stream data (#1096).
+  - Correctly check the version of the shodan library, it resulted in wrong comparisons with two digit numbers.
 
 #### Parsers
 - `intelmq.bots.parsers.misp`: Fix Object attribute (#1318).
@@ -120,6 +124,9 @@ CHANGELOG
   - Handle not installed dependency library `requests` gracefully.
 - `intelmq.bots.experts.ripencc_abuse_contact.expert`:
   - Handle not installed dependency library `requests` gracefully.
+- `intelmq.bots.experts.sieve.expert`:
+  - check method: Add missing of the harmonization for the check, caused an error for every check.
+  - Add text and more context to error messages.
 
 #### Outputs
 - `intelmq.bots.outputs.redis`: Fix sending password to redis server.
@@ -141,13 +148,15 @@ CHANGELOG
 
 ### Tests
 - `intelmq.tests.lib.test_bot`: Skip `test_logging_level_other` on python 3.7 because of unclear behavior related to copies of loggers (#1269).
-- `intelmq.tests.bots.collectors.rt.test_collector`: Make test more robust by creating the needed ticket in every test run.
+- `intelmq.tests.bots.collectors.rt.test_collector`: Remove test because the REST interface of the instance has been closed (see also https://github.com/CZ-NIC/python-rt/issues/28).
 
 ### Tools
 - `intelmqctl check`: Shows more detailed information on orphaned queues.
 - `intelmqctl`:
   - Correctly determine the status of bots started with `intelmqctl run`.
   - Fix output of errors during bot status determination, making it compatible to IntelMQ Manager.
+  - `check` subcommand: Show bot ID for messages also in JSON output.
+  - `run [bot-id] process -m [message]` works also with bots without a configured source pipeline (#1307).
 
 ### Contrib
 - elasticsearch/elasticmapper: Add tlp field (#1308).

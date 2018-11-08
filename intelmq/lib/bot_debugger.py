@@ -22,6 +22,7 @@ from intelmq.lib import utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.utils import StreamHandler
 from intelmq.lib.utils import error_message_from_exc
+from intelmq.lib.pipeline import Pipeline
 
 
 class BotDebugger:
@@ -119,6 +120,9 @@ class BotDebugger:
     def _process(self, dryrun, msg, show):
         if msg:
             msg = MessageFactory.serialize(self.arg2msg(msg))
+            if not self.instance._Bot__source_pipeline:
+                # is None if source pipeline does not exist
+                self.instance._Bot__source_pipeline = Pipeline(None)
             self.instance._Bot__source_pipeline.receive = lambda: msg
             self.instance.logger.info(" * Message from cli will be used when processing.")
 
