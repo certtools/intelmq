@@ -42,7 +42,7 @@ PHISHING_EVENTS = [{
                         'source.registry': 'ARIN',
                         'extra.inetnum': '104.16.0.0 - 104.31.255.255',
                         'source.geolocation.cc': 'US',
-                        'time.source': '2017-08-06T14:59:50+00:00'
+                        'time.source': '2017-08-06T14:59:50+00:00',
                     },
                     {
                         'source.abuse_contact': 'abuse@mochahost.com',
@@ -68,7 +68,7 @@ PHISHING_EVENTS = [{
                         'source.registry': 'ARIN',
                         'extra.inetnum': '198.38.80.0 - 198.38.95.255',
                         'source.geolocation.cc': 'US',
-                        'time.source': '2017-08-23T17:04:43+00:00'
+                        'time.source': '2017-08-23T17:04:43+00:00',
                     },
                     {
                         'classification.type': 'phishing',
@@ -123,7 +123,7 @@ VIRUSES_EVENTS = [{
                     'source.abuse_contact': 'abuse@cloudflare.com',
                     'extra.ns1': 'noah.ns.cloudflare.com',
                     'extra.id': '112588349',
-                    'time.source': '2017-12-12T22:30:10+00:00'
+                    'time.source': '2017-12-12T22:30:10+00:00',
                 },
                 {
                     'malware.name': 'phishing.html.doc',
@@ -153,7 +153,7 @@ VIRUSES_EVENTS = [{
                     'source.abuse_contact': 'abuse@netregistry.com.au',
                     'extra.ns1': 'ns-2.ezyreg.com',
                     'extra.id': '112588346',
-                    'time.source': '2017-12-12T22:30:09+00:00'
+                    'time.source': '2017-12-12T22:30:09+00:00',
                 }]
 
 

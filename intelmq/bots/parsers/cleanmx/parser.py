@@ -136,9 +136,7 @@ class CleanMXParserBot(ParserBot):
 
                 if key == "time.source":
                     try:
-                        value = (
-                            datetime.utcfromtimestamp(int(value)).isoformat()
-                            + " UTC")
+                        value = (datetime.utcfromtimestamp(int(value)).isoformat() + " UTC")
                     except TypeError as e:
                         self.logger.warning(
                             'No valid "first" field epoch time found, skipping '
