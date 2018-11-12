@@ -118,6 +118,7 @@ CHANGELOG
   - Add support for the `Accessible-Rsync` feed.
   - Document support for the `Open-LDAP-TCP` feed.
 - `intelmq.bots.parsers.generic.parser_csv`: If the `skip_header` parameter was set to `True`, the header was not part of the `raw` field as returned by the `recover_line` method. The header is now saved and handled correctly by the fixed recovery method.
+- `intelmq.bots.parsers.cleanmx.parser`: Use field `first` instead of `firsttime` for `time.source` (#1329, #1348).
 
 #### Experts
 - `intelmq.bots.experts.national_cert_contact_certat.expert`:
