@@ -8,6 +8,7 @@ Parameters:
 import ipaddress
 import os
 import re
+import traceback
 
 import intelmq.lib.exceptions as exceptions
 from intelmq import HARMONIZATION_CONF_FILE
@@ -75,22 +76,26 @@ class SieveExpertBot(Bot):
     @staticmethod
     def check(parameters):
         try:
+            harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
+            SieveExpertBot.harmonization = harmonization_config['event']
+
             metamodel = SieveExpertBot.init_metamodel()
             SieveExpertBot.read_sieve_file(parameters['file'], metamodel)
         except Exception as e:
-            return [['error', str(e)]]
+            return [['error', 'Validation of Sieve file failed with the following traceback: %r' % traceback.format_exc()]]
 
     def process(self):
         event = self.receive_message()
         procedure = Procedure.CONTINUE
-        for rule in self.sieve.rules:
-            procedure = self.process_rule(rule, event)
-            if procedure == Procedure.KEEP:
-                self.logger.debug('Stop processing based on rule at %s: %s.', self.get_linecol(rule), event)
-                break
-            elif procedure == Procedure.DROP:
-                self.logger.debug('Dropped event based on rule at %s: %s.', self.get_linecol(rule), event)
-                break
+        if self.sieve:  # empty rules file results in empty string
+            for rule in self.sieve.rules:
+                procedure = self.process_rule(rule, event)
+                if procedure == Procedure.KEEP:
+                    self.logger.debug('Stop processing based on rule at %s: %s.', self.get_linecol(rule), event)
+                    break
+                elif procedure == Procedure.DROP:
+                    self.logger.debug('Dropped event based on rule at %s: %s.', self.get_linecol(rule), event)
+                    break
 
         # forwarding decision
         if procedure != Procedure.DROP:
