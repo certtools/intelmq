@@ -24,7 +24,9 @@ Possible feednames:
 * `Accessible-ADB`
 * `Accessible-Cisco-Smart-Install`
 * `Accessible-CWMP`
+* `Accessible-DB2`
 * `Accessible-Hadoop`
+* `Accessible-HTTP`
 * `Accessible-RDP`
 * `Accessible-Rsync`
 * `Accessible-SMB`
