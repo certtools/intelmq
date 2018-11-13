@@ -48,8 +48,8 @@ import re
 def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
-		"Open-DB2": scan_db2,
-		"Accessible-HTTP": scan_http,
+        "Open-DB2": scan_db2,
+        "Accessible-HTTP": scan_http,
         "Accessible-ADB": accessible_adb,
         "Accessible-Cisco-Smart-Install": accessible_cisco_smart_install,
         "Accessible-CWMP": accessible_cwmp,
@@ -218,66 +218,66 @@ def convert_date(value):
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-DB2
 scan_db2 = {
-	'required_fields': [
-		('time.source', 'timestamp', add_UTC_to_timestamp),
-		('source.ip', 'ip'),
-		('source.port', 'port')
-	],
-	'optional_fields': [
-		('protocol.transport', 'protocol'),
-		('source.reverse_dns', 'hostname'),
-		('source.asn', 'asn'),
-		('source.geolocation.cc', 'geo'),
-		('source.geolocation.region', 'region'),
-		('source.geolocation.city', 'city'),
-		('destination.reverse_dns', 'db2_hostname'),
-		('extra.', 'naics', invalidate_zero),
-		('extra.', 'sic', invalidate_zero),
-		('extra.', 'size', convert_int),
-		('extra.', 'servername', validate_to_none),
-		('extra.', 'tag', validate_to_none)
-	],
-	'constant_fields': {
-		'classification.taxonomy': 'vulnerable',
-		'classification.type': 'vulnerable service',
-		'classification.identifier': 'open-db2',
-	}
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('destination.reverse_dns', 'db2_hostname'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'size', convert_int),
+        ('extra.', 'servername', validate_to_none),
+        ('extra.', 'tag', validate_to_none)
+    ],
+        'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'open-db2',
+    }
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-HTTP
 scan_http = {
-	'required_fields': [
-		('time.source', 'timestamp', add_UTC_to_timestamp),
-		('source.ip', 'ip'),
-		('source.port', 'port')
-	],
-	'optional_fields': [
-		('protocol.transport', 'protocol'),
-		('source.reverse_dns', 'hostname'),
-		('source.asn', 'asn'),
-		('source.geolocation.cc', 'geo'),
-		('source.geolocation.region', 'region'),
-		('source.geolocation.city', 'city'),
-		('extra.', 'naics', invalidate_zero),
-		('extra.', 'sic', invalidate_zero),
-		('extra.', 'tag', validate_to_none),
-		('extra.', 'http', validate_to_none),
-		('extra.', 'http_code', convert_int),
-		('extra.', 'http_reason', validate_to_none),
-		('extra.', 'content_type', validate_to_none),
-		('extra.', 'connection', validate_to_none),
-		('extra.', 'www_authenticate', validate_to_none),
-		('extra.', 'set_cookie', validate_to_none),
-		('extra.', 'server', validate_to_none),
-		('extra.', 'content_length', invalidate_zero),
-		('extra.', 'transfer_encoding', validate_to_none),
-		('extra.', 'http_date', convert_date),
-	],
-	'constant_fields': {
-		'classification.taxonomy': 'vulnerable',
-		'classification.type': 'vulnerable service',
-		'classification.identifier': 'http-scan',
-	}
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'http', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server', validate_to_none),
+        ('extra. ', 'content_length', invalidate_zero),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'http-scan',
+    }
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
@@ -318,7 +318,6 @@ open_mdns = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-mdns',
         'protocol.application': 'mdns',
-
     }
 }
 
@@ -347,7 +346,6 @@ open_chargen = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-chargen',
         'protocol.application': 'chargen',
-
     },
 }
 
@@ -379,7 +377,6 @@ open_tftp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-tftp',
         'protocol.application': 'tftp',
-
     },
 }
 
@@ -426,7 +423,6 @@ sinkhole_http_drone = {
         # but since it is about HTTP the protocol is always set to 'tcp'.
         'protocol.transport': 'tcp',
         'protocol.application': 'http',
-
     },
 }
 
@@ -468,7 +464,6 @@ ipv6_sinkhole_http_drone = {
         # The feed does not include explicit information on the protocol
         # but since it is about HTTP the protocol is always set to 'tcp'.
         'protocol.transport': 'tcp',
-
     },
 }
 
@@ -513,7 +508,6 @@ microsoft_sinkhole = {
         # classification.identifier will be set to (harmonized) malware name by modify expert
         'protocol.transport': 'tcp',
         'protocol.application': 'http',
-
     },
 }
 
@@ -554,7 +548,6 @@ open_redis = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-redis',
         'protocol.application': 'redis',
-
     },
 }
 
@@ -585,7 +578,6 @@ open_portmapper = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-portmapper',
         'protocol.application': 'portmapper',
-
     },
 }
 
@@ -631,7 +623,6 @@ open_ipmi = {
         'classification.identifier': 'open-ipmi',
         'protocol.application': 'ipmi',
         'protocol.transport': 'udp',
-
     },
 }
 
@@ -660,7 +651,6 @@ open_qotd = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-qotd',
         'protocol.application': 'qotd',
-
     },
 }
 
@@ -698,7 +688,6 @@ open_ssdp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-ssdp',
         'protocol.application': 'ssdp',
-
     },
 }
 
@@ -728,7 +717,6 @@ open_snmp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-snmp',
         'protocol.application': 'snmp',
-
     },
 }
 
@@ -763,7 +751,6 @@ open_mssql = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-mssql',
         'protocol.application': 'mssql',
-
     },
 }
 
@@ -801,7 +788,6 @@ open_mongodb = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-mongodb',
         'protocol.application': 'mongodb',
-
     },
 }
 
@@ -833,7 +819,6 @@ open_netbios_nameservice = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-netbios-nameservice',
         'protocol.application': 'netbios-nameservice',
-
     },
 }
 
@@ -871,7 +856,6 @@ open_elasticsearch = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-elasticsearch',
         'protocol.application': 'elasticsearch',
-
     },
 }
 
@@ -903,7 +887,6 @@ dns_open_resolvers = {
         'classification.taxonomy': 'vulnerable',
         'classification.identifier': 'dns-open-resolver',
         'protocol.application': 'dns',
-
     },
 }
 
@@ -932,7 +915,6 @@ ntp_monitor = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'ntp-monitor',
         'protocol.application': 'ntp',
-
     },
 }
 
@@ -1016,7 +998,6 @@ ssl_freak_vulnerable_servers = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'ssl-freak',
         'protocol.application': 'https',
-
     },
 }
 
@@ -1100,7 +1081,6 @@ ssl_poodle_vulnerable_servers = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'ssl-poodle',
         'protocol.application': 'https',
-
     },
 }
 
@@ -1135,7 +1115,6 @@ open_memcached = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-memcached',
         'protocol.application': 'memcached',
-
     },
 }
 
@@ -1183,7 +1162,6 @@ drone = {
         'classification.taxonomy': 'malicious code',
         'classification.type': 'infected system',
         # classification.identifier will be set to (harmonized) malware name by modify expert
-
     },
 }
 drone_spam = {
@@ -1229,7 +1207,6 @@ drone_spam = {
         'classification.taxonomy': 'abusive content',
         'classification.type': 'spam',
         'classification.identifier': 'spam',
-
     },
 }
 
@@ -1260,7 +1237,6 @@ open_xdmcp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-xdmcp',
         'protocol.application': 'xdmcp',
-
     },
 }
 
@@ -1294,7 +1270,6 @@ compromised_website = {
         'classification.taxonomy': 'intrusions',
         'classification.type': 'compromised',
         'classification.identifier': 'compromised-website',
-
     },
 }
 
@@ -1326,7 +1301,6 @@ open_natpmp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-natpmp',
         'protocol.application': 'natpmp',
-
     },
 }
 
@@ -1354,7 +1328,6 @@ open_netis = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-netis',
         'protocol.transport': 'udp',
-
     },
 }
 
@@ -1406,7 +1379,6 @@ ntp_version = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'ntp-version',
         'protocol.application': 'ntp',
-
     },
 }
 
@@ -1429,7 +1401,6 @@ sandbox_url = {
         'classification.taxonomy': 'malicious code',
         'classification.type': 'malware',
         'classification.identifier': 'sandbox-url',
-
     },
 }
 
@@ -1455,14 +1426,11 @@ spam_url = {
         ('extra.', 'sender', validate_to_none),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'src_naics', invalidate_zero),
-        ('extra.', 'src_sic', invalidate_zero),
     ],
     'constant_fields': {
         'classification.taxonomy': 'abusive content',
         'classification.type': 'spam',
         'classification.identifier': 'spam-url',
-
     },
 }
 
@@ -1500,7 +1468,6 @@ vulnerable_isakmp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-ike',
         'protocol.application': 'ipsec',
-
     }
 }
 
@@ -1543,7 +1510,6 @@ accessible_rdp = {
         'classification.identifier': 'open-rdp',
         'protocol.transport': 'tcp',
         'protocol.application': 'rdp',
-
     },
 }
 
@@ -1572,7 +1538,6 @@ accessible_smb = {
         'classification.identifier': 'open-smb',
         'protocol.transport': 'tcp',
         'protocol.application': 'smb',
-
     },
 }
 
@@ -1622,7 +1587,6 @@ open_ldap = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-ldap',
         'protocol.application': 'ldap',
-
     }
 }
 
@@ -1648,7 +1612,6 @@ blacklisted_ip = {
         'classification.taxonomy': 'other',
         'classification.type': 'blacklist',
         'classification.identifier': 'blacklisted-ip',
-
     }
 }
 
@@ -1676,7 +1639,6 @@ accessible_telnet = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-telnet',
         'protocol.application': 'telnet',
-
     }
 }
 
@@ -1714,7 +1676,6 @@ accessible_cwmp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-cwmp',
         'protocol.application': 'cwmp',
-
     }
 }
 
@@ -1742,7 +1703,6 @@ accessible_vnc = {
         'classification.identifier': 'open-vnc',
         'protocol.transport': 'tcp',
         'protocol.application': 'vnc',
-
     }
 }
 
@@ -1769,7 +1729,6 @@ accessible_cisco_smart_install = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-cisco-smart-install',
         'protocol.application': 'cisco-smart-install',
-
     }
 }
 
@@ -1811,7 +1770,6 @@ drone_brute_force = {
     'constant_fields': {
         'classification.taxonomy': 'intrusion attempts',
         'classification.type': 'brute-force',
-
     }
 }
 
@@ -1846,7 +1804,6 @@ accessible_hadoop = {
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-hadoop',
-
     }
 }
 
@@ -1877,7 +1834,6 @@ accessible_adb = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-adb',
         'protocol.application': 'adb',
-
     },
 }
 
