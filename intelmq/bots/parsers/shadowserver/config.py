@@ -48,8 +48,6 @@ import re
 def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
-		"Outdated-DNS": outdated_dnssec_key,
-		"Outdated-DNS6": outdated_dnssec_key_v6,
 		"Open-DB2": scan_db2,
 		"Accessible-HTTP": scan_http,
         "Accessible-ADB": accessible_adb,
@@ -217,75 +215,6 @@ def validate_fqdn(value):
 def convert_date(value):
     return harmonization.DateTime.sanitize(value)
 
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Outdated-DNSSEC-Key
-outdated_dnssec_key = {
-	'required_fields': [
-		('time.source', 'timestamp', add_UTC_to_timestamp),
-		('source.ip', 'ip')
-	],
-	'optional_fields': [
-		('source.asn', 'asn'),
-		('source.geolocation.cc', 'geo'),
-		('source.geolocation.region', 'region'),
-		('source.geolocation.city', 'city'),
-		('source.reverse_dns', 'hostname'),
-		('destination.ip', 'dst_ip', validate_ip),
-		('destination.port', 'dst_port'),
-		('destination.asn', 'dst_asn'),
-		('destination.geolocation.cc', 'dst_geo'),
-		('protocol.transport', 'protocol'),
-		('extra.', 'naics', invalidate_zero),
-		('extra.', 'sic', invalidate_zero),
-		('extra.destination.naics', 'dst_naics', invalidate_zero),
-		('extra.destination.sic', 'dst_sic', invalidate_zero),
-		('extra.destination.sector', 'dst_sector', invalidate_zero),
-		('extra.', 'sector', validate_to_none),
-		('extra.', 'tag', validate_to_none),
-		('extra.', 'public_source', validate_to_none)
-	],
-	'constant_fields': {
-		'classification.taxonomy': 'vulnerable',
-		'classification.type': 'vulnerable service',
-		'classicication.identifier': 'outdated_dnssec_key',
-		'protocol.application': 'dns',
-
-	}
-}
-
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Outdated-DNSSEC-Key-IPv6
-outdated_dnssec_key_v6 = {
-	'required_fields': [
-		('time.source', 'timestamp', add_UTC_to_timestamp),
-		('source.ip', 'ip')
-	],
-	'optional_fields': [
-		('source.asn', 'asn'),
-		('source.geolocation.cc', 'geo'),
-		('source.geolocation.region', 'region'),
-		('source.geolocation.city', 'city'),
-		('source.reverse_dns', 'hostname'),
-		('destination.ip', 'dst_ip', validate_ip),
-		('destination.port', 'dst_port'),
-		('destination.asn', 'dst_asn'),
-		('destination.geolocation.cc', 'dst_geo'),
-		('protocol.transport', 'protocol'),
-		('extra.', 'naics', invalidate_zero),
-		('extra.', 'sic', invalidate_zero),
-		('extra.destination.naics', 'dst_naics', invalidate_zero),
-		('extra.destination.sic', 'dst_sic', invalidate_zero),
-		('extra.destination.sector', 'dst_sector', invalidate_zero),
-		('extra.', 'sector', validate_to_none),
-		('extra.', 'tag', validate_to_none),
-		('extra.', 'public_source', validate_to_none)
-	],
-	'constant_fields': {
-		'classification.taxonomy': 'vulnerable',
-		'classification.type': 'vulnerable service',
-		'classicication.identifier': 'outdated_dnssec_key',
-		'protocol.application': 'dns',
-
-	}
-}
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-DB2
 scan_db2 = {
@@ -295,6 +224,7 @@ scan_db2 = {
 		('source.port', 'port')
 	],
 	'optional_fields': [
+		('protocol.transport', 'protocol'),
 		('source.reverse_dns', 'hostname'),
 		('source.asn', 'asn'),
 		('source.geolocation.cc', 'geo'),
@@ -305,14 +235,12 @@ scan_db2 = {
 		('extra.', 'sic', invalidate_zero),
 		('extra.', 'size', convert_int),
 		('extra.', 'servername', validate_to_none),
-		('extra.', 'tag', validate_to_none),
+		('extra.', 'tag', validate_to_none)
 	],
 	'constant_fields': {
 		'classification.taxonomy': 'vulnerable',
 		'classification.type': 'vulnerable service',
-		'classicication.identifier': 'open_db2',
-		'protocol.transport': 'udp',
-
+		'classification.identifier': 'open-db2',
 	}
 }
 
@@ -324,6 +252,7 @@ scan_http = {
 		('source.port', 'port')
 	],
 	'optional_fields': [
+		('protocol.transport', 'protocol'),
 		('source.reverse_dns', 'hostname'),
 		('source.asn', 'asn'),
 		('source.geolocation.cc', 'geo'),
@@ -340,16 +269,14 @@ scan_http = {
 		('extra.', 'www_authenticate', validate_to_none),
 		('extra.', 'set_cookie', validate_to_none),
 		('extra.', 'server', validate_to_none),
-		('extra.', 'content_length', validate_to_none),
+		('extra.', 'content_length', invalidate_zero),
 		('extra.', 'transfer_encoding', validate_to_none),
 		('extra.', 'http_date', convert_date),
 	],
 	'constant_fields': {
 		'classification.taxonomy': 'vulnerable',
 		'classification.type': 'vulnerable service',
-		'classicication.identifier': 'http-scan',
-		'protocol.transport': 'tcp',
-
+		'classification.identifier': 'http-scan',
 	}
 }
 
