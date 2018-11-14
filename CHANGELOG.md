@@ -104,6 +104,7 @@ Update to 2018-09-26 version. New values are per taxonomy:
   - Add text and more context to error messages.
   - README: Fix 'modify' to 'update' (#1340).
   - Handle empty rules file (#1343).
+- `intelmq.bots.experts.idea.expert`: Add mappings for new harmonization `classification.type` values, see above.
 
 #### Outputs
 - `intelmq.bots.outputs.redis`: Fix sending password to redis server.
