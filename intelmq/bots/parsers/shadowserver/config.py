@@ -49,6 +49,7 @@ def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
         "Accessible-ADB": accessible_adb,
+        "Accessible-AFP": accessible_afp,
         "Accessible-Cisco-Smart-Install": accessible_cisco_smart_install,
         "Accessible-CWMP": accessible_cwmp,
         "Accessible-Hadoop": accessible_hadoop,
@@ -1832,5 +1833,40 @@ accessible_rsync = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-rsync',
         'protocol.application': 'rsync',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-AFP
+accessible_afp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-afp' in constant_fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'machine_type', validate_to_none),
+        ('extra.', 'afp_versions', validate_to_none),
+        ('extra.', 'uams', validate_to_none),
+        ('extra.', 'flags', validate_to_none),
+        ('extra.', 'server_name', validate_to_none),
+        ('extra.', 'signature', validate_to_none),
+        ('extra.', 'directory_service', validate_to_none),
+        ('extra.', 'utf8_servername', validate_to_none),
+        ('extra.', 'network_address', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-afp',
+        'protocol.application': 'afp',
     },
 }
