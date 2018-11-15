@@ -24,7 +24,6 @@ Possible feednames:
 * `Accessible-ADB`
 * `Accessible-Cisco-Smart-Install`
 * `Accessible-CWMP`
-* `Accessible-DB2`
 * `Accessible-Hadoop`
 * `Accessible-HTTP`
 * `Accessible-RDP`
@@ -42,6 +41,7 @@ Possible feednames:
 * `NTP-Monitor`
 * `NTP-Version`
 * `Open-Chargen`
+* `Open-DB2-Discovery-Service`
 * `Open-Elasticsearch`
 * `Open-IPMI`
 * `Open-LDAP`
