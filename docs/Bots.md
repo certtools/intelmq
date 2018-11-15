@@ -343,6 +343,36 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `subject_regex`: regular expression to look for a subject
 * `attach_regex`: regular expression of the name of the attachment
 * `attach_unzip`: whether to unzip the attachment (default: `true`)
+* `sent_from`: filter messages by sender
+* `sent_to`: filter messages by recipient
+
+* * *
+
+### Generic Mail Body Fetcher
+
+
+#### Information:
+* `name:` intelmq.bots.collectors.mail.collector_mail_body
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` collect messages from mailboxes, forwards the bodies as reports. Each non-empty body with the matching content type is sent as individual report.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `mail_host`: FQDN or IP of mail server
+* `mail_user`: user account of the email account
+* `mail_password`: password associated with the user account
+* `mail_ssl`: whether the mail account uses SSL (default: `true`)
+* `folder`: folder in which to look for mails (default: `INBOX`)
+* `subject_regex`: regular expression to look for a subject
+* `sent_from`: filter messages by sender
+* `sent_to`: filter messages by recipient
+* `content_types`: Which bodies to use based on the content_type. Default: `true`/`['html', 'plain']` for all:
+  - string with comma separated values, e.g. `['html', 'plain']`
+  - `true`, `false`, `null`: Same as default value
+  - `string`, e.g. `'plain'`
 
 * * *
 

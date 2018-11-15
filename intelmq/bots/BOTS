@@ -69,6 +69,22 @@
                 "url_regex": "http://"
             }
         },
+        "Mail Body Fetcher": {
+            "description": "Monitor IMAP mailboxes and fetch mail bodies",
+            "module": "intelmq.bots.collectors.mail.collector_mail_body",
+            "parameters": {
+                "content_types": true,
+                "folder": "INBOX",
+                "mail_host": "<host>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "mail_user": "<user>",
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
+                "rate_limit": 60,
+                "subject_regex": "<subject>"
+            }
+        },
         "URL Fetcher": {
             "description": "Generic URL Fetcher is the bot responsible to get the report from an URL.",
             "module": "intelmq.bots.collectors.http.collector_http",
