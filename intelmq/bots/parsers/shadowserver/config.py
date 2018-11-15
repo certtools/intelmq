@@ -60,6 +60,7 @@ def get_feed(feedname, logger):
         "Blacklisted-IP": blacklisted_ip,
         "Compromised-Website": compromised_website,
         "DNS-Open-Resolvers": dns_open_resolvers,
+        "Darknet": darknet,
         "Drone-Brute-Force": drone_brute_force,
         "Drone": drone,
         "IPv6-Sinkhole-HTTP-Drone": ipv6_sinkhole_http_drone,
@@ -1832,5 +1833,40 @@ accessible_rsync = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-rsync',
         'protocol.application': 'rsync',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Darknet
+darknet = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'type', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port', convert_int),
+        ('destination.asn', 'dst_asn', convert_int),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('extra.', 'count', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sic', 'dst_sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'family', validate_to_none),
+        ('classification.identifier', 'tag'),  # different values possible in this report
+        ('extra.', 'public_source', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
     },
 }
