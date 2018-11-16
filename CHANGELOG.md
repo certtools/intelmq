@@ -132,7 +132,10 @@ CHANGELOG
   - Handle empty rules file (#1343).
 
 #### Outputs
-- `intelmq.bots.outputs.redis`: Fix sending password to redis server.
+- `intelmq.bots.outputs.redis`:
+  - Fix sending password to redis server.
+  - Fix for redis-py >= 3.0.0: Convert Event to string explicitly (#1354).
+  - Use `Redis` class instead of deprecated `StrictRedis` for redis-py >= 3.0.0 (#1355).
 - `intelmq.bots.outputs.mongodb`:
   - New parameter `replacement_char` (default: `'_'`) for non-hierarchical output as dots in key names are not allowed (#1324, #1322).
   - Save value of fields `time.observation` and `time.source` as native datetime object, not as string (#1322).
