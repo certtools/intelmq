@@ -55,8 +55,8 @@ class IdeaExpertBot(Bot):
         "unauthorized-command": "Intrusion.AdminCompromise",
         "unauthorized-login": "Intrusion.AdminCompromise",
         "violence": "Abusive.Violence",
-        "data-loss": "Other",
-        "burglary": "Other",
+        "data-loss": "Information",
+        "burglary": "Intrusion",
         "weak-crypto": "Vulnerable.Config",
         "Unauthorised-information-access": "Information.UnauthorizedAccess",
         "privileged-account-compromise": "Intrusion.AdminCompromise",
@@ -73,7 +73,7 @@ class IdeaExpertBot(Bot):
         "vulnerable-system": "Vulnerable.Config",
         "Unauthorised-information-modification": "Information.UnauthorizedModification",
         "sabotage": "Availability.Sabotage",
-        "malware-distribution": "Other",
+        "malware-distribution": "Malware",
         "outage": "Availability.Outage",
         "ddos-amplifier": "Intrusion.Botnet",
         "copyright": "Fraud.Copyright",
@@ -89,6 +89,7 @@ class IdeaExpertBot(Bot):
         "dga domain": "DGA",
         "proxy": "Proxy",
         "tor": "Tor",
+        "malware-distribution": "Malware"
     }
 
     def init(self):
