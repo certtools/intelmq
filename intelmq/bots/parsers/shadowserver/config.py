@@ -236,7 +236,7 @@ open_db2_discovery_service = {
         ('extra.', 'size', convert_int),
         ('extra.', 'servername', validate_to_none),
     ],
-        'constant_fields': {
+    'constant_fields': {
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-db2-discovery-service',
