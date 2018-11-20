@@ -59,6 +59,8 @@ CHANGELOG
   - Add support for the `Accessible-Rsync` feed.
   - Document support for the `Open-LDAP-TCP` feed.
   - Add support for `Accessible-HTTP` and `Open-DB2-Discovery-Service` (#1349).
+  - Add support for `Accessible-AFP` (#1351).
+  - Add support for `Darknet` (#1353).
 - `intelmq.bots.parsers.generic.parser_csv`: If the `skip_header` parameter was set to `True`, the header was not part of the `raw` field as returned by the `recover_line` method. The header is now saved and handled correctly by the fixed recovery method.
 - `intelmq.bots.parsers.cleanmx.parser`: Use field `first` instead of `firsttime` for `time.source` (#1329, #1348).
 
