@@ -48,6 +48,8 @@ import re
 def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
+        "Open-DB2-Discovery-Service": open_db2_discovery_service,
+        "Accessible-HTTP": accessible_http,
         "Accessible-ADB": accessible_adb,
         "Accessible-Cisco-Smart-Install": accessible_cisco_smart_install,
         "Accessible-CWMP": accessible_cwmp,
@@ -213,6 +215,68 @@ def validate_fqdn(value):
 def convert_date(value):
     return harmonization.DateTime.sanitize(value)
 
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-DB2
+open_db2_discovery_service = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'db2_hostname', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'size', convert_int),
+        ('extra.', 'servername', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'open-db2-discovery-service',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-HTTP
+accessible_http = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'http', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server', validate_to_none),
+        ('extra.', 'content_length', invalidate_zero),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+        'classification.identifier': 'accessible-http',
+    }
+}
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
 open_mdns = {
