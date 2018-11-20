@@ -22,6 +22,7 @@ They are different from the wiki page names!
 
 Possible feednames:
 * `Accessible-ADB`
+* `Accessible-AFP`
 * `Accessible-Cisco-Smart-Install`
 * `Accessible-CWMP`
 * `Accessible-Hadoop`
@@ -33,6 +34,7 @@ Possible feednames:
 * `Accessible-VNC`
 * `Blacklisted-IP`
 * `Compromised-Website`
+* `Darknet`
 * `DNS-Open-Resolvers`
 * `Drone`
 * `Drone-Brute-Force`
