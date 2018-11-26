@@ -48,7 +48,10 @@ import re
 def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
+        "Open-DB2-Discovery-Service": open_db2_discovery_service,
+        "Accessible-HTTP": accessible_http,
         "Accessible-ADB": accessible_adb,
+        "Accessible-AFP": accessible_afp,
         "Accessible-Cisco-Smart-Install": accessible_cisco_smart_install,
         "Accessible-CWMP": accessible_cwmp,
         "Accessible-Hadoop": accessible_hadoop,
@@ -60,6 +63,7 @@ def get_feed(feedname, logger):
         "Blacklisted-IP": blacklisted_ip,
         "Compromised-Website": compromised_website,
         "DNS-Open-Resolvers": dns_open_resolvers,
+        "Darknet": darknet,
         "Drone-Brute-Force": drone_brute_force,
         "Drone": drone,
         "IPv6-Sinkhole-HTTP-Drone": ipv6_sinkhole_http_drone,
@@ -213,6 +217,68 @@ def validate_fqdn(value):
 def convert_date(value):
     return harmonization.DateTime.sanitize(value)
 
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-DB2
+open_db2_discovery_service = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'db2_hostname', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'size', convert_int),
+        ('extra.', 'servername', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'open-db2-discovery-service',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-HTTP
+accessible_http = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'http', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server', validate_to_none),
+        ('extra.', 'content_length', invalidate_zero),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+        'classification.identifier': 'accessible-http',
+    }
+}
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
 open_mdns = {
@@ -1832,5 +1898,75 @@ accessible_rsync = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-rsync',
         'protocol.application': 'rsync',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-AFP
+accessible_afp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-afp' in constant_fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'machine_type', validate_to_none),
+        ('extra.', 'afp_versions', validate_to_none),
+        ('extra.', 'uams', validate_to_none),
+        ('extra.', 'flags', validate_to_none),
+        ('extra.', 'server_name', validate_to_none),
+        ('extra.', 'signature', validate_to_none),
+        ('extra.', 'directory_service', validate_to_none),
+        ('extra.', 'utf8_servername', validate_to_none),
+        ('extra.', 'network_address', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-afp',
+        'protocol.application': 'afp',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Darknet
+darknet = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+    ],
+    'optional_fields': [
+        ('source.port', 'port'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'type', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port', convert_int),
+        ('destination.asn', 'dst_asn', convert_int),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('extra.', 'count', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sic', 'dst_sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'family', validate_to_none),
+        ('classification.identifier', 'tag'),  # different values possible in this report
+        ('extra.', 'public_source', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
     },
 }

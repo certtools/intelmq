@@ -117,6 +117,9 @@ CHANGELOG
   - Add support for the `Outdated-DNSSEC-Key` and `Outdated-DNSSEC-Key-IPv6` feeds.
   - Add support for the `Accessible-Rsync` feed.
   - Document support for the `Open-LDAP-TCP` feed.
+  - Add support for `Accessible-HTTP` and `Open-DB2-Discovery-Service` (#1349).
+  - Add support for `Accessible-AFP` (#1351).
+  - Add support for `Darknet` (#1353).
 - `intelmq.bots.parsers.generic.parser_csv`: If the `skip_header` parameter was set to `True`, the header was not part of the `raw` field as returned by the `recover_line` method. The header is now saved and handled correctly by the fixed recovery method.
 - `intelmq.bots.parsers.cleanmx.parser`: Use field `first` instead of `firsttime` for `time.source` (#1329, #1348).
 
@@ -132,7 +135,10 @@ CHANGELOG
   - Handle empty rules file (#1343).
 
 #### Outputs
-- `intelmq.bots.outputs.redis`: Fix sending password to redis server.
+- `intelmq.bots.outputs.redis`:
+  - Fix sending password to redis server.
+  - Fix for redis-py >= 3.0.0: Convert Event to string explicitly (#1354).
+  - Use `Redis` class instead of deprecated `StrictRedis` for redis-py >= 3.0.0 (#1355).
 - `intelmq.bots.outputs.mongodb`:
   - New parameter `replacement_char` (default: `'_'`) for non-hierarchical output as dots in key names are not allowed (#1324, #1322).
   - Save value of fields `time.observation` and `time.source` as native datetime object, not as string (#1322).
