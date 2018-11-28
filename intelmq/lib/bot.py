@@ -177,6 +177,7 @@ class Bot(object):
 
             self.stop()
             raise
+        self.logger.info("Bot initialization completed.")
 
         self.__stats_cache = cache.Cache(host=getattr(self.parameters,
                                                       "statistics_host",
@@ -502,8 +503,6 @@ class Bot(object):
             self.logger.debug("Connected to destination queues.")
         else:
             self.logger.debug("No destination queues to load.")
-
-        self.logger.info("Pipeline ready.")
 
     def __disconnect_pipelines(self):
         """ Disconnecting pipelines. """

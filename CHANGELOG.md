@@ -16,6 +16,8 @@ CHANGELOG
   - add `DateTime.convert_fuzzy`.
 - `intelmq.lib.pipeline`:
   - Redis: Use single connection client if calling bot is not multithreaded. Gives a small speed advantage.
+- `intelmq.lib.bot`:
+  - Log message after successful bot initialization, no log message anymore for ready pipeline.
 
 ### Development
 
