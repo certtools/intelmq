@@ -1,0 +1,35 @@
+Description: patch setup.py for installation
+Author: Tomas Bellus
+---
+--- setup.py	2018-12-05 10:50:19.000365837 +0100
++++ setup.py	2018-12-05 10:56:29.891285135 +0100
+@@ -19,24 +19,24 @@
+ 
+ 
+ DATA = [
+-    ('/opt/intelmq/etc/',
++    ('/etc/intelmq/',
+      ['intelmq/bots/BOTS',
+       ],
+      ),
+-    ('/opt/intelmq/etc/examples',
++    ('/etc/intelmq/',
+      ['intelmq/etc/defaults.conf',
+       'intelmq/etc/harmonization.conf',
+       'intelmq/etc/pipeline.conf',
+       'intelmq/etc/runtime.conf',
+       ],
+      ),
+-    ('/opt/intelmq/var/log/',
++    ('/var/log/intelmq/',
+      [],
+      ),
+-    ('/opt/intelmq/var/lib/bots/file-output/',
++    ('/var/lib/intelmq/bots/file-output/',
+      [],
+      ),
+-    ('/opt/intelmq/var/lib/bots/rsync_collector',
++    ('/var/lib/intelmq/bots/rsync_collector',
+      [],
+      ),
+ ]
