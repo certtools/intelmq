@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import imaplib
 import re
+import ssl
 
 try:
     import imbox
@@ -18,10 +19,13 @@ class MailCollectorBot(CollectorBot):
 
     def connect_mailbox(self):
         self.logger.debug("Connecting to %s.", self.parameters.mail_host)
+        ca_file = getattr(self.parameters, 'ca_file', None)
+        ssl_custom_context = ssl.create_default_context(cafile=ca_file)
         mailbox = imbox.Imbox(self.parameters.mail_host,
                               self.parameters.mail_user,
                               self.parameters.mail_password,
-                              self.parameters.mail_ssl)
+                              self.parameters.mail_ssl,
+                              ssl_context=ssl_custom_context)
         return mailbox
 
     def process(self):
