@@ -9,6 +9,13 @@
                 "port": 5000
             }
         },
+        "Anyrun-collector": {
+            "description": "Bot for collecting data from any.run/reports/",
+            "module": "intelmq.bots.collectors.anyrun.collector_anyrun",
+            "parameters": {
+                "rate_limit": 60,
+                "name": "Anyrun-collector"}
+        },
         "CertStream": {
             "description": "A bot to collect information from CertStream",
             "module": "intelmq.bots.collectors.calidog.collector_certstream",
@@ -318,6 +325,11 @@
         "Autoshun": {
             "description": "Autoshun Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.autoshun.parser",
+            "parameters": {}
+        },
+        "Anyrun-parser": {
+            "description": "Anyrun Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.anyrun.parser",
             "parameters": {}
         },
         "Bambenek": {
