@@ -13,7 +13,7 @@ from intelmq.bots.collectors.anyrun.collector_anyrun import AnyrunCollectorBot
 OUTPUT = {"__type": "Report",
           "feed.name": "Anyrun",
           "feed.accuracy": 100.,
-          "feed.url": "http://localhost/anyrun_testing.txt",
+          "feed.url": "http://localhost/anyrun_testing_feed.txt",
           "raw": utils.base64_encode('foo text\n'),
           }
 
