@@ -118,6 +118,8 @@ You can set these parameters per bot as well. The settings will take effect afte
 
 * **`rate_limit`** - time interval (in seconds) between messages processing.  int value.
 
+* **`ssl_ca_cert`** - trusted CA certificate for IMAP connections (supported by some bots).
+
 * **`source_pipeline_host`** - broker IP, FQDN or Unix socket that the bot will use to connect and receive messages.
 
 * **`source_pipeline_port`** - broker port that the bot will use to connect and receive messages. Can be empty for Unix socket.
