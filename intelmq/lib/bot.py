@@ -290,7 +290,7 @@ class Bot(object):
             print('Could not initialize logger, only logging to stdout.')
         try:
             self.shutdown()
-        except BaseException:
+        except Exception:
             if self.logger:
                 self.logger.exception('Error during shutdown of bot.')
             else:  # logger not yet initialized
