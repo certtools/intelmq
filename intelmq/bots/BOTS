@@ -14,6 +14,7 @@
             "module": "intelmq.bots.collectors.anyrun.collector_anyrun",
             "parameters": {
                 "rate_limit": 60,
+                "http_url": "https://any.run/report/",
                 "name": "Anyrun-collector"}
         },
         "CertStream": {

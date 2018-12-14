@@ -5,12 +5,11 @@ from requests import get
 
 class AnyrunCollectorBot(CollectorBot):
     def init(self):
-        self.anyrun_url = "https://any.run/report/"
         self.last_ioc_url = None
 
     def process(self):
         urls = []
-        res = get(self.anyrun_url)
+        res = get(self.parameters.http_url)
         if res.status_code // 100 != 2:
             raise ValueError('HTTP response status code was %i.' % resp.status_code)
 
