@@ -29,6 +29,7 @@ class RIPEExpertBot(Bot):
     def init(self):
         if requests is None:
             raise ValueError('Could not import requests. Please install it.')
+        self.__http_session = requests.Session()
 
         if hasattr(self.parameters, 'query_ripe_stat'):
             self.logger.warning("The parameter 'query_ripe_stat' is deprecated and will be "
@@ -61,7 +62,7 @@ class RIPEExpertBot(Bot):
             return json.loads(cache_value)
         elif cache_value == CACHE_NO_VALUE:
             return []
-        response = requests.get(self.URL_STAT_CONTACT.format(resource), data="",
+        response = self.__http_session.get(self.URL_STAT_CONTACT.format(resource), data="",
                                 proxies=self.proxy,
                                 headers=self.http_header,
                                 verify=self.http_verify_cert,
@@ -90,7 +91,7 @@ class RIPEExpertBot(Bot):
             return json.loads(cache_value)
         elif cache_value == CACHE_NO_VALUE:
             return {}
-        response = requests.get(self.URL_STAT_GEOLOCATION.format(ip),
+        response = self.__http_session.get(self.URL_STAT_GEOLOCATION.format(ip),
                                 proxies=self.proxy,
                                 headers=self.http_header,
                                 verify=self.http_verify_cert,
@@ -116,7 +117,7 @@ class RIPEExpertBot(Bot):
         cache_value = self.cache.get('dbip:%s' % ip)
         if cache_value:
             return json.loads(cache_value)
-        response = requests.get(self.URL_DB_IP.format(ip), data="",
+        response = self.__http_session.get(self.URL_DB_IP.format(ip), data="",
                                 proxies=self.proxy,
                                 headers=self.http_header,
                                 verify=self.http_verify_cert,
@@ -133,7 +134,7 @@ class RIPEExpertBot(Bot):
         cache_value = self.cache.get('dbasn:%s' % asn)
         if cache_value and cache_value != CACHE_NO_VALUE:
             return json.loads(cache_value)
-        response = requests.get(self.URL_DB_AS.format(asn), data="",
+        response = self.__http_session.get(self.URL_DB_AS.format(asn), data="",
                                 proxies=self.proxy,
                                 headers=self.http_header,
                                 verify=self.http_verify_cert,
