@@ -12,7 +12,7 @@ OUTPUT = {"__type": "Report",
           "feed.name": "Anyrun",
           "feed.accuracy": 100.0,
           "feed.url": "http://localhost/anyrun_testing_feed.txt",
-          "raw": 'Zm9vIHRleHQK',
+          "raw": 'Zm9vIHRleHQKCg==',
           }
 
 
