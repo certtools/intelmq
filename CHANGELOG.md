@@ -92,6 +92,7 @@ CHANGELOG
 - Feeds:
   - Fix Autoshun Feed URL (#1325).
   - Add parameters `name` and `provider` to `intelmq/etc/feeds.yaml`, `docs/Feeds.md` and `intelmq/bots/BOTS` (#1321).
+- Add SECURITY.md file.
 
 ### Packaging
 - Change the maintainer from Sasche Wilde to Sebastian Wagner (#1320).
