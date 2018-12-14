@@ -146,11 +146,14 @@ CHANGELOG
   - Handle not installed dependency library `requests` gracefully.
 
 ### Documentation
-- FAQ: Explanation and solution on orphaned queues.
+- FAQ
+  - Explanation and solution on orphaned queues.
+  - Section on how and why to remove `raw` data.
 - Add or fix the tables of contents for all documentation files.
 - Feeds:
   - Fix Autoshun Feed URL (#1325).
   - Add parameters `name` and `provider` to `intelmq/etc/feeds.yaml`, `docs/Feeds.md` and `intelmq/bots/BOTS` (#1321).
+- Add SECURITY.md file.
 
 ### Packaging
 - Change the maintainer from Sasche Wilde to Sebastian Wagner (#1320).
