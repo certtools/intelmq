@@ -70,6 +70,7 @@ class AnyrunParserBot(ParserBot):
                     if status in self.accuracy:
                         event = self.new_event(report)
                         event.add("source.fqdn", domain)
+                        del event["feed.accuracy"]
                         event.add("feed.accuracy", self.accuracy[status])
                         event.add("raw", "".join(lines[raw_start_index: x+2]))
                         try:
