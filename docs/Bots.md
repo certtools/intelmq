@@ -859,7 +859,7 @@ Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 #### Configuration Parameters:
 * `type` - either `"whitelist"` or `"blacklist"`
-* `keys` - a list of key names (strings)
+* `keys` - Can be a JSON-list of field names (`["raw", "source.account"]`) or a string with a comma-separated list of field names (`"raw,source.account"`).
 
 ##### Whitelist
 
