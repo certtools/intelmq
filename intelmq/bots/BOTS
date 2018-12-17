@@ -424,6 +424,11 @@
                 "type_translation": null
             }
         },
+        "HaaS": {
+            "description": "HaaS data",
+            "module": "intelmq.bots.parsers.haas.parser",
+            "parameters": {}
+        },
         "HpHosts": {
             "description": "HpHosts Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.hphosts.parser",
@@ -494,7 +499,7 @@
             "description": "NBU data from Microsoft - Monitor IMAP mailboxes and retrieve mail attachments",
             "module": "intelmq.bots.parsers.nbu_ms.parser",
             "parameters": {}
-        },
+        },        
         "Netlab 360": {
             "description": "Netlab 360 Parser is the bot responsible to parse the DGA and Magnitude reports and sanitize the information.",
             "module": "intelmq.bots.parsers.netlab_360.parser",
