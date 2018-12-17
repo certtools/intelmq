@@ -2,6 +2,17 @@
 
 For installation instructions, see [INSTALL.md](INSTALL.md).
 
+**Table of Contents:**
+- [Stop IntelMQ and Backup](#stop-intelmq-and-backup)
+- [Upgrade IntelMQ](#upgrade-intelmq)
+  - [Packages](#packages)
+  - [PyPi](#pypi)
+  - [Local repository](#local-repository)
+- [Check the installation](#check-the-installation)
+- [Redefine/Check permissions](#redefinecheck-permissions)
+- [Start IntelMQ](#start-intelmq)
+
+
 ## Stop IntelMQ and Backup
 
 * Make sure that your IntelMQ system is completely stopped: `intelmqctl stop`

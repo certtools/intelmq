@@ -18,7 +18,7 @@ class MISPParserBot(Bot):
         'ecsirt:information-gathering="scanner"': 'scanner',
         'ecsirt:information-content-security="dropzone"': 'dropzone',
         'ecsirt:malicious-code="malware"': 'malware',
-        'ecsirt:malicious-code="botnet-drone"': 'botnet drone',
+        'ecsirt:malicious-code="botnet-drone"': 'infected system',
         'ecsirt:malicious-code="ransomware"': 'ransomware',
         'ecsirt:malicious-code="malware-configuration"': 'malware configuration',
         'ecsirt:malicious-code="c&c"': 'c&c',
@@ -69,6 +69,11 @@ class MISPParserBot(Bot):
 
         # get the attributes from the event
         event_attributes = misp_event['Attribute']
+
+        # add object attributes to the list
+        if 'Object' in misp_event:
+            for obj in misp_event['Object']:
+                event_attributes += obj['Attribute']
 
         # payload type - get malware variant for the event
         malware_variant = None

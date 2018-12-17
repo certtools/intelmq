@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+"""
+Author: SYNchroACK <synchroack@protonmail.ch>
+"""
 
 import argparse
 import json
@@ -6,7 +9,7 @@ import sys
 
 try:
     from elasticsearch import Elasticsearch
-except:
+except ImportError:
     print("[-] Please install ElasticSearch using the following command: 'pip install elasticsearch'.", file=sys.stderr)
     sys.exit(-1)
 
@@ -29,6 +32,7 @@ TYPES = {
     "Registry": "text",
     "String": "text",
     "UppercaseString": "text",
+    "TLP": "text",
     "URL": "text"
 }
 
@@ -80,7 +84,7 @@ def send_mapping(host, index, data):
     try:
         es = Elasticsearch([host], verify_certs=True)
         response = es.indices.create(index=index, ignore=400, body=data)
-    except:
+    except Exception:
         err = -1
 
     return response, err

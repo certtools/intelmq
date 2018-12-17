@@ -156,6 +156,15 @@ class TestUtils(unittest.TestCase):
         with self.assertRaises(ValueError):
             utils.parse_relative('1 minute')
 
+    def test_seconds_to_human(self):
+        """ Test seconds_to_human """
+        self.assertEqual(utils.seconds_to_human(60), '1m')
+        self.assertEqual(utils.seconds_to_human(3600), '1h')
+        self.assertEqual(utils.seconds_to_human(86401), '1d 1s')
+        self.assertEqual(utils.seconds_to_human(64.2), '1m 4s')
+        self.assertEqual(utils.seconds_to_human(64.2, precision=1),
+                         '1.0m 4.2s')
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

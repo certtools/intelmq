@@ -39,7 +39,7 @@ cleanup()
 fetch_and_install()
 {
   cd "$TMP_DIR"
-  curl -s -O https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
+  curl -s -S -O https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
   gunzip -q GeoLite2-City.mmdb
   mv -f GeoLite2-City.mmdb "$DEST_FILE"
 }

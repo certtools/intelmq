@@ -21,9 +21,8 @@ from dateutil.parser import parse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.exceptions import InvalidArgument
+from intelmq.lib.exceptions import InvalidArgument, InvalidValue
 from intelmq.lib.harmonization import DateTime
-import intelmq.lib.exceptions as exceptions
 
 
 TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
@@ -59,6 +58,11 @@ class GenericCsvParserBot(ParserBot):
             raise InvalidArgument('filter_type', got=self.filter_type,
                                   expected=("blacklist", "whitelist"),
                                   docs='docs/Bots.md')
+        self.columns_required = getattr(self.parameters, 'columns_required',
+                                        [True for _ in self.columns])
+        if len(self.columns) != len(self.columns_required):
+            raise ValueError("Length of parameters 'columns' (%d) and 'columns_required' (%d) "
+                             "needs to be equal." % (len(self.columns), len(self.columns_required)))
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
@@ -69,6 +73,7 @@ class GenericCsvParserBot(ParserBot):
         raw_report = re.sub(r'(?m)\0', '', raw_report)
         # skip header
         if getattr(self.parameters, 'skip_header', False):
+            self.tempdata.append(raw_report[:raw_report.find('\n')])
             raw_report = raw_report[raw_report.find('\n') + 1:]
         for row in csv.reader(io.StringIO(raw_report),
                               delimiter=str(self.parameters.delimiter)):
@@ -87,8 +92,8 @@ class GenericCsvParserBot(ParserBot):
     def parse_line(self, row, report):
         event = self.new_event(report)
 
-        for key, value in zip(self.columns, row):
-            keys = key.split('|') if '|' in key else [key, ]
+        for keygroup, value, required in zip(self.columns, row, self.columns_required):
+            keys = keygroup.split('|') if '|' in keygroup else [keygroup, ]
             for key in keys:
                 if isinstance(value, str) and not value:  # empty string is never valid
                     break
@@ -121,8 +126,9 @@ class GenericCsvParserBot(ParserBot):
                 if event.add(key, value, raise_failure=False):
                     break
             else:
-                # if the value sill remains unadded we need to inform
-                raise exceptions.InvalidValue(keys, value)
+                # if the value sill remains unadded we need to inform if the key is needed
+                if required:
+                    raise InvalidValue(key, value)
 
         if hasattr(self.parameters, 'type')\
                 and "classification.type" not in event:

@@ -5,7 +5,7 @@ Last-Update: 2017-09-20
 This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 --- a/intelmq/__init__.py
 +++ b/intelmq/__init__.py
-@@ -1,13 +1,12 @@
+@@ -1,14 +1,13 @@
  from .version import __version__
  import os
  
@@ -22,3 +22,5 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
  RUNTIME_CONF_FILE = os.path.join(CONFIG_DIR, "runtime.conf")
 -VAR_RUN_PATH = os.path.join(ROOT_DIR, "var/run/")
 +VAR_RUN_PATH = "/var/run/intelmq/"
+-VAR_STATE_PATH = os.path.join(ROOT_DIR, "var/lib/bots/")
++VAR_STATE_PATH = "/var/lib/intelmq/bots/"

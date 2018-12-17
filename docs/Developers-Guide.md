@@ -1,50 +1,58 @@
-**Table of Contents**
-
-* [Intended Audience](#intended-audience)
-  * [Goals](#goals)
-* [Development Environment](#development-environment)
-  * [Installation](#installation)
-  * [How to develop](#how-to-develop)
-  * [Update](#update)
-  * [Testing](#testing)
-    * [Environment variables](#environment-variables)
-    * [Configuration test files](#configuration-test-files)
-* [Development Guidelines](#development-guidelines)
-  * [Coding-Rules](#coding-rules)
-    * [Unicode](#unicode)
-    * [Back-end independence](#back-end-independence)
-    * [Compatibility](#compatibility)
-    * [Documentation](#documentation)
-  * [Layout Rules](#layout-rules)
-    * [Directories Hierarchy on Default Installation](#directories-hierarchy-on-default-installation)
-    * [Directories and Files naming](#directories-and-files-naming)
-    * [Class Names](#class-names)
-  * [Data Harmonization Rules](#data-harmonization-rules)
-  * [Code Submission Rules](#code-submission-rules)
-    * [Releases, Repositories and Branches](#releases-repositories-and-branches)
-    * [How to Contribute](#how-to-contribute)
-    * [Workflow](#workflow)
-    * [Commit Messages](#commit-messages)
-    * [Prepare for Discussion in GitHub](#prepare-for-discussion-in-github)
-  * [License and Author files](#license-and-author-files)
-* [System Overview](#system-overview)
-  * [Code Architecture](#code-architecture)
-  * [Pipeline](#pipeline)
-* [Bot Developer Guide](#bot-developer-guide)
-  * [Template](#template)
-  * [Pipeline interactions](#pipeline-interactions)
-  * [Logging](#logging)
-    * [Log Messages Format](#log-messages-format)
-    * [Log Levels](#log-levels)
-    * [What to Log](#what-to-log)
-    * [How to Log](#how-to-log)
-  * [Error handling](#error-handling)
-  * [Initialization](#initialization)
-  * [Custom configuration checks](#custom-configuration-checks)
-  * [Examples](#examples)
-  * [Parsers](#parsers)
-  * [Tests](#tests)
-  * [Configuration](#configuration)
+**Table of Contents:**
+- [Intended Audience](#intended-audience)
+  - [Goals](#goals)
+- [Development Environment](#development-environment)
+  - [Installation](#installation)
+  - [How to develop](#how-to-develop)
+  - [Update](#update)
+  - [Testing](#testing)
+    - [Additional optional requirements](#additional-optional-requirements)
+    - [Run the tests](#run-the-tests)
+    - [Environment variables](#environment-variables)
+    - [Configuration test files](#configuration-test-files)
+- [Development Guidelines](#development-guidelines)
+  - [Coding-Rules](#coding-rules)
+    - [Unicode](#unicode)
+    - [Back-end independence and Compatibility](#back-end-independence-and-compatibility)
+  - [Layout Rules](#layout-rules)
+    - [Documentation](#documentation)
+    - [Directories Hierarchy on Default Installation](#directories-hierarchy-on-default-installation)
+    - [Directories and Files naming](#directories-and-files-naming)
+    - [Class Names](#class-names)
+  - [Data Harmonization Rules](#data-harmonization-rules)
+  - [Code Submission Rules](#code-submission-rules)
+    - [Releases, Repositories and Branches](#releases-repositories-and-branches)
+    - [Branching model](#branching-model)
+    - [How to Contribute](#how-to-contribute)
+    - [Workflow](#workflow)
+    - [Commit Messages](#commit-messages)
+    - [Prepare for Discussion in GitHub](#prepare-for-discussion-in-github)
+  - [License and Author files](#license-and-author-files)
+- [System Overview](#system-overview)
+  - [Code Architecture](#code-architecture)
+  - [Pipeline](#pipeline)
+- [Bot Developer Guide](#bot-developer-guide)
+  - [Template](#template)
+- [imports for additional libraries and intelmq](#imports-for-additional-libraries-and-intelmq)
+  - [Pipeline interactions](#pipeline-interactions)
+  - [Logging](#logging)
+    - [Log Messages Format](#log-messages-format)
+    - [Log Levels](#log-levels)
+    - [What to Log](#what-to-log)
+    - [How to Log](#how-to-log)
+      - [String formatting in Logs](#string-formatting-in-logs)
+  - [Error handling](#error-handling)
+  - [Initialization](#initialization)
+  - [Custom configuration checks](#custom-configuration-checks)
+  - [Examples](#examples)
+  - [Parsers](#parsers)
+    - [parse_line](#parse_line)
+  - [Tests](#tests)
+  - [Configuration](#configuration)
+  - [Cache](#cache)
+- [Feeds documentation](#feeds-documentation)
+- [Testing Pre-releases](#testing-pre-releases)
+  - [Installation](#installation)
 
 # Intended Audience
 This guide is for developers of IntelMQ. It explains the code architecture, coding guidelines as well as ways you can contribute code or documentation.
@@ -81,18 +89,18 @@ Similarly, if code does not get accepted upstream by the main developers, it is 
 
 ## Installation
 
-Developers MUST have a fork repository of IntelMQ in order to commit the new code to their repository and then be able to do pull requests to main repository.
+Developers can create a fork repository of IntelMQ in order to commit the new code to this repository and then be able to do pull requests to the main repository. Otherwise you can just use the 'certtools' as username below.
 
 The following instructions will use `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code. However, configuration files still required to be moved to `/opt/intelmq` as the instructions show.
+
+In this guide we use `/opt/dev_intelmq` as local repository copy. You can also use other directories as long as they are readable by other unprivileged users (e.g. home directories on Fedora can't be read by other users by default).
+`/opt/intelmq` is used as root location for IntelMQ installations, this is IntelMQ's default for this installation method. This directory is used for configurations (`/opt/intelmq/etc`), local states (`/opt/intelmq/var/lib`) and logs (`/opt/intelmq/var/log`).
 
 ```bash
 sudo -s
 
 git clone https://github.com/<your username>/intelmq.git /opt/dev_intelmq
 cd /opt/dev_intelmq
-
-git config core.fileMode false
-chmod -R 777 /intelmq
 
 pip3 install -e .
 
@@ -157,12 +165,24 @@ intelmqctl start <bot_id>
 
 ## Testing
 
-All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
+### Additional optional requirements
+
+For the documentation tests two additional libraries are required: Cerberus and PyYAML. You can install them with pip:
+
+```bash
+pip3 install Cerberus PyYAML
+```
+
+or the package management of your operating system.
+
+### Run the tests
+
+All changes have to be tested and new contributions should be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
 
     cd /opt/dev_intelmq
     python3 -m unittest {discover|filename}  # or
-    nosetests3 [filename]  # or
-    python3 setup.py test  # uses a build environment
+    nosetests3 [filename]  # alternatively nosetests or nosetests-3.5 depending on your installation, or
+    python3 setup.py test  # uses a build environment (no external dependencies)
 
 It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, give the file path as argument.
 
@@ -170,18 +190,19 @@ There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for
 
 ### Environment variables
 
-There are a bunch of environemnt variables which switch on/off some tests:
+There are a bunch of environment variables which switch on/off some tests:
 
-* `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default, set to 1 to test those bots.
+* `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default, set to 1 to test those bots. These tests need preparation, e.g. running databases with users and certain passwords etc. Have a look at the `.travis.yml` in IntelMQ's repository for steps to set databases up.
 * `INTELMQ_SKIP_INTERNET`: tests requiring internet connection will be skipped if this is set to 1.
 * `INTELMQ_SKIP_REDIS`: redis-related tests are ran by default, set this to 1 to skip those.
-* `INTELMQ_TEST_LOCAL_WEB`: tests which connect to local web servers or proxies are active when set to 1.
+* `INTELMQ_TEST_LOCAL_WEB`: tests which connect to local web servers or proxies are active when set to 1. Running these tests assume a local webserverserving certain files and/or proxy. Example preparation steps can be found in `.travis.yml` again.
 * `INTELMQ_TEST_EXOTIC`: some bots and tests require libraries which may not be available, those are skipped by default. To run them, set this to 1.
+* `INTELMQ_TEST_REDIS_PASSWORD`: Set this value to the password for the local redis database if needed.
 
 For example, to run all tests you can use:
 
 ```bash
-INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests
+INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests3
 ```
 
 ### Configuration test files
@@ -210,14 +231,9 @@ We support Python 3 only.
 * Each internal object in IntelMQ (Event, Report, etc) that has strings, their strings MUST be in UTF-8 Unicode format.
 * Any data received from external sources MUST be transformed into UTF-8 Unicode format before add it to IntelMQ objects.
 
-### Back-end independence
+### Back-end independence and Compatibility
 
-Any component of the IntelMQ MUST be independent of the message queue technology (Redis, RabbitMQ, etc...), except `lib/pipeline.py`. Intelmq bots MAY only assume to use the class specified in `lib/pipeline.py` and `lib/cache.py` for inter-process or inter-bot communications.
-
-### Compatibility
-
-IntelMQ core (including intelmqctl) MUST be compatible with IntelMQ Manager.
-
+Any component of the IntelMQ MUST be independent of the message queue technology (Redis, RabbitMQ, etc...).
 
 ## Layout Rules
 
@@ -281,18 +297,14 @@ Any directory and file of IntelMQ has to follow the Directories and Files naming
 * be represented with lowercase and in case of the name has multiple words, the spaces between them must be removed or replaced by underscores;
 * be self-explaining what the content contains.
 
-In the bot directories name, the name must correspond to the feed name. If necessary, some words can be added to give context by joining together using underscores.
+In the bot directories name, the name must correspond to the feed provider. If necessary and applicable the feed name can and should be used as postfix for the filename.
 
-Example (without context words):
+Examples:
 ```
-intelmq/bots/parser/dragonresearchgroup
-intelmq/bots/parser/malwaredomainlist
-```
-
-Example (with context words):
-```
-intelmq/bots/parser/cymru_full_bogons
-intelmq/bots/parser/taichung_city_netflow
+intelmq/bots/parser/malwaredomainlist/parser.py
+intelmq/bots/parser/taichung/parser.py
+intelmq/bots/parser/cymru/parser_full_bogons.py
+intelmq/bots/parser/abusech/parser_ransomware.py
 ```
 
 ### Class Names
@@ -717,3 +729,35 @@ See the [testing section](#testing) about how to run the tests.
 
 In the end, the new information about the new bot should be added to BOTS file
 located at `intelmq/bots`. Note that the file is sorted!
+
+## Cache
+
+Bots can use a Redis database as cache instance. Use the `intelmq.lib.utils.Cache` class to set this up and/or look at existing bots, like the `cymru_whois` expert how the cache can be used.
+Bots must set a TTL for all keys that are cached to avoid caches growing endless over time.
+Bots must use the Redis databases `>=` 10, but not those already used by other bots. See `bots/BOTS` what databases are already used.
+
+The databases `<` 10 are reserved for the IntelMQ core:
+ * 2: pipeline
+ * 4: tests
+
+# Feeds documentation
+
+The feeds which are known to be working with IntelMQ are documented in the machine-readable file `intelmq/etc/feeds.yaml`. The human-readable documentation is in `docs/Feeds.md`. In order to keep these files in sync, call `intelmq/bin/intelmq_gen_docs.py` which generates the Markdown file from the YAML file.
+
+So to add a new feeds, change the `feeds.yaml` and then call the `intelmq_gen_docs.py` file.
+
+# Testing Pre-releases
+
+## Installation
+
+The [installation procedures](Install.md) needs to be adapted only a little bit.
+
+For native packages, you can find the unstable packages of the next version here: [Installation Unstable Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq%3Aunstable&package=intelmq).
+
+For the installation with pip, use the `--pre` parameter as shown here following command:
+
+```bash
+pip3 install --pre intelmq
+```
+
+All other steps are not different. Please report any issues you find in our [Issue Tracker](https://github.com/certtools/intelmq/issues/new).

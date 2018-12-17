@@ -3,7 +3,6 @@
 from datetime import datetime
 
 import dns
-from dns import resolver, reversename
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
@@ -59,9 +58,9 @@ class ReverseDnsExpertBot(Bot):
             elif cachevalue:
                 result = cachevalue
             else:
-                rev_name = reversename.from_address(ip)
+                rev_name = dns.reversename.from_address(ip)
                 try:
-                    results = resolver.query(rev_name, "PTR")
+                    results = dns.resolver.query(rev_name, "PTR")
                     expiration = results.expiration
                     for result in results:
                         # use first valid result

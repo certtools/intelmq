@@ -3,35 +3,33 @@
 For installation instructions, see [INSTALL.md](INSTALL.md).
 For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
 
-  * [Where to get help?](#help)
-  * [Configure services](#configure-services)
-  * [Configuration](#configuration)
-    * [System Configuration](#system-configuration-defaults)
-        * [Error Handling](#error-handling)
-        * [Miscellaneous](#miscellaneous)
-    * [Pipeline Configuration](#pipeline-configuration)
-    * [Runtime Configuration](#runtime-configuration)
-    * [Harmonization Configuration](#harmonization-configuration)
-  * [Utilities](#utilities)
-    * [Management](#management)
-      * [Web interface: IntelMQ Manager](#web-interface-intelmq-manager)
-      * [Command-line interface: intelmqctl](#command-line-interface-intelmqctl)
-        * [Botnet Concept](#botnet-concept)
-        * [Scheduled run mode](#scheduled-run-mode)
-        * [Continuous run mode](#continuous-run-mode)
-        * [Forcing reset pipeline and cache (be careful)](#forcing-reset-pipeline-and-cache-be-careful)
-    * [Error Handling](#error-handling-1)
-      * [Tool: intelmqdump](#tool-intelmqdump)
-    * [Monitoring Logs](#monitoring-logs)
-  * [Upgrade](#upgrade)
-    * [Stop IntelMQ and Backup](#stop-intelmq-and-backup)
-    * [Upgrade](#upgrade-1)
-    * [Restore Configurations](#restore-configurations)
-  * [Uninstall](#uninstall)
-  * [Integration with ticket systems, etc.](#integration-with-ticket-systems-etc)
-  * [Frequently Asked Questions](#frequently-asked-questions)
-  * [Additional Information](#additional-information)
-    * [Performance Tests](#performance-tests)
+**Table of Contents:**
+- [Where to get help?](#where-to-get-help)
+- [Configure services](#configure-services)
+- [Configuration](#configuration)
+- [System Configuration (defaults)](#system-configuration-defaults)
+    - [Error Handling](#error-handling)
+    - [Miscellaneous](#miscellaneous)
+- [Pipeline Configuration](#pipeline-configuration)
+- [Runtime Configuration](#runtime-configuration)
+- [Harmonization Configuration](#harmonization-configuration)
+- [Utilities](#utilities)
+- [Management](#management)
+  - [Web interface: IntelMQ Manager](#web-interface-intelmq-manager)
+  - [Command-line interface: intelmqctl](#command-line-interface-intelmqctl)
+    - [Botnet Concept](#botnet-concept)
+    - [Scheduled Run Mode](#scheduled-run-mode)
+    - [Continuous Run Mode](#continuous-run-mode)
+    - [Forcing reset pipeline and cache (be careful)](#forcing-reset-pipeline-and-cache-be-careful)
+- [Error Handling](#error-handling)
+  - [Tool: intelmqdump](#tool-intelmqdump)
+- [Monitoring Logs](#monitoring-logs)
+- [Uninstall](#uninstall)
+- [Integration with ticket systems, etc.](#integration-with-ticket-systems-etc)
+- [Frequently Asked Questions](#frequently-asked-questions)
+- [Additional Information](#additional-information)
+- [Bash Completion](#bash-completion)
+- [Performance Tests](#performance-tests)
 
 # Where to get help?
 
@@ -188,6 +186,7 @@ Note that `destination-queues` contains one of the following values:
 ```
 In that case, bot will be able to send the message to one of defined paths. The path `"_default"` is used if none is not specified.
 In case of errors during processing, and the optional path `"_on_error"` is specified, the message will be sent to the pipelines given given as on-error.
+Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities.
 
 >>>>>>> sieve-named-queues
 **Example:**
@@ -577,6 +576,8 @@ Processing dragon-research-group-ssh-parser: 2 dumps
 recover (a)ll, delete (e)ntries, (d)elete file, (q)uit, (s)how by ids, (r)ecover by ids? d
 Deleted file /opt/intelmq/var/log/dragon-research-group-ssh-parser.dump
 ```
+
+Bots and the intelmqdump tool use file locks to prevent writing to already opened files. Bots are trying to lock the file for up to 60 seconds if the dump file is locked already by another process (intelmqdump) and then give up. Intelmqdump does not wait and instead only shows an error message.
 
 ## Monitoring Logs
 

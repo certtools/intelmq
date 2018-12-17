@@ -33,8 +33,9 @@ BOT_CONFIG = {"http_proxy": None,
               "error_max_retries": 0,
               "redis_cache_host": "localhost",
               "redis_cache_port": 6379,
-              "redis_cache_db": 10,
+              "redis_cache_db": 4,
               "redis_cache_ttl": 10,
+              "redis_cache_password": os.environ.get('INTELMQ_TEST_REDIS_PASSWORD'),
               "testing": True,
               }
 
@@ -154,10 +155,14 @@ class BotTestCase(object):
                 utils.decode(json.dumps(cls.default_input_message))
 
         if cls.use_cache and not os.environ.get('INTELMQ_SKIP_REDIS'):
+            password = os.environ.get('INTELMQ_TEST_REDIS_PASSWORD') or \
+                (BOT_CONFIG['redis_cache_password'] if 'redis_cache_password' in BOT_CONFIG else None)
             cls.cache = redis.Redis(host=BOT_CONFIG['redis_cache_host'],
                                     port=BOT_CONFIG['redis_cache_port'],
                                     db=BOT_CONFIG['redis_cache_db'],
-                                    socket_timeout=BOT_CONFIG['redis_cache_ttl'])
+                                    socket_timeout=BOT_CONFIG['redis_cache_ttl'],
+                                    password=password,
+                                    )
 
     harmonization = utils.load_configuration(pkg_resources.resource_filename('intelmq',
                                                                              'etc/harmonization.conf'))
@@ -341,7 +346,7 @@ class BotTestCase(object):
                 counter += 1
         if counter != len(self.bot_types) - 1:
             self.fail("Bot name {!r} does not match one of {!r}"
-                      "".format(self.bot_name, list(self.bot_types.values())))
+                      "".format(self.bot_name, list(self.bot_types.values())))  # pragma: no cover
 
         self.assertEqual('Test{}'.format(self.bot_name),
                          self.__class__.__name__)
@@ -366,7 +371,7 @@ class BotTestCase(object):
                 return
         else:
             raise ValueError('Logline with level {!r} and message {!r} not found'
-                             ''.format(levelname, message))
+                             ''.format(levelname, message))  # pragma: no cover
 
     def assertLoglineEqual(self, line_no: int, message: str, levelname: str = "ERROR"):
         """
@@ -430,7 +435,7 @@ class BotTestCase(object):
             elif levelname == fields["log_level"] and re.match(pattern, fields["message"]):
                 break
         else:
-            raise ValueError('No matching logline found.')
+            raise ValueError('No matching logline found.')  # pragma: no cover
 
     def assertRegexpMatchesLog(self, pattern):
         """Asserts that pattern matches against log. """
@@ -450,7 +455,7 @@ class BotTestCase(object):
         """
         self.assertEqual(len(self.get_output_queue(path=path)), queue_len)
 
-    def assertMessageEqual(self, queue_pos, expected_msg, path="_default"):
+    def assertMessageEqual(self, queue_pos, expected_msg, compare_raw=True, path="_default"):
         """
         Asserts that the given expected_message is
         contained in the generated event with
@@ -464,6 +469,10 @@ class BotTestCase(object):
             expected = expected_msg.to_dict(with_type=True)
         else:
             expected = expected_msg.copy()
+
+        if not compare_raw:
+            expected.pop('raw', None)
+            event_dict.pop('raw', None)
         if 'time.observation' in event_dict:
             del event_dict['time.observation']
         if 'time.observation' in expected:

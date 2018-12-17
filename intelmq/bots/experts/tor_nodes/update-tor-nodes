@@ -36,6 +36,9 @@ fetch_and_install()
 {
   cd "$TMP_DIR"
   #-k parameter added for ignoring wrong certificate on the server
+  # 17.12.2018: IntelMQ now uses another source (but it seems to me there is less IPs found):
+  # curl -s -S https://check.torproject.org/exit-addresses | awk '/ExitAddress/ {print $2}' > tor_nodes.dat
+  # see https://github.com/certtools/intelmq/issues/1289
   curl -sk -O https://internet2.us/static/latest.bz2
   bunzip2 -q -c latest.bz2 >tor_nodes.dat
   mv -f tor_nodes.dat "$DEST_FILE"

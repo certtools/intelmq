@@ -39,7 +39,7 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
                          'name': 'Example feed',
                          }
 
-    def test_events(self):
+    def test_targz_twofiles(self):
         """ Test if correct Events have been produced. """
         self.input_message = None
         self.run_bot(iterations=1)
@@ -57,6 +57,17 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
                           'http_url_formatting': True,
                           }
         self.run_bot(iterations=1)
+
+    def test_gzip(self):
+        self.sysconfig = {'http_url': 'http://localhost/foobar.gz',
+                          'extract_files': True,
+                          'name': 'Example feed',
+                          }
+        self.run_bot(iterations=1)
+
+        output = OUTPUT[0].copy()
+        output['feed.url'] = 'http://localhost/foobar.gz'
+        self.assertMessageEqual(0, output)
 
 
 if __name__ == '__main__':  # pragma: no cover

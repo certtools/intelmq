@@ -1,9 +1,169 @@
 # Bots Documentation
 
-1. [Collectors](#collectors)
-2. [Parsers](#parsers)
-3. [Experts](#experts)
-4. [Outputs](#outputs)
+**Table of Contents:**
+- [Bots Documentation](#bots-documentation)
+- [General remarks](#general-remarks)
+- [Initialization parameters](#initialization-parameters)
+- [Common parameters](#common-parameters)
+- [Collectors](#collectors)
+  - [Generic URL Fetcher](#generic-url-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic URL Stream Fetcher](#generic-url-stream-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic Mail URL Fetcher](#generic-mail-url-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic Mail Attachment Fetcher](#generic-mail-attachment-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Fileinput](#fileinput)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [MISP Generic](#misp-generic)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Request Tracker](#request-tracker)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Shodan Stream](#shodan-stream)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [TCP](#tcp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [XMPP collector](#xmpp-collector)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Alien Vault OTX](#alien-vault-otx)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Blueliv Crimeserver](#blueliv-crimeserver)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Microsoft Azure](#microsoft-azure)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Microsoft Interflow](#microsoft-interflow)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Additional functionalities](#additional-functionalities)
+  - [Stomp](#stomp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Twitter](#twitter)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [Parsers](#parsers)
+  - [Generic CSV Parser](#generic-csv-parser)
+    - [Configuration parameters](#configuration-parameters)
+  - [Cymru CAP Program](#cymru-cap-program)
+    - [Information:](#information)
+  - [Cymru Full Bogons](#cymru-full-bogons)
+    - [Information:](#information)
+  - [Twitter](#twitter)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Shodan](#shodan)
+    - [Information](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [Experts](#experts)
+  - [Abusix](#abusix)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [ASN Lookup](#asn-lookup)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Cymru Whois](#cymru-whois)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Domain Suffix](#domain-suffix)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Rule processing](#rule-processing)
+  - [Deduplicator](#deduplicator)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Field Reducer Bot](#field-reducer-bot)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+      - [Whitelist](#whitelist)
+      - [Blacklist](#blacklist)
+  - [Filter](#filter)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic DB Lookup](#generic-db-lookup)
+  - [Gethostbyname](#gethostbyname)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [IDEA](#idea)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [MaxMind GeoIP](#maxmind-geoip)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Modify](#modify)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Configuration File](#configuration-file)
+    - [Actions](#actions)
+    - [Examples](#examples)
+    - [Types](#types)
+  - [National CERT contact lookup by CERT.AT](#national-cert-contact-lookup-by-certat)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Reverse DNS](#reverse-dns)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [RFC1918](#rfc1918)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [RipeNCC Abuse Contact](#ripencc-abuse-contact)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Sieve](#sieve)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Taxonomy](#taxonomy)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Tor Nodes](#tor-nodes)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Url2FQDN](#url2fqdn)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Wait](#wait)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [Outputs](#outputs)
+  - [File](#file)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+      - [Filename formatting](#filename-formatting)
+  - [Files](#files)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [MongoDB](#mongodb)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Installation Requirements](#installation-requirements)
+  - [PostgreSQL](#postgresql)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Installation Requirements](#installation-requirements)
+    - [PostgreSQL Installation](#postgresql-installation)
+  - [REST API](#rest-api)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [SMTP Output Bot](#smtp-output-bot)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [TCP](#tcp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+
 
 ## General remarks
 
@@ -57,10 +217,9 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `enabled`: If the parameter is set to `true` (which is NOT the default value if it is missing as a protection) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `false`, the Bot will not be started by `intelmqctl start`, however you can run the bot independently using `intelmqctl start <bot_id>`. Check the [User-Guide](./User-Guide.md) for more details.
 * `run_mode`: There are two run modes, "continuous" (default run mode) or "scheduled". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after one successful run. This is especially useful when scheduling bots via cron or systemd. Default is `continuous`. Check the [User-Guide](./User-Guide.md) for more details.
 
-<a name="collectors"></a>
-## Collectors
+## Common parameters
 
-**Feed parameters**: Common configuration options for all collectors
+**Feed parameters**: Common configuration options for all collectors.
 
 * `feed`: Name for the feed (`feed.name`).
 * `accuracy`: Accuracy for the data of the feed (`feed.accuracy`).
@@ -69,7 +228,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `provider`: Name of the provider of the feed (`feed.provider`).
 * `rate_limit`: time interval (in seconds) between fetching data if applicable.
 
-**HTTP parameters**: Common URL fetching parameters used in multiple collectors
+**HTTP parameters**: Common URL fetching parameters used in multiple bots.
 
 * `http_timeout_sec`: A tuple of floats or only one float describing the timeout of the http connection. Can be a tuple of two floats (read and connect timeout) or just one float (applies for both timeouts). The default is 30 seconds in default.conf, if not given no timeout is used. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
 * `http_timeout_max_tries`: An integer depciting how often a connection is retried, when a timeout occured. Defaults to 3 in default.conf.
@@ -90,6 +249,8 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `redis_cache_ttl`: TTL used for caching.
 * `redis_cache_password`: Optional password for the redis database (default: none).
 
+## Collectors
+
 
 ### Generic URL Fetcher
 
@@ -105,9 +266,11 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
+* `extract_files`: Optional, boolean or list of strings. If it is not false, the retrieved (compressed) file or archived will be uncompressed/unpacked and the files are extracted. If the parameter is a list for strings, only the files matching the filenames are extracted. Extraction handles gziped files and both compressed and uncompressed tar-archives.
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
 * `http_url_formatting`: If `True` (default `False`) `{time[format]}` will be replaced by the current time formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2018` for the year 2018. Currently only the time in local timezone is available. Python's [Format Specification Mini-Language¶](https://docs.python.org/3/library/string.html) is used for this.
 
+Zipped files are automatically extracted if detected.
 
 * * *
 
@@ -199,6 +362,25 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `postfix`: FIXME
 * `delete_file`: whether to delete the file after reading (default: `false`)
 
+* * *
+
+### Rsync
+
+Requires the rsync executable
+
+#### Information:
+* `name:` intelmq.bots.collectors.rsync.collector_rsync
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Bot download file by rsync and then load data from downloaded file. Downloaded file is located in var/lib/bots/rsync_collector.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `file`: Name of downloaded file.
+* `rsync_path`: Path to file. It can be "/home/username/directory" or "username@remote_host:/home/username/directory"
+* `temp_directory`: Path of a temporary state directory to use for rsync'd files. Optional. Default: `/opt/intelmq/var/run/rsync_collector/`.
 
 * * *
 
@@ -350,6 +532,7 @@ See the README.md
 
 * **Feed parameters** (see above)
 * `api_key`: location of information resource
+* `api_url`: The optional API endpoint, by default `https://freeapi.blueliv.com`.
 
 * * *
 
@@ -418,7 +601,7 @@ The cache is used to remember which files have already been downloaded. Make sur
 
 ### Stomp
 
-See the README.md
+See the README.md in `intelmq/bots/collectors/stomp/`
 
 #### Information:
 * `name:` intelmq.bots.collectors.stomp.collector
@@ -463,7 +646,25 @@ Collects tweets from target_timelines. Up to tweet_count tweets from each user a
 * `acces_token_key`: Twitter api login data
 * `access_token_secret`: Twitter api login data
 
-<a name="parsers"></a>
+### API collector bot
+
+#### Information:
+* `name:` intelmq.bots.collectors.api.collector_api
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Bot for collecting data using API, you need to post JSON to /intelmq/push endpoint
+
+example usage:
+```
+curl -X POST http://localhost:5000/intelmq/push -H 'Content-Type: application/json' --data '{"source.ip": "127.0.0.101", "classification.type": "backdoor"}'
+```
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `port`: 5000
+
 ## Parsers
 
 TODO
@@ -526,6 +727,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
      ```
  * `"type_translation"`: If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
+ * `"columns_required"`: A list of true/false for each column. By default, it is true for every column.
 
 
 ### Cymru CAP Program
@@ -542,6 +744,8 @@ Some reports are not implemented at all as there is no data available to check i
 The information about the event could be better in many cases but as Cymru does not want to be associated with the report, we can't add comments to the events in the parser, because then the source would be easily identifiable for the recipient.
 
 ### Cymru Full Bogons
+
+http://www.team-cymru.com/bogon-reference.html
 
 #### Information:
 * `name:` intelmq.bots.parsers.cymru.parser_full_bogons
@@ -625,7 +829,6 @@ The parser is by far not complete as there are a lot of fields in a big nested s
 * `minimal_mode`: Boolean (default false)
 
 
-<a name="experts"></a>
 ## Experts
 
 ### Abusix
@@ -642,7 +845,7 @@ See the README.md
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 FIXME
 
 * * *
@@ -675,16 +878,22 @@ FIXME
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 FIXME
 
 * * *
 
 ### Domain Suffix
 
+This bots adds the public suffix to the event, derived by a domain.
 See or information on the public suffix list: https://publicsuffix.org/list/
 Only rules for ICANN domains are processed. The list can (and should) contain
-Unicode data, punycode conversion is done during reading
+Unicode data, punycode conversion is done during reading.
+
+Note that the public suffix is not the same as the top level domain (TLD). E.g.
+`co.uk` is a public suffix, but the TLD is `uk`.
+Privatly registered suffixes (such as `blogspot.co.at`) which are part of the
+public suffix list too, are ignored.
 
 #### Information:
 * `name:` deduplicator
@@ -737,7 +946,7 @@ See the README.md
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 * * *
@@ -753,7 +962,7 @@ Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 #### Configuration Parameters:
 * `type` - either `"whitelist"` or `"blacklist"`
-* `keys` - a list of key names (strings)
+* `keys` - Can be a JSON-list of field names (`["raw", "source.account"]`) or a string with a comma-separated list of field names (`"raw,source.account"`).
 
 ##### Whitelist
 
@@ -1047,7 +1256,7 @@ For both `source.ip` and `destination.ip` the PTR record is fetched and the firs
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 * `cache_ttl_invalid_response`: The TTL for cached invalid responses.
 
 * * *
@@ -1078,23 +1287,26 @@ Sources:
 
 * * *
 
-### RipeNCC Abuse Contact
+### Ripe
+
+Online RIPE Abuse Contact and Geolocation Finder for IP addresses and Autonomous Systems.
 
 #### Information:
 * `name:` ripencc-abuse-contact
 * `lookup:` https api
 * `public:` yes
-* `cache (redis db):` 9
+* `cache (redis db):` 10
 * `description:` IP to abuse contact
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 * `mode`: either `append` (default) or `replace`
 * `query_ripe_db_asn`: Query for IPs at `http://rest.db.ripe.net/abuse-contact/%s.json`, default `true`
 * `query_ripe_db_ip`: Query for ASNs at `http://rest.db.ripe.net/abuse-contact/as%s.json`, default `true`
 * `query_ripe_stat_asn`: Query for ASNs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
 * `query_ripe_stat_ip`: Query for IPs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
+* `query_ripe_stat_geolocation`: Query for IPs at `https://stat.ripe.net/data/maxmind-geo-lite/data.json?resource=%s`, default `true`
 
 * * *
 
@@ -1184,8 +1396,21 @@ Otherwise the dummy mode is active, the events are just passed without an additi
 
 Note that SIGHUPs and reloads interrupt the sleeping.
 
-<a name="outputs"></a>
 ## Outputs
+
+### Blackhole
+
+This output bot discards all incoming messages.
+
+#### Information
+* `name`: blackhole
+* `lookup`: no
+* `public`: yes
+* `cache`: no
+* `description`: discards messages
+
+* * *
+
 
 ### File
 
@@ -1198,6 +1423,7 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 
 #### Configuration Parameters:
 
+* `encoding_errors_mode`: By default `'strict'`, see for more details and options: https://docs.python.org/3/library/functions.html#open For example with `'backslashreplace'` all characters which cannot be properly encoded will be written escaped with backslashes.
 * `file`: file path of output file. Missing directories will be created if possible with the mode 755.
 * `format_filename`: Boolean if the filename should be formatted (default: `false`).
 * `hierarchial_output`: If true, the resulting dictionary will be hierarchical (field names split by dot).
@@ -1257,6 +1483,8 @@ If the field used in the format string is not defined, `None` will be used as fa
 
 ### MongoDB
 
+Saves events in a MongoDB either as hierarchical structure or flat with full key names. `time.observation` and `time.source` are saved as datetime objects, not as ISO formatted string.
+
 #### Information:
 * `name:` mongodb
 * `lookup:` no
@@ -1273,6 +1501,7 @@ If the field used in the format string is not defined, `None` will be used as fa
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
 * `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionary in sub-dictionaries.
+* `replacement_char`: String (default `'_'`) used as replacement character for the dots in key names if hierarchical output is not used.
 
 #### Installation Requirements
 

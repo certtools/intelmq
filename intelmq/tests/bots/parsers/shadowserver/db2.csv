@@ -1,0 +1,3 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","db2_hostname","servername","size"
+"2016-05-17 19:09:38","221.0.111.99","udp",523,,"db2",4837,"CN","SHANDONG","JINAN",0,0,"server1.net","server1",298
+"2016-05-17 19:09:44","217.241.57.135","udp",523,"pd9f13987.dip0.t-ipconnect.de","db2",3320,"DE","BAYERN","NUREMBERG",541690,874899,"kronos.net","kronos",298

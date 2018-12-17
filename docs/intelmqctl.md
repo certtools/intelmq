@@ -1,27 +1,33 @@
 # intelmqctl documentation
 
-  * [Introduction](#introduction)
-  * [Output type](#output-type)
-  * [Manage individual bots](#manage-individual-bots)
-    * [start](#start)
-    * [stop](#stop)
-    * [status](#status)
-    * [restart](#restart)
-    * [reload](#reload)
-    * [run](#run)
-    * [disable](#disable)
-    * [enable](#enable)
-  * [Manage the botnet](#manage-the-botnet)
-    * [start](#start-1)
-    * [stop](#stop-1)
-    * [status](#status-1)
-    * [restart](#restart-1)
-    * [reload](#reload-1)
-  * [List bots](#list-bots)
-  * [List queues](#list-queues)
-  * [Log](#log)
-  * [Check](#check)
-  * [Known issues](#known-issues)
+**Table of Contents:**
+- [Introduction](#introduction)
+- [Output type](#output-type)
+- [Manage individual bots](#manage-individual-bots)
+  - [start](#start)
+  - [stop](#stop)
+  - [status](#status)
+  - [restart](#restart)
+  - [reload](#reload)
+  - [run](#run)
+    - [console](#console)
+    - [message](#message)
+    - [process](#process)
+  - [disable](#disable)
+  - [enable](#enable)
+- [Manage the botnet](#manage-the-botnet)
+  - [start](#start)
+  - [stop](#stop)
+  - [status](#status)
+  - [restart](#restart)
+  - [reload](#reload)
+  - [enable / disable](#enable-disable)
+- [List bots](#list-bots)
+- [List queues](#list-queues)
+- [Log](#log)
+- [Check](#check)
+- [Exit code](#exit-code)
+- [Known issues](#known-issues)
 
 ## Introduction
 
@@ -209,8 +215,8 @@ file-output: Waiting for incoming message.
 file-output: Received message {'raw': '1234'}.
 ```
 
-If run with **--dryrun|-d** flag, the message gets never really popped out from the source or internal pipeline, nor send to the output pipeline.
-Plus, you receive a note about the exact moment the message would get sent, or acknowledged. It is explicitly if sent to a non-default path.
+If run with **--dryrun|-d** flag, the message gets never really popped out from the source or internal pipeline, nor sent to the output pipeline.
+Plus, you receive a note about the exact moment the message would get sent, or acknowledged. If the message would be sent to a non-default path, the name of this path is printed on the console.
 
 ```bash
 > intelmqctl run file-output process -d

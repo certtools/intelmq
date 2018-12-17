@@ -12,16 +12,20 @@ reverse_readline
 parse_logline
 """
 import base64
+import collections
+import gzip
 import io
 import json
 import logging
 import logging.handlers
 import os
 import re
+import warnings
 import sys
 import tarfile
 import traceback
 from typing import Sequence, Optional, Union, Generator
+from dateutil.relativedelta import relativedelta
 
 import dateutil.parser
 import pytz
@@ -228,6 +232,17 @@ class StreamHandler(logging.StreamHandler):
             self.handleError(record)
 
 
+class ListHandler(logging.StreamHandler):
+    """
+    Logging handler which saves the messages in a list which can be accessed with the
+    `buffer` attribute.
+    """
+    buffer = []
+
+    def emit(self, record):
+        self.buffer.append((record.levelname.lower(), record.getMessage()))
+
+
 def log(name: str, log_path: str = intelmq.DEFAULT_LOGGING_PATH, log_level: str = "DEBUG",
         stream: Optional[object] = None, syslog: Union[bool, str, list, tuple] = None,
         log_format_stream: str = LOG_FORMAT_STREAM):
@@ -411,13 +426,29 @@ def parse_relative(relative_time: str) -> int:
 
 def extract_tar(file: bytes, extract_files: Union[bool, list]) -> list:
     """
-        Extracts given compressed tar.gz file and returns content of specified or all files from it.
+    Wrapper for the new and more generic function unzip.
+    """
+    warnings.warn("The function 'extract_tar' is deprecated and will be removed in version 2.0, "
+                  "use unzip instead.",
+                  DeprecationWarning)
+    return unzip(file=file, extract_files=extract_files, try_gzip=False)
+
+
+def unzip(file: bytes, extract_files: Union[bool, list], logger=None, try_gzip: bool = True) -> list:
+    """
+        Extracts given compressed (tar.)gz file and returns content of specified or all files from it.
+        Handles tarfiles, compressed tarfiles and gzipped files.
+
+        First the function tries to handle the file with the tarfile library which handles
+        compressed archives too.
+        Second, it tries to uncompress the file with gzip.
 
         Parameters:
             file: a binary representation of compressed file
             extract_files: a value which specifies files to be extracted:
                     True: all
                     list: some
+            try_gzip: Try to gzip-uncompress the file.
 
         Returns:
             result: list containing the string representation of specified files
@@ -427,13 +458,24 @@ def extract_tar(file: bytes, extract_files: Union[bool, list]) -> list:
     """
     try:
         tar = tarfile.open(fileobj=io.BytesIO(file))
+        if logger:
+            logger.debug('Detected tarfile.')
     except tarfile.TarError as te:
-        raise TypeError("Could not process given file" + repr(te.args))
+        try:
+            if not try_gzip:
+                raise OSError
+            if logger:
+                logger.debug('Detected gzipped file.')
+            data = gzip.decompress(file)
+        except OSError:
+            raise TypeError("Could not process given file" + repr(te.args))
+        else:
+            return [data]
+    else:
+        if isinstance(extract_files, bool):
+            extract_files = [file.name for file in tar.getmembers()]
 
-    if isinstance(extract_files, bool):
-        extract_files = [file.name for file in tar.getmembers()]
-
-    return [tar.extractfile(member).read() for member in tar.getmembers() if member.name in extract_files]
+        return [tar.extractfile(member).read() for member in tar.getmembers() if member.name in extract_files]
 
 
 class RewindableFileHandle(object):
@@ -455,3 +497,38 @@ class RewindableFileHandle(object):
         if self.first_line is None:
             self.first_line = self.current_line
         return self.current_line
+
+
+def object_pair_hook_bots(*args, **kwargs):
+    """
+    A object_pair_hook function for the BOTS file to be used in the json's dump functions.
+
+    Usage: BOTS = json.loads(raw, object_pairs_hook=object_pair_hook_bots)
+
+    """
+    # Do not sort collector bots
+    if len(args[0]) and len(args[0][0]) == 2 and isinstance(args[0][0][1], dict) and\
+            'module' in args[0][0][1] and '.collectors' in args[0][0][1]['module']:
+        return collections.OrderedDict(*args, **kwargs)
+    # Do not sort bot groups
+    if len(args[0]) and len(args[0][0]) and len(args[0][0][0]) and args[0][0][0] == 'Collector':
+        return collections.OrderedDict(*args, **kwargs)
+    return dict(sorted(*args), **kwargs)
+
+
+def seconds_to_human(seconds: float, precision: int = 0) -> str:
+    """
+    Converts second count to a human readable description.
+    >>> seconds_to_human(60)
+    "1m"
+    >>> seconds_to_human(3600)
+    "1h"
+    >>> seconds_to_human(3601)
+    "1h 0m 1s"
+    """
+    relative = relativedelta(seconds=seconds)
+    result = []
+    for frame in ('days', 'hours', 'minutes', 'seconds'):
+        if getattr(relative, frame):
+            result.append('%.{}f%s'.format(precision) % (getattr(relative, frame), frame[0]))
+    return ' '.join(result)

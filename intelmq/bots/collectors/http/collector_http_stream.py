@@ -14,7 +14,10 @@ strip_lines: boolean
 http_timeout_sec: tuple of two floats or float
 """
 
-import requests
+try:
+    import requests
+except ImportError:
+    requests = None
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import decode
@@ -25,6 +28,9 @@ class HTTPStreamCollectorBot(CollectorBot):
     sighup_delay = False
 
     def init(self):
+        if requests is None:
+            raise ValueError('Could not import requests. Please install it.')
+
         self.set_request_parameters()
 
     def process(self):

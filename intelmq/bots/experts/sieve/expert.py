@@ -8,6 +8,7 @@ Parameters:
 import ipaddress
 import os
 import re
+import traceback
 
 import intelmq.lib.exceptions as exceptions
 from intelmq import HARMONIZATION_CONF_FILE
@@ -75,22 +76,26 @@ class SieveExpertBot(Bot):
     @staticmethod
     def check(parameters):
         try:
+            harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
+            SieveExpertBot.harmonization = harmonization_config['event']
+
             metamodel = SieveExpertBot.init_metamodel()
-            sieve = SieveExpertBot.read_sieve_file(parameters['file'], metamodel)
+            SieveExpertBot.read_sieve_file(parameters['file'], metamodel)
         except Exception as e:
-            return [['error', str(e)]]
+            return [['error', 'Validation of Sieve file failed with the following traceback: %r' % traceback.format_exc()]]
 
     def process(self):
         event = self.receive_message()
         procedure = Procedure.CONTINUE
-        for rule in self.sieve.rules:
-            procedure = self.process_rule(rule, event)
-            if procedure == Procedure.KEEP:
-                self.logger.debug('Stop processing based on rule at %s: %s.', self.get_linecol(rule), event)
-                break
-            elif procedure == Procedure.DROP:
-                self.logger.debug('Dropped event based on rule at %s: %s.', self.get_linecol(rule), event)
-                break
+        if self.sieve:  # empty rules file results in empty string
+            for rule in self.sieve.rules:
+                procedure = self.process_rule(rule, event)
+                if procedure == Procedure.KEEP:
+                    self.logger.debug('Stop processing based on rule at %s: %s.', self.get_linecol(rule), event)
+                    break
+                elif procedure == Procedure.DROP:
+                    self.logger.debug('Dropped event based on rule at %s: %s.', self.get_linecol(rule), event)
+                    break
 
         # forwarding decision
         if procedure != Procedure.DROP:
@@ -321,8 +326,12 @@ class SieveExpertBot(Bot):
             Default return type is a tuple of (line,col). Optionally, returns a dict when as_dict == True.
 
         """
-        metamodel = textx.model.metamodel(model_obj)
-        tup = metamodel.parser.pos_to_linecol(model_obj._tx_position)
+        # The __version__ attribute is first available with version 1.7.0
+        if hasattr(textx, '__version__'):
+            parser = textx.model.get_model(model_obj)._tx_parser
+        else:
+            parser = textx.model.metamodel(model_obj).parser
+        tup = parser.pos_to_linecol(model_obj._tx_position)
         if as_dict:
             return dict(zip(['line', 'col'], tup))
         return tup
