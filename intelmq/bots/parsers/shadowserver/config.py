@@ -60,12 +60,14 @@ def get_feed(feedname, logger):
         "Accessible-SMB": accessible_smb,
         "Accessible-Telnet": accessible_telnet,
         "Accessible-VNC": accessible_vnc,
+        "Amplification-DDoS-Victim": amplification_ddos_victim,
         "Blacklisted-IP": blacklisted_ip,
         "Compromised-Website": compromised_website,
         "DNS-Open-Resolvers": dns_open_resolvers,
         "Darknet": darknet,
         "Drone-Brute-Force": drone_brute_force,
         "Drone": drone,
+        "HTTP-Scanners": http_scanners,
         "IPv6-Sinkhole-HTTP-Drone": ipv6_sinkhole_http_drone,
         "Microsoft-Sinkhole": microsoft_sinkhole,
         "NTP-Monitor": ntp_monitor,
@@ -1969,4 +1971,75 @@ darknet = {
         'classification.taxonomy': 'other',
         'classification.type': 'other',
     },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Amplification-DDoS-Victim
+amplification_ddos_victim = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+    ],
+    'optional_fields': [
+        ('source.port', 'src_port'),
+        ('protocol.transport', 'protocol'),
+        ('destination.port', 'dst_port'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'request', validate_to_none),
+        ('extra.', 'count', convert_int),
+        ('extra.', 'bytes', convert_int),
+        ('extra.', 'sensor_geo', validate_to_none),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'end_time', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'availability',
+        'classification.type': 'ddos',
+        'classification.identifier': 'amplification-ddos-victim',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/HTTP-Scanners
+http_scanners = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+       ('source.asn', 'asn'),
+       ('source.geolocation.cc', 'geo'),
+       ('source.geolocation.region', 'region'),
+       ('source.geolocation.city', 'city'),
+       ('source.reverse_dns', 'hostname'),
+       ('destination.ip', 'dst_ip'),
+       ('destination.port', 'dst_port'),
+       ('destination.asn', 'dst_asn'),
+       ('destination.geolocation.cc', 'dst_geo'),
+       ('destination.fqdn', 'dst_dns', validate_fqdn),
+       ('extra.', 'type', validate_to_none),
+       ('extra.', 'naics', invalidate_zero),
+       ('extra.', 'sic', invalidate_zero),
+       ('extra.', 'sector', validate_to_none),
+       ('extra.destination.sector', 'dst_sector', validate_to_none),
+       ('extra.', 'public_source', validate_to_none),
+       ('extra.', 'sensorid', validate_to_none),
+       ('extra.', 'pattern', validate_to_none),
+       ('extra.', 'url', validate_to_none),
+       ('extra.file.md5', 'file_md5', validate_to_none),
+       ('extra.file.sha256', 'file_sha256', validate_to_none),
+       ('extra.', 'request_raw', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'information gathering',
+        'classification.type': 'scanner',
+        'classification.identifier': 'http-scanners',
+    }
 }
