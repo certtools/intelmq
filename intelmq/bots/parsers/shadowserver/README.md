@@ -40,6 +40,7 @@ Possible feednames:
 * `Drone`
 * `Drone-Brute-Force`
 * `HTTP-Scanners`
+* `ICS-Scanners`
 * `IPv6-Sinkhole-HTTP-Drone`
 * `Microsoft-Sinkhole`
 * `NTP-Monitor`
