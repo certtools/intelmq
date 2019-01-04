@@ -32,12 +32,14 @@ Possible feednames:
 * `Accessible-SMB`
 * `Accessible-Telnet`
 * `Accessible-VNC`
+* `Amplification-DDoS-Victim`
 * `Blacklisted-IP`
 * `Compromised-Website`
 * `Darknet`
 * `DNS-Open-Resolvers`
 * `Drone`
 * `Drone-Brute-Force`
+* `HTTP-Scanners`
 * `IPv6-Sinkhole-HTTP-Drone`
 * `Microsoft-Sinkhole`
 * `NTP-Monitor`
