@@ -68,6 +68,7 @@ def get_feed(feedname, logger):
         "Drone-Brute-Force": drone_brute_force,
         "Drone": drone,
         "HTTP-Scanners": http_scanners,
+        "ICS-Scanners": ics_scanners,
         "IPv6-Sinkhole-HTTP-Drone": ipv6_sinkhole_http_drone,
         "Microsoft-Sinkhole": microsoft_sinkhole,
         "NTP-Monitor": ntp_monitor,
@@ -2041,5 +2042,44 @@ http_scanners = {
         'classification.taxonomy': 'information gathering',
         'classification.type': 'scanner',
         'classification.identifier': 'http-scanners',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/ICS-Scanners
+ics_scanners = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+       ('source.asn', 'asn'),
+       ('source.geolocation.cc', 'geo'),
+       ('source.geolocation.region', 'region'),
+       ('source.geolocation.city', 'city'),
+       ('source.reverse_dns', 'hostname'),
+       ('protocol.application', 'protocol'),
+       ('destination.ip', 'dst_ip'),
+       ('destination.port', 'dst_port'),
+       ('destination.asn', 'dst_asn'),
+       ('destination.geolocation.cc', 'dst_geo'),
+       ('destination.fqdn', 'dst_dns', validate_fqdn),
+       ('extra.', 'type', validate_to_none),
+       ('extra.', 'naics', invalidate_zero),
+       ('extra.', 'sic', invalidate_zero),
+       ('extra.', 'sector', validate_to_none),
+       ('extra.destination.sector', 'dst_sector', validate_to_none),
+       ('extra.', 'public_source', validate_to_none),
+       ('extra.', 'sensorid', validate_to_none),
+       ('extra.', 'state', validate_to_none),
+       ('extra.', 'slave_id', validate_to_none),
+       ('extra.', 'function_code', convert_int),
+       ('extra.', 'request', validate_to_none),
+       ('extra.', 'response', convert_int),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'information gathering',
+        'classification.type': 'scanner',
+        'classification.identifier': 'ics-scanners',
     }
 }
