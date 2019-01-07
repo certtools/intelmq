@@ -33,7 +33,7 @@ class MailURLCollectorBot(MailCollectorBot):
         seen = False
 
         for body in message.body['plain']:
-            match = re.search(self.parameters.url_regex, str(body))
+            match = re.search(self.parameters.url_regex, str(body.decode('utf-8') if isinstance(body, bytes) else body))
             if match:
                 url = match.group()
                 # strip leading and trailing spaces, newlines and
