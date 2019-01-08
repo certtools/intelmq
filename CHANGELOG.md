@@ -9,6 +9,7 @@ CHANGELOG
 - `lib/bot`:
   - Dump messages locks the dump file using unix file locks (#574).
   - Print idle/rate limit time also in human readable format (#1332).
+  - `set_request_parameters`: Use `{}` as default proxy value instead of `None`. Allows updating of existing proxy dictionaries.
 - `lib/utils`
   - Function `unzip` to extract files from gzipped and/or tar-archives.
   - New class `ListHandler`: new handler for logging purpose which saves the messages in a list.
@@ -36,10 +37,15 @@ CHANGELOG
 - added `intelmq.bots.experts.mcafee.expert_mar` (1265).
 - renamed `intelmq.bots.experts.ripencc_abuse_contact.expert` to `intelmq.bots.experts.ripe.expert`, compatibility shim will be removed in version 3.0.
   - Added support for geolocation information in ripe expert with a new parameter `query_ripe_stat_geolocation` (#1317).
+- `intelmq.bots.experts.ripe.expert`:
+  - Use a requests session (#1363).
+  - Set the requests parameters once per session.
 
 #### Outputs
 - added `intelmq.bots.experts.mcafee.output_esm` (1265).
 - added `intelmq.bots.outputs.blackhole` (#1279).
+- `intelmq.bots.outputs.restapi.expert`:
+  - Set the requests parameters once per session.
 
 ### Documentation
 

@@ -605,9 +605,9 @@ class Bot(object):
             self.logger.warning('Only %s_proxy seems to be set.'
                                 'Both http and https proxies must be set.',
                                 'http' if self.parameters.http_proxy else 'https')
-            self.proxy = None
+            self.proxy = {}
         else:
-            self.proxy = None
+            self.proxy = {}
 
         self.http_timeout_sec = getattr(self.parameters, 'http_timeout_sec', None)
         self.http_timeout_max_tries = getattr(self.parameters, 'http_timeout_max_tries', 1)
