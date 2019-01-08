@@ -24,6 +24,9 @@ CHANGELOG
 - added `intelmq.bots.collectors.rsync` (#1286).
 - `intelmq.bots.collectors.http.collector_http`: Add support for uncompressing of gzipped-files (#1270).
 - `intelmq.collectors.blueliv.collector_crimeserver`: Allow setting the API URL by parameter (#1336).
+- `intelmq.collectors.mail`:
+  - Use internal lib for functionality.
+  - Add `intelmq.bots.collectors.mail.collector_mail_body`.
 
 #### Parsers
 - added `intelmq.bots.parsers.mcafee.parser_atd` (#1265).
