@@ -55,15 +55,15 @@ GEOLOCA_OUTPUT1 = {"__type": "Event",
                    "source.ip": "96.30.37.204",
                    "source.geolocation.cc": "US",
                    "source.geolocation.city": "Lansing",
-                   "source.geolocation.latitude": 42.7257,
-                   "source.geolocation.longitude": -84.636
+                   "source.geolocation.latitude": 42.7376,
+                   "source.geolocation.longitude": -84.6244
                    }
 GEOLOCA_OUTPUT3 = {"__type": "Event",
                    "source.ip": "96.30.37.204",
                    "source.geolocation.cc": "IN",
                    "source.geolocation.city": "Lansing",
-                   "source.geolocation.latitude": 42.7257,
-                   "source.geolocation.longitude": -84.636
+                   "source.geolocation.latitude": 42.7376,
+                   "source.geolocation.longitude": -84.6244
                    }
 
 
