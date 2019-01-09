@@ -17,6 +17,7 @@ Parameters:
 
     classification_type : string with a valid classificationtype
 """
+import pkg_resources
 
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.bot import utils
@@ -25,7 +26,7 @@ from intelmq.lib.harmonization import ClassificationType
 import re
 
 try:
-    from url_normalize import url_normalize, __version__ as url_version
+    from url_normalize import url_normalize
 except ImportError:
     url_normalize = None
 
@@ -42,8 +43,10 @@ class TwitterParserBot(ParserBot):
     def init(self):
         if url_normalize is None:
             raise ValueError("Could not import 'url-normalize'. Please install it.")
+        url_version = pkg_resources.get_distribution("url-normalize").version
         if tuple(int(v) for v in url_version.split('.')) < (1, 4, 1) and hasattr(self.parameters, 'default_scheme'):
-            raise ValueError("Parameter 'default_scheme' given but 'url-normalize' version %r does not support it. Get at least version '1.4.1'." % url_version)
+            raise ValueError("Parameter 'default_scheme' given but 'url-normalize' version %r does not support it. "
+                             "Get at least version '1.4.1'." % url_version)
         if get_tld is None:
             raise ValueError("Could not import 'tld'. Please install it.")
         try:
