@@ -115,7 +115,7 @@ class RIPEExpertBot(Bot):
         if cache_value:
             return json.loads(cache_value)
         response = self.http_session.get(self.URL_DB_IP.format(ip), data="",
-                                           timeout=self.http_timeout_sec)
+                                         timeout=self.http_timeout_sec)
         if response.status_code != 200:
             raise ValueError(STATUS_CODE_ERROR % response.status_code)
 
@@ -128,7 +128,7 @@ class RIPEExpertBot(Bot):
         if cache_value and cache_value != CACHE_NO_VALUE:
             return json.loads(cache_value)
         response = self.http_session.get(self.URL_DB_AS.format(asn), data="",
-                                           timeout=self.http_timeout_sec)
+                                         timeout=self.http_timeout_sec)
         if response.status_code != 200:
             """ If no abuse contact could be found, a 404 is given. """
             if response.status_code == 404:
