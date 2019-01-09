@@ -64,7 +64,9 @@ class TestTwitterParserBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = TwitterParserBot
         cls.sysconfig = {"substitutions" : " .net;.net;[.];.;,;.",
-                         "classification_type": "blacklist"}
+                         "classification_type": "blacklist",
+                         "default_scheme": "http",
+                         }
     def test_parse(self):
         self.input_message = REPORT
         self.run_bot()

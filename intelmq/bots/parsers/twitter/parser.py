@@ -25,11 +25,12 @@ from intelmq.lib.harmonization import ClassificationType
 import re
 
 try:
-    from url_normalize import url_normalize
+    from url_normalize import url_normalize, __version__ as url_version
 except ImportError:
     url_normalize = None
 
 try:
+    import tld.exceptions
     from tld import get_tld
     from tld.utils import update_tld_names
 except ImportError:
@@ -41,9 +42,14 @@ class TwitterParserBot(ParserBot):
     def init(self):
         if url_normalize is None:
             raise ValueError("Could not import 'url-normalize'. Please install it.")
+        if tuple(int(v) for v in url_version.split('.')) < (1, 4, 1) and hasattr(self.parameters, 'default_scheme'):
+            raise ValueError("Parameter 'default_scheme' given but 'url-normalize' version %r does not support it. Get at least version '1.4.1'." % url_version)
         if get_tld is None:
             raise ValueError("Could not import 'tld'. Please install it.")
-        update_tld_names()
+        try:
+            update_tld_names()
+        except tld.exceptions.TldIOError:
+            self.logger.info("Could not update TLD names cache.")
         self.domain_whitelist = []
         if getattr(self.parameters, "domain_whitelist", '') != '':
             self.domain_whitelist.extend(self.parameters.domain_whitelist.split(','))
@@ -61,12 +67,17 @@ class TwitterParserBot(ParserBot):
         if not ClassificationType.is_valid(self.classification_type):
             self.classification_type = 'unknown'
 
+        if hasattr(self.parameters, 'default_scheme'):
+            self.url_kwargs = {'default_scheme': self.parameters.default_scheme}
+        else:
+            self.url_kwargs = {}
+
     def get_domain(self, address):
         try:
             dom = re.search(r'(//|^)([a-z0-9.-]*[a-z]\.[a-z][a-z-]*?(?:[/:].*|$))', address).group(2)
             if not self.in_whitelist(dom):
-                if get_tld(url_normalize(dom), fail_silently=True):
-                    return url_normalize(dom)
+                if get_tld(url_normalize(dom, **self.url_kwargs), fail_silently=True):
+                    return url_normalize(dom, **self.url_kwargs)
             return None
         except AttributeError:
             return None

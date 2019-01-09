@@ -1,2 +1,2 @@
 tld
-url-normalize
+url-normalize>=1.4.1
