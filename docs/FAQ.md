@@ -41,6 +41,38 @@ In most cases the bottlenecks are look-up experts. In these cases you can easily
 
 See also this discussion on a possible enhanced load balancing: https://github.com/certtools/intelmq/issues/186
 
+### Removing raw data for higher performance and less space usage
+
+If you do not need the raw data, you can safely remove it. For events (after parsers), it keeps the original data, eg. a line of a CSV file. In reports it keeps the actual data to be parsed, so don't delete the raw field in Reports - between collectors and parsers.
+
+The raw data consumes about 50% - 30% of the messages' size (Depending of course on how many additional data you add to it and how much data the report includes). Dropping it, will improve the speed as less data needs to be transferred and processed at each step.
+
+
+#### In a bot
+
+You can do this for example by using the *Field Reducer Expert*. The configuration could be:
+
+ * `type`: `blacklist`
+ * `keys`: `raw`
+
+Other solutions are the *Modify* bot and the *Sieve* bot. The last one is a good choice if you already use it and you only need to add the command:
+
+```
+remove raw
+```
+
+#### In the database
+
+In case you store data in the database and you want to keep its size small, you can (periodically) delete the raw data there.
+
+To remove the raw data for a events table of a PostgreSQL database, you can use something like:
+
+```
+UPDATE events SET raw = NULL WHERE "time.source" < '2018-07-01';
+```
+
+If the database is big, make sure only update small parts of the database by using an appropriate `WHERE` clause. If you do not see any negative performance impact, you can increase the size of the chunks, otherwise the events in the output bot may queue up. The `id` column can also be used instead of the source's time.
+
 ## My bot(s) died on startup with no errors logged
 
 Rather than starting your bot(s) with `intelmqctl start`, try `intelmqctl run [bot]`. This will provide valuable debug output you might not otherwise see, pointing to issues like configuration errors.

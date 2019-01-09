@@ -30,6 +30,8 @@ class RIPEExpertBot(Bot):
         if requests is None:
             raise ValueError('Could not import requests. Please install it.')
 
+        self.http_session = requests.Session()
+
         if hasattr(self.parameters, 'query_ripe_stat'):
             self.logger.warning("The parameter 'query_ripe_stat' is deprecated and will be "
                                 "removed in 2.0. Use 'query_ripe_stat_asn' and "
@@ -44,6 +46,10 @@ class RIPEExpertBot(Bot):
         self.mode = getattr(self.parameters, 'mode', 'append')
 
         self.set_request_parameters()
+        self.http_session.proxies.update(self.proxy)
+        self.http_session.headers.update(self.http_header)
+        self.http_session.verify = self.http_verify_cert
+        self.http_session.cert = self.ssl_client_cert
 
         cache_host = getattr(self.parameters, 'redis_cache_host')
         cache_port = getattr(self.parameters, 'redis_cache_port')
@@ -61,12 +67,8 @@ class RIPEExpertBot(Bot):
             return json.loads(cache_value)
         elif cache_value == CACHE_NO_VALUE:
             return []
-        response = requests.get(self.URL_STAT_CONTACT.format(resource), data="",
-                                proxies=self.proxy,
-                                headers=self.http_header,
-                                verify=self.http_verify_cert,
-                                cert=self.ssl_client_cert,
-                                timeout=self.http_timeout_sec)
+        response = self.http_session.get(self.URL_STAT_CONTACT.format(resource), data="",
+                                         timeout=self.http_timeout_sec)
         if response.status_code != 200:
             raise ValueError(STATUS_CODE_ERROR % response.status_code)
 
@@ -90,12 +92,8 @@ class RIPEExpertBot(Bot):
             return json.loads(cache_value)
         elif cache_value == CACHE_NO_VALUE:
             return {}
-        response = requests.get(self.URL_STAT_GEOLOCATION.format(ip),
-                                proxies=self.proxy,
-                                headers=self.http_header,
-                                verify=self.http_verify_cert,
-                                cert=self.ssl_client_cert,
-                                timeout=self.http_timeout_sec)
+        response = self.http_session.get(self.URL_STAT_GEOLOCATION.format(ip),
+                                         timeout=self.http_timeout_sec)
         if response.status_code != 200:
             raise ValueError(STATUS_CODE_ERROR % response.status_code)
 
@@ -116,12 +114,8 @@ class RIPEExpertBot(Bot):
         cache_value = self.cache.get('dbip:%s' % ip)
         if cache_value:
             return json.loads(cache_value)
-        response = requests.get(self.URL_DB_IP.format(ip), data="",
-                                proxies=self.proxy,
-                                headers=self.http_header,
-                                verify=self.http_verify_cert,
-                                cert=self.ssl_client_cert,
-                                timeout=self.http_timeout_sec)
+        response = self.http_session.get(self.URL_DB_IP.format(ip), data="",
+                                           timeout=self.http_timeout_sec)
         if response.status_code != 200:
             raise ValueError(STATUS_CODE_ERROR % response.status_code)
 
@@ -133,12 +127,8 @@ class RIPEExpertBot(Bot):
         cache_value = self.cache.get('dbasn:%s' % asn)
         if cache_value and cache_value != CACHE_NO_VALUE:
             return json.loads(cache_value)
-        response = requests.get(self.URL_DB_AS.format(asn), data="",
-                                proxies=self.proxy,
-                                headers=self.http_header,
-                                verify=self.http_verify_cert,
-                                cert=self.ssl_client_cert,
-                                timeout=self.http_timeout_sec)
+        response = self.http_session.get(self.URL_DB_AS.format(asn), data="",
+                                           timeout=self.http_timeout_sec)
         if response.status_code != 200:
             """ If no abuse contact could be found, a 404 is given. """
             if response.status_code == 404:
