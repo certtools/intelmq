@@ -843,6 +843,13 @@ http://www.team-cymru.com/bogon-reference.html
 * `domain_whitelist`: domains to be filetered out
 * `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
 * `classification_type: string with a valid classification type as defined in data harmonization
+* `default_scheme`: Default scheme for URLs if not given. See also the next section.
+
+##### Default scheme
+
+The dependency `url-normalize` changed it's behavior in version 1.4.0 from using `http://` as default scheme to `https://`. Version 1.4.1 added the possibility to specify it. Thus you can only use the `default_scheme` parameter with a current version of this library >= 1.4.1, with 1.4.0 you will always get `https://` as default scheme and for older versions < 1.4.0 `http://` is used.
+
+This does not affect URLs which already include the scheme.
 
 ### Shodan
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import unittest
 
 import intelmq.lib.test as test
@@ -64,7 +65,12 @@ class TestTwitterParserBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = TwitterParserBot
         cls.sysconfig = {"substitutions" : " .net;.net;[.];.;,;.",
-                         "classification_type": "blacklist"}
+                         "classification_type": "blacklist",
+                         }
+        if sys.version_info >= (3, 6, 0):
+            # url-normalize 1.4.1 supporting this parameter is only available for 3.6
+            cls.sysconfig["default_scheme"] = "http"
+
     def test_parse(self):
         self.input_message = REPORT
         self.run_bot()

@@ -85,7 +85,8 @@ CHANGELOG
 - `lib/pipeline.py` (`Redis.receive`): Wait in 1s steps if redis is busy loading its snapshot from disk (#1334).
 
 ### Default configuration
-- Set `error_dump_message` to true by default.
+- Set `error_dump_message` to true by default in `defaults.conf`.
+- Fixed typo in `defaults.conf`: `proccess_manager` -> `process_manager`
 
 ### Development
 - `bin/rewrite_config_files.py`: Fix ordering of BOTS file (#1327).
@@ -131,6 +132,7 @@ CHANGELOG
   - Add support for `Darknet` (#1353).
 - `intelmq.bots.parsers.generic.parser_csv`: If the `skip_header` parameter was set to `True`, the header was not part of the `raw` field as returned by the `recover_line` method. The header is now saved and handled correctly by the fixed recovery method.
 - `intelmq.bots.parsers.cleanmx.parser`: Use field `first` instead of `firsttime` for `time.source` (#1329, #1348).
+- `intelmq.bots.parsers.twitter.parser`: Support for `url-normalize` >= 1.4.1 and recommend it. Added new optional parameter `default_scheme`, passed to `url-normalize` (#1356).
 
 #### Experts
 - `intelmq.bots.experts.national_cert_contact_certat.expert`:
