@@ -114,6 +114,8 @@ CHANGELOG
   - Handle not installed dependency library `requests` gracefully.
 - added `intelmq.bots.collectors.shodan.collector_stream` for collecting shodan stream data (#1096).
   - Correctly check the version of the shodan library, it resulted in wrong comparisons with two digit numbers.
+- `intelmq.bots.collectors.microsoft.collector_interflow`:
+  - Add check if Cache's TTL is big enough compared to `not_older_than` and throw an error otherwise.
 
 #### Parsers
 - `intelmq.bots.parsers.misp`: Fix Object attribute (#1318).

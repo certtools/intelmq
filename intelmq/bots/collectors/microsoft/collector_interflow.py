@@ -29,6 +29,7 @@ Parameter:
 import gzip
 import io
 import re
+import sys
 from datetime import datetime, timedelta
 
 import pytz
@@ -48,6 +49,19 @@ URL_DOWNLOAD = 'https://interflow.azure-api.net/file/api/file/download?fileName=
 
 
 class MicrosoftInterflowCollectorBot(CollectorBot):
+
+    def check_ttl_time(self):
+        """
+        Checks if the cache's TTL is big enough compared to the chosen
+        time frame so that the bot does not process the same data over and
+        over.
+        """
+        if isinstance(self.time_match, datetime):  # absolute
+            now = datetime.now(tz=pytz.timezone('UTC'))
+            if now - timedelta(seconds=self.parameters.redis_cache_ttl) > self.time_match:
+                raise ValueError("The cache's TTL must be higher than 'not_older_than', "
+                                 "otherwise the bot is processing the same data over and over again.")
+
     def init(self):
         if requests is None:
             raise ValueError('Could not import requests. Please install it.')
@@ -63,10 +77,19 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
             try:
                 self.time_match = timedelta(minutes=parse_relative(self.parameters.not_older_than))
             except ValueError:
-                self.time_match = parser.parse(self.parameters.not_older_than)
+                if sys.version_info >= (3, 6):
+                    self.time_match = parser.parse(self.parameters.not_older_than).astimezone(pytz.utc)
+                else:  # "astimezone() cannot be applied to a naive datetime" otherwise
+                    if '+' not in self.parameters.not_older_than:
+                        self.parameters.not_older_than += '+00:00'
+                    self.time_match = parser.parse(self.parameters.not_older_than)
                 self.logger.info("Filtering files absolute %r.", self.time_match)
+                self.check_ttl_time()
             else:
                 self.logger.info("Filtering files relative %r.", self.time_match)
+                if timedelta(seconds=self.parameters.redis_cache_ttl) < self.time_match:
+                    raise ValueError("The cache's TTL must be higher than 'not_older_than', "
+                                     "otherwise the bot is processing the same data over and over again.")
         else:
             self.time_match = None
 
@@ -79,6 +102,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
                            )
 
     def process(self):
+        self.check_ttl_time()
         self.logger.debug('Downloading file list.')
         files = requests.get(URL_LIST,
                              auth=self.auth,
