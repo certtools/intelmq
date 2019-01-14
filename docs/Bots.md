@@ -620,8 +620,8 @@ The cache is used to remember which files have already been downloaded. Make sur
 * **Feed parameters** (see above)
 * `api_key`: API generate in their portal
 * `file_match`: an optional regular expression to match file names
-* `not_older_than`: an optional relative (minutes) or absolute time expression to determine the oldest time of a file to be downloaded
-* `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved.
+* `not_older_than`: an optional relative (minutes) or absolute time (UTC is assumed) expression to determine the oldest time of a file to be downloaded
+* `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved. The cache's TTL must always be bigger than `not_older_than`.
 
 #### Additional functionalities
 
