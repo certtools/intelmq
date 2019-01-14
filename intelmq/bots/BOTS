@@ -867,14 +867,15 @@
             "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
             "module": "intelmq.bots.outputs.elasticsearch.output",
             "parameters": {
-                "elastic_doctype": "events",
                 "elastic_host": "127.0.0.1",
-                "elastic_index": "intelmq",
                 "elastic_port": 9200,
-                "flatten_fields": "extra",
-                "http_password": null,
+                "elastic_index": "intelmq",
+                "rotate_index": "never",
+                "elastic_doctype": "events",
                 "http_username": null,
-                "replacement_char": "_"
+                "http_password": null,
+                "flatten_fields": "extra",
+                "replacement_char": null
             }
         },
         "File": {
