@@ -1,7 +1,7 @@
 CHANGELOG
 ==========
 
-1.1.1 (unreleased)
+1.1.1 (2019-01-15)
 ------------------
 
 ### Core
@@ -156,6 +156,9 @@ Update to 2018-09-26 version. New values are per taxonomy:
   - Handle collector's `feed.name` and `feed.provider` (#1314).
 
 ### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted (#952).
+- Tests: capture logging with context manager (#1342).
+- stomp collector bot constantly uses 100% of CPU (#1364).
 
 
 1.1.0 (2018-09-05)
