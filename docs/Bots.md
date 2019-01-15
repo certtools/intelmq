@@ -1,9 +1,169 @@
 # Bots Documentation
 
-1. [Collectors](#collectors)
-2. [Parsers](#parsers)
-3. [Experts](#experts)
-4. [Outputs](#outputs)
+**Table of Contents:**
+- [Bots Documentation](#bots-documentation)
+- [General remarks](#general-remarks)
+- [Initialization parameters](#initialization-parameters)
+- [Common parameters](#common-parameters)
+- [Collectors](#collectors)
+  - [Generic URL Fetcher](#generic-url-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic URL Stream Fetcher](#generic-url-stream-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic Mail URL Fetcher](#generic-mail-url-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic Mail Attachment Fetcher](#generic-mail-attachment-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Fileinput](#fileinput)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [MISP Generic](#misp-generic)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Request Tracker](#request-tracker)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Shodan Stream](#shodan-stream)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [TCP](#tcp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [XMPP collector](#xmpp-collector)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Alien Vault OTX](#alien-vault-otx)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Blueliv Crimeserver](#blueliv-crimeserver)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Microsoft Azure](#microsoft-azure)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Microsoft Interflow](#microsoft-interflow)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Additional functionalities](#additional-functionalities)
+  - [Stomp](#stomp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Twitter](#twitter)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [Parsers](#parsers)
+  - [Generic CSV Parser](#generic-csv-parser)
+    - [Configuration parameters](#configuration-parameters)
+  - [Cymru CAP Program](#cymru-cap-program)
+    - [Information:](#information)
+  - [Cymru Full Bogons](#cymru-full-bogons)
+    - [Information:](#information)
+  - [Twitter](#twitter)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Shodan](#shodan)
+    - [Information](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [Experts](#experts)
+  - [Abusix](#abusix)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [ASN Lookup](#asn-lookup)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Cymru Whois](#cymru-whois)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Domain Suffix](#domain-suffix)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Rule processing](#rule-processing)
+  - [Deduplicator](#deduplicator)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Field Reducer Bot](#field-reducer-bot)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+      - [Whitelist](#whitelist)
+      - [Blacklist](#blacklist)
+  - [Filter](#filter)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic DB Lookup](#generic-db-lookup)
+  - [Gethostbyname](#gethostbyname)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [IDEA](#idea)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [MaxMind GeoIP](#maxmind-geoip)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Modify](#modify)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Configuration File](#configuration-file)
+    - [Actions](#actions)
+    - [Examples](#examples)
+    - [Types](#types)
+  - [National CERT contact lookup by CERT.AT](#national-cert-contact-lookup-by-certat)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Reverse DNS](#reverse-dns)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [RFC1918](#rfc1918)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [RipeNCC Abuse Contact](#ripencc-abuse-contact)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Sieve](#sieve)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Taxonomy](#taxonomy)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Tor Nodes](#tor-nodes)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Url2FQDN](#url2fqdn)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Wait](#wait)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [Outputs](#outputs)
+  - [File](#file)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+      - [Filename formatting](#filename-formatting)
+  - [Files](#files)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [MongoDB](#mongodb)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Installation Requirements](#installation-requirements)
+  - [PostgreSQL](#postgresql)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Installation Requirements](#installation-requirements)
+    - [PostgreSQL Installation](#postgresql-installation)
+  - [REST API](#rest-api)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [SMTP Output Bot](#smtp-output-bot)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [TCP](#tcp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+
 
 ## General remarks
 
@@ -106,6 +266,10 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
+* `extract_files`: To extract the archive:
+  * `true` for auto-detection / all files
+  * a string of file names separated by `,`
+  * otherwise `null` or `false` for no extraction
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
 * `http_url_formatting`: If `True` (default `False`) `{time[format]}` will be replaced by the current time formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2018` for the year 2018. Currently only the time in local timezone is available. Python's [Format Specification Mini-Language¶](https://docs.python.org/3/library/string.html) is used for this.
 
@@ -391,8 +555,8 @@ The cache is used to remember which files have already been downloaded. Make sur
 * **Feed parameters** (see above)
 * `api_key`: API generate in their portal
 * `file_match`: an optional regular expression to match file names
-* `not_older_than`: an optional relative (minutes) or absolute time expression to determine the oldest time of a file to be downloaded
-* `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved.
+* `not_older_than`: an optional relative (minutes) or absolute time (UTC is assumed) expression to determine the oldest time of a file to be downloaded
+* `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved. The cache's TTL must always be bigger than `not_older_than`.
 
 #### Additional functionalities
 
@@ -546,6 +710,13 @@ http://www.team-cymru.com/bogon-reference.html
 * `domain_whitelist`: domains to be filetered out
 * `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
 * `classification_type: string with a valid classification type as defined in data harmonization
+* `default_scheme`: Default scheme for URLs if not given. See also the next section.
+
+##### Default scheme
+
+The dependency `url-normalize` changed it's behavior in version 1.4.0 from using `http://` as default scheme to `https://`. Version 1.4.1 added the possibility to specify it. Thus you can only use the `default_scheme` parameter with a current version of this library >= 1.4.1, with 1.4.0 you will always get `https://` as default scheme and for older versions < 1.4.0 `http://` is used.
+
+This does not affect URLs which already include the scheme.
 
 ### Shodan
 
@@ -695,7 +866,7 @@ Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 #### Configuration Parameters:
 * `type` - either `"whitelist"` or `"blacklist"`
-* `keys` - a list of key names (strings)
+* `keys` - Can be a JSON-list of field names (`["raw", "source.account"]`) or a string with a comma-separated list of field names (`"raw,source.account"`).
 
 ##### Whitelist
 
@@ -1110,6 +1281,8 @@ If the field used in the format string is not defined, `None` will be used as fa
 
 ### MongoDB
 
+Saves events in a MongoDB either as hierarchical structure or flat with full key names. `time.observation` and `time.source` are saved as datetime objects, not as ISO formatted string.
+
 #### Information:
 * `name:` mongodb
 * `lookup:` no
@@ -1126,6 +1299,7 @@ If the field used in the format string is not defined, `None` will be used as fa
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
 * `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionary in sub-dictionaries.
+* `replacement_char`: String (default `'_'`) used as replacement character for the dots in key names if hierarchical output is not used.
 
 #### Installation Requirements
 

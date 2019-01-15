@@ -4,7 +4,6 @@ Messages are the information packages in pipelines.
 
 Use MessageFactory to get a Message object (types Report and Event).
 """
-import functools
 import hashlib
 import json
 import re
@@ -144,6 +143,13 @@ class Message(dict):
                 else:
                     raise
 
+    def __delitem__(self, item):
+        if item == 'extra':
+            for key in [key for key in self.keys() if key.startswith('extra.')]:
+                del self[key]
+            return
+        return super().__delitem__(item)
+
     def get(self, key, default=None):
         try:
             return self[key]
@@ -253,11 +259,14 @@ class Message(dict):
         class_name, subitem = self.__get_type_config(key)
         if class_name and class_name['type'] == 'JSONDict' and not subitem:
             # for backwards compatibility allow setting the extra field as string
+            if overwrite and key in self:
+                del self[key]
             for extrakey, extravalue in json.loads(value).items():
-                if hasattr(extravalue, '__len__'):
+                # For extra we must not ignore empty or invalid values because of backwards compatibility issues #1335
+                if key != 'extra' and hasattr(extravalue, '__len__'):
                     if not len(extravalue):  # ignore empty values
                         continue
-                if extravalue in self._IGNORED_VALUES:
+                if key != 'extra' and extravalue in self._IGNORED_VALUES:
                     continue
                 super(Message, self).__setitem__('%s.%s' % (key, extrakey),
                                                  extravalue)
@@ -307,7 +316,6 @@ class Message(dict):
         message = json.loads(message_string)
         return message
 
-#    @functools.lru_cache(maxsize=None)
     def __is_valid_key(self, key: str):
         try:
             class_name, subitem = self.__get_type_config(key)
@@ -349,7 +357,6 @@ class Message(dict):
         else:
             return class_reference().sanitize_subitem(value)
 
-#    @functools.lru_cache(maxsize=None)
     def __get_type_config(self, key: str):
         if key == '__type':
             return None, None

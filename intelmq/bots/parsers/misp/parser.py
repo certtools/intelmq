@@ -70,6 +70,11 @@ class MISPParserBot(Bot):
         # get the attributes from the event
         event_attributes = misp_event['Attribute']
 
+        # add object attributes to the list
+        if 'Object' in misp_event:
+            for obj in misp_event['Object']:
+                event_attributes += obj['Attribute']
+
         # payload type - get malware variant for the event
         malware_variant = None
         for attribute in event_attributes:

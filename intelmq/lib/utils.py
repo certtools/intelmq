@@ -12,6 +12,7 @@ reverse_readline
 parse_logline
 """
 import base64
+import collections
 import io
 import json
 import logging
@@ -455,3 +456,20 @@ class RewindableFileHandle(object):
         if self.first_line is None:
             self.first_line = self.current_line
         return self.current_line
+
+
+def object_pair_hook_bots(*args, **kwargs):
+    """
+    A object_pair_hook function for the BOTS file to be used in the json's dump functions.
+
+    Usage: BOTS = json.loads(raw, object_pairs_hook=object_pair_hook_bots)
+
+    """
+    # Do not sort collector bots
+    if len(args[0]) and len(args[0][0]) == 2 and isinstance(args[0][0][1], dict) and\
+            'module' in args[0][0][1] and '.collectors' in args[0][0][1]['module']:
+        return collections.OrderedDict(*args, **kwargs)
+    # Do not sort bot groups
+    if len(args[0]) and len(args[0][0]) and len(args[0][0][0]) and args[0][0][0] == 'Collector':
+        return collections.OrderedDict(*args, **kwargs)
+    return dict(sorted(*args), **kwargs)

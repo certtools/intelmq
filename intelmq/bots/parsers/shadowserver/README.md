@@ -21,22 +21,32 @@ Feed-names are the subjects of the Shadowserver E-Mails.
 They are different from the wiki page names!
 
 Possible feednames:
-* `Accessible-Hadoop`
+* `Accessible-ADB`
+* `Accessible-AFP`
 * `Accessible-Cisco-Smart-Install`
 * `Accessible-CWMP`
+* `Accessible-Hadoop`
+* `Accessible-HTTP`
 * `Accessible-RDP`
+* `Accessible-Rsync`
+* `Accessible-SMB`
 * `Accessible-Telnet`
+* `Accessible-VNC`
 * `Blacklisted-IP`
 * `Compromised-Website`
-* `Drone`
+* `Darknet`
 * `DNS-Open-Resolvers`
+* `Drone`
+* `Drone-Brute-Force`
+* `IPv6-Sinkhole-HTTP-Drone`
 * `Microsoft-Sinkhole`
 * `NTP-Monitor`
 * `NTP-Version`
 * `Open-Chargen`
+* `Open-DB2-Discovery-Service`
 * `Open-Elasticsearch`
 * `Open-IPMI`
-* `Open-LDAP`
+* `Open-LDAP` (also parses the `Open-LDAP-TCP` feed)
 * `Open-mDNS`
 * `Open-Memcached`
 * `Open-MongoDB`
@@ -51,6 +61,8 @@ Possible feednames:
 * `Open-SSDP`
 * `Open-TFTP`
 * `Open-XDMCP`
+* `Outdated-DNSSEC-Key`
+* `Outdated-DNSSEC-Key-IPv6`
 * `Sandbox-URL`
 * `Sinkhole-HTTP-Drone`
 * `Spam-URL`

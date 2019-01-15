@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import requests
+try:
+    import requests
+except ImportError:
+    requests = None
 
 from intelmq.lib.bot import Bot
 
@@ -8,6 +11,9 @@ from intelmq.lib.bot import Bot
 class RestAPIOutputBot(Bot):
 
     def init(self):
+        if requests is None:
+            raise ValueError('Could not import requests. Please install it.')
+
         self.session = requests.Session()
         self.set_request_parameters()
         if self.parameters.auth_token_name and self.parameters.auth_token:

@@ -1,16 +1,15 @@
-**Table of Contents**
-
-1. [Requirements](#requirements)
-2. [Install Dependencies](#install-dependencies)
-   * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
-   * [Ubuntu 16.04 / Debian 9](#ubuntu-1604--debian-9)
-   * [CentOS 7 / RHEL 7](#centos-7--rhel-7)
-   * [openSUSE Leap 42.2](#opensuse-leap-422--423)
-3. [Installation](#installation)
-   * [Native Packages](#native-packages)
-   * [PyPi](#pypi)
-4. [Additional Information](#additional-information)
-5. [Afterwards](#afterwards)
+**Table of Contents:**
+- [Requirements](#requirements)
+- [Install Dependencies](#install-dependencies)
+  - [Ubuntu 14.04 / Debian 8](#ubuntu-1404-debian-8)
+  - [Ubuntu 16.04 / Ubuntu 18.04 / Debian 9](#ubuntu-1604-ubuntu-1804-debian-9)
+  - [CentOS 7 / RHEL 7](#centos-7-rhel-7)
+  - [openSUSE Leap 42.2 / 42.3 / 15.0](#opensuse-leap-422-423-150)
+- [Installation](#installation)
+  - [Native Packages](#native-packages)
+  - [PyPi](#pypi)
+- [Additional Information](#additional-information)
+- [Afterwards](#afterwards)
 
 
 Please report any errors you encounter at https://github.com/certtools/intelmq/issues

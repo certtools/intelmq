@@ -173,7 +173,7 @@ class BotTestCase(object):
     def new_event(self):
         return message.Event(harmonization=self.harmonization)
 
-    def prepare_bot(self):
+    def prepare_bot(self, parameters={}):
         """Reconfigures the bot with the changed attributes"""
 
         self.log_stream = io.StringIO()
@@ -183,10 +183,12 @@ class BotTestCase(object):
                      "other-way": "{}-other-output".format(self.bot_id),
                      "two-way": ["{}-way1-output".format(self.bot_id), "{}-way2-output".format(self.bot_id)]}
 
+        config = self.sysconfig.copy()
+        config.update(parameters)
         self.mocked_config = mocked_config(self.bot_id,
                                            src_name,
                                            dst_names,
-                                           sysconfig=self.sysconfig,
+                                           sysconfig=config,
                                            group=self.bot_type.title(),
                                            module=self.bot_reference.__module__,
                                            )

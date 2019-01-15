@@ -10,6 +10,8 @@ providers:
           parameters:
             http_url: https://app.webinspector.com/public/recent_detections/
             rate_limit: 60
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.webinspektor.parser
           parameters:
@@ -26,6 +28,8 @@ providers:
           parameters:
             http_url: http://labs.sucuri.net/?malware
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.sucuri.parser
           parameters:
@@ -42,6 +46,8 @@ providers:
           parameters:
             http_url: https://lists.malwarepatrol.net/cgi/getfile?receipt={{ your API key }}&product=8&list=dansguardian
             rate_limit: 180000
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.malwarepatrol.parser_dansguardian
           parameters:
@@ -58,6 +64,8 @@ providers:
           parameters:
             http_url: http://mirror1.malwaredomains.com/files/domains.txt
             rate_limit: 172800
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.malwaredomains.parser
           parameters:
@@ -75,6 +83,8 @@ providers:
           parameters:
             http_url: https://bitcash.cz/misc/log/blacklist
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.bitcash.parser
           parameters:
@@ -91,11 +101,18 @@ providers:
         collector:
           module: intelmq.bots.collectors.mail.collector_mail_attach
           parameters:
+            mail_host: __HOST__
+            mail_password: __PASSWORD__
+            mail_ssl: true
+            mail_user: __USERNAME__
+            sent_from: datazh@zone-h.org
+            folder: INBOX
+            subject_regex: Report
             attach_unzip: false
-            attach_regex: "csv"
-            rate_limit: 300
-            subject_regex: "Report"
-            sent_from: "datazh@zone-h.org"
+            attach_regex: csv
+            rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.zoneh.parser
           parameters:
@@ -115,6 +132,8 @@ providers:
           parameters:
             http_url: https://www.openphish.com/feed.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.openphish.parser
           parameters:
@@ -136,6 +155,8 @@ providers:
             http_password: "{{ your password}}"
             http_username: "{{ your username}}"
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.openphish.parser_commercial
           parameters:
@@ -156,6 +177,8 @@ providers:
           parameters:
             http_url: http://www.nothink.org/blacklist/blacklist_snmp_day.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.nothink.parser
           parameters:
@@ -175,6 +198,8 @@ providers:
           parameters:
             http_url: http://www.nothink.org/blacklist/blacklist_ssh_day.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.nothink.parser
           parameters:
@@ -191,6 +216,8 @@ providers:
           parameters:
             http_url: http://www.nothink.org/honeypot_dns_attacks.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.nothink.parser
           parameters:
@@ -210,6 +237,8 @@ providers:
           parameters:
             http_url: http://www.nothink.org/blacklist/blacklist_telnet_day.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.nothink.parser
           parameters:
@@ -227,6 +256,8 @@ providers:
           parameters:
             http_url: http://www.urlvir.com/export-hosts/
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.urlvir.parser
           parameters:
@@ -242,6 +273,8 @@ providers:
           parameters:
             http_url: http://www.urlvir.com/export-ip-addresses/
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.urlvir.parser
           parameters:
@@ -259,6 +292,8 @@ providers:
           parameters:
             http_url: http://data.netlab.360.com/feeds/mirai-scanner/scanner.list
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.netlab_360.parser
           parameters:
@@ -276,6 +311,8 @@ providers:
           parameters:
             http_url: http://data.netlab.360.com/feeds/ek/magnitude.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.netlab_360.parser
           parameters:
@@ -292,6 +329,8 @@ providers:
           parameters:
             http_url: http://data.netlab.360.com/feeds/dga/dga.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.netlab_360.parser
           parameters:
@@ -312,6 +351,8 @@ providers:
           parameters:
             http_url: https://zeustracker.abuse.ch/blocklist.php?download=badips
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.abusech.parser_ip
           parameters:
@@ -335,6 +376,8 @@ providers:
           parameters:
             http_url: https://feodotracker.abuse.ch/blocklist/?download=domainblocklist
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.abusech.parser_domain
           parameters:
@@ -351,6 +394,8 @@ providers:
           parameters:
             http_url: https://ransomwaretracker.abuse.ch/feeds/csv/
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.abusech.parser_ransomware
           parameters:
@@ -369,6 +414,8 @@ providers:
           parameters:
             http_url: https://zeustracker.abuse.ch/blocklist.php?download=baddomains
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.abusech.parser_domain
           parameters:
@@ -397,6 +444,8 @@ providers:
           parameters:
             http_url: https://feodotracker.abuse.ch/blocklist/?download=ipblocklist
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.abusech.parser_ip
           parameters:
@@ -413,6 +462,9 @@ providers:
           module: intelmq.bots.collectors.blueliv.collector_crimeserver
           parameters:
             rate_limit: 3600
+            api_key: __APIKEY__
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.blueliv.parser_crimeserver
           parameters:
@@ -435,6 +487,8 @@ providers:
             http_url: https://www.cymru.com/{{your organization name}}/infected_{time[%Y%m%d]}.txt
             http_username: "{{your login}}"
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.cymru.parser_cap_program
           parameters:
@@ -456,6 +510,8 @@ providers:
           parameters:
             http_url: https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.cymru.parser_full_bogons
           parameters:
@@ -472,6 +528,8 @@ providers:
           parameters:
             http_url: https://www.tc.edu.tw/net/netflow/lkout/recent/30
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.taichung.parser
           parameters:
@@ -491,6 +549,8 @@ providers:
           parameters:
             http_url: http://hosts-file.net/download/hosts.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.hphosts.parser
           parameters:
@@ -512,6 +572,8 @@ providers:
           parameters:
             http_url: http://dataplane.org/sshclient.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.dataplane.parser
           parameters:
@@ -531,6 +593,8 @@ providers:
           parameters:
             http_url: http://dataplane.org/sshpwauth.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.dataplane.parser
           parameters:
@@ -550,6 +614,8 @@ providers:
           parameters:
             http_url: http://dataplane.org/sipquery.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.dataplane.parser
           parameters:
@@ -569,6 +635,8 @@ providers:
           parameters:
             http_url: http://dataplane.org/sipregistration.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.dataplane.parser
           parameters:
@@ -590,6 +658,8 @@ providers:
           parameters:
             http_url: https://www.turris.cz/greylist-data/greylist-latest.csv
             rate_limit: 43200
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.turris.parser
           parameters:
@@ -607,6 +677,8 @@ providers:
           parameters:
             http_url: https://malc0de.com/bl/ZONES
             rate_limit: 10800
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.malc0de.parser
           parameters:
@@ -623,6 +695,8 @@ providers:
           parameters:
             http_url: https://malc0de.com/bl/BOOT
             rate_limit: 10800
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.malc0de.parser
           parameters:
@@ -638,6 +712,8 @@ providers:
           parameters:
             http_url: https://malc0de.com/bl/IP_Blacklist.txt
             rate_limit: 10800
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.malc0de.parser
           parameters:
@@ -655,6 +731,8 @@ providers:
             http_url: https://dsi.ut-capitole.fr/blacklists/download/{collection name}.tar.gz
             extract_files: 'true'
             rate_limit: 43200
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.generic.parser_csv
           parameters:
@@ -672,8 +750,10 @@ providers:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://www.autoshun.org/files/shunlist.html
+            http_url: https://www.autoshun.org/download/?api_key=__APIKEY__&format=html
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.autoshun.parser
           parameters:
@@ -690,6 +770,8 @@ providers:
           parameters:
             http_url: http://danger.rulez.sk/projects/bruteforceblocker/blist.php
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.danger_rulez.parser
           parameters:
@@ -709,6 +791,8 @@ providers:
           parameters:
             http_url: http://dataplane.org/sipinvitation.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.dataplane.parser
           parameters:
@@ -729,6 +813,8 @@ providers:
           parameters:
             http_url: https://www.spamhaus.org/drop/drop.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.spamhaus.parser_drop
           parameters:
@@ -746,6 +832,8 @@ providers:
           parameters:
             http_url: https://www.spamhaus.org/drop/asndrop.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.spamhaus.parser_drop
           parameters:
@@ -764,6 +852,8 @@ providers:
           parameters:
             http_url: https://www.spamhaus.org/drop/dropv6.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.spamhaus.parser_drop
           parameters:
@@ -781,6 +871,8 @@ providers:
           parameters:
             http_url: "{{ your CERT portal URL }}"
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.spamhaus.parser_cert
           parameters:
@@ -798,6 +890,8 @@ providers:
           parameters:
             http_url: https://www.spamhaus.org/drop/edrop.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.spamhaus.parser_drop
           parameters:
@@ -815,6 +909,8 @@ providers:
           parameters:
             http_url: https://data.phishtank.com/data/{{ your API key }}/online-valid.csv
             rate_limit: 28800
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.phishtank.parser
           parameters:
@@ -835,6 +931,8 @@ providers:
           parameters:
             http_url: http://cinsscore.com/list/ci-badguys.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.ci_army.parser
           parameters:
@@ -851,6 +949,8 @@ providers:
           parameters:
             http_url: https://lists.blocklist.de/lists/ircbot.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
           parameters:
@@ -868,6 +968,8 @@ providers:
           parameters:
             http_url: https://lists.blocklist.de/lists/strongips.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
           parameters:
@@ -885,6 +987,8 @@ providers:
           parameters:
             http_url: https://lists.blocklist.de/lists/mail.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
           parameters:
@@ -903,6 +1007,8 @@ providers:
           parameters:
             http_url: https://lists.blocklist.de/lists/apache.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
           parameters:
@@ -920,6 +1026,8 @@ providers:
           parameters:
             http_url: https://lists.blocklist.de/lists/ftp.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
           parameters:
@@ -937,6 +1045,8 @@ providers:
           parameters:
             http_url: https://lists.blocklist.de/lists/ssh.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
           parameters:
@@ -954,6 +1064,8 @@ providers:
           parameters:
             http_url: https://lists.blocklist.de/lists/bruteforcelogin.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
           parameters:
@@ -973,6 +1085,8 @@ providers:
           parameters:
             http_url: https://lists.blocklist.de/lists/bots.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
           parameters:
@@ -990,6 +1104,8 @@ providers:
           parameters:
             http_url: https://lists.blocklist.de/lists/imap.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
           parameters:
@@ -1008,6 +1124,8 @@ providers:
           parameters:
             http_url: https://lists.blocklist.de/lists/sip.txt
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
           parameters:
@@ -1032,6 +1150,8 @@ providers:
             ssl_client_certificate: "{insert path to client cert file for CERTpl's
               n6}"
             server: n6stream.cert.pl
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.n6.parser_n6stomp
           parameters:
@@ -1048,6 +1168,8 @@ providers:
           module: intelmq.bots.collectors.alienvault_otx.collector
           parameters:
             api_key: "{{ your API key }}"
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.alienvault.parser_otx
           parameters:
@@ -1063,6 +1185,8 @@ providers:
           parameters:
             http_url: https://reputation.alienvault.com/reputation.data
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.alienvault.parser
           parameters:
@@ -1079,9 +1203,11 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=
-            http_timeout_sec: '120'
+            http_timeout_sec: 120
             http_user_agent: "{{ your user agent }}"
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.cleanmx.parser
           parameters:
@@ -1097,9 +1223,11 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&domain=
-            http_timeout_sec: '120'
+            http_timeout_sec: 120
             http_user_agent: "{{ your user agent }}"
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.cleanmx.parser
           parameters:
@@ -1116,6 +1244,8 @@ providers:
           parameters:
             http_url: http://www.malwaredomainlist.com/updatescsv.php
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.malwaredomainlist.parser
           parameters:
@@ -1133,6 +1263,8 @@ providers:
           parameters:
             http_url: https://prod.cyberfeed.net/stream?key={{ your API key }}
             strip_lines: 'true'
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.anubisnetworks.parser
           parameters:
@@ -1150,6 +1282,8 @@ providers:
           parameters:
             http_url: https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.bambenek.parser
           parameters:
@@ -1166,6 +1300,8 @@ providers:
           parameters:
             http_url: https://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.bambenek.parser
           parameters:
@@ -1181,6 +1317,8 @@ providers:
           parameters:
             http_url: https://osint.bambenekconsulting.com/feeds/dga-feed.txt
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.bambenek.parser
           parameters:
@@ -1198,6 +1336,8 @@ providers:
           parameters:
             http_url: http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt
             rate_limit: 10800
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.dyn.parser
           parameters:
@@ -1217,6 +1357,8 @@ providers:
           parameters:
             http_url: https://www.dshield.org/feeds/suspiciousdomains_High.txt
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.dshield.parser_domain
           parameters:
@@ -1234,6 +1376,8 @@ providers:
           parameters:
             http_url: https://www.dshield.org/block.txt
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.dshield.parser_block
           parameters:
@@ -1249,6 +1393,8 @@ providers:
           parameters:
             http_url: https://dshield.org/asdetailsascii.html?as={{ AS Number }}
             rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.dshield.parser_asn
           parameters:
@@ -1265,6 +1411,8 @@ providers:
           parameters:
             http_url: http://vxvault.net/URL_List.php
             rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.vxvault.parser
           parameters:
@@ -1272,7 +1420,7 @@ providers:
       status: on
       documentation:
   ShadowServer:
-    FIXME:
+    Custom:
       description: Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
         The reports can be retrieved from the URL in the mail or from the attachment.
       additional_information:
@@ -1280,10 +1428,17 @@ providers:
         collector:
           module: intelmq.bots.collectors.mail.collector_mail_attach
           parameters:
-            attach_unzip: 'true'
+            mail_host: __HOST__
+            mail_password: __PASSWORD__
+            mail_ssl: true
+            mail_user: __USERNAME__
+            attach_unzip: true
             attach_regex: csv.zip
             rate_limit: 86400
-            subject_regex: FIXME - (see individual reports below)
+            subject_regex: __REGEX__
+            folder: INBOX
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.shadowserver.parser
           parameters:
@@ -1303,6 +1458,8 @@ providers:
             http_password: "{{ your password}}"
             http_username: "{{ your username}}"
             rate_limit: 10800
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.fraunhofer.parser_dga
           parameters:
@@ -1319,6 +1476,8 @@ providers:
           parameters:
             http_url: https://www.malwareurl.com/
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.malwareurl.parser
           parameters:
@@ -1338,6 +1497,8 @@ providers:
             not_older_than: "2 days"
             rate_limit: 3600
             http_timeout_sec: 300
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.microsoft.parser_bingmurls
           parameters:
@@ -1356,6 +1517,8 @@ providers:
             not_older_than: "2 days"
             rate_limit: 3600
             http_timeout_sec: 300
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.microsoft.parser_ctip
           parameters:
@@ -1372,6 +1535,8 @@ providers:
           parameters:
             http_url: https://www.threatminer.org/
             rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.threatminer.parser
           parameters:
@@ -1386,6 +1551,8 @@ providers:
         collector:
           module: intelmq.bots.collectors.certstream.collector_certstream
           parameters:
+            name: __FEED__
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parses.certstream.parser_certstream
           parameters:

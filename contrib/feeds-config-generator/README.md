@@ -7,6 +7,8 @@ Quickly generate feeds configurations (runtime and pipeline configs).
 ```
 ./intelmq_gen_feeds_conf -h
 usage: intelmq_gen_feeds_conf [-h] --feeds-file <filepath> [--all]
+                              [--runtime-output-file <filepath>]
+                              [--pipeline-output-file <filepath>]
 
 IntelMQ Feeds Config Generator tool
 
@@ -15,6 +17,10 @@ optional arguments:
   --feeds-file <filepath>
                         feeds.yaml config file
   --all                 iterate through all feeds
+  --runtime-output-file <filepath>
+                        /tmp/runtime.conf
+  --pipeline-output-file <filepath>
+                        /tmp/pipeline.conf
 
 ```
 ### Generate a bot configuration
@@ -26,4 +32,10 @@ optional arguments:
 
 ```
 ./intelmq_gen_feeds_conf --feeds-file=../../intelmq/etc/feeds.yaml --all
+```
+
+### Generate all bots configurations and send to file
+
+```
+./intelmq_gen_feeds_conf --feeds-file=../../intelmq/etc/feeds.yaml --all  --runtime-output-file=/tmp/runtime.conf --pipeline-output-file=/tmp/pipeline.conf
 ```

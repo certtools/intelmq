@@ -1,0 +1,3 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","http","http_code","http_reason","content_type","connection","www_authenticate","set_cookie","server","content_length","transfer_encoding","http_date"
+"2018-04-19 00:02:26","75.74.78.113","tcp",8080,"c-75-74-78-113.hsd1.fl.comcast.net","http",7922,"US","FLORIDA","MIAMI",518111,737401,"HTTP/1.1",200,"OK","text/html",,,,"lighttpd",,"chunked","Thu, 19 Apr 2018 00:02:28 GMT"
+"2018-04-19 00:02:26","88.162.174.130","tcp",8080,"sto95-3-88-162-174-130.fbx.proxad.net","http",12322,"FR",,"SAINT-OUEN-LAUMONE",518210,737415,"HTTP/1.1",200,"OK","text/html",,,,,17729,,"Thu, 19 Apr 2018 02:02:28 GMT"

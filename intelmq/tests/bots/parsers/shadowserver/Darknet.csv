@@ -1,0 +1,4 @@
+"timestamp","ip","port","asn","geo","region","city","hostname","type","dst_ip","dst_port","dst_asn","dst_geo","count","naics","sic","dst_naics","dst_sic","sector","dst_sector","family","tag","public_source"
+"2018-11-19 00:00:17","198.51.100.47",,64496,"AT","WIEN","VIENNA","198-51-100-47.example.net",,,8001,,,1,518210,737415,,,,,,"mirai-like","sissden"
+"2018-11-19 00:00:25","198.51.100.4",,64497,"AT","STEIERMARK","DEUTSCHLANDSBERG","198-51-100-4.example.net",,,80,,,2,0,0,,,,,,"mirai-like","sissden"
+"2018-11-19 22:58:23","198.51.100.146",,64498,"AT","WIEN","VIENNA",,,,5555,,,2,518210,737401,,,"Information Technology",,,"mirai-like","sissden"
