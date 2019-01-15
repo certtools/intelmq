@@ -13,13 +13,19 @@ See the changelog for a full list of changes.
 ### Configuration
 The bot `intelmq.bots.experts.ripencc_abuse_contact.expert` has been renamed to `intelmq.bots.experts.ripe.expert`, the compatibility shim will be removed in version 3.0. Adapt your `runtime.conf` accordingly.
 
+
+1.1.2 Bugfix release (unreleased)
+---------------------------------
+
+### Configuration
+
 ### Libraries
 
 ### Postgres databases
 
 
-1.1.1 Bugfix release (unreleased)
-----------------------------------
+1.1.1 Bugfix release (2019-01-15)
+---------------------------------
 
 ### Tools
 

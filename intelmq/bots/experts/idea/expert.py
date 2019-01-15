@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+IDEA classification: https://idea.cesnet.cz/en/classifications
+"""
 from collections import Sequence, Mapping
 from base64 import b64decode
 from uuid import uuid4
@@ -51,6 +54,29 @@ class IdeaExpertBot(Bot):
         "test": "Test",
         "unauthorized-command": "Intrusion.AdminCompromise",
         "unauthorized-login": "Intrusion.AdminCompromise",
+        "violence": "Abusive.Violence",
+        "data-loss": "Information",
+        "burglary": "Intrusion",
+        "weak-crypto": "Vulnerable.Config",
+        "Unauthorised-information-access": "Information.UnauthorizedAccess",
+        "privileged-account-compromise": "Intrusion.AdminCompromise",
+        "potentially-unwanted-accessible": "Vulnerable.Open",
+        "application-compromise": "Intrusion.AppCompromise",
+        "unauthorized-use-of-resources": "Fraud.UnauthorizedUsage",
+        "masquerade": "Fraud.Scam",
+        "harmful-speech": "Abusive.Harassment",
+        "unprivileged-account-compromise": "Intrusion.UserCompromise",
+        "social-engineering": "Recon.SocialEngineering",
+        "dos": "Availability.DoS",
+        "information-disclosure": "Information.UnauthorizedAccess",
+        "sniffing": "Recon.Sniffing",
+        "vulnerable-system": "Vulnerable.Config",
+        "Unauthorised-information-modification": "Information.UnauthorizedModification",
+        "sabotage": "Availability.Sabotage",
+        "malware-distribution": "Malware",
+        "outage": "Availability.Outage",
+        "ddos-amplifier": "Intrusion.Botnet",
+        "copyright": "Fraud.Copyright",
     }
 
     type_to_source_type = {
@@ -63,6 +89,7 @@ class IdeaExpertBot(Bot):
         "dga domain": "DGA",
         "proxy": "Proxy",
         "tor": "Tor",
+        "malware-distribution": "Malware"
     }
 
     def init(self):
