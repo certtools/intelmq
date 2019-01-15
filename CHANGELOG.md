@@ -1,6 +1,37 @@
 CHANGELOG
 ==========
 
+1.1.2 (unreleased)
+------------------
+
+### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
 1.1.1 (2019-01-15)
 ------------------
 
