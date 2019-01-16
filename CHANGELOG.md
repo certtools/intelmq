@@ -123,8 +123,6 @@ CHANGELOG
 ### Development
 - `bin/rewrite_config_files.py`: Fix ordering of BOTS file (#1327).
 
-### Core
-
 ### Harmonization
 Update to 2018-09-26 version. New values are per taxonomy:
 - Taxonomy 'intrusions':
