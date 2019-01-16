@@ -86,6 +86,7 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
+- Install: Update operating system versions
 
 ### Packaging
 
