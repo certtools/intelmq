@@ -67,7 +67,38 @@ CHANGELOG
 ### Known issues
 
 
-1.1.1 (unreleased)
+1.1.2 (unreleased)
+------------------
+
+### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
+1.1.1 (2019-01-15)
 ------------------
 
 ### Core
@@ -94,6 +125,39 @@ CHANGELOG
 ### Core
 
 ### Harmonization
+Update to 2018-09-26 version. New values are per taxonomy:
+- Taxonomy 'intrusions':
+  - "application-compromise"
+  - "burglary"
+  - "privileged-account-compromise"
+  - "unprivileged-account-compromise"
+- Taxonomy 'fraud':
+  - "copyright"
+  - "masquerade"
+  - "unauthorized-use-of-resources"
+- Taxonomy 'information content security':
+  - "data-loss"
+- Taxonomy 'vulnerable':
+  - "ddos-amplifier"
+  - "information-disclosure"
+  - "potentially-unwanted-accessible"
+  - "vulnerable-system"
+  - "weak-crypto"
+- Taxonomy 'availability':
+  - "dos"
+  - "outage"
+  - "sabotage"
+- Taxonomy 'abusive-content':
+  - "harmful-speech"
+  - "violence"
+- Taxonomy 'malicious code':
+  - "malware-distribution"
+- Taxonomy 'information-gathering':
+  - "social-engineering"
+  - "sniffing"
+- Taxonomy 'information content security':
+  - "Unauthorised-information-access"
+  - "Unauthorised-information-modification"
 
 ### Bots
 #### Collectors
@@ -146,6 +210,7 @@ CHANGELOG
   - Add text and more context to error messages.
   - README: Fix 'modify' to 'update' (#1340).
   - Handle empty rules file (#1343).
+- `intelmq.bots.experts.idea.expert`: Add mappings for new harmonization `classification.type` values, see above.
 
 #### Outputs
 - `intelmq.bots.outputs.redis`:
@@ -190,6 +255,9 @@ CHANGELOG
   - Handle collector's `feed.name` and `feed.provider` (#1314).
 
 ### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted (#952).
+- Tests: capture logging with context manager (#1342).
+- stomp collector bot constantly uses 100% of CPU (#1364).
 
 
 1.1.0 (2018-09-05)

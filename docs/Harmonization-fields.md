@@ -123,36 +123,66 @@ Sanitation accepts string 'true' and 'false' and integers 0 and 1.
 
 ### ClassificationType
 
-classification.type type. Allowed values are:
+`classification.type` type.
+
+The mapping follows
+Reference Security Incident Taxonomy Working Group – RSIT WG
+https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
+with extensions.
+
+Allowed values are:
+ * application-compromise
  * backdoor
  * blacklist
  * botnet drone
  * brute-force
+ * burglary
  * c&c
  * compromised
+ * copyright
+ * data-loss
  * ddos
+ * ddos-amplifier
  * defacement
  * dga domain
+ * dos
  * dropzone
  * exploit
+ * harmful-speech
  * ids alert
  * infected system
+ * information-disclosure
  * leak
  * malware
  * malware configuration
+ * malware-distribution
+ * masquerade
  * other
+ * outage
  * phishing
+ * potentially-unwanted-accessible
+ * privileged-account-compromise
  * proxy
  * ransomware
+ * sabotage
  * scanner
+ * sniffing
+ * social-engineering
  * spam
  * test
  * tor
- * unauthorized-login
+ * Unauthorised-information-access
+ * Unauthorised-information-modification
  * unauthorized-command
+ * unauthorized-login
+ * unauthorized-use-of-resources
  * unknown
+ * unprivileged-account-compromise
+ * violence
  * vulnerable client
  * vulnerable service
+ * vulnerable-system
+ * weak-crypto
 
 ### DateTime
 

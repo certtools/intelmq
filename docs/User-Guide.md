@@ -20,6 +20,7 @@ For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
     - [Botnet Concept](#botnet-concept)
     - [Scheduled Run Mode](#scheduled-run-mode)
     - [Continuous Run Mode](#continuous-run-mode)
+    - [Reloading](#reloading)
     - [Forcing reset pipeline and cache (be careful)](#forcing-reset-pipeline-and-cache-be-careful)
 - [Error Handling](#error-handling)
   - [Tool: intelmqdump](#tool-intelmqdump)
@@ -497,6 +498,11 @@ intelmqctl start blocklistde-apache-parser
 
 Bots configured as `continuous` will never exit except if there is an error and the error handling configuration requires the bot to exit. See the Error Handling section for more details.
 
+
+#### Reloading
+
+Whilst restart is a mere stop & start, performing `intelmqctl reload <bot_id>` will not stop the bot, permitting it to keep the state: the same common behavior as for (Linux) daemons. It will initialize again (including reading all configuration again) after the current action is finished. Also, the rate limit/sleep is continued (with the *new* time) and not interrupted like with the restart command. So if you have a collector with a rate limit of 24 h, the reload does not trigger a new fetching of the source at the time of the reload, but just 24 h after the last run – with the new configuration. 
+Which state the bots are keeping depends on the bots of course.
 
 #### Forcing reset pipeline and cache (be careful)
 
