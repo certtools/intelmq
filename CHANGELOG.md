@@ -450,10 +450,6 @@ Update to 2018-09-26 version. New values are per taxonomy:
 1.0.6 Bugfix release (2018-08-31)
 ---------------------------------
 
-### Core
-
-### Harmonization
-
 ### Bots
 #### Collectors
 - `bots.collectors.rt.collector_rt`: Log ticket id for downloaded reports.
