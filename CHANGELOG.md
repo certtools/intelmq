@@ -14,6 +14,7 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.stomp.collector`: Fix name of shutdown method, was ineffective in the past.
 
 #### Parsers
 
