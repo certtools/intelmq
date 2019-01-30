@@ -49,7 +49,7 @@ IpRangeList: '[' values+=SingleIpRange[','] ']' ;
 ExistMatch: op=ExistOperator key=Key;
 ExistOperator: ':exists' | ':notexists';
 
-Key: /[a-z_\.]+/;
+Key: /[a-z0-9_\.]+/;
 
 StringValue: SingleStringValue | StringValueList ;
 SingleStringValue: value=STRING ;

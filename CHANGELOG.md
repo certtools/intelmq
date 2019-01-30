@@ -16,6 +16,7 @@ CHANGELOG
 #### Parsers
 
 #### Experts
+- `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
 
 #### Outputs
 
