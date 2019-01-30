@@ -21,6 +21,7 @@ CHANGELOG
 
 ### Documentation
 - Install: Update operating system versions
+- Sieve Expert: Fix `elsif` -> `elif`.
 
 ### Packaging
 
