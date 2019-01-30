@@ -5,6 +5,8 @@ CHANGELOG
 ------------------
 
 ### Core
+- `intelmq.lib.bot`:
+  - `Bot.__handle_sighup`: Handle exceptions in `shutdown` method of bots.
 
 ### Development
 
