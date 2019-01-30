@@ -87,7 +87,7 @@ class GenericCsvParserBot(ParserBot):
                 else:
                     continue
             else:
-                    yield row
+                yield row
 
     def parse_line(self, row, report):
         event = self.new_event(report)

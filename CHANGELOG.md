@@ -71,6 +71,8 @@ CHANGELOG
 ------------------
 
 ### Core
+- `intelmq.lib.bot`:
+  - `Bot.__handle_sighup`: Handle exceptions in `shutdown` method of bots.
 
 ### Development
 
@@ -78,15 +80,18 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.stomp.collector`: Fix name of shutdown method, was ineffective in the past.
 
 #### Parsers
 
 #### Experts
+- `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
 
 #### Outputs
 
 ### Documentation
 - Install: Update operating system versions
+- Sieve Expert: Fix `elsif` -> `elif`.
 
 ### Packaging
 
