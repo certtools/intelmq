@@ -70,7 +70,7 @@ class AMQPTopicBot(Bot):
 
         # self.connection and self.channel can be None
         if getattr(self.connection, 'is_closed', None) or getattr(self.channel, 'is_closed', None):
-                self.connect_server()
+            self.connect_server()
 
         event = self.receive_message()
 

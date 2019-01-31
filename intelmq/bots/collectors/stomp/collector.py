@@ -77,7 +77,7 @@ class StompCollectorBot(CollectorBot):
         self.logger.info('Successfully connected and subscribed to %s:%s.',
                          self.server, self.port)
 
-    def disconnect(self):
+    def shutdown(self):
         self.conn.disconnect()
 
     def process(self):

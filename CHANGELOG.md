@@ -71,6 +71,8 @@ CHANGELOG
 ------------------
 
 ### Core
+- `intelmq.lib.bot`:
+  - `Bot.__handle_sighup`: Handle exceptions in `shutdown` method of bots.
 
 ### Development
 
@@ -78,14 +80,18 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.stomp.collector`: Fix name of shutdown method, was ineffective in the past.
 
 #### Parsers
 
 #### Experts
+- `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
 
 #### Outputs
 
 ### Documentation
+- Install: Update operating system versions
+- Sieve Expert: Fix `elsif` -> `elif`.
 
 ### Packaging
 
@@ -121,8 +127,6 @@ CHANGELOG
 
 ### Development
 - `bin/rewrite_config_files.py`: Fix ordering of BOTS file (#1327).
-
-### Core
 
 ### Harmonization
 Update to 2018-09-26 version. New values are per taxonomy:
@@ -448,10 +452,6 @@ Update to 2018-09-26 version. New values are per taxonomy:
 
 1.0.6 Bugfix release (2018-08-31)
 ---------------------------------
-
-### Core
-
-### Harmonization
 
 ### Bots
 #### Collectors
