@@ -62,7 +62,9 @@ CHANGELOG
 - `intelmqdump`: Inspecting dumps locks the dump file using unix file locks (#574).
 
 ### Contrib
-* `malware_name_mapping`: Added the script `apply_mapping_eventdb.py` to apply the mapping to an eventdb.
+- `malware_name_mapping`:
+  - Added the script `apply_mapping_eventdb.py` to apply the mapping to an eventdb.
+  - Possibility to add local rules using the download tool.
 
 ### Known issues
 
