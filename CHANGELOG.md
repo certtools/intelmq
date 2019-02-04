@@ -43,6 +43,7 @@ CHANGELOG
 - `intelmq.bots.experts.ripe.expert`:
   - Use a requests session (#1363).
   - Set the requests parameters once per session.
+- `intelmq.bots.experts.maxmind_geoip.expert`: New parameter `use_registered` to use the registered country (#1344).
 
 #### Outputs
 - added `intelmq.bots.experts.mcafee.output_esm` (1265).
