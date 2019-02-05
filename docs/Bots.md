@@ -241,6 +241,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `http_user_agent`: user agent to use for the request.
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Only used by some bots.
 * `http_header`: HTTP request headers
 
 **Cache parameters**: Common redis cache parameters used in multiple bots (mainly lookup experts):
@@ -271,7 +272,6 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `extract_files`: Optional, boolean or list of strings. If it is not false, the retrieved (compressed) file or archived will be uncompressed/unpacked and the files are extracted. If the parameter is a list for strings, only the files matching the filenames are extracted. Extraction handles gziped files and both compressed and uncompressed tar-archives.
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
 * `http_url_formatting`: If `True` (default `False`) `{time[format]}` will be replaced by the current time formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2018` for the year 2018. Currently only the time in local timezone is available. Python's [Format Specification Mini-Language¶](https://docs.python.org/3/library/string.html) is used for this.
-* `ssl_ca_cert`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
 Zipped files are automatically extracted if detected.
 
@@ -322,6 +322,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `url_regex`: regular expression of the feed URL to search for in the mail body
 * `sent_from`: filter messages by sender
 * `sent_to`: filter messages by recipient
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
 * * *
 
@@ -348,6 +349,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `attach_unzip`: whether to unzip the attachment (default: `true`)
 * `sent_from`: filter messages by sender
 * `sent_to`: filter messages by recipient
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
 * * *
 
@@ -372,6 +374,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `subject_regex`: regular expression to look for a subject
 * `sent_from`: filter messages by sender
 * `sent_to`: filter messages by recipient
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 * `content_types`: Which bodies to use based on the content_type. Default: `true`/`['html', 'plain']` for all:
   - string with comma separated values, e.g. `['html', 'plain']`
   - `true`, `false`, `null`: Same as default value

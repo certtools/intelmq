@@ -27,6 +27,7 @@ CHANGELOG
 - `intelmq.collectors.mail`:
   - Use internal lib for functionality.
   - Add `intelmq.bots.collectors.mail.collector_mail_body`.
+  - Support for `ssl_ca_certificate` parameter (#1362).
 
 #### Parsers
 - added `intelmq.bots.parsers.mcafee.parser_atd` (#1265).

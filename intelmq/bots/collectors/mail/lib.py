@@ -19,7 +19,7 @@ class MailCollectorBot(CollectorBot):
 
     def connect_mailbox(self):
         self.logger.debug("Connecting to %s.", self.parameters.mail_host)
-        ca_file = getattr(self.parameters, 'ca_file', None)
+        ca_file = getattr(self.parameters, 'ssl_ca_certificate', None)
         ssl_custom_context = ssl.create_default_context(cafile=ca_file)
         mailbox = imbox.Imbox(self.parameters.mail_host,
                               self.parameters.mail_user,
