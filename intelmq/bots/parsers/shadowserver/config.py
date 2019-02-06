@@ -2041,7 +2041,9 @@ http_scanners = {
     'constant_fields': {
         'classification.taxonomy': 'information gathering',
         'classification.type': 'scanner',
-        'classification.identifier': 'http-scanners',
+        'classification.identifier': 'http',
+        'protocol.application': 'http',
+        'protocol.transport': 'tcp',
     }
 }
 
@@ -2080,6 +2082,6 @@ ics_scanners = {
     'constant_fields': {
         'classification.taxonomy': 'information gathering',
         'classification.type': 'scanner',
-        'classification.identifier': 'ics-scanners',
+        'classification.identifier': 'ics',
     }
 }
