@@ -142,7 +142,7 @@ Meaning of source, destination and local values for each classification type and
 |phishing|*phishing website*||||
 |proxy|*server allowing policy and security bypass*||||
 |ransomware|*infected device*||||
-|scanner|*scanning device*|scanned device|||
+|scanner|*scanning device*|scanned device||http,modbus,wordpress|
 |spam|*infected device*|targeted server|internal at source||
 |test||||||
 |unknown||||||
