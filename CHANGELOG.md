@@ -80,6 +80,7 @@ CHANGELOG
 
 ### Tools
 - `intelmqctl check`: Now uses the new `ListHandler` from utils to handle the logging in JSON output mode.
+- `intelmqctl run`: The message that a running bot has been stopped, is not longer a warning, but an informational message. No need to inform sysadmins about this intended behaviour.
 - `intelmqdump`: Inspecting dumps locks the dump file using unix file locks (#574).
 - `intelmqctl`:
   - After the check if the program runs as root, it tries to drop privileges. Only if this does not work, a warning is shown.

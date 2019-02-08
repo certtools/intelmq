@@ -137,10 +137,10 @@ class IntelMQProcessManager:
         module = self.__runtime_configuration[bot_id]['module']
         status = self.__status_process(pid, module, bot_id) if pid else False
         if pid and status is True:
-            self.logger.warning("Main instance of the bot is running in the background and will be stopped; "
-                                "when finished, we try to relaunch it again. "
-                                "You may want to launch: 'intelmqctl stop {}' to prevent this message."
-                                .format(bot_id))
+            self.logger.info("Main instance of the bot is running in the background and will be stopped; "
+                             "when finished, we try to relaunch it again. "
+                             "You may want to launch: 'intelmqctl stop {}' to prevent this message."
+                             .format(bot_id))
             paused = True
             self.bot_stop(bot_id)
         elif status is False:
