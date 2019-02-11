@@ -86,6 +86,7 @@ CHANGELOG
 #### Collectors
 - `intelmq.bots.collectors.stomp.collector`: Fix name of shutdown method, was ineffective in the past.
 - `intelmq.bots.collectors.mail.collector_mail_url`: Decode body if it is bytes (#1367).
+- `intelmq.bots.collectors.tcp.collector`: Timeout added. More stable version.
 
 #### Parsers
 
@@ -93,6 +94,7 @@ CHANGELOG
 - `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
 
 #### Outputs
+- `intelmq.bots.outputs.tcp.output`: Timeout added. When no separator used, awaits that every message is acknowledged by a simple "Ok" string to ensure more stability.
 
 ### Documentation
 - Install: Update operating system versions

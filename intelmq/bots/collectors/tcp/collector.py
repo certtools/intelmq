@@ -27,12 +27,11 @@ class TCPCollectorBot(CollectorBot):
         conn = None
         try:
             conn, addr = self.con.accept()
-            self.logger.info('Connection address: %s.', addr)
             while True:
                 # Read message length and unpack it into an integer
                 raw_msglen = self.recvall(conn, 4)
                 if not raw_msglen:
-                    conn.send(b"OK")
+                    conn.send(b"End")
                     return
 
                 # Read the message data
@@ -45,18 +44,23 @@ class TCPCollectorBot(CollectorBot):
                 report = self.new_report()
                 report.add("raw", msg)
                 self.send_message(report)
-        except socket.error:
-            self.logger.exception("Reconnecting.")
-            self.con.close()
-            self.connect()
+
+                if msg:  # if the partner connection ended, our message are already sent
+                    conn.sendall(b"Ok")
+                    pass
+        except socket.error as e:
+            self.logger.exception("Socket error.")
         finally:
             if conn:
                 conn.close()
 
     def connect(self):
         self.con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.con.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER,
+                            struct.pack('ii', 1, 0))  # immediately unbind port after closing so that we can restart
         self.con.bind(self.address)
-        if sys.version_info[1] > 4:  # remove when we're having Python 3.5+
+        self.con.settimeout(15)
+        if sys.version_info[1] > 4:  # remove when we're having Python 3.5+, let here `self.con.listen()`
             self.con.listen()
         else:
             self.con.listen(1)
