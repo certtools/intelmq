@@ -32,7 +32,7 @@ The bot `intelmq.bots.experts.ripencc_abuse_contact.expert` has been renamed to 
 ### Harmonization
 
 ### Configuration
-In 1.1.0 the default value for the parameter `error_dump_message` was set to `false`. The recommended value, used in previous and future release` is `true` to not loose any data in case of errors. Users are advised to check the values configured in their `defaults.conf` file.
+In 1.1.0 the default value for the parameter `error_dump_message` was set to `false`. The recommended value, used in previous and future release is `true` to not loose any data in case of errors. Users are advised to check the values configured in their `defaults.conf` file.
 
 ### Libraries
 
