@@ -375,7 +375,7 @@ class IntelMQController():
             logger.error('Not logging to file: %s', exc)
         self.logger = logger
         self.interactive = interactive
-        if os.geteuid() == 0:
+        if not utils.drop_privileges():
             logger.warning('Running intelmqctl as root is highly discouraged!')
 
         APPNAME = "intelmqctl"

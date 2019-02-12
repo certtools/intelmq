@@ -13,22 +13,24 @@ parse_logline
 """
 import base64
 import collections
+import grp
 import gzip
 import io
 import json
 import logging
 import logging.handlers
 import os
+import pwd
 import re
-import warnings
 import sys
 import tarfile
 import traceback
-from typing import Sequence, Optional, Union, Generator
-from dateutil.relativedelta import relativedelta
+import warnings
+from typing import Generator, Optional, Sequence, Union
 
 import dateutil.parser
 import pytz
+from dateutil.relativedelta import relativedelta
 
 import intelmq
 
@@ -532,3 +534,21 @@ def seconds_to_human(seconds: float, precision: int = 0) -> str:
         if getattr(relative, frame):
             result.append('%.{}f%s'.format(precision) % (getattr(relative, frame), frame[0]))
     return ' '.join(result)
+
+
+def drop_privileges() -> bool:
+    """
+    Checks if the current user is root. If yes, it tries to change to intelmq user and group.
+
+    returns:
+        success: If the drop of privileges did work
+    """
+    if os.geteuid() == 0:
+        try:
+            os.setgid(grp.getgrnam('intelmq').gr_gid)
+            os.setuid(pwd.getpwnam('intelmq').pw_uid)
+        except OSError:
+            return False
+    if os.geteuid() != 0:  # For the unprobably possibility that intelmq is root
+        return True
+    return False

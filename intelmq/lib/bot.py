@@ -64,12 +64,13 @@ class Bot(object):
                                                 id=bot_id, python=version_info,
                                                 pid=os.getpid(), intelmq=__version__)))
             self.__log_buffer.append(('debug', 'Library path: %r.' % __file__))
+            if not utils.drop_privileges():
+                raise ValueError('IntelMQ must not run as root. Dropping privileges did not work.')
 
             self.__load_defaults_configuration()
 
             self.__check_bot_id(bot_id)
             self.__bot_id = bot_id
-
             self.__init_logger()
         except Exception:
             self.__log_buffer.append(('critical', traceback.format_exc()))

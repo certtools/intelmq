@@ -10,10 +10,12 @@ CHANGELOG
   - Dump messages locks the dump file using unix file locks (#574).
   - Print idle/rate limit time also in human readable format (#1332).
   - `set_request_parameters`: Use `{}` as default proxy value instead of `None`. Allows updating of existing proxy dictionaries.
+  - Bots drop privileges if they run as root.
 - `lib/utils`
   - Function `unzip` to extract files from gzipped and/or tar-archives.
   - New class `ListHandler`: new handler for logging purpose which saves the messages in a list.
   - Add function `seconds_to_human`.
+  - Add function `drop_privileges`.
 
 ### Harmonization
 
@@ -62,6 +64,8 @@ CHANGELOG
 ### Tools
 - `intelmqctl check`: Now uses the new `ListHandler` from utils to handle the logging in JSON output mode.
 - `intelmqdump`: Inspecting dumps locks the dump file using unix file locks (#574).
+- `intelmqctl`:
+  - After the check if the program runs as root, it tries to drop privileges. Only if this does not work, a warning is shown.
 
 ### Contrib
 - `malware_name_mapping`:
