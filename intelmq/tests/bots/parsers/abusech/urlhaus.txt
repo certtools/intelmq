@@ -1,0 +1,14 @@
+##############################################################################
+# URLhaus TLD CSV Feed                                                       #
+# Generated on 2019-02-13 10:32:07 UTC                                       #
+#                                                                            #
+# For questions please refer to:                                             #
+# https://urlhaus.abuse.ch/feeds/                                            #
+##############################################################################
+#
+# Feed generated for TLD CH
+#
+# Dateadded (UTC),URL,URL_status,Threat,Host,IPaddress,ASnumber,Country
+2019-02-13 00:34:42,http://marconuenlist.ch/verif.accounts.docs.net/,offline,malware_download,marconuenlist.ch,62.241.37.242,29083,DE
+2019-02-12 14:27:03,http://cbd-planet.ch/sec.myacc.send.com/,online,malware_download,cbd-planet.ch,83.166.138.63,29222,CH
+# of entries: 2

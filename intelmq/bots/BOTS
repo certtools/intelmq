@@ -317,6 +317,11 @@
             "module": "intelmq.bots.parsers.abusech.parser_ransomware",
             "parameters": {}
         },
+        "Abuse.ch URLhaus": {
+            "description": "Bot used to parse and sanitize reports from the Abuse.ch URLhaus feed.",
+            "module": "intelmq.bots.parsers.abusech.parser_urlhaus",
+            "parameters": {}
+        },
         "AlienVault": {
             "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.alienvault.parser",
