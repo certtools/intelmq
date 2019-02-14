@@ -468,6 +468,32 @@ providers:
       revision: 20-01-2018
       status: on
       documentation:
+    URLhaus:
+      description: URLhaus is a project from abuse.ch with the goal of sharing malicious
+        URLs that are being used for malware distribution. URLhaus offers a country, ASN
+        (AS number) and Top Level Domain (TLD) feed for network operators / Internet Service
+        Providers (ISPs), Computer Emergency Response Teams (CERTs) and domain registries.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://urlhaus.abuse.ch/feeds/tld/<TLD>/,
+              https://urlhaus.abuse.ch/feeds/country/<CC>/, or
+              https://urlhaus.abuse.ch/feeds/asn/<ASN>/
+            rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.generic.parser_csv
+          parameters:
+            skip_header: false
+            default_url_protocol: http://
+            type: malware
+            columns: time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc
+      revision: 14-02-2019
+      status: on
+      documentation:
   Blueliv:
     CrimeServer:
       description: Blueliv Crimeserver Collector is the bot responsible to get the
