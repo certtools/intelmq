@@ -57,10 +57,12 @@ class HTTPCollectorBot(CollectorBot):
             try:
                 http_url = self.parameters.http_url.format(time=Time(formatting))
             except TypeError:
-                self.logger.error("Wrongly formatted http_url_formatting parameter: %s. Should be boolean or a time-delta JSON.", formatting)
+                self.logger.error("Wrongly formatted http_url_formatting parameter: %s. Should be boolean or a time-delta JSON.",
+                                  formatting)
                 raise
             except KeyError:
-                self.logger.error("Wrongly formatted http_url parameter: %s. Possible misspell with 'time' variable.", self.parameters.http_url)
+                self.logger.error("Wrongly formatted http_url parameter: %s. Possible misspell with 'time' variable.",
+                                  self.parameters.http_url)
                 raise
         else:
             http_url = self.parameters.http_url
