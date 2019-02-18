@@ -92,6 +92,8 @@ CHANGELOG
 - `intelmq.bots.collectors.mail.collector_mail_url`: Decode body if it is bytes (#1367).
 
 #### Parsers
+- `intelmq.bots.parsers.shadowserver`:
+  - Add support for the `Amplification-DDoS-Victim`, `HTTP-Scanners` and `ICS-Scanners` feeds (#1368).
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
