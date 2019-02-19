@@ -241,6 +241,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `http_user_agent`: user agent to use for the request.
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Only used by some bots.
 * `http_header`: HTTP request headers
 
 **Cache parameters**: Common redis cache parameters used in multiple bots (mainly lookup experts):
@@ -270,7 +271,8 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * **HTTP parameters** (see above)
 * `extract_files`: Optional, boolean or list of strings. If it is not false, the retrieved (compressed) file or archived will be uncompressed/unpacked and the files are extracted. If the parameter is a list for strings, only the files matching the filenames are extracted. Extraction handles gziped files and both compressed and uncompressed tar-archives.
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
-* `http_url_formatting`: If `True` (default `False`) `{time[format]}` will be replaced by the current time formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2018` for the year 2018. Currently only the time in local timezone is available. Python's [Format Specification Mini-Language¶](https://docs.python.org/3/library/string.html) is used for this.
+* `http_url_formatting`: (`bool|JSON`, default: `false`) If `true`, `{time[format]}` will be replaced by the current time in local timezone formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2019` for the year 2019. (Python's [Format Specification Mini-Language](https://docs.python.org/3/library/string.html#formatspec) is used for this.)
+You may use `a JSON` specifiying [time-delta](https://docs.python.org/3/library/datetime.html#datetime.timedelta) parameters to shift the current time accordingly. Ex: type in `{"days": -1}` to use yesterday's date; the URL `http://localhost/{time[%Y-%m-%d]}` will get translated to "http://localhost/2018-12-31" for the 1st Jan of 2019.
 
 Zipped files are automatically extracted if detected.
 
@@ -321,6 +323,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `url_regex`: regular expression of the feed URL to search for in the mail body
 * `sent_from`: filter messages by sender
 * `sent_to`: filter messages by recipient
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
 * * *
 
@@ -347,6 +350,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `attach_unzip`: whether to unzip the attachment (default: `true`)
 * `sent_from`: filter messages by sender
 * `sent_to`: filter messages by recipient
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
 * * *
 
@@ -371,6 +375,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `subject_regex`: regular expression to look for a subject
 * `sent_from`: filter messages by sender
 * `sent_to`: filter messages by recipient
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 * `content_types`: Which bodies to use based on the content_type. Default: `true`/`['html', 'plain']` for all:
   - string with comma separated values, e.g. `['html', 'plain']`
   - `true`, `false`, `null`: Same as default value
@@ -1072,8 +1077,6 @@ Documentation about IDEA: https://idea.cesnet.cz/en/index
 
 ### MaxMind GeoIP
 
-See the README.md
-
 #### Information:
 * `name:` maxmind-geoip
 * `lookup:` local database
@@ -1081,10 +1084,20 @@ See the README.md
 * `cache (redis db):` none
 * `description:` IP to geolocation
 
+#### Setup
+
+The bot requires the maxmind's `geoip2` Python library, version 2.2.0 has been tested.
+
+The database is available at https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
+You need to unzip it.
+
+You may want to use a shell script provided in the contrib directory to keep the database up to date: `contrib/cron-jobs/update-geoip-data`
+
 #### Configuration Parameters:
 
-FIXME
-
+* `database`: Path to the local database, e.g. `"/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"`
+* `overwrite`: boolean
+* `use_registered`: boolean. MaxMind has two country ISO codes: One for the physical location of the address and one for the registered location. Default is `false` (backwards-compatibility). See also https://github.com/certtools/intelmq/pull/1344 for a short explanation.
 
 * * *
 
@@ -1651,7 +1664,7 @@ from your installation.
 
 * * *
 
-# SMTP Output Bot
+### SMTP Output Bot
 
 Sends a MIME Multipart message containing the text and the event as CSV for every single event.
 
@@ -1702,5 +1715,6 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 * `ip`: IP of destination server
 * `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server
-* `separator`: separator of messages, eg. "\n", optional (when sending to a TCP collector, parameter shouldn't be present)
+* `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present. 
+    In that case, the output waits every message is acknowledged by "Ok" message the tcp.collector bot implements.
 
