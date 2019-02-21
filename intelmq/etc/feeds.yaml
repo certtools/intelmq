@@ -489,7 +489,7 @@ providers:
           parameters:
             skip_header: false
             default_url_protocol: http://
-            type: malware
+            type_translation: '{"malware_download": "malware-distribution"}'
             columns: time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc
       revision: 14-02-2019
       status: on

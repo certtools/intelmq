@@ -142,7 +142,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `columns`: `time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc`
 *  * `default_url_protocol`: `http://`
 *  * `skip_header`: `False`
-*  * `type`: `malware`
+*  * `type_translation`: `{"malware_download": "malware-distribution"}`
 
 
 ## Zeus Tracker Domains
