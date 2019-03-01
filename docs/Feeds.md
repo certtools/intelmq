@@ -120,6 +120,31 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
+## URLhaus
+
+* **Status:** on
+* **Revision:** 14-02-2019
+* **Description:** URLhaus is a project from abuse.ch with the goal of sharing malicious URLs that are being used for malware distribution. URLhaus offers a country, ASN (AS number) and Top Level Domain (TLD) feed for network operators / Internet Service Providers (ISPs), Computer Emergency Response Teams (CERTs) and domain registries.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://urlhaus.abuse.ch/feeds/tld/<TLD>/, https://urlhaus.abuse.ch/feeds/country/<CC>/, or https://urlhaus.abuse.ch/feeds/asn/<ASN>/`
+*  * `name`: `URLhaus`
+*  * `provider`: `Abuse.ch`
+*  * `rate_limit`: `129600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.generic.parser_csv
+* **Configuration Parameters:**
+*  * `columns`: `time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc`
+*  * `default_url_protocol`: `http://`
+*  * `skip_header`: `False`
+*  * `type_translation`: `{"malware_download": "malware-distribution"}`
+
+
 ## Zeus Tracker Domains
 
 * **Status:** off
