@@ -57,6 +57,7 @@ CHANGELOG
   - Set the requests parameters once per session.
 
 ### Documentation
+- Feeds: Document abuse.ch URLhaus feed (#1379).
 
 ### Packaging
 

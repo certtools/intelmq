@@ -423,12 +423,13 @@ class Bot(object):
             # loaded harmonization, stop now as this will happen repeatedly without any change
             raise exceptions.ConfigurationError('harmonization', exc.args[0])
 
-        if 'raw' in self.__current_message and len(self.__current_message['raw']) > 400:
-            tmp_msg = self.__current_message.to_dict(hierarchical=False)
-            tmp_msg['raw'] = tmp_msg['raw'][:397] + '...'
-        else:
-            tmp_msg = self.__current_message
-        self.logger.debug('Received message %r.', tmp_msg)
+        if self.logger.isEnabledFor(logging.DEBUG):
+            if 'raw' in self.__current_message and len(self.__current_message['raw']) > 400:
+                tmp_msg = self.__current_message.to_dict(hierarchical=False)
+                tmp_msg['raw'] = tmp_msg['raw'][:397] + '...'
+            else:
+                tmp_msg = self.__current_message
+            self.logger.debug('Received message %r.', tmp_msg)
 
         return self.__current_message
 
