@@ -2095,6 +2095,7 @@ accessible_uds = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
+        ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
         ('extra.', 'tag'),
         ('source.asn', 'asn'),
@@ -2115,6 +2116,5 @@ accessible_uds = {
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-ubiquiti-discovery-service',
-        'protocol.transport': 'udp',
     }
 }
