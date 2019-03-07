@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 import os
 import unittest
 
@@ -13,8 +14,7 @@ with open(os.path.join(os.path.dirname(__file__), 'feodoips.txt')) as handle:
 EXAMPLE_FEODO_REPORT = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipblocklist.csv",
                         "feed.name": "AbuseCH Feodotracker",
                         "__type": "Report",
-                        "raw": utils.base64_encode(EXAMPLE_FEODO_FILE),
-                        "time.observation": "2015-11-02T13:11:44+00:00"
+                        "raw": utils.base64_encode(EXAMPLE_FEODO_FILE)
                        }
 
 EXAMPLE_FEODO_EVENT = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipblocklist.csv",
@@ -22,7 +22,7 @@ EXAMPLE_FEODO_EVENT = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipbl
                        "source.ip": "110.93.230.101",
                        "source.port": 990,
                        "raw": utils.base64_encode("2019-03-04 22:10:24,110.93.230.101,990,Heodo"),
-                       "time.observation": "2015-11-02T13:11:44+00:00",
+                       "time.observation": "2019-03-05T22:10:24+00:00",
                        "time.source": "2019-03-04T22:10:24+00:00",
                        "classification.taxonomy": "malicious code",
                        "classification.type": "c&c",
