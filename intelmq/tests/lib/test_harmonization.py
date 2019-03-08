@@ -280,7 +280,7 @@ class TestHarmonization(unittest.TestCase):
     @test.skip_internet()
     def test_fqdn_to_ip(self):
         """ Test FQDN.to_ip """
-        self.assertEqual(None, harmonization.FQDN.to_ip('localhost'))
+        self.assertEqual('127.0.0.1', harmonization.FQDN.to_ip('localhost'))
         self.assertEqual('93.184.216.34',
                          harmonization.FQDN.to_ip('example.org'))
 
