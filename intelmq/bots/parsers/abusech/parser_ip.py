@@ -50,7 +50,9 @@ class AbusechIPParserBot(ParserBot):
 
         fields = top_line.split(',')
         if len(fields) is not len(FEEDS[feed]['format']):
-            self.logger.warning("Feed '{}' has not the expected length of fields: {} != {}".format(feed, len(fields), len(FEEDS[feed]['format'])))
+            self.logger.warning("Feed '{}' has not the expected fields: {} != {}".format(feed,
+                                                                                         len(fields),
+                                                                                         len(FEEDS[feed]['format'])))
             raise PipelineError("Abusech ip parser is not up to date with the format online")
 
         for line in utils.base64_decode(report.get("raw")).splitlines():
