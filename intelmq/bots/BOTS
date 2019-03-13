@@ -1,6 +1,5 @@
 {
-    "Collector": {
-        "API": {
+    "Collector": { "API": {
             "description": "Bot for collecting data using API.",
             "module": "intelmq.bots.collectors.api.collector_api",
             "parameters": {
@@ -963,7 +962,8 @@
                 "redis_queue": "external-redis-queue",
                 "redis_server_ip": "127.0.0.1",
                 "redis_server_port": 6379,
-                "redis_timeout": 50000
+                "redis_timeout": 50000,
+                "send_as_hierarchical_json": false
             }
         },
         "SMTP": {
