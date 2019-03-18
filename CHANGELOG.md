@@ -14,7 +14,9 @@ CHANGELOG
 
 ### Bots
 #### Collectors
-- `intelmq.bots.collectors.stomp.collector`: Fix name of shutdown method, was ineffective in the past.
+- `intelmq.bots.collectors.stomp.collector`
+  - Fix name of shutdown method, was ineffective in the past.
+  - Ignore `NotConnectedException` errors on disconnect during shutdown.
 - `intelmq.bots.collectors.mail.collector_mail_url`: Decode body if it is bytes (#1367).
 - `intelmq.bots.collectors.tcp.collector`: Timeout added. More stable version.
 
