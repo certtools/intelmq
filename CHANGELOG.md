@@ -23,6 +23,8 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.shadowserver`:
   - Add support for the `Amplification-DDoS-Victim`, `HTTP-Scanners` and `ICS-Scanners` feeds (#1368).
+- `intelmq.bots.parsers.microsoft.parser_ctip`:
+  - Workaround for mis-formatted data in `networkdestinationipv4` field (since 2019-03-14).
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
