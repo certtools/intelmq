@@ -91,13 +91,17 @@ CHANGELOG
 
 ### Bots
 #### Collectors
-- `intelmq.bots.collectors.stomp.collector`: Fix name of shutdown method, was ineffective in the past.
+- `intelmq.bots.collectors.stomp.collector`
+  - Fix name of shutdown method, was ineffective in the past.
+  - Ignore `NotConnectedException` errors on disconnect during shutdown.
 - `intelmq.bots.collectors.mail.collector_mail_url`: Decode body if it is bytes (#1367).
 - `intelmq.bots.collectors.tcp.collector`: Timeout added. More stable version.
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver`:
   - Add support for the `Amplification-DDoS-Victim`, `HTTP-Scanners` and `ICS-Scanners` feeds (#1368).
+- `intelmq.bots.parsers.microsoft.parser_ctip`:
+  - Workaround for mis-formatted data in `networkdestinationipv4` field (since 2019-03-14).
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
@@ -108,6 +112,7 @@ CHANGELOG
 ### Documentation
 - Install: Update operating system versions
 - Sieve Expert: Fix `elsif` -> `elif`.
+- Rephrase the description of `time.*` fields.
 
 ### Packaging
 
