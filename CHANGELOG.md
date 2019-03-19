@@ -37,6 +37,7 @@ CHANGELOG
   - New parameter `columns_required` to optionally ignore parse errors for columns.
 - added `intelmq.bots.parsers.cert_eu.parser_csv` (#1287).
 - added `intelmq.bots.parsers.surbl.surbl`
+- added `intelmq.bots.parsers.html_table` (#1381).
 
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).
@@ -55,6 +56,9 @@ CHANGELOG
   - Set the requests parameters once per session.
 
 ### Documentation
+- added documentation for feeds
+  - CyberCrime Tracker
+  - Feodo Tracker Latest
 
 ### Packaging
 
