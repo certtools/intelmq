@@ -35,6 +35,7 @@ CHANGELOG
 ### Documentation
 - Install: Update operating system versions
 - Sieve Expert: Fix `elsif` -> `elif`.
+- Rephrase the description of `time.*` fields.
 
 ### Packaging
 
