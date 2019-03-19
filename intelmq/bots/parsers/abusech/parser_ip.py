@@ -55,7 +55,7 @@ class AbusechIPParserBot(ParserBot):
             self.logger.warning("Feed '{}' has not the expected fields: {} != {}".format(feed,
                                                                                          len(fields),
                                                                                          len(FEEDS[feed]['format'])))
-            raise PipelineError("Abusech ip parser is not up to date with the format online")
+            raise ValueError("Abusech ip parser is not up to date with the format online")
 
         for line in comments:
             if 'Last updated' in line:
