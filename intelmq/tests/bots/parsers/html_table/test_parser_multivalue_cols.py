@@ -38,6 +38,7 @@ EXAMPLE_EVENT1 = {"feed.name": "HTML Table Feed",
                   }
 
 
+@test.skip_exotic()
 class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for a HTMLTableParserBot.

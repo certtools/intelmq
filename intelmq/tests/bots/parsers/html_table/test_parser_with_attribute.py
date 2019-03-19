@@ -54,6 +54,7 @@ EXAMPLE_EVENT2 = {"__type": "Event",
                   "time.source": "2018-11-22T00:30:06+00:00"}
 
 
+@test.skip_exotic()
 class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for a HTMLTableParserBot.

@@ -41,6 +41,7 @@ EXAMPLE_EVENT2 = EXAMPLE_EVENT.copy()
 EXAMPLE_EVENT2['source.url'] = "http://[D] lingvaworld.ru/media/system/css/messg.jpg"
 
 
+@test.skip_exotic()
 class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for a HTMLTableParserBot.

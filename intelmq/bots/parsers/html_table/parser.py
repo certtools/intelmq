@@ -15,12 +15,10 @@ split_index: int
 type: string
 """
 
-from bs4 import BeautifulSoup as bs
 from dateutil.parser import parse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import DateTime
 
@@ -29,10 +27,18 @@ TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
                     'epoch_millis': DateTime.from_epoch_millis,
                     None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
 
+try:
+    from bs4 import BeautifulSoup as bs
+except ImportError:
+    bs = None
+
 
 class HTMLTableParserBot(Bot):
 
     def init(self):
+        if bs is None:
+            raise ValueError("Could not import 'beautifulsoup4'. Please install it.")
+
         self.columns = self.parameters.columns
         # convert columns to an array
         if type(self.columns) is str:

@@ -64,6 +64,7 @@ EXAMPLE_EVENT3 = {"feed.name": "Feodo Tracker Browse",
                  }
 
 
+@test.skip_exotic()
 class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for a HTMLTableParserBot.
