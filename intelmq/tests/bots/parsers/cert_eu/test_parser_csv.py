@@ -14,6 +14,7 @@ EXAMPLE_FILE_SPLIT = EXAMPLE_FILE.splitlines()
 EXAMPLE_REPORT = {"feed.url": "https://www.cert-eu.eu",
                   "feed.name": "CERT-EU Feed",
                   "__type": "Report",
+                  "time.observation": "2018-01-01T01:00:00+00:00",
                   "raw": utils.base64_encode(EXAMPLE_FILE)
                   }
 
@@ -22,7 +23,8 @@ EXAMPLE_EVENT1 = {
     "feed.name": "CERT-EU Feed",
     "source.ip": "109.125.93.10",
     "raw": utils.base64_encode('\r\n'.join(EXAMPLE_FILE_SPLIT[:2])),
-    "time.observation": "2018-07-06T10:59:06+00:00",
+    "time.observation": "2018-01-01T01:00:00+00:00",
+    "extra.cert_eu_time_observation": "2018-07-06T10:59:06+00:00",
     "classification.type": "malware",
     "time.source": "2018-07-06T08:52:16+00:00",
     "tlp": "GREEN",
@@ -49,8 +51,9 @@ EXAMPLE_EVENT2 = {
     "source.ip": "144.76.221.34",
     "raw": utils.base64_encode('\r\n'.join((EXAMPLE_FILE_SPLIT[0],
                                             EXAMPLE_FILE_SPLIT[2]))),
-    "time.observation": "2018-07-06T10:59:06+00:00",
+    "extra.cert_eu_time_observation": "2018-07-06T11:34:53+00:00",
     "time.source": "2018-07-05T14:32:06+00:00",
+    "time.observation": "2018-01-01T01:00:00+00:00",
     "tlp": "GREEN",
     "event_description.text": "This type most often refers to a URL which is trying to defraud the users of their credentials.",
     "source.geolocation.country": "Germany",
