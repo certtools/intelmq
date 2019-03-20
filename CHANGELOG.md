@@ -41,6 +41,7 @@ CHANGELOG
 
 ### Tests
 - Add missing `__init__.py` files in 4 bot's test directories. Previously these tests have never been executed.
+- `intelmq.lib.test`: Allow bot test class names with an arbitrary postfix separated by an underscore. E.g. `TestShodanParserBot_minimal`.
 
 ### Tools
 - intelmqctl:
