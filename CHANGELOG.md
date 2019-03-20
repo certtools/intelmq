@@ -25,6 +25,13 @@ CHANGELOG
   - Add support for the `Amplification-DDoS-Victim`, `HTTP-Scanners` and `ICS-Scanners` feeds (#1368).
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - Workaround for mis-formatted data in `networkdestinationipv4` field (since 2019-03-14).
+- `intelmq.bots.parsers.shodan.parser`:
+  - In `minimal_mode`:
+    - Fix the parsing, previously only `source.geolocation.cc` and `extra.shodan` was correctly filled with information.
+    - Add a `classification.type` = 'other' to all events.
+    - Added tests for this mode.
+  - Fix the parsing of `timestamp` to `time.source in the normal mode, previously no timezone information has been added and thus every event raised an exception.
+  
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).

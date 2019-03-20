@@ -11,10 +11,8 @@ from intelmq.lib.utils import base64_decode
 
 MAPPING = {
     'hash': 'extra.shodan.event_hash',
-    'ip': '__IGNORE__',  # using ip_str
-    'hostnames': [
-            'source.reverse_dns',  # TODO: multiple hostname
-    ],
+    # 'ip': '__IGNORE__',  # using ip_str
+    'hostnames': 'source.reverse_dns',  # TODO: multiple hostname
     'org': 'event_description.target',
     'data': 'extra.data',
     'port': 'source.port',
@@ -48,17 +46,17 @@ MAPPING = {
                 }
             },
         "anonymous": 'extra.ftp.anonymous',
-        "features_hash": '__IGNORE__',
+        # "features_hash": '__IGNORE__',
     },
     'http': {
-        'robots_hash': '__IGNORE__',
+        # 'robots_hash': '__IGNORE__',
         # 'redirects': unknown,
         # 'securitytxt': unknown,
         'title': 'extra.http.html.title',
-        'sitemap_hash': '__IGNORE__',
-        'robots': '__IGNORE__',
-        'favicon': '__IGNORE__',
-        'host': '__IGNORE__',
+        # 'sitemap_hash': '__IGNORE__',
+        # 'robots': '__IGNORE__',
+        # 'favicon': '__IGNORE__',
+        # 'host': '__IGNORE__',
         'html': 'extra.http.html.data',
         'location': 'extra.http.location',
         # 'components': unknown,
@@ -97,47 +95,47 @@ MAPPING = {
         #            "vendor_ids": [] unknown
     },
     'asn': 'source.asn',
-    'html': '__IGNORE__',  # use http.html
+    # 'html': '__IGNORE__',  # use http.html
     'location': {
-            'country_code3': '__IGNORE__',  # using country_code
-            'city': 'source.geolocation.city',
-            'region_code': 'extra.region_code',
-            'postal_code': 'extra.postal_code',
-            'longitude': 'source.geolocation.longitude',
-            'country_code': 'source.geolocation.cc',
-            'latitude': 'source.geolocation.latitude',
-            'country_name': '__IGNORE__',  # using country_code
-            'area_code': 'extra.area_code',
-            'dma_code': 'extra.dma_code',
+        # 'country_code3': '__IGNORE__',  # using country_code
+        'city': 'source.geolocation.city',
+        'region_code': 'extra.region_code',
+        'postal_code': 'extra.postal_code',
+        'longitude': 'source.geolocation.longitude',
+        'country_code': 'source.geolocation.cc',
+        'latitude': 'source.geolocation.latitude',
+        # 'country_name': '__IGNORE__',  # using country_code
+        'area_code': 'extra.area_code',
+        'dma_code': 'extra.dma_code',
     },
     'timestamp': 'time.source',
-    'domains': [
-        'source.fqdn',  # TODO: multiple domains
-    ],
+    'domains': 'source.fqdn',  # TODO: multiple domains
     'ip_str': 'source.ip',
     'os': 'extra.os_name',
-    '_shodan': '__IGNORE__',  # for now
+    # '_shodan': '__IGNORE__',  # for now
     'opts': {'raw': 'extra.raw',
              },
     'tags': 'extra.tags',
 }
 
 MAPPING_MINIMAL = {
-    'source.ip': ("ip_str"),
-    'source.asn': ("asn"),
-    'source.port': ("port"),
-    'protocol.transport': ("transport"),
-    'time.source': ("timestamp"),
-    'event_description.target': ("org"),
-    'extra.hostnames': ('hostnames'),  # is a list
-    'extra.data': ('data'),
-    'extra.html_title': ('title'),
-    'extra.tags': ('tags'),
-    'source.geolocation.cc': ("location", "country_code"),
-    'extra.opts': ('opts'),
+    'source.ip': "ip_str",
+    'source.asn': "asn",
+    'source.port': "port",
+    'protocol.transport': "transport",
+    'event_description.target': "org",
+    'extra.data': 'data',
+    'extra.html_title': 'title',
+    'extra.tags': 'tags',
 }
 
 PROTOCOLS = ['ftp', 'http', 'isakmp']
+
+CONVERSIONS = {
+    'timestamp': lambda x: x + '+00',
+    'hostnames': lambda x: x[0],
+    'domains': lambda x: x[0],
+}
 
 
 class ShodanParserBot(Bot):
@@ -153,7 +151,7 @@ class ShodanParserBot(Bot):
             self.minimal_mode = False
 
     def apply_mapping(self, mapping, data):
-        self.logger.debug('Appylying mapping %r to data %r.', mapping, data)
+        self.logger.debug('Applying mapping %r to data %r.', mapping, data)
         event = {}
         for key, value in data.items():
             try:
@@ -162,9 +160,9 @@ class ShodanParserBot(Bot):
                         update = self.apply_mapping(mapping[key], value)
                         if update:
                             event.update(update)
-                    elif isinstance(mapping[key], list):
-                        event[mapping[key][0]] = value[0]
                     else:
+                        if key in CONVERSIONS:
+                            value = CONVERSIONS[key](value)
                         event[mapping[key]] = value
             except KeyError:
                 if not self.ignore_errors:
@@ -180,16 +178,19 @@ class ShodanParserBot(Bot):
         event['raw'] = raw
         if self.minimal_mode:
             for intelmqkey, shodankey in MAPPING_MINIMAL.items():
-                value = decoded
-                for shodankeypart in shodankey:
-                    try:
-                        value = value[shodankeypart]
-                    except KeyError:
-                        break
-                else:
-                    event[intelmqkey] = value
+                try:
+                    if decoded[shodankey]:
+                        event[intelmqkey] = decoded[shodankey]
+                except KeyError:
+                    pass
+            try:
+                event['source.geolocation.cc'] = decoded["location"]["country_code"]
+            except KeyError:
+                pass
+            event['time.source'] = CONVERSIONS['timestamp'](decoded["timestamp"])
 
             event['extra.shodan'] = decoded
+            event['classification.type'] = 'other'
         else:
             event.update(self.apply_mapping(MAPPING, decoded))
             event.add('classification.type', 'other')

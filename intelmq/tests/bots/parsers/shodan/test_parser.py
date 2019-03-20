@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 import base64
+import json
 import os
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.parsers.shodan.parser import ShodanParserBot
 
-with open(os.path.join(os.path.dirname(__file__), 'tests.json'), 'rb') as fh:
-    RAWS = [base64.b64encode(x).decode() for x in fh.read().splitlines()]
+with open(os.path.join(os.path.dirname(__file__), 'tests.json'), 'rt') as fh:
+    RAWS_UNENCODED = fh.read().splitlines()
+    RAWS = [base64.b64encode(x.encode()).decode() for x in RAWS_UNENCODED]
 
 REPORTS = [{"feed.name": "Test feed",
                     "raw": raw,
@@ -58,7 +60,6 @@ EVENTS = [{'__type': 'Event',
            'extra.shodan.event_hash': 2125142980,
            'feed.name': 'Test feed',
            'protocol.application': 'ftp',
-
            },{
            '__type': 'Event',
            'classification.identifier': 'shodan-scan',
@@ -124,6 +125,50 @@ EVENTS = [{'__type': 'Event',
            'raw': RAWS[2],
            }
           ]
+MINIMAL = [{'__type': 'Event',
+            'classification.type': 'other',
+            'event_description.target': 'Example Org 1',
+            'extra.data': EVENTS[0]['extra.data'],
+            'feed.name': 'Test feed',
+            'protocol.transport': 'tcp',
+            'source.asn': 64496,
+            'source.geolocation.cc': 'AT',
+            'source.ip': '240.15.82.82',
+            'source.port': 21,
+            'time.source': '2018-06-19T13:02:37.371273+00:00',
+            'feed.name': 'Test feed',
+            'extra.shodan': json.loads(RAWS_UNENCODED[0]),
+            'raw': RAWS[0],
+            },{
+            '__type': 'Event',
+            'classification.type': 'other',
+            'event_description.target': 'Example Org',
+            'feed.name': 'Test feed',
+            'protocol.transport': 'tcp',
+            'source.asn': 64496,
+            'source.geolocation.cc': 'DE',
+            'source.ip': '203.0.113.58',
+            'source.port': 8888,
+            'time.source': '2018-06-19T14:14:15.931753+00:00',
+            'extra.shodan': json.loads(RAWS_UNENCODED[1]),
+            'raw': RAWS[1],
+            },
+           {'__type': 'Event',
+            'classification.type': 'other',
+            'event_description.target': 'Example Org 2',
+            'extra.tags': ['vpn'],
+            'feed.name': 'Test feed',
+            'protocol.transport': 'udp',
+            'source.asn': 64496,
+            'source.geolocation.cc': 'JP',
+            'source.ip': '172.0.0.8',
+            'source.port': 500,
+            'time.source': '2018-06-19T14:14:15.587093+00:00',
+            'extra.data': EVENTS[2]['extra.data'],
+            'extra.shodan': json.loads(RAWS_UNENCODED[2]),
+            'raw': RAWS[2],
+            }
+           ]
 
 
 class TestShodanParserBot(test.BotTestCase, unittest.TestCase):
@@ -149,6 +194,32 @@ class TestShodanParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = REPORTS[2]
         self.run_bot()
         self.assertMessageEqual(0, EVENTS[2])
+
+
+class TestShodanParserBot_minimal(test.BotTestCase, unittest.TestCase):
+    """
+    A TestCase for a ShodanParserBot with minimal_mode.
+    """
+
+    @classmethod
+    def set_bot(cls):
+        cls.bot_reference = ShodanParserBot
+        cls.default_input_message = REPORTS[0]
+        cls.sysconfig = {"minimal_mode": True}
+
+    def test_minimal_ftp(self):
+        self.run_bot()
+        self.assertMessageEqual(0, MINIMAL[0])
+
+    def test_minimal_http(self):
+        self.input_message = REPORTS[1]
+        self.run_bot()
+        self.assertMessageEqual(0, MINIMAL[1])
+
+    def test_minimal_ike(self):
+        self.input_message = REPORTS[2]
+        self.run_bot()
+        self.assertMessageEqual(0, MINIMAL[2])
 
 
 if __name__ == '__main__':  # pragma: no cover
