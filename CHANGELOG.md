@@ -121,6 +121,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Add missing `__init__.py` files in 4 bot's test directories. Previously these tests have never been executed.
 
 ### Tools
 - intelmqctl:
