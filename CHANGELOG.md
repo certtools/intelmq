@@ -30,8 +30,9 @@ CHANGELOG
     - Fix the parsing, previously only `source.geolocation.cc` and `extra.shodan` was correctly filled with information.
     - Add a `classification.type` = 'other' to all events.
     - Added tests for this mode.
-  - Fix the parsing of `timestamp` to `time.source in the normal mode, previously no timezone information has been added and thus every event raised an exception.
-  
+  - Normal mode:
+    - Fix the parsing of `timestamp` to `time.source in the normal mode, previously no timezone information has been added and thus every event raised an exception.
+    - ISAKMP: Ignore `isakmp.aggressive`, as the content is same as `isakmp` or less.
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).

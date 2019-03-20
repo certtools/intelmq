@@ -77,21 +77,21 @@ MAPPING = {
             "authentication": "extra.isakmp.authentication",
             "commit": "extra.isakmp.commit",
         },
-        "aggressive": {
-            "initiator_spi": "extra.isakmp.initiator_spi",
-            "responder_spi": "extra.isakmp.responder_spi",
-            "msg_id": "extra.isakmp.msg_id",
-            "next_payload": "extra.isakmp.next_payload",
-            "exchange_type": "extra.isakmp.exchange_type",
-            "length": "extra.isakmp.length",
-            "version": "extra.isakmp.version",
-            "flags": {
-                "encryption": "extra.isakmp.encryption",
-                "authentication": "extra.isakmp.authentication",
-                "commit": "extra.isakmp.commit",
-            },
-            #              "vendor_ids": [] unknown
-        },
+        # "aggressive": {  # same as above
+        # "initiator_spi": "extra.isakmp.initiator_spi",
+        # "responder_spi": "extra.isakmp.responder_spi",  # can be zeros
+        # "msg_id": "extra.isakmp.msg_id",
+        # "next_payload": "extra.isakmp.next_payload",
+        # "exchange_type": "extra.isakmp.exchange_type",
+        # "length": "extra.isakmp.length",
+        # "version": "extra.isakmp.version",
+        # "flags": {
+        # "encryption": "extra.isakmp.encryption",
+        # "authentication": "extra.isakmp.authentication",
+        # "commit": "extra.isakmp.commit",
+        # },
+        #              "vendor_ids": [] unknown
+        # },
         #            "vendor_ids": [] unknown
     },
     'asn': 'source.asn',
