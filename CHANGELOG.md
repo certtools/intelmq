@@ -106,6 +106,14 @@ CHANGELOG
   - Add support for the `Amplification-DDoS-Victim`, `HTTP-Scanners` and `ICS-Scanners` feeds (#1368).
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - Workaround for mis-formatted data in `networkdestinationipv4` field (since 2019-03-14).
+- `intelmq.bots.parsers.shodan.parser`:
+  - In `minimal_mode`:
+    - Fix the parsing, previously only `source.geolocation.cc` and `extra.shodan` was correctly filled with information.
+    - Add a `classification.type` = 'other' to all events.
+    - Added tests for this mode.
+  - Normal mode:
+    - Fix the parsing of `timestamp` to `time.source in the normal mode, previously no timezone information has been added and thus every event raised an exception.
+    - ISAKMP: Ignore `isakmp.aggressive`, as the content is same as `isakmp` or less.
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
@@ -122,6 +130,7 @@ CHANGELOG
 
 ### Tests
 - Add missing `__init__.py` files in 4 bot's test directories. Previously these tests have never been executed.
+- `intelmq.lib.test`: Allow bot test class names with an arbitrary postfix separated by an underscore. E.g. `TestShodanParserBot_minimal`.
 
 ### Tools
 - intelmqctl:
