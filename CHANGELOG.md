@@ -123,6 +123,8 @@ CHANGELOG
 ### Tests
 
 ### Tools
+- intelmqctl:
+  - status: Show commandline differences if a program with the expected PID could be found, but they do not match (previous output was `None`).
 
 ### Contrib
 
