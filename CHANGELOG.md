@@ -56,6 +56,9 @@ CHANGELOG
 - added `intelmq.bots.outputs.blackhole` (#1279).
 - `intelmq.bots.outputs.restapi.expert`:
   - Set the requests parameters once per session.
+- `intelmq.bots.outputs.redis`:
+  - New parameter `hierarchichal_output` (#1388).
+  - New parameter `with_type`.
 
 ### Documentation
 - Feeds: Document abuse.ch URLhaus feed (#1379).

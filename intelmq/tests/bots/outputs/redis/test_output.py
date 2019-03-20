@@ -49,7 +49,7 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
 
     @test.skip_redis()
     def test_event(self):
-        """ Setup Redis connection """
+        """ Test Redis output with default parameters. """
         redis_ip = self.sysconfig['redis_server_ip']
         redis_port = self.sysconfig['redis_server_port']
         redis_db = self.sysconfig['redis_db']

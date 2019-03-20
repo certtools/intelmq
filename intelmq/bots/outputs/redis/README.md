@@ -9,7 +9,8 @@ Bot parameters:
 * redis_server_ip   : remote server IP address, e.g.: 127.0.0.1
 * redis_server_port : remote server Port, e.g: 6379
 * redis_timeout     : Connection timeout, in msecs, e.g.: 50000
-* send_as_hierarchical_json : whether output should be sent in hierarchical json format
+* `hierarchical_output` : whether output should be sent in hierarchical json format (default: false)
+* `with_type`       : Send the `__type` field (default: true)
 
 
 ### Examples of usage:

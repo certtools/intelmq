@@ -14,8 +14,9 @@ class RedisOutputBot(Bot):
         self.queue = self.parameters.redis_queue
         self.password = self.parameters.redis_password
         self.timeout = int(self.parameters.redis_timeout)
-        self.send_as_hierarchical_json = getattr(self.parameters,
-                                     "send_as_hierarchical_json", False)
+        self.hierarchical_output = getattr(self.parameters,
+                                           "hierarchical_output", False)
+        self.with_type = getattr(self.parameters, "with_type", True)  # backwards compat
 
         redis_version = tuple(int(x) for x in redis.__version__.split('.'))
         if redis_version >= (3, 0, 0):
@@ -30,11 +31,9 @@ class RedisOutputBot(Bot):
         event = self.receive_message()
 
         try:
-            if self.send_as_hierarchical_json:
-                self.output.lpush(self.queue,
-                            str(event.to_json(hierarchical=True)))
-            else:
-                self.output.lpush(self.queue, str(event))
+            self.output.lpush(self.queue,
+                              event.to_json(hierarchical=self.hierarchical_output,
+                                            with_type=self.with_type))
         except Exception:
             self.logger.exception('Failed to send message. Reconnecting.')
             self.connect()
