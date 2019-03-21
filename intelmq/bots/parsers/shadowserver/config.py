@@ -59,6 +59,7 @@ def get_feed(feedname, logger):
         "Accessible-Rsync": accessible_rsync,
         "Accessible-SMB": accessible_smb,
         "Accessible-Telnet": accessible_telnet,
+        "Accessible-Ubiquiti-Discovery-Service": accessible_uds,
         "Accessible-VNC": accessible_vnc,
         "Amplification-DDoS-Victim": amplification_ddos_victim,
         "Blacklisted-IP": blacklisted_ip,
@@ -2083,5 +2084,37 @@ ics_scanners = {
         'classification.taxonomy': 'information gathering',
         'classification.type': 'scanner',
         'classification.identifier': 'ics',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Ubiquiti
+accessible_uds = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.mac_address', 'mac', validate_to_none),
+        ('extra.name', 'radioname', validate_to_none),
+        ('extra.', 'essid', validate_to_none),
+        ('extra.model', 'modelshort', validate_to_none),
+        ('extra.model_full', 'modelfull', validate_to_none),
+        ('extra.firmwarerev', 'firmware', validate_to_none),
+        ('extra.response_size', 'size', convert_int),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-ubiquiti-discovery-service',
     }
 }
