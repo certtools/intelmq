@@ -59,7 +59,7 @@ def get_feed(feedname, logger):
         "Accessible-Rsync": accessible_rsync,
         "Accessible-SMB": accessible_smb,
         "Accessible-Telnet": accessible_telnet,
-        "Accessible-Ubiquiti-Discovery-Service": accessible_uds,
+        "Accessible-Ubiquiti-Discovery-Service": accessible_ubiquity_discovery_service,
         "Accessible-VNC": accessible_vnc,
         "Amplification-DDoS-Victim": amplification_ddos_victim,
         "Blacklisted-IP": blacklisted_ip,
@@ -2088,7 +2088,7 @@ ics_scanners = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Ubiquiti
-accessible_uds = {
+accessible_ubiquity_discovery_service = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -2105,7 +2105,7 @@ accessible_uds = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.mac_address', 'mac', validate_to_none),
-        ('extra.name', 'radioname', validate_to_none),
+        ('extra.radio_name', 'radioname', validate_to_none),
         ('extra.', 'essid', validate_to_none),
         ('extra.model', 'modelshort', validate_to_none),
         ('extra.model_full', 'modelfull', validate_to_none),

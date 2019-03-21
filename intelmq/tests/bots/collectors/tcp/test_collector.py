@@ -190,5 +190,5 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
         self.assertOutputQueueLen(client_count * msg_count + 2)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
