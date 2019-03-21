@@ -79,5 +79,7 @@ class TestTwitterParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(2, EVENTS[2])
         self.assertMessageEqual(3, EVENTS[3])
         self.assertMessageEqual(4, EVENTS[4])
+
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
