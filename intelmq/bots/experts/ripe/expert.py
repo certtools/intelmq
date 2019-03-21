@@ -28,9 +28,11 @@ def clean_string(s):
     return values
 
 
-def clean_geo(g):
+def clean_geo(geo_data):
     '''Clean RIPE reply specifics for geolocation query'''
-    return {} if 'country' in g and g['country'] == '?' else g
+    if 'country' in geo_data and geo_data['country'] == '?':
+        del geo_data['country']
+    return geo_data
 
 
 class RIPEExpertBot(Bot):
@@ -144,8 +146,15 @@ class RIPEExpertBot(Bot):
         else:
             response = self.http_session.get(self.QUERY[type].format(resource), data="", timeout=self.http_timeout_sec)
             if response.status_code != 200:
-                if type != 'db_asn' or response.status_code != 404:     # 404 => contact not found
-                    raise ValueError(STATUS_CODE_ERROR.format(response.status_code))
+                if type == 'db_asn' and response.status_code == 404:
+                    """ If no abuse contact could be found, a 404 is given. """
+                    try:
+                        if response.json()['message'].startswith('No abuse contact found for '):
+                            self.__cache.set('{}:{}'.format(type, resource), CACHE_NO_VALUE)
+                            return {}
+                    except ValueError:
+                        pass
+                raise ValueError(STATUS_CODE_ERROR.format(response.status_code))
             try:
                 data = self.REPLY_TO_DATA[type](response.json())
                 self.__cache.set('{}:{}'.format(type, resource),

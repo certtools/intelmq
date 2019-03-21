@@ -65,7 +65,17 @@ GEOLOCA_OUTPUT3 = {"__type": "Event",
                    "source.geolocation.latitude": 42.7348,
                    "source.geolocation.longitude": -84.6245
                    }
-
+INDEX_ERROR = {"__type": "Event",
+               "source.ip": "228.66.141.189",
+               }
+QUESTION_MARK = {"__type": "Event",
+               "source.ip": "35.197.157.0",
+               }
+QUESTION_MARK_OUTPUT = {"__type": "Event",
+                        "source.ip": "35.197.157.0",
+                        'source.geolocation.latitude': 35.0,
+                        'source.geolocation.longitude': 105.0,
+                        }
 
 @test.skip_internet()
 class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
@@ -124,8 +134,8 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EMPTY_INPUT
         self.allowed_error_count = 1
         self.prepare_bot()
-        old = self.bot.URL_STAT_CONTACT
-        self.bot.URL_STAT_CONTACT = 'http://localhost/{}'
+        old = self.bot.QUERY['stat']
+        self.bot.QUERY['stat'] = 'http://localhost/{}'
         self.run_bot(prepare=False)
         # internal json in < and >= 3.5 and simplejson
         self.assertLogMatches(pattern='.*(JSONDecodeError|ValueError|Expecting value|No JSON object could be decoded).*',
@@ -234,6 +244,26 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
                           }
         self.run_bot()
         self.assertMessageEqual(0, GEOLOCA_OUTPUT3)
+
+    def test_index_error(self):
+        self.input_message = INDEX_ERROR
+        self.run_bot()
+        self.assertMessageEqual(0, INDEX_ERROR)
+
+    def test_country_question_mark(self):
+        """
+        Response has '?' as country
+        https://stat.ripe.net/data/maxmind-geo-lite/data.json?resource=35.197.157.0
+        """
+        self.input_message = QUESTION_MARK
+        self.sysconfig = {'query_ripe_db_asn': False,
+                          'query_ripe_db_ip': False,
+                          'query_ripe_stat_asn': False,
+                          'query_ripe_stat_ip': False,
+                          'query_ripe_stat_geolocation': True,
+                          }
+        self.run_bot()
+        self.assertMessageEqual(0, QUESTION_MARK_OUTPUT)
 
 
 if __name__ == '__main__':  # pragma: no cover
