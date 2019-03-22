@@ -53,6 +53,13 @@ class MicrosoftCTIPParserBot(ParserBot):
                 continue
             if key == 'networkdestinationipv4' and value == '0.0.0.0':
                 continue
+            if key == 'networkdestinationipv4' and ',' in value:
+                """
+                data contains:
+                "networkdestinationipv4": "192.88.99.209, 192.88.99.209",
+                since 2019-03-14, reported upstream, IP addresses are always the same
+                """
+                value = value[:value.find(',')]
             event[MAPPING[key]] = value
         event.add('feed.accuracy',
                   event.get('feed.accuracy', 100) * line['confidence'] / 100,

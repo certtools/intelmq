@@ -963,7 +963,9 @@
                 "redis_queue": "external-redis-queue",
                 "redis_server_ip": "127.0.0.1",
                 "redis_server_port": 6379,
-                "redis_timeout": 50000
+                "redis_timeout": 50000,
+                "hierarchical_output": false,
+                "with_type": true
             }
         },
         "SMTP": {

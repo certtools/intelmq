@@ -32,6 +32,46 @@ EXAMPLE_EVENT = {"classification.type": "malware",
                  "NjExMDc3NjgsIl9nZW9fZW52X3JlbW90ZV9hZGRyIjp7ImNvd"
                  "W50cnlfbmFtZSI6IkRvbWluaWNhbiBSZXB1YmxpYyJ9fQ=="
                  }
+EXAMPLE_EVENT_JSON = {
+                    "feed": {
+                            "url": "http://alerts.bitsighttech.com:8080/stream?",
+                            "name": "BitSight",
+                            "accuracy": 100.0
+                    },
+                    "malware": {
+                            "name": "salityp2p"
+                    },
+                    "time": {
+                            "observation": "2016-04-19T23:16:08+00:00",
+                            "source": "2016-04-19T23:16:08+00:00"
+                    },
+                    "raw": "eyJ0cm9qYW5mYW1pbHkiOiJTYWxpdHlwMnAiLCJlbnYiOnsic"
+                    "mVtb3RlX2FkZHIiOiIxNTIuMTY2LjExOS4yIiwicmVtb3RlX3"
+                    "BvcnQiOiI2NTExOCIsInNlcnZlcl9hZGRyIjoiNTIuMTguMTk"
+                    "2LjE2OSIsInNlcnZlcl9wb3J0IjoiOTc5NiJ9LCJfdHMiOjE0"
+                    "NjExMDc3NjgsIl9nZW9fZW52X3JlbW90ZV9hZGRyIjp7ImNvd"
+                    "W50cnlfbmFtZSI6IkRvbWluaWNhbiBSZXB1YmxpYyJ9fQ==",
+                    "classification": {
+                            "type": "malware"
+                    },
+                    "destination": {
+                            "port": 9796,
+                            "ip": "52.18.196.169"
+                    },
+                    "extra": {
+                            "non_ascii": "ççãããã\x80\ua000 \164 \x80\x80 abcd \165\166"
+                    },
+                    "event_description": {
+                            "text": "Sinkhole attempted connection"
+                    },
+                    "source": {
+                            "port": 65118,
+                            "geolocation": {
+                                    "country": "Dominican Republic"
+                            },
+                            "ip": "152.166.119.2"
+                    }
+                }
 
 
 class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
@@ -45,11 +85,14 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
                          "redis_db": 4,
                          "redis_queue": "test-redis-output-queue",
                          "redis_password": os.getenv('INTELMQ_TEST_REDIS_PASSWORD'),
-                         "redis_timeout": "50000"}
+                         "redis_timeout": "50000",
+                         "hierarchical_output": True,
+                         "with_type": False,
+                         }
 
     @test.skip_redis()
     def test_event(self):
-        """ Test Redis output with default parameters. """
+        """ Setup Redis connection """
         redis_ip = self.sysconfig['redis_server_ip']
         redis_port = self.sysconfig['redis_server_port']
         redis_db = self.sysconfig['redis_db']
@@ -74,7 +117,7 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
 
         self.assertIsInstance(event, str)
         event_dict = json.loads(event)
-        self.assertDictEqual(EXAMPLE_EVENT, event_dict)
+        self.assertDictEqual(EXAMPLE_EVENT_JSON, event_dict)
 
 
 if __name__ == '__main__':  # pragma: no cover
