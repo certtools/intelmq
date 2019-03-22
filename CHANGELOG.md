@@ -18,6 +18,7 @@ CHANGELOG
 #### Parsers
 
 #### Experts
+- added `intelmq.bots.experts.do_portal.expert`.
 
 #### Outputs
 

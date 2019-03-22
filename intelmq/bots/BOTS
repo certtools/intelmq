@@ -703,6 +703,14 @@
                 "redis_cache_ttl": "86400"
             }
         },
+        "DO-Portal": {
+            "description": "Retrieves contact information for the affected CIDR from a do-portal instance.",
+            "module": "intelmq.bots.experts.do_portal.expert",
+            "parameters": {
+                "portal_api_key": "<INSERT KEY>",
+                "portal_url": "<INSERT URL HERE>"
+            }
+        },
         "Domain Suffix": {
             "description": "Extracts the domain suffix from a domain and saves it in the the domain_suffix field.",
             "module": "intelmq.bots.experts.domain_suffix.expert",
