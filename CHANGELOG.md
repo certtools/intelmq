@@ -26,6 +26,7 @@ CHANGELOG
   - Add support for the `Amplification-DDoS-Victim`, `HTTP-Scanners`, `ICS-Scanners` and `Accessible-Ubiquiti-Discovery-Service` feeds (#1368, #1383)
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - Workaround for mis-formatted data in `networkdestinationipv4` field (since 2019-03-14).
+  - Ignore "hostname" ("destination.fqdn") if it contains invalid data.
 - `intelmq.bots.parsers.shodan.parser`:
   - In `minimal_mode`:
     - Fix the parsing, previously only `source.geolocation.cc` and `extra.shodan` was correctly filled with information.
