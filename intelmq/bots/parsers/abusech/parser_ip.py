@@ -40,7 +40,6 @@ FEEDS = {
 
 
 class AbusechIPParserBot(ParserBot):
-    __last_generated_date = None
     __is_comment_line_regex = re.compile(r'^#+.*')
     __date_regex = re.compile(r'[0-9]{4}.[0-9]{2}.[0-9]{2}.[0-9]{2}.[0-9]{2}.[0-9]{2}( UTC)?')
 
@@ -57,15 +56,9 @@ class AbusechIPParserBot(ParserBot):
                                                                                          len(FEEDS[feed]['format'])))
             raise ValueError("Abusech ip parser is not up to date with the format online")
 
-        for line in comments:
-            if 'Last updated' in line:
-                self.__last_generated_date = dateutil.parser.parse(self.__date_regex.search(line).group(0)).isoformat()
-
         lines = (l for l in raw_lines if not self.__is_comment_line_regex.search(l))
         for line in lines:
-            line = line.strip()
-            if not any([line.startswith(prefix) for prefix in self.ignore_lines_starting]):
-                yield line
+            yield line.strip()
 
     def parse_line(self, line, report):
         event = self.new_event(report)
@@ -73,13 +66,13 @@ class AbusechIPParserBot(ParserBot):
         self.__process_fields(event, line, report['feed.url'])
         yield event
 
-    def __process_defaults(self, event, line, feed_url):
+    @staticmethod
+    def __process_defaults(event, line, feed_url):
         defaults = {
             ('malware.name', FEEDS[feed_url]['malware']),
             ('raw', line),
             ('classification.type', 'c&c'),
-            ('classification.taxonomy', 'malicious code'),
-            ('time.observation', self.__last_generated_date)
+            ('classification.taxonomy', 'malicious code')
         }
 
         for i in defaults:
