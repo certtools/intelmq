@@ -57,6 +57,7 @@ CHANGELOG
 ### Tools
 - intelmqctl:
   - status: Show commandline differences if a program with the expected PID could be found, but they do not match (previous output was `None`).
+  - Use logging level from defauls configuration if possible, otherwise intelmq's internal default. Previously, DEBUG was used unconditionally.
 
 ### Contrib
 

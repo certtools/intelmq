@@ -16,7 +16,8 @@ import pkg_resources
 import psutil
 
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
-                     VAR_RUN_PATH, BOTS_FILE, HARMONIZATION_CONF_FILE)
+                     VAR_RUN_PATH, BOTS_FILE, HARMONIZATION_CONF_FILE,
+                     DEFAULT_LOGGING_LEVEL)
 from intelmq.lib import utils
 from intelmq.lib.bot_debugger import BotDebugger
 from intelmq.lib.pipeline import PipelineFactory
@@ -369,10 +370,20 @@ class IntelMQController():
         global logger
         global QUIET
         QUIET = quiet
+        self.parameters = Parameters()
+
+        # Try to get log_level from defaults_configuration, else use default
         try:
-            logger = utils.log('intelmqctl', log_level='DEBUG')
+            self.load_defaults_configuration()
+        except Exception:
+            log_level = DEFAULT_LOGGING_LEVEL
+        else:
+            log_level = self.parameters.logging_level
+
+        try:
+            logger = utils.log('intelmqctl', log_level=log_level)
         except (FileNotFoundError, PermissionError) as exc:
-            logger = utils.log('intelmqctl', log_level='DEBUG', log_path=False)
+            logger = utils.log('intelmqctl', log_level=log_level, log_path=False)
             logger.error('Not logging to file: %s', exc)
         self.logger = logger
         self.interactive = interactive
@@ -455,7 +466,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
-        self.parameters = Parameters()
         self.load_defaults_configuration()
         try:
             self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
@@ -615,12 +625,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             self.parser = parser
 
-    def load_defaults_configuration(self):
+    def load_defaults_configuration(self, silent=False):
         # Load defaults configuration
         try:
             config = utils.load_configuration(DEFAULTS_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
-            self.abort('Error loading %r: %s' % (DEFAULTS_CONF_FILE, exc))
+            if not silent:
+                self.abort('Error loading %r: %s' % (DEFAULTS_CONF_FILE, exc))
         for option, value in config.items():
             setattr(self.parameters, option, value)
 
