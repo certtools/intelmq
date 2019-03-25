@@ -1245,6 +1245,8 @@ You can set the value of the field to a string literal or number.
 In addition you can use the [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax)
 to access the values from the processed event as `msg` and the match groups
 of the conditions as `matches`, see the bitdefender example above.
+Group 0 (`[0]`) contains the full matching string. See also the documentation on [`re.Match.group`](https://docs.python.org/3/library/re.html?highlight=re%20search#re.Match.group).
+
 Note that `matches` will also contain the match groups
 from the default conditions if there were any.
 

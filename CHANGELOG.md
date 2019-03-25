@@ -94,6 +94,7 @@ CHANGELOG
 ### Development
 
 ### Harmonization
+- FQDN: Disallow `:` in FQDN values to prevent values like '10.0.0.1:8080' (#1235).
 
 ### Bots
 #### Collectors
@@ -117,6 +118,9 @@ CHANGELOG
     - Fix the parsing of `timestamp` to `time.source in the normal mode, previously no timezone information has been added and thus every event raised an exception.
     - ISAKMP: Ignore `isakmp.aggressive`, as the content is same as `isakmp` or less.
 - `intelmq.bots.parsers.abusech.parser_ip`: Re-structure the bot and support new format of the changed "Feodo Tracker Domains" feed.
+- `intelmq.bots.parsers.n6.parser`:
+  - Add parsing for fields "confidence", "expires" and "source".
+  - Add support for type "bl-other" (category "other").
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
@@ -139,6 +143,7 @@ CHANGELOG
 ### Tools
 - intelmqctl:
   - status: Show commandline differences if a program with the expected PID could be found, but they do not match (previous output was `None`).
+  - Use logging level from defauls configuration if possible, otherwise intelmq's internal default. Previously, DEBUG was used unconditionally.
 
 ### Contrib
 
