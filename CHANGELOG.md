@@ -35,6 +35,9 @@ CHANGELOG
     - Fix the parsing of `timestamp` to `time.source in the normal mode, previously no timezone information has been added and thus every event raised an exception.
     - ISAKMP: Ignore `isakmp.aggressive`, as the content is same as `isakmp` or less.
 - `intelmq.bots.parsers.abusech.parser_ip`: Re-structure the bot and support new format of the changed "Feodo Tracker Domains" feed.
+- `intelmq.bots.parsers.n6.parser`:
+  - Add parsing for fields "confidence", "expires" and "source".
+  - Add support for type "bl-other" (category "other").
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
