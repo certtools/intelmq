@@ -116,6 +116,7 @@ CHANGELOG
   - Normal mode:
     - Fix the parsing of `timestamp` to `time.source in the normal mode, previously no timezone information has been added and thus every event raised an exception.
     - ISAKMP: Ignore `isakmp.aggressive`, as the content is same as `isakmp` or less.
+- `intelmq.bots.parsers.abusech.parser_ip`: Re-structure the bot and support new format of the changed "Feodo Tracker Domains" feed.
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
@@ -127,6 +128,7 @@ CHANGELOG
 - Install: Update operating system versions
 - Sieve Expert: Fix `elsif` -> `elif`.
 - Rephrase the description of `time.*` fields.
+- Feeds: New URL and format of the "Feodo Tracker IPs" feed. "Feodo Tracker Domains" has been discontinued.
 
 ### Packaging
 

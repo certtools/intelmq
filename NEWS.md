@@ -18,6 +18,9 @@ The bot `intelmq.bots.experts.ripencc_abuse_contact.expert` has been renamed to 
 ---------------------------------
 
 ### Configuration
+#### Feodotracker
+ * The URL of the "Feodo Tracker IPs" feed has changed. The new one is `https://feodotracker.abuse.ch/downloads/ipblocklist.csv`. If you are using this feed, adapt your configuration accordingly. The parser has been updated to support the new format.
+ * The feed ""Feodo Tracker Domains" has been discontinued.
 
 ### Libraries
 

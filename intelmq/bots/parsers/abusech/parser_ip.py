@@ -12,7 +12,6 @@ import dateutil
 
 from intelmq.lib.bot import ParserBot
 from intelmq.lib import utils
-from intelmq.lib.exceptions import PipelineError
 
 FEEDS = {
     'https://feodotracker.abuse.ch/downloads/ipblocklist.csv': {
@@ -64,8 +63,7 @@ class AbusechIPParserBot(ParserBot):
         lines = (l for l in raw_lines if not self.__is_comment_line_regex.search(l))
         for line in lines:
             line = line.strip()
-            if not any([line.startswith(prefix) for prefix in self.ignore_lines_starting]):
-                yield line
+            yield line
 
     def parse_line(self, line, report):
         event = self.new_event(report)
@@ -79,7 +77,7 @@ class AbusechIPParserBot(ParserBot):
             ('raw', line),
             ('classification.type', 'c&c'),
             ('classification.taxonomy', 'malicious code'),
-            ('time.observation', self.__last_generated_date)
+            ('extra.feed_last_generated', self.__last_generated_date)
         }
 
         for i in defaults:
