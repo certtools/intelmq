@@ -33,7 +33,7 @@ if source.ip << '192.0.0.0/24' {
 if classification.type == ['phishing', 'malware'] && source.fqdn =~ '.*\.(ch|li)$' {
   add! comment = 'domainabuse'
   keep
-} elsif classification.type == 'scanner' {
+} elif classification.type == 'scanner' {
   add! comment = 'ignore'
   drop
 } else {

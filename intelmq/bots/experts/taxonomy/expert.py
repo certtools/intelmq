@@ -44,19 +44,19 @@ TAXONOMY = {
     "unauthorized-command": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "unauthorized-login": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "unprivileged-account-compromise": "intrusions",
-    "botnet drone": "malicious code",
+    "botnet drone": "malicious code",  # not in ENISA eCSIRT-II taxonomy, deprecated -> infected system
     "c&c": "malicious code",  # ENISA eCSIRT-II taxonomy: 'c2server'
-    "dga domain": "malicious code",
+    "dga domain": "malicious code",  # not in ENISA eCSIRT-II taxonomy
     "infected system": "malicious code",  # ENISA eCSIRT-II taxonomy: 'infected-system'
-    "malware": "malicious code",
+    "malware": "malicious code",  # not in ENISA eCSIRT-II taxonomy
     "malware configuration": "malicious code",  # ENISA eCSIRT-II taxonomy: 'malware-configuration'
     "malware-distribution": "malicious code",
-    "ransomware": "malicious code",
+    "ransomware": "malicious code",  # not in ENISA eCSIRT-II taxonomy
     "blacklist": "other",
-    "other": "other",
-    "proxy": "other",
-    "tor": "other",
-    "unknown": "other",
+    "other": "other",  # not in ENISA eCSIRT-II taxonomy
+    "proxy": "other",  # not in ENISA eCSIRT-II taxonomy
+    "tor": "other",  # not in ENISA eCSIRT-II taxonomy
+    "unknown": "other",  # not in ENISA eCSIRT-II taxonomy
     "test": "test",
     "ddos-amplifier": "vulnerable",
     "information-disclosure": "vulnerable",

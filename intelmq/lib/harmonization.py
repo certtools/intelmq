@@ -404,6 +404,9 @@ class FQDN(GenericType):
 
     All valid lowercase domains are accepted, no IP addresses or URLs. Trailing
     dot is not allowed.
+
+    To prevent values like '10.0.0.1:8080' (#1235), we check for the
+    non-existence of ':'.
     """
 
     @staticmethod
@@ -414,7 +417,7 @@ class FQDN(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        if value.strip('.') != value or value != value.lower():
+        if value.strip('.') != value or value != value.lower() or ':' in value:
             return False
 
         if IPAddress().is_valid(value):

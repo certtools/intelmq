@@ -248,6 +248,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.FQDN.is_valid('n/a'))
         self.assertFalse(harmonization.FQDN.is_valid('.'))
         self.assertFalse(harmonization.FQDN.is_valid('.example.com'))
+        self.assertFalse(harmonization.FQDN.is_valid('10.0.0.1:8080'))  # 1235
 
     def test_fqdn_sanitize(self):
         """ Test FQDN.sanitize with valid arguments. """

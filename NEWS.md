@@ -3,17 +3,19 @@ NEWS
 
 See the changelog for a full list of changes.
 
+1.1.2 Bugfix release (2019-03-25)
+---------------------------------
+
+### Configuration
+#### Feodotracker
+ * The URL of the "Feodo Tracker IPs" feed has changed. The new one is `https://feodotracker.abuse.ch/downloads/ipblocklist.csv`. If you are using this feed, adapt your configuration accordingly. The parser has been updated to support the new format.
+ * The feed "Feodo Tracker Domains" has been discontinued.
+
 1.1.1 Bugfix release (2019-01-15)
 ---------------------------------
 
-### Tools
-
-### Harmonization
-
 ### Configuration
-In 1.1.0 the default value for the parameter `error_dump_message` was set to `false`. The recommended value, used in previous and future release` is `true` to not loose any data in case of errors. Users are advised to check the values configured in their `defaults.conf` file.
-
-### Libraries
+In 1.1.0 the default value for the parameter `error_dump_message` was set to `false`. The recommended value, used in previous and future release is `true` to not loose any data in case of errors. Users are advised to check the values configured in their `defaults.conf` file.
 
 ### Postgres databases
 The following statements optionally update existing data.
@@ -238,8 +240,6 @@ UPDATE events
 
 1.0.6 Bugfix release (2018-08-31)
 ---------------------------------
-
-### Configuration
 
 ### Libraries
 - Some optional dependencies do not support Python 3.3 anymore. If your are still using this unsuported version consider upgrading. IntelMQ 1.0.x itself is compatible with Python 3.3.

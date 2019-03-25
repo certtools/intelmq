@@ -1044,6 +1044,8 @@ You can set the value of the field to a string literal or number.
 In addition you can use the [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax)
 to access the values from the processed event as `msg` and the match groups
 of the conditions as `matches`, see the bitdefender example above.
+Group 0 (`[0]`) contains the full matching string. See also the documentation on [`re.Match.group`](https://docs.python.org/3/library/re.html?highlight=re%20search#re.Match.group).
+
 Note that `matches` will also contain the match groups
 from the default conditions if there were any.
 
@@ -1372,7 +1374,7 @@ from your installation.
 
 * * *
 
-# SMTP Output Bot
+### SMTP Output Bot
 
 Sends a MIME Multipart message containing the text and the event as CSV for every single event.
 
@@ -1423,5 +1425,6 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 * `ip`: IP of destination server
 * `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server
-* `separator`: separator of messages, eg. "\n", optional (when sending to a TCP collector, parameter shouldn't be present)
+* `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present. 
+    In that case, the output waits every message is acknowledged by "Ok" message the tcp.collector bot implements.
 

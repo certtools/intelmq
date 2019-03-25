@@ -1,6 +1,71 @@
 CHANGELOG
 ==========
 
+1.1.2 (2019-03-25)
+------------------
+
+### Core
+- `intelmq.lib.bot`:
+  - `Bot.__handle_sighup`: Handle exceptions in `shutdown` method of bots.
+
+### Harmonization
+- FQDN: Disallow `:` in FQDN values to prevent values like '10.0.0.1:8080' (#1235).
+
+### Bots
+#### Collectors
+- `intelmq.bots.collectors.stomp.collector`
+  - Fix name of shutdown method, was ineffective in the past.
+  - Ignore `NotConnectedException` errors on disconnect during shutdown.
+- `intelmq.bots.collectors.mail.collector_mail_url`: Decode body if it is bytes (#1367).
+- `intelmq.bots.collectors.tcp.collector`: Timeout added. More stable version.
+
+#### Parsers
+- `intelmq.bots.parsers.shadowserver`:
+  - Add support for the `Amplification-DDoS-Victim`, `HTTP-Scanners`, `ICS-Scanners` and `Accessible-Ubiquiti-Discovery-Service` feeds (#1368, #1383)
+- `intelmq.bots.parsers.microsoft.parser_ctip`:
+  - Workaround for mis-formatted data in `networkdestinationipv4` field (since 2019-03-14).
+  - Ignore "hostname" ("destination.fqdn") if it contains invalid data.
+- `intelmq.bots.parsers.shodan.parser`:
+  - In `minimal_mode`:
+    - Fix the parsing, previously only `source.geolocation.cc` and `extra.shodan` was correctly filled with information.
+    - Add a `classification.type` = 'other' to all events.
+    - Added tests for this mode.
+  - Normal mode:
+    - Fix the parsing of `timestamp` to `time.source in the normal mode, previously no timezone information has been added and thus every event raised an exception.
+    - ISAKMP: Ignore `isakmp.aggressive`, as the content is same as `isakmp` or less.
+- `intelmq.bots.parsers.abusech.parser_ip`: Re-structure the bot and support new format of the changed "Feodo Tracker Domains" feed.
+- `intelmq.bots.parsers.n6.parser`:
+  - Add parsing for fields "confidence", "expires" and "source".
+  - Add support for type "bl-other" (category "other").
+
+#### Experts
+- `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
+
+#### Outputs
+- `intelmq.bots.outputs.tcp.output`: Timeout added. When no separator used, awaits that every message is acknowledged by a simple "Ok" string to ensure more stability.
+
+### Documentation
+- Install: Update operating system versions
+- Sieve Expert: Fix `elsif` -> `elif`.
+- Rephrase the description of `time.*` fields.
+- Feeds: New URL and format of the "Feodo Tracker IPs" feed. "Feodo Tracker Domains" has been discontinued.
+
+### Packaging
+
+### Tests
+- Add missing `__init__.py` files in 4 bot's test directories. Previously these tests have never been executed.
+- `intelmq.lib.test`: Allow bot test class names with an arbitrary postfix separated by an underscore. E.g. `TestShodanParserBot_minimal`.
+
+### Tools
+- intelmqctl:
+  - status: Show commandline differences if a program with the expected PID could be found, but they do not match (previous output was `None`).
+  - Use logging level from defauls configuration if possible, otherwise intelmq's internal default. Previously, DEBUG was used unconditionally.
+
+### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted (#952).
+- stomp collector bot constantly uses 100% of CPU (#1364).
+
+
 1.1.1 (2019-01-15)
 ------------------
 
@@ -229,6 +294,7 @@ Update to 2018-09-26 version. New values are per taxonomy:
   * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
   * the special path `"_on_error"` can be used to pass messages to different queues in case of processing errors (#1133).
 - `lib/harmonization`: Accept `AS` prefix for ASN values (automatically stripped).
+- added `intelmq.VAR_STATE_PATH` for variable state data of bots.
 
 ### Bots
 - Removed print statements from various bots.
@@ -348,10 +414,6 @@ Update to 2018-09-26 version. New values are per taxonomy:
 
 1.0.6 Bugfix release (2018-08-31)
 ---------------------------------
-
-### Core
-
-### Harmonization
 
 ### Bots
 #### Collectors

@@ -12,6 +12,10 @@ EXAMPLE_INPUT = {"__type": "Event",
                  "time.observation": "2017-01-01T00:00:00+00:00",
                  }
 
+EXAMPLE_MD5 = {"__type": "Event",
+               "malware.hash.md5": "0904631316551",
+               }
+
 
 @test.skip_exotic()
 class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
@@ -950,7 +954,6 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         numeric_match_false['comment'] = "keep with path"
         self.input_message = numeric_match_false
         self.run_bot()
-        self.assertMessageEqual(0, numeric_match_false, path="other-way")
 
         # if doesn't match keep
         numeric_match_false = EXAMPLE_INPUT.copy()
@@ -959,6 +962,17 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, numeric_match_false, path="_default")
 
+    def test_numeric_key(self):
+        """ Test == numeric match """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_numeric_key.sieve')
+
+        # if match drop
+        numeric_match_true = EXAMPLE_INPUT.copy()
+        numeric_match_true['comment'] = "drop"
+        self.input_message = numeric_match_true
+        self.run_bot()
+        self.assertMessageEqual(0, numeric_match_true)
 
 
 if __name__ == '__main__':  # pragma: no cover

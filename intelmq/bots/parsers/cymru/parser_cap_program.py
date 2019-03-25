@@ -64,7 +64,7 @@ class CymruCAPProgramParserBot(ParserBot):
                     comment_value.clear()
                 else:
                     if comment_key == 'destaddr' and len(comment_value) == 1:
-                            # line 9 in test case ('Avalanche Botnet' comment)
+                        # line 9 in test case ('Avalanche Botnet' comment)
                         event_comment.append(part)
                     else:
                         comment_value.append(part)
