@@ -202,6 +202,9 @@ Fully qualified domain name type.
 All valid lowercase domains are accepted, no IP addresses or URLs. Trailing
 dot is not allowed.
 
+To prevent values like '10.0.0.1:8080' (#1235), we check for the
+non-existence of ':'.
+
 
 ### Float
 

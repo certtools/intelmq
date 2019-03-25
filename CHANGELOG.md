@@ -11,6 +11,7 @@ CHANGELOG
 ### Development
 
 ### Harmonization
+- FQDN: Disallow `:` in FQDN values to prevent values like '10.0.0.1:8080' (#1235).
 
 ### Bots
 #### Collectors
