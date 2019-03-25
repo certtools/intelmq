@@ -38,6 +38,7 @@ CHANGELOG
 - `intelmq.bots.parsers.generic.parser_csv`:
   - New parameter `columns_required` to optionally ignore parse errors for columns.
 - added `intelmq.bots.parsers.cert_eu.parser_csv` (#1287).
+  - Do not overwrite the local `time.observation` with the data from the feed. The feed's field 'observation time' is now saved in the field `extra.cert_eu_time_observation`.
 - added `intelmq.bots.parsers.surbl.surbl`
 
 #### Experts
@@ -45,6 +46,8 @@ CHANGELOG
 - added `intelmq.bots.experts.mcafee.expert_mar` (1265).
 - renamed `intelmq.bots.experts.ripencc_abuse_contact.expert` to `intelmq.bots.experts.ripe.expert`, compatibility shim will be removed in version 3.0.
   - Added support for geolocation information in ripe expert with a new parameter `query_ripe_stat_geolocation` (#1317).
+  - Restructurize the expert and de-duplicataion (#1384).
+  - Handle '?' in geolocation country data (#1384).
 - `intelmq.bots.experts.ripe.expert`:
   - Use a requests session (#1363).
   - Set the requests parameters once per session.
@@ -55,6 +58,9 @@ CHANGELOG
 - added `intelmq.bots.outputs.blackhole` (#1279).
 - `intelmq.bots.outputs.restapi.expert`:
   - Set the requests parameters once per session.
+- `intelmq.bots.outputs.redis`:
+  - New parameter `hierarchichal_output` (#1388).
+  - New parameter `with_type`.
 
 ### Documentation
 - Feeds: Document abuse.ch URLhaus feed (#1379).
@@ -91,13 +97,26 @@ CHANGELOG
 
 ### Bots
 #### Collectors
-- `intelmq.bots.collectors.stomp.collector`: Fix name of shutdown method, was ineffective in the past.
+- `intelmq.bots.collectors.stomp.collector`
+  - Fix name of shutdown method, was ineffective in the past.
+  - Ignore `NotConnectedException` errors on disconnect during shutdown.
 - `intelmq.bots.collectors.mail.collector_mail_url`: Decode body if it is bytes (#1367).
 - `intelmq.bots.collectors.tcp.collector`: Timeout added. More stable version.
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver`:
-  - Add support for the `Amplification-DDoS-Victim`, `HTTP-Scanners` and `ICS-Scanners` feeds (#1368).
+  - Add support for the `Amplification-DDoS-Victim`, `HTTP-Scanners`, `ICS-Scanners` and `Accessible-Ubiquiti-Discovery-Service` feeds (#1368, #1383)
+- `intelmq.bots.parsers.microsoft.parser_ctip`:
+  - Workaround for mis-formatted data in `networkdestinationipv4` field (since 2019-03-14).
+- `intelmq.bots.parsers.shodan.parser`:
+  - In `minimal_mode`:
+    - Fix the parsing, previously only `source.geolocation.cc` and `extra.shodan` was correctly filled with information.
+    - Add a `classification.type` = 'other' to all events.
+    - Added tests for this mode.
+  - Normal mode:
+    - Fix the parsing of `timestamp` to `time.source in the normal mode, previously no timezone information has been added and thus every event raised an exception.
+    - ISAKMP: Ignore `isakmp.aggressive`, as the content is same as `isakmp` or less.
+- `intelmq.bots.parsers.abusech.parser_ip`: Re-structure the bot and support new format of the changed "Feodo Tracker Domains" feed.
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
@@ -108,12 +127,18 @@ CHANGELOG
 ### Documentation
 - Install: Update operating system versions
 - Sieve Expert: Fix `elsif` -> `elif`.
+- Rephrase the description of `time.*` fields.
+- Feeds: New URL and format of the "Feodo Tracker IPs" feed. "Feodo Tracker Domains" has been discontinued.
 
 ### Packaging
 
 ### Tests
+- Add missing `__init__.py` files in 4 bot's test directories. Previously these tests have never been executed.
+- `intelmq.lib.test`: Allow bot test class names with an arbitrary postfix separated by an underscore. E.g. `TestShodanParserBot_minimal`.
 
 ### Tools
+- intelmqctl:
+  - status: Show commandline differences if a program with the expected PID could be found, but they do not match (previous output was `None`).
 
 ### Contrib
 

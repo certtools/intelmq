@@ -1,0 +1,3 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","mac","radioname","essid","modelshort","modelfull","firmware","size"
+"2019-02-04 15:34:33","177.22.68.220","udp",10001,"220.68.22.177.strnet.com.br","ubiquiti",262890,"BR","SAO PAULO","TAMBAU",0,0,"0027223ae564","Sartori Tecnologia","NETTAMBAU23N-2","AG5-HP",,"XM.ar7240.v6.0.4-licensed.30805.170505.1649",164
+"2019-02-04 15:34:33","195.32.35.53","udp",10001,"c-35-53.cust.wadsl.it","ubiquiti",205005,"IT","ASTI","MONTECHIARO D'ASTI",0,0,"802aa8b03d28","DETTORI Daniela","find-adsl","LB5",,"XW.ar934x.v6.0.4.30805.170505.1510",142

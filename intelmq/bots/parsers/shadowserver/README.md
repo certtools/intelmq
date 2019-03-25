@@ -31,6 +31,7 @@ Possible feednames:
 * `Accessible-Rsync`
 * `Accessible-SMB`
 * `Accessible-Telnet`
+* `Accessible-Ubiquiti-Discovery-Service`
 * `Accessible-VNC`
 * `Amplification-DDoS-Victim`
 * `Blacklisted-IP`

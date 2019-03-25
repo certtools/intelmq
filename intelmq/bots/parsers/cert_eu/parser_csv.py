@@ -3,6 +3,7 @@ CERT-EU parser
 """
 from intelmq.lib.bot import ParserBot
 from collections import defaultdict
+from intelmq.lib.harmonization import DateTime
 
 
 class CertEUCSVParserBot(ParserBot):
@@ -43,7 +44,8 @@ class CertEUCSVParserBot(ParserBot):
         if "datasource" in line:
             event["extra.datasource"] = line["datasource"]
         event.add("source.ip", line["source ip"])
-        event.add("time.observation", line["observation time"])
+        event.add("extra.cert_eu_time_observation",
+                  DateTime.sanitize(line["observation time"]))
         event.add("tlp", line["tlp"])
         event.add("event_description.text", line["description"])
         event.add("classification.type", self.abuse_to_intelmq[line["type"]])

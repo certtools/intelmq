@@ -351,7 +351,7 @@ class BotTestCase(object):
                       "".format(self.bot_name, list(self.bot_types.values())))  # pragma: no cover
 
         self.assertEqual('Test{}'.format(self.bot_name),
-                         self.__class__.__name__)
+                         self.__class__.__name__.split('_')[0])
 
     def assertAnyLoglineEqual(self, message: str, levelname: str = "ERROR"):
         """

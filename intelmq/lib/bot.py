@@ -590,10 +590,8 @@ class Bot(object):
 
     def set_request_parameters(self):
         self.http_header = getattr(self.parameters, 'http_header', {})
-        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
-                                        True)
-        self.ssl_client_cert = getattr(self.parameters,
-                                       'ssl_client_certificate', None)
+        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert', True)
+        self.ssl_client_cert = getattr(self.parameters, 'ssl_client_certificate', None)
 
         if (hasattr(self.parameters, 'http_username') and
             hasattr(self.parameters, 'http_password') and

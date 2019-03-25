@@ -338,6 +338,8 @@ class IntelMQProcessManager:
             elif (len(proc.cmdline()) > 3 and proc.cmdline()[1] == shutil.which('intelmqctl') and
                   proc.cmdline()[2] == 'run' and proc.cmdline()[3] == bot_id):
                 return True
+            elif len(proc.cmdline()) > 1:
+                return 'Commandline of the program %r does not match expected value %r.' % (proc.cmdline()[1], shutil.which(module))
         except psutil.NoSuchProcess:
             return False
         except psutil.AccessDenied:

@@ -78,7 +78,10 @@ class StompCollectorBot(CollectorBot):
                          self.server, self.port)
 
     def shutdown(self):
-        self.conn.disconnect()
+        try:
+            self.conn.disconnect()
+        except stomp.exception.NotConnectedException:
+            pass
 
     def process(self):
         pass

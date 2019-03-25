@@ -84,5 +84,24 @@
     "additionalmetadata": ["any??thing\\x0000can\\x01be!here??"],
     "hostname": "",
     "useragent": ""
+  },
+  {
+    "confidence": 100,
+    "description": "Host is a member of Botnet B68-2-64",
+    "externalid": "B68-2-64",
+    "firstreporteddatetime": "2019-03-17T09:05:50",
+    "hostname": "",
+    "indicatorexpirationdatetime": "2019-03-19T09:05:51.1615402Z",
+    "indicatorthreattype": "Botnet",
+    "ispartnershareable": "true",
+    "isproductlicensed": "true",
+    "networkdestinationipv4": "192.88.99.209, 192.88.99.209",
+    "networkdestinationport": 16465,
+    "networksourceasn": "64504",
+    "networksourceipv4": "224.34.234.52",
+    "networksourceport": 55522,
+    "tlplevel": "Green",
+    "useragent": "",
+    "version": 1.5
   }
 ]

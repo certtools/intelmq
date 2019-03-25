@@ -12,7 +12,6 @@ import dateutil
 
 from intelmq.lib.bot import ParserBot
 from intelmq.lib import utils
-from intelmq.lib.exceptions import PipelineError
 
 FEEDS = {
     'https://feodotracker.abuse.ch/downloads/ipblocklist.csv': {
@@ -56,9 +55,14 @@ class AbusechIPParserBot(ParserBot):
                                                                                          len(FEEDS[feed]['format'])))
             raise ValueError("Abusech ip parser is not up to date with the format online")
 
+        for line in comments:
+            if 'Last updated' in line:
+                self.__last_generated_date = dateutil.parser.parse(self.__date_regex.search(line).group(0)).isoformat()
+
         lines = (l for l in raw_lines if not self.__is_comment_line_regex.search(l))
         for line in lines:
-            yield line.strip()
+            line = line.strip()
+            yield line
 
     def parse_line(self, line, report):
         event = self.new_event(report)
@@ -72,7 +76,8 @@ class AbusechIPParserBot(ParserBot):
             ('malware.name', FEEDS[feed_url]['malware']),
             ('raw', line),
             ('classification.type', 'c&c'),
-            ('classification.taxonomy', 'malicious code')
+            ('classification.taxonomy', 'malicious code'),
+            ('extra.feed_last_generated', self.__last_generated_date)
         }
 
         for i in defaults:
