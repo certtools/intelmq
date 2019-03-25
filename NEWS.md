@@ -7,6 +7,9 @@ See the changelog for a full list of changes.
 ---------------------------------
 
 ### Configuration
+#### Feodotracker
+ * The URL of the "Feodo Tracker IPs" feed has changed. The new one is `https://feodotracker.abuse.ch/downloads/ipblocklist.csv`. If you are using this feed, adapt your configuration accordingly. The parser has been updated to support the new format.
+ * The feed ""Feodo Tracker Domains" has been discontinued.
 
 ### Libraries
 
