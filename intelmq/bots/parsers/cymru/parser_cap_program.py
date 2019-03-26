@@ -21,7 +21,8 @@ class CymruCAPProgramParserBot(ParserBot):
         event = self.new_event(report)
 
         event.add('source.ip', ip)
-        event.add('source.asn', asn)
+        if asn != '0':
+            event.add('source.asn', asn)
         event.add('time.source', timestamp + ' GMT')
         event.add('source.as_name', asn_name)
         event.add('raw', self.recover_line(line))
@@ -48,12 +49,13 @@ class CymruCAPProgramParserBot(ParserBot):
             event.add('classification.identifier', report_type)
             event.add('malware.name', report_type)
         elif report_type == 'bots':
-            # bots|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[srcport <PORT>] [mwtype <TYPE>] [destaddr <IPADDR>]|ASNAME
+            # bots|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[srcport <PORT>] [mwtype <TYPE>] [destaddr <IPADDR>] [comment]|ASNAME
             # TYPE can contain spaces -.-
-            event.add('classification.type', 'botnet drone')
+            event.add('classification.type', 'infected system')
             comment_results = {}
             comment_key = None
             comment_value = []
+            event_comment = []
             for part in comment_split + [None]:  # iterate once more at end
                 if part in ['srcport', 'mwtype', 'destaddr', None]:
                     if comment_key and comment_value:
@@ -61,7 +63,11 @@ class CymruCAPProgramParserBot(ParserBot):
                     comment_key = part
                     comment_value.clear()
                 else:
-                    comment_value.append(part)
+                    if comment_key == 'destaddr' and len(comment_value) == 1:
+                        # line 9 in test case ('Avalanche Botnet' comment)
+                        event_comment.append(part)
+                    else:
+                        comment_value.append(part)
             for kind, value in comment_results.items():
                 if kind == 'srcport':
                     event['extra.source_port'] = int(value)
@@ -71,6 +77,8 @@ class CymruCAPProgramParserBot(ParserBot):
                     event['destination.ip'] = value
                 else:
                     raise ValueError('Unknown value in comment %r for report %r.' % (kind, report_type))
+            if event_comment:
+                event.add('event_description.text', ' '.join(event_comment))
         elif report_type == 'bruteforce':
             # bruteforce|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<PROTOCOL>|ASNAME
             event.add('classification.type', 'brute-force')
@@ -165,7 +173,7 @@ class CymruCAPProgramParserBot(ParserBot):
                     break
         elif report_type == 'toxbot':  # TODO: verify
             # toxbot|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|srcport <SOURCE PORT>|ASNAME
-            event.add('classification.type', 'botnet drone')
+            event.add('classification.type', 'infected system')
             event.add('classification.identifier', report_type)
             event.add('malware.name', report_type)
             event['extra.source_port'] = int(comment_split[1])

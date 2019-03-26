@@ -1,21 +1,22 @@
-**Table of Contents**
-
-1. [Requirements](#requirements)
-2. [Install Dependencies](#install-dependencies)
-   * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
-   * [Ubuntu 16.04 / Debian 9](#ubuntu-1604--debian-9)
-   * [CentOS 7 / RHEL 7](#centos-7--rhel-7)
-   * [openSUSE Leap 42.2](#opensuse-leap-422--423)
-3. [Installation](#installation)
-   * [Native Packages](#native-packages)
-   * [PyPi](#pypi)
-4. [Additional Information](#additional-information)
-5. [Afterwards](#afterwards)
+**Table of Contents:**
+- [Requirements](#requirements)
+- [Install Dependencies](#install-dependencies)
+  - [Ubuntu 14.04 / Debian 8](#ubuntu-1404-debian-8)
+  - [Ubuntu 16.04 / Ubuntu 18.04 / Debian 9](#ubuntu-1604-ubuntu-1804-debian-9)
+  - [CentOS 7 / RHEL 7](#centos-7-rhel-7)
+  - [openSUSE Leap 42.3 / 15.0](#opensuse-leap-423-150)
+- [Installation](#installation)
+  - [Native Packages](#native-packages)
+  - [PyPi](#pypi)
+- [Additional Information](#additional-information)
+- [Afterwards](#afterwards)
 
 
 Please report any errors you encounter at https://github.com/certtools/intelmq/issues
 
 For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
+For setting up a development environment see the [Developer's Guide](Developers-Guide.md#development-environment) section *Development Environment*.
+For testing pre-releases see also the [Developer's Guide](Developers-Guide.md#testing-pre-releases) section *Testing Pre-releases*.
 
 # Requirements
 
@@ -24,8 +25,8 @@ The following instructions assume the following requirements:
 Supported and recommended operating systems are:
 * CentOS 7
 * Debian 8 and 9
-* OpenSUSE Leap 42.2 and 42.3
-* Ubuntu: 14.04 and 16.04 LTS
+* OpenSUSE Leap 42.3 and 15.0
+* Ubuntu: 14.04, 16.04 and 18.04
 
 Other distributions which are (most probably) supported include RHEL, Fedora and openSUSE Tumbleweed.
 
@@ -50,18 +51,16 @@ curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
 python3.4 /tmp/get-pip.py
 ```
 
-## Ubuntu 16.04 / Debian 9
+## Ubuntu 16.04 / Ubuntu 18.04 / Debian 9
 
 ```bash
-apt install python3-pip python3-dnspython python3-psutil python3-redis python3-requests python3-termstyle python3-tz
+apt install python3-pip python3-dnspython python3-psutil python3-redis python3-requests python3-termstyle python3-tz python3-dateutil
 apt install git redis-server
 ```
 
-For Debian 9 additionally install `python3-dateutil` (it's not available in Ubuntu 16.04).
-
 Optional dependencies:
 ```bash
-apt install bash-completion jq cron
+apt install bash-completion jq
 apt install python3-sleekxmpp python3-pymongo python3-psycopg2
 ```
 
@@ -80,18 +79,16 @@ curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
 python3.4 /tmp/get-pip.py
 ```
 
-## openSUSE Leap 42.2 / 42.3
+## openSUSE Leap 42.3 / 15.0
 
 ```bash
 zypper install python3-dateutil python3-dnspython python3-psutil python3-pytz python3-redis python3-requests python3-python-termstyle
 zypper install git redis
 ```
 
-For 42.3 additionally install `python3-install` (it's not available in 42.2).
-
 Optional dependencies:
 ```bash
-zypper in bash-completion jq cron
+zypper in bash-completion jq
 zypper in python3-psycopg2 python3-pymongo python3-sleekxmpp
 ```
 
@@ -112,15 +109,14 @@ Supported Operating Systems:
 * **RHEL 7**  (requires `epel-release`)
 * **Debian 8** (requires `python3-typing`)
 * **Debian 9**
-* **Fedora 26**
 * **Fedora 27**
 * **Fedora 28**
+* **Fedora 29**
 * **openSUSE Leap 42.3**
 * **openSUSE Leap 15.0**
 * **openSUSE Tumbleweed**
-* **Ubuntu 16.04**
-* **Ubuntu 17.10**
-* **Ubuntu 18.04**
+* **Ubuntu 16.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ xenial main`)
+* **Ubuntu 18.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ bionic main`)
 
 Get the installation instructions for your operating system here: [Installation Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq).
 

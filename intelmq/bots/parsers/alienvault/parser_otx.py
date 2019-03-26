@@ -9,7 +9,6 @@ howto_use_python_otx_api.ipynb
 import json
 import urllib.parse as parse
 
-from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 
 HASHES = {
@@ -97,12 +96,12 @@ class AlienVaultOTXParserBot(ParserBot):
             if 'tags' in pulse:
                 additional_indicator['tags'] = pulse['tags']
             if 'modified' in pulse:
-                    if '.' in pulse["modified"]:
-                        additional_indicator['time_updated'] = \
-                            pulse["modified"][:-4] + "+00:00"
-                    else:
-                        additional_indicator['time_updated'] = \
-                            pulse["modified"] + ".00+00:00"
+                if '.' in pulse["modified"]:
+                    additional_indicator['time_updated'] = \
+                        pulse["modified"][:-4] + "+00:00"
+                else:
+                    additional_indicator['time_updated'] = \
+                        pulse["modified"] + ".00+00:00"
             if 'industries' in pulse:
                 additional_indicator['industries'] = pulse["industries"]
             if 'adversary' in pulse:

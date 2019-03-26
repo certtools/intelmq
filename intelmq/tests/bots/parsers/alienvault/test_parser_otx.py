@@ -57,6 +57,7 @@ EXAMPLE_EVENT_2 = {
              'able to bypass SMS-based two-factor authentication. '
              'Additionally, it also contains modules to target some popular '
              'social media apps.',
+  'extra.adversary': '',
   'extra.tags': ['skype', 'flash player', 'android', 'banker'],
   'extra.pulse_key': '581b9aef324bc542d6b1fd84',
   'extra.targeted_countries': ['United States', 'Germany', 'France', 'Australia', 'Turkey', 'Poland', 'Austria'],
@@ -107,9 +108,12 @@ EXAMPLE_EVENT_4 = {
   '__type': 'Event',
   'classification.type': 'blacklist',
   'comment': 'HIDDEN COBRA – North Korean Malicious Cyber Activity',
+  'extra.adversary': '',
   'extra.pulse_key': '5942175dd78f563d01abc79c',
   'extra.pulse': 'Alert (TA17-164A)',
   'extra.author': 'bschlaps',
+  'extra.industries': [],
+  'extra.tags': [],
   'extra.time_updated': '2017-06-15T05:17:12.18+00:00',
   'feed.name': 'AlienVault OTX',
   'raw': 'eyJhY2Nlc3NfZ3JvdXBzIjogW10sICJhY2Nlc3NfcmVhc29uIjogIiIsICJhY2Nlc3NfdHlwZSI6ICJwdWJsaWMiLCAiY29udGVudCI6ICIiLCAiY3JlYXRlZCI6ICIyMDE3LTA2LTE1VDA1OjEzOjAyIiwgImRlc2NyaXB0aW9uIjogIiIsICJleHBpcmF0aW9uIjogbnVsbCwgImlkIjogMTM1Nzk4OSwgImluZGljYXRvciI6ICIxMzQuMTE5LjM2LjEzNSIsICJpc19hY3RpdmUiOiAxLCAib2JzZXJ2YXRpb25zIjogMTEsICJwdWxzZV9rZXkiOiAiNTk0MjE3NWRkNzhmNTYzZDAxYWJjNzljIiwgInJvbGUiOiBudWxsLCAidGl0bGUiOiAiIiwgInR5cGUiOiAiSVB2NCJ9',
@@ -121,6 +125,9 @@ EXAMPLE_EVENT_4 = {
 EXAMPLE_EVENT_URI_1 = {
     "__type": "Event",
     "extra.author": "bschlaps",
+    'extra.adversary': '',
+    'extra.industries': [],
+    'extra.tags': [],
     "extra.pulse": "Alert (TA17-164A)",
     "extra.pulse_key": "5942175dd78f563d01abc79c",
     "extra.time_updated": "2017-06-15T05:17:12.18+00:00",
@@ -141,6 +148,9 @@ EXAMPLE_EVENT_URI_1 = {
 EXAMPLE_EVENT_URI_2 = {
     "__type": "Event",
     "extra.author": "bschlaps",
+    'extra.adversary': '',
+    'extra.industries': [],
+    'extra.tags': [],
     "extra.pulse": "Alert (TA17-164A)",
     "extra.pulse_key": "5942175dd78f563d01abc79c",
     "extra.time_updated": "2017-06-15T05:17:12.18+00:00",

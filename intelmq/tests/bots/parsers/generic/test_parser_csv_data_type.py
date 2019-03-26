@@ -17,9 +17,9 @@ EXAMPLE_REPORT = {"feed.name": "Sample CSV Feed",
                   "time.observation": "2015-01-01T00:00:00+00:00"}
 EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "__type": "Event",
-                 "raw": "MTEuMTEuMTEuMTEsaHR0cDovL3Rlc3QuY29tLCJbIiJ0MSIiLCIidDIiIiwiInQzIiJdIg0K",
+                 "raw": utils.base64_encode(SAMPLE_FILE.replace('\n', '\r\n')),
                  "time.observation": "2015-01-01T00:00:00+00:00",
-                 "classification.type": "botnet drone",
+                 "classification.type": "infected system",
                  "source.ip": "11.11.11.11",
                  'extra.tags': ["t1", "t2", "t3"],
                  'source.url': 'http://test.com'}
@@ -37,7 +37,7 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         cls.sysconfig = {"columns": [ "source.ip", "source.url", "extra.tags"],
                          "delimiter": ",",
                          "skip_header": True,
-                         "type": "botnet drone",
+                         "type": "infected system",
                          "data_type": "{\"extra.tags\":\"json\"}",
                         }
     def test_event(self):

@@ -18,9 +18,10 @@ EXAMPLE_REPORT = {"feed.name": "Microsoft DCU Feed",
                   }
 EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "__type": "Event",
-                 "raw": utils.base64_encode(SAMPLE_SPLIT[1].replace('"', '')+'\r\n'),
+                 "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\r\n' +
+                                            SAMPLE_SPLIT[1].replace('"', '')+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
-                 "classification.type": "botnet drone",
+                 "classification.type": "infected system",
                  "extra.source.metro_code": '0',
                  "extra.source": "Microsoft-DCU",
                  "extra.http_request": "29|",
@@ -38,9 +39,10 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  }
 EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
                   "__type": "Event",
-                  "raw": utils.base64_encode(SAMPLE_SPLIT[2].replace('"', '')+'\r\n'),
+                  "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\r\n' +
+                                            SAMPLE_SPLIT[2].replace('"', '')+'\r\n'),
                   "time.observation": "2015-01-01T00:00:00+00:00",
-                  "classification.type": "botnet drone",
+                  "classification.type": "infected system",
                   "destination.ip": "224.1.1.2",
                   "destination.port": 80,
                   "extra.http_method": "POST",
@@ -86,13 +88,12 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                          "delimiter": ",",
                          "skip_header": True,
                          "time_format": "windows_nt",
-                         "type": "botnet drone",
+                         "type": "infected system",
                          "type_translation": None,
                          "column_regex_search": {"source.asn": "[0-9]+"}}
 
     def test_event(self):
         """ Test if correct Event has been produced. """
-        self.run_bot()
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
         self.assertMessageEqual(1, EXAMPLE_EVENT2)

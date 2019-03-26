@@ -8,6 +8,7 @@ import json
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
+from intelmq.lib.harmonization import DateTime
 
 __all__ = ['N6StompParserBot']
 mapping = {}
@@ -15,7 +16,7 @@ mapping['amplifier']    = {"taxonomy": "vulnerable",
                            "type": "vulnerable service",
                            "identifier": "amplifier"}
 mapping['bots']         = {"taxonomy": "malicious code",
-                           "type": "botnet drone", "identifier": "generic-n6-drone"}
+                           "type": "infected system", "identifier": "generic-n6-drone"}
 mapping['backdoor']     = {"taxonomy": "intrusions",
                            "type": "backdoor", "identifier": "hacked server"}
 mapping['cnc']          = {"taxonomy": "malicious code",
@@ -80,7 +81,6 @@ class N6StompParserBot(Bot):
         dict_report = json.loads(peek)
 
         event.add("raw", report.get("raw"), sanitize=False)
-        extra = {}
         if "time" in dict_report:
             event.add("time.source", dict_report["time"])
         if "dip" in dict_report:
@@ -97,15 +97,21 @@ class N6StompParserBot(Bot):
             else:
                 event.add("source.fqdn", dict_report["fqdn"])
         if "id" in dict_report:
-            extra['feed_id'] = dict_report["id"]
+            event["extra.feed_id"] = dict_report["id"]
         if "adip" in dict_report:
-            extra["adip"] = dict_report["adip"]
+            event["extra.adip"] = dict_report["adip"]
         if "proto" in dict_report:
             event.add("protocol.transport", dict_report["proto"])
         if "sport" in dict_report:
             event.add("source.port", dict_report["sport"])
         if "url" in dict_report:
             event.add("source.url", dict_report["url"])
+        if "confidence" in dict_report:
+            event.add("extra.confidence", dict_report["confidence"])
+        if "expires" in dict_report:
+            event.add("extra.expires", DateTime.sanitize(dict_report["expires"]))
+        if "source" in dict_report:
+            event.add("extra.feed_source", dict_report["source"])
         if ("category" in dict_report and "name" in dict_report and
                 dict_report["category"] == 'bots'):
             event.add("malware.name", dict_report["name"])
@@ -115,7 +121,10 @@ class N6StompParserBot(Bot):
         else:
             mapping['bots']['identifier'] = "generic-n6-drone"
 
-        if dict_report["category"] is not None:
+        if dict_report["type"] == "bl-update":
+            event.add("classification.taxonomy", "other")
+            event.add("classification.type", "blacklist")
+        elif dict_report["category"] is not None:
             event.add("classification.taxonomy",
                       mapping[dict_report["category"]]["taxonomy"],
                       overwrite=True)
@@ -126,32 +135,19 @@ class N6StompParserBot(Bot):
                       mapping[dict_report["category"]]["identifier"],
                       overwrite=True)
 
-        if extra:
-            event.add("extra", extra)
-
-        # address is an array of JSON objects -> split the event
-        if (not ("address" in dict_report or "fqdn" in dict_report)):
-            # neither of them present -> currently we can't handle those
-            self.logger.warn("ignoring event that we can't handle: "
-                             "neither an address nor an fqdn given")
-        elif ("fqdn" in dict_report):
-            # need to handle domain based data later (for example via gethostbyname bot)
+        # split up the event into multiple ones, one for each address
+        for addr in dict_report['address']:
             ev = self.new_event(event)
+            ev.add("source.ip", addr["ip"])
+            if ("asn" in addr):
+                ev.add("source.asn", addr["asn"])
+            if ("rdns" in addr):
+                ev.add("source.reverse_dns", addr["rdns"])
+            # XXX ignore for now, only relevant for flows
+            # ev.add("source.dir", addr["dir"])
+            if ("cc" in addr):
+                ev.add("source.geolocation.cc", addr["cc"])
             self.send_message(ev)
-        else:
-            # split up the event into multiple ones, one for each address
-            for addr in dict_report['address']:
-                ev = self.new_event(event)
-                ev.add("source.ip", addr["ip"])
-                if ("asn" in addr):
-                    ev.add("source.asn", addr["asn"])
-                if ("rdns" in addr):
-                    ev.add("source.reverse_dns", addr["rdns"])
-                # XXX ignore for now, only relevant for flows
-                # ev.add("source.dir", addr["dir"])
-                if ("cc" in addr):
-                    ev.add("source.geolocation.cc", addr["cc"])
-                self.send_message(ev)
 
         self.acknowledge_message()
 

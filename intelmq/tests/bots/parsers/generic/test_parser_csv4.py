@@ -18,9 +18,10 @@ EXAMPLE_REPORT = {"feed.name": "Sample CSV Feed",
                   }
 EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "__type": "Event",
-                 "raw": utils.base64_encode(SAMPLE_SPLIT[1].replace('"', '')+'\r\n'),
+                 "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\r\n' +
+                                            SAMPLE_SPLIT[1].replace('"', '')+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
-                 "classification.type": "botnet drone",
+                 "classification.type": "infected system",
                  "source.ip": "11.11.11.11",
                  "feed.name": "Sample CSV Feed",
                  "source.port": 9001,
@@ -30,9 +31,10 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
 
 EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
                  "__type": "Event",
-                 "raw": utils.base64_encode(SAMPLE_SPLIT[2].replace('"', '')+'\r\n'),
+                 "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\r\n' +
+                                            SAMPLE_SPLIT[2].replace('"', '')+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
-                 "classification.type": "botnet drone",
+                 "classification.type": "infected system",
                  "source.ip": "11.11.11.11",
                  "feed.name": "Sample CSV Feed",
                  'time.source': '2017-05-26T07:00:37+00:00',
@@ -41,9 +43,10 @@ EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
 
 EXAMPLE_EVENT3 = {"feed.name": "Sample CSV Feed",
                  "__type": "Event",
-                 "raw": utils.base64_encode(SAMPLE_SPLIT[3].replace('"', '')+'\r\n'),
+                 "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\r\n' +
+                                            SAMPLE_SPLIT[3].replace('"', '')+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
-                 "classification.type": "botnet drone",
+                 "classification.type": "infected system",
                  "source.ip": "11.11.11.11",
                  "feed.name": "Sample CSV Feed",
                  "source.port": 9001,
@@ -65,15 +68,13 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         cls.sysconfig = {"columns": [ "source.ip", "source.url", "source.port", "time.source" ],
                          "delimiter": ",",
                          "skip_header": True,
-                         "type": "botnet drone",
+                         "type": "infected system",
                          "time_format": "epoch_millis",
                          "default_url_protocol": "http://",
                          "type_translation": None}
 
     def test_event(self):
         """ Test if correct Event has been produced. """
-        self.run_bot()
-        self.run_bot()
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
         self.assertMessageEqual(1, EXAMPLE_EVENT2)

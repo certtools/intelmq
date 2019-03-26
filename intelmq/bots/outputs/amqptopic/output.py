@@ -11,6 +11,9 @@ except ImportError:
 class AMQPTopicBot(Bot):
 
     def init(self):
+        if pika is None:
+            raise ValueError("Could not import library 'pika'. Please install it.")
+
         self.connection = None
         self.channel = None
         self.keep_raw_field = self.parameters.keep_raw_field
@@ -37,7 +40,7 @@ class AMQPTopicBot(Bot):
         self.connect_server()
 
     def connect_server(self):
-        self.logger.info('AMQP Connecting to %s:%s%s.',
+        self.logger.info('AMQP Connecting to %s:%s/%s.',
                          self.connection_host, self.connection_port, self.connection_vhost)
         try:
             self.connection = pika.BlockingConnection(self.connection_parameters)
@@ -53,12 +56,13 @@ class AMQPTopicBot(Bot):
         else:
             self.logger.info('AMQP connection successful.')
             self.channel = self.connection.channel()
-            try:
-                self.channel.exchange_declare(exchange=self.exchange, type=self.exchange_type,
-                                              durable=self.durable)
-            except pika.exceptions.ChannelClosed:
-                self.logger.error('Access to exchange refused.')
-                raise
+            if self.exchange:  # do not declare default exchange (#1295)
+                try:
+                    self.channel.exchange_declare(exchange=self.exchange, type=self.exchange_type,
+                                                  durable=self.durable)
+                except pika.exceptions.ChannelClosed:
+                    self.logger.error('Access to exchange refused.')
+                    raise
             self.channel.confirm_delivery()
 
     def process(self):
@@ -66,7 +70,7 @@ class AMQPTopicBot(Bot):
 
         # self.connection and self.channel can be None
         if getattr(self.connection, 'is_closed', None) or getattr(self.channel, 'is_closed', None):
-                self.connect_server()
+            self.connect_server()
 
         event = self.receive_message()
 
@@ -76,7 +80,8 @@ class AMQPTopicBot(Bot):
         try:
             if not self.channel.basic_publish(exchange=self.exchange,
                                               routing_key=self.routing_key,
-                                              body=event.to_json(),
+                                              # replace unicode characters when encoding (#1296)
+                                              body=event.to_json().encode(errors='backslashreplace'),
                                               properties=self.properties,
                                               mandatory=True):
                 if self.require_confirmation:
@@ -88,6 +93,9 @@ class AMQPTopicBot(Bot):
             self.logger.exception('Error publishing the message.')
         else:
             self.acknowledge_message()
+
+    def shutdown(self):
+        self.connection.close()
 
 
 BOT = AMQPTopicBot

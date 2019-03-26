@@ -1,15 +1,22 @@
 ## Table of Contents
 
-1. [Overview](#overview)
-2. [Rules for keys](#rules)
-3. [Sections](#sections)
-4. [Data types](#basicdatatypes)
-5. [Fields List and data types](#fields-list-and-data-types)
-6. [Type/Taxonomy Mapping](#mapping)
-7. [Minimum required fields](#requirements)
+**Table of Contents:**
+- [Overview](#overview)
+- [Rules for keys](#rules-for-keys)
+- [Sections](#sections)
+- [Feed](#feed)
+- [Time](#time)
+- [Source Identity](#source-identity)
+  - [Source Geolocation Identity](#source-geolocation-identity)
+  - [Source Local Identity](#source-local-identity)
+- [Destination Identity](#destination-identity)
+  - [Destination Geolocation Identity](#destination-geolocation-identity)
+  - [Destination Local Identity](#destination-local-identity)
+- [Extra values](#extra-values)
+- [Fields List and data types](#fields-list-and-data-types)
+- [Classification](#classification)
+- [Minimum recommended requirements for events](#minimum-recommended-requirements-for-events)
 
-
-<a name="overview"></a>
 
 ## Overview
 
@@ -20,14 +27,11 @@ Every event **MUST** contain a timestamp field.
 
 [IOC](https://en.wikipedia.org/wiki/Indicator_of_compromise) (Indicator of compromise) is a single observation like a log line.
 
-<a name="rules"></a>
-
 ## Rules for keys
 
 The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`. Thus, keys must match `^[a-z_](.[a-z0-9_]+)*$`.
 
 
-<a name="sections"></a>
 ## Sections
 
 As stated above, every field is organized under some section. The following is a description of the sections and what they imply.
@@ -72,12 +76,10 @@ Some sources report an internal (NATed) IP address.
 ### Extra values
 Data which does not fit in the harmonization can be saved in the 'extra' namespace. All keys must begin with `extra.`, there are no other rules on key names and values. The values can be get/set like all other fields.
 
-<a name="fields-list-and-data-types"></a>
 ## Fields List and data types
 
 A list of allowed fields and data types can be found in [Harmonization-fields.md](Harmonization-fields.md)
 
-<a name="mapping"></a>
 ## Classification
 
 IntelMQ classifies events using three labels: taxonomy, type and identifier. This tuple of three values can be used for deduplication of events and describes what happened.
@@ -87,35 +89,58 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 
 |Taxonomy|Type|Description|
 |--------|----|-----------|
-|abusive content|spam|This IOC refers to resources, which make up a SPAM infrastructure, be it a harvester, dictionary attacker, URL etc.|
-|availability|ddos|This IOC refers to various parts of the DDOS infrastructure.|
-|fraud|phishing|This IOC most often refers to a URL, which is phishing for user credentials.|
-|information content security|dropzone|This IOC refers to place where the compromised machines store the stolen user data.|
-|information content security|leak|IOCs relating to leaked credentials or personal data.|
-|information gathering|scanner|This IOC refers to port scanning activity specifically.|
-|intrusion attempts|brute-force|This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol. Please see the IOC protocol below.|
-|intrusion attempts|exploit|An exploit is often executed through a malicious URL.|
-|intrusion attempts|ids alert|IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.|
-|intrusions|backdoor|This refers to hosts, which have been compromised and backdoored with a remote administration software or Trojan in the traditional sense.|
-|intrusions|compromised|This IOC refers to compromised system.|
-|intrusions|defacement|This IOC refers to hacktivism related activity.|
-|intrusions|unauthorized-login|A possibly infected device logged in to a remote device without authorization.|
-|intrusions|unauthorized-command|The possibly infected device sent unauthorized commands to a remote device with malicious intent.|
-|malicious code|botnet drone|This is a compromised machine, which has been observed to make a connection to a command and control server.|
-|malicious code|c&c|This is a command and control server in charge of a given number of botnet drones.|
-|malicious code|dga domain|DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers.|
-|malicious code|infected system|This is a compromised machine, which has been observed to make a connection to a command and control server.|
-|malicious code|malware|A URL is the most common resource with reference to malware binary distribution.|
+|abusive content|spam|Or 'Unsolicited Bulk Email', this means that the recipient has not granted verifiable permission for the message to be sent and that the message is sent as part of a larger collection of messages, all having a functionally comparable content.|
+|abusive-content|harmful-speech|Discreditation or discrimination of somebody, e.g. cyber stalking, racism or threats against one or more individuals.|
+|abusive-content|violence|Child pornography, glorification of violence, etc.|
+|availability|ddos|Distributed Denial of Service attack, e.g. SYN-Flood or UDP-based reflection/amplification attacks.|
+|availability|dos|Denial of Service attack, e.g. sending specially crafted requests to a web application which causes the application to crash or slow down.|
+|availability|outage|Outage caused e.g. by air condition failure or natural disaster.|
+|availability|sabotage|Physical sabotage, e.g cutting wires or malicious arson.|
+|fraud|copyright|Offering or Installing copies of unlicensed commercial software or other copyright protected materials (Warez).|
+|fraud|masquerade|Type of attack in which one entity illegitimately impersonates the identity of another in order to benefit from it.|
+|fraud|phishing|Masquerading as another entity in order to persuade the user to reveal private credentials.|
+|fraud|unauthorized-use-of-resources|Using resources for unauthorized purposes including profit-making ventures, e.g. the use of e-mail to participate in illegal profit chain letters or pyramid schemes.|
+|information content security|Unauthorised-information-access|Unauthorized access to information, e.g. by abusing stolen login credentials for a system or application, intercepting traffic or gaining access to physical documents.|
+|information content security|Unauthorised-information-modification|Unauthorised modification of information, e.g. by an attacker abusing stolen login credentials for a system or application or a ransomware encrypting data.|
+|information content security|data-loss|Loss of data, e.g. caused by harddisk failure or physical theft.|
+|information content security|dropzone|This IOC refers to place where the compromised machines store the stolen user data. Not in ENISA eCSIRT-II taxonomy.|
+|information content security|leak|IOCs relating to leaked credentials or personal data. Not in ENISA eCSIRT-II taxonomy.|
+|information gathering|scanner|Attacks that send requests to a system to discover weaknesses. This also includes testing processes to gather information on hosts, services and accounts. Examples: fingerd, DNS querying, ICMP, SMTP (EXPN, RCPT, ...), port scanning.|
+|information-gathering|sniffing|Observing and recording of network traffic (wiretapping).|
+|information-gathering|social-engineering|Gathering information from a human being in a non-technical way (e.g. lies, tricks, bribes, or threats). This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol.|
+|intrusion attempts|brute-force|Multiple login attempts (Guessing / cracking of passwords, brute force).|
+|intrusion attempts|exploit|An attack using an unknown exploit.|
+|intrusion attempts|ids alert|IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert. ENISA eCSIRT-II taxonomy: 'ids-alert'.|
+|intrusions|application-compromise|Compromise of an application by exploiting (un)known software vulnerabilities, e.g. SQL injection.|
+|intrusions|backdoor|This refers to hosts, which have been compromised and backdoored with a remote administration software or Trojan in the traditional sense. Not in ENISA eCSIRT-II taxonomy.|
+|intrusions|burglary|Physical intrusion, e.g. into corporate building or data center.|
+|intrusions|compromised|This IOC refers to compromised system. Not in ENISA eCSIRT-II taxonomy.|
+|intrusions|defacement|This IOC refers to hacktivism related activity. Not in ENISA eCSIRT-II taxonomy.|
+|intrusions|privileged-account-compromise|Compromise of a system where the attacker gained administrative privileges.|
+|intrusions|unauthorized-command|The possibly infected device sent unauthorized commands to a remote device with malicious intent. Not in ENISA eCSIRT-II taxonomy.|
+|intrusions|unauthorized-login|A possibly infected device logged in to a remote device without authorization. Not in ENISA eCSIRT-II taxonomy.|
+|intrusions|unprivileged-account-compromise|Compromise of a system using an unprivileged (user/service) account.|
+|malicious code|botnet drone|This is a compromised machine, which has been observed to make a connection to a command and control server. Not in ENISA eCSIRT-II taxonomy and deprecated, use 'infected system instead'.|
+|malicious code|c&c|This is a command and control server in charge of a given number of botnet drones. ENISA eCSIRT-II taxonomy: 'c2server'.|
+|malicious code|dga domain|DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers. Not in ENISA eCSIRT-II taxonomy.|
+|malicious code|infected system|This is a compromised machine, which has been observed to make a connection to a command and control server. ENISA eCSIRT-II taxonomy: 'infected-system'.|
+|malicious code|malware|A URL is the most common resource with reference to malware binary distribution. Not in ENISA eCSIRT-II taxonomy.|
 |malicious code|malware configuration|This is a resource which updates botnet drones with a new configuration.|
-|malicious code|ransomware|This IOC refers to a specific type of compromised machine, where the computer has been hijacked for ransom by the criminals.|
+|malicious code|malware-distribution|URI used for malware distribution, e.g. a download URL included in fake invoice malware spam.|
+|malicious code|ransomware|This IOC refers to a specific type of compromised machine, where the computer has been hijacked for ransom by the criminals. Not in ENISA eCSIRT-II taxonomy and deprecated, use 'infected system instead'.|
 |other|blacklist|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
-|other|other|All IOCs that can not be put in any other taxonomy.|
-|other|proxy|This refers to the use of proxies from inside your network.|
-|other|tor|This IOC refers to incidents related to TOR network infrastructure.|
-|other|unknown|unknown events|
-|test|test|This is a value for testing purposes.|
-|vulnerable|vulnerable client|This attribute refers to a badly configured or vulnerable clients, which may be vulnerable and can be compromised by a third party. For example, not-up-to-date clients or client which are misconfigured, such as clients querying public domains for WPAD configurations. In addition, to specify the vulnerability and its potential abuse, one should use the classification.identifier, description and other attributes for that purpose respectively.|
-|vulnerable|vulnerable service|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (NTP) or character generation services (chargen), simple network management services (SNMP). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
+|other|other|All incidents which don't fit in one of the given categories should be put into this class. Not in ENISA eCSIRT-II taxonomy.|
+|other|proxy|This refers to the use of proxies from inside your network. Not in ENISA eCSIRT-II taxonomy.|
+|other|tor|This IOC refers to incidents related to TOR network infrastructure. Not in ENISA eCSIRT-II taxonomy.|
+|other|unknown|Unknown classification. Not in ENISA eCSIRT-II taxonomy.|
+|test|test|Meant for testing.|
+|vulnerable|ddos-amplifier|Publicly accessible services that can be abused for conducting DDoS reflection/amplification attacks, e.g. DNS open-resolvers or NTP servers with monlist enabled.|
+|vulnerable|information-disclosure|Publicly accessible services potentially disclosing sensitive information, e.g. SNMP or Redis.|
+|vulnerable|potentially-unwanted-accessible|Potentially unwanted publicly accessible services, e.g. Telnet, RDP or VNC.|
+|vulnerable|vulnerable client|This attribute refers to a badly configured or vulnerable clients, which may be vulnerable and can be compromised by a third party. For example, not-up-to-date clients or client which are misconfigured, such as clients querying public domains for WPAD configurations. In addition, to specify the vulnerability and its potential abuse, one should use the classification.identifier, description and other attributes for that purpose respectively. Not in ENISA eCSIRT-II taxonomy.|
+|vulnerable|vulnerable service|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (NTP) or character generation services (chargen), simple network management services (SNMP). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively. Not in ENISA eCSIRT-II taxonomy.|
+|vulnerable|vulnerable-system|A system which is vulnerable to certain attacks. Example: misconfigured client proxy settings (example: WPAD), outdated operating system version, etc.|
+|vulnerable|weak-crypto|Publicly accessible services offering weak crypto, e.g. web servers susceptible to POODLE/FREAK attacks.|
 
 Meaning of source, destination and local values for each classification type and possible identifiers. The identifier is often a normalized malware name, grouping many variants.
 
@@ -140,7 +165,7 @@ Meaning of source, destination and local values for each classification type and
 |phishing|*phishing website*||||
 |proxy|*server allowing policy and security bypass*||||
 |ransomware|*infected device*||||
-|scanner|*scanning device*|scanned device|||
+|scanner|*scanning device*|scanned device||http,modbus,wordpress|
 |spam|*infected device*|targeted server|internal at source||
 |test||||||
 |unknown||||||
@@ -153,7 +178,6 @@ Example:
 
 If you know of an IP address that connects to a zeus c&c server, it's about the infected device, thus type malware and identifier zeus. If you want to complain about the c&c server, it's type c&c and identifier zeus. The `malware.name` can have the full name, eg. 'zeus_p2p'.
 
-<a name="requirements"></a>
 ## Minimum recommended requirements for events
 
 Below, we have enumerated the minimum recommended requirements for an actionable abuse event. These keys should to be present for the abuse report to make sense for the end recipient. Please note that if you choose to anonymize your sources, you can substitute **feed** with **feed.code** and that only one of the identity keys **ip**, **domain name**, **url**, **email address** must be present. All the rest of the keys are **optional**.

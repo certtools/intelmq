@@ -9,7 +9,7 @@ class CymruFullBogonsParserDeprecatedBot(CymruFullBogonsParserBot):
                             ".bots.parser has been renamed to 'intelmq.bots."
                             "parsers.cymru.full_bogons'. This compatibility "
                             "will be removed in version 2.0.")
-        super(CymruFullBogonsParserBot, self).init()
+        super().init()
 
 
 BOT = CymruFullBogonsParserDeprecatedBot

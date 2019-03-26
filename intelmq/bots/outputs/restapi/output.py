@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import requests
+try:
+    import requests
+except ImportError:
+    requests = None
 
 from intelmq.lib.bot import Bot
 
@@ -8,8 +11,16 @@ from intelmq.lib.bot import Bot
 class RestAPIOutputBot(Bot):
 
     def init(self):
+        if requests is None:
+            raise ValueError('Could not import requests. Please install it.')
+
         self.session = requests.Session()
         self.set_request_parameters()
+        self.session.proxies.update(self.proxy)
+        self.session.headers.update(self.http_header)
+        self.session.verify = self.http_verify_cert
+        self.session.cert = self.ssl_client_cert
+
         if self.parameters.auth_token_name and self.parameters.auth_token:
             if self.parameters.auth_type == 'http_header':
                 self.session.headers.update(
@@ -28,10 +39,6 @@ class RestAPIOutputBot(Bot):
             kwargs = {'data': event.to_dict(hierarchical=self.parameters.hierarchical_output)}
 
         r = self.session.post(self.parameters.host,
-                              proxies=self.proxy,
-                              headers=self.http_header,
-                              verify=self.http_verify_cert,
-                              cert=self.ssl_client_cert,
                               timeout=self.http_timeout_sec,
                               **kwargs)
         if not r.ok:

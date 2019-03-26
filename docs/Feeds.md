@@ -40,6 +40,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
 - [Sucuri](#sucuri)
+- [Surbl](#surbl)
 - [Taichung](#taichung)
 - [Team Cymru](#team-cymru)
 - [Threatminer](#threatminer)
@@ -56,37 +57,21 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 # Abuse.ch
 
-## Feodo Tracker Domains
-
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** The Feodo Tracker Feodo Domain Blocklist contains domain names (FQDN) used as C&C communication channel by the Feodo Trojan. These domains names are usually registered and operated by cybercriminals for the exclusive purpose of hosting a Feodo botnet controller. Hence you should expect no legit traffic to those domains. I highly recommend you to block/drop any traffic towards any Feodo C&C domain by using the Feodo Domain Blocklist. Please consider that domain names are usually only used by version B of the Feodo Trojan. C&C communication channels used by version A, version C and version D are not covered by this blocklist.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `https://feodotracker.abuse.ch/blocklist/?download=domainblocklist`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.abusech.parser_domain
-* **Configuration Parameters:**
-
-
 ## Feodo Tracker IPs
 
 * **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** The Feodo Tracker Feodo IP Blocklist contains IP addresses (IPv4) used as C&C communication channel by the Feodo Trojan. This lists contains two types of IP address: Feodo C&C servers used by version A, version C and version D of the Feodo Trojan (these IP addresses are usually compromised servers running an nginx daemon on port 8080 TCP or 7779 TCP that is acting as proxy, forwarding all traffic to a tier 2 proxy node) and Feodo C&C servers used by version B which are usually used for the exclusive purpose of hosting a Feodo C&C server. Attention: Since Feodo C&C servers associated with version A, version C and version D are usually hosted on compromised servers, its likely that you also block/drop legit traffic e.g. towards websites hosted on a certain IP address acting as Feodo C&C for version A, version C and version D. If you only want to block/drop traffic to Feodo C&C servers hosted on bad IPs (version B), please use the blocklist BadIPs documented below.
+* **Revision:** 25-03-2019
+* **Description:** List of botnet Command&Control servers (C&Cs) tracked by Feodo Tracker, associated with Dridex and Emotet (aka Heodo).
+* **Additional Information:** https://feodotracker.abuse.ch/
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://feodotracker.abuse.ch/blocklist/?download=ipblocklist`
-*  * `rate_limit`: `129600`
+*  * `http_url`: `https://feodotracker.abuse.ch/downloads/ipblocklist.csv`
+*  * `name`: `Feodo Tracker IPs`
+*  * `provider`: `Abuse.ch`
+*  * `rate_limit`: `3600`
 
 ### Parser
 
@@ -105,12 +90,39 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://ransomwaretracker.abuse.ch/feeds/csv/`
+*  * `name`: `Ransomware Tracker`
+*  * `provider`: `Abuse.ch`
 *  * `rate_limit`: `129600`
 
 ### Parser
 
 * **Module:** intelmq.bots.parsers.abusech.parser_ransomware
 * **Configuration Parameters:**
+
+
+## URLhaus
+
+* **Status:** on
+* **Revision:** 14-02-2019
+* **Description:** URLhaus is a project from abuse.ch with the goal of sharing malicious URLs that are being used for malware distribution. URLhaus offers a country, ASN (AS number) and Top Level Domain (TLD) feed for network operators / Internet Service Providers (ISPs), Computer Emergency Response Teams (CERTs) and domain registries.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://urlhaus.abuse.ch/feeds/tld/<TLD>/, https://urlhaus.abuse.ch/feeds/country/<CC>/, or https://urlhaus.abuse.ch/feeds/asn/<ASN>/`
+*  * `name`: `URLhaus`
+*  * `provider`: `Abuse.ch`
+*  * `rate_limit`: `129600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.generic.parser_csv
+* **Configuration Parameters:**
+*  * `columns`: `time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc`
+*  * `default_url_protocol`: `http://`
+*  * `skip_header`: `False`
+*  * `type_translation`: `{"malware_download": "malware-distribution"}`
 
 
 ## Zeus Tracker Domains
@@ -124,6 +136,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://zeustracker.abuse.ch/blocklist.php?download=baddomains`
+*  * `name`: `Zeus Tracker Domains`
+*  * `provider`: `Abuse.ch`
 *  * `rate_limit`: `129600`
 
 ### Parser
@@ -143,6 +157,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://zeustracker.abuse.ch/blocklist.php?download=badips`
+*  * `name`: `Zeus Tracker IPs`
+*  * `provider`: `Abuse.ch`
 *  * `rate_limit`: `129600`
 
 ### Parser
@@ -164,6 +180,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.alienvault_otx.collector
 * **Configuration Parameters:**
 *  * `api_key`: `{{ your API key }}`
+*  * `name`: `OTX`
+*  * `provider`: `AlienVault`
 
 ### Parser
 
@@ -182,6 +200,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://reputation.alienvault.com/reputation.data`
+*  * `name`: `Reputation List`
+*  * `provider`: `AlienVault`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -203,6 +223,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http_stream
 * **Configuration Parameters:**
 *  * `http_url`: `https://prod.cyberfeed.net/stream?key={{ your API key }}`
+*  * `name`: `Cyberfeed Stream`
+*  * `provider`: `AnubisNetworks`
 *  * `strip_lines`: `true`
 
 ### Parser
@@ -223,7 +245,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://www.autoshun.org/files/shunlist.html`
+*  * `http_url`: `https://www.autoshun.org/download/?api_key=__APIKEY__&format=html`
+*  * `name`: `Shunlist`
+*  * `provider`: `Autoshun`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -245,6 +269,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt`
+*  * `name`: `C2 Domains`
+*  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -264,6 +290,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt`
+*  * `name`: `C2 IPs`
+*  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -283,6 +311,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://osint.bambenekconsulting.com/feeds/dga-feed.txt`
+*  * `name`: `DGA Domains`
+*  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -304,6 +334,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://bitcash.cz/misc/log/blacklist`
+*  * `name`: `Banned IPs`
+*  * `provider`: `Bitcash`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -325,6 +357,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/apache.txt`
+*  * `name`: `Apache`
+*  * `provider`: `Blocklist.de`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -344,6 +378,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/bots.txt`
+*  * `name`: `Bots`
+*  * `provider`: `Blocklist.de`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -363,6 +399,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/bruteforcelogin.txt`
+*  * `name`: `Brute-force Logins`
+*  * `provider`: `Blocklist.de`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -382,6 +420,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/ftp.txt`
+*  * `name`: `FTP`
+*  * `provider`: `Blocklist.de`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -401,6 +441,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/imap.txt`
+*  * `name`: `IMAP`
+*  * `provider`: `Blocklist.de`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -420,6 +462,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/ircbot.txt`
+*  * `name`: `IRC Bots`
+*  * `provider`: `Blocklist.de`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -439,6 +483,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/mail.txt`
+*  * `name`: `Mail`
+*  * `provider`: `Blocklist.de`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -458,6 +504,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/sip.txt`
+*  * `name`: `SIP`
+*  * `provider`: `Blocklist.de`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -477,6 +525,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/ssh.txt`
+*  * `name`: `SSH`
+*  * `provider`: `Blocklist.de`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -496,6 +546,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/strongips.txt`
+*  * `name`: `Strong IPs`
+*  * `provider`: `Blocklist.de`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -511,11 +563,15 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Status:** on
 * **Revision:** 20-01-2018
 * **Description:** Blueliv Crimeserver Collector is the bot responsible to get the report through the API.
+* **Additional Information:** The service uses a different API for free users and paying subscribers. In 'CrimeServer' feed the difference lies in the data points present in the feed. The non-free API available from Blueliv contains, for this specific feed, following extra fields not present in the free API; "_id" - Internal unique ID "subType" - Subtype of the Crime Server "countryName" - Country name where the Crime Server is located, in English "city" - City where the Crime Server is located "domain" - Domain of the Crime Server "host" - Host of the Crime Server "createdAt" - Date when the Crime Server was added to Blueliv CrimeServer database "asnCidr" - Range of IPs that belong to an ISP (registered via Autonomous System Number (ASN)) "asnId" - Identifier of an ISP registered via ASN "asnDesc" Description of the ISP registered via ASN
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.blueliv.collector_crimeserver
 * **Configuration Parameters:**
+*  * `api_key`: `__APIKEY__`
+*  * `name`: `CrimeServer`
+*  * `provider`: `Blueliv`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -537,7 +593,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.stomp.collector
 * **Configuration Parameters:**
 *  * `exchange`: `{insert your exchange point as given by CERT.pl}`
+*  * `name`: `N6 Stomp Stream`
 *  * `port`: `61614`
+*  * `provider`: `CERT.PL`
 *  * `server`: `n6stream.cert.pl`
 *  * `ssl_ca_certificate`: `{insert path to CA file for CERT.pl's n6}`
 *  * `ssl_client_certificate`: `{insert path to client cert file for CERTpl's n6}`
@@ -562,6 +620,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://cinsscore.com/list/ci-badguys.txt`
+*  * `name`: `Army List`
+*  * `provider`: `CINSscore`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -582,6 +642,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.collectors.certstream.collector_certstream
 * **Configuration Parameters:**
+*  * `name`: `CertStream`
+*  * `provider`: `Calidog`
 
 ### Parser
 
@@ -604,6 +666,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `http_timeout_sec`: `120`
 *  * `http_url`: `http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&domain=`
 *  * `http_user_agent`: `{{ your user agent }}`
+*  * `name`: `Phishing`
+*  * `provider`: `CleanMX`
 *  * `rate_limit`: `129600`
 
 ### Parser
@@ -625,6 +689,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `http_timeout_sec`: `120`
 *  * `http_url`: `http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=`
 *  * `http_user_agent`: `{{ your user agent }}`
+*  * `name`: `Virus`
+*  * `provider`: `CleanMX`
 *  * `rate_limit`: `129600`
 
 ### Parser
@@ -646,6 +712,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://dshield.org/asdetailsascii.html?as={{ AS Number }}`
+*  * `name`: `AS Details`
+*  * `provider`: `DShield`
 *  * `rate_limit`: `129600`
 
 ### Parser
@@ -665,6 +733,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.dshield.org/block.txt`
+*  * `name`: `Block`
+*  * `provider`: `DShield`
 *  * `rate_limit`: `129600`
 
 ### Parser
@@ -684,6 +754,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.dshield.org/feeds/suspiciousdomains_High.txt`
+*  * `name`: `Suspicious Domains`
+*  * `provider`: `DShield`
 *  * `rate_limit`: `129600`
 
 ### Parser
@@ -705,6 +777,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://danger.rulez.sk/projects/bruteforceblocker/blist.php`
+*  * `name`: `Bruteforce Blocker`
+*  * `provider`: `Danger Rulez`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -724,6 +798,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://dataplane.org/sipinvitation.txt`
+*  * `name`: `SIP Invitation`
+*  * `provider`: `Danger Rulez`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -745,6 +821,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://dataplane.org/sipquery.txt`
+*  * `name`: `SIP Query`
+*  * `provider`: `Dataplane`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -764,6 +842,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://dataplane.org/sipregistration.txt`
+*  * `name`: `SIP Registration`
+*  * `provider`: `Dataplane`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -783,6 +863,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://dataplane.org/sshclient.txt`
+*  * `name`: `SSH Client Connection`
+*  * `provider`: `Dataplane`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -802,6 +884,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://dataplane.org/sshpwauth.txt`
+*  * `name`: `SSH Password Authentication`
+*  * `provider`: `Dataplane`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -823,6 +907,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt`
+*  * `name`: `Infected Domains`
+*  * `provider`: `DynDNS`
 *  * `rate_limit`: `10800`
 
 ### Parser
@@ -846,6 +932,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `http_password`: `{{ your password}}`
 *  * `http_url`: `https://dgarchive.caad.fkie.fraunhofer.de/today`
 *  * `http_username`: `{{ your username}}`
+*  * `name`: `DGA Archive`
+*  * `provider`: `Fraunhofer`
 *  * `rate_limit`: `10800`
 
 ### Parser
@@ -867,6 +955,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://hosts-file.net/download/hosts.txt`
+*  * `name`: `Hosts`
+*  * `provider`: `HPHosts`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -889,6 +979,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://malc0de.com/bl/ZONES`
+*  * `name`: `Bind Format`
+*  * `provider`: `Malc0de`
 *  * `rate_limit`: `10800`
 
 ### Parser
@@ -908,6 +1000,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://malc0de.com/bl/IP_Blacklist.txt`
+*  * `name`: `IP Blacklist`
+*  * `provider`: `Malc0de`
 *  * `rate_limit`: `10800`
 
 ### Parser
@@ -927,6 +1021,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://malc0de.com/bl/BOOT`
+*  * `name`: `Windows Format`
+*  * `provider`: `Malc0de`
 *  * `rate_limit`: `10800`
 
 ### Parser
@@ -948,6 +1044,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://www.malwaredomainlist.com/updatescsv.php`
+*  * `name`: `Blacklist`
+*  * `provider`: `Malware Domain List`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -969,6 +1067,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://mirror1.malwaredomains.com/files/domains.txt`
+*  * `name`: `Malicious`
+*  * `provider`: `Malware Domains`
 *  * `rate_limit`: `172800`
 
 ### Parser
@@ -990,6 +1090,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.malwarepatrol.net/cgi/getfile?receipt={{ your API key }}&product=8&list=dansguardian`
+*  * `name`: `DansGuardian`
+*  * `provider`: `MalwarePatrol`
 *  * `rate_limit`: `180000`
 
 ### Parser
@@ -1011,6 +1113,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.malwareurl.com/`
+*  * `name`: `Latest malicious activity`
+*  * `provider`: `MalwareURL`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -1057,7 +1161,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `api_key`: `{{your API key}}`
 *  * `file_match`: `^bingmurls_`
 *  * `http_timeout_sec`: `300`
+*  * `name`: `BingMURLs`
 *  * `not_older_than`: `2 days`
+*  * `provider`: `Microsoft`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -1080,7 +1186,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `api_key`: `{{your API key}}`
 *  * `file_match`: `^ctip_`
 *  * `http_timeout_sec`: `300`
+*  * `name`: `CTIP`
 *  * `not_older_than`: `2 days`
+*  * `provider`: `Microsoft`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -1102,6 +1210,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://data.netlab.360.com/feeds/dga/dga.txt`
+*  * `name`: `DGA`
+*  * `provider`: `Netlab 360`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -1121,6 +1231,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://data.netlab.360.com/feeds/ek/magnitude.txt`
+*  * `name`: `Magnitude EK`
+*  * `provider`: `Netlab 360`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -1140,6 +1252,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://data.netlab.360.com/feeds/mirai-scanner/scanner.list`
+*  * `name`: `Mirai Scanner`
+*  * `provider`: `Netlab 360`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -1161,6 +1275,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://www.nothink.org/honeypot_dns_attacks.txt`
+*  * `name`: `DNS Attack`
+*  * `provider`: `Nothink`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -1180,6 +1296,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://www.nothink.org/blacklist/blacklist_snmp_day.txt`
+*  * `name`: `SNMP`
+*  * `provider`: `Nothink`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -1199,6 +1317,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://www.nothink.org/blacklist/blacklist_ssh_day.txt`
+*  * `name`: `SSH`
+*  * `provider`: `Nothink`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -1218,6 +1338,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://www.nothink.org/blacklist/blacklist_telnet_day.txt`
+*  * `name`: `Telnet`
+*  * `provider`: `Nothink`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -1239,6 +1361,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.openphish.com/feed.txt`
+*  * `name`: `Phishing`
+*  * `provider`: `OpenPhish`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -1262,6 +1386,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `http_password`: `{{ your password}}`
 *  * `http_url`: `https://openphish.com/prvt-intell/`
 *  * `http_username`: `{{ your username}}`
+*  * `name`: `Phishing`
+*  * `provider`: `OpenPhish Commercial`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -1283,6 +1409,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://data.phishtank.com/data/{{ your API key }}/online-valid.csv`
+*  * `name`: `Online`
+*  * `provider`: `PhishTank`
 *  * `rate_limit`: `28800`
 
 ### Parser
@@ -1293,7 +1421,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 # ShadowServer
 
-## FIXME
+## Custom
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1304,9 +1432,16 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv.zip`
-*  * `attach_unzip`: `true`
+*  * `attach_unzip`: `True`
+*  * `folder`: `INBOX`
+*  * `mail_host`: `__HOST__`
+*  * `mail_password`: `__PASSWORD__`
+*  * `mail_ssl`: `True`
+*  * `mail_user`: `__USERNAME__`
+*  * `name`: `Custom`
+*  * `provider`: `ShadowServer`
 *  * `rate_limit`: `86400`
-*  * `subject_regex`: `FIXME - (see individual reports below)`
+*  * `subject_regex`: `__REGEX__`
 
 ### Parser
 
@@ -1327,6 +1462,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.spamhaus.org/drop/asndrop.txt`
+*  * `name`: `ASN Drop`
+*  * `provider`: `Spamhaus`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -1346,6 +1483,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `{{ your CERT portal URL }}`
+*  * `name`: `CERT`
+*  * `provider`: `Spamhaus`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -1365,6 +1504,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.spamhaus.org/drop/drop.txt`
+*  * `name`: `Drop`
+*  * `provider`: `Spamhaus`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -1384,6 +1525,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.spamhaus.org/drop/dropv6.txt`
+*  * `name`: `Dropv6`
+*  * `provider`: `Spamhaus`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -1403,6 +1546,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.spamhaus.org/drop/edrop.txt`
+*  * `name`: `EDrop`
+*  * `provider`: `Spamhaus`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -1425,11 +1570,34 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://labs.sucuri.net/?malware`
+*  * `name`: `Hidden IFrames`
+*  * `provider`: `Sucuri`
 *  * `rate_limit`: `86400`
 
 ### Parser
 
 * **Module:** intelmq.bots.parsers.sucuri.parser
+* **Configuration Parameters:**
+
+
+# Surbl
+
+## Malicious Domains
+
+* **Status:** on
+* **Revision:** 04-09-2018
+* **Description:** Detected malicious domains. Note that you have to opened up Sponsored Datafeed Service (SDS) access to the SURBL data via rsync for your IP address.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.rsync.collector_rsync
+* **Configuration Parameters:**
+*  * `file`: `wild.surbl.org.rbldnsd`
+*  * `rsync_path`: `blacksync.prolocation.net::surbl-wild/`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.surbl.parser
 * **Configuration Parameters:**
 
 
@@ -1446,6 +1614,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.tc.edu.tw/net/netflow/lkout/recent/30`
+*  * `name`: `Netflow`
+*  * `provider`: `Taichung`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -1471,6 +1641,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `http_url`: `https://www.cymru.com/{{your organization name}}/infected_{time[%Y%m%d]}.txt`
 *  * `http_url_formatting`: `True`
 *  * `http_username`: `{{your login}}`
+*  * `name`: `CAP`
+*  * `provider`: `Team Cymru`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -1490,6 +1662,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt`
+*  * `name`: `Full Bogons`
+*  * `provider`: `Team Cymru`
 *  * `rate_limit`: `129600`
 
 ### Parser
@@ -1512,6 +1686,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.threatminer.org/`
+*  * `name`: `Recent domains`
+*  * `provider`: `Threatminer`
 *  * `rate_limit`: `86400`
 
 ### Parser
@@ -1533,6 +1709,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.turris.cz/greylist-data/greylist-latest.csv`
+*  * `name`: `Greylist`
+*  * `provider`: `Turris`
 *  * `rate_limit`: `43200`
 
 ### Parser
@@ -1554,6 +1732,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://www.urlvir.com/export-hosts/`
+*  * `name`: `Hosts`
+*  * `provider`: `URLVir`
 *  * `rate_limit`: `129600`
 
 ### Parser
@@ -1573,6 +1753,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://www.urlvir.com/export-ip-addresses/`
+*  * `name`: `IPs`
+*  * `provider`: `URLVir`
 *  * `rate_limit`: `129600`
 
 ### Parser
@@ -1595,6 +1777,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 *  * `extract_files`: `true`
 *  * `http_url`: `https://dsi.ut-capitole.fr/blacklists/download/{collection name}.tar.gz`
+*  * `name`: `Blacklist`
+*  * `provider`: `University of Toulouse`
 *  * `rate_limit`: `43200`
 
 ### Parser
@@ -1619,6 +1803,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://vxvault.net/URL_List.php`
+*  * `name`: `IPs`
+*  * `provider`: `VXVault`
 *  * `rate_limit`: `3600`
 
 ### Parser
@@ -1640,6 +1826,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://app.webinspector.com/public/recent_detections/`
+*  * `name`: `Unsafe sites`
+*  * `provider`: `WebInspektor`
 *  * `rate_limit`: `60`
 
 ### Parser
@@ -1662,7 +1850,14 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv`
 *  * `attach_unzip`: `False`
-*  * `rate_limit`: `300`
+*  * `folder`: `INBOX`
+*  * `mail_host`: `__HOST__`
+*  * `mail_password`: `__PASSWORD__`
+*  * `mail_ssl`: `True`
+*  * `mail_user`: `__USERNAME__`
+*  * `name`: `Defacements`
+*  * `provider`: `ZoneH`
+*  * `rate_limit`: `3600`
 *  * `sent_from`: `datazh@zone-h.org`
 *  * `subject_regex`: `Report`
 

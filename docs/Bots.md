@@ -1,9 +1,171 @@
 # Bots Documentation
 
-1. [Collectors](#collectors)
-2. [Parsers](#parsers)
-3. [Experts](#experts)
-4. [Outputs](#outputs)
+**Table of Contents:**
+- [Bots Documentation](#bots-documentation)
+- [General remarks](#general-remarks)
+- [Initialization parameters](#initialization-parameters)
+- [Common parameters](#common-parameters)
+- [Collectors](#collectors)
+  - [Generic URL Fetcher](#generic-url-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic URL Stream Fetcher](#generic-url-stream-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic Mail URL Fetcher](#generic-mail-url-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic Mail Attachment Fetcher](#generic-mail-attachment-fetcher)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Fileinput](#fileinput)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [MISP Generic](#misp-generic)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Request Tracker](#request-tracker)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Shodan Stream](#shodan-stream)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [TCP](#tcp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [XMPP collector](#xmpp-collector)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Alien Vault OTX](#alien-vault-otx)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Blueliv Crimeserver](#blueliv-crimeserver)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Microsoft Azure](#microsoft-azure)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Microsoft Interflow](#microsoft-interflow)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Additional functionalities](#additional-functionalities)
+  - [Stomp](#stomp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Twitter](#twitter)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [Parsers](#parsers)
+  - [Generic CSV Parser](#generic-csv-parser)
+    - [Configuration parameters](#configuration-parameters)
+  - [Cymru CAP Program](#cymru-cap-program)
+    - [Information:](#information)
+  - [Cymru Full Bogons](#cymru-full-bogons)
+    - [Information:](#information)
+  - [Twitter](#twitter)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Shodan](#shodan)
+    - [Information](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [Experts](#experts)
+  - [Abusix](#abusix)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [ASN Lookup](#asn-lookup)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Cymru Whois](#cymru-whois)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Domain Suffix](#domain-suffix)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Rule processing](#rule-processing)
+  - [Deduplicator](#deduplicator)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Field Reducer Bot](#field-reducer-bot)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+      - [Whitelist](#whitelist)
+      - [Blacklist](#blacklist)
+  - [Filter](#filter)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Generic DB Lookup](#generic-db-lookup)
+  - [Gethostbyname](#gethostbyname)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [IDEA](#idea)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [MaxMind GeoIP](#maxmind-geoip)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Modify](#modify)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Configuration File](#configuration-file)
+    - [Actions](#actions)
+    - [Examples](#examples)
+    - [Types](#types)
+  - [National CERT contact lookup by CERT.AT](#national-cert-contact-lookup-by-certat)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Reverse DNS](#reverse-dns)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [RFC1918](#rfc1918)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [RipeNCC Abuse Contact](#ripencc-abuse-contact)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Sieve](#sieve)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Taxonomy](#taxonomy)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Tor Nodes](#tor-nodes)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Url2FQDN](#url2fqdn)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [Wait](#wait)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [Outputs](#outputs)
+  - [Elasticsearch](#elasticsearch)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [File](#file)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+      - [Filename formatting](#filename-formatting)
+  - [Files](#files)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [MongoDB](#mongodb)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Installation Requirements](#installation-requirements)
+  - [PostgreSQL](#postgresql)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+    - [Installation Requirements](#installation-requirements)
+    - [PostgreSQL Installation](#postgresql-installation)
+  - [REST API](#rest-api)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+- [SMTP Output Bot](#smtp-output-bot)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+  - [TCP](#tcp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+
 
 ## General remarks
 
@@ -57,10 +219,9 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `enabled`: If the parameter is set to `true` (which is NOT the default value if it is missing as a protection) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `false`, the Bot will not be started by `intelmqctl start`, however you can run the bot independently using `intelmqctl start <bot_id>`. Check the [User-Guide](./User-Guide.md) for more details.
 * `run_mode`: There are two run modes, "continuous" (default run mode) or "scheduled". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after one successful run. This is especially useful when scheduling bots via cron or systemd. Default is `continuous`. Check the [User-Guide](./User-Guide.md) for more details.
 
-<a name="collectors"></a>
-## Collectors
+## Common parameters
 
-**Feed parameters**: Common configuration options for all collectors
+**Feed parameters**: Common configuration options for all collectors.
 
 * `feed`: Name for the feed (`feed.name`).
 * `accuracy`: Accuracy for the data of the feed (`feed.accuracy`).
@@ -69,7 +230,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `provider`: Name of the provider of the feed (`feed.provider`).
 * `rate_limit`: time interval (in seconds) between fetching data if applicable.
 
-**HTTP parameters**: Common URL fetching parameters used in multiple collectors
+**HTTP parameters**: Common URL fetching parameters used in multiple bots.
 
 * `http_timeout_sec`: A tuple of floats or only one float describing the timeout of the http connection. Can be a tuple of two floats (read and connect timeout) or just one float (applies for both timeouts). The default is 30 seconds in default.conf, if not given no timeout is used. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
 * `http_timeout_max_tries`: An integer depciting how often a connection is retried, when a timeout occured. Defaults to 3 in default.conf.
@@ -80,6 +241,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `http_user_agent`: user agent to use for the request.
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Only used by some bots.
 * `http_header`: HTTP request headers
 
 **Cache parameters**: Common redis cache parameters used in multiple bots (mainly lookup experts):
@@ -89,6 +251,8 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `redis_cache_db`: Database number.
 * `redis_cache_ttl`: TTL used for caching.
 * `redis_cache_password`: Optional password for the redis database (default: none).
+
+## Collectors
 
 
 ### Generic URL Fetcher
@@ -105,9 +269,12 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
+* `extract_files`: Optional, boolean or list of strings. If it is not false, the retrieved (compressed) file or archived will be uncompressed/unpacked and the files are extracted. If the parameter is a list for strings, only the files matching the filenames are extracted. Extraction handles gziped files and both compressed and uncompressed tar-archives.
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
-* `http_url_formatting`: If `True` (default `False`) `{time[format]}` will be replaced by the current time formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2018` for the year 2018. Currently only the time in local timezone is available. Python's [Format Specification Mini-Language¶](https://docs.python.org/3/library/string.html) is used for this.
+* `http_url_formatting`: (`bool|JSON`, default: `false`) If `true`, `{time[format]}` will be replaced by the current time in local timezone formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2019` for the year 2019. (Python's [Format Specification Mini-Language](https://docs.python.org/3/library/string.html#formatspec) is used for this.)
+You may use `a JSON` specifiying [time-delta](https://docs.python.org/3/library/datetime.html#datetime.timedelta) parameters to shift the current time accordingly. Ex: type in `{"days": -1}` to use yesterday's date; the URL `http://localhost/{time[%Y-%m-%d]}` will get translated to "http://localhost/2018-12-31" for the 1st Jan of 2019.
 
+Zipped files are automatically extracted if detected.
 
 * * *
 
@@ -156,6 +323,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `url_regex`: regular expression of the feed URL to search for in the mail body
 * `sent_from`: filter messages by sender
 * `sent_to`: filter messages by recipient
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
 * * *
 
@@ -180,6 +348,38 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `subject_regex`: regular expression to look for a subject
 * `attach_regex`: regular expression of the name of the attachment
 * `attach_unzip`: whether to unzip the attachment (default: `true`)
+* `sent_from`: filter messages by sender
+* `sent_to`: filter messages by recipient
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
+
+* * *
+
+### Generic Mail Body Fetcher
+
+
+#### Information:
+* `name:` intelmq.bots.collectors.mail.collector_mail_body
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` collect messages from mailboxes, forwards the bodies as reports. Each non-empty body with the matching content type is sent as individual report.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `mail_host`: FQDN or IP of mail server
+* `mail_user`: user account of the email account
+* `mail_password`: password associated with the user account
+* `mail_ssl`: whether the mail account uses SSL (default: `true`)
+* `folder`: folder in which to look for mails (default: `INBOX`)
+* `subject_regex`: regular expression to look for a subject
+* `sent_from`: filter messages by sender
+* `sent_to`: filter messages by recipient
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
+* `content_types`: Which bodies to use based on the content_type. Default: `true`/`['html', 'plain']` for all:
+  - string with comma separated values, e.g. `['html', 'plain']`
+  - `true`, `false`, `null`: Same as default value
+  - `string`, e.g. `'plain'`
 
 * * *
 
@@ -199,6 +399,25 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `postfix`: FIXME
 * `delete_file`: whether to delete the file after reading (default: `false`)
 
+* * *
+
+### Rsync
+
+Requires the rsync executable
+
+#### Information:
+* `name:` intelmq.bots.collectors.rsync.collector_rsync
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Bot download file by rsync and then load data from downloaded file. Downloaded file is located in var/lib/bots/rsync_collector.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `file`: Name of downloaded file.
+* `rsync_path`: Path to file. It can be "/home/username/directory" or "username@remote_host:/home/username/directory"
+* `temp_directory`: Path of a temporary state directory to use for rsync'd files. Optional. Default: `/opt/intelmq/var/run/rsync_collector/`.
 
 * * *
 
@@ -350,6 +569,7 @@ See the README.md
 
 * **Feed parameters** (see above)
 * `api_key`: location of information resource
+* `api_url`: The optional API endpoint, by default `https://freeapi.blueliv.com`.
 
 * * *
 
@@ -407,8 +627,8 @@ The cache is used to remember which files have already been downloaded. Make sur
 * **Feed parameters** (see above)
 * `api_key`: API generate in their portal
 * `file_match`: an optional regular expression to match file names
-* `not_older_than`: an optional relative (minutes) or absolute time expression to determine the oldest time of a file to be downloaded
-* `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved.
+* `not_older_than`: an optional relative (minutes) or absolute time (UTC is assumed) expression to determine the oldest time of a file to be downloaded
+* `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved. The cache's TTL must always be bigger than `not_older_than`.
 
 #### Additional functionalities
 
@@ -418,7 +638,7 @@ The cache is used to remember which files have already been downloaded. Make sur
 
 ### Stomp
 
-See the README.md
+See the README.md in `intelmq/bots/collectors/stomp/`
 
 #### Information:
 * `name:` intelmq.bots.collectors.stomp.collector
@@ -463,7 +683,25 @@ Collects tweets from target_timelines. Up to tweet_count tweets from each user a
 * `acces_token_key`: Twitter api login data
 * `access_token_secret`: Twitter api login data
 
-<a name="parsers"></a>
+### API collector bot
+
+#### Information:
+* `name:` intelmq.bots.collectors.api.collector_api
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Bot for collecting data using API, you need to post JSON to /intelmq/push endpoint
+
+example usage:
+```
+curl -X POST http://localhost:5000/intelmq/push -H 'Content-Type: application/json' --data '{"source.ip": "127.0.0.101", "classification.type": "backdoor"}'
+```
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `port`: 5000
+
 ## Parsers
 
 TODO
@@ -526,6 +764,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
      ```
  * `"type_translation"`: If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
+ * `"columns_required"`: A list of true/false for each column. By default, it is true for every column.
 
 
 ### Cymru CAP Program
@@ -542,6 +781,8 @@ Some reports are not implemented at all as there is no data available to check i
 The information about the event could be better in many cases but as Cymru does not want to be associated with the report, we can't add comments to the events in the parser, because then the source would be easily identifiable for the recipient.
 
 ### Cymru Full Bogons
+
+http://www.team-cymru.com/bogon-reference.html
 
 #### Information:
 * `name:` intelmq.bots.parsers.cymru.parser_full_bogons
@@ -609,6 +850,13 @@ The information about the event could be better in many cases but as Cymru does 
 * `domain_whitelist`: domains to be filetered out
 * `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
 * `classification_type: string with a valid classification type as defined in data harmonization
+* `default_scheme`: Default scheme for URLs if not given. See also the next section.
+
+##### Default scheme
+
+The dependency `url-normalize` changed it's behavior in version 1.4.0 from using `http://` as default scheme to `https://`. Version 1.4.1 added the possibility to specify it. Thus you can only use the `default_scheme` parameter with a current version of this library >= 1.4.1, with 1.4.0 you will always get `https://` as default scheme and for older versions < 1.4.0 `http://` is used.
+
+This does not affect URLs which already include the scheme.
 
 ### Shodan
 
@@ -625,7 +873,6 @@ The parser is by far not complete as there are a lot of fields in a big nested s
 * `minimal_mode`: Boolean (default false)
 
 
-<a name="experts"></a>
 ## Experts
 
 ### Abusix
@@ -642,7 +889,7 @@ See the README.md
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 FIXME
 
 * * *
@@ -675,16 +922,22 @@ FIXME
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 FIXME
 
 * * *
 
 ### Domain Suffix
 
+This bots adds the public suffix to the event, derived by a domain.
 See or information on the public suffix list: https://publicsuffix.org/list/
 Only rules for ICANN domains are processed. The list can (and should) contain
-Unicode data, punycode conversion is done during reading
+Unicode data, punycode conversion is done during reading.
+
+Note that the public suffix is not the same as the top level domain (TLD). E.g.
+`co.uk` is a public suffix, but the TLD is `uk`.
+Privatly registered suffixes (such as `blogspot.co.at`) which are part of the
+public suffix list too, are ignored.
 
 #### Information:
 * `name:` deduplicator
@@ -737,7 +990,7 @@ See the README.md
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 * * *
@@ -753,7 +1006,7 @@ Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 #### Configuration Parameters:
 * `type` - either `"whitelist"` or `"blacklist"`
-* `keys` - a list of key names (strings)
+* `keys` - Can be a JSON-list of field names (`["raw", "source.account"]`) or a string with a comma-separated list of field names (`"raw,source.account"`).
 
 ##### Whitelist
 
@@ -824,8 +1077,6 @@ Documentation about IDEA: https://idea.cesnet.cz/en/index
 
 ### MaxMind GeoIP
 
-See the README.md
-
 #### Information:
 * `name:` maxmind-geoip
 * `lookup:` local database
@@ -833,10 +1084,20 @@ See the README.md
 * `cache (redis db):` none
 * `description:` IP to geolocation
 
+#### Setup
+
+The bot requires the maxmind's `geoip2` Python library, version 2.2.0 has been tested.
+
+The database is available at https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
+You need to unzip it.
+
+You may want to use a shell script provided in the contrib directory to keep the database up to date: `contrib/cron-jobs/update-geoip-data`
+
 #### Configuration Parameters:
 
-FIXME
-
+* `database`: Path to the local database, e.g. `"/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"`
+* `overwrite`: boolean
+* `use_registered`: boolean. MaxMind has two country ISO codes: One for the physical location of the address and one for the registered location. Default is `false` (backwards-compatibility). See also https://github.com/certtools/intelmq/pull/1344 for a short explanation.
 
 * * *
 
@@ -984,6 +1245,8 @@ You can set the value of the field to a string literal or number.
 In addition you can use the [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax)
 to access the values from the processed event as `msg` and the match groups
 of the conditions as `matches`, see the bitdefender example above.
+Group 0 (`[0]`) contains the full matching string. See also the documentation on [`re.Match.group`](https://docs.python.org/3/library/re.html?highlight=re%20search#re.Match.group).
+
 Note that `matches` will also contain the match groups
 from the default conditions if there were any.
 
@@ -1047,7 +1310,7 @@ For both `source.ip` and `destination.ip` the PTR record is fetched and the firs
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 * `cache_ttl_invalid_response`: The TTL for cached invalid responses.
 
 * * *
@@ -1078,23 +1341,26 @@ Sources:
 
 * * *
 
-### RipeNCC Abuse Contact
+### Ripe
+
+Online RIPE Abuse Contact and Geolocation Finder for IP addresses and Autonomous Systems.
 
 #### Information:
 * `name:` ripencc-abuse-contact
 * `lookup:` https api
 * `public:` yes
-* `cache (redis db):` 9
+* `cache (redis db):` 10
 * `description:` IP to abuse contact
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 * `mode`: either `append` (default) or `replace`
 * `query_ripe_db_asn`: Query for IPs at `http://rest.db.ripe.net/abuse-contact/%s.json`, default `true`
 * `query_ripe_db_ip`: Query for ASNs at `http://rest.db.ripe.net/abuse-contact/as%s.json`, default `true`
 * `query_ripe_stat_asn`: Query for ASNs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
 * `query_ripe_stat_ip`: Query for IPs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
+* `query_ripe_stat_geolocation`: Query for IPs at `https://stat.ripe.net/data/maxmind-geo-lite/data.json?resource=%s`, default `true`
 
 * * *
 
@@ -1184,8 +1450,59 @@ Otherwise the dummy mode is active, the events are just passed without an additi
 
 Note that SIGHUPs and reloads interrupt the sleeping.
 
-<a name="outputs"></a>
 ## Outputs
+
+### Blackhole
+
+This output bot discards all incoming messages.
+
+#### Information
+* `name`: blackhole
+* `lookup`: no
+* `public`: yes
+* `cache`: no
+* `description`: discards messages
+
+* * *
+
+
+### Elasticsearch Output Bot
+
+Output Bot that sends events to Elasticsearch
+
+#### Configuration parameters:
+
+* elastic_host       : Name/IP for the Elasticsearch server, defaults to 127.0.0.1
+* elastic_port       : Port for the Elasticsearch server, defaults to 9200
+* elastic_index      : Index for the Elasticsearch output, defaults to intelmq
+* rotate_index       : If set, will index events using the date information associated with the event.
+                       Options: 'never', 'daily', 'weekly', 'monthly', 'yearly'. Using 'intelmq' as the elastic_index, the following are examples of the generated index names:
+
+                       'never' --> intelmq
+                       'daily' --> intelmq-2018-02-02
+                       'weekly' --> intelmq-2018-42
+                       'monthly' --> intelmq-2018-02
+                       'yearly' --> intelmq-2018
+* elastic_doctype    : Elasticsearch document type for the event. Default: events
+* http_username      : http_auth basic username
+* http_password      : http_auth basic password
+* replacement_char   : If set, dots ('.') in field names will be replaced with this character prior to indexing. This is for backward compatibility with ES 2.X. Default: null. Recommended for ES2.X: '_'
+* flatten_fields     : In ES, some query and aggregations work better if the fields are flat and not JSON. Here you can provide a list of fields to convert.
+                       Can be a list of strings (fieldnames) or a string with field names separated by a comma (,). eg `extra,field2` or `['extra', 'field2']`
+                       Default: ['extra']
+
+See contrib/elasticsearch/elasticmapper for a utility for creating Elasticsearch mappings and templates.
+
+If using rotate_index, the resulting index name will be of the form [elastic_index]-[event date].
+To query all intelmq indices at once, use an alias (https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-aliases.html), or a multi-index query.
+
+The data in ES can be retrieved with the HTTP-Interface:
+
+```bash
+> curl -XGET 'http://localhost:9200/intelmq/events/_search?pretty=True'
+```
+* * *
+
 
 ### File
 
@@ -1198,6 +1515,7 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 
 #### Configuration Parameters:
 
+* `encoding_errors_mode`: By default `'strict'`, see for more details and options: https://docs.python.org/3/library/functions.html#open For example with `'backslashreplace'` all characters which cannot be properly encoded will be written escaped with backslashes.
 * `file`: file path of output file. Missing directories will be created if possible with the mode 755.
 * `format_filename`: Boolean if the filename should be formatted (default: `false`).
 * `hierarchial_output`: If true, the resulting dictionary will be hierarchical (field names split by dot).
@@ -1257,6 +1575,8 @@ If the field used in the format string is not defined, `None` will be used as fa
 
 ### MongoDB
 
+Saves events in a MongoDB either as hierarchical structure or flat with full key names. `time.observation` and `time.source` are saved as datetime objects, not as ISO formatted string.
+
 #### Information:
 * `name:` mongodb
 * `lookup:` no
@@ -1273,6 +1593,7 @@ If the field used in the format string is not defined, `None` will be used as fa
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
 * `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionary in sub-dictionaries.
+* `replacement_char`: String (default `'_'`) used as replacement character for the dots in key names if hierarchical output is not used.
 
 #### Installation Requirements
 
@@ -1345,7 +1666,7 @@ from your installation.
 
 * * *
 
-# SMTP Output Bot
+### SMTP Output Bot
 
 Sends a MIME Multipart message containing the text and the event as CSV for every single event.
 
@@ -1389,12 +1710,13 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, another IntelMQ, etc..).
+* `description:` TCP is the bot responsible to send events to a TCP port (Splunk, another IntelMQ, etc..).
 
 #### Configuration Parameters:
 
 * `ip`: IP of destination server
 * `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server
-* `separator`: separator of messages, eg. "\n", optional (when sending to a TCP collector, parameter shouldn't be present)
+* `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present. 
+    In that case, the output waits every message is acknowledged by "Ok" message the tcp.collector bot implements.
 

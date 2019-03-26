@@ -4,7 +4,6 @@ Messages are the information packages in pipelines.
 
 Use MessageFactory to get a Message object (types Report and Event).
 """
-import functools
 import hashlib
 import json
 import re
@@ -116,7 +115,7 @@ class Message(dict):
             if not re.match('^[a-z_](.[a-z_0-9]+)*$', harm_key) and harm_key != '__type':
                 raise exceptions.InvalidKey("Harmonization key %r is invalid." % harm_key)
 
-        super(Message, self).__init__()
+        super().__init__()
         if isinstance(message, dict):
             iterable = message.items()
         elif isinstance(message, tuple):
@@ -137,12 +136,25 @@ class Message(dict):
             return json.dumps(self.to_dict(hierarchical=True)[key.split('.')[0]])
         else:
             try:
-                return super(Message, self).__getitem__(key)
+                return super().__getitem__(key)
             except KeyError:
                 if self._default_value_set:
                     return self.default_value
                 else:
                     raise
+
+    def __delitem__(self, item):
+        if item == 'extra':
+            for key in [key for key in self.keys() if key.startswith('extra.')]:
+                del self[key]
+            return
+        return super().__delitem__(item)
+
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
 
     def is_valid(self, key: str, value: str, sanitize: bool = True) -> bool:
         """
@@ -247,16 +259,19 @@ class Message(dict):
         class_name, subitem = self.__get_type_config(key)
         if class_name and class_name['type'] == 'JSONDict' and not subitem:
             # for backwards compatibility allow setting the extra field as string
+            if overwrite and key in self:
+                del self[key]
             for extrakey, extravalue in json.loads(value).items():
-                if hasattr(extravalue, '__len__'):
+                # For extra we must not ignore empty or invalid values because of backwards compatibility issues #1335
+                if key != 'extra' and hasattr(extravalue, '__len__'):
                     if not len(extravalue):  # ignore empty values
                         continue
-                if extravalue in self._IGNORED_VALUES:
+                if key != 'extra' and extravalue in self._IGNORED_VALUES:
                     continue
-                super(Message, self).__setitem__('%s.%s' % (key, extrakey),
-                                                 extravalue)
+                super().__setitem__('{}.{}'.format(key, extrakey),
+                                    extravalue)
         else:
-            super(Message, self).__setitem__(key, value)
+            super().__setitem__(key, value)
         return True
 
     def update(self, other: dict):
@@ -270,7 +285,7 @@ class Message(dict):
         return self.add(key, value, overwrite=True, sanitize=sanitize)
 
     def finditems(self, keyword: str):
-        for key, value in super(Message, self).items():
+        for key, value in super().items():
             if key.startswith(keyword):
                 yield key, value
 
@@ -278,7 +293,7 @@ class Message(dict):
         class_ref = self.__class__.__name__
         self['__type'] = class_ref
         retval = getattr(intelmq.lib.message,
-                         class_ref)(super(Message, self).copy(),
+                         class_ref)(super().copy(),
                                     harmonization={self.__class__.__name__.lower(): self.harmonization_config})
         del self['__type']
         return retval
@@ -301,7 +316,6 @@ class Message(dict):
         message = json.loads(message_string)
         return message
 
-#    @functools.lru_cache(maxsize=None)
     def __is_valid_key(self, key: str):
         try:
             class_name, subitem = self.__get_type_config(key)
@@ -343,7 +357,6 @@ class Message(dict):
         else:
             return class_reference().sanitize_subitem(value)
 
-#    @functools.lru_cache(maxsize=None)
     def __get_type_config(self, key: str):
         if key == '__type':
             return None, None
@@ -463,7 +476,7 @@ class Message(dict):
 
         Comparison with other types e.g. dicts does not check the harmonization_config.
         """
-        dict_eq = super(Message, self).__eq__(other)
+        dict_eq = super().__eq__(other)
         if dict_eq and issubclass(type(other), Message):
             type_eq = type(self) == type(other)
             harm_eq = self.harmonization_config == other.harmonization_config if hasattr(other, 'harmonization_config') else False
@@ -482,6 +495,11 @@ class Message(dict):
         """
         self._default_value_set = True
         self.default_value = value
+
+    def __contains__(self, item) -> bool:
+        if item == 'extra':
+            return 'extra' in self.to_dict(hierarchical=True)
+        return super().__contains__(item)
 
 
 class Event(Message):
@@ -516,7 +534,7 @@ class Event(Message):
                 template['time.observation'] = message['time.observation']
         else:
             template = message
-        super(Event, self).__init__(template, auto, harmonization)
+        super().__init__(template, auto, harmonization)
 
 
 class Report(Message):
@@ -532,18 +550,18 @@ class Report(Message):
             harmonization: Harmonization definition to use
         """
         if isinstance(message, Event):
-            super(Report, self).__init__({}, auto, harmonization)
+            super().__init__({}, auto, harmonization)
             for key, value in message.items():
                 if self._Message__is_valid_key(key):
                     self.add(key, value, sanitize=False)
         else:
-            super(Report, self).__init__(message, auto, harmonization)
+            super().__init__(message, auto, harmonization)
         if not auto and 'time.observation' not in self:
             time_observation = intelmq.lib.harmonization.DateTime().generate_datetime_now()
             self.add('time.observation', time_observation, sanitize=False)
 
     def copy(self):
-        retval = super(Report, self).copy()
+        retval = super().copy()
         if 'time.observation' in retval and 'time.observation' not in self:
             del retval['time.observation']
         return retval

@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
+import datetime
 import os
 from pathlib import Path
+from collections import defaultdict
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.utils import base64_decode
 
 
 class FileOutputBot(Bot):
+    file = None
 
     def init(self):
         # needs to be done here, because in process() FileNotFoundError handling we call init(),
@@ -15,6 +18,7 @@ class FileOutputBot(Bot):
 
         self.logger.debug("Opening %r file.", self.parameters.file)
         self.format_filename = getattr(self.parameters, 'format_filename', False)
+        self.errors = getattr(self.parameters, 'encoding_errors_mode', 'strict')
         if not self.format_filename:
             self.open_file(self.parameters.file)
         self.logger.info("File %r is open.", self.parameters.file)
@@ -24,7 +28,7 @@ class FileOutputBot(Bot):
         if self.file is not None:
             self.file.close()
         try:
-            self.file = open(filename, mode='at', encoding='utf-8')
+            self.file = open(filename, mode='at', encoding='utf-8', errors=self.errors)
         except FileNotFoundError:  # directory does not exist
             path = Path(os.path.dirname(filename))
             try:
@@ -33,13 +37,21 @@ class FileOutputBot(Bot):
                 self.logger.exception('Directory %r could not be created.', path)
                 self.stop()
             else:
-                self.file = open(filename, mode='at', encoding='utf-8')
+                self.file = open(filename, mode='at', encoding='utf-8', errors=self.errors)
 
     def process(self):
         event = self.receive_message()
-        event.set_default_value(None)
         if self.format_filename:
-            filename = self.parameters.file.format(event=event)
+            ev = defaultdict(None)
+            ev.update(event)
+            # remove once #671 is done
+            if 'time.observation' in ev:
+                ev['time.observation'] = datetime.datetime.strptime(ev['time.observation'],
+                                                                    '%Y-%m-%dT%H:%M:%S+00:00')
+            if 'time.source' in ev:
+                ev['time.source'] = datetime.datetime.strptime(ev['time.source'],
+                                                               '%Y-%m-%dT%H:%M:%S+00:00')
+            filename = self.parameters.file.format(event=ev)
             if not self.file or filename != self.file.name:
                 self.open_file(filename)
 
