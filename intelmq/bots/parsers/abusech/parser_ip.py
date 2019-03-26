@@ -58,7 +58,7 @@ class AbusechIPParserBot(ParserBot):
 
         for line in comments:
             if 'Last updated' in line:
-               self.__last_generated_date = dateutil.parser.parse(self.__date_regex.search(line).group(0)).isoformat()
+                self.__last_generated_date = dateutil.parser.parse(self.__date_regex.search(line).group(0)).isoformat()
 
         lines = (l for l in raw_lines if not self.__is_comment_line_regex.search(l))
         for line in lines:
