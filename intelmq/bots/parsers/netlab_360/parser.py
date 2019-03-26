@@ -11,7 +11,7 @@ class Netlab360ParserBot(ParserBot):
     MIRAI_SCANNER_FEED = {'http://data.netlab.360.com/feeds/mirai-scanner/scanner.list'}
 
     def parse_line(self, line, report):
-        if line.startswith('#') or len(line) == 0:
+        if line.startswith('#') or not line.strip():
             self.tempdata.append(line)
 
         else:
