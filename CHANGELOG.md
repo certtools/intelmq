@@ -64,6 +64,7 @@ CHANGELOG
 
 ### Documentation
 - Feeds: Document abuse.ch URLhaus feed (#1379).
+- Install and Upgrading: Use `intelmqsetup` tool.
 
 ### Packaging
 
@@ -75,6 +76,7 @@ CHANGELOG
 - `intelmqdump`: Inspecting dumps locks the dump file using unix file locks (#574).
 - `intelmqctl`:
   - After the check if the program runs as root, it tries to drop privileges. Only if this does not work, a warning is shown.
+- `intelmqsetup`: New tool for initialize an IntelMQ environment.
 
 ### Contrib
 - `malware_name_mapping`:

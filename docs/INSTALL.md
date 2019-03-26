@@ -38,7 +38,7 @@ If you are using native packages, you can simply skip this section as all depend
 
 ```bash
 apt-get install python3 python3-pip
-apt-get install git build-essential libffi-dev
+apt-get install build-essential libffi-dev
 apt-get install python3-dev
 apt-get install redis-server
 ```
@@ -55,7 +55,7 @@ python3.4 /tmp/get-pip.py
 
 ```bash
 apt install python3-pip python3-dnspython python3-psutil python3-redis python3-requests python3-termstyle python3-tz python3-dateutil
-apt install git redis-server
+apt install redis-server
 ```
 
 Optional dependencies:
@@ -69,7 +69,7 @@ apt install python3-sleekxmpp python3-pymongo python3-psycopg2
 ```bash
 yum install epel-release
 yum install python34 python34-devel
-yum install git gcc gcc-c++
+yum install gcc gcc-c++
 yum install redis
 ```
 
@@ -83,7 +83,7 @@ python3.4 /tmp/get-pip.py
 
 ```bash
 zypper install python3-dateutil python3-dnspython python3-psutil python3-pytz python3-redis python3-requests python3-python-termstyle
-zypper install git redis
+zypper install redis
 ```
 
 Optional dependencies:
@@ -125,18 +125,13 @@ Please report any errors or improvements at [IntelMQ Issues](https://github.com/
 ## PyPi
 
 ```bash
-sudo -s
+sudo -i
 
 pip3 install intelmq
 
-mv `python3 -c "import site; print(site.getsitepackages()[0] + '/opt/intelmq')"` /opt/
-
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
-chmod -R 0770 /opt/intelmq
-chown -R intelmq.intelmq /opt/intelmq
+sudo intelmqsetup
 ```
-
-**Note:** the reason why instructions have the `mv` command using python output is because pip3 installation method does not (and cannot) create `/opt/intelmq`, as described in [Issue #189](https://github.com/certtools/intelmq/issues/819).
 
 
 ## Additional Information
