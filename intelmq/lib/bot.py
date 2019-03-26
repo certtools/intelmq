@@ -3,7 +3,6 @@
 
 """
 import csv
-import datetime
 import fcntl
 import io
 import json
@@ -26,7 +25,7 @@ import intelmq.lib.message as libmessage
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, __version__)
-from intelmq.lib import exceptions, utils
+from intelmq.lib import cache, exceptions, utils
 from intelmq.lib.pipeline import PipelineFactory
 from intelmq.lib.utils import RewindableFileHandle
 
@@ -36,14 +35,7 @@ __all__ = ['Bot', 'CollectorBot', 'ParserBot']
 class Bot(object):
     """ Not to be reset when initialized again on reload. """
     __current_message = None
-    __message_counter = {"since": 0,  # messages since last logging
-                         "start": None,  # last login time
-                         "success": 0,  # total number since the beginning
-                         "failure": 0,  # total number since the beginning
-                         "stats_timestamp": datetime.now(),  # stamp of last report to redis
-                         "path": defaultdict(int),  # number of messages sent to queues since last report to redis
-                         "path_total": defaultdict(int)  # number of messages sent to queues since beginning
-                         }
+    __message_counter_delay = timedelta(seconds=2)
 
     # Bot is capable of SIGHUP delaying
     sighup_delay = True
@@ -63,6 +55,15 @@ class Bot(object):
         self.__source_pipeline = None
         self.__destination_pipeline = None
         self.logger = None
+
+        self.__message_counter = {"since": 0,  # messages since last logging
+                                  "start": None,  # last login time
+                                  "success": 0,  # total number since the beginning
+                                  "failure": 0,  # total number since the beginning
+                                  "stats_timestamp": datetime.now(),  # stamp of last report to redis
+                                  "path": defaultdict(int),  # number of messages sent to queues since last report to redis
+                                  "path_total": defaultdict(int)  # number of messages sent to queues since beginning
+                                  }
 
         try:
             version_info = sys.version.splitlines()[0].strip()
@@ -110,6 +111,18 @@ class Bot(object):
 
             self.stop()
             raise
+
+        self.__stats_cache = cache.Cache(host=getattr(self.parameters,
+                                                      "source_pipeline_host",
+                                                      "127.0.0.1"),
+                                         port=getattr(self.parameters,
+                                                      "source_pipeline_port", "6379"),
+                                         db=3,
+                                         password=getattr(self.parameters,
+                                                          "source_pipeline_password",
+                                                          None),
+                                         ttl=None,
+                                         )
 
     def __handle_sigterm_signal(self, signum: int, stack: Optional[object]):
         """
@@ -285,22 +298,26 @@ class Bot(object):
             self.__handle_sighup()
 
     def __stats(self, force=False):
-        # flush stats to redis
-        sec = 2
-        if force or datetime.now() - self.__message_counter["stats_timestamp"] > sec:  # every X seconds at maximum
-            pipe = self.__source_pipeline or self.__destination_pipeline
-            if pipe:
-                try:
-                    for path, n in self.__message_counter["path"].items():  # current queue traffic
-                        pipe.pipe.set((self.__bot_id, path), n, ex=2)
-                        self.__message_counter["path_total"][path] += n
-                        self.__message_counter["path"][path] = 0
-                    for path, n in self.__message_counter["path_total"].items():  # total queue traffic
-                        pipe.pipe.set(("total", self.__bot_id, path), n)
-                    pipe.pipe.set(("stats", self.__bot_id), (self.__message_counter["success"], self.__message_counter["failure"]))
-                    self.__message_counter["stats_timestamp"] = datetime.now()
-                except:  # if something goes wrong, no information is given
-                    pass
+        """
+        Flush stats to redis
+
+        Only all self.__message_counter_delay (2 seconds), or with force=True
+        """
+
+        if not (force or datetime.now() - self.__message_counter["stats_timestamp"] > self.__message_counter_delay):
+            return
+
+        try:
+            for path, n in self.__message_counter["path"].items():  # current queue traffic
+                self.__stats_cache.set(".".join((self.__bot_id, "temporary", path)), n, ttl=2)
+                self.__message_counter["path_total"][path] += n
+                self.__message_counter["path"][path] = 0
+            for path, n in self.__message_counter["path_total"].items():  # total queue traffic
+                self.__stats_cache.set(".".join((self.__bot_id, "total", path)), n)
+            self.__stats_cache.set(".".join((self.__bot_id, "stats")), (self.__message_counter["success"], self.__message_counter["failure"]))
+            self.__message_counter["stats_timestamp"] = datetime.now()
+        except Exception:
+            self.logger.debug('Failed to write statistics to cache.', exc_info=True)
 
     def __sleep(self):
         """
@@ -339,7 +356,7 @@ class Bot(object):
                 print("%s %d messages since last logging." % (self._message_processed_verb,
                                                               self.__message_counter["since"]))
 
-        self.__stats(True)
+        self.__stats(force=True)
         self.__disconnect_pipelines()
 
         if self.logger:
@@ -428,7 +445,8 @@ class Bot(object):
             if self.__message_counter["since"] % self.parameters.log_processed_messages_count == 0 or \
                     datetime.now() - self.__message_counter["start"] > self.parameters.log_processed_messages_seconds:
                 self.logger.info("%s %d messages since last logging.",
-                                 self._message_processed_verb, self.__message_counter["since"])
+                                 self._message_processed_verb,
+                                 self.__message_counter["since"])
                 self.__message_counter["since"] = 0
                 self.__message_counter["start"] = datetime.now()
 

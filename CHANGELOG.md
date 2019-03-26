@@ -11,11 +11,14 @@ CHANGELOG
   - Print idle/rate limit time also in human readable format (#1332).
   - `set_request_parameters`: Use `{}` as default proxy value instead of `None`. Allows updating of existing proxy dictionaries.
   - Bots drop privileges if they run as root.
+  - Save statistics on successfully and failed processed messages in the redis database 3.
 - `lib/utils`
   - Function `unzip` to extract files from gzipped and/or tar-archives.
   - New class `ListHandler`: new handler for logging purpose which saves the messages in a list.
   - Add function `seconds_to_human`.
   - Add function `drop_privileges`.
+- `lib/cache`:
+  - Allow ttl to be None explicitly.
 
 ### Harmonization
 
