@@ -84,14 +84,12 @@ CHANGELOG
 ### Known issues
 
 
-1.1.2 (unreleased)
+1.1.2 (2019-03-25)
 ------------------
 
 ### Core
 - `intelmq.lib.bot`:
   - `Bot.__handle_sighup`: Handle exceptions in `shutdown` method of bots.
-
-### Development
 
 ### Harmonization
 - FQDN: Disallow `:` in FQDN values to prevent values like '10.0.0.1:8080' (#1235).
@@ -109,6 +107,7 @@ CHANGELOG
   - Add support for the `Amplification-DDoS-Victim`, `HTTP-Scanners`, `ICS-Scanners` and `Accessible-Ubiquiti-Discovery-Service` feeds (#1368, #1383)
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - Workaround for mis-formatted data in `networkdestinationipv4` field (since 2019-03-14).
+  - Ignore "hostname" ("destination.fqdn") if it contains invalid data.
 - `intelmq.bots.parsers.shodan.parser`:
   - In `minimal_mode`:
     - Fix the parsing, previously only `source.geolocation.cc` and `extra.shodan` was correctly filled with information.
@@ -145,9 +144,9 @@ CHANGELOG
   - status: Show commandline differences if a program with the expected PID could be found, but they do not match (previous output was `None`).
   - Use logging level from defauls configuration if possible, otherwise intelmq's internal default. Previously, DEBUG was used unconditionally.
 
-### Contrib
-
 ### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted (#952).
+- stomp collector bot constantly uses 100% of CPU (#1364).
 
 
 1.1.1 (2019-01-15)

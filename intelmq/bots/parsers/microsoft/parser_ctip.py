@@ -51,6 +51,9 @@ class MicrosoftCTIPParserBot(ParserBot):
                 value += ' UTC'
             if key == "hostname" and value == line["networkdestinationipv4"]:  # ignore IP in FQDN field
                 continue
+            if key == "hostname" and not event.is_valid("source.fqdn", value):
+                # can contain very weird characters
+                continue
             if key == 'networkdestinationipv4' and value == '0.0.0.0':
                 continue
             if key == 'networkdestinationipv4' and ',' in value:
