@@ -308,13 +308,18 @@ class Bot(object):
             return
 
         try:
-            for path, n in self.__message_counter["path"].items():  # current queue traffic
+            for path, n in self.__message_counter["path"].items():
+                # current queue traffic
                 self.__stats_cache.set(".".join((self.__bot_id, "temporary", path)), n, ttl=2)
                 self.__message_counter["path_total"][path] += n
                 self.__message_counter["path"][path] = 0
-            for path, n in self.__message_counter["path_total"].items():  # total queue traffic
-                self.__stats_cache.set(".".join((self.__bot_id, "total", path)), n)
-            self.__stats_cache.set(".".join((self.__bot_id, "stats")), (self.__message_counter["success"], self.__message_counter["failure"]))
+            for path, total in self.__message_counter["path_total"].items():
+                # total queue traffic
+                self.__stats_cache.set(".".join((self.__bot_id, "total", path)), total)
+            self.__stats_cache.set(".".join((self.__bot_id, "stats", "success")),
+                                   self.__message_counter["success"])
+            self.__stats_cache.set(".".join((self.__bot_id, "stats", "failure")),
+                                   self.__message_counter["failure"])
             self.__message_counter["stats_timestamp"] = datetime.now()
         except Exception:
             self.logger.debug('Failed to write statistics to cache.', exc_info=True)
