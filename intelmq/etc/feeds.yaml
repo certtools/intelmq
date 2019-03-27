@@ -468,6 +468,27 @@ providers:
       revision: 20-01-2018
       status: on
       documentation:
+    Feodo Tracker Browse:
+      description: ''
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://feodotracker.abuse.ch/browse
+            rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.html_table.parser
+          parameters:
+            columns: ["time.source", "source.ip", "malware.name", "status", "extra.SBL", "source.as_name", "source.geolocation.cc"]
+            ignore_values: ["", "", "", "", "Not listed", "", ""]
+            skip_head: True
+            type: c&c
+      revision: 19-03-2019
+      status: on
+      documentation:
   Blueliv:
     CrimeServer:
       description: Blueliv Crimeserver Collector is the bot responsible to get the
@@ -1432,7 +1453,7 @@ providers:
       status: on
       documentation:
   VXVault:
-    IPs:
+    URLs:
       description: This feed provides IP addresses hosting Malware.
       additional_information:
       bots:
@@ -1604,5 +1625,27 @@ providers:
           parameters:
             verdict_severity: 4
       revision: 05-07-2018
+      status: on
+      documentation:
+  CyberCrime Tracker:
+    Latest:
+      description: C2 servers
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://cybercrime-tracker.net/index.php
+            rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.html_table.parser
+          parameters:
+            columns: ["time.source", "source.url", "source.ip", "malware.name", "__IGNORE__"]
+            skip_head: true
+            default_url_protocol: http://
+            type: c&c
+      revision: 19-03-2019
       status: on
       documentation:

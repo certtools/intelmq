@@ -15,12 +15,10 @@ split_index: int
 type: string
 """
 
-from bs4 import BeautifulSoup as bs
 from dateutil.parser import parse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import DateTime
 
@@ -29,10 +27,18 @@ TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
                     'epoch_millis': DateTime.from_epoch_millis,
                     None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
 
+try:
+    from bs4 import BeautifulSoup as bs
+except ImportError:
+    bs = None
+
 
 class HTMLTableParserBot(Bot):
 
     def init(self):
+        if bs is None:
+            raise ValueError("Could not import 'beautifulsoup4'. Please install it.")
+
         self.columns = self.parameters.columns
         # convert columns to an array
         if type(self.columns) is str:
@@ -41,20 +47,24 @@ class HTMLTableParserBot(Bot):
         if type(self.ignore_values) is str:
             self.ignore_values = [value.strip() for value in self.ignore_values.split(",")]
 
+        if len(self.columns) != len(self.ignore_values):
+            raise ValueError("Length of parameters 'columns' and 'ignore_values' is not equal.")
+
         self.table_index = getattr(self.parameters, "table_index", 0)
         self.attr_name = getattr(self.parameters, "attribute_name", None)
         self.attr_value = getattr(self.parameters, "attribute_value", None)
-
         self.skip_head = getattr(self.parameters, "skip_table_head", True)
         self.skip_row = 1 if self.skip_head else 0
         self.split_column = getattr(self.parameters, "split_column", None)
         self.split_separator = getattr(self.parameters, "split_separator", None)
         self.split_index = getattr(self.parameters, "split_index", 0)
+
         self.time_format = getattr(self.parameters, "time_format", None)
         if self.time_format not in TIME_CONVERSIONS.keys():
             raise InvalidArgument('time_format', got=self.time_format,
                                   expected=list(TIME_CONVERSIONS.keys()),
                                   docs='docs/Bots.md')
+        self.default_url_protocol = getattr(self.parameters, 'default_url_protocol', 'http://')
 
     def process(self):
         report = self.receive_message()
@@ -67,9 +77,9 @@ class HTMLTableParserBot(Bot):
             table = soup.find_all('table')
         table = table[self.table_index]
 
-        row = table.find_all('tr')[self.skip_row:]
+        rows = table.find_all('tr')[self.skip_row:]
 
-        for feed in row:
+        for feed in rows:
 
             event = self.new_event(report)
             tdata = [data.text for data in feed.find_all('td')]
@@ -101,7 +111,7 @@ class HTMLTableParserBot(Bot):
                         if not data:
                             continue
                         if '://' not in data:
-                            data = self.parameters.default_url_protocol + data
+                            data = self.default_url_protocol + data
 
                     if event.add(key, data, raise_failure=False):
                         break
