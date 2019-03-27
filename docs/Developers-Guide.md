@@ -738,6 +738,7 @@ Bots must use the Redis databases `>=` 10, but not those already used by other b
 
 The databases `<` 10 are reserved for the IntelMQ core:
  * 2: pipeline
+ * 3: statistics
  * 4: tests
 
 # Feeds documentation

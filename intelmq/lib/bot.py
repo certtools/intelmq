@@ -3,13 +3,11 @@
 
 """
 import csv
-import datetime
 import fcntl
 import io
 import json
 import logging
 import os
-import psutil
 import re
 import signal
 import sys
@@ -17,25 +15,28 @@ import time
 import traceback
 import types
 import warnings
+from collections import defaultdict
+from datetime import datetime, timedelta
+from typing import Any, Optional, List
 
+import psutil
+
+import intelmq.lib.message as libmessage
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, __version__)
-from intelmq.lib import exceptions, utils
-import intelmq.lib.message as libmessage
+from intelmq.lib import cache, exceptions, utils
 from intelmq.lib.pipeline import PipelineFactory
 from intelmq.lib.utils import RewindableFileHandle
-from typing import Any, Optional, List
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot']
 
 
 class Bot(object):
-
     """ Not to be reset when initialized again on reload. """
     __current_message = None
-    __message_counter = 0
-    __message_counter_start = None
+    __message_counter_delay = timedelta(seconds=2)
+
     # Bot is capable of SIGHUP delaying
     sighup_delay = True
     # From the runtime configuration
@@ -54,6 +55,15 @@ class Bot(object):
         self.__source_pipeline = None
         self.__destination_pipeline = None
         self.logger = None
+
+        self.__message_counter = {"since": 0,  # messages since last logging
+                                  "start": None,  # last login time
+                                  "success": 0,  # total number since the beginning
+                                  "failure": 0,  # total number since the beginning
+                                  "stats_timestamp": datetime.now(),  # stamp of last report to redis
+                                  "path": defaultdict(int),  # number of messages sent to queues since last report to redis
+                                  "path_total": defaultdict(int)  # number of messages sent to queues since beginning
+                                  }
 
         try:
             version_info = sys.version.splitlines()[0].strip()
@@ -101,6 +111,18 @@ class Bot(object):
 
             self.stop()
             raise
+
+        self.__stats_cache = cache.Cache(host=getattr(self.parameters,
+                                                      "source_pipeline_host",
+                                                      "127.0.0.1"),
+                                         port=getattr(self.parameters,
+                                                      "source_pipeline_port", "6379"),
+                                         db=3,
+                                         password=getattr(self.parameters,
+                                                          "source_pipeline_password",
+                                                          None),
+                                         ttl=None,
+                                         )
 
     def __handle_sigterm_signal(self, signum: int, stack: Optional[object]):
         """
@@ -221,6 +243,7 @@ class Bot(object):
                     break
 
                 if error_on_message or error_on_pipeline:
+                    self.__message_counter["failure"] += 1
                     self.__error_retries_counter += 1
 
                     # reached the maximum number of retries
@@ -264,13 +287,42 @@ class Bot(object):
                             # retry forever, see https://github.com/certtools/intelmq/issues/1333
                             # https://lists.cert.at/pipermail/intelmq-users/2018-October/000085.html
                             pass
+                else:
+                    self.__message_counter["success"] += 1
+                    # no errors, check for run mode: scheduled
+                    if self.run_mode == 'scheduled':
+                        self.logger.info('Shutting down scheduled bot.')
+                        self.stop(exitcode=0)
 
-                # no errors, check for run mode: scheduled
-                elif self.run_mode == 'scheduled':
-                    self.logger.info('Shutting down scheduled bot.')
-                    self.stop(exitcode=0)
-
+            self.__stats()
             self.__handle_sighup()
+
+    def __stats(self, force=False):
+        """
+        Flush stats to redis
+
+        Only all self.__message_counter_delay (2 seconds), or with force=True
+        """
+
+        if not (force or datetime.now() - self.__message_counter["stats_timestamp"] > self.__message_counter_delay):
+            return
+
+        try:
+            for path, n in self.__message_counter["path"].items():
+                # current queue traffic
+                self.__stats_cache.set(".".join((self.__bot_id, "temporary", path)), n, ttl=2)
+                self.__message_counter["path_total"][path] += n
+                self.__message_counter["path"][path] = 0
+            for path, total in self.__message_counter["path_total"].items():
+                # total queue traffic
+                self.__stats_cache.set(".".join((self.__bot_id, "total", path)), total)
+            self.__stats_cache.set(".".join((self.__bot_id, "stats", "success")),
+                                   self.__message_counter["success"])
+            self.__stats_cache.set(".".join((self.__bot_id, "stats", "failure")),
+                                   self.__message_counter["failure"])
+            self.__message_counter["stats_timestamp"] = datetime.now()
+        except Exception:
+            self.logger.debug('Failed to write statistics to cache.', exc_info=True)
 
     def __sleep(self):
         """
@@ -300,15 +352,16 @@ class Bot(object):
             else:  # logger not yet initialized
                 print('Error during shutdown of bot.')
 
-        if self.__message_counter:
+        if self.__message_counter["since"]:
             if self.logger:
                 self.logger.info("%s %d messages since last logging.",
                                  self._message_processed_verb,
-                                 self.__message_counter)
+                                 self.__message_counter["since"])
             else:
                 print("%s %d messages since last logging." % (self._message_processed_verb,
-                                                              self.__message_counter))
+                                                              self.__message_counter["since"]))
 
+        self.__stats(force=True)
         self.__disconnect_pipelines()
 
         if self.logger:
@@ -387,21 +440,23 @@ class Bot(object):
                 continue
             if not self.__destination_pipeline:
                 raise exceptions.ConfigurationError('pipeline', 'No destination pipeline given, '
-                                                    'but needed')
+                                                                'but needed')
 
             self.logger.debug("Sending message.")
+            self.__message_counter["since"] += 1
+            self.__message_counter["path"][path] += 1
+            if not self.__message_counter["start"]:
+                self.__message_counter["start"] = datetime.now()
+            if self.__message_counter["since"] % self.parameters.log_processed_messages_count == 0 or \
+                    datetime.now() - self.__message_counter["start"] > self.parameters.log_processed_messages_seconds:
+                self.logger.info("%s %d messages since last logging.",
+                                 self._message_processed_verb,
+                                 self.__message_counter["since"])
+                self.__message_counter["since"] = 0
+                self.__message_counter["start"] = datetime.now()
 
             raw_message = libmessage.MessageFactory.serialize(message)
             self.__destination_pipeline.send(raw_message, path=path)
-
-            self.__message_counter += 1
-            if not self.__message_counter_start:
-                self.__message_counter_start = datetime.datetime.now()
-            if self.__message_counter % self.parameters.log_processed_messages_count == 0 or \
-               datetime.datetime.now() - self.__message_counter_start > self.parameters.log_processed_messages_seconds:
-                self.logger.info("Processed %d messages since last logging.", self.__message_counter)
-                self.__message_counter = 0
-                self.__message_counter_start = datetime.datetime.now()
 
     def receive_message(self):
         self.logger.debug('Waiting for incoming message.')
@@ -450,7 +505,7 @@ class Bot(object):
             return
 
         self.logger.info('Dumping message from pipeline to dump file.')
-        timestamp = datetime.datetime.utcnow()
+        timestamp = datetime.utcnow()
         timestamp = timestamp.isoformat()
 
         dump_file = os.path.join(self.parameters.logging_path, self.__bot_id + ".dump")
@@ -495,7 +550,7 @@ class Bot(object):
 
     def __load_defaults_configuration(self):
         self.__log_buffer.append(('debug', "Loading defaults configuration from %r."
-                                  "" % DEFAULTS_CONF_FILE))
+                                           "" % DEFAULTS_CONF_FILE))
         config = utils.load_configuration(DEFAULTS_CONF_FILE)
 
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
@@ -504,7 +559,7 @@ class Bot(object):
             setattr(self.parameters, option, value)
             self.__log_configuration_parameter("defaults", option, value)
 
-        self.parameters.log_processed_messages_seconds = datetime.timedelta(seconds=self.parameters.log_processed_messages_seconds)
+        self.parameters.log_processed_messages_seconds = timedelta(seconds=self.parameters.log_processed_messages_seconds)
 
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
@@ -553,20 +608,19 @@ class Bot(object):
                 self.__source_queues = config[self.__bot_id]['source-queue']
 
             if 'destination-queues' in config[self.__bot_id].keys():
-
                 self.__destination_queues = config[
                     self.__bot_id]['destination-queues']
                 # Convert old to new format here
 
         else:
             raise exceptions.ConfigurationError('pipeline', "no key "
-                                                "{!r}.".format(self.__bot_id))
+                                                            "{!r}.".format(self.__bot_id))
 
     def __log_configuration_parameter(self, config_name: str, option: str, value: Any):
         if "password" in option or "token" in option:
             value = "HIDDEN"
 
-        message = "{} configuration: parameter {!r} loaded with value {!r}."\
+        message = "{} configuration: parameter {!r} loaded with value {!r}." \
             .format(config_name.title(), option, value)
 
         if self.logger:
@@ -594,7 +648,7 @@ class Bot(object):
         self.ssl_client_cert = getattr(self.parameters, 'ssl_client_certificate', None)
 
         if (hasattr(self.parameters, 'http_username') and
-            hasattr(self.parameters, 'http_password') and
+                hasattr(self.parameters, 'http_password') and
                 self.parameters.http_username):
             self.auth = (self.parameters.http_username,
                          self.parameters.http_password)
@@ -816,6 +870,7 @@ class CollectorBot(Bot):
 
     Does some sanity checks on message sending.
     """
+
     def __init__(self, bot_id: str):
         super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'CollectorBot':
