@@ -36,6 +36,7 @@ class Bot(object):
     """ Not to be reset when initialized again on reload. """
     __current_message = None
     __message_counter_delay = timedelta(seconds=2)
+    __stats_cache = None
 
     # Bot is capable of SIGHUP delaying
     sighup_delay = True
@@ -305,6 +306,9 @@ class Bot(object):
         """
 
         if not (force or datetime.now() - self.__message_counter["stats_timestamp"] > self.__message_counter_delay):
+            return
+        if not self.__stats_cache:
+            # Cache not yet initialized, e.g. error in init
             return
 
         try:
