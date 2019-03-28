@@ -12,6 +12,8 @@ table_index: int
 split_column: string
 split_separator: string
 split_index: int
+default_url_protocol: string
+time_format: string
 type: string
 """
 

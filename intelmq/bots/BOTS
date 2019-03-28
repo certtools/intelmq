@@ -449,8 +449,18 @@
                     "",
                     "source.fqdn"
                 ],
+                "ignore_values": [
+                    "",
+                    ""
+                ],
                 "table_index": 0,
                 "skip_table_head": true,
+                "attribute_name": "",
+                "attribute_value": "",
+                "split_column": "",
+                "split_separator": "",
+                "split_index": 0,
+                "default_url_protocol": "http://",
                 "time_format": null,
                 "type": "c&c"
             }

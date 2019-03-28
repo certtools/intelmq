@@ -10,12 +10,12 @@ from intelmq.bots.parsers.html_table.parser import HTMLTableParserBot
 with open(os.path.join(os.path.dirname(__file__), 'html_table_multivalue_cols.data')) as handle:
     SAMPLE_FILE = handle.read()
 
-EXAMPLE_REPORT = {"feed.name": "HTML Table Feed",
+EXAMPLE_REPORT = {"feed.name": "Precisionsec Agent Tesla IOC Feed",
                   "raw": utils.base64_encode(SAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2019-01-01T00:00:00+00:00",
                   }
-EXAMPLE_EVENT = {"feed.name": "HTML Table Feed",
+EXAMPLE_EVENT = {"feed.name": "Precisionsec Agent Tesla IOC Feed",
                  "__type": "Event",
                  "time.source": "2018-11-22T00:30:06+00:00",
                  "classification.type": "malware",
@@ -26,7 +26,7 @@ EXAMPLE_EVENT = {"feed.name": "HTML Table Feed",
                         "Qgc3R5bGU9InRleHQtYWxpZ246IGxlZnQ7Ij4yMDE4LTExLTIyIDAwOjMwOjA2CjwvdGQ+CjwvdHI+"
                  }
 
-EXAMPLE_EVENT1 = {"feed.name": "HTML Table Feed",
+EXAMPLE_EVENT1 = {"feed.name": "Precisionsec Agent Tesla IOC Feed",
                   "__type": "Event",
                   "time.source": "2018-11-19T10:50:41+00:00",
                   "classification.type": "malware",
@@ -56,10 +56,6 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
         """ Test if correct Event has been produced. """
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
-
-    def test_event(self):
-        """ Test if correct Event has been produced. """
-        self.run_bot()
         self.assertMessageEqual(1, EXAMPLE_EVENT1)
 
 

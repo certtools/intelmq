@@ -62,6 +62,8 @@
     - [Information:](#information)
   - [Cymru Full Bogons](#cymru-full-bogons)
     - [Information:](#information)
+  - [HTML Table Parser](#html-table-parser)
+    - [Configuration parameters](#configuration-parameters)
   - [Twitter](#twitter)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
@@ -788,6 +790,86 @@ http://www.team-cymru.com/bogon-reference.html
 * `public:` no
 * `cache (redis db):` none
 * `description:` Parses data from full bogons feed.
+
+### HTML Table Parser
+
+#### Configuration parameters
+
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Empty column specifications and columns named `"__IGNORE__"` are ignored. E.g.
+   ```json
+   "columns": [
+        "",
+        "source.fqdn",
+        "extra.http_host_header",
+        "__IGNORE__"
+   ],
+   ```
+   is equivalent to:
+   ```json
+   "columns": ",source.fqdn,extra.http_host_header,"
+   ```
+   The first and the last column are not used in this example.
+    It is possible to specify multiple columns using the `|` character. E.g.
+    ```
+        "columns": "source.url|source.fqdn|source.ip"
+    ```
+    First, bot will try to parse the value as url, if it fails, it will try to parse it as FQDN, if that fails, it will try to parse it as IP, if that fails, an error wil be raised.
+    Some use cases -
+
+        - mixed data set, e.g. URL/FQDN/IP/NETMASK  `"columns": "source.url|source.fqdn|source.ip|source.network"`
+
+        - parse a value and ignore if it fails  `"columns": "source.url|__IGNORE__"`
+
+ * `"ignore_values"`:  A list of strings or a string of comma-separated values which will not considered while assigning to the corresponding fields given in `columns`. E.g.
+   ```json
+   "ignore_values": [
+        "",
+        "unknown",
+        "Not listed",
+   ],
+   ```
+   is equivalent to:
+   ```json
+   "ignore_values": ",unknown,Not listed,"
+   ```
+   The following configuration will lead to assigning all values to malware.name and extra.SBL except `unknown` and `Not listed` respectively.
+   ```json
+   "columns": [
+        "source.url",
+        "malware.name",
+        "extra.SBL",
+   ],
+   "ignore_values": [
+        "",
+        "unknown",
+        "Not listed",
+   ],
+   ```
+   Parameters **columns and ignore_values must have same length**
+ * `"attribute_name"`: Filtering table with table attributes, to be used in conjection with `attribute_value`, optional. E.g. `class`, `id`, `style`.
+ * `"attribute_value"`: String.
+    To filter all tables with attribute `class='details'` use
+    ```json
+    "attribute_name": "class",
+    "attribute_value": "details"
+    ```
+ * `"table_index"`: Index of the table if multiple tables present. If `attribute_name` and `attribute_value` given, index according to tables remaining after filtering with table attribute.
+ * `"split_column"`: Padded column to be splitted to get values, to be used in conjection with `split_separator` and `split_index`, optional.
+ * `"split_separator"`: Delimiter string for padded column.
+ * `"split_index"`: Index of unpadded string in returned list from splitting `split_column` with `split_separator` as delimiter string.
+    E.g.
+    ```json
+    "split_column": "source.fqdn",
+    "split_separator": " ",
+    "split_index": 1,
+    ```
+    With above configuration, column corresponding to source.fqdn with value `[D] lingvaworld.ru` will be assigned as `"source.fqdn": "lingvaworld.ru"`.
+ * `"skip_table_head"`: Boolean, skip the first row of the table, optional.
+ * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data.
+ * `"time_format"`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
+ * `"type"`: set the `classification.type` statically, optional
+
+* * *
 
 ### McAfee Advanced Threat Defense File
 
