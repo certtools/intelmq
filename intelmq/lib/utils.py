@@ -364,10 +364,6 @@ def parse_logline(logline: str, regex: str = LOG_REGEX) -> dict:
     try:
         value = dict(list(zip(fields, match.group(*fields))))
         date = dateutil.parser.parse(value['date'])
-        try:
-            date = date.astimezone(pytz.utc)
-        except ValueError:  # astimezone() cannot be applied to a naive datetime
-            pass
         value['date'] = date.isoformat()
         if value['date'].endswith('+00:00'):
             value['date'] = value['date'][:-6]
