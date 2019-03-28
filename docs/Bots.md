@@ -459,6 +459,7 @@ Requires the rsync executable
 * `uri`: url of the REST interface of the RT
 * `user`: RT username
 * `password`: RT password
+* `search_not_older_than`: Absolute time (use ISO format) or relative time, e.g. `3 days`.
 * `search_owner`: owner of the ticket to search for (default: `nobody`)
 * `search_queue`: queue of the ticket to search for (default: `Incident Reports`)
 * `search_status`: status of the ticket to search for (default: `new`)
