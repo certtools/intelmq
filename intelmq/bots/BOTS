@@ -769,7 +769,7 @@
         },
         "RIPE": {
             "description": "This bots fetches abuse contacts and/or geolocation information for the source and/or destination IP addresses and/or ASNs of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
-            "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
+            "module": "intelmq.bots.experts.ripe.expert",
             "parameters": {
                 "mode": "append",
                 "query_ripe_db_asn": true,
