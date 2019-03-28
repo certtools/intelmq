@@ -83,7 +83,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `type`: `c&c`
 
 
-## Feodo Tracker IP
+## Feodo Tracker IPs
 
 * **Status:** on
 * **Revision:** 25-03-2019
