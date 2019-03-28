@@ -136,7 +136,7 @@ class N6StompParserBot(Bot):
                       overwrite=True)
 
         # split up the event into multiple ones, one for each address
-        for addr in dict_report['address']:
+        for addr in dict_report.get('address', []):
             ev = self.new_event(event)
             ev.add("source.ip", addr["ip"])
             if ("asn" in addr):
@@ -148,6 +148,8 @@ class N6StompParserBot(Bot):
             if ("cc" in addr):
                 ev.add("source.geolocation.cc", addr["cc"])
             self.send_message(ev)
+        else:  # no address
+            self.send_message(event)
 
         self.acknowledge_message()
 

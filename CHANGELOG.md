@@ -48,6 +48,7 @@ CHANGELOG
   - Fix parsing of `asn` (renamed to `source asn`, `source.asn` internally) and handle existing `feed.accuracy` for parsing `confidence`.
 - added `intelmq.bots.parsers.surbl.surbl`
 - `intelmq.bot.parsers.netlab_360.parser`: Handle empty lines containing blank characters (#1393).
+- `intelmq.bots.parsers.n6.parser_n6stomp`: Handle events without IP addresses.
 
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).

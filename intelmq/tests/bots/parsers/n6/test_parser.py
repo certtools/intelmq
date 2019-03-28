@@ -49,6 +49,22 @@ BLACKLIST_EVENT = {"__type": "Event",
                    "source.asn": 65536,
                    "raw": BLACKLIST_REPORT['raw']
                    }
+NO_ADDRESS_REPORT = {"__type": "Report",
+                     "time.observation": "2015-11-17T12:17:27.043452Z",
+                     "raw": utils.base64_encode("""
+{"category": "cnc", "confidence": "medium", "name": "some name", "fqdn": "secao.org", "source": "hidden.64534", "time": "2018-09-26T08:05:19Z", "type": "event", "id": "14758f1afd44c09b7992073ccf00b43d"}
+""")}
+NO_ADDRESS_EVENT = {"__type": "Event",
+                    "time.observation": "2015-11-17T12:17:27.043452Z",
+                    "extra.confidence": "medium",
+                    "extra.feed_id": "14758f1afd44c09b7992073ccf00b43d",
+                    "time.source": "2018-09-26T08:05:19+00:00",
+                    'classification.identifier': 'c&c server',
+                    'classification.taxonomy': 'malicious code',
+                    'classification.type': 'c&c',
+                    'extra.feed_source': 'hidden.64534',
+                    'source.fqdn': 'secao.org',
+                    "raw": NO_ADDRESS_REPORT['raw']}
 
 
 class TestN6StompParserBot(test.BotTestCase, unittest.TestCase):
@@ -71,6 +87,12 @@ class TestN6StompParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = BLACKLIST_REPORT
         self.run_bot()
         self.assertMessageEqual(0, BLACKLIST_EVENT)
+
+    def test_no_address(self):
+        """ Test event without address. """
+        self.input_message = NO_ADDRESS_REPORT
+        self.run_bot()
+        self.assertMessageEqual(0, NO_ADDRESS_EVENT)
 
 
 if __name__ == '__main__':  # pragma: no cover
