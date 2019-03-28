@@ -45,6 +45,7 @@ CHANGELOG
   - New parameter `columns_required` to optionally ignore parse errors for columns.
 - added `intelmq.bots.parsers.cert_eu.parser_csv` (#1287).
   - Do not overwrite the local `time.observation` with the data from the feed. The feed's field 'observation time' is now saved in the field `extra.cert_eu_time_observation`.
+  - Fix parsing of `asn` (renamed to `source asn`, `source.asn` internally) and handle existing `feed.accuracy` for parsing `confidence`.
 - added `intelmq.bots.parsers.surbl.surbl`
 - `intelmq.bot.parsers.netlab_360.parser`: Handle empty lines containing blank characters (#1393).
 

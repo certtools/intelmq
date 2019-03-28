@@ -15,7 +15,8 @@ EXAMPLE_REPORT = {"feed.url": "https://www.cert-eu.eu",
                   "feed.name": "CERT-EU Feed",
                   "__type": "Report",
                   "time.observation": "2018-01-01T01:00:00+00:00",
-                  "raw": utils.base64_encode(EXAMPLE_FILE)
+                  "raw": utils.base64_encode(EXAMPLE_FILE),
+                  "feed.accuracy": 50,
                   }
 
 EXAMPLE_EVENT1 = {
@@ -36,7 +37,7 @@ EXAMPLE_EVENT1 = {
     "source.geolocation.city": "Munich",
     "source.geolocation.geoip_cc": "DE",
     "source.geolocation.longitude": 11.57549,
-    "feed.accuracy": 50.0,
+    "feed.accuracy": 25.0,
     "extra.count": 6,
     "extra.datasource": "SR",
     "extra.first_seen": "2018-07-06T08:34:55.759000",
@@ -61,7 +62,7 @@ EXAMPLE_EVENT2 = {
     "source.geolocation.city": "Nuremberg",
     "source.geolocation.geoip_cc": "DE",
     "source.geolocation.longitude": 11.06833,
-    "feed.accuracy": 50.0,
+    "feed.accuracy": 25.0,
     "event_description.target": "Other",
     "source.url": "https://janagames.com/details/package-view/dhl.com/",
     "source.asn": 24940,

@@ -63,12 +63,14 @@ class CertEUCSVParserBot(ParserBot):
             event["extra.first_seen"] = line["first_seen"]
         if "num_sensors" in line:
             event["extra.num_sensors"] = line["num_sensors"]
-        event.add("feed.accuracy", line["confidence level"])
+        event.add('feed.accuracy',
+                  event.get('feed.accuracy', 100) * int(line["confidence level"]) / 100,
+                  overwrite=True)
         if "last_seen" in line:
             event["extra.last_seen"] = line["last_seen"]
         event.add("event_description.target", line["target"])
         event.add("source.url", line["url"])
-        event.add("source.asn", line["asn"])
+        event.add("source.asn", line["source asn"])
         event.add("source.fqdn", line["domain name"])
 
         event.add("raw", self.recover_line(line))
