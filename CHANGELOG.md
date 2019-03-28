@@ -43,6 +43,7 @@ CHANGELOG
 - added `intelmq.bots.parsers.cert_eu.parser_csv` (#1287).
   - Do not overwrite the local `time.observation` with the data from the feed. The feed's field 'observation time' is now saved in the field `extra.cert_eu_time_observation`.
 - added `intelmq.bots.parsers.surbl.surbl`
+- `intelmq.bot.parsers.netlab_360.parser`: Handle empty lines containing blank characters (#1393).
 
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).
