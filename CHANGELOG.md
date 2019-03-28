@@ -85,6 +85,8 @@ CHANGELOG
 - `malware_name_mapping`:
   - Added the script `apply_mapping_eventdb.py` to apply the mapping to an eventdb.
   - Possibility to add local rules using the download tool.
+- `check_mk`:
+  - Added scripts for monitoring queues and statistics.
 
 ### Known issues
 
