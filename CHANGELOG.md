@@ -19,6 +19,7 @@ CHANGELOG
   - Add function `drop_privileges`.
 - `lib/cache`:
   - Allow ttl to be None explicitly.
+  - Overwrite existing cache keys in the database instead of discarding the new data.
 
 ### Harmonization
 
