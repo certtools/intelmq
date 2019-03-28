@@ -1,0 +1,3 @@
+"timestamp","ip","protocol","dst_port","tag","src_port","hostname","asn","geo","region","city","naics","sic","request","count","bytes","sensor_geo","sector","end_time","public_source"
+"2018-10-09 06:00:06","192.0.2.10","udp","13","daytime","53","192-0-2-10.example.net","44395","AM","YEREVAN","YEREVAN","0","0","DAYTIME Request","15","2220","RU","IT1","2018-10-09 06:10:01","SSS"
+"2018-10-09 08:14:37","192.0.2.50","udp","123","ntp","53","dhcp-50-2-0-192.net1.bg","43561","BG","SOFIA-GRAD","SOFIA","0","0","Standard query response 0xe98a  NS auth111.ns.uu.net NS auth120.ns.uu.net","15","2700","RU","IT2","2018-10-09 10:14:59","SSS"

@@ -55,5 +55,5 @@ class TestThreatminerParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(1, EVENT2)
         self.assertMessageEqual(2, EVENT3)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

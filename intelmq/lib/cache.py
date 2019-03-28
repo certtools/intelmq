@@ -51,8 +51,9 @@ class Cache():
         if isinstance(value, str):
             value = utils.encode(value)
         # backward compatibility (Redis v2.2)
-        self.redis.setnx(key, value)
-        self.redis.expire(key, ttl)
+        self.redis.set(key, value)
+        if ttl:
+            self.redis.expire(key, ttl)
 
     def flush(self):
         """

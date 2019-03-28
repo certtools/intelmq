@@ -55,23 +55,37 @@ GEOLOCA_OUTPUT1 = {"__type": "Event",
                    "source.ip": "96.30.37.204",
                    "source.geolocation.cc": "US",
                    "source.geolocation.city": "Lansing",
-                   "source.geolocation.latitude": 42.7376,
-                   "source.geolocation.longitude": -84.6244
+                   "source.geolocation.latitude": 42.7348,
+                   "source.geolocation.longitude": -84.6245
                    }
 GEOLOCA_OUTPUT3 = {"__type": "Event",
                    "source.ip": "96.30.37.204",
                    "source.geolocation.cc": "IN",
                    "source.geolocation.city": "Lansing",
-                   "source.geolocation.latitude": 42.7376,
-                   "source.geolocation.longitude": -84.6244
+                   "source.geolocation.latitude": 42.7348,
+                   "source.geolocation.longitude": -84.6245
                    }
-
+INDEX_ERROR = {"__type": "Event",
+               "source.ip": "228.66.141.189",
+               }
+QUESTION_MARK = {"__type": "Event",
+               "source.ip": "35.197.157.0",
+               }
+QUESTION_MARK_OUTPUT = {"__type": "Event",
+                        "source.ip": "35.197.157.0",
+                        'source.geolocation.latitude': 35.0,
+                        'source.geolocation.longitude': 105.0,
+                        }
 
 @test.skip_internet()
 class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for RIPEExpertBot.
     """
+
+    def tearDown(self):
+        if self.bot is not None:
+            self.bot.http_session.close()
 
     @classmethod
     def set_bot(cls):
@@ -90,16 +104,16 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.allowed_warning_count = 1
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
-        self.assertEqual(self.cache.get('dbasn:35492'), b'["abuse@funkfeuer.at"]')
-        self.assertEqual(self.cache.get('dbip:93.184.216.34'), b'["abuse@verizondigitalmedia.com"]')
-        self.assertEqual(self.cache.get('dbip:193.238.157.5'), b'["abuse@funkfeuer.at"]')
+        self.assertEqual(self.cache.get('db_asn:35492'), b'["abuse@funkfeuer.at"]')
+        self.assertEqual(self.cache.get('db_ip:93.184.216.34'), b'["abuse@verizondigitalmedia.com"]')
+        self.assertEqual(self.cache.get('db_ip:193.238.157.5'), b'["abuse@funkfeuer.at"]')
 
     def test_db_ipv6_lookup(self):
         self.input_message = EXAMPLE_INPUT6
         self.allowed_warning_count = 1
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
-        self.assertEqual(self.cache.get('dbip:2001:62a:4:100:80::8'), b'["security.zid@univie.ac.at"]')
+        self.assertEqual(self.cache.get('db_ip:2001:62a:4:100:80::8'), b'["security.zid@univie.ac.at"]')
 
     def test_empty_lookup(self):
         """ No email is returned, event should be untouched. """
@@ -120,8 +134,8 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EMPTY_INPUT
         self.allowed_error_count = 1
         self.prepare_bot()
-        old = self.bot.URL_STAT_CONTACT
-        self.bot.URL_STAT_CONTACT = 'http://localhost/{}'
+        old = self.bot.QUERY['stat']
+        self.bot.QUERY['stat'] = 'http://localhost/{}'
         self.run_bot(prepare=False)
         # internal json in < and >= 3.5 and simplejson
         self.assertLogMatches(pattern='.*(JSONDecodeError|ValueError|Expecting value|No JSON object could be decoded).*',
@@ -147,10 +161,10 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.allowed_error_count = 1
         self.allowed_warning_count = 1
         self.prepare_bot()
-        old = self.bot.URL_DB_AS
-        self.bot.URL_DB_AS = 'http://localhost/{}'
+        old = self.bot.QUERY['db_asn']
+        self.bot.QUERY['db_asn'] = 'http://localhost/{}'
         self.run_bot(prepare=False)
-        self.bot.URL_DB_AS = old
+        self.bot.QUERY['db_asn'] = old
         self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
 
@@ -167,10 +181,10 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.allowed_error_count = 1
         self.allowed_warning_count = 1
         self.prepare_bot()
-        old = self.bot.URL_DB_IP
-        self.bot.URL_DB_IP = 'http://localhost/{}'
+        old = self.bot.QUERY['db_ip']
+        self.bot.QUERY['db_ip'] = 'http://localhost/{}'
         self.run_bot(prepare=False)
-        self.bot.URL_DB_IP = old
+        self.bot.QUERY['db_ip'] = old
         self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
 
@@ -230,6 +244,26 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
                           }
         self.run_bot()
         self.assertMessageEqual(0, GEOLOCA_OUTPUT3)
+
+    def test_index_error(self):
+        self.input_message = INDEX_ERROR
+        self.run_bot()
+        self.assertMessageEqual(0, INDEX_ERROR)
+
+    def test_country_question_mark(self):
+        """
+        Response has '?' as country
+        https://stat.ripe.net/data/maxmind-geo-lite/data.json?resource=35.197.157.0
+        """
+        self.input_message = QUESTION_MARK
+        self.sysconfig = {'query_ripe_db_asn': False,
+                          'query_ripe_db_ip': False,
+                          'query_ripe_stat_asn': False,
+                          'query_ripe_stat_ip': False,
+                          'query_ripe_stat_geolocation': True,
+                          }
+        self.run_bot()
+        self.assertMessageEqual(0, QUESTION_MARK_OUTPUT)
 
 
 if __name__ == '__main__':  # pragma: no cover

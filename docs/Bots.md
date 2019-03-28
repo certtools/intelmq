@@ -273,7 +273,8 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * **HTTP parameters** (see above)
 * `extract_files`: Optional, boolean or list of strings. If it is not false, the retrieved (compressed) file or archived will be uncompressed/unpacked and the files are extracted. If the parameter is a list for strings, only the files matching the filenames are extracted. Extraction handles gziped files and both compressed and uncompressed tar-archives.
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
-* `http_url_formatting`: If `True` (default `False`) `{time[format]}` will be replaced by the current time formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2018` for the year 2018. Currently only the time in local timezone is available. Python's [Format Specification Mini-Language¶](https://docs.python.org/3/library/string.html) is used for this.
+* `http_url_formatting`: (`bool|JSON`, default: `false`) If `true`, `{time[format]}` will be replaced by the current time in local timezone formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2019` for the year 2019. (Python's [Format Specification Mini-Language](https://docs.python.org/3/library/string.html#formatspec) is used for this.)
+You may use `a JSON` specifiying [time-delta](https://docs.python.org/3/library/datetime.html#datetime.timedelta) parameters to shift the current time accordingly. Ex: type in `{"days": -1}` to use yesterday's date; the URL `http://localhost/{time[%Y-%m-%d]}` will get translated to "http://localhost/2018-12-31" for the 1st Jan of 2019.
 
 Zipped files are automatically extracted if detected.
 
@@ -460,6 +461,7 @@ Requires the rsync executable
 * `uri`: url of the REST interface of the RT
 * `user`: RT username
 * `password`: RT password
+* `search_not_older_than`: Absolute time (use ISO format) or relative time, e.g. `3 days`.
 * `search_owner`: owner of the ticket to search for (default: `nobody`)
 * `search_queue`: queue of the ticket to search for (default: `Incident Reports`)
 * `search_status`: status of the ticket to search for (default: `new`)
@@ -1326,6 +1328,8 @@ You can set the value of the field to a string literal or number.
 In addition you can use the [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax)
 to access the values from the processed event as `msg` and the match groups
 of the conditions as `matches`, see the bitdefender example above.
+Group 0 (`[0]`) contains the full matching string. See also the documentation on [`re.Match.group`](https://docs.python.org/3/library/re.html?highlight=re%20search#re.Match.group).
+
 Note that `matches` will also contain the match groups
 from the default conditions if there were any.
 
@@ -1745,7 +1749,7 @@ from your installation.
 
 * * *
 
-# SMTP Output Bot
+### SMTP Output Bot
 
 Sends a MIME Multipart message containing the text and the event as CSV for every single event.
 
@@ -1796,5 +1800,6 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 * `ip`: IP of destination server
 * `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server
-* `separator`: separator of messages, eg. "\n", optional (when sending to a TCP collector, parameter shouldn't be present)
+* `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present. 
+    In that case, the output waits every message is acknowledged by "Ok" message the tcp.collector bot implements.
 

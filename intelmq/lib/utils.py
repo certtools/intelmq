@@ -364,10 +364,6 @@ def parse_logline(logline: str, regex: str = LOG_REGEX) -> dict:
     try:
         value = dict(list(zip(fields, match.group(*fields))))
         date = dateutil.parser.parse(value['date'])
-        try:
-            date = date.astimezone(pytz.utc)
-        except ValueError:  # astimezone() cannot be applied to a naive datetime
-            pass
         value['date'] = date.isoformat()
         if value['date'].endswith('+00:00'):
             value['date'] = value['date'][:-6]
@@ -416,7 +412,7 @@ def parse_relative(relative_time: str) -> int:
         TIMESPANS: Defines the conversion of verbal timespans to minutes
     """
     try:
-        result = re.findall(r'^(\d+)\s+(\w+[^s])s?$', relative_time, re.UNICODE)
+        result = re.findall(r'^(\d+)\s+(\w+[^s])s?$', relative_time.strip(), re.UNICODE)
     except ValueError as e:
         raise ValueError("Could not apply regex to attribute \"%s\" with exception %s.",
                          repr(relative_time), repr(e.args))

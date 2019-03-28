@@ -28,7 +28,7 @@ class GeoIPExpertBot(Bot):
                               " procedure.")
             self.stop()
         self.overwrite = getattr(self.parameters, 'overwrite', False)
-        self.registerd = getattr(self.parameters, 'use_registered', False)
+        self.registered = getattr(self.parameters, 'use_registered', False)
 
     def process(self):
         event = self.receive_message()

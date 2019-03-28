@@ -31,13 +31,17 @@ Possible feednames:
 * `Accessible-Rsync`
 * `Accessible-SMB`
 * `Accessible-Telnet`
+* `Accessible-Ubiquiti-Discovery-Service`
 * `Accessible-VNC`
+* `Amplification-DDoS-Victim`
 * `Blacklisted-IP`
 * `Compromised-Website`
 * `Darknet`
 * `DNS-Open-Resolvers`
 * `Drone`
 * `Drone-Brute-Force`
+* `HTTP-Scanners`
+* `ICS-Scanners`
 * `IPv6-Sinkhole-HTTP-Drone`
 * `Microsoft-Sinkhole`
 * `NTP-Monitor`

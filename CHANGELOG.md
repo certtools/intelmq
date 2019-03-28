@@ -11,11 +11,17 @@ CHANGELOG
   - Print idle/rate limit time also in human readable format (#1332).
   - `set_request_parameters`: Use `{}` as default proxy value instead of `None`. Allows updating of existing proxy dictionaries.
   - Bots drop privileges if they run as root.
+  - Save statistics on successfully and failed processed messages in the redis database 3.
 - `lib/utils`
   - Function `unzip` to extract files from gzipped and/or tar-archives.
   - New class `ListHandler`: new handler for logging purpose which saves the messages in a list.
   - Add function `seconds_to_human`.
   - Add function `drop_privileges`.
+  - `parse_relative`: Strip string before parsing.
+  - `parse_logline`: Do not convert the timestamps to UTC, leave them as is.
+- `lib/cache`:
+  - Allow ttl to be None explicitly.
+  - Overwrite existing cache keys in the database instead of discarding the new data.
 
 ### Harmonization
 
@@ -24,7 +30,9 @@ CHANGELOG
 - added `intelmq.bots.parsers.opendxl.collector` (#1265).
 - added `intelmq.bots.collectors.api`: collecting data using an HTTP API (#123, #1187).
 - added `intelmq.bots.collectors.rsync` (#1286).
-- `intelmq.bots.collectors.http.collector_http`: Add support for uncompressing of gzipped-files (#1270).
+- `intelmq.bots.collectors.http.collector_http`:
+  - Add support for uncompressing of gzipped-files (#1270).
+  - Add time-delta support for time formatted URLs (#1366).
 - `intelmq.collectors.blueliv.collector_crimeserver`: Allow setting the API URL by parameter (#1336).
 - `intelmq.collectors.mail`:
   - Use internal lib for functionality.
@@ -36,14 +44,19 @@ CHANGELOG
 - `intelmq.bots.parsers.generic.parser_csv`:
   - New parameter `columns_required` to optionally ignore parse errors for columns.
 - added `intelmq.bots.parsers.cert_eu.parser_csv` (#1287).
+  - Do not overwrite the local `time.observation` with the data from the feed. The feed's field 'observation time' is now saved in the field `extra.cert_eu_time_observation`.
+  - Fix parsing of `asn` (renamed to `source asn`, `source.asn` internally) and handle existing `feed.accuracy` for parsing `confidence`.
 - added `intelmq.bots.parsers.surbl.surbl`
 - added `intelmq.bots.parsers.html_table` (#1381).
+- `intelmq.bot.parsers.netlab_360.parser`: Handle empty lines containing blank characters (#1393).
 
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).
 - added `intelmq.bots.experts.mcafee.expert_mar` (1265).
 - renamed `intelmq.bots.experts.ripencc_abuse_contact.expert` to `intelmq.bots.experts.ripe.expert`, compatibility shim will be removed in version 3.0.
   - Added support for geolocation information in ripe expert with a new parameter `query_ripe_stat_geolocation` (#1317).
+  - Restructurize the expert and de-duplicataion (#1384).
+  - Handle '?' in geolocation country data (#1384).
 - `intelmq.bots.experts.ripe.expert`:
   - Use a requests session (#1363).
   - Set the requests parameters once per session.
@@ -54,11 +67,15 @@ CHANGELOG
 - added `intelmq.bots.outputs.blackhole` (#1279).
 - `intelmq.bots.outputs.restapi.expert`:
   - Set the requests parameters once per session.
+- `intelmq.bots.outputs.redis`:
+  - New parameter `hierarchichal_output` (#1388).
+  - New parameter `with_type`.
 
 ### Documentation
 - added documentation for feeds
   - CyberCrime Tracker
   - Feodo Tracker Latest
+- Feeds: Document abuse.ch URLhaus feed (#1379).
 
 ### Packaging
 
@@ -75,46 +92,75 @@ CHANGELOG
 - `malware_name_mapping`:
   - Added the script `apply_mapping_eventdb.py` to apply the mapping to an eventdb.
   - Possibility to add local rules using the download tool.
+- `check_mk`:
+  - Added scripts for monitoring queues and statistics.
 
 ### Known issues
 
 
-1.1.2 (unreleased)
+1.1.2 (2019-03-25)
 ------------------
 
 ### Core
 - `intelmq.lib.bot`:
   - `Bot.__handle_sighup`: Handle exceptions in `shutdown` method of bots.
 
-### Development
-
 ### Harmonization
+- FQDN: Disallow `:` in FQDN values to prevent values like '10.0.0.1:8080' (#1235).
 
 ### Bots
 #### Collectors
-- `intelmq.bots.collectors.stomp.collector`: Fix name of shutdown method, was ineffective in the past.
+- `intelmq.bots.collectors.stomp.collector`
+  - Fix name of shutdown method, was ineffective in the past.
+  - Ignore `NotConnectedException` errors on disconnect during shutdown.
 - `intelmq.bots.collectors.mail.collector_mail_url`: Decode body if it is bytes (#1367).
+- `intelmq.bots.collectors.tcp.collector`: Timeout added. More stable version.
 
 #### Parsers
+- `intelmq.bots.parsers.shadowserver`:
+  - Add support for the `Amplification-DDoS-Victim`, `HTTP-Scanners`, `ICS-Scanners` and `Accessible-Ubiquiti-Discovery-Service` feeds (#1368, #1383)
+- `intelmq.bots.parsers.microsoft.parser_ctip`:
+  - Workaround for mis-formatted data in `networkdestinationipv4` field (since 2019-03-14).
+  - Ignore "hostname" ("destination.fqdn") if it contains invalid data.
+- `intelmq.bots.parsers.shodan.parser`:
+  - In `minimal_mode`:
+    - Fix the parsing, previously only `source.geolocation.cc` and `extra.shodan` was correctly filled with information.
+    - Add a `classification.type` = 'other' to all events.
+    - Added tests for this mode.
+  - Normal mode:
+    - Fix the parsing of `timestamp` to `time.source in the normal mode, previously no timezone information has been added and thus every event raised an exception.
+    - ISAKMP: Ignore `isakmp.aggressive`, as the content is same as `isakmp` or less.
+- `intelmq.bots.parsers.abusech.parser_ip`: Re-structure the bot and support new format of the changed "Feodo Tracker Domains" feed.
+- `intelmq.bots.parsers.n6.parser`:
+  - Add parsing for fields "confidence", "expires" and "source".
+  - Add support for type "bl-other" (category "other").
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`: Fix key definition to allow field names with numbers (`malware.hash.md5`/`sha1`, #1371).
 
 #### Outputs
+- `intelmq.bots.outputs.tcp.output`: Timeout added. When no separator used, awaits that every message is acknowledged by a simple "Ok" string to ensure more stability.
 
 ### Documentation
 - Install: Update operating system versions
 - Sieve Expert: Fix `elsif` -> `elif`.
+- Rephrase the description of `time.*` fields.
+- Feeds: New URL and format of the "Feodo Tracker IPs" feed. "Feodo Tracker Domains" has been discontinued.
 
 ### Packaging
 
 ### Tests
+- Add missing `__init__.py` files in 4 bot's test directories. Previously these tests have never been executed.
+- `intelmq.lib.test`: Allow bot test class names with an arbitrary postfix separated by an underscore. E.g. `TestShodanParserBot_minimal`.
 
 ### Tools
-
-### Contrib
+- intelmqctl:
+  - status: Show commandline differences if a program with the expected PID could be found, but they do not match (previous output was `None`).
+  - Use logging level from defauls configuration if possible, otherwise intelmq's internal default. Previously, DEBUG was used unconditionally.
 
 ### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted (#952).
+- stomp collector bot constantly uses 100% of CPU (#1364).
 
 
 1.1.1 (2019-01-15)

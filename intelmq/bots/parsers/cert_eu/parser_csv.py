@@ -3,6 +3,7 @@ CERT-EU parser
 """
 from intelmq.lib.bot import ParserBot
 from collections import defaultdict
+from intelmq.lib.harmonization import DateTime
 
 
 class CertEUCSVParserBot(ParserBot):
@@ -43,7 +44,8 @@ class CertEUCSVParserBot(ParserBot):
         if "datasource" in line:
             event["extra.datasource"] = line["datasource"]
         event.add("source.ip", line["source ip"])
-        event.add("time.observation", line["observation time"])
+        event.add("extra.cert_eu_time_observation",
+                  DateTime.sanitize(line["observation time"]))
         event.add("tlp", line["tlp"])
         event.add("event_description.text", line["description"])
         event.add("classification.type", self.abuse_to_intelmq[line["type"]])
@@ -61,12 +63,14 @@ class CertEUCSVParserBot(ParserBot):
             event["extra.first_seen"] = line["first_seen"]
         if "num_sensors" in line:
             event["extra.num_sensors"] = line["num_sensors"]
-        event.add("feed.accuracy", line["confidence level"])
+        event.add('feed.accuracy',
+                  event.get('feed.accuracy', 100) * int(line["confidence level"]) / 100,
+                  overwrite=True)
         if "last_seen" in line:
             event["extra.last_seen"] = line["last_seen"]
         event.add("event_description.target", line["target"])
         event.add("source.url", line["url"])
-        event.add("source.asn", line["asn"])
+        event.add("source.asn", line["source asn"])
         event.add("source.fqdn", line["domain name"])
 
         event.add("raw", self.recover_line(line))
