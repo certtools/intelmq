@@ -17,6 +17,7 @@ CHANGELOG
   - New class `ListHandler`: new handler for logging purpose which saves the messages in a list.
   - Add function `seconds_to_human`.
   - Add function `drop_privileges`.
+  - `parse_relative`: Strip string before parsing.
   - `parse_logline`: Do not convert the timestamps to UTC, leave them as is.
 - `lib/cache`:
   - Allow ttl to be None explicitly.

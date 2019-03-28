@@ -412,7 +412,7 @@ def parse_relative(relative_time: str) -> int:
         TIMESPANS: Defines the conversion of verbal timespans to minutes
     """
     try:
-        result = re.findall(r'^(\d+)\s+(\w+[^s])s?$', relative_time, re.UNICODE)
+        result = re.findall(r'^(\d+)\s+(\w+[^s])s?$', relative_time.strip(), re.UNICODE)
     except ValueError as e:
         raise ValueError("Could not apply regex to attribute \"%s\" with exception %s.",
                          repr(relative_time), repr(e.args))
