@@ -40,6 +40,10 @@ BOT_CONFIG = {"http_proxy": None,
               }
 
 
+class Parameters(object):
+    pass
+
+
 def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}, group=None, module=None):
     def mocked(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
@@ -178,21 +182,30 @@ class BotTestCase(object):
     def new_event(self):
         return message.Event(harmonization=self.harmonization)
 
-    def prepare_bot(self, parameters={}):
-        """Reconfigures the bot with the changed attributes"""
+    def prepare_bot(self, parameters={}, destination_queues=None):
+        """
+        Reconfigures the bot with the changed attributes.
 
+        Parameters:
+            parameters: optional bot parameters for this run, as dict
+            destination_queues: optional definition of destination queues
+                default: {"_default": "{}-output".format(self.bot_id)}
+        """
         self.log_stream = io.StringIO()
 
         src_name = "{}-input".format(self.bot_id)
-        dst_names = {"_default": "{}-output".format(self.bot_id),
-                     "other-way": "{}-other-output".format(self.bot_id),
-                     "two-way": ["{}-way1-output".format(self.bot_id), "{}-way2-output".format(self.bot_id)]}
+        if not destination_queues:
+            destination_queues = {"_default": "{}-output".format(self.bot_id)}
+        else:
+            destination_queues = {queue_name: "%s-%s-output" % (self.bot_id,
+                                                                queue_name.strip('_'))
+                                  for queue_name in destination_queues}
 
         config = self.sysconfig.copy()
         config.update(parameters)
         self.mocked_config = mocked_config(self.bot_id,
                                            src_name,
-                                           dst_names,
+                                           destination_queues,
                                            sysconfig=config,
                                            group=self.bot_type.title(),
                                            module=self.bot_reference.__module__,
@@ -209,11 +222,9 @@ class BotTestCase(object):
         warnings_logger = logging.getLogger("py.warnings")
         warnings_logger.addHandler(console_handler)
 
-        class Parameters(object):
-            source_queue = src_name
-            destination_queues = dst_names
-
         parameters = Parameters()
+        setattr(parameters, 'source_queue', src_name)
+        setattr(parameters, 'destination_queues', destination_queues)
         self.pipe = pipeline.Pythonlist(parameters, logger=logger)
         self.pipe.set_queues(parameters.source_queue, "source")
         self.pipe.set_queues(parameters.destination_queues, "destination")
@@ -238,7 +249,8 @@ class BotTestCase(object):
             if self.default_input_message:  # None for collectors
                 self.input_queue = [self.default_input_message]
 
-    def run_bot(self, iterations: int = 1, error_on_pipeline: bool = False, prepare=True):
+    def run_bot(self, iterations: int = 1, error_on_pipeline: bool = False,
+                prepare=True):
         """
         Call this method for actually doing a test run for the specified bot.
 
@@ -257,10 +269,6 @@ class BotTestCase(object):
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
 
-        """ Test if all pipes are created with correct names. """
-        pipenames = ["{}-input", "{}-input-internal", "{}-output", "{}-other-output", "{}-way1-output", "{}-way2-output"]
-        self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
-                            set(self.pipe.state.keys()))
         """ Test if input queue is empty. """
         self.assertEqual(self.input_queue, [],
                          'Not all input messages have been processed. '

@@ -435,7 +435,8 @@ class Bot(object):
             self.__destination_pipeline = None
             self.logger.debug("Disconnected from destination pipeline.")
 
-    def send_message(self, *messages, path="_default", auto_add=None):
+    def send_message(self, *messages, path="_default", auto_add=None,
+                     path_permissive=False):
         """
         Parameters:
             messages: Instances of intelmq.lib.message.Message class
@@ -463,7 +464,8 @@ class Bot(object):
                 self.__message_counter["start"] = datetime.now()
 
             raw_message = libmessage.MessageFactory.serialize(message)
-            self.__destination_pipeline.send(raw_message, path=path)
+            self.__destination_pipeline.send(raw_message, path=path,
+                                             path_permissive=path_permissive)
 
     def receive_message(self):
         self.logger.debug('Waiting for incoming message.')

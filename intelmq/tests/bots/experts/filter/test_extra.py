@@ -29,6 +29,7 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_extra_filter_drop(self):
         self.run_bot()
+        self.assertOutputQueueLen(queue_len=0)
 
     def test_extra_filter_keep(self):
         self.sysconfig = {'filter_key': 'extra.test2',

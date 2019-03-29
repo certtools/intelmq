@@ -4,6 +4,7 @@ import intelmq.lib.test as test
 from intelmq.lib.bot import Bot
 
 EXAMPLE = {'feed.name': 'Test', "__type": "Report"}
+QUEUES = {"_default", "other-way", "two-way"}
 
 class DummyExpertBot(Bot):
 
@@ -22,30 +23,28 @@ class TestDummyExpertBot(test.BotTestCase, unittest.TestCase):
         cls.default_input_message = EXAMPLE.copy()
         cls.allowed_error_count = 1
 
-    def test_bot_name(self):
-        self.run_bot()
-        self.assertEqual(self.bot.name, 'Test Bot')
-
     def test_pipeline_default(self):
         self.input_message = EXAMPLE
-        self.run_bot()
+        self.prepare_bot(destination_queues=QUEUES)
+        self.run_bot(prepare=False)
         self.assertMessageEqual(0, EXAMPLE)
 
     def test_pipeline_other(self):
-        msg = self.input_message = EXAMPLE.copy()
+        self.input_message = EXAMPLE.copy()
         self.input_message["feed.code"] = "other-way"
-        self.run_bot()
+        self.prepare_bot(destination_queues=QUEUES)
+        self.run_bot(prepare=False)
         self.assertOutputQueueLen(0, path="_default")
-        self.assertMessageEqual(0, msg, path="other-way")
+        self.assertMessageEqual(0, self.input_message, path="other-way")
 
     def test_pipeline_multiple(self):
-        msg = self.input_message = EXAMPLE.copy()
+        self.input_message = EXAMPLE.copy()
         self.input_message["feed.code"] = "two-way"
-        self.run_bot()
+        self.prepare_bot(destination_queues=QUEUES)
+        self.run_bot(prepare=False)
         self.assertOutputQueueLen(0, path="_default")
         self.assertOutputQueueLen(0, path="other-way")
-        self.assertMessageEqual(0, msg, path="two-way")
-        self.assertMessageEqual(1, msg, path="two-way")
+        self.assertMessageEqual(0, self.input_message, path="two-way")
 
 
 if __name__ == '__main__':  # pragma: no cover
