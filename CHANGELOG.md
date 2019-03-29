@@ -49,6 +49,7 @@ CHANGELOG
 - added `intelmq.bots.parsers.surbl.surbl`
 - `intelmq.bot.parsers.netlab_360.parser`: Handle empty lines containing blank characters (#1393).
 - `intelmq.bots.parsers.n6.parser_n6stomp`: Handle events without IP addresses.
+- `intelmq.bots.parsers.cymru.parser_cap_program`: Handle new feed format.
 
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).

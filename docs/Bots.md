@@ -776,6 +776,16 @@ you can map them to the correct ones. The `type_translation` field can hold a JS
 * `cache (redis db):` none
 * `description:` Parses data from cymru's cap program feed.
 
+#### Description
+
+There are two different feeds available:
+ * infected_$date.txt ("old")
+ * $certname_$date.txt ("new")
+
+The new will replace the old at some point in time, currently you need to fetch both. The parser handles both formats.
+
+##### Old feed
+
 As little information on the format is available, the mappings might not be correct in all cases.
 Some reports are not implemented at all as there is no data available to check if the parsing is correct at all. If you do get errors like `Report ... not implement` or similar please open an issue and report the (anonymized) example data. Thanks.
 

@@ -3,6 +3,30 @@ from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 
 
+MAPPING_STATIC = {'bot': {
+    'classification.type': 'infected system'},
+    'bruteforce': {
+    'classification.type': 'brute-force'},
+    'controller': {
+    'classification.type': 'c&c'},
+    'darknet': {'classification.type': 'scanner',
+                'classification.identifier': 'darknet',},
+    'phishing': {'classification.type': 'phishing',
+                 'classification.identifier': 'phishing'},
+    'proxy': {'classification.type': 'proxy',
+              'classification.identifier': 'openproxy'},
+    'honeypot': {'classification.type': 'scanner'},
+    'openresolvers': {'classification.type': 'vulnerable service',
+                      'classification.identifier': 'dns-open-resolver',
+                      'protocol.application': 'dns',
+                      }
+}
+MAPPING_COMMENT = {'bruteforce': ('classification.identifier', 'protocol.application'),
+                   'phishing': ('source.url', )}
+PROTOCOL_MAPPING = {'6': 'tcp',  # TODO: use getent in harmonization
+                    '17': 'udp'}
+
+
 class CymruCAPProgramParserBot(ParserBot):
 
     def parse(self, report):
@@ -12,6 +36,8 @@ class CymruCAPProgramParserBot(ParserBot):
             line = line.strip()
             if line.startswith('#'):
                 self.tempdata.append(line)
+                if 'generated on' in line:
+                    self.parse_line = self.parse_line_new
             else:
                 yield line
 
@@ -180,6 +206,69 @@ class CymruCAPProgramParserBot(ParserBot):
         else:
             raise ValueError('Unknown report %r.', report_type)
         yield event
+
+
+    def parse_line_new(self, line, report):
+        category, ip, asn, timestamp, notes, asninfo = line.split('|')
+        comment_split = list(filter(lambda x: x, notes.split(';')))
+        asninfo_split = asninfo.split(', ')
+        event = self.new_event(report)
+        event.add('raw', self.recover_line(line))
+
+        event.add('source.ip', ip)
+        if asn != '0':
+            event.add('source.asn', asn)
+        event.add('time.source', timestamp + ' GMT')
+        event.add('source.as_name', ', '.join(asninfo_split[:-1]))  # contains CC at the end
+        if category in MAPPING_COMMENT:
+            assert len(comment_split) == 1
+            for field in MAPPING_COMMENT[category]:
+                event.add(field, comment_split[0])
+
+        try:
+            for key, value in MAPPING_STATIC[category].items():
+                event.add(key, value)
+        except KeyError:
+            raise ValueError('Unknown category %r.', category)
+        destination_ports = []
+
+        for comment in comment_split:
+            if category in MAPPING_COMMENT:
+                break
+            if ': ' not in comment:
+                if category == 'proxy':
+                    comment = 'proxy_type: %s' % comment
+                else:
+                    raise ValueError('Unable to parse comment %r of category %r. Please report this.' % (comment, category))
+            key, value = comment.split(': ')
+            key = key.strip()
+            value = value.strip()
+            if key == 'family':
+                event['classification.identifier'] = event['malware.name'] = value.lower()
+            elif key == 'dest_addr':
+                event['destination.ip'] = value
+            elif key in ('dest_port', 'ports_scanned', 'honeypot_port', 'darknet_port'):
+                for val in value.split(','):
+                    destination_ports.append(val.strip())
+            elif key == 'protocol':
+                try:
+                    event.add('protocol.transport', PROTOCOL_MAPPING[value])
+                except KeyError:
+                    raise ValueError('Unknown protocol %r, please report a bug')
+            elif key == 'hostname':
+                event['source.fqdn'] = value
+            elif key == 'proxy_type':
+                protocol, port = value.split('-')
+                event['protocol.application'] = protocol
+                event['source.port'] = port
+            else:
+                raise ValueError('Unknown key %r in comment of category %r. Please report this.' % (key, category))
+        for destination_port in destination_ports:
+            ev = self.new_event(event)
+            ev['destination.port'] = destination_port
+            yield ev
+        if not destination_ports:
+            yield event
 
 
 BOT = CymruCAPProgramParserBot
