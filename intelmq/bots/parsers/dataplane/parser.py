@@ -50,23 +50,29 @@ class DataplaneParserBot(ParserBot):
     }
 
     def parse_line(self, line, report):
+        file_format = [
+            ('source.asn', lambda x: x if x != 'NA' else None),
+            ('source.as_name', lambda x: x.split()[0] if x != 'NA' else None),
+            ('source.ip', lambda x: x),
+            ('time.source', lambda x: x + '+00:00'),
+        ]
+
         if line.startswith('#') or len(line) == 0:
             self.tempdata.append(line)
-
         else:
-            value = line.split('|')
             event = Event(report)
-            event.add('time.source', value[3].strip() + '+00:00')
-            if value[0].strip() != 'NA':
-                event.add('source.asn', value[0].strip())
-            if value[1].strip() != 'NA':
-                event.add('source.as_name', value[1].split()[0])
-            event.add('source.ip', value[2].strip())
 
-            if value[4].strip() in DataplaneParserBot.CATEGORY:
-                event.update(DataplaneParserBot.CATEGORY[value[4].strip()])
+            line_contents = line.split('|')
+            if len(line_contents) != len(file_format) + 1:
+                raise ValueError('Incorrect format for feed {}, found line: "{}"', event.get('feed.url'), line)
+
+            if line_contents[-1].strip() in self.CATEGORY:
+                event.update(self.CATEGORY[line_contents[-1].strip()])
             else:
-                raise ValueError('Unknown data feed %r.' % value[4].strip())
+                raise ValueError('Unknown data feed {}.'.format(line_contents[-1].strip()))
+
+            for field, setter in zip(line_contents, file_format):
+                event.add(setter[0], setter[1](field.strip()))
 
             event.add('raw', line)
             yield event
