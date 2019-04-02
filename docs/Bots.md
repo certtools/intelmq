@@ -848,26 +848,26 @@ http://www.team-cymru.com/bogon-reference.html
    ],
    ```
    Parameters **columns and ignore_values must have same length**
- * `"attribute_name"`: Filtering table with table attributes, to be used in conjection with `attribute_value`, optional. E.g. `class`, `id`, `style`.
+ * `"attribute_name"`: Filtering table with table attributes, to be used in conjunction with `attribute_value`, optional. E.g. `class`, `id`, `style`.
  * `"attribute_value"`: String.
     To filter all tables with attribute `class='details'` use
     ```json
     "attribute_name": "class",
     "attribute_value": "details"
     ```
- * `"table_index"`: Index of the table if multiple tables present. If `attribute_name` and `attribute_value` given, index according to tables remaining after filtering with table attribute.
+ * `"table_index"`: Index of the table if multiple tables present. If `attribute_name` and `attribute_value` given, index according to tables remaining after filtering with table attribute. Default: `0`.
  * `"split_column"`: Padded column to be splitted to get values, to be used in conjection with `split_separator` and `split_index`, optional.
  * `"split_separator"`: Delimiter string for padded column.
- * `"split_index"`: Index of unpadded string in returned list from splitting `split_column` with `split_separator` as delimiter string.
+ * `"split_index"`: Index of unpadded string in returned list from splitting `split_column` with `split_separator` as delimiter string. Default: `0`.
     E.g.
     ```json
     "split_column": "source.fqdn",
     "split_separator": " ",
     "split_index": 1,
     ```
-    With above configuration, column corresponding to source.fqdn with value `[D] lingvaworld.ru` will be assigned as `"source.fqdn": "lingvaworld.ru"`.
- * `"skip_table_head"`: Boolean, skip the first row of the table, optional.
- * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data.
+    With above configuration, column corresponding to `source.fqdn` with value `[D] lingvaworld.ru` will be assigned as `"source.fqdn": "lingvaworld.ru"`.
+ * `"skip_table_head"`: Boolean, skip the first row of the table, optional. Default: `true`.
+ * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data. Default: `"http://"`.
  * `"time_format"`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
 

@@ -38,6 +38,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [OpenPhish](#openphish)
 - [OpenPhish Commercial](#openphish-commercial)
 - [PhishTank](#phishtank)
+- [PrecisionSec](#precisionsec)
 - [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
 - [Sucuri](#sucuri)
@@ -79,7 +80,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 *  * `columns`: `['time.source', 'source.ip', 'malware.name', 'status', 'extra.SBL', 'source.as_name', 'source.geolocation.cc']`
 *  * `ignore_values`: `['', '', '', '', 'Not listed', '', '']`
-*  * `skip_head`: `True`
+*  * `skip_table_head`: `True`
 *  * `type`: `c&c`
 
 
@@ -748,7 +749,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 *  * `columns`: `['time.source', 'source.url', 'source.ip', 'malware.name', '__IGNORE__']`
 *  * `default_url_protocol`: `http://`
-*  * `skip_head`: `True`
+*  * `skip_table_head`: `True`
 *  * `type`: `c&c`
 
 
@@ -1470,6 +1471,34 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.phishtank.parser
 * **Configuration Parameters:**
+
+
+# PrecisionSec
+
+## Agent Tesla
+
+* **Status:** on
+* **Revision:** 02-04-2019
+* **Documentation:** https://precisionsec.com/threat-intelligence-feeds/agent-tesla/
+* **Description:** Agent Tesla IoCs, URLs where the malware is hosted.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://precisionsec.com/threat-intelligence-feeds/agent-tesla/`
+*  * `name`: `Agent Tesla`
+*  * `provider`: `PrecisionSec`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.html_table.parser
+* **Configuration Parameters:**
+*  * `columns`: `['source.ip|source.url', 'time.source']`
+*  * `default_url_protocol`: `http://`
+*  * `skip_table_head`: `True`
+*  * `type`: `malware`
 
 
 # ShadowServer
