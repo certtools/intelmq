@@ -6,7 +6,6 @@ from intelmq.lib.message import Event
 
 
 class DataplaneParserBot(ParserBot):
-
     CATEGORY = {
         'sipquery': {
             'classification.type': 'brute-force',
@@ -49,30 +48,32 @@ class DataplaneParserBot(ParserBot):
         }
     }
 
-    def parse_line(self, line, report):
-        file_format = [
-            ('source.asn', lambda x: x if x != 'NA' else None),
-            ('source.as_name', lambda x: x.split()[0] if x != 'NA' else None),
-            ('source.ip', lambda x: x),
-            ('time.source', lambda x: x + '+00:00'),
-        ]
+    FILE_FORMAT = [
+        ('source.asn', lambda x: x if x != 'NA' else None),
+        ('source.as_name', lambda x: x.split()[0] if x != 'NA' else None),
+        ('source.ip', lambda x: x),
+        ('time.source', lambda x: x + '+00:00'),
+    ]
 
+    def parse_line(self, line, report):
         if line.startswith('#') or len(line) == 0:
             self.tempdata.append(line)
         else:
             event = Event(report)
 
             line_contents = line.split('|')
-            if len(line_contents) != len(file_format) + 1:
-                raise ValueError('Incorrect format for feed {}, found line: "{}"', event.get('feed.url'), line)
+            if len(line_contents) != len(self.FILE_FORMAT) + 1:
+                raise ValueError('Incorrect format for feed {}, found line: "{}"'.format(event.get('feed.url'), line))
 
             if line_contents[-1].strip() in self.CATEGORY:
                 event.update(self.CATEGORY[line_contents[-1].strip()])
             else:
                 raise ValueError('Unknown data feed {}.'.format(line_contents[-1].strip()))
 
-            for field, setter in zip(line_contents, file_format):
-                event.add(setter[0], setter[1](field.strip()))
+            for field, setter in zip(line_contents, self.FILE_FORMAT):
+                value = setter[1](field.strip())
+                if value is not None:
+                    event.add(setter[0], value)
 
             event.add('raw', line)
             yield event
