@@ -86,6 +86,7 @@ class HTMLTableParserBot(Bot):
             event = self.new_event(report)
             tdata = [data.text for data in feed.find_all('td')]
 
+            data_added = False
             for key, data, ignore_value in zip(self.columns, tdata, self.ignore_values):
                 keys = key.split('|') if '|' in key else [key, ]
                 data = data.strip()
@@ -116,8 +117,15 @@ class HTMLTableParserBot(Bot):
                             data = self.default_url_protocol + data
 
                     if event.add(key, data, raise_failure=False):
+                        data_added = True
                         break
+                else:
+                    raise ValueError("Could not add value %r to %s, all invalid."
+                                     "" % (data, keys))
 
+            if not data_added:
+                # we added nothing from this row, so skip it
+                continue
             if hasattr(self.parameters, 'type')\
                     and "classification.type" not in event:
                 event.add('classification.type', self.parameters.type)

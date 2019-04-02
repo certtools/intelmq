@@ -49,14 +49,18 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = HTMLTableParserBot
         cls.default_input_message = EXAMPLE_REPORT
         cls.sysconfig = {"columns": ["source.ip|source.url", "time.source"],
-                         "skip_head": True,
                          "type": "malware"}
 
     def test_event(self):
-        """ Test if correct Event has been produced. """
+        """
+        Test if correct Event has been produced.
+
+        The row without data must be ignored.
+        """
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
         self.assertMessageEqual(1, EXAMPLE_EVENT1)
+        self.assertOutputQueueLen(10)
 
 
 if __name__ == '__main__':  # pragma: no cover
