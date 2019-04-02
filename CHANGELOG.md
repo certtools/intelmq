@@ -46,6 +46,7 @@ CHANGELOG
 - added `intelmq.bots.parsers.cert_eu.parser_csv` (#1287).
   - Do not overwrite the local `time.observation` with the data from the feed. The feed's field 'observation time' is now saved in the field `extra.cert_eu_time_observation`.
   - Fix parsing of `asn` (renamed to `source asn`, `source.asn` internally) and handle existing `feed.accuracy` for parsing `confidence`.
+  - Update columns and mapping to current (2019-04-02) data.
 - added `intelmq.bots.parsers.surbl.surbl`
 - `intelmq.bot.parsers.netlab_360.parser`: Handle empty lines containing blank characters (#1393).
 - `intelmq.bots.parsers.n6.parser_n6stomp`: Handle events without IP addresses.
