@@ -441,6 +441,30 @@
                 "type_translation": null
             }
         },
+        "HTML Table": {
+            "description": "HTML Table Parser is a bot configurable to parse different html table data.",
+            "module": "intelmq.bots.parsers.html_table.parser",
+            "parameters": {
+                "columns": [
+                    "",
+                    "source.fqdn"
+                ],
+                "ignore_values": [
+                    "",
+                    ""
+                ],
+                "table_index": 0,
+                "skip_table_head": true,
+                "attribute_name": "",
+                "attribute_value": "",
+                "split_column": "",
+                "split_separator": "",
+                "split_index": 0,
+                "default_url_protocol": "http://",
+                "time_format": null,
+                "type": "c&c"
+            }
+        },
         "HpHosts": {
             "description": "HpHosts Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.hphosts.parser",

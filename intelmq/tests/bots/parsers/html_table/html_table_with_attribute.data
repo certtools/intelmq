@@ -1,0 +1,65 @@
+<table class='ExploitTable' width='722'>
+    <thead>
+        <tr class='TableHeader'>
+            <td width="59">-::DATE</td>
+            <td width='440'>-::URL</td>
+            <td>-::IP</td>
+            <td>-::TYPE</td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>15-02-2019</td>
+            <td>servicestatus.one/b2ccsaG/login.php</td>
+            <td>51.15.130.100</td>
+            <td>Amadey</td>
+        </tr>
+        <tr>
+            <td>13-02-2019</td>
+            <td>checkz.tk/base/admin.php</td>
+            <td>176.114.9.43</td>
+            <td>Pony</td>
+        </tr>
+    </tbody>
+</table>
+<table style='table-layout: fixed;'>
+    <thead>
+        <tr>
+            <th style='text-align: left;'>URL/IP</th>
+            <th style='text-align: left;width: 20%'>Date Added</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style='text-align: left; word-wrap:break-word;'>http://www.ryanmotors.co/banners/obm/obm.exe</td>
+        <td style='text-align: left;'>2018-11-22 00:30:06
+        </td>
+    </tr>
+    <tr>
+        <td style='text-align: left; word-wrap:break-word;'>192.185.143.150</td>
+        <td style='text-align: left;'>2018-11-19 10:50:41
+        </td>
+    </tr>
+    </tbody>
+</table>
+<TABLE id='details'>
+    <TR>
+        <TH>Date&nbsp;</TH>
+        <TH>URL</TH>
+        <TH>MD5</TH>
+        <TH>IP</TH>
+    </TR>
+    <TR>
+        <TD class=fonce>02-15</TD>
+        <TD class=fonce>lingvaworld.ru/media/system/css/messg.jpg</TD>
+        <TD class=fonce>A5144B1F31AAD413075FFBD9D91D4EB9</TD>
+        <TD class=fonce>81.177.135.172&nbsp;</TD>
+    </TR>
+    <TR>
+        <TD class=clair>02-15</TD>
+        <TD class=clair>3forfree.org/wp-content/themes/twentyseventeen/assets/css/messg.</TD>
+        <TD class=clair>BC278B8AF540FAE0AA608B16BC1594B1</TD>
+        <TD class=clair>69.195.107.217&nbsp;</TD>
+    </TR>
+</TABLE>

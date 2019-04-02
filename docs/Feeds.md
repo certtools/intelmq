@@ -19,6 +19,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [CINSscore](#cinsscore)
 - [Calidog](#calidog)
 - [CleanMX](#cleanmx)
+- [CyberCrime Tracker](#cybercrime-tracker)
 - [DShield](#dshield)
 - [Danger Rulez](#danger-rulez)
 - [Dataplane](#dataplane)
@@ -37,6 +38,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [OpenPhish](#openphish)
 - [OpenPhish Commercial](#openphish-commercial)
 - [PhishTank](#phishtank)
+- [PrecisionSec](#precisionsec)
 - [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
 - [Sucuri](#sucuri)
@@ -56,6 +58,31 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 
 # Abuse.ch
+
+## Feodo Tracker Browse
+
+* **Status:** on
+* **Revision:** 19-03-2019
+* **Description:**
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://feodotracker.abuse.ch/browse`
+*  * `name`: `Feodo Tracker Browse`
+*  * `provider`: `Abuse.ch`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.html_table.parser
+* **Configuration Parameters:**
+*  * `columns`: `['time.source', 'source.ip', 'malware.name', 'status', 'extra.SBL', 'source.as_name', 'source.geolocation.cc']`
+*  * `ignore_values`: `['', '', '', '', 'Not listed', '', '']`
+*  * `skip_table_head`: `True`
+*  * `type`: `c&c`
+
 
 ## Feodo Tracker IPs
 
@@ -697,6 +724,33 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.cleanmx.parser
 * **Configuration Parameters:**
+
+
+# CyberCrime Tracker
+
+## Latest
+
+* **Status:** on
+* **Revision:** 19-03-2019
+* **Description:** C2 servers
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://cybercrime-tracker.net/index.php`
+*  * `name`: `Latest`
+*  * `provider`: `CyberCrime Tracker`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.html_table.parser
+* **Configuration Parameters:**
+*  * `columns`: `['time.source', 'source.url', 'source.ip', 'malware.name', '__IGNORE__']`
+*  * `default_url_protocol`: `http://`
+*  * `skip_table_head`: `True`
+*  * `type`: `c&c`
 
 
 # DShield
@@ -1419,6 +1473,34 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
+# PrecisionSec
+
+## Agent Tesla
+
+* **Status:** on
+* **Revision:** 02-04-2019
+* **Documentation:** https://precisionsec.com/threat-intelligence-feeds/agent-tesla/
+* **Description:** Agent Tesla IoCs, URLs where the malware is hosted.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://precisionsec.com/threat-intelligence-feeds/agent-tesla/`
+*  * `name`: `Agent Tesla`
+*  * `provider`: `PrecisionSec`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.html_table.parser
+* **Configuration Parameters:**
+*  * `columns`: `['source.ip|source.url', 'time.source']`
+*  * `default_url_protocol`: `http://`
+*  * `skip_table_head`: `True`
+*  * `type`: `malware`
+
+
 # ShadowServer
 
 ## Custom
@@ -1792,7 +1874,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 # VXVault
 
-## IPs
+## URLs
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1803,7 +1885,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://vxvault.net/URL_List.php`
-*  * `name`: `IPs`
+*  * `name`: `URLs`
 *  * `provider`: `VXVault`
 *  * `rate_limit`: `3600`
 

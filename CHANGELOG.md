@@ -48,6 +48,7 @@ CHANGELOG
   - Fix parsing of `asn` (renamed to `source asn`, `source.asn` internally) and handle existing `feed.accuracy` for parsing `confidence`.
   - Update columns and mapping to current (2019-04-02) data.
 - added `intelmq.bots.parsers.surbl.surbl`
+- added `intelmq.bots.parsers.html_table` (#1381).
 - `intelmq.bot.parsers.netlab_360.parser`: Handle empty lines containing blank characters (#1393).
 - `intelmq.bots.parsers.n6.parser_n6stomp`: Handle events without IP addresses.
 
@@ -73,6 +74,9 @@ CHANGELOG
   - New parameter `with_type`.
 
 ### Documentation
+- added documentation for feeds
+  - CyberCrime Tracker
+  - Feodo Tracker Latest
 - Feeds: Document abuse.ch URLhaus feed (#1379).
 
 ### Packaging

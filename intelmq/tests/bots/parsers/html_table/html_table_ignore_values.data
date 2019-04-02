@@ -1,0 +1,50 @@
+<table id="botnet_c2s" class="table table-sm table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Firstseen (UTC)</th>
+            <th>Host</th>
+            <th>Malware</th>
+            <th>Status</th>
+            <th>SBL</th>
+            <th>Network (ASN)</th>
+            <th>Country</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>2019-02-06 10:36:27</td>
+            <td><a href="/browse/host/201.192.163.160/" target="_parent" title="Get more information about this botnet C&amp;C">201.192.163.160</a></td>
+            <td><span class="badge badge-info">Heodo <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.geodo" target="_blank" title="Malpedia: Geodo (aka Emotet aka Heodo)" class="malpedia"></a></span></td>
+            <td><span class="badge badge-danger"><img src="/images/icons/flame.svg" alt="-">  Online</span></td>
+            <td>Not listed</td>
+            <td class="text-truncate">AS11830 Instituto Costarricense de Electricidad y Telecom.</td>
+            <td><img src="/images/flags/cr.png" alt="-" title="CR"> CR</td>
+        </tr>
+        <tr>
+            <td>2018-12-11 18:26:22</td>
+            <td><a href="/browse/host/179.33.30.194/" target="_parent" title="Get more information about this botnet C&amp;C">179.33.30.194</a></td>
+            <td><span class="badge badge-info">Heodo <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.geodo" target="_blank" title="Malpedia: Geodo (aka Emotet aka Heodo)" class="malpedia"></a></span></td>
+            <td><span class="badge badge-success">Offline</span></td>
+            <td><a href="https://www.spamhaus.org/sbl/query/SBL426579" target="_blank" title="Spamhaus SBL (SBL426579)"><span class="badge badge-warning">SBL426579</span></a></td>
+            <td class="text-truncate">AS3816 COLOMBIA TELECOMUNICACIONES S.A. ESP</td>
+            <td><img src="/images/flags/co.png" alt="-" title="CO"> CO</td></tr>
+        <tr>
+            <td>2019-02-06 10:36:21</td>
+            <td><a href="/browse/host/187.147.145.48/" target="_parent" title="Get more information about this botnet C&amp;C">187.147.145.48</a></td>
+            <td><span class="badge badge-info">Heodo <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.geodo" target="_blank" title="Malpedia: Geodo (aka Emotet aka Heodo)" class="malpedia"></a></span></td>
+            <td><span class="badge badge-success">Offline</span></td>
+            <td>Not listed</td>
+            <td class="text-truncate">AS8151 Uninet S.A. de C.V.</td>
+            <td><img src="/images/flags/mx.png" alt="-" title="MX"> MX</td>
+        </tr>
+        <tr>
+            <td>2019-02-06 10:36:14</td>
+            <td><a href="/browse/host/190.147.42.32/" target="_parent" title="Get more information about this botnet C&amp;C">190.147.42.32</a></td>
+            <td><span class="badge badge-info">Heodo <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.geodo" target="_blank" title="Malpedia: Geodo (aka Emotet aka Heodo)" class="malpedia"></a></span></td>
+            <td><span class="badge badge-success">Offline</span></td>
+            <td>Not listed</td>
+            <td class="text-truncate">AS10620 Telmex Colombia S.A.</td>
+            <td><img src="/images/flags/co.png" alt="-" title="CO"> CO</td>
+        </tr>
+    </tbody>
+</table>
