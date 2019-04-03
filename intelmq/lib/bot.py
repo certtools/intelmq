@@ -824,7 +824,7 @@ class ParserBot(Bot):
             if self._Bot__destination_queues and '_on_error' in self._Bot__destination_queues:
                 self.send_message(report_dump, path='_on_error')
 
-        self.logger.info('Sent %d events and found %d error(s).' % (events_count, len(self.__failed)))
+        self.logger.info('Sent %d events and found %d problem(s).' % (events_count, len(self.__failed)))
 
         self.acknowledge_message()
 
