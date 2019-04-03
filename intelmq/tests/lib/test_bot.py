@@ -22,6 +22,7 @@ class TestBot(test.BotTestCase, unittest.TestCase):
     def test_bot_name(self):
         pass
 
+    @test.skip_travis()
     def test_pipeline_raising(self):
         self.sysconfig = {"raise_on_connect": True}
         self.default_input_message = None

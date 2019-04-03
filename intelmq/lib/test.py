@@ -102,6 +102,11 @@ def skip_exotic():
                                'Skipping tests requiring exotic libs.')
 
 
+def skip_travis():
+    return unittest.skipIf(os.getenv('TRAVIS') == 'true' and os.getenv('CI') == 'true',
+                           'Test disabled on travis.')
+
+
 class BotTestCase(object):
     """
     Provides common tests and assert methods for bot testing.
