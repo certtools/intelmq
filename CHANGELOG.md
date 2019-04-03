@@ -75,6 +75,7 @@ CHANGELOG
 - `intelmq.bots.outputs.redis`:
   - New parameter `hierarchichal_output` (#1388).
   - New parameter `with_type`.
+- `intelmq.bots.outputs.amqptopic.output`: Compatibility with pika 1.0.0 (#1394).
 
 ### Documentation
 - added documentation for feeds
