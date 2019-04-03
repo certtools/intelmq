@@ -860,7 +860,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         return source_queues, destination_queues, internal_queues, all_queues
 
     def list_queues(self):
-        pipeline = PipelineFactory.create(self.parameters)
+        pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
         pipeline.set_queues(None, "source")
         pipeline.connect()
         source_queues, destination_queues, internal_queues,\
@@ -893,7 +893,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         First checks if the queue does exist in the pipeline configuration.
         """
-        pipeline = PipelineFactory.create(self.parameters)
+        pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
         pipeline.set_queues(None, "source")
         pipeline.connect()
 
@@ -1070,7 +1070,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'] + '-internal')
         if not no_connections:
             try:
-                pipeline = PipelineFactory.create(self.parameters)
+                pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
                 pipeline.set_queues(None, "source")
                 pipeline.connect()
                 orphan_queues = "', '".join(pipeline.nonempty_queues() - all_queues)

@@ -37,7 +37,9 @@ class PipelineFactory(object):
             raise exceptions.InvalidArgument("direction", got=direction,
                                              expected=["destination", "source"])
         if direction and hasattr(parameters, "%s_pipeline_broker" % direction):
-            broker = getattr(parameters, "%s_pipeline_broker" % direction)
+            broker = getattr(parameters, "%s_pipeline_broker" % direction).title()
+        elif getattr(parameters, "source_pipeline_broker", None) == getattr(parameters, "destination_pipeline_broker", None) and getattr(parameters, "source_pipeline_broker", None) is not None:
+            broker = getattr(parameters, "source_pipeline_broker").title()
         else:
             if hasattr(parameters, 'broker'):
                 broker = parameters.broker.title()
@@ -317,8 +319,6 @@ class Amqp(Pipeline):
         if pika is None:
             raise ValueError("To use AMQP you must install the 'pika' library.")
         self.properties = pika.BasicProperties(delivery_mode=2)  # message persistence
-        self.logger.warning("The 'amqp' pipeline broker is not stable yet, don't use "
-                            "in production environments.")
 
     def load_configurations(self, queues_type):
         self.host = getattr(self.parameters,
@@ -433,19 +433,34 @@ class Amqp(Pipeline):
         except Exception as e:
             raise exceptions.PipelineError(e)
 
+    def _get_queues(self) -> dict:
+        if self.username and self.password:
+            auth = (self.username, self.password)
+        else:
+            auth = ('guest', 'guest')
+        if requests is None:
+            self.logger.error("Library 'requests' is needed to get queue status. Please install it.")
+            return {}
+        response = requests.get('http://%s:15672/api/queues' % self.host, auth=auth)
+        if response.status_code == 401:
+            if response.json()['error'] == 'not_authorised':
+                # "Login failed", "Not management user"
+                raise ValueError("User is not authorised: %r.", response.json()['reason'])
+            else:
+                raise ValueError("Unknown authentication failure: %r.", response.json())
+        elif response.status_code != 200:
+            raise ValueError("Unknown error %r.", response.text)
+        try:
+            return {x['name']: x['messages'] for x in response.json()}
+        except SyntaxError:
+            self.logger.error("Unable to parse response from server as JSON: %r.", response.text)
+            return {}
+
     def count_queued_messages(self, *queues) -> dict:
         queue_dict = dict()
+        response = self._get_queues()
         for queue in queues:
-            try:
-                queue_dict[queue] = self.channel.queue_declare(queue=queue, passive=True).method.message_count
-            except pika.exceptions.ChannelClosed as exc:  # channel not found and similar, need to re-declare
-                if not exc.args or exc.args[0] in [404, 406]:
-                    queue_dict[queue] = 0
-                elif exc.args:
-                    raise exceptions.PipelineError(exc)
-                self.channel = self.connection.channel()
-            except Exception as exc:
-                raise exceptions.PipelineError(exc)
+            queue_dict[queue] = response.get(queue, 0)
         return queue_dict
 
     def clear_queue(self, queue: str) -> bool:
@@ -455,11 +470,5 @@ class Amqp(Pipeline):
             pass
 
     def nonempty_queues(self) -> set:
-        if requests is False:
-            return False
-        try:
-            result = requests.get('http://localhost:15672/api/queues', auth=('guest', 'guest'))
-            if result:
-                return {x['name'] for x in result.json() if x['messages']}
-        except Exception:
-            return False
+        result = self._get_queues()
+        return {x['name'] for x in result if x['messages']}
