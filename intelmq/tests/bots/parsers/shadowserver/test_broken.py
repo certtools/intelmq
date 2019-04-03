@@ -37,7 +37,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertLogMatches(pattern="Failed to parse line.")
         self.assertLogMatches(pattern="ValueError: Required column 'timestamp' not found in data. Possible change in data format or misconfiguration.")
-        self.assertLogMatches(pattern="Sent 0 events and found 1 error\(s\)\.",
+        self.assertLogMatches(pattern="Sent 0 events and found 1 problem\(s\)\.",
                               levelname="INFO")
 
     def test_half_broken(self):
@@ -49,7 +49,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertLogMatches(pattern="Optional key 'protocol' not found in data. Possible change in data format or misconfiguration.",
                               levelname="WARNING")
-        self.assertLogMatches(pattern="Sent 1 events and found 0 error\(s\)\.",
+        self.assertLogMatches(pattern="Sent 1 events and found 0 problem\(s\)\.",
                               levelname="INFO")
 
 
