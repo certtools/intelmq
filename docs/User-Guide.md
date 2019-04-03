@@ -203,14 +203,19 @@ Note that a bot must only have one (input) source queue but may have multiple de
 
 More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ repository.
 
-### AMQP
+### AMQP (Beta)
 
-Starting with IntelMQ 1.2 the AMQP protocol is supported as message queue. To use it, install a broker, for example RabbitMQ. The configuration and the differences are outlined here. Keep in mind that it is slower, but has better monitoring capabilities and is more stable.
+Starting with IntelMQ 1.2 the AMQP protocol is supported as message queue.
+To use it, install a broker, for example RabbitMQ.
+The configuration and the differences are outlined here.
+Keep in mind that it is slower, but has better monitoring capabilities and is more stable.
+The AMQP support is considered beta, so small problems might occur. So far, only RabbitMQ as broker has been tested.
 
-You can change the broker for single bots (set the parameters in the runtime configuration per bot) or for the whole botnet (in defafults configuration).
+You can change the broker for single bots (set the parameters in the runtime configuration per bot) or for the whole botnet (in defaults configuration).
 
-of course you need to set the parameter `source_pipeline_broker`/`destination_pipeline_broker` to `amqp`. There are more parameters:
+You need to set the parameter `source_pipeline_broker`/`destination_pipeline_broker` to `amqp`. There are more parameters available:
 
+* `destination_pipeline_broker`: `"amqp"`
 * `destination_pipeline_host` (default: `'127.0.0.1'`)
 * `destination_pipeline_port` (default: 5672)
 * `destination_pipeline_username`
@@ -223,6 +228,9 @@ of course you need to set the parameter `source_pipeline_broker`/`destination_pi
 * `source_pipeline_password`
 * `source_pipeline_socket_timeout` (default: no timeout)
 * `source_pipeline_amqp_virtual_host` (default: `'/`)
+
+In a RabbitMQ's default configuration you might not provide a user account, as by default the administrator is open. If you create a user account, make sure to add the tag "monitoring", otherwise IntelMQ can't fetch the queue sizes.
+![RabbitMQ User Account Monitoring Tag](./images/rabbitmq-user-monitoring.png)
 
 ## Runtime Configuration
 
