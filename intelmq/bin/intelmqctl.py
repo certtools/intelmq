@@ -1089,7 +1089,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 orphan_queues = "', '".join(pipeline.nonempty_queues() - all_queues)
             except Exception as exc:
                 error = utils.error_message_from_exc(exc)
-                check_logger.error('Could not connect to redis pipeline: %s', error)
+                check_logger.error('Could not connect to pipeline: %s', error)
                 retval = 1
             else:
                 if orphan_queues:

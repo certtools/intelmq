@@ -8,6 +8,7 @@ CHANGELOG
 ### Core
 - `lib/pipeline`:
   - Allow setting the broker of source and destination independently.
+  - Support for a new AMQP broker. See User Guide for configuration. (#1179)
 - `lib/bot`:
   - Dump messages locks the dump file using unix file locks (#574).
   - Print idle/rate limit time also in human readable format (#1332).

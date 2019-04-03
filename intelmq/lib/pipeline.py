@@ -38,7 +38,8 @@ class PipelineFactory(object):
                                              expected=["destination", "source"])
         if direction and hasattr(parameters, "%s_pipeline_broker" % direction):
             broker = getattr(parameters, "%s_pipeline_broker" % direction).title()
-        elif getattr(parameters, "source_pipeline_broker", None) == getattr(parameters, "destination_pipeline_broker", None) and getattr(parameters, "source_pipeline_broker", None) is not None:
+        elif (getattr(parameters, "source_pipeline_broker", None) == getattr(parameters, "destination_pipeline_broker", None) and
+              getattr(parameters, "source_pipeline_broker", None) is not None):
             broker = getattr(parameters, "source_pipeline_broker").title()
         else:
             if hasattr(parameters, 'broker'):
@@ -404,7 +405,6 @@ class Amqp(Pipeline):
             if not self.publish_raises_nack and not retval:
                 raise exceptions.PipelineError('Sent message was not confirmed.')
 
-
     def send(self, message: str, path="_default"):
         """
         In principle we could use AMQP's exchanges here but that architecture is incompatible
@@ -452,7 +452,8 @@ class Amqp(Pipeline):
         if requests is None:
             self.logger.error("Library 'requests' is needed to get queue status. Please install it.")
             return {}
-        response = requests.get('http://%s:15672/api/queues' % self.host, auth=auth)
+        response = requests.get('http://%s:15672/api/queues' % self.host, auth=auth,
+                                timeout=5)
         if response.status_code == 401:
             if response.json()['error'] == 'not_authorised':
                 # "Login failed", "Not management user"
@@ -462,7 +463,7 @@ class Amqp(Pipeline):
         elif response.status_code != 200:
             raise ValueError("Unknown error %r.", response.text)
         try:
-            return {x['name']: x['messages'] for x in response.json()}
+            return {x['name']: x.get('messages', 0) for x in response.json()}
         except SyntaxError:
             self.logger.error("Unable to parse response from server as JSON: %r.", response.text)
             return {}
@@ -482,4 +483,4 @@ class Amqp(Pipeline):
 
     def nonempty_queues(self) -> set:
         result = self._get_queues()
-        return {x['name'] for x in result if x['messages']}
+        return {name for name, count in result.items() if count}
