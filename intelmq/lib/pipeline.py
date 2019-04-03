@@ -345,11 +345,16 @@ class Amqp(Pipeline):
         self.kwargs = {}
         if self.username and self.password:
             self.kwargs['credentials'] = pika.PlainCredentials(self.username, self.password)
-            pika_version = tuple(int(x) for x in pika.__version__.split('.'))
-            if pika_version < (0, 11):
-                self.kwargs['heartbeat_interval'] = 10
-            else:
-                self.kwargs['heartbeat'] = 10
+        pika_version = tuple(int(x) for x in pika.__version__.split('.'))
+        if pika_version < (0, 11):
+            self.kwargs['heartbeat_interval'] = 10
+        else:
+            self.kwargs['heartbeat'] = 10
+        if pika_version < (1, ):
+            # https://groups.google.com/forum/#!topic/pika-python/gz7lZtPRq4Q
+            self.publish_raises_nack = False
+        else:
+            self.publish_raises_nack = True
 
     def connect(self, channelonly=False):
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
@@ -359,6 +364,7 @@ class Amqp(Pipeline):
                                                                             **self.kwargs
                                                                             ))
         self.channel = self.connection.channel()
+        self.channel.confirm_delivery()
         if self.source_queue:
             self.channel.queue_declare(queue=self.source_queue, durable=True)
         for path in self.destination_queues.values():
@@ -388,11 +394,12 @@ class Amqp(Pipeline):
                                                 properties=self.properties,
                                                 mandatory=True,
                                                 )
-        except Exception as exc:
+        except Exception as exc:  # UnroutableError, NackError in 1.0.0
             raise exceptions.PipelineError(exc)
         else:
-            if not retval:
+            if not self.publish_raises_nack and not retval:
                 raise exceptions.PipelineError('Sent message was not confirmed.')
+
 
     def send(self, message: str, path="_default"):
         """
