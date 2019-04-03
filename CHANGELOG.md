@@ -6,6 +6,9 @@ CHANGELOG
 - use pyupgrade to upgrade all files to python3-only syntax, e.g. use `super()` instead of `super(..., ...)` in all files. Migration from old to new string formatting has not been applied if the resulting code would be longer.
 
 ### Core
+- `lib/pipeline`:
+  - Allow setting the broker of source and destination independently.
+  - Support for a new AMQP broker. See User Guide for configuration. (#1179)
 - `lib/bot`:
   - Dump messages locks the dump file using unix file locks (#574).
   - Print idle/rate limit time also in human readable format (#1332).
@@ -73,6 +76,7 @@ CHANGELOG
 - `intelmq.bots.outputs.redis`:
   - New parameter `hierarchichal_output` (#1388).
   - New parameter `with_type`.
+- `intelmq.bots.outputs.amqptopic.output`: Compatibility with pika 1.0.0 (#1394).
 
 ### Documentation
 - added documentation for feeds
@@ -83,6 +87,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Add tests of AMQP broker.
 - Travis: Change the ownership of `/opt/intelmq` to the current user.
 
 ### Tools

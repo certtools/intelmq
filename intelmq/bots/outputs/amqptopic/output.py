@@ -16,6 +16,14 @@ class AMQPTopicBot(Bot):
 
         self.connection = None
         self.channel = None
+
+        pika_version = tuple(int(x) for x in pika.__version__.split('.'))
+        self.kwargs = {}
+        if pika_version < (0, 11):
+            self.kwargs['heartbeat_interval'] = self.parameters.connection_heartbeat
+        else:
+            self.kwargs['heartbeat'] = self.parameters.connection_heartbeat
+
         self.keep_raw_field = self.parameters.keep_raw_field
         self.delivery_mode = self.parameters.delivery_mode
         self.content_type = self.parameters.content_type
@@ -32,11 +40,12 @@ class AMQPTopicBot(Bot):
             port=self.connection_port,
             virtual_host=self.connection_vhost,
             connection_attempts=self.parameters.connection_attempts,
-            heartbeat_interval=self.parameters.connection_heartbeat,
-            credentials=self.credentials)
+            credentials=self.credentials,
+            **self.kwargs)
         self.routing_key = self.parameters.routing_key
         self.properties = pika.BasicProperties(
             content_type=self.content_type, delivery_mode=self.delivery_mode)
+
         self.connect_server()
 
     def connect_server(self):

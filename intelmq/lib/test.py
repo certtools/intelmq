@@ -102,6 +102,11 @@ def skip_exotic():
                                'Skipping tests requiring exotic libs.')
 
 
+def skip_travis():
+    return unittest.skipIf(os.getenv('TRAVIS') == 'true' and os.getenv('CI') == 'true',
+                           'Test disabled on travis.')
+
+
 class BotTestCase(object):
     """
     Provides common tests and assert methods for bot testing.
@@ -209,7 +214,7 @@ class BotTestCase(object):
             destination_queues = dst_names
 
         parameters = Parameters()
-        self.pipe = pipeline.Pythonlist(parameters)
+        self.pipe = pipeline.Pythonlist(parameters, logger=logger)
         self.pipe.set_queues(parameters.source_queue, "source")
         self.pipe.set_queues(parameters.destination_queues, "destination")
 

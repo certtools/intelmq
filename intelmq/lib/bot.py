@@ -403,17 +403,20 @@ class Bot(object):
     def __connect_pipelines(self):
         if self.__source_queues:
             self.logger.debug("Loading source pipeline and queue %r.", self.__source_queues)
-            self.__source_pipeline = PipelineFactory.create(self.parameters)
-            self.__source_pipeline.set_queues(self.__source_queues, "source")
+            self.__source_pipeline = PipelineFactory.create(self.parameters,
+                                                            logger=self.logger,
+                                                            direction="source",
+                                                            queues=self.__source_queues)
             self.__source_pipeline.connect()
             self.logger.debug("Connected to source queue.")
 
         if self.__destination_queues:
             self.logger.debug("Loading destination pipeline and queues %r.",
                               self.__destination_queues)
-            self.__destination_pipeline = PipelineFactory.create(self.parameters)
-            self.__destination_pipeline.set_queues(self.__destination_queues,
-                                                   "destination")
+            self.__destination_pipeline = PipelineFactory.create(self.parameters,
+                                                                 logger=self.logger,
+                                                                 direction="destination",
+                                                                 queues=self.__destination_queues)
             self.__destination_pipeline.connect()
             self.logger.debug("Connected to destination queues.")
         else:

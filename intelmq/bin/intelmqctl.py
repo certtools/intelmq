@@ -519,8 +519,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_list.set_defaults(func=self.list)
 
             parser_clear = subparsers.add_parser('clear', help='Clear a queue')
-            parser_clear.add_argument('queue', help='queue name',
-                                      choices=self.get_queues()[3])
+            parser_clear.add_argument('queue', help='queue name')
             parser_clear.set_defaults(func=self.clear_queue)
 
             parser_log = subparsers.add_parser('log', help='Get last log lines of a bot')
@@ -849,7 +848,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                     'description': self.runtime_configuration[bot_id].get('description')}
                    for bot_id in sorted(self.runtime_configuration.keys())]
 
-    def get_queues(self):
+    def get_queues(self, with_internal_queues=False):
         """
         :return: 4-tuple of source, destination, internal queues, and all queues combined.
         The returned values are only queue names, not their paths. I.E. if there is a bot with
@@ -863,7 +862,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         for botid, value in self.pipeline_configuration.items():
             if 'source-queue' in value:
                 source_queues.add(value['source-queue'])
-                internal_queues.add(value['source-queue'] + '-internal')
+                if with_internal_queues:
+                    internal_queues.add(value['source-queue'] + '-internal')
             if 'destination-queues' in value:
                 # flattens ["one", "two"] → {"one", "two"}, {"_default": "one", "other": ["two", "three"]} → {"one", "two", "three"}
                 destination_queues.update(utils.flatten_queues(value['destination-queues']))
@@ -873,12 +873,14 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         return source_queues, destination_queues, internal_queues, all_queues
 
     def list_queues(self):
-        source_queues, destination_queues, internal_queues, all_queues = self.get_queues()
-        pipeline = PipelineFactory.create(self.parameters)
+        pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
         pipeline.set_queues(None, "source")
         pipeline.connect()
+        source_queues, destination_queues, internal_queues,\
+            all_queues = self.get_queues(with_internal_queues=pipeline.has_internal_queues)
 
         counters = pipeline.count_queued_messages(*all_queues)
+        pipeline.disconnect()
         log_list_queues(counters)
 
         return_dict = {}
@@ -888,7 +890,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             if 'source-queue' in info:
                 return_dict[bot_id]['source_queue'] = (
                     info['source-queue'], counters[info['source-queue']])
-                return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
+                if pipeline.has_internal_queues:
+                    return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
 
             if 'destination-queues' in info:
                 return_dict[bot_id]['destination_queues'] = []
@@ -903,19 +906,20 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         First checks if the queue does exist in the pipeline configuration.
         """
+        pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
+        pipeline.set_queues(None, "source")
+        pipeline.connect()
+
         if RETURN_TYPE == 'text':
             logger.info("Clearing queue %s.", queue)
         queues = set()
         for key, value in self.pipeline_configuration.items():
             if 'source-queue' in value:
                 queues.add(value['source-queue'])
-                queues.add(value['source-queue'] + '-internal')
+                if pipeline.has_internal_queues:
+                    queues.add(value['source-queue'] + '-internal')
             if 'destination-queues' in value:
                 queues.update(value['destination-queues'])
-
-        pipeline = PipelineFactory.create(self.parameters)
-        pipeline.set_queues(None, "source")
-        pipeline.connect()
 
         if queue not in queues:
             if RETURN_TYPE == 'text':
@@ -1079,13 +1083,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'] + '-internal')
         if not no_connections:
             try:
-                pipeline = PipelineFactory.create(self.parameters)
+                pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
                 pipeline.set_queues(None, "source")
                 pipeline.connect()
-                orphan_queues = "', '".join({a.decode() for a in pipeline.pipe.keys()} - all_queues)
+                orphan_queues = "', '".join(pipeline.nonempty_queues() - all_queues)
             except Exception as exc:
                 error = utils.error_message_from_exc(exc)
-                check_logger.error('Could not connect to redis pipeline: %s', error)
+                check_logger.error('Could not connect to pipeline: %s', error)
                 retval = 1
             else:
                 if orphan_queues:

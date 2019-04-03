@@ -54,6 +54,7 @@ services:
   - postgresql
   - elasticsearch
   - mongodb
+  - rabbitmq
 after_success:
   - if [[ -v requirements ]]; then codecov; fi
 addons:

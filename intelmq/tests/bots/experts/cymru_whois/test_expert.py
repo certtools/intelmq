@@ -78,8 +78,7 @@ EXAMPLE_6TO4_OUTPUT = {"__type": "Event",
 
 @test.skip_redis()
 @test.skip_internet()
-@unittest.skipIf(os.getenv('TRAVIS') == 'true' and os.getenv('CI') == 'true',
-                 'Cymru Whois tests disable on travis.')
+@test.skip_travis()
 class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.
