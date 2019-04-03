@@ -314,6 +314,8 @@ class Pythonlist(Pipeline):
 
 
 class Amqp(Pipeline):
+    queue_args = {'x-queue-mode': 'lazy'}
+
     def __init__(self, parameters, logger):
         super(Amqp, self).__init__(parameters, logger)
         if pika is None:
@@ -366,10 +368,12 @@ class Amqp(Pipeline):
         self.channel = self.connection.channel()
         self.channel.confirm_delivery()
         if self.source_queue:
-            self.channel.queue_declare(queue=self.source_queue, durable=True)
+            self.channel.queue_declare(queue=self.source_queue, durable=True,
+                                       arguments=self.queue_args)
         for path in self.destination_queues.values():
             for destination_queue in path:
-                self.channel.queue_declare(queue=destination_queue, durable=True)
+                self.channel.queue_declare(queue=destination_queue, durable=True,
+                                           arguments=self.queue_args)
 
     def disconnect(self):
         try:
