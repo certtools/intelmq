@@ -25,7 +25,8 @@ except ImportError:
 class PipelineFactory(object):
 
     @staticmethod
-    def create(parameters: object, direction: Optional[str] = None,
+    def create(parameters: object, logger: object,
+               direction: Optional[str] = None,
                queues: Optional[Union[str, list, dict]] = None):
         """
         parameters: Parameters object
@@ -42,7 +43,7 @@ class PipelineFactory(object):
                 broker = parameters.broker.title()
             else:
                 broker = "Redis"
-        pipe = getattr(intelmq.lib.pipeline, broker)(parameters)
+        pipe = getattr(intelmq.lib.pipeline, broker)(parameters, logger)
         if queues and not direction:
             raise ValueError("Parameter 'direction' must be given when using "
                              "the queues parameter.")
@@ -55,11 +56,12 @@ class PipelineFactory(object):
 class Pipeline(object):
     has_internal_queues = False
 
-    def __init__(self, parameters):
+    def __init__(self, parameters, logger):
         self.parameters = parameters
         self.destination_queues = {}  # type: dict of lists
         self.internal_queue = None
         self.source_queue = None
+        self.logger = logger
 
     def connect(self):
         raise NotImplementedError
@@ -310,11 +312,13 @@ class Pythonlist(Pipeline):
 
 
 class Amqp(Pipeline):
-    def __init__(self, parameters):
-        super(Amqp, self).__init__(parameters)
+    def __init__(self, parameters, logger):
+        super(Amqp, self).__init__(parameters, logger)
         if pika is None:
             raise ValueError("To use AMQP you must install the 'pika' library.")
         self.properties = pika.BasicProperties(delivery_mode=2)  # message persistence
+        self.logger.warning("The 'amqp' pipeline broker is not stable yet, don't use "
+                            "in production environments.")
 
     def load_configurations(self, queues_type):
         self.host = getattr(self.parameters,

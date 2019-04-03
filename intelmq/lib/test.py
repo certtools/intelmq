@@ -207,7 +207,7 @@ class BotTestCase(object):
             destination_queues = dst_names
 
         parameters = Parameters()
-        self.pipe = pipeline.Pythonlist(parameters)
+        self.pipe = pipeline.Pythonlist(parameters, logger=logger)
         self.pipe.set_queues(parameters.source_queue, "source")
         self.pipe.set_queues(parameters.destination_queues, "destination")
 

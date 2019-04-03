@@ -341,6 +341,7 @@ class Bot(object):
         if self.__source_queues:
             self.logger.debug("Loading source pipeline and queue %r.", self.__source_queues)
             self.__source_pipeline = PipelineFactory.create(self.parameters,
+                                                            logger=self.logger,
                                                             direction="source",
                                                             queues=self.__source_queues)
             self.__source_pipeline.connect()
@@ -350,6 +351,7 @@ class Bot(object):
             self.logger.debug("Loading destination pipeline and queues %r.",
                               self.__destination_queues)
             self.__destination_pipeline = PipelineFactory.create(self.parameters,
+                                                                 logger=self.logger,
                                                                  direction="destination",
                                                                  queues=self.__destination_queues)
             self.__destination_pipeline.connect()

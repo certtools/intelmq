@@ -8,8 +8,10 @@ TODO: clear_queues
 TODO: acknowledge
 TODO: check internal representation of data in redis (like with Pythonlist)
 """
+import logging
 import os
 import unittest
+import time
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.test as test
@@ -28,7 +30,10 @@ class TestPipeline(unittest.TestCase):
 
     def setUp(self):
         params = Parameters()
-        self.pipe = pipeline.PipelineFactory.create(params)
+        logger = logging.getLogger('foo')
+        logger.addHandler(logging.NullHandler())
+        self.pipe = pipeline.PipelineFactory.create(params,
+                                                    logger=logger)
         self.pipe.set_queues('test-bot-input', 'source')
 
     def test_creation_from_string(self):
@@ -54,7 +59,10 @@ class TestPythonlist(unittest.TestCase):
     def setUp(self):
         params = Parameters()
         params.broker = 'Pythonlist'
-        self.pipe = pipeline.PipelineFactory.create(params)
+        logger = logging.getLogger('foo')
+        logger.addHandler(logging.NullHandler())
+        self.pipe = pipeline.PipelineFactory.create(params,
+                                                    logger=logger)
         self.pipe.set_queues('test-bot-input', 'source')
         self.pipe.set_queues('test-bot-output', 'destination')
 
@@ -104,7 +112,10 @@ class TestRedis(unittest.TestCase):
         setattr(params, 'source_pipeline_db', 4)
         setattr(params, 'destination_pipeline_password', os.getenv('INTELMQ_TEST_REDIS_PASSWORD'))
         setattr(params, 'destination_pipeline_db', 4)
-        self.pipe = pipeline.PipelineFactory.create(params)
+        logger = logging.getLogger('foo')
+        logger.addHandler(logging.NullHandler())
+        self.pipe = pipeline.PipelineFactory.create(params,
+                                                    logger)
         self.pipe.set_queues('test', 'source')
         self.pipe.set_queues('test', 'destination')
         self.pipe.connect()
@@ -142,7 +153,10 @@ class TestAmqp(unittest.TestCase):
     def setUp(self):
         params = Parameters()
         params.broker = 'Amqp'
-        self.pipe = pipeline.PipelineFactory.create(params)
+        logger = logging.getLogger('foo')
+        logger.addHandler(logging.NullHandler())
+        self.pipe = pipeline.PipelineFactory.create(params,
+                                                    logger=logger)
         self.pipe.set_queues('test', 'source')
         self.pipe.set_queues('test', 'destination')
         self.pipe.connect()
@@ -152,21 +166,26 @@ class TestAmqp(unittest.TestCase):
         self.pipe.clear_queue(self.pipe.source_queue)
 
     def test_send_receive(self):
-        """ Sending bytest and receiving unicode. """
+        """ Sending and receiving bytes. """
         self.clear()
+        self.pipe.connect()
         self.pipe.send(SAMPLES['normal'][0])
         self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
 
     def test_send_receive_unicode(self):
+        """ Sending and receiving unicode. """
         self.clear()
+        self.pipe.connect()
         self.pipe.send(SAMPLES['unicode'][1])
         self.assertEqual(SAMPLES['unicode'][1], self.pipe.receive())
 
     def test_count(self):
         self.clear()
+        self.pipe.connect()
         self.pipe.send(SAMPLES['normal'][0])
         self.pipe.send(SAMPLES['normal'][1])
         self.pipe.send(SAMPLES['unicode'][0])
+        time.sleep(0.006)
         self.assertEqual(self.pipe.count_queued_messages('test'), {'test': 3})
 
     def tearDown(self):
