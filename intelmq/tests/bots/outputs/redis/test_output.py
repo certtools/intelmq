@@ -49,7 +49,7 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
 
     @test.skip_redis()
     def test_event(self):
-        """ Setup Redis connection """
+        """ Test Redis output with default parameters. """
         redis_ip = self.sysconfig['redis_server_ip']
         redis_port = self.sysconfig['redis_server_port']
         redis_db = self.sysconfig['redis_db']
@@ -58,9 +58,14 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
         redis_timeout = self.sysconfig['redis_timeout']
         redis_conn = redis.ConnectionPool(host=redis_ip, port=redis_port,
                                           db=redis_db, password=redis_password)
-        redis_output = redis.StrictRedis(connection_pool=redis_conn,
-                                         socket_timeout=redis_timeout,
-                                         password=redis_password)
+        redis_version = tuple(int(x) for x in redis.__version__.split('.'))
+        if redis_version >= (3, 0, 0):
+            redis_class = redis.Redis
+        else:
+            redis_class = redis.StrictRedis
+        redis_output = redis_class(connection_pool=redis_conn,
+                                   socket_timeout=redis_timeout,
+                                   password=redis_password)
 
         self.run_bot()
 

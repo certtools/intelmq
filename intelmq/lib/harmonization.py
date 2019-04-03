@@ -137,38 +137,68 @@ class Boolean(GenericType):
 
 class ClassificationType(GenericType):
     """
-    classification.type type. Allowed values are:
+    `classification.type` type.
+
+    The mapping follows
+    Reference Security Incident Taxonomy Working Group – RSIT WG
+    https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
+    with extensions.
+
+    Allowed values are:
      * """
 
-    allowed_values = ['backdoor',
+    allowed_values = ["application-compromise",
+                      'backdoor',
                       'blacklist',
                       'botnet drone',
                       'brute-force',
+                      "burglary",
                       'c&c',
                       'compromised',
+                      "copyright",
+                      "data-loss",
                       'ddos',
+                      "ddos-amplifier",
                       'defacement',
                       'dga domain',
+                      "dos",
                       'dropzone',
                       'exploit',
+                      'harmful-speech',
                       'ids alert',
                       'infected system',
+                      "information-disclosure",
                       'leak',
                       'malware',
                       'malware configuration',
+                      'malware-distribution',
+                      "masquerade",
                       'other',
+                      'outage',
                       'phishing',
+                      "potentially-unwanted-accessible",
+                      "privileged-account-compromise",
                       'proxy',
                       'ransomware',
+                      'sabotage',
                       'scanner',
+                      'sniffing',
+                      'social-engineering',
                       'spam',
                       'test',
                       'tor',
-                      'unauthorized-login',
+                      "Unauthorised-information-access",
+                      "Unauthorised-information-modification",
                       'unauthorized-command',
+                      'unauthorized-login',
+                      "unauthorized-use-of-resources",
                       'unknown',
+                      "unprivileged-account-compromise",
+                      'violence',
                       'vulnerable client',
                       'vulnerable service',
+                      "vulnerable-system",
+                      "weak-crypto",
                       ]
 
     __doc__ += '\n     * '.join(allowed_values)
@@ -374,6 +404,9 @@ class FQDN(GenericType):
 
     All valid lowercase domains are accepted, no IP addresses or URLs. Trailing
     dot is not allowed.
+
+    To prevent values like '10.0.0.1:8080' (#1235), we check for the
+    non-existence of ':'.
     """
 
     @staticmethod
@@ -384,7 +417,7 @@ class FQDN(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        if value.strip('.') != value or value != value.lower():
+        if value.strip('.') != value or value != value.lower() or ':' in value:
             return False
 
         if IPAddress().is_valid(value):

@@ -62,6 +62,8 @@
     - [Information:](#information)
   - [Cymru Full Bogons](#cymru-full-bogons)
     - [Information:](#information)
+  - [HTML Table Parser](#html-table-parser)
+    - [Configuration parameters](#configuration-parameters)
   - [Twitter](#twitter)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
@@ -138,6 +140,8 @@
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
 - [Outputs](#outputs)
+  - [Elasticsearch](#elasticsearch)
+    - [Configuration Parameters:](#configuration-parameters)
   - [File](#file)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
@@ -239,6 +243,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `http_user_agent`: user agent to use for the request.
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Only used by some bots.
 * `http_header`: HTTP request headers
 
 **Cache parameters**: Common redis cache parameters used in multiple bots (mainly lookup experts):
@@ -268,7 +273,8 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * **HTTP parameters** (see above)
 * `extract_files`: Optional, boolean or list of strings. If it is not false, the retrieved (compressed) file or archived will be uncompressed/unpacked and the files are extracted. If the parameter is a list for strings, only the files matching the filenames are extracted. Extraction handles gziped files and both compressed and uncompressed tar-archives.
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
-* `http_url_formatting`: If `True` (default `False`) `{time[format]}` will be replaced by the current time formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2018` for the year 2018. Currently only the time in local timezone is available. Python's [Format Specification Mini-Language¶](https://docs.python.org/3/library/string.html) is used for this.
+* `http_url_formatting`: (`bool|JSON`, default: `false`) If `true`, `{time[format]}` will be replaced by the current time in local timezone formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2019` for the year 2019. (Python's [Format Specification Mini-Language](https://docs.python.org/3/library/string.html#formatspec) is used for this.)
+You may use `a JSON` specifiying [time-delta](https://docs.python.org/3/library/datetime.html#datetime.timedelta) parameters to shift the current time accordingly. Ex: type in `{"days": -1}` to use yesterday's date; the URL `http://localhost/{time[%Y-%m-%d]}` will get translated to "http://localhost/2018-12-31" for the 1st Jan of 2019.
 
 Zipped files are automatically extracted if detected.
 
@@ -319,6 +325,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `url_regex`: regular expression of the feed URL to search for in the mail body
 * `sent_from`: filter messages by sender
 * `sent_to`: filter messages by recipient
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
 * * *
 
@@ -343,6 +350,38 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `subject_regex`: regular expression to look for a subject
 * `attach_regex`: regular expression of the name of the attachment
 * `attach_unzip`: whether to unzip the attachment (default: `true`)
+* `sent_from`: filter messages by sender
+* `sent_to`: filter messages by recipient
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
+
+* * *
+
+### Generic Mail Body Fetcher
+
+
+#### Information:
+* `name:` intelmq.bots.collectors.mail.collector_mail_body
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` collect messages from mailboxes, forwards the bodies as reports. Each non-empty body with the matching content type is sent as individual report.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `mail_host`: FQDN or IP of mail server
+* `mail_user`: user account of the email account
+* `mail_password`: password associated with the user account
+* `mail_ssl`: whether the mail account uses SSL (default: `true`)
+* `folder`: folder in which to look for mails (default: `INBOX`)
+* `subject_regex`: regular expression to look for a subject
+* `sent_from`: filter messages by sender
+* `sent_to`: filter messages by recipient
+* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
+* `content_types`: Which bodies to use based on the content_type. Default: `true`/`['html', 'plain']` for all:
+  - string with comma separated values, e.g. `['html', 'plain']`
+  - `true`, `false`, `null`: Same as default value
+  - `string`, e.g. `'plain'`
 
 * * *
 
@@ -422,6 +461,7 @@ Requires the rsync executable
 * `uri`: url of the REST interface of the RT
 * `user`: RT username
 * `password`: RT password
+* `search_not_older_than`: Absolute time (use ISO format) or relative time, e.g. `3 days`.
 * `search_owner`: owner of the ticket to search for (default: `nobody`)
 * `search_queue`: queue of the ticket to search for (default: `Incident Reports`)
 * `search_status`: status of the ticket to search for (default: `new`)
@@ -590,8 +630,8 @@ The cache is used to remember which files have already been downloaded. Make sur
 * **Feed parameters** (see above)
 * `api_key`: API generate in their portal
 * `file_match`: an optional regular expression to match file names
-* `not_older_than`: an optional relative (minutes) or absolute time expression to determine the oldest time of a file to be downloaded
-* `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved.
+* `not_older_than`: an optional relative (minutes) or absolute time (UTC is assumed) expression to determine the oldest time of a file to be downloaded
+* `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved. The cache's TTL must always be bigger than `not_older_than`.
 
 #### Additional functionalities
 
@@ -753,6 +793,86 @@ http://www.team-cymru.com/bogon-reference.html
 * `cache (redis db):` none
 * `description:` Parses data from full bogons feed.
 
+### HTML Table Parser
+
+#### Configuration parameters
+
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Empty column specifications and columns named `"__IGNORE__"` are ignored. E.g.
+   ```json
+   "columns": [
+        "",
+        "source.fqdn",
+        "extra.http_host_header",
+        "__IGNORE__"
+   ],
+   ```
+   is equivalent to:
+   ```json
+   "columns": ",source.fqdn,extra.http_host_header,"
+   ```
+   The first and the last column are not used in this example.
+    It is possible to specify multiple columns using the `|` character. E.g.
+    ```
+        "columns": "source.url|source.fqdn|source.ip"
+    ```
+    First, bot will try to parse the value as url, if it fails, it will try to parse it as FQDN, if that fails, it will try to parse it as IP, if that fails, an error wil be raised.
+    Some use cases -
+
+        - mixed data set, e.g. URL/FQDN/IP/NETMASK  `"columns": "source.url|source.fqdn|source.ip|source.network"`
+
+        - parse a value and ignore if it fails  `"columns": "source.url|__IGNORE__"`
+
+ * `"ignore_values"`:  A list of strings or a string of comma-separated values which will not considered while assigning to the corresponding fields given in `columns`. E.g.
+   ```json
+   "ignore_values": [
+        "",
+        "unknown",
+        "Not listed",
+   ],
+   ```
+   is equivalent to:
+   ```json
+   "ignore_values": ",unknown,Not listed,"
+   ```
+   The following configuration will lead to assigning all values to malware.name and extra.SBL except `unknown` and `Not listed` respectively.
+   ```json
+   "columns": [
+        "source.url",
+        "malware.name",
+        "extra.SBL",
+   ],
+   "ignore_values": [
+        "",
+        "unknown",
+        "Not listed",
+   ],
+   ```
+   Parameters **columns and ignore_values must have same length**
+ * `"attribute_name"`: Filtering table with table attributes, to be used in conjunction with `attribute_value`, optional. E.g. `class`, `id`, `style`.
+ * `"attribute_value"`: String.
+    To filter all tables with attribute `class='details'` use
+    ```json
+    "attribute_name": "class",
+    "attribute_value": "details"
+    ```
+ * `"table_index"`: Index of the table if multiple tables present. If `attribute_name` and `attribute_value` given, index according to tables remaining after filtering with table attribute. Default: `0`.
+ * `"split_column"`: Padded column to be splitted to get values, to be used in conjection with `split_separator` and `split_index`, optional.
+ * `"split_separator"`: Delimiter string for padded column.
+ * `"split_index"`: Index of unpadded string in returned list from splitting `split_column` with `split_separator` as delimiter string. Default: `0`.
+    E.g.
+    ```json
+    "split_column": "source.fqdn",
+    "split_separator": " ",
+    "split_index": 1,
+    ```
+    With above configuration, column corresponding to `source.fqdn` with value `[D] lingvaworld.ru` will be assigned as `"source.fqdn": "lingvaworld.ru"`.
+ * `"skip_table_head"`: Boolean, skip the first row of the table, optional. Default: `true`.
+ * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data. Default: `"http://"`.
+ * `"time_format"`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
+ * `"type"`: set the `classification.type` statically, optional
+
+* * *
+
 ### McAfee Advanced Threat Defense File
 
 #### Information:
@@ -813,6 +933,13 @@ http://www.team-cymru.com/bogon-reference.html
 * `domain_whitelist`: domains to be filetered out
 * `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
 * `classification_type: string with a valid classification type as defined in data harmonization
+* `default_scheme`: Default scheme for URLs if not given. See also the next section.
+
+##### Default scheme
+
+The dependency `url-normalize` changed it's behavior in version 1.4.0 from using `http://` as default scheme to `https://`. Version 1.4.1 added the possibility to specify it. Thus you can only use the `default_scheme` parameter with a current version of this library >= 1.4.1, with 1.4.0 you will always get `https://` as default scheme and for older versions < 1.4.0 `http://` is used.
+
+This does not affect URLs which already include the scheme.
 
 ### Shodan
 
@@ -962,7 +1089,7 @@ Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 #### Configuration Parameters:
 * `type` - either `"whitelist"` or `"blacklist"`
-* `keys` - a list of key names (strings)
+* `keys` - Can be a JSON-list of field names (`["raw", "source.account"]`) or a string with a comma-separated list of field names (`"raw,source.account"`).
 
 ##### Whitelist
 
@@ -1033,8 +1160,6 @@ Documentation about IDEA: https://idea.cesnet.cz/en/index
 
 ### MaxMind GeoIP
 
-See the README.md
-
 #### Information:
 * `name:` maxmind-geoip
 * `lookup:` local database
@@ -1042,10 +1167,20 @@ See the README.md
 * `cache (redis db):` none
 * `description:` IP to geolocation
 
+#### Setup
+
+The bot requires the maxmind's `geoip2` Python library, version 2.2.0 has been tested.
+
+The database is available at https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
+You need to unzip it.
+
+You may want to use a shell script provided in the contrib directory to keep the database up to date: `contrib/cron-jobs/update-geoip-data`
+
 #### Configuration Parameters:
 
-FIXME
-
+* `database`: Path to the local database, e.g. `"/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"`
+* `overwrite`: boolean
+* `use_registered`: boolean. MaxMind has two country ISO codes: One for the physical location of the address and one for the registered location. Default is `false` (backwards-compatibility). See also https://github.com/certtools/intelmq/pull/1344 for a short explanation.
 
 * * *
 
@@ -1193,6 +1328,8 @@ You can set the value of the field to a string literal or number.
 In addition you can use the [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax)
 to access the values from the processed event as `msg` and the match groups
 of the conditions as `matches`, see the bitdefender example above.
+Group 0 (`[0]`) contains the full matching string. See also the documentation on [`re.Match.group`](https://docs.python.org/3/library/re.html?highlight=re%20search#re.Match.group).
+
 Note that `matches` will also contain the match groups
 from the default conditions if there were any.
 
@@ -1412,6 +1549,44 @@ This output bot discards all incoming messages.
 * * *
 
 
+### Elasticsearch Output Bot
+
+Output Bot that sends events to Elasticsearch
+
+#### Configuration parameters:
+
+* elastic_host       : Name/IP for the Elasticsearch server, defaults to 127.0.0.1
+* elastic_port       : Port for the Elasticsearch server, defaults to 9200
+* elastic_index      : Index for the Elasticsearch output, defaults to intelmq
+* rotate_index       : If set, will index events using the date information associated with the event.
+                       Options: 'never', 'daily', 'weekly', 'monthly', 'yearly'. Using 'intelmq' as the elastic_index, the following are examples of the generated index names:
+
+                       'never' --> intelmq
+                       'daily' --> intelmq-2018-02-02
+                       'weekly' --> intelmq-2018-42
+                       'monthly' --> intelmq-2018-02
+                       'yearly' --> intelmq-2018
+* elastic_doctype    : Elasticsearch document type for the event. Default: events
+* http_username      : http_auth basic username
+* http_password      : http_auth basic password
+* replacement_char   : If set, dots ('.') in field names will be replaced with this character prior to indexing. This is for backward compatibility with ES 2.X. Default: null. Recommended for ES2.X: '_'
+* flatten_fields     : In ES, some query and aggregations work better if the fields are flat and not JSON. Here you can provide a list of fields to convert.
+                       Can be a list of strings (fieldnames) or a string with field names separated by a comma (,). eg `extra,field2` or `['extra', 'field2']`
+                       Default: ['extra']
+
+See contrib/elasticsearch/elasticmapper for a utility for creating Elasticsearch mappings and templates.
+
+If using rotate_index, the resulting index name will be of the form [elastic_index]-[event date].
+To query all intelmq indices at once, use an alias (https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-aliases.html), or a multi-index query.
+
+The data in ES can be retrieved with the HTTP-Interface:
+
+```bash
+> curl -XGET 'http://localhost:9200/intelmq/events/_search?pretty=True'
+```
+* * *
+
+
 ### File
 
 #### Information:
@@ -1574,7 +1749,7 @@ from your installation.
 
 * * *
 
-# SMTP Output Bot
+### SMTP Output Bot
 
 Sends a MIME Multipart message containing the text and the event as CSV for every single event.
 
@@ -1618,12 +1793,13 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, another IntelMQ, etc..).
+* `description:` TCP is the bot responsible to send events to a TCP port (Splunk, another IntelMQ, etc..).
 
 #### Configuration Parameters:
 
 * `ip`: IP of destination server
 * `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server
-* `separator`: separator of messages, eg. "\n", optional (when sending to a TCP collector, parameter shouldn't be present)
+* `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present. 
+    In that case, the output waits every message is acknowledged by "Ok" message the tcp.collector bot implements.
 

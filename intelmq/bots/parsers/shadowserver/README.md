@@ -22,27 +22,35 @@ They are different from the wiki page names!
 
 Possible feednames:
 * `Accessible-ADB`
+* `Accessible-AFP`
 * `Accessible-Cisco-Smart-Install`
 * `Accessible-CWMP`
 * `Accessible-Hadoop`
+* `Accessible-HTTP`
 * `Accessible-RDP`
 * `Accessible-Rsync`
 * `Accessible-SMB`
 * `Accessible-Telnet`
+* `Accessible-Ubiquiti-Discovery-Service`
 * `Accessible-VNC`
+* `Amplification-DDoS-Victim`
 * `Blacklisted-IP`
 * `Compromised-Website`
+* `Darknet`
 * `DNS-Open-Resolvers`
 * `Drone`
 * `Drone-Brute-Force`
+* `HTTP-Scanners`
+* `ICS-Scanners`
 * `IPv6-Sinkhole-HTTP-Drone`
 * `Microsoft-Sinkhole`
 * `NTP-Monitor`
 * `NTP-Version`
 * `Open-Chargen`
+* `Open-DB2-Discovery-Service`
 * `Open-Elasticsearch`
 * `Open-IPMI`
-* `Open-LDAP`
+* `Open-LDAP` (also parses the `Open-LDAP-TCP` feed)
 * `Open-mDNS`
 * `Open-Memcached`
 * `Open-MongoDB`

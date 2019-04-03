@@ -28,6 +28,7 @@ class GeoIPExpertBot(Bot):
                               " procedure.")
             self.stop()
         self.overwrite = getattr(self.parameters, 'overwrite', False)
+        self.registered = getattr(self.parameters, 'use_registered', False)
 
     def process(self):
         event = self.receive_message()
@@ -43,9 +44,14 @@ class GeoIPExpertBot(Bot):
             try:
                 info = self.database.city(ip)
 
-                if info.country.iso_code:
-                    event.add(geo_key % "cc", info.country.iso_code,
-                              overwrite=self.parameters)
+                if self.registered:
+                    if info.registered_country.iso_code:
+                        event.add(geo_key % "cc", info.registered_country.iso_code,
+                                  overwrite=self.parameters)
+                else:
+                    if info.country.iso_code:
+                        event.add(geo_key % "cc", info.country.iso_code,
+                                  overwrite=self.parameters)
 
                 if info.location.latitude:
                     event.add(geo_key % "latitude", info.location.latitude,

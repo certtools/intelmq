@@ -83,8 +83,8 @@ Harmonization field names
 |Source|source.url|[URL](#url)|A URL denotes an IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |Source|source.urlpath|[String](#string)|The path portion of an HTTP or related network request.|
 | |status|[String](#string)|Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.|
-|Time|time.observation|[DateTime](#datetime)|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660).|
-|Time|time.source|[DateTime](#datetime)|Time reported by a source. Some sources only report a date, which may be used here if there is no better observation.|
+|Time|time.observation|[DateTime](#datetime)|The time the collector of the local instance processed (observed) the event.|
+|Time|time.source|[DateTime](#datetime)|The time of occurence of the event as reported the feed (source).|
 | |tlp|[TLP](#tlp)|Traffic Light Protocol level of the event.|
 
 
@@ -123,36 +123,66 @@ Sanitation accepts string 'true' and 'false' and integers 0 and 1.
 
 ### ClassificationType
 
-classification.type type. Allowed values are:
+`classification.type` type.
+
+The mapping follows
+Reference Security Incident Taxonomy Working Group – RSIT WG
+https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
+with extensions.
+
+Allowed values are:
+ * application-compromise
  * backdoor
  * blacklist
  * botnet drone
  * brute-force
+ * burglary
  * c&c
  * compromised
+ * copyright
+ * data-loss
  * ddos
+ * ddos-amplifier
  * defacement
  * dga domain
+ * dos
  * dropzone
  * exploit
+ * harmful-speech
  * ids alert
  * infected system
+ * information-disclosure
  * leak
  * malware
  * malware configuration
+ * malware-distribution
+ * masquerade
  * other
+ * outage
  * phishing
+ * potentially-unwanted-accessible
+ * privileged-account-compromise
  * proxy
  * ransomware
+ * sabotage
  * scanner
+ * sniffing
+ * social-engineering
  * spam
  * test
  * tor
- * unauthorized-login
+ * Unauthorised-information-access
+ * Unauthorised-information-modification
  * unauthorized-command
+ * unauthorized-login
+ * unauthorized-use-of-resources
  * unknown
+ * unprivileged-account-compromise
+ * violence
  * vulnerable client
  * vulnerable service
+ * vulnerable-system
+ * weak-crypto
 
 ### DateTime
 
@@ -171,6 +201,9 @@ Fully qualified domain name type.
 
 All valid lowercase domains are accepted, no IP addresses or URLs. Trailing
 dot is not allowed.
+
+To prevent values like '10.0.0.1:8080' (#1235), we check for the
+non-existence of ':'.
 
 
 ### Float

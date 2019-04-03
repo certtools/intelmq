@@ -19,6 +19,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [CINSscore](#cinsscore)
 - [Calidog](#calidog)
 - [CleanMX](#cleanmx)
+- [CyberCrime Tracker](#cybercrime-tracker)
 - [DShield](#dshield)
 - [Danger Rulez](#danger-rulez)
 - [Dataplane](#dataplane)
@@ -37,6 +38,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [OpenPhish](#openphish)
 - [OpenPhish Commercial](#openphish-commercial)
 - [PhishTank](#phishtank)
+- [PrecisionSec](#precisionsec)
 - [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
 - [Sucuri](#sucuri)
@@ -57,41 +59,46 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 # Abuse.ch
 
-## Feodo Tracker Domains
+## Feodo Tracker Browse
 
 * **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** The Feodo Tracker Feodo Domain Blocklist contains domain names (FQDN) used as C&C communication channel by the Feodo Trojan. These domains names are usually registered and operated by cybercriminals for the exclusive purpose of hosting a Feodo botnet controller. Hence you should expect no legit traffic to those domains. I highly recommend you to block/drop any traffic towards any Feodo C&C domain by using the Feodo Domain Blocklist. Please consider that domain names are usually only used by version B of the Feodo Trojan. C&C communication channels used by version A, version C and version D are not covered by this blocklist.
+* **Revision:** 19-03-2019
+* **Description:**
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://feodotracker.abuse.ch/blocklist/?download=domainblocklist`
-*  * `name`: `Feodo Tracker Domains`
+*  * `http_url`: `https://feodotracker.abuse.ch/browse`
+*  * `name`: `Feodo Tracker Browse`
 *  * `provider`: `Abuse.ch`
-*  * `rate_limit`: `129600`
+*  * `rate_limit`: `86400`
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.abusech.parser_domain
+* **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
+*  * `columns`: `['time.source', 'source.ip', 'malware.name', 'status', 'extra.SBL', 'source.as_name', 'source.geolocation.cc']`
+*  * `ignore_values`: `['', '', '', '', 'Not listed', '', '']`
+*  * `skip_table_head`: `True`
+*  * `type`: `c&c`
 
 
 ## Feodo Tracker IPs
 
 * **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** The Feodo Tracker Feodo IP Blocklist contains IP addresses (IPv4) used as C&C communication channel by the Feodo Trojan. This lists contains two types of IP address: Feodo C&C servers used by version A, version C and version D of the Feodo Trojan (these IP addresses are usually compromised servers running an nginx daemon on port 8080 TCP or 7779 TCP that is acting as proxy, forwarding all traffic to a tier 2 proxy node) and Feodo C&C servers used by version B which are usually used for the exclusive purpose of hosting a Feodo C&C server. Attention: Since Feodo C&C servers associated with version A, version C and version D are usually hosted on compromised servers, its likely that you also block/drop legit traffic e.g. towards websites hosted on a certain IP address acting as Feodo C&C for version A, version C and version D. If you only want to block/drop traffic to Feodo C&C servers hosted on bad IPs (version B), please use the blocklist BadIPs documented below.
+* **Revision:** 25-03-2019
+* **Description:** List of botnet Command&Control servers (C&Cs) tracked by Feodo Tracker, associated with Dridex and Emotet (aka Heodo).
+* **Additional Information:** https://feodotracker.abuse.ch/
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://feodotracker.abuse.ch/blocklist/?download=ipblocklist`
+*  * `http_url`: `https://feodotracker.abuse.ch/downloads/ipblocklist.csv`
 *  * `name`: `Feodo Tracker IPs`
 *  * `provider`: `Abuse.ch`
-*  * `rate_limit`: `129600`
+*  * `rate_limit`: `3600`
 
 ### Parser
 
@@ -118,6 +125,31 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.abusech.parser_ransomware
 * **Configuration Parameters:**
+
+
+## URLhaus
+
+* **Status:** on
+* **Revision:** 14-02-2019
+* **Description:** URLhaus is a project from abuse.ch with the goal of sharing malicious URLs that are being used for malware distribution. URLhaus offers a country, ASN (AS number) and Top Level Domain (TLD) feed for network operators / Internet Service Providers (ISPs), Computer Emergency Response Teams (CERTs) and domain registries.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://urlhaus.abuse.ch/feeds/tld/<TLD>/, https://urlhaus.abuse.ch/feeds/country/<CC>/, or https://urlhaus.abuse.ch/feeds/asn/<ASN>/`
+*  * `name`: `URLhaus`
+*  * `provider`: `Abuse.ch`
+*  * `rate_limit`: `129600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.generic.parser_csv
+* **Configuration Parameters:**
+*  * `columns`: `time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc`
+*  * `default_url_protocol`: `http://`
+*  * `skip_header`: `False`
+*  * `type_translation`: `{"malware_download": "malware-distribution"}`
 
 
 ## Zeus Tracker Domains
@@ -692,6 +724,33 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.cleanmx.parser
 * **Configuration Parameters:**
+
+
+# CyberCrime Tracker
+
+## Latest
+
+* **Status:** on
+* **Revision:** 19-03-2019
+* **Description:** C2 servers
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://cybercrime-tracker.net/index.php`
+*  * `name`: `Latest`
+*  * `provider`: `CyberCrime Tracker`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.html_table.parser
+* **Configuration Parameters:**
+*  * `columns`: `['time.source', 'source.url', 'source.ip', 'malware.name', '__IGNORE__']`
+*  * `default_url_protocol`: `http://`
+*  * `skip_table_head`: `True`
+*  * `type`: `c&c`
 
 
 # DShield
@@ -1414,6 +1473,34 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
+# PrecisionSec
+
+## Agent Tesla
+
+* **Status:** on
+* **Revision:** 02-04-2019
+* **Documentation:** https://precisionsec.com/threat-intelligence-feeds/agent-tesla/
+* **Description:** Agent Tesla IoCs, URLs where the malware is hosted.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://precisionsec.com/threat-intelligence-feeds/agent-tesla/`
+*  * `name`: `Agent Tesla`
+*  * `provider`: `PrecisionSec`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.html_table.parser
+* **Configuration Parameters:**
+*  * `columns`: `['source.ip|source.url', 'time.source']`
+*  * `default_url_protocol`: `http://`
+*  * `skip_table_head`: `True`
+*  * `type`: `malware`
+
+
 # ShadowServer
 
 ## Custom
@@ -1787,7 +1874,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 # VXVault
 
-## IPs
+## URLs
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1798,7 +1885,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://vxvault.net/URL_List.php`
-*  * `name`: `IPs`
+*  * `name`: `URLs`
 *  * `provider`: `VXVault`
 *  * `rate_limit`: `3600`
 

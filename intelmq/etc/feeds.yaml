@@ -375,31 +375,6 @@ providers:
       revision: 20-01-2018
       status: off
       documentation:
-    Feodo Tracker Domains:
-      description: The Feodo Tracker Feodo Domain Blocklist contains domain names
-        (FQDN) used as C&C communication channel by the Feodo Trojan. These domains
-        names are usually registered and operated by cybercriminals for the exclusive
-        purpose of hosting a Feodo botnet controller. Hence you should expect no legit
-        traffic to those domains. I highly recommend you to block/drop any traffic
-        towards any Feodo C&C domain by using the Feodo Domain Blocklist. Please
-        consider that domain names are usually only used by version B of the Feodo
-        Trojan. C&C communication channels used by version A, version C and version
-        D are not covered by this blocklist.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://feodotracker.abuse.ch/blocklist/?download=domainblocklist
-            rate_limit: 129600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.abusech.parser_domain
-          parameters:
-      revision: 20-01-2018
-      status: on
-      documentation:
     Ransomware Tracker:
       description: Ransomware Tracker feed includes FQDN's, URL's, and known IP addresses
         that were used for said FQDN's and URL's for various ransomware families.
@@ -439,33 +414,68 @@ providers:
       status: off
       documentation:
     Feodo Tracker IPs:
-      description: 'The Feodo Tracker Feodo IP Blocklist contains IP addresses (IPv4)
-        used as C&C communication channel by the Feodo Trojan. This lists contains
-        two types of IP address: Feodo C&C servers used by version A, version
-        C and version D of the Feodo Trojan (these IP addresses are usually compromised
-        servers running an nginx daemon on port 8080 TCP or 7779 TCP that is acting
-        as proxy, forwarding all traffic to a tier 2 proxy node) and Feodo C&C
-        servers used by version B which are usually used for the exclusive purpose
-        of hosting a Feodo C&C server. Attention: Since Feodo C&C servers
-        associated with version A, version C and version D are usually hosted on compromised
-        servers, its likely that you also block/drop legit traffic e.g. towards websites
-        hosted on a certain IP address acting as Feodo C&C for version A, version
-        C and version D. If you only want to block/drop traffic to Feodo C&C servers
-        hosted on bad IPs (version B), please use the blocklist BadIPs documented
-        below.'
-      additional_information:
+      description: 'List of botnet Command&Control servers (C&Cs) tracked by Feodo Tracker,
+        associated with Dridex and Emotet (aka Heodo).'
+      additional_information: https://feodotracker.abuse.ch/
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://feodotracker.abuse.ch/blocklist/?download=ipblocklist
-            rate_limit: 129600
+            http_url: https://feodotracker.abuse.ch/downloads/ipblocklist.csv
+            rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.abusech.parser_ip
           parameters:
-      revision: 20-01-2018
+      revision: 25-03-2019
+      status: on
+      documentation:
+    URLhaus:
+      description: URLhaus is a project from abuse.ch with the goal of sharing malicious
+        URLs that are being used for malware distribution. URLhaus offers a country, ASN
+        (AS number) and Top Level Domain (TLD) feed for network operators / Internet Service
+        Providers (ISPs), Computer Emergency Response Teams (CERTs) and domain registries.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://urlhaus.abuse.ch/feeds/tld/<TLD>/,
+              https://urlhaus.abuse.ch/feeds/country/<CC>/, or
+              https://urlhaus.abuse.ch/feeds/asn/<ASN>/
+            rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.generic.parser_csv
+          parameters:
+            skip_header: false
+            default_url_protocol: http://
+            type_translation: '{"malware_download": "malware-distribution"}'
+            columns: time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc
+      revision: 14-02-2019
+      status: on
+      documentation:
+    Feodo Tracker Browse:
+      description: ''
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://feodotracker.abuse.ch/browse
+            rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.html_table.parser
+          parameters:
+            columns: ["time.source", "source.ip", "malware.name", "status", "extra.SBL", "source.as_name", "source.geolocation.cc"]
+            ignore_values: ["", "", "", "", "Not listed", "", ""]
+            skip_table_head: True
+            type: c&c
+      revision: 19-03-2019
       status: on
       documentation:
   Blueliv:
@@ -1432,7 +1442,7 @@ providers:
       status: on
       documentation:
   VXVault:
-    IPs:
+    URLs:
       description: This feed provides IP addresses hosting Malware.
       additional_information:
       bots:
@@ -1606,3 +1616,47 @@ providers:
       revision: 05-07-2018
       status: on
       documentation:
+  CyberCrime Tracker:
+    Latest:
+      description: C2 servers
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://cybercrime-tracker.net/index.php
+            rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.html_table.parser
+          parameters:
+            columns: ["time.source", "source.url", "source.ip", "malware.name", "__IGNORE__"]
+            skip_table_head: true
+            default_url_protocol: http://
+            type: c&c
+      revision: 19-03-2019
+      status: on
+      documentation:
+  PrecisionSec:
+    Agent Tesla:
+      description: Agent Tesla IoCs, URLs where the malware is hosted.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://precisionsec.com/threat-intelligence-feeds/agent-tesla/
+            rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.html_table.parser
+          parameters:
+            columns: ["source.ip|source.url", "time.source"]
+            skip_table_head: true
+            default_url_protocol: http://
+            type: malware
+      revision: 02-04-2019
+      status: on
+      documentation: https://precisionsec.com/threat-intelligence-feeds/agent-tesla/

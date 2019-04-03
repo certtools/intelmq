@@ -33,7 +33,7 @@ if source.ip << '192.0.0.0/24' {
 if classification.type == ['phishing', 'malware'] && source.fqdn =~ '.*\.(ch|li)$' {
   add! comment = 'domainabuse'
   keep
-} elsif classification.type == 'scanner' {
+} elif classification.type == 'scanner' {
   add! comment = 'ignore'
   drop
 } else {
@@ -116,11 +116,11 @@ in the sieve file will be forwarded to the next bot in the pipeline, unless the
 
  * `add!` same as above, but will force overwrite the key in the event.
 
- * `modify` modifies an existing value for a key. Only applies if the key is
+ * `update` modifies an existing value for a key. Only applies if the key is
 already defined. If the key is not defined in the event, this action is ignored.
 Example:
 
-   ```modify feed.accuracy = 50```
+   ```update feed.accuracy = 50```
 
  * `remove` removes a key/value from the event. Action is ignored if the key is
  not defined in the event. Example:

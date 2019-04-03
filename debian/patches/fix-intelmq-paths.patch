@@ -23,4 +23,4 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 -VAR_RUN_PATH = os.path.join(ROOT_DIR, "var/run/")
 +VAR_RUN_PATH = "/var/run/intelmq/"
 -VAR_STATE_PATH = os.path.join(ROOT_DIR, "var/lib/bots/")
-+VAR_STATE_PATH = os.path.join(ROOT_DIR, "/var/lib/intelmq/bots/")
++VAR_STATE_PATH = "/var/lib/intelmq/bots/"

@@ -10,7 +10,7 @@ import sys
 try:
     from elasticsearch import Elasticsearch
 except ImportError:
-    print("[-] Please install ElasticSearch using the following command: 'pip install elasticsearch'.", file=sys.stderr)
+    print("[-] Please install Elasticsearch using the following command: 'pip install elasticsearch'.", file=sys.stderr)
     sys.exit(-1)
 
 
@@ -42,6 +42,7 @@ def __mapping_properties_from_harmonization(properties):
     del properties['extra']
     return properties
 
+
 def mapping_properties_from_harmonization(harmonization, replacement_char):
     properties = dict()
     err = None
@@ -60,9 +61,10 @@ def mapping_properties_from_harmonization(harmonization, replacement_char):
 
     return __mapping_properties_from_harmonization(properties), err
 
+
 def create_mapping(harmonization, index_type, replacement_char):
 
-    config = { "enabled": False }
+    config = {"enabled": False}
 
     properties, err = mapping_properties_from_harmonization(harmonization, replacement_char)
 
@@ -77,6 +79,7 @@ def create_mapping(harmonization, index_type, replacement_char):
 
     return data, err
 
+
 def send_mapping(host, index, data):
     err = None
     response = None
@@ -85,6 +88,55 @@ def send_mapping(host, index, data):
         es = Elasticsearch([host], verify_certs=True)
         response = es.indices.create(index=index, ignore=400, body=data)
     except Exception:
+        err = -1
+
+    return response, err
+
+
+def create_template(mapping, patterns=None):
+    """
+    Constructs an Elasticsearch index template from a given mapping.
+    :param mapping: The mapping to use in the template.
+    :param patterns: (Optional) A list of patterns for this template to match. Default: ["intelmq-*"]
+    :return: A dict containing the new index template.
+    """
+
+    patterns = patterns or ["intelmq-*"]
+
+    if len(patterns) > 1:
+        print("[!] Notice: The template contains multiple index patterns ({}). "
+              "Multiple index patterns are only supported on Elasticsearch >= 6.0.0."
+              "If your Elasticsearch instance does not support multiple index patterns, "
+              "only the first value ({}) will be used.".format(patterns, patterns[0]))
+
+    template = {
+        "index_patterns": patterns,
+        "template": patterns[0],  # For backward compatibility with ES < 6.0.0. Ignored if ES >= 6.0.0
+        # "settings": {
+        #     "number_of_shards": 5,
+        #     ...
+        # },
+        "mappings": mapping.get("mappings")
+    }
+
+    return template
+
+
+def send_template(host, name, template):
+    """
+    Send a mapping template to Elasticsearch
+    :param host: The Elasticsearch host
+    :param name: The name to use for the template
+    :param template: The template (as a dict) to send
+    :return: response, err as returned by the Elasticsearch client.
+    """
+    err = None
+    response = None
+
+    try:
+        es = Elasticsearch([host], verify_certs=True)
+        response = es.indices.put_template(name=name, body=template)
+    except:
         err = -1
 
     return response, err
@@ -122,7 +174,7 @@ if __name__ == "__main__":
                         dest="index",
                         default="intelmq",
                         required=False,
-                        help='elasticsearch index')
+                        help='elasticsearch index name, or template name if using a template')
 
     parser.add_argument('--index-type',
                         action="store",
@@ -130,6 +182,13 @@ if __name__ == "__main__":
                         default="events",
                         required=False,
                         help='elasticsearch index type')
+
+    parser.add_argument('--index-template',
+                        action="store_true",
+                        dest="index_template",
+                        required=False,
+                        default=False,
+                        help='whether to store the mapping as a template for new indices')
 
     parser.add_argument('--replacement-char',
                         action="store",
@@ -143,7 +202,7 @@ if __name__ == "__main__":
                         dest="output",
                         metavar="<filepath>",
                         required=False,
-                        help='write a copy of applied mapping to file')
+                        help='write a copy of applied mapping or template to file')
 
     arguments = parser.parse_args()
 
@@ -161,19 +220,32 @@ if __name__ == "__main__":
             print("[-] Supported field types by elasticmapper: %s" % ", ".join(TYPES.keys()), file=sys.stderr)
             sys.exit(-2)
 
+    # Optionally construct an index template from the generated mapping
+    if arguments.index_template:
+        data = create_template(data)
+
     if arguments.output:
         with open(arguments.output, 'w') as fp:
             fp.write(json.dumps(data, indent=4))
-        print("[+] Mapping has been written to output file.")
+
+        object_type = "Template" if arguments.index_template else "Mapping"
+        print("[+] {} has been written to output file.".format(object_type))
 
     if arguments.host:
-        response, err = send_mapping(arguments.host, arguments.index, data)
+
+        if arguments.index_template:
+            # Optionally, send the mapping as a template for new indices
+            response, err = send_template(arguments.host, arguments.index, data)
+        else:
+            # Default - create a mapping for only one named index
+            response, err = send_mapping(arguments.host, arguments.index, data)
+
         if err:
-            print("\n[-] Could not send mapping to ElasticSearch.", file=sys.stderr)
-            print("[-] Please check if host parameter is correct or if host is allowing connections to ElasticSearch REST API.", file=sys.stderr)
+            print("\n[-] Could not send mapping to Elasticsearch.", file=sys.stderr)
+            print("[-] Please check if host parameter is correct or if host is allowing connections to Elasticsearch REST API.", file=sys.stderr)
             sys.exit(-3)
         else:
-            print("[+] Mapping has been sent to ElasticSearch.")
-            print("[+] ElasticSearch Response:\n")
+            print("[+] Mapping has been sent to Elasticsearch.")
+            print("[+] Elasticsearch Response:\n")
             print(response)
             print("")

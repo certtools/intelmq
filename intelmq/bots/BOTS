@@ -69,11 +69,27 @@
                 "url_regex": "http://"
             }
         },
+        "Mail Body Fetcher": {
+            "description": "Monitor IMAP mailboxes and fetch mail bodies",
+            "module": "intelmq.bots.collectors.mail.collector_mail_body",
+            "parameters": {
+                "content_types": true,
+                "folder": "INBOX",
+                "mail_host": "<host>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "mail_user": "<user>",
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
+                "rate_limit": 60,
+                "subject_regex": "<subject>"
+            }
+        },
         "URL Fetcher": {
             "description": "Generic URL Fetcher is the bot responsible to get the report from an URL.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "extract_files": "True or string of file names separated by ,",
+                "extract_files": false,
                 "http_password": null,
                 "http_url": "<insert url of feed>",
                 "http_url_formatting": false,
@@ -273,6 +289,7 @@
                 "access_token_secret": "",
                 "consumer_key": "",
                 "consumer_secret": "",
+                "default_scheme": "http",
                 "exclude_replies": "false",
                 "follow_urls": "",
                 "include_rts": "true",
@@ -422,6 +439,30 @@
                 "time_format": null,
                 "type": "c&c",
                 "type_translation": null
+            }
+        },
+        "HTML Table": {
+            "description": "HTML Table Parser is a bot configurable to parse different html table data.",
+            "module": "intelmq.bots.parsers.html_table.parser",
+            "parameters": {
+                "columns": [
+                    "",
+                    "source.fqdn"
+                ],
+                "ignore_values": [
+                    "",
+                    ""
+                ],
+                "table_index": 0,
+                "skip_table_head": true,
+                "attribute_name": "",
+                "attribute_value": "",
+                "split_column": "",
+                "split_separator": "",
+                "split_index": 0,
+                "default_url_protocol": "http://",
+                "time_format": null,
+                "type": "c&c"
             }
         },
         "HpHosts": {
@@ -722,7 +763,8 @@
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
             "parameters": {
                 "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb",
-                "overwrite": false
+                "overwrite": false,
+                "use_registered": false
             }
         },
         "Modify": {
@@ -751,7 +793,7 @@
         },
         "RIPE": {
             "description": "This bots fetches abuse contacts and/or geolocation information for the source and/or destination IP addresses and/or ASNs of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
-            "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
+            "module": "intelmq.bots.experts.ripe.expert",
             "parameters": {
                 "mode": "append",
                 "query_ripe_db_asn": true,
@@ -850,14 +892,15 @@
             "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
             "module": "intelmq.bots.outputs.elasticsearch.output",
             "parameters": {
-                "elastic_doctype": "events",
                 "elastic_host": "127.0.0.1",
-                "elastic_index": "intelmq",
                 "elastic_port": 9200,
-                "flatten_fields": "extra",
-                "http_password": null,
+                "elastic_index": "intelmq",
+                "rotate_index": "never",
+                "elastic_doctype": "events",
                 "http_username": null,
-                "replacement_char": "_"
+                "http_password": null,
+                "flatten_fields": "extra",
+                "replacement_char": null
             }
         },
         "File": {
@@ -944,7 +987,9 @@
                 "redis_queue": "external-redis-queue",
                 "redis_server_ip": "127.0.0.1",
                 "redis_server_port": 6379,
-                "redis_timeout": 50000
+                "redis_timeout": 50000,
+                "hierarchical_output": false,
+                "with_type": true
             }
         },
         "SMTP": {

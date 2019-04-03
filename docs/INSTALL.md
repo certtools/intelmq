@@ -4,7 +4,7 @@
   - [Ubuntu 14.04 / Debian 8](#ubuntu-1404-debian-8)
   - [Ubuntu 16.04 / Ubuntu 18.04 / Debian 9](#ubuntu-1604-ubuntu-1804-debian-9)
   - [CentOS 7 / RHEL 7](#centos-7-rhel-7)
-  - [openSUSE Leap 42.2 / 42.3 / 15.0](#opensuse-leap-422-423-150)
+  - [openSUSE Leap 42.3 / 15.0](#opensuse-leap-423-150)
 - [Installation](#installation)
   - [Native Packages](#native-packages)
   - [PyPi](#pypi)
@@ -25,8 +25,8 @@ The following instructions assume the following requirements:
 Supported and recommended operating systems are:
 * CentOS 7
 * Debian 8 and 9
-* OpenSUSE Leap 42.2 and 42.3
-* Ubuntu: 14.04 and 16.04 LTS
+* OpenSUSE Leap 42.3 and 15.0
+* Ubuntu: 14.04, 16.04 and 18.04
 
 Other distributions which are (most probably) supported include RHEL, Fedora and openSUSE Tumbleweed.
 
@@ -79,7 +79,7 @@ curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
 python3.4 /tmp/get-pip.py
 ```
 
-## openSUSE Leap 42.2 / 42.3 / 15.0
+## openSUSE Leap 42.3 / 15.0
 
 ```bash
 zypper install python3-dateutil python3-dnspython python3-psutil python3-pytz python3-redis python3-requests python3-python-termstyle
@@ -109,9 +109,9 @@ Supported Operating Systems:
 * **RHEL 7**  (requires `epel-release`)
 * **Debian 8** (requires `python3-typing`)
 * **Debian 9**
-* **Fedora 26**
 * **Fedora 27**
 * **Fedora 28**
+* **Fedora 29**
 * **openSUSE Leap 42.3**
 * **openSUSE Leap 15.0**
 * **openSUSE Tumbleweed**

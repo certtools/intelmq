@@ -1,9 +1,10 @@
-##########################################################################
-# Feodo IP Blocklist                                                     #
-# Generated on 2016-02-23 15:11:38 UTC                                   #
-#                                                                        #
-# For questions please refer to https://feodotracker.abuse.ch/blocklist/ #
-##########################################################################
-# START
-103.232.215.133
-# END (1 entries)
+################################################################
+# abuse.ch Feodo Tracker Botnet C2 IP Blocklist (CSV)          #
+# Last updated: 2019-03-05 22:10:24 UTC                        #
+#                                                              #
+# Terms Of Use: https://feodotracker.abuse.ch/blocklist/       #
+# For questions please contact feodotracker [at] abuse.ch      #
+################################################################
+#
+# Firstseen,DstIP,DstPort,Malware
+2019-03-04 22:10:24,110.93.230.101,990,Heodo

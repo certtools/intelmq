@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+The mapping follows
+Reference Security Incident Taxonomy Working Group – RSIT WG
+https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
+with extensions.
+"""
 
 from intelmq.lib.bot import Bot
 
@@ -6,35 +12,59 @@ from intelmq.lib.bot import Bot
 
 TAXONOMY = {
     # type       # taxonomy
-    "phishing": "fraud",
-    "proxy": "Other",
-    "ddos": "availability",
+    # sorted!
     "spam": "abusive content",
+    "harmful-speech": "abusive-content",
+    "violence": "abusive-content",
+    "ddos": "availability",
+    "dos": "availability",
+    "outage": "availability",
+    "sabotage": "availability",
+    "copyright": "fraud",
+    "masquerade": "fraud",
+    "phishing": "fraud",
+    "unauthorized-use-of-resources": "fraud",
+    "Unauthorised-information-access": "information content security",
+    "Unauthorised-information-modification": "information content security",
+    "data-loss": "information content security",
+    "dropzone": "information content security",  # not in ENISA eCSIRT-II taxonomy
+    "leak": "information content security",  # not in ENISA eCSIRT-II taxonomy
     "scanner": "information gathering",
-    "dropzone": "information content security",
-    "malware": "malicious code",
-    "botnet drone": "malicious code",
-    "ransomware": "malicious code",
-    "dga domain": "malicious code",
-    "malware configuration": "malicious code",
-    "c&c": "malicious code",
-    "exploit": "intrusion attempts",
+    "sniffing": "information-gathering",
+    "social-engineering": "information-gathering",
     "brute-force": "intrusion attempts",
-    "ids alert": "intrusion attempts",
-    "defacement": "intrusions",
-    "compromised": "intrusions",
-    "backdoor": "intrusions",
-    "vulnerable service": "vulnerable",
-    "vulnerable client": "vulnerable",
+    "exploit": "intrusion attempts",
+    "ids alert": "intrusion attempts",  # ENISA eCSIRT-II taxonomy: 'ids-alert'
+    "application-compromise": "intrusions",
+    "backdoor": "intrusions",  # not in ENISA eCSIRT-II taxonomy
+    "burglary": "intrusions",
+    "compromised": "intrusions",  # not in ENISA eCSIRT-II taxonomy,
+    "defacement": "intrusions",  # not in ENISA eCSIRT-II taxonomy
+    "privileged-account-compromise": "intrusions",
+    "unauthorized-command": "intrusions",  # not in ENISA eCSIRT-II taxonomy
+    "unauthorized-login": "intrusions",  # not in ENISA eCSIRT-II taxonomy
+    "unprivileged-account-compromise": "intrusions",
+    "botnet drone": "malicious code",  # not in ENISA eCSIRT-II taxonomy, deprecated -> infected system
+    "c&c": "malicious code",  # ENISA eCSIRT-II taxonomy: 'c2server'
+    "dga domain": "malicious code",  # not in ENISA eCSIRT-II taxonomy
+    "infected system": "malicious code",  # ENISA eCSIRT-II taxonomy: 'infected-system'
+    "malware": "malicious code",  # not in ENISA eCSIRT-II taxonomy
+    "malware configuration": "malicious code",  # ENISA eCSIRT-II taxonomy: 'malware-configuration'
+    "malware-distribution": "malicious code",
+    "ransomware": "malicious code",  # not in ENISA eCSIRT-II taxonomy
     "blacklist": "other",
-    "unknown": "other",
+    "other": "other",  # not in ENISA eCSIRT-II taxonomy
+    "proxy": "other",  # not in ENISA eCSIRT-II taxonomy
+    "tor": "other",  # not in ENISA eCSIRT-II taxonomy
+    "unknown": "other",  # not in ENISA eCSIRT-II taxonomy
     "test": "test",
-    "other": "other",
-    "tor": "other",
-    "leak": "information content security",
-    "infected system": "malicious code",
-    'unauthorized-login': 'intrusions',
-    'unauthorized-command': 'intrusions',
+    "ddos-amplifier": "vulnerable",
+    "information-disclosure": "vulnerable",
+    "potentially-unwanted-accessible": "vulnerable",
+    "vulnerable client": "vulnerable",  # not in ENISA eCSIRT-II taxonomy
+    "vulnerable service": "vulnerable",  # not in ENISA eCSIRT-II taxonomy
+    "vulnerable-system": "vulnerable",
+    "weak-crypto": "vulnerable",
 }
 
 
