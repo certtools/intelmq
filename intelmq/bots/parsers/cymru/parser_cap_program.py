@@ -10,7 +10,7 @@ MAPPING_STATIC = {'bot': {
     'controller': {
     'classification.type': 'c&c'},
     'darknet': {'classification.type': 'scanner',
-                'classification.identifier': 'darknet',},
+                'classification.identifier': 'darknet'},
     'phishing': {'classification.type': 'phishing',
                  'classification.identifier': 'phishing'},
     'proxy': {'classification.type': 'proxy',
@@ -206,7 +206,6 @@ class CymruCAPProgramParserBot(ParserBot):
         else:
             raise ValueError('Unknown report %r.', report_type)
         yield event
-
 
     def parse_line_new(self, line, report):
         category, ip, asn, timestamp, notes, asninfo = line.split('|')
