@@ -25,6 +25,7 @@ Possible feednames:
 * `Accessible-AFP`
 * `Accessible-Cisco-Smart-Install`
 * `Accessible-CWMP`
+* `Accessible-FTP`
 * `Accessible-Hadoop`
 * `Accessible-HTTP`
 * `Accessible-RDP`
