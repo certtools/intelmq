@@ -63,7 +63,7 @@ def main():
 
     print('Setting intelmq as owner for it\'s directories.')
     for obj in (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
-                VAR_STATE_PATH, VAR_STATE_PATH+'file-output'):
+                VAR_STATE_PATH, VAR_STATE_PATH + 'file-output'):
         shutil.chown(obj, user='intelmq')
 
 
