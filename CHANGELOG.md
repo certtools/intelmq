@@ -57,6 +57,8 @@ CHANGELOG
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Handle new feed format.
 - `intelmq.bots.parsers.shadowserver`:
   - Add support for the `Accessible-FTP` feed (#1391).
+- `intelmq.bots.parsers.dataplane.parser`:
+  - Fix parse errors and log more context (#1396).
 
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).
