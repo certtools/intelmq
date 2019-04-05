@@ -953,7 +953,8 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         numeric_match_false = EXAMPLE_INPUT.copy()
         numeric_match_false['comment'] = "keep with path"
         self.input_message = numeric_match_false
-        self.run_bot()
+        self.prepare_bot(destination_queues={"_default", "other-way"})
+        self.run_bot(prepare=False)
 
         # if doesn't match keep
         numeric_match_false = EXAMPLE_INPUT.copy()

@@ -30,21 +30,23 @@ class TestDummyExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE)
 
     def test_pipeline_other(self):
-        self.input_message = EXAMPLE.copy()
-        self.input_message["feed.code"] = "other-way"
+        input_message = EXAMPLE.copy()
+        input_message["feed.code"] = "other-way"
+        self.input_message = input_message
         self.prepare_bot(destination_queues=QUEUES)
         self.run_bot(prepare=False)
         self.assertOutputQueueLen(0, path="_default")
-        self.assertMessageEqual(0, self.input_message, path="other-way")
+        self.assertMessageEqual(0, input_message, path="other-way")
 
     def test_pipeline_multiple(self):
-        self.input_message = EXAMPLE.copy()
-        self.input_message["feed.code"] = "two-way"
+        input_message = EXAMPLE.copy()
+        input_message["feed.code"] = "two-way"
+        self.input_message = input_message
         self.prepare_bot(destination_queues=QUEUES)
         self.run_bot(prepare=False)
         self.assertOutputQueueLen(0, path="_default")
         self.assertOutputQueueLen(0, path="other-way")
-        self.assertMessageEqual(0, self.input_message, path="two-way")
+        self.assertMessageEqual(0, input_message, path="two-way")
 
 
 if __name__ == '__main__':  # pragma: no cover
