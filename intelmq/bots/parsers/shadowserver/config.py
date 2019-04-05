@@ -2098,7 +2098,7 @@ accessible_ubiquiti_discovery_service = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        ('extra.', 'tag'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-ubiquiti-discovery-service' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -2130,7 +2130,7 @@ accessible_ftp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        ('extra.', 'tag'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-ftp' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -2187,6 +2187,7 @@ accessible_ftp = {
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
-        'classification.identifier': 'accessible-ftp-discovery-service'
+        'classification.identifier': 'accessible-ftp'
+        'protocol.application': 'ftp',
     }
 }
