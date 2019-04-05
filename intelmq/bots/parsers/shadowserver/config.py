@@ -2187,7 +2187,7 @@ accessible_ftp = {
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
-        'classification.identifier': 'accessible-ftp'
+        'classification.identifier': 'accessible-ftp',
         'protocol.application': 'ftp',
     }
 }
