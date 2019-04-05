@@ -1991,7 +1991,7 @@ amplification_ddos_victim = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('extra.', 'tag', validate_to_none),
+        ('classification.identifier', 'tag'),  # service abused for the attack
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'request', validate_to_none),
@@ -2005,7 +2005,6 @@ amplification_ddos_victim = {
     'constant_fields': {
         'classification.taxonomy': 'availability',
         'classification.type': 'ddos',
-        'classification.identifier': 'amplification-ddos-victim',
     }
 }
 
