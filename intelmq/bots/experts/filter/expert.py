@@ -55,14 +55,16 @@ class FilterExpertBot(Bot):
         if hasattr(self.parameters, 'filter_regex') and self.parameters.filter_regex:
             self.regex = re.compile(self.parameters.filter_value)
 
-        if not (self.filter or self.not_after is not None or self.not_before is not None):
+        self.time_filter = self.not_after is not None or self.not_before is not None
+
+        if not (self.filter or self.time_filter):
             raise ValueError("No relevant filter configuration found.")
 
     def process(self):
         event = self.receive_message()
 
         # time based filtering
-        if 'time.source' in event:
+        if self.time_filter and 'time.source' in event:
             try:
                 event_time = parser.parse(str(event.get('time.source'))).replace(tzinfo=pytz.timezone('UTC'))
             except ValueError:
@@ -91,9 +93,17 @@ class FilterExpertBot(Bot):
         if self.filter and self.parameters.filter_action == "drop":
             if self.doFilter(event, self.parameters.filter_key,
                              self.parameters.filter_value):
+                # action == drop, filter matches
+                self.send_message(event, path='action_other',
+                                  path_permissive=True)
+                self.send_message(event, path='filter_match',
+                                  path_permissive=True)
                 self.acknowledge_message()
                 return
             else:
+                # action == drop, filter not matches
+                self.send_message(event, path='filter_no_match',
+                                  path_permissive=True)
                 self.send_message(event)
                 self.acknowledge_message()
                 return
@@ -101,10 +111,18 @@ class FilterExpertBot(Bot):
         if self.filter and self.parameters.filter_action == "keep":
             if self.doFilter(event, self.parameters.filter_key,
                              self.parameters.filter_value):
+                # action == keep, filter matches
+                self.send_message(event, path='filter_match',
+                                  path_permissive=True)
                 self.send_message(event)
                 self.acknowledge_message()
                 return
             else:
+                # action == keep, filter not matches
+                self.send_message(event, path='action_other',
+                                  path_permissive=True)
+                self.send_message(event, path='filter_no_match',
+                                  path_permissive=True)
                 self.acknowledge_message()
                 return
 

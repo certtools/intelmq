@@ -161,8 +161,11 @@ class Redis(Pipeline):
         self.load_configurations(queues_type)
         super().set_queues(queues, queues_type)
 
-    def send(self, message, path="_default"):
+    def send(self, message, path="_default", path_permissive=False):
         message = utils.encode(message)
+        if path not in self.destination_queues and path_permissive:
+            return
+
         try:
             queues = self.destination_queues[path]
         except KeyError as exc:
@@ -267,8 +270,11 @@ class Pythonlist(Pipeline):
         for destination_queue in chain.from_iterable(self.destination_queues.values()):
             self.state[destination_queue] = []
 
-    def send(self, message, path="_default"):
+    def send(self, message, path="_default", path_permissive=False):
         """Sends a message to the destination queues"""
+        if path not in self.destination_queues and path_permissive:
+            return
+
         for destination_queue in self.destination_queues[path]:
             if destination_queue in self.state:
                 self.state[destination_queue].append(utils.encode(message))
