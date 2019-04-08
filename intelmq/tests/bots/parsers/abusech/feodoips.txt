@@ -6,5 +6,5 @@
 # For questions please contact feodotracker [at] abuse.ch      #
 ################################################################
 #
-# Firstseen,DstIP,DstPort,Malware
-2019-03-04 22:10:24,110.93.230.101,990,Heodo
+# Firstseen,DstIP,DstPort,LastOnline,Malware
+2019-03-04 22:10:24,110.93.230.101,990,2019-03-05,Heodo
