@@ -19,6 +19,7 @@ FEEDS = {
             'time.source',
             'source.ip',
             'source.port',
+            'extra.last_online',
             'malware.name'
         ],
         'malware': 'Cridex'
