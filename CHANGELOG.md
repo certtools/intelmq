@@ -61,6 +61,7 @@ CHANGELOG
   - Add support for the `Accessible-FTP` feed (#1391).
 - `intelmq.bots.parsers.dataplane.parser`:
   - Fix parse errors and log more context (#1396).
+- added `intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc.py` and `intelmq.bots.parsers.fraunhofer.parser_ddosattack_target.py` (#1373).
 
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).
