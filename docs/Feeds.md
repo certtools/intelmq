@@ -918,7 +918,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Status:** on
 * **Revision:** 01-07-2018
-* **Description:** The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs.
+* **Description:** The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs. You may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
 
 ### Collector
 
@@ -943,7 +943,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Status:** on
 * **Revision:** 01-07-2018
-* **Description:** The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs.
+* **Description:** The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs. You may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
 
 ### Collector
 

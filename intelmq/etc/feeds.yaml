@@ -1497,7 +1497,9 @@ providers:
       status: on
       documentation:
     DDoS Attack Feed (C&C):
-      description: The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs.
+      description: The Fraunhofer DDoS attack feed provides information about
+        tracked C&C servers and detected attack commands from these C&Cs. You
+        may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
       additional_information:
       bots:
         collector:
@@ -1518,7 +1520,9 @@ providers:
       status: on
       documentation:
     DDoS Attack Feed (Targets):
-      description: The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs.
+      description: The Fraunhofer DDoS attack feed provides information about
+        tracked C&C servers and detected attack commands from these C&Cs. You
+        may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
       additional_information:
       bots:
         collector:
