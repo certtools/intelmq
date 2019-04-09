@@ -114,6 +114,9 @@ class Pipeline(object):
     def nonempty_queues(self) -> set:
         raise NotImplementedError
 
+    def send(self, message, path="_default", path_permissive=False):
+        raise NotImplementedError
+
 
 class Redis(Pipeline):
     has_internal_queues = True
@@ -162,9 +165,10 @@ class Redis(Pipeline):
         super().set_queues(queues, queues_type)
 
     def send(self, message, path="_default", path_permissive=False):
-        message = utils.encode(message)
         if path not in self.destination_queues and path_permissive:
             return
+
+        message = utils.encode(message)
 
         try:
             queues = self.destination_queues[path]
@@ -411,11 +415,14 @@ class Amqp(Pipeline):
             if not self.publish_raises_nack and not retval:
                 raise exceptions.PipelineError('Sent message was not confirmed.')
 
-    def send(self, message: str, path="_default"):
+    def send(self, message: str, path="_default", path_permissive=False):
         """
         In principle we could use AMQP's exchanges here but that architecture is incompatible
         to the format of our pipeline.conf file.
         """
+        if path not in self.destination_queues and path_permissive:
+            return
+
         message = utils.encode(message)
         try:
             queues = self.destination_queues[path]
