@@ -29,8 +29,7 @@ For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
 - [Integration with ticket systems, etc.](#integration-with-ticket-systems-etc)
 - [Frequently Asked Questions](#frequently-asked-questions)
 - [Additional Information](#additional-information)
-- [Bash Completion](#bash-completion)
-- [Performance Tests](#performance-tests)
+  - [Bash Completion](#bash-completion)
 
 # Where to get help?
 
@@ -666,15 +665,3 @@ Consult the [FAQ](FAQ.md) if you encountered any problems.
 ## Bash Completion
 
 To enable bash completion on `intelmqctl` and `intelmqdump` in order to help you run the commands in an easy manner, follow the installation process [here](../contrib/bash-completion/README.md).
-
-## Performance Tests
-
-Some tests have been made with a virtual machine with 
-the following specifications:
-
-* CPU: 1 core dedicated from i7 processor
-* Memory: 4GB
-* HDD: 10GB
-
-The entire solution didn't have any problem handling 2.000.000 
-queued events in memory with bots digesting the messages.
