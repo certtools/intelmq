@@ -145,6 +145,39 @@ You can set these parameters per bot as well. The settings will take effect afte
 * **`http_verify_cert`** - defines if the bot will verify SSL certificates when performing HTTPS requests (e.g. bots/collectors/collector_http.py).
     * **`true/false`** - verify or not verify SSL certificates
 
+
+### Using supervisor as process manager (Beta)
+
+First of all: Do not use it in production environments yet! It has not been tested thoroughly yet.
+
+[Supervisor](http://supervisord.org) is process manager written in Python. The main advantage is that it take care about processes, so if bot process exit with failure (exit code different than 0), supervisor try to run it again. Another advantage is that it not require writing PID files.
+
+This was tested on Ubuntu 18.04.
+
+Install supervisor. `supervisor_twiddler` is extension for supervisor, that makes possible to create process dynamically. (Ubuntu `supervisor` package is currently based on Python 2, so `supervisor_twiddler` must be installed with Python 2 `pip`.)
+```
+apt install supervisor python-pip
+pip install supervisor_twiddler
+```
+
+
+Create default config `/etc/supervisor/conf.d/intelmq.conf` and restart `supervisor` service:
+
+```ini
+[rpcinterface:twiddler]
+supervisor.rpcinterface_factory=supervisor_twiddler.rpcinterface:make_twiddler_rpcinterface
+
+[group:intelmq]
+```
+
+Change IntelMQ process manager in `/opt/intelmq/etc/defaults.conf`:
+
+```
+"process_manager": "supervisor",
+```
+
+After this it is possible to manage bots like before with `intelmqctl` command.
+
 ## Pipeline Configuration
 
 This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them. IntelMQ Manager generates this configuration.
