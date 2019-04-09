@@ -294,6 +294,20 @@ By default, all of the bots are started when you start the whole botnet, however
 }
 ```
 
+### Multithreading (Beta)
+
+First of all: Do not use it in production environments yet! There are a few bugs, see below
+
+Since IntelMQ 2.0 it is possible to provide the following parameter:
+  * `instances_threads`
+Set it to a non-zero integer, then this number of worker threads will be spawn.
+This is useful if bots often wait for system resources or if network-based lookups are a bottleneck.
+
+However, there are currently a few cavecats:
+  * Only use it with the AMQP pipeline, as with Redis, messages may get duplicated because there's only one internal queue
+  * In the logs, you can see the main thread initializing first, then all of the threads which log with the name `[bot-id].[thread-id]`.
+  * You need to kill the bot twice to actually stop it.
+
 ## Harmonization Configuration
 
 This configuration is used to specify the fields for all message types. The harmonization library will load this configuration to check, during the message processing, if the values are compliant to the "harmonization" format. Usually, this configuration doesn't need any change. It is mostly maintained by the intelmq maintainers.

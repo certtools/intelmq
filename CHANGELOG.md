@@ -25,6 +25,8 @@ CHANGELOG
 - `lib/cache`:
   - Allow ttl to be None explicitly.
   - Overwrite existing cache keys in the database instead of discarding the new data.
+- `lib/bot`:
+  - Basic, but easy-to-configure multi-threading using python's `threading` library. See the User-Guide for more information (#111, #186).
 
 ### Harmonization
 
