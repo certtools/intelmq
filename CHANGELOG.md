@@ -1,9 +1,11 @@
 CHANGELOG
 ==========
 
-1.2.0 (unreleased)
-------------------
-- use pyupgrade to upgrade all files to python3-only syntax, e.g. use `super()` instead of `super(..., ...)` in all files. Migration from old to new string formatting has not been applied if the resulting code would be longer.
+1.2.0.beta1 (2019-04-10)
+------------------------
+There are some features considered as beta and marked as such in the documentation, do not use them in production yet.
+
+- upgraded all files to python3-only syntax, e.g. use `super()` instead of `super(..., ...)` in all files. Migration from old to new string formatting has not been applied if the resulting code would be longer.
 
 ### Removals of deprecated code:
 - Removed compatibility shim `intelmq.bots.collectors.n6.collector_stomp`, use `intelmq.bots.collectors.stomp.collector` instead (see #1124).
@@ -94,7 +96,7 @@ CHANGELOG
 - `intelmq.bots.outputs.redis`:
   - New parameter `hierarchichal_output` (#1388).
   - New parameter `with_type`.
-- `intelmq.bots.outputs.amqptopic.output`: Compatibility with pika 1.0.0 (#1394).
+- `intelmq.bots.outputs.amqptopic.output`: Compatibility with pika 1.0.0 (#1084, #1394).
 
 ### Documentation
 - added documentation for feeds
@@ -125,6 +127,18 @@ CHANGELOG
   - Added scripts for monitoring queues and statistics.
 
 ### Known issues
+- Multi-threaded bots require multiple SIGTERMs (#1403)
+- Stats can't be saved with AMQP if redis is password-protected (#1402)
+- Update taxonomies to current RSIT and vice-versa (#1380)
+- stomp collector bot constantly uses 100% of CPU (#1364)
+- tests: capture logging with context manager (#1342)
+- Consistent message counter log messages for all kind of bots (#1278)
+- pymongo 3.0 deprecates used insert method  (#1063)
+- pymongo >= 3.5: authentication changes  (#1062)
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952)
+- n6 parser: mapping is modified within each run (#905)
+- reverse DNS: Only first record is used (#877)
+- Corrupt dump files when interrupted during writing (#870)
 
 
 1.1.2 (2019-03-25)
@@ -217,7 +231,7 @@ CHANGELOG
 - `bin/rewrite_config_files.py`: Fix ordering of BOTS file (#1327).
 
 ### Harmonization
-Update to 2018-09-26 version. New values are per taxonomy:
+Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380). New values for `classification.type` are per taxonomy:
 - Taxonomy 'intrusions':
   - "application-compromise"
   - "burglary"
