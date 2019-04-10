@@ -3,7 +3,7 @@
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.parsers.cymru_full_bogons.parser import \
+from intelmq.bots.parsers.cymru.parser_full_bogons import \
     CymruFullBogonsParserBot
 
 REPORT = {'__type': 'Report',

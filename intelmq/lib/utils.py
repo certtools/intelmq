@@ -422,16 +422,6 @@ def parse_relative(relative_time: str) -> int:
         raise ValueError("Could not process result of regex for attribute " + repr(relative_time))
 
 
-def extract_tar(file: bytes, extract_files: Union[bool, list]) -> list:
-    """
-    Wrapper for the new and more generic function unzip.
-    """
-    warnings.warn("The function 'extract_tar' is deprecated and will be removed in version 2.0, "
-                  "use unzip instead.",
-                  DeprecationWarning)
-    return unzip(file=file, extract_files=extract_files, try_gzip=False)
-
-
 def unzip(file: bytes, extract_files: Union[bool, list], logger=None, try_gzip: bool = True) -> list:
     """
         Extracts given compressed (tar.)gz file and returns content of specified or all files from it.

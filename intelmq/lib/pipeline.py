@@ -72,10 +72,6 @@ class Pipeline(object):
     def disconnect(self):
         raise NotImplementedError
 
-    def sleep(self, interval):
-        warnings.warn("'Pipeline.sleep' will be removed in version 2.0.", DeprecationWarning)
-        time.sleep(interval)
-
     def set_queues(self, queues, queues_type):
         """
         :param queues: For source queue, it's just string.

@@ -5,6 +5,14 @@ CHANGELOG
 ------------------
 - use pyupgrade to upgrade all files to python3-only syntax, e.g. use `super()` instead of `super(..., ...)` in all files. Migration from old to new string formatting has not been applied if the resulting code would be longer.
 
+### Removals of deprecated code:
+- Removed compatibility shim `intelmq.bots.collectors.n6.collector_stomp`, use `intelmq.bots.collectors.stomp.collector` instead (see #1124).
+- Removed compatibility shim `intelmq.bots.parsers.cymru_full_bogons.parser`, use `intelmq.bots.parsers.cymru.parser_full_bogons` instead.
+- Removed compatibility shim handing deprecated parameter `feed` for collectors. Use `name` instead.
+- Removed deprecated and unused method `intelmq.lib.pipeline.Pipeline.sleep`.
+- Removed support for deprecated parameter `query_ripe_stat` in `intelmq.bots.experts.ripe.expert`, use `query_ripe_stat_asn` and `query_ripe_stat_ip` instead (#1291).
+- Removed deprecated and unused function `intelmq.lib.utils.extract_tar`.
+
 ### Core
 - `lib/pipeline`:
   - Allow setting the broker of source and destination independently.

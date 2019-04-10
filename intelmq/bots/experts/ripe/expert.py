@@ -61,24 +61,17 @@ class RIPEExpertBot(Bot):
         if requests is None:
             raise ValueError("Could not import 'requests'. Please install the package.")
 
-        self.__check_deprecated_parameters(self.parameters)
-
         self.__mode = getattr(self.parameters, 'mode', 'append')
         self.__query = {
             "db_asn": getattr(self.parameters, 'query_ripe_db_asn', True),
             "db_ip": getattr(self.parameters, 'query_ripe_db_ip', True),
-            "stat_asn": getattr(self.parameters, 'query_ripe_stat_asn', getattr(self.parameters, 'query_ripe_stat', True)),
-            "stat_ip": getattr(self.parameters, 'query_ripe_stat_ip', getattr(self.parameters, 'query_ripe_stat', True)),
+            "stat_asn": getattr(self.parameters, 'query_ripe_stat_asn', True),
+            "stat_ip": getattr(self.parameters, 'query_ripe_stat_ip', True),
             "stat_geo": getattr(self.parameters, 'query_ripe_stat_geolocation', True)
         }
 
         self.__initialize_http_session()
         self.__initialize_cache()
-
-    def __check_deprecated_parameters(self, parameters):
-        if hasattr(parameters, 'query_ripe_stat'):
-            self.logger.warning("The parameter 'query_ripe_stat' is deprecated and will be removed in 2.0."
-                                "Use 'query_ripe_stat_asn' and 'query_ripe_stat_ip' instead'.")
 
     def __initialize_http_session(self):
         self.http_session = requests.Session()
