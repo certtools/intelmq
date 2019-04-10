@@ -373,7 +373,7 @@ class Bot(object):
         except Exception:
             self.logger.debug('Failed to write statistics to cache.', exc_info=True)
 
-    def __sleep(self, remaining: Optional[float]=None):
+    def __sleep(self, remaining: Optional[float] = None):
         """
         Sleep handles interrupts and changed rate_limit-parameter.
 
