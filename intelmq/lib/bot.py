@@ -813,7 +813,8 @@ class ParserBot(Bot):
                 else:
                     events = [value]
             except Exception:
-                self.logger.exception("Failed to parse line '{}' for feed '{}'".format(line, report.get('feed.url', 'Feed URL is unspecified')))
+                self.logger.exception("Failed to parse line '{}' for feed '{}'".format(
+                                      line, report.get('feed.url', 'Feed URL is unspecified')))
                 self.__failed.append((traceback.format_exc(), line))
             else:
                 events_count += len(events)
