@@ -10,8 +10,8 @@ TODO: check internal representation of data in redis (like with Pythonlist)
 """
 import logging
 import os
-import unittest
 import time
+import unittest
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.test as test

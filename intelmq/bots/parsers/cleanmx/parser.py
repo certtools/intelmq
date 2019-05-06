@@ -1,7 +1,6 @@
-from xml.etree import ElementTree
-
 from collections import OrderedDict
 from datetime import datetime
+from xml.etree import ElementTree
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot

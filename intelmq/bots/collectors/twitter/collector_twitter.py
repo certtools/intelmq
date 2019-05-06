@@ -33,6 +33,7 @@ To get api login data see: https://python-twitter.readthedocs.io/en/latest/getti
 """
 
 import time
+
 from intelmq.lib.bot import CollectorBot
 
 try:

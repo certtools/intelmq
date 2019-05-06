@@ -12,14 +12,14 @@ import os
 import re
 import signal
 import sys
-import time
 import threading
+import time
 import traceback
 import types
 import warnings
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Any, Optional, List
+from typing import Any, List, Optional
 
 import psutil
 

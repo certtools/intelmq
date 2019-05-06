@@ -3,8 +3,9 @@
 See README for database download.
 """
 
-from intelmq.lib.bot import Bot
 import csv
+
+from intelmq.lib.bot import Bot
 
 
 class RecordedFutureIPRiskExpertBot(Bot):

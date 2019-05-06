@@ -8,6 +8,7 @@ CHANGELOG
 - Add more and fix some existing type annotations.
 
 ### Development
+- Applied isort to all core files and core-related test files, sorting the imports there (every thing except bots and bots' tests).
 
 ### Harmonization
 

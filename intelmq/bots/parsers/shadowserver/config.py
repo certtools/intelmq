@@ -41,8 +41,9 @@ TODOs:
     check if the mappings are correct.
 
 """
-import intelmq.lib.harmonization as harmonization
 import re
+
+import intelmq.lib.harmonization as harmonization
 
 
 def get_feed(feedname, logger):

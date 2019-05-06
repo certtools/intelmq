@@ -8,7 +8,6 @@ import json
 from intelmq.lib.bot import Bot
 from intelmq.lib.utils import base64_decode
 
-
 MAPPING = {
     'hash': 'extra.shodan.event_hash',
     # 'ip': '__IGNORE__',  # using ip_str

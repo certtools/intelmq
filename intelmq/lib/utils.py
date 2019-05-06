@@ -246,7 +246,7 @@ class ListHandler(logging.StreamHandler):
         self.buffer.append((record.levelname.lower(), record.getMessage()))
 
 
-def log(name: str, log_path: str = Union[intelmq.DEFAULT_LOGGING_PATH, bool], log_level: str = "DEBUG",
+def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, log_level: str = "DEBUG",
         stream: Optional[object] = None, syslog: Union[bool, str, list, tuple] = None,
         log_format_stream: str = LOG_FORMAT_STREAM):
     """

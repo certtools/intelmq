@@ -4,8 +4,9 @@ Created on Tue Jan 23 15:25:58 2018
 
 @author: sebastian
 """
-import redis
 import time
+
+import redis
 
 from intelmq.lib.bot import Bot
 

@@ -2,10 +2,10 @@
 """
 IDEA classification: https://idea.cesnet.cz/en/classifications
 """
-from collections import Sequence, Mapping
 from base64 import b64decode
-from uuid import uuid4
+from collections import Mapping, Sequence
 from urllib.parse import quote_plus
+from uuid import uuid4
 
 from intelmq.lib.bot import Bot
 

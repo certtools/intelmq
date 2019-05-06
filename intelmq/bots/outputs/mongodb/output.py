@@ -3,8 +3,9 @@
 pymongo library automatically tries to reconnect if connection has been lost
 """
 
-from intelmq.lib.bot import Bot
 import dateutil.parser
+
+from intelmq.lib.bot import Bot
 
 try:
     import pymongo

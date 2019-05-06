@@ -21,13 +21,14 @@ import io
 import zipfile
 from datetime import datetime, timedelta
 
+from intelmq.lib.bot import CollectorBot
+from intelmq.lib.utils import unzip
+
 try:
     import requests
 except ImportError:
     requests = None
 
-from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import unzip
 
 class Time(object):
     def __init__(self, delta=None):

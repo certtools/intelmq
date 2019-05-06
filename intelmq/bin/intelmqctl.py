@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse
+import distutils.version
+import getpass
+import http.client
 import importlib
 import json
 import logging
@@ -8,22 +11,19 @@ import os
 import re
 import shutil
 import signal
+import socket
 import subprocess
 import sys
 import time
-from collections import OrderedDict
 import xmlrpc.client
-import http.client
-import socket
-import distutils.version
-import getpass
+from collections import OrderedDict
 
 import pkg_resources
 import psutil
 
-from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
-                     VAR_RUN_PATH, BOTS_FILE, HARMONIZATION_CONF_FILE,
-                     DEFAULT_LOGGING_LEVEL)
+from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,
+                     HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
+                     RUNTIME_CONF_FILE, VAR_RUN_PATH)
 from intelmq.lib import utils
 from intelmq.lib.bot_debugger import BotDebugger
 from intelmq.lib.pipeline import PipelineFactory

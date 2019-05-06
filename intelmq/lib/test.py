@@ -15,11 +15,12 @@ import unittest
 import unittest.mock as mock
 from itertools import chain
 
+import pkg_resources
+import redis
+
 import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-import pkg_resources
-import redis
 from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
 
 __all__ = ['BotTestCase']

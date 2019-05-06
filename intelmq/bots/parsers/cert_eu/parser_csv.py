@@ -8,8 +8,9 @@ CERT-EU parser
 
 reported cc, reported as name: ignored intentionally
 """
-from intelmq.lib.bot import ParserBot
 from collections import defaultdict
+
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import DateTime
 
 

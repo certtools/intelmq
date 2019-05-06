@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+import errno
 import io
+import os
 import socket
 import time
-import errno
-import os
 from os import path
 
 from intelmq.lib.bot import Bot

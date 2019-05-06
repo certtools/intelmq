@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import datetime
 import os
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.utils import base64_decode

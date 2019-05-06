@@ -3,9 +3,8 @@
 Tests the Bot class itself.
 """
 
-import unittest
 import sys
-
+import unittest
 
 import intelmq.lib.test as test
 from intelmq.tests.lib import test_parser_bot

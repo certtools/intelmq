@@ -10,8 +10,8 @@ import re
 
 import dateutil
 
-from intelmq.lib.bot import ParserBot
 from intelmq.lib import utils
+from intelmq.lib.bot import ParserBot
 
 FEEDS = {
     'https://feodotracker.abuse.ch/downloads/ipblocklist.csv': {

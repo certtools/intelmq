@@ -2,13 +2,14 @@
 Tests for intelmq.lib.splitreports
 """
 
-import io
-import unittest
-import itertools
 import base64
+import io
+import itertools
+import unittest
 
-from intelmq.lib.splitreports import read_delimited_chunks, generate_reports
 from intelmq.lib.message import Report
+from intelmq.lib.splitreports import generate_reports, read_delimited_chunks
+
 from .test_message import HARM
 
 csv_test_data = b"\n".join(b",".join(line) for line in
