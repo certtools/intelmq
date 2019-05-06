@@ -25,6 +25,9 @@ CHANGELOG
 
 ### Tests
 - `test_conf`: For yaml use `safe_load` instead of unsafe `load`.
+- Travis: Switch distribution from trusty to xenial, adapt scripts.
+  - Add Python 3.7 to tests.
+- Don't use Cerberus 1.3 because of https://github.com/pyeve/cerberus/issues/489
 
 ### Tools
 

@@ -53,7 +53,7 @@ setup(
     python_requires='>=3.4',
     install_requires=REQUIRES,
     tests_require=[
-        'Cerberus',
+        'Cerberus!=1.3',
         'pyyaml',
     ],
     test_suite='intelmq.tests',
