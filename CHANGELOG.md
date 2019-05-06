@@ -24,6 +24,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- `test_conf`: For yaml use `safe_load` instead of unsafe `load`.
 
 ### Tools
 
