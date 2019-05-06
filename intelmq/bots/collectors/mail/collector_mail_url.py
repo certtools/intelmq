@@ -13,7 +13,6 @@ except ImportError:
 from .lib import MailCollectorBot
 from intelmq.lib.splitreports import generate_reports
 
-
 class MailURLCollectorBot(MailCollectorBot):
 
     def init(self):

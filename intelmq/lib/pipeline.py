@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import time
 import warnings
+from itertools import chain
+from typing import Dict, Optional, Union
 
 import redis
-from itertools import chain
-from typing import Optional, Union
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline
@@ -61,7 +61,7 @@ class Pipeline(object):
 
     def __init__(self, parameters, logger):
         self.parameters = parameters
-        self.destination_queues = {}  # type: dict of lists
+        self.destination_queues = {}  # type: dict[str, list]
         self.internal_queue = None
         self.source_queue = None
         self.logger = logger
@@ -251,7 +251,7 @@ class Pythonlist(Pipeline):
     Data is saved as it comes (no conversion) and it is not blocking.
     """
 
-    state = {}
+    state = {}  # type: Dict[str, list]
 
     def connect(self):
         if self.parameters.raise_on_connect:
@@ -411,7 +411,7 @@ class Amqp(Pipeline):
             if not self.publish_raises_nack and not retval:
                 raise exceptions.PipelineError('Sent message was not confirmed.')
 
-    def send(self, message: str, path="_default", path_permissive=False):
+    def send(self, message: str, path="_default", path_permissive=False) -> None:
         """
         In principle we could use AMQP's exchanges here but that architecture is incompatible
         to the format of our pipeline.conf file.

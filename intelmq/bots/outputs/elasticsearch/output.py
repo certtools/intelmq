@@ -14,7 +14,6 @@ except ImportError:
 
 from intelmq.lib.bot import Bot
 
-
 ROTATE_OPTIONS = {
     'never': None,
     'daily': '%Y-%m-%d',

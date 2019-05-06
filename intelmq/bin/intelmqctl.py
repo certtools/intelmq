@@ -396,7 +396,7 @@ class SupervisorProcessManager:
     SUPERVISOR_GROUP = "intelmq"
     __supervisor_xmlrpc = None
 
-    def __init__(self, runtime_configuration: dict, logger: logging.Logger, controller):
+    def __init__(self, runtime_configuration: dict, logger: logging.Logger, controller) -> None:
         self.__runtime_configuration = runtime_configuration
         self.__logger = logger
         self.__controller = controller
@@ -618,7 +618,7 @@ PROCESS_MANAGER = {'intelmq': IntelMQProcessManager, 'supervisor': SupervisorPro
 
 class IntelMQController():
 
-    def __init__(self, interactive: bool = False, return_type: str = "python", quiet: bool = False):
+    def __init__(self, interactive: bool = False, return_type: str = "python", quiet: bool = False) -> None:
         """
         Initializes intelmqctl.
 

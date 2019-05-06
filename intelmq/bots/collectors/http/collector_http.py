@@ -29,7 +29,6 @@ except ImportError:
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import unzip
 
-
 class Time(object):
     def __init__(self, delta=None):
         """ Delta is a datetime.timedelta JSON string, ex: '{days=-1}'. """

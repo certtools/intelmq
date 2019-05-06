@@ -10,7 +10,6 @@ except ImportError:
 
 from intelmq.lib.bot import CollectorBot
 
-
 class MailCollectorBot(CollectorBot):
 
     def init(self):

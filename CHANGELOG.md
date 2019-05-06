@@ -5,6 +5,7 @@ CHANGELOG
 ------------------
 
 ### Core
+- Add more and fix some existing type annotations.
 
 ### Development
 

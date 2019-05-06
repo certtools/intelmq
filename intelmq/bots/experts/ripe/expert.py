@@ -16,7 +16,6 @@ except ImportError:
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
 
-
 STATUS_CODE_ERROR = 'HTTP status code was {}. Possible problem at the connection endpoint or network issue.'
 CACHE_NO_VALUE = '__no_contact'
 

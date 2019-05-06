@@ -19,7 +19,6 @@ except ImportError:
 
 from intelmq.lib.bot import CollectorBot
 
-
 class openDXLCollectorBot(CollectorBot):
 
     def init(self):

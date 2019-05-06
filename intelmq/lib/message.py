@@ -8,14 +8,13 @@ import hashlib
 import json
 import re
 import warnings
+from collections import defaultdict
+from typing import Any, Dict, Optional, Sequence, Union
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
-from typing import Any, Sequence, Optional
-from collections import defaultdict
-
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
 VALID_MESSSAGE_TYPES = ('Event', 'Message', 'Report')
@@ -89,7 +88,8 @@ class Message(dict):
     _IGNORED_VALUES = ["", "-", "N/A"]
     _default_value_set = False
 
-    def __init__(self, message=(), auto=False, harmonization=None):
+    def __init__(self, message: Union[dict, tuple] = (), auto: bool = False,
+                 harmonization: dict = None) -> None:
         try:
             classname = message['__type'].lower()
             del message['__type']
@@ -126,10 +126,10 @@ class Message(dict):
             if not self.add(key, value, sanitize=False, raise_failure=False):
                 self.add(key, value, sanitize=True)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any) -> None:
         self.add(key, value)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> Any:
         class_name, subitem = self.__get_type_config(key)
         if class_name['type'] == 'JSONDict' and not subitem:
             # return extra as string for backwards compatibility
@@ -187,7 +187,7 @@ class Message(dict):
 
     def add(self, key: str, value: str, sanitize: bool = True,
             overwrite: Optional[bool] = None, ignore: Sequence = (),
-            raise_failure: bool = True) -> bool:
+            raise_failure: bool = True) -> Optional[bool]:
         """
         Add a value for the key (after sanitation).
 
@@ -211,6 +211,7 @@ class Message(dict):
             * True if the value has been added.
             * False if the value is invalid and raise_failure is False or the value existed
                 and has not been overwritten.
+            * None if the value has been ignored.
 
         Raises:
             intelmq.lib.exceptions.KeyExists: If key exists and won't be overwritten explicitly.
@@ -427,12 +428,12 @@ class Message(dict):
             new_dict: A dictionary as copy of itself modified according
                 to the given parameters
         """
-        new_dict = {}
+        new_dict = {}  # type: Dict[str, Any]
 
         if with_type:
             new_dict['__type'] = self.__class__.__name__
 
-        jsondicts = defaultdict(dict)
+        jsondicts = defaultdict(dict)  # type: Dict[str, Any]
 
         for key, value in self.items():
             splitted_key = key.split('.')
@@ -440,7 +441,7 @@ class Message(dict):
                 subkeys = splitted_key
             else:
                 subkeys = [key]
-            json_dict_fp = new_dict
+            json_dict_fp = new_dict  # type: Dict[str, Any]
 
             try:
                 key_type = self.__get_type_config(splitted_key[0])[0]['type']
@@ -504,8 +505,8 @@ class Message(dict):
 
 class Event(Message):
 
-    def __init__(self, message: Optional[dict] = (), auto: bool = False,
-                 harmonization: Optional[dict] = None):
+    def __init__(self, message: Union[dict, tuple] = (), auto: bool = False,
+                 harmonization: Optional[dict] = None) -> None:
         """
         Parameters:
             message: Give a report and feed.name, feed.url and
@@ -539,8 +540,8 @@ class Event(Message):
 
 class Report(Message):
 
-    def __init__(self, message: Optional[dict] = (), auto: bool = False,
-                 harmonization: Optional[dict] = None):
+    def __init__(self, message: Union[dict, tuple] = (), auto: bool = False,
+                 harmonization: Optional[dict] = None) -> None:
         """
         Parameters:
             message: Passed along to Message's and dict's init.
