@@ -1,6 +1,37 @@
 CHANGELOG
 ==========
 
+1.2.0 (unreleased)
+------------------
+
+### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
 1.2.0.beta1 (2019-04-10)
 ------------------------
 There are some features considered as beta and marked as such in the documentation, do not use them in production yet.
