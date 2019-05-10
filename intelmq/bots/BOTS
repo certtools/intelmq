@@ -704,9 +704,10 @@
             }
         },
         "DO-Portal": {
-            "description": "Retrieves contact information for the affected CIDR from a do-portal instance.",
+            "description": "Retrieves contact information for the source.ip from a do-portal instance.",
             "module": "intelmq.bots.experts.do_portal.expert",
             "parameters": {
+                "mode": "append",
                 "portal_api_key": "<INSERT KEY>",
                 "portal_url": "<INSERT URL HERE>"
             }
