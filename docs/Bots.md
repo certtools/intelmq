@@ -1088,6 +1088,22 @@ Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 * * *
 
+### DO Portal Expert Bot
+
+#### Information:
+* `name:` do_portal
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` The DO portal retrieves the contact information from a DO portal instance: http://github.com/certat/do-portal/
+
+#### Configuration Parameters:
+* `mode` - Either `replace` or `append` the new abuse contacts in case there are existing ones.
+* `portal_url` - The URL to the portal, without the API-path. The used URL is `$portal_url + '/api/1.0/ripe/contact?cidr=%s'`.
+* `portal_api_key` - The API key of the user to be used. Must have sufficient privileges.
+
+* * *
+
 ### Field Reducer Bot
 
 #### Information:

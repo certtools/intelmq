@@ -16,15 +16,16 @@ class DoPortalExpertBot(Bot):
 
         self.url = self.parameters.portal_url + '/api/1.0/ripe/contact?cidr=%s'
         self.http_header.update({
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "API-Authorization":  self.parameters.portal_api_key
-                })
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "API-Authorization": self.parameters.portal_api_key
+        })
+        self.mode = self.parameters.mode
 
     def process(self):
         event = self.receive_message()
-        if "source.network" in event:
-            req = requests.get(self.url % event['source.network'],
+        if "source.ip" in event:
+            req = requests.get(self.url % event['source.ip'],
                                headers=self.http_header,
                                auth=self.auth,
                                proxies=self.proxy,
@@ -32,12 +33,18 @@ class DoPortalExpertBot(Bot):
                                cert=self.ssl_client_cert,
                                timeout=self.http_timeout_sec)
             if req.status_code == 404 and req.json()['message'].startswith("('no such cidr'"):
-                self.send_message(event)
-                self.acknowledge_message()
-                return
+                result = []
             else:
                 req.raise_for_status()
-            event["source.abuse_contact"] = ','.join(req.json()['abusecs'])
+                result = req.json()['abusecs']
+
+            if self.mode == 'append':
+                existing = event.get("source.abuse_contact", '').split(',')
+                combined = ','.join(existing + result).strip(',')
+                event.add("source.abuse_contact", combined, overwrite=True)
+            else:
+                event.add("source.abuse_contact", ','.join(result), overwrite=True)
+
         self.send_message(event)
         self.acknowledge_message()
 
