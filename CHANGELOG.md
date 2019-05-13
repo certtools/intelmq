@@ -10,6 +10,7 @@ CHANGELOG
 ### Core
 - Add more and fix some existing type annotations.
 - `intelmq.lib.bot`: Use `statistics_*` parameters for bot's statistics (#1402).
+- `intelmq.lib.pipeline`: redis: OOM can also be low memory, add this to log message (#1405).
 
 ### Development
 - Applied isort to all core files and core-related test files, sorting the imports there (every thing except bots and bots' tests).
