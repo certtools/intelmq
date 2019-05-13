@@ -101,7 +101,7 @@ class Bot(object):
             self.__load_runtime_configuration()
 
             """ Multithreading """
-            if hasattr(self.parameters, 'instances_threads') and not self.is_multithreaded:
+            if getattr(self.parameters, 'instances_threads', 0) > 1 and not self.is_multithreaded:
                 self.logger.handlers = []
                 num_instances = int(self.parameters.instances_threads)
                 instances = []
