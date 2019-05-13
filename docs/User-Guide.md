@@ -29,8 +29,7 @@ For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
 - [Integration with ticket systems, etc.](#integration-with-ticket-systems-etc)
 - [Frequently Asked Questions](#frequently-asked-questions)
 - [Additional Information](#additional-information)
-- [Bash Completion](#bash-completion)
-- [Performance Tests](#performance-tests)
+  - [Bash Completion](#bash-completion)
 
 # Where to get help?
 
@@ -146,6 +145,39 @@ You can set these parameters per bot as well. The settings will take effect afte
 * **`http_verify_cert`** - defines if the bot will verify SSL certificates when performing HTTPS requests (e.g. bots/collectors/collector_http.py).
     * **`true/false`** - verify or not verify SSL certificates
 
+
+### Using supervisor as process manager (Beta)
+
+First of all: Do not use it in production environments yet! It has not been tested thoroughly yet.
+
+[Supervisor](http://supervisord.org) is process manager written in Python. The main advantage is that it take care about processes, so if bot process exit with failure (exit code different than 0), supervisor try to run it again. Another advantage is that it not require writing PID files.
+
+This was tested on Ubuntu 18.04.
+
+Install supervisor. `supervisor_twiddler` is extension for supervisor, that makes possible to create process dynamically. (Ubuntu `supervisor` package is currently based on Python 2, so `supervisor_twiddler` must be installed with Python 2 `pip`.)
+```
+apt install supervisor python-pip
+pip install supervisor_twiddler
+```
+
+
+Create default config `/etc/supervisor/conf.d/intelmq.conf` and restart `supervisor` service:
+
+```ini
+[rpcinterface:twiddler]
+supervisor.rpcinterface_factory=supervisor_twiddler.rpcinterface:make_twiddler_rpcinterface
+
+[group:intelmq]
+```
+
+Change IntelMQ process manager in `/opt/intelmq/etc/defaults.conf`:
+
+```
+"process_manager": "supervisor",
+```
+
+After this it is possible to manage bots like before with `intelmqctl` command.
+
 ## Pipeline Configuration
 
 This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them. IntelMQ Manager generates this configuration.
@@ -235,6 +267,13 @@ You need to set the parameter `source_pipeline_broker`/`destination_pipeline_bro
 In a RabbitMQ's default configuration you might not provide a user account, as by default the administrator is open. If you create a user account, make sure to add the tag "monitoring", otherwise IntelMQ can't fetch the queue sizes.
 ![RabbitMQ User Account Monitoring Tag](./images/rabbitmq-user-monitoring.png)
 
+Setting the statistics (and cache) parameters is necessary when the local redis is running under a non-default host/port. If this is the case, you can set them explicitly:
+
+* `statistics_database`: `3`
+* `statistics_host`: `"127.0.0.1"`
+* `statistics_password`: `null`
+* `statistics_port`: `6379`
+
 ## Runtime Configuration
 
 This configuration is used by each bot to load its specific (runtime) parameters. Usually, the `BOTS` file is used to generate `runtime.conf`. Also, the IntelMQ Manager generates this configuration. You may edit it manually as well. Be sure to re-load the bot (see the intelmqctl documentation).
@@ -293,6 +332,20 @@ By default, all of the bots are started when you start the whole botnet, however
     }
 }
 ```
+
+### Multithreading (Beta)
+
+First of all: Do not use it in production environments yet! There are a few bugs, see below
+
+Since IntelMQ 2.0 it is possible to provide the following parameter:
+  * `instances_threads`
+Set it to a non-zero integer, then this number of worker threads will be spawn.
+This is useful if bots often wait for system resources or if network-based lookups are a bottleneck.
+
+However, there are currently a few cavecats:
+  * Only use it with the AMQP pipeline, as with Redis, messages may get duplicated because there's only one internal queue
+  * In the logs, you can see the main thread initializing first, then all of the threads which log with the name `[bot-id].[thread-id]`.
+  * You need to kill the bot twice to actually stop it.
 
 ## Harmonization Configuration
 
@@ -652,15 +705,3 @@ Consult the [FAQ](FAQ.md) if you encountered any problems.
 ## Bash Completion
 
 To enable bash completion on `intelmqctl` and `intelmqdump` in order to help you run the commands in an easy manner, follow the installation process [here](../contrib/bash-completion/README.md).
-
-## Performance Tests
-
-Some tests have been made with a virtual machine with 
-the following specifications:
-
-* CPU: 1 core dedicated from i7 processor
-* Memory: 4GB
-* HDD: 10GB
-
-The entire solution didn't have any problem handling 2.000.000 
-queued events in memory with bots digesting the messages.

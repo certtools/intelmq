@@ -24,7 +24,6 @@ from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidArgument, InvalidValue
 from intelmq.lib.harmonization import DateTime
 
-
 TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
                     'windows_nt': DateTime.from_windows_nt,
                     'epoch_millis': DateTime.from_epoch_millis,

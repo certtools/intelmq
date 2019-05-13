@@ -10,14 +10,14 @@ dxl_topic: string
 
 import time
 
+from intelmq.lib.bot import CollectorBot
+
 try:
     from dxlclient.callbacks import EventCallback
     from dxlclient.client import DxlClient
     from dxlclient.client_config import DxlClientConfig
 except ImportError:
     DxlClient = None
-
-from intelmq.lib.bot import CollectorBot
 
 
 class openDXLCollectorBot(CollectorBot):

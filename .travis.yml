@@ -1,5 +1,5 @@
 sudo: required
-dist: trusty
+dist: xenial
 language: python
 env:
   - requirements=true
@@ -8,6 +8,7 @@ python:
   - 3.4
   - 3.5
   - 3.6
+  - 3.7
 matrix:
   include:
   - python: 3.4
@@ -20,7 +21,7 @@ install:
   - if [[ $mode == debian ]]; then sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt fakeroot dh-systemd safe-rm; fi
   - if [[ $requirements == true ]]; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
   - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then sudo pip install typing; fi
-  - if [[ -v requirements ]]; then pip install Cerberus codecov pyyaml; fi
+  - if [[ -v requirements ]]; then pip install Cerberus!=1.3 codecov pyyaml; fi
   - if [[ $mode == codestyle ]]; then pip install pycodestyle; fi
   - if [[ -v requirements ]]; then sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers; fi
   - if [[ -v requirements ]]; then sudo pip install .; fi
@@ -42,7 +43,7 @@ before_script:
   - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$version.orig.tar.gz; fi
   - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$debversion.debian.tar.gz; fi
   - if [[ $mode == debian ]]; then popd; fi
-  - if [[ -v requirements ]]; then sudo cp intelmq/tests/assets/* /var/www/ && sudo touch /var/www/$(date +%Y).txt; fi
+  - if [[ -v requirements ]]; then sudo cp intelmq/tests/assets/* /var/www/html/ && sudo touch /var/www/html/$(date +%Y).txt; fi
 script:
   - if [[ $requirements == true ]]; then INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; elif [[ $requirements == false ]]; then INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
   - if [[ $mode == codestyle ]]; then pycodestyle intelmq/{bots,lib,bin}; fi
@@ -59,3 +60,6 @@ after_success:
   - if [[ -v requirements ]]; then codecov; fi
 addons:
   postgresql: "9.4"
+  apt:
+    packages:
+      - rabbitmq-server

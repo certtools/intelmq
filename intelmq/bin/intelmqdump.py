@@ -13,16 +13,17 @@ import re
 import readline
 import sys
 import traceback
+from collections import OrderedDict
 
 from termstyle import bold, green, inverted, red
-from collections import OrderedDict
 
 import intelmq.bin.intelmqctl as intelmqctl
 import intelmq.lib.exceptions as exceptions
+import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-import intelmq.lib.message as message
-from intelmq import DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
+from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
+                     PIPELINE_CONF_FILE, RUNTIME_CONF_FILE)
 
 APPNAME = "intelmqdump"
 DESCRIPTION = """

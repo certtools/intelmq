@@ -62,6 +62,8 @@ Increase the version in `intelmq/version.py` and declare it as alpha version.
 Add a new empty changelog and news section. For the changelog:
 
 ```
+### Configuration
+
 ### Core
 
 ### Development

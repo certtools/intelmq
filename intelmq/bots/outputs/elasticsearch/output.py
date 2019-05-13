@@ -3,16 +3,16 @@
 The ES-connection can't be closed explicitly.
 """
 
-from json import loads
-from datetime import datetime
 from collections.abc import Mapping
+from datetime import datetime
+from json import loads
+
+from intelmq.lib.bot import Bot
 
 try:
     from elasticsearch import Elasticsearch
 except ImportError:
     Elasticsearch = None
-
-from intelmq.lib.bot import Bot
 
 
 ROTATE_OPTIONS = {

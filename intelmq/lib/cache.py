@@ -7,10 +7,11 @@ Cymru Whois. It's possible to define a TTL value in each information
 inserted in cache. This TTL means how much time the system will keep an
 information in the cache.
 """
+from typing import Any, Optional
+
 import redis
 
 import intelmq.lib.utils as utils
-from typing import Any, Optional
 
 __all__ = ['Cache']
 

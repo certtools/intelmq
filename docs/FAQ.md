@@ -45,7 +45,7 @@ See also this discussion on a possible enhanced load balancing: https://github.c
 
 If you do not need the raw data, you can safely remove it. For events (after parsers), it keeps the original data, eg. a line of a CSV file. In reports it keeps the actual data to be parsed, so don't delete the raw field in Reports - between collectors and parsers.
 
-The raw data consumes about 50% - 30% of the messages' size (Depending of course on how many additional data you add to it and how much data the report includes). Dropping it, will improve the speed as less data needs to be transferred and processed at each step.
+The raw data consumes about 50% - 30% of the messages' size. The size of course depends on how many additional data you add to it and how much data the report includes. Dropping it, will improve the speed as less data needs to be transferred and processed at each step.
 
 
 #### In a bot
@@ -75,7 +75,7 @@ If the database is big, make sure only update small parts of the database by usi
 
 ## My bot(s) died on startup with no errors logged
 
-Rather than starting your bot(s) with `intelmqctl start`, try `intelmqctl run [bot]`. This will provide valuable debug output you might not otherwise see, pointing to issues like configuration errors.
+Rather than starting your bot(s) with `intelmqctl start`, try `intelmqctl run [bot]`. This will provide valuable debug output you might not otherwise see, pointing to issues like system configuration errors.
 
 ## Orphaned Queues
 

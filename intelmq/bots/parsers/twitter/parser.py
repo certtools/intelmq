@@ -17,13 +17,13 @@ Parameters:
 
     classification_type : string with a valid classificationtype
 """
+import re
+
 import pkg_resources
 
-from intelmq.lib.bot import ParserBot
-from intelmq.lib.bot import utils
+from intelmq.lib.bot import ParserBot, utils
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import ClassificationType
-import re
 
 try:
     from url_normalize import url_normalize

@@ -35,14 +35,15 @@ from datetime import datetime, timedelta
 import pytz
 from dateutil import parser
 
+from intelmq.lib.bot import CollectorBot
+from intelmq.lib.cache import Cache
+from intelmq.lib.utils import parse_relative
+
 try:
     import requests
 except ImportError:
     requests = None
 
-from intelmq.lib.bot import CollectorBot
-from intelmq.lib.cache import Cache
-from intelmq.lib.utils import parse_relative
 
 URL_LIST = 'https://interflow.azure-api.net/file/api/file/listsharedfiles'
 URL_DOWNLOAD = 'https://interflow.azure-api.net/file/api/file/download?fileName=%s'

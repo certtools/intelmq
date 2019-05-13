@@ -8,7 +8,6 @@ import json
 
 from intelmq.lib.bot import ParserBot
 
-
 MAPPING = {"additionalmetadata": "extra.additionalmetadata",
            "description": "event_description.text",
            "externalid": "malware.name",

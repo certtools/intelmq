@@ -1506,6 +1506,51 @@ providers:
       revision: 20-01-2018
       status: on
       documentation:
+    DDoS Attack Feed (C&C):
+      description: The Fraunhofer DDoS attack feed provides information about
+        tracked C&C servers and detected attack commands from these C&Cs. You
+        may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http_stream
+          parameters:
+            http_url: https://feed.caad.fkie.fraunhofer.de/ddosattackfeed
+            http_password: "{{ your password }}"
+            http_username: "{{ your username }}"
+            rate_limit: 10
+            strip_lines: true
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc
+          parameters:
+            unknown_messagetype_accuracy: 80
+      revision: 01-07-2018
+      status: on
+      documentation:
+    DDoS Attack Feed (Targets):
+      description: The Fraunhofer DDoS attack feed provides information about
+        tracked C&C servers and detected attack commands from these C&Cs. You
+        may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http_stream
+          parameters:
+            http_url: https://feed.caad.fkie.fraunhofer.de/ddosattackfeed
+            http_password: "{{ your password }}"
+            http_username: "{{ your username }}"
+            rate_limit: 10
+            strip_lines: true
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.fraunhofer.parser_ddosattack_target
+          parameters:
+      revision: 01-07-2018
+      status: on
+      documentation:
   MalwareURL:
     Latest malicious activity:
       description: Latest malicious domains/IPs.

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from os import path, mkdir
+from os import mkdir, path
 from subprocess import call
-from intelmq.lib.bot import CollectorBot
+
 from intelmq import VAR_STATE_PATH
+from intelmq.lib.bot import CollectorBot
 
 
 class RsyncCollectorBot(CollectorBot):

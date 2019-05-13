@@ -243,7 +243,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `http_user_agent`: user agent to use for the request.
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
-* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Only used by some bots.
+* `ssl_ca_certificate`: Optional string of path to trusted CA certificate. Only used by some bots.
 * `http_header`: HTTP request headers
 
 **Cache parameters**: Common redis cache parameters used in multiple bots (mainly lookup experts):
@@ -1088,6 +1088,22 @@ Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 * * *
 
+### DO Portal Expert Bot
+
+#### Information:
+* `name:` do_portal
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` The DO portal retrieves the contact information from a DO portal instance: http://github.com/certat/do-portal/
+
+#### Configuration Parameters:
+* `mode` - Either `replace` or `append` the new abuse contacts in case there are existing ones.
+* `portal_url` - The URL to the portal, without the API-path. The used URL is `$portal_url + '/api/1.0/ripe/contact?cidr=%s'`.
+* `portal_api_key` - The API key of the user to be used. Must have sufficient privileges.
+
+* * *
+
 ### Field Reducer Bot
 
 #### Information:
@@ -1113,7 +1129,7 @@ The fields in `keys` will be removed from events.
 
 ### Filter
 
-See the README.md
+The filter bot is capable of filtering specific events.
 
 #### Information:
 * `name:` filter
@@ -1124,7 +1140,42 @@ See the README.md
 
 #### Configuration Parameters:
 
-FIXME
+##### Parameters for filtering with key/value attributes:
+* `filter_key` - key from data harmonization
+* `filter_value` - value for the key
+* `filter_action` - action when a message match to the criteria (possible actions: keep/drop)
+* `filter_regex` - attribute determines if the `filter_value` shall be treated as regular expression or not.
+   If this attribute is not empty, the bot uses python's "search" function to evaluate the filter.
+
+##### Parameters for time based filtering:
+* `not_before` - events before this time will be dropped
+* `not_after` - events after this time will be dropped
+
+Both parameters accept string values describing absolute or relative time:
+* absolute
+ * basically anything parseable by datetime parser, eg. "2015-09-012T06:22:11+00:00"
+ * `time.source` taken from the event will be compared to this value to decide the filter behavior
+* relative
+ * accepted string formatted like this "<integer> <epoch>", where epoch could be any of following strings (could optionally end with trailing 's'): hour, day, week, month, year
+ * time.source taken from the event will be compared to the value (now - relative) to decide the filter behavior
+
+Examples of time filter definition:
+* ```"not_before" : "2015-09-012T06:22:11+00:00"``` events older than the specified time will be dropped
+* ```"not_after" : "6 months"``` just events older than 6 months will be passed through the pipeline
+
+#### Possible paths
+
+ * `_default`: default path, according to the configuration
+ * `action_other`: Negation of the default path
+ * `filter_match`: For all events the filter matched on
+ * `filter_no_match`: For all events the filter does not match
+
+| action | match |  `_default` | `action_other` | `filter_match` | `filter_no_match` |
+| ------ | ----- | ----------- | -------------- | -------------- | ----------------- |
+| keep   | ✓     | ✓           | ✗              | ✓              | ✗                 |
+| keep   | ✗     | ✗           | ✓              | ✗              | ✓                 |
+| drop   | ✓     | ✗           | ✓              | ✓              | ✗                 |
+| drop   | ✗     | ✓           | ✗              | ✗              | ✓                 |
 
 * * *
 

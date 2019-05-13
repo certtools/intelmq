@@ -192,7 +192,10 @@ class TestDataplaneParserBot(test.BotTestCase, unittest.TestCase):
 
     def test_ssh_client(self):
         self.input_message = SSH_CLIENT_REPORT
+        self.allowed_error_count = 1
         self.run_bot()
+        self.allowed_error_count = 0
+        self.assertLogMatches('.*Incorrect format for feed http://dataplane.org/sshclient.txt.*', 'ERROR')
         self.assertMessageEqual(0, SSH_CLIENT_EVENT[0])
         self.assertMessageEqual(1, SSH_CLIENT_EVENT[1])
 

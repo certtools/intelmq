@@ -2,16 +2,17 @@
 """
 Uses the common mail iteration method from the lib file.
 """
-import re
 import io
+import re
+
+from intelmq.lib.splitreports import generate_reports
+
+from .lib import MailCollectorBot
 
 try:
     import requests
 except ImportError:
     requests = None
-
-from .lib import MailCollectorBot
-from intelmq.lib.splitreports import generate_reports
 
 
 class MailURLCollectorBot(MailCollectorBot):

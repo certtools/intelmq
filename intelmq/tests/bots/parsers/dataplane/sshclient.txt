@@ -65,6 +65,7 @@
 #
 NA           |  NA                              |       5.157.7.82  |  2016-12-01 20:41:09  |  sshclient
 394472       |  SWOI-ASN - SWOI, US             |  104.241.232.238  |  2016-12-05 01:49:19  |  sshclient
+14080 | Telmex Colombia S.A., CO |
 #
 # Statistics
 #        ASNs: 1

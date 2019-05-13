@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import time
 import warnings
+from itertools import chain
+from typing import Dict, Optional, Union
 
 import redis
-from itertools import chain
-from typing import Optional, Union
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline
@@ -61,7 +61,7 @@ class Pipeline(object):
 
     def __init__(self, parameters, logger):
         self.parameters = parameters
-        self.destination_queues = {}  # type: dict of lists
+        self.destination_queues = {}  # type: dict[str, list]
         self.internal_queue = None
         self.source_queue = None
         self.logger = logger
@@ -71,10 +71,6 @@ class Pipeline(object):
 
     def disconnect(self):
         raise NotImplementedError
-
-    def sleep(self, interval):
-        warnings.warn("'Pipeline.sleep' will be removed in version 2.0.", DeprecationWarning)
-        time.sleep(interval)
 
     def set_queues(self, queues, queues_type):
         """
@@ -112,6 +108,9 @@ class Pipeline(object):
             raise exceptions.InvalidArgument('queues_type', got=queues_type, expected=['source', 'destination'])
 
     def nonempty_queues(self) -> set:
+        raise NotImplementedError
+
+    def send(self, message, path="_default", path_permissive=False):
         raise NotImplementedError
 
 
@@ -161,8 +160,12 @@ class Redis(Pipeline):
         self.load_configurations(queues_type)
         super().set_queues(queues, queues_type)
 
-    def send(self, message, path="_default"):
+    def send(self, message, path="_default", path_permissive=False):
+        if path not in self.destination_queues and path_permissive:
+            return
+
         message = utils.encode(message)
+
         try:
             queues = self.destination_queues[path]
         except KeyError as exc:
@@ -248,7 +251,7 @@ class Pythonlist(Pipeline):
     Data is saved as it comes (no conversion) and it is not blocking.
     """
 
-    state = {}
+    state = {}  # type: Dict[str, list]
 
     def connect(self):
         if self.parameters.raise_on_connect:
@@ -267,8 +270,11 @@ class Pythonlist(Pipeline):
         for destination_queue in chain.from_iterable(self.destination_queues.values()):
             self.state[destination_queue] = []
 
-    def send(self, message, path="_default"):
+    def send(self, message, path="_default", path_permissive=False):
         """Sends a message to the destination queues"""
+        if path not in self.destination_queues and path_permissive:
+            return
+
         for destination_queue in self.destination_queues[path]:
             if destination_queue in self.state:
                 self.state[destination_queue].append(utils.encode(message))
@@ -405,11 +411,14 @@ class Amqp(Pipeline):
             if not self.publish_raises_nack and not retval:
                 raise exceptions.PipelineError('Sent message was not confirmed.')
 
-    def send(self, message: str, path="_default"):
+    def send(self, message: str, path="_default", path_permissive=False) -> None:
         """
         In principle we could use AMQP's exchanges here but that architecture is incompatible
         to the format of our pipeline.conf file.
         """
+        if path not in self.destination_queues and path_permissive:
+            return
+
         message = utils.encode(message)
         try:
             queues = self.destination_queues[path]

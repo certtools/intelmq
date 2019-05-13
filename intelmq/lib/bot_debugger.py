@@ -20,9 +20,8 @@ from os.path import exists
 
 from intelmq.lib import utils
 from intelmq.lib.message import MessageFactory
-from intelmq.lib.utils import StreamHandler
-from intelmq.lib.utils import error_message_from_exc
 from intelmq.lib.pipeline import Pipeline
+from intelmq.lib.utils import StreamHandler, error_message_from_exc
 
 
 class BotDebugger:

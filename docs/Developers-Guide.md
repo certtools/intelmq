@@ -425,7 +425,7 @@ In the `intelmq/lib/` directory you can find some libraries:
  * Cache: For some expert bots it does make sense to cache external lookup results. Redis is used here.
  * Harmonization: For defined types, checks and sanitation methods are implemented.
  * Message: Defines Events and Reports classes, uses harmonization to check validity of keys and values according to config.
- * Pipeline: Writes messages to message queues. Implemented for productions use is only Redis. A python-only solution is used by testing. A solution using ZMQ is in development.
+ * Pipeline: Writes messages to message queues. Implemented for productions use is only Redis, AMQP is beta.
  * Test: Base class for bot tests with predefined test and assert methods.
  * Utils: Utility functions used by system components.
 

@@ -3,12 +3,12 @@ import imaplib
 import re
 import ssl
 
+from intelmq.lib.bot import CollectorBot
+
 try:
     import imbox
 except ImportError:
     imbox = None
-
-from intelmq.lib.bot import CollectorBot
 
 
 class MailCollectorBot(CollectorBot):

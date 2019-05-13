@@ -13,9 +13,9 @@ verdict_severity: defines the minimum severity of reports to be parsed
 """
 import json
 
+import intelmq.lib.utils as utils
 # imports for additional libraries and intelmq
 from intelmq.lib.bot import Bot
-import intelmq.lib.utils as utils
 
 
 class ATDParserBot(Bot):

@@ -7,7 +7,6 @@ import json
 import os
 import traceback
 
-
 from intelmq.lib.utils import object_pair_hook_bots
 
 

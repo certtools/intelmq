@@ -6,7 +6,6 @@ import json
 
 from intelmq.lib.bot import ParserBot
 
-
 MAPPING = {"Attributable": "extra.attributable",
            "Description": "event_description.text",
            "IndicatorThreatType": "classification.identifier",  # MaliciousUrl

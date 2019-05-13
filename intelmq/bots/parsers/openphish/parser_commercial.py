@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 

@@ -41,8 +41,9 @@ TODOs:
     check if the mappings are correct.
 
 """
-import intelmq.lib.harmonization as harmonization
 import re
+
+import intelmq.lib.harmonization as harmonization
 
 
 def get_feed(feedname, logger):
@@ -54,12 +55,13 @@ def get_feed(feedname, logger):
         "Accessible-AFP": accessible_afp,
         "Accessible-Cisco-Smart-Install": accessible_cisco_smart_install,
         "Accessible-CWMP": accessible_cwmp,
+        "Accessible-FTP": accessible_ftp,
         "Accessible-Hadoop": accessible_hadoop,
         "Accessible-RDP": accessible_rdp,
         "Accessible-Rsync": accessible_rsync,
         "Accessible-SMB": accessible_smb,
         "Accessible-Telnet": accessible_telnet,
-        "Accessible-Ubiquiti-Discovery-Service": accessible_ubiquity_discovery_service,
+        "Accessible-Ubiquiti-Discovery-Service": accessible_ubiquiti_discovery_service,
         "Accessible-VNC": accessible_vnc,
         "Amplification-DDoS-Victim": amplification_ddos_victim,
         "Blacklisted-IP": blacklisted_ip,
@@ -2088,7 +2090,7 @@ ics_scanners = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Ubiquiti
-accessible_ubiquity_discovery_service = {
+accessible_ubiquiti_discovery_service = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -2097,7 +2099,7 @@ accessible_ubiquity_discovery_service = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        ('extra.', 'tag'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-ubiquiti-discovery-service' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -2116,5 +2118,77 @@ accessible_ubiquity_discovery_service = {
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-ubiquiti-discovery-service',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-FTP
+accessible_ftp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-ftp' in constant_fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'banner', validate_to_none),
+        ('extra.', 'handshake', validate_to_none),
+        ('extra.', 'cipher_suite', validate_to_none),
+        ('extra.', 'cert_length', convert_int),
+        ('extra.', 'subject_common_name', validate_to_none),
+        ('extra.', 'issuer_common_name', validate_to_none),
+        ('extra.', 'cert_issue_date', validate_to_none),
+        ('extra.', 'cert_expiration_date', validate_to_none),
+        ('extra.', 'sha1_fingerprint', validate_to_none),
+        ('extra.', 'cert_serial_number', validate_to_none),
+        ('extra.', 'ssl_version', validate_to_none),
+        ('extra.', 'signature_algorithm', validate_to_none),
+        ('extra.', 'key_algorithm', validate_to_none),
+        ('extra.', 'subject_organization_name', validate_to_none),
+        ('extra.', 'subject_organization_unit_name', validate_to_none),
+        ('extra.', 'subject_country', validate_to_none),
+        ('extra.', 'subject_state_or_province_name', validate_to_none),
+        ('extra.', 'subject_locality_name', validate_to_none),
+        ('extra.', 'subject_street_address', validate_to_none),
+        ('extra.', 'subject_postal_code', validate_to_none),
+        ('extra.', 'subject_surname', validate_to_none),
+        ('extra.', 'subject_given_name', validate_to_none),
+        ('extra.', 'subject_email_address', validate_to_none),
+        ('extra.', 'subject_business_category', validate_to_none),
+        ('extra.', 'subject_serial_number', validate_to_none),
+        ('extra.', 'issuer_organization_name', validate_to_none),
+        ('extra.', 'issuer_organization_unit_name', validate_to_none),
+        ('extra.', 'issuer_country', validate_to_none),
+        ('extra.', 'issuer_state_or_province_name', validate_to_none),
+        ('extra.', 'issuer_locality_name', validate_to_none),
+        ('extra.', 'issuer_street_address', validate_to_none),
+        ('extra.', 'issuer_postal_code', validate_to_none),
+        ('extra.', 'issuer_surname', validate_to_none),
+        ('extra.', 'issuer_given_name', validate_to_none),
+        ('extra.', 'issuer_email_address', validate_to_none),
+        ('extra.', 'issuer_business_category', validate_to_none),
+        ('extra.', 'issuer_serial_number', validate_to_none),
+        ('extra.', 'sha256_fingerprint', validate_to_none),
+        ('extra.', 'sha512_fingerprint', validate_to_none),
+        ('extra.', 'md5_fingerprint', validate_to_none),
+        ('extra.', 'cert_valid', convert_bool),
+        ('extra.', 'self_signed', convert_bool),
+        ('extra.', 'cert_expired', convert_bool),
+        ('extra.', 'validation_level', validate_to_none),
+        ('extra.', 'auth_tls_response', validate_to_none),
+        ('extra.', 'auth_ssl_response', validate_to_none)
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-ftp',
+        'protocol.application': 'ftp',
     }
 }

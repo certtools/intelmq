@@ -25,11 +25,9 @@ import re
 import sys
 import tarfile
 import traceback
-import warnings
-from typing import Generator, Optional, Sequence, Union
+from typing import Generator, Iterator, Optional, Sequence, Union
 
 import dateutil.parser
-import pytz
 from dateutil.relativedelta import relativedelta
 
 import intelmq
@@ -95,7 +93,7 @@ def decode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8",),
 
 
 def encode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8",),
-           force: bool = False) -> str:
+           force: bool = False) -> bytes:
     """
     Encode given string from UTF-8 (default).
 
@@ -158,13 +156,16 @@ def base64_encode(value: Union[bytes, str]) -> str:
     return decode(base64.b64encode(encode(value, force=True)), force=True)
 
 
-def flatten_queues(queues) -> Generator[str, None, None]:
+def flatten_queues(queues) -> Iterator[str]:
     """
     Assure that output value will be a flattened.
 
     Parameters:
-        queues: either list [...] or object that that contain values of strings and lists {"": str, "": list}
+        queues: either list [...] or object that contain values of strings and lists {"": str, "": list}.
+            As used in the pipeline configuration.
 
+    Returns:
+        flattened_queues: queues without dictionaries as values, just lists with the values
     """
     return (item for sublist in (queues.values() if type(queues) is dict else queues) for item in
             (sublist if type(sublist) is list else [sublist]))
@@ -239,13 +240,13 @@ class ListHandler(logging.StreamHandler):
     Logging handler which saves the messages in a list which can be accessed with the
     `buffer` attribute.
     """
-    buffer = []
+    buffer = []  # type: list
 
     def emit(self, record):
         self.buffer.append((record.levelname.lower(), record.getMessage()))
 
 
-def log(name: str, log_path: str = intelmq.DEFAULT_LOGGING_PATH, log_level: str = "DEBUG",
+def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, log_level: str = "DEBUG",
         stream: Optional[object] = None, syslog: Union[bool, str, list, tuple] = None,
         log_format_stream: str = LOG_FORMAT_STREAM):
     """
@@ -314,7 +315,7 @@ def log(name: str, log_path: str = intelmq.DEFAULT_LOGGING_PATH, log_level: str 
     return logger
 
 
-def reverse_readline(filename: str, buf_size=100000) -> str:
+def reverse_readline(filename: str, buf_size=100000) -> Generator[str, None, None]:
     """
     See also:
         https://github.com/certtools/intelmq/issues/393#issuecomment-154041996
@@ -342,7 +343,7 @@ def reverse_readline(filename: str, buf_size=100000) -> str:
         yield line[::-1]
 
 
-def parse_logline(logline: str, regex: str = LOG_REGEX) -> dict:
+def parse_logline(logline: str, regex: str = LOG_REGEX) -> Union[dict, str]:
     """
     Parses the given logline string into its components.
 
@@ -352,6 +353,7 @@ def parse_logline(logline: str, regex: str = LOG_REGEX) -> dict:
 
     Returns:
         result: dictionary with keys: ['date', 'bot_id', 'log_level', 'message']
+            or string if the line can't be parsed
 
     See also:
         LOG_REGEX: Regular expression for default log format of file handler
@@ -420,16 +422,6 @@ def parse_relative(relative_time: str) -> int:
         return int(result[0][0]) * TIMESPANS[result[0][1]]
     else:
         raise ValueError("Could not process result of regex for attribute " + repr(relative_time))
-
-
-def extract_tar(file: bytes, extract_files: Union[bool, list]) -> list:
-    """
-    Wrapper for the new and more generic function unzip.
-    """
-    warnings.warn("The function 'extract_tar' is deprecated and will be removed in version 2.0, "
-                  "use unzip instead.",
-                  DeprecationWarning)
-    return unzip(file=file, extract_files=extract_files, try_gzip=False)
 
 
 def unzip(file: bytes, extract_files: Union[bool, list], logger=None, try_gzip: bool = True) -> list:
@@ -514,7 +506,7 @@ def object_pair_hook_bots(*args, **kwargs):
     return dict(sorted(*args), **kwargs)
 
 
-def seconds_to_human(seconds: float, precision: int = 0) -> str:
+def seconds_to_human(seconds: int, precision: int = 0) -> str:
     """
     Converts second count to a human readable description.
     >>> seconds_to_human(60)

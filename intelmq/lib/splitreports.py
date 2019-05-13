@@ -35,7 +35,7 @@ Other considerations:
    chunk size must take this into account, but multiplying the actual
    limit by 3/4 and subtracting a generous amount for the meta data.
 """
-from typing import BinaryIO, Generator, Optional, List
+from typing import BinaryIO, Generator, List, Optional
 
 from intelmq.lib.message import Report
 

@@ -3,8 +3,31 @@ NEWS
 
 See the changelog for a full list of changes.
 
-1.2.0 Feature release (unreleased)
-----------------------------------
+2.0.0 Major release (unreleased)
+--------------------------------
+
+### Requirements
+
+### Tools
+
+### Harmonization
+
+### Configuration
+Four new values have been introduced to configure the statistics database. Add them to your `defaults.conf` file:
+* `statistics_database`: `3`,
+* `statistics_host`: `"127.0.0.1"`,
+* `statistics_password`: `null`,
+* `statistics_port`: `6379`,
+
+### Libraries
+
+### Postgres databases
+
+
+2.0.0.beta1 release (2019-04-10)
+-------------------------------
+
+There are some features considered as beta and marked as such in the documentation, do not use them in production yet.
 
 ### Tools
 

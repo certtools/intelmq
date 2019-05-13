@@ -2,7 +2,6 @@
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 
-
 MAPPING_STATIC = {'bot': {
     'classification.type': 'infected system'},
     'bruteforce': {

@@ -5,10 +5,9 @@ import json
 import textwrap
 
 import pkg_resources
+import yaml
 
 import intelmq.lib.harmonization
-
-import yaml
 
 
 HEADER = """

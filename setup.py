@@ -30,15 +30,6 @@ DATA = [
       'intelmq/etc/runtime.conf',
       ],
      ),
-    ('/opt/intelmq/var/log/',
-     [],
-     ),
-    ('/opt/intelmq/var/lib/bots/file-output/',
-     [],
-     ),
-    ('/opt/intelmq/var/lib/bots/rsync_collector',
-     [],
-     ),
 ]
 
 exec(open(os.path.join(os.path.dirname(__file__),
@@ -62,7 +53,7 @@ setup(
     python_requires='>=3.4',
     install_requires=REQUIRES,
     tests_require=[
-        'Cerberus',
+        'Cerberus!=1.3',
         'pyyaml',
     ],
     test_suite='intelmq.tests',
@@ -105,6 +96,7 @@ setup(
             'intelmqdump = intelmq.bin.intelmqdump:main',
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
             'intelmq.bots.experts.sieve.validator = intelmq.bots.experts.sieve.validator:main',
+            'intelmqsetup = intelmq.bin.intelmqsetup:main',
         ] + BOTS,
     },
     scripts=[
