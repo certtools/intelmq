@@ -920,6 +920,10 @@
                 "elastic_doctype": "events",
                 "http_username": null,
                 "http_password": null,
+                "use_ssl": false,
+                "http_verify_cert": false,
+                "ssl_ca_certificate": null,
+                "ssl_show_warnings": true,
                 "flatten_fields": "extra",
                 "replacement_char": null
             }
