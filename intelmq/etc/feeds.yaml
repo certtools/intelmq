@@ -417,6 +417,7 @@ providers:
       description: 'List of botnet Command&Control servers (C&Cs) tracked by Feodo Tracker,
         associated with Dridex and Emotet (aka Heodo).'
       additional_information: https://feodotracker.abuse.ch/
+        The data in the column Last Online is used for `time.source` if available, with 00:00 as time. Otherwise first seen is used as `time.source`.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http

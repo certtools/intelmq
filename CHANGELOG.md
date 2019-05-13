@@ -20,6 +20,8 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.abusech.parser_ip`: Support LastOnline column in feodo feed (#1400) and use it for `time.source` if available.
+  - Use lower case malware names as default, should not make a difference in practice.
 
 #### Experts
 - added `intelmq.bots.experts.do_portal.expert`.
