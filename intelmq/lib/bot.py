@@ -52,6 +52,8 @@ class Bot(object):
 
     # True for (non-main) threads of a bot instance
     is_multithreaded = False
+    # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
+    collector_empty_process = False
 
     def __init__(self, bot_id: str, start=False, sighup_event=None):
         self.__log_buffer = []
@@ -243,6 +245,8 @@ class Bot(object):
 
                 if self.parameters.rate_limit and self.run_mode != 'scheduled':
                     self.__sleep()
+                if self.collector_empty_process and self.run_mode != 'scheduled':
+                    self.__sleep(1, log=False)
 
             except exceptions.PipelineError as exc:
                 error_on_pipeline = True
@@ -374,7 +378,7 @@ class Bot(object):
         except Exception:
             self.logger.debug('Failed to write statistics to cache, check your `statistics_*` settings.', exc_info=True)
 
-    def __sleep(self, remaining: Optional[float] = None):
+    def __sleep(self, remaining: Optional[float] = None, log: bool = True):
         """
         Sleep handles interrupts and changed rate_limit-parameter.
 
@@ -384,13 +388,16 @@ class Bot(object):
 
         Parameters:
             remaining: Time to sleep. 'rate_limit' parameter by default if None
+            log: Log the remaining sleep time, default: True
         """
         starttime = time.time()
         if remaining is None:
             remaining = self.parameters.rate_limit
+
         while remaining > 0:
-            self.logger.info("Idling for {:.1f}s ({}) now.".format(remaining,
-                                                                   utils.seconds_to_human(remaining)))
+            if log:
+                self.logger.info("Idling for {:.1f}s ({}) now.".format(remaining,
+                                                                       utils.seconds_to_human(remaining)))
             time.sleep(remaining)
             self.__handle_sighup()
             remaining = self.parameters.rate_limit - (time.time() - starttime)

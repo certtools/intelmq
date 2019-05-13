@@ -38,6 +38,8 @@ except ImportError:
 class StompCollectorBot(CollectorBot):
     """ main class for the STOMP protocol collector """
 
+    collector_empty_process = True
+
     def init(self):
         if stomp is None:
             raise ValueError('Could not import stomp. Please install it.')

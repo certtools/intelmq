@@ -9,7 +9,9 @@ CHANGELOG
 
 ### Core
 - Add more and fix some existing type annotations.
-- `intelmq.lib.bot`: Use `statistics_*` parameters for bot's statistics (#1402).
+- `intelmq.lib.bot`:
+  - Use `statistics_*` parameters for bot's statistics (#1402).
+  - Introduce `collector_empty_process` for collectors with an empty `process()` method, hardcoded 1s minimum sleep time, preventing endless loops, causing high load (#1364).
 - `intelmq.lib.pipeline`: redis: OOM can also be low memory, add this to log message (#1405).
 
 ### Development

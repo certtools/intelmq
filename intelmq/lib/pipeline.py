@@ -184,7 +184,8 @@ class Redis(Pipeline):
                         "OOM command not allowed when used memory > 'maxmemory'." in exc.args[0]:
                     raise MemoryError(exc.args[0])
                 elif 'Redis is configured to save RDB snapshots, but is currently not able to persist on disk' in exc.args[0]:
-                    raise IOError(28, 'No space left on device or in memory. Redis can\'t save its snapshots. Look at redis\'s logs.')
+                    raise IOError(28, 'No space left on device or in memory. Redis can\'t save its snapshots. '
+                                      'Look at redis\'s logs.')
                 raise exceptions.PipelineError(exc)
 
     def receive(self):
