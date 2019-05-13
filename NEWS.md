@@ -13,6 +13,11 @@ See the changelog for a full list of changes.
 ### Harmonization
 
 ### Configuration
+Four new values have been introduced to configure the statistics database. Add them to your `defaults.conf` file:
+* `statistics_database`: `3`,
+* `statistics_host`: `"127.0.0.1"`,
+* `statistics_password`: `null`,
+* `statistics_port`: `6379`,
 
 ### Libraries
 

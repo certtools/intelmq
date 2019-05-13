@@ -257,6 +257,10 @@ You need to set the parameter `source_pipeline_broker`/`destination_pipeline_bro
 * `destination_pipeline_password`
 * `destination_pipeline_socket_timeout` (default: no timeout)
 * `destination_pipeline_amqp_virtual_host` (default: `'/`)
+* `statistics_database`: `3`,
+* `statistics_host`: `"127.0.0.1"`,
+* `statistics_password`: `null`,
+* `statistics_port`: `6379`,
 * `source_pipeline_host` (default: `'127.0.0.1'`)
 * `source_pipeline_port` (default: 5672)
 * `source_pipeline_username`

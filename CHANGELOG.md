@@ -4,8 +4,12 @@ CHANGELOG
 1.2.0 (unreleased)
 ------------------
 
+### Configurations
+- Defaults: New parameters `statistics_host`, `statistics_port`, `statistics_databasae`, `statistics_password` for statistics redis database (#1402).
+
 ### Core
 - Add more and fix some existing type annotations.
+- `intelmq.lib.bot`: Use `statistics_*` parameters for bot's statistics (#1402).
 
 ### Development
 - Applied isort to all core files and core-related test files, sorting the imports there (every thing except bots and bots' tests).

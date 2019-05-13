@@ -156,13 +156,14 @@ class Bot(object):
             raise
 
         self.__stats_cache = cache.Cache(host=getattr(self.parameters,
-                                                      "source_pipeline_host",
+                                                      "statistics_host",
                                                       "127.0.0.1"),
                                          port=getattr(self.parameters,
-                                                      "source_pipeline_port", "6379"),
-                                         db=3,
+                                                      "statistics_port", "6379"),
+                                         db=int(getattr(self.parameters,
+                                                        "statistics_database", 3)),
                                          password=getattr(self.parameters,
-                                                          "source_pipeline_password",
+                                                          "statistics_password",
                                                           None),
                                          ttl=None,
                                          )
@@ -371,7 +372,7 @@ class Bot(object):
                                    self.__message_counter["failure"])
             self.__message_counter["stats_timestamp"] = datetime.now()
         except Exception:
-            self.logger.debug('Failed to write statistics to cache.', exc_info=True)
+            self.logger.debug('Failed to write statistics to cache, check your `statistics_*` settings.', exc_info=True)
 
     def __sleep(self, remaining: Optional[float] = None):
         """
