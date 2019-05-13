@@ -9,6 +9,8 @@ from intelmq.bots.parsers.abusech.parser_ip import AbusechIPParserBot
 
 with open(os.path.join(os.path.dirname(__file__), 'zeusips.txt')) as handle:
     EXAMPLE_ZEUS_FILE = handle.read()
+LINES = EXAMPLE_ZEUS_FILE.splitlines()
+HEADER = '\n'.join(LINES[:5]) + '\n'
 
 EXAMPLE_ZEUS_REPORT = {"feed.url": "https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist",
                         "feed.name": "AbuseCH Zeustracker",
@@ -20,7 +22,7 @@ EXAMPLE_ZEUS_REPORT = {"feed.url": "https://zeustracker.abuse.ch/blocklist.php?d
 EXAMPLE_ZEUS_EVENT = {"feed.url": "https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist",
                        "feed.name": "AbuseCH Zeustracker",
                        "source.ip": "101.200.81.187",
-                       "raw": utils.base64_encode("101.200.81.187"),
+                       "raw": utils.base64_encode(HEADER + LINES[6]),
                        "time.observation": "2015-11-02T13:11:44+00:00",
                        "classification.taxonomy": "malicious code",
                        "classification.type": "c2server",
