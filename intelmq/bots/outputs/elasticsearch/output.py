@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 The ES-connection can't be closed explicitly.
+
+TODO:
+    * Support client_cert and client_key parameters, see https://github.com/certtools/intelmq/pull/1406
 """
 
 from collections.abc import Mapping
@@ -84,8 +87,6 @@ class ElasticsearchOutputBot(Bot):
                                 verify_certs=self.http_verify_cert,
                                 ca_certs=self.ssl_ca_certificate,
                                 ssl_show_warn=self.ssl_show_warnings,
-                                # client_cert=self.ssl_client_cert,
-                                # client_key=None
                                 )
 
         if self.should_rotate():

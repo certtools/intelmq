@@ -26,6 +26,7 @@ CHANGELOG
 - added `intelmq.bots.experts.do_portal.expert`.
 
 #### Outputs
+- `intelmq.bots.outputs.elasticsearch.output`: Support for TLS added (#1406).
 
 ### Documentation
 
