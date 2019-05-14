@@ -21,7 +21,7 @@ TEMPLATE = {'__type': 'Event',
             'feed.name': 'BlockList.de',
             'feed.url': 'https://lists.blocklist.de/lists/imap.txt',
             'time.observation': '2015-09-14T12:00:00+02:00',
-            'classification.type': 'ids alert',
+            'classification.type': 'ids-alert',
             'protocol.application': 'imap',
             'event_description.text': 'IP reported as having run attacks on '
                                       'the service IMAP, SASL, POP3',

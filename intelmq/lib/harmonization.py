@@ -144,16 +144,22 @@ class ClassificationType(GenericType):
     https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
     with extensions.
 
+    These old values are automatically mapped to the new ones:
+        'botnet drone' -> 'infected-system'
+        'ids alert' -> 'ids-alert'
+        'c&c' -> 'c2server'
+        'infected system' -> 'infected-system'
+        'malware configuration' -> 'malware-configuration'
+
     Allowed values are:
      * """
 
     allowed_values = ["application-compromise",
                       'backdoor',
                       'blacklist',
-                      'botnet drone',
                       'brute-force',
                       "burglary",
-                      'c&c',
+                      'c2server',
                       'compromised',
                       "copyright",
                       "data-loss",
@@ -165,12 +171,12 @@ class ClassificationType(GenericType):
                       'dropzone',
                       'exploit',
                       'harmful-speech',
-                      'ids alert',
-                      'infected system',
+                      'ids-alert',
+                      'infected-system',
                       "information-disclosure",
                       'leak',
                       'malware',
-                      'malware configuration',
+                      'malware-configuration',
                       'malware-distribution',
                       "masquerade",
                       'other',
@@ -218,6 +224,21 @@ class ClassificationType(GenericType):
             return False
 
         return True
+
+    @staticmethod
+    def sanitize(value):
+        value = value.lower().strip()
+        if value == 'botnet drone':
+            value = 'infected-system'
+        elif value == 'ids alert':
+            value = 'ids-alert'
+        elif value == 'c&c':
+            value = 'c2server'
+        elif value == 'infected system':
+            value = 'infected-system'
+        elif value == 'malware configuration':
+            value = 'malware-configuration'
+        return GenericType().sanitize(value)
 
 
 class DateTime(GenericType):

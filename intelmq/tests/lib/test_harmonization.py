@@ -452,6 +452,26 @@ class TestHarmonization(unittest.TestCase):
         """ Test TLP.is_valid with invalid arguments. """
         self.assertFalse(harmonization.TLP.is_valid('TLP AMBER'))
 
+    def test_classification_type_valid(self):
+        """ Test ClassificationType.is_valid with valid arguments. """
+        self.assertTrue(harmonization.ClassificationType.is_valid('infected-system'))
+
+    def test_classification_type_invalid(self):
+        """ Test ClassificationType.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.ClassificationType.is_valid('foobar'))
+
+    def test_classification_type_sanitize(self):
+        """ Test ClassificationType.sanitize with valid arguments. """
+        self.assertTrue(harmonization.ClassificationType.is_valid('Infected-system',
+                                                   sanitize=True))
+        self.assertTrue(harmonization.ClassificationType.is_valid('infected system ',
+                                                   sanitize=True))
+
+    def test_classification_type_sanitize_invalid(self):
+        """ Test ClassificationType.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.ClassificationType.is_valid('botnet-drone'))
+        self.assertFalse(harmonization.ClassificationType.is_valid('botnet drone'))
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

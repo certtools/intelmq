@@ -9,13 +9,13 @@ if os.environ.get('INTELMQ_TEST_DATABASES'):
     import pymongo
 
 INPUT1 = {"__type": "Event",
-          "classification.type": "botnet drone",
+          "classification.type": "infected-system",
           "source.asn": 64496,
           "source.ip": "192.0.2.1",
           "feed.name": "Example Feed",
           "extra": '{"foo.bar": "test"}'
           }
-OUTPUT1 = {'classification': {'type': 'botnet drone'},
+OUTPUT1 = {'classification': {'type': 'infected-system'},
            'extra': {"foo": {"bar": "test"}},
            'feed': {'name': 'Example Feed'},
            'source': {'asn': 64496, 'ip': '192.0.2.1'},

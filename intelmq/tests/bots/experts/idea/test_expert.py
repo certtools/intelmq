@@ -9,7 +9,7 @@ from intelmq.lib.harmonization import ClassificationType
 
 TEST_INPUT1 = {
     "__type": "Event",
-    "classification.type": "infected system",
+    "classification.type": "infected-system",
     "destination.ip": "2001:DB8::BB2B:F258",
     "destination.port": 22,
     "event_description.target": "DHL",

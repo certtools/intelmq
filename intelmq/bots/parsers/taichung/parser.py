@@ -7,8 +7,8 @@ from intelmq.lib.bot import Bot
 
 CLASSIFICATION = {
     "brute-force": ["brute-force", "brute force", "mysql"],
-    "c&c": ["c&c server"],
-    "infected system": ["irc-botnet"],
+    "c2server": ["c&c server"],
+    "infected-system": ["irc-botnet"],
     "malware": ["malware provider", "malware website", '\u60e1\u610f', "worm"],
     "scanner": ["scan"],
     "exploit": ["bash", "php-cgi", "phpmyadmin"],

@@ -13,6 +13,13 @@ CHANGELOG
   - Use `statistics_*` parameters for bot's statistics (#1402).
   - Introduce `collector_empty_process` for collectors with an empty `process()` method, hardcoded 1s minimum sleep time, preventing endless loops, causing high load (#1364).
 - `intelmq.lib.pipeline`: redis: OOM can also be low memory, add this to log message (#1405).
+- `intelmq.lib.harmonization`: ClassificationType: Update RSIT mapping (#1380):
+  - replace `botnet drone` with `infected-system`
+  - replace `infected system` with `infected-system`
+  - replace `ids alert` with `ids-alert`
+  - replace `c&c` with `c2server`
+  - replace `malware configuration` with `malware-configuration`
+  - sanitize replaces these values on the fly
 
 ### Development
 - Applied isort to all core files and core-related test files, sorting the imports there (every thing except bots and bots' tests).
@@ -20,6 +27,7 @@ CHANGELOG
 ### Harmonization
 
 ### Bots
+- Use the new RSIT types in several types, see above
 #### Collectors
 
 #### Parsers

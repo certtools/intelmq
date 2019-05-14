@@ -16,7 +16,7 @@ EVENT_TEMPL = {"__type": "Event",
                "feed.url": "https://portal.spamhaus.org/cert/api.php?cert="
                            "<CERTNAME>&key=<APIKEY>",
                "classification.taxonomy": "malicious code",
-               "classification.type": "botnet drone",
+               "classification.type": "infected-system",
                "time.observation": "2015-01-01T00:00:00+00:00",
                }
 INPUT = [{'feed.name': 'Abuse.ch',

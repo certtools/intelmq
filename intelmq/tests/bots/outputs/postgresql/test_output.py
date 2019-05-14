@@ -13,7 +13,7 @@ if os.environ.get('INTELMQ_TEST_DATABASES'):
 
 INPUT1 = {"__type": "Event",
           "classification.identifier": "zeus",
-          "classification.type": "botnet drone",
+          "classification.type": "infected-system",
           "source.asn": 64496,
           "source.ip": "192.0.2.1",
           "feed.name": "Example Feed",

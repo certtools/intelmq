@@ -13,7 +13,7 @@ TYPES = {
     'EXPLOIT_KIT': 'exploit',
     'BACKDOOR': 'backdoor',
     'TOR_IP': 'proxy',
-    'C_AND_C': 'c&c'
+    'C_AND_C': 'c2server'
 }
 
 

@@ -11,7 +11,7 @@ CNC_EVENT_TEMPLATE = {
     'feed.url': 'https://feed.caad.fkie.fraunhofer.de/ddosattackfeed',
     'feed.name': 'Fraunhofer DDoS Attack Feed',
     '__type': 'Event',
-    'classification.type': 'c&c',
+    'classification.type': 'c2server',
     'classification.taxonomy': 'malicious code',
     'malware.name': 'some_malware',
     'time.source': '2018-02-05T10:15:42+00:00',

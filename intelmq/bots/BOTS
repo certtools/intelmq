@@ -449,7 +449,7 @@
                 "filter_type": null,
                 "skip_header": true,
                 "time_format": null,
-                "type": "c&c",
+                "type": "c2server",
                 "type_translation": null
             }
         },
@@ -474,7 +474,7 @@
                 "split_index": 0,
                 "default_url_protocol": "http://",
                 "time_format": null,
-                "type": "c&c"
+                "type": "c2server"
             }
         },
         "HpHosts": {

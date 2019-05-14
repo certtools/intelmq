@@ -11,6 +11,12 @@ See the changelog for a full list of changes.
 ### Tools
 
 ### Harmonization
+The allowed values for the `classification.type` field have been updated to the RSIT mapping. These values have changed and are automatically mapped:
+  - `botnet drone` with `infected-system`
+  - `infected system` with `infected-system`
+  - `ids alert` with `ids-alert`
+  - `c&c` with `c2server`
+  - `malware configuration` with `malware-configuration`
 
 ### Configuration
 Four new values have been introduced to configure the statistics database. Add them to your `defaults.conf` file:
@@ -22,6 +28,28 @@ Four new values have been introduced to configure the statistics database. Add t
 ### Libraries
 
 ### Postgres databases
+The following statements optionally update existing data.
+Please check if you did use these feed names and eventually adapt them for your setup!
+```SQL
+UPDATE events
+   SET "classification.type" = 'infected-system'
+   WHERE "classification.type" = 'botnet drone';
+UPDATE events
+   SET "classification.type" = 'infected-system'
+   WHERE "classification.type" = 'infected system';
+UPDATE events
+   SET "classification.type" = 'ids-alert'
+   WHERE "classification.type" = 'ids alert';
+UPDATE events
+   SET "classification.type" = 'c2server'
+   WHERE "classification.type" = 'c&c';
+UPDATE events
+   SET "classification.type" = 'malware-configuration'
+   WHERE "classification.type" = 'malware configuration';
+```
+
+In the section for 1.1.0 there was this command:
+```
 
 
 2.0.0.beta1 release (2019-04-10)

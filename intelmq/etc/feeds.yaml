@@ -474,7 +474,7 @@ providers:
             columns: ["time.source", "source.ip", "malware.name", "status", "extra.SBL", "source.as_name", "source.geolocation.cc"]
             ignore_values: ["", "", "", "", "Not listed", "", ""]
             skip_table_head: True
-            type: c&c
+            type: c2server
       revision: 19-03-2019
       status: on
       documentation:
@@ -1679,7 +1679,7 @@ providers:
             columns: ["time.source", "source.url", "source.ip", "malware.name", "__IGNORE__"]
             skip_table_head: true
             default_url_protocol: http://
-            type: c&c
+            type: c2server
       revision: 19-03-2019
       status: on
       documentation:

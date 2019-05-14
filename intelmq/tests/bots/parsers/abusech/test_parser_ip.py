@@ -27,7 +27,7 @@ EXAMPLE_FEODO_EVENT = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipbl
                        "extra.feed_last_generated": "2019-03-05T22:10:24+00:00",
                        "time.source": "2019-03-04T22:10:24+00:00",
                        "classification.taxonomy": "malicious code",
-                       "classification.type": "c&c",
+                       "classification.type": "c2server",
                        "malware.name": "heodo",
                        "__type": "Event"
                        }

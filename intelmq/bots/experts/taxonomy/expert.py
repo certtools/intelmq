@@ -34,7 +34,7 @@ TAXONOMY = {
     "social-engineering": "information-gathering",
     "brute-force": "intrusion attempts",
     "exploit": "intrusion attempts",
-    "ids alert": "intrusion attempts",  # ENISA eCSIRT-II taxonomy: 'ids-alert'
+    "ids-alert": "intrusion attempts",
     "application-compromise": "intrusions",
     "backdoor": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "burglary": "intrusions",
@@ -44,12 +44,11 @@ TAXONOMY = {
     "unauthorized-command": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "unauthorized-login": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "unprivileged-account-compromise": "intrusions",
-    "botnet drone": "malicious code",  # not in ENISA eCSIRT-II taxonomy, deprecated -> infected system
-    "c&c": "malicious code",  # ENISA eCSIRT-II taxonomy: 'c2server'
+    "c2server": "malicious code",  # ENISA eCSIRT-II taxonomy: 'c2server'
     "dga domain": "malicious code",  # not in ENISA eCSIRT-II taxonomy
-    "infected system": "malicious code",  # ENISA eCSIRT-II taxonomy: 'infected-system'
+    "infected-system": "malicious code",  # ENISA eCSIRT-II taxonomy: 'infected-system'
     "malware": "malicious code",  # not in ENISA eCSIRT-II taxonomy
-    "malware configuration": "malicious code",  # ENISA eCSIRT-II taxonomy: 'malware-configuration'
+    "malware-configuration": "malicious code",  # ENISA eCSIRT-II taxonomy: 'malware-configuration'
     "malware-distribution": "malicious code",
     "ransomware": "malicious code",  # not in ENISA eCSIRT-II taxonomy
     "blacklist": "other",

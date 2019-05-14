@@ -2,7 +2,7 @@
 """
 The source provides a stream/list of newline separated JSON objects. Each line
 represents a single event observed by a DDoS C&C tracker, like an attack
-command. This parser emits a c&c event for the C&C tracked server the
+command. This parser emits a c2server event for the C&C tracked server the
 observed event originated from. If the bot receives a report with a known
 C&C type but with an unknown message type, it generates a C&C event with a
 feed.accuracy given by the parameter unknown_messagetype_accuracy, if set.
@@ -27,7 +27,7 @@ class FraunhoferDdosAttackCncParserBot(ParserBot):
                              'unsupported cnctype %s.' % message['cnctype'])
 
         event = self.__new_event(message, line, report)
-        event.add('classification.type', 'c&c')
+        event.add('classification.type', 'c2server')
         event.add('classification.taxonomy', 'malicious code')
         event.add('source.fqdn', message['cnc']['domain'])
         event.add('source.ip', message['cnc']['ip'])

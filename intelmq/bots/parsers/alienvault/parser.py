@@ -3,7 +3,7 @@
 from intelmq.lib.bot import ParserBot
 
 CLASSIFICATION = {
-    "c&c": "c&c",
+    "c2server": "c2server",
     "scanning host": "scanner",
     "malicious host": "malware",
     "spamming": "spam",

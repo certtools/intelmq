@@ -12,20 +12,20 @@ if os.environ.get('INTELMQ_TEST_DATABASES'):
     import elasticsearch
 
 INPUT1 = {"__type": "Event",
-          "classification.type": "botnet drone",
+          "classification.type": "infected-system",
           "source.asn": 64496,
           "source.ip": "192.0.2.1",
           "feed.name": "Example Feed",
           "extra": '{"foo.bar": "test"}'
           }
-OUTPUT1 = {'classification.type': 'botnet drone',
+OUTPUT1 = {'classification.type': 'infected-system',
            'extra.foo.bar': 'test',
            'feed.name': 'Example Feed',
            'source.asn': 64496,
            'source.ip': '192.0.2.1',
            }
 OUTPUT1_REPLACEMENT_CHARS = {
-    'classification_type': 'botnet drone',
+    'classification_type': 'infected-system',
     'extra_foo_bar': 'test',
     'feed_name': 'Example Feed',
     'source_asn': 64496,
@@ -90,7 +90,7 @@ TIMESTAMP_2 = "2020-02-02T01:23:45+00:00"
 TIMESTAMP_3 = "2018-09-09T01:23:45+00:00"
 INPUT_TIME_SOURCE = {
     "__type": "Event",
-    "classification.type": "botnet drone",
+    "classification.type": "infected-system",
     "source.asn": 64496,
     "source.ip": "192.0.2.1",
     "feed.name": "Example Feed",
@@ -99,7 +99,7 @@ INPUT_TIME_SOURCE = {
 }
 INPUT_TIME_OBSERVATION = {
     "__type": "Event",
-    "classification.type": "botnet drone",
+    "classification.type": "infected-system",
     "source.asn": 64496,
     "source.ip": "192.0.2.1",
     "feed.name": "Example Feed",
