@@ -20,6 +20,7 @@ CHANGELOG
   - replace `c&c` with `c2server`
   - replace `malware configuration` with `malware-configuration`
   - sanitize replaces these values on the fly
+- Allow using non-opt/ (LSB) paths with environment variable `INTELMQ_PATHS_NO_OPT`.
 
 ### Development
 - Applied isort to all core files and core-related test files, sorting the imports there (every thing except bots and bots' tests).
