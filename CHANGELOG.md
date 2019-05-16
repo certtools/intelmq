@@ -31,6 +31,7 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.spamhaus.parser_cert`: Added support for `extortion` events.
 
 #### Experts
 - added `intelmq.bots.experts.do_portal.expert`.

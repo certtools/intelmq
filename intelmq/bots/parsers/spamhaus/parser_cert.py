@@ -130,6 +130,12 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('classification.identifier', 'authentication-spoof')
                 event.add('protocol.application', 'smtp')
                 event.add('event_description.text', 'The device spoofed SMTP authentication with a bad EHLO.')
+            elif malware == 'extortion':
+                event.add('classification.type', 'spam')
+                event.add('classification.identifier', 'extortion')
+                if row_splitted[7] == '25':
+                    event.add('protocol.application', 'smtp')
+                event.add('event_description.text', 'This device sent extortion mails.')
             else:
                 if malware == 'auto':
                     malware = 's_other'

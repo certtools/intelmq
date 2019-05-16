@@ -211,6 +211,17 @@ EXAMPLE_EVENTS_PARTS = [{'source.ip': '109.126.64.2',
                          'event_description.text': 'The device spoofed SMTP authentication with a bad '
                                                    'EHLO.',
                          },
+                        {'source.ip': '172.20.148.82',
+                         'source.asn': 65551,
+                         'time.source': '2019-04-23T06:38:02+00:00',
+                         'classification.type': 'spam',
+                         'classification.identifier': 'extortion',
+                         'protocol.application': 'smtp',
+                         'destination.port': 25,
+                         'source.geolocation.cc': 'AT',
+                         'protocol.transport': 'tcp',
+                         'event_description.text': 'This device sent extortion mails.',
+                         },
                         ]
 
 
