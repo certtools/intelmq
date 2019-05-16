@@ -23,7 +23,8 @@ import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
-                     PIPELINE_CONF_FILE, RUNTIME_CONF_FILE)
+                     PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
+                     DEFAULT_LOGGING_LEVEL)
 
 APPNAME = "intelmqdump"
 DESCRIPTION = """
@@ -170,6 +171,19 @@ def main():
     parser.add_argument('botid', metavar='botid', nargs='?',
                         default=None, help='botid to inspect dumps of')
     args = parser.parse_args()
+
+    # Try to get log_level from defaults_configuration, else use default
+    try:
+        log_level = utils.load_configuration(DEFAULTS_CONF_FILE)['logging_level']
+    except Exception:
+        log_level = DEFAULT_LOGGING_LEVEL
+
+    try:
+        logger = utils.log('intelmqdump', log_level=log_level)
+    except (FileNotFoundError, PermissionError) as exc:
+        logger = utils.log('intelmqdump', log_level=log_level, log_path=False)
+        logger.error('Not logging to file: %s', exc)
+
     ctl = intelmqctl.IntelMQController()
     readline.parse_and_bind("tab: complete")
     readline.set_completer_delims('')
@@ -300,7 +314,7 @@ def main():
                 default = utils.load_configuration(DEFAULTS_CONF_FILE)
                 runtime = utils.load_configuration(RUNTIME_CONF_FILE)
                 params = utils.load_parameters(default, runtime)
-                pipe = pipeline.PipelineFactory.create(params)
+                pipe = pipeline.PipelineFactory.create(params, logger)
                 try:
                     for i, (key, entry) in enumerate([item for (count, item)
                                                       in enumerate(content.items()) if count in ids]):
