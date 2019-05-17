@@ -43,6 +43,7 @@ CHANGELOG
 ### Documentation
 
 ### Packaging
+- Update IntelMQ path fix patch after `INTELMQ_PATHS_NO_OPT` introduction, provide `INTELMQ_PATHS_OPT` environment variable for packaged instances.
 
 ### Tests
 - `test_conf`: For yaml use `safe_load` instead of unsafe `load`.
