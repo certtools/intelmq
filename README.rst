@@ -111,6 +111,14 @@ Licence
 This software is licensed under GNU Affero General Public License
 version 3
 
+Funded by
+---------
+
+This project was partially funded by the CEF framework
+
+.. figure:: docs/images/cef_logo.png
+   :alt: Co-financed by the Connecting Europe Facility of the European Union
+
 .. |Build Status| image:: https://travis-ci.org/certtools/intelmq.svg?branch=master
    :target: https://travis-ci.org/certtools/intelmq
 .. |codecov.io| image:: https://codecov.io/github/certtools/intelmq/coverage.svg?branch=master
