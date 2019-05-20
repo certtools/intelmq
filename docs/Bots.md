@@ -6,6 +6,7 @@
 - [Initialization parameters](#initialization-parameters)
 - [Common parameters](#common-parameters)
 - [Collectors](#collectors)
+  - [API](#api)
   - [Generic URL Fetcher](#generic-url-fetcher)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
@@ -27,6 +28,7 @@
   - [Request Tracker](#request-tracker)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
+  - [Rsync](#rsync)
   - [Shodan Stream](#shodan-stream)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
@@ -42,6 +44,8 @@
   - [Blueliv Crimeserver](#blueliv-crimeserver)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
+  - [Calidog Certstream](#calidog-certstream)
+  - [McAfee openDXL](#mcafee-opendxl)
   - [Microsoft Azure](#microsoft-azure)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
@@ -56,6 +60,7 @@
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
 - [Parsers](#parsers)
+  - [Not complete](#not-complete)
   - [Generic CSV Parser](#generic-csv-parser)
     - [Configuration parameters](#configuration-parameters)
   - [Cymru CAP Program](#cymru-cap-program)
@@ -77,14 +82,16 @@
   - [ASN Lookup](#asn-lookup)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
+  - [Copy Extra](#copy-extra)
   - [Cymru Whois](#cymru-whois)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
+  - [Deduplicator](#deduplicator)
   - [Domain Suffix](#domain-suffix)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
     - [Rule processing](#rule-processing)
-  - [Deduplicator](#deduplicator)
+  - [DO-Portal](#do-portal)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
   - [Field Reducer Bot](#field-reducer-bot)
@@ -112,9 +119,13 @@
     - [Actions](#actions)
     - [Examples](#examples)
     - [Types](#types)
+  - [McAfee Active Response Hash lookup](#mcafee-active-response-hash-lookup)
+  - [McAfee Active Response IP lookup](#mcafee-active-response-ip-lookup)
+  - [McAfee Active Response URL lookup](#mcafee-active-response-url-lookup)
   - [National CERT contact lookup by CERT.AT](#national-cert-contact-lookup-by-certat)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
+  - [Recorded Future IP Risk](#recorded-future-ip-risk)
   - [Reverse DNS](#reverse-dns)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
@@ -140,6 +151,8 @@
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
 - [Outputs](#outputs)
+  - [AMQP Topic](#amqp-topic)
+  - [Blackhole](#blackhole)
   - [Elasticsearch](#elasticsearch)
     - [Configuration Parameters:](#configuration-parameters)
   - [File](#file)
@@ -149,6 +162,7 @@
   - [Files](#files)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
+  - [McAfee Enterprise Security Manager](#mcafee-enterprise-security-manager)
   - [MongoDB](#mongodb)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
@@ -158,6 +172,7 @@
     - [Configuration Parameters:](#configuration-parameters)
     - [Installation Requirements](#installation-requirements)
     - [PostgreSQL Installation](#postgresql-installation)
+  - [Redis](#redis)
   - [REST API](#rest-api)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
@@ -261,6 +276,26 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 ## Collectors
 
 Multihreading is disabled for all Collectors, as this would lead to duplicated data.
+
+### API
+
+#### Information:
+* `name:` intelmq.bots.collectors.api.collector
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` collect report messages from a HTTP REST API
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `port`: Optional, integer. Default: 5000. The local port, the API will be available at.
+
+The API is available at `/intelmq/push`.
+The `tornado` library is required.
+
+* * *
+
 
 ### Generic URL Fetcher
 
@@ -481,6 +516,25 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 
 * * *
 
+### Rsync
+
+#### Information:
+
+* `name:` intelmq.bots.collectors.rsync.collector_rsync
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Syncs a file via rsync and reads the file.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `file`: The filename to process, combine with `rsync_path`.
+* `temp_directory`: The temporary directory for rsync, by default `$VAR_STATE_PATH/rsync_collector`. `$VAR_STATE_PATH` is `/var/run/intelmq/` or `/opt/intelmq/var/run/`.
+* `rsync_path`: The path of the file to process
+
+* * *
+
 ### Shodan Stream
 
 Requires the shodan library to be installed:
@@ -579,6 +633,24 @@ See the README.md
 * **Feed parameters** (see above)
 * `api_key`: location of information resource
 * `api_url`: The optional API endpoint, by default `https://freeapi.blueliv.com`.
+
+* * *
+
+### Calidog Certstream
+
+A Bot to collect data from the Certificate Transparency Log (CTL)
+This bot works based on certstream libary (https://github.com/CaliDog/certstream-python)
+
+#### Information:
+* `name:` intelmq.bots.collectors.calidog.collector_certstream
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` collect data from Certificate Transparency Log
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
 
 * * *
 
@@ -712,6 +784,10 @@ curl -X POST http://localhost:5000/intelmq/push -H 'Content-Type: application/js
 * `port`: 5000
 
 ## Parsers
+
+### Not complete
+
+This list is not complete. Look at `intelmq/bots/BOTS` or the list of parsers shown in the manager. But most parsers do not need configuration parameters.
 
 TODO
 
@@ -1010,6 +1086,22 @@ FIXME
 
 * * *
 
+### Copy Extra
+
+#### Information:
+* `name:` `intelmq.bots.experts.national_cert_contact_certat.expert
+* `lookup:` to https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Queries abuse contact based on the country.
+
+#### Configuration Parameters:
+
+* **Cache parameters** (see in section [common parameters](#common-parameters))
+FIXME
+
+* * *
+
 ### Cymru Whois
 
 #### Information:
@@ -1022,7 +1114,6 @@ FIXME
 #### Configuration Parameters:
 
 * **Cache parameters** (see in section [common parameters](#common-parameters))
-FIXME
 
 * * *
 
@@ -1600,7 +1691,26 @@ Otherwise the dummy mode is active, the events are just passed without an additi
 
 Note that SIGHUPs and reloads interrupt the sleeping.
 
+* * *
+
 ## Outputs
+
+### AMQP Topic
+
+Sends data to an AMQP Server
+
+#### Information
+* `name`: `intelmq.bots.outputs.amqptopic.output`
+* `lookup`: to the amqp server
+* `public`: yes
+* `cache`: no
+* `description`: Sends the event to a specified topic of an AMQP server
+
+#### Configuration parameters:
+
+See README.md
+
+* * *
 
 ### Blackhole
 
@@ -1800,6 +1910,20 @@ from your installation.
 
 * * *
 
+### Redis
+
+#### Information:
+* `name:` `intelmq.bots.outputs.redis.output`
+* `lookup:` to the redis server
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Sends the events to another redis server
+
+#### Configuration Parameters:
+
+See README.md
+
+* * *
 
 ### REST API
 
@@ -1818,7 +1942,6 @@ from your installation.
 * `hierarchical_output`: boolean
 * `host`: destination URL
 * `use_json`: boolean
-
 
 * * *
 
