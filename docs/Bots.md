@@ -161,12 +161,16 @@
   - [REST API](#rest-api)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
-- [SMTP Output Bot](#smtp-output-bot)
+ - [SMTP Output Bot](#smtp-output-bot)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
-  - [TCP](#tcp)
+ - [TCP](#tcp)
     - [Information:](#information)
     - [Configuration Parameters:](#configuration-parameters)
+ - [UDP](#tcp)
+    - [Information:](#information)
+    - [Configuration Parameters:](#configuration-parameters)
+ - [XMPP](#xmpp)
 
 
 ## General remarks
@@ -511,6 +515,7 @@ Requires the shodan library to be installed:
 
 * `ip`: IP of destination server
 * `port`: port of destination server
+
 * * *
 
 
@@ -1857,7 +1862,7 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 ### TCP
 
 #### Information:
-* `name:` intelmq.bots.outputs.tcp.collector
+* `name:` intelmq.bots.outputs.tcp.output
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
@@ -1874,3 +1879,30 @@ Multihreading is disabled for this bot.
 * `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present. 
     In that case, the output waits every message is acknowledged by "Ok" message the tcp.collector bot implements.
 
+* * *
+
+### UDP
+
+#### Information:
+* `name:` intelmq.bots.outputs.udp.output
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` TCP is the bot responsible to send events to a UDP port
+
+Multihreading is disabled for this bot.
+
+#### Configuration Parameters:
+
+* `field_delimiter`: String, default: `"|"`
+* `format`: `json` or `delimited`, see README
+* `header`: string
+* `keep_raw_field`: boolean, default: false
+* `udp_host`: Destination's server's Host name or IP address
+* `udp_port`: Destination port
+
+* * *
+
+### XMPP
+
+See the README.md in the bot's directory

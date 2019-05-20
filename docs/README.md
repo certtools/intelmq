@@ -16,6 +16,9 @@ InfoSec events. Its main goal is to give to incident responders an easy
 way to collect & process threat intelligence thus improving the incident
 handling processes of CERTs.
 
+Several pieces of software are evolved around IntelMQ. For an overview,
+look at the [Ecosystem document](Ecosystem.md).
+
 IntelMQ's design was influenced by
 [AbuseHelper](https://github.com/abusesa/abusehelper)
 however it was re-written from scratch and aims at:
@@ -26,11 +29,9 @@ however it was re-written from scratch and aims at:
     persistence functionality (even system crash)
 -   Use and improve the existing Data Harmonization Ontology
 -   Use JSON format for all messages
--   Integration of the existing tools (AbuseHelper, CIF)
 -   Provide easy way to store data into Log Collectors like
     ElasticSearch, Splunk, databases (such as PostgreSQL)
 -   Provide easy way to create your own black-lists
--   Provide easy communication with other systems via HTTP RESTFUL API
 
 It follows the following basic meta-guidelines:
 
@@ -68,6 +69,8 @@ User Guide
 ----------------
 
 See [User Guide](User-Guide.md).
+Which Feeds are supported? Have a look at the [Feeds documentation](Feeds.md) and the [Bots documentation](Bots.md).
+If you know additional feeds and how to parse them, please contribute your code or your configuration (by issues or the mailing lists).
 
 For support questions please use the intelmq-users mailing list: <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users>
 
@@ -88,7 +91,7 @@ Incident Handling Automation Project
 Data Harmonization
 ------------------
 
-IntelMQ use the Data Harmonization. Please read [this document](docs/Data-Harmonization.md) for more details.
+IntelMQ use the Data Harmonization. Please read [this document](Data-Harmonization.md) for more details.
 
 How to participate
 ------------------
