@@ -52,6 +52,8 @@ class Bot(object):
 
     # True for (non-main) threads of a bot instance
     is_multithreaded = False
+    # True if the bot is thread-safe and it makes sense
+    is_multithreadable = True
     # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
     collector_empty_process = False
 
@@ -103,7 +105,9 @@ class Bot(object):
             self.__load_runtime_configuration()
 
             """ Multithreading """
-            if getattr(self.parameters, 'instances_threads', 0) > 1 and not self.is_multithreaded:
+            if (getattr(self.parameters, 'instances_threads', 0) > 1 and
+                not self.is_multithreaded and
+                    self.is_multithreadable):
                 self.logger.handlers = []
                 num_instances = int(self.parameters.instances_threads)
                 instances = []
@@ -128,6 +132,12 @@ class Bot(object):
                 for i, thread in enumerate(instances):
                     thread.join()
                 return
+            elif (getattr(self.parameters, 'instances_threads', 1) > 1 and
+                  not self.is_multithreadable):
+                self.logger.error('Multithreading is configured, but is not '
+                                  'available for this bot. Look at the FAQ '
+                                  'for a list of reasons for this. '
+                                  'https://github.com/certtools/intelmq/blob/master/docs/FAQ.md')
 
             self.__load_pipeline_configuration()
             self.__load_harmonization_configuration()
@@ -940,6 +950,8 @@ class CollectorBot(Bot):
 
     Does some sanity checks on message sending.
     """
+
+    is_multithreadable = False
 
     def __init__(self, bot_id: str, start=False, sighup_event=None):
         super().__init__(bot_id=bot_id)

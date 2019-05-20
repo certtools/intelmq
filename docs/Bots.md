@@ -256,6 +256,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 
 ## Collectors
 
+Multihreading is disabled for all Collectors, as this would lead to duplicated data.
 
 ### Generic URL Fetcher
 
@@ -1661,6 +1662,8 @@ The data in ES can be retrieved with the HTTP-Interface:
 * `cache (redis db):` none
 * `description:` output messages (reports or events) to file
 
+Multihreading is disabled for this bot, as this would lead to corrupted files.
+
 #### Configuration Parameters:
 
 * `encoding_errors_mode`: By default `'strict'`, see for more details and options: https://docs.python.org/3/library/functions.html#open For example with `'backslashreplace'` all characters which cannot be properly encoded will be written escaped with backslashes.
@@ -1859,6 +1862,8 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 * `public:` yes
 * `cache (redis db):` none
 * `description:` TCP is the bot responsible to send events to a TCP port (Splunk, another IntelMQ, etc..).
+
+Multihreading is disabled for this bot.
 
 #### Configuration Parameters:
 

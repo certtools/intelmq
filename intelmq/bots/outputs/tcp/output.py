@@ -15,6 +15,8 @@ from intelmq.lib.bot import Bot
 
 class TCPOutputBot(Bot):
 
+    is_multithreadable = False
+
     def init(self):
         self.to_intelmq = getattr(self.parameters, "counterpart_is_intelmq", False)
 

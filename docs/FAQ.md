@@ -88,3 +88,12 @@ llen [queue-name] # shows the length of the queue [queue-name]
 lindex [queue-name] [index] # show the [index]'s message of the queue [queue-name]
 del [queue-name] # remove the queue [queue-name]
 ```
+## Multithreading is not available for this bot
+
+Multithreading is not available for some bots.
+
+ * For all collectors, Multithreading is disabled. Otherwise this would lead to duplicated data, as the data retrieval is not atomic.
+ * Some bots use libraries which are not thread safe. Look a the bot's documentation for more information.
+ * Some bots' operations are not thread safe. Look a the bot's documentation for more information.
+
+If you think this mapping is wrong, please report a bug.
