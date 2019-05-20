@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+For intelmq collectors on the other side we can expect the "ok" sent back.
+Otherwise, for filebeat and other we can't do that.
+As this was the previous behavior, that's the default.
+https://github.com/certtools/intelmq/issues/1385
+"""
 import socket
 import struct
 import time
@@ -10,6 +16,8 @@ from intelmq.lib.bot import Bot
 class TCPOutputBot(Bot):
 
     def init(self):
+        self.to_intelmq = getattr(self.parameters, "counterpart_is_intelmq", False)
+
         self.address = (self.parameters.ip, int(self.parameters.port))
         self.separator = utils.encode(self.parameters.separator) if (hasattr(self.parameters, "separator")) else None
         self.connect()
@@ -36,11 +44,14 @@ class TCPOutputBot(Bot):
                     d = utils.encode(data)
                     msg = struct.pack('>I', len(d)) + d
                     self.con.sendall(msg)
-                response = self.con.recv(2)
-                if response == b"Ok":
+                if self.to_intelmq:
+                    response = self.con.recv(2)
+                    if response == b"Ok":
+                        break
+                    self.logger.warn("Message not delivered, retrying.")
+                    time.sleep(1)
+                else:
                     break
-                self.logger.warn("Message not delivered, retrying.")
-                time.sleep(1)
         except socket.error as e:
             self.logger.exception("Reconnecting, %s", e)
             self.con.close()

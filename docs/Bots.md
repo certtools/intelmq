@@ -1862,6 +1862,7 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 
 #### Configuration Parameters:
 
+* `counterpart_is_intelmq`: Boolean. If you are sending to an IntelMQ TCP collector, set this to True, otherwise e.g. with filebeat, set it to false.
 * `ip`: IP of destination server
 * `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server

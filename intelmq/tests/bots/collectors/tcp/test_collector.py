@@ -70,7 +70,8 @@ class TestTCPOutputBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = TCPOutputBot
         cls.sysconfig = {'hierarchical_output': False,
                          'ip': 'localhost',
-                         'port': PORT
+                         'port': PORT,
+                         'counterpart_is_intelmq': True,
                          }
 
     def _delayed_start(self):

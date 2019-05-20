@@ -1051,10 +1051,11 @@
             "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, another IntelMQ, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
+                "counterpart_is_intelmq": true,
                 "hierarchical_output": false,
                 "ip": "<ip>",
                 "port": "<port>",
-                "separator": "<nothing or \n or sth>"
+                "separator": "<nothing or \\n or sth>"
             }
         },
         "UDP": {

@@ -39,6 +39,7 @@ CHANGELOG
 
 #### Outputs
 - `intelmq.bots.outputs.elasticsearch.output`: Support for TLS added (#1406).
+- `intelmq.bots.outputs.tcp.output`: Support non-intelmq counterparts again. New parameter `counterpart_is_intelmq`, see NEWS.md for more information (#1385).
 
 ### Documentation
 

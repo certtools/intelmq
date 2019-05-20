@@ -25,6 +25,9 @@ Four new values have been introduced to configure the statistics database. Add t
 * `statistics_password`: `null`,
 * `statistics_port`: `6379`,
 
+#### TCP Output
+Version 1.1.2 broke the compatibility of the TCP Output with third-party counterparts like filebeat, but is more stable for a TCP Collector counterpart. A new parameter `counterpart_is_intelmq` has been introduced, it's default is `false` for backwards compatibility. If you use a TCP collector, set this to `true`, otherwise to `false`.
+
 ### Libraries
 
 ### Postgres databases
