@@ -57,7 +57,8 @@ class Bot(object):
     # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
     collector_empty_process = False
 
-    def __init__(self, bot_id: str, start=False, sighup_event=None):
+    def __init__(self, bot_id: str, start=False, sighup_event=None,
+                 disable_multithreading=None):
         self.__log_buffer = []
         self.parameters = Parameters()
 
@@ -107,7 +108,8 @@ class Bot(object):
             """ Multithreading """
             if (getattr(self.parameters, 'instances_threads', 0) > 1 and
                 not self.is_multithreaded and
-                    self.is_multithreadable):
+                    self.is_multithreadable and
+                    not disable_multithreading):
                 self.logger.handlers = []
                 num_instances = int(self.parameters.instances_threads)
                 instances = []
@@ -138,6 +140,9 @@ class Bot(object):
                                   'available for this bot. Look at the FAQ '
                                   'for a list of reasons for this. '
                                   'https://github.com/certtools/intelmq/blob/master/docs/FAQ.md')
+            elif disable_multithreading:
+                self.logger.warning('Multithreading is configured, but is not '
+                                    'available for interactive runs.')
 
             self.__load_pipeline_configuration()
             self.__load_harmonization_configuration()

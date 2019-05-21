@@ -44,7 +44,7 @@ class BotDebugger:
         bot = getattr(module, 'BOT')
         if run_subcommand == "message":
             bot.init = lambda *args: None
-        self.instance = bot(bot_id)
+        self.instance = bot(bot_id, disable_multithreading=True)
 
         if not run_subcommand:
             self.instance.start()

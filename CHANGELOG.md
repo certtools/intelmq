@@ -12,6 +12,7 @@ CHANGELOG
 - `intelmq.lib.bot`:
   - Use `statistics_*` parameters for bot's statistics (#1402).
   - Introduce `collector_empty_process` for collectors with an empty `process()` method, hardcoded 1s minimum sleep time, preventing endless loops, causing high load (#1364).
+  - Allow to disable multithreading by initialization parameter, used by intelmqctl / the bot debugger (#1403).
 - `intelmq.lib.pipeline`: redis: OOM can also be low memory, add this to log message (#1405).
 - `intelmq.lib.harmonization`: ClassificationType: Update RSIT mapping (#1380):
   - replace `botnet drone` with `infected-system`
@@ -55,6 +56,7 @@ CHANGELOG
 
 ### Tools
 - intelmqdump: Fix creation of pipeline object by providing a logger.
+- intelmqctl: Disable multithreading for interactive runs / the bot debugger (#1403).
 
 ### Contrib
 
