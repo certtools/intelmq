@@ -105,6 +105,11 @@ class Bot(object):
             self.logger.info('Bot is starting.')
             self.__load_runtime_configuration()
 
+            broker = getattr(self.parameters, "source_pipeline_broker",
+                             getattr(self.parameters, "broker", "redis")).title()
+            if broker != 'Amqp':
+                self.is_multithreadable = False
+
             """ Multithreading """
             if (getattr(self.parameters, 'instances_threads', 0) > 1 and
                 not self.is_multithreaded and

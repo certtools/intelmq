@@ -90,8 +90,9 @@ del [queue-name] # remove the queue [queue-name]
 ```
 ## Multithreading is not available for this bot
 
-Multithreading is not available for some bots.
+Multithreading is not available for some bots and AMQP broker is necessary.
 
+ * Multithreading is only available when using the AMQP broker.
  * For all collectors, Multithreading is disabled. Otherwise this would lead to duplicated data, as the data retrieval is not atomic.
  * Some bots use libraries which are not thread safe. Look a the bot's documentation for more information.
  * Some bots' operations are not thread safe. Look a the bot's documentation for more information.
