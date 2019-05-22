@@ -47,8 +47,18 @@ systemctl start redis.service
 
 # Configuration
 
-Note: If you installed the packages, LSB paths are used instead of `/opt/intelmq`.
-Otherwise, the configuration directory is `/opt/intelmq/etc/`. All files are JSON. By
+## /opt and LSB paths
+
+If you installed the packages, LSB paths are used instead of `/opt/intelmq`.
+Otherwise, the configuration directory is `/opt/intelmq/etc/`.
+
+You can switch this by setting the environment variables `INTELMQ_PATHS_NO_OPT` and `INTELMQ_PATHS_OPT`, respectively.
+* When installing the Python packages, you can set `INTELMQ_PATHS_NO_OPT` to something non-empty to use LSB-paths.
+* When installing the deb/rpm packages, you can set `INTELMQ_PATHS_OPT` to something non-empty to use `/opt/` paths.
+
+## Overview
+
+All files are JSON. By
 default, the installation method puts its distributed configuration files into
 `etc/examples`, so it does not overwrite your local configuration. Prior to the
 first run, copy them to `etc`:
