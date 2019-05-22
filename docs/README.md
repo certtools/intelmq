@@ -23,25 +23,26 @@ IntelMQ's design was influenced by
 [AbuseHelper](https://github.com/abusesa/abusehelper)
 however it was re-written from scratch and aims at:
 
--   Reducing the complexity of system administration
--   Reducing the complexity of writing new bots for new data feeds
--   Reducing the probability of events lost in all process with
-    persistence functionality (even system crash)
--   Use and improve the existing Data Harmonization Ontology
--   Use JSON format for all messages
--   Provide easy way to store data into Log Collectors like
-    ElasticSearch, Splunk, databases (such as PostgreSQL)
--   Provide easy way to create your own black-lists
+-  Reducing the complexity of system administration
+-  Reducing the complexity of writing new bots for new data feeds
+-  Reducing the probability of events lost in all process with
+   persistence functionality (even system crash)
+-  Use and improve the existing Data Harmonization Ontology
+-  Use JSON format for all messages
+-  Provide easy way to store data into Log Collectors like
+   ElasticSearch, Splunk, databases (such as PostgreSQL)
+-  Provide easy way to create your own black-lists
+-  Provide easy communication with other systems via HTTP RESTful API
 
 It follows the following basic meta-guidelines:
 
--   Don't break simplicity - KISS
--   Keep it open source - forever
--   Strive for perfection while keeping a deadline
--   Reduce complexity/avoid feature bloat
--   Embrace unit testing
--   Code readability: test with unexperienced programmers
--   Communicate clearly
+-  Don't break simplicity - KISS
+-  Keep it open source - forever
+-  Strive for perfection while keeping a deadline
+-  Reduce complexity/avoid feature bloat
+-  Embrace unit testing
+-  Code readability: test with unexperienced programmers
+-  Communicate clearly
 
 Table of Contents
 -----------------
@@ -49,11 +50,12 @@ Table of Contents
 1.  [How to Install](#how-to-install)
 2.  [Developers Guide](#developers-guide)
 3.  [User Guide](#user-guide)
-3.  [IntelMQ Manager](#intelmq-manager)
-4.  [Incident Handling Automation Project](#incident-handling-automation-project)
-5.  [Data Harmonization](#data-harmonization)
-6.  [How to Participate](#how-to-participate)
-7.  [Licence](#licence)
+4.  [IntelMQ Manager](#intelmq-manager)
+5.  [Incident Handling Automation Project](#incident-handling-automation-project)
+6.  [Data Harmonization](#data-harmonization)
+7.  [How to Participate](#how-to-participate)
+8.  [Licence](#licence)
+9.  [Funded by](#funded-by)
 
 How to Install
 --------------
@@ -84,9 +86,9 @@ an IntelMQ system.
 Incident Handling Automation Project
 ------------------------------------
 
--   **URL:**
-    <http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation>
--   **Mailing-list:** <ihap@lists.trusted-introducer.org>
+- **URL:**
+  <http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation>
+- **Mailing-list:** <ihap@lists.trusted-introducer.org>
 
 Data Harmonization
 ------------------
@@ -96,16 +98,23 @@ IntelMQ use the Data Harmonization. Please read [this document](Data-Harmonizati
 How to participate
 ------------------
 
--   Subscribe to the Intelmq-dev Mailing list:
-    <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev> (for
-    developers)
--   Watch out for our regular developers conf call
--   IRC: server: irc.freenode.net, channel: \#intelmq
--   Via github issues
--   Via Pull requests (please do read help.github.com first)
+- Subscribe to the Intelmq-dev Mailing list:
+  <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev> (for
+  developers)
+- Watch out for our regular developers conf call
+- IRC: server: irc.freenode.net, channel: \#intelmq
+- Via github issues
+- Via Pull requests (please do read help.github.com first)
 
 Licence
 -------
 
 This software is licensed under GNU Affero General Public License
 version 3
+
+Funded by
+---------
+
+This project was partially funded by the CEF framework
+
+![Co-financed by the Connecting Europe Facility of the European Union](images/cef_logo.png)
