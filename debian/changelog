@@ -1,3 +1,9 @@
+intelmq (2.0.0-1) stable; urgency=medium
+
+  * Update to 2.0.0.
+
+ -- Sebastian Wagner <wagner@cert.at>  Wed, 22 May 2019 14:00:27 +0200
+
 intelmq (2.0.0~beta2-1) unstable; urgency=low
 
   * Update to version 2.0.0 beta 2

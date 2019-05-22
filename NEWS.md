@@ -3,12 +3,10 @@ NEWS
 
 See the changelog for a full list of changes.
 
-2.0.0 Major release (unreleased)
+2.0.0 Major release (2019-05-22)
 --------------------------------
 
-### Requirements
-
-### Tools
+See also the news for 2.0.0.beta1 below.
 
 ### Harmonization
 The allowed values for the `classification.type` field have been updated to the RSIT mapping. These values have changed and are automatically mapped:
@@ -27,8 +25,6 @@ Four new values have been introduced to configure the statistics database. Add t
 
 #### TCP Output
 Version 1.1.2 broke the compatibility of the TCP Output with third-party counterparts like filebeat, but is more stable for a TCP Collector counterpart. A new parameter `counterpart_is_intelmq` has been introduced, it's default is `false` for backwards compatibility. If you use a TCP collector, set this to `true`, otherwise to `false`.
-
-### Libraries
 
 ### Postgres databases
 The following statements optionally update existing data.
@@ -51,18 +47,10 @@ UPDATE events
    WHERE "classification.type" = 'malware configuration';
 ```
 
-In the section for 1.1.0 there was this command:
-```
-
-
 2.0.0.beta1 release (2019-04-10)
 -------------------------------
 
 There are some features considered as beta and marked as such in the documentation, do not use them in production yet.
-
-### Tools
-
-### Harmonization
 
 ### Configuration
 The bot `intelmq.bots.experts.ripencc_abuse_contact.expert` has been renamed to `intelmq.bots.experts.ripe.expert`, the compatibility shim will be removed in version 3.0. Adapt your `runtime.conf` accordingly.

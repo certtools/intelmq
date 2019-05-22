@@ -1,8 +1,10 @@
 CHANGELOG
 ==========
 
-1.2.0 (unreleased)
+2.0.0 (2019-05-22)
 ------------------
+
+See also the changelog for 2.0.0.beta1 below.
 
 ### Configurations
 - Defaults: New parameters `statistics_host`, `statistics_port`, `statistics_databasae`, `statistics_password` for statistics redis database (#1402).
@@ -28,10 +30,10 @@ CHANGELOG
 - Applied isort to all core files and core-related test files, sorting the imports there (every thing except bots and bots' tests).
 
 ### Harmonization
+- See the Core section for the changes in the allowed values for `classification.type`.
 
 ### Bots
 - Use the new RSIT types in several types, see above
-#### Collectors
 
 #### Parsers
 - `intelmq.bots.parsers.spamhaus.parser_cert`: Added support for `extortion` events.
@@ -42,8 +44,6 @@ CHANGELOG
 #### Outputs
 - `intelmq.bots.outputs.elasticsearch.output`: Support for TLS added (#1406).
 - `intelmq.bots.outputs.tcp.output`: Support non-intelmq counterparts again. New parameter `counterpart_is_intelmq`, see NEWS.md for more information (#1385).
-
-### Documentation
 
 ### Packaging
 - Update IntelMQ path fix patch after `INTELMQ_PATHS_NO_OPT` introduction, provide `INTELMQ_PATHS_OPT` environment variable for packaged instances.
@@ -58,12 +58,17 @@ CHANGELOG
 - intelmqdump: Fix creation of pipeline object by providing a logger.
 - intelmqctl: Disable multithreading for interactive runs / the bot debugger (#1403).
 
-### Contrib
-
 ### Known issues
+- tests: capture logging with context manager (#1342)
+- pymongo 3.0 deprecates used insert method  (#1063)
+- pymongo >= 3.5: authentication changes  (#1062)
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952)
+- n6 parser: mapping is modified within each run (#905)
+- reverse DNS: Only first record is used (#877)
+- Corrupt dump files when interrupted during writing (#870)
 
 
-1.2.0.beta1 (2019-04-10)
+2.0.0.beta1 (2019-04-10)
 ------------------------
 There are some features considered as beta and marked as such in the documentation, do not use them in production yet.
 
