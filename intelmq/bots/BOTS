@@ -670,15 +670,6 @@
                 "redis_cache_ttl": "86400"
             }
         },
-        "CERT.at Contact Database": {
-            "description": "Cert.at Contact Database is the bot responsible to get CERT. Set filter to true if you want to filter out events for cert.at. Set add_cc to true if you want to overwrite an existing CC value.",
-            "module": "intelmq.bots.experts.national_cert_contact_certat.expert",
-            "parameters": {
-                "filter": false,
-                "http_verify_cert": true,
-                "overwrite_cc": false
-            }
-        },
         "Cymru Whois": {
             "description": "Cymru Whois (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
             "module": "intelmq.bots.experts.cymru_whois.expert",
@@ -794,6 +785,15 @@
             "parameters": {
                 "case_sensitive": true,
                 "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf"
+            }
+        },
+        "National CERT by CERT.at": {
+            "description": "Cert.at Contact Database is the bot responsible to get CERT. Set filter to true if you want to filter out events for cert.at. Set add_cc to true if you want to overwrite an existing CC value.",
+            "module": "intelmq.bots.experts.national_cert_contact_certat.expert",
+            "parameters": {
+                "filter": false,
+                "http_verify_cert": true,
+                "overwrite_cc": false
             }
         },
         "RecordedFuture IPRisk": {
