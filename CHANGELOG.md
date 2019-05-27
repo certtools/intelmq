@@ -19,8 +19,10 @@ CHANGELOG
 #### Parsers
 
 #### Experts
+- `intelmq.bots.experts.generic_db_lookup`: Recommend psycopg2-binary package.
 
 #### Outputs
+- `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
 
 ### Documentation
 
