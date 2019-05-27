@@ -16,7 +16,7 @@ way to collect & process threat intelligence thus improving the incident
 handling processes of CERTs.
 
 Several pieces of software are evolved around IntelMQ. For an overview,
-look at the [Ecosystem document](Ecosystem.md).
+look at the `Ecosystem document  <docs/Ecosystem.md>`__.
 
 IntelMQ's design was influenced by
 `AbuseHelper <https://github.com/abusesa/abusehelper>`__ however it was
@@ -71,7 +71,7 @@ User Guide
 ----------
 
 See `User Guide <docs/User-Guide.md>`__.
-Which Feeds are supported? Have a look at the [Feeds documentation](Feeds.md) and the [Bots documentation](Bots.md).
+Which Feeds are supported? Have a look at the `Feeds documentation <docs/Feeds.md>`__ and the `Bots documentation <docs/Bots.md>`__.
 If you know additional feeds and how to parse them, please contribute your code or your configuration (by issues or the mailing lists).
 
 For support questions please use the intelmq-users mailing list:
