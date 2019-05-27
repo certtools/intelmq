@@ -128,7 +128,7 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |malicious code|malware-distribution|URI used for malware distribution, e.g. a download URL included in fake invoice malware spam.|
 |malicious code|ransomware|This IOC refers to a specific type of compromised machine, where the computer has been hijacked for ransom by the criminals. Not in ENISA eCSIRT-II taxonomy and deprecated, use 'infected system instead'.|
 |other|blacklist|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
-|other|other|All incidents which don't fit in one of the given categories should be put into this class. Not in ENISA eCSIRT-II taxonomy.|
+|other|other|All incidents which don't fit in one of the given categories should be put into this class.|
 |other|proxy|This refers to the use of proxies from inside your network. Not in ENISA eCSIRT-II taxonomy.|
 |other|tor|This IOC refers to incidents related to TOR network infrastructure. Not in ENISA eCSIRT-II taxonomy.|
 |other|unknown|Unknown classification. Not in ENISA eCSIRT-II taxonomy.|
