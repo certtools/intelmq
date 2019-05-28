@@ -353,9 +353,9 @@ Set it to a non-zero integer, then this number of worker threads will be spawn.
 This is useful if bots often wait for system resources or if network-based lookups are a bottleneck.
 
 However, there are currently a few cavecats:
+  * This is not possible for all bots, there are some exceptions (collectors and some outputs), see the [FAQ](FAQ.md#multithreading-is-not-available-for-this-bot) for some reasons.
   * Only use it with the AMQP pipeline, as with Redis, messages may get duplicated because there's only one internal queue
   * In the logs, you can see the main thread initializing first, then all of the threads which log with the name `[bot-id].[thread-id]`.
-  * You need to kill the bot twice to actually stop it.
 
 ## Harmonization Configuration
 
