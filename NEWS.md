@@ -3,6 +3,22 @@ NEWS
 
 See the changelog for a full list of changes.
 
+2.0.1 Bugfix release (unreleased)
+---------------------------------
+
+### Requirements
+
+### Tools
+
+### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
 2.0.0 Major release (2019-05-22)
 --------------------------------
 
