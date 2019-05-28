@@ -117,6 +117,8 @@ You can set these parameters per bot as well. The settings will take effect afte
 * **`error_dump_message`** - specifies if the bot will write queued up messages to its dump file (use intelmqdump to re-insert the message).
     * **`true/false`** - write or not write message to the dump file
 
+If the path `_on_error` exists for a bot, the message is also sent to this queue, instead of (only) dumping the file if configured to do so.
+
 #### Miscellaneous
 
 * **`load_balance`** - this option allows you to choose the behavior of the queue. Use the following values:
@@ -353,9 +355,9 @@ Set it to a non-zero integer, then this number of worker threads will be spawn.
 This is useful if bots often wait for system resources or if network-based lookups are a bottleneck.
 
 However, there are currently a few cavecats:
+  * This is not possible for all bots, there are some exceptions (collectors and some outputs), see the [FAQ](FAQ.md#multithreading-is-not-available-for-this-bot) for some reasons.
   * Only use it with the AMQP pipeline, as with Redis, messages may get duplicated because there's only one internal queue
   * In the logs, you can see the main thread initializing first, then all of the threads which log with the name `[bot-id].[thread-id]`.
-  * You need to kill the bot twice to actually stop it.
 
 ## Harmonization Configuration
 

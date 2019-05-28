@@ -1,6 +1,40 @@
 CHANGELOG
 ==========
 
+
+2.0.1 (unreleased)
+------------------
+
+### Configuration
+
+### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
 2.0.0 (2019-05-22)
 ------------------
 
@@ -181,7 +215,7 @@ There are some features considered as beta and marked as such in the documentati
 - `intelmqdump`: Inspecting dumps locks the dump file using unix file locks (#574).
 - `intelmqctl`:
   - After the check if the program runs as root, it tries to drop privileges. Only if this does not work, a warning is shown.
-- `intelmqsetup`: New tool for initialize an IntelMQ environment.
+- `intelmqsetup`: New tool for initializing an IntelMQ environment.
 
 ### Contrib
 - `malware_name_mapping`:
@@ -495,8 +529,8 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
   - Message.get behaves the same like `Message.__getitem__` (#1305).
 - Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
 - lib/pipeline:
-  * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
-  * the special path `"_on_error"` can be used to pass messages to different queues in case of processing errors (#1133).
+  - you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
+  - the special path `"_on_error"` can be used to pass messages to different queues in case of processing errors (#1133).
 - `lib/harmonization`: Accept `AS` prefix for ASN values (automatically stripped).
 - added `intelmq.VAR_STATE_PATH` for variable state data of bots.
 
@@ -547,9 +581,9 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 - added `intelmq.bots.parsers.webinspektor.parser`
 - added `intelmq.bots.parsers.twitter.parser`
 - added `intelmq.bots.parsers.microsoft.parser_ctip`
-  * ignore the invalid IP '0.0.0.0' for the destination
-  * fix the raw/dumped messages, did not contain the paling list previously.
-  * use the new harmonization field `tlp` instead of `extra.tlp`.
+  - ignore the invalid IP '0.0.0.0' for the destination
+  - fix the raw/dumped messages, did not contain the paling list previously.
+  - use the new harmonization field `tlp` instead of `extra.tlp`.
 - `bots.parsers.alienvault.parser_otx`: Save TLP data in the new harmonization field `tlp`.
 - added `intelmq.bots.parsers.openphish.parser_commercial`
 - added `intelmq.bots.parsers.microsoft.parser_bingmurls`
@@ -560,17 +594,17 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
- * capable of distributing the event to appropriate named queues
+  - capable of distributing the event to appropriate named queues
 - `bots.experts.modify`
-  * default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
-  * new parameter `case_sensitive` (default: True)
+  - default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
+  - new parameter `case_sensitive` (default: True)
 - Added wait expert for sleeping
 - Added domain suffix expert to extract the TLD/Suffix from a domain name.
 - `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
 - `intelmq.bots.experts.ripencc_abuse_contact`:
-  * Extend deprecated parameter compatibility `query_ripe_stat` until 2.0 because of a logic bug in the compatibility code, use `query_ripe_stat_asn` and `query_ripe_stat_ip` instead (#1071, #1291).
-  * Handle HTTP status code 404 for DB AS queries.
-  * Add caching capability.
+  - Extend deprecated parameter compatibility `query_ripe_stat` until 2.0 because of a logic bug in the compatibility code, use `query_ripe_stat_asn` and `query_ripe_stat_ip` instead (#1071, #1291).
+  - Handle HTTP status code 404 for DB AS queries.
+  - Add caching capability.
 - `intelmq/bots/experts/asn_lookup/update-asn-data`: Errors produce proper output on stdout/stderr.
 - `intelmq/bots/experts/maxmind_geoip/update-geoip-data`: Errors produce proper output on stdout/stderr.
 - `intelmq/bots/experts/tor_nodes/update-tor-nodes`: Errors produce proper output on stdout/stderr.
@@ -671,8 +705,8 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 ### Core
 - `lib/message`: `Report()` can now create a Report instance from Event instances (#1225).
 - `lib/bot`:
-  * The first word in the log line `Processed ... messages since last logging.` is now adaptable and set to `Forwarded` in the existing filtering bots (#1237).
-  * Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
+  - The first word in the log line `Processed ... messages since last logging.` is now adaptable and set to `Forwarded` in the existing filtering bots (#1237).
+  - Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
 - `lib/utils`: log: set the name of the `py.warnings` logger to the bot name (#1184).
 
 ### Harmonization
@@ -685,11 +719,11 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 
 #### Parsers
 - Shadowserver parser:
-  * SSL FREAK: Remove optional column `device_serial` and add several new ones.
-  * Fixed HTTP URL parsing for multiple feeds (#1243).
+  - SSL FREAK: Remove optional column `device_serial` and add several new ones.
+  - Fixed HTTP URL parsing for multiple feeds (#1243).
 - Spamhaus CERT parser:
-  * add support for `smtpauth`, `l_spamlink`, `pop`, `imap`, `rdp`, `smb`, `iotscan`, `proxyget`, `iotmicrosoftds`, `automatedtest`, `ioturl`, `iotmirai`, `iotcmd`, `iotlogin` and `iotuser` (#1254).
-  * fix `extra.destination.local_port` -> `extra.source.local_port`.
+  - add support for `smtpauth`, `l_spamlink`, `pop`, `imap`, `rdp`, `smb`, `iotscan`, `proxyget`, `iotmicrosoftds`, `automatedtest`, `ioturl`, `iotmirai`, `iotcmd`, `iotlogin` and `iotuser` (#1254).
+  - fix `extra.destination.local_port` -> `extra.source.local_port`.
 
 #### Experts
 - `bots.experts.filter`: Pre-compile regex at bot initialization.
@@ -699,15 +733,15 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 
 ### Tools
 - `intelmqctl`:
-  * `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
-  * `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
+  - `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
+  - `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
 - `intelmqdump`:
-  * has now command completion for bot names, actions and queue names in interactive console.
-  * automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
-  * is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
-  * truncated messages are no longer used/saved to the file after being shown (#1255).
-  * now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
-  * now sorts the dump by the time of the dump. Previously, the list was in random order (#1020).
+  - has now command completion for bot names, actions and queue names in interactive console.
+  - automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
+  - is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
+  - truncated messages are no longer used/saved to the file after being shown (#1255).
+  - now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
+  - now sorts the dump by the time of the dump. Previously, the list was in random order (#1020).
 
 ### Known issues
 no known issues
@@ -720,8 +754,8 @@ no known issues
 
 ### Core
 - lib/harmonization:
-  * FQDN validation now handles None correctly (raised an Exception).
-  * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
+  - FQDN validation now handles None correctly (raised an Exception).
+  - Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
 
 ### Bots
 * Use the new pypi website at https://pypi.org/ everywhere.
