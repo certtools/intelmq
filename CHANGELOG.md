@@ -17,6 +17,7 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.n6.parser_n6stomp`: use `malware-generic` instead of `generic-n6-drone` for unknown infected system events.
 
 #### Experts
 
