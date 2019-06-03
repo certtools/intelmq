@@ -577,10 +577,20 @@ class IPAddress(GenericType):
 
         try:
             value = GenericType().sanitize(value)
-            network = ipaddress.ip_network(str(value))
         except ValueError:
             return None
 
+        # Remove the scope ID if it's detected.
+        text_scope_id = value.split('%')
+        if len(text_scope_id) > 1:
+            value = text_scope_id[0]
+
+        # Check if it is syntacticlly a valid IP Address/Network
+        try:
+            network = ipaddress.ip_network(str(value))
+        except ValueError:
+            return None
+        # And then make sure it is an address or remove the CIDR (converts addresses with CIDR to addresses without CIDR)
         if network.num_addresses == 1:
             value = str(network.network_address)
         else:

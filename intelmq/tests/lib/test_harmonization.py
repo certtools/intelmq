@@ -120,6 +120,8 @@ class TestHarmonization(unittest.TestCase):
                                                           sanitize=False))
         self.assertFalse(harmonization.IPAddress.is_valid('localhost',
                                                           sanitize=False))
+        self.assertFalse(harmonization.IPAddress.is_valid('fe80::1c41:b16d:ff5e:689d%bnep0',
+                                                          sanitize=False))
 
     def test_ipaddress_sanitize(self):
         """ Test IPAddress.is_valid and sanitize with valid arguments. """
@@ -130,6 +132,8 @@ class TestHarmonization(unittest.TestCase):
                                                          sanitize=True))
         self.assertTrue(harmonization.IPAddress.is_valid(ipaddress.ip_address('192.0.2.1'),
                                                          sanitize=True))
+        self.assertTrue(harmonization.IPAddress.is_valid('fe80::1c41:b16d:ff5e:689d%bnep0',
+                                                          sanitize=True))
 
     def test_ipaddress_sanitize_invalid(self):
         """ Test IPAddress.is_valid ans sanitize with invalid arguments. """
