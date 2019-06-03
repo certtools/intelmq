@@ -24,6 +24,7 @@ CHANGELOG
 
 #### Outputs
 - `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
+- `intelmq.bots.outputs.amqptopic.output`: Shutdown: Close connection only if connection exists.
 
 ### Documentation
 
