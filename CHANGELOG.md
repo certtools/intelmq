@@ -20,8 +20,10 @@ CHANGELOG
 - `intelmq.bots.parsers.n6.parser_n6stomp`: use `malware-generic` instead of `generic-n6-drone` for unknown infected system events.
 
 #### Experts
+- `intelmq.bots.experts.generic_db_lookup`: Recommend psycopg2-binary package.
 
 #### Outputs
+- `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
 
 ### Documentation
 
