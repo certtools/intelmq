@@ -8,7 +8,9 @@ CHANGELOG
 ### Configuration
 
 ### Core
-- `intelmq.lib.harmonization.IPAddress`: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
+- `intelmq.lib.harmonization`:
+  - `IPAddress`: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
+  - All types: Handle `None` for validation and sanitation gracefully.
 
 ### Development
 

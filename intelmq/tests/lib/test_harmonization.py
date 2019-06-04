@@ -477,5 +477,18 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.ClassificationType.is_valid('botnet drone'))
 
 
+def generate_nonetest_function(typeclassname):
+    typeclass = getattr(harmonization, typeclassname)
+    def test_type_none(self):
+        """ Test if None raises no error for type %s. """ % typeclass
+        typeclass.is_valid(None, sanitize=False)
+        typeclass.is_valid(None, sanitize=True)
+    return test_type_none
+
+
+for typeclassname in harmonization.__all__:
+    setattr(TestHarmonization, 'test_%s_none' % typeclassname, generate_nonetest_function(typeclassname))
+
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
