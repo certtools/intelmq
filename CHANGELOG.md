@@ -31,6 +31,7 @@ CHANGELOG
 - `intelmq.bots.outputs.amqptopic.output`: Shutdown: Close connection only if connection exists.
 
 ### Documentation
+- Add certbund-contact to the ecosystem document.
 
 ### Packaging
 
@@ -212,6 +213,7 @@ There are some features considered as beta and marked as such in the documentati
   - Feodo Tracker Latest
 - Feeds: Document abuse.ch URLhaus feed (#1379).
 - Install and Upgrading: Use `intelmqsetup` tool.
+- Added an ecosystem overview document describing related software.
 
 ### Tests
 - Add tests of AMQP broker.
