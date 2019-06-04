@@ -16,7 +16,7 @@ mapping['amplifier']    = {"taxonomy": "vulnerable",
                            "type": "vulnerable service",
                            "identifier": "amplifier"}
 mapping['bots']         = {"taxonomy": "malicious code",
-                           "type": "infected-system", "identifier": "generic-n6-drone"}
+                           "type": "infected-system", "identifier": "malware-generic"}
 mapping['backdoor']     = {"taxonomy": "intrusions",
                            "type": "backdoor", "identifier": "hacked server"}
 mapping['cnc']          = {"taxonomy": "malicious code",
@@ -119,7 +119,7 @@ class N6StompParserBot(Bot):
         if ("name" in dict_report):
             mapping['bots']['identifier'] = dict_report["name"]
         else:
-            mapping['bots']['identifier'] = "generic-n6-drone"
+            mapping['bots']['identifier'] = "malware-generic"
 
         if dict_report["type"] == "bl-update":
             event.add("classification.taxonomy", "other")

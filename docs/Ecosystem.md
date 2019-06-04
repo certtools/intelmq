@@ -37,9 +37,11 @@ https://github.com/Intevation/intelmq-mailgen
 ## IntelMQ Fody + Backend
 
 Fody is an interface for intelmq-mailgen's contact database, it's OTRS and the EventDB.
+The certbund-contact expert fetches the information from this contact database and provides scripts to import RIPE data into the contact database.
 
-http://github.com/Intevation/intelmq-fody/
-http://github.com/Intevation/intelmq-fody-backend/
+https://github.com/Intevation/intelmq-fody/
+https://github.com/Intevation/intelmq-fody-backend/
+https://github.com/Intevation/intelmq-certbund-contact/
 
 ## do-portal
 

@@ -41,21 +41,30 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.harmonization`:
+  - `IPAddress`: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
+  - All types: Handle `None` for validation and sanitation gracefully.
 
 ### Development
 
 ### Harmonization
+- IPAddress type: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
 
 ### Bots
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.n6.parser_n6stomp`: use `malware-generic` instead of `generic-n6-drone` for unknown infected system events.
 
 #### Experts
+- `intelmq.bots.experts.generic_db_lookup`: Recommend psycopg2-binary package.
 
 #### Outputs
+- `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
+- `intelmq.bots.outputs.amqptopic.output`: Shutdown: Close connection only if connection exists.
 
 ### Documentation
+- Add certbund-contact to the ecosystem document.
 
 ### Packaging
 
@@ -237,6 +246,7 @@ There are some features considered as beta and marked as such in the documentati
   - Feodo Tracker Latest
 - Feeds: Document abuse.ch URLhaus feed (#1379).
 - Install and Upgrading: Use `intelmqsetup` tool.
+- Added an ecosystem overview document describing related software.
 
 ### Tests
 - Add tests of AMQP broker.

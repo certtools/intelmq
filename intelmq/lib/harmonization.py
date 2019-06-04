@@ -33,7 +33,7 @@ import intelmq.lib.utils as utils
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
            'Integer', 'JSON', 'JSONDict', 'LowercaseString', 'Registry',
-           'String', 'URL', 'ASN',
+           'String', 'URL', 'ASN', 'UppercaseString', 'TLP',
            ]
 
 
@@ -87,7 +87,7 @@ class Base64(GenericType):
 
         try:
             utils.base64_decode(value)
-        except TypeError:
+        except (TypeError, AttributeError):
             return False
 
         if not GenericType().is_valid(value):
@@ -97,7 +97,10 @@ class Base64(GenericType):
 
     @staticmethod
     def sanitize(value):
-        value = utils.base64_encode(value)
+        try:
+            value = utils.base64_encode(value)
+        except AttributeError:  # None
+            return None
         return value
 
 
@@ -227,7 +230,9 @@ class ClassificationType(GenericType):
 
     @staticmethod
     def sanitize(value):
-        value = value.lower().strip()
+        value = LowercaseString.sanitize(value)
+        if not value:
+            return None
         if value == 'botnet drone':
             value = 'infected-system'
         elif value == 'ids alert':
@@ -267,7 +272,10 @@ class DateTime(GenericType):
 
     @staticmethod
     def sanitize(value):
-        value = DateTime.__parse(value)
+        try:
+            value = DateTime.__parse(value)
+        except TypeError:  # None
+            return None
         return GenericType().sanitize(value)
 
     @staticmethod
@@ -577,10 +585,23 @@ class IPAddress(GenericType):
 
         try:
             value = GenericType().sanitize(value)
-            network = ipaddress.ip_network(str(value))
         except ValueError:
             return None
 
+        try:
+            # Remove the scope ID if it's detected.
+            text_scope_id = value.split('%')
+            if len(text_scope_id) > 1:
+                value = text_scope_id[0]
+        except AttributeError:  # None
+            return None
+
+        # Check if it is syntacticlly a valid IP Address/Network
+        try:
+            network = ipaddress.ip_network(str(value))
+        except ValueError:
+            return None
+        # And then make sure it is an address or remove the CIDR (converts addresses with CIDR to addresses without CIDR)
         if network.num_addresses == 1:
             value = str(network.network_address)
         else:
@@ -761,7 +782,10 @@ class LowercaseString(GenericType):
 
     @staticmethod
     def sanitize(value):
-        value = value.lower()
+        try:
+            value = value.lower()
+        except AttributeError:  # None
+            return None
         return String().sanitize(value)
 
 
@@ -868,7 +892,10 @@ class UppercaseString(GenericType):
 
     @staticmethod
     def sanitize(value):
-        value = value.upper()
+        try:
+            value = value.upper()
+        except AttributeError:  # None
+            return None
         return String().sanitize(value)
 
 
@@ -929,5 +956,6 @@ class TLP(UppercaseString):
     @staticmethod
     def sanitize(value):
         value = UppercaseString.sanitize(value)
-        value = TLP.prefix_pattern.sub('', value)
-        return value
+        if value:
+            value = TLP.prefix_pattern.sub('', value)
+            return value

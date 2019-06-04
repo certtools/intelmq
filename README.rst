@@ -6,8 +6,8 @@ Welcome to IntelMQ!
 
 |Build Status| |codecov.io|
 
-**IntelMQ** is a solution for IT security teams (CERTs, CSIRTs, abuse
-departments,...) for collecting and processing security feeds (such as
+**IntelMQ** is a solution for IT security teams (CERTs & CSIRTs, SOCs, abuse
+departments, etc.) for collecting and processing security feeds (such as
 log files) using a message queuing protocol. It's a community driven
 initiative called **IHAP** (Incident Handling Automation Project) which
 was conceptually designed by European CERTs/CSIRTs during several
@@ -17,6 +17,13 @@ handling processes of CERTs.
 
 Several pieces of software are evolved around IntelMQ. For an overview,
 look at the `Ecosystem document  <docs/Ecosystem.md>`__.
+
+IntelMQ can be used for
+- automated incident handling
+- situational awareness
+- automated notifications
+- as data collector for other tools
+- etc.
 
 IntelMQ's design was influenced by
 `AbuseHelper <https://github.com/abusesa/abusehelper>`__ however it was
