@@ -787,7 +787,8 @@ class ParserBot(Bot):
     handle = None
     current_line = None
 
-    def __init__(self, bot_id: str, start=False, sighup_event=None):
+    def __init__(self, bot_id: str, start=False, sighup_event=None,
+                 disable_multithreading=None):
         super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'ParserBot':
             self.logger.error('ParserBot can\'t be started itself. '
@@ -963,7 +964,8 @@ class CollectorBot(Bot):
 
     is_multithreadable = False
 
-    def __init__(self, bot_id: str, start=False, sighup_event=None):
+    def __init__(self, bot_id: str, start=False, sighup_event=None,
+                 disable_multithreading=None):
         super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'CollectorBot':
             self.logger.error('CollectorBot can\'t be started itself. '
