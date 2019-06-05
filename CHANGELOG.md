@@ -44,6 +44,7 @@ CHANGELOG
 - `intelmq.lib.harmonization`:
   - `IPAddress`: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
   - All types: Handle `None` for validation and sanitation gracefully.
+- `intelmq.lib.bot`: fix parameters of ParserBot and CollectorBot constructors, allowing `intelmqctl run` with these bots again (#1414).
 
 ### Development
 
