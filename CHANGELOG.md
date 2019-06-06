@@ -41,6 +41,7 @@ CHANGELOG
 ### Tools
 
 ### Contrib
+* logcheck rules: Adapt ignore rule to cover the instance id of bot names.
 
 ### Known issues
 
