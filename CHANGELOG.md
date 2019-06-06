@@ -37,6 +37,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- `intelmq.lib.test`: Disable statistics for test runs of bots.
 
 ### Tools
 
