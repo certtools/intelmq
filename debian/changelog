@@ -1,16 +1,28 @@
-intelmq (2.0.0~beta1-1) unstable; urgency=medium
+intelmq (2.0.0-1) stable; urgency=medium
+
+  * Update to 2.0.0.
+
+ -- Sebastian Wagner <wagner@cert.at>  Wed, 22 May 2019 14:00:27 +0200
+
+intelmq (2.0.0~beta2-1) unstable; urgency=low
+
+  * Update to version 2.0.0 beta 2
+
+ -- Sebastian Wagner <wagner@cert.at>  Mon, 20 May 2019 09:51:45 +0200
+
+intelmq (2.0.0~beta1-1) unstable; urgency=low
 
   * Update to version 2.0.0 beta 1
 
  -- Wagner Sebastian <wagner@cert.at>  Wed, 10 Apr 2019 14:23:41 +0200
 
-intelmq (1.2.0~alpha2-1) unstable; urgency=medium
+intelmq (1.2.0~alpha2-1) unstable; urgency=low
 
   * Update to version 1.2.0 alpha 2
 
  -- sebastianw <sebastianw@localhost>  Sat, 24 Nov 2018 22:40:21 +0100
 
-intelmq (1.2.0~alpha1-1) unstable; urgency=medium
+intelmq (1.2.0~alpha1-1) unstable; urgency=low
 
   * Update to version 1.2.0 alpha 1
 

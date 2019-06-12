@@ -24,6 +24,8 @@ else:
 
 
 class APICollectorBot(CollectorBot):
+    collector_empty_process = True
+
     def init(self):
         if IOLoop is None:
             raise ValueError("Could not import 'tornado'. Please install it.")

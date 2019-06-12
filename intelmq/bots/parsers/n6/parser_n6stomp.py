@@ -16,11 +16,11 @@ mapping['amplifier']    = {"taxonomy": "vulnerable",
                            "type": "vulnerable service",
                            "identifier": "amplifier"}
 mapping['bots']         = {"taxonomy": "malicious code",
-                           "type": "infected system", "identifier": "generic-n6-drone"}
+                           "type": "infected-system", "identifier": "malware-generic"}
 mapping['backdoor']     = {"taxonomy": "intrusions",
                            "type": "backdoor", "identifier": "hacked server"}
 mapping['cnc']          = {"taxonomy": "malicious code",
-                           "type": "c&c", "identifier": "c&c server"}
+                           "type": "c2server", "identifier": "c&c server"}
 mapping['dns-query']    = {"taxonomy": "other",
                            "type": "other", "identifier": "dns-query"}
 mapping['dos-attacker'] = {"taxonomy": "availability",
@@ -38,8 +38,8 @@ mapping['leak']         = {"taxonomy": "information content security",
 mapping['malurl']       = {"taxonomy": "malicious code",
                            "type": "exploit", "identifier": "malurl"}
 mapping['malware-action'] = {"taxonomy": "malicious code",
-                             "type": "malware configuration",
-                             "identifier": "malware configuration"}
+                             "type": "malware-configuration",
+                             "identifier": "malware-configuration"}
 mapping['phish']        = {"taxonomy": "fraud",
                            "type": "phishing", "identifier": "phishing"}
 mapping['proxy']        = {"taxonomy": "other",
@@ -119,7 +119,7 @@ class N6StompParserBot(Bot):
         if ("name" in dict_report):
             mapping['bots']['identifier'] = dict_report["name"]
         else:
-            mapping['bots']['identifier'] = "generic-n6-drone"
+            mapping['bots']['identifier'] = "malware-generic"
 
         if dict_report["type"] == "bl-update":
             event.add("classification.taxonomy", "other")

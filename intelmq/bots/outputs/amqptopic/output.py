@@ -9,6 +9,7 @@ except ImportError:
 
 
 class AMQPTopicBot(Bot):
+    connection = None
 
     def init(self):
         if pika is None:
@@ -104,7 +105,8 @@ class AMQPTopicBot(Bot):
             self.acknowledge_message()
 
     def shutdown(self):
-        self.connection.close()
+        if self.connection:
+            self.connection.close()
 
 
 BOT = AMQPTopicBot

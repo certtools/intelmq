@@ -6,7 +6,9 @@ import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
 
 
-class UDPBot(Bot):
+class UDPOutputBot(Bot):
+
+    is_multithreadable = False
 
     def init(self):
         self.delimiter = self.parameters.field_delimiter
@@ -51,4 +53,4 @@ class UDPBot(Bot):
             self.acknowledge_message()
 
 
-BOT = UDPBot
+BOT = UDPOutputBot

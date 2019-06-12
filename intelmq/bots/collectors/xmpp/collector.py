@@ -79,6 +79,7 @@ except ImportError:
 class XMPPCollectorBot(CollectorBot):
 
     xmpp = None
+    collector_empty_process = True
 
     def init(self):
         if sleekxmpp is None:

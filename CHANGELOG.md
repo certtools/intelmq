@@ -1,18 +1,15 @@
 CHANGELOG
 ==========
 
-1.2.0 (unreleased)
-------------------
 
-### Configurations
-- Defaults: New parameters `statistics_host`, `statistics_port`, `statistics_databasae`, `statistics_password` for statistics redis database (#1402).
+2.1.0 (unreleased)
+-----------------
+
+### Configuration
 
 ### Core
-- Add more and fix some existing type annotations.
-- `intelmq.lib.bot`: Use `statistics_*` parameters for bot's statistics (#1402).
 
 ### Development
-- Applied isort to all core files and core-related test files, sorting the imports there (every thing except bots and bots' tests).
 
 ### Harmonization
 
@@ -20,11 +17,8 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
-- `intelmq.bots.parsers.abusech.parser_ip`: Support LastOnline column in feodo feed (#1400) and use it for `time.source` if available.
-  - Use lower case malware names as default, should not make a difference in practice.
 
 #### Experts
-- added `intelmq.bots.experts.do_portal.expert`.
 
 #### Outputs
 
@@ -33,10 +27,6 @@ CHANGELOG
 ### Packaging
 
 ### Tests
-- `test_conf`: For yaml use `safe_load` instead of unsafe `load`.
-- Travis: Switch distribution from trusty to xenial, adapt scripts.
-  - Add Python 3.7 to tests.
-- Don't use Cerberus 1.3 because of https://github.com/pyeve/cerberus/issues/489
 
 ### Tools
 
@@ -45,7 +35,119 @@ CHANGELOG
 ### Known issues
 
 
-1.2.0.beta1 (2019-04-10)
+2.0.1 (unreleased)
+------------------
+
+### Configuration
+
+### Core
+- `intelmq.lib.harmonization`:
+  - `IPAddress`: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
+  - All types: Handle `None` for validation and sanitation gracefully.
+- `intelmq.lib.bot`: fix parameters of ParserBot and CollectorBot constructors, allowing `intelmqctl run` with these bots again (#1414).
+
+### Development
+
+### Harmonization
+- IPAddress type: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
+
+### Bots
+#### Collectors
+
+#### Parsers
+- `intelmq.bots.parsers.n6.parser_n6stomp`: use `malware-generic` instead of `generic-n6-drone` for unknown infected system events.
+- `intelmq.bots.parsers.abusech.parser_ip`: Support LastOnline column in feodo feed (#1400) and use it for `time.source` if available.
+  - Use lower case malware names as default, should not make a difference in practice.
+
+#### Experts
+- `intelmq.bots.experts.generic_db_lookup`: Recommend psycopg2-binary package.
+
+#### Outputs
+- `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
+- `intelmq.bots.outputs.amqptopic.output`: Shutdown: Close connection only if connection exists.
+
+### Documentation
+- Add certbund-contact to the ecosystem document.
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
+2.0.0 (2019-05-22)
+------------------
+
+See also the changelog for 2.0.0.beta1 below.
+
+### Configurations
+- Defaults: New parameters `statistics_host`, `statistics_port`, `statistics_databasae`, `statistics_password` for statistics redis database (#1402).
+
+### Core
+- Add more and fix some existing type annotations.
+- `intelmq.lib.bot`:
+  - Use `statistics_*` parameters for bot's statistics (#1402).
+  - Introduce `collector_empty_process` for collectors with an empty `process()` method, hardcoded 1s minimum sleep time, preventing endless loops, causing high load (#1364).
+  - Allow to disable multithreading by initialization parameter, used by intelmqctl / the bot debugger (#1403).
+- `intelmq.lib.pipeline`: redis: OOM can also be low memory, add this to log message (#1405).
+- `intelmq.lib.harmonization`: ClassificationType: Update RSIT mapping (#1380):
+  - replace `botnet drone` with `infected-system`
+  - replace `infected system` with `infected-system`
+  - replace `ids alert` with `ids-alert`
+  - replace `c&c` with `c2server`
+  - replace `malware configuration` with `malware-configuration`
+  - sanitize replaces these values on the fly
+- Allow using non-opt/ (LSB) paths with environment variable `INTELMQ_PATHS_NO_OPT`.
+- Disable/disallow threading for all collectors and some other bots.
+
+### Development
+- Applied isort to all core files and core-related test files, sorting the imports there (every thing except bots and bots' tests).
+
+### Harmonization
+- See the Core section for the changes in the allowed values for `classification.type`.
+
+### Bots
+- Use the new RSIT types in several types, see above
+
+#### Parsers
+- `intelmq.bots.parsers.spamhaus.parser_cert`: Added support for `extortion` events.
+
+#### Experts
+- added `intelmq.bots.experts.do_portal.expert`.
+
+#### Outputs
+- `intelmq.bots.outputs.elasticsearch.output`: Support for TLS added (#1406).
+- `intelmq.bots.outputs.tcp.output`: Support non-intelmq counterparts again. New parameter `counterpart_is_intelmq`, see NEWS.md for more information (#1385).
+
+### Packaging
+- Update IntelMQ path fix patch after `INTELMQ_PATHS_NO_OPT` introduction, provide `INTELMQ_PATHS_OPT` environment variable for packaged instances.
+
+### Tests
+- `test_conf`: For yaml use `safe_load` instead of unsafe `load`.
+- Travis: Switch distribution from trusty to xenial, adapt scripts.
+  - Add Python 3.7 to tests.
+- Don't use Cerberus 1.3 because of https://github.com/pyeve/cerberus/issues/489
+
+### Tools
+- intelmqdump: Fix creation of pipeline object by providing a logger.
+- intelmqctl: Disable multithreading for interactive runs / the bot debugger (#1403).
+
+### Known issues
+- tests: capture logging with context manager (#1342)
+- pymongo 3.0 deprecates used insert method  (#1063)
+- pymongo >= 3.5: authentication changes  (#1062)
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952)
+- n6 parser: mapping is modified within each run (#905)
+- reverse DNS: Only first record is used (#877)
+- Corrupt dump files when interrupted during writing (#870)
+
+
+2.0.0.beta1 (2019-04-10)
 ------------------------
 There are some features considered as beta and marked as such in the documentation, do not use them in production yet.
 
@@ -147,6 +249,7 @@ There are some features considered as beta and marked as such in the documentati
   - Feodo Tracker Latest
 - Feeds: Document abuse.ch URLhaus feed (#1379).
 - Install and Upgrading: Use `intelmqsetup` tool.
+- Added an ecosystem overview document describing related software.
 
 ### Tests
 - Add tests of AMQP broker.
@@ -158,7 +261,7 @@ There are some features considered as beta and marked as such in the documentati
 - `intelmqdump`: Inspecting dumps locks the dump file using unix file locks (#574).
 - `intelmqctl`:
   - After the check if the program runs as root, it tries to drop privileges. Only if this does not work, a warning is shown.
-- `intelmqsetup`: New tool for initialize an IntelMQ environment.
+- `intelmqsetup`: New tool for initializing an IntelMQ environment.
 
 ### Contrib
 - `malware_name_mapping`:
@@ -472,8 +575,8 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
   - Message.get behaves the same like `Message.__getitem__` (#1305).
 - Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
 - lib/pipeline:
-  * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
-  * the special path `"_on_error"` can be used to pass messages to different queues in case of processing errors (#1133).
+  - you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
+  - the special path `"_on_error"` can be used to pass messages to different queues in case of processing errors (#1133).
 - `lib/harmonization`: Accept `AS` prefix for ASN values (automatically stripped).
 - added `intelmq.VAR_STATE_PATH` for variable state data of bots.
 
@@ -524,9 +627,9 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 - added `intelmq.bots.parsers.webinspektor.parser`
 - added `intelmq.bots.parsers.twitter.parser`
 - added `intelmq.bots.parsers.microsoft.parser_ctip`
-  * ignore the invalid IP '0.0.0.0' for the destination
-  * fix the raw/dumped messages, did not contain the paling list previously.
-  * use the new harmonization field `tlp` instead of `extra.tlp`.
+  - ignore the invalid IP '0.0.0.0' for the destination
+  - fix the raw/dumped messages, did not contain the paling list previously.
+  - use the new harmonization field `tlp` instead of `extra.tlp`.
 - `bots.parsers.alienvault.parser_otx`: Save TLP data in the new harmonization field `tlp`.
 - added `intelmq.bots.parsers.openphish.parser_commercial`
 - added `intelmq.bots.parsers.microsoft.parser_bingmurls`
@@ -537,17 +640,17 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
- * capable of distributing the event to appropriate named queues
+  - capable of distributing the event to appropriate named queues
 - `bots.experts.modify`
-  * default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
-  * new parameter `case_sensitive` (default: True)
+  - default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
+  - new parameter `case_sensitive` (default: True)
 - Added wait expert for sleeping
 - Added domain suffix expert to extract the TLD/Suffix from a domain name.
 - `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
 - `intelmq.bots.experts.ripencc_abuse_contact`:
-  * Extend deprecated parameter compatibility `query_ripe_stat` until 2.0 because of a logic bug in the compatibility code, use `query_ripe_stat_asn` and `query_ripe_stat_ip` instead (#1071, #1291).
-  * Handle HTTP status code 404 for DB AS queries.
-  * Add caching capability.
+  - Extend deprecated parameter compatibility `query_ripe_stat` until 2.0 because of a logic bug in the compatibility code, use `query_ripe_stat_asn` and `query_ripe_stat_ip` instead (#1071, #1291).
+  - Handle HTTP status code 404 for DB AS queries.
+  - Add caching capability.
 - `intelmq/bots/experts/asn_lookup/update-asn-data`: Errors produce proper output on stdout/stderr.
 - `intelmq/bots/experts/maxmind_geoip/update-geoip-data`: Errors produce proper output on stdout/stderr.
 - `intelmq/bots/experts/tor_nodes/update-tor-nodes`: Errors produce proper output on stdout/stderr.
@@ -648,8 +751,8 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 ### Core
 - `lib/message`: `Report()` can now create a Report instance from Event instances (#1225).
 - `lib/bot`:
-  * The first word in the log line `Processed ... messages since last logging.` is now adaptable and set to `Forwarded` in the existing filtering bots (#1237).
-  * Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
+  - The first word in the log line `Processed ... messages since last logging.` is now adaptable and set to `Forwarded` in the existing filtering bots (#1237).
+  - Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
 - `lib/utils`: log: set the name of the `py.warnings` logger to the bot name (#1184).
 
 ### Harmonization
@@ -662,11 +765,11 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 
 #### Parsers
 - Shadowserver parser:
-  * SSL FREAK: Remove optional column `device_serial` and add several new ones.
-  * Fixed HTTP URL parsing for multiple feeds (#1243).
+  - SSL FREAK: Remove optional column `device_serial` and add several new ones.
+  - Fixed HTTP URL parsing for multiple feeds (#1243).
 - Spamhaus CERT parser:
-  * add support for `smtpauth`, `l_spamlink`, `pop`, `imap`, `rdp`, `smb`, `iotscan`, `proxyget`, `iotmicrosoftds`, `automatedtest`, `ioturl`, `iotmirai`, `iotcmd`, `iotlogin` and `iotuser` (#1254).
-  * fix `extra.destination.local_port` -> `extra.source.local_port`.
+  - add support for `smtpauth`, `l_spamlink`, `pop`, `imap`, `rdp`, `smb`, `iotscan`, `proxyget`, `iotmicrosoftds`, `automatedtest`, `ioturl`, `iotmirai`, `iotcmd`, `iotlogin` and `iotuser` (#1254).
+  - fix `extra.destination.local_port` -> `extra.source.local_port`.
 
 #### Experts
 - `bots.experts.filter`: Pre-compile regex at bot initialization.
@@ -676,15 +779,15 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 
 ### Tools
 - `intelmqctl`:
-  * `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
-  * `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
+  - `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
+  - `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
 - `intelmqdump`:
-  * has now command completion for bot names, actions and queue names in interactive console.
-  * automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
-  * is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
-  * truncated messages are no longer used/saved to the file after being shown (#1255).
-  * now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
-  * now sorts the dump by the time of the dump. Previously, the list was in random order (#1020).
+  - has now command completion for bot names, actions and queue names in interactive console.
+  - automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
+  - is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
+  - truncated messages are no longer used/saved to the file after being shown (#1255).
+  - now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
+  - now sorts the dump by the time of the dump. Previously, the list was in random order (#1020).
 
 ### Known issues
 no known issues
@@ -697,8 +800,8 @@ no known issues
 
 ### Core
 - lib/harmonization:
-  * FQDN validation now handles None correctly (raised an Exception).
-  * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
+  - FQDN validation now handles None correctly (raised an Exception).
+  - Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
 
 ### Bots
 * Use the new pypi website at https://pypi.org/ everywhere.

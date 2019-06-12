@@ -9,37 +9,37 @@ MAPPING = {
         "classification.type": "blacklist",
     },
     "ssh.txt": {
-        "classification.type": "ids alert",
+        "classification.type": "ids-alert",
         "protocol.application": "ssh",
         "event_description.text": "IP reported as having run attacks on the "
                                   "service SSH",
     },
     "mail.txt": {
-        "classification.type": "ids alert",
+        "classification.type": "ids-alert",
         "protocol.application": "smtp",
         "event_description.text": "IP reported as having run attacks on the "
                                   "service Mail, Postfix",
     },
     "apache.txt": {
-        "classification.type": "ids alert",
+        "classification.type": "ids-alert",
         "protocol.application": "http",
         "event_description.text": "IP reported as having run attacks on the "
                                   "service Apache, Apache-DDoS, RFI-Attacks",
     },
     "imap.txt": {
-        "classification.type": "ids alert",
+        "classification.type": "ids-alert",
         "protocol.application": "imap",
         "event_description.text": "IP reported as having run attacks on the "
         "service IMAP, SASL, POP3",
     },
     "ftp.txt": {
-        "classification.type": "ids alert",
+        "classification.type": "ids-alert",
         "protocol.application": "ftp",
         "event_description.text": "IP reported as having run attacks on the "
                                   "service FTP",
     },
     "sip.txt": {
-        "classification.type": "ids alert",
+        "classification.type": "ids-alert",
         "protocol.application": "sip",
         "event_description.text": "IP reported as having run attacks on the "
                                   "service SIP, VOIP, Asterisk",
@@ -55,7 +55,7 @@ MAPPING = {
                                   "2 months",
     },
     "ircbot.txt": {
-        "classification.type": "infected system",
+        "classification.type": "infected-system",
         "protocol.application": "irc",
     },
     "bruteforcelogin.txt": {

@@ -22,7 +22,7 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\r\n' +
                                             SAMPLE_SPLIT[1].replace('"', '')+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
-                 "classification.type": "infected system",
+                 "classification.type": "infected-system",
                  "source.ip": "11.11.11.11",
                  "feed.name": "Sample CSV Feed",
                  'source.url': 'http://test.com'
@@ -33,7 +33,7 @@ EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
                  "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\r\n' +
                                             SAMPLE_SPLIT[2].replace('"', '')+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
-                 "classification.type": "infected system",
+                 "classification.type": "infected-system",
                  "feed.name": "Sample CSV Feed",
                  'source.network': '11.11.11.0/24',
                  'source.url': 'http://test.com'
@@ -52,7 +52,7 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         cls.sysconfig = {"columns": [ "source.ip|source.network", "source.url" ],
                          "delimiter": ",",
                          "skip_header": True,
-                         "type": "infected system",
+                         "type": "infected-system",
                          "time_format": "timestamp",
                          "default_url_protocol": "http://",
                          "type_translation": None}

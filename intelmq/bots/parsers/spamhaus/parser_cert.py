@@ -115,11 +115,11 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('classification.identifier', 'iot')
                 event.add('event_description.text', 'The infected iot device logged in to a honeypot and issued malicous commands.')
             elif malware == 'iotmirai':
-                event.add('classification.type', 'infected system')
+                event.add('classification.type', 'infected-system')
                 event.add('classification.identifier', 'mirai')
                 event.add('malware.name', 'mirai')
             elif malware == 'ioturl':
-                event.add('classification.type', 'c&c')
+                event.add('classification.type', 'c2server')
                 event.add('classification.identifier', 'malware-generic')
             elif malware == 'automatedtest':
                 event.add('classification.type', 'brute-force')
@@ -130,11 +130,17 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('classification.identifier', 'authentication-spoof')
                 event.add('protocol.application', 'smtp')
                 event.add('event_description.text', 'The device spoofed SMTP authentication with a bad EHLO.')
+            elif malware == 'extortion':
+                event.add('classification.type', 'spam')
+                event.add('classification.identifier', 'extortion')
+                if row_splitted[7] == '25':
+                    event.add('protocol.application', 'smtp')
+                event.add('event_description.text', 'This device sent extortion mails.')
             else:
                 if malware == 'auto':
                     malware = 's_other'
                 event.add('malware.name', malware)
-                event.add('classification.type', 'infected system')
+                event.add('classification.type', 'infected-system')
                 event.add('source.url', row_splitted[5], raise_failure=False)
 
             # otherwise the same ip, ignore

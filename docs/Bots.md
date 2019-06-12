@@ -6,167 +6,89 @@
 - [Initialization parameters](#initialization-parameters)
 - [Common parameters](#common-parameters)
 - [Collectors](#collectors)
+  - [API](#api)
   - [Generic URL Fetcher](#generic-url-fetcher)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Generic URL Stream Fetcher](#generic-url-stream-fetcher)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Generic Mail URL Fetcher](#generic-mail-url-fetcher)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Generic Mail Attachment Fetcher](#generic-mail-attachment-fetcher)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Fileinput](#fileinput)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [MISP Generic](#misp-generic)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Request Tracker](#request-tracker)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
+  - [Rsync](#rsync)
   - [Shodan Stream](#shodan-stream)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [TCP](#tcp)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [XMPP collector](#xmpp-collector)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Alien Vault OTX](#alien-vault-otx)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Blueliv Crimeserver](#blueliv-crimeserver)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
+  - [Calidog Certstream](#calidog-certstream)
+  - [McAfee openDXL](#mcafee-opendxl)
   - [Microsoft Azure](#microsoft-azure)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Microsoft Interflow](#microsoft-interflow)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
     - [Additional functionalities](#additional-functionalities)
   - [Stomp](#stomp)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Twitter](#twitter)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
 - [Parsers](#parsers)
+  - [Not complete](#not-complete)
   - [Generic CSV Parser](#generic-csv-parser)
-    - [Configuration parameters](#configuration-parameters)
   - [Cymru CAP Program](#cymru-cap-program)
-    - [Information:](#information)
   - [Cymru Full Bogons](#cymru-full-bogons)
-    - [Information:](#information)
   - [HTML Table Parser](#html-table-parser)
-    - [Configuration parameters](#configuration-parameters)
   - [Twitter](#twitter)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Shodan](#shodan)
-    - [Information](#information)
-    - [Configuration Parameters:](#configuration-parameters)
 - [Experts](#experts)
   - [Abusix](#abusix)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [ASN Lookup](#asn-lookup)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
+  - [Copy Extra](#copy-extra)
   - [Cymru Whois](#cymru-whois)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
-  - [Domain Suffix](#domain-suffix)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
-    - [Rule processing](#rule-processing)
   - [Deduplicator](#deduplicator)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
+  - [Domain Suffix](#domain-suffix)
+    - [Rule processing](#rule-processing)
+  - [DO-Portal](#do-portal)
   - [Field Reducer Bot](#field-reducer-bot)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
       - [Whitelist](#whitelist)
       - [Blacklist](#blacklist)
   - [Filter](#filter)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Generic DB Lookup](#generic-db-lookup)
   - [Gethostbyname](#gethostbyname)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [IDEA](#idea)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [MaxMind GeoIP](#maxmind-geoip)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Modify](#modify)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
-  - [Configuration File](#configuration-file)
-    - [Actions](#actions)
-    - [Examples](#examples)
-    - [Types](#types)
+    - [Configuration File](#configuration-file)
+      - [Actions](#actions)
+      - [Examples](#examples)
+      - [Types](#types)
+  - [McAfee Active Response Hash lookup](#mcafee-active-response-hash-lookup)
+  - [McAfee Active Response IP lookup](#mcafee-active-response-ip-lookup)
+  - [McAfee Active Response URL lookup](#mcafee-active-response-url-lookup)
   - [National CERT contact lookup by CERT.AT](#national-cert-contact-lookup-by-certat)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
+  - [Recorded Future IP Risk](#recorded-future-ip-risk)
   - [Reverse DNS](#reverse-dns)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [RFC1918](#rfc1918)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [RipeNCC Abuse Contact](#ripencc-abuse-contact)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Sieve](#sieve)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Taxonomy](#taxonomy)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Tor Nodes](#tor-nodes)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Url2FQDN](#url2fqdn)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
   - [Wait](#wait)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
 - [Outputs](#outputs)
+  - [AMQP Topic](#amqp-topic)
+  - [Blackhole](#blackhole)
   - [Elasticsearch](#elasticsearch)
-    - [Configuration Parameters:](#configuration-parameters)
   - [File](#file)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
       - [Filename formatting](#filename-formatting)
   - [Files](#files)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
+  - [McAfee Enterprise Security Manager](#mcafee-enterprise-security-manager)
   - [MongoDB](#mongodb)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
     - [Installation Requirements](#installation-requirements)
   - [PostgreSQL](#postgresql)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
     - [Installation Requirements](#installation-requirements)
     - [PostgreSQL Installation](#postgresql-installation)
+  - [Redis](#redis)
   - [REST API](#rest-api)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
-- [SMTP Output Bot](#smtp-output-bot)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
-  - [TCP](#tcp)
-    - [Information:](#information)
-    - [Configuration Parameters:](#configuration-parameters)
+ - [SMTP Output Bot](#smtp-output-bot)
+ - [TCP](#tcp)
+ - [UDP](#tcp)
+ - [XMPP](#xmpp)
 
 
 ## General remarks
@@ -255,6 +177,27 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `redis_cache_password`: Optional password for the redis database (default: none).
 
 ## Collectors
+
+Multihreading is disabled for all Collectors, as this would lead to duplicated data.
+
+### API
+
+#### Information:
+* `name:` intelmq.bots.collectors.api.collector
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` collect report messages from a HTTP REST API
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `port`: Optional, integer. Default: 5000. The local port, the API will be available at.
+
+The API is available at `/intelmq/push`.
+The `tornado` library is required.
+
+* * *
 
 
 ### Generic URL Fetcher
@@ -476,6 +419,25 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 
 * * *
 
+### Rsync
+
+#### Information:
+
+* `name:` intelmq.bots.collectors.rsync.collector_rsync
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Syncs a file via rsync and reads the file.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `file`: The filename to process, combine with `rsync_path`.
+* `temp_directory`: The temporary directory for rsync, by default `$VAR_STATE_PATH/rsync_collector`. `$VAR_STATE_PATH` is `/var/run/intelmq/` or `/opt/intelmq/var/run/`.
+* `rsync_path`: The path of the file to process
+
+* * *
+
 ### Shodan Stream
 
 Requires the shodan library to be installed:
@@ -510,6 +472,7 @@ Requires the shodan library to be installed:
 
 * `ip`: IP of destination server
 * `port`: port of destination server
+
 * * *
 
 
@@ -573,6 +536,24 @@ See the README.md
 * **Feed parameters** (see above)
 * `api_key`: location of information resource
 * `api_url`: The optional API endpoint, by default `https://freeapi.blueliv.com`.
+
+* * *
+
+### Calidog Certstream
+
+A Bot to collect data from the Certificate Transparency Log (CTL)
+This bot works based on certstream libary (https://github.com/CaliDog/certstream-python)
+
+#### Information:
+* `name:` intelmq.bots.collectors.calidog.collector_certstream
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` collect data from Certificate Transparency Log
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
 
 * * *
 
@@ -706,6 +687,10 @@ curl -X POST http://localhost:5000/intelmq/push -H 'Content-Type: application/js
 * `port`: 5000
 
 ## Parsers
+
+### Not complete
+
+This list is not complete. Look at `intelmq/bots/BOTS` or the list of parsers shown in the manager. But most parsers do not need configuration parameters.
 
 TODO
 
@@ -1004,6 +989,22 @@ FIXME
 
 * * *
 
+### Copy Extra
+
+#### Information:
+* `name:` `intelmq.bots.experts.national_cert_contact_certat.expert
+* `lookup:` to https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Queries abuse contact based on the country.
+
+#### Configuration Parameters:
+
+* **Cache parameters** (see in section [common parameters](#common-parameters))
+FIXME
+
+* * *
+
 ### Cymru Whois
 
 #### Information:
@@ -1016,7 +1017,6 @@ FIXME
 #### Configuration Parameters:
 
 * **Cache parameters** (see in section [common parameters](#common-parameters))
-FIXME
 
 * * *
 
@@ -1312,7 +1312,7 @@ You may want to use a shell script provided in the contrib directory to keep the
 * `configuration_path`: filename
 * `case_sensitive`: boolean, default: true
 
-### Configuration File
+#### Configuration File
 
 The modify expert bot allows you to change arbitrary field values of events just using a configuration file. Thus it is possible to adapt certain values or adding new ones only by changing JSON-files without touching the code of many other bots.
 
@@ -1382,7 +1382,7 @@ If the value for a condition is an empty string, the bot checks if the field doe
 This is useful to apply default values for empty fields.
 
 
-#### Actions
+##### Actions
 
 You can set the value of the field to a string literal or number.
 
@@ -1394,13 +1394,13 @@ Group 0 (`[0]`) contains the full matching string. See also the documentation on
 Note that `matches` will also contain the match groups
 from the default conditions if there were any.
 
-#### Examples
+##### Examples
 
 We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and eventually enters section `Spamhaus Cert`. First, the default condition is checked, it matches! OK, going on. Otherwise the expert would have selected a different section that has not yet been considered. Now, go through the rules, until we hit the rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action: `classification.identifier` is set to `conficker`, the trivial name.
 
 Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` will be set to `feodo` by `{msg[malware.name]}`.
 
-#### Types
+##### Types
 
 If the rule is a string, a regex-search is performed, also for numeric values (`str()` is called on them). If the rule is numeric for numeric values, a simple comparison is done. If other types are mixed, a warning will be thrown.
 
@@ -1594,7 +1594,26 @@ Otherwise the dummy mode is active, the events are just passed without an additi
 
 Note that SIGHUPs and reloads interrupt the sleeping.
 
+* * *
+
 ## Outputs
+
+### AMQP Topic
+
+Sends data to an AMQP Server
+
+#### Information
+* `name`: `intelmq.bots.outputs.amqptopic.output`
+* `lookup`: to the amqp server
+* `public`: yes
+* `cache`: no
+* `description`: Sends the event to a specified topic of an AMQP server
+
+#### Configuration parameters:
+
+See README.md
+
+* * *
 
 ### Blackhole
 
@@ -1630,6 +1649,10 @@ Output Bot that sends events to Elasticsearch
 * elastic_doctype    : Elasticsearch document type for the event. Default: events
 * http_username      : http_auth basic username
 * http_password      : http_auth basic password
+* use_ssl            : Whether to use SSL/TLS when connecting to Elasticsearch. Default: False
+* http_verify_cert   : Whether to require verification of the server's certificate. Default: False
+* ssl_ca_certificate : An optional path to a certificate bundle to use for verifying the server
+* ssl_show_warnings  : Whether to show warnings if the server's certificate can not be verified. Default: True
 * replacement_char   : If set, dots ('.') in field names will be replaced with this character prior to indexing. This is for backward compatibility with ES 2.X. Default: null. Recommended for ES2.X: '_'
 * flatten_fields     : In ES, some query and aggregations work better if the fields are flat and not JSON. Here you can provide a list of fields to convert.
                        Can be a list of strings (fieldnames) or a string with field names separated by a comma (,). eg `extra,field2` or `['extra', 'field2']`
@@ -1656,6 +1679,8 @@ The data in ES can be retrieved with the HTTP-Interface:
 * `public:` yes
 * `cache (redis db):` none
 * `description:` output messages (reports or events) to file
+
+Multihreading is disabled for this bot, as this would lead to corrupted files.
 
 #### Configuration Parameters:
 
@@ -1788,6 +1813,20 @@ from your installation.
 
 * * *
 
+### Redis
+
+#### Information:
+* `name:` `intelmq.bots.outputs.redis.output`
+* `lookup:` to the redis server
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Sends the events to another redis server
+
+#### Configuration Parameters:
+
+See README.md
+
+* * *
 
 ### REST API
 
@@ -1806,7 +1845,6 @@ from your installation.
 * `hierarchical_output`: boolean
 * `host`: destination URL
 * `use_json`: boolean
-
 
 * * *
 
@@ -1850,17 +1888,47 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 ### TCP
 
 #### Information:
-* `name:` intelmq.bots.outputs.tcp.collector
+* `name:` intelmq.bots.outputs.tcp.output
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
 * `description:` TCP is the bot responsible to send events to a TCP port (Splunk, another IntelMQ, etc..).
 
+Multihreading is disabled for this bot.
+
 #### Configuration Parameters:
 
+* `counterpart_is_intelmq`: Boolean. If you are sending to an IntelMQ TCP collector, set this to True, otherwise e.g. with filebeat, set it to false.
 * `ip`: IP of destination server
 * `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server
 * `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present. 
     In that case, the output waits every message is acknowledged by "Ok" message the tcp.collector bot implements.
 
+* * *
+
+### UDP
+
+#### Information:
+* `name:` intelmq.bots.outputs.udp.output
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` TCP is the bot responsible to send events to a UDP port
+
+Multihreading is disabled for this bot.
+
+#### Configuration Parameters:
+
+* `field_delimiter`: String, default: `"|"`
+* `format`: `json` or `delimited`, see README
+* `header`: string
+* `keep_raw_field`: boolean, default: false
+* `udp_host`: Destination's server's Host name or IP address
+* `udp_port`: Destination port
+
+* * *
+
+### XMPP
+
+See the README.md in the bot's directory

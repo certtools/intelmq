@@ -21,7 +21,7 @@ from intelmq.lib.utils import base64_decode
 PORT = 5011
 SEPARATOR = '\n'
 INPUT1 = {'classification.taxonomy': 'malicious code',
-          'classification.type': 'c&c',
+          'classification.type': 'c2server',
           'feed.name': 'Example feed',
           'feed.accuracy': 100.0,
           'feed.url': 'http://localhost/two_files.tar.gz',
@@ -70,7 +70,8 @@ class TestTCPOutputBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = TCPOutputBot
         cls.sysconfig = {'hierarchical_output': False,
                          'ip': 'localhost',
-                         'port': PORT
+                         'port': PORT,
+                         'counterpart_is_intelmq': True,
                          }
 
     def _delayed_start(self):

@@ -130,14 +130,20 @@ Reference Security Incident Taxonomy Working Group – RSIT WG
 https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
 with extensions.
 
+These old values are automatically mapped to the new ones:
+    'botnet drone' -> 'infected-system'
+    'ids alert' -> 'ids-alert'
+    'c&c' -> 'c2server'
+    'infected system' -> 'infected-system'
+    'malware configuration' -> 'malware-configuration'
+
 Allowed values are:
  * application-compromise
  * backdoor
  * blacklist
- * botnet drone
  * brute-force
  * burglary
- * c&c
+ * c2server
  * compromised
  * copyright
  * data-loss
@@ -149,12 +155,12 @@ Allowed values are:
  * dropzone
  * exploit
  * harmful-speech
- * ids alert
- * infected system
+ * ids-alert
+ * infected-system
  * information-disclosure
  * leak
  * malware
- * malware configuration
+ * malware-configuration
  * malware-distribution
  * masquerade
  * other

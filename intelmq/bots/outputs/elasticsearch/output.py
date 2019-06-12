@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 The ES-connection can't be closed explicitly.
+
+TODO:
+    * Support client_cert and client_key parameters, see https://github.com/certtools/intelmq/pull/1406
 """
 
 from collections.abc import Mapping
@@ -61,10 +64,12 @@ class ElasticsearchOutputBot(Bot):
                                      'elastic_index', 'intelmq')
         self.rotate_index = getattr(self.parameters,
                                     'rotate_index', False)
-        self.http_username = getattr(self.parameters,
-                                     'http_username', None)
-        self.http_password = getattr(self.parameters,
-                                     'http_password', None)
+        self.use_ssl = getattr(self.parameters,
+                               'use_ssl', False)
+        self.ssl_ca_certificate = getattr(self.parameters,
+                                          'ssl_ca_certificate', None)
+        self.ssl_show_warnings = getattr(self.parameters,
+                                         'ssl_show_warnings', True)
         self.elastic_doctype = getattr(self.parameters,
                                        'elastic_doctype', 'events')
         self.replacement_char = getattr(self.parameters,
@@ -74,11 +79,15 @@ class ElasticsearchOutputBot(Bot):
         if isinstance(self.flatten_fields, str):
             self.flatten_fields = self.flatten_fields.split(',')
 
-        kwargs = {}
-        if self.http_username and self.http_password:
-            kwargs = {'http_auth': (self.http_username, self.http_password)}
+        self.set_request_parameters()  # Not all parameters set here are used by the ES client
 
-        self.es = Elasticsearch([{'host': self.elastic_host, 'port': self.elastic_port}], **kwargs)
+        self.es = Elasticsearch([{'host': self.elastic_host, 'port': self.elastic_port}],
+                                http_auth=self.auth,
+                                use_ssl=self.use_ssl,
+                                verify_certs=self.http_verify_cert,
+                                ca_certs=self.ssl_ca_certificate,
+                                ssl_show_warn=self.ssl_show_warnings,
+                                )
 
         if self.should_rotate():
             # Use rotating index names - check that the template exists

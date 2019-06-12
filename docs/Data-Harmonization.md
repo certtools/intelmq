@@ -110,7 +110,7 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |information-gathering|social-engineering|Gathering information from a human being in a non-technical way (e.g. lies, tricks, bribes, or threats). This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol.|
 |intrusion attempts|brute-force|Multiple login attempts (Guessing / cracking of passwords, brute force).|
 |intrusion attempts|exploit|An attack using an unknown exploit.|
-|intrusion attempts|ids alert|IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert. ENISA eCSIRT-II taxonomy: 'ids-alert'.|
+|intrusion attempts|ids-alert|IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.|
 |intrusions|application-compromise|Compromise of an application by exploiting (un)known software vulnerabilities, e.g. SQL injection.|
 |intrusions|backdoor|This refers to hosts, which have been compromised and backdoored with a remote administration software or Trojan in the traditional sense. Not in ENISA eCSIRT-II taxonomy.|
 |intrusions|burglary|Physical intrusion, e.g. into corporate building or data center.|
@@ -120,16 +120,15 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |intrusions|unauthorized-command|The possibly infected device sent unauthorized commands to a remote device with malicious intent. Not in ENISA eCSIRT-II taxonomy.|
 |intrusions|unauthorized-login|A possibly infected device logged in to a remote device without authorization. Not in ENISA eCSIRT-II taxonomy.|
 |intrusions|unprivileged-account-compromise|Compromise of a system using an unprivileged (user/service) account.|
-|malicious code|botnet drone|This is a compromised machine, which has been observed to make a connection to a command and control server. Not in ENISA eCSIRT-II taxonomy and deprecated, use 'infected system instead'.|
-|malicious code|c&c|This is a command and control server in charge of a given number of botnet drones. ENISA eCSIRT-II taxonomy: 'c2server'.|
+|malicious code|c2server|This is a command and control server in charge of a given number of botnet drones.|
 |malicious code|dga domain|DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers. Not in ENISA eCSIRT-II taxonomy.|
-|malicious code|infected system|This is a compromised machine, which has been observed to make a connection to a command and control server. ENISA eCSIRT-II taxonomy: 'infected-system'.|
+|malicious code|infected-system|This is a compromised machine, which has been observed to make a connection to a command and control server.|
 |malicious code|malware|A URL is the most common resource with reference to malware binary distribution. Not in ENISA eCSIRT-II taxonomy.|
-|malicious code|malware configuration|This is a resource which updates botnet drones with a new configuration.|
+|malicious code|malware-configuration|This is a resource which updates botnet drones with a new configuration.|
 |malicious code|malware-distribution|URI used for malware distribution, e.g. a download URL included in fake invoice malware spam.|
 |malicious code|ransomware|This IOC refers to a specific type of compromised machine, where the computer has been hijacked for ransom by the criminals. Not in ENISA eCSIRT-II taxonomy and deprecated, use 'infected system instead'.|
 |other|blacklist|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
-|other|other|All incidents which don't fit in one of the given categories should be put into this class. Not in ENISA eCSIRT-II taxonomy.|
+|other|other|All incidents which don't fit in one of the given categories should be put into this class.|
 |other|proxy|This refers to the use of proxies from inside your network. Not in ENISA eCSIRT-II taxonomy.|
 |other|tor|This IOC refers to incidents related to TOR network infrastructure. Not in ENISA eCSIRT-II taxonomy.|
 |other|unknown|Unknown classification. Not in ENISA eCSIRT-II taxonomy.|
@@ -148,16 +147,15 @@ Meaning of source, destination and local values for each classification type and
 |----|------|-----------|-----|--------------------|
 |backdoor|*backdoored device*||||
 |blacklist|*blacklisted device*||||
-|botnet drone|*infected device*|*contacted c2c server*|||
 |brute-force|*attacker*|target|||
-|c&c|*(sinkholed) c&c server*|||zeus, palevo, feodo|
+|c2server|*(sinkholed) c&c server*|||zeus, palevo, feodo|
 |compromised|*server*||||
 |ddos|*attacker*|target|||
 |defacement|*defaced website*||||
 |dga domain|*infected device*||||
 |dropzone|*server hosting stolen data*||||
 |exploit|*hosting server*||||
-|ids alert|*triggering device*||||
+|ids-alert|*triggering device*||||
 |infected system|*infected device*|*contacted c2c server*|||
 |malware|*infected device*||internal at source|zeus, palevo, feodo|
 |malware configuration|*infected device*||||

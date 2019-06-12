@@ -3,8 +3,8 @@ NEWS
 
 See the changelog for a full list of changes.
 
-2.0.0 Major release (unreleased)
---------------------------------
+2.1.0 Feature release (unreleased)
+----------------------------------
 
 ### Requirements
 
@@ -13,25 +13,76 @@ See the changelog for a full list of changes.
 ### Harmonization
 
 ### Configuration
-Four new values have been introduced to configure the statistics database. Add them to your `defaults.conf` file:
-* `statistics_database`: `3`,
-* `statistics_host`: `"127.0.0.1"`,
-* `statistics_password`: `null`,
-* `statistics_port`: `6379`,
 
 ### Libraries
 
 ### Postgres databases
 
 
-2.0.0.beta1 release (2019-04-10)
--------------------------------
+2.0.1 Bugfix release (unreleased)
+---------------------------------
 
-There are some features considered as beta and marked as such in the documentation, do not use them in production yet.
+### Requirements
 
 ### Tools
 
 ### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
+2.0.0 Major release (2019-05-22)
+--------------------------------
+
+See also the news for 2.0.0.beta1 below.
+
+### Harmonization
+The allowed values for the `classification.type` field have been updated to the RSIT mapping. These values have changed and are automatically mapped:
+  - `botnet drone` with `infected-system`
+  - `infected system` with `infected-system`
+  - `ids alert` with `ids-alert`
+  - `c&c` with `c2server`
+  - `malware configuration` with `malware-configuration`
+
+### Configuration
+Four new values have been introduced to configure the statistics database. Add them to your `defaults.conf` file:
+* `statistics_database`: `3`,
+* `statistics_host`: `"127.0.0.1"`,
+* `statistics_password`: `null`,
+* `statistics_port`: `6379`,
+
+#### TCP Output
+Version 1.1.2 broke the compatibility of the TCP Output with third-party counterparts like filebeat, but is more stable for a TCP Collector counterpart. A new parameter `counterpart_is_intelmq` has been introduced, it's default is `false` for backwards compatibility. If you use a TCP collector, set this to `true`, otherwise to `false`.
+
+### Postgres databases
+The following statements optionally update existing data.
+Please check if you did use these feed names and eventually adapt them for your setup!
+```SQL
+UPDATE events
+   SET "classification.type" = 'infected-system'
+   WHERE "classification.type" = 'botnet drone';
+UPDATE events
+   SET "classification.type" = 'infected-system'
+   WHERE "classification.type" = 'infected system';
+UPDATE events
+   SET "classification.type" = 'ids-alert'
+   WHERE "classification.type" = 'ids alert';
+UPDATE events
+   SET "classification.type" = 'c2server'
+   WHERE "classification.type" = 'c&c';
+UPDATE events
+   SET "classification.type" = 'malware-configuration'
+   WHERE "classification.type" = 'malware configuration';
+```
+
+2.0.0.beta1 release (2019-04-10)
+-------------------------------
+
+There are some features considered as beta and marked as such in the documentation, do not use them in production yet.
 
 ### Configuration
 The bot `intelmq.bots.experts.ripencc_abuse_contact.expert` has been renamed to `intelmq.bots.experts.ripe.expert`, the compatibility shim will be removed in version 3.0. Adapt your `runtime.conf` accordingly.

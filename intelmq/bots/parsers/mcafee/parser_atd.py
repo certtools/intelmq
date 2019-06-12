@@ -48,7 +48,7 @@ class ATDParserBot(Bot):
             # forward initial sample hashes
             event = self.new_event(report)
             event.add("classification.taxonomy", "malicious code")
-            event.add("classification.type", 'infected system')
+            event.add("classification.type", 'infected-system')
             event.add("raw", raw_report)
 
             event.add('malware.name', subject_name)
@@ -63,7 +63,7 @@ class ATDParserBot(Bot):
                 for entry in atd_event['Summary']['Files']:
                     event = self.new_event(report)
                     event.add("classification.taxonomy", "malicious code")
-                    event.add("classification.type", 'infected system')
+                    event.add("classification.type", 'infected-system')
                     event.add("raw", raw_report)
                     for key, value in entry.items():
                         if (key in self.ATD_TYPE_MAPPING):
@@ -77,7 +77,7 @@ class ATDParserBot(Bot):
                 for entry in atd_event['Summary']['Ips']:
                     event = self.new_event(report)
                     event.add("classification.taxonomy", "malicious code")
-                    event.add("classification.type", 'infected system')
+                    event.add("classification.type", 'infected-system')
                     event.add("raw", raw_report)
 
                     event.add('malware.name', subject_name)
@@ -98,7 +98,7 @@ class ATDParserBot(Bot):
                 for entry in atd_event['Summary']['Urls']:
                     event = self.new_event(report)
                     event.add("classification.taxonomy", "malicious code")
-                    event.add("classification.type", 'infected system')
+                    event.add("classification.type", 'infected-system')
                     event.add("raw", raw_report)
 
                     event.add('malware.name', subject_name)

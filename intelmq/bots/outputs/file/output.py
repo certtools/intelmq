@@ -10,6 +10,7 @@ from intelmq.lib.utils import base64_decode
 
 class FileOutputBot(Bot):
     file = None
+    is_multithreadable = False
 
     def init(self):
         # needs to be done here, because in process() FileNotFoundError handling we call init(),

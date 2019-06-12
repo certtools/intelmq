@@ -28,7 +28,7 @@ class Netlab360ParserBot(ParserBot):
                 event.add('time.source', value[2] + ' UTC')
                 if event['time.source'] > event['time.observation']:
                     event.change('time.source', event['time.observation'])
-                event.add('classification.type', 'c&c')
+                event.add('classification.type', 'c2server')
                 event.add('event_description.url', 'http://data.netlab.360.com/dga')
 
             elif report['feed.url'] in Netlab360ParserBot.MAGNITUDE_FEED:

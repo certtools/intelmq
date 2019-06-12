@@ -120,6 +120,8 @@ class TestHarmonization(unittest.TestCase):
                                                           sanitize=False))
         self.assertFalse(harmonization.IPAddress.is_valid('localhost',
                                                           sanitize=False))
+        self.assertFalse(harmonization.IPAddress.is_valid('fe80::1c41:b16d:ff5e:689d%bnep0',
+                                                          sanitize=False))
 
     def test_ipaddress_sanitize(self):
         """ Test IPAddress.is_valid and sanitize with valid arguments. """
@@ -130,6 +132,8 @@ class TestHarmonization(unittest.TestCase):
                                                          sanitize=True))
         self.assertTrue(harmonization.IPAddress.is_valid(ipaddress.ip_address('192.0.2.1'),
                                                          sanitize=True))
+        self.assertTrue(harmonization.IPAddress.is_valid('fe80::1c41:b16d:ff5e:689d%bnep0',
+                                                          sanitize=True))
 
     def test_ipaddress_sanitize_invalid(self):
         """ Test IPAddress.is_valid ans sanitize with invalid arguments. """
@@ -451,6 +455,39 @@ class TestHarmonization(unittest.TestCase):
     def test_tlp_sanitize_invalid(self):
         """ Test TLP.is_valid with invalid arguments. """
         self.assertFalse(harmonization.TLP.is_valid('TLP AMBER'))
+
+    def test_classification_type_valid(self):
+        """ Test ClassificationType.is_valid with valid arguments. """
+        self.assertTrue(harmonization.ClassificationType.is_valid('infected-system'))
+
+    def test_classification_type_invalid(self):
+        """ Test ClassificationType.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.ClassificationType.is_valid('foobar'))
+
+    def test_classification_type_sanitize(self):
+        """ Test ClassificationType.sanitize with valid arguments. """
+        self.assertTrue(harmonization.ClassificationType.is_valid('Infected-system',
+                                                   sanitize=True))
+        self.assertTrue(harmonization.ClassificationType.is_valid('infected system ',
+                                                   sanitize=True))
+
+    def test_classification_type_sanitize_invalid(self):
+        """ Test ClassificationType.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.ClassificationType.is_valid('botnet-drone'))
+        self.assertFalse(harmonization.ClassificationType.is_valid('botnet drone'))
+
+
+def generate_nonetest_function(typeclassname):
+    typeclass = getattr(harmonization, typeclassname)
+    def test_type_none(self):
+        """ Test if None raises no error for type %s. """ % typeclass
+        typeclass.is_valid(None, sanitize=False)
+        typeclass.is_valid(None, sanitize=True)
+    return test_type_none
+
+
+for typeclassname in harmonization.__all__:
+    setattr(TestHarmonization, 'test_%s_none' % typeclassname, generate_nonetest_function(typeclassname))
 
 
 if __name__ == '__main__':  # pragma: no cover

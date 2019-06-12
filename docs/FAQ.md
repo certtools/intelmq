@@ -9,6 +9,7 @@
 - [How can I improve the speed?](#how-can-i-improve-the-speed)
 - [My bot(s) died on startup with no errors logged](#my-bots-died-on-startup-with-no-errors-logged)
 - [Orphaned Queues](#orphaned-queues)
+- [Multithreading is not available for this bot](#multithreading-is-not-available-for-this-bot)
 
 ## Send IntelMQ events to Splunk
 
@@ -88,3 +89,13 @@ llen [queue-name] # shows the length of the queue [queue-name]
 lindex [queue-name] [index] # show the [index]'s message of the queue [queue-name]
 del [queue-name] # remove the queue [queue-name]
 ```
+## Multithreading is not available for this bot
+
+Multithreading is not available for some bots and AMQP broker is necessary.
+
+ * Multithreading is only available when using the AMQP broker.
+ * For all collectors, Multithreading is disabled. Otherwise this would lead to duplicated data, as the data retrieval is not atomic.
+ * Some bots use libraries which are not thread safe. Look a the bot's documentation for more information.
+ * Some bots' operations are not thread safe. Look a the bot's documentation for more information.
+
+If you think this mapping is wrong, please report a bug.

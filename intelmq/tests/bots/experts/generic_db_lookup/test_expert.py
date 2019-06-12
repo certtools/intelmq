@@ -13,7 +13,7 @@ if os.environ.get('INTELMQ_TEST_DATABASES'):
 
 INPUT1 = {"__type": "Event",
           "classification.identifier": "zeus",
-          "classification.type": "botnet drone",
+          "classification.type": "infected-system",
           "source.asn": 64496,
           "source.ip": "192.0.2.1",
           "feed.name": "Example Feed",
@@ -90,7 +90,7 @@ class TestGenericDBLookupExpertBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig['match_fields'] = {"source.asn": "asn",
                                           "classification.type": "type"}
         self.cur.execute('''INSERT INTO lookuptests ("asn", "contact", "note", "type") VALUES
-        (64497, 'abuse@example.com', 'bar', 'botnet drone')
+        (64497, 'abuse@example.com', 'bar', 'infected-system')
         ''')
         self.input_message = INPUT3
         self.run_bot()

@@ -3,11 +3,11 @@ from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 
 MAPPING_STATIC = {'bot': {
-    'classification.type': 'infected system'},
+    'classification.type': 'infected-system'},
     'bruteforce': {
     'classification.type': 'brute-force'},
     'controller': {
-    'classification.type': 'c&c'},
+    'classification.type': 'c2server'},
     'darknet': {'classification.type': 'scanner',
                 'classification.identifier': 'darknet'},
     'phishing': {'classification.type': 'phishing',
@@ -76,7 +76,7 @@ class CymruCAPProgramParserBot(ParserBot):
         elif report_type == 'bots':
             # bots|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[srcport <PORT>] [mwtype <TYPE>] [destaddr <IPADDR>] [comment]|ASNAME
             # TYPE can contain spaces -.-
-            event.add('classification.type', 'infected system')
+            event.add('classification.type', 'infected-system')
             comment_results = {}
             comment_key = None
             comment_value = []
@@ -113,7 +113,7 @@ class CymruCAPProgramParserBot(ParserBot):
             # ddosreport|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<PROTOCOL> <PORT>] [category: <CATEGORY>]
             # [servpass: <PASSWORD>] [SSL] [url: <URL>]|ASNAME
             raise NotImplementedError('Report %r not implemented, format is unknown.' % report_type)
-            event['classification.type'] = 'c&c'
+            event['classification.type'] = 'c2server'
             event['protocol.application'] = comment_split[0]
             event['source.port'] = comment_split[1]
             # TODO: category? password? ssl?
@@ -198,7 +198,7 @@ class CymruCAPProgramParserBot(ParserBot):
                     break
         elif report_type == 'toxbot':  # TODO: verify
             # toxbot|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|srcport <SOURCE PORT>|ASNAME
-            event.add('classification.type', 'infected system')
+            event.add('classification.type', 'infected-system')
             event.add('classification.identifier', report_type)
             event.add('malware.name', report_type)
             event['extra.source_port'] = int(comment_split[1])

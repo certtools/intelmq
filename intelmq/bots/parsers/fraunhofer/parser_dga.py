@@ -27,7 +27,7 @@ class FraunhoferDGAParserBot(Bot):
             malware_name = key.split('_')[0]
             for row in dict_report[key]:
                 event = self.new_event(report)
-                event.add('classification.type', 'c&c')
+                event.add('classification.type', 'c2server')
                 event.add('malware.name', malware_name)
                 if not event.add('source.ip', row, raise_failure=False):
                     event.add('source.fqdn', row)

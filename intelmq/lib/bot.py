@@ -52,8 +52,13 @@ class Bot(object):
 
     # True for (non-main) threads of a bot instance
     is_multithreaded = False
+    # True if the bot is thread-safe and it makes sense
+    is_multithreadable = True
+    # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
+    collector_empty_process = False
 
-    def __init__(self, bot_id: str, start=False, sighup_event=None):
+    def __init__(self, bot_id: str, start=False, sighup_event=None,
+                 disable_multithreading=None):
         self.__log_buffer = []
         self.parameters = Parameters()
 
@@ -100,8 +105,16 @@ class Bot(object):
             self.logger.info('Bot is starting.')
             self.__load_runtime_configuration()
 
+            broker = getattr(self.parameters, "source_pipeline_broker",
+                             getattr(self.parameters, "broker", "redis")).title()
+            if broker != 'Amqp':
+                self.is_multithreadable = False
+
             """ Multithreading """
-            if getattr(self.parameters, 'instances_threads', 0) > 1 and not self.is_multithreaded:
+            if (getattr(self.parameters, 'instances_threads', 0) > 1 and
+                not self.is_multithreaded and
+                    self.is_multithreadable and
+                    not disable_multithreading):
                 self.logger.handlers = []
                 num_instances = int(self.parameters.instances_threads)
                 instances = []
@@ -126,6 +139,15 @@ class Bot(object):
                 for i, thread in enumerate(instances):
                     thread.join()
                 return
+            elif (getattr(self.parameters, 'instances_threads', 1) > 1 and
+                  not self.is_multithreadable):
+                self.logger.error('Multithreading is configured, but is not '
+                                  'available for this bot. Look at the FAQ '
+                                  'for a list of reasons for this. '
+                                  'https://github.com/certtools/intelmq/blob/master/docs/FAQ.md')
+            elif disable_multithreading:
+                self.logger.warning('Multithreading is configured, but is not '
+                                    'available for interactive runs.')
 
             self.__load_pipeline_configuration()
             self.__load_harmonization_configuration()
@@ -243,6 +265,8 @@ class Bot(object):
 
                 if self.parameters.rate_limit and self.run_mode != 'scheduled':
                     self.__sleep()
+                if self.collector_empty_process and self.run_mode != 'scheduled':
+                    self.__sleep(1, log=False)
 
             except exceptions.PipelineError as exc:
                 error_on_pipeline = True
@@ -374,7 +398,7 @@ class Bot(object):
         except Exception:
             self.logger.debug('Failed to write statistics to cache, check your `statistics_*` settings.', exc_info=True)
 
-    def __sleep(self, remaining: Optional[float] = None):
+    def __sleep(self, remaining: Optional[float] = None, log: bool = True):
         """
         Sleep handles interrupts and changed rate_limit-parameter.
 
@@ -384,13 +408,16 @@ class Bot(object):
 
         Parameters:
             remaining: Time to sleep. 'rate_limit' parameter by default if None
+            log: Log the remaining sleep time, default: True
         """
         starttime = time.time()
         if remaining is None:
             remaining = self.parameters.rate_limit
+
         while remaining > 0:
-            self.logger.info("Idling for {:.1f}s ({}) now.".format(remaining,
-                                                                   utils.seconds_to_human(remaining)))
+            if log:
+                self.logger.info("Idling for {:.1f}s ({}) now.".format(remaining,
+                                                                       utils.seconds_to_human(remaining)))
             time.sleep(remaining)
             self.__handle_sighup()
             remaining = self.parameters.rate_limit - (time.time() - starttime)
@@ -760,7 +787,8 @@ class ParserBot(Bot):
     handle = None
     current_line = None
 
-    def __init__(self, bot_id: str, start=False, sighup_event=None):
+    def __init__(self, bot_id: str, start=False, sighup_event=None,
+                 disable_multithreading=None):
         super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'ParserBot':
             self.logger.error('ParserBot can\'t be started itself. '
@@ -934,7 +962,10 @@ class CollectorBot(Bot):
     Does some sanity checks on message sending.
     """
 
-    def __init__(self, bot_id: str, start=False, sighup_event=None):
+    is_multithreadable = False
+
+    def __init__(self, bot_id: str, start=False, sighup_event=None,
+                 disable_multithreading=None):
         super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'CollectorBot':
             self.logger.error('CollectorBot can\'t be started itself. '
