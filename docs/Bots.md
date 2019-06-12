@@ -1200,7 +1200,7 @@ none
 
 * * *
 
-### IDEA
+### IDEA Converter
 
 Converts the event to IDEA format and saves it as JSON in the field `output`. All other fields are not modified.
 
