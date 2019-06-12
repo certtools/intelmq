@@ -26,8 +26,8 @@ FEEDS = {
         'malware': 'feodo',
         'additional_fields':
             {
-                'time.source': lambda row: row[3]+'T00:00+00' if row[3] else row[0]+' UTC',
-             },
+                'time.source': lambda row: row[3] + 'T00:00+00' if row[3] else row[0] + ' UTC',
+        },
     },
     'https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist': {
         'format': [
@@ -98,9 +98,9 @@ class AbusechIPParserBot(ParserBot):
         for field, value in zip(FEEDS[feed_url]['format'], line.split(',')):
             if value and field in ('extra.first_seen', 'extra.last_online'):
                 if ':' in value:
-                    event.add(field, DateTime.sanitize(value+'+00:00'))
+                    event.add(field, DateTime.sanitize(value + '+00:00'))
                 else:
-                    event.add(field, value+'T00:00:00+00:00')
+                    event.add(field, value + 'T00:00:00+00:00')
             else:
                 event.add(field, value)
 

@@ -89,7 +89,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Status:** on
 * **Revision:** 25-03-2019
 * **Description:** List of botnet Command&Control servers (C&Cs) tracked by Feodo Tracker, associated with Dridex and Emotet (aka Heodo).
-* **Additional Information:** https://feodotracker.abuse.ch/
+* **Additional Information:** https://feodotracker.abuse.ch/ The data in the column Last Online is used for `time.source` if available, with 00:00 as time. Otherwise first seen is used as `time.source`.
 
 ### Collector
 
