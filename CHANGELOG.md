@@ -56,6 +56,8 @@ CHANGELOG
 
 #### Parsers
 - `intelmq.bots.parsers.n6.parser_n6stomp`: use `malware-generic` instead of `generic-n6-drone` for unknown infected system events.
+- `intelmq.bots.parsers.abusech.parser_ip`: Support LastOnline column in feodo feed (#1400) and use it for `time.source` if available.
+  - Use lower case malware names as default, should not make a difference in practice.
 
 #### Experts
 - `intelmq.bots.experts.generic_db_lookup`: Recommend psycopg2-binary package.
