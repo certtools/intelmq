@@ -72,10 +72,12 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- `intelmq.lib.test`: Disable statistics for test runs of bots.
 
 ### Tools
 
 ### Contrib
+* logcheck rules: Adapt ignore rule to cover the instance id of bot names.
 
 ### Known issues
 

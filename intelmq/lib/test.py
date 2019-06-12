@@ -234,6 +234,8 @@ class BotTestCase(object):
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
                 self.bot = self.bot_reference(self.bot_id)
+        self.bot._Bot__stats_cache = None
+
         if self.input_message is not None:
             if type(self.input_message) is not list:
                 self.input_message = [self.input_message]
