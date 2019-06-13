@@ -14,6 +14,7 @@ CHANGELOG
 - `intelmq.lib.bot`: fix parameters of ParserBot and CollectorBot constructors, allowing `intelmqctl run` with these bots again (#1414).
 
 ### Development
+- `intelmq.bin.intelmq_gen_docs`: For yaml use `safe_load` instead of unsafe `load`.
 
 ### Harmonization
 - IPAddress type: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
