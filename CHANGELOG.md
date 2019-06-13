@@ -12,6 +12,7 @@ CHANGELOG
 ### Development
 
 ### Harmonization
+- Add extra to reports.
 
 ### Bots
 #### Collectors
