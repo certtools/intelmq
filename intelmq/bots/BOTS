@@ -755,7 +755,7 @@
             "module": "intelmq.bots.experts.gethostbyname.expert",
             "parameters": {}
         },
-        "IDEA": {
+        "IDEA Converter": {
             "description": "Converts events into the IDEA format.",
             "module": "intelmq.bots.experts.idea.expert",
             "parameters": {

@@ -68,7 +68,7 @@ def info(key, value=""):
 
 def feeds_docs():
     with open(pkg_resources.resource_filename('intelmq', 'etc/feeds.yaml')) as fhandle:
-        config = yaml.load(fhandle.read())
+        config = yaml.safe_load(fhandle.read())
 
     toc = ""
     for provider in sorted(config['providers'].keys()):
