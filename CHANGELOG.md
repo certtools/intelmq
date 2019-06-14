@@ -37,6 +37,9 @@ CHANGELOG
 
 #### Experts
 - `intelmq.bots.experts.generic_db_lookup`: Recommend psycopg2-binary package.
+- `intelmq.bots.experts.modify.expert`:
+  - Compile regular expressions (all string rules) at initializations, improves the speed.
+  - Warn about old configuration style deprecation.
 
 #### Outputs
 - `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
