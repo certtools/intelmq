@@ -8,6 +8,7 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.harmonization`: Use correct parent classes.
 
 ### Development
 

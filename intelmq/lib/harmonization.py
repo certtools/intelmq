@@ -73,7 +73,29 @@ class GenericType(object):
         return str(value)
 
 
-class Base64(GenericType):
+class String(GenericType):
+    """
+    Any non-empty string without leading or trailing whitespace.
+    """
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+
+        if not GenericType().is_valid(value):
+            return False
+
+        if type(value) is not str:
+            return False
+
+        if len(value) == 0:
+            return False
+
+        return True
+
+
+class Base64(String):
     """
     Base64 type. Always gives unicode strings.
 
@@ -138,7 +160,7 @@ class Boolean(GenericType):
         return None
 
 
-class ClassificationType(GenericType):
+class ClassificationType(String):
     """
     `classification.type` type.
 
@@ -246,7 +268,7 @@ class ClassificationType(GenericType):
         return GenericType().sanitize(value)
 
 
-class DateTime(GenericType):
+class DateTime(String):
     """
     Date and time type for timestamps.
 
@@ -394,7 +416,7 @@ class Float(GenericType):
             return None
 
 
-class Accuracy(GenericType):
+class Accuracy(Float):
     """
     Accuracy type. A Float between 0 and 100.
     """
@@ -427,7 +449,7 @@ class Accuracy(GenericType):
             return None
 
 
-class FQDN(GenericType):
+class FQDN(String):
     """
     Fully qualified domain name type.
 
@@ -517,7 +539,7 @@ class Integer(GenericType):
             return None
 
 
-class ASN(GenericType):
+class ASN(Integer):
     """
     ASN type. Derived from Integer with forbidden values.
 
@@ -553,7 +575,7 @@ class ASN(GenericType):
             return value
 
 
-class IPAddress(GenericType):
+class IPAddress(String):
     """
     Type for IP addresses, all families. Uses the ipaddress module.
 
@@ -631,7 +653,7 @@ class IPAddress(GenericType):
         return str(dns.reversename.from_address(ip_addr))
 
 
-class IPNetwork(GenericType):
+class IPNetwork(String):
     """
     Type for IP networks, all families. Uses the ipaddress module.
 
@@ -672,7 +694,7 @@ class IPNetwork(GenericType):
         return ipaddress.ip_network(str(value)).version
 
 
-class JSON(GenericType):
+class JSON(String):
     """
     JSON type.
 
@@ -759,7 +781,7 @@ class JSONDict(JSON):
         return value
 
 
-class LowercaseString(GenericType):
+class LowercaseString(String):
     """
     Like string, but only allows lower case characters.
 
@@ -789,29 +811,7 @@ class LowercaseString(GenericType):
         return String().sanitize(value)
 
 
-class String(GenericType):
-    """
-    Any non-empty string without leading or trailing whitespace.
-    """
-
-    @staticmethod
-    def is_valid(value, sanitize=False):
-        if sanitize:
-            value = GenericType().sanitize(value)
-
-        if not GenericType().is_valid(value):
-            return False
-
-        if type(value) is not str:
-            return False
-
-        if len(value) == 0:
-            return False
-
-        return True
-
-
-class URL(GenericType):
+class URL(String):
     """
     URI type. Local and remote.
 
@@ -870,7 +870,7 @@ class URL(GenericType):
         return None
 
 
-class UppercaseString(GenericType):
+class UppercaseString(String):
     """
     Like string, but only allows upper case characters.
 
