@@ -24,6 +24,7 @@ FEEDS = {
             'malware.name'
         ],
         'malware': 'feodo',
+        'position': 2,
         'additional_fields':
             {
                 'time.source': lambda row: row[3] + 'T00:00+00' if row[3] else row[0] + ' UTC',
@@ -33,13 +34,15 @@ FEEDS = {
         'format': [
             'source.ip'
         ],
-        'malware': 'zeus'
+        'malware': 'zeus',
+        'position': 1
     },
     'https://zeustracker.abuse.ch/blocklist.php?download=badips': {
         'format': [
             'source.ip'
         ],
-        'malware': 'zeus'
+        'malware': 'zeus',
+        'position': 1
     }
 }
 
@@ -55,7 +58,7 @@ class AbusechIPParserBot(ParserBot):
         raw_lines = utils.base64_decode(report.get("raw")).splitlines()
         self.comments = list(r for r in raw_lines if self.__is_comment_line_regex.search(r))
 
-        fields = self.comments[-1].split(',')
+        fields = self.comments[-FEEDS[feed]['position']].split(',')
         if len(fields) is not len(FEEDS[feed]['format']):
             self.logger.warning("Feed '{}' has not the expected fields: {} != {}".format(feed,
                                                                                          len(fields),
