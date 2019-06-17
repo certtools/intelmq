@@ -51,6 +51,7 @@ CHANGELOG
 - `intelmq.lib.test`: Disable statistics for test runs of bots.
 
 ### Tools
+- `intelmqsetup`: Only change directory ownerships if necessary.
 - `intelmqctl`:
   - Provide logging level on on class layer.
 
