@@ -12,6 +12,8 @@ CHANGELOG
   - `IPAddress`: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
   - All types: Handle `None` for validation and sanitation gracefully.
 - `intelmq.lib.bot`: fix parameters of ParserBot and CollectorBot constructors, allowing `intelmqctl run` with these bots again (#1414).
+- `__version_info__` is now available in the top level module.
+- `__version__`: uses now integer values if possible.
 
 ### Development
 - `intelmq.bin.intelmq_gen_docs`: For yaml use `safe_load` instead of unsafe `load`.
