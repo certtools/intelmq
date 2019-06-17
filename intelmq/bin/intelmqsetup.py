@@ -20,6 +20,8 @@ import shutil
 import site
 import sys
 
+from pwd import getpwuid
+
 from intelmq import (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
                      VAR_STATE_PATH)
 
@@ -29,7 +31,7 @@ def main():
         sys.exit('You need to run this program as root.')
 
     if not ROOT_DIR.startswith('/opt/'):
-        print('Not a pip-installation of IntelMQ.')
+        sys.exit('Not a pip-installation of IntelMQ, nothing to initialize.')
 
     intelmq_path = os.path.join(site.getsitepackages()[0], 'opt/intelmq/')
     opt_path = os.path.join(site.getsitepackages()[0], 'opt/')
@@ -64,7 +66,8 @@ def main():
     print('Setting intelmq as owner for it\'s directories.')
     for obj in (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
                 VAR_STATE_PATH, VAR_STATE_PATH + 'file-output'):
-        shutil.chown(obj, user='intelmq')
+        if getpwuid(os.stat(obj).st_uid).pw_name != 'intelmq':
+            shutil.chown(obj, user='intelmq')
 
 
 if __name__ == '__main__':

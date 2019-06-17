@@ -165,6 +165,14 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(utils.seconds_to_human(64.2, precision=1),
                          '1.0m 4.2s')
 
+    def test_version_smaller(self):
+        """ Test version_smaller """
+        self.assertTrue(utils.version_smaller((1, 0, 0), (1, 1, 0)))
+        self.assertTrue(utils.version_smaller((1, 0, 0), (1, 0, 1, 'alpha')))
+        self.assertFalse(utils.version_smaller((1, 0, 0, 'beta', 3), (1, 0, 0, 'alpha', 0)))
+        self.assertFalse(utils.version_smaller((1, 0, 0), (1, 0, 0, 'alpha', 99)))
+        self.assertFalse(utils.version_smaller((1, 0, 0), (1, 0, 0, 'beta')))
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
