@@ -110,10 +110,20 @@ class TestUtils(unittest.TestCase):
         """Tests if the parse_logline() function works as expected"""
         line = ("2015-05-29 21:00:24,379 - malware-domain-list-collector - "
                 "ERROR - Something went wrong")
+        thread = ("2015-05-29 21:00:24,379 - malware-domain-list-collector.4 - "
+                  "ERROR - Something went wrong")
 
         fields = utils.parse_logline(line)
         self.assertDictEqual({'date': '2015-05-29T21:00:24.379000',
                               'bot_id': 'malware-domain-list-collector',
+                              'thread_id': None,
+                              'log_level': 'ERROR',
+                              'message': 'Something went wrong'},
+                             fields)
+        fields = utils.parse_logline(thread)
+        self.assertDictEqual({'date': '2015-05-29T21:00:24.379000',
+                              'bot_id': 'malware-domain-list-collector',
+                              'thread_id': 4,
                               'log_level': 'ERROR',
                               'message': 'Something went wrong'},
                              fields)
@@ -132,10 +142,19 @@ class TestUtils(unittest.TestCase):
         """Tests if the parse_logline() function parses syslog correctly. """
         line = ("Feb 22 10:17:10 host malware-domain-list-collector: ERROR "
                 "Something went wrong")
+        thread = ("Feb 22 10:17:10 host malware-domain-list-collector.4: ERROR "
+                "Something went wrong")
 
         actual = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
         self.assertEqual({'bot_id': 'malware-domain-list-collector',
                           'date': '%d-02-22T10:17:10' % datetime.datetime.now().year,
+                          'thread_id': None,
+                          'log_level': 'ERROR',
+                          'message': 'Something went wrong'}, actual)
+        actual = utils.parse_logline(thread, regex=utils.SYSLOG_REGEX)
+        self.assertEqual({'bot_id': 'malware-domain-list-collector',
+                          'date': '%d-02-22T10:17:10' % datetime.datetime.now().year,
+                          'thread_id': 4,
                           'log_level': 'ERROR',
                           'message': 'Something went wrong'}, actual)
 

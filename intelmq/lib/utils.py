@@ -45,11 +45,14 @@ LOG_FORMAT_SYSLOG = '%(name)s: %(levelname)s %(message)s'
 
 # Regex for parsing the above LOG_FORMAT
 LOG_REGEX = (r'^(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
-             r' (?P<bot_id>([-\w]+|py\.warnings)) - '
+             r' (?P<bot_id>([-\w]+|py\.warnings))'
+             r'(?P<thread_id>\.[0-9]+)? - '
              r'(?P<log_level>[A-Z]+) - '
              r'(?P<message>.+)$')
 SYSLOG_REGEX = (r'^(?P<date>\w{3} \d{2} \d{2}:\d{2}:\d{2}) (?P<hostname>[-\.\w]+) '
-                r'(?P<bot_id>([-\w]+|py\.warnings)): (?P<log_level>[A-Z]+) (?P<message>.+)$')
+                r'(?P<bot_id>([-\w]+|py\.warnings))'
+                r'(?P<thread_id>\.[0-9]+)?'
+                r': (?P<log_level>[A-Z]+) (?P<message>.+)$')
 
 
 class Parameters(object):
@@ -361,7 +364,7 @@ def parse_logline(logline: str, regex: str = LOG_REGEX) -> Union[dict, str]:
     """
 
     match = re.match(regex, logline)
-    fields = ("date", "bot_id", "log_level", "message")
+    fields = ("date", "bot_id", "thread_id", "log_level", "message")
 
     try:
         value = dict(list(zip(fields, match.group(*fields))))
@@ -369,6 +372,8 @@ def parse_logline(logline: str, regex: str = LOG_REGEX) -> Union[dict, str]:
         value['date'] = date.isoformat()
         if value['date'].endswith('+00:00'):
             value['date'] = value['date'][:-6]
+        if value["thread_id"]:
+            value["thread_id"] = int(value["thread_id"][1:])
         return value
     except AttributeError:
         return logline
