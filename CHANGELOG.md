@@ -15,6 +15,7 @@ CHANGELOG
 - `__version_info__` is now available in the top level module.
 - `__version__`: uses now integer values if possible.
 - Also provide (empty) `ROOT_DIR` for non-pip installations.
+- `intelmq.lib.upgrades`: New library file `upgrades` with upgrade functions.
 - `intelmq.lib.utils`:
   - New function `setup_list_logging` for intelmqctl check an possibly others.
   - New function `version_smaller` for version comparisons.
@@ -53,6 +54,7 @@ CHANGELOG
 ### Tools
 - `intelmqsetup`: Only change directory ownerships if necessary.
 - `intelmqctl`:
+  - Provide new command `upgrade-conf` to uprade configuration to a newer version.
   - Provide logging level on on class layer.
 
 ### Contrib
