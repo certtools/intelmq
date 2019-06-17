@@ -540,3 +540,11 @@ def drop_privileges() -> bool:
     if os.geteuid() != 0:  # For the unprobably possibility that intelmq is root
         return True
     return False
+
+
+def setup_list_logging(name='intelmq', logging_level='INFO'):
+    check_logger = logging.getLogger('check')  # name does not matter
+    list_handler = ListHandler()
+    list_handler.setLevel('INFO')
+    check_logger.addHandler(list_handler)
+    check_logger.setLevel('INFO')

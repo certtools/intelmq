@@ -909,6 +909,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         global RETURN_TYPE, QUIET
         RETURN_TYPE, QUIET = args.type, args.quiet
         del args_dict['type'], args_dict['quiet'], args_dict['func']
+        self.logging_level = 'WARNING' if QUIET else 'INFO'
+        self.logger.setLevel(self.logging_level)
+
         retval, results = args.func(**args_dict)
 
         if RETURN_TYPE == 'json':
@@ -1255,17 +1258,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
     def check(self, no_connections=False):
         retval = 0
         if RETURN_TYPE == 'json':
-            check_logger = logging.getLogger('check')  # name does not matter
-            list_handler = utils.ListHandler()
-            list_handler.setLevel('INFO')
-            if QUIET:
-                self.list_handler.setLevel('WARNING')
-            check_logger.addHandler(list_handler)
-            check_logger.setLevel('INFO')
+            check_logger, list_handler = utils.setup_list_logging(name='check',
+                                                                  logging_level=self.logging_level)
         else:
             check_logger = self.logger
-        if QUIET:
-            check_logger.setLevel('WARNING')
 
         # loading files and syntax check
         files = {DEFAULTS_CONF_FILE: None, PIPELINE_CONF_FILE: None,

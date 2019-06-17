@@ -15,6 +15,8 @@ CHANGELOG
 - `__version_info__` is now available in the top level module.
 - `__version__`: uses now integer values if possible.
 - Also provide (empty) `ROOT_DIR` for non-pip installations.
+- `intelmq.lib.utils`:
+  - New function `setup_list_logging` for intelmqctl check an possibly others.
 
 ### Development
 - `intelmq.bin.intelmq_gen_docs`: For yaml use `safe_load` instead of unsafe `load`.
@@ -47,6 +49,8 @@ CHANGELOG
 - `intelmq.lib.test`: Disable statistics for test runs of bots.
 
 ### Tools
+- `intelmqctl`:
+  - Provide logging level on on class layer.
 
 ### Contrib
 * logcheck rules: Adapt ignore rule to cover the instance id of bot names.
