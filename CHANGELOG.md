@@ -47,6 +47,14 @@ CHANGELOG
   - `IPAddress`: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
   - All types: Handle `None` for validation and sanitation gracefully.
 - `intelmq.lib.bot`: fix parameters of ParserBot and CollectorBot constructors, allowing `intelmqctl run` with these bots again (#1414).
+- `__version_info__` is now available in the top level module.
+- `__version__`: uses now integer values if possible.
+- Also provide (empty) `ROOT_DIR` for non-pip installations.
+- `intelmq.lib.upgrades`: New library file `upgrades` with upgrade functions.
+- `intelmq.lib.utils`:
+  - New function `setup_list_logging` for intelmqctl check an possibly others.
+  - New function `version_smaller` for version comparisons.
+  - New function `lazy_int` for version conversions.
 
 ### Development
 - `intelmq.bin.intelmq_gen_docs`: For yaml use `safe_load` instead of unsafe `load`.
@@ -64,6 +72,9 @@ CHANGELOG
 
 #### Experts
 - `intelmq.bots.experts.generic_db_lookup`: Recommend psycopg2-binary package.
+- `intelmq.bots.experts.modify.expert`:
+  - Compile regular expressions (all string rules) at initializations, improves the speed.
+  - Warn about old configuration style deprecation.
 
 #### Outputs
 - `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
@@ -79,6 +90,10 @@ CHANGELOG
 - `intelmq.lib.test`: Disable statistics for test runs of bots.
 
 ### Tools
+- `intelmqsetup`: Only change directory ownerships if necessary.
+- `intelmqctl`:
+  - Provide new command `upgrade-conf` to uprade configuration to a newer version.
+  - Provide logging level on on class layer.
 
 ### Contrib
 * logcheck rules: Adapt ignore rule to cover the instance id of bot names.
@@ -612,7 +627,7 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 
 #### Parsers
 - `bots.parsers.shadowserver`:
-  - changed feednames . Please refer to it's README for the exact changes.
+  - changed feednames. Please refer to it's README for the exact changes.
   - If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
     Previously errors like these were only logged and ignored otherwise.
   - add support for the feeds

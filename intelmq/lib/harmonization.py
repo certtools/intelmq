@@ -3,18 +3,25 @@
 The following types are implemented with sanitize() and is_valid() functions:
 
  - Base64
+ - Boolean
  - ClassificationType
- - DNS
  - DateTime
  - FQDN
- - FeedName
+ - Float
+ - Accuracy
  - GenericType
  - IPAddress
  - IPNetwork
+ - Integer
+ - JSON
+ - JSONDict
  - LowercaseString
  - Registry
  - String
  - URL
+ - ASN
+ - UppercaseString
+ - TLP
 """
 import binascii
 import datetime
