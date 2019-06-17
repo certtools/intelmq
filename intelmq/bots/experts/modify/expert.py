@@ -3,9 +3,20 @@
 Modify Expert bot let's you manipulate all fields with a config file.
 """
 import re
+import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.utils import load_configuration
+
+
+def is_re_pattern(value):
+    """
+    Checks if the given value is a re compiled pattern
+    """
+    if sys.version_info > (3, 7):
+        return isinstance(value, re.Pattern)
+    else:
+        return hasattr(value, "pattern")
 
 
 class MatchGroupMapping:
@@ -68,7 +79,7 @@ class ModifyExpertBot(Bot):
                     continue
             if name not in event:
                 return None
-            if isinstance(rule, re.Pattern):
+            if is_re_pattern(rule):
                 if isinstance(event[name], (int, float)):
                     match = rule.search(str(event[name]))
                     if match is None:
