@@ -31,7 +31,7 @@ def main():
         sys.exit('You need to run this program as root.')
 
     if not ROOT_DIR.startswith('/opt/'):
-        print('Not a pip-installation of IntelMQ.')
+        sys.exit('Not a pip-installation of IntelMQ, nothing to initialize.')
 
     intelmq_path = os.path.join(site.getsitepackages()[0], 'opt/intelmq/')
     opt_path = os.path.join(site.getsitepackages()[0], 'opt/')

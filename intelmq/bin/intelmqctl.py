@@ -589,7 +589,7 @@ class SupervisorProcessManager:
 
             if distutils.version.StrictVersion(supervisor_version) < distutils.version.StrictVersion("3.2.0"):
                 self.__logger.warning("Current supervisor version is supported, but reloading bots will not work. "
-                                      "Please upgrade to version 3.2.0 or higher.")
+                                      "Please upgrade supervisor to version 3.2.0 or higher.")
 
             supervisor_state = self.__supervisor_xmlrpc.supervisor.getState()["statename"]
             if supervisor_state != "RUNNING":

@@ -589,7 +589,7 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 
 #### Parsers
 - `bots.parsers.shadowserver`:
-  - changed feednames . Please refer to it's README for the exact changes.
+  - changed feednames. Please refer to it's README for the exact changes.
   - If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
     Previously errors like these were only logged and ignored otherwise.
   - add support for the feeds
