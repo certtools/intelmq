@@ -6,11 +6,11 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 --- a/intelmq/__init__.py
 +++ b/intelmq/__init__.py
 @@ -1,7 +1,7 @@
- from .version import __version__
+ from .version import __version__, __version_info__
  import os
  
 -if os.getenv('INTELMQ_PATHS_NO_OPT', False):
 +if not os.getenv('INTELMQ_PATHS_OPT', False):
+     ROOT_DIR = ""
      CONFIG_DIR = "/etc/intelmq/"
      DEFAULT_LOGGING_LEVEL = "INFO"
-     BOTS_FILE = os.path.join(CONFIG_DIR, "BOTS")
