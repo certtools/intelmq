@@ -1463,7 +1463,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         state_file_path = os.path.join(VAR_STATE_PATH, '../state.json')
         print(state_file_path)
         if os.path.isfile(state_file_path):
-            with open(state_file_path, 'r')  as state_handle:
+            with open(state_file_path, 'r') as state_handle:
                 state = json.load(state_handle)
         else:
             state = {"version_history": [],
@@ -1501,9 +1501,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         else:
             if not (os.access(state_file_path, os.W_OK) or
                     os.access(os.path.dirname(state_file_path), os.W_OK)):
-                    self.logger.error('File %s cannot be written. Check the permissions.',
-                                      state_file_path)
-                    return 1, 'error'
+                self.logger.error('File %s cannot be written. Check the permissions.',
+                                  state_file_path)
+                return 1, 'error'
             if state["version_history"] and not previous:
                 previous = state["version_history"][-1]
                 self.logger.info("Found previous version %r in state file.", previous)

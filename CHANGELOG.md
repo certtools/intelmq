@@ -55,6 +55,7 @@ CHANGELOG
   - New function `setup_list_logging` for intelmqctl check an possibly others.
   - New function `version_smaller` for version comparisons.
   - New function `lazy_int` for version conversions.
+  - `parse_logline`: Handle thread IDs.
 
 ### Development
 - `intelmq.bin.intelmq_gen_docs`: For yaml use `safe_load` instead of unsafe `load`.

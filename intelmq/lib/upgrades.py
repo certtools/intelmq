@@ -32,7 +32,7 @@ def v201_defaults_statistics():
               }
     changed = False
     defaults = utils.load_configuration(intelmq.DEFAULTS_CONF_FILE)
-    for key,value in values.items():
+    for key, value in values.items():
         if key not in defaults:
             defaults[key] = value
             changed = True
@@ -58,7 +58,7 @@ def v201_defaults_broker():
     values = {"destination_pipeline_broker": defaults.get("broker", "redis"),
               "source_pipeline_broker": defaults.get("broker", "redis"),
               }
-    for key,value in values.items():
+    for key, value in values.items():
         if key not in defaults:
             defaults[key] = value
             changed = True
@@ -122,12 +122,12 @@ def v110_shadowserver_feednames():
     Replace depreacated Shadowserver feednames
     """
     mapping = {
-            "Botnet-Drone-Hadoop": "Drone",
-            "DNS-open-resolvers": "DNS-Open-Resolvers",
-            "Open-NetBIOS": "Open-NetBIOS-Nameservice",
-            "Ssl-Freak-Scan": "SSL-FREAK-Vulnerable-Servers",
-            "Ssl-Scan": "SSL-POODLE-Vulnerable-Servers",
-            }
+        "Botnet-Drone-Hadoop": "Drone",
+        "DNS-open-resolvers": "DNS-Open-Resolvers",
+        "Open-NetBIOS": "Open-NetBIOS-Nameservice",
+        "Ssl-Freak-Scan": "SSL-FREAK-Vulnerable-Servers",
+        "Ssl-Scan": "SSL-POODLE-Vulnerable-Servers",
+    }
     runtime = utils.load_configuration(intelmq.RUNTIME_CONF_FILE)
     changed = False
     for bot_id, bot in runtime.items():
@@ -152,9 +152,9 @@ def v110_deprecations():
     Checking for deprecated runtime configurations
     """
     mapping = {
-            "intelmq.bots.collectors.n6.collector_stomp": "intelmq.bots.collectors.stomp.collector",
-            "intelmq.bots.parsers.cymru_full_bogons.parser": "intelmq.bots.parsers.cymru.parser_full_bogons",
-            }
+        "intelmq.bots.collectors.n6.collector_stomp": "intelmq.bots.collectors.stomp.collector",
+        "intelmq.bots.parsers.cymru_full_bogons.parser": "intelmq.bots.parsers.cymru.parser_full_bogons",
+    }
     runtime = utils.load_configuration(intelmq.RUNTIME_CONF_FILE)
     changed = False
     for bot_id, bot in runtime.items():
@@ -168,9 +168,9 @@ def v110_deprecations():
         if bot["module"] == "intelmq.bots.experts.ripe.expert":
             if bot["parameters"].get("query_ripe_stat"):
                 changed = True
-                if not "query_ripe_stat_asn" in bot["parameters"]:
+                if "query_ripe_stat_asn" not in bot["parameters"]:
                     bot["parameters"]["query_ripe_stat_asn"] = bot["parameters"]["query_ripe_stat"]
-                if not "query_ripe_stat_asn" in bot["parameters"]:
+                if "query_ripe_stat_asn" not in bot["parameters"]:
                     bot["parameters"]["query_ripe_stat_ip"] = bot["parameters"]["query_ripe_stat_ip"]
                 del bot["parameters"]["query_ripe_stat"]
         if bot["group"] == 'Collector' and bot["parameters"].get("feed"):
@@ -192,4 +192,4 @@ UPGRADES = OrderedDict([
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
     ((1, 1, 2), (v112_feodo_tracker_ips, v112_feodo_tracker_domains, )),
     ((2, 0, 1), (v201_defaults_statistics, v201_defaults_broker)),
-    ])
+])
