@@ -25,7 +25,7 @@ import re
 import sys
 import tarfile
 import traceback
-from typing import Generator, Iterator, Optional, Sequence, Union
+from typing import Any, Generator, Iterator, Optional, Sequence, Union
 
 import dateutil.parser
 from dateutil.relativedelta import relativedelta
@@ -540,3 +540,49 @@ def drop_privileges() -> bool:
     if os.geteuid() != 0:  # For the unprobably possibility that intelmq is root
         return True
     return False
+
+
+def setup_list_logging(name='intelmq', logging_level='INFO'):
+    check_logger = logging.getLogger('check')  # name does not matter
+    list_handler = ListHandler()
+    list_handler.setLevel('INFO')
+    check_logger.addHandler(list_handler)
+    check_logger.setLevel('INFO')
+
+
+def version_smaller(version1: tuple, version2: tuple) -> Optional[bool]:
+    """
+    Parameters:
+        version1: A tuple of integer and string values
+        version2: Same as version1
+        Integer values are expected as integers (__version_info__).
+
+    Returns:
+        True if version1 is smaller
+        False if version1 is greater
+        None if both are equal
+    """
+    if len(version1) == 3:
+        version1 = version1 + ('stable', 0)
+    if len(version1) == 4:
+        version1 = version1 + (0, )
+    if len(version2) == 3:
+        version2 = version2 + ('stable', 0)
+    if len(version2) == 4:
+        version2 = version2 + (0, )
+    for level1, level2 in zip(version1, version2):
+        if level1 > level2:
+            return False
+        if level1 < level2:
+            return True
+    return None
+
+
+def lazy_int(value: Any) -> Any:
+    """
+    Tries to conver the value to int if possible. Original value otherwise
+    """
+    try:
+        return int(value)
+    except ValueError:
+        return value
