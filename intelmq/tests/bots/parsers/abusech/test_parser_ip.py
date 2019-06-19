@@ -11,7 +11,7 @@ from intelmq.bots.parsers.abusech.parser_ip import AbusechIPParserBot
 with open(os.path.join(os.path.dirname(__file__), 'feodoips.txt')) as handle:
     EXAMPLE_FEODO_FILE = handle.read()
 LINES = EXAMPLE_FEODO_FILE.splitlines()
-HEADER = '\n'.join(LINES[:9]) + '\n'
+HEADER = '\n'.join(LINES[:9]) + '\n' +  LINES[-1] + '\n'
 
 EXAMPLE_FEODO_REPORT = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipblocklist.csv",
                         "feed.name": "AbuseCH Feodotracker",
@@ -61,7 +61,7 @@ class TestAbusechIPParserBot(test.BotTestCase, unittest.TestCase):
         cls.default_input_message = EXAMPLE_FEODO_REPORT
 
     def test_feodo_event(self):
-        """ Test if correct Event has been produced. """
+        """ Test Feodotracker IPs. """
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_FEODO_EVENT)
         self.assertMessageEqual(1, EXAMPLE_FEODO_EVENT1)
