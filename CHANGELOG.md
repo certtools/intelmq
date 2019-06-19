@@ -64,7 +64,9 @@ CHANGELOG
 
 ### Contrib
 * logcheck rules: Adapt ignore rule to cover the instance id of bot names.
-* malware name mapping: Ignore lines in mapping starting with '#'.
+* malware name mapping:
+  - Ignore lines in mapping starting with '#'.
+  - Optionally include malpedia data.
 
 ### Known issues
 
