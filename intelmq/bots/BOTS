@@ -750,6 +750,14 @@
                 "user": "intelmq"
             }
         },
+        "Geohash": {
+            "description": "Computes the geohashes from longitude/latitude information.",
+            "module": "intelmq.bots.experts.geohash.expert",
+            "parameters": {
+                "overwrite": false,
+                "precision": 7
+            }
+        },
         "Gethostbyname": {
             "description": "fqdn2ip is the bot responsible to parsing the ip from the fqdn.",
             "module": "intelmq.bots.experts.gethostbyname.expert",

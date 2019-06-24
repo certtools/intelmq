@@ -21,6 +21,7 @@ CHANGELOG
 #### Parsers
 
 #### Experts
+- Add geohash expert.
 
 #### Outputs
 
