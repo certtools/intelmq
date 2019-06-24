@@ -22,6 +22,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   }
 
 
+@test.skip_exotic()
 class TestGeohashExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for GeohashExpertBot.
