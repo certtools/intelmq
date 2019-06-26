@@ -49,6 +49,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Turris](#turris)
 - [URLVir](#urlvir)
 - [University of Toulouse](#university-of-toulouse)
+- [ViriBack](#viriback)
 - [VXVault](#vxvault)
 - [WebInspektor](#webinspektor)
 - [ZoneH](#zoneh)
@@ -1919,6 +1920,25 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `columns`: `{depends on a collection}`
 *  * `delimiter`: `false`
 *  * `type`: `{depends on a collection}`
+
+
+# ViriBack
+
+* **Status:** on
+* **Revision:** 26-06-2019
+* **Description:** Latest malicious domains.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `http://tracker.viriback.com/`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.viriback.parser
+* **Configuration Parameters:**
 
 
 # VXVault

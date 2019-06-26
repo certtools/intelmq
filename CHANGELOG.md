@@ -72,6 +72,7 @@ CHANGELOG
 - `intelmq.bots.parsers.abusech.parser_ip`: Support LastOnline column in feodo feed (#1400) and use it for `time.source` if available.
   - Use lower case malware names as default, should not make a difference in practice.
   - Fix handling of CSV header for feodotracker (#1417, #1418).
+  - added `intemq.bots.parsers.viriback.parser`
 
 #### Experts
 - `intelmq.bots.experts.generic_db_lookup`: Recommend psycopg2-binary package.
