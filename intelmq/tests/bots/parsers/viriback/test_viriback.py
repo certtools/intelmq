@@ -32,7 +32,6 @@ EVENT1 = {"raw": utils.base64_encode(IOCS[0]),
           "classification.taxonomy": "malicious code",
           "classification.type": "malware",
           "classification.identifier": "Lokibot",
-          "time.source": "2019-06-20T22:00:00+00:00",
           "feed.name": "Viriback"}
 
 EVENT2 = {"raw": utils.base64_encode(IOCS[1]),
@@ -44,7 +43,6 @@ EVENT2 = {"raw": utils.base64_encode(IOCS[1]),
           "classification.taxonomy": "malicious code",
           "classification.type": "malware",
           "classification.identifier": "Lokibot",
-          "time.source": "2019-06-20T22:00:00+00:00",
           "feed.name": "Viriback"}
 
 EVENT3 = {"raw": utils.base64_encode(IOCS[2]),
@@ -55,7 +53,6 @@ EVENT3 = {"raw": utils.base64_encode(IOCS[2]),
           "source.ip": "198.23.213.114",
           "classification.taxonomy": "malicious code",
           "classification.identifier": "Lokibot",
-          "time.source": "2019-06-20T22:00:00+00:00",
           "classification.type": "malware",
           "feed.name": "Viriback"}
 

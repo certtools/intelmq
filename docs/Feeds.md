@@ -1926,7 +1926,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Status:** on
 * **Revision:** 26-06-2019
-* **Description:** Latest malicious domains.
+* **Description:** Latest malicious urls.
 
 ### Collector
 

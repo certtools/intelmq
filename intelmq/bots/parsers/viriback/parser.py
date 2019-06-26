@@ -2,6 +2,7 @@
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 
+
 class ViribackParserBot(ParserBot):
     def process(self):
         report = self.receive_message()
@@ -13,7 +14,6 @@ class ViribackParserBot(ParserBot):
             event.add("source.url", "http://" + url)
             event.add("raw", ioc)
             event.add("source.ip", ip)
-            event.add("time.source", date)
             event.add("classification.type", "malware")
             event.add("classification.taxonomy", "malicious code")
             event.add("classification.identifier", malware_type)
