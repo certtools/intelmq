@@ -1,5 +1,23 @@
 ---
 providers:
+  ViriBack:
+    Unsafe sites:
+      description: Latest detected unsafe sites.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: http://tracker.viriback.com/ 
+            rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.viriback.parser
+          parameters:
+      revision: 27-06-2018
+      status: on
+      documentation:
   WebInspektor:
     Unsafe sites:
       description: Latest detected unsafe sites.
