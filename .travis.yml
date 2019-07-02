@@ -19,7 +19,7 @@ install:
   - set -e
   - if [[ -v requirements ]]; then sudo apt-get install polipo lighttpd; fi
   - if [[ $mode == debian ]]; then sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt fakeroot dh-systemd safe-rm; fi
-  - if [[ $requirements == true ]]; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
+  - if [[ $requirements == true ]]; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; pip install lxml; fi
   - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then sudo pip install typing; fi
   - if [[ -v requirements ]]; then pip install Cerberus!=1.3 codecov pyyaml; fi
   - if [[ $mode == codestyle ]]; then pip install pycodestyle; fi

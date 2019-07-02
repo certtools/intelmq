@@ -53,6 +53,7 @@ EVENT3 = {"raw": "PHRyPjx0ZD5Mb2tpYm90PC90ZD48dGQ+YWRhbXNqZWYudG9wL2plZi9QdnFEcT
           "feed.name": "Viriback"}
 
 
+@test.skip_exotic()
 class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod

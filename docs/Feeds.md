@@ -1952,6 +1952,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Status:** on
 * **Revision:** 27-06-2018
 * **Description:** Latest detected unsafe sites.
+* **Additional Information:** You need to install the lxml library in order to parse this feed.
 
 ### Collector
 

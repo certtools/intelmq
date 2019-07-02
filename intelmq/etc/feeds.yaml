@@ -3,7 +3,7 @@ providers:
   ViriBack:
     Unsafe sites:
       description: Latest detected unsafe sites.
-      additional_information:
+      additional_information: You need to install the lxml library in order to parse this feed.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
