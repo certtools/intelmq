@@ -33,6 +33,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Travis: Use UTC timezone.
 
 ### Tools
 
