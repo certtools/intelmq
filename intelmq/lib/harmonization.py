@@ -29,6 +29,7 @@ import ipaddress
 import json
 import re
 import socket
+import sys
 import urllib.parse as parse
 
 import dateutil.parser
@@ -397,7 +398,12 @@ class DateTime(String):
         """
         Converts a datetime with the given format.
         """
-        return datetime.datetime.strptime(value, format).astimezone(pytz.utc).isoformat()
+        value = datetime.datetime.strptime(value, format)
+        if not value.tzinfo and sys.version_info <= (3, 6):
+            value = pytz.utc.localize(value)
+        elif not value.tzinfo:
+            value = value.astimezone(pytz.utc)
+        return value.isoformat()
 
     @staticmethod
     def convert_from_format_midnight(value: str, format: str) -> str:
@@ -405,14 +411,20 @@ class DateTime(String):
         Converts a date with the given format and adds time 00:00:00 to it.
         """
         date = datetime.datetime.strptime(value, format)
-        value = datetime.datetime.combine(date, DateTime.midnight,
-                                          tzinfo=pytz.utc)
-        return value.astimezone(pytz.utc).isoformat()
+        if sys.version_info <= (3, 6):
+            value = datetime.datetime.combine(date, DateTime.midnight)
+            value = pytz.utc.localize(value)
+        else:
+            value = datetime.datetime.combine(date, DateTime.midnight,
+                                              tzinfo=pytz.utc)
+        return value.isoformat()
 
     @staticmethod
     def convert_fuzzy(value):
         value = dateutil.parser.parse(value, fuzzy=True)
-        if  not value.tzinfo:
+        if not value.tzinfo and sys.version_info <= (3, 6):
+            value = pytz.utc.localize(value)
+        elif not value.tzinfo:
             value.astimezone(pytz.utc)
         return value.isoformat()
 
