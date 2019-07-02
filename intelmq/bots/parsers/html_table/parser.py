@@ -68,12 +68,14 @@ class HTMLTableParserBot(Bot):
                                   docs='docs/Bots.md')
         self.default_url_protocol = getattr(self.parameters, 'default_url_protocol', 'http://')
 
+        self.parser = getattr(self.parameters, 'html_parser', 'html.parser')
+
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])
 
-        soup = bs(raw_report, 'html.parser')
-        if self.attr_name is not None:
+        soup = bs(raw_report, self.parser)
+        if self.attr_name:
             table = soup.find_all('table', attrs={self.attr_name: self.attr_value})
         else:
             table = soup.find_all('table')

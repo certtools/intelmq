@@ -19,6 +19,8 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bot.parsers.html_table.parser`:
+  * New parameter "html_parser".
 
 #### Experts
 - Add geohash expert.
