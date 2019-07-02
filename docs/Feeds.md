@@ -50,6 +50,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [URLVir](#urlvir)
 - [University of Toulouse](#university-of-toulouse)
 - [VXVault](#vxvault)
+- [ViriBack](#viriback)
 - [WebInspektor](#webinspektor)
 - [ZoneH](#zoneh)
 
@@ -1942,6 +1943,33 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.vxvault.parser
 * **Configuration Parameters:**
+
+
+# ViriBack
+
+## Unsafe sites
+
+* **Status:** on
+* **Revision:** 27-06-2018
+* **Description:** Latest detected unsafe sites.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `http://tracker.viriback.com/`
+*  * `name`: `Unsafe sites`
+*  * `provider`: `ViriBack`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.html_table.parser
+* **Configuration Parameters:**
+*  * `columns`: `['malware.name', 'source.url', 'source.ip', 'time.source']`
+*  * `html_parser`: `lxml`
+*  * `time_format`: `from_format_midnight|%d-%m-%Y`
+*  * `type`: `malware`
 
 
 # WebInspektor

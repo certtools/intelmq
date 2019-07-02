@@ -8,7 +8,12 @@ CHANGELOG
 ### Configuration
 
 ### Core
-- `intelmq.lib.harmonization`: Use correct parent classes.
+- `intelmq.lib.harmonization`:
+  - Use correct parent classes.
+  - Add `DateTime.convert` as interface for all existing conversion functions.
+  - add `DateTime.convert_from_format`.
+  - add `DateTime.convert_from_format_midnight`.
+  - add `DateTime.convert_fuzzy`.
 
 ### Development
 
@@ -19,6 +24,9 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bot.parsers.html_table.parser`:
+  * New parameter "html_parser".
+  * Use time conversion functions directly from `intelmq.lib.harmonization.DateTime.convert`.
 
 #### Experts
 - Add geohash expert.
@@ -26,10 +34,12 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
+- Feeds: Add ViriBack feed.
 
 ### Packaging
 
 ### Tests
+- Travis: Use UTC timezone.
 
 ### Tools
 
@@ -72,6 +82,7 @@ CHANGELOG
 - `intelmq.bots.parsers.abusech.parser_ip`: Support LastOnline column in feodo feed (#1400) and use it for `time.source` if available.
   - Use lower case malware names as default, should not make a difference in practice.
   - Fix handling of CSV header for feodotracker (#1417, #1418).
+  - added `intemq.bots.parsers.viriback.parser`
 
 #### Experts
 - `intelmq.bots.experts.generic_db_lookup`: Recommend psycopg2-binary package.
@@ -598,7 +609,7 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
     False: An existing value will not be overwritten (previously an exception has been raised when the value was given).
     None (default): If the value exists an `KeyExists` exception is thrown (previously the same as False).
     This allows shorter code in the bots, as an 'overwrite' configuration parameter can be directly passed to the function.
-  - The message class has now the possibility to return a default value for non-exisiting fields, see `Message.set_default_value`.
+  - The message class has now the possibility to return a default value for non-existing fields, see `Message.set_default_value`.
   - Message.get behaves the same like `Message.__getitem__` (#1305).
 - Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
 - lib/pipeline:

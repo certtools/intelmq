@@ -235,6 +235,17 @@ class TestHarmonization(unittest.TestCase):
         with self.assertRaises(TypeError):
             harmonization.DateTime.from_timestamp('1441008970')
 
+    def test_datetime_convert(self):
+        self.assertEqual('2019-07-01T15:15:15+00:00',
+                         harmonization.DateTime.convert('15 15 15 07 01 2019',
+                                               format='from_format|%M %H %S %m %d %Y'))
+        self.assertEqual('2019-07-01T00:00:00+00:00',
+                         harmonization.DateTime.convert('07-01-2019',
+                                                        'from_format_midnight|%m-%d-%Y'))
+        self.assertEqual('2011-02-01T02:43:11.572760+00:00',
+                         harmonization.DateTime.convert(129410017915727600,
+                                                        'windows_nt'))
+
     def test_fqdn_valid(self):
         """ Test FQDN.is_valid with valid arguments. """
         self.assertTrue(harmonization.FQDN.is_valid('ex-am.ple.example'))
