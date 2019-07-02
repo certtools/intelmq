@@ -862,7 +862,7 @@ http://www.team-cymru.com/bogon-reference.html
     ```
     With above configuration, column corresponding to `source.fqdn` with value `[D] lingvaworld.ru` will be assigned as `"source.fqdn": "lingvaworld.ru"`.
  * `"skip_table_head"`: Boolean, skip the first row of the table, optional. Default: `true`.
- * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data. Default: `"http://"`.
+ * `"default_url_protocol"`: For URLs you can give a default protocol which will be pretended to the data. Default: `"http://"`.
  * `"time_format"`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
  * `"html_parser"`: The html parser to use, by default "html.parser", can also be e.g. "lxml", have a look at https://www.crummy.com/software/BeautifulSoup/bs4/doc/

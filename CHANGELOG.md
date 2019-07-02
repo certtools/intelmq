@@ -609,7 +609,7 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
     False: An existing value will not be overwritten (previously an exception has been raised when the value was given).
     None (default): If the value exists an `KeyExists` exception is thrown (previously the same as False).
     This allows shorter code in the bots, as an 'overwrite' configuration parameter can be directly passed to the function.
-  - The message class has now the possibility to return a default value for non-exisiting fields, see `Message.set_default_value`.
+  - The message class has now the possibility to return a default value for non-existing fields, see `Message.set_default_value`.
   - Message.get behaves the same like `Message.__getitem__` (#1305).
 - Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
 - lib/pipeline:
