@@ -461,9 +461,8 @@ DateTime.TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
                              'fuzzy': DateTime.convert_fuzzy,
                              None: DateTime.convert_fuzzy,
                              }
-__convert_doc_position = DateTime.convert.__doc__.find('\n\n')+1
+__convert_doc_position = DateTime.convert.__doc__.find('\n\n') + 1
 DateTime.__doc__ += DateTime.convert.__doc__[__convert_doc_position:]
-
 
 
 class Float(GenericType):
