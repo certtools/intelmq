@@ -20,7 +20,6 @@ class ViribackParserBot(ParserBot):
             event.add("source.url", "http://" + url)
             event.add("raw", "</td><td>".join([malware_type, url, ip, date]))
             event.add("source.ip", ip)
-            event.add("time.source", date)
             event.add("classification.type", "malware")
             event.add("classification.taxonomy", "malicious code")
             event.add("classification.identifier", malware_type)
