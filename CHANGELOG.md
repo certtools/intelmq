@@ -8,7 +8,12 @@ CHANGELOG
 ### Configuration
 
 ### Core
-- `intelmq.lib.harmonization`: Use correct parent classes.
+- `intelmq.lib.harmonization`:
+  - Use correct parent classes.
+  - Add `DateTime.convert` as interface for all existing conversion functions.
+  - add `DateTime.convert_from_format`.
+  - add `DateTime.convert_from_format_midnight`.
+  - add `DateTime.convert_fuzzy`.
 
 ### Development
 
@@ -21,6 +26,7 @@ CHANGELOG
 #### Parsers
 - `intelmq.bot.parsers.html_table.parser`:
   * New parameter "html_parser".
+  * Use time conversion functions directly from `intelmq.lib.harmonization.DateTime.convert`.
 
 #### Experts
 - Add geohash expert.

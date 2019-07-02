@@ -24,10 +24,6 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import DateTime
 
-TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
-                    'windows_nt': DateTime.from_windows_nt,
-                    'epoch_millis': DateTime.from_epoch_millis,
-                    None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
 
 try:
     from bs4 import BeautifulSoup as bs
@@ -62,9 +58,9 @@ class HTMLTableParserBot(Bot):
         self.split_index = getattr(self.parameters, "split_index", 0)
 
         self.time_format = getattr(self.parameters, "time_format", None)
-        if self.time_format not in TIME_CONVERSIONS.keys():
+        if self.time_format and self.time_format.split('|')[0] not in DateTime.TIME_CONVERSIONS.keys():
             raise InvalidArgument('time_format', got=self.time_format,
-                                  expected=list(TIME_CONVERSIONS.keys()),
+                                  expected=list(DateTime.TIME_CONVERSIONS.keys()),
                                   docs='docs/Bots.md')
         self.default_url_protocol = getattr(self.parameters, 'default_url_protocol', 'http://')
 
@@ -110,7 +106,7 @@ class HTMLTableParserBot(Bot):
                             data = int(data)
                         except:
                             pass
-                        data = TIME_CONVERSIONS[self.time_format](data)
+                        data = DateTime.convert(data, format=self.time_format)
 
                     elif key.endswith('.url'):
                         if not data:
