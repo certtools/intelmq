@@ -1964,8 +1964,12 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.viriback.parser
+* **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
+*  * `columns`: `['malware.name', 'source.url', 'source.ip', 'time.source']`
+*  * `html_parser`: `lxml`
+*  * `time_format`: `from_format_midnight|%d-%m-%Y`
+*  * `type`: `malware`
 
 
 # WebInspektor

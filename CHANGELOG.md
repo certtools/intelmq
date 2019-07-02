@@ -26,6 +26,7 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
+- Feeds: Add ViriBack feed.
 
 ### Packaging
 

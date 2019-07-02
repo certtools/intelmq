@@ -635,11 +635,6 @@
             "module": "intelmq.bots.parsers.urlvir.parser",
             "parameters": {}
         },
-        "ViriBack": {
-            "description": "ViriBack is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.viriback.parser",
-            "parameters": {}
-        },
         "VXVault": {
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.vxvault.parser",
