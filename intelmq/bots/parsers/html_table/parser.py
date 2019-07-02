@@ -73,11 +73,15 @@ class HTMLTableParserBot(Bot):
         soup = bs(raw_report, self.parser)
         if self.attr_name:
             table = soup.find_all('table', attrs={self.attr_name: self.attr_value})
+            self.logger.debug('Found %d table(s) by attribute %r: %r.',
+                              (len(table), self.attr_name, self.attr_value))
         else:
             table = soup.find_all('table')
+            self.logger.debug('Found %d table(s).', len(table))
         table = table[self.table_index]
 
         rows = table.find_all('tr')[self.skip_row:]
+        self.logger.debug('Handling %d row(s).', len(rows))
 
         for feed in rows:
 
@@ -104,7 +108,7 @@ class HTMLTableParserBot(Bot):
                     if key in ["time.source", "time.destination"]:
                         try:
                             data = int(data)
-                        except:
+                        except ValueError:
                             pass
                         data = DateTime.convert(data, format=self.time_format)
 
