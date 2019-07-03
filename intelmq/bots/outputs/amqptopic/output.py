@@ -106,6 +106,9 @@ class AMQPTopicBot(Bot):
         except (pika.exceptions.ChannelError, pika.exceptions.AMQPChannelError,
                 pika.exceptions.NackError):
             self.logger.exception('Error publishing the message.')
+        except pika.exceptions.UnroutableError:
+            self.logger.exception('The destination queue does not exist, declare it first. See also the README.')
+            self.stop()
         else:
             self.acknowledge_message()
 

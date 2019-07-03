@@ -349,7 +349,7 @@ class Amqp(Pipeline):
                                       None)
         self.load_balance = getattr(self.parameters, "load_balance", False)
         self.virtual_host = getattr(self.parameters,
-                                    "{}_amqp_virtual_host".format(queues_type),
+                                    "{}_pipeline_amqp_virtual_host".format(queues_type),
                                     '/')
         self.load_balance_iterator = 0
         self.kwargs = {}

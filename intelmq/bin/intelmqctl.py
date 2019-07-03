@@ -78,13 +78,6 @@ QUIET = False
 BOT_GROUP = {"collectors": "Collector", "parsers": "Parser", "experts": "Expert", "outputs": "Output"}
 
 
-def log_list_queues(queues):
-    if RETURN_TYPE == 'text':
-        for queue, counter in sorted(queues.items(), key=lambda x: str.lower(x[0])):
-            if counter or not QUIET:
-                logger.info("%s - %s", queue, counter)
-
-
 def log_bot_error(status, *args):
     if RETURN_TYPE == 'text':
         logger.error(ERROR_MESSAGES[status], *args)
@@ -646,12 +639,17 @@ class IntelMQController():
         except Exception:
             log_level = DEFAULT_LOGGING_LEVEL
         else:
-            log_level = self.parameters.logging_level
+            log_level = self.parameters.logging_level.upper()
+            logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
 
         try:
-            logger = utils.log('intelmqctl', log_level=log_level)
+            logger = utils.log('intelmqctl', log_level=log_level,
+                               log_format_stream=utils.LOG_FORMAT_SIMPLE,
+                               logging_level_stream=logging_level_stream)
         except (FileNotFoundError, PermissionError) as exc:
-            logger = utils.log('intelmqctl', log_level=log_level, log_path=False)
+            logger = utils.log('intelmqctl', log_level=log_level, log_path=False,
+                               log_format_stream=utils.LOG_FORMAT_SIMPLE,
+                               logging_level_stream=logging_level_stream)
             logger.error('Not logging to file: %s', exc)
         self.logger = logger
         self.interactive = interactive
@@ -783,7 +781,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             parser_list = subparsers.add_parser('list', help='Listing bots or queues')
             parser_list.add_argument('kind', choices=['bots', 'queues', 'queues-and-status'])
-            parser_list.add_argument('--quiet', '-q', action='store_const',
+            parser_list.add_argument('--non-zero', '--quiet', '-q', action='store_const',
                                      help='Only list non-empty queues '
                                           'or the IDs of enabled bots.',
                                      const=True)
@@ -1093,11 +1091,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 retval = 1
         return retval, botnet_status
 
-    def list(self, kind=None):
+    def list(self, kind=None, non_zero=False):
         if kind == 'queues':
-            return self.list_queues()
+            return self.list_queues(non_zero=non_zero)
         elif kind == 'bots':
-            return self.list_bots()
+            return self.list_bots(non_zero=non_zero)
         elif kind == 'queues-and-status':
             q = self.list_queues()
             b = self.botnet_status()
@@ -1118,7 +1116,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             self.abort('Can\'t update runtime configuration: Permission denied.')
         return True
 
-    def list_bots(self):
+    def list_bots(self, non_zero=False):
         """
         Lists all configured bots from runtime.conf with bot id and
         description.
@@ -1127,7 +1125,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         """
         if RETURN_TYPE == 'text':
             for bot_id in sorted(self.runtime_configuration.keys(), key=str.lower):
-                if QUIET and not self.runtime_configuration[bot_id].get('enabled'):
+                if non_zero and not self.runtime_configuration[bot_id].get('enabled'):
                     continue
                 if QUIET:
                     print(bot_id)
@@ -1162,7 +1160,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         return source_queues, destination_queues, internal_queues, all_queues
 
-    def list_queues(self):
+    def list_queues(self, non_zero=False):
         pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
         pipeline.set_queues(None, "source")
         pipeline.connect()
@@ -1171,7 +1169,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         counters = pipeline.count_queued_messages(*all_queues)
         pipeline.disconnect()
-        log_list_queues(counters)
+        if RETURN_TYPE == 'text':
+            for queue, counter in sorted(counters.items(), key=lambda x: str.lower(x[0])):
+                if counter or not non_zero:
+                    logger.info("%s - %s", queue, counter)
 
         return_dict = {}
         for bot_id, info in self.pipeline_configuration.items():

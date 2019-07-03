@@ -67,6 +67,9 @@ CHANGELOG
   - New function `version_smaller` for version comparisons.
   - New function `lazy_int` for version conversions.
   - `parse_logline`: Handle thread IDs.
+  - `log` takes a new argument `logging_level_stream` for the logging level of the console handler.
+  - New constant `LOG_FORMAT_SIMPLE`, used by intelmqctl.
+- `intelmq.lib.pipeline`: AMQP: Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
 
 ### Development
 - `intelmq.bin.intelmq_gen_docs`: For yaml use `safe_load` instead of unsafe `load`.
@@ -92,7 +95,9 @@ CHANGELOG
 #### Outputs
 - `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
 - `intelmq.bots.outputs.amqptopic.output`: Shutdown: Close connection only if connection exists.
-- `intelmq.bots.outputs.amqptopic`: Add support for pika > 1, the way the (Non-)Acknowledgments are provided has been changed.
+- `intelmq.bots.outputs.amqptopic`:
+  - Add support for pika > 1, the way the (Non-)Acknowledgments are provided has been changed.
+  - Gracefully handle unroutable messages and give advice.
 
 ### Documentation
 - Add certbund-contact to the ecosystem document.
@@ -108,6 +113,8 @@ CHANGELOG
 - `intelmqctl`:
   - Provide new command `upgrade-conf` to uprade configuration to a newer version.
   - Provide logging level on on class layer.
+  - Fix `-q` flag for `intelmqctl list queues` by renaming (providing an additional variant) it to `--non-zero`.
+  - For console output `intemqctl: ` at the beginning of each line is no longer present.
 
 ### Contrib
 * logcheck rules: Adapt ignore rule to cover the instance id of bot names.
