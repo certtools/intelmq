@@ -56,12 +56,13 @@ CHANGELOG
 
 #### Outputs
 - `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
-- `intelmq.bots.outputs.amqptopic.output`: Shutdown: Close connection only if connection exists.
 - `intelmq.bots.outputs.amqptopic`:
+  - Shutdown: Close connection only if connection exists.
   - Add support for pika > 1, the way the (Non-)Acknowledgments are provided has been changed.
   - Gracefully handle unroutable messages and give advice.
   - Support for no used authentication.
   - Replace deprecated parameter `type` with `exchange_type` for `exchange_declare`, supporting pika >= 0.11 (#1425).
+  - New parameters `message_hierarchical_output`, `message_with_type`, `message_jsondict_as_string`.
 - `intelmq.bots.outputs.mongodb.output`: Support for pymongo >= 3.0.0 (#1063, PR#1421).
 - `intelmq.bots.outputs.file`: `time.*` field serialization: support for microseconds.
 - `intelmq.bots.outputs.mongodb.output`: Support for authentication in pymongo >= 3.5 (#1062).

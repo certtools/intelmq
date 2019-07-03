@@ -55,6 +55,10 @@ class AMQPTopicOutputBot(Bot):
 
         self.connect_server()
 
+        self.hierarchical = getattr(self.parameters, "message_hierarchical", False)
+        self.with_type = getattr(self.parameters, "message_with_type", False)
+        self.jsondict_as_string = getattr(self.parameters, "message_jsondict_as_string", False)
+
     def connect_server(self):
         self.logger.info('AMQP Connecting to %s:%s/%s.',
                          self.connection_host, self.connection_port, self.connection_vhost)
@@ -93,12 +97,15 @@ class AMQPTopicOutputBot(Bot):
 
         if not self.keep_raw_field:
             del event['raw']
+        body = event.to_json(hierarchical=self.hierarchical,
+                             with_type=self.with_type,
+                             jsondict_as_string=self.jsondict_as_string).encode(errors='backslashreplace')
 
         try:
             if not self.channel.basic_publish(exchange=self.exchange,
                                               routing_key=self.routing_key,
                                               # replace unicode characters when encoding (#1296)
-                                              body=event.to_json().encode(errors='backslashreplace'),
+                                              body=body,
                                               properties=self.properties,
                                               mandatory=True):
                 if self.require_confirmation and not self.publish_raises_nack:
