@@ -46,7 +46,9 @@ CHANGELOG
 #### Outputs
 - `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
 - `intelmq.bots.outputs.amqptopic.output`: Shutdown: Close connection only if connection exists.
-- `intelmq.bots.outputs.amqptopic`: Add support for pika > 1, the way the (Non-)Acknowledgments are provided has been changed.
+- `intelmq.bots.outputs.amqptopic`:
+  - Add support for pika > 1, the way the (Non-)Acknowledgments are provided has been changed.
+  - Gracefully handle unroutable messages and give advice.
 
 ### Documentation
 - Add certbund-contact to the ecosystem document.

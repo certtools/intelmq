@@ -4,7 +4,7 @@
 
 See https://www.rabbitmq.com/tutorials/amqp-concepts.html for more details on amqp topic exchange.
 
-Bot parameters: 
+Bot parameters:
 
 * connection_attempts   : The number of connection attempts to defined server, defaults to 3
 * connection_heartbeat  : Heartbeat to server, in seconds, defaults to 3600
@@ -32,3 +32,11 @@ If routing key or exchange name are invalid or non existent, the message is
 accepted by the server but we receive no confirmation.
 If parameter require_confirmation is True and no confirmation is received, an
 error is raised.
+
+### Common errors
+
+#### Unroutable messages / Undefined destination queue
+
+The destination exchange and queue need to exist beforehand,
+with your preferred settings (e.g. durable, [lazy queue](https://www.rabbitmq.com/lazy-queues.html).
+If the error message says that the message is "unroutable", the queue doesn't exist.
