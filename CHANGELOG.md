@@ -66,6 +66,7 @@ CHANGELOG
 - `intelmqctl`:
   - Provide new command `upgrade-conf` to uprade configuration to a newer version.
   - Provide logging level on on class layer.
+  - Fix `-q` flag for `intelmqctl list queues` by renaming (providing an additional variant) it to `--non-zero`.
   - For console output `intemqctl: ` at the beginning of each line is no longer present.
 
 ### Contrib
