@@ -21,6 +21,10 @@ Bot parameters:
 * require_confirmation  : If set to True, an exception will be raised if a confirmation error is received
 * routing_key           : The routing key for your amqptopic
 * username              : Username for authentication on your AMQP server
+* message_hierarchical_output: Convert the message to hierachical JSON, default: false
+* message_with_type     : Include the type in the sent message, default: false
+* message_jsondict_as_string: Convert fields of type JSONDict (extra) as string, default: false
+
 
 ### Examples of usage:
 

@@ -32,6 +32,7 @@ CHANGELOG
 - Add geohash expert.
 
 #### Outputs
+- `intelmq.bots.outputs.amqptopic.output`: New parameters `message_hierarchical_output`, `message_with_type`, `message_jsondict_as_string`.
 
 ### Documentation
 - Feeds: Add ViriBack feed.
