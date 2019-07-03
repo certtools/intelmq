@@ -649,9 +649,13 @@ class IntelMQController():
             log_level = self.parameters.logging_level
 
         try:
-            logger = utils.log('intelmqctl', log_level=log_level)
+            logger = utils.log('intelmqctl', log_level=log_level,
+                               log_format_stream=utils.LOG_FORMAT_SIMPLE,
+                               logging_level_stream=logging_level_stream)
         except (FileNotFoundError, PermissionError) as exc:
-            logger = utils.log('intelmqctl', log_level=log_level, log_path=False)
+            logger = utils.log('intelmqctl', log_level=log_level, log_path=False,
+                               log_format_stream=utils.LOG_FORMAT_SIMPLE,
+                               logging_level_stream=logging_level_stream)
             logger.error('Not logging to file: %s', exc)
         self.logger = logger
         self.interactive = interactive

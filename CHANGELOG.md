@@ -21,6 +21,8 @@ CHANGELOG
   - New function `version_smaller` for version comparisons.
   - New function `lazy_int` for version conversions.
   - `parse_logline`: Handle thread IDs.
+  - `log` takes a new argument `logging_level_stream` for the logging level of the console handler.
+  - New constant `LOG_FORMAT_SIMPLE`, used by intelmqctl.
 
 ### Development
 - `intelmq.bin.intelmq_gen_docs`: For yaml use `safe_load` instead of unsafe `load`.
@@ -64,6 +66,7 @@ CHANGELOG
 - `intelmqctl`:
   - Provide new command `upgrade-conf` to uprade configuration to a newer version.
   - Provide logging level on on class layer.
+  - For console output `intemqctl: ` at the beginning of each line is no longer present.
 
 ### Contrib
 * logcheck rules: Adapt ignore rule to cover the instance id of bot names.

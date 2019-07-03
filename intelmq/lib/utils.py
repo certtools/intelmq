@@ -42,6 +42,7 @@ __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_FORMAT_STREAM = '%(name)s: %(message)s'
 LOG_FORMAT_SYSLOG = '%(name)s: %(levelname)s %(message)s'
+LOG_FORMAT_SIMPLE = '%(message)s'
 
 # Regex for parsing the above LOG_FORMAT
 LOG_REGEX = (r'^(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
@@ -251,7 +252,8 @@ class ListHandler(logging.StreamHandler):
 
 def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, log_level: str = "DEBUG",
         stream: Optional[object] = None, syslog: Union[bool, str, list, tuple] = None,
-        log_format_stream: str = LOG_FORMAT_STREAM):
+        log_format_stream: str = LOG_FORMAT_STREAM,
+        logging_level_stream: Optional[str] = None):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
     The warnings module will log to the same handlers.
@@ -261,14 +263,18 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, lo
         log_path: Path to log directory, defaults to DEFAULT_LOGGING_PATH
             If False, nothing is logged to files.
         log_level: default is "DEBUG"
-        stream: By default (None), stderr will be used, stream objects can be
-            given. If False, stream output is not used.
+        stream: By default (None), stdout and stderr will be used depending on the level.
+            If False, stream output is not used.
+            For everything else, the argument is used as stream output.
         syslog:
             If False (default), FileHandler will be used. Otherwise either a list/
             tuple with address and UDP port are expected, e.g. `["localhost", 514]`
             or a string with device name, e.g. `"/dev/log"`.
         log_format_stream:
             The log format used for streaming output. Default: LOG_FORMAT_STREAM
+        logging_level_stream:
+            The logging level for stream (console) output.
+            By default the same as log_level.
 
     Returns:
         logger: An instance of logging.Logger
@@ -285,6 +291,9 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, lo
 
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
+
+    if not logging_level_stream:
+        logging_level_stream = log_level
 
     if log_path and not syslog:
         handler = FileHandler("%s/%s.log" % (log_path, name))
@@ -313,7 +322,7 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, lo
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
         warnings_logger.addHandler(console_handler)
-        console_handler.setLevel(log_level)
+        console_handler.setLevel(logging_level_stream)
 
     return logger
 
