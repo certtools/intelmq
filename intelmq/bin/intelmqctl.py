@@ -818,8 +818,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_run_message = parser_run_subparsers.add_parser('message',
                                                                   help='Debug bot\'s pipelines. Get the message in the'
                                                                        ' input pipeline, pop it (cut it) and display it, or'
-                                                                       ' send the message directly to bot\'s output pipeline.')
-            parser_run_message.add_argument('message_action_kind', choices=["get", "pop", "send"])
+                                                                       ' send the message directly to bot\'s output pipeline(s).')
+            parser_run_message.add_argument('message_action_kind',
+                                            choices=["get", "pop", "send"],
+                                            help='get: show the next message in the source pipeline. '
+                                                 'pop: show and delete the next message in the source pipeline '
+                                                 'send: Send the given message to the destination pipeline(s).')
             parser_run_message.add_argument('msg', nargs='?', help='If send was chosen, put here the message in JSON.')
             parser_run_message.set_defaults(run_subcommand="message")
 
