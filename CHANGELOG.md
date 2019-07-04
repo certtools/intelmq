@@ -36,6 +36,7 @@ CHANGELOG
 
 ### Documentation
 - Feeds: Add ViriBack feed.
+- `intelmq.tests.bots.outputs.amqptopic.test_output`: Added.
 
 ### Packaging
 
