@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
+import json
 import os
 import unittest
+
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
+from intelmq.bots.outputs.amqptopic.output import AMQPTopicOutputBot
 from intelmq.tests.bots.outputs.redis.test_output import EXAMPLE_EVENT
-import pika
-import json
 
 if os.environ.get('INTELMQ_TEST_EXOTIC'):
-    from intelmq.bots.outputs.amqptopic.output import AMQPTopicOutputBot
+    import pika
 
 
 class TestAMQPTopicOutputBot(test.BotTestCase, unittest.TestCase):
