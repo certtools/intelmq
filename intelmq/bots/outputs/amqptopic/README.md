@@ -22,6 +22,8 @@ Bot parameters:
 * routing_key           : The routing key for your amqptopic
 * username              : Username for authentication on your AMQP server
 
+If no authentication should be used, leave username or password empty or `null`.
+
 ### Examples of usage:
 
 * Useful to send events to a RabbitMQ exchange topic to be further processed in other platforms.

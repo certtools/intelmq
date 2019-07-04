@@ -8,7 +8,7 @@ except ImportError:
     pika = None
 
 
-class AMQPTopicBot(Bot):
+class AMQPTopicOutputBot(Bot):
     connection = None
 
     def init(self):
@@ -40,13 +40,14 @@ class AMQPTopicBot(Bot):
         self.connection_host = self.parameters.connection_host
         self.connection_port = self.parameters.connection_port
         self.connection_vhost = self.parameters.connection_vhost
-        self.credentials = pika.PlainCredentials(self.parameters.username, self.parameters.password)
+        if self.parameters.username and self.parameters.password:
+            self.kwargs['credentials'] = pika.PlainCredentials(self.username,
+                                                               self.password)
         self.connection_parameters = pika.ConnectionParameters(
             host=self.connection_host,
             port=self.connection_port,
             virtual_host=self.connection_vhost,
             connection_attempts=self.parameters.connection_attempts,
-            credentials=self.credentials,
             **self.kwargs)
         self.routing_key = self.parameters.routing_key
         self.properties = pika.BasicProperties(
@@ -117,4 +118,4 @@ class AMQPTopicBot(Bot):
             self.connection.close()
 
 
-BOT = AMQPTopicBot
+BOT = AMQPTopicOutputBot
