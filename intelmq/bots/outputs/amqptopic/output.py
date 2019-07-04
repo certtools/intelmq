@@ -41,8 +41,8 @@ class AMQPTopicOutputBot(Bot):
         self.connection_port = self.parameters.connection_port
         self.connection_vhost = self.parameters.connection_vhost
         if self.parameters.username and self.parameters.password:
-            self.kwargs['credentials'] = pika.PlainCredentials(self.username,
-                                                               self.password)
+            self.kwargs['credentials'] = pika.PlainCredentials(self.parameters.username,
+                                                               self.parameters.password)
         self.connection_parameters = pika.ConnectionParameters(
             host=self.connection_host,
             port=self.connection_port,
