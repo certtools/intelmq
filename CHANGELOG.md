@@ -100,6 +100,7 @@ CHANGELOG
 - `intelmq.bots.outputs.amqptopic`:
   - Add support for pika > 1, the way the (Non-)Acknowledgments are provided has been changed.
   - Gracefully handle unroutable messages and give advice.
+  - Support for no used authentication.
 
 ### Documentation
 - Add certbund-contact to the ecosystem document.

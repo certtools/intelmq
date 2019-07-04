@@ -26,6 +26,8 @@ Bot parameters:
 * message_jsondict_as_string: Convert fields of type JSONDict (extra) as string, default: false
 
 
+If no authentication should be used, leave username or password empty or `null`.
+
 ### Examples of usage:
 
 * Useful to send events to a RabbitMQ exchange topic to be further processed in other platforms.
