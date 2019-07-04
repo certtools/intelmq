@@ -1767,7 +1767,7 @@ Saves events in a MongoDB either as hierarchical structure or flat with full key
 #### Installation Requirements
 
 ```
-pip3 install pymongo>=2.7.1
+pip3 install pymongo>=3.0.0
 ```
 
 * * *

@@ -65,7 +65,7 @@ class MongoDBOutputBot(Bot):
                 tmp_dict[time_src] = dateutil.parser.parse(tmp_dict[time_obs])
 
         try:
-            self.collection.insert(tmp_dict)
+            self.collection.insert_one(tmp_dict)
         except pymongo.errors.AutoReconnect:
             self.logger.error('Connection Lost. Connecting again.')
             self.connect()
