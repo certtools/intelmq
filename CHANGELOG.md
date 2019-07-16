@@ -66,6 +66,7 @@ CHANGELOG
 - `intelmq.lib.upgrades`: New library file `upgrades` with upgrade functions.
 - `intelmq.lib.utils`:
   - New function `setup_list_logging` for intelmqctl check an possibly others.
+    - Fix return values (#1423).
   - New function `version_smaller` for version comparisons.
   - New function `lazy_int` for version conversions.
   - `parse_logline`: Handle thread IDs.
