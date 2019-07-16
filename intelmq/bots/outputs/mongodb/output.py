@@ -18,6 +18,9 @@ class MongoDBOutputBot(Bot):
     def init(self):
         if pymongo is None:
             raise ValueError('Could not import pymongo. Please install it.')
+
+        self.pymongo_3 = pymongo.version_tuple >= (3, )
+
         self.replacement_char = getattr(self.parameters, 'replacement_char', '_')
         if self.replacement_char == '.':
             raise ValueError('replacement_char should be different than .')
@@ -65,7 +68,10 @@ class MongoDBOutputBot(Bot):
                 tmp_dict[time_src] = dateutil.parser.parse(tmp_dict[time_obs])
 
         try:
-            self.collection.insert_one(tmp_dict)
+            if self.pymongo_3:
+                self.collection.insert_one(tmp_dict)
+            else:
+                self.collection.insert(tmp_dict)
         except pymongo.errors.AutoReconnect:
             self.logger.error('Connection Lost. Connecting again.')
             self.connect()
