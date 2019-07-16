@@ -562,6 +562,7 @@ def setup_list_logging(name='intelmq', logging_level='INFO'):
     list_handler.setLevel('INFO')
     check_logger.addHandler(list_handler)
     check_logger.setLevel('INFO')
+    return check_logger, list_handler
 
 
 def version_smaller(version1: tuple, version2: tuple) -> Optional[bool]:
