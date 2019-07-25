@@ -60,6 +60,7 @@ CHANGELOG
 ### Documentation
 - Add certbund-contact to the ecosystem document.
 - Rename the IDEA expert to "IDEA Converter".
+- Add the new configuration upgrade function to the docs.
 
 ### Packaging
 

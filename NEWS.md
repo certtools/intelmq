@@ -9,6 +9,7 @@ See the changelog for a full list of changes.
 ### Requirements
 
 ### Tools
+intelmqctl has a new function `upgrade-conf` to upgrade the configuration from previous installations.
 
 ### Harmonization
 
