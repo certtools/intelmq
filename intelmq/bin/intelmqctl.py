@@ -1506,6 +1506,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             return 0, 'success'
 
         if function:
+            if not force and state['upgrades'].get(function, False):
+                # already performed
+                self.logger.info('This upgrade has been performed previously successfully already. Force with -f.')
+                return 0, 'success'
+
             result = {"function": function,
                       "time": datetime.datetime.now().isoformat()
                       }
@@ -1556,17 +1561,18 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         if previous:
             previous = tuple(utils.lazy_int(v) for v in previous.split('.'))
-            self.logger.info("Using previous version %r from parameter.", previous)
+            self.logger.info("Using previous version %r from parameter.",
+                             '.'.join(str(x) for x in previous))
 
         if __version_info__ in state["version_history"] and not force:
-            return 0, {'message': "Nothing to do."}
+            return 0, "Nothing to do."
         else:
             if not (os.access(state_file_path, os.W_OK) or
                     os.access(os.path.dirname(state_file_path), os.W_OK)):
                 self.logger.error('File %s cannot be written. Check the permissions.',
                                   state_file_path)
                 return 1, 'error'
-            if state["version_history"] and not previous:
+            if state["version_history"] and not previous and not force:
                 previous = state["version_history"][-1]
                 self.logger.info("Found previous version %s in state file.",
                                  '.'.join(str(x) for x in previous))
@@ -1585,7 +1591,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             for version, bunch in todo:
                 self.logger.info('Upgrading to version %s.' % '.'.join(map(str, version)))
                 for function in bunch:
-                    if state['upgrades'].get(function.__name__, False):
+                    if not force and state['upgrades'].get(function.__name__, False):
                         # already performed
                         continue
 
