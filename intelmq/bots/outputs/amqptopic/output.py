@@ -78,7 +78,8 @@ class AMQPTopicOutputBot(Bot):
             self.channel = self.connection.channel()
             if self.exchange:  # do not declare default exchange (#1295)
                 try:
-                    self.channel.exchange_declare(exchange=self.exchange, type=self.exchange_type,
+                    self.channel.exchange_declare(exchange=self.exchange,
+                                                  exchange_type=self.exchange_type,
                                                   durable=self.durable)
                 except pika.exceptions.ChannelClosed:
                     self.logger.error('Access to exchange refused.')

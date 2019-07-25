@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """
 © 2019 Sebastian Wagner <wagner@cert.at>
@@ -8,16 +7,17 @@ SPDX-License-Identifier: AGPL-3.0
 TODO: modify syntax conversion
 """
 import json
-
 from collections import OrderedDict
 
 import intelmq
 import intelmq.lib.utils as utils
 
-__all__ = ['v201_defaults_statistics', 'v201_defaults_broker',
+__all__ = ['v100_dev7_modify_syntax',
+           'v110_shadowserver_feednames', 'v110_deprecations'
+           'v201_defaults_statistics',
+           'v201_defaults_broker',
            'v112_feodo_tracker_ips',
            'v112_feodo_tracker_domains',
-           'v110_shadowserver_feednames', 'v110_deprecations'
            ]
 
 
@@ -119,7 +119,7 @@ def v112_feodo_tracker_domains():
 
 def v110_shadowserver_feednames():
     """
-    Replace depreacated Shadowserver feednames
+    Replace deprecated Shadowserver feednames
     """
     mapping = {
         "Botnet-Drone-Hadoop": "Drone",
@@ -175,7 +175,10 @@ def v110_deprecations():
                 del bot["parameters"]["query_ripe_stat"]
         if bot["group"] == 'Collector' and bot["parameters"].get("feed"):
             changed = True
-            bot["parameters"]["feed"] = bot["parameters"]["name"]
+            try:
+                bot["parameters"]["feed"] = bot["parameters"]["name"]
+            except KeyError:
+                pass
     if not changed:
         return None
 
@@ -188,8 +191,49 @@ def v110_deprecations():
     return True
 
 
+def modify_expert_convert_config(old):
+    """
+    Also used in the modify expert.
+    """
+    config = []
+    for groupname, group in old.items():
+        for rule_name, rule in group.items():
+            config.append({"rulename": groupname + ' ' + rule_name,
+                           "if": rule[0],
+                           "then": rule[1]})
+    return config
+
+
+def v100_dev7_modify_syntax():
+    """
+    Migrate modify bot configuration format
+    """
+    runtime = utils.load_configuration(intelmq.RUNTIME_CONF_FILE)
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.experts.modify.expert":
+            if "configuration_path" in bot["parameters"]:
+                config = utils.load_configuration(bot["parameters"]["configuration_path"])
+                if type(config) is dict:
+                    new_config = modify_expert_convert_config(config)
+                    if len(config) != len(new_config):
+                        return 'Error converting modify expert syntax. Different size of configurations. Please report this.'
+                    changed = True
+                    try:
+                        with open(bot["parameters"]["configuration_path"],
+                                  'w') as handle:
+                            json.dump(new_config, fp=handle, indent=4, sort_keys=True,
+                                      separators=(',', ': '))
+                    except PermissionError:
+                        return 'Can\'t update %s\'s configuration: Permission denied.' % bot_id
+
+    return changed
+
+
 UPGRADES = OrderedDict([
+    ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
     ((1, 1, 2), (v112_feodo_tracker_ips, v112_feodo_tracker_domains, )),
-    ((2, 0, 1), (v201_defaults_statistics, v201_defaults_broker)),
+    ((2, 0, 0), (v201_defaults_statistics, v201_defaults_broker)),
+    ((2, 0, 1), ()),
 ])

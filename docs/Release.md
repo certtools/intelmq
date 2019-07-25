@@ -58,6 +58,7 @@ For bigger releases, probably also at IHAP, Twitter, etc. Ask your favorite soci
 ## Prepare new version
 
 Increase the version in `intelmq/version.py` and declare it as alpha version.
+Add the new version in `intelmq/lib/upgrades.py`.
 
 Add a new empty changelog and news section. For the changelog:
 

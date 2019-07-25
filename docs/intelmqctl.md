@@ -26,6 +26,7 @@
 - [List queues](#list-queues)
 - [Log](#log)
 - [Check](#check)
+- [Configuration upgrade](#configuration-upgrade)
 - [Exit code](#exit-code)
 - [Known issues](#known-issues)
 
@@ -407,6 +408,14 @@ See the help page for more information.
 
 ## Check
 This command will do various sanity checks on the installation and especially the configuration.
+
+## Configuration upgrade
+The `intelmqctl upgrade-conf` function upgrade, upgrade the configuration from previous versions to the current one.
+It keeps track of previously installed versions and the result of all "upgrade functions" in the "state file", locate in the $var_state_path/state.json (e.g. /opt/intelmq/var/lib/state.json or /var/lib/intelmq/state.json).
+
+This function has been introduced in version 2.0.1.
+
+Make sure to have a backup of your configuration.
 
 ## Exit code
 In case of errors, unsuccessful operations, the exit code is higher than 0.

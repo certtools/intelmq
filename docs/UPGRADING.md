@@ -13,6 +13,10 @@ For installation instructions, see [INSTALL.md](INSTALL.md).
 - [Start IntelMQ](#start-intelmq)
 
 
+## Read NEWS.md
+
+Read the NEWS.md file to look for things you need to have a look at.
+
 ## Stop IntelMQ and Backup
 
 * Make sure that your IntelMQ system is completely stopped: `intelmqctl stop`
@@ -57,6 +61,14 @@ pip install .
 sudo intelmqsetup
 ```
 For editable installations (development only), run `pip install -e .` instead.
+
+## Upgrade the configuration
+
+Make a backup of your configuration files, including the bots' configuration (like the modify bot).
+Call the configuration upgrade function:
+```
+intelmqctl upgrade-conf
+```
 
 ## Check the installation
 
