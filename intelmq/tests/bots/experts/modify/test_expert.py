@@ -9,7 +9,7 @@ from pkg_resources import resource_filename
 
 import intelmq.lib.test as test
 from intelmq.lib.utils import load_configuration
-from intelmq.bots.experts.modify.expert import ModifyExpertBot, convert_config
+from intelmq.bots.experts.modify.expert import ModifyExpertBot, modify_expert_convert_config
 
 EVENT_TEMPL = {"__type": "Event",
                "feed.name": "Spamhaus Cert",
@@ -84,7 +84,7 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
         new_path = resource_filename('intelmq',
                                      'tests/bots/experts/modify/new_format.conf')
         new_config = load_configuration(new_path)
-        self.assertDictEqual(convert_config(old_config)[0],
+        self.assertDictEqual(modify_expert_convert_config(old_config)[0],
                              new_config[0])
 
     def test_types(self):
