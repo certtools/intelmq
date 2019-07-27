@@ -1,6 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import argparse
+import datetime
 import distutils.version
 import getpass
 import http.client
@@ -15,6 +16,7 @@ import socket
 import subprocess
 import sys
 import textwrap
+import traceback
 import time
 import xmlrpc.client
 from collections import OrderedDict
@@ -731,6 +733,7 @@ can be longer due to our logging format!
 
 Upgrade from a previous version:
     intelmqctl upgrade-conf
+Make a backup of your configuration first, also including bot's configuration files.
 
 Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
@@ -1451,31 +1454,66 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             function: Only execute this upgrade function
             force: Also upgrade if not necessary
 
-        state:
-            version_history = [[2, 0, 1]]
+        state file:
+
+            version_history = [..., [2, 0, 0], [2, 0, 1]]
             upgrades = {
                 "v112_feodo_tracker_domains": true,
                 "v112_feodo_tracker_ips": false,
                 "v200beta1_ripe_expert": false
                 }
             results = [
-                {"function": "v112_feodo_tracker_domains", "success": true, "time": "..."},
-                {"function": "v112_feodo_tracker_domains", "success": false, "time": "..."},
-                {"function": "v112_feodo_tracker_ips", "success": false, "message": "...", "time": "..."},
-                {"function": "v200beta1_ripe_expert", "success": false, "traceback": "...", "time": "..."}
+                {"function": "v112_feodo_tracker_domains",
+                 "success": true,
+                 "retval": null,
+                 "time": "..."},
+                {"function": "v112_feodo_tracker_domains",
+                 "success": false,
+                 "retval": "fix it manually",
+                 "message": "fix it manually",
+                 "time": "..."},
+                {"function": "v200beta1_ripe_expert",
+                 "success": false,
+                 "traceback": "...",
+                 "time": "..."}
                 ]
         """
         state_file_path = os.path.join(VAR_STATE_PATH, '../state.json')
-        print(state_file_path)
         if os.path.isfile(state_file_path):
+            if not os.access(state_file_path, os.W_OK):
+                self.logger.error("State file %r is not writable.")
+                return 1, "State file %r is not writable."
             with open(state_file_path, 'r') as state_handle:
                 state = json.load(state_handle)
         else:
+            """
+            We create the state file directly before any upgrade function.
+            Otherwise we might run into the situation, that we can't write the state but we already upgraded.
+            """
+            self.logger.info('Writing intial state file.')
             state = {"version_history": [],
                      "upgrades": {},
                      "results": []}
+            try:
+                with open(state_file_path, 'w') as state_handle:
+                    json.dump(state, fp=state_handle,
+                              indent=4, sort_keys=True,
+                              separators=(',', ': '))
+            except Exception as exc:
+                self.logger.error('Error writing state file %r: %s.', state_file_path, exc)
+                return 1, 'Error writing state file %r: %s.' % (state_file_path, exc)
+            self.logger.error('Successfully wrote initial state file. Please re-run this program.')
+            return 0, 'success'
 
         if function:
+            if not force and state['upgrades'].get(function, False):
+                # already performed
+                self.logger.info('This upgrade has been performed previously successfully already. Force with -f.')
+                return 0, 'success'
+
+            result = {"function": function,
+                      "time": datetime.datetime.now().isoformat()
+                      }
             if not hasattr(upgrades, function):
                 self.logger.error('This function does not exist. '
                                   'Available functions are %s'
@@ -1484,39 +1522,65 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             try:
                 retval = getattr(upgrades, function)()
             except Exception:
-                self.logger.exception('Upgrade failed, please report this bug '
-                                      'with the traceback.')
-                return 1, 'error'
-            if type(retval) is str:
-                self.logger.error('Upgrade failed: %s', retval)
-            elif retval is None:
-                self.logger.info('Upgrade successful: Nothing to do.')
-            elif retval is True:
-                self.logger.info('Upgrade successful.')
+                self.logger.exception('Upgrade %r failed, please report this bug '
+                                      'with the shown traceback.',
+                                      function)
+                result['traceback'] = traceback.format_exc()
+                result['success'] = False
             else:
-                self.logger.error('Unknown return value %r. Please report this '
-                                  'as bug.' % retval)
+                if type(retval) is str:
+                    self.logger.error('Upgrade %r failed: %s', function, retval)
+                    result['message'] = retval
+                    result['success'] = False
+                elif retval is None:
+                    self.logger.info('Upgrade %r successful: Nothing to do.',
+                                     function)
+                    result['success'] = True
+                elif retval is True:
+                    self.logger.info('Upgrade %r successful.', function)
+                    result['success'] = True
+                else:
+                    self.logger.error('Unknown return value %r for %r. '
+                                      'Please report this as bug.',
+                                      retval, function)
+                    result['success'] = False
+
+                result['retval'] = retval
+
+            state['results'].append(result)
+            state['upgrades'][function] = result['success']
+            with open(state_file_path, 'w') as state_handle:
+                json.dump(state, fp=state_handle,
+                          indent=4, sort_keys=True,
+                          separators=(',', ': '))
+
+            if result['success']:
+                return 0, 'success'
+            else:
+                return 1, 'error'
 
         if previous:
             previous = tuple(utils.lazy_int(v) for v in previous.split('.'))
-            self.logger.info("Using previous version %r from parameter.", previous)
+            self.logger.info("Using previous version %r from parameter.",
+                             '.'.join(str(x) for x in previous))
 
         if __version_info__ in state["version_history"] and not force:
-            return 0, {'message': "Nothing to do."}
+            return 0, "Nothing to do."
         else:
             if not (os.access(state_file_path, os.W_OK) or
                     os.access(os.path.dirname(state_file_path), os.W_OK)):
                 self.logger.error('File %s cannot be written. Check the permissions.',
                                   state_file_path)
                 return 1, 'error'
-            if state["version_history"] and not previous:
+            if state["version_history"] and not previous and not force:
                 previous = state["version_history"][-1]
-                self.logger.info("Found previous version %r in state file.", previous)
+                self.logger.info("Found previous version %s in state file.",
+                                 '.'.join(str(x) for x in previous))
             if previous:
                 todo = []
                 for version, functions in upgrades.UPGRADES.items():
-                    if utils.version_smaller(previous, version):
-                        todo.append(version, functions)
+                    if utils.version_smaller(tuple(previous), version):
+                        todo.append((version, functions))
             else:
                 self.logger.info("Found no previous version, doing all upgrades.")
                 todo = upgrades.UPGRADES.items()
@@ -1527,25 +1591,63 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             for version, bunch in todo:
                 self.logger.info('Upgrading to version %s.' % '.'.join(map(str, version)))
                 for function in bunch:
+                    if not force and state['upgrades'].get(function.__name__, False):
+                        # already performed
+                        continue
+
                     docstring = textwrap.dedent(function.__doc__).strip()
+                    result = {"function": function.__name__,
+                              "time": datetime.datetime.now().isoformat()
+                              }
                     try:
                         retval = function()
                     except Exception:
                         self.logger.exception('%s: Upgrade failed, please report this bug '
                                               'with the traceback.', docstring)
-                        return 1, 'error'
-                    if type(retval) is str:
-                        self.logger.error('%s: Upgrade failed: %s', docstring, retval)
-                    elif retval is None:
-                        self.logger.info('%s: Nothing to do.', docstring)
-                    elif retval is True:
-                        self.logger.info('%s: Upgrade successful.', docstring)
+                        result['traceback'] = traceback.format_exc()
+                        result['success'] = False
                     else:
-                        self.logger.error('%s: Unknown return value %r. Please report this '
-                                          'as bug.', docstring, retval)
-            # TODO: Write results to state file
+                        if type(retval) is str:
+                            self.logger.error('%s: Upgrade failed: %s', docstring, retval)
+                            result['message'] = retval
+                            result['success'] = False
+                        elif retval is None:
+                            self.logger.info('%s: Nothing to do.', docstring)
+                            result['success'] = True
+                        elif retval is True:
+                            self.logger.info('%s: Upgrade successful.', docstring)
+                            result['success'] = True
+                        else:
+                            self.logger.error('%s: Unknown return value %r. Please report this '
+                                              'as bug.', docstring, retval)
+                            result['success'] = False
+                        result['retval'] = retval
+                    state['results'].append(result)
+                    state['upgrades'][function.__name__] = result['success']
 
-            return 1, {'message': 'something is missing'}
+                    if not result['success']:
+                        with open(state_file_path, 'w') as state_handle:
+                            json.dump(state, fp=state_handle,
+                                      indent=4, sort_keys=True,
+                                      separators=(',', ': '))
+                        self.logger.error('Some migration did not succeed or '
+                                          'manual intervention is needed. Look at '
+                                          'the output above. Afterwards, re-run '
+                                          'this program.')
+                        return 1, 'error'
+                state['version_history'].append(version)
+
+            if todo:
+                self.logger.info('Configuration upgrade successful!')
+            else:
+                self.logger.info('Nothing to do!')
+
+            with open(state_file_path, 'w') as state_handle:
+                json.dump(state, fp=state_handle,
+                          indent=4, sort_keys=True,
+                          separators=(',', ': '))
+
+        return 0, 'success'
 
 
 def main():  # pragma: no cover

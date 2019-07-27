@@ -7,6 +7,7 @@ import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.utils import load_configuration
+from intelmq.lib.upgrades import modify_expert_convert_config
 
 
 def is_re_pattern(value):
@@ -33,17 +34,6 @@ class MatchGroupMapping:
         return self.match.group(key)
 
 
-def convert_config(old):
-    config = []
-    for groupname, group in old.items():
-        for rule_name, rule in group.items():
-            config.append({"rulename": groupname + ' ' + rule_name,
-                           "if": rule[0],
-                           "then": rule[1]})
-
-    return config
-
-
 class ModifyExpertBot(Bot):
 
     def init(self):
@@ -52,7 +42,7 @@ class ModifyExpertBot(Bot):
             self.logger.warning('Support for dict-based configuration will be '
                                 'removed in version 3.0. Have a look at the '
                                 'NEWS file section 1.0.0.dev7.')
-            config = convert_config(config)
+            config = modify_expert_convert_config(config)
 
         if getattr(self.parameters, 'case_sensitive', True):
             self.re_kwargs = {}
