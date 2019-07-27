@@ -66,6 +66,8 @@ CHANGELOG
 
 ### Tests
 - `intelmq.lib.test`: Disable statistics for test runs of bots.
+- `contrib.malware_name_mapping`: Added tests.
+- Travis: Also run tests of contrib.
 
 ### Tools
 - `intelmqsetup`: Only change directory ownerships if necessary.
