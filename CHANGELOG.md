@@ -114,6 +114,8 @@ CHANGELOG
 
 ### Tests
 - `intelmq.lib.test`: Disable statistics for test runs of bots.
+- `contrib.malware_name_mapping`: Added tests.
+- Travis: Also run tests of contrib.
 
 ### Tools
 - `intelmqsetup`: Only change directory ownerships if necessary.
@@ -128,6 +130,7 @@ CHANGELOG
 * malware name mapping:
   - Ignore lines in mapping starting with '#'.
   - Optionally include malpedia data.
+  - Fix command line parsing for not arguments (#1427).
 
 ### Known issues
 
