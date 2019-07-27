@@ -82,6 +82,7 @@ CHANGELOG
 * malware name mapping:
   - Ignore lines in mapping starting with '#'.
   - Optionally include malpedia data.
+  - Fix command line parsing for not arguments (#1427).
 
 ### Known issues
 
