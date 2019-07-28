@@ -44,6 +44,8 @@ CHANGELOG
 - Travis: Use UTC timezone.
 
 ### Tools
+- intelmqctl:
+  - Use green and red text color for some interactive output to indicate obvious errors or the absence of them.
 
 ### Contrib
 
