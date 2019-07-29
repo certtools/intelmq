@@ -681,7 +681,7 @@ class IntelMQController():
         intelmqctl run bot-id console
         intelmqctl clear queue-id
         intelmqctl check
-        intelmqctl upgrade-conf
+        intelmqctl upgrade-config
 
 Starting a bot:
     intelmqctl start bot-id
@@ -733,7 +733,7 @@ Default is INFO. Number of lines defaults to 10, -1 gives all. Result
 can be longer due to our logging format!
 
 Upgrade from a previous version:
-    intelmqctl upgrade-conf
+    intelmqctl upgrade-config
 Make a backup of your configuration first, also including bot's configuration files.
 
 Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
@@ -900,17 +900,20 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                        choices=self.runtime_configuration.keys())
             parser_status.set_defaults(func=self.bot_disable)
 
-            parser_upgrade = subparsers.add_parser('upgrade-conf',
-                                                   help='Upgrade IntelMQ configuration to a newer version.')
-            parser_upgrade.add_argument('-p', '--previous',
-                                        help='Use this version as the previous one.')
-            parser_upgrade.add_argument('-d', '--function',
-                                        help='Run this upgrade function.',
-                                        choices=upgrades.__all__)
-            parser_upgrade.add_argument('-f', '--force',
-                                        action='store_true',
-                                        help='Force running the upgrade procedure.')
-            parser_upgrade.set_defaults(func=self.upgrade)
+            parser_upgrade_conf = subparsers.add_parser('upgrade-config',
+                                                        help='Upgrade IntelMQ configuration to a newer version.')
+            parser_upgrade_conf.add_argument('-p', '--previous',
+                                             help='Use this version as the previous one.')
+            parser_upgrade_conf.add_argument('-d', '--dry-run',
+                                             action='store_true', default=False,
+                                             help='Do not write any files.')
+            parser_upgrade_conf.add_argument('-u', '--function',
+                                             help='Run this upgrade function.',
+                                             choices=upgrades.__all__)
+            parser_upgrade_conf.add_argument('-f', '--force',
+                                             action='store_true',
+                                             help='Force running the upgrade procedure.')
+            parser_upgrade_conf.set_defaults(func=self.upgrade_conf)
 
             self.parser = parser
 
@@ -1451,7 +1454,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 self.logger.info('No issues found.')
                 return retval, 'success'
 
-    def upgrade(self, previous=None, function=None, force=None):
+    def upgrade_conf(self, previous=None, dry_run=None, function=None, force=None):
         """
         Upgrade the IntelMQ configuration after a version upgrade.
 
@@ -1498,6 +1501,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             state = {"version_history": [],
                      "upgrades": {},
                      "results": []}
+            if dry_run:
+                self.logger.info('Would create state file now at %r.', STATE_FILE_PATH)
+                return 0, 'success'
             try:
                 utils.write_configuration(STATE_FILE_PATH, state)
             except Exception as exc:
@@ -1505,6 +1511,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 return 1, 'Error writing state file %r: %s.' % (STATE_FILE_PATH, exc)
             self.logger.error('Successfully wrote initial state file. Please re-run this program.')
             return 0, 'success'
+
+        defaults = utils.load_configuration(DEFAULTS_CONF_FILE)
+        runtime = utils.load_configuration(RUNTIME_CONF_FILE)
+        if dry_run:
+            self.logger.info('Doing a dry run, not writing anything now.')
 
         if function:
             if not force and state['upgrades'].get(function, False):
@@ -1570,11 +1581,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         if __version_info__ in state["version_history"] and not force:
             return 0, "Nothing to do."
         else:
-            if not (os.access(state_file_path, os.W_OK) or
-                    os.access(os.path.dirname(state_file_path), os.W_OK)):
-                self.logger.error('File %s cannot be written. Check the permissions.',
-                                  state_file_path)
-                return 1, 'error'
             if state["version_history"] and not previous and not force:
                 previous = state["version_history"][-1]
                 self.logger.info("Found previous version %s in state file.",
@@ -1591,6 +1597,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             # todo is now a list of tuples of functions.
             # all functions in a tuple (bunch) must be processed successfully to continue
 
+            error = False
             for version, bunch in todo:
                 self.logger.info('Upgrading to version %s.' % '.'.join(map(str, version)))
                 for function in bunch:
@@ -1603,7 +1610,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                               "time": datetime.datetime.now().isoformat()
                               }
                     try:
-                        retval = function()
+                        retval, defaults, runtime = function(defaults, runtime, dry_run)
                     except Exception:
                         self.logger.exception('%s: Upgrade failed, please report this bug '
                                               'with the traceback.', docstring)
@@ -1629,15 +1636,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                     state['upgrades'][function.__name__] = result['success']
 
                     if not result['success']:
-                        with open(state_file_path, 'w') as state_handle:
-                            json.dump(state, fp=state_handle,
-                                      indent=4, sort_keys=True,
-                                      separators=(',', ': '))
-                        self.logger.error('Some migration did not succeed or '
-                                          'manual intervention is needed. Look at '
-                                          'the output above. Afterwards, re-run '
-                                          'this program.')
-                        return 1, 'error'
+                        error = True
+                        break
+                if error:
+                    break
                 state['version_history'].append(version)
 
             if error:
@@ -1669,7 +1671,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             if not dry_run:
                 utils.write_configuration(STATE_FILE_PATH, state)
 
-        return 0, 'success'
+        if error:
+            return 1, 'error'
+        else:
+            return 0, 'success'
 
 
 def main():  # pragma: no cover
