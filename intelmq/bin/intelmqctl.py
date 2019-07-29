@@ -1112,9 +1112,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def write_updated_runtime_config(self, filename=RUNTIME_CONF_FILE):
         try:
-            with open(RUNTIME_CONF_FILE, 'w') as handle:
-                json.dump(self.runtime_configuration, fp=handle, indent=4, sort_keys=True,
-                          separators=(',', ': '))
+            utils.write_configuration(filename, self.runtime_configuration)
         except PermissionError:
             self.abort('Can\'t update runtime configuration: Permission denied.')
         return True
@@ -1495,10 +1493,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                      "upgrades": {},
                      "results": []}
             try:
-                with open(state_file_path, 'w') as state_handle:
-                    json.dump(state, fp=state_handle,
-                              indent=4, sort_keys=True,
-                              separators=(',', ': '))
+                utils.write_configuration(STATE_FILE_PATH, state)
             except Exception as exc:
                 self.logger.error('Error writing state file %r: %s.', state_file_path, exc)
                 return 1, 'Error writing state file %r: %s.' % (state_file_path, exc)
@@ -1520,7 +1515,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                   '' % ', '.join(upgrades.__all__))
                 return 1, 'error'
             try:
-                retval = getattr(upgrades, function)()
+                retval, defaults_new, runtime_new = getattr(upgrades, function)(defaults, runtime, dry_run)
+                # Handle changed configurations
+                    if retval is True and not dry_run:
+                        utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new)
+                        utils.write_configuration(RUNTIME_CONF_FILE, runtime_new)
             except Exception:
                 self.logger.exception('Upgrade %r failed, please report this bug '
                                       'with the shown traceback.',
@@ -1549,10 +1548,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             state['results'].append(result)
             state['upgrades'][function] = result['success']
-            with open(state_file_path, 'w') as state_handle:
-                json.dump(state, fp=state_handle,
-                          indent=4, sort_keys=True,
-                          separators=(',', ': '))
+            if not dry_run:
+                utils.write_configuration(STATE_FILE_PATH, state)
 
             if result['success']:
                 return 0, 'success'
@@ -1637,10 +1634,31 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         return 1, 'error'
                 state['version_history'].append(version)
 
-            if todo:
-                self.logger.info('Configuration upgrade successful!')
-            else:
-                self.logger.info('Nothing to do!')
+            if error:
+                # some upgrade function had a problem
+                if not dry_run:
+                    utils.write_configuration(STATE_FILE_PATH, state)
+                self.logger.error('Some migration did not succeed or '
+                                  'manual intervention is needed. Look at '
+                                  'the output above. Afterwards, re-run '
+                                  'this program.')
+
+            try:
+                if not dry_run:
+                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults)
+                    utils.write_configuration(RUNTIME_CONF_FILE, runtime)
+            except Exception as exc:
+                self.logger.error('Writing defaults or runtime configuration '
+                                  'did not succeed: %s\nFix the problem and '
+                                  'afterwards, re-run this program.',
+                                  exc)
+                return 1, 'error'
+
+            if not error:
+                if todo:
+                    self.logger.info('Configuration upgrade successful!')
+                else:
+                    self.logger.info('Nothing to do!')
 
             with open(state_file_path, 'w') as state_handle:
                 json.dump(state, fp=state_handle,

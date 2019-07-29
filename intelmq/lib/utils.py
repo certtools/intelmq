@@ -22,6 +22,7 @@ import logging.handlers
 import os
 import pwd
 import re
+import shutil
 import sys
 import tarfile
 import traceback
@@ -194,6 +195,36 @@ def load_configuration(configuration_filepath: str) -> dict:
     else:
         raise ValueError('File not found: %r.' % configuration_filepath)
     return config
+
+
+def write_configuration(configuration_filepath: str,
+                        content: dict, backup: bool = True) -> bool:
+    """
+    Writes a configuration to the file, optionally with making a backup.
+    Checks if the file needs to be written at all.
+    Accepts dicts as input and formats them like all configurations.
+
+    Parameters:
+        configuration_filepath: the path to the configuration file
+        content: the configuration itself as dictionary
+        backup: make a backup of the file and delete the old backup (default)
+
+    Returns:
+        True if file has been written successfully
+        None if the file content was the same
+
+    Raises:
+        In case of errors, e.g. PermissionError
+    """
+    old_content = load_configuration(configuration_filepath=configuration_filepath)
+    if content == old_content:
+        return None
+    if backup:
+        shutil.copy2(configuration_filepath, configuration_filepath + '.bak')
+    with open(configuration_filepath, 'w') as handle:
+        json.dump(content, fp=handle, indent=4,
+                  sort_keys=True,
+                  separators=(',', ': '))
 
 
 def load_parameters(*configs: dict) -> Parameters:
