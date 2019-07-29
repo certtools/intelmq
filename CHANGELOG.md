@@ -43,7 +43,9 @@ CHANGELOG
 ### Packaging
 
 ### Tests
-- Travis: Use UTC timezone.
+- Travis:
+  - Use UTC timezone.
+  - Limit lxml dependency on 3.4 to < 4.4.0 (incompatibility).
 
 ### Tools
 - intelmqctl:
