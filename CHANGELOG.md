@@ -26,6 +26,7 @@ CHANGELOG
   - New constant `LOG_FORMAT_SIMPLE`, used by intelmqctl.
   - New function `write_configuration` to write dicts to files in the correct json formatting.
 - `intelmq.lib.pipeline`: AMQP: Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
+- Variable `STATE_FILE_PATH` added.
 
 ### Development
 - `intelmq.bin.intelmq_gen_docs`: For yaml use `safe_load` instead of unsafe `load`.
