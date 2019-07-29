@@ -10,11 +10,13 @@ import intelmq
 import intelmq.lib.utils as utils
 
 __all__ = ['v100_dev7_modify_syntax',
-           'v110_shadowserver_feednames', 'v110_deprecations'
-           'v201_defaults_statistics',
-           'v201_defaults_broker',
+           'v110_shadowserver_feednames',
+           'v110_deprecations',
+           'v200_defaults_statistics',
+           'v200_defaults_broker',
            'v112_feodo_tracker_ips',
            'v112_feodo_tracker_domains',
+           'v200_defaults_ssl_ca_certificate',
            ]
 
 
@@ -24,7 +26,7 @@ def v200_defaults_statistics(defaults, runtime, dry_run):
     """
     values = {"statistics_database": 3,
               "statistics_host": "127.0.0.1",
-              "statistics_password": None,
+              "statistics_password": defaults.get('source_pipeline_password', None),
               "statistics_port": 6379
               }
     changed = None
@@ -138,21 +140,13 @@ def v110_deprecations(defaults, runtime, dry_run):
                 bot["parameters"]["feed"] = bot["parameters"]["name"]
             except KeyError:
                 pass
-    if not changed:
-        return None
 
-    try:
-        with open(intelmq.RUNTIME_CONF_FILE, 'w') as handle:
-            json.dump(runtime, fp=handle, indent=4, sort_keys=True,
-                      separators=(',', ': '))
-    except PermissionError:
-        return 'Can\'t update runtime configuration: Permission denied.'
-    return True
+    return changed, defaults, runtime
 
 
 def modify_expert_convert_config(old):
     """
-    Also used in the modify expert.
+    Also used in the modify expert
     """
     config = []
     for groupname, group in old.items():
@@ -177,6 +171,10 @@ def v100_dev7_modify_syntax(defaults, runtime, dry_run):
                     if len(config) != len(new_config):
                         return 'Error converting modify expert syntax. Different size of configurations. Please report this.'
                     changed = True
+                    if dry_run:
+                        print('Would now convert file %r syntax.',
+                              bot["parameters"]["configuration_path"])
+                        continue
                     try:
                         utils.write_configuration(bot["parameters"]["configuration_path"],
                                                   new_config)
@@ -186,13 +184,23 @@ def v100_dev7_modify_syntax(defaults, runtime, dry_run):
 
     return changed, defaults, runtime
 
-    return changed
+
+def v200_defaults_ssl_ca_certificate(defaults, runtime, dry_run):
+    """
+    Add ssl_ca_certificate to defaults
+    """
+    if "ssl_ca_certificate" not in defaults:
+        defaults["ssl_ca_certificate"] = None
+        return True, defaults, runtime
+    else:
+        return None, defaults, runtime
 
 
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
     ((1, 1, 2), (v112_feodo_tracker_ips, v112_feodo_tracker_domains, )),
-    ((2, 0, 0), (v201_defaults_statistics, v201_defaults_broker)),
+    ((2, 0, 0), (v200_defaults_statistics, v200_defaults_broker,
+                 v200_defaults_ssl_ca_certificate)),
     ((2, 0, 1), ()),
 ])
