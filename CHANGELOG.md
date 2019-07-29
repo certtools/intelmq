@@ -14,6 +14,8 @@ CHANGELOG
   - add `DateTime.convert_from_format`.
   - add `DateTime.convert_from_format_midnight`.
   - add `DateTime.convert_fuzzy`.
+- `intelmq.lib.pipeline`:
+  - Redis: Use single connection client if calling bot is not multithreaded. Gives a small speed advantage.
 
 ### Development
 

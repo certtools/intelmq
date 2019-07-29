@@ -2,7 +2,7 @@
 import time
 import warnings
 from itertools import chain
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
 import redis
 
@@ -27,11 +27,13 @@ class PipelineFactory(object):
     @staticmethod
     def create(parameters: object, logger: object,
                direction: Optional[str] = None,
-               queues: Optional[Union[str, list, dict]] = None):
+               queues: Optional[Union[str, list, dict]] = None,
+               bot=None):
         """
         parameters: Parameters object
         direction: "source" or "destination", optional, needed for queues
         queues: needs direction to be set, calls set_queues
+        bot: Bot instance
         """
         if direction not in [None, "source", "destination"]:
             raise exceptions.InvalidArgument("direction", got=direction,
@@ -46,7 +48,7 @@ class PipelineFactory(object):
                 broker = parameters.broker.title()
             else:
                 broker = "Redis"
-        pipe = getattr(intelmq.lib.pipeline, broker)(parameters, logger)
+        pipe = getattr(intelmq.lib.pipeline, broker)(parameters, logger, bot)
         if queues and not direction:
             raise ValueError("Parameter 'direction' must be given when using "
                              "the queues parameter.")
@@ -59,12 +61,13 @@ class PipelineFactory(object):
 class Pipeline(object):
     has_internal_queues = False
 
-    def __init__(self, parameters, logger):
+    def __init__(self, parameters, logger, bot):
         self.parameters = parameters
         self.destination_queues = {}  # type: dict[str, list]
         self.internal_queue = None
         self.source_queue = None
         self.logger = logger
+        self.bot = bot
 
     def connect(self):
         raise NotImplementedError
@@ -138,6 +141,8 @@ class Redis(Pipeline):
         self.load_balance_iterator = 0
 
     def connect(self):
+        redis_version = tuple(int(x) for x in redis.__version__.split('.'))
+
         if self.host.startswith("/"):
             kwargs = {"unix_socket_path": self.host}
 
@@ -150,6 +155,9 @@ class Redis(Pipeline):
                 "port": int(self.port),
                 "socket_timeout": self.socket_timeout,
             }
+        if self.bot and self.bot.is_multithreaded and redis_version >= (3, 3):
+            # Should give a small performance increase, but is not thread-safe.
+            kwargs['single_connection_client'] = True
 
         self.pipe = redis.Redis(db=self.db, password=self.password, **kwargs)
 
@@ -324,8 +332,8 @@ class Pythonlist(Pipeline):
 class Amqp(Pipeline):
     queue_args = {'x-queue-mode': 'lazy'}
 
-    def __init__(self, parameters, logger):
-        super(Amqp, self).__init__(parameters, logger)
+    def __init__(self, parameters, logger, bot):
+        super(Amqp, self).__init__(parameters, logger, bot)
         if pika is None:
             raise ValueError("To use AMQP you must install the 'pika' library.")
         self.properties = pika.BasicProperties(delivery_mode=2)  # message persistence

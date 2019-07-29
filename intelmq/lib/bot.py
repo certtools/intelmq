@@ -486,7 +486,8 @@ class Bot(object):
             self.__source_pipeline = PipelineFactory.create(self.parameters,
                                                             logger=self.logger,
                                                             direction="source",
-                                                            queues=self.__source_queues)
+                                                            queues=self.__source_queues,
+                                                            bot=self)
             self.__source_pipeline.connect()
             self.logger.debug("Connected to source queue.")
 
