@@ -27,7 +27,7 @@ from termstyle import red, green
 
 from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
-                     RUNTIME_CONF_FILE, VAR_RUN_PATH, VAR_STATE_PATH,
+                     RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
                      __version_info__)
 from intelmq.lib import utils
 from intelmq.lib.bot_debugger import BotDebugger
@@ -1428,8 +1428,15 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                        bot['module'], bot_id)
                     retval = 1
 
-        # TODO: Check migrations from state file, and if the latter exists
-        # check if all functions have been executed successfully
+        if os.path.isfile(STATE_FILE_PATH):
+            state = utils.load_configuration(STATE_FILE_PATH)
+            for functionname in upgrades.__all__:
+                if not state['upgrades'].get(functionname, False):
+                    check_logger.error("Upgrade function %s not completed (successfully). "
+                                       "Please run 'intelmqctl upgrade-config'.",
+                                       functionname)
+        else:
+            check_logger.error("No state file found. Please call 'intelmqctl upgrade-config'.")
 
         if RETURN_TYPE == 'json':
             if retval:
@@ -1477,13 +1484,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                  "time": "..."}
                 ]
         """
-        state_file_path = os.path.join(VAR_STATE_PATH, '../state.json')
-        if os.path.isfile(state_file_path):
-            if not os.access(state_file_path, os.W_OK):
+        if os.path.isfile(STATE_FILE_PATH):
+            if not os.access(STATE_FILE_PATH, os.W_OK) and not dry_run:
                 self.logger.error("State file %r is not writable.")
                 return 1, "State file %r is not writable."
-            with open(state_file_path, 'r') as state_handle:
-                state = json.load(state_handle)
+            state = utils.load_configuration(STATE_FILE_PATH)
         else:
             """
             We create the state file directly before any upgrade function.
@@ -1496,8 +1501,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             try:
                 utils.write_configuration(STATE_FILE_PATH, state)
             except Exception as exc:
-                self.logger.error('Error writing state file %r: %s.', state_file_path, exc)
-                return 1, 'Error writing state file %r: %s.' % (state_file_path, exc)
+                self.logger.error('Error writing state file %r: %s.', STATE_FILE_PATH, exc)
+                return 1, 'Error writing state file %r: %s.' % (STATE_FILE_PATH, exc)
             self.logger.error('Successfully wrote initial state file. Please re-run this program.')
             return 0, 'success'
 
@@ -1661,10 +1666,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 else:
                     self.logger.info('Nothing to do!')
 
-            with open(state_file_path, 'w') as state_handle:
-                json.dump(state, fp=state_handle,
-                          indent=4, sort_keys=True,
-                          separators=(',', ': '))
+            if not dry_run:
+                utils.write_configuration(STATE_FILE_PATH, state)
 
         return 0, 'success'
 
