@@ -75,9 +75,11 @@ CHANGELOG
 - `intelmqsetup`: Only change directory ownerships if necessary.
 - `intelmqctl`:
   - Provide new command `upgrade-conf` to uprade configuration to a newer version.
+    - Makes backups of configurations files itself.
   - Provide logging level on on class layer.
   - Fix `-q` flag for `intelmqctl list queues` by renaming (providing an additional variant) it to `--non-zero`.
   - For console output `intemqctl: ` at the beginning of each line is no longer present.
+  - `check`: Support for the state file added. Checks if it exists and all upgrade functions have been executed successfully.
 
 ### Contrib
 * logcheck rules: Adapt ignore rule to cover the instance id of bot names.

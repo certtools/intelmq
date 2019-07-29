@@ -3,10 +3,7 @@
 © 2019 Sebastian Wagner <wagner@cert.at>
 
 SPDX-License-Identifier: AGPL-3.0
-
-TODO: modify syntax conversion
 """
-import json
 from collections import OrderedDict
 
 import intelmq
