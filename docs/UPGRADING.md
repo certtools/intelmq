@@ -70,13 +70,14 @@ Call the configuration upgrade function:
 intelmqctl upgrade-conf
 ```
 
-## Check the installation
+## Upgrade configuration and check the installation
 
 Go through [NEWS.md](../NEWS.md) and apply necessary adaptions to your setup.
 If you have adapted IntelMQ's code, also read the [CHANGELOG.md](../CHANGELOG.md).
 
 Check your installation and configuration to detect any problems:
 ```bash
+intelmqctl upgrade-config
 intelmqctl check
 ```
 
