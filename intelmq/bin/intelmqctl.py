@@ -1502,10 +1502,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                      "upgrades": {},
                      "results": []}
             if dry_run:
-                self.logger.info('Would create state file now at %r.', STATE_FILE_PATH)
+                self.logger.info('Would create state file now at %r.',
+                                 STATE_FILE_PATH)
                 return 0, 'success'
             try:
-                utils.write_configuration(STATE_FILE_PATH, state)
+                utils.write_configuration(STATE_FILE_PATH, state, new=True)
             except Exception as exc:
                 self.logger.error('Error writing state file %r: %s.', STATE_FILE_PATH, exc)
                 return 1, 'Error writing state file %r: %s.' % (STATE_FILE_PATH, exc)

@@ -198,7 +198,8 @@ def load_configuration(configuration_filepath: str) -> dict:
 
 
 def write_configuration(configuration_filepath: str,
-                        content: dict, backup: bool = True) -> bool:
+                        content: dict, backup: bool = True,
+                        new=False) -> bool:
     """
     Writes a configuration to the file, optionally with making a backup.
     Checks if the file needs to be written at all.
@@ -208,6 +209,7 @@ def write_configuration(configuration_filepath: str,
         configuration_filepath: the path to the configuration file
         content: the configuration itself as dictionary
         backup: make a backup of the file and delete the old backup (default)
+        new: If the file is expected to be new, do not attempt to read or backup it.
 
     Returns:
         True if file has been written successfully
@@ -216,10 +218,11 @@ def write_configuration(configuration_filepath: str,
     Raises:
         In case of errors, e.g. PermissionError
     """
-    old_content = load_configuration(configuration_filepath=configuration_filepath)
-    if content == old_content:
-        return None
-    if backup:
+    if not new:
+        old_content = load_configuration(configuration_filepath=configuration_filepath)
+        if content == old_content:
+            return None
+    if not new and backup:
         shutil.copy2(configuration_filepath, configuration_filepath + '.bak')
     with open(configuration_filepath, 'w') as handle:
         json.dump(content, fp=handle, indent=4,

@@ -47,11 +47,19 @@ class FileOutputBot(Bot):
             ev.update(event)
             # remove once #671 is done
             if 'time.observation' in ev:
-                ev['time.observation'] = datetime.datetime.strptime(ev['time.observation'],
-                                                                    '%Y-%m-%dT%H:%M:%S+00:00')
+                try:
+                    ev['time.observation'] = datetime.datetime.strptime(ev['time.observation'],
+                                                                        '%Y-%m-%dT%H:%M:%S+00:00')
+                except ValueError:
+                    ev['time.observation'] = datetime.datetime.strptime(ev['time.observation'],
+                                                                        '%Y-%m-%dT%H:%M:%S.%f+00:00')
             if 'time.source' in ev:
-                ev['time.source'] = datetime.datetime.strptime(ev['time.source'],
-                                                               '%Y-%m-%dT%H:%M:%S+00:00')
+                try:
+                    ev['time.source'] = datetime.datetime.strptime(ev['time.source'],
+                                                                   '%Y-%m-%dT%H:%M:%S+00:00')
+                except ValueError:
+                    ev['time.source'] = datetime.datetime.strptime(ev['time.source'],
+                                                                   '%Y-%m-%dT%H:%M:%S.%f+00:00')
             filename = self.parameters.file.format(event=ev)
             if not self.file or filename != self.file.name:
                 self.open_file(filename)
