@@ -6,7 +6,6 @@ SPDX-License-Identifier: AGPL-3.0
 """
 from collections import OrderedDict
 
-import intelmq
 import intelmq.lib.utils as utils
 
 __all__ = ['v100_dev7_modify_syntax',
@@ -117,27 +116,27 @@ def v110_deprecations(defaults, runtime, dry_run):
     }
     changed = None
     for bot_id, bot in runtime.items():
-
         if bot["module"] in mapping:
-            changed = True
             bot["module"] = mapping[bot["module"]]
-        if bot["module"] == "intelmq.bots.experts.ripencc_abuse_contact.expert":
             changed = True
+        if bot["module"] == "intelmq.bots.experts.ripencc_abuse_contact.expert":
             bot["module"] = "intelmq.bots.experts.ripe.expert"
+            changed = True
         if bot["module"] == "intelmq.bots.experts.ripe.expert":
             if bot["parameters"].get("query_ripe_stat"):
-                changed = True
                 if "query_ripe_stat_asn" not in bot["parameters"]:
                     bot["parameters"]["query_ripe_stat_asn"] = bot["parameters"]["query_ripe_stat"]
                 if "query_ripe_stat_asn" not in bot["parameters"]:
                     bot["parameters"]["query_ripe_stat_ip"] = bot["parameters"]["query_ripe_stat_ip"]
                 del bot["parameters"]["query_ripe_stat"]
+                changed = True
         if bot["group"] == 'Collector' and bot["parameters"].get("feed"):
-            changed = True
             try:
                 bot["parameters"]["feed"] = bot["parameters"]["name"]
             except KeyError:
                 pass
+            else:
+                changed = True
 
     return changed, defaults, runtime
 
