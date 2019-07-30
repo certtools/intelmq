@@ -9,6 +9,7 @@ class Netlab360ParserBot(ParserBot):
     DGA_FEED = {'http://data.netlab.360.com/feeds/dga/dga.txt'}
     MAGNITUDE_FEED = {'http://data.netlab.360.com/feeds/ek/magnitude.txt'}
     MIRAI_SCANNER_FEED = {'http://data.netlab.360.com/feeds/mirai-scanner/scanner.list'}
+    HAJIME_SCANNER_FEED = {'http://data.netlab.360.com/feeds/hajime-scanner/bot.list'}
 
     def parse_line(self, line, report):
         if line.startswith('#') or not line.strip():
