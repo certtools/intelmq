@@ -144,6 +144,7 @@ See also the changelog for 2.0.0.beta1 below.
 - Travis: Switch distribution from trusty to xenial, adapt scripts.
   - Add Python 3.7 to tests.
 - Don't use Cerberus 1.3 because of https://github.com/pyeve/cerberus/issues/489
+- Add tests for `intelmqctl.lib.upgrades`.
 
 ### Tools
 - intelmqdump: Fix creation of pipeline object by providing a logger.
