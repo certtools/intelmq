@@ -58,6 +58,7 @@ CHANGELOG
   - Support for no used authentication.
   - Replace deprecated parameter `type` with `exchange_type` for `exchange_declare`, supporting pika >= 0.11 (#1425).
 - `intelmq.bots.outputs.mongodb.output`: Support for pymongo >= 3.0.0 (#1063, PR#1421).
+- `intelmq.bots.outputs.file`: `time.*` field serialization: support for microseconds.
 
 ### Documentation
 - Add certbund-contact to the ecosystem document.
