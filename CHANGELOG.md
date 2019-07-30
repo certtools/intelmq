@@ -78,7 +78,9 @@ CHANGELOG
   - `parse_logline`: Handle thread IDs.
   - `log` takes a new argument `logging_level_stream` for the logging level of the console handler.
   - New constant `LOG_FORMAT_SIMPLE`, used by intelmqctl.
+  - New function `write_configuration` to write dicts to files in the correct json formatting.
 - `intelmq.lib.pipeline`: AMQP: Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
+- Variable `STATE_FILE_PATH` added.
 
 ### Development
 - `intelmq.bin.intelmq_gen_docs`: For yaml use `safe_load` instead of unsafe `load`.
@@ -127,9 +129,11 @@ CHANGELOG
 - `intelmqsetup`: Only change directory ownerships if necessary.
 - `intelmqctl`:
   - Provide new command `upgrade-conf` to uprade configuration to a newer version.
+    - Makes backups of configurations files itself.
   - Provide logging level on on class layer.
   - Fix `-q` flag for `intelmqctl list queues` by renaming (providing an additional variant) it to `--non-zero`.
   - For console output `intemqctl: ` at the beginning of each line is no longer present.
+  - `check`: Support for the state file added. Checks if it exists and all upgrade functions have been executed successfully.
 
 ### Contrib
 * logcheck rules: Adapt ignore rule to cover the instance id of bot names.
@@ -137,6 +141,7 @@ CHANGELOG
   - Ignore lines in mapping starting with '#'.
   - Optionally include malpedia data.
   - Fix command line parsing for not arguments (#1427).
+- bash-completion: Support for `intelmqctl upgrade-config` added.
 
 ### Known issues
 
