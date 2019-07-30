@@ -1534,9 +1534,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             try:
                 retval, defaults_new, runtime_new = getattr(upgrades, function)(defaults, runtime, dry_run)
                 # Handle changed configurations
-                    if retval is True and not dry_run:
-                        utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new)
-                        utils.write_configuration(RUNTIME_CONF_FILE, runtime_new)
+                if retval is True and not dry_run:
+                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new)
+                    utils.write_configuration(RUNTIME_CONF_FILE, runtime_new)
             except Exception:
                 self.logger.exception('Upgrade %r failed, please report this bug '
                                       'with the shown traceback.',

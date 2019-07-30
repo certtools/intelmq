@@ -74,7 +74,6 @@ def v112_feodo_tracker_domains(defaults, runtime, dry_run):
     """
     Search for discontinued feodotracker domains feed
     """
-    runtime = utils.load_configuration(intelmq.RUNTIME_CONF_FILE)
     found = False
     for bot_id, bot in runtime.items():
         if bot["parameters"].get("http_url") == "https://feodotracker.abuse.ch/blocklist/?download=domainblocklist":
