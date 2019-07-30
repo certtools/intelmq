@@ -65,7 +65,6 @@ def v112_feodo_tracker_ips(defaults, runtime, dry_run):
         if bot["parameters"].get("http_url") == "https://feodotracker.abuse.ch/blocklist/?download=ipblocklist":
             bot["parameters"]["http_url"] = "https://feodotracker.abuse.ch/downloads/ipblocklist.csv"
             changed = True
-    changed = True
 
     return changed, defaults, runtime
 
