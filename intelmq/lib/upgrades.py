@@ -16,6 +16,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v112_feodo_tracker_ips',
            'v112_feodo_tracker_domains',
            'v200_defaults_ssl_ca_certificate',
+           'v111_defaults_process_manager',
            ]
 
 
@@ -193,9 +194,30 @@ def v200_defaults_ssl_ca_certificate(defaults, runtime, dry_run):
         return None, defaults, runtime
 
 
+def v111_defaults_process_manager(defaults, runtime, dry_run):
+    """
+    Fix typo in proccess_manager parameter
+    """
+    changed = None
+    if "proccess_manager" in defaults:
+        if "process_manager" in defaults:
+            del defaults["proccess_manager"]
+        elif "process_manager" not in defaults:
+            defaults["process_manager"] = defaults["proccess_manager"]
+            del defaults["proccess_manager"]
+        changed = True
+    else:
+        if "process_manager" not in defaults:
+            defaults["process_manager"] = "intelmq"
+            changed = True
+
+    return changed, defaults, runtime
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
+    ((1, 1, 1), (v111_defaults_process_manager, )),
     ((1, 1, 2), (v112_feodo_tracker_ips, v112_feodo_tracker_domains, )),
     ((2, 0, 0), (v200_defaults_statistics, v200_defaults_broker,
                  v200_defaults_ssl_ca_certificate)),
