@@ -77,6 +77,7 @@ CHANGELOG
 - `intelmqctl`:
   - Provide new command `upgrade-conf` to uprade configuration to a newer version.
     - Makes backups of configurations files itself.
+    - Also checks for previously skipped or new functions of older versions and catches up.
   - Provide logging level on on class layer.
   - Fix `-q` flag for `intelmqctl list queues` by renaming (providing an additional variant) it to `--non-zero`.
   - For console output `intemqctl: ` at the beginning of each line is no longer present.

@@ -1585,17 +1585,38 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 todo = []
                 for version, functions in upgrades.UPGRADES.items():
                     if utils.version_smaller(tuple(previous), version):
-                        todo.append((version, functions))
+                        todo.append((version, functions, True))
+                    else:
+                        funcs = []
+                        for function in functions:
+                            fname = function.__name__
+                            if not state['upgrades'].get(fname, False):
+                                self.logger.info("Catch up function %s from version %s.",
+                                                 fname, '.'.join(str(x) for x in version))
+                                funcs.append(function)
+                        if funcs:
+                            todo.append((version, funcs, False))
             else:
                 self.logger.info("Found no previous version, doing all upgrades.")
                 todo = upgrades.UPGRADES.items()
 
-            # todo is now a list of tuples of functions.
-            # all functions in a tuple (bunch) must be processed successfully to continue
+            """
+            todo is now a list of tuples of functions.
+            todo = [
+                    (version, tuple of functions, bool if the version is new)
+                    ...
+                    ]
+            all functions in a tuple (bunch) must be processed successfully to continue
+            the third value is to catch some situations:
+                if the function has been inserted later, we do not say this is an upgrade to a newer version
+                and do not append the version to the version history again
+            """
 
             error = False
-            for version, bunch in todo:
-                self.logger.info('Upgrading to version %s.' % '.'.join(map(str, version)))
+            for version, bunch, version_new in todo:
+                if version_new:
+                    self.logger.info('Upgrading to version %s.',
+                                     '.'.join(map(str, version)))
                 for function in bunch:
                     if not force and state['upgrades'].get(function.__name__, False):
                         # already performed
@@ -1636,7 +1657,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         break
                 if error:
                     break
-                state['version_history'].append(version)
+                if version_new:
+                    state['version_history'].append(version)
 
             if error:
                 # some upgrade function had a problem
