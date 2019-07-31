@@ -347,11 +347,6 @@
             "module": "intelmq.bots.parsers.bitcash.parser",
             "parameters": {}
         },
-	"BotScout": {
-            "description": "BotScout Blocklist parser is the bot responsible to parse and sanitize the information.",
-            "module": "intelmq.bots.parsers.botscout.parser",
-            "parameters": {}
-	},
         "Blocklist.de": {
             "description": "Blocklist.DE Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.blocklistde.parser",
