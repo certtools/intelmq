@@ -66,6 +66,7 @@ CHANGELOG
 - Add the new configuration upgrade function to the docs.
 
 ### Packaging
+- Do not execute the tcp collector tests during debian and ubuntu builds as they fail there.
 
 ### Tests
 - `intelmq.lib.test`: Disable statistics for test runs of bots.
