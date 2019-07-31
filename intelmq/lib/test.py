@@ -226,15 +226,16 @@ class BotTestCase(object):
         parameters = Parameters()
         setattr(parameters, 'source_queue', src_name)
         setattr(parameters, 'destination_queues', destination_queues)
-        self.pipe = pipeline.Pythonlist(parameters, logger=logger)
-        self.pipe.set_queues(parameters.source_queue, "source")
-        self.pipe.set_queues(parameters.destination_queues, "destination")
 
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
                 self.bot = self.bot_reference(self.bot_id)
         self.bot._Bot__stats_cache = None
+
+        self.pipe = pipeline.Pythonlist(parameters, logger=logger, bot=self.bot)
+        self.pipe.set_queues(parameters.source_queue, "source")
+        self.pipe.set_queues(parameters.destination_queues, "destination")
 
         if self.input_message is not None:
             if type(self.input_message) is not list:
