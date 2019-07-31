@@ -139,7 +139,7 @@ file-output: Bot is starting.
 file-output: Loading source pipeline and queue 'file-output-queue'.
 file-output: Connected to source queue.
 file-output: No destination queues to load.
-file-output: Pipeline ready.
+file-output: Bot initialization completed.
 file-output: Waiting for incoming message.
 ```
 
@@ -210,7 +210,7 @@ With no other arguments, bot\'s ```process()``` method will be run one time.
 ```bash
 > intelmqctl run file-output process
 file-output: Bot is starting.
-file-output: Pipeline ready.
+file-output: Bot initialization completed.
 file-output: Processing...
 file-output: Waiting for incoming message.
 file-output: Received message {'raw': '1234'}.
