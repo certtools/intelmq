@@ -1337,10 +1337,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 if field not in bot_config:
                     check_logger.warning('Bot %r has no %r.', bot_id, field)
                     retval = 1
-            if 'module' in bot_config and bot_config['module'] == 'bots.collectors.n6.collector_stomp':
-                check_logger.warning("The module 'bots.collectors.n6.collector_stomp' is deprecated and will be removed in "
-                                     "version 2.0. Please use intelmq.bots.collectors."
-                                     "stomp.collector instead for bot %r." % bot_id)
             if 'run_mode' in bot_config and bot_config['run_mode'] not in ['continuous', 'scheduled']:
                 message = "Bot %r has invalid `run_mode` %r. Must be 'continuous' or 'scheduled'."
                 check_logger.warning(message, bot_id, bot_config['run_mode'])
@@ -1389,7 +1385,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         for event_type, event_type_conf in files[HARMONIZATION_CONF_FILE].items():
             for harm_type_name, harm_type in event_type_conf.items():
                 if "description" not in harm_type:
-                    check_logger.warn('Missing description for type %r.', harm_type_name)
+                    check_logger.warning('Missing description for type %r.', harm_type_name)
                 if "type" not in harm_type:
                     check_logger.error('Missing type for type %r.', harm_type_name)
                     retval = 1
@@ -1528,8 +1524,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                       }
             if not hasattr(upgrades, function):
                 self.logger.error('This function does not exist. '
-                                  'Available functions are %s'
-                                  '' % ', '.join(upgrades.__all__))
+                                  'Available functions are %s',
+                                  ', '.join(upgrades.__all__))
                 return 1, 'error'
             try:
                 retval, defaults_new, runtime_new = getattr(upgrades, function)(defaults, runtime, dry_run)
