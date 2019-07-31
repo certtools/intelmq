@@ -192,6 +192,35 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(utils.version_smaller((1, 0, 0), (1, 0, 0, 'alpha', 99)))
         self.assertFalse(utils.version_smaller((1, 0, 0), (1, 0, 0, 'beta')))
 
+    def test_unzip_tar_gz(self):
+        """ Test the unzip function with a tar gz file. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/two_files.tar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True)
+        self.assertEqual(result, [b'bar text\n', b'foo text\n'])
+
+    def test_unzip_tar_gz_return_names(self):
+        """ Test the unzip function with a tar gz file and return_names. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/two_files.tar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True, return_names=True)
+        self.assertEqual(result, [('bar', b'bar text\n'),
+                                  ('foo', b'foo text\n')])
+
+    def test_unzip_gz(self):
+        """ Test the unzip function with a gz file. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/foobar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True)
+        self.assertEqual(result, [b'bar text\n'])
+
+    def test_unzip_gz_name(self):
+        """ Test the unzip function with a gz file. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/foobar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True, return_names=True)
+        self.assertEqual(result, [(None, b'bar text\n')])
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

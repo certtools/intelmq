@@ -472,7 +472,8 @@ def parse_relative(relative_time: str) -> int:
         raise ValueError("Could not process result of regex for attribute " + repr(relative_time))
 
 
-def unzip(file: bytes, extract_files: Union[bool, list], logger=None, try_gzip: bool = True) -> list:
+def unzip(file: bytes, extract_files: Union[bool, list], logger=None,
+          try_gzip: bool = True, return_names: bool = False) -> list:
     """
         Extracts given compressed (tar.)gz file and returns content of specified or all files from it.
         Handles tarfiles, compressed tarfiles and gzipped files.
@@ -487,6 +488,9 @@ def unzip(file: bytes, extract_files: Union[bool, list], logger=None, try_gzip: 
                     True: all
                     list: some
             try_gzip: Try to gzip-uncompress the file.
+            return_names: If true, return tuples of (file name, file content) instead of
+                only the file content.
+                False by default
 
         Returns:
             result: list containing the string representation of specified files
@@ -508,12 +512,18 @@ def unzip(file: bytes, extract_files: Union[bool, list], logger=None, try_gzip: 
         except OSError:
             raise TypeError("Could not process given file" + repr(te.args))
         else:
-            return [data]
+            if return_names:
+                return [(None, data)]
+            else:
+                return [data]
     else:
         if isinstance(extract_files, bool):
             extract_files = [file.name for file in tar.getmembers()]
 
-        return [tar.extractfile(member).read() for member in tar.getmembers() if member.name in extract_files]
+        if return_names:
+            return [(member.name, tar.extractfile(member).read()) for member in tar.getmembers() if member.name in extract_files]
+        else:
+            return [tar.extractfile(member).read() for member in tar.getmembers() if member.name in extract_files]
 
 
 class RewindableFileHandle(object):

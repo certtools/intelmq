@@ -21,6 +21,8 @@ CHANGELOG
   - Log message after successful bot initialization, no log message anymore for ready pipeline.
 - `intelmq.lib.test`:
   - Fix the tests broker by providing the testing pipeline.
+- `intelmq.lib.utils`:
+  `unzip`: new parameter `return_names` to optionally return the file names.
 
 ### Development
 
@@ -51,6 +53,7 @@ CHANGELOG
 - Travis:
   - Use UTC timezone.
   - Limit lxml dependency on 3.4 to < 4.4.0 (incompatibility).
+- Tests for `utils.unzip`.
 
 ### Tools
 - intelmqctl:
