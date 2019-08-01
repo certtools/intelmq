@@ -688,9 +688,12 @@ tail -f /opt/intelmq/var/log/*.log
 
 # Uninstall
 
+If you installed intelmq with native packages: Use the package management tool to remove the package `intelmq`. These tools do not remove configuration by default.
+
+If you installed manually via pip (note that this also deletes all configuration and possibly data):
 ```bash
-pip uninstall intelmq
-rm -rf /opt/intelmq
+pip3 uninstall intelmq
+rm -r /opt/intelmq
 ```
 
 # Integration with ticket systems, etc.
