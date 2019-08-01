@@ -26,6 +26,7 @@ import shutil
 import sys
 import tarfile
 import traceback
+import zipfile
 from typing import Any, Generator, Iterator, Optional, Sequence, Union
 
 import dateutil.parser
@@ -472,58 +473,95 @@ def parse_relative(relative_time: str) -> int:
         raise ValueError("Could not process result of regex for attribute " + repr(relative_time))
 
 
+def extract_tar(file):
+    tar = tarfile.open(fileobj=io.BytesIO(file))
+    def extract(filename):
+        return tar.extractfile(filename).read()
+    return tuple(file.name for file in tar.getmembers()), tar, extract
+
+
+def extract_gzip(file):
+    return None, gzip.decompress(file), None
+
+
+def extract_zip(file):
+    zfp = zipfile.ZipFile(io.BytesIO(file), "r")
+    return zfp.namelist(), zfp, zfp.read
+
+
 def unzip(file: bytes, extract_files: Union[bool, list], logger=None,
-          try_gzip: bool = True, return_names: bool = False) -> list:
+          try_gzip: bool = True,
+          try_zip: bool = True, try_tar: bool = True,
+          return_names: bool = False,
+          ) -> list:
     """
-        Extracts given compressed (tar.)gz file and returns content of specified or all files from it.
-        Handles tarfiles, compressed tarfiles and gzipped files.
+    Extracts given compressed (tar.)gz file and returns content of specified or all files from it.
+    Handles tarfiles, compressed tarfiles and gzipped files.
 
-        First the function tries to handle the file with the tarfile library which handles
-        compressed archives too.
-        Second, it tries to uncompress the file with gzip.
+    First the function tries to handle the file with the tarfile library which handles
+    compressed archives too.
+    Second, it tries to uncompress the file with gzip.
 
-        Parameters:
-            file: a binary representation of compressed file
-            extract_files: a value which specifies files to be extracted:
-                    True: all
-                    list: some
-            try_gzip: Try to gzip-uncompress the file.
-            return_names: If true, return tuples of (file name, file content) instead of
-                only the file content.
-                False by default
+    Parameters:
+        file: a binary representation of compressed file
+        extract_files: a value which specifies files to be extracted:
+                True: all
+                list: some
+        logger: optional Logger object
+        try_gzip: Try to uncompress the file using gzip, default: True
+        try_zip: Try to uncompress and extract files using zip, default: True
+        try_tar: Try to uncompress and extract files using tar, default: True
+        return_names: If true, return tuples of (file name, file content) instead of
+            only the file content.
+            False by default
 
-        Returns:
-            result: list containing the string representation of specified files
+    Returns:
+        result: tuple containing the string representation of specified files
+            if extract_names is True, each element is a tuple of file name and the file content
 
-        Raises:
-            TypeError: If file isn't tar.gz
+    Raises:
+        TypeError: If file isn't tar.gz
     """
-    try:
-        tar = tarfile.open(fileobj=io.BytesIO(file))
-        if logger:
-            logger.debug('Detected tarfile.')
-    except tarfile.TarError as te:
+    for tryit, name, function in zip((try_zip, try_tar, try_gzip),
+                                     ('zip', 'tar', 'gzip'),
+                                     (extract_zip, extract_tar, extract_gzip)):
+        if not tryit:
+            continue
         try:
-            if not try_gzip:
-                raise OSError
+            files, archive, extract_function = function(file)
+        except Exception as exc:
             if logger:
-                logger.debug('Detected gzipped file.')
-            data = gzip.decompress(file)
-        except OSError:
-            raise TypeError("Could not process given file" + repr(te.args))
+                logger.debug("Uncompression using %s failed with %s.",
+                             name, exc)
         else:
-            if return_names:
-                return [(None, data)]
-            else:
-                return [data]
+            if logger:
+                logger.debug('Detected %s archive.', name)
+            break
     else:
-        if isinstance(extract_files, bool):
-            extract_files = [file.name for file in tar.getmembers()]
+        raise ValueError("Failed to uncompress the given file.")
 
+    if files is None:
         if return_names:
-            return [(member.name, tar.extractfile(member).read()) for member in tar.getmembers() if member.name in extract_files]
+            return ((None, archive), )
         else:
-            return [tar.extractfile(member).read() for member in tar.getmembers() if member.name in extract_files]
+            return (archive, )
+
+    if logger:
+        logger.debug("Found files %r in archive.", files)
+
+    if isinstance(extract_files, bool):
+        extract_files = files
+    if logger:
+        logger.debug("Extracting %r from archive.", extract_files)
+
+    if return_names:
+        return ((filename, extract_function(filename))
+                for filename in files
+                if filename in extract_files)
+    else:
+        return (extract_function(filename)
+                for filename in files
+                if filename in extract_files)
 
 
 class RewindableFileHandle(object):

@@ -15,12 +15,14 @@ OUTPUT = [{"__type": "Report",
            "feed.accuracy": 100.,
            "feed.url": "http://localhost/two_files.tar.gz",
            "raw": utils.base64_encode('bar text\n'),
+           "extra.file_name": "bar",
            },
           {"__type": "Report",
            "feed.name": "Example feed",
            "feed.accuracy": 100.,
            "feed.url": "http://localhost/two_files.tar.gz",
            "raw": utils.base64_encode('foo text\n'),
+           "extra.file_name": "foo",
            },
           ]
 
@@ -66,8 +68,42 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(iterations=1)
 
         output = OUTPUT[0].copy()
-        output['feed.url'] = 'http://localhost/foobar.gz'
+        output['feed.url'] = self.sysconfig['http_url']
+        del output['extra.file_name']
         self.assertMessageEqual(0, output)
+
+    def test_zip_auto(self):
+        """
+        Test automatic unzipping
+        """
+        self.sysconfig = {'http_url': 'http://localhost/two_files.zip',
+                          'name': 'Example feed',
+                          }
+        self.run_bot(iterations=1)
+
+        output0 = OUTPUT[0].copy()
+        output0['feed.url'] = self.sysconfig['http_url']
+        output1 = OUTPUT[1].copy()
+        output1['feed.url'] = self.sysconfig['http_url']
+        self.assertMessageEqual(0, output0)
+        self.assertMessageEqual(1, output1)
+
+    def test_zip(self):
+        """
+        Test unzipping with explicit extract_files
+        """
+        self.sysconfig = {'http_url': 'http://localhost/two_files.zip',
+                          'extract_files': ['bar', 'foo'],
+                          'name': 'Example feed',
+                          }
+        self.run_bot(iterations=1)
+
+        output0 = OUTPUT[0].copy()
+        output0['feed.url'] = self.sysconfig['http_url']
+        output1 = OUTPUT[1].copy()
+        output1['feed.url'] = self.sysconfig['http_url']
+        self.assertMessageEqual(0, output0)
+        self.assertMessageEqual(1, output1)
 
 
 if __name__ == '__main__':  # pragma: no cover

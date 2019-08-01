@@ -22,7 +22,11 @@ CHANGELOG
 - `intelmq.lib.test`:
   - Fix the tests broker by providing the testing pipeline.
 - `intelmq.lib.utils`:
-  `unzip`: new parameter `return_names` to optionally return the file names.
+  - `unzip`:
+    - new parameter `return_names` to optionally return the file names.
+    - support for zip
+    - new parameters `try_zip`, `try_gzip` and `try_tar` to control which compressions are tried.
+    - rewritten to an iterative approach
 
 ### Development
 
@@ -31,6 +35,7 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.http.collector_http`: More extensive usage of `intelmq.lib.utils.unzip`.
 
 #### Parsers
 - `intelmq.bot.parsers.html_table.parser`:
@@ -54,6 +59,7 @@ CHANGELOG
   - Use UTC timezone.
   - Limit lxml dependency on 3.4 to < 4.4.0 (incompatibility).
 - Tests for `utils.unzip`.
+- Add a new asset: Zip archive with two files, same as with tar.gz archive.
 
 ### Tools
 - intelmqctl:
