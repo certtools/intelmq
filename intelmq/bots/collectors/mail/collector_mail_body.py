@@ -26,6 +26,9 @@ class MailBodyCollectorBot(MailCollectorBot):
 
                 report = self.new_report()
                 report.add("raw", body)
+                report.add["extra.email_subject"] = message.subject
+                report.add["extra.email_from"] = message.sent_from
+                report.add["extra.email_message_id"] = message.message_id
 
                 self.send_message(report)
 

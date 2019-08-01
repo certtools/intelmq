@@ -272,6 +272,11 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `sent_to`: filter messages by recipient
 * `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
+The resulting reports contains the following special fields:
+ * `extra.email_subject`: The subject of the email
+ * `extra.email_from`: The email's from address
+ * `extra.email_message_id`: The email's message ID
+
 * * *
 
 ### Generic Mail Attachment Fetcher
@@ -299,6 +304,10 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `sent_to`: filter messages by recipient
 * `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
+The resulting reports contains the following special fields:
+ * `extra.email_subject`: The subject of the email
+ * `extra.email_from`: The email's from address
+ * `extra.email_message_id`: The email's message ID
 * * *
 
 ### Generic Mail Body Fetcher
@@ -327,6 +336,11 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
   - string with comma separated values, e.g. `['html', 'plain']`
   - `true`, `false`, `null`: Same as default value
   - `string`, e.g. `'plain'`
+
+The resulting reports contains the following special fields:
+ * `extra.email_subject`: The subject of the email
+ * `extra.email_from`: The email's from address
+ * `extra.email_message_id`: The email's message ID
 
 * * *
 

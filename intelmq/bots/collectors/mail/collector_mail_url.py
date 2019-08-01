@@ -76,6 +76,9 @@ class MailURLCollectorBot(MailCollectorBot):
                     self.logger.info("Report downloaded.")
 
                     template = self.new_report()
+                    template["extra.email_subject"] = message.subject
+                    template["extra.email_from"] = message.sent_from
+                    template["extra.email_message_id"] = message.message_id
 
                     for report in generate_reports(template, io.BytesIO(resp.content),
                                                    self.chunk_size,
