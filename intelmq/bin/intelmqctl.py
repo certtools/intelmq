@@ -1338,10 +1338,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 if field not in bot_config:
                     check_logger.warning('Bot %r has no %r.', bot_id, field)
                     retval = 1
-            if 'module' in bot_config and bot_config['module'] == 'bots.collectors.n6.collector_stomp':
-                check_logger.warning("The module 'bots.collectors.n6.collector_stomp' is deprecated and will be removed in "
-                                     "version 2.0. Please use intelmq.bots.collectors."
-                                     "stomp.collector instead for bot %r." % bot_id)
             if 'run_mode' in bot_config and bot_config['run_mode'] not in ['continuous', 'scheduled']:
                 message = "Bot %r has invalid `run_mode` %r. Must be 'continuous' or 'scheduled'."
                 check_logger.warning(message, bot_id, bot_config['run_mode'])
@@ -1390,7 +1386,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         for event_type, event_type_conf in files[HARMONIZATION_CONF_FILE].items():
             for harm_type_name, harm_type in event_type_conf.items():
                 if "description" not in harm_type:
-                    check_logger.warn('Missing description for type %r.', harm_type_name)
+                    check_logger.warning('Missing description for type %r.', harm_type_name)
                 if "type" not in harm_type:
                     check_logger.error('Missing type for type %r.', harm_type_name)
                     retval = 1
@@ -1529,8 +1525,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                       }
             if not hasattr(upgrades, function):
                 self.logger.error('This function does not exist. '
-                                  'Available functions are %s'
-                                  '' % ', '.join(upgrades.__all__))
+                                  'Available functions are %s',
+                                  ', '.join(upgrades.__all__))
                 return 1, 'error'
             try:
                 retval, defaults_new, runtime_new = getattr(upgrades, function)(defaults, runtime, dry_run)
@@ -1590,17 +1586,38 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 todo = []
                 for version, functions in upgrades.UPGRADES.items():
                     if utils.version_smaller(tuple(previous), version):
-                        todo.append((version, functions))
+                        todo.append((version, functions, True))
+                    else:
+                        funcs = []
+                        for function in functions:
+                            fname = function.__name__
+                            if not state['upgrades'].get(fname, False):
+                                self.logger.info("Catch up function %s from version %s.",
+                                                 fname, '.'.join(str(x) for x in version))
+                                funcs.append(function)
+                        if funcs:
+                            todo.append((version, funcs, False))
             else:
                 self.logger.info("Found no previous version, doing all upgrades.")
                 todo = upgrades.UPGRADES.items()
 
-            # todo is now a list of tuples of functions.
-            # all functions in a tuple (bunch) must be processed successfully to continue
+            """
+            todo is now a list of tuples of functions.
+            todo = [
+                    (version, tuple of functions, bool if the version is new)
+                    ...
+                    ]
+            all functions in a tuple (bunch) must be processed successfully to continue
+            the third value is to catch some situations:
+                if the function has been inserted later, we do not say this is an upgrade to a newer version
+                and do not append the version to the version history again
+            """
 
             error = False
-            for version, bunch in todo:
-                self.logger.info('Upgrading to version %s.' % '.'.join(map(str, version)))
+            for version, bunch, version_new in todo:
+                if version_new:
+                    self.logger.info('Upgrading to version %s.',
+                                     '.'.join(map(str, version)))
                 for function in bunch:
                     if not force and state['upgrades'].get(function.__name__, False):
                         # already performed
@@ -1641,7 +1658,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         break
                 if error:
                     break
-                state['version_history'].append(version)
+                if version_new:
+                    state['version_history'].append(version)
 
             if error:
                 # some upgrade function had a problem
