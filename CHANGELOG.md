@@ -36,6 +36,7 @@ CHANGELOG
 ### Bots
 #### Collectors
 - `intelmq.bots.collectors.http.collector_http`: More extensive usage of `intelmq.lib.utils.unzip`.
+- `intelmq.bots.collectors.rt.collector_rt`: Save ticket information/metadata in the extra fields of the report.
 
 #### Parsers
 - `intelmq.bot.parsers.html_table.parser`:

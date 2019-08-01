@@ -97,6 +97,9 @@ class RTCollectorBot(CollectorBot):
                 else:
                     self.logger.debug('No matching attachment or URL found.')
                     continue
+
+            report = self.new_report()
+
             if content == 'attachment':
                 attachment = RT.get_attachment_content(ticket_id, att_id)
                 created = RT.get_attachment(ticket_id, att_id)['Created']
@@ -105,6 +108,7 @@ class RTCollectorBot(CollectorBot):
                     file_obj = io.BytesIO(attachment)
                     zipped = zipfile.ZipFile(file_obj)
                     raw = zipped.read(zipped.namelist()[0])
+                    report["extra.file_name"] = zipped.namelist()[0]
                 else:
                     raw = attachment
             else:
@@ -134,10 +138,16 @@ class RTCollectorBot(CollectorBot):
                 self.logger.info("Report #%d downloaded.", ticket_id)
                 raw = resp.text
 
-            report = self.new_report()
             report.add("raw", raw)
             report.add("rtir_id", ticket_id)
+            report.add("extra.email_subject", ticket["Subject"])
+            report.add("extra.ticket_subject", ticket["Subject"])
             report.add("time.observation", created + ' UTC', overwrite=True)
+            report.add("extra.email_from", ','.join(ticket["Requestors"]))
+            report.add("extra.ticket_requestors", ','.join(ticket["Requestors"]))
+            report.add("extra.ticket_queue", ticket["Queue"])
+            report.add("extra.ticket_status", ticket["Status"])
+            report.add("extra.ticket_owner", ticket["Owner"])
             self.send_message(report)
 
             if self.parameters.take_ticket:

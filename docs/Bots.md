@@ -221,6 +221,8 @@ You may use `a JSON` specifiying [time-delta](https://docs.python.org/3/library/
 
 Zipped files are automatically extracted if detected.
 
+For extracted files, every extracted file is sent in it's own report. Every report has a field named `extra.file_name` with the file name in the archive the content was extracted from.
+
 * * *
 
 ### Generic URL Stream Fetcher
@@ -409,13 +411,22 @@ Requires the rsync executable
 * `search_queue`: queue of the ticket to search for (default: `Incident Reports`)
 * `search_status`: status of the ticket to search for (default: `new`)
 * `search_subject_like`: part of the subject of the ticket to search for (default: `Report`)
-* `set_status`: status to set the ticket to after processing (default: `open`)
+* `set_status`: status to set the ticket to after processing (default: `open`). `false` or `null` to not set a different status.
 * `take_ticket`: whether to take the ticket (default: `true`)
 * `url_regex`: regular expression of an URL to search for in the ticket
 * `attachment_regex`: regular expression of an attachment in the ticket
-* `unzip_attachment`: whether to unzip a found attachment
+* `unzip_attachment`: whether to unzip a found attachment. Only the first file in the archive is used.
 
 The parameter `http_timeout_max_tries` is of no use in this collector.
+
+The resulting reports contains the following special fields:
+ * `rtir_id`: The ticket ID
+ * `extra.email_subject` and `extra.ticket_subject`: The subject of the ticket
+ * `extra.email_from` and `extra.ticket_requestors`: Comma separated list of requestor's email addresses.
+ * `extra.ticket_owner`: The ticket's owner name
+ * `extra.ticket_status`: The ticket's status
+ * `extra.ticket_queue`: The ticket's queue
+ * `time.observation`: The creation time of the ticket or attachment.
 
 * * *
 
