@@ -35,6 +35,7 @@ CHANGELOG
 
 ### Harmonization
 - IPAddress type: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
+- TLP: Sanitation handles now more cases: case-insensitive prefixes and arbitary whitespace between the prefix and the value (#1420).
 
 ### Bots
 #### Collectors
