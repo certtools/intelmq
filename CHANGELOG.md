@@ -59,6 +59,7 @@ CHANGELOG
   - Replace deprecated parameter `type` with `exchange_type` for `exchange_declare`, supporting pika >= 0.11 (#1425).
 - `intelmq.bots.outputs.mongodb.output`: Support for pymongo >= 3.0.0 (#1063, PR#1421).
 - `intelmq.bots.outputs.file`: `time.*` field serialization: support for microseconds.
+- `intelmq.bots.outputs.mongodb.output`: Support for authentication in pymongo >= 3.5 (#1062).
 
 ### Documentation
 - Add certbund-contact to the ecosystem document.
