@@ -264,11 +264,6 @@ class Bot(object):
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
-                if self.parameters.rate_limit and self.run_mode != 'scheduled':
-                    self.__sleep()
-                if self.collector_empty_process and self.run_mode != 'scheduled':
-                    self.__sleep(1, log=False)
-
             except exceptions.PipelineError as exc:
                 error_on_pipeline = True
 
@@ -314,6 +309,8 @@ class Bot(object):
                     self.stop(exitcode=0)
                     break
 
+                do_rate_limit = False
+
                 if error_on_message or error_on_pipeline:
                     self.__message_counter["failure"] += 1
                     self.__error_retries_counter += 1
@@ -354,6 +351,7 @@ class Bot(object):
                         # error_procedure: pass
                         elif not error_on_pipeline:
                             self.__error_retries_counter = 0  # reset counter
+                            do_rate_limit = True
                         # error_procedure: pass and pipeline problem
                         else:
                             # retry forever, see https://github.com/certtools/intelmq/issues/1333
@@ -361,10 +359,20 @@ class Bot(object):
                             pass
                 else:
                     self.__message_counter["success"] += 1
+                    do_rate_limit = True
+
                     # no errors, check for run mode: scheduled
                     if self.run_mode == 'scheduled':
                         self.logger.info('Shutting down scheduled bot.')
                         self.stop(exitcode=0)
+
+                # Do rate_limit at the end on success and after the retries
+                # counter has been reset: https://github.com/certtools/intelmq/issues/1431
+                if do_rate_limit:
+                    if self.parameters.rate_limit and self.run_mode != 'scheduled':
+                        self.__sleep()
+                    if self.collector_empty_process and self.run_mode != 'scheduled':
+                        self.__sleep(1, log=False)
 
             self.__stats()
             self.__handle_sighup()

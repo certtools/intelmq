@@ -11,7 +11,9 @@ CHANGELOG
 - `intelmq.lib.harmonization`:
   - `IPAddress`: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
   - All types: Handle `None` for validation and sanitation gracefully.
-- `intelmq.lib.bot`: fix parameters of ParserBot and CollectorBot constructors, allowing `intelmqctl run` with these bots again (#1414).
+- `intelmq.lib.bot`:
+  - fix parameters of ParserBot and CollectorBot constructors, allowing `intelmqctl run` with these bots again (#1414).
+  - Also run `rate_limit` after retry counter reset (#1431).
 - `__version_info__` is now available in the top level module.
 - `__version__`: uses now integer values if possible.
 - Also provide (empty) `ROOT_DIR` for non-pip installations.
