@@ -108,7 +108,7 @@ You can set these parameters per bot as well. The settings will take effect afte
 
     * **`stop`** - stop bot after retrying X times (as defined in `error_max_retries`)  with a delay between retries (as defined in `error_retry_delay`). If the bot reaches the `error_max_retries` value, it will remove the message from the pipeline and stop. If the option `error_dump_message` is also enable, the bot will dump the removed message to its dump file (to be found in var/log).
     
-    * **`pass`** - will skip this message and will process the next message after retrying X times, removing the current message from pipeline. If the option `error_dump_message` is also enable, then the bot will dump the removed message to its dump file.
+    * **`pass`** - will skip this message and will process the next message after retrying X times, removing the current message from pipeline. If the option `error_dump_message` is also enable, then the bot will dump the removed message to its dump file. After max retries are reached, the rate limit is applied (e.g. a collector bot fetch an unavailable resource does not try forever).
 
 * **`error_max_retries`** - in case of an error, the bot will try to re-start processing the current message X times as defined by this option. int value.
 
@@ -688,9 +688,12 @@ tail -f /opt/intelmq/var/log/*.log
 
 # Uninstall
 
+If you installed intelmq with native packages: Use the package management tool to remove the package `intelmq`. These tools do not remove configuration by default.
+
+If you installed manually via pip (note that this also deletes all configuration and possibly data):
 ```bash
-pip uninstall intelmq
-rm -rf /opt/intelmq
+pip3 uninstall intelmq
+rm -r /opt/intelmq
 ```
 
 # Integration with ticket systems, etc.
