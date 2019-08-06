@@ -137,7 +137,20 @@ class RIPEExpertBot(Bot):
             else:
                 return json.loads(cached_value)
         else:
-            response = self.http_session.get(self.QUERY[type].format(resource), data="", timeout=self.http_timeout_sec)
+            timeoutretries = 0
+            response = None
+
+            while timeoutretries < self.http_timeout_max_tries and response is None:
+                try:
+                    response = self.http_session.get(self.QUERY[type].format(resource),
+                                                     data="", timeout=self.http_timeout_sec)
+                except requests.exceptions.Timeout:
+                    timeoutretries += 1
+
+            if response is None and timeoutretries >= self.http_timeout_max_tries:
+                raise ValueError("Request timed out %i times in a row."
+                                 "" % timeoutretries)
+
             if response.status_code != 200:
                 if type == 'db_asn' and response.status_code == 404:
                     """ If no abuse contact could be found, a 404 is given. """

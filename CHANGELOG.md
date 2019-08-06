@@ -52,6 +52,7 @@ CHANGELOG
   - Compile regular expressions (all string rules) at initializations, improves the speed.
   - Warn about old configuration style deprecation.
 - `intelmq.bots.experts.do_portal.expert`: Use `http_timeout_max_tries` parameter for retries on connection timeouts (#1432).
+- `intelmq.bots.experts.ripe.expert`: Use `http_timeout_max_tries` parameter for retries on connection timeouts.
 
 #### Outputs
 - `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
