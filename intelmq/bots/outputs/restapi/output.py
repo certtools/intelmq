@@ -38,12 +38,23 @@ class RestAPIOutputBot(Bot):
         else:
             kwargs = {'data': event.to_dict(hierarchical=self.parameters.hierarchical_output)}
 
-        r = self.session.post(self.parameters.host,
-                              timeout=self.http_timeout_sec,
-                              **kwargs)
-        if not r.ok:
+        timeoutretries = 0
+        req = None
+        while timeoutretries < self.http_timeout_max_tries and req is None:
+            try:
+                req = self.session.post(self.parameters.host,
+                                        timeout=self.http_timeout_sec,
+                                        **kwargs)
+            except requests.exceptions.Timeout:
+                timeoutretries += 1
+
+        if req is None and timeoutretries >= self.http_timeout_max_tries:
+            raise ValueError("Request timed out %i times in a row."
+                             "" % timeoutretries)
+
+        if not req.ok:
             self.logger.debug("Error during message sending with response body: %r.", r.text)
-        r.raise_for_status()
+        req.raise_for_status()
         self.logger.debug('Sent message.')
         self.acknowledge_message()
 

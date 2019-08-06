@@ -65,6 +65,7 @@ CHANGELOG
 - `intelmq.bots.outputs.mongodb.output`: Support for pymongo >= 3.0.0 (#1063, PR#1421).
 - `intelmq.bots.outputs.file`: `time.*` field serialization: support for microseconds.
 - `intelmq.bots.outputs.mongodb.output`: Support for authentication in pymongo >= 3.5 (#1062).
+- `intelmq.bots.outputs.restapi.output`: Use `http_timeout_max_tries` parameter for retries on connection timeouts.
 
 ### Documentation
 - Add certbund-contact to the ecosystem document.
