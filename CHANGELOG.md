@@ -11,7 +11,9 @@ CHANGELOG
 - `intelmq.lib.harmonization`:
   - `IPAddress`: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
   - All types: Handle `None` for validation and sanitation gracefully.
-- `intelmq.lib.bot`: fix parameters of ParserBot and CollectorBot constructors, allowing `intelmqctl run` with these bots again (#1414).
+- `intelmq.lib.bot`:
+  - fix parameters of ParserBot and CollectorBot constructors, allowing `intelmqctl run` with these bots again (#1414).
+  - Also run `rate_limit` after retry counter reset (#1431).
 - `__version_info__` is now available in the top level module.
 - `__version__`: uses now integer values if possible.
 - Also provide (empty) `ROOT_DIR` for non-pip installations.
@@ -33,6 +35,7 @@ CHANGELOG
 
 ### Harmonization
 - IPAddress type: Remove Scope/Zone IDs for IPv6 addresses in sanitation.
+- TLP: Sanitation handles now more cases: case-insensitive prefixes and arbitary whitespace between the prefix and the value (#1420).
 
 ### Bots
 #### Collectors
@@ -59,11 +62,14 @@ CHANGELOG
   - Replace deprecated parameter `type` with `exchange_type` for `exchange_declare`, supporting pika >= 0.11 (#1425).
 - `intelmq.bots.outputs.mongodb.output`: Support for pymongo >= 3.0.0 (#1063, PR#1421).
 - `intelmq.bots.outputs.file`: `time.*` field serialization: support for microseconds.
+- `intelmq.bots.outputs.mongodb.output`: Support for authentication in pymongo >= 3.5 (#1062).
 
 ### Documentation
 - Add certbund-contact to the ecosystem document.
 - Rename the IDEA expert to "IDEA Converter".
 - Add the new configuration upgrade function to the docs.
+- User Guide:
+  - Clarify on Uninstallation
 
 ### Packaging
 - Do not execute the tcp collector tests during debian and ubuntu builds as they fail there.
