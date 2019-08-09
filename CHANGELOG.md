@@ -32,6 +32,7 @@ CHANGELOG
   - AMQP: Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
   - pipeline base class: add missing dummy methods.
   - Add missing return types.
+  - Redis: Evaluate return parameter of queue/key deletion.
 - Variable `STATE_FILE_PATH` added.
 
 ### Development

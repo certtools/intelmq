@@ -234,7 +234,10 @@ class Redis(Pipeline):
         """Clears a queue by removing (deleting) the key,
         which is the same as an empty list in Redis"""
         try:
-            return self.pipe.delete(queue)
+            retval = self.pipe.delete(queue)
+            if retval not in (0, 1):
+                raise ValueError("Error on redis queue deletion: Return value was not 0 "
+                                 "or 1 but %s." % retval)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
 
