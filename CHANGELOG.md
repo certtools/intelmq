@@ -86,8 +86,9 @@ CHANGELOG
 - `intelmq.lib.bot`:
   - fix parameters of ParserBot and CollectorBot constructors, allowing `intelmqctl run` with these bots again (#1414).
   - Also run `rate_limit` after retry counter reset (#1431).
-- `__version_info__` is now available in the top level module.
-- `__version__`: uses now integer values if possible.
+- `__version_info__`:
+  - is now available in the top level module.
+  - uses now integer values instead of strings for numerical version parts
 - Also provide (empty) `ROOT_DIR` for non-pip installations.
 - `intelmq.lib.upgrades`: New library file `upgrades` with upgrade functions.
 - `intelmq.lib.utils`:
@@ -99,7 +100,11 @@ CHANGELOG
   - `log` takes a new argument `logging_level_stream` for the logging level of the console handler.
   - New constant `LOG_FORMAT_SIMPLE`, used by intelmqctl.
   - New function `write_configuration` to write dicts to files in the correct json formatting.
-- `intelmq.lib.pipeline`: AMQP: Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
+- `intelmq.lib.pipeline`:
+  - AMQP: Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
+  - pipeline base class: add missing dummy methods.
+  - Add missing return types.
+  - Redis: Evaluate return parameter of queue/key deletion.
 - Variable `STATE_FILE_PATH` added.
 
 ### Development
@@ -123,18 +128,22 @@ CHANGELOG
 - `intelmq.bots.experts.modify.expert`:
   - Compile regular expressions (all string rules) at initializations, improves the speed.
   - Warn about old configuration style deprecation.
+- `intelmq.bots.experts.do_portal.expert`: Use `http_timeout_max_tries` parameter for retries on connection timeouts (#1432).
+- `intelmq.bots.experts.ripe.expert`: Use `http_timeout_max_tries` parameter for retries on connection timeouts.
 
 #### Outputs
 - `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
-- `intelmq.bots.outputs.amqptopic.output`: Shutdown: Close connection only if connection exists.
 - `intelmq.bots.outputs.amqptopic`:
+  - Shutdown: Close connection only if connection exists.
   - Add support for pika > 1, the way the (Non-)Acknowledgments are provided has been changed.
   - Gracefully handle unroutable messages and give advice.
   - Support for no used authentication.
   - Replace deprecated parameter `type` with `exchange_type` for `exchange_declare`, supporting pika >= 0.11 (#1425).
+  - New parameters `message_hierarchical_output`, `message_with_type`, `message_jsondict_as_string`.
 - `intelmq.bots.outputs.mongodb.output`: Support for pymongo >= 3.0.0 (#1063, PR#1421).
 - `intelmq.bots.outputs.file`: `time.*` field serialization: support for microseconds.
 - `intelmq.bots.outputs.mongodb.output`: Support for authentication in pymongo >= 3.5 (#1062).
+- `intelmq.bots.outputs.restapi.output`: Use `http_timeout_max_tries` parameter for retries on connection timeouts.
 
 ### Documentation
 - Add certbund-contact to the ecosystem document.
@@ -144,6 +153,7 @@ CHANGELOG
   - Clarify on Uninstallation
 
 ### Packaging
+- Do not execute the tcp collector tests during debian and ubuntu builds as they fail there.
 
 ### Tests
 - `intelmq.lib.test`: Disable statistics for test runs of bots.

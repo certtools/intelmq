@@ -110,10 +110,19 @@ class Pipeline(object):
         else:
             raise exceptions.InvalidArgument('queues_type', got=queues_type, expected=['source', 'destination'])
 
-    def nonempty_queues(self) -> set:
+    def send(self, message, path="_default", path_permissive=False):
         raise NotImplementedError
 
-    def send(self, message, path="_default", path_permissive=False):
+    def receive(self) -> str:
+        raise NotImplementedError
+
+    def acknowledge(self):
+        raise NotImplementedError
+
+    def clear_queue(self, queue):
+        raise NotImplementedError
+
+    def nonempty_queues(self) -> set:
         raise NotImplementedError
 
 
@@ -196,7 +205,7 @@ class Redis(Pipeline):
                                       'Look at redis\'s logs.')
                 raise exceptions.PipelineError(exc)
 
-    def receive(self):
+    def receive(self) -> str:
         if self.source_queue is None:
             raise exceptions.ConfigurationError('pipeline', 'No source queue given.')
         try:
@@ -220,7 +229,7 @@ class Redis(Pipeline):
         except Exception as e:
             raise exceptions.PipelineError(e)
 
-    def count_queued_messages(self, *queues):
+    def count_queued_messages(self, *queues) -> dict:
         queue_dict = {}
         for queue in queues:
             try:
@@ -233,7 +242,10 @@ class Redis(Pipeline):
         """Clears a queue by removing (deleting) the key,
         which is the same as an empty list in Redis"""
         try:
-            return self.pipe.delete(queue)
+            retval = self.pipe.delete(queue)
+            if retval not in (0, 1):
+                raise ValueError("Error on redis queue deletion: Return value was not 0 "
+                                 "or 1 but %s." % retval)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
 
@@ -290,7 +302,7 @@ class Pythonlist(Pipeline):
             else:
                 self.state[destination_queue] = [utils.encode(message)]
 
-    def receive(self):
+    def receive(self) -> str:
         """
         Receives the last not yet acknowledged message.
 
@@ -310,9 +322,9 @@ class Pythonlist(Pipeline):
 
     def acknowledge(self):
         """Removes a message from the internal queue and returns it"""
-        return self.state.get(self.internal_queue, [None]).pop(0)
+        self.state.get(self.internal_queue, [None]).pop(0)
 
-    def count_queued_messages(self, *queues):
+    def count_queued_messages(self, *queues) -> dict:
         """Returns the amount of queued messages
            over all given queue names.
         """

@@ -24,26 +24,42 @@ class DoPortalExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
-        if "source.ip" in event:
-            req = requests.get(self.url % event['source.ip'],
-                               headers=self.http_header,
-                               auth=self.auth,
-                               proxies=self.proxy,
-                               verify=self.http_verify_cert,
-                               cert=self.ssl_client_cert,
-                               timeout=self.http_timeout_sec)
-            if req.status_code == 404 and req.json()['message'].startswith("('no such cidr'"):
-                result = []
-            else:
-                req.raise_for_status()
-                result = req.json()['abusecs']
+        if "source.ip" not in event:
+            self.send_message(event)
+            self.acknowledge_message()
+            return
 
-            if self.mode == 'append':
-                existing = event.get("source.abuse_contact", '').split(',')
-                combined = ','.join(existing + result).strip(',')
-                event.add("source.abuse_contact", combined, overwrite=True)
-            else:
-                event.add("source.abuse_contact", ','.join(result), overwrite=True)
+        timeoutretries = 0
+        req = None
+
+        while timeoutretries < self.http_timeout_max_tries and req is None:
+            try:
+                req = requests.get(self.url % event['source.ip'],
+                                   headers=self.http_header,
+                                   auth=self.auth,
+                                   proxies=self.proxy,
+                                   verify=self.http_verify_cert,
+                                   cert=self.ssl_client_cert,
+                                   timeout=self.http_timeout_sec)
+            except requests.exceptions.Timeout:
+                timeoutretries += 1
+
+        if req is None and timeoutretries >= self.http_timeout_max_tries:
+            raise ValueError("Request timed out %i times in a row."
+                             "" % timeoutretries)
+
+        if req.status_code == 404 and req.json()['message'].startswith("('no such cidr'"):
+            result = []
+        else:
+            req.raise_for_status()
+            result = req.json()['abusecs']
+
+        if self.mode == 'append':
+            existing = event.get("source.abuse_contact", '').split(',')
+            combined = ','.join(existing + result).strip(',')
+            event.add("source.abuse_contact", combined, overwrite=True)
+        else:
+            event.add("source.abuse_contact", ','.join(result), overwrite=True)
 
         self.send_message(event)
         self.acknowledge_message()
