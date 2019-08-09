@@ -28,7 +28,9 @@ CHANGELOG
   - `log` takes a new argument `logging_level_stream` for the logging level of the console handler.
   - New constant `LOG_FORMAT_SIMPLE`, used by intelmqctl.
   - New function `write_configuration` to write dicts to files in the correct json formatting.
-- `intelmq.lib.pipeline`: AMQP: Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
+- `intelmq.lib.pipeline`:
+  - AMQP: Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
+  - pipeline base class: add missing dummy methods.
 - Variable `STATE_FILE_PATH` added.
 
 ### Development

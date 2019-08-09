@@ -107,10 +107,19 @@ class Pipeline(object):
         else:
             raise exceptions.InvalidArgument('queues_type', got=queues_type, expected=['source', 'destination'])
 
-    def nonempty_queues(self) -> set:
+    def send(self, message, path="_default", path_permissive=False):
         raise NotImplementedError
 
-    def send(self, message, path="_default", path_permissive=False):
+    def receive(self) -> str:
+        raise NotImplementedError
+
+    def acknowledge(self):
+        raise NotImplementedError
+
+    def clear_queue(self, queue):
+        raise NotImplementedError
+
+    def nonempty_queues(self) -> set:
         raise NotImplementedError
 
 
