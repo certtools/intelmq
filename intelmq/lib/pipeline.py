@@ -197,7 +197,7 @@ class Redis(Pipeline):
                                       'Look at redis\'s logs.')
                 raise exceptions.PipelineError(exc)
 
-    def receive(self):
+    def receive(self) -> str:
         if self.source_queue is None:
             raise exceptions.ConfigurationError('pipeline', 'No source queue given.')
         try:
@@ -221,7 +221,7 @@ class Redis(Pipeline):
         except Exception as e:
             raise exceptions.PipelineError(e)
 
-    def count_queued_messages(self, *queues):
+    def count_queued_messages(self, *queues) -> dict:
         queue_dict = {}
         for queue in queues:
             try:
@@ -291,7 +291,7 @@ class Pythonlist(Pipeline):
             else:
                 self.state[destination_queue] = [utils.encode(message)]
 
-    def receive(self):
+    def receive(self) -> str:
         """
         Receives the last not yet acknowledged message.
 
@@ -311,9 +311,9 @@ class Pythonlist(Pipeline):
 
     def acknowledge(self):
         """Removes a message from the internal queue and returns it"""
-        return self.state.get(self.internal_queue, [None]).pop(0)
+        self.state.get(self.internal_queue, [None]).pop(0)
 
-    def count_queued_messages(self, *queues):
+    def count_queued_messages(self, *queues) -> dict:
         """Returns the amount of queued messages
            over all given queue names.
         """
