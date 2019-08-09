@@ -27,6 +27,7 @@ class DoPortalExpertBot(Bot):
         if "source.ip" not in event:
             self.send_message(event)
             self.acknowledge_message()
+            return
 
         timeoutretries = 0
         req = None
