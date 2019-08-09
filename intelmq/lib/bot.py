@@ -498,6 +498,7 @@ class Bot(object):
                                                             queues=self.__source_queues,
                                                             bot=self)
             self.__source_pipeline.connect()
+            self.__current_message = None
             self.logger.debug("Connected to source queue.")
 
         if self.__destination_queues:
@@ -556,6 +557,10 @@ class Bot(object):
                                              path_permissive=path_permissive)
 
     def receive_message(self):
+        if self.__current_message:
+            self.logger.debug("Reusing existing current message as incoming.")
+            return self.__current_message
+
         self.logger.debug('Waiting for incoming message.')
         message = None
         while not message:

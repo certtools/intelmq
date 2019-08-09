@@ -17,8 +17,11 @@ CHANGELOG
 - `intelmq.lib.pipeline`:
   - Redis: Use single connection client if calling bot is not multithreaded. Gives a small speed advantage.
   - Require the bot instance as parameter for all pipeline classes.
+  - New internal variable `_has_message` to keep the state of the pipeline.
+  - Split receive and acknowledge into public-facing and private methods.
 - `intelmq.lib.bot`:
   - Log message after successful bot initialization, no log message anymore for ready pipeline.
+  - Use existing current message if receive is called and the current message still exists.
 - `intelmq.lib.test`:
   - Fix the tests broker by providing the testing pipeline.
 - `intelmq.lib.utils`:
