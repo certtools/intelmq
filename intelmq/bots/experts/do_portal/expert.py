@@ -4,6 +4,7 @@ try:
 except ImportError:
     requests = None
 
+import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
 
 
@@ -22,6 +23,8 @@ class DoPortalExpertBot(Bot):
         })
         self.mode = self.parameters.mode
 
+        self.session = utils.create_request_session_from_bot(self)
+
     def process(self):
         event = self.receive_message()
         if "source.ip" not in event:
@@ -29,24 +32,7 @@ class DoPortalExpertBot(Bot):
             self.acknowledge_message()
             return
 
-        timeoutretries = 0
-        req = None
-
-        while timeoutretries < self.http_timeout_max_tries and req is None:
-            try:
-                req = requests.get(self.url % event['source.ip'],
-                                   headers=self.http_header,
-                                   auth=self.auth,
-                                   proxies=self.proxy,
-                                   verify=self.http_verify_cert,
-                                   cert=self.ssl_client_cert,
-                                   timeout=self.http_timeout_sec)
-            except requests.exceptions.Timeout:
-                timeoutretries += 1
-
-        if req is None and timeoutretries >= self.http_timeout_max_tries:
-            raise ValueError("Request timed out %i times in a row."
-                             "" % timeoutretries)
+        req = self.session.get(self.url % event['source.ip'])
 
         if req.status_code == 404 and req.json()['message'].startswith("('no such cidr'"):
             result = []
