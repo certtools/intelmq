@@ -393,7 +393,7 @@ providers:
       status: on
       documentation:
   Abuse.ch:
-    Zeyus Tracker IPs:
+    Zeus Tracker IPs:
       description: This list only includes IPv4 addresses that are used by the ZeuS
         Trojan. It is the recommended list if you want to block only ZeuS IPs. It
         excludes IP addresses that ZeuS Tracker believes to be hijacked (level 2)
