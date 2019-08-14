@@ -14,6 +14,7 @@ except ImportError:
 
 
 class MongoDBOutputBot(Bot):
+    client = None
 
     def init(self):
         if pymongo is None:
@@ -25,12 +26,13 @@ class MongoDBOutputBot(Bot):
         self.replacement_char = getattr(self.parameters, 'replacement_char', '_')
         if self.replacement_char == '.':
             raise ValueError('replacement_char should be different than .')
-        self.connect()
 
         self.username = getattr(self.parameters, "db_user", None)
         self.password = getattr(self.parameters, "db_pass", None)
         if not self.password:  # checking for username is sufficient then
             self.username = None
+
+        self.connect()
 
     def connect(self):
         self.logger.debug('Connecting to MongoDB server.')
@@ -91,7 +93,8 @@ class MongoDBOutputBot(Bot):
             self.acknowledge_message()
 
     def shutdown(self):
-        self.client.close()
+        if self.client:
+            self.client.close()
 
 
 BOT = MongoDBOutputBot
