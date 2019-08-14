@@ -57,7 +57,9 @@ CHANGELOG
 - `intelmq.bots.experts.modify.expert`:
   - Compile regular expressions (all string rules) at initializations, improves the speed.
   - Warn about old configuration style deprecation.
-- `intelmq.bots.experts.do_portal.expert`: Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts (#1432).
+- `intelmq.bots.experts.do_portal.expert`:
+  - Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts (#1432).
+  - Treat "502 Bad Gateway" as timeout which can be retried.
 - `intelmq.bots.experts.ripe.expert`: Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts.
 
 #### Outputs

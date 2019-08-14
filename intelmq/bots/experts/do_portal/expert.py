@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+As the frontend reverse-proxies the (backend) API
+a "502 Bad Gateway" status code is treated the same as a timeout,
+i.e. will be retried instead of a fail.
+"""
 try:
     import requests
 except ImportError:
@@ -24,6 +29,11 @@ class DoPortalExpertBot(Bot):
         self.mode = self.parameters.mode
 
         self.session = utils.create_request_session_from_bot(self)
+        retries = requests.urllib3.Retry.from_int(self.http_timeout_max_tries)
+        retries.status_forcelist = [502]
+        adapter = requests.adapters.HTTPAdapter(max_retries=retries)
+        self.session.mount('http://', adapter)
+        self.session.mount('https://', adapter)
 
     def process(self):
         event = self.receive_message()
