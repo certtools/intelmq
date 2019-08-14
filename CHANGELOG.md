@@ -103,6 +103,7 @@ CHANGELOG
   - `log` takes a new argument `logging_level_stream` for the logging level of the console handler.
   - New constant `LOG_FORMAT_SIMPLE`, used by intelmqctl.
   - New function `write_configuration` to write dicts to files in the correct json formatting.
+  - New function `create_request_session_from_bot`.
 - `intelmq.lib.pipeline`:
   - AMQP: Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
   - pipeline base class: add missing dummy methods.
@@ -131,8 +132,10 @@ CHANGELOG
 - `intelmq.bots.experts.modify.expert`:
   - Compile regular expressions (all string rules) at initializations, improves the speed.
   - Warn about old configuration style deprecation.
-- `intelmq.bots.experts.do_portal.expert`: Use `http_timeout_max_tries` parameter for retries on connection timeouts (#1432).
-- `intelmq.bots.experts.ripe.expert`: Use `http_timeout_max_tries` parameter for retries on connection timeouts.
+- `intelmq.bots.experts.do_portal.expert`:
+  - Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts (#1432).
+  - Treat "502 Bad Gateway" as timeout which can be retried.
+- `intelmq.bots.experts.ripe.expert`: Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts.
 
 #### Outputs
 - `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
@@ -146,7 +149,7 @@ CHANGELOG
 - `intelmq.bots.outputs.mongodb.output`: Support for pymongo >= 3.0.0 (#1063, PR#1421).
 - `intelmq.bots.outputs.file`: `time.*` field serialization: support for microseconds.
 - `intelmq.bots.outputs.mongodb.output`: Support for authentication in pymongo >= 3.5 (#1062).
-- `intelmq.bots.outputs.restapi.output`: Use `http_timeout_max_tries` parameter for retries on connection timeouts.
+- `intelmq.bots.outputs.restapi.output`: Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts.
 
 ### Documentation
 - Add certbund-contact to the ecosystem document.

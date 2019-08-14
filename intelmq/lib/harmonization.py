@@ -1018,7 +1018,7 @@ class TLP(UppercaseString):
     Accepted for sanitation are different cases and the prefix 'tlp:'.
     """
     enum = ['WHITE', 'GREEN', 'AMBER', 'RED']
-    prefix_pattern = re.compile('^(TLP:?)?\s*', flags=re.IGNORECASE)
+    prefix_pattern = re.compile(r'^(TLP:?)?\s*', flags=re.IGNORECASE)
 
     @staticmethod
     def is_valid(value, sanitize=False):

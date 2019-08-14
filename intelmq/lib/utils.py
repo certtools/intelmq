@@ -22,6 +22,7 @@ import logging.handlers
 import os
 import pwd
 import re
+import requests
 import shutil
 import sys
 import tarfile
@@ -683,3 +684,27 @@ def lazy_int(value: Any) -> Any:
         return int(value)
     except ValueError:
         return value
+
+
+def create_request_session_from_bot(bot: type) -> requests.Session:
+    """
+    Creates a requests.Session object preconfigured with the parameters
+    set by the Bot.set_request_parameters and given by the bot instance.
+
+    Parameters:
+        bot_instance: An instance of a Bot
+
+    Returns:
+        session: A preconfigured instance of requests.Session
+    """
+    session = requests.Session()
+    session.headers.update(bot.http_header)
+    session.auth = bot.auth
+    session.proxies = bot.proxy
+    session.cert = bot.ssl_client_cert
+    session.timeout = bot.http_timeout_sec
+    session.verify = bot.http_verify_cert
+    adapter = requests.adapters.HTTPAdapter(max_retries=bot.http_timeout_max_tries - 1)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session

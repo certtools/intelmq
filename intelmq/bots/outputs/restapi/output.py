@@ -5,6 +5,7 @@ try:
 except ImportError:
     requests = None
 
+import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
 
 
@@ -14,21 +15,18 @@ class RestAPIOutputBot(Bot):
         if requests is None:
             raise ValueError('Could not import requests. Please install it.')
 
-        self.session = requests.Session()
         self.set_request_parameters()
-        self.session.proxies.update(self.proxy)
-        self.session.headers.update(self.http_header)
-        self.session.verify = self.http_verify_cert
-        self.session.cert = self.ssl_client_cert
 
         if self.parameters.auth_token_name and self.parameters.auth_token:
             if self.parameters.auth_type == 'http_header':
-                self.session.headers.update(
+                self.http_header.update(
                     {self.parameters.auth_token_name: self.parameters.auth_token})
             elif self.parameters.auth_type == 'http_basic_auth':
-                self.session.auth = self.parameters.auth_token_name, self.parameters.auth_token
-        self.session.headers.update({"content-type":
-                                     "application/json; charset=utf-8"})
+                self.auth = self.parameters.auth_token_name, self.parameters.auth_token
+        self.http_header.update({"Content-Type":
+                                 "application/json; charset=utf-8"})
+
+        self.session = utils.create_request_session_from_bot(self)
         self.session.keep_alive = False
 
     def process(self):
