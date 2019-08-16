@@ -73,6 +73,7 @@ CHANGELOG
   - Use green and red text color for some interactive output to indicate obvious errors or the absence of them.
 
 ### Contrib
+* malware name mapping: Add support for MISP treat actors data, see it's README for more information.
 
 ### Known issues
 
