@@ -1324,6 +1324,27 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
+## Hajime Scanner
+
+* **Status:** on
+* **Revision:** 01-08-2019
+* **Description:** This feed lists IP address for know Hajime bots network. These IPs data are obtained by joining the DHT network and interacting with the Hajime node
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://data.netlab.360.com/feeds/hajime-scanner/bot.list`
+*  * `name`: `Hajime Scanner`
+*  * `provider`: `Netlab 360`
+*  * `rate_limit`: `3600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.netlab_360.parser
+* **Configuration Parameters:**
+
+
 ## Magnitude EK
 
 * **Status:** on
