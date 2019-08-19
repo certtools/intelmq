@@ -9,7 +9,8 @@ class Netlab360ParserBot(ParserBot):
     DGA_FEED = {'http://data.netlab.360.com/feeds/dga/dga.txt'}
     MAGNITUDE_FEED = {'http://data.netlab.360.com/feeds/ek/magnitude.txt'}
     MIRAI_SCANNER_FEED = {'http://data.netlab.360.com/feeds/mirai-scanner/scanner.list'}
-    HAJIME_SCANNER_FEED = {'http://data.netlab.360.com/feeds/hajime-scanner/bot.list'}
+    HAJIME_SCANNER_FEED = {'http://data.netlab.360.com/feeds/hajime-scanner/bot.list',
+                           'https://data.netlab.360.com/feeds/hajime-scanner/bot.list'}
 
     def parse_line(self, line, report):
         if line.startswith('#') or not line.strip():
@@ -48,7 +49,7 @@ class Netlab360ParserBot(ParserBot):
                 event.add('classification.type', 'scanner')
                 event.add('classification.identifier', 'mirai', overwrite=True)
             elif report['feed.url'] in Netlab360ParserBot.HAJIME_SCANNER_FEED:
-                event.add('time.source', value[0] + ' UTC')
+                event.add('time.source', value[0] + 'T00:00:00 UTC')
                 event.add('source.ip', value[1].replace('ip=', ''))
                 event.add('classification.type', 'scanner')
                 event.add('classification.identifier', 'hajime', overwrite=True)

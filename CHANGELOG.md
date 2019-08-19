@@ -48,6 +48,7 @@ CHANGELOG
 - `intelmq.bot.parsers.html_table.parser`:
   * New parameter "html_parser".
   * Use time conversion functions directly from `intelmq.lib.harmonization.DateTime.convert`.
+- `intelmq.bots.parsers.netlab_360.parser`: Add support for hajime scanners.
 
 #### Experts
 - Add geohash expert.
