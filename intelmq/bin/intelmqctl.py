@@ -233,8 +233,15 @@ class IntelMQProcessManager:
             return 'running'
         else:
             if getstatus:
-                time.sleep(0.5)
+                # Wait for up to 2 seconds until the bot stops, #1434
+                starttime = time.time()
+                remaining = 2
                 status = self.__status_process(pid, module, bot_id)
+                while status is True and remaining > 0:
+                    status = self.__status_process(pid, module, bot_id)
+                    time.sleep(0.1)
+                    remaining = 2 - (time.time() - starttime)
+
                 if status is True:
                     log_bot_error('running', bot_id)
                     return 'running'
@@ -984,6 +991,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             return self.botnet_restart(group=group)
         else:
             status_stop = self.bot_stop(bot_id)
+            # Exit if stopping the bot did not work, #1434
+            if status_stop[0] != 0:
+                return status_stop
+
             status_start = self.bot_start(bot_id)
             return status_stop[0] | status_start[0], [status_stop[1], status_start[1]]
 
