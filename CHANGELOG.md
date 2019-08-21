@@ -62,6 +62,7 @@ CHANGELOG
   - Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts (#1432).
   - Treat "502 Bad Gateway" as timeout which can be retried.
 - `intelmq.bots.experts.ripe.expert`: Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts.
+- `intelmq.bots.experts.url2fqdn.expert`: Support for IP addresses in hostnames (#1416).
 
 #### Outputs
 - `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.

@@ -1557,16 +1557,20 @@ FIXME
 
 ### Url2FQDN
 
+This bot extracts the Host from the `source.url` and `destination.url` fields and
+writes it to `source.fqdn` or `destination.fqdn` if it is a hostname, or
+`source.ip` or `destination.ip` if it is an IP address.
+
 #### Information:
 * `name:` url2fqdn
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
-* `description:` writes domain name from URL to FQDN
+* `description:` writes domain name from URL to FQDN or IP address
 
 #### Configuration Parameters:
 
-* `overwrite`: boolean, replace existing FQDN?
+* `overwrite`: boolean, replace existing FQDN / IP address?
 
 ### Wait
 
