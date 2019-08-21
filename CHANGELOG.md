@@ -102,6 +102,8 @@ CHANGELOG
   - Fix `-q` flag for `intelmqctl list queues` by renaming (providing an additional variant) it to `--non-zero`.
   - For console output `intemqctl: ` at the beginning of each line is no longer present.
   - `check`: Support for the state file added. Checks if it exists and all upgrade functions have been executed successfully.
+  - Wait for up to 2 seconds when stopping a bot (#1434).
+  - Exit early on restart if stopping a bot did not work (#1434).
 
 ### Contrib
 * logcheck rules: Adapt ignore rule to cover the instance id of bot names.
