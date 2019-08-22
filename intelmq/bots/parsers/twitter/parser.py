@@ -21,7 +21,7 @@ import re
 
 import pkg_resources
 
-from intelmq.lib.bot import ParserBot, utils
+from intelmq.lib.bot import Bot, utils
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import ClassificationType
 
@@ -39,7 +39,7 @@ except ImportError:
     update_tld_names = None
 
 
-class TwitterParserBot(ParserBot):
+class TwitterParserBot(Bot):
     def init(self):
         if url_normalize is None:
             raise ValueError("Could not import 'url-normalize'. Please install it.")

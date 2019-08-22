@@ -6,7 +6,7 @@ import re
 from html.parser import HTMLParser
 
 from intelmq.lib import utils
-from intelmq.lib.bot import ParserBot
+from intelmq.lib.bot import Bot
 
 
 class MyHTMLParser(HTMLParser):
@@ -21,7 +21,7 @@ parser = MyHTMLParser()
 remove_comments = re.compile(r"<!--(.|\s|\n)*?-->")
 
 
-class SucuriParserBot(ParserBot):
+class SucuriParserBot(Bot):
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])  # decoding
