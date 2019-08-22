@@ -123,6 +123,7 @@ class BotDebugger:
                 # is None if source pipeline does not exist
                 self.instance._Bot__source_pipeline = Pipeline(None)
             self.instance._Bot__source_pipeline.receive = lambda: msg
+            self.instance._Bot__source_pipeline.acknowledge = lambda: None
             self.instance.logger.info(" * Message from cli will be used when processing.")
 
         if dryrun:

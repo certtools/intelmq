@@ -15,12 +15,14 @@ Bot parameters:
 * delivery_mode         : 1 - Non-persistent, 2 - Persistent. On persistent mode, messages are delivered to 'durable' queues and will be saved to disk.
 * exchange_durable      : If set to True, the exchange will survive broker restart, otherwise will be a transient exchange.
 * exchange_name         : The name of the exchange to use
-* exchange_type         : Type of the exchange, presently only "topic" is supported
+* exchange_type         : Type of the exchange, e.g. `topic`, `fanout` etc.
 * keep_raw_field        : If set to True, the message 'raw' field will be sent
 * password              : Password for authentication on your AMQP server
 * require_confirmation  : If set to True, an exception will be raised if a confirmation error is received
 * routing_key           : The routing key for your amqptopic
+* `single_key`          : Only send a the field instead of the full event (expecting a field name as string)
 * username              : Username for authentication on your AMQP server
+* `use_ssl`             : Use ssl for the connection, make sure to also set the correct port, usually 5671 (`true`/`false`)
 * message_hierarchical_output: Convert the message to hierachical JSON, default: false
 * message_with_type     : Include the type in the sent message, default: false
 * message_jsondict_as_string: Convert fields of type JSONDict (extra) as string, default: false

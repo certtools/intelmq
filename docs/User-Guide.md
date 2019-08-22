@@ -276,7 +276,8 @@ You need to set the parameter `source_pipeline_broker`/`destination_pipeline_bro
 * `source_pipeline_socket_timeout` (default: no timeout)
 * `source_pipeline_amqp_virtual_host` (default: `'/`)
 
-In a RabbitMQ's default configuration you might not provide a user account, as by default the administrator is open. If you create a user account, make sure to add the tag "monitoring", otherwise IntelMQ can't fetch the queue sizes.
+For getting the queue sizes, `intelmqctl` needs to connect to the monitoring interface of RabbitMQ. If the monitoring interface is not available under "http://{host}:15671" you can manually set using the parameter `intelmqctl_rabbitmq_monitoring_url`.
+In a RabbitMQ's default configuration you might not provide a user account, as by default the administrator (`guest`:`guest`) allows full access from localhost. If you create a separate user account, make sure to add the tag "monitoring" to it, otherwise IntelMQ can't fetch the queue sizes.
 ![RabbitMQ User Account Monitoring Tag](./images/rabbitmq-user-monitoring.png)
 
 Setting the statistics (and cache) parameters is necessary when the local redis is running under a non-default host/port. If this is the case, you can set them explicitly:

@@ -110,7 +110,9 @@ CHANGELOG
   - New function `write_configuration` to write dicts to files in the correct json formatting.
   - New function `create_request_session_from_bot`.
 - `intelmq.lib.pipeline`:
-  - AMQP: Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
+  - AMQP:
+    - Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
+    - Support for SSL with `source/destination_pipeline_ssl` parameter.
   - pipeline base class: add missing dummy methods.
   - Add missing return types.
   - Redis: Evaluate return parameter of queue/key deletion.
@@ -125,6 +127,12 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.http.collector_http`: Use `utils.create_request_session_from_bot`.
+- `intelmq.bots.collectors.http.collector_http_stream`: Use `utils.create_request_session_from_bot` and thus fix some retries on connection timeouts.
+- `intelmq.bots.collectors.mail.collector_mail_url`: Use `utils.create_request_session_from_bot`.
+- `intelmq.bots.collectors.microsoft.collector_interflow`: Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts.
+- `intelmq.bots.collectors.rt.collector_rt`: Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts.
+- `intelmq.bots.collectors.twitter.collector_twitter`: Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts for non-twitter connections.
 
 #### Parsers
 - `intelmq.bots.parsers.n6.parser_n6stomp`: use `malware-generic` instead of `generic-n6-drone` for unknown infected system events.
@@ -143,6 +151,7 @@ CHANGELOG
   - Treat "502 Bad Gateway" as timeout which can be retried.
 - `intelmq.bots.experts.ripe.expert`: Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts.
 - `intelmq.bots.experts.url2fqdn.expert`: Support for IP addresses in hostnames (#1416).
+- `intelmq.bots.experts.national_cert_contact_certat.expert`: Use `utils.create_request_session_from_bot` and thus fix retries on connection timeouts.
 
 #### Outputs
 - `intelmq.bots.outputs.postgresql`: Recommend psycopg2-binary package.
@@ -153,6 +162,8 @@ CHANGELOG
   - Support for no used authentication.
   - Replace deprecated parameter `type` with `exchange_type` for `exchange_declare`, supporting pika >= 0.11 (#1425).
   - New parameters `message_hierarchical_output`, `message_with_type`, `message_jsondict_as_string`.
+  - New parameter `use_ssl` for SSL connections.
+  - New parameter `single_key` for sending single fields instead of the full event.
 - `intelmq.bots.outputs.mongodb.output`: Support for pymongo >= 3.0.0 (#1063, PR#1421).
 - `intelmq.bots.outputs.file`: `time.*` field serialization: support for microseconds.
 - `intelmq.bots.outputs.mongodb.output`: Support for authentication in pymongo >= 3.5 (#1062).
@@ -185,6 +196,8 @@ CHANGELOG
   - `check`: Support for the state file added. Checks if it exists and all upgrade functions have been executed successfully.
   - Wait for up to 2 seconds when stopping a bot (#1434).
   - Exit early on restart if stopping a bot did not work (#1434).
+  - debugging: Mock acknowledge method if incoming message is mocked too, otherwise a different message is acknowledged.
+  - Queue listing for AMQP: Support non-default monitoring URLs, see User-Guide.
 
 ### Contrib
 * logcheck rules: Adapt ignore rule to cover the instance id of bot names.

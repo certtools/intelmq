@@ -22,7 +22,7 @@ import zipfile
 from datetime import datetime, timedelta
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import unzip
+from intelmq.lib.utils import unzip, create_request_session_from_bot
 
 try:
     import requests
@@ -50,8 +50,9 @@ class HTTPCollectorBot(CollectorBot):
         self.set_request_parameters()
         self.extract_files = getattr(self.parameters, "extract_files", None)
 
-    def process(self):
+        self.session = create_request_session_from_bot(self)
 
+    def process(self):
         formatting = getattr(self.parameters, 'http_url_formatting', False)
         if formatting:
             try:
@@ -69,25 +70,7 @@ class HTTPCollectorBot(CollectorBot):
 
         self.logger.info("Downloading report from %r.", http_url)
 
-        timeoutretries = 0
-        resp = None
-
-        while timeoutretries < self.http_timeout_max_tries and resp is None:
-            try:
-                resp = requests.get(url=http_url, auth=self.auth,
-                                    proxies=self.proxy, headers=self.http_header,
-                                    verify=self.http_verify_cert,
-                                    cert=self.ssl_client_cert,
-                                    timeout=self.http_timeout_sec)
-
-            except requests.exceptions.Timeout:
-                timeoutretries += 1
-                self.logger.warn("Timeout whilst downloading the report.")
-
-        if resp is None and timeoutretries >= self.http_timeout_max_tries:
-            self.logger.error("Request timed out %i times in a row.",
-                              timeoutretries)
-            return
+        resp = self.session.get(url=http_url)
 
         if resp.status_code // 100 != 2:
             raise ValueError('HTTP response status code was %i.' % resp.status_code)

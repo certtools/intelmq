@@ -37,7 +37,7 @@ from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.cache import Cache
-from intelmq.lib.utils import parse_relative
+from intelmq.lib.utils import parse_relative, create_request_session_from_bot
 
 try:
     import requests
@@ -68,6 +68,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
             raise ValueError('Could not import requests. Please install it.')
 
         self.set_request_parameters()
+
         self.http_header['Ocp-Apim-Subscription-Key'] = self.parameters.api_key
         if self.parameters.file_match:
             self.file_match = re.compile(self.parameters.file_match)
@@ -93,6 +94,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
                                      "otherwise the bot is processing the same data over and over again.")
         else:
             self.time_match = None
+        self.session = create_request_session_from_bot(self)
 
         self.cache = Cache(self.parameters.redis_cache_host,
                            self.parameters.redis_cache_port,
@@ -105,13 +107,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
     def process(self):
         self.check_ttl_time()
         self.logger.debug('Downloading file list.')
-        files = requests.get(URL_LIST,
-                             auth=self.auth,
-                             proxies=self.proxy,
-                             headers=self.http_header,
-                             verify=self.http_verify_cert,
-                             cert=self.ssl_client_cert,
-                             timeout=self.http_timeout_sec)
+        files = self.session.get(URL_LIST)
         files.raise_for_status()
         self.logger.debug('Downloaded file list, %s entries.', len(files.json()))
         for file in files.json():
@@ -133,13 +129,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
 
             self.logger.debug('Processing file %r.', file['Name'])
             download_url = URL_DOWNLOAD % file['Name']
-            download = requests.get(download_url,
-                                    auth=self.auth,
-                                    proxies=self.proxy,
-                                    headers=self.http_header,
-                                    verify=self.http_verify_cert,
-                                    cert=self.ssl_client_cert,
-                                    timeout=self.http_timeout_sec)
+            download = self.session.get(download_url)
             download.raise_for_status()
             if download_url.endswith('.gz'):
                 raw = gzip.open(io.BytesIO(download.content)).read().decode()

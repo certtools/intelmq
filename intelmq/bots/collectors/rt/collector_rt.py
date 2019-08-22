@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import parse_relative
+from intelmq.lib.utils import parse_relative, create_request_session_from_bot
 
 try:
     import rt
@@ -34,7 +34,6 @@ class RTCollectorBot(CollectorBot):
         if rt is None:
             raise ValueError('Could not import rt. Please install it.')
 
-        self.set_request_parameters()
 
         if getattr(self.parameters, 'search_not_older_than', None):
             try:
@@ -50,6 +49,9 @@ class RTCollectorBot(CollectorBot):
                 self.not_older_than_type = 'relative'
         else:
             self.not_older_than_type = False
+
+        self.set_request_parameters()
+        self.session = create_request_session_from_bot(self)
 
     def process(self):
         RT = rt.Rt(self.parameters.uri, self.parameters.user,
@@ -112,12 +114,7 @@ class RTCollectorBot(CollectorBot):
                 else:
                     raw = attachment
             else:
-                resp = requests.get(url=url, auth=self.auth,
-                                    proxies=self.proxy,
-                                    headers=self.http_header,
-                                    verify=self.http_verify_cert,
-                                    cert=self.ssl_client_cert,
-                                    timeout=self.http_timeout_sec)
+                resp = self.session.get(url=url)
 
                 response_code_class = resp.status_code // 100
                 if response_code_class != 2:

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import ssl
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.utils import base64_decode
 
 try:
     import pika
@@ -43,6 +45,10 @@ class AMQPTopicOutputBot(Bot):
         if self.parameters.username and self.parameters.password:
             self.kwargs['credentials'] = pika.PlainCredentials(self.parameters.username,
                                                                self.parameters.password)
+
+        if getattr(self.parameters, 'use_ssl', False):
+            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.SSLContext())
+
         self.connection_parameters = pika.ConnectionParameters(
             host=self.connection_host,
             port=self.connection_port,
@@ -58,6 +64,8 @@ class AMQPTopicOutputBot(Bot):
         self.hierarchical = getattr(self.parameters, "message_hierarchical", False)
         self.with_type = getattr(self.parameters, "message_with_type", False)
         self.jsondict_as_string = getattr(self.parameters, "message_jsondict_as_string", False)
+
+        self.single_key = getattr(self.parameters, 'single_key', None)
 
     def connect_server(self):
         self.logger.info('AMQP Connecting to %s:%s/%s.',
@@ -95,16 +103,24 @@ class AMQPTopicOutputBot(Bot):
 
         event = self.receive_message()
 
-        if not self.keep_raw_field:
-            del event['raw']
-        body = event.to_json(hierarchical=self.hierarchical,
-                             with_type=self.with_type,
-                             jsondict_as_string=self.jsondict_as_string).encode(errors='backslashreplace')
+        if self.single_key:
+            if self.single_key == 'raw':
+                body = base64_decode(event.get('raw', ''))
+            else:
+                body = str(event.get(self.single_key))
+        else:
+            if not self.keep_raw_field:
+                del event['raw']
+            body = event.to_json(hierarchical=self.hierarchical,
+                                 with_type=self.with_type,
+                                 jsondict_as_string=self.jsondict_as_string)
+
+        # replace unicode characters when encoding (#1296)
+        body = body.encode(errors='backslashreplace')
 
         try:
             if not self.channel.basic_publish(exchange=self.exchange,
                                               routing_key=self.routing_key,
-                                              # replace unicode characters when encoding (#1296)
                                               body=body,
                                               properties=self.properties,
                                               mandatory=True):

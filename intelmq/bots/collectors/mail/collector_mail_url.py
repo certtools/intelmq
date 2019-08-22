@@ -6,6 +6,7 @@ import io
 import re
 
 from intelmq.lib.splitreports import generate_reports
+from intelmq.lib.utils import create_request_session_from_bot
 
 from .lib import MailCollectorBot
 
@@ -24,6 +25,7 @@ class MailURLCollectorBot(MailCollectorBot):
 
         # Build request
         self.set_request_parameters()
+        self.session = create_request_session_from_bot(self)
 
         self.chunk_size = getattr(self.parameters, 'chunk_size', None)
         self.chunk_replicate_header = getattr(self.parameters,
@@ -42,24 +44,11 @@ class MailURLCollectorBot(MailCollectorBot):
                 url = url.strip()
 
                 self.logger.info("Downloading report from %r.", url)
-                timeoutretries = 0
-                resp = None
-                while timeoutretries < self.http_timeout_max_tries and resp is None:
-                    try:
-                        resp = requests.get(url=url,
-                                            auth=self.auth, proxies=self.proxy,
-                                            headers=self.http_header,
-                                            verify=self.http_verify_cert,
-                                            cert=self.ssl_client_cert,
-                                            timeout=self.http_timeout_sec)
-
-                    except requests.exceptions.Timeout:
-                        timeoutretries += 1
-                        self.logger.warn("Timeout whilst downloading the report.")
-
-                if resp is None and timeoutretries >= self.http_timeout_max_tries:
+                try:
+                    resp = self.session.get(url=url)
+                except requests.exceptions.Timeout:
                     self.logger.error("Request timed out %i times in a row. " %
-                                      timeoutretries)
+                                      self.http_timeout_max_tries)
                     erroneous = True
                     # The download timed out too often, leave the Loop.
                     continue
