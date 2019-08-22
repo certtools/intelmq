@@ -476,6 +476,7 @@ def parse_relative(relative_time: str) -> int:
 
 def extract_tar(file):
     tar = tarfile.open(fileobj=io.BytesIO(file))
+
     def extract(filename):
         return tar.extractfile(filename).read()
     return tuple(file.name for file in tar.getmembers()), tar, extract
