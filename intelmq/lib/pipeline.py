@@ -384,6 +384,12 @@ class Amqp(Pipeline):
         else:
             self.publish_raises_nack = True
 
+        self.monitoring_url = getattr(self.parameters,
+                                         'intelmqctl_rabbitmq_monitoring_url',
+                                         'http://%s:15671/' % self.host)
+        if not self.monitoring_url.endswith('/'):
+            self.monitoring_url = "%s/" % self.monitoring_url
+
     def connect(self, channelonly=False):
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
                                                                             port=int(self.port),
@@ -480,7 +486,7 @@ class Amqp(Pipeline):
         if requests is None:
             self.logger.error("Library 'requests' is needed to get queue status. Please install it.")
             return {}
-        response = requests.get('http://%s:15672/api/queues' % self.host, auth=auth,
+        response = requests.get(self.monitoring_url + 'api/queues', auth=auth,
                                 timeout=5)
         if response.status_code == 401:
             if response.json()['error'] == 'not_authorised':

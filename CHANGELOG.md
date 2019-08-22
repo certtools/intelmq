@@ -110,6 +110,7 @@ CHANGELOG
   - Wait for up to 2 seconds when stopping a bot (#1434).
   - Exit early on restart if stopping a bot did not work (#1434).
   - debugging: Mock acknowledge method if incoming message is mocked too, otherwise a different message is acknowledged.
+  - Queue listing for AMQP: Support non-default monitoring URLs, see User-Guide.
 
 ### Contrib
 * logcheck rules: Adapt ignore rule to cover the instance id of bot names.
