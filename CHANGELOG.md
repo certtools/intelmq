@@ -30,7 +30,9 @@ CHANGELOG
   - New function `write_configuration` to write dicts to files in the correct json formatting.
   - New function `create_request_session_from_bot`.
 - `intelmq.lib.pipeline`:
-  - AMQP: Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
+  - AMQP:
+    - Actually use `source/destination_pipeline_amqp_virtual_host` parameter.
+    - Support for SSL with `source/destination_pipeline_ssl` parameter.
   - pipeline base class: add missing dummy methods.
   - Add missing return types.
   - Redis: Evaluate return parameter of queue/key deletion.

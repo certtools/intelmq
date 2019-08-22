@@ -3,6 +3,7 @@ import time
 import warnings
 from itertools import chain
 from typing import Dict, Optional, Union
+import ssl
 
 import redis
 
@@ -363,10 +364,15 @@ class Amqp(Pipeline):
         self.virtual_host = getattr(self.parameters,
                                     "{}_pipeline_amqp_virtual_host".format(queues_type),
                                     '/')
+        self.ssl = getattr(self.parameters,
+                           "{}_pipeline_ssl".format(queues_type),
+                           False)
         self.load_balance_iterator = 0
         self.kwargs = {}
         if self.username and self.password:
             self.kwargs['credentials'] = pika.PlainCredentials(self.username, self.password)
+        if self.ssl:
+            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.SSLContext())
         pika_version = tuple(int(x) for x in pika.__version__.split('.'))
         if pika_version < (0, 11):
             self.kwargs['heartbeat_interval'] = 10
