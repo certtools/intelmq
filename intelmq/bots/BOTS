@@ -904,6 +904,7 @@
                 "password": "<your amqp password>",
                 "require_confirmation": true,
                 "routing_key": "<your routing key>",
+                "use_ssl": false,
                 "username": "<your amqp username>"
             }
         },
