@@ -1,1 +1,3 @@
 beautifulsoup4
+lxml<4.4.0; python_version < '3.5'
+lxml; python_version >= '3.5'
