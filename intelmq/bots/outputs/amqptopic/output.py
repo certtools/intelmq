@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import ssl
 
 from intelmq.lib.bot import Bot
 
@@ -43,6 +44,10 @@ class AMQPTopicOutputBot(Bot):
         if self.parameters.username and self.parameters.password:
             self.kwargs['credentials'] = pika.PlainCredentials(self.parameters.username,
                                                                self.parameters.password)
+
+        if getattr(self.parameters, 'use_ssl', False):
+            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.SSLContext())
+
         self.connection_parameters = pika.ConnectionParameters(
             host=self.connection_host,
             port=self.connection_port,
