@@ -42,6 +42,7 @@ CHANGELOG
   - More extensive usage of `intelmq.lib.utils.unzip`.
   - Save the file names in the report if files have been extracted form an archive.
 - `intelmq.bots.collectors.rt.collector_rt`: Save ticket information/metadata in the extra fields of the report.
+  - Support for RT 3.8 and RT 4.4.
 - `intelmq.bots.collectos.mail.*`: Save email information/metadata in the extra fields of the report.
 
 #### Parsers

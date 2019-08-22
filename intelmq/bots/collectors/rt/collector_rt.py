@@ -140,14 +140,23 @@ class RTCollectorBot(CollectorBot):
 
             report.add("raw", raw)
             report.add("rtir_id", ticket_id)
+            report.add("time.observation", created + ' UTC', overwrite=True)
+
+            """
+            On RT 3.8 these fields are only available on the original ticket, not the
+            first history element as in 4.4
+            """
+            if "Subject" not in ticket:
+                ticket = RT.get_ticket(ticket_id)
+
             report.add("extra.email_subject", ticket["Subject"])
             report.add("extra.ticket_subject", ticket["Subject"])
-            report.add("time.observation", created + ' UTC', overwrite=True)
             report.add("extra.email_from", ','.join(ticket["Requestors"]))
             report.add("extra.ticket_requestors", ','.join(ticket["Requestors"]))
             report.add("extra.ticket_queue", ticket["Queue"])
             report.add("extra.ticket_status", ticket["Status"])
             report.add("extra.ticket_owner", ticket["Owner"])
+
             self.send_message(report)
 
             if self.parameters.take_ticket:

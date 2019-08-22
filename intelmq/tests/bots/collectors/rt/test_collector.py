@@ -7,7 +7,7 @@ import os
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 
-from intelmq.bots.collectors.rt.collector_rt import RTCollectorBot  # noqa
+from intelmq.bots.collectors.rt.collector_rt import RTCollectorBot
 
 rt_url = os.getenv('INTELMQ_TEST_RT_URL')
 rt_username = os.getenv('INTELMQ_TEST_RT_USERNAME')
