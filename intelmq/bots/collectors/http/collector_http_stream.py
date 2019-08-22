@@ -20,7 +20,7 @@ except ImportError:
     requests = None
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import decode
+from intelmq.lib.utils import decode, create_request_session_from_bot
 
 
 class HTTPStreamCollectorBot(CollectorBot):
@@ -32,16 +32,14 @@ class HTTPStreamCollectorBot(CollectorBot):
             raise ValueError('Could not import requests. Please install it.')
 
         self.set_request_parameters()
+        self.session = create_request_session_from_bot(self)
 
     def process(self):
         self.logger.info("Connecting to stream at %r.", self.parameters.http_url)
 
         try:
-            req = requests.get(url=self.parameters.http_url, auth=self.auth,
-                               proxies=self.proxy, headers=self.http_header,
-                               verify=self.http_verify_cert,
-                               cert=self.ssl_client_cert, stream=True,
-                               timeout=self.http_timeout_sec)
+            req = self.session.get(url=self.parameters.http_url,
+                                   stream=True)
         except requests.exceptions.ConnectionError:
             self.logger.exception('Connection Failed.')
         else:

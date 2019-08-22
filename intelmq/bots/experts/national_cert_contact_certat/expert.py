@@ -16,6 +16,7 @@ Options:
 """
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.utils import create_request_session_from_bot
 
 try:
     import requests
@@ -32,6 +33,7 @@ class NationalCERTContactCertATExpertBot(Bot):
             raise ValueError('Could not import requests. Please install it.')
 
         self.set_request_parameters()
+        self.session = create_request_session_from_bot(self)
 
     def process(self):
         event = self.receive_message()
@@ -47,11 +49,7 @@ class NationalCERTContactCertATExpertBot(Bot):
                     'bShowNationalCERT': 'on',
                     'sep': 'semicolon',
                 }
-                req = requests.get(URL, params=parameters,
-                                   proxies=self.proxy, headers=self.http_header,
-                                   verify=self.http_verify_cert,
-                                   timeout=self.http_timeout_sec
-                                   )
+                req = self.session.get(URL, params=parameters)
                 response = req.text.strip().split(';')
 
                 ccfield = '{}.geolocation.cc'.format(section)
