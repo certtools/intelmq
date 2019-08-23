@@ -62,14 +62,6 @@ sudo intelmqsetup
 ```
 For editable installations (development only), run `pip install -e .` instead.
 
-## Upgrade the configuration
-
-Make a backup of your configuration files, including the bots' configuration (like the modify bot).
-Call the configuration upgrade function:
-```
-intelmqctl upgrade-conf
-```
-
 ## Upgrade configuration and check the installation
 
 Go through [NEWS.md](../NEWS.md) and apply necessary adaptions to your setup.
