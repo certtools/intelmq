@@ -49,13 +49,13 @@ CHANGELOG
 - `intelmq.bot.parsers.html_table.parser`:
   * New parameter "html_parser".
   * Use time conversion functions directly from `intelmq.lib.harmonization.DateTime.convert`.
+  - Limit lxml dependency on 3.4 to < 4.4.0 (incompatibility).
 - `intelmq.bots.parsers.netlab_360.parser`: Add support for hajime scanners.
 
 #### Experts
 - Add geohash expert.
 
 #### Outputs
-- `intelmq.bots.outputs.amqptopic.output`: New parameters `message_hierarchical_output`, `message_with_type`, `message_jsondict_as_string`.
 
 ### Documentation
 - Feeds: Add ViriBack feed.
@@ -66,7 +66,6 @@ CHANGELOG
 ### Tests
 - Travis:
   - Use UTC timezone.
-  - Limit lxml dependency on 3.4 to < 4.4.0 (incompatibility).
 - Tests for `utils.unzip`.
 - Add a new asset: Zip archive with two files, same as with tar.gz archive.
 
