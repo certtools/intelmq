@@ -98,7 +98,6 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
         self.prepare_bot(parameters=parameters)
         self.run_bot(prepare=False, iterations=len(INPUT[6:]))
         for position, event_out in enumerate(OUTPUT[6:]):
-            print(position)
             self.assertMessageEqual(position, event_out)
 
 
