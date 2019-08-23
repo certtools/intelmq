@@ -3,13 +3,14 @@
 Testing modify expert bot.
 """
 
+import json
 import unittest
 
 from pkg_resources import resource_filename
 
 import intelmq.lib.test as test
 from intelmq.lib.utils import load_configuration
-from intelmq.bots.experts.modify.expert import ModifyExpertBot, modify_expert_convert_config
+from intelmq.bots.experts.modify.expert import ModifyExpertBot
 
 EVENT_TEMPL = {"__type": "Event",
                "feed.name": "Spamhaus Cert",
@@ -87,6 +88,19 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
 
         for position, event_out in enumerate(OUTPUT[:7]):
             self.assertMessageEqual(position, event_out)
+
+    def test_timing(self):
+        """
+        Test Timing.
+        Call with:
+        python3 intelmq/tests/bots/experts/modify/test_expert.py -q TestModifyExpertBot.test_timing
+        """
+        parameters = {'configuration_path': '/opt/intelmq/var/lib/bots/modify/malware_names.conf'}
+        count = 10000
+        self.prepare_bot(parameters=parameters)
+        self.input_queue = [json.dumps({"__type": "Event", "malware.name": "this does not match anything :)"}) for i in range(count)]
+        raise self.run_bot(prepare=False, timeit_number=count)
+
 
     def test_conversion(self):
         """ Test if the conversion from old dict-based config to new list based is correct. """
