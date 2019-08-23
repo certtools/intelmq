@@ -3,7 +3,7 @@ NEWS
 
 See the changelog for a full list of changes.
 
-2.0.1 Bugfix release (unreleased)
+2.0.1 Bugfix release (2019-08-23)
 ---------------------------------
 
 ### Requirements

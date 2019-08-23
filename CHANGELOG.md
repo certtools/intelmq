@@ -2,10 +2,8 @@ CHANGELOG
 ==========
 
 
-2.0.1 (unreleased)
+2.0.1 (2019-08-23)
 ------------------
-
-### Configuration
 
 ### Core
 - `intelmq.lib.harmonization`:
@@ -128,6 +126,12 @@ CHANGELOG
 - bash-completion: Support for `intelmqctl upgrade-config` added.
 
 ### Known issues
+- http stream collector: retry on regular connection problems? (#1435)
+- tests: capture logging with context manager (#1342)
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952)
+- n6 parser: mapping is modified within each run (#905)
+- reverse DNS: Only first record is used (#877)
+- Corrupt dump files when interrupted during writing (#870)
 
 
 2.0.0 (2019-05-22)
