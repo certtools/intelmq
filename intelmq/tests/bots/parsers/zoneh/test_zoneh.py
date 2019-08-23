@@ -111,7 +111,6 @@ class TestZoneHParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = ZoneHParserBot
         cls.default_input_message = ACCEPTED_REPORT
         cls.sysconfig = {'feedname': 'Compromised-Website'}
-        print(PENDING_LINES)
 
     def test_event(self):
         """ Test if correct Event has been produced. """

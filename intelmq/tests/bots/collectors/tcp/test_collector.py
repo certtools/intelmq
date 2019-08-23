@@ -77,7 +77,6 @@ class TestTCPOutputBot(test.BotTestCase, unittest.TestCase):
     def _delayed_start(self):
         sleep(2)
         self.assertEqual = lambda *args, **kwargs: True
-        # print(self.bot_id)
         self.run_bot(iterations=len(self.input_message))
 
 
