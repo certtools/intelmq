@@ -755,7 +755,7 @@
             "module": "intelmq.bots.experts.gethostbyname.expert",
             "parameters": {}
         },
-        "IDEA": {
+        "IDEA Converter": {
             "description": "Converts events into the IDEA format.",
             "module": "intelmq.bots.experts.idea.expert",
             "parameters": {
@@ -898,9 +898,14 @@
                 "exchange_name": "<your exchange name>",
                 "exchange_type": "topic",
                 "keep_raw_field": false,
+                "message_hierarchical_output": false,
+                "message_with_type": false,
+                "message_jsondict_as_string": false,
                 "password": "<your amqp password>",
                 "require_confirmation": true,
                 "routing_key": "<your routing key>",
+                "single_key": false,
+                "use_ssl": false,
                 "username": "<your amqp username>"
             }
         },

@@ -1,0 +1,225 @@
+# -*- coding: utf-8 -*-
+"""
+© 2019 Sebastian Wagner <wagner@cert.at>
+
+SPDX-License-Identifier: AGPL-3.0
+"""
+from collections import OrderedDict
+
+import intelmq.lib.utils as utils
+
+__all__ = ['v100_dev7_modify_syntax',
+           'v110_shadowserver_feednames',
+           'v110_deprecations',
+           'v200_defaults_statistics',
+           'v200_defaults_broker',
+           'v112_feodo_tracker_ips',
+           'v112_feodo_tracker_domains',
+           'v200_defaults_ssl_ca_certificate',
+           'v111_defaults_process_manager',
+           ]
+
+
+def v200_defaults_statistics(defaults, runtime, dry_run):
+    """
+    Inserting "statistics_*" parameters into defaults.conf file
+    """
+    values = {"statistics_database": 3,
+              "statistics_host": "127.0.0.1",
+              "statistics_password": defaults.get('source_pipeline_password', None),
+              "statistics_port": 6379
+              }
+    changed = None
+    for key, value in values.items():
+        if key not in defaults:
+            defaults[key] = value
+            changed = True
+    return changed, defaults, runtime
+
+
+def v200_defaults_broker(defaults, runtime, dry_run):
+    """
+    Inserting "*_pipeline_broker" and deleting broker into/from defaults configuration
+    """
+    changed = None
+    values = {"destination_pipeline_broker": defaults.get("broker", "redis"),
+              "source_pipeline_broker": defaults.get("broker", "redis"),
+              }
+    for key, value in values.items():
+        if key not in defaults:
+            defaults[key] = value
+            changed = True
+    if "broker" in defaults:
+        del defaults["broker"]
+        changed = True
+
+    return changed, defaults, runtime
+
+
+def v112_feodo_tracker_ips(defaults, runtime, dry_run):
+    """
+    Fix URL of feodotracker IPs feed in runtime configuration
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["parameters"].get("http_url") == "https://feodotracker.abuse.ch/blocklist/?download=ipblocklist":
+            bot["parameters"]["http_url"] = "https://feodotracker.abuse.ch/downloads/ipblocklist.csv"
+            changed = True
+
+    return changed, defaults, runtime
+
+
+def v112_feodo_tracker_domains(defaults, runtime, dry_run):
+    """
+    Search for discontinued feodotracker domains feed
+    """
+    found = False
+    for bot_id, bot in runtime.items():
+        if bot["parameters"].get("http_url") == "https://feodotracker.abuse.ch/blocklist/?download=domainblocklist":
+            found = bot_id
+
+    if not found:
+        return None, defaults, runtime
+    else:
+        return ('The discontinued feed "Feodo Tracker Domains" has been found '
+                'as bot %r. Remove it yourself please.' % found,
+                defaults, runtime)
+
+
+def v110_shadowserver_feednames(defaults, runtime, dry_run):
+    """
+    Replace deprecated Shadowserver feednames
+    """
+    mapping = {
+        "Botnet-Drone-Hadoop": "Drone",
+        "DNS-open-resolvers": "DNS-Open-Resolvers",
+        "Open-NetBIOS": "Open-NetBIOS-Nameservice",
+        "Ssl-Freak-Scan": "SSL-FREAK-Vulnerable-Servers",
+        "Ssl-Scan": "SSL-POODLE-Vulnerable-Servers",
+    }
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.parsers.shadowserver.parser":
+            if bot["parameters"]["feedname"] in mapping:
+                changed = True
+                bot["parameters"]["feedname"] = mapping[bot["parameters"]["feedname"]]
+
+    return changed, defaults, runtime
+
+
+def v110_deprecations(defaults, runtime, dry_run):
+    """
+    Checking for deprecated runtime configurations
+    """
+    mapping = {
+        "intelmq.bots.collectors.n6.collector_stomp": "intelmq.bots.collectors.stomp.collector",
+        "intelmq.bots.parsers.cymru_full_bogons.parser": "intelmq.bots.parsers.cymru.parser_full_bogons",
+    }
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] in mapping:
+            bot["module"] = mapping[bot["module"]]
+            changed = True
+        if bot["module"] == "intelmq.bots.experts.ripencc_abuse_contact.expert":
+            bot["module"] = "intelmq.bots.experts.ripe.expert"
+            changed = True
+        if bot["module"] == "intelmq.bots.experts.ripe.expert":
+            if bot["parameters"].get("query_ripe_stat"):
+                if "query_ripe_stat_asn" not in bot["parameters"]:
+                    bot["parameters"]["query_ripe_stat_asn"] = bot["parameters"]["query_ripe_stat"]
+                if "query_ripe_stat_asn" not in bot["parameters"]:
+                    bot["parameters"]["query_ripe_stat_ip"] = bot["parameters"]["query_ripe_stat_ip"]
+                del bot["parameters"]["query_ripe_stat"]
+                changed = True
+        if bot["group"] == 'Collector' and bot["parameters"].get("feed"):
+            try:
+                bot["parameters"]["feed"] = bot["parameters"]["name"]
+            except KeyError:
+                pass
+            else:
+                changed = True
+
+    return changed, defaults, runtime
+
+
+def modify_expert_convert_config(old):
+    """
+    Also used in the modify expert
+    """
+    config = []
+    for groupname, group in old.items():
+        for rule_name, rule in group.items():
+            config.append({"rulename": groupname + ' ' + rule_name,
+                           "if": rule[0],
+                           "then": rule[1]})
+    return config
+
+
+def v100_dev7_modify_syntax(defaults, runtime, dry_run):
+    """
+    Migrate modify bot configuration format
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.experts.modify.expert":
+            if "configuration_path" in bot["parameters"]:
+                config = utils.load_configuration(bot["parameters"]["configuration_path"])
+                if type(config) is dict:
+                    new_config = modify_expert_convert_config(config)
+                    if len(config) != len(new_config):
+                        return 'Error converting modify expert syntax. Different size of configurations. Please report this.'
+                    changed = True
+                    if dry_run:
+                        print('Would now convert file %r syntax.',
+                              bot["parameters"]["configuration_path"])
+                        continue
+                    try:
+                        utils.write_configuration(bot["parameters"]["configuration_path"],
+                                                  new_config)
+                    except PermissionError:
+                        return ('Can\'t update %s\'s configuration: Permission denied.' % bot_id,
+                                defaults, runtime)
+
+    return changed, defaults, runtime
+
+
+def v200_defaults_ssl_ca_certificate(defaults, runtime, dry_run):
+    """
+    Add ssl_ca_certificate to defaults
+    """
+    if "ssl_ca_certificate" not in defaults:
+        defaults["ssl_ca_certificate"] = None
+        return True, defaults, runtime
+    else:
+        return None, defaults, runtime
+
+
+def v111_defaults_process_manager(defaults, runtime, dry_run):
+    """
+    Fix typo in proccess_manager parameter
+    """
+    changed = None
+    if "proccess_manager" in defaults:
+        if "process_manager" in defaults:
+            del defaults["proccess_manager"]
+        elif "process_manager" not in defaults:
+            defaults["process_manager"] = defaults["proccess_manager"]
+            del defaults["proccess_manager"]
+        changed = True
+    else:
+        if "process_manager" not in defaults:
+            defaults["process_manager"] = "intelmq"
+            changed = True
+
+    return changed, defaults, runtime
+
+
+UPGRADES = OrderedDict([
+    ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
+    ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
+    ((1, 1, 1), (v111_defaults_process_manager, )),
+    ((1, 1, 2), (v112_feodo_tracker_ips, v112_feodo_tracker_domains, )),
+    ((2, 0, 0), (v200_defaults_statistics, v200_defaults_broker,
+                 v200_defaults_ssl_ca_certificate)),
+    ((2, 0, 1), ()),
+])

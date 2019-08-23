@@ -22,10 +22,12 @@ import logging.handlers
 import os
 import pwd
 import re
+import requests
+import shutil
 import sys
 import tarfile
 import traceback
-from typing import Generator, Iterator, Optional, Sequence, Union
+from typing import Any, Generator, Iterator, Optional, Sequence, Union
 
 import dateutil.parser
 from dateutil.relativedelta import relativedelta
@@ -42,14 +44,18 @@ __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_FORMAT_STREAM = '%(name)s: %(message)s'
 LOG_FORMAT_SYSLOG = '%(name)s: %(levelname)s %(message)s'
+LOG_FORMAT_SIMPLE = '%(message)s'
 
 # Regex for parsing the above LOG_FORMAT
 LOG_REGEX = (r'^(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
-             r' (?P<bot_id>([-\w]+|py\.warnings)) - '
+             r' (?P<bot_id>([-\w]+|py\.warnings))'
+             r'(?P<thread_id>\.[0-9]+)? - '
              r'(?P<log_level>[A-Z]+) - '
              r'(?P<message>.+)$')
 SYSLOG_REGEX = (r'^(?P<date>\w{3} \d{2} \d{2}:\d{2}:\d{2}) (?P<hostname>[-\.\w]+) '
-                r'(?P<bot_id>([-\w]+|py\.warnings)): (?P<log_level>[A-Z]+) (?P<message>.+)$')
+                r'(?P<bot_id>([-\w]+|py\.warnings))'
+                r'(?P<thread_id>\.[0-9]+)?'
+                r': (?P<log_level>[A-Z]+) (?P<message>.+)$')
 
 
 class Parameters(object):
@@ -192,6 +198,39 @@ def load_configuration(configuration_filepath: str) -> dict:
     return config
 
 
+def write_configuration(configuration_filepath: str,
+                        content: dict, backup: bool = True,
+                        new=False) -> bool:
+    """
+    Writes a configuration to the file, optionally with making a backup.
+    Checks if the file needs to be written at all.
+    Accepts dicts as input and formats them like all configurations.
+
+    Parameters:
+        configuration_filepath: the path to the configuration file
+        content: the configuration itself as dictionary
+        backup: make a backup of the file and delete the old backup (default)
+        new: If the file is expected to be new, do not attempt to read or backup it.
+
+    Returns:
+        True if file has been written successfully
+        None if the file content was the same
+
+    Raises:
+        In case of errors, e.g. PermissionError
+    """
+    if not new:
+        old_content = load_configuration(configuration_filepath=configuration_filepath)
+        if content == old_content:
+            return None
+    if not new and backup:
+        shutil.copy2(configuration_filepath, configuration_filepath + '.bak')
+    with open(configuration_filepath, 'w') as handle:
+        json.dump(content, fp=handle, indent=4,
+                  sort_keys=True,
+                  separators=(',', ': '))
+
+
 def load_parameters(*configs: dict) -> Parameters:
     """
     Load dictionaries into new Parameters() instance.
@@ -248,7 +287,8 @@ class ListHandler(logging.StreamHandler):
 
 def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, log_level: str = "DEBUG",
         stream: Optional[object] = None, syslog: Union[bool, str, list, tuple] = None,
-        log_format_stream: str = LOG_FORMAT_STREAM):
+        log_format_stream: str = LOG_FORMAT_STREAM,
+        logging_level_stream: Optional[str] = None):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
     The warnings module will log to the same handlers.
@@ -258,14 +298,18 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, lo
         log_path: Path to log directory, defaults to DEFAULT_LOGGING_PATH
             If False, nothing is logged to files.
         log_level: default is "DEBUG"
-        stream: By default (None), stderr will be used, stream objects can be
-            given. If False, stream output is not used.
+        stream: By default (None), stdout and stderr will be used depending on the level.
+            If False, stream output is not used.
+            For everything else, the argument is used as stream output.
         syslog:
             If False (default), FileHandler will be used. Otherwise either a list/
             tuple with address and UDP port are expected, e.g. `["localhost", 514]`
             or a string with device name, e.g. `"/dev/log"`.
         log_format_stream:
             The log format used for streaming output. Default: LOG_FORMAT_STREAM
+        logging_level_stream:
+            The logging level for stream (console) output.
+            By default the same as log_level.
 
     Returns:
         logger: An instance of logging.Logger
@@ -282,6 +326,9 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, lo
 
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
+
+    if not logging_level_stream:
+        logging_level_stream = log_level
 
     if log_path and not syslog:
         handler = FileHandler("%s/%s.log" % (log_path, name))
@@ -310,7 +357,7 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, lo
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
         warnings_logger.addHandler(console_handler)
-        console_handler.setLevel(log_level)
+        console_handler.setLevel(logging_level_stream)
 
     return logger
 
@@ -361,7 +408,7 @@ def parse_logline(logline: str, regex: str = LOG_REGEX) -> Union[dict, str]:
     """
 
     match = re.match(regex, logline)
-    fields = ("date", "bot_id", "log_level", "message")
+    fields = ("date", "bot_id", "thread_id", "log_level", "message")
 
     try:
         value = dict(list(zip(fields, match.group(*fields))))
@@ -369,6 +416,8 @@ def parse_logline(logline: str, regex: str = LOG_REGEX) -> Union[dict, str]:
         value['date'] = date.isoformat()
         if value['date'].endswith('+00:00'):
             value['date'] = value['date'][:-6]
+        if value["thread_id"]:
+            value["thread_id"] = int(value["thread_id"][1:])
         return value
     except AttributeError:
         return logline
@@ -540,3 +589,74 @@ def drop_privileges() -> bool:
     if os.geteuid() != 0:  # For the unprobably possibility that intelmq is root
         return True
     return False
+
+
+def setup_list_logging(name='intelmq', logging_level='INFO'):
+    check_logger = logging.getLogger('check')  # name does not matter
+    list_handler = ListHandler()
+    list_handler.setLevel('INFO')
+    check_logger.addHandler(list_handler)
+    check_logger.setLevel('INFO')
+    return check_logger, list_handler
+
+
+def version_smaller(version1: tuple, version2: tuple) -> Optional[bool]:
+    """
+    Parameters:
+        version1: A tuple of integer and string values
+        version2: Same as version1
+        Integer values are expected as integers (__version_info__).
+
+    Returns:
+        True if version1 is smaller
+        False if version1 is greater
+        None if both are equal
+    """
+    if len(version1) == 3:
+        version1 = version1 + ('stable', 0)
+    if len(version1) == 4:
+        version1 = version1 + (0, )
+    if len(version2) == 3:
+        version2 = version2 + ('stable', 0)
+    if len(version2) == 4:
+        version2 = version2 + (0, )
+    for level1, level2 in zip(version1, version2):
+        if level1 > level2:
+            return False
+        if level1 < level2:
+            return True
+    return None
+
+
+def lazy_int(value: Any) -> Any:
+    """
+    Tries to conver the value to int if possible. Original value otherwise
+    """
+    try:
+        return int(value)
+    except ValueError:
+        return value
+
+
+def create_request_session_from_bot(bot: type) -> requests.Session:
+    """
+    Creates a requests.Session object preconfigured with the parameters
+    set by the Bot.set_request_parameters and given by the bot instance.
+
+    Parameters:
+        bot_instance: An instance of a Bot
+
+    Returns:
+        session: A preconfigured instance of requests.Session
+    """
+    session = requests.Session()
+    session.headers.update(bot.http_header)
+    session.auth = bot.auth
+    session.proxies = bot.proxy
+    session.cert = bot.ssl_client_cert
+    session.timeout = bot.http_timeout_sec
+    session.verify = bot.http_verify_cert
+    adapter = requests.adapters.HTTPAdapter(max_retries=bot.http_timeout_max_tries - 1)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session

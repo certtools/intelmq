@@ -24,6 +24,9 @@ build:
 		patch -p1 setup.py debian/patches/fix-dnspython-name.patch;\
 	fi
 	dh build --with python3 --without python2 --buildsystem=pybuild --with quilt --with systemd
+	# This tests frequently failes on ubuntu and debian systems.
+	# On some systems this command will be executed twice, so -f
+	rm -rf intelmq/tests/bots/collectors/tcp/
 
 override_dh_auto_build:
 

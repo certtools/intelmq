@@ -3,9 +3,21 @@
 Modify Expert bot let's you manipulate all fields with a config file.
 """
 import re
+import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.utils import load_configuration
+from intelmq.lib.upgrades import modify_expert_convert_config
+
+
+def is_re_pattern(value):
+    """
+    Checks if the given value is a re compiled pattern
+    """
+    if sys.version_info > (3, 7):
+        return isinstance(value, re.Pattern)
+    else:
+        return hasattr(value, "pattern")
 
 
 class MatchGroupMapping:
@@ -22,28 +34,28 @@ class MatchGroupMapping:
         return self.match.group(key)
 
 
-def convert_config(old):
-    config = []
-    for groupname, group in old.items():
-        for rule_name, rule in group.items():
-            config.append({"rulename": groupname + ' ' + rule_name,
-                           "if": rule[0],
-                           "then": rule[1]})
-
-    return config
-
-
 class ModifyExpertBot(Bot):
 
     def init(self):
-        self.config = load_configuration(self.parameters.configuration_path)
-        if type(self.config) is dict:
-            self.config = convert_config(self.config)
+        config = load_configuration(self.parameters.configuration_path)
+        if type(config) is dict:
+            self.logger.warning('Support for dict-based configuration will be '
+                                'removed in version 3.0. Have a look at the '
+                                'NEWS file section 1.0.0.dev7.')
+            config = modify_expert_convert_config(config)
 
         if getattr(self.parameters, 'case_sensitive', True):
             self.re_kwargs = {}
         else:
             self.re_kwargs = {'flags': re.IGNORECASE}
+
+        # regex compilation
+        self.config = []
+        for rule in config:
+            self.config.append(rule)
+            for field, expression in rule["if"].items():
+                if isinstance(expression, str) and expression != '':
+                    self.config[-1]["if"][field] = re.compile(expression, **self.re_kwargs)
 
     def matches(self, identifier, event, condition):
         matches = {}
@@ -57,26 +69,22 @@ class ModifyExpertBot(Bot):
                     continue
             if name not in event:
                 return None
-            if not isinstance(rule, type(event[name])):
-                if isinstance(rule, str) and isinstance(event[name], (int, float)):
-                    match = re.search(rule, str(event[name]), **self.re_kwargs)
+            if is_re_pattern(rule):
+                if isinstance(event[name], (int, float)):
+                    match = rule.search(str(event[name]))
                     if match is None:
                         return None
                     else:
                         matches[name] = match
                 else:
-                    self.logger.warn("Type of rule (%r) and data (%r) do not "
-                                     "match in %s, %s!",
-                                     type(rule), type(event[name]), identifier, name)
-            elif not isinstance(event[name], str):  # int, float, etc
+                    match = rule.search(event[name])
+                    if match is None:
+                        return None
+                    else:
+                        matches[name] = match
+            else:  # rule is boolean, int, float, etc
                 if event[name] != rule:
                     return None
-            else:
-                match = re.search(rule, event[name], **self.re_kwargs)
-                if match is None:
-                    return None
-                else:
-                    matches[name] = match
 
         return matches
 

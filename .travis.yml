@@ -45,7 +45,7 @@ before_script:
   - if [[ $mode == debian ]]; then popd; fi
   - if [[ -v requirements ]]; then sudo cp intelmq/tests/assets/* /var/www/html/ && sudo touch /var/www/html/$(date +%Y).txt; fi
 script:
-  - if [[ $requirements == true ]]; then INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; elif [[ $requirements == false ]]; then INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
+  - if [[ $requirements == true ]]; then INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; find contrib/ -name "test*.py" -exec nosetests {} \+; elif [[ $requirements == false ]]; then INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
   - if [[ $mode == codestyle ]]; then pycodestyle intelmq/{bots,lib,bin}; fi
   - if [[ $mode == debian ]]; then pushd ../build; fi
   - if [[ $mode == debian ]]; then DEB_BUILD_OPTIONS='nocheck' dpkg-buildpackage -us -uc -d; fi

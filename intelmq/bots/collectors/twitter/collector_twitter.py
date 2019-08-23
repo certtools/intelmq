@@ -35,6 +35,7 @@ To get api login data see: https://python-twitter.readthedocs.io/en/latest/getti
 import time
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.utils import create_request_session_from_bot
 
 try:
     import requests
@@ -74,14 +75,17 @@ class TwitterCollectorBot(CollectorBot):
             access_token_secret=self.parameters.access_token_secret,
             tweet_mode="extended")
 
+        self.set_request_parameters()
+        self.session = create_request_session_from_bot(self)
+
     def get_text_from_url(self, url: str) -> str:
         if "pastebin.com" in url:
             self.logger.debug('Processing url %r.', url)
             if "raw" not in url:
-                request = requests.get(
+                request = self.session.get(
                     url.replace("pastebin.com", "pastebin.com/raw"))
             else:
-                request = requests.get(url)
+                request = self.session.get(url)
             return request.text
         return ''
 

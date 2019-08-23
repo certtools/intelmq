@@ -108,7 +108,7 @@ You can set these parameters per bot as well. The settings will take effect afte
 
     * **`stop`** - stop bot after retrying X times (as defined in `error_max_retries`)  with a delay between retries (as defined in `error_retry_delay`). If the bot reaches the `error_max_retries` value, it will remove the message from the pipeline and stop. If the option `error_dump_message` is also enable, the bot will dump the removed message to its dump file (to be found in var/log).
     
-    * **`pass`** - will skip this message and will process the next message after retrying X times, removing the current message from pipeline. If the option `error_dump_message` is also enable, then the bot will dump the removed message to its dump file.
+    * **`pass`** - will skip this message and will process the next message after retrying X times, removing the current message from pipeline. If the option `error_dump_message` is also enable, then the bot will dump the removed message to its dump file. After max retries are reached, the rate limit is applied (e.g. a collector bot fetch an unavailable resource does not try forever).
 
 * **`error_max_retries`** - in case of an error, the bot will try to re-start processing the current message X times as defined by this option. int value.
 
@@ -116,6 +116,8 @@ You can set these parameters per bot as well. The settings will take effect afte
 
 * **`error_dump_message`** - specifies if the bot will write queued up messages to its dump file (use intelmqdump to re-insert the message).
     * **`true/false`** - write or not write message to the dump file
+
+If the path `_on_error` exists for a bot, the message is also sent to this queue, instead of (only) dumping the file if configured to do so.
 
 #### Miscellaneous
 
@@ -274,7 +276,8 @@ You need to set the parameter `source_pipeline_broker`/`destination_pipeline_bro
 * `source_pipeline_socket_timeout` (default: no timeout)
 * `source_pipeline_amqp_virtual_host` (default: `'/`)
 
-In a RabbitMQ's default configuration you might not provide a user account, as by default the administrator is open. If you create a user account, make sure to add the tag "monitoring", otherwise IntelMQ can't fetch the queue sizes.
+For getting the queue sizes, `intelmqctl` needs to connect to the monitoring interface of RabbitMQ. If the monitoring interface is not available under "http://{host}:15671" you can manually set using the parameter `intelmqctl_rabbitmq_monitoring_url`.
+In a RabbitMQ's default configuration you might not provide a user account, as by default the administrator (`guest`:`guest`) allows full access from localhost. If you create a separate user account, make sure to add the tag "monitoring" to it, otherwise IntelMQ can't fetch the queue sizes.
 ![RabbitMQ User Account Monitoring Tag](./images/rabbitmq-user-monitoring.png)
 
 Setting the statistics (and cache) parameters is necessary when the local redis is running under a non-default host/port. If this is the case, you can set them explicitly:
@@ -353,9 +356,9 @@ Set it to a non-zero integer, then this number of worker threads will be spawn.
 This is useful if bots often wait for system resources or if network-based lookups are a bottleneck.
 
 However, there are currently a few cavecats:
+  * This is not possible for all bots, there are some exceptions (collectors and some outputs), see the [FAQ](FAQ.md#multithreading-is-not-available-for-this-bot) for some reasons.
   * Only use it with the AMQP pipeline, as with Redis, messages may get duplicated because there's only one internal queue
   * In the logs, you can see the main thread initializing first, then all of the threads which log with the name `[bot-id].[thread-id]`.
-  * You need to kill the bot twice to actually stop it.
 
 ## Harmonization Configuration
 
@@ -686,9 +689,12 @@ tail -f /opt/intelmq/var/log/*.log
 
 # Uninstall
 
+If you installed intelmq with native packages: Use the package management tool to remove the package `intelmq`. These tools do not remove configuration by default.
+
+If you installed manually via pip (note that this also deletes all configuration and possibly data):
 ```bash
-pip uninstall intelmq
-rm -rf /opt/intelmq
+pip3 uninstall intelmq
+rm -r /opt/intelmq
 ```
 
 # Integration with ticket systems, etc.

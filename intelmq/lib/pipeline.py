@@ -3,6 +3,7 @@ import time
 import warnings
 from itertools import chain
 from typing import Dict, Optional, Union
+import ssl
 
 import redis
 
@@ -107,10 +108,19 @@ class Pipeline(object):
         else:
             raise exceptions.InvalidArgument('queues_type', got=queues_type, expected=['source', 'destination'])
 
-    def nonempty_queues(self) -> set:
+    def send(self, message, path="_default", path_permissive=False):
         raise NotImplementedError
 
-    def send(self, message, path="_default", path_permissive=False):
+    def receive(self) -> str:
+        raise NotImplementedError
+
+    def acknowledge(self):
+        raise NotImplementedError
+
+    def clear_queue(self, queue):
+        raise NotImplementedError
+
+    def nonempty_queues(self) -> set:
         raise NotImplementedError
 
 
@@ -188,7 +198,7 @@ class Redis(Pipeline):
                                       'Look at redis\'s logs.')
                 raise exceptions.PipelineError(exc)
 
-    def receive(self):
+    def receive(self) -> str:
         if self.source_queue is None:
             raise exceptions.ConfigurationError('pipeline', 'No source queue given.')
         try:
@@ -212,7 +222,7 @@ class Redis(Pipeline):
         except Exception as e:
             raise exceptions.PipelineError(e)
 
-    def count_queued_messages(self, *queues):
+    def count_queued_messages(self, *queues) -> dict:
         queue_dict = {}
         for queue in queues:
             try:
@@ -225,7 +235,10 @@ class Redis(Pipeline):
         """Clears a queue by removing (deleting) the key,
         which is the same as an empty list in Redis"""
         try:
-            return self.pipe.delete(queue)
+            retval = self.pipe.delete(queue)
+            if retval not in (0, 1):
+                raise ValueError("Error on redis queue deletion: Return value was not 0 "
+                                 "or 1 but %s." % retval)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
 
@@ -282,7 +295,7 @@ class Pythonlist(Pipeline):
             else:
                 self.state[destination_queue] = [utils.encode(message)]
 
-    def receive(self):
+    def receive(self) -> str:
         """
         Receives the last not yet acknowledged message.
 
@@ -302,9 +315,9 @@ class Pythonlist(Pipeline):
 
     def acknowledge(self):
         """Removes a message from the internal queue and returns it"""
-        return self.state.get(self.internal_queue, [None]).pop(0)
+        self.state.get(self.internal_queue, [None]).pop(0)
 
-    def count_queued_messages(self, *queues):
+    def count_queued_messages(self, *queues) -> dict:
         """Returns the amount of queued messages
            over all given queue names.
         """
@@ -349,12 +362,17 @@ class Amqp(Pipeline):
                                       None)
         self.load_balance = getattr(self.parameters, "load_balance", False)
         self.virtual_host = getattr(self.parameters,
-                                    "{}_amqp_virtual_host".format(queues_type),
+                                    "{}_pipeline_amqp_virtual_host".format(queues_type),
                                     '/')
+        self.ssl = getattr(self.parameters,
+                           "{}_pipeline_ssl".format(queues_type),
+                           False)
         self.load_balance_iterator = 0
         self.kwargs = {}
         if self.username and self.password:
             self.kwargs['credentials'] = pika.PlainCredentials(self.username, self.password)
+        if self.ssl:
+            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.SSLContext())
         pika_version = tuple(int(x) for x in pika.__version__.split('.'))
         if pika_version < (0, 11):
             self.kwargs['heartbeat_interval'] = 10
@@ -365,6 +383,12 @@ class Amqp(Pipeline):
             self.publish_raises_nack = False
         else:
             self.publish_raises_nack = True
+
+        self.monitoring_url = getattr(self.parameters,
+                                      'intelmqctl_rabbitmq_monitoring_url',
+                                      'http://%s:15671/' % self.host)
+        if not self.monitoring_url.endswith('/'):
+            self.monitoring_url = "%s/" % self.monitoring_url
 
     def connect(self, channelonly=False):
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
@@ -462,7 +486,7 @@ class Amqp(Pipeline):
         if requests is None:
             self.logger.error("Library 'requests' is needed to get queue status. Please install it.")
             return {}
-        response = requests.get('http://%s:15672/api/queues' % self.host, auth=auth,
+        response = requests.get(self.monitoring_url + 'api/queues', auth=auth,
                                 timeout=5)
         if response.status_code == 401:
             if response.json()['error'] == 'not_authorised':

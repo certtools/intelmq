@@ -6,9 +6,12 @@ from intelmq.lib.harmonization import DateTime
 
 
 class Netlab360ParserBot(ParserBot):
-    DGA_FEED = {'http://data.netlab.360.com/feeds/dga/dga.txt'}
-    MAGNITUDE_FEED = {'http://data.netlab.360.com/feeds/ek/magnitude.txt'}
-    MIRAI_SCANNER_FEED = {'http://data.netlab.360.com/feeds/mirai-scanner/scanner.list'}
+    DGA_FEED = {'http://data.netlab.360.com/feeds/dga/dga.txt',
+                'https://data.netlab.360.com/feeds/dga/dga.txt'}
+    MAGNITUDE_FEED = {'http://data.netlab.360.com/feeds/ek/magnitude.txt',
+                      'https://data.netlab.360.com/feeds/ek/magnitude.txt'}
+    MIRAI_SCANNER_FEED = {'http://data.netlab.360.com/feeds/mirai-scanner/scanner.list',
+                          'https://data.netlab.360.com/feeds/mirai-scanner/scanner.list'}
 
     def parse_line(self, line, report):
         if line.startswith('#') or not line.strip():

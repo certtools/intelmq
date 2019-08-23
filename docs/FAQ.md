@@ -9,6 +9,7 @@
 - [How can I improve the speed?](#how-can-i-improve-the-speed)
 - [My bot(s) died on startup with no errors logged](#my-bots-died-on-startup-with-no-errors-logged)
 - [Orphaned Queues](#orphaned-queues)
+- [Multithreading is not available for this bot](#multithreading-is-not-available-for-this-bot)
 
 ## Send IntelMQ events to Splunk
 

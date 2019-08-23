@@ -3,6 +3,23 @@ NEWS
 
 See the changelog for a full list of changes.
 
+2.0.1 Bugfix release (2019-08-23)
+---------------------------------
+
+### Requirements
+
+### Tools
+intelmqctl has a new function `upgrade-config` to upgrade the configuration from previous installations. It is recommended to call this function after every upgrade.
+
+### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
 2.0.0 Major release (2019-05-22)
 --------------------------------
 
