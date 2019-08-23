@@ -570,7 +570,8 @@ class Bot(object):
                 continue
 
         # handle a sighup which happened during blocking read
-        self.__handle_sighup()
+        # TODO: quickfix for https://github.com/certtools/intelmq/issues/1438
+#        self.__handle_sighup()
 
         try:
             self.__current_message = libmessage.MessageFactory.unserialize(message,
