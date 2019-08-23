@@ -66,6 +66,11 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
+    project_urls={
+        'Travis CI': 'https://travis-ci.org/certtools/intelmq',
+        'Documentation': 'https://github.com/certtools/intelmq/blob/master/docs/',
+        'Source and Issue Tracker': 'https://github.com/certtools/intelmq/',
+    },
     license='AGPLv3',
     description='IntelMQ is a solution for IT security teams for collecting and '
                 'processing security feeds using a message queuing protocol.',
