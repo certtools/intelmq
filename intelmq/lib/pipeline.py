@@ -416,8 +416,8 @@ class Amqp(Pipeline):
             self.publish_raises_nack = True
 
         self.monitoring_url = getattr(self.parameters,
-                                         'intelmqctl_rabbitmq_monitoring_url',
-                                         'http://%s:15671/' % self.host)
+                                      'intelmqctl_rabbitmq_monitoring_url',
+                                      'http://%s:15671/' % self.host)
         if not self.monitoring_url.endswith('/'):
             self.monitoring_url = "%s/" % self.monitoring_url
 
