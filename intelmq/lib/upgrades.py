@@ -222,4 +222,5 @@ UPGRADES = OrderedDict([
     ((2, 0, 0), (v200_defaults_statistics, v200_defaults_broker,
                  v200_defaults_ssl_ca_certificate)),
     ((2, 0, 1), ()),
+    ((2, 0, 2), ()),
 ])

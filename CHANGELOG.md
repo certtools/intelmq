@@ -80,6 +80,38 @@ CHANGELOG
 
 ### Known issues
 
+2.0.2 (unreleased)
+-----------------
+
+### Configuration
+
+### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
 
 2.0.1 (2019-08-23)
 ------------------
