@@ -34,7 +34,6 @@ class RTCollectorBot(CollectorBot):
         if rt is None:
             raise ValueError('Could not import rt. Please install it.')
 
-
         if getattr(self.parameters, 'search_not_older_than', None):
             try:
                 self.not_older_than = parser.parse(self.parameters.search_not_older_than)
