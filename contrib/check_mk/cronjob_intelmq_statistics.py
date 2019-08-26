@@ -12,10 +12,10 @@ import redis
 
 config = load_configuration(DEFAULTS_CONF_FILE)
 
-db = redis.Redis(host=config.get('source_pipeline_host', '127.0.0.1'),
-                 port=config.get("source_pipeline_port", "6379"),
-                 db=3,
-                 password=config.get("source_pipeline_password"),
+db = redis.Redis(host=config.get('statistics_host', '127.0.0.1'),
+                 port=config.get("statistics_port", 6379),
+                 db=config.get("statistics_database", 3),
+                 password=config.get("statistics_password"),
                  )
 
 with open('/var/lib/check_mk_agent/spool/70_intelmq-statistics.txt', 'w') as handle:
