@@ -77,6 +77,8 @@ CHANGELOG
 * malware name mapping:
   * Add support for MISP treat actors data, see it's README for more information.
     * And handle empty synonyms in misp's galxies data.
+  * Move apply-Script to the new EventDB directory
+* EventDB: Scripts for applying malware name mapping and domain suffixes to an EventDB.
 
 ### Known issues
 

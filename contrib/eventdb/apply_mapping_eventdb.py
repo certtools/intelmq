@@ -6,11 +6,11 @@ Created on Wed Jul 11 15:47:07 2018
 @author: sebastian
 """
 
-import argparse
 import csv
 import io
 import re
 import sys
+from .common import create_parser
 
 try:
     import requests
@@ -85,8 +85,7 @@ def eventdb_apply(malware_name_column, malware_family_column, host, port,
 
 
 def main():
-    parser = argparse.ArgumentParser('eventdb',
-                                     description='Apply the mapping to an existing EventDB.')
+    parser = create_parser(name='eventdb', description='Apply the mapping to an existing EventDB.')
     parser.add_argument('--filename', '-f',
                         help="Path to mapping file name. Will be downloaded if not given.")
     parser.add_argument('--malware-name-column', '-m', default='malware.name',
@@ -96,22 +95,6 @@ def main():
                         default='classification.identifier',
                         help='Apply the mapping to this column, '
                              "default: 'classification.identifier'")
-    parser.add_argument('--host', '-H', default='localhost',
-                        help="PostgreSQL host, default: 'localhost'")
-    parser.add_argument('--port', '-P', default=5432,
-                        help='PostgreSQL port, default: 5432')
-    parser.add_argument('--username', '-u', default='intelmq',
-                        help="PostgreSQL username, default: 'intelmq'")
-    parser.add_argument('--database', '-d', default='eventdb',
-                        help="PostgreSQL database, default: 'eventdb'")
-    parser.add_argument('--password', '-W', action='store_true',
-                        help='PostgreSQL password, will be queried on stdin.')
-    parser.add_argument('--table', '-t', default='events',
-                        help="PostgreSQL table, default: 'events'")
-    parser.add_argument('--dry-run', '-n', action='store_true',
-                        help='Do not apply the mapping and instead print the statements.')
-    parser.add_argument('--where', '-w',
-                        help='Optional additional SQL WHERE statement.')
 
     args = parser.parse_args()
     return eventdb_apply(**vars(args).copy())
