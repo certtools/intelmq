@@ -31,6 +31,9 @@ CHANGELOG
 ### Tools
 
 ### Contrib
+- Check MK Statistics Cronjob:
+  - Use `statistics_*` parameters.
+  - Make file executable
 
 ### Known issues
 
