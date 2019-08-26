@@ -143,6 +143,15 @@ class Pipeline(object):
     def nonempty_queues(self) -> set:
         raise NotImplementedError
 
+    def reject_message(self):
+        if not self._has_message:
+            raise exceptions.PipelineError("No message to acknowledge.")
+        self._reject_message()
+        self._has_message = False
+
+    def _reject_message(self):
+        raise NotImplementedError
+
 
 class Redis(Pipeline):
     has_internal_queues = True
@@ -280,6 +289,11 @@ class Redis(Pipeline):
             self.connect()
         return {queue.decode() for queue in self.pipe.keys()}
 
+    def _reject_message(self):
+        """
+        Rejecting is a no-op as the message is in the internal queue anyway.
+        """
+
 # Algorithm
 # ---------
 # [Receive]     B RPOP LPUSH   source_queue ->  internal_queue
@@ -363,6 +377,11 @@ class Pythonlist(Pipeline):
     def clear_queue(self, queue):
         """ Empties given queue. """
         self.state[queue] = []
+
+    def _reject_message(self):
+        """
+        No-op because of the internal queue
+        """
 
 
 class Amqp(Pipeline):
@@ -549,3 +568,6 @@ class Amqp(Pipeline):
     def nonempty_queues(self) -> set:
         result = self._get_queues()
         return {name for name, count in result.items() if count}
+
+    def _reject_message(self):
+        self.channel.basic_nack(delivery_tag=self.delivery_tag, requeue=True)

@@ -19,9 +19,11 @@ CHANGELOG
   - Require the bot instance as parameter for all pipeline classes.
   - New internal variable `_has_message` to keep the state of the pipeline.
   - Split receive and acknowledge into public-facing and private methods.
+  - Add `reject_message` method to the Pipeline class for explicit requeue of messages.
 - `intelmq.lib.bot`:
   - Log message after successful bot initialization, no log message anymore for ready pipeline.
   - Use existing current message if receive is called and the current message still exists.
+  - Fix handling of received messaged after a sighup that happend during a blocking receving connection using explicit rejection (#1438).
 - `intelmq.lib.test`:
   - Fix the tests broker by providing the testing pipeline.
 - `intelmq.lib.utils`:

@@ -557,6 +557,13 @@ class Bot(object):
                                              path_permissive=path_permissive)
 
     def receive_message(self):
+        """
+
+
+        If the bot is reloaded when waiting for an incoming message, the received message
+        will be rejected to the pipeline in the first place to get to a clean state.
+        Then, after reloading, the message will be retrieved again.
+        """
         if self.__current_message:
             self.logger.debug("Reusing existing current message as incoming.")
             return self.__current_message
@@ -567,11 +574,16 @@ class Bot(object):
             message = self.__source_pipeline.receive()
             if not message:
                 self.logger.warning('Empty message received. Some previous bot sent invalid data.')
+                self.__handle_sighup()
                 continue
 
-        # handle a sighup which happened during blocking read
-        # TODO: quickfix for https://github.com/certtools/intelmq/issues/1438
-#        self.__handle_sighup()
+        # * handle a sighup which happened during blocking read
+        # * re-queue the message before reloading
+        #   https://github.com/certtools/intelmq/issues/1438
+        if self.__sighup.is_set():
+            self.__source_pipeline.reject_message()
+            self.__handle_sighup()
+            return self.receive_message()
 
         try:
             self.__current_message = libmessage.MessageFactory.unserialize(message,
