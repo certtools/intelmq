@@ -32,6 +32,7 @@ CHANGELOG
 - intelmqctl:
   - More and more precise logging messages for botnet starting and restarting, enable and disable.
   - No error message for disabled bots on botnet reload.
+  - Fix `upgrade-conf` is state file is empty or not existing.
 
 ### Contrib
 - Check MK Statistics Cronjob:

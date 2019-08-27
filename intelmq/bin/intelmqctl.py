@@ -1626,7 +1626,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                             todo.append((version, funcs, False))
             else:
                 self.logger.info("Found no previous version, doing all upgrades.")
-                todo = upgrades.UPGRADES.items()
+                todo = [(version, bunch, True) for version, bunch in upgrades.UPGRADES.items()]
 
             """
             todo is now a list of tuples of functions.
