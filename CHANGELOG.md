@@ -26,6 +26,9 @@ CHANGELOG
 ### Documentation
 
 ### Packaging
+- Rules:
+  - Exclude intelmqsetup tool in packages
+  - Include update-rfiprisk-data in packages
 
 ### Tests
 
