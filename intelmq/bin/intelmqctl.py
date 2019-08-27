@@ -46,12 +46,15 @@ STATUSES = {
 }
 
 MESSAGES = {
+    'enabled': 'Bot %s is enabled.',
     'disabled': 'Bot %s is disabled.',
     'starting': 'Starting %s...',
     'running': 'Bot %s is running.',
     'stopped': 'Bot %s is stopped.',
     'stopping': 'Stopping bot %s...',
     'reloading': 'Reloading bot %s ...',
+    'enabling': 'Enabling %s.',
+    'disabling': 'Disabling %s.',
     'reloaded': 'Bot %s is reloaded.',
 }
 
@@ -979,8 +982,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         if bot_id is None:
             return self.botnet_reload(group=group)
         else:
+            if self.bot_process_manager.bot_status(bot_id) == 'disabled':
+                return 0, 'disabled'
             status = self.bot_process_manager.bot_reload(bot_id, getstatus)
-            if status in ['running']:
+            if status in ['running','disabled']:
                 return 0, status
             else:
                 return 1, status
@@ -1008,13 +1013,23 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 return 1, status
 
     def bot_enable(self, bot_id):
-        self.runtime_configuration[bot_id]['enabled'] = True
-        self.write_updated_runtime_config()
+        if self._is_enabled(bot_id):
+            log_bot_message('enabled', bot_id)
+        else:
+            log_bot_message('enabling', bot_id)
+            self.runtime_configuration[bot_id]['enabled'] = True
+            self.write_updated_runtime_config()
         return self.bot_status(bot_id)
 
     def bot_disable(self, bot_id):
-        self.runtime_configuration[bot_id]['enabled'] = False
-        self.write_updated_runtime_config()
+        """
+        If Bot is already disabled, the "Bot ... is disabled" message is
+        printed by the wrapping function already.
+        """
+        if self._is_enabled(bot_id):
+            log_bot_message('disabling', bot_id)
+            self.runtime_configuration[bot_id]['enabled'] = False
+            self.write_updated_runtime_config()
         return self.bot_status(bot_id)
 
     def _is_enabled(self, bot_id):
@@ -1022,6 +1037,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def botnet_start(self, group=None):
         botnet_status = {}
+        log_botnet_message('starting', group)
 
         if group:
             bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
@@ -1089,6 +1105,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         return retval, botnet_status
 
     def botnet_restart(self, group=None):
+        log_botnet_message('restarting')
         retval_stop, _ = self.botnet_stop(group=group)
         retval_start, status = self.botnet_start(group=group)
         if retval_stop > retval_start:  # In case the stop operation was not successful, exit 1

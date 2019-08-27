@@ -29,6 +29,9 @@ CHANGELOG
 ### Tests
 
 ### Tools
+- intelmqctl:
+  - More and more precise logging messages for botnet starting and restarting, enable and disable.
+  - No error message for disabled bots on botnet reload.
 
 ### Contrib
 - Check MK Statistics Cronjob:
