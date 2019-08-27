@@ -49,7 +49,8 @@ class APICollectorBot(CollectorBot):
         pass
 
     def shutdown(self):
-        IOLoop.current().stop()
+        if IOLoop:
+            IOLoop.current().stop()
 
 
 BOT = APICollectorBot

@@ -15,6 +15,7 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.api.collector_api`: Handle non-existing IO loop in shutdown.
 
 #### Parsers
 
