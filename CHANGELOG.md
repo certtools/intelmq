@@ -15,7 +15,10 @@ CHANGELOG
 
 ### Bots
 #### Collectors
-- `intelmq.bots.collectors.api.collector_api`: Handle non-existing IO loop in shutdown.
+- `intelmq.bots.collectors.api.collector_api`:
+  - Handle non-existing IO loop in shutdown.
+  - Close socket on shutdown, fixes reloading.
+  - Marked as non-threadable.
 
 #### Parsers
 
