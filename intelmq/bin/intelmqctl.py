@@ -985,7 +985,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             if self.bot_process_manager.bot_status(bot_id) == 'disabled':
                 return 0, 'disabled'
             status = self.bot_process_manager.bot_reload(bot_id, getstatus)
-            if status in ['running','disabled']:
+            if status in ['running', 'disabled']:
                 return 0, status
             else:
                 return 1, status
