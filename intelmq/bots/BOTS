@@ -736,7 +736,7 @@
                 "strip_columns": "malware.name",
                 "strip_chars": " ",
                 "split_column": "",
-                "split_separator": ","
+                "split_separator": ",",
                 "replace_column": "",
                 "old_value": "",
                 "new_value": "",
