@@ -11,7 +11,9 @@ import os.path
 import pprint
 import re
 import readline
+import subprocess
 import sys
+import tempfile
 import traceback
 from collections import OrderedDict
 
@@ -70,6 +72,7 @@ ACTIONS = {'r': ('(r)ecover by ids', True, False),
            'd': ('(d)elete file', False, True),
            's': ('(s)how by ids', True, False),
            'q': ('(q)uit', False, True),
+           'v': ('edit id', True, False),
            }
 AVAILABLE_IDS = [key for key, value in ACTIONS.items() if value[1]]
 
@@ -251,8 +254,8 @@ def main():
                 available_answers = [k for k, v in ACTIONS.items() if v[2]]
                 print('Restricted actions.')
             else:
-                # don't display list after 'show' and 'recover' command
-                if not (answer and isinstance(answer, list) and answer[0] in ['s', 'r']):
+                # don't display list after 'show', 'recover' & edit commands
+                if not (answer and isinstance(answer, list) and answer[0] in ['s', 'r', 'v']):
                     content = json.load(handle)
                     handle.seek(0)
                     content = OrderedDict(sorted(content.items(), key=lambda t: t[0]))  # sort by key here, #1280
@@ -374,6 +377,25 @@ def main():
                     if type(value['traceback']) is not list:
                         value['traceback'] = value['traceback'].splitlines()
                     pprint.pprint(value)
+            elif answer[0] == 'v':
+                # edit given id
+                if not ids:
+                    print(red('Edit mode needs an id'))
+                    continue
+                for entry in ids:
+                    with tempfile.NamedTemporaryFile(mode='w+t', suffix='.json') as tmphandle:
+                        filename = tmphandle.name
+                        utils.write_configuration(configuration_filepath=filename,
+                                                  content=json.loads(content[meta[entry][0]]['message']),
+                                                  new=True,
+                                                  backup=False)
+                        proc = subprocess.call(['sensible-editor', filename])
+                        if proc != 0:
+                            print(red('Calling editor failed.'))
+                        else:
+                            tmphandle.seek(0)
+                            content[meta[entry][0]]['message'] = tmphandle.read()
+                            save_file(handle, content)
 
     if delete_file:
         os.remove(fname)

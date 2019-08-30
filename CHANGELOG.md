@@ -74,6 +74,8 @@ CHANGELOG
 ### Tools
 - intelmqctl:
   - Use green and red text color for some interactive output to indicate obvious errors or the absence of them.
+- intelmqdump:
+  - New edit action `v` to modify a message saved in the dump (#1284).
 
 ### Contrib
 * malware name mapping:
