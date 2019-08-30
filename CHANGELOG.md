@@ -45,6 +45,7 @@ CHANGELOG
 - Check MK Statistics Cronjob:
   - Use `statistics_*` parameters.
   - Make file executable
+  - Handle None values in `*.temporary.*` keys and treat them as 0.
 
 ### Known issues
 
