@@ -48,6 +48,7 @@
       - [Whitelist](#whitelist)
       - [Blacklist](#blacklist)
   - [Filter](#filter)
+  - [Format Field](#format-field)
   - [Generic DB Lookup](#generic-db-lookup)
   - [Gethostbyname](#gethostbyname)
   - [IDEA](#idea)
@@ -1202,6 +1203,44 @@ Examples of time filter definition:
 | keep   | ✗     | ✗           | ✓              | ✗              | ✓                 |
 | drop   | ✓     | ✗           | ✓              | ✓              | ✗                 |
 | drop   | ✗     | ✓           | ✗              | ✗              | ✓                 |
+
+* * *
+
+### Format Field
+
+#### Information:
+* `name:` Format Field
+* `lookup:` none
+* `cache (redis db):` none
+* `description:` String method operations on column values
+
+#### Configuration Parameters:
+
+##### Parameters for stripping chars:
+* `strip_columns` -  A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. E.g.
+   ```json
+   "columns": [
+        "malware.name",
+        "extra.tags"
+   ],
+   ```
+   is equivalent to:
+   ```json
+   "columns": "malware.name,extra.tags"
+   ```
+* `strip_chars` -  a set of characters to remove as leading/trailing characters(default: ` ` or whitespace)
+
+##### Parameters for replacing chars:
+* `replace_column` - key from data harmonization
+* `old_value` - the string to search for
+* `new_value` - the string to replace the old value with
+* `replace_count` - number specifying how many occurrences of the old value you want to replace(default: `1`)
+
+##### Parameters for splitting string to list of string:
+* `split_column` - key from data harmonization
+* `split_separator` - specifies the separator to use when splitting the string(default: `,`)
+
+Order of operation: `strip -> replace -> split`. These three methods can be combined such as first strip and then split.
 
 * * *
 
