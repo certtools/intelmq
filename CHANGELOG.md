@@ -97,6 +97,10 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.api.collector_api`:
+  - Handle non-existing IO loop in shutdown.
+  - Close socket on shutdown, fixes reloading.
+  - Marked as non-threadable.
 
 #### Parsers
 
@@ -107,10 +111,17 @@ CHANGELOG
 ### Documentation
 
 ### Packaging
+- Rules:
+  - Exclude intelmqsetup tool in packages
+  - Include update-rfiprisk-data in packages
 
 ### Tests
 
 ### Tools
+- intelmqctl:
+  - More and more precise logging messages for botnet starting and restarting, enable and disable.
+  - No error message for disabled bots on botnet reload.
+  - Fix `upgrade-conf` is state file is empty or not existing.
 
 ### Contrib
 - Check MK Statistics Cronjob:
