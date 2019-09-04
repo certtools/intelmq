@@ -22,6 +22,11 @@ with open('/var/lib/check_mk_agent/spool/70_intelmq-statistics.txt', 'w') as han
     handle.write("<<<local>>>\nP intelmq-statistics ")
     stats = []
     for key in db.keys():
-        stats.append("%s=%s" % (key.decode(), db.get(key).decode()))
+        value = db.get(key)
+        if value is None:
+            value = '0'
+        else:
+            value = value.decode()
+        stats.append("%s=%s" % (key.decode(), value))
     handle.write("|".join(stats))
     handle.write('\n')

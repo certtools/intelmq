@@ -36,7 +36,7 @@ For temporary failures the status is not modified, instead the ticket will be sk
 
     "request-tracker-collector": {
         "attachment_regex": "\\.csv\\.zip$",
-        "feed": "Request Tracker",
+        "name": "Request Tracker",
         "password": "intelmq",
         "search_not_older_than": null,
         "search_owner": "nobody",

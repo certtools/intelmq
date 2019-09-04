@@ -95,6 +95,11 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.bot.CollectorBot`: Support the deprecated parameter `feed` until version 2.2 as the documentation was not properly updated (#1445).
+- `intelmq.lib.upgrades.v202_fixes`
+  - Migration of deprecated parameter `feed` for Collectors.
+  - Ripe expert parameter `query_ripe_stat_ip` was not correctly configured in `v110_deprecations`, now use `query_ripe_stat_asn` as default if it does not exist.
+- `intelmq.lib.upgrades.v110_deprecations`: Fix upgrade of ripe expert configuration.
 
 ### Development
 
@@ -121,6 +126,8 @@ CHANGELOG
   - Include update-rfiprisk-data in packages
 
 ### Tests
+- Tests for `intelmq.lib.upgrades.v202_fixes`.
+- Tests for `intelmq.lib.upgrades.v110_deprecations`.
 
 ### Tools
 - intelmqctl:
@@ -132,6 +139,7 @@ CHANGELOG
 - Check MK Statistics Cronjob:
   - Use `statistics_*` parameters.
   - Make file executable
+  - Handle None values in `*.temporary.*` keys and treat them as 0.
 
 ### Known issues
 

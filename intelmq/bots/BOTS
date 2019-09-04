@@ -222,9 +222,9 @@
             "description": "Listens to McAfee openDXL fabric",
             "module": "intelmq.bots.collectors.opendxl.collector",
             "parameters": {
-                "feed": "<Feed Name>",
                 "dxl_config_file": "<insert /path/to/dxlclient.config>",
-                "dxl_topic": "/mcafee/event/atd/file/report"
+                "dxl_topic": "/mcafee/event/atd/file/report",
+                "name": "<Feed Name>"
             }
         },
         "Microsoft Azure": {

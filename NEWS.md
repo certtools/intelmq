@@ -29,6 +29,10 @@ See the changelog for a full list of changes.
 ### Harmonization
 
 ### Configuration
+The deprecated parameter `feed` for collectors is again supported as the documentation as not properly updated. The support will be removed before version 2.2.
+
+#### RIPE expert
+In the upgrade function for version 1.1.0 (in effect in version 2.0.1) the addition of the parameter `query_ripe_stat_ip` was not correctly done and is maybe missing. A new upgrade function re-adds it with the value of `query_ripe_stat_ip`.
 
 ### Libraries
 
