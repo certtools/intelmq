@@ -14,9 +14,10 @@ Depending on the subcommand received, the class either
 """
 import json
 import sys
-import time
 from importlib import import_module
 from os.path import exists
+
+import time
 
 from intelmq.lib import utils
 from intelmq.lib.message import MessageFactory
@@ -134,7 +135,8 @@ class BotDebugger:
 
         if show:
             fn = self.instance.send_message
-            self.instance.send_message = lambda msg, path="_default": [self.pprint(msg), fn(msg, path=path)]
+            self.instance.send_message = lambda msg=None, path="_default": [self.pprint(msg or "No message generated"),
+                                                                            fn(msg, path=path)]
 
         self.instance.logger.info("Processing...")
         self.instance.process()
