@@ -45,7 +45,9 @@ CHANGELOG
   - Save the file names in the report if files have been extracted form an archive.
 - `intelmq.bots.collectors.rt.collector_rt`: Save ticket information/metadata in the extra fields of the report.
   - Support for RT 3.8 and RT 4.4.
-- `intelmq.bots.collectos.mail.*`: Save email information/metadata in the extra fields of the report.
+- `intelmq.bots.collectors.mail.*`: Save email information/metadata in the extra fields of the report. See the bots documentation for a complete list of provided data.
+  - `intelmq.bots.collectors.mail.collector_mail_attach`: Check for existence/validity of the `attach_regex` parameter.
+  - Use the lib's `unzip` function for uncompressing attachments and use the .
 
 #### Parsers
 - `intelmq.bot.parsers.html_table.parser`:
@@ -70,6 +72,7 @@ CHANGELOG
   - Use UTC timezone.
 - Tests for `utils.unzip`.
 - Add a new asset: Zip archive with two files, same as with tar.gz archive.
+- Added first tests for the Mail Attachment collector.
 
 ### Tools
 - intelmqctl:

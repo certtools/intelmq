@@ -274,6 +274,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
 The resulting reports contains the following special fields:
+ * `feed.url`: The URL the data was downloaded from
  * `extra.email_subject`: The subject of the email
  * `extra.email_from`: The email's from address
  * `extra.email_message_id`: The email's message ID
@@ -293,6 +294,7 @@ The resulting reports contains the following special fields:
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
+* `extract_files`: Optional, boolean or list of strings. See documentation of the Generic URL Fetcher for more details.
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
@@ -300,15 +302,16 @@ The resulting reports contains the following special fields:
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
 * `attach_regex`: regular expression of the name of the attachment
-* `attach_unzip`: whether to unzip the attachment (default: `true`)
+* `attach_unzip`: whether to unzip the attachment. Only extracts the first file. Deprecated, use `extract_files` instead.
 * `sent_from`: filter messages by sender
 * `sent_to`: filter messages by recipient
-* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
+* `ssl_ca_certificate`: Optional string of path to trusted CA certificate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
 The resulting reports contains the following special fields:
  * `extra.email_subject`: The subject of the email
  * `extra.email_from`: The email's from address
  * `extra.email_message_id`: The email's message ID
+ * `extra.file_name`: The file name of the attachment or the file name in the attached archive if attachment is to uncompress.
 * * *
 
 ### Generic Mail Body Fetcher
