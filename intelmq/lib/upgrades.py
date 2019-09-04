@@ -218,10 +218,7 @@ def v111_defaults_process_manager(defaults, runtime, dry_run):
 
 def v202_fixes(defaults, runtime, dry_run):
     """
-    Migrating parameter `feed` to `name`.
-
-    ripe expert: query_ripe_stat_ip was not correctly set in v110_deprecations
-    Set query_ripe_stat_ip to value of query_ripe_stat_asn if query_ripe_stat_ip does not exist
+    Migrating parameter `feed` to `name`. RIPE expert Setting query_ripe_stat_ip query_ripe_stat_asn if query_ripe_stat_ip does not exist
     """
     changed = None
     for bot_id, bot in runtime.items():
