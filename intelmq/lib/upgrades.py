@@ -128,8 +128,8 @@ def v110_deprecations(defaults, runtime, dry_run):
             if bot["parameters"].get("query_ripe_stat"):
                 if "query_ripe_stat_asn" not in bot["parameters"]:
                     bot["parameters"]["query_ripe_stat_asn"] = bot["parameters"]["query_ripe_stat"]
-                if "query_ripe_stat_asn" not in bot["parameters"]:
-                    bot["parameters"]["query_ripe_stat_ip"] = bot["parameters"]["query_ripe_stat_ip"]
+                if "query_ripe_stat_ip" not in bot["parameters"]:
+                    bot["parameters"]["query_ripe_stat_ip"] = bot["parameters"]["query_ripe_stat"]
                 del bot["parameters"]["query_ripe_stat"]
                 changed = True
         if bot["group"] == 'Collector' and bot["parameters"].get("feed") and not bot["parameters"].get("name"):
@@ -219,6 +219,9 @@ def v111_defaults_process_manager(defaults, runtime, dry_run):
 def v202_fixes(defaults, runtime, dry_run):
     """
     Migrating parameter `feed` to `name`.
+
+    ripe expert: query_ripe_stat_ip was not correctly set in v110_deprecations
+    Set query_ripe_stat_ip to value of query_ripe_stat_asn if query_ripe_stat_ip does not exist
     """
     changed = None
     for bot_id, bot in runtime.items():
@@ -230,6 +233,11 @@ def v202_fixes(defaults, runtime, dry_run):
                 pass
             else:
                 changed = True
+        if bot["module"] == "intelmq.bots.experts.ripe.expert":
+            if "query_ripe_stat_asn" in bot["parameters"]:
+                if "query_ripe_stat_ip" not in bot["parameters"]:
+                    bot["parameters"]["query_ripe_stat_ip"] = bot["parameters"]["query_ripe_stat_asn"]
+                    changed = True
 
     return changed, defaults, runtime
 
