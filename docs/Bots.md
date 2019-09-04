@@ -364,6 +364,10 @@ The resulting reports contains the following special fields:
 * `postfix`: FIXME
 * `delete_file`: whether to delete the file after reading (default: `false`)
 
+The resulting reports contains the following special fields:
+ * `feed.url`: The URI using the `file://` scheme and localhost, with the full path to the processed file.
+ * `extra.file_name`: The file name (without path) of the processed file.
+
 * * *
 
 ### Rsync
