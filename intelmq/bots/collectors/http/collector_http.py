@@ -17,8 +17,6 @@ http_proxy, https_proxy: string
 http_timeout_sec: tuple of two floats or float
 http_timeout_max_tries: an integer depicting how often a connection attempt is retried
 """
-import io
-import zipfile
 from datetime import datetime, timedelta
 
 from intelmq.lib.bot import CollectorBot
