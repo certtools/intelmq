@@ -20,7 +20,6 @@ class MailAttachCollectorBot(MailCollectorBot):
         if not getattr(self.parameters, 'attach_regex', None):
             raise InvalidArgument('attach_regex', expected='string')
 
-
     def process_message(self, uid, message):
         seen = False
 

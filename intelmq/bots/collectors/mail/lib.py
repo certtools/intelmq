@@ -21,7 +21,8 @@ class MailCollectorBot(CollectorBot):
 
         if getattr(self.parameters, 'attach_unzip', None) and not self.extract_files:
             self.parameters.extract_files = True
-            self.logger.warning("The parameter 'attach_unzip' is deprecated and will be removed in version 4.0. Use 'extract_files' instead.")
+            self.logger.warning("The parameter 'attach_unzip' is deprecated and will "
+                                "be removed in version 4.0. Use 'extract_files' instead.")
         if isinstance(self.extract_files, str) and len(self.extract_files):
             self.extract_files = self.extract_files.split(",")
 

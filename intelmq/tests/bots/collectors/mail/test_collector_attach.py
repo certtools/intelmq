@@ -2,32 +2,32 @@
 """
 Testing Mail Attach collector
 """
-from imbox.parser import parse_email
 import os
 import unittest
 import unittest.mock as mock
 
 import intelmq.lib.test as test
 
-with open(os.path.join(os.path.dirname(__file__), 'foobarzip.eml')) as handle:
-    EMAIL_FOOBAR = parse_email(handle.read())
+if os.getenv('INTELMQ_TEST_EXOTIC'):
+    from imbox.parser import parse_email
+    with open(os.path.join(os.path.dirname(__file__), 'foobarzip.eml')) as handle:
+        EMAIL_FOOBAR = parse_email(handle.read())
 
+    class MockedImbox():
+        _connected = False
 
-class MockedImbox():
-    _connected = False
+        def __init__(self, hostname, username=None, password=None, ssl=True,
+                     port=None, ssl_context=None, policy=None, starttls=False):
+            pass
 
-    def __init__(self, hostname, username=None, password=None, ssl=True,
-                 port=None, ssl_context=None, policy=None, starttls=False):
-        pass
+        def messages(self, *args, **kwargs):
+            yield 0, EMAIL_FOOBAR
 
-    def messages(self, *args, **kwargs):
-        yield 0, EMAIL_FOOBAR
+        def mark_seen(self, uid):
+            pass
 
-    def mark_seen(self, uid):
-        pass
-
-    def logout(self):
-        pass
+        def logout(self):
+            pass
 
 
 from intelmq.bots.collectors.mail.collector_mail_attach import MailAttachCollectorBot
