@@ -8,6 +8,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.bot.CollectorBot`: Support the deprecated parameter `feed` until version 2.2 as the documentation was not properly updated (#1445).
+- `intelmq.lib.upgrades.v202_fixes`: Migration of deprecated parameter `feed` for Collectors.
 
 ### Development
 
@@ -34,6 +36,7 @@ CHANGELOG
   - Include update-rfiprisk-data in packages
 
 ### Tests
+- Tests for `intelmq.lib.upgrades.v202_fixes`.
 
 ### Tools
 - intelmqctl:

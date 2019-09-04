@@ -17,6 +17,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v112_feodo_tracker_domains',
            'v200_defaults_ssl_ca_certificate',
            'v111_defaults_process_manager',
+           'v202_fixes',
            ]
 
 
@@ -131,9 +132,10 @@ def v110_deprecations(defaults, runtime, dry_run):
                     bot["parameters"]["query_ripe_stat_ip"] = bot["parameters"]["query_ripe_stat_ip"]
                 del bot["parameters"]["query_ripe_stat"]
                 changed = True
-        if bot["group"] == 'Collector' and bot["parameters"].get("feed"):
+        if bot["group"] == 'Collector' and bot["parameters"].get("feed") and not bot["parameters"].get("name"):
             try:
-                bot["parameters"]["feed"] = bot["parameters"]["name"]
+                bot["parameters"]["name"] = bot["parameters"]["feed"]
+                del bot["parameters"]["feed"]
             except KeyError:
                 pass
             else:
@@ -214,6 +216,24 @@ def v111_defaults_process_manager(defaults, runtime, dry_run):
     return changed, defaults, runtime
 
 
+def v202_fixes(defaults, runtime, dry_run):
+    """
+    Migrating parameter `feed` to `name`.
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["group"] == 'Collector' and bot["parameters"].get("feed"):
+            try:
+                bot["parameters"]["name"] = bot["parameters"]["feed"]
+                del bot["parameters"]["feed"]
+            except KeyError:
+                pass
+            else:
+                changed = True
+
+    return changed, defaults, runtime
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -222,5 +242,5 @@ UPGRADES = OrderedDict([
     ((2, 0, 0), (v200_defaults_statistics, v200_defaults_broker,
                  v200_defaults_ssl_ca_certificate)),
     ((2, 0, 1), ()),
-    ((2, 0, 2), ()),
+    ((2, 0, 2), (v202_fixes, )),
 ])

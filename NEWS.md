@@ -14,6 +14,7 @@ See the changelog for a full list of changes.
 ### Harmonization
 
 ### Configuration
+The deprecated parameter `feed` for collectors is again supported as the documentation as not properly updated. The support will be removed before version 2.2.
 
 ### Libraries
 

@@ -992,6 +992,12 @@ class CollectorBot(Bot):
     def __add_report_fields(self, report: dict):
         if hasattr(self.parameters, 'name'):
             report.add("feed.name", self.parameters.name)
+        if hasattr(self.parameters, 'feed'):
+            warnings.warn("The parameter 'feed' is deprecated and will be "
+                          "removed in version 2.2. Use 'name' instead.",
+                          DeprecationWarning)
+            if "feed.name" not in report:
+                report.add("feed.name", self.parameters.feed)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
         if hasattr(self.parameters, 'documentation'):
