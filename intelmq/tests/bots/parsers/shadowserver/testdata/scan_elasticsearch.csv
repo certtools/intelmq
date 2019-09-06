@@ -1,0 +1,3 @@
+"timestamp","ip","protocol","port","hostname","tag","version","asn","geo","region","city","naics","sic","ok","name","cluster_name","status","build_hash","build_timestamp","build_snapshot","lucene_version","tagline","sector"
+"2016-07-24 00:31:27","198.0.0.1","tcp",9200,,"elasticsearch","2.3.2",64496,"DE","HESSEN","FRANKFURT AM MAIN",0,0,,"Example Name","Example Clustername",,"b9e4a6acad4008027e4038f6abed7f7dba346f94","2016-04-21T16:03:47Z","false","5.5.0","You Know, for Search",
+"2015-05-27 19:57:23","31.210.46.170","tcp",9200,"trvds4.aysima.net","elasticsearch","0.90.0.Bet",42910,"TR","ISTANBUL","ISTANBUL",0,0,"true","Silver Fox",,200,,,,,"You Know, for Search"

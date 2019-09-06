@@ -34,6 +34,7 @@
   - [Cymru Full Bogons](#cymru-full-bogons)
   - [HTML Table Parser](#html-table-parser)
   - [Twitter](#twitter)
+  - [Shadowserver](#shadowserver)
   - [Shodan](#shodan)
 - [Experts](#experts)
   - [Abusix](#abusix)
@@ -671,7 +672,7 @@ See the README.md in `intelmq/bots/collectors/stomp/`
 
 ### Twitter
 
-Collects tweets from target_timelines. Up to tweet_count tweets from each user and up to timelimit back in time. The tweet text is sent separately and if allowed, links to pastebin are followed and the text sent in a separate report 
+Collects tweets from target_timelines. Up to tweet_count tweets from each user and up to timelimit back in time. The tweet text is sent separately and if allowed, links to pastebin are followed and the text sent in a separate report
 
 #### Information:
 * `name:` intelmq.bots.collectors.twitter.collector_twitter
@@ -687,7 +688,7 @@ Collects tweets from target_timelines. Up to tweet_count tweets from each user a
 * `timelimit`: maximum age of the tweets collected in seconds
 * `follow_urls`: list of screen_names for which urls will be followed
 * `exclude_replies`: exclude replies of the followed screen_names
-* `include_rts`: whether to include retweets by given screen_name 
+* `include_rts`: whether to include retweets by given screen_name
 * `consumer_key`: Twitter api login data
 * `consumer_secret`: Twitter api login data
 * `acces_token_key`: Twitter api login data
@@ -745,12 +746,12 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
         "columns": "source.url|source.fqdn|source.ip"
     ```
     First, bot will try to parse the value as url, if it fails, it will try to parse it as FQDN, if that fails, it will try to parse it as IP, if that fails, an error wil be raised.
-    Some use cases - 
-    
+    Some use cases -
+
         - mixed data set, e.g. URL/FQDN/IP/NETMASK  `"columns": "source.url|source.fqdn|source.ip|source.network"`
-    
+
         - parse a value and ignore if it fails  `"columns": "source.url|__IGNORE__"`
-        
+
  * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaulated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`.
  * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
@@ -758,16 +759,16 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
  * `time_format`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
  * `"data_type"`: sets the data of specific type, currently only `"json"` is supported value. An example
- 
+
         ```{
             "columns": [ "source.ip", "source.url", "extra.tags"],
             "data_type": "{\"extra.tags\":\"json\"}"
         }```
-        
+
         It will ensure `extra.tags` is treated as `json`.
  * `"filter_text"`: only process the lines containing or not containing specified text, to be used in conjection with `filter_type`
  * `"filter_type"`: value can be whitelist or blacklist. If `whitelist`, only lines containing the text in `filter_text` will be processed, if `blacklist`, only lines NOT containing the text will be processed.
- 
+
      To process ipset format files use
      ```
         {
@@ -954,7 +955,7 @@ http://www.team-cymru.com/bogon-reference.html
 
 * `domain_whitelist`: domains to be filetered out
 * `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
-* `classification_type: string with a valid classification type as defined in data harmonization
+* `classification_type`: string with a valid classification type as defined in data harmonization
 * `default_scheme`: Default scheme for URLs if not given. See also the next section.
 
 ##### Default scheme
@@ -962,6 +963,25 @@ http://www.team-cymru.com/bogon-reference.html
 The dependency `url-normalize` changed it's behavior in version 1.4.0 from using `http://` as default scheme to `https://`. Version 1.4.1 added the possibility to specify it. Thus you can only use the `default_scheme` parameter with a current version of this library >= 1.4.1, with 1.4.0 you will always get `https://` as default scheme and for older versions < 1.4.0 `http://` is used.
 
 This does not affect URLs which already include the scheme.
+
+* * *
+
+### Shadowserver
+
+#### Information
+* `name:` intelmq.bots.parsers.shadowserver.parser
+* `public:` yes
+* `description:` Parses different reports from shadowserver.
+
+The parser parses multiple reports from Shadowserver. Almost all types of reports are implemented, however, some are still missing.
+This bot needs the field `extra.file_name` to be set in the report to be processed, otherwise it will fail. `extra.file_name` has to be the name of the file without editing it, for example 2019-01-01-scan_http-contry.geo.
+#### Configuration Parameters:
+
+* `keep_feedname`: Boolean, default False. If True, it keeps the report's
+  feed.name and does not override it with the corresponding feed name.
+
+* * *
+
 
 ### Shodan
 
@@ -1973,7 +1993,7 @@ Multihreading is disabled for this bot.
 * `ip`: IP of destination server
 * `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server
-* `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present. 
+* `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present.
     In that case, the output waits every message is acknowledged by "Ok" message the tcp.collector bot implements.
 
 * * *

@@ -1,5 +1,7 @@
 # Shadowserver-Parser README
 
+This bot parses multiple reports from Shadowserver.
+
 ## Structure of this Parser Bot:
 The parser consists of two files:
  * config.py
@@ -7,80 +9,72 @@ The parser consists of two files:
 
 Both files are required for the parser to work properly.
 
+## Requirements
 
-## How to use the Parser:
-Add the Shadowserver parser to your Botnet.
+The report to be processed MUST have `extra.file_name` set and it has to be
+valid. A valid value has the following structure:
+`%Y-%m-%d-${report_name}[-suffix].csv` where suffix can be something like `country-geo`. For example, some possible filenames are `2019-01-01-scan_http-country-geo.csv` or `2019-01-01-scan_tftp.csv`. The important part here ${report_name}, between the date and the suffix.
+
+
+## Parameters
 
 **Parameters**
- * feedname: The Name of the feed, see list below for possible values.
- * overwrite: If an existing `feed.name` should be overwritten.
+ * `keep_feedname`: If report's `feed.name` should be kept instead of being
+    overwritten by the bot with the value defined in config.py
 
-Set at least the parameter `feedname`. it is required to find the correct
-configuration. If this parameter is not set or not correct, the bot fail!
-Feed-names are the subjects of the Shadowserver E-Mails.
-They are different from the wiki page names!
+## How this bot works?
 
-Possible feednames:
-* `Accessible-ADB`
-* `Accessible-AFP`
-* `Accessible-Cisco-Smart-Install`
-* `Accessible-CWMP`
-* `Accessible-FTP`
-* `Accessible-Hadoop`
-* `Accessible-HTTP`
-* `Accessible-RDP`
-* `Accessible-Rsync`
-* `Accessible-SMB`
-* `Accessible-Telnet`
-* `Accessible-Ubiquiti-Discovery-Service`
-* `Accessible-VNC`
-* `Amplification-DDoS-Victim`
-* `Blacklisted-IP`
-* `Compromised-Website`
-* `Darknet`
-* `DNS-Open-Resolvers`
-* `Drone`
-* `Drone-Brute-Force`
-* `HTTP-Scanners`
-* `ICS-Scanners`
-* `IPv6-Sinkhole-HTTP-Drone`
-* `Microsoft-Sinkhole`
-* `NTP-Monitor`
-* `NTP-Version`
-* `Open-Chargen`
-* `Open-DB2-Discovery-Service`
-* `Open-Elasticsearch`
-* `Open-IPMI`
-* `Open-LDAP` (also parses the `Open-LDAP-TCP` feed)
-* `Open-mDNS`
-* `Open-Memcached`
-* `Open-MongoDB`
-* `Open-MSSQL`
-* `Open-NATPMP`
-* `Open-NetBIOS-Nameservice`
-* `Open-Netis`
-* `Open-Portmapper`
-* `Open-QOTD`
-* `Open-Redis`
-* `Open-SNMP`
-* `Open-SSDP`
-* `Open-TFTP`
-* `Open-XDMCP`
-* `Outdated-DNSSEC-Key`
-* `Outdated-DNSSEC-Key-IPv6`
-* `Sandbox-URL`
-* `Sinkhole-HTTP-Drone`
-* `Spam-URL`
-* `SSL-FREAK-Vulnerable-Servers`
-* `SSL-POODLE-Vulnerable-Servers`
-* `Vulnerable-ISAKMP`
+When processing a report, this bot takes `extra.file_name` from the report and
+looks in config.py how the report should be parsed.
 
-Additionally these deprecated names can still be used until removed in version 1.3:
-* `Botnet-Drone-Hadoop` for `Drone`
-* `DNS-open-resolvers` for `DNS-Open-Resolvers`
-* `Open-NetBIOS` for `Open-NetBIOS-Nameservice`
-* `Ssl-Freak-Scan` for `SSL-FREAK-Vulnerable-Servers`
-* `Ssl-Scan` for `SSL-POODLE-Vulnerable-Servers`
+## Supported reports:
+
+These are the supported filenames (${report_name}) and their corresponding feed names:
+
+| Filename             | Feed name |
+|----------------------| ----------|            
+| blacklist  | Blacklist |
+| botnet_drone  | Drone |
+| cisco_smart_install  | Accessible Cisco Smart Install |
+| cwsandbox_url  | Sandbox URL |
+| ddos_amplification  | Amplification DDoS Victim |
+| drone_brute_force  | Drone Brute Force |
+| microsoft_sinkhole  | Microsoft Sinkhole |
+| scan_adb  | Accessible ADB |
+| scan_afp  | Accessible AFP |
+| scan_chargen  | Open Chargen |
+| scan_cwmp  | Accessible CWMP |
+| scan_dns  | DNS Open Resolvers |
+| scan_elasticsearch  | Open Elasticsearch |
+| scan_ftp  | Accessible FTP |
+| scan_http  | Accessible HTTP |
+| scan_ipmi  | Open IPMI |
+| scan_isakmp  | Vulnerable ISAKMP |
+| scan_ldap  | Open LDAP |
+| scan_ldap_tcp  | Open LDAP |
+| scan_mdns  | Open mDNS |
+| scan_memcached  | Open Memcached |
+| scan_mongodb  | Open mongoDB |
+| scan_mssql  | Open MSSQL |
+| scan_nat_pmp  | Open NATPMP |
+| scan_netbios  | Open NetBIOS Nameservice |
+| scan_ntp  | NTP Version |
+| scan_ntpmonitor  | NTP Monitor |
+| scan_portmapper  | Open Portmapper |
+| scan_qotd  | Open QOTD |
+| scan_rdp  | Accessible RDP |
+| scan_redis  | Open Redis |
+| scan_rsync  | Accessible Rsync |
+| scan_smb  | Accessible SMB |
+| scan_snmp  | Open SNMP |
+| scan_ssdp  | Open SSDP |
+| scan_ssl_freak  |  SSL FREAK Vulnerable Servers |
+| scan_ssl_poodle  | SSL POODLE Vulnerable Servers |
+| scan_telnet  | Accessible Telnet |
+| scan_tftp  | Open TFTP |
+| scan_ubiquiti  |  Open Ubiquiti |
+| scan_vnc  | Accessible VNC |
+| sinkhole_http_drone  | Sinkhole HTTP Drone |
 
 ## Add new Feedformats:
 Add a new feedformat and conversions if required to the file

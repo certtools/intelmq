@@ -1,0 +1,3 @@
+"timestamp","ip","port","hostname","asn","geo","region","city","naics","sic","product","banner"
+"2019-09-04 14:51:44","198.123.245.53",5678,,5678,"AA","LOCATION","LOCATION",0,0,"Apple remote desktop vnc","RFB 003.889"
+"2019-09-04 14:51:44","198.123.245.112",5678,"localhost.localdomain",5678,"AA","LOCATION","LOCATION",517311,0,"RealVNC Enterprise v5.3 or later","RFB 005.000"

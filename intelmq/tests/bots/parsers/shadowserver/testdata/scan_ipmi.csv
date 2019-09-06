@@ -1,0 +1,3 @@
+"timestamp","ip","port","hostname","tag","ipmi_version","asn","geo","region","city","none_auth","md2_auth","md5_auth","passkey_auth","oem_auth","defaultkg","permessage_auth","userlevel_auth","usernames","nulluser","anon_login","error","deviceid","devicerev","firmwarerev","version","manufacturerid","manufacturername","productid","productname","naics","sic","sector"
+"2016-07-24 00:09:42","198.51.100.4",623,,"ipmi","1.5",2914,"DE","BERLIN","BERLIN","yes","no","yes","yes","no","-","enabled","enabled","no","yes","no",,,,,,,,,,0,0,
+"2016-07-24 00:09:43","198.51.100.182",623,,"ipmi","2.0",28753,"DE","HESSEN","FRANKFURT AM MAIN","no","no","no","no","no","default","disabled","enabled","yes","no","no",,,,,,,,,,0,0,

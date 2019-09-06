@@ -9,13 +9,25 @@ from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 REPORT1 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
            "__type": "Report",
            "time.observation": "2015-01-01T00:00:00+00:00",
+           "extra.file_name": "2019-01-01-scan_http-test-test.csv",
            }
 REPORT2 = {"raw": utils.base64_encode('''timestamp,ip,port
 2018-08-01T00:00:00+00,127.0.0.1,80
 '''),
            "__type": "Report",
            "time.observation": "2015-01-01T00:00:00+00:00",
+           "extra.file_name": "2019-01-01-scan_ftp-test-test.csv",
            }
+REPORT3 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
+           "__type": "Report",
+           "time.observation": "2015-01-01T00:00:00+00:00",
+           "extra.file_name": "2019-01-01-some_string-test-test.csv",
+}
+REPORT4 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
+           "__type": "Report",
+           "time.observation": "2015-01-01T00:00:00+00:00",
+           "extra.file_name": "wrong-filename.csv",
+}
 
 
 class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
@@ -26,7 +38,6 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = ShadowserverParserBot
-        cls.sysconfig = {'feedname': 'Accessible-CWMP'}
 
     def test_broken(self):
         """
@@ -35,8 +46,9 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = REPORT1
         self.allowed_error_count = 1
         self.run_bot()
+        self.assertLogMatches(pattern="Report name: scan_http.", levelname="INFO")
         self.assertLogMatches(pattern="Failed to parse line.")
-        self.assertLogMatches(pattern="ValueError: Required column 'timestamp' not found in data. Possible change in data format or misconfiguration.")
+        self.assertLogMatches(pattern="ValueError: Required column 'timestamp' not found in feed 'scan_http'. Possible change in data format or misconfiguration.")
         self.assertLogMatches(pattern="Sent 0 events and found 1 problem\(s\)\.",
                               levelname="INFO")
 
@@ -47,10 +59,31 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = REPORT2
         self.allowed_warning_count = 1
         self.run_bot()
-        self.assertLogMatches(pattern="Optional key 'protocol' not found in data. Possible change in data format or misconfiguration.",
+        self.assertLogMatches(pattern="Report name: scan_ftp.", levelname="INFO")
+        self.assertLogMatches(pattern="Optional key 'protocol' not found in feed 'scan_ftp'. Possible change in data format or misconfiguration.",
                               levelname="WARNING")
         self.assertLogMatches(pattern="Sent 1 events and found 0 problem\(s\)\.",
                               levelname="INFO")
+
+    def test_no_config(self):
+        """
+        Test a report which does not have a valid extra.file_name
+        """
+        self.input_message = REPORT3
+        self.allowed_error_count = 1
+        self.run_bot()
+        self.assertLogMatches(pattern="ValueError: Could not get a config for 'some_string', check feed_idx in config.py." )
+
+    def test_invalid_filename(self):
+        """
+        Test a report which does not have a valid extra.file_name
+        """
+        self.input_message = REPORT4
+        self.allowed_error_count = 1
+        self.run_bot()
+        self.assertLogMatches(pattern="ValueError: Report's extra.file_name 'wrong-filename.csv' is not valid." )
+
+
 
 
 if __name__ == '__main__':  # pragma: no cover
