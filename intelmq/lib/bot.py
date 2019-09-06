@@ -5,23 +5,23 @@
 import atexit
 import csv
 import fcntl
-import io
 import json
 import logging
 import os
-import re
-import signal
 import sys
-import threading
-import time
 import traceback
-import types
 import warnings
 from collections import defaultdict
+
+import io
+import psutil
+import re
+import signal
+import threading
+import time
+import types
 from datetime import datetime, timedelta
 from typing import Any, List, Optional
-
-import psutil
 
 import intelmq.lib.message as libmessage
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
@@ -31,7 +31,7 @@ from intelmq.lib import cache, exceptions, utils
 from intelmq.lib.pipeline import PipelineFactory
 from intelmq.lib.utils import RewindableFileHandle
 
-__all__ = ['Bot', 'CollectorBot', 'ParserBot']
+__all__ = ['Bot', 'CollectorBot', 'ParserBot', 'SQLBot']
 
 
 class Bot(object):
@@ -1023,6 +1023,7 @@ class CollectorBot(Bot):
         """"
         Parameters:
             messages: Instances of intelmq.lib.message.Message class
+            path: Named queue the message will be send to
             auto_add: Add some default report fields form parameters
         """
         messages = filter(self.__filter_empty_report, messages)
@@ -1032,6 +1033,54 @@ class CollectorBot(Bot):
 
     def new_report(self):
         return libmessage.Report()
+
+
+class SQLBot(Bot):
+    """
+    You should not inherit this class directly, rather user PostgreSQLBot or SQLiteBot.
+    You do not have to bother:
+        * connecting database in the self.init() method, just call super().init(), self.cur will be set
+        * catching exceptions, just call self.execute() instead of self.cur.execute()
+    """
+    def init(self, engine, connect_args, cursor_args={}):
+        self.engine = engine
+
+        try:
+            self.con = self.engine.connect(**connect_args)
+            self.con.autocommit = getattr(self.parameters, 'autocommit', True)  # True prevents deadlocks
+            self.cur = self.con.cursor(**cursor_args)
+        except (self.engine.Error, Exception):
+            self.logger.exception('Failed to connect to database.')
+            self.stop()
+        self.logger.info("Connected to database.")
+
+    def execute(self, query, values, rollback=False):
+        try:
+            self.logger.debug('Executing %r.', query, values)
+            # note: this assumes, the DB was created with UTF-8 support!
+            self.cur.execute(query, values)
+            self.logger.debug('Done.')
+        except (self.engine.InterfaceError, self.engine.InternalError,
+                self.engine.OperationalError, AttributeError):
+            if rollback:
+                try:
+                    self.con.rollback()
+                    self.logger.exception('Executed rollback command '
+                                          'after failed query execution.')
+                except self.engine.OperationalError:
+                    self.logger.exception('Executed rollback command '
+                                          'after failed query execution.')
+                    self.init()
+                except Exception:
+                    self.logger.exception('Cursor has been closed, connecting '
+                                          'again.')
+                    self.init()
+            else:
+                self.logger.exception('Database connection problem, connecting again.')
+                self.init()
+        else:
+            return True
+        return False
 
 
 class Parameters(object):

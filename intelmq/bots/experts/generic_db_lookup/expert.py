@@ -3,7 +3,7 @@
 Generic DB Lookup
 """
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.postgresql_bot import PostgreSQLBot
 
 try:
     import psycopg2
@@ -12,34 +12,10 @@ except ImportError:
     psycopg2 = None
 
 
-class GenericDBLookupExpertBot(Bot):
+class GenericDBLookupExpertBot(PostgreSQLBot):
 
     def init(self):
-        self.logger.debug("Connecting to database.")
-        if psycopg2 is None:
-            raise ValueError('Could not import psycopg2. Please install it.')
-
-        try:
-            if hasattr(self.parameters, 'connect_timeout'):
-                connect_timeout = self.parameters.connect_timeout
-            else:
-                connect_timeout = 5
-
-            self.con = psycopg2.connect(database=self.parameters.database,
-                                        user=self.parameters.user,
-                                        password=self.parameters.password,
-                                        host=self.parameters.host,
-                                        port=self.parameters.port,
-                                        sslmode=self.parameters.sslmode,
-                                        connect_timeout=connect_timeout,
-                                        )
-            self.con.autocommit = True  # prevents deadlocks
-            self.cur = self.con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-
-        except Exception:
-            self.logger.exception('Failed to connect to database.')
-            self.stop()
-        self.logger.info("Connected to PostgreSQL.")
+        super().init()
 
         self.replace = self.parameters.replace_fields
         self.match = self.parameters.match_fields
@@ -65,16 +41,7 @@ class GenericDBLookupExpertBot(Bot):
             self.acknowledge_message()
             return
 
-        try:
-            self.logger.debug('Executing %r.', self.cur.mogrify(self.query,
-                                                                [event[key] for key in self.match.keys()]))
-            self.cur.execute(self.query, [event[key] for key in self.match.keys()])
-            self.logger.debug('Done.')
-        except (psycopg2.InterfaceError, psycopg2.InternalError,
-                psycopg2.OperationalError, AttributeError):
-            self.logger.exception('Database connection problem, connecting again.')
-            self.init()
-        else:
+        if self.execute(self.query, [event[key] for key in self.match.keys()]):
             if self.cur.rowcount > 1:
                 raise ValueError('Lookup returned more then one result. Please inspect.')
             elif self.cur.rowcount == 1:
