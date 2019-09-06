@@ -56,8 +56,17 @@ CHANGELOG
 
 #### Experts
 - Add geohash expert.
+- `intelmq.bot.experts.generic_db_lookup.expert`
+    * got required parameter "engine"
+    * engine can be set to "postgresql" to drop-in replacement for previous functionality
+    * can be set to sqlite to search via this engine
 
 #### Outputs
+- `intelmq.bot.outputs.postgresql.output`
+    * renamed to SQL (`intelmq.bot.outputs.sql.output`)
+    * got required parameter "engine" 
+    * engine can be set to "postgresql" to drop-in replacement for previous functionality
+    * can be set to sqlite to output via this engine 
 
 ### Documentation
 - Feeds: Add ViriBack feed.

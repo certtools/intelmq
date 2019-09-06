@@ -81,15 +81,15 @@
   - [McAfee Enterprise Security Manager](#mcafee-enterprise-security-manager)
   - [MongoDB](#mongodb)
     - [Installation Requirements](#installation-requirements)
-  - [PostgreSQL](#postgresql)
-    - [Installation Requirements](#installation-requirements)
-    - [PostgreSQL Installation](#postgresql-installation)
   - [Redis](#redis)
   - [REST API](#rest-api)
- - [SMTP Output Bot](#smtp-output-bot)
- - [TCP](#tcp)
- - [UDP](#tcp)
- - [XMPP](#xmpp)
+  - [SMTP Output Bot](#smtp-output-bot)
+  - [SQL](#sql)
+    - [Installation Requirements](#installation-requirements)
+    - [PostgreSQL Installation](#postgresql-installation)
+  - [TCP](#tcp)
+  - [UDP](#tcp)
+  - [XMPP](#xmpp)
 
 
 ## General remarks
@@ -1843,47 +1843,6 @@ The bot has been tested with pymongo versions 2.7.1 and 3.4.
 
 * * *
 
-
-### PostgreSQL
-
-#### Information:
-* `name:` postgresql
-* `lookup:` no
-* `public:` yes
-* `cache (redis db):` none
-* `description:` PostgreSQL is the bot responsible to send events to a PostgreSQL Database
-* `notes`: When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit
-
-#### Configuration Parameters:
-
-The parameters marked with 'PostgreSQL' will be sent
-to libpq via psycopg2. Check the
-[libpq parameter documentation] (https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-PARAMKEYWORDS)
-for the versions you are using.
-
-* `autocommit`: [psycopg's autocommit mode](http://initd.org/psycopg/docs/connection.html?#connection.autocommit), optional, default True
-* `connect_timeout`: PostgreSQL connect_timeout, optional, default 5 seconds
-* `database`: PostgreSQL database
-* `host`: PostgreSQL host
-* `jsondict_as_string`: save JSONDict fields as JSON string, boolean. Default: true (like in versions before 1.1)
-* `port`: PostgreSQL port
-* `user`: PostgreSQL user
-* `password`: PostgreSQL password
-* `sslmode`: PostgreSQL sslmode, can be `'disable'`, `'allow'`, `'prefer'` (default), `'require'`, `'verify-ca'` or `'verify-full'`. See postgresql docs: https://www.postgresql.org/docs/current/static/libpq-connect.html#libpq-connect-sslmode
-* `table`: name of the database table into which events are to be inserted
-
-#### Installation Requirements
-
-See [REQUIREMENTS.txt](../intelmq/bots/outputs/postgresql/REQUIREMENTS.txt)
-from your installation.
-
-#### PostgreSQL Installation
-
-See [outputs/postgresql/README.md](../intelmq/bots/outputs/postgresql/README.md)
-from your installation.
-
-* * *
-
 ### Redis
 
 #### Information:
@@ -1955,6 +1914,46 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 
 * * *
 
+### SQL
+
+#### Information:
+* `name:` sql
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` SQL is the bot responsible to send events to a PostgreSQL or SQLite Database
+* `notes`: When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit
+
+#### Configuration Parameters:
+
+The parameters marked with 'PostgreSQL' will be sent
+to libpq via psycopg2. Check the
+[libpq parameter documentation] (https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-PARAMKEYWORDS)
+for the versions you are using.
+
+* `autocommit`: [psycopg's autocommit mode](http://initd.org/psycopg/docs/connection.html?#connection.autocommit), optional, default True
+* `connect_timeout`: Database connect_timeout, optional, default 5 seconds
+* `engine`: 'postgresql' or 'sqlite'
+* `database`: PostgreSQL database or SQLite file
+* `host`: PostgreSQL host
+* `jsondict_as_string`: save JSONDict fields as JSON string, boolean. Default: true (like in versions before 1.1)
+* `port`: PostgreSQL port
+* `user`: PostgreSQL user
+* `password`: PostgreSQL password
+* `sslmode`: PostgreSQL sslmode, can be `'disable'`, `'allow'`, `'prefer'` (default), `'require'`, `'verify-ca'` or `'verify-full'`. See postgresql docs: https://www.postgresql.org/docs/current/static/libpq-connect.html#libpq-connect-sslmode
+* `table`: name of the database table into which events are to be inserted
+
+#### Installation Requirements
+
+See [REQUIREMENTS.txt](../intelmq/bots/outputs/sql/REQUIREMENTS.txt)
+from your installation.
+
+#### PostgreSQL Installation
+
+See [outputs/sql/README.md](../intelmq/bots/outputs/sql/README.md)
+from your installation.
+
+* * *
 
 ### TCP
 

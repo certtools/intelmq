@@ -3,8 +3,7 @@ import os
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.outputs.postgresql.output import PostgreSQLOutputBot
-
+from intelmq.bots.outputs.sql.output import SQLOutputBot
 
 if os.environ.get('INTELMQ_TEST_DATABASES'):
     import psycopg2
@@ -26,13 +25,14 @@ INPUT_EXTRA = {"__type": "Event",
 
 
 @test.skip_database()
-class TestPostgreSQLOutputBot(test.BotTestCase, unittest.TestCase):
+class TestSQLOutputBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = PostgreSQLOutputBot
+        cls.bot_reference = SQLOutputBot
         cls.default_input_message = INPUT1
-        cls.sysconfig = {"host": "localhost",
+        cls.sysconfig = {"engine": "postgresql",
+                         "host": "localhost",
                          "port": 5432,
                          "database": "intelmq",
                          "user": "intelmq",

@@ -1,3 +1,8 @@
+# SQL Output – Generic DB Output
+
+Outputs to a database.
+
+# PostgreSQL
 You have two basic choices to run PostgreSQL:
 1. on the same machine as intelmq, then you could use unix-sockets if available on your platform
 2. on a different machine. In which case you would need to use a TCP connection and make sure you give the right connection parameters to each psql or client call.
@@ -5,8 +10,7 @@ You have two basic choices to run PostgreSQL:
 Make sure to consult your PostgreSQL documentation 
 about how to allow network connections and authentication in case 2.
 
-
-# PostgreSQL Version
+## PostgreSQL Version
 Any supported version of PostgreSQL should work 
 (v>=9.2 as of Oct 2016)[[1](https://www.postgresql.org/support/versioning/)].
 
@@ -15,7 +19,7 @@ to use the time-zone [formatting string](https://www.postgresql.org/docs/9.4/sta
 and the [GiST index for the cidr type](https://www.postgresql.org/docs/9.4/static/release-9-4.html#AEN120769). This may be useful depending on how 
 you plan to use the events that this bot writes into the database.
 
-# How to install:
+## How to install:
 
 Use `intelmq_psql_initdb` to create initial sql-statements
 from Harmonization.conf. The script will create the required table layout
@@ -46,4 +50,20 @@ a network connection to localhost is used, so you would get to test
 if the user `intelmq` can authenticate):
 ```
 psql -h localhost intelmq-events intelmq </tmp/initdb.sql
+```
+
+
+# SQLite
+
+## How to install:
+
+Similarly to PostgreSQL, you can use `intelmq_psql_initdb` to create initial sql-statements
+from Harmonization.conf. The script will create the required table layout
+and save it as /tmp/initdb.sql
+
+Create the new database (you can ignore all errors since SQLite doesn't know all SQL features generated for PostgreSQL):
+
+```bash
+sqlite3 your-db.db
+sqlite> .read /tmp/initdb.sql
 ```
