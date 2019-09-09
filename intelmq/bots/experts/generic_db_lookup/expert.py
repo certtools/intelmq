@@ -3,23 +3,17 @@
 Generic DB Lookup
 """
 
-from intelmq.lib.postgresql_bot import PostgreSQLBot
-
-try:
-    import psycopg2
-    import psycopg2.extras
-except ImportError:
-    psycopg2 = None
+from intelmq.lib.bot import SQLBot
 
 
-class GenericDBLookupExpertBot(PostgreSQLBot):
+class GenericDBLookupExpertBot(SQLBot):
 
     def init(self):
         super().init()
 
         self.replace = self.parameters.replace_fields
         self.match = self.parameters.match_fields
-        query = 'SELECT "{replace}" FROM "{table}" WHERE ' + 'AND '.join(['"{}" = %s '] * len(self.match))
+        query = 'SELECT "{replace}" FROM "{table}" WHERE ' + 'AND '.join(['"{}" = ' + self.format_char + ' '] * len(self.match))
         self.query = query.format(*self.match.values(),
                                   table=self.parameters.table,
                                   replace='", "'.join(self.replace.keys()))
@@ -44,13 +38,21 @@ class GenericDBLookupExpertBot(PostgreSQLBot):
         if self.execute(self.query, [event[key] for key in self.match.keys()]):
             if self.cur.rowcount > 1:
                 raise ValueError('Lookup returned more then one result. Please inspect.')
-            elif self.cur.rowcount == 1:
-                result = self.cur.fetchone()
-                for key, value in self.replace.items():
-                    event.add(value, result[key], overwrite=True)
-                self.logger.debug('Applied.')
-            else:
-                self.logger.debug('No row found.')
+            elif self.cur.rowcount == 1 or (self.cur.rowcount == -1 and self.parameters.engine == SQLBot.SQLLITE):
+                result = None
+                if self.cur.rowcount == 1:
+                    result = self.cur.fetchone()
+                elif self.cur.rowcount == -1 and self.parameters.engine == SQLBot.SQLLITE:
+                    # https://docs.python.org/2/library/sqlite3.html#sqlite3.Cursor.rowcount
+                    # since the DB’s own support for the determination is quirky we try to fetch even when rowcount=-1
+                    result = self.cur.fetchone()
+
+                if result:
+                    for i, (key, value) in enumerate(self.replace.items()):
+                        event.add(value, result[i], overwrite=True)
+                    self.logger.debug('Applied.')
+                else:
+                    self.logger.debug('No row found.')
 
             self.send_message(event)
             self.acknowledge_message()

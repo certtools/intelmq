@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-PostgreSQL output bot.
+SQL output bot.
 
 See Readme.md for installation and configuration.
 
@@ -9,15 +9,10 @@ and thus temporary. We don't want to catch too much, like programming errors
 (missing fields etc).
 """
 
-from intelmq.lib.postgresql_bot import PostgreSQLBot
-
-try:
-    import psycopg2
-except ImportError:
-    psycopg2 = None
+from intelmq.lib.postgresql_bot import SQLBot
 
 
-class PostgreSQLOutputBot(PostgreSQLBot):
+class SQLOutputBot(SQLBot):
 
     def init(self):
         super().init()
@@ -29,7 +24,7 @@ class PostgreSQLOutputBot(PostgreSQLBot):
 
         keys = '", "'.join(event.keys())
         values = list(event.values())
-        fvalues = len(values) * '%s, '
+        fvalues = len(values) * '{0}, '.format(self.format_char)
         query = ('INSERT INTO {table} ("{keys}") VALUES ({values})'
                  ''.format(table=self.table, keys=keys, values=fvalues[:-2]))
 
@@ -38,4 +33,4 @@ class PostgreSQLOutputBot(PostgreSQLBot):
             self.acknowledge_message()
 
 
-BOT = PostgreSQLOutputBot
+BOT = SQLOutputBot

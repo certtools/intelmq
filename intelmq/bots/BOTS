@@ -747,6 +747,7 @@
             "description": "Fetches data from a database.",
             "module": "intelmq.bots.experts.generic_db_lookup.expert",
             "parameters": {
+                "engine": "<postgresql OR sqlite>",
                 "database": "intelmq",
                 "host": "localhost",
                 "match_fields": {
@@ -1005,6 +1006,9 @@
         "PostgreSQL": {
             "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database. When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit",
             "module": "intelmq.bots.outputs.postgresql.output",
+            "help": {
+            "autocommit": "We have an addition"
+            },
             "parameters": {
                 "autocommit": true,
                 "database": "intelmq-events",

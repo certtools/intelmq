@@ -112,7 +112,7 @@ class Bot(object):
 
             """ Multithreading """
             if (getattr(self.parameters, 'instances_threads', 0) > 1 and
-                not self.is_multithreaded and
+                    not self.is_multithreaded and
                     self.is_multithreadable and
                     not disable_multithreading):
                 self.logger.handlers = []
@@ -124,6 +124,7 @@ class Bot(object):
                                                    stack: Optional[object]):
                     for event in sighup_events:
                         event.set()
+
                 signal.signal(signal.SIGHUP, handle_sighup_signal_threading)
 
                 for i in range(num_instances):
@@ -482,7 +483,7 @@ class Bot(object):
     def __check_bot_id(self, name: str):
         res = re.fullmatch(r'([0-9a-zA-Z\-]+)(\.[0-9]+)?', name)
         if res:
-            if not(res.group(2) and threading.current_thread() == threading.main_thread()):
+            if not (res.group(2) and threading.current_thread() == threading.main_thread()):
                 return name, res.group(1), res.group(2)[1:] if res.group(2) else None
         self.__log_buffer.append(('error',
                                   "Invalid bot id, must match '"
@@ -1036,23 +1037,73 @@ class CollectorBot(Bot):
 
 
 class SQLBot(Bot):
+    POSTGRESQL = "postgresql"
+    SQLLITE = "sqlite"
+
     """
-    You should not inherit this class directly, rather user PostgreSQLBot or SQLiteBot.
+    XXXYou should not inherit this class directly, rather user PostgreSQLBot or SQLiteBot.
+    XYou should inherit this class and call either init.postgresql or init.sqlite.
     You do not have to bother:
         * connecting database in the self.init() method, just call super().init(), self.cur will be set
         * catching exceptions, just call self.execute() instead of self.cur.execute()
     """
-    def init(self, engine, connect_args, cursor_args={}):
-        self.engine = engine
+    def init(self):
+        name = self.parameters.engine = self.parameters.engine.lower()
+        engines = {SQLBot.POSTGRESQL: (self._init_postgresql, "%s"), SQLBot.SQLLITE: (self._init_sqlite, "?")}
+        for key, val in engines.items():
+            if name == key:
+                val[0]()
+                self.format_char = val[1]
+                break
+        else:
+            raise ValueError("Wrong parameter engine '{0}', possible values are {1}".format(name, engines))
+
+    def _connect(self, engine, connect_args, autocommitable=False):
+        self.engine = engine  # imported external library that connects to the DB
+        self.logger.debug("Connecting to database.")
+        if self.engine is None:
+            raise ValueError('Could not import {0}. Please install it.'.format(self.parameters.engine))
 
         try:
             self.con = self.engine.connect(**connect_args)
-            self.con.autocommit = getattr(self.parameters, 'autocommit', True)  # True prevents deadlocks
-            self.cur = self.con.cursor(**cursor_args)
+            if autocommitable:  # psycopg2 has it, sqlite3 has not
+                self.con.autocommit = getattr(self.parameters, 'autocommit', True)  # True prevents deadlocks
+            self.cur = self.con.cursor()  # XXX not required in postgresql and not compatible with sqlite: **cursor_args
         except (self.engine.Error, Exception):
             self.logger.exception('Failed to connect to database.')
             self.stop()
         self.logger.info("Connected to database.")
+
+    def _init_postgresql(self):
+        try:
+            import psycopg2
+            import psycopg2.extras
+        except ImportError:
+            psycopg2 = None
+
+        self._connect(psycopg2,
+                      {"database": self.parameters.database,
+                       "user": self.parameters.user,
+                       "password": self.parameters.password,
+                       "host": self.parameters.host,
+                       "port": self.parameters.port,
+                       "sslmode": self.parameters.sslmode,
+                       "connect_timeout": getattr(self.parameters, 'connect_timeout', 5)
+                       },
+                      # {"cursor_factory": psycopg2.extras.RealDictCursor},
+                      autocommitable=True)
+
+    def _init_sqlite(self):
+        try:
+            import sqlite3
+        except ImportError:
+            sqlite3 = None
+
+        self._connect(sqlite3,
+                      {"database": self.parameters.database,
+                       "timeout": getattr(self.parameters, 'connect_timeout', 5)
+                       }
+                      )
 
     def execute(self, query, values, rollback=False):
         try:
