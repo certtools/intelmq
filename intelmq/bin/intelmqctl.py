@@ -792,19 +792,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                 help='choose if it should return regular text '
                                      'or other machine-readable')
 
-            parser.add_argument('--quiet', '-q', action='store_const',
+            parser.add_argument('--quiet', '-q', action='store_true',
                                 help='Quiet mode, useful for reloads initiated '
-                                     'scripts like logrotate',
-                                const=True)
+                                     'scripts like logrotate')
 
             subparsers = parser.add_subparsers(title='subcommands')
 
             parser_list = subparsers.add_parser('list', help='Listing bots or queues')
             parser_list.add_argument('kind', choices=['bots', 'queues', 'queues-and-status'])
-            parser_list.add_argument('--non-zero', '--quiet', '-q', action='store_const',
+            parser_list.add_argument('--non-zero', '--quiet', '-q', action='store_true',
                                      help='Only list non-empty queues '
-                                          'or the IDs of enabled bots.',
-                                     const=True)
+                                          'or the IDs of enabled bots.')
             parser_list.set_defaults(func=self.list)
 
             parser_clear = subparsers.add_parser('clear', help='Clear a queue')
@@ -859,12 +857,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             parser_check = subparsers.add_parser('check',
                                                  help='Check installation and configuration')
-            parser_check.add_argument('--quiet', '-q', action='store_const',
-                                      help='Only print warnings and errors.',
-                                      const=True)
-            parser_check.add_argument('--no-connections', '-C', action='store_const',
-                                      help='Do not test the connections to services like redis.',
-                                      const=True)
+            parser_check.add_argument('--quiet', '-q', action='store_true',
+                                      help='Only print warnings and errors.')
+            parser_check.add_argument('--no-connections', '-C', action='store_true',
+                                      help='Do not test the connections to services like redis.')
             parser_check.set_defaults(func=self.check)
 
             parser_help = subparsers.add_parser('help',
