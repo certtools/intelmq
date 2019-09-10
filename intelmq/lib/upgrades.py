@@ -23,7 +23,7 @@ __all__ = ['v100_dev7_modify_syntax',
 
 def v200_defaults_statistics(defaults, runtime, dry_run):
     """
-    Inserting "statistics_*" parameters into defaults.conf file
+    Inserting `statistics_*` parameters into defaults configuration file
     """
     values = {"statistics_database": 3,
               "statistics_host": "127.0.0.1",
@@ -40,7 +40,7 @@ def v200_defaults_statistics(defaults, runtime, dry_run):
 
 def v200_defaults_broker(defaults, runtime, dry_run):
     """
-    Inserting "*_pipeline_broker" and deleting broker into/from defaults configuration
+    Inserting `*_pipeline_broker` and deleting broker into/from defaults configuration
     """
     changed = None
     values = {"destination_pipeline_broker": defaults.get("broker", "redis"),
@@ -110,7 +110,7 @@ def v110_shadowserver_feednames(defaults, runtime, dry_run):
 
 def v110_deprecations(defaults, runtime, dry_run):
     """
-    Checking for deprecated runtime configurations
+    Checking for deprecated runtime configurations (stomp collector, cymru parser, ripe expert)
     """
     mapping = {
         "intelmq.bots.collectors.n6.collector_stomp": "intelmq.bots.collectors.stomp.collector",
@@ -218,7 +218,7 @@ def v111_defaults_process_manager(defaults, runtime, dry_run):
 
 def v202_fixes(defaults, runtime, dry_run):
     """
-    Migrating parameter `feed` to `name`. RIPE expert Setting query_ripe_stat_ip query_ripe_stat_asn if query_ripe_stat_ip does not exist
+    Migrating collector parameter `feed` to `name`. RIPE expert set: `query_ripe_stat_ip` with `query_ripe_stat_asn` as default
     """
     changed = None
     for bot_id, bot in runtime.items():
