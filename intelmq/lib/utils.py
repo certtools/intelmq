@@ -39,6 +39,7 @@ __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
            'reverse_readline', 'error_message_from_exc', 'parse_relative',
            'RewindableFileHandle',
+           'file_name_from_response',
            ]
 
 # Used loglines format
@@ -57,6 +58,7 @@ SYSLOG_REGEX = (r'^(?P<date>\w{3} \d{2} \d{2}:\d{2}:\d{2}) (?P<hostname>[-\.\w]+
                 r'(?P<bot_id>([-\w]+|py\.warnings))'
                 r'(?P<thread_id>\.[0-9]+)?'
                 r': (?P<log_level>[A-Z]+) (?P<message>.+)$')
+RESPONSE_FILENAME = re.compile("filename=(.+)")
 
 
 class Parameters(object):
@@ -709,3 +711,21 @@ def create_request_session_from_bot(bot: type) -> requests.Session:
     session.mount('http://', adapter)
     session.mount('https://', adapter)
     return session
+
+
+def file_name_from_response(response: requests.Response) -> str:
+    """
+    Extract the file name from the Content-Disposition header of the Response object
+    or the URL as fallback
+
+    Parameters:
+        response: a Response object retrieved from a call with the requests library
+
+    Returns:
+        file_name: The file name
+    """
+    try:
+        file_name = RESPONSE_FILENAME.findall(response.headers["Content-Disposition"])[0]
+    except KeyError:
+        file_name = response.url.split("/")[-1]
+    return file_name

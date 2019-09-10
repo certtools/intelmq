@@ -11,6 +11,7 @@ import io
 import os
 import tempfile
 import unittest
+import requests
 
 import intelmq.lib.utils as utils
 
@@ -235,6 +236,13 @@ class TestUtils(unittest.TestCase):
             result = utils.unzip(fh.read(), extract_files=True, return_names=True)
         self.assertEqual(tuple(result), (('bar', b'bar text\n'),
                                          ('foo', b'foo text\n')))
+
+    def test_file_name_from_response(self):
+        """ test file_name_from_response """
+        response = requests.Response()
+        response.headers['Content-Disposition'] = 'attachment; filename=2019-09-09-drone_brute_force-austria-geo.csv'
+        self.assertEqual(utils.file_name_from_response(response),
+                         '2019-09-09-drone_brute_force-austria-geo.csv')
 
 
 if __name__ == '__main__':  # pragma: no cover
