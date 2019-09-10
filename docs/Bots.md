@@ -278,6 +278,7 @@ The resulting reports contains the following special fields:
  * `extra.email_subject`: The subject of the email
  * `extra.email_from`: The email's from address
  * `extra.email_message_id`: The email's message ID
+ * `extra.file_name`: The file name of the downloaded file (extracted from the HTTP Response Headers if possible)
 
 * * *
 

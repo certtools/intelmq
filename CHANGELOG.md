@@ -49,6 +49,7 @@ CHANGELOG
 - `intelmq.bots.collectors.mail.*`: Save email information/metadata in the extra fields of the report. See the bots documentation for a complete list of provided data.
   - `intelmq.bots.collectors.mail.collector_mail_attach`: Check for existence/validity of the `attach_regex` parameter.
   - Use the lib's `unzip` function for uncompressing attachments and use the .
+  - `intelmq.bots.collectors.mail.collector_mail_url`: Save the file name of the downloaded file as `extra.file_name`.
 
 #### Parsers
 - `intelmq.bot.parsers.html_table.parser`:
@@ -73,7 +74,7 @@ CHANGELOG
   - Use UTC timezone.
 - Tests for `utils.unzip`.
 - Add a new asset: Zip archive with two files, same as with tar.gz archive.
-- Added first tests for the Mail Attachment collector.
+- Added tests for the Mail Attachment & Mail URL collectors.
 
 ### Tools
 - intelmqctl:
