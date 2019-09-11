@@ -61,6 +61,7 @@ CHANGELOG
   * Use time conversion functions directly from `intelmq.lib.harmonization.DateTime.convert`.
   - Limit lxml dependency on 3.4 to < 4.4.0 (incompatibility).
 - `intelmq.bots.parsers.netlab_360.parser`: Add support for hajime scanners.
+- `intelmq.bots.parsers.hibp.parser_callback`: A new parser to parse data retrieved from a HIBP Enterprise Subscription.
 
 #### Experts
 - Add geohash expert.
@@ -68,7 +69,9 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
-- Feeds: Add ViriBack feed.
+- Feeds:
+  - Add ViriBack feed.
+  - Add Have I Been Pwned Enterprise Callback.
 - `intelmq.tests.bots.outputs.amqptopic.test_output`: Added.
 
 ### Packaging
