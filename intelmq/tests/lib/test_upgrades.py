@@ -79,6 +79,34 @@ DEP_110_EXP = {"n6-collector": {
         "query_ripe_stat_ip": True,
     },
 }}
+V210 = {"test-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.rt.collector_rt",
+    "parameters": {
+        "unzip_attachment": True,
+    }
+},
+    "test-collector2": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.rt.collector_rt",
+    "parameters": {
+    },
+}
+}
+V210_EXP = {"test-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.rt.collector_rt",
+    "parameters": {
+        "extract_files": True,
+    }
+},
+    "test-collector2": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.rt.collector_rt",
+    "parameters": {
+    },
+}
+}
 
 
 def generate_function(function):
@@ -121,6 +149,12 @@ class TestUpgradeLib(unittest.TestCase):
         result = upgrades.v202_fixes({}, V202, False)
         self.assertTrue(result[0])
         self.assertEqual(V202_EXP, result[2])
+
+    def test_v210_deprecations(self):
+        """ Test v210_deprecations """
+        result = upgrades.v210_deprecations({}, V210, True)
+        self.assertTrue(result[0])
+        self.assertEqual(V210_EXP, result[2])
 
 
 for name in upgrades.__all__:

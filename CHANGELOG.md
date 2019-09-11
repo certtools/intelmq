@@ -34,6 +34,7 @@ CHANGELOG
     - new parameters `try_zip`, `try_gzip` and `try_tar` to control which compressions are tried.
     - rewritten to an iterative approach
   - add `file_name_from_response` to extract a file name from a Response object for downloaded files.
+- `intelmq.lib.upgrades`: Added `v210_deprecations` for deprecated parameters.
 
 ### Development
 
