@@ -26,6 +26,7 @@ CHANGELOG
   - Handle non-existing IO loop in shutdown.
   - Close socket on shutdown, fixes reloading.
   - Marked as non-threadable.
+- `intelmq.bots.collectors.rt.collector_rt`: Check for matching URLs if no `attachment_regex` is given.
 
 #### Parsers
 

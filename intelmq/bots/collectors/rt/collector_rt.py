@@ -78,26 +78,28 @@ class RTCollectorBot(CollectorBot):
             ticket_id = int(ticket['id'].split('/')[1])
             self.logger.debug('Process ticket %s.', ticket_id)
             content = 'attachment'
-            for (att_id, att_name, _, _) in RT.get_attachments(ticket_id):
-                if not self.parameters.attachment_regex:
-                    break
-                if re.search(self.parameters.attachment_regex, att_name):
-                    self.logger.debug('Found attachment %s: %r.',
-                                      att_id, att_name)
-                    break
-            else:
-                urlmatch = False
-                if self.parameters.url_regex:
-                    ticket = RT.get_history(ticket_id)[0]
-                    created = ticket['Created']
-                    urlmatch = re.search(self.parameters.url_regex, ticket['Content'])
+            success = False
+            if self.parameters.attachment_regex:
+                for (att_id, att_name, _, _) in RT.get_attachments(ticket_id):
+                    if re.search(self.parameters.attachment_regex, att_name):
+                        self.logger.debug('Found attachment %s: %r.',
+                                          att_id, att_name)
+                        success = True
+                        content = 'attachment'
+                        break
+            if not success and self.parameters.url_regex:
+                ticket = RT.get_history(ticket_id)[0]
+                created = ticket['Created']
+                urlmatch = re.search(self.parameters.url_regex, ticket['Content'])
                 if urlmatch:
                     content = 'url'
                     url = urlmatch.group(0)
-                    self.logger.info('Matching URL found %r.', url)
-                else:
-                    self.logger.debug('No matching attachment or URL found.')
-                    continue
+                    self.logger.debug('Matching URL found %r.', url)
+                    success = True
+            if not success:
+                self.logger.info('No matching attachment or URL found.')
+                continue
+
             if content == 'attachment':
                 attachment = RT.get_attachment_content(ticket_id, att_id)
                 created = RT.get_attachment(ticket_id, att_id)['Created']
