@@ -46,7 +46,6 @@ class HTTPCollectorBot(CollectorBot):
             raise ValueError('Could not import requests. Please install it.')
 
         self.set_request_parameters()
-        self.extract_files = getattr(self.parameters, "extract_files", None)
 
         self.session = create_request_session_from_bot(self)
 
@@ -89,12 +88,6 @@ class HTTPCollectorBot(CollectorBot):
                                                        for file_name, _
                                                        in raw_reports]))
         else:
-            if isinstance(self.extract_files, str) and len(self.extract_files):
-                self.extract_files = self.extract_files.split(",")
-                self.logger.info('Extracting files from archive: '
-                                 "'%s'.", "', '".join(self.extract_files))
-            else:
-                self.logger.info('Extracting all files from archive.')
             raw_reports = unzip(resp.content, self.extract_files,
                                 return_names=True, logger=self.logger)
 

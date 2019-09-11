@@ -153,6 +153,7 @@ class Bot(object):
             self.__load_pipeline_configuration()
             self.__load_harmonization_configuration()
 
+            self._parse_common_parameters()
             self.init()
 
             if not self.__instance_id:
@@ -806,6 +807,23 @@ class Bot(object):
                 strings. log_level must be a valid log level.
         """
         pass
+
+    def _parse_common_parameters(self):
+        """
+        Parses and sanitizes commonly used parameters:
+
+         * extract_files
+        """
+        self.extract_files = getattr(self.parameters, 'extract_files', None)
+        if self.extract_files and isinstance(self.extract_files, str):
+            self.extract_files = self.extract_files.split(",")
+            self.logger.info('Extracting files from archives: '
+                             "'%s'.", "', '".join(self.extract_files))
+        elif self.extract_files and isinstance(self.extract_files, (list, tuple)):
+            self.logger.info('Extracting files from archives: '
+                             "'%s'.", "', '".join(self.extract_files))
+        elif self.extract_files:
+            self.logger.info('Extracting all files from archives.')
 
 
 class ParserBot(Bot):

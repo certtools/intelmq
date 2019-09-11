@@ -24,6 +24,7 @@ CHANGELOG
   - Log message after successful bot initialization, no log message anymore for ready pipeline.
   - Use existing current message if receive is called and the current message still exists.
   - Fix handling of received messaged after a sighup that happend during a blocking receving connection using explicit rejection (#1438).
+  - New method `_parse_common_parameters` called before `init` to parse commonly used argument. Currently supported: `extract_files`.
 - `intelmq.lib.test`:
   - Fix the tests broker by providing the testing pipeline.
 - `intelmq.lib.utils`:
@@ -44,8 +45,10 @@ CHANGELOG
 - `intelmq.bots.collectors.http.collector_http`:
   - More extensive usage of `intelmq.lib.utils.unzip`.
   - Save the file names in the report if files have been extracted form an archive.
-- `intelmq.bots.collectors.rt.collector_rt`: Save ticket information/metadata in the extra fields of the report.
+- `intelmq.bots.collectors.rt.collector_rt`:
+  - Save ticket information/metadata in the extra fields of the report.
   - Support for RT 3.8 and RT 4.4.
+  - Support parameter `extract_files` for generic archive extraction and consistency. The parameter `unzip_attachment` is deprecated.
 - `intelmq.bots.collectors.mail.*`: Save email information/metadata in the extra fields of the report. See the bots documentation for a complete list of provided data.
   - `intelmq.bots.collectors.mail.collector_mail_attach`: Check for existence/validity of the `attach_regex` parameter.
   - Use the lib's `unzip` function for uncompressing attachments and use the .

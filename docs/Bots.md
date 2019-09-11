@@ -278,7 +278,7 @@ The resulting reports contains the following special fields:
  * `extra.email_subject`: The subject of the email
  * `extra.email_from`: The email's from address
  * `extra.email_message_id`: The email's message ID
- * `extra.file_name`: The file name of the downloaded file (extracted from the HTTP Response Headers if possible)
+ * `extra.file_name`: The file name of the downloaded file (extracted from the HTTP Response Headers if possible).
 
 * * *
 
@@ -426,6 +426,7 @@ Requires the rsync executable
 
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
+* `extract_files`: Optional, boolean or list of strings. See documentation of the Generic URL Fetcher for more details.
 * `uri`: url of the REST interface of the RT
 * `user`: RT username
 * `password`: RT password
@@ -449,6 +450,7 @@ The resulting reports contains the following special fields:
  * `extra.ticket_owner`: The ticket's owner name
  * `extra.ticket_status`: The ticket's status
  * `extra.ticket_queue`: The ticket's queue
+ * `extra.file_name`: The name of the extracted file, the name of the downloaded file or the attachments' filename without `.gz` postfix.
  * `time.observation`: The creation time of the ticket or attachment.
 
 * * *
