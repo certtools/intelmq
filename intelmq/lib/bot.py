@@ -620,12 +620,12 @@ class Bot(object):
         if message is None or getattr(self.parameters, 'testing', False):
             return
 
-        self.logger.info('Dumping message from pipeline to dump file.')
-        timestamp = datetime.utcnow()
-        timestamp = timestamp.isoformat()
+        self.logger.info('Dumping message to dump file.')
 
         dump_file = os.path.join(self.parameters.logging_path, self.__bot_id + ".dump")
 
+        timestamp = datetime.utcnow()
+        timestamp = timestamp.isoformat()
         new_dump_data = {}
         new_dump_data[timestamp] = {}
         new_dump_data[timestamp]["bot_id"] = self.__bot_id
@@ -641,7 +641,7 @@ class Bot(object):
             # new dump file
             mode = 'w'
         with open(dump_file, mode) as fp:
-            for i in range(50):
+            for i in range(60):
                 try:
                     fcntl.flock(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 except BlockingIOError:
