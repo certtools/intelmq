@@ -105,6 +105,8 @@ CHANGELOG
 
 ### Core
 - `intelmq.lib.bot.CollectorBot`: Support the deprecated parameter `feed` until version 2.2 as the documentation was not properly updated (#1445).
+- `intelmq.lib.bot.Bot`:
+  - `_dump_message`: Wait for up to 60 seconds instead of 50 if the dump file is locked (the log message was said 60, but the code was for only 50).
 - `intelmq.lib.upgrades.v202_fixes`
   - Migration of deprecated parameter `feed` for Collectors.
   - Ripe expert parameter `query_ripe_stat_ip` was not correctly configured in `v110_deprecations`, now use `query_ripe_stat_asn` as default if it does not exist.
@@ -122,8 +124,14 @@ CHANGELOG
   - Handle non-existing IO loop in shutdown.
   - Close socket on shutdown, fixes reloading.
   - Marked as non-threadable.
+- `intelmq.bots.collectors.rt.collector_rt`: Check for matching URLs if no `attachment_regex` is given.
 
 #### Parsers
+- `intelmq.bots.cymru.parser_cap_program`: Fix parsing of the new `$certname_$date.txt` report format:
+  - Support protocol ICMP.
+  - Fix error message for unsupported protocols.
+  - Support fields `destination_port_numbers`, `port`.
+  - Support for proxy type `httppost`.
 
 #### Experts
 
@@ -139,6 +147,7 @@ CHANGELOG
 ### Tests
 - Tests for `intelmq.lib.upgrades.v202_fixes`.
 - Tests for `intelmq.lib.upgrades.v110_deprecations`.
+- Extended tests for `intelmq.bots.parser.cymru.parser_cap_program`.
 
 ### Tools
 - intelmqctl:

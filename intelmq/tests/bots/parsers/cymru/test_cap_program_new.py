@@ -171,6 +171,71 @@ EVENT11 = {'__type': 'Event',
           'classification.identifier': 'dns-open-resolver',
           'protocol.application': 'dns',
           }
+EVENT12 = {'__type': 'Event',
+          'time.observation': '2015-11-01T00:01:45+00:05',
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.ip': '172.16.0.21',
+          'time.source': '2019-09-11T08:05:00+00:00',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[15]])),
+          'classification.type': 'proxy',
+          'classification.identifier': 'openproxy',
+          'protocol.application': 'httppost',
+          }
+EVENT13 = {'__type': 'Event',
+          'time.observation': '2015-11-01T00:01:45+00:05',
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.ip': '172.16.0.21',
+          'extra.source_port': 61458,
+          'time.source': '2019-09-11T16:39:57+00:00',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[16]])),
+          'classification.type': 'infected-system',
+          'classification.identifier': 'conficker',
+          'malware.name': 'conficker',
+          'destination.ip': '172.16.0.22',
+          }
+EVENT14 = {'__type': 'Event',
+          'time.observation': '2015-11-01T00:01:45+00:05',
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.ip': '172.16.0.21',
+          'source.port': 15390,
+          'destination.ip': '172.16.0.22',
+          'destination.port': 80,
+          'time.source': '2019-09-11T00:31:30+00:00',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[17]])),
+          'classification.type': 'infected-system',
+          'classification.identifier': 'azorult',
+          'malware.name': 'azorult',
+          'protocol.transport': 'tcp',
+          }
+EVENT15 = {'__type': 'Event',
+          'time.observation': '2015-11-01T00:01:45+00:05',
+          'classification.type': 'scanner',
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.port': 53488,
+          'source.ip': '172.16.0.21',
+          'destination.port': 445,
+          'time.source': '2019-09-11T11:07:58+00:00',
+          'protocol.transport': 'tcp',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[18]])),
+          }
+EVENT16 = {'__type': 'Event',
+          'time.observation': '2015-11-01T00:01:45+00:05',
+          'classification.type': 'scanner',
+          'classification.identifier': 'darknet',
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.port': 23365,
+          'source.ip': '172.16.0.21',
+          'destination.port': 23,
+          'time.source': '2019-09-11T11:57:37+00:00',
+          'protocol.transport': 'icmp',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[19]])),
+          }
+
 
 class TestCymruCAPProgramParserBot(test.BotTestCase, unittest.TestCase):
     """
@@ -199,6 +264,12 @@ class TestCymruCAPProgramParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(10, EVENT9)
         self.assertMessageEqual(11, EVENT10)
         self.assertMessageEqual(12, EVENT11)
+        self.assertMessageEqual(13, EVENT12)
+        self.assertMessageEqual(14, EVENT13)
+        self.assertMessageEqual(15, EVENT14)
+        self.assertMessageEqual(16, EVENT15)
+        self.assertMessageEqual(17, EVENT16)
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
