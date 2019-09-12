@@ -9,6 +9,8 @@ CHANGELOG
 
 ### Core
 - `intelmq.lib.bot.CollectorBot`: Support the deprecated parameter `feed` until version 2.2 as the documentation was not properly updated (#1445).
+- `intelmq.lib.bot.Bot`:
+  - `_dump_message`: Wait for up to 60 seconds instead of 50 if the dump file is locked (the log message was said 60, but the code was for only 50).
 - `intelmq.lib.upgrades.v202_fixes`
   - Migration of deprecated parameter `feed` for Collectors.
   - Ripe expert parameter `query_ripe_stat_ip` was not correctly configured in `v110_deprecations`, now use `query_ripe_stat_asn` as default if it does not exist.
