@@ -1103,6 +1103,14 @@ server {
 
 ### Collector
 
+* **Module:** intelmq.bots.collectors.api.collector_api
+* **Configuration Parameters:**
+*  * `name`: `Enterprise Callback`
+*  * `port`: `5001`
+*  * `provider`: `Have I Been Pwned`
+
+### Parser
+
 * **Module:** intelmq.bots.parsers.hibp.parser_callback
 * **Configuration Parameters:**
 

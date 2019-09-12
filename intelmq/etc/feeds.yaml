@@ -1782,6 +1782,7 @@ providers:
             port: 5001
             name: __FEED__
             provider: __PROVIDER__
+        parser:
           module: intelmq.bots.parsers.hibp.parser_callback
           parameters:
       revision: 11-09-2019
