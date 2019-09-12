@@ -18,3 +18,4 @@ bot|172.16.0.21|64496|2019-09-11 16:39:57|srcport 61458 mwtype Conficker dstaddr
 bot|172.16.0.21|64496|2019-09-11 00:31:30|family: azorult;dest_addr: 172.16.0.22; dest_port: 80;port: 15390;protocol: 6;|Example AS Name, AT
 honeypot|172.16.0.21|64496|2019-09-11 11:07:58|destination_port_numbers: 445;port: 53488;protocol: 6;|Example AS Name, AT
 darknet|172.16.0.21|64496|2019-09-11 11:57:37|destination_port_numbers: 23;port: 23365;protocol: 6;|Example AS Name, AT
+darknet|172.16.0.21|64496|2019-09-11 00:49:45|destination_port_numbers: 3;port: 3;protocol: 1;|Example AS Name, AT
