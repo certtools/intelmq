@@ -160,7 +160,6 @@ class RTCollectorBot(CollectorBot):
             report.add("extra.ticket_status", ticket["Status"])
             report.add("extra.ticket_owner", ticket["Owner"])
 
-
             if self.extract_files:
                 try:
                     unzipped = unzip(raw, self.extract_files,
@@ -179,7 +178,7 @@ class RTCollectorBot(CollectorBot):
                     report_new = report.copy()
                     report_new.add("raw", raw_report)
                     report_new.add("extra.file_name", file_name, overwrite=True)
-                    if not "extra.file_name" in report_new and att_name.endswith('.gz'):
+                    if "extra.file_name" not in report_new and att_name.endswith('.gz'):
                         report_new["extra.file_name"] = att_name[:-3]
                     self.send_message(report_new)
             else:
