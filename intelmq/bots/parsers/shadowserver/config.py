@@ -50,7 +50,7 @@ import intelmq.lib.harmonization as harmonization
 def get_feed(feedname):
     # TODO update missing names
     feed_idx = {
-        ## TODO These are missing
+        # TODO These are missing
         # "Open-DB2-Discovery-Service": open_db2_discovery_service,
         # "Accessible-Hadoop": accessible_hadoop,
         # "Compromised-Website": compromised_website,
@@ -214,7 +214,6 @@ def validate_fqdn(value):
 
 def convert_date(value):
     return harmonization.DateTime.sanitize(value)
-
 
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-DB2

@@ -34,11 +34,10 @@ class ShadowserverParserBot(ParserBot):
     def init(self):
 
         # Set a switch if the parser shall keep the report's feed.name,
-        self.keep_feedname= False
+        self.keep_feedname = False
         if hasattr(self.parameters, 'keep_feedname'):
             if self.parameters.keep_feedname:
                 self.keep_feedname = True
-
 
     def parse(self, report):
 
@@ -61,11 +60,10 @@ class ShadowserverParserBot(ParserBot):
         # Delete constant field feed.name if keep_feedname is true so it won't
         # be updated later
         if self.keep_feedname:
-            self.sparser_config.get("constant_fields", None).pop("feed.name",None)
+            self.sparser_config.get("constant_fields", None).pop("feed.name", None)
 
         # Set default csv parse function
         return self.parse_csv_dict(report)
-
 
     def parse_line(self, row, report):
 
@@ -90,7 +88,6 @@ class ShadowserverParserBot(ParserBot):
         # the parser is going to write this information into an object
         # one level below the "extra root"
         # e.g.: extra {'cc_dns': '127.0.0.1'}
-
 
         # Iterate Config, add required fields.
         # Fail hard if not possible:
