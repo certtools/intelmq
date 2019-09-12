@@ -29,6 +29,11 @@ CHANGELOG
 - `intelmq.bots.collectors.rt.collector_rt`: Check for matching URLs if no `attachment_regex` is given.
 
 #### Parsers
+- `intelmq.bots.cymru.parser_cap_program`: Fix parsing of the new `$certname_$date.txt` report format:
+  - Support protocol ICMP.
+  - Fix error message for unsupported protocols.
+  - Support fields `destination_port_numbers`, `port`.
+  - Support for proxy type `httppost`.
 
 #### Experts
 
@@ -44,6 +49,7 @@ CHANGELOG
 ### Tests
 - Tests for `intelmq.lib.upgrades.v202_fixes`.
 - Tests for `intelmq.lib.upgrades.v110_deprecations`.
+- Extended tests for `intelmq.bots.parser.cymru.parser_cap_program`.
 
 ### Tools
 - intelmqctl:

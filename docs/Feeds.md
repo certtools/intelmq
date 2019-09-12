@@ -1763,13 +1763,18 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Status:** on
 * **Revision:** 20-01-2018
 * **Description:** Team Cymru provides daily lists of compromised or abused devices for the ASNs and/or netblocks with a CSIRT's jurisdiction. This includes such information as bot infected hosts, command and control systems, open resolvers, malware urls, phishing urls, and brute force attacks
+* **Additional Information:** "Two feeds types are offered:
+ * The new https://www.cymru.com/$certname/$certname_{time[%Y%m%d]}.txt
+ * and the old https://www.cymru.com/$certname/infected_{time[%Y%m%d]}.txt
+ Both formats are supported by the parser.
+ As of 2019-03-28 not all the data from the old format is available in the new format."
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_password`: `{{your password}}`
-*  * `http_url`: `https://www.cymru.com/{{your organization name}}/infected_{time[%Y%m%d]}.txt`
+*  * `http_url`: `https://www.cymru.com/$certname/$certname_{time[%Y%m%d]}.txt`
 *  * `http_url_formatting`: `True`
 *  * `http_username`: `{{your login}}`
 *  * `name`: `CAP`

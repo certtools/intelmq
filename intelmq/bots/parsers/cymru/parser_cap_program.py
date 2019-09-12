@@ -23,7 +23,8 @@ MAPPING_STATIC = {'bot': {
 MAPPING_COMMENT = {'bruteforce': ('classification.identifier', 'protocol.application'),
                    'phishing': ('source.url', )}
 PROTOCOL_MAPPING = {'6': 'tcp',  # TODO: use getent in harmonization
-                    '17': 'udp'}
+                    '17': 'udp',
+                    '1': 'icmp'}
 
 
 class CymruCAPProgramParserBot(ParserBot):
@@ -39,6 +40,35 @@ class CymruCAPProgramParserBot(ParserBot):
                     self.parse_line = self.parse_line_new
             else:
                 yield line
+
+    def parse_bot_old(self, comment_split, report_type, event):
+        comment_results = {}
+        comment_key = None
+        comment_value = []
+        event_comment = []
+        for part in comment_split + [None]:  # iterate once more at end
+            if part in ['srcport', 'mwtype', 'destaddr', 'dstaddr', None]:
+                if comment_key and comment_value:
+                    comment_results[comment_key] = ' '.join(comment_value)
+                comment_key = part
+                comment_value.clear()
+            else:
+                if comment_key == 'destaddr' and len(comment_value) == 1:
+                    # line 9 in test case ('Avalanche Botnet' comment)
+                    event_comment.append(part)
+                else:
+                    comment_value.append(part)
+        for kind, value in comment_results.items():
+            if kind == 'srcport':
+                event['extra.source_port'] = int(value)
+            elif kind == 'mwtype':
+                event['classification.identifier'] = event['malware.name'] = value.lower()
+            elif kind in ('destaddr', 'dstaddr'):
+                event['destination.ip'] = value
+            else:
+                raise ValueError('Unknown value in comment %r for report %r.' % (kind, report_type))
+        if event_comment:
+            event.add('event_description.text', ' '.join(event_comment))
 
     def parse_line(self, line, report):
         report_type, ip, asn, timestamp, comments, asn_name = line.split('|')
@@ -77,33 +107,7 @@ class CymruCAPProgramParserBot(ParserBot):
             # bots|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[srcport <PORT>] [mwtype <TYPE>] [destaddr <IPADDR>] [comment]|ASNAME
             # TYPE can contain spaces -.-
             event.add('classification.type', 'infected-system')
-            comment_results = {}
-            comment_key = None
-            comment_value = []
-            event_comment = []
-            for part in comment_split + [None]:  # iterate once more at end
-                if part in ['srcport', 'mwtype', 'destaddr', None]:
-                    if comment_key and comment_value:
-                        comment_results[comment_key] = ' '.join(comment_value)
-                    comment_key = part
-                    comment_value.clear()
-                else:
-                    if comment_key == 'destaddr' and len(comment_value) == 1:
-                        # line 9 in test case ('Avalanche Botnet' comment)
-                        event_comment.append(part)
-                    else:
-                        comment_value.append(part)
-            for kind, value in comment_results.items():
-                if kind == 'srcport':
-                    event['extra.source_port'] = int(value)
-                elif kind == 'mwtype':
-                    event['classification.identifier'] = event['malware.name'] = value.lower()
-                elif kind == 'destaddr':
-                    event['destination.ip'] = value
-                else:
-                    raise ValueError('Unknown value in comment %r for report %r.' % (kind, report_type))
-            if event_comment:
-                event.add('event_description.text', ' '.join(event_comment))
+            self.parse_bot_old(comment_split, report_type, event)
         elif report_type == 'bruteforce':
             # bruteforce|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<PROTOCOL>|ASNAME
             event.add('classification.type', 'brute-force')
@@ -237,6 +241,14 @@ class CymruCAPProgramParserBot(ParserBot):
                 if category == 'proxy':
                     comment = 'proxy_type: %s' % comment
                 else:
+                    if category == 'bot':
+                        try:
+                            self.parse_bot_old(notes.split(' '),
+                                               category, event)
+                        except Exception:
+                            pass
+                        else:
+                            break
                     raise ValueError('Unable to parse comment %r of category %r. Please report this.' % (comment, category))
             key, value = comment.split(': ')
             key = key.strip()
@@ -245,20 +257,28 @@ class CymruCAPProgramParserBot(ParserBot):
                 event['classification.identifier'] = event['malware.name'] = value.lower()
             elif key == 'dest_addr':
                 event['destination.ip'] = value
-            elif key in ('dest_port', 'ports_scanned', 'honeypot_port', 'darknet_port'):
+            elif key in ('dest_port', 'ports_scanned', 'honeypot_port',
+                         'darknet_port', 'destination_port_numbers'):
                 for val in value.split(','):
                     destination_ports.append(val.strip())
             elif key == 'protocol':
                 try:
                     event.add('protocol.transport', PROTOCOL_MAPPING[value])
                 except KeyError:
-                    raise ValueError('Unknown protocol %r, please report a bug')
+                    raise ValueError('Unknown protocol %r, please report a bug'
+                                     '' % value)
             elif key == 'hostname':
                 event['source.fqdn'] = value
             elif key == 'proxy_type':
-                protocol, port = value.split('-')
-                event['protocol.application'] = protocol
-                event['source.port'] = port
+                if value == 'httppost':
+                    event['protocol.application'] = 'httppost'
+                else:
+                    protocol, port = value.split('-')
+                    event['protocol.application'] = protocol
+                    event['source.port'] = port
+            elif key == 'port':
+                # for bot category
+                event['source.port'] = value
             else:
                 raise ValueError('Unknown key %r in comment of category %r. Please report this.' % (key, category))
         for destination_port in destination_ports:

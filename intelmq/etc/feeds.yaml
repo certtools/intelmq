@@ -518,14 +518,19 @@ providers:
         for the ASNs and/or netblocks with a CSIRT's jurisdiction. This includes such
         information as bot infected hosts, command and control systems, open resolvers,
         malware urls, phishing urls, and brute force attacks
-      additional_information:
+      additional_information: |
+        "Two feeds types are offered:
+         * The new https://www.cymru.com/$certname/$certname_{time[%Y%m%d]}.txt
+         * and the old https://www.cymru.com/$certname/infected_{time[%Y%m%d]}.txt
+         Both formats are supported by the parser.
+         As of 2019-03-28 not all the data from the old format is available in the new format."
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_password: "{{your password}}"
             http_url_formatting: true
-            http_url: https://www.cymru.com/{{your organization name}}/infected_{time[%Y%m%d]}.txt
+            http_url: https://www.cymru.com/$certname/$certname_{time[%Y%m%d]}.txt
             http_username: "{{your login}}"
             rate_limit: 86400
             name: __FEED__
