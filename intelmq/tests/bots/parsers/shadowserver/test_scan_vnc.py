@@ -12,14 +12,14 @@ with open(os.path.join(os.path.dirname(__file__),
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible VNC",
+EXAMPLE_REPORT = {'feed.name': 'Accessible VNC',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   "extra.file_name": "2019-01-01-scan_vnc-test-geo.csv",
                   }
 EVENTS = [{'__type': 'Event',
-           'feed.name': 'ShadowServer Accessible VNC',
+           'feed.name': 'Accessible VNC',
            "classification.identifier": "open-vnc",
            "classification.taxonomy": "vulnerable",
            "classification.type": "vulnerable service",
@@ -39,7 +39,7 @@ EVENTS = [{'__type': 'Event',
            "time.source": "2019-09-04T14:51:44+00:00"
           },
           {'__type': 'Event',
-           'feed.name': 'ShadowServer Accessible VNC',
+           'feed.name': 'Accessible VNC',
            "classification.identifier": "open-vnc",
            "classification.taxonomy": "vulnerable",
            "classification.type": "vulnerable service",

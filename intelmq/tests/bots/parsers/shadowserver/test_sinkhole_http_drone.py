@@ -12,14 +12,14 @@ with open(os.path.join(os.path.dirname(__file__),
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Sinkhole HTTP Drone",
+EXAMPLE_REPORT = {'feed.name': 'Sinkhole HTTP Drone',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   "extra.file_name": "2019-01-01-sinkhole_http_drone-test-geo.csv",
                   }
 EVENTS = [{'__type': 'Event',
-           'feed.name': 'ShadowServer Sinkhole HTTP Drone',
+           'feed.name': 'Sinkhole HTTP Drone',
            "classification.taxonomy": "malicious code",
            "classification.type": "infected-system",
            "destination.asn": 393667,
@@ -44,7 +44,7 @@ EVENTS = [{'__type': 'Event',
            "time.source": "2018-03-21T00:00:07+00:00"
            },
           {'__type': 'Event',
-           'feed.name': 'ShadowServer Sinkhole HTTP Drone',
+           'feed.name': 'Sinkhole HTTP Drone',
            "classification.taxonomy": "malicious code",
            "classification.type": "infected-system",
            "destination.asn": 6939,

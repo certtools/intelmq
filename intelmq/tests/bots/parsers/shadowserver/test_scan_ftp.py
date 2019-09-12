@@ -12,7 +12,7 @@ with open(os.path.join(os.path.dirname(__file__),
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible FTP",
+EXAMPLE_REPORT = {'feed.name': 'Accessible FTP',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2019-03-25T00:00:00+00:00",
@@ -20,7 +20,7 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible FTP",
                   }
 EVENTS = [{
             '__type': 'Event',
-            'feed.name': 'ShadowServer Accessible FTP',
+            'feed.name': 'Accessible FTP',
             'time.observation': '2019-03-25T00:00:00+00:00',
             'time.source': '2019-03-06T06:37:00+00:00',
             'classification.taxonomy': 'vulnerable',
@@ -70,7 +70,7 @@ EVENTS = [{
           },
           {
             '__type': 'Event',
-            'feed.name': 'ShadowServer Accessible FTP',
+            'feed.name': 'Accessible FTP',
             'time.observation': '2019-03-25T00:00:00+00:00',
             'time.source': '2019-03-06T06:37:00+00:00',
             'classification.taxonomy': 'vulnerable',

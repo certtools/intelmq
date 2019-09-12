@@ -12,7 +12,7 @@ with open(os.path.join(os.path.dirname(__file__),
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible ADB",
+EXAMPLE_REPORT = {'feed.name': 'Accessible ADB',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2018-07-30T00:00:00+00:00",
@@ -20,7 +20,7 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible ADB",
 
                   }
 EVENTS = [{'__type': 'Event',
-           'feed.name': 'ShadowServer Accessible ADB',
+           'feed.name': 'Accessible ADB',
            'time.observation': '2018-07-30T00:00:00+00:00',
            'time.source': '2018-07-26T02:07:16+00:00',
            'classification.taxonomy': 'vulnerable',
@@ -45,7 +45,7 @@ EVENTS = [{'__type': 'Event',
            'source.reverse_dns': '36-239-124-210.dynamic-ip.hinet.net',
            },
           {'__type': 'Event',
-           'feed.name': 'ShadowServer Accessible ADB',
+           'feed.name': 'Accessible ADB',
            'time.observation': '2018-07-30T00:00:00+00:00',
            'time.source': '2018-07-26T02:07:16+00:00',
            'classification.taxonomy': 'vulnerable',

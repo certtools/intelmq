@@ -11,14 +11,14 @@ with open(os.path.join(os.path.dirname(__file__), 'testdata/scan_ipmi.csv')) as 
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Open IPMI",
+EXAMPLE_REPORT = {'feed.name': 'Open IPMI',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   "extra.file_name": "2019-01-01-scan_ipmi-test-geo.csv",
                   }
 EVENTS = [{'__type': 'Event',
-           'feed.name': 'ShadowServer Open IPMI',
+           'feed.name': 'Open IPMI',
            'classification.identifier': 'open-elasticsearch',
            "classification.identifier": "open-ipmi",
            "classification.taxonomy": "vulnerable",
@@ -52,7 +52,7 @@ EVENTS = [{'__type': 'Event',
            "time.source": "2016-07-24T00:09:42+00:00"
            },
            {'__type': 'Event',
-           'feed.name': 'ShadowServer Open IPMI',
+           'feed.name': 'Open IPMI',
            "classification.identifier": "open-ipmi",
            "classification.taxonomy": "vulnerable",
            "classification.type": "vulnerable service",

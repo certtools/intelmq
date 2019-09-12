@@ -11,14 +11,14 @@ with open(os.path.join(os.path.dirname(__file__), 'testdata/ddos_amplification.c
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Amplification DDoS Victim",
+EXAMPLE_REPORT = {'feed.name': 'Amplification DDoS Victim',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2019-01-01T00:00:00+00:00",
                   "extra.file_name": "2019-01-01-ddos_amplification-test-test.csv"
                   }
 EVENTS = [{'__type': 'Event',
-           'feed.name': 'ShadowServer Amplification DDoS Victim',
+           'feed.name': 'Amplification DDoS Victim',
            'classification.identifier': 'amplification-ddos-victim',
            'classification.taxonomy': 'availability',
            'classification.type': 'ddos',
@@ -45,7 +45,7 @@ EVENTS = [{'__type': 'Event',
            'extra.public_source': 'SSS',
            },
            {'__type': 'Event',
-           'feed.name': 'ShadowServer Amplification DDoS Victim',
+           'feed.name': 'Amplification DDoS Victim',
            'classification.identifier': 'amplification-ddos-victim',
            'classification.taxonomy': 'availability',
            'classification.type': 'ddos',

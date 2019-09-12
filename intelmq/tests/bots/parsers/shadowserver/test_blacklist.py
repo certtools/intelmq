@@ -12,7 +12,7 @@ with open(os.path.join(os.path.dirname(__file__), 'testdata/blacklist.csv')) as 
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
 EXAMPLE_REPORT = {
-    "feed.name": "ShadowServer Blacklist",
+    'feed.name': 'Blacklist',
     "raw": utils.base64_encode(EXAMPLE_FILE),
     "__type": "Report",
     "time.observation": "2015-01-01T00:00:00+00:00",
@@ -20,7 +20,7 @@ EXAMPLE_REPORT = {
 }
 EVENTS = [{
     '__type': 'Event',
-    'feed.name': 'ShadowServer Blacklist',
+    'feed.name': 'Blacklist',
     "classification.identifier": "blacklisted-ip",
     "classification.taxonomy": "other",
     "classification.type": "blacklist",
@@ -40,7 +40,7 @@ EVENTS = [{
 },
 {
     '__type': 'Event',
-    'feed.name': 'ShadowServer Blacklist',
+    'feed.name': 'Blacklist',
      "classification.identifier": "blacklisted-ip",
     "classification.taxonomy": "other",
     "classification.type": "blacklist",

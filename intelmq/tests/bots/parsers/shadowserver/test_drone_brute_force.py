@@ -11,7 +11,7 @@ with open(os.path.join(os.path.dirname(__file__), 'testdata/drone_brute_force.cs
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Drone Brute Force",
+EXAMPLE_REPORT = {'feed.name': 'Drone Brute Force',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
@@ -35,7 +35,7 @@ EVENTS = [{'__type': 'Event',
            'extra.start_time': '2018-04-07T03:02:15.951205Z',
            'destination.account': 'alex',
            'protocol.application': 'ssh',
-           'feed.name': 'ShadowServer Drone Brute Force',
+           'feed.name': 'Drone Brute Force',
            'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
                                                  EXAMPLE_LINES[1]])),
            'source.asn': 64496,

@@ -11,14 +11,14 @@ with open(os.path.join(os.path.dirname(__file__), 'testdata/scan_ntpmonitor.csv'
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer NTP Monitor",
+EXAMPLE_REPORT = {'feed.name': 'NTP Monitor',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   "extra.file_name": "2019-01-01-scan_ntpmonitor-test-geo.csv",
                   }
 EVENTS = [{'__type': 'Event',
-           'feed.name': 'ShadowServer NTP Monitor',
+           'feed.name': 'NTP Monitor',
            "classification.identifier": "ntp-monitor",
            "classification.taxonomy": "vulnerable",
            "classification.type": "vulnerable service",
@@ -41,7 +41,7 @@ EVENTS = [{'__type': 'Event',
            "time.source": "2016-07-24T06:09:09+00:00"
            },
            {'__type': 'Event',
-           'feed.name': 'ShadowServer NTP Monitor',
+           'feed.name': 'NTP Monitor',
            "classification.identifier": "ntp-monitor",
            "classification.taxonomy": "vulnerable",
            "classification.type": "vulnerable service",

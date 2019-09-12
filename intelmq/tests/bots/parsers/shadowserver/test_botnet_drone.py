@@ -12,7 +12,7 @@ with open(os.path.join(os.path.dirname(__file__), 'testdata/botnet_drone.csv')) 
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
 EXAMPLE_REPORT = {
-    "feed.name": "ShadowServer Drone",
+    'feed.name': 'Drone',
     "raw": utils.base64_encode(EXAMPLE_FILE),
     "__type": "Report",
     "time.observation": "2015-01-01T00:00:00+00:00",
@@ -20,7 +20,7 @@ EXAMPLE_REPORT = {
 }
 EVENTS = [{
     '__type': 'Event',
-    'feed.name': 'ShadowServer Drone',
+    'feed.name': 'Drone',
     "classification.taxonomy": "malicious code",
     "classification.type": "infected-system",
     "destination.asn": 8560,
@@ -50,7 +50,7 @@ EVENTS = [{
 },
 {
     '__type': 'Event',
-    'feed.name': 'ShadowServer Drone',
+    'feed.name': 'Drone',
     "classification.taxonomy": "malicious code",
     "classification.type": "infected-system",
     "destination.asn": 16265,

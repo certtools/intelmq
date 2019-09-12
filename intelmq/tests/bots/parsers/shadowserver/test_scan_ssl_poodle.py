@@ -11,7 +11,7 @@ with open(os.path.join(os.path.dirname(__file__), 'testdata/scan_ssl_poodle.csv'
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer SSL POODLE Vulnerable Servers",
+EXAMPLE_REPORT = {'feed.name': 'SSL POODLE Vulnerable Servers',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
@@ -48,7 +48,7 @@ EVENTS = [{'classification.taxonomy': 'vulnerable',
            'extra.subject_common_name': 'usg20_107BEF394BA5',
            'extra.tag': 'ssl-poodle',
            'extra.transfer_encoding': 'chunked',
-           'feed.name': 'ShadowServer SSL POODLE Vulnerable Servers',
+           'feed.name': 'SSL POODLE Vulnerable Servers',
            'protocol.application': 'https',
            'source.asn': 65540,
            'source.geolocation.cc': 'AT',

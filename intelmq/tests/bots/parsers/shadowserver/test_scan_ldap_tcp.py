@@ -11,14 +11,14 @@ with open(os.path.join(os.path.dirname(__file__), 'testdata/scan_ldap_tcp.csv'))
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Open LDAP",
+EXAMPLE_REPORT = {'feed.name': 'Open LDAP',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   "extra.file_name": "2019-01-01-scan_ldap_tcp-test-geo.csv",
                   }
 EVENTS = [{'__type': 'Event',
-           'feed.name': 'ShadowServer Open LDAP',
+           'feed.name': 'Open LDAP',
            "classification.identifier": "open-ldap",
            "classification.taxonomy": "vulnerable",
            "classification.type": "vulnerable service",
@@ -49,7 +49,7 @@ EVENTS = [{'__type': 'Event',
            "time.source": "2019-09-04T08:04:41+00:00"
            },
            {'__type': 'Event',
-           'feed.name': 'ShadowServer Open LDAP',
+           'feed.name': 'Open LDAP',
            "classification.identifier": "open-ldap",
            "classification.taxonomy": "vulnerable",
            "classification.type": "vulnerable service",

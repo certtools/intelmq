@@ -11,14 +11,14 @@ with open(os.path.join(os.path.dirname(__file__), 'testdata/scan_isakmp.csv')) a
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Vulnerable ISAKMP",
+EXAMPLE_REPORT = {'feed.name': 'Vulnerable ISAKMP',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   "extra.file_name": "2019-01-01-scan_isakmp-test-geo.csv",
                   }
 EVENTS = [{'__type': 'Event',
-           'feed.name': 'ShadowServer Vulnerable ISAKMP',
+           'feed.name': 'Vulnerable ISAKMP',
            "classification.identifier": "open-ike",
            "classification.taxonomy": "vulnerable",
            "classification.type": "vulnerable service",
@@ -49,7 +49,7 @@ EVENTS = [{'__type': 'Event',
            "time.source": "2019-09-04T00:17:25+00:00"
            },
            {'__type': 'Event',
-           'feed.name': 'ShadowServer Vulnerable ISAKMP',
+           'feed.name': 'Vulnerable ISAKMP',
            "classification.identifier": "open-ike",
            "classification.taxonomy": "vulnerable",
            "classification.type": "vulnerable service",

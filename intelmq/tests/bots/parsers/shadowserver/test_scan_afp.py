@@ -12,7 +12,7 @@ with open(os.path.join(os.path.dirname(__file__),
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible AFP",
+EXAMPLE_REPORT = {'feed.name': 'Accessible AFP',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2018-07-30T00:00:00+00:00",
@@ -21,7 +21,7 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible AFP",
                   }
 EVENTS = [{
     '__type': 'Event',
-    'feed.name': 'ShadowServer Accessible AFP',
+    'feed.name': 'Accessible AFP',
     "classification.identifier": "accessible-afp",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable service",
@@ -51,7 +51,7 @@ EVENTS = [{
 },
 {
     '__type': 'Event',
-    'feed.name': 'ShadowServer Accessible AFP',
+    'feed.name': 'Accessible AFP',
     "classification.identifier": "accessible-afp",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable service",

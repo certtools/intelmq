@@ -12,7 +12,7 @@ with open(os.path.join(os.path.dirname(__file__),
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible CWMP",
+EXAMPLE_REPORT = {'feed.name': 'Accessible CWMP',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2018-07-30T00:00:00+00:00",
@@ -21,7 +21,7 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible CWMP",
                   }
 EVENTS = [{
     '__type': 'Event',
-    'feed.name': 'ShadowServer Accessible CWMP',
+    'feed.name': 'Accessible CWMP',
     "classification.identifier": "open-cwmp",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable service",
@@ -51,7 +51,7 @@ EVENTS = [{
 },
 {
     '__type': 'Event',
-    'feed.name': 'ShadowServer Accessible CWMP',
+    'feed.name': 'Accessible CWMP',
     "classification.identifier": "open-cwmp",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable service",

@@ -11,14 +11,14 @@ with open(os.path.join(os.path.dirname(__file__), 'testdata/cisco_smart_install.
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible Cisco Smart Install",
+EXAMPLE_REPORT = {'feed.name': 'Accessible Cisco Smart Install',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   "extra.file_name": "2019-01-01-cisco_smart_install-test-geo.csv",
                   }
 EVENTS = [{'__type': 'Event',
-           'feed.name': 'ShadowServer Accessible Cisco Smart Install',
+           'feed.name': 'Accessible Cisco Smart Install',
            'classification.identifier': 'accessible-cisco-smart-install',
            'classification.type': 'vulnerable service',
            'classification.taxonomy': 'vulnerable',
@@ -37,7 +37,7 @@ EVENTS = [{'__type': 'Event',
            'time.observation': '2015-01-01T00:00:00+00:00',
            'time.source': '2017-11-18T08:42:45+00:00'},
           {'__type': 'Event',
-           'feed.name': 'ShadowServer Accessible Cisco Smart Install',
+           'feed.name': 'Accessible Cisco Smart Install',
            'classification.identifier': 'accessible-cisco-smart-install',
            'classification.type': 'vulnerable service',
            'classification.taxonomy': 'vulnerable',

@@ -11,14 +11,14 @@ with open(os.path.join(os.path.dirname(__file__), 'testdata/scan_elasticsearch.c
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Open Elasticsearch",
+EXAMPLE_REPORT = {'feed.name': 'Open Elasticsearch',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   "extra.file_name": "2019-01-01-scan_elasticsearch-test-geo.csv",
                   }
 EVENTS = [{'__type': 'Event',
-           'feed.name': 'ShadowServer Open Elasticsearch',
+           'feed.name': 'Open Elasticsearch',
            'classification.identifier': 'open-elasticsearch',
            'classification.taxonomy': 'vulnerable',
            'classification.type': 'vulnerable service',
@@ -45,7 +45,7 @@ EVENTS = [{'__type': 'Event',
            'time.source': '2016-07-24T00:31:27+00:00',
            },
            {'__type': 'Event',
-           'feed.name': 'ShadowServer Open Elasticsearch',
+           'feed.name': 'Open Elasticsearch',
            'classification.identifier': 'open-elasticsearch',
            'classification.taxonomy': 'vulnerable',
            'classification.type': 'vulnerable service',
