@@ -569,6 +569,7 @@ You can schedule the bot with a crontab-entry like this:
 ```
 
 Bots configured as `scheduled` will exit after the first successful run.
+Setting `enabled` to `false` will cause the bot to not start with `intelmqctl start`, but only with an explicit start, in this example `intelmqctl start blocklistde-apache-collector`.
 
 
 #### Continuous Run Mode
