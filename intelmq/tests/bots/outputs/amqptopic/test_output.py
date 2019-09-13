@@ -38,6 +38,22 @@ class TestAMQPTopicOutputBot(test.BotTestCase, unittest.TestCase):
                         "username": None,
                         }
 
+    def setup_channel(self):
+        connection = pika.BlockingConnection(pika.ConnectionParameters(
+                host='localhost',
+                port=5672,
+                socket_timeout=10,
+                virtual_host='/',
+                ))
+        channel = connection.channel()
+        channel.confirm_delivery()
+        channel.queue_declare(queue='test', durable=True,
+                              arguments={'x-queue-mode': 'lazy'})
+        channel.queue_delete(queue='test')  # "purge" it
+        channel.queue_declare(queue='test', durable=True,
+                              arguments={'x-queue-mode': 'lazy'})
+        return channel
+
     @test.skip_exotic()
     def test_event(self):
         """ Test AMQP Topic output. """

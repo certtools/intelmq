@@ -54,6 +54,7 @@ CHANGELOG
   - `intelmq.bots.collectors.mail.collector_mail_attach`: Check for existence/validity of the `attach_regex` parameter.
   - Use the lib's `unzip` function for uncompressing attachments and use the .
   - `intelmq.bots.collectors.mail.collector_mail_url`: Save the file name of the downloaded file as `extra.file_name`.
+- `intelmq.bots.collectors.amqp.collector_amqp`: New collector to collect data from (remote) AMQP servers, for bot IntelMQ as well as external data.
 
 #### Parsers
 - `intelmq.bot.parsers.html_table.parser`:

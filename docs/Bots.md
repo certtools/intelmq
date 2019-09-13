@@ -181,6 +181,33 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 
 Multihreading is disabled for all Collectors, as this would lead to duplicated data.
 
+### AMQP
+
+#### Information:
+* `name`: intelmq.bots.collectors.amqp.collector_amqp
+* `lookup`: yes
+* `public`: yes
+* `cache (redis db)`: none
+* `description`: collect data from (remote) AMQP servers, for both IntelMQ as well as external data
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `connection_attempts`: The number of connection attempts to defined server, defaults to 3
+* `connection_heartbeat`: Heartbeat to server, in seconds, defaults to 3600
+* `connection_host`: Name/IP for the AMQP server, defaults to 127.0.0.1
+* `connection_port`: Port for the AMQP server, defaults to 5672
+* `connection_vhost`: Virtual host to connect, on a http(s) connection would be http:/IP/<your virtual host>
+* `expect_intelmq_message`: Boolean, if the data is from IntelMQ or not. Default: `false`. If true, then the data can be any Report or Event and will be passed to the next bot as is. Otherwise a new report is created with the raw data.
+* `password`: Password for authentication on your AMQP server
+* `queue_name`: The name of the queue to fetch data from
+* `username`: Username for authentication on your AMQP server
+* `use_ssl`: Use ssl for the connection, make sure to also set the correct port, usually 5671 (`true`/`false`)
+
+Currently only fetching from a queue is supported can be extended in the future. Messages will be acknowledge at AMQP after it is sent to the pipeline.
+
+* * *
+
 ### API
 
 #### Information:
