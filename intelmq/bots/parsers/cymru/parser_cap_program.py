@@ -271,12 +271,12 @@ class CymruCAPProgramParserBot(ParserBot):
             elif key == 'hostname':
                 event['source.fqdn'] = value
             elif key == 'proxy_type':
-                if value == 'httppost':
-                    event['protocol.application'] = 'httppost'
-                else:
+                if '-' in value:
                     protocol, port = value.split('-')
                     event['protocol.application'] = protocol
                     event['source.port'] = port
+                else:
+                    event['protocol.application'] = value
             elif key == 'port':
                 # for bot category
                 event['source.port'] = value
