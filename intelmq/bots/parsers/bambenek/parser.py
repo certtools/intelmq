@@ -33,11 +33,10 @@ class BambenekParserBot(ParserBot):
             self.tempdata.append(line)
 
         else:
-            m = re.match(r"(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}),(?P<description>.*),(?P<timestamp>\d{4}-\d{2}-\d{2}[ ]\d{2}[:]\d{2}),(?P<url>.*)", line)
+            m = re.match(r"(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}),(?P<description>.*), \
+                (?P<timestamp>\d{4}-\d{2}-\d{2}[ ]\d{2}[:]\d{2}),(?P<url>.*)", line)
             values = m.groups()
-            
             event = self.new_event(report)
-
             event.add('event_description.text', values[1])
             event.add('event_description.url', values[3])
             event.add('raw', line)
