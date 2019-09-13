@@ -124,11 +124,12 @@ CHANGELOG
 - `intelmq.bots.collectors.rt.collector_rt`: Check for matching URLs if no `attachment_regex` is given.
 
 #### Parsers
-- `intelmq.bots.cymru.parser_cap_program`: Fix parsing of the new `$certname_$date.txt` report format:
+- `intelmq.bots.cymru.parser_cap_program`: Fix parsing of the new `$certname_$date.txt` report format (#1443):
   - Support protocol ICMP.
   - Fix error message for unsupported protocols.
   - Support fields `destination_port_numbers`, `port`.
   - Support for proxy type `httppost`.
+  - Use Country Code of AS as `source.geolocation.cc`.
 
 #### Experts
 

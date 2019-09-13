@@ -222,6 +222,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event.add('source.asn', asn)
         event.add('time.source', timestamp + ' GMT')
         event.add('source.as_name', ', '.join(asninfo_split[:-1]))  # contains CC at the end
+        event.add('source.geolocation.cc', asninfo_split[-1])
         if category in MAPPING_COMMENT:
             assert len(comment_split) == 1
             for field in MAPPING_COMMENT[category]:
