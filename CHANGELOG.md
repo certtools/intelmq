@@ -129,7 +129,7 @@ CHANGELOG
   - Support protocol ICMP.
   - Fix error message for unsupported protocols.
   - Support fields `destination_port_numbers`, `port`.
-  - Support for proxy type `httppost`.
+  - Support for all proxy types without ports.
   - Use Country Code of AS as `source.geolocation.cc`.
 
 #### Experts
