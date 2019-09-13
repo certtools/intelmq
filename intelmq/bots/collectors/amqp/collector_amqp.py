@@ -43,7 +43,7 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
                                                                self.parameters.password)
 
         if getattr(self.parameters, 'use_ssl', False):
-            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.SSLContext())
+            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.create_default_context(ssl.Purpose.CLIENT_AUTH))
 
         self.connection_parameters = pika.ConnectionParameters(
             host=self.connection_host,
@@ -80,3 +80,6 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
                 report['raw'] = body
                 self.send_message(report)
             self.channel.basic_ack(delivery_tag=method.delivery_tag)
+
+
+BOT = AMQPCollectorBot
