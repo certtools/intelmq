@@ -38,6 +38,7 @@ CHANGELOG
   - Support fields `destination_port_numbers`, `port`.
   - Support for all proxy types without ports.
   - Use Country Code of AS as `source.geolocation.cc`.
+  - Support for 'scanner' category.
 
 #### Experts
 
