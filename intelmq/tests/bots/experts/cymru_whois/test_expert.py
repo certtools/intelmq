@@ -75,6 +75,16 @@ EXAMPLE_6TO4_OUTPUT = {"__type": "Event",
                   "source.as_name": "SURFNET-NL SURFnet, The Netherlands, NL",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
+OVERWRITE_OUT = {"__type": "Event",
+                  "source.ip": "93.184.216.34",
+                  "source.geolocation.cc": "AA",
+                  "source.registry": "LACNIC",
+                  "source.network": "93.184.216.0/24",
+                  "source.allocated": "2008-06-02T00:00:00+00:00",
+                  "source.asn": 15133,
+                  "source.as_name": "EDGECAST - MCI Communications Services, Inc. d/b/a Verizon Business, US",
+                  "time.observation": "2015-01-01T00:00:00+00:00",
+                  }
 
 @test.skip_redis()
 @test.skip_internet()
@@ -113,6 +123,14 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EXAMPLE_6TO4_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_6TO4_OUTPUT)
+
+    def test_overwrite(self):
+        self.input_message = EXAMPLE_INPUT.copy()
+        self.input_message["source.geolocation.cc"] = "AA"
+        self.input_message["source.registry"] = "LACNIC"
+        self.sysconfig = {'overwrite' : False}
+        self.run_bot()
+        self.assertMessageEqual(0, OVERWRITE_OUT)
 
     @unittest.expectedFailure
     def test_missing_asn(self):
