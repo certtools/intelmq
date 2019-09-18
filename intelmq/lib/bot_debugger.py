@@ -135,8 +135,8 @@ class BotDebugger:
 
         if show:
             fn = self.instance.send_message
-            self.instance.send_message = lambda msg=None, path="_default": [self.pprint(msg or "No message generated"),
-                                                                            fn(msg, path=path)]
+            self.instance.send_message = lambda msg=None, **kwargs: [self.pprint(msg or "No message generated"),
+                                                                            fn(msg, **kwargs)]
 
         self.instance.logger.info("Processing...")
         self.instance.process()
