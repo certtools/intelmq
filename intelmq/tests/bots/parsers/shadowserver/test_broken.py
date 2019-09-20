@@ -38,6 +38,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = ShadowserverParserBot
+        cls.sysconfig = {"logging_level": "DEBUG"}
 
     def test_broken(self):
         """
@@ -46,9 +47,10 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = REPORT1
         self.allowed_error_count = 1
         self.run_bot()
-        self.assertLogMatches(pattern="Report name: scan_http.", levelname="INFO")
+        self.assertLogMatches(pattern="Detected report's file name: 'scan_http'.",
+                              levelname="DEBUG")
         self.assertLogMatches(pattern="Failed to parse line.")
-        self.assertLogMatches(pattern="ValueError: Required column 'timestamp' not found in feed 'scan_http'. Possible change in data format or misconfiguration.")
+        self.assertLogMatches(pattern="ValueError: Required column 'timestamp' not found in feed 'Accessible-HTTP'. Possible change in data format or misconfiguration.")
         self.assertLogMatches(pattern="Sent 0 events and found 1 problem\(s\)\.",
                               levelname="INFO")
 
@@ -59,8 +61,9 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = REPORT2
         self.allowed_warning_count = 1
         self.run_bot()
-        self.assertLogMatches(pattern="Report name: scan_ftp.", levelname="INFO")
-        self.assertLogMatches(pattern="Optional key 'protocol' not found in feed 'scan_ftp'. Possible change in data format or misconfiguration.",
+        self.assertLogMatches(pattern="Detected report's file name: 'scan_ftp'.",
+                              levelname="DEBUG")
+        self.assertLogMatches(pattern="Optional key 'protocol' not found in feed 'Accessible-FTP'. Possible change in data format or misconfiguration.",
                               levelname="WARNING")
         self.assertLogMatches(pattern="Sent 1 events and found 0 problem\(s\)\.",
                               levelname="INFO")
@@ -72,7 +75,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = REPORT3
         self.allowed_error_count = 1
         self.run_bot()
-        self.assertLogMatches(pattern="ValueError: Could not get a config for 'some_string', check feed_idx in config.py." )
+        self.assertLogMatches(pattern="ValueError: Could not get a config for 'some_string', check the documentation." )
 
     def test_invalid_filename(self):
         """
@@ -81,7 +84,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = REPORT4
         self.allowed_error_count = 1
         self.run_bot()
-        self.assertLogMatches(pattern="ValueError: Report's extra.file_name 'wrong-filename.csv' is not valid." )
+        self.assertLogMatches(pattern="ValueError: Report's 'extra.file_name' 'wrong-filename.csv' is not valid." )
 
 
 

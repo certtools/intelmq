@@ -6,6 +6,37 @@ Software engineering by BSI & Intevation GmbH
 
 This is a configuration File for the shadowserver parser
 
+In the following, *intelmqkey* are arbitrary keys from intelmq's harmonization
+and *shadowkey* is a column name from shadowserver's data.
+
+Every bot-type is defined by a dictionary with three values:
+- `required_fields`: A list of tuples containing intelmq's field name, field
+  name from data and an optional conversion function. Errors are raised, if the
+  field does not exists in data.
+- `optional_fields`: Same format as above, but does not raise errors if the
+  field does not exist. If there's no mapping to an intelmq field, you can set
+  the intelmqkey to `extra.` and the field will be added to the extra field
+  using the original field name. See section below for possible tuple-values.
+- `constant_fields`: A dictionary with a static mapping of field name to data,
+  e.g. to set classifications or protocols.
+
+The tuples can be of following format:
+
+- `('intelmqkey', 'shadowkey')`, the data from the column *shadowkey* will be
+  saved in the event's field *intelmqkey*. Logically equivalent to:
+  `event[`*intelmqkey*`] = row[`*shadowkey*`]`.
+- `('intelmqkey', 'shadowkey', conversion_function)`, the given function will be
+  used to convert and/or validate the data. Logically equivalent to:
+  `event[`*intelmqkey*`] = conversion_function(row[`*shadowkey*`)]`.
+- `('intelmqkey', 'shadowkey', conversion_function, True)`, the function gets
+  two parameters here, the second one is the full row (as dictionary). Logically
+  equivalent to:
+  `event[`*intelmqkey*`] = conversion_function(row[`*shadowkey*`, row)]`.
+- `('extra.', 'shadowkey', conversion_function)`, the data will be added to
+  extra in this case, the resulting name is `extra.[shadowkey]`. The
+  `conversion_function` is optional. Logically equivalent to:
+  `event[extra.`*intelmqkey*`] = conversion_function(row[`*shadowkey*`)]`.
+
 Mappings are "straight forward" each mapping is a dict
 of at least three keys:
 
@@ -47,68 +78,20 @@ import re
 import intelmq.lib.harmonization as harmonization
 
 
-def get_feed(feedname):
-    # TODO update missing names
-    feed_idx = {
-        # TODO These are missing
-        # "Open-DB2-Discovery-Service": open_db2_discovery_service,
-        # "Accessible-Hadoop": accessible_hadoop,
-        # "Compromised-Website": compromised_website,
-        # "HTTP-Scanners": http_scanners,
-        # "ICS-Scanners": ics_scanners,
-        # "IPv6-Sinkhole-HTTP-Drone": ipv6_sinkhole_http_drone,
-        # "Darknet": darknet,
-        # "Open-Netis": open_netis,
-        # "Open-XDMCP": open_xdmcp,
-        # "Outdated-DNSSEC-Key": outdated_dnssec_key,
-        # "Outdated-DNSSEC-Key-IPv6": outdated_dnssec_key,  # same format as IPv4 report
-        # "Spam-URL": spam_url,
+def get_feed_by_feedname(given_feedname):
+    for feedname, filename, function in mapping:
+        if given_feedname == feedname:
+            return function
+    else:
+        return None
 
-        "blacklist": blacklisted_ip,
-        "botnet_drone": drone,
-        "cisco_smart_install": accessible_cisco_smart_install,
-        "cwsandbox_url": sandbox_url,
-        "ddos_amplification": amplification_ddos_victim,
-        "drone_brute_force": drone_brute_force,
-        "microsoft_sinkhole": microsoft_sinkhole,
-        "scan_adb": accessible_adb,
-        "scan_afp": accessible_afp,
-        "scan_chargen": open_chargen,
-        "scan_cwmp": accessible_cwmp,
-        "scan_dns": dns_open_resolvers,
-        "scan_elasticsearch": open_elasticsearch,
-        "scan_ftp": accessible_ftp,
-        "scan_http": accessible_http,
-        "scan_ipmi": open_ipmi,
-        "scan_isakmp": vulnerable_isakmp,
-        "scan_ldap": open_ldap,
-        "scan_ldap_tcp": open_ldap,
-        "scan_mdns": open_mdns,
-        "scan_memcached": open_memcached,
-        "scan_mongodb": open_mongodb,
-        "scan_mssql": open_mssql,
-        "scan_nat_pmp": open_natpmp,
-        "scan_netbios": open_netbios_nameservice,
-        "scan_ntp": ntp_version,
-        "scan_ntpmonitor": ntp_monitor,
-        "scan_portmapper": open_portmapper,
-        "scan_qotd": open_qotd,
-        "scan_rdp": accessible_rdp,
-        "scan_redis": open_redis,
-        "scan_rsync": accessible_rsync,
-        "scan_smb": accessible_smb,
-        "scan_snmp": open_snmp,
-        "scan_ssdp": open_ssdp,
-        "scan_ssl_freak": ssl_freak_vulnerable_servers,
-        "scan_ssl_poodle": ssl_poodle_vulnerable_servers,
-        "scan_telnet": accessible_telnet,
-        "scan_tftp": open_tftp,
-        "scan_ubiquiti": accessible_ubiquiti_discovery_service,
-        "scan_vnc": accessible_vnc,
-        "sinkhole_http_drone": sinkhole_http_drone,
-    }
 
-    return feed_idx.get(feedname)
+def get_feed_by_filename(given_filename):
+    for feedname, filename, function in mapping:
+        if given_filename == filename:
+            return feedname, function
+    else:
+        return None
 
 
 def add_UTC_to_timestamp(value):
@@ -240,7 +223,6 @@ open_db2_discovery_service = {
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-db2-discovery-service',
-        'feed.name': 'Open DB2 Discovery Service',
     }
 }
 
@@ -276,7 +258,6 @@ accessible_http = {
         'classification.taxonomy': 'other',
         'classification.type': 'other',
         'classification.identifier': 'accessible-http',
-        'feed.name': 'Accessible HTTP',
     }
 }
 
@@ -318,7 +299,6 @@ open_mdns = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-mdns',
         'protocol.application': 'mdns',
-        'feed.name': 'Open mDNS',
     }
 }
 
@@ -347,7 +327,6 @@ open_chargen = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-chargen',
         'protocol.application': 'chargen',
-        'feed.name': 'Open Chargen',
     },
 }
 
@@ -379,7 +358,6 @@ open_tftp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-tftp',
         'protocol.application': 'tftp',
-        'feed.name': 'Open TFTP',
     },
 }
 
@@ -426,7 +404,6 @@ sinkhole_http_drone = {
         # but since it is about HTTP the protocol is always set to 'tcp'.
         'protocol.transport': 'tcp',
         'protocol.application': 'http',
-        'feed.name': 'Sinkhole HTTP Drone',
     },
 }
 
@@ -468,7 +445,6 @@ ipv6_sinkhole_http_drone = {
         # The feed does not include explicit information on the protocol
         # but since it is about HTTP the protocol is always set to 'tcp'.
         'protocol.transport': 'tcp',
-        'feed.name': 'IPv6 Sinkhole HTTP Drone',
     },
 }
 
@@ -513,7 +489,6 @@ microsoft_sinkhole = {
         # classification.identifier will be set to (harmonized) malware name by modify expert
         'protocol.transport': 'tcp',
         'protocol.application': 'http',
-        'feed.name': 'Microsoft Sinkhole',
     },
 }
 
@@ -554,7 +529,6 @@ open_redis = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-redis',
         'protocol.application': 'redis',
-        'feed.name': 'Open Redis',
     },
 }
 
@@ -585,7 +559,6 @@ open_portmapper = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-portmapper',
         'protocol.application': 'portmapper',
-        'feed.name': 'Open Portmapper',
     },
 }
 
@@ -631,7 +604,6 @@ open_ipmi = {
         'classification.identifier': 'open-ipmi',
         'protocol.application': 'ipmi',
         'protocol.transport': 'udp',
-        'feed.name': 'Open IPMI',
     },
 }
 
@@ -660,7 +632,6 @@ open_qotd = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-qotd',
         'protocol.application': 'qotd',
-        'feed.name': 'Open QOTD',
     },
 }
 
@@ -698,7 +669,6 @@ open_ssdp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-ssdp',
         'protocol.application': 'ssdp',
-        'feed.name': 'Open SSDP',
     },
 }
 
@@ -728,7 +698,6 @@ open_snmp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-snmp',
         'protocol.application': 'snmp',
-        'feed.name': 'Open SNMP',
     },
 }
 
@@ -763,7 +732,6 @@ open_mssql = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-mssql',
         'protocol.application': 'mssql',
-        'feed.name': 'Open MSSQL',
     },
 }
 
@@ -801,7 +769,6 @@ open_mongodb = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-mongodb',
         'protocol.application': 'mongodb',
-        'feed.name': 'Open MongoDB',
     },
 }
 
@@ -833,7 +800,6 @@ open_netbios_nameservice = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-netbios-nameservice',
         'protocol.application': 'netbios-nameservice',
-        'feed.name': 'Open NetBIOS',
     },
 }
 
@@ -871,7 +837,6 @@ open_elasticsearch = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-elasticsearch',
         'protocol.application': 'elasticsearch',
-        'feed.name': 'Open Elasticsearch',
     },
 }
 
@@ -903,7 +868,6 @@ dns_open_resolvers = {
         'classification.taxonomy': 'vulnerable',
         'classification.identifier': 'dns-open-resolver',
         'protocol.application': 'dns',
-        'feed.name': 'DNS Open Resolvers',
     },
 }
 
@@ -932,7 +896,6 @@ ntp_monitor = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'ntp-monitor',
         'protocol.application': 'ntp',
-        'feed.name': 'NTP Monitor',
     },
 }
 
@@ -1016,7 +979,6 @@ ssl_freak_vulnerable_servers = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'ssl-freak',
         'protocol.application': 'https',
-        'feed.name': 'SSL FREAK Vulnerable Servers',
     },
 }
 
@@ -1102,7 +1064,6 @@ ssl_poodle_vulnerable_servers = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'ssl-poodle',
         'protocol.application': 'https',
-        'feed.name': 'SSL POODLE Vulnerable Servers',
     },
 }
 
@@ -1137,7 +1098,6 @@ open_memcached = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-memcached',
         'protocol.application': 'memcached',
-        'feed.name': 'Open Memcached',
     },
 }
 
@@ -1185,10 +1145,8 @@ drone = {
         'classification.taxonomy': 'malicious code',
         'classification.type': 'infected-system',
         # classification.identifier will be set to (harmonized) malware name by modify expert
-        'feed.name': 'Drone',
     },
 }
-# TODO add feed.name
 drone_spam = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1262,7 +1220,6 @@ open_xdmcp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-xdmcp',
         'protocol.application': 'xdmcp',
-        'feed.name': 'Open XDMCP',
     },
 }
 
@@ -1296,7 +1253,6 @@ compromised_website = {
         'classification.taxonomy': 'intrusions',
         'classification.type': 'compromised',
         'classification.identifier': 'compromised-website',
-        'feed.name': 'Compromised Website',
     },
 }
 
@@ -1328,7 +1284,6 @@ open_natpmp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-natpmp',
         'protocol.application': 'natpmp',
-        'feed.name': 'Open NATPMP',
     },
 }
 
@@ -1356,7 +1311,6 @@ open_netis = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-netis',
         'protocol.transport': 'udp',
-        'feed.name': 'Netis Router',
     },
 }
 
@@ -1408,7 +1362,6 @@ ntp_version = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'ntp-version',
         'protocol.application': 'ntp',
-        'feed.name': 'NTP Version',
     },
 }
 
@@ -1431,7 +1384,6 @@ sandbox_url = {
         'classification.taxonomy': 'malicious code',
         'classification.type': 'malware',
         'classification.identifier': 'sandbox-url',
-        'feed.name': 'Sandbox URL',
     },
 }
 
@@ -1462,7 +1414,6 @@ spam_url = {
         'classification.taxonomy': 'abusive content',
         'classification.type': 'spam',
         'classification.identifier': 'spam-url',
-        'feed.name': 'Spam URL',
     },
 }
 
@@ -1500,7 +1451,6 @@ vulnerable_isakmp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-ike',
         'protocol.application': 'ipsec',
-        'feed.name': 'Vulnerable ISAKMP',
     }
 }
 
@@ -1543,7 +1493,6 @@ accessible_rdp = {
         'classification.identifier': 'open-rdp',
         'protocol.transport': 'tcp',
         'protocol.application': 'rdp',
-        'feed.name': 'Accessible RDP',
     },
 }
 
@@ -1572,7 +1521,6 @@ accessible_smb = {
         'classification.identifier': 'open-smb',
         'protocol.transport': 'tcp',
         'protocol.application': 'smb',
-        'feed.name': 'Accessible SMB',
     },
 }
 
@@ -1622,7 +1570,6 @@ open_ldap = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-ldap',
         'protocol.application': 'ldap',
-        'feed.name': 'Open LDAP',
     }
 }
 
@@ -1648,7 +1595,6 @@ blacklisted_ip = {
         'classification.taxonomy': 'other',
         'classification.type': 'blacklist',
         'classification.identifier': 'blacklisted-ip',
-        'feed.name': 'Blacklist',
     }
 }
 
@@ -1676,7 +1622,6 @@ accessible_telnet = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-telnet',
         'protocol.application': 'telnet',
-        'feed.name': 'Accessible Telnet',
     }
 }
 
@@ -1714,7 +1659,6 @@ accessible_cwmp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-cwmp',
         'protocol.application': 'cwmp',
-        'feed.name': 'Accessible CWMP',
     }
 }
 
@@ -1742,7 +1686,6 @@ accessible_vnc = {
         'classification.identifier': 'open-vnc',
         'protocol.transport': 'tcp',
         'protocol.application': 'vnc',
-        'feed.name': 'Accessible VNC',
     }
 }
 
@@ -1769,7 +1712,6 @@ accessible_cisco_smart_install = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-cisco-smart-install',
         'protocol.application': 'cisco-smart-install',
-        'feed.name': 'Accessible Cisco Smart Install',
     }
 }
 
@@ -1811,7 +1753,6 @@ drone_brute_force = {
     'constant_fields': {
         'classification.taxonomy': 'intrusion attempts',
         'classification.type': 'brute-force',
-        'feed.name': 'Drone Brute Force',
     }
 }
 
@@ -1846,7 +1787,6 @@ accessible_hadoop = {
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-hadoop',
-        'feed.name': 'Accessible Hadoop',
     }
 }
 
@@ -1877,7 +1817,6 @@ accessible_adb = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-adb',
         'protocol.application': 'adb',
-        'feed.name': 'Accessible ADB',
     },
 }
 
@@ -1913,7 +1852,6 @@ outdated_dnssec_key = {
         'classification.taxonomy': 'availability',
         'classification.type': 'other',  # change to "misconfiguration" when available
         'classification.identifier': 'outdated-dnssec-key',
-        'feed.name': 'Outdated DNSSEC Key',
     }
 }
 
@@ -1943,7 +1881,6 @@ accessible_rsync = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-rsync',
         'protocol.application': 'rsync',
-        'feed.name': 'Accessible Rsync',
     },
 }
 
@@ -1979,7 +1916,6 @@ accessible_afp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-afp',
         'protocol.application': 'afp',
-        'feed.name': 'Accessible AFP',
     },
 }
 
@@ -2015,7 +1951,6 @@ darknet = {
     'constant_fields': {
         'classification.taxonomy': 'other',
         'classification.type': 'other',
-        'feed.name': 'Darknet',
     },
 }
 
@@ -2049,7 +1984,6 @@ amplification_ddos_victim = {
         'classification.taxonomy': 'availability',
         'classification.type': 'ddos',
         'classification.identifier': 'amplification-ddos-victim',
-        'feed.name': 'Amplification DDoS Victim',
     }
 }
 
@@ -2090,7 +2024,6 @@ http_scanners = {
         'classification.identifier': 'http',
         'protocol.application': 'http',
         'protocol.transport': 'tcp',
-        'feed.name': 'HTTP Scanners',
     }
 }
 
@@ -2130,7 +2063,6 @@ ics_scanners = {
         'classification.taxonomy': 'information gathering',
         'classification.type': 'scanner',
         'classification.identifier': 'ics',
-        'feed.name': 'ICS Scanners',
     }
 }
 
@@ -2163,7 +2095,6 @@ accessible_ubiquiti_discovery_service = {
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-ubiquiti-discovery-service',
-        'feed.name': 'Open Ubiquiti',
     }
 }
 
@@ -2236,6 +2167,63 @@ accessible_ftp = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-ftp',
         'protocol.application': 'ftp',
-        'feed.name': 'Accessible FTP',
     }
 }
+
+mapping = (
+    # feed name, file name, function
+    ('Accessible-ADB', 'scan_adb', accessible_adb),
+    ('Accessible-AFP', 'scan_afp', accessible_afp),
+    ('Accessible-CWMP', 'scan_cwmp', accessible_cwmp),
+    ('Accessible-Cisco-Smart-Install', 'cisco_smart_install', accessible_cisco_smart_install),
+    ('Accessible-FTP', 'scan_ftp', accessible_ftp),
+    ('Accessible-HTTP', 'scan_http', accessible_http),
+    ('Accessible-Hadoop', 'scan_hadoop', accessible_hadoop),
+    ('Accessible-RDP', 'scan_rdp', accessible_rdp),
+    ('Accessible-Rsync', 'scan_rsync', accessible_rsync),
+    ('Accessible-SMB', 'scan_smb', accessible_smb),
+    ('Accessible-Telnet', 'scan_telnet', accessible_telnet),
+    ('Accessible-Ubiquiti-Discovery-Service', 'scan_ubiquiti', accessible_ubiquiti_discovery_service),
+    ('Accessible-VNC', 'scan_vnc', accessible_vnc),
+    ('Amplification-DDoS-Victim', 'ddos_amplification', amplification_ddos_victim),
+    ('Blacklisted-IP', 'blacklist', blacklisted_ip),
+    ('Compromised-Website', 'compromised_website', compromised_website),
+    ('DNS-Open-Resolvers', 'scan_dns', dns_open_resolvers),
+    ('Darknet', 'darknet', darknet),
+    ('Drone', 'botnet_drone', drone),
+    ('Drone-Brute-Force', 'drone_brute_force', drone_brute_force),
+    ('HTTP-Scanners', 'hp_http_scan', http_scanners),
+    ('ICS-Scanners', 'hp_ics_scan', ics_scanners),
+    ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),
+    ('Microsoft-Sinkhole', 'microsoft_sinkhole', microsoft_sinkhole),
+    ('NTP-Monitor', 'scan_ntpmonitor', ntp_monitor),
+    ('NTP-Version', 'scan_ntp', ntp_version),
+    ('Open-Chargen', 'scan_chargen', open_chargen),
+    ('Open-DB2-Discovery-Service', 'scan_db2', open_db2_discovery_service),
+    ('Open-Elasticsearch', 'scan_elasticsearch', open_elasticsearch),
+    ('Open-IPMI', 'scan_ipmi', open_ipmi),
+    ('Open-LDAP', 'scan_ldap', open_ldap),
+    ('Open-LDAP-TCP', 'scan_ldap_tcp', open_ldap),
+    ('Open-MSSQL', 'scan_mssql', open_mssql),
+    ('Open-Memcached', 'scan_memcached', open_memcached),
+    ('Open-MongoDB', 'scan_mongodb', open_mongodb),
+    ('Open-NATPMP', 'scan_nat_pmp', open_natpmp),
+    ('Open-NetBIOS-Nameservice', 'scan_netbios', open_netbios_nameservice),
+    ('Open-Netis', 'netis_router', open_netis),
+    ('Open-Portmapper', 'scan_portmapper', open_portmapper),
+    ('Open-QOTD', 'scan_qotd', open_qotd),
+    ('Open-Redis', 'scan_redis', open_redis),
+    ('Open-SNMP', 'scan_snmp', open_snmp),
+    ('Open-SSDP', 'scan_ssdp', open_ssdp),
+    ('Open-TFTP', 'scan_tftp', open_tftp),
+    ('Open-XDMCP', 'scan_xdmcp', open_xdmcp),
+    ('Open-mDNS', 'scan_mdns', open_mdns),
+    ('Outdated-DNSSEC-Key', 'outdated_dnssec_key', outdated_dnssec_key),
+    ('Outdated-DNSSEC-Key-IPv6', 'outdated_dnssec_key_v6', outdated_dnssec_key),
+    ('SSL-FREAK-Vulnerable-Servers', 'scan_ssl_freak', ssl_freak_vulnerable_servers),
+    ('SSL-POODLE-Vulnerable-Servers', 'scan_ssl_poodle', ssl_poodle_vulnerable_servers),
+    ('Sandbox-URL', 'cwsandbox_url', sandbox_url),
+    ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),
+    ('Spam-URL', 'spam_url', spam_url),
+    ('Vulnerable-ISAKMP', 'scan_isakmp', vulnerable_isakmp),
+)

@@ -973,12 +973,107 @@ This does not affect URLs which already include the scheme.
 * `public:` yes
 * `description:` Parses different reports from shadowserver.
 
-The parser parses multiple reports from Shadowserver. Almost all types of reports are implemented, however, some are still missing.
-This bot needs the field `extra.file_name` to be set in the report to be processed, otherwise it will fail. `extra.file_name` has to be the name of the file without editing it, for example 2019-01-01-scan_http-contry.geo.
-#### Configuration Parameters:
+#### Configuration Parameters
 
-* `keep_feedname`: Boolean, default False. If True, it keeps the report's
-  feed.name and does not override it with the corresponding feed name.
+ * `feedname`: Optional, the Name of the feed, see list below for possible values.
+ * `overwrite`: If an existing `feed.name` should be overwritten.
+
+#### How this bot works?
+
+There are two possibilities TODO.
+
+#### Automatic feed detection
+Since IntelMQ version 2.1 the parser can detect the feed based on metadata provided by the collector.
+
+When processing a report, this bot takes `extra.file_name` from the report and
+looks in config.py how the report should be parsed.
+
+If this lookup is not possible, and the feed name is not given as parameter, the feed cannot be parsed.
+
+The field `extra.file_name` has the following structure:
+`%Y-%m-%d-${report_name}[-suffix].csv` where suffix can be something like `country-geo`. For example, some possible filenames are `2019-01-01-scan_http-country-geo.csv` or `2019-01-01-scan_tftp.csv`. The important part is `${report_name}`, between the date and the suffix.
+
+#### Fixed feed name
+If the method above is not possible and for upgraded instances, the feed can be set with the `feedname` parameter.
+Feed-names are derived from the subjects of the Shadowserver E-Mails.
+A list of possible feeds can be found in the table below in the column "feed name".
+
+#### Supported reports:
+
+These are the supported feed name and their corresponding file name for automatic detection:
+
+| feed name            | file name |
+|----------------------| ----------|
+| Accessible-ADB | `scan_adb` |
+| Accessible-AFP | `scan_afp` |
+| Accessible-Cisco-Smart-Install | `cisco_smart_install` |
+| Accessible-CWMP | `scan_cwmp` |
+| Accessible-FTP | `scan_ftp` |
+| Accessible-Hadoop | `scan_hadoop` |
+| Accessible-HTTP | `scan_http` |
+| Accessible-RDP | `scan_rdp` |
+| Accessible-Rsync | `scan_rsync` |
+| Accessible-SMB | `scan_smb` |
+| Accessible-Telnet | `scan_telnet` |
+| Accessible-Ubiquiti-Discovery-Service | `scan_ubiquiti` |
+| Accessible-VNC | `scan_vnc` |
+| Amplification-DDoS-Victim | `ddos_amplification` |
+| Blacklisted-IP | `blacklist` |
+| Compromised-Website | `compromised_website` |
+| Darknet | `darknet` |
+| DNS-Open-Resolvers | `scan_dns` |
+| Drone | `botnet_drone` |
+| Drone-Brute-Force | `drone_brute_force` |
+| HTTP-Scanners | `hp_http_scan` |
+| ICS-Scanners | `hp_ics_scan` |
+| IPv6-Sinkhole-HTTP-Drone | `sinkhole6_http` |
+| Microsoft-Sinkhole | `microsoft_sinkhole` |
+| NTP-Monitor | `scan_ntpmonitor` |
+| NTP-Version | `scan_ntp` |
+| Open-Chargen | `scan_chargen` |
+| Open-DB2-Discovery-Service | `scan_db2` |
+| Open-Elasticsearch | `scan_elasticsearch` |
+| Open-IPMI | `scan_ipmi` |
+| Open-LDAP | `scan_ldap ` |
+| Open-LDAP-TCP | `scan_ldap_tcp` |
+| Open-mDNS | `scan_mdns` |
+| Open-Memcached | `scan_memcached` |
+| Open-MongoDB | `scan_mongodb` |
+| Open-MSSQL | `scan_mssql` |
+| Open-NATPMP | `scan_nat_pmp` |
+| Open-NetBIOS-Nameservice | `scan_netbios` |
+| Open-Netis | ? |
+| Open-Portmapper | `scan_portmapper` |
+| Open-QOTD | `scan_qotd` |
+| Open-Redis | `scan_redis` |
+| Open-SNMP | `scan_snmp` |
+| Open-SSDP | `scan_ssdp` |
+| Open-TFTP | `scan_tftp` |
+| Open-XDMCP | `scan_xdmcp` |
+| Outdated-DNSSEC-Key | `outdated_dnssec_key` |
+| Outdated-DNSSEC-Key-IPv6 | `outdated_dnssec_key_v6` |
+| Sandbox-URL | `cwsandbox_url` |
+| Sinkhole-HTTP-Drone | `sinkhole_http_drone` |
+| Spam-URL | `spam_url` |
+| SSL-FREAK-Vulnerable-Servers | `scan_ssl_freak` |
+| SSL-POODLE-Vulnerable-Servers | `scan_ssl_poodle` |
+| Vulnerable-ISAKMP | `scan_isakmp` |
+
+#### Development
+
+##### Structure of this Parser Bot:
+The parser consists of two files:
+ * config.py
+ * parser.py
+
+Both files are required for the parser to work properly.
+
+##### Add new Feedformats:
+Add a new feedformat and conversions if required to the file
+`config.py`. Don't forget to update the `feed_idx` dict.
+It is required to look up the correct configuration.
+
+Look a the documentation in the bots's `config.py` file for more information.
 
 * * *
 

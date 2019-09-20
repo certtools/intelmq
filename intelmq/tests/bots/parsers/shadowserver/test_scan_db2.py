@@ -7,7 +7,7 @@ import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 
-with open(os.path.join(os.path.dirname(__file__), 'db2.csv')) as handle:
+with open(os.path.join(os.path.dirname(__file__), 'testdata/scan_db2.csv')) as handle:
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
@@ -15,6 +15,7 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer Open-DB2-Discovery-Service",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
+                  "extra.file_name": "2019-01-01-scan_db2-test-geo.csv",
                   }
 EVENTS = [{'__type': 'Event',
            'feed.name': 'ShadowServer Open-DB2-Discovery-Service',
@@ -70,7 +71,6 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = ShadowserverParserBot
         cls.default_input_message = EXAMPLE_REPORT
-        cls.sysconfig = {'feedname': 'Open-DB2-Discovery-Service'}
 
     def test_event(self):
         """ Test if correct Event has been produced. """

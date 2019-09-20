@@ -54,14 +54,21 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = ShadowserverParserBot
         cls.default_input_message = EXAMPLE_REPORT
-        cls.sysconfig = {'keep_feedname': True}
 
-
-    def test_event(self):
-        """ Test if correct Event has been produced. """
+    def test_default(self):
+        """ Test if feed name is not overwritten has been produced. """
         self.run_bot()
         for i, EVENT in enumerate(EVENTS):
             self.assertMessageEqual(i, EVENT)
+
+    def test_overwrite_feed_name(self):
+        """ Test if feed name is overwritten if asked to do so. """
+        self.prepare_bot(parameters={'overwrite': True})
+        self.run_bot(prepare=False)
+        for i, EVENT in enumerate(EVENTS):
+            event = EVENT.copy()
+            event['feed.name'] = 'DNS-Open-Resolvers'
+            self.assertMessageEqual(i, event)
 
 
 if __name__ == '__main__':  # pragma: no cover

@@ -19,7 +19,6 @@ EXAMPLE_REPORT = {'feed.name': 'Open IPMI',
                   }
 EVENTS = [{'__type': 'Event',
            'feed.name': 'Open IPMI',
-           'classification.identifier': 'open-elasticsearch',
            "classification.identifier": "open-ipmi",
            "classification.taxonomy": "vulnerable",
            "classification.type": "vulnerable service",

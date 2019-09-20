@@ -13,8 +13,9 @@ This parser will only work with csv files named like
 2019-01-01-scan_http-country-geo.csv.
 
 Optional parameters:
-    keep_feedname: Bool, default False. If True, it keeps the report's
-    feed.name and does not override it with the corresponding feed name.
+    overwrite: Bool, default False. If True, it keeps the report's
+        feed.name and does not override it with the corresponding feed name.
+    feedname: The fixed feed name to use if it should not automatically detected.
 """
 import copy
 import re
@@ -22,7 +23,6 @@ import re
 import intelmq.bots.parsers.shadowserver.config as config
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidKey, InvalidValue
-from intelmq.lib import utils
 
 
 class ShadowserverParserBot(ParserBot):
@@ -30,37 +30,45 @@ class ShadowserverParserBot(ParserBot):
     recover_line = ParserBot.recover_line_csv_dict
     csv_params = {'dialect': 'unix'}
     __is_filename_regex = re.compile(r'\d{4}-\d{2}-\d{2}-(\w+)(-\w+)*\.csv')
+    sparser_config = None
+    feedname = None
 
     def init(self):
+        if hasattr(self.parameters, 'feedname'):
+            self.feedname = self.parameters.feedname
+            self.sparser_config = config.get_feed_by_feedname(self.feedname)
+            if self.sparser_config:
+                self.logger.info('Using fixed feed name %r for parsing reports.' % self.feedname)
+            else:
+                self.logger.info('Could not determine the feed by the feed name %r given by parameter. '
+                                 'Will determine the feed from the file names.')
 
-        # Set a switch if the parser shall keep the report's feed.name,
-        self.keep_feedname = False
-        if hasattr(self.parameters, 'keep_feedname'):
-            if self.parameters.keep_feedname:
-                self.keep_feedname = True
+        # Set a switch if the parser shall reset the feed.name,
+        #  for this event
+        self.overwrite = False
+        if hasattr(self.parameters, 'overwrite'):
+            if self.parameters.overwrite:
+                self.overwrite = True
 
     def parse(self, report):
+        if self.sparser_config:
+            return self.parse_csv_dict(report)
 
         # Set config to parse report
-        self.sparser_config = None
         self.report_name = report.get('extra.file_name')
         filename_search = self.__is_filename_regex.search(self.report_name)
 
         if not filename_search:
-            raise ValueError('Report\'s extra.file_name \'{}\' is not valid.'.format(self.report_name))
+            raise ValueError("Report's 'extra.file_name' {!r} is not valid.".format(self.report_name))
         else:
             self.report_name = filename_search.group(1)
-            self.logger.info('Report name: {}.'.format(self.report_name))
-            self.sparser_config = config.get_feed(self.report_name)
+            self.logger.debug("Detected report's file name: {!r}.".format(self.report_name))
+            retval = config.get_feed_by_filename(self.report_name)
 
-            if not self.sparser_config:
-                raise ValueError('Could not get a config for \'{}\', check feed_idx '
-                                 'in config.py.'.format(self.report_name))
-
-        # Delete constant field feed.name if keep_feedname is true so it won't
-        # be updated later
-        if self.keep_feedname:
-            self.sparser_config.get("constant_fields", None).pop("feed.name", None)
+            if not retval:
+                raise ValueError('Could not get a config for {!r}, check the documentation.'
+                                 ''.format(self.report_name))
+            self.feedname, self.sparser_config = retval
 
         # Set default csv parse function
         return self.parse_csv_dict(report)
@@ -83,6 +91,9 @@ class ShadowserverParserBot(ParserBot):
         # extra field.
 
         event = self.new_event(report)
+        # set feed.name and code, honor the overwrite parameter
+        event.add('feed.name', self.feedname, overwrite=self.overwrite)
+
         extra = {}  # The Json-Object which will be populated with the
         # fields that could not be added to the standard intelmq fields
         # the parser is going to write this information into an object
@@ -95,8 +106,8 @@ class ShadowserverParserBot(ParserBot):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:
                 if not row.get(shadowkey):  # key does not exist in data (not even in the header)
-                    raise ValueError('Required column \'{}\' not found in feed \'{}\'. Possible change in data'
-                                     ' format or misconfiguration.'.format(shadowkey, self.report_name))
+                    raise ValueError('Required column {!r} not found in feed {!r}. Possible change in data'
+                                     ' format or misconfiguration.'.format(shadowkey, self.feedname))
                 else:  # key is used twice
                     fields.append(shadowkey)
             if len(item) > 2:
@@ -125,8 +136,8 @@ class ShadowserverParserBot(ParserBot):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:
                 if not row.get(shadowkey):  # key does not exist in data (not even in the header)
-                    self.logger.warning('Optional key \'{}\' not found in feed \'{}\'. Possible change in data'
-                                        ' format or misconfiguration.'.format(shadowkey, self.report_name))
+                    self.logger.warning('Optional key {!r} not found in feed {!r}. Possible change in data'
+                                        ' format or misconfiguration.'.format(shadowkey, self.feedname))
                     continue
                 else:  # key is used twice
                     fields.append(shadowkey)
@@ -147,7 +158,7 @@ class ShadowserverParserBot(ParserBot):
                         """ fail early and often in this case. We want to be able to convert everything """
                         self.logger.error('Could not convert shadowkey: %r in feed %r, '
                                           'value: %r via conversion function %r.',
-                                          shadowkey, self.report_name, raw_value, conv_func.__name__)
+                                          shadowkey, self.feedname, raw_value, conv_func.__name__)
                         raise
 
             if value is not None:
@@ -168,7 +179,7 @@ class ShadowserverParserBot(ParserBot):
                     fields.remove(shadowkey)
                 except InvalidValue:
                     self.logger.debug('Could not add key %r in feed %r, adding it to extras.',
-                                      shadowkey, self.report_name)
+                                      shadowkey, self.feedname)
                 except InvalidKey:
                     extra[intelmqkey] = value
                     fields.remove(shadowkey)

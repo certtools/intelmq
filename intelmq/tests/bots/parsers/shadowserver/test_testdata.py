@@ -25,7 +25,6 @@ for filename in os.listdir(os.path.join(os.path.dirname(__file__), 'testdata')):
 def generate_feed_function(feedname):
     def test_feed(self):
         """ Test if no errors happen for feed %s. """ % feedname
-        # self.sysconfig = {'feedname': feedname}
         self.input_message = REPORTS[feedname]
         self.run_bot()
     return test_feed
