@@ -278,6 +278,19 @@ EVENT18 = {'__type': 'Event',
           'protocol.application': 'socks4',
           'source.geolocation.cc': 'AT',
           }
+EVENT19 = {'__type': 'Event',
+          'time.observation': '2015-11-01T00:01:45+00:05',
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.ip': '172.16.0.21',
+          'destination.port': 53912,
+          'time.source': '2019-09-17T02:58:48+00:00',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[22]])),
+          'classification.type': 'scanner',
+          'classification.identifier': 'scanner',
+          'protocol.transport': 'tcp',
+          'source.geolocation.cc': 'AT',
+          }
 
 
 class TestCymruCAPProgramParserBot(test.BotTestCase, unittest.TestCase):
@@ -314,6 +327,7 @@ class TestCymruCAPProgramParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(17, EVENT16)
         self.assertMessageEqual(18, EVENT17)
         self.assertMessageEqual(19, EVENT18)
+        self.assertMessageEqual(20, EVENT19)
 
 
 if __name__ == '__main__':  # pragma: no cover

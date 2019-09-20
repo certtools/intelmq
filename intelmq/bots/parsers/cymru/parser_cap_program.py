@@ -18,7 +18,9 @@ MAPPING_STATIC = {'bot': {
     'openresolvers': {'classification.type': 'vulnerable service',
                       'classification.identifier': 'dns-open-resolver',
                       'protocol.application': 'dns',
-                      }
+                      },
+    'scanner': {'classification.type': 'scanner',
+                'classification.identifier': 'scanner'},
 }
 MAPPING_COMMENT = {'bruteforce': ('classification.identifier', 'protocol.application'),
                    'phishing': ('source.url', )}
@@ -278,8 +280,10 @@ class CymruCAPProgramParserBot(ParserBot):
                 else:
                     event['protocol.application'] = value
             elif key == 'port':
-                # for bot category
-                event['source.port'] = value
+                if category == 'scanner':
+                    event['destination.port'] = value
+                else:
+                    event['source.port'] = value
             else:
                 raise ValueError('Unknown key %r in comment of category %r. Please report this.' % (key, category))
         for destination_port in destination_ports:

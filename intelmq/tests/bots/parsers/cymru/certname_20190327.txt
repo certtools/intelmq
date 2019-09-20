@@ -20,3 +20,4 @@ honeypot|172.16.0.21|64496|2019-09-11 11:07:58|destination_port_numbers: 445;por
 darknet|172.16.0.21|64496|2019-09-11 11:57:37|destination_port_numbers: 23;port: 23365;protocol: 6;|Example AS Name, AT
 darknet|172.16.0.21|64496|2019-09-11 00:49:45|destination_port_numbers: 3;port: 3;protocol: 1;|Example AS Name, AT
 proxy|172.16.0.21|64496|2019-09-12 07:01:00|proxy_type: socks4;|Example AS Name, AT
+scanner|172.16.0.21|64496|2019-09-17 02:58:48|port: 53912;protocol: 6;|Example AS Name, AT
