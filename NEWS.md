@@ -13,6 +13,9 @@ See the changelog for a full list of changes.
 ### Harmonization
 
 ### Configuration
+#### Shadowserver Parser
+
+The Shadowserver Parser is now able to detect the feed base on the report's field `extra.file_name`, added by collectors. Have a look at their documentation for more details.
 
 ### Libraries
 
