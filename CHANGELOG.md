@@ -70,6 +70,8 @@ CHANGELOG
   - Use `statistics_*` parameters.
   - Make file executable
   - Handle None values in `*.temporary.*` keys and treat them as 0.
+- systemd:
+  - Add `PIDFile` parameter to service file.
 
 ### Known issues
 
