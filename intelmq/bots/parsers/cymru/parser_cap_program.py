@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 
@@ -27,6 +29,7 @@ MAPPING_COMMENT = {'bruteforce': ('classification.identifier', 'protocol.applica
 PROTOCOL_MAPPING = {'6': 'tcp',  # TODO: use getent in harmonization
                     '17': 'udp',
                     '1': 'icmp'}
+BOGUS_HOSTNAME_PORT = re.compile('hostname: ([^:]+)port: ([0-9]+)')
 
 
 class CymruCAPProgramParserBot(ParserBot):
@@ -214,6 +217,17 @@ class CymruCAPProgramParserBot(ParserBot):
 
     def parse_line_new(self, line, report):
         category, ip, asn, timestamp, notes, asninfo = line.split('|')
+
+        # to detect bogous lines like 'hostname: sub.example.comport: 80'
+        bogus = BOGUS_HOSTNAME_PORT.search(notes)
+        if bogus:
+            span = bogus.span()
+            groups = bogus.groups()
+            notes = '%shostname: %s; port: %s%s' % (notes[:span[0]],
+                                                    groups[0],
+                                                    groups[1],
+                                                    notes[span[1]:])
+
         comment_split = list(filter(lambda x: x, notes.split(';')))
         asninfo_split = asninfo.split(', ')
         event = self.new_event(report)
