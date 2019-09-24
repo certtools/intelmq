@@ -561,8 +561,8 @@ providers:
         "Two feeds types are offered:
          * The new https://www.cymru.com/$certname/$certname_{time[%Y%m%d]}.txt
          * and the old https://www.cymru.com/$certname/infected_{time[%Y%m%d]}.txt
-         Both formats are supported by the parser.
-         As of 2019-03-28 not all the data from the old format is available in the new format."
+         Both formats are supported by the parser and the new one is recommended.
+         As of 2019-09-12 the old format will be retired soon."
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http

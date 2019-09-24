@@ -7,14 +7,15 @@ import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 
-with open(os.path.join(os.path.dirname(__file__), 'drone_brute_force.csv')) as handle:
+with open(os.path.join(os.path.dirname(__file__), 'testdata/drone_brute_force.csv')) as handle:
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Drone Brute Force",
+EXAMPLE_REPORT = {'feed.name': 'Drone Brute Force',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
+                  "extra.file_name": "2019-01-01-drone_brute_force-test-test.csv"
                   }
 EVENTS = [{'__type': 'Event',
            'classification.identifier': 'ssh',
@@ -34,7 +35,7 @@ EVENTS = [{'__type': 'Event',
            'extra.start_time': '2018-04-07T03:02:15.951205Z',
            'destination.account': 'alex',
            'protocol.application': 'ssh',
-           'feed.name': 'ShadowServer Drone Brute Force',
+           'feed.name': 'Drone Brute Force',
            'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
                                                  EXAMPLE_LINES[1]])),
            'source.asn': 64496,
@@ -56,7 +57,6 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = ShadowserverParserBot
         cls.default_input_message = EXAMPLE_REPORT
-        cls.sysconfig = {'feedname': 'Drone-Brute-Force'}
 
     def test_event(self):
         """ Test if correct Event has been produced. """

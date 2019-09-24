@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 
@@ -18,13 +20,16 @@ MAPPING_STATIC = {'bot': {
     'openresolvers': {'classification.type': 'vulnerable service',
                       'classification.identifier': 'dns-open-resolver',
                       'protocol.application': 'dns',
-                      }
+                      },
+    'scanner': {'classification.type': 'scanner',
+                'classification.identifier': 'scanner'},
 }
 MAPPING_COMMENT = {'bruteforce': ('classification.identifier', 'protocol.application'),
                    'phishing': ('source.url', )}
 PROTOCOL_MAPPING = {'6': 'tcp',  # TODO: use getent in harmonization
                     '17': 'udp',
                     '1': 'icmp'}
+BOGUS_HOSTNAME_PORT = re.compile('hostname: ([^:]+)port: ([0-9]+)')
 
 
 class CymruCAPProgramParserBot(ParserBot):
@@ -212,6 +217,17 @@ class CymruCAPProgramParserBot(ParserBot):
 
     def parse_line_new(self, line, report):
         category, ip, asn, timestamp, notes, asninfo = line.split('|')
+
+        # to detect bogous lines like 'hostname: sub.example.comport: 80'
+        bogus = BOGUS_HOSTNAME_PORT.search(notes)
+        if bogus:
+            span = bogus.span()
+            groups = bogus.groups()
+            notes = '%shostname: %s; port: %s%s' % (notes[:span[0]],
+                                                    groups[0],
+                                                    groups[1],
+                                                    notes[span[1]:])
+
         comment_split = list(filter(lambda x: x, notes.split(';')))
         asninfo_split = asninfo.split(', ')
         event = self.new_event(report)
@@ -222,6 +238,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event.add('source.asn', asn)
         event.add('time.source', timestamp + ' GMT')
         event.add('source.as_name', ', '.join(asninfo_split[:-1]))  # contains CC at the end
+        event.add('source.geolocation.cc', asninfo_split[-1])
         if category in MAPPING_COMMENT:
             assert len(comment_split) == 1
             for field in MAPPING_COMMENT[category]:
@@ -270,15 +287,17 @@ class CymruCAPProgramParserBot(ParserBot):
             elif key == 'hostname':
                 event['source.fqdn'] = value
             elif key == 'proxy_type':
-                if value == 'httppost':
-                    event['protocol.application'] = 'httppost'
-                else:
+                if '-' in value:
                     protocol, port = value.split('-')
                     event['protocol.application'] = protocol
                     event['source.port'] = port
+                else:
+                    event['protocol.application'] = value
             elif key == 'port':
-                # for bot category
-                event['source.port'] = value
+                if category == 'scanner':
+                    event['destination.port'] = value
+                else:
+                    event['source.port'] = value
             else:
                 raise ValueError('Unknown key %r in comment of category %r. Please report this.' % (key, category))
         for destination_port in destination_ports:

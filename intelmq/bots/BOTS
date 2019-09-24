@@ -1,5 +1,23 @@
 {
     "Collector": {
+        "AMQP": {
+            "description": "Collecting from a (remote) AMQP Server and fetching either intelmq or any other messages.",
+            "module": "intelmq.bots.collectors.amqp.collector_amqp",
+            "parameters": {
+                "connection_attempts": 3,
+                "connection_heartbeat": 3600,
+                "connection_host": "127.0.0.1",
+                "connection_port": 5672,
+                "connection_vhost": "<your virtual host>",
+                "expect_intelmq_message": false,
+                "name": "My Queue",
+                "password": "<your amqp password>",
+                "provider": "AMQP Collector",
+                "queue_name": "<your routing key>",
+                "username": "<your amqp username>",
+                "use_ssl": false
+            }
+        },
         "API": {
             "description": "Bot for collecting data using API.",
             "module": "intelmq.bots.collectors.api.collector_api",
@@ -1088,6 +1106,13 @@
                 "ip": "<ip>",
                 "port": "<port>",
                 "separator": "<nothing or \\n or sth>"
+            }
+        },
+        "Touch": {
+            "description": "Touches a file for every event received.",
+            "module": "intelmq.bots.outputs.touch.output",
+            "parameters": {
+                "path": "<path to a file>"
             }
         },
         "UDP": {

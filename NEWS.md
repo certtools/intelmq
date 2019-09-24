@@ -13,6 +13,9 @@ See the changelog for a full list of changes.
 ### Harmonization
 
 ### Configuration
+#### Shadowserver Parser
+
+The Shadowserver Parser is now able to detect the feed base on the report's field `extra.file_name`, added by collectors. Have a look at their documentation for more details.
 
 ### Libraries
 
@@ -33,6 +36,10 @@ The deprecated parameter `feed` for collectors is again supported as the documen
 
 #### RIPE expert
 In the upgrade function for version 1.1.0 (in effect in version 2.0.1) the addition of the parameter `query_ripe_stat_ip` was not correctly done and is maybe missing. A new upgrade function re-adds it with the value of `query_ripe_stat_ip`.
+
+#### Cymru CAP Feed Migration
+
+The Cymru CAP Feed is (being) migrated to a new URL with a different format and more data. Look at the feed's documentation for more information.
 
 ### Libraries
 

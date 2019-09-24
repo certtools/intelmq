@@ -1,11 +1,11 @@
 #generated on 20190326
-#category|address|asn|timestamp|notes|asninfo
+#category|address|asn|timestamp|optional_information|asninfo
 
 bot|172.16.0.21|64496|2019-03-22 11:18:52|family: Conficker;|Example AS Name, AT
 bot|172.16.0.21|64496|2019-03-25 03:44:22|family: nivdort;dest_addr: 172.16.0.22; dest_port: 80;protocol: 6;|Example AS Name, AT
 bruteforce|172.16.0.21|64496|2019-01-10 22:25:58|ssh;|Example AS Name, AT
 controller|172.16.0.21|64496|2019-03-25 17:47:40|family: stealrat;protocol: 6;|Example AS Name, AT
-controller|172.16.0.21|64496|2019-03-25 05:01:47|family: http_post;hostname: www.pfeffer.at;|Example AS Name, AT
+controller|172.16.0.21|64496|2019-03-25 05:01:47|family: http_post;hostname: www.example.com;|Example AS Name, AT
 darknet|172.16.0.21|64496|2019-03-25 17:24:06|darknet_port: 23, 2323;protocol: 6;|Example AS Name, AT
 darknet|172.16.0.21|64496|2019-03-25 04:27:11|ports_scanned: 55756;protocol: 17;|Example AS Name, AT
 honeypot|172.16.0.21|64496|2019-03-25 14:08:53|honeypot_port: 22;protocol: 6;|Example AS Name, AT
@@ -18,3 +18,7 @@ bot|172.16.0.21|64496|2019-09-11 16:39:57|srcport 61458 mwtype Conficker dstaddr
 bot|172.16.0.21|64496|2019-09-11 00:31:30|family: azorult;dest_addr: 172.16.0.22; dest_port: 80;port: 15390;protocol: 6;|Example AS Name, AT
 honeypot|172.16.0.21|64496|2019-09-11 11:07:58|destination_port_numbers: 445;port: 53488;protocol: 6;|Example AS Name, AT
 darknet|172.16.0.21|64496|2019-09-11 11:57:37|destination_port_numbers: 23;port: 23365;protocol: 6;|Example AS Name, AT
+darknet|172.16.0.21|64496|2019-09-11 00:49:45|destination_port_numbers: 3;port: 3;protocol: 1;|Example AS Name, AT
+proxy|172.16.0.21|64496|2019-09-12 07:01:00|proxy_type: socks4;|Example AS Name, AT
+scanner|172.16.0.21|64496|2019-09-17 02:58:48|port: 53912;protocol: 6;|Example AS Name, AT
+controller|172.16.0.21|64496|2019-09-22 05:39:38|family: http_post;hostname: sub.example.comport: 80;|Example AS Name, AT

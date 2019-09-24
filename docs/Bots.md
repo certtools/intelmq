@@ -34,6 +34,7 @@
   - [Cymru Full Bogons](#cymru-full-bogons)
   - [HTML Table Parser](#html-table-parser)
   - [Twitter](#twitter)
+  - [Shadowserver](#shadowserver)
   - [Shodan](#shodan)
 - [Experts](#experts)
   - [Abusix](#abusix)
@@ -88,6 +89,7 @@
   - [REST API](#rest-api)
  - [SMTP Output Bot](#smtp-output-bot)
  - [TCP](#tcp)
+ - [Touch](#touch)
  - [UDP](#tcp)
  - [XMPP](#xmpp)
 
@@ -180,6 +182,33 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 ## Collectors
 
 Multihreading is disabled for all Collectors, as this would lead to duplicated data.
+
+### AMQP
+
+#### Information:
+* `name`: intelmq.bots.collectors.amqp.collector_amqp
+* `lookup`: yes
+* `public`: yes
+* `cache (redis db)`: none
+* `description`: collect data from (remote) AMQP servers, for both IntelMQ as well as external data
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `connection_attempts`: The number of connection attempts to defined server, defaults to 3
+* `connection_heartbeat`: Heartbeat to server, in seconds, defaults to 3600
+* `connection_host`: Name/IP for the AMQP server, defaults to 127.0.0.1
+* `connection_port`: Port for the AMQP server, defaults to 5672
+* `connection_vhost`: Virtual host to connect, on a http(s) connection would be http:/IP/<your virtual host>
+* `expect_intelmq_message`: Boolean, if the data is from IntelMQ or not. Default: `false`. If true, then the data can be any Report or Event and will be passed to the next bot as is. Otherwise a new report is created with the raw data.
+* `password`: Password for authentication on your AMQP server
+* `queue_name`: The name of the queue to fetch data from
+* `username`: Username for authentication on your AMQP server
+* `use_ssl`: Use ssl for the connection, make sure to also set the correct port, usually 5671 (`true`/`false`)
+
+Currently only fetching from a queue is supported can be extended in the future. Messages will be acknowledge at AMQP after it is sent to the pipeline.
+
+* * *
 
 ### API
 
@@ -681,7 +710,7 @@ See the README.md in `intelmq/bots/collectors/stomp/`
 
 ### Twitter
 
-Collects tweets from target_timelines. Up to tweet_count tweets from each user and up to timelimit back in time. The tweet text is sent separately and if allowed, links to pastebin are followed and the text sent in a separate report 
+Collects tweets from target_timelines. Up to tweet_count tweets from each user and up to timelimit back in time. The tweet text is sent separately and if allowed, links to pastebin are followed and the text sent in a separate report
 
 #### Information:
 * `name:` intelmq.bots.collectors.twitter.collector_twitter
@@ -697,7 +726,7 @@ Collects tweets from target_timelines. Up to tweet_count tweets from each user a
 * `timelimit`: maximum age of the tweets collected in seconds
 * `follow_urls`: list of screen_names for which urls will be followed
 * `exclude_replies`: exclude replies of the followed screen_names
-* `include_rts`: whether to include retweets by given screen_name 
+* `include_rts`: whether to include retweets by given screen_name
 * `consumer_key`: Twitter api login data
 * `consumer_secret`: Twitter api login data
 * `acces_token_key`: Twitter api login data
@@ -755,12 +784,12 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
         "columns": "source.url|source.fqdn|source.ip"
     ```
     First, bot will try to parse the value as url, if it fails, it will try to parse it as FQDN, if that fails, it will try to parse it as IP, if that fails, an error wil be raised.
-    Some use cases - 
-    
+    Some use cases -
+
         - mixed data set, e.g. URL/FQDN/IP/NETMASK  `"columns": "source.url|source.fqdn|source.ip|source.network"`
-    
+
         - parse a value and ignore if it fails  `"columns": "source.url|__IGNORE__"`
-        
+
  * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaulated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`.
  * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
@@ -768,16 +797,16 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
  * `time_format`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
  * `"data_type"`: sets the data of specific type, currently only `"json"` is supported value. An example
- 
+
         ```{
             "columns": [ "source.ip", "source.url", "extra.tags"],
             "data_type": "{\"extra.tags\":\"json\"}"
         }```
-        
+
         It will ensure `extra.tags` is treated as `json`.
  * `"filter_text"`: only process the lines containing or not containing specified text, to be used in conjection with `filter_type`
  * `"filter_type"`: value can be whitelist or blacklist. If `whitelist`, only lines containing the text in `filter_text` will be processed, if `blacklist`, only lines NOT containing the text will be processed.
- 
+
      To process ipset format files use
      ```
         {
@@ -964,7 +993,7 @@ http://www.team-cymru.com/bogon-reference.html
 
 * `domain_whitelist`: domains to be filetered out
 * `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
-* `classification_type: string with a valid classification type as defined in data harmonization
+* `classification_type`: string with a valid classification type as defined in data harmonization
 * `default_scheme`: Default scheme for URLs if not given. See also the next section.
 
 ##### Default scheme
@@ -972,6 +1001,120 @@ http://www.team-cymru.com/bogon-reference.html
 The dependency `url-normalize` changed it's behavior in version 1.4.0 from using `http://` as default scheme to `https://`. Version 1.4.1 added the possibility to specify it. Thus you can only use the `default_scheme` parameter with a current version of this library >= 1.4.1, with 1.4.0 you will always get `https://` as default scheme and for older versions < 1.4.0 `http://` is used.
 
 This does not affect URLs which already include the scheme.
+
+* * *
+
+### Shadowserver
+
+#### Information
+* `name:` intelmq.bots.parsers.shadowserver.parser
+* `public:` yes
+* `description:` Parses different reports from shadowserver.
+
+#### Configuration Parameters
+
+ * `feedname`: Optional, the Name of the feed, see list below for possible values.
+ * `overwrite`: If an existing `feed.name` should be overwritten.
+
+#### How this bot works?
+
+There are two possibilities TODO.
+
+#### Automatic feed detection
+Since IntelMQ version 2.1 the parser can detect the feed based on metadata provided by the collector.
+
+When processing a report, this bot takes `extra.file_name` from the report and
+looks in config.py how the report should be parsed.
+
+If this lookup is not possible, and the feed name is not given as parameter, the feed cannot be parsed.
+
+The field `extra.file_name` has the following structure:
+`%Y-%m-%d-${report_name}[-suffix].csv` where suffix can be something like `country-geo`. For example, some possible filenames are `2019-01-01-scan_http-country-geo.csv` or `2019-01-01-scan_tftp.csv`. The important part is `${report_name}`, between the date and the suffix.
+
+#### Fixed feed name
+If the method above is not possible and for upgraded instances, the feed can be set with the `feedname` parameter.
+Feed-names are derived from the subjects of the Shadowserver E-Mails.
+A list of possible feeds can be found in the table below in the column "feed name".
+
+#### Supported reports:
+
+These are the supported feed name and their corresponding file name for automatic detection:
+
+| feed name            | file name |
+|----------------------| ----------|
+| Accessible-ADB | `scan_adb` |
+| Accessible-AFP | `scan_afp` |
+| Accessible-Cisco-Smart-Install | `cisco_smart_install` |
+| Accessible-CWMP | `scan_cwmp` |
+| Accessible-FTP | `scan_ftp` |
+| Accessible-Hadoop | `scan_hadoop` |
+| Accessible-HTTP | `scan_http` |
+| Accessible-RDP | `scan_rdp` |
+| Accessible-Rsync | `scan_rsync` |
+| Accessible-SMB | `scan_smb` |
+| Accessible-Telnet | `scan_telnet` |
+| Accessible-Ubiquiti-Discovery-Service | `scan_ubiquiti` |
+| Accessible-VNC | `scan_vnc` |
+| Amplification-DDoS-Victim | `ddos_amplification` |
+| Blacklisted-IP | `blacklist` |
+| Compromised-Website | `compromised_website` |
+| Darknet | `darknet` |
+| DNS-Open-Resolvers | `scan_dns` |
+| Drone | `botnet_drone` |
+| Drone-Brute-Force | `drone_brute_force` |
+| HTTP-Scanners | `hp_http_scan` |
+| ICS-Scanners | `hp_ics_scan` |
+| IPv6-Sinkhole-HTTP-Drone | `sinkhole6_http` |
+| Microsoft-Sinkhole | `microsoft_sinkhole` |
+| NTP-Monitor | `scan_ntpmonitor` |
+| NTP-Version | `scan_ntp` |
+| Open-Chargen | `scan_chargen` |
+| Open-DB2-Discovery-Service | `scan_db2` |
+| Open-Elasticsearch | `scan_elasticsearch` |
+| Open-IPMI | `scan_ipmi` |
+| Open-LDAP | `scan_ldap ` |
+| Open-LDAP-TCP | `scan_ldap_tcp` |
+| Open-mDNS | `scan_mdns` |
+| Open-Memcached | `scan_memcached` |
+| Open-MongoDB | `scan_mongodb` |
+| Open-MSSQL | `scan_mssql` |
+| Open-NATPMP | `scan_nat_pmp` |
+| Open-NetBIOS-Nameservice | `scan_netbios` |
+| Open-Netis | ? |
+| Open-Portmapper | `scan_portmapper` |
+| Open-QOTD | `scan_qotd` |
+| Open-Redis | `scan_redis` |
+| Open-SNMP | `scan_snmp` |
+| Open-SSDP | `scan_ssdp` |
+| Open-TFTP | `scan_tftp` |
+| Open-XDMCP | `scan_xdmcp` |
+| Outdated-DNSSEC-Key | `outdated_dnssec_key` |
+| Outdated-DNSSEC-Key-IPv6 | `outdated_dnssec_key_v6` |
+| Sandbox-URL | `cwsandbox_url` |
+| Sinkhole-HTTP-Drone | `sinkhole_http_drone` |
+| Spam-URL | `spam_url` |
+| SSL-FREAK-Vulnerable-Servers | `scan_ssl_freak` |
+| SSL-POODLE-Vulnerable-Servers | `scan_ssl_poodle` |
+| Vulnerable-ISAKMP | `scan_isakmp` |
+
+#### Development
+
+##### Structure of this Parser Bot:
+The parser consists of two files:
+ * config.py
+ * parser.py
+
+Both files are required for the parser to work properly.
+
+##### Add new Feedformats:
+Add a new feedformat and conversions if required to the file
+`config.py`. Don't forget to update the `feed_idx` dict.
+It is required to look up the correct configuration.
+
+Look a the documentation in the bots's `config.py` file for more information.
+
+* * *
+
 
 ### Shodan
 
@@ -1983,8 +2126,23 @@ Multihreading is disabled for this bot.
 * `ip`: IP of destination server
 * `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server
-* `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present. 
+* `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present.
     In that case, the output waits every message is acknowledged by "Ok" message the tcp.collector bot implements.
+
+* * *
+
+### Touch
+
+#### Information:
+* `name:` intelmq.bots.outputs.touch.output
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Touches a file for every event received.
+
+#### Configuration Parameters:
+
+* `path`: Path to the file to touch.
 
 * * *
 
