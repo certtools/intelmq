@@ -303,7 +303,6 @@ EVENT20 = {'__type': 'Event',
           'classification.identifier': 'http_post',
           'malware.name': 'http_post',
           'classification.type': 'c2server',
-          'protocol.transport': 'tcp',
           'source.geolocation.cc': 'AT',
           }
 
