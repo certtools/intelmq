@@ -89,6 +89,7 @@
   - [REST API](#rest-api)
  - [SMTP Output Bot](#smtp-output-bot)
  - [TCP](#tcp)
+ - [Touch](#touch)
  - [UDP](#tcp)
  - [XMPP](#xmpp)
 
@@ -2127,6 +2128,21 @@ Multihreading is disabled for this bot.
 * `port`: port of destination server
 * `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present.
     In that case, the output waits every message is acknowledged by "Ok" message the tcp.collector bot implements.
+
+* * *
+
+### Touch
+
+#### Information:
+* `name:` intelmq.bots.outputs.touch.output
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Touches a file for every event received.
+
+#### Configuration Parameters:
+
+* `path`: Path to the file to touch.
 
 * * *
 

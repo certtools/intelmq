@@ -1103,6 +1103,13 @@
                 "separator": "<nothing or \\n or sth>"
             }
         },
+        "Touch": {
+            "description": "Touches a file for every event received.",
+            "module": "intelmq.bots.outputs.touch.output",
+            "parameters": {
+                "path": "<path to a file>"
+            }
+        },
         "UDP": {
             "description": "UDP is a simple UDP bot responsible to send events to a udp port (e.g.: syslog daemon). For more explanations about the parameters field, checkout out the README.md",
             "module": "intelmq.bots.outputs.udp.output",

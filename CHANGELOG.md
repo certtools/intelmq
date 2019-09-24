@@ -70,6 +70,7 @@ CHANGELOG
 - Add geohash expert.
 
 #### Outputs
+- Add `intelmq.bots.outputs.touch.output`.
 
 ### Documentation
 - Feeds: Add ViriBack feed.
