@@ -294,10 +294,7 @@ class CymruCAPProgramParserBot(ParserBot):
                 else:
                     event['protocol.application'] = value
             elif key == 'port':
-                if category == 'scanner':
-                    event['destination.port'] = value
-                else:
-                    event['source.port'] = value
+                event['source.port'] = value
             else:
                 raise ValueError('Unknown key %r in comment of category %r. Please report this.' % (key, category))
         for destination_port in destination_ports:
