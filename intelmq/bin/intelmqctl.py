@@ -650,6 +650,7 @@ class IntelMQController():
             self.load_defaults_configuration()
         except Exception:
             log_level = DEFAULT_LOGGING_LEVEL
+            logging_level_stream = 'DEBUG'
         else:
             log_level = self.parameters.logging_level.upper()
             logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
