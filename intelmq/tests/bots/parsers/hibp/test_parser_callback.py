@@ -9,7 +9,7 @@ import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.parsers.hibp.parser_callback import HIBPCallbackParserBot
 
-REQUEST = {
+BREACHREQUEST = {
     "Email": "test@example.com",
     "Domain": "example.com",
     "DomainEmails": ["test@example.com", "test2@example.com"],
@@ -44,7 +44,32 @@ REQUEST = {
             "IsRetired":False,
             "IsSpamList":False
         }
-    ],
+    ]
+}
+BREACHRAW = utils.base64_encode(json.dumps(BREACHREQUEST))
+
+
+BR_REP = {"feed.name": "HIBP Enterprise",
+          "time.observation": "2019-03-01T01:01:01+00:00",
+          "__type": "Report",
+          "raw": BREACHRAW
+          }
+
+BR_EV = {"feed.name": "HIBP Enterprise",
+         "raw": BREACHRAW,
+         "time.observation": "2019-03-01T01:01:01+00:00",
+         "extra.domain_emails": BREACHREQUEST["DomainEmails"],
+         "extra.breach": BREACHREQUEST["Breach"],
+         "classification.taxonomy": "information content security",
+         "classification.type": "leak",
+         "source.account": "test@example.com",
+         "source.fqdn": "example.com",
+         "__type": "Event"
+         }
+PASTEREQUEST = {
+    "Email": "test@example.com",
+    "Domain": "example.com",
+    "DomainEmails": ["test@example.com", "test2@example.com"],
     "Paste": [
         {
             "Source": "Pastebin",
@@ -61,21 +86,20 @@ REQUEST = {
         }
     ]
 }
-RAW = utils.base64_encode(json.dumps(REQUEST))
+PASTERAW = utils.base64_encode(json.dumps(PASTEREQUEST))
 
 
-REPORT = {"feed.name": "HIBP Enterprise",
+PA_REP = {"feed.name": "HIBP Enterprise",
           "time.observation": "2019-03-01T01:01:01+00:00",
           "__type": "Report",
-          "raw": RAW
+          "raw": PASTERAW
           }
 
-EVENT = {"feed.name": "HIBP Enterprise",
-         "raw": RAW,
+PA_EV = {"feed.name": "HIBP Enterprise",
+         "raw": PASTERAW,
          "time.observation": "2019-03-01T01:01:01+00:00",
-         "extra.domain_emails": REQUEST["DomainEmails"],
-         "extra.breach": REQUEST["Breach"],
-         "extra.paste": REQUEST["Paste"],
+         "extra.domain_emails": PASTEREQUEST["DomainEmails"],
+         "extra.paste": PASTEREQUEST["Paste"],
          "classification.taxonomy": "information content security",
          "classification.type": "leak",
          "source.account": "test@example.com",
@@ -92,12 +116,18 @@ class TestHIBPCallbackParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = HIBPCallbackParserBot
-        cls.default_input_message = REPORT
+        cls.default_input_message = BR_REP
 
-    def test_feodo_event(self):
-        """ Test Feodotracker IPs. """
+    def test_breach(self):
+        """ Test Breach. """
         self.run_bot()
-        self.assertMessageEqual(0, EVENT)
+        self.assertMessageEqual(0, BR_EV)
+
+    def test_paste(self):
+        """ Test Breach. """
+        self.input_message = PA_REP
+        self.run_bot()
+        self.assertMessageEqual(0, PA_EV)
 
 
 if __name__ == '__main__':  # pragma: no cover

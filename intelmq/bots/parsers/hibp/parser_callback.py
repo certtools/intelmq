@@ -25,9 +25,18 @@ class HIBPCallbackParserBot(ParserBot):
         event['source.account'] = request['Email']
         event["source.fqdn"] = request["Domain"]
         event["extra.domain_emails"] = request["DomainEmails"]
-        event["extra.breach"] = request["Breach"]
-        event["extra.paste"] = request["Paste"]
+        try:
+            event["extra.breach"] = request["Breach"]
+        except KeyError:
+            pass
+        try:
+            event["extra.paste"] = request["Paste"]
+        except KeyError:
+            pass
 
         event['classification.taxonomy'] = 'information content security'
         event['classification.type'] = 'leak'
         yield event
+
+
+BOT = HIBPCallbackParserBot
