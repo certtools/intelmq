@@ -28,6 +28,8 @@ class ReverseDnsExpertBot(Bot):
                                    None)
                            )
 
+        self.overwrite = getattr(self.parameters, 'overwrite', True)
+
     def process(self):
         event = self.receive_message()
 
@@ -37,6 +39,8 @@ class ReverseDnsExpertBot(Bot):
             ip_key = key % "ip"
 
             if ip_key not in event:
+                continue
+            if key % 'reverse_dns' in event and not self.overwrite:
                 continue
 
             ip = event.get(ip_key)
@@ -82,7 +86,7 @@ class ReverseDnsExpertBot(Bot):
                                    ttl=int(ttl.total_seconds()))
 
             if result is not None:
-                event.add(key % 'reverse_dns', str(result), overwrite=True)
+                event.add(key % 'reverse_dns', str(result), overwrite=self.overwrite)
 
         self.send_message(event)
         self.acknowledge_message()
