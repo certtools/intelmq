@@ -43,6 +43,7 @@ CHANGELOG
   - Use Country Code of AS as `source.geolocation.cc`.
   - Support for 'scanner' category.
   - Handle bogus lines with missing separator.
+  - Fix bug preventing use of old format after using the new format.
 
 #### Experts
 

@@ -43,6 +43,8 @@ class CymruCAPProgramParserBot(ParserBot):
                 self.tempdata.append(line)
                 if 'generated on' in line:
                     self.parse_line = self.parse_line_new
+                elif 'Data file written at' in line:
+                    self.parse_line = self.parse_line_old
             else:
                 yield line
 
@@ -75,7 +77,7 @@ class CymruCAPProgramParserBot(ParserBot):
         if event_comment:
             event.add('event_description.text', ' '.join(event_comment))
 
-    def parse_line(self, line, report):
+    def parse_line_old(self, line, report):
         report_type, ip, asn, timestamp, comments, asn_name = line.split('|')
         comment_split = comments.split(' ')
         event = self.new_event(report)
@@ -212,7 +214,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event.add('malware.name', report_type)
             event['extra.source_port'] = int(comment_split[1])
         else:
-            raise ValueError('Unknown report %r.', report_type)
+            raise ValueError('Unknown report %r.' % report_type)
         yield event
 
     def parse_line_new(self, line, report):
@@ -248,7 +250,7 @@ class CymruCAPProgramParserBot(ParserBot):
             for key, value in MAPPING_STATIC[category].items():
                 event.add(key, value)
         except KeyError:
-            raise ValueError('Unknown category %r.', category)
+            raise ValueError('Unknown category %r.' % category)
         destination_ports = []
 
         for comment in comment_split:
