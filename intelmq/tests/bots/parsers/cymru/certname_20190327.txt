@@ -22,3 +22,4 @@ darknet|172.16.0.21|64496|2019-09-11 00:49:45|destination_port_numbers: 3;port: 
 proxy|172.16.0.21|64496|2019-09-12 07:01:00|proxy_type: socks4;|Example AS Name, AT
 scanner|172.16.0.21|64496|2019-09-17 02:58:48|port: 53912;protocol: 6;|Example AS Name, AT
 controller|172.16.0.21|64496|2019-09-22 05:39:38|family: http_post;hostname: sub.example.comport: 80;|Example AS Name, AT
+scanner|172.16.0.21|64496|2019-09-19 00:03:13|destination_port_numbers: 57518;port: 55133;protocol: 6;|Example AS Name, AT
