@@ -19,7 +19,13 @@ V202 = {"test-collector": {
     "parameters": {
         "query_ripe_stat_asn": True,
     },
-}
+},
+    "reveredns-expert": {
+    "group": "Expert",
+    "module": "intelmq.bots.experts.reverse_dns.expert",
+    "parameters": {
+    },
+},
 }
 V202_EXP = {"test-collector": {
     "group": "Collector",
@@ -35,7 +41,14 @@ V202_EXP = {"test-collector": {
         "query_ripe_stat_asn": True,
         "query_ripe_stat_ip": True,
     },
-}
+},
+    "reveredns-expert": {
+    "group": "Expert",
+    "module": "intelmq.bots.experts.reverse_dns.expert",
+    "parameters": {
+        "overwrite": True,
+    },
+},
 }
 
 DEP_110 = {"n6-collector": {

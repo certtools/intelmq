@@ -697,7 +697,7 @@
                 "redis_cache_password": null,
                 "redis_cache_port": "6379",
                 "redis_cache_ttl": "86400",
-                "overwrite": true
+                "overwrite": false
             }
         },
         "Deduplicator": {
@@ -880,7 +880,7 @@
                 "redis_cache_password": null,
                 "redis_cache_port": "6379",
                 "redis_cache_ttl": "86400",
-                "overwrite": true
+                "overwrite": false
             }
         },
         "Sieve": {

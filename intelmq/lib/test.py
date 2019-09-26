@@ -254,15 +254,16 @@ class BotTestCase(object):
                 self.input_queue = [self.default_input_message]
 
     def run_bot(self, iterations: int = 1, error_on_pipeline: bool = False,
-                prepare=True):
+                prepare=True, parameters={}):
         """
         Call this method for actually doing a test run for the specified bot.
 
         Parameters:
             iterations: Bot instance will be run the given times, defaults to 1.
+            parameters: passed to prepare_bot
         """
         if prepare:
-            self.prepare_bot()
+            self.prepare_bot(parameters=parameters)
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):

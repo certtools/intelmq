@@ -647,14 +647,18 @@ class IntelMQController():
         self.parameters = Parameters()
 
         # Try to get log_level from defaults_configuration, else use default
+        defaults_loading_exc = None
         try:
             self.load_defaults_configuration()
-        except Exception:
+        except Exception as exc:
+            defaults_loading_exc = exc
             log_level = DEFAULT_LOGGING_LEVEL
             logging_level_stream = 'DEBUG'
         else:
             log_level = self.parameters.logging_level.upper()
-            logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
+        # make sure that logging_level_stream is always at least INFO or more verbose
+        # otherwise the output on stdout/stderr is less than the user expects
+        logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
 
         try:
             logger = utils.log('intelmqctl', log_level=log_level,
@@ -666,6 +670,10 @@ class IntelMQController():
                                logging_level_stream=logging_level_stream)
             logger.error('Not logging to file: %s', exc)
         self.logger = logger
+        if defaults_loading_exc:
+            self.logger.exception('Loading the defaults configuration failed!',
+                                  exc_info=defaults_loading_exc)
+
         self.interactive = interactive
         if not utils.drop_privileges():
             logger.warning('Running intelmqctl as root is highly discouraged!')
@@ -751,7 +759,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
-        self.load_defaults_configuration()
         try:
             self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
