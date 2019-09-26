@@ -1017,6 +1017,7 @@ FIXME
 #### Configuration Parameters:
 
 * **Cache parameters** (see in section [common parameters](#common-parameters))
+* `overwrite`: Overwrite existing fields. Default: `True` if not given (for backwards compatibility, will change in version 3.0.0)
 
 * * *
 
@@ -1456,6 +1457,7 @@ For both `source.ip` and `destination.ip` the PTR record is fetched and the firs
 
 * **Cache parameters** (see in section [common parameters](#common-parameters))
 * `cache_ttl_invalid_response`: The TTL for cached invalid responses.
+* `overwrite`: Overwrite existing fields. Default: `True` if not given (for backwards compatibility, will change in version 3.0.0)
 
 * * *
 

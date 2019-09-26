@@ -21,6 +21,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
                   "source.ip": "2001:500:88:200::8",  # iana.org
+                  "source.reverse_dns": "example.com",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_OUTPUT6 = {"__type": "Event",
@@ -65,6 +66,7 @@ class TestReverseDnsExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = ReverseDnsExpertBot
         cls.use_cache = True
+        cls.sysconfig = {'overwrite': True}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
@@ -89,8 +91,7 @@ class TestReverseDnsExpertBot(test.BotTestCase, unittest.TestCase):
     def test_overwrite(self):
         self.input_message = EXAMPLE_INPUT.copy()
         self.input_message['destination.reverse_dns'] = 'example.net'
-        self.sysconfig = {'overwrite' : False}
-        self.run_bot()
+        self.run_bot(parameters={'overwrite' : False})
         self.assertMessageEqual(0, OVERWRITE_OUT)
 
 

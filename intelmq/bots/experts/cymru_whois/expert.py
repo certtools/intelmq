@@ -21,6 +21,10 @@ class CymruExpertBot(Bot):
                                    None)
                            )
 
+        if not hasattr(self.parameters, 'overwrite'):
+            self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
+                                "Please set it explicitly, default will change to "
+                                "'False' in version 3.0.0'.")
         self.overwrite = getattr(self.parameters, 'overwrite', True)
 
     def process(self):

@@ -86,6 +86,7 @@ OVERWRITE_OUT = {"__type": "Event",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 
+
 @test.skip_redis()
 @test.skip_internet()
 @test.skip_travis()
@@ -98,6 +99,7 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = CymruExpertBot
         cls.use_cache = True
+        cls.sysconfig = {'overwrite': True}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
@@ -128,8 +130,7 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EXAMPLE_INPUT.copy()
         self.input_message["source.geolocation.cc"] = "AA"
         self.input_message["source.registry"] = "LACNIC"
-        self.sysconfig = {'overwrite' : False}
-        self.run_bot()
+        self.run_bot(parameters={'overwrite' : False})
         self.assertMessageEqual(0, OVERWRITE_OUT)
 
     @unittest.expectedFailure

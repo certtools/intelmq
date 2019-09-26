@@ -46,6 +46,8 @@ CHANGELOG
   - Fix bug preventing use of old format after using the new format.
 
 #### Experts
+- `intelmq.bots.experts.cymru_whois.expert`: Add optional parameter `overwrite`, current behavior was `True`, default if not given is `True` now, will change to `False` in 3.0.0 (#1452, #1455).
+- `intelmq.bots.experts.reverse_dns.expert`: Add optional parameter `overwrite`, current behavior was `True`, default if not given is `True` now, will change to `False` in 3.0.0 (#1452, #1455).
 
 #### Outputs
 - `intelmq.bots.outputs.amqptopic.output`: use default SSL context for client purposes, fixes compatibility with python < 3.6 if TLS is used.
