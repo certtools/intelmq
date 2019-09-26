@@ -67,6 +67,8 @@ CHANGELOG
   - More and more precise logging messages for botnet starting and restarting, enable and disable.
   - No error message for disabled bots on botnet reload.
   - Fix `upgrade-conf` is state file is empty or not existing.
+  - Use arpgarse's `store_true` action for flags instead of `store_const`.
+  - If the loading of the defaults configuration failed, a variable definition was missing and causing an exception (#1456).
 
 ### Contrib
 - Check MK Statistics Cronjob:
