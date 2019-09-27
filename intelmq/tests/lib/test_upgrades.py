@@ -20,7 +20,7 @@ V202 = {"test-collector": {
         "query_ripe_stat_asn": True,
     },
 },
-    "reveredns-expert": {
+    "reversedns-expert": {
     "group": "Expert",
     "module": "intelmq.bots.experts.reverse_dns.expert",
     "parameters": {
@@ -42,7 +42,7 @@ V202_EXP = {"test-collector": {
         "query_ripe_stat_ip": True,
     },
 },
-    "reveredns-expert": {
+    "reversedns-expert": {
     "group": "Expert",
     "module": "intelmq.bots.experts.reverse_dns.expert",
     "parameters": {

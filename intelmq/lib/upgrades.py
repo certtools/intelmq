@@ -236,7 +236,8 @@ def v202_fixes(defaults, runtime, dry_run):
                     bot["parameters"]["query_ripe_stat_ip"] = bot["parameters"]["query_ripe_stat_asn"]
                     changed = True
         if bot["module"] in ("intelmq.bots.experts.cymru_whois.expert",
-                             "intelmq.bots.experts.reverse_dns.expert"):
+                             "intelmq.bots.experts.reverse_dns.expert",
+                             "intelmq.bots.experts.modify.expert"):
             if "overwrite" not in bot["parameters"]:
                 bot["parameters"]["overwrite"] = True
                 changed = True
