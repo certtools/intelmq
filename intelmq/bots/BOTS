@@ -786,7 +786,7 @@
             "parameters": {
                 "case_sensitive": true,
                 "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf",
-                "overwrite": False
+                "overwrite": false
             }
         },
         "National CERT by CERT.at": {
