@@ -24,9 +24,9 @@ class TestBot(test.BotTestCase, unittest.TestCase):
 #    @test.skip_travis()
     @unittest.skip("Strange blocking behavior")
     def test_pipeline_raising(self):
-        self.sysconfig = {"raise_on_connect": True}
         self.default_input_message = None
-        self.run_bot(error_on_pipeline=True)
+        self.run_bot(parameters={"raise_on_connect": True},
+                     error_on_pipeline=True)
         self.assertLogMatches(levelname='ERROR', pattern='Pipeline failed')
 
     def test_pipeline_empty(self):
@@ -38,9 +38,8 @@ class TestBot(test.BotTestCase, unittest.TestCase):
                      'Unclear behavior with copies of logger in Python 3.7, see '
                      'https://bugs.python.org/issue9338 and https://github.com/certtools/intelmq/issues/1269')
     def test_logging_level_other(self):
-        self.sysconfig = {"logging_level": "DEBUG"}
         self.input_message = test_parser_bot.EXAMPLE_SHORT
-        self.run_bot()
+        self.run_bot(parameters={"logging_level": "DEBUG"})
         self.assertLogMatches(levelname='DEBUG', pattern='test')
 
     def test_logging_catch_warnings(self):
@@ -49,8 +48,7 @@ class TestBot(test.BotTestCase, unittest.TestCase):
         """
         self.input_message = test_parser_bot.EXAMPLE_SHORT
         self.allowed_warning_count = 1
-        self.sysconfig = {'raise_warning': True}
-        self.run_bot()
+        self.run_bot(parameters={'raise_warning': True})
         self.assertLogMatches(levelname='WARNING', pattern='.*intelmq/tests/lib/test_parser_bot\.py\:[0-9]+\: UserWarning: This is a warning test.')
 
     def test_bot_group(self):
