@@ -13,6 +13,14 @@ See the changelog for a full list of changes.
 ### Harmonization
 
 ### Configuration
+#### PostgreSQL Output
+The PostgreSQL Output Bot has been integrated into the new and generic SQL Output Bot
+* module name:
+  * old: `intelmq.bots.outputs.postgresql.output`
+  * new: `intelmq.bots.outputs.sql.output`
+* parameters:
+  * new: `engine` = `postgresql`
+IntelMQ versions 2.x will be compatible with previous configurations.
 
 ### Libraries
 

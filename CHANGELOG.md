@@ -67,6 +67,7 @@ CHANGELOG
     * got required parameter "engine" 
     * engine can be set to "postgresql" to drop-in replacement for previous functionality
     * can be set to sqlite to output via this engine 
+    * The previous module is a compatibility shim and will be available in the 2.x series.
 
 ### Documentation
 - Feeds: Add ViriBack feed.
