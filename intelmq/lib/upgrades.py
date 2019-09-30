@@ -259,6 +259,14 @@ def v210_deprecations(defaults, runtime, dry_run):
                 bot["parameters"]["extract_files"] = bot["parameters"]["unzip_attachment"]
             del bot["parameters"]["unzip_attachment"]
             changed = True
+        if bot["module"] in ("intelmq.bots.experts.generic_db_lookup.expert",
+                             "intelmq.bots.outputs.postgresql.output"):
+            if "engine" not in bot["parameters"]:
+                bot["parameters"]["engine"] = "postgresql"
+                changed = True
+            if bot["module"] == "intelmq.bots.outputs.postgresql.output":
+                bot["module"] = "intelmq.bots.outputs.sql.output"
+                changed = True
     return changed, defaults, runtime
 
 

@@ -49,7 +49,7 @@ class TestGenericDBLookupExpertBot(test.BotTestCase, unittest.TestCase):
                          "database": "intelmq",
                          "user": "intelmq",
                          "password": "intelmq",
-                         "sslmode": "require",
+                         "sslmode": "allow",
                          "table": "lookuptests",
                          "match_fields": {"source.asn": "asn"},
                          "replace_fields": {"note": "comment",

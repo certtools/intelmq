@@ -1071,23 +1071,23 @@ class SQLBot(Bot):
 
     POSTGRESQL = "postgresql"
     SQLITE = "sqlite"
+    default_engine = "postgresql"
 
     def init(self):
-        name = self.parameters.engine = self.parameters.engine.lower()
-        engines = {SQLBot.POSTGRESQL: (self._init_postgresql, "%s"), SQLBot.SQLITE: (self._init_sqlite, "?")}
+        self.engine_name = getattr(self.parameters, 'engine', self.default_engine).lower()
+        engines = {SQLBot.POSTGRESQL: (self._init_postgresql, "%s"),
+                   SQLBot.SQLITE: (self._init_sqlite, "?")}
         for key, val in engines.items():
-            if name == key:
+            if self.engine_name == key:
                 val[0]()
                 self.format_char = val[1]
                 break
         else:
-            raise ValueError("Wrong parameter engine '{0}', possible values are {1}".format(name, engines))
+            raise ValueError("Wrong parameter 'engine' {0!r}, possible values are {1}".format(self.engine_name, engines))
 
     def _connect(self, engine, connect_args, autocommitable=False):
         self.engine = engine  # imported external library that connects to the DB
         self.logger.debug("Connecting to database.")
-        if self.engine is None:
-            raise ValueError('Could not import {0}. Please install it.'.format(self.parameters.engine))
 
         try:
             self.con = self.engine.connect(**connect_args)
@@ -1104,7 +1104,7 @@ class SQLBot(Bot):
             import psycopg2
             import psycopg2.extras
         except ImportError:
-            psycopg2 = None
+            raise ValueError("Could not import 'psycopg2'. Please install it.")
 
         self._connect(psycopg2,
                       {"database": self.parameters.database,
@@ -1121,7 +1121,7 @@ class SQLBot(Bot):
         try:
             import sqlite3
         except ImportError:
-            sqlite3 = None
+            raise ValueError("Could not import 'sqlite3'. Please install it.")
 
         self._connect(sqlite3,
                       {"database": self.parameters.database,

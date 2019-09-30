@@ -24,7 +24,7 @@ The PostgreSQL Output Bot has been integrated into the new and generic SQL Outpu
   * new: `intelmq.bots.outputs.sql.output`
 * parameters:
   * new: `engine` = `postgresql`
-IntelMQ versions 2.x will be compatible with previous configurations.
+IntelMQ versions 2.x will be compatible with previous configurations. `intelmqctl upgrade-config` migrates configurations.
 
 ### Libraries
 
