@@ -766,6 +766,7 @@
             "description": "Fetches data from a database.",
             "module": "intelmq.bots.experts.generic_db_lookup.expert",
             "parameters": {
+                "engine": "<postgresql OR sqlite>",
                 "database": "intelmq",
                 "host": "localhost",
                 "match_fields": {
@@ -1023,21 +1024,6 @@
                 "replacement_char": "_"
             }
         },
-        "PostgreSQL": {
-            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database. When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit",
-            "module": "intelmq.bots.outputs.postgresql.output",
-            "parameters": {
-                "autocommit": true,
-                "database": "intelmq-events",
-                "host": "localhost",
-                "jsondict_as_string": true,
-                "password": "<password>",
-                "port": "5432",
-                "sslmode": "require",
-                "table": "events",
-                "user": "intelmq"
-            }
-        },
         "REST API": {
             "description": "REST API is the bot responsible to send events to a REST API listener through POST.",
             "module": "intelmq.bots.outputs.restapi.output",
@@ -1093,6 +1079,22 @@
                 "ssl_ca_certificate": "<insert path to CA file>",
                 "ssl_client_certificate": "<insert path to client cert file>",
                 "ssl_client_certificate_key": "<insert path to client cert key file>"
+            }
+        },
+        "SQL": {
+            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database. When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit",
+            "module": "intelmq.bots.outputs.sql.output",
+            "parameters": {
+                "autocommit": true,
+                "database": "intelmq-events",
+                "engine": "<postgresql OR sqlite>",
+                "host": "localhost",
+                "jsondict_as_string": true,
+                "password": "<password>",
+                "port": "5432",
+                "sslmode": "require",
+                "table": "events",
+                "user": "intelmq"
             }
         },
         "TCP": {

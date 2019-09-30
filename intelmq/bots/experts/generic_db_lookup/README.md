@@ -1,7 +1,7 @@
 # Generic DB Lookup
 
 This bot is capable for enriching intelmq events by lookups to a database.
-Currently only postgres is supported.
+Currently only PostgreSQL and SQLite are supported.
 
 If more than one result is returned, a ValueError is raised.
 
@@ -9,13 +9,20 @@ If more than one result is returned, a ValueError is raised.
 
 ### Connection
 
-* `database`: string, defaults to "intelmq"
+* `engine`: `postgresql` or `sqlite`
+* `database`: string, defaults to "intelmq", database name or the SQLLite filename
+* `table`: defaults to "contacts"
+
+#### PostgreSQL specific
 * `host`: string, defaults to "localhost"
 * `password`: string
 * `port`: integer, defaults to 5432
 * `sslmode`: string, defaults to "require"
-* `table`: defaults to "contacts"
 * `user`: defaults to "intelmq"
+
+### Lookup and replace
+
+* `lookup`: defauls
 
 ### Lookup
 

@@ -68,9 +68,20 @@ CHANGELOG
 
 #### Experts
 - Add geohash expert.
+- `intelmq.bot.experts.generic_db_lookup.expert`
+    * got required parameter "engine"
+    * engine can be set to "postgresql" to drop-in replacement for previous functionality
+    * can be set to sqlite to search via this engine
 
 #### Outputs
 - Add `intelmq.bots.outputs.touch.output`.
+- `intelmq.bot.outputs.postgresql.output`:
+  - deprecated in favor of `intelmq.bot.outputs.sql.output`
+  - Compatibility shim will be available in the 2.x series.
+- `intelmq.bot.outputs.sql.output` added generic SQL output bot. Comparted to
+  - got required parameter `engine`.
+    - engine can be set to `postgresql` is a drop-in replacement for the deprecated postgresql output bot.
+  - New engine `sqlite`.
 
 ### Documentation
 - Feeds: Add ViriBack feed.
