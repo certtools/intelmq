@@ -53,19 +53,19 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
         """ Test if correct Events have been produced. """
         self.input_message = None
         self.allowed_warning_count = 1  # message has empty raw
-        self.sysconfig = {'http_url': 'http://localhost/{time[%Y]}.txt',
-                          'extract_files': None,
-                          'name': 'Example feed',
-                          'http_url_formatting': True,
-                          }
-        self.run_bot(iterations=1)
+        self.run_bot(parameters={'http_url': 'http://localhost/{time[%Y]}.txt',
+                                 'extract_files': None,
+                                 'name': 'Example feed',
+                                 'http_url_formatting': True,
+                                 },
+                     iterations=1)
 
     def test_gzip(self):
-        self.sysconfig = {'http_url': 'http://localhost/foobar.gz',
-                          'extract_files': True,
-                          'name': 'Example feed',
-                          }
-        self.run_bot(iterations=1)
+        self.run_bot(parameters={'http_url': 'http://localhost/foobar.gz',
+                                 'extract_files': True,
+                                 'name': 'Example feed',
+                                 },
+                     iterations=1)
 
         output = OUTPUT[0].copy()
         output['feed.url'] = self.sysconfig['http_url']

@@ -41,6 +41,9 @@ In the upgrade function for version 1.1.0 (in effect in version 2.0.1) the addit
 
 The Cymru CAP Feed is (being) migrated to a new URL with a different format and more data. Look at the feed's documentation for more information.
 
+#### Cymru Whois Expert, Modify Expert & Reverse DNS Expert
+These bots overwrite existing fields by default. A parameter `overwrite` has been added to make this optional, with the default value of `True` for backwards compatibility. If the parameter is not set, a warning is logged. The default value will change to `False` in version 3.0.0. The default for all new bots (in `BOTS`) is `False` already.
+
 ### Libraries
 
 ### Postgres databases

@@ -31,6 +31,7 @@ INPUT = [{'feed.name': 'Abuse.ch',
          {},
          {'feed.accuracy': 5.22},
          {'feed.accuracy': 100},
+         {},
          ]
 OUTPUT = [{'classification.identifier': 'feodo'},
           {'classification.identifier': 'foobar'},
@@ -44,6 +45,7 @@ OUTPUT = [{'classification.identifier': 'feodo'},
           {'event_description.text': 'We don\'t know if this is a TOR node.'},
           {'event_description.text': 'Accuracy is 10% or lower.'},
           {'event_description.text': 'Accuracy is the highest.'},
+          {'classification.type': 'vulnerable service'},
           ]
 for index in range(len(INPUT)):
     copy1 = EVENT_TEMPL.copy()
@@ -71,6 +73,7 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
     def test_events(self):
         """ Test if correct Events have been produced. """
         self.input_message = INPUT[:6]
+        self.allowed_warning_count = 1
         self.run_bot(iterations=6)
 
         for position, event_out in enumerate(OUTPUT[:6]):
@@ -94,11 +97,34 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
         config_path = resource_filename('intelmq',
                                         'tests/bots/experts/modify/types.conf')
         parameters = {'configuration_path': config_path}
-        self.input_message = INPUT[6:]
+        self.input_message = INPUT[6:11]
+        self.allowed_warning_count = 1
         self.prepare_bot(parameters=parameters)
-        self.run_bot(prepare=False, iterations=len(INPUT[6:]))
-        for position, event_out in enumerate(OUTPUT[6:]):
+        self.run_bot(prepare=False, iterations=len(INPUT[6:11]))
+        for position, event_out in enumerate(OUTPUT[6:11]):
             self.assertMessageEqual(position, event_out)
+
+    def test_overwrite(self):
+        """
+        test if bot overwrites by default
+        """
+        config_path = resource_filename('intelmq',
+                                        'tests/bots/experts/modify/overwrite.conf')
+        self.input_message = EVENT_TEMPL
+        self.allowed_warning_count = 1
+        self.run_bot(parameters={'configuration_path': config_path})
+        self.assertMessageEqual(0, OUTPUT[11])
+
+    def test_overwrite_not(self):
+        """
+        test if bot does not overwrites if parameter is set
+        """
+        config_path = resource_filename('intelmq',
+                                        'tests/bots/experts/modify/overwrite.conf')
+        self.input_message = EVENT_TEMPL
+        self.run_bot(parameters={'configuration_path': config_path,
+                                 'overwrite': False})
+        self.assertMessageEqual(0, EVENT_TEMPL)
 
 
 if __name__ == '__main__':  # pragma: no cover

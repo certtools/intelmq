@@ -146,6 +146,7 @@ CHANGELOG
 
 #### Experts
 - `intelmq.bots.experts.cymru_whois.expert`: Add optional parameter `overwrite`, current behavior was `True`, default if not given is `True` now, will change to `False` in 3.0.0 (#1452, #1455).
+- `intelmq.bots.experts.modify.expert`: Add optional parameter `overwrite`, current behavior was `True`, default if not given is `True` now, will change to `False` in 3.0.0 (#1452, #1455).
 - `intelmq.bots.experts.reverse_dns.expert`: Add optional parameter `overwrite`, current behavior was `True`, default if not given is `True` now, will change to `False` in 3.0.0 (#1452, #1455).
 
 #### Outputs

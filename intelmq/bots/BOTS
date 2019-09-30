@@ -825,7 +825,8 @@
             "module": "intelmq.bots.experts.modify.expert",
             "parameters": {
                 "case_sensitive": true,
-                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf"
+                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf",
+                "overwrite": false
             }
         },
         "National CERT by CERT.at": {
