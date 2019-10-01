@@ -30,6 +30,7 @@ PROTOCOL_MAPPING = {'6': 'tcp',  # TODO: use getent in harmonization
                     '17': 'udp',
                     '1': 'icmp'}
 BOGUS_HOSTNAME_PORT = re.compile('hostname: ([^:]+)port: ([0-9]+)')
+DESTINATION_PORT_NUMBERS_TOTAL = re.compile(r' \(total_count:\d+\)$')
 
 
 class CymruCAPProgramParserBot(ParserBot):
@@ -278,6 +279,7 @@ class CymruCAPProgramParserBot(ParserBot):
                 event['destination.ip'] = value
             elif key in ('dest_port', 'ports_scanned', 'honeypot_port',
                          'darknet_port', 'destination_port_numbers'):
+                value = DESTINATION_PORT_NUMBERS_TOTAL.sub('', value)
                 for val in value.split(','):
                     destination_ports.append(val.strip())
             elif key == 'protocol':
