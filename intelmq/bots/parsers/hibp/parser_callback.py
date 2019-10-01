@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Sep 11 17:03:33 2019
-
-@author: sebastian
+There are two different Formats: Breaches and Pastes
+For Breaches, there are again two different Variants:
+    * Callback Test: has field 'Email', Breach is a list of dictionaries
+    * Real: has NO field 'Email', Breach is a dictionary
 """
 import json
 
@@ -22,11 +23,16 @@ class HIBPCallbackParserBot(ParserBot):
         event = self.new_event(report)
         event['raw'] = self.recover_line(request)
 
-        event['source.account'] = request['Email']
         event["source.fqdn"] = request["Domain"]
         event["extra.domain_emails"] = request["DomainEmails"]
         try:
             event["extra.breach"] = request["Breach"]
+            try:
+                # for real
+                event["time.source"] = request["Breach"]["AddedDate"]
+            except TypeError:
+                # for callback test, has multiple breaches
+                pass
         except KeyError:
             pass
         try:
@@ -36,7 +42,12 @@ class HIBPCallbackParserBot(ParserBot):
 
         event['classification.taxonomy'] = 'information content security'
         event['classification.type'] = 'leak'
-        yield event
+
+        for email in sorted(filter(bool, set([request.get('Email')] + request["DomainEmails"]))):
+            if not email:
+                continue
+            event.add('source.account', email, overwrite=True)
+            yield event.copy()
 
 
 BOT = HIBPCallbackParserBot
