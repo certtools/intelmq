@@ -471,6 +471,11 @@
                 "type_translation": null
             }
         },
+        "Have I been Pwned Enterprise Callback": {
+            "description": "Parses the data sent by the 'Have I Been Pwned' Callback for Enterprise Subscribers",
+            "module": "intelmq.bots.parsers.hibp.parser_callback",
+            "parameters": {}
+        },
         "HTML Table": {
             "description": "HTML Table Parser is a bot configurable to parse different html table data.",
             "module": "intelmq.bots.parsers.html_table.parser",

@@ -26,6 +26,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [DynDNS](#dyndns)
 - [Fraunhofer](#fraunhofer)
 - [HPHosts](#hphosts)
+- [Have I Been Pwned](#have-i-been-pwned)
 - [Malc0de](#malc0de)
 - [Malware Domain List](#malware-domain-list)
 - [Malware Domains](#malware-domains)
@@ -1068,6 +1069,50 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.parsers.hphosts.parser
 * **Configuration Parameters:**
 *  * `error_log_message`: `false`
+
+
+# Have I Been Pwned
+
+## Enterprise Callback
+
+* **Status:** on
+* **Revision:** 11-09-2019
+* **Documentation:** https://haveibeenpwned.com/EnterpriseSubscriber/
+* **Description:** With the Enterprise Subscription of 'Have I Been Pwned' you are able to provide a callback URL and any new leak data is submitted to it. It is recommended to put a webserver with Authorization check, TLS etc. in front of the API collector.
+* **Additional Information:** "A minimal nginx configuration could look like:
+```
+server {
+    listen 443 ssl http2;
+    server_name [your host name];
+    client_max_body_size 50M;
+    
+    ssl_certificate [path to your key];
+    ssl_certificate_key [path to your certificate];
+    
+    location /[your private url] {
+         if ($http_authorization != '[your private password]') {
+             return 403;
+         }
+         proxy_pass http://localhost:5001/intelmq/push;
+         proxy_read_timeout 30;
+         proxy_connect_timeout 30;
+     }
+}
+```
+"
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.api.collector_api
+* **Configuration Parameters:**
+*  * `name`: `Enterprise Callback`
+*  * `port`: `5001`
+*  * `provider`: `Have I Been Pwned`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.hibp.parser_callback
+* **Configuration Parameters:**
 
 
 # Malc0de

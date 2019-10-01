@@ -63,6 +63,7 @@ CHANGELOG
   * Use time conversion functions directly from `intelmq.lib.harmonization.DateTime.convert`.
   - Limit lxml dependency on 3.4 to < 4.4.0 (incompatibility).
 - `intelmq.bots.parsers.netlab_360.parser`: Add support for hajime scanners.
+- `intelmq.bots.parsers.hibp.parser_callback`: A new parser to parse data retrieved from a HIBP Enterprise Subscription.
 - `intelmq.bots.parsers.shadowserver.parser`:
   - Ability to detect the feed base on the reports's field `extra.file_name`, so the parameter `feedname` is no longer required and one configured parser can parse any feed (#1442).
 
@@ -80,7 +81,9 @@ CHANGELOG
   - new optional parameter `engine` with `postgresql` (default) and `sqlite` (new) as possible values.
 
 ### Documentation
-- Feeds: Add ViriBack feed.
+- Feeds:
+  - Add ViriBack feed.
+  - Add Have I Been Pwned Enterprise Callback.
 - `intelmq.tests.bots.outputs.amqptopic.test_output`: Added.
 - Moved the Shadowserver Parser documentation from a separate README to the central Bots.md file.
 
