@@ -151,6 +151,8 @@
             "module": "intelmq.bots.collectors.rt.collector_rt",
             "parameters": {
                 "attachment_regex": "\\.csv\\.zip$",
+                "extract_attachment": true,
+                "extract_download": true,
                 "http_password": null,
                 "http_username": null,
                 "name": "__FEED__",
@@ -166,7 +168,6 @@
                 "set_status": "open",
                 "ssl_client_certificate": null,
                 "take_ticket": true,
-                "unzip_attachment": true,
                 "uri": "http://localhost/rt/REST/1.0",
                 "url_regex": "https://dl.shadowserver.org/[a-zA-Z0-9?_-]*",
                 "user": "intelmq"

@@ -50,16 +50,18 @@ class RTCollectorBot(CollectorBot):
 
         self.set_request_parameters()
         self.session = create_request_session_from_bot(self)
+        self._parse_extract_file_parameter('extract_attachment')
+        self._parse_extract_file_parameter('extract_download')
 
         if hasattr(self.parameters, 'unzip_attachment'):
             self.logger.warning("The parameter 'unzip_attachment' is deprecated and "
                                 "will be removed in version 3.0 in favor of the "
-                                "more generic and powerful 'extract_files'. "
+                                "more generic and powerful 'extract_attachment'. "
                                 "Look at the Bots documentation for more details.")
-            if not self.extract_files:
+            if not self.extract_attachment:
                 self.extract_files = self.parameters.unzip_attachment
             else:
-                self.logger.warn("Both 'extract_files' and the deprecated "
+                self.logger.warn("Both 'extract_attachment' and the deprecated "
                                  "'unzip_attachment' parameter are in use. Ignoring "
                                  "the latter one.")
 
@@ -97,6 +99,7 @@ class RTCollectorBot(CollectorBot):
                                           att_id, att_name)
                         success = True
                         content = 'attachment'
+                        self.extract_files = self.extract_attachment
                         break
             if not success and self.parameters.url_regex:
                 ticket = RT.get_history(ticket_id)[0]
@@ -104,6 +107,8 @@ class RTCollectorBot(CollectorBot):
                 urlmatch = re.search(self.parameters.url_regex, ticket['Content'])
                 if urlmatch:
                     content = 'url'
+                    self.extract_files = self.extract_download
+
                     url = urlmatch.group(0)
                     self.logger.debug('Matching URL found %r.', url)
                     success = True
@@ -138,7 +143,7 @@ class RTCollectorBot(CollectorBot):
                         self.logger.info('Skipping now.')
                         continue
                 self.logger.info("Report #%d downloaded.", ticket_id)
-                if self.extract_files:
+                if self.extract_download:
                     raw = resp.content
                 else:
                     raw = resp.text

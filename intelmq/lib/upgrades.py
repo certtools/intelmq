@@ -18,7 +18,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v200_defaults_ssl_ca_certificate',
            'v111_defaults_process_manager',
            'v202_fixes',
-           'v210_deprecations',
+           'v210_deprecations_1',
            ]
 
 
@@ -246,17 +246,21 @@ def v202_fixes(defaults, runtime, dry_run):
     return changed, defaults, runtime
 
 
-def v210_deprecations(defaults, runtime, dry_run):
+def v210_deprecations_1(defaults, runtime, dry_run):
     """
-    Migrating RT collector's `unzip_attachment` to `extract_files`.
+    Migrating configuration.
     """
     changed = None
     for bot_id, bot in runtime.items():
         if bot["module"] == "intelmq.bots.collectors.rt.collector_rt":
+            if "extract_files" in bot["parameters"]:  # from 29c4b2c42b126ef51ac7287edc1a9fee28ab27fd to ce96e6d995d420e117a49a22d3bfdea762d899ec
+                bot["parameters"]["extract_attachment"] = bot["parameters"]["extract_files"]
+                del bot["parameters"]["extract_files"]
+                changed = True
             if "unzip_attachment" not in bot["parameters"]:
                 continue
             if "extract_files" not in bot["parameters"]:
-                bot["parameters"]["extract_files"] = bot["parameters"]["unzip_attachment"]
+                bot["parameters"]["extract_attachment"] = bot["parameters"]["unzip_attachment"]
             del bot["parameters"]["unzip_attachment"]
             changed = True
         if bot["module"] in ("intelmq.bots.experts.generic_db_lookup.expert",
@@ -279,5 +283,5 @@ UPGRADES = OrderedDict([
                  v200_defaults_ssl_ca_certificate)),
     ((2, 0, 1), ()),
     ((2, 0, 2), (v202_fixes, )),
-    ((2, 1, 0), (v210_deprecations, )),
+    ((2, 1, 0), (v210_deprecations_1, )),
 ])

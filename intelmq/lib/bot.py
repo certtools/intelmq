@@ -815,15 +815,24 @@ class Bot(object):
 
          * extract_files
         """
-        self.extract_files = getattr(self.parameters, 'extract_files', None)
-        if self.extract_files and isinstance(self.extract_files, str):
-            self.extract_files = self.extract_files.split(",")
+        self.extract_files = self._parse_extract_file_parameter('extract_files')
+
+    def _parse_extract_file_parameter(self, parameter_name='extract_files'):
+        """
+        Parses and sanitizes commonly used parameters:
+
+         * extract_files
+        """
+        parameter_value = getattr(self.parameters, parameter_name, None)
+        setattr(self, parameter_name, parameter_value)
+        if parameter_value and isinstance(parameter_value, str):
+            setattr(self, parameter_name, parameter_value.split(","))
             self.logger.info('Extracting files from archives: '
-                             "'%s'.", "', '".join(self.extract_files))
-        elif self.extract_files and isinstance(self.extract_files, (list, tuple)):
+                             "'%s'.", "', '".join(getattr(self, parameter_name)))
+        elif parameter_value and isinstance(parameter_value, (list, tuple)):
             self.logger.info('Extracting files from archives: '
-                             "'%s'.", "', '".join(self.extract_files))
-        elif self.extract_files:
+                             "'%s'.", "', '".join(parameter_value))
+        elif parameter_value:
             self.logger.info('Extracting all files from archives.')
 
 

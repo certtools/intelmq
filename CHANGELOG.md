@@ -49,7 +49,7 @@ CHANGELOG
 - `intelmq.bots.collectors.rt.collector_rt`:
   - Save ticket information/metadata in the extra fields of the report.
   - Support for RT 3.8 and RT 4.4.
-  - Support parameter `extract_files` for generic archive extraction and consistency. The parameter `unzip_attachment` is deprecated.
+  - New parameters `extract_attachment` and `extract_download` for generic archive extraction and consistency. The parameter `unzip_attachment` is deprecated.
 - `intelmq.bots.collectors.mail.*`: Save email information/metadata in the extra fields of the report. See the bots documentation for a complete list of provided data.
   - `intelmq.bots.collectors.mail.collector_mail_attach`: Check for existence/validity of the `attach_regex` parameter.
   - Use the lib's `unzip` function for uncompressing attachments and use the .

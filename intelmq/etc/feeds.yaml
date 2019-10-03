@@ -1505,10 +1505,9 @@ providers:
       status: on
       documentation:
   ShadowServer:
-    Custom:
+    Via IMAP:
       description: Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
-        The reports can be retrieved from the URL in the mail or from the attachment.
-      additional_information:
+      additional_information: The configuration retrieves the data from a e-mails via IMAP from the attachments.
       bots:
         collector:
           module: intelmq.bots.collectors.mail.collector_mail_attach
@@ -1524,6 +1523,39 @@ providers:
             folder: INBOX
             name: __FEED__
             provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.shadowserver.parser
+          parameters:
+      revision: 20-01-2018
+      status: on
+      documentation:
+    Via Request Tracker:
+      description: Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
+      additional_information: The configuration retrieves the data from a RT/RTIR ticketing instance via the attachment or an download.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.rt.collector_rt
+          parameters:
+            attachment_regex: \\.csv\\.zip$
+            extract_attachment: true
+            extract_download: false
+            http_password: null
+            http_username: null
+            password: __PASSWORD__
+            provider: __PROVIDER__
+            rate_limit: 3600
+            search_not_older_than: null
+            search_owner: nobody
+            search_queue: Incident Reports
+            search_requestor: autoreports@shadowserver.org
+            search_status: new
+            search_subject_like: \[__COUNTRY__\] Shadowserver __COUNTRY__
+            set_status: open
+            ssl_client_certificate: null
+            take_ticket: true
+            uri: http://localhost/rt/REST/1.0
+            url_regex: https://dl.shadowserver.org/[a-zA-Z0-9?_-]*
+            user: __USERNAME__
         parser:
           module: intelmq.bots.parsers.shadowserver.parser
           parameters:

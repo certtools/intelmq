@@ -1619,11 +1619,12 @@ server {
 
 # ShadowServer
 
-## Custom
+## Via IMAP
 
 * **Status:** on
 * **Revision:** 20-01-2018
-* **Description:** Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports). The reports can be retrieved from the URL in the mail or from the attachment.
+* **Description:** Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
+* **Additional Information:** The configuration retrieves the data from a e-mails via IMAP from the attachments.
 
 ### Collector
 
@@ -1636,10 +1637,48 @@ server {
 *  * `mail_password`: `__PASSWORD__`
 *  * `mail_ssl`: `True`
 *  * `mail_user`: `__USERNAME__`
-*  * `name`: `Custom`
+*  * `name`: `Via IMAP`
 *  * `provider`: `ShadowServer`
 *  * `rate_limit`: `86400`
 *  * `subject_regex`: `__REGEX__`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.shadowserver.parser
+* **Configuration Parameters:**
+
+
+## Via Request Tracker
+
+* **Status:** on
+* **Revision:** 20-01-2018
+* **Description:** Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
+* **Additional Information:** The configuration retrieves the data from a RT/RTIR ticketing instance via the attachment or an download.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.rt.collector_rt
+* **Configuration Parameters:**
+*  * `attachment_regex`: `\\.csv\\.zip$`
+*  * `extract_attachment`: `True`
+*  * `extract_download`: `False`
+*  * `http_password`: `None`
+*  * `http_username`: `None`
+*  * `password`: `__PASSWORD__`
+*  * `provider`: `ShadowServer`
+*  * `rate_limit`: `3600`
+*  * `search_not_older_than`: `None`
+*  * `search_owner`: `nobody`
+*  * `search_queue`: `Incident Reports`
+*  * `search_requestor`: `autoreports@shadowserver.org`
+*  * `search_status`: `new`
+*  * `search_subject_like`: `\[__COUNTRY__\] Shadowserver __COUNTRY__`
+*  * `set_status`: `open`
+*  * `ssl_client_certificate`: `None`
+*  * `take_ticket`: `True`
+*  * `uri`: `http://localhost/rt/REST/1.0`
+*  * `url_regex`: `https://dl.shadowserver.org/[a-zA-Z0-9?_-]*`
+*  * `user`: `__USERNAME__`
 
 ### Parser
 

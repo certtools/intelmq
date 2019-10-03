@@ -145,7 +145,7 @@ V210_EXP = {"test-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.rt.collector_rt",
     "parameters": {
-        "extract_files": True,
+        "extract_attachment": True,
     }
 },
     "test-collector2": {
@@ -237,7 +237,7 @@ class TestUpgradeLib(unittest.TestCase):
 
     def test_v210_deprecations(self):
         """ Test v210_deprecations """
-        result = upgrades.v210_deprecations({}, V210, True)
+        result = upgrades.v210_deprecations_1({}, V210, True)
         self.assertTrue(result[0])
         self.assertEqual(V210_EXP, result[2])
 

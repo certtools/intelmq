@@ -535,7 +535,7 @@ def unzip(file: bytes, extract_files: Union[bool, list], logger=None,
             files, archive, extract_function = function(file)
         except Exception as exc:
             if logger:
-                logger.debug("Uncompression using %s failed with %s.",
+                logger.debug("Uncompression using %s failed with: %s.",
                              name, exc)
         else:
             if logger:
