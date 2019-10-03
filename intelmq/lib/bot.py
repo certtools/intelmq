@@ -827,13 +827,13 @@ class Bot(object):
         setattr(self, parameter_name, parameter_value)
         if parameter_value and isinstance(parameter_value, str):
             setattr(self, parameter_name, parameter_value.split(","))
-            self.logger.info('Extracting files from archives: '
-                             "'%s'.", "', '".join(getattr(self, parameter_name)))
+            self.logger.debug('Extracting files from archives: '
+                              "'%s'.", "', '".join(getattr(self, parameter_name)))
         elif parameter_value and isinstance(parameter_value, (list, tuple)):
-            self.logger.info('Extracting files from archives: '
-                             "'%s'.", "', '".join(parameter_value))
+            self.logger.debug('Extracting files from archives: '
+                              "'%s'.", "', '".join(parameter_value))
         elif parameter_value:
-            self.logger.info('Extracting all files from archives.')
+            self.logger.debug('Extracting all files from archives.')
 
 
 class ParserBot(Bot):
