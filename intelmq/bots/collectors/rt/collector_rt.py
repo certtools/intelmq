@@ -59,7 +59,7 @@ class RTCollectorBot(CollectorBot):
                                 "more generic and powerful 'extract_attachment'. "
                                 "Look at the Bots documentation for more details.")
             if not self.extract_attachment:
-                self.extract_files = self.parameters.unzip_attachment
+                self.extract_attachment = self.parameters.unzip_attachment
             else:
                 self.logger.warn("Both 'extract_attachment' and the deprecated "
                                  "'unzip_attachment' parameter are in use. Ignoring "
