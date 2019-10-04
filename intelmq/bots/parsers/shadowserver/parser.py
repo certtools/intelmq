@@ -51,7 +51,7 @@ class ShadowserverParserBot(ParserBot):
                 self.overwrite = True
 
     def parse(self, report):
-        if self.sparser_config:
+        if self.sparser_config and hasattr(self.parameters, 'feedname'):
             return self.parse_csv_dict(report)
 
         # Set config to parse report
