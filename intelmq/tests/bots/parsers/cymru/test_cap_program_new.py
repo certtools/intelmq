@@ -16,7 +16,6 @@ REPORT = {'__type': 'Report',
           'raw': utils.base64_encode(RAW),
           'time.observation': '2015-11-01T00:01:45+00:05',
           }
-NUM_EVENTS = [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10]
 EVENT_TEMPLATE = {'__type': 'Event',
                   'source.as_name': 'Example AS Name',
                   'source.asn': 64496,
@@ -172,7 +171,15 @@ EVENTS = [{'time.source': '2019-03-22T11:18:52+00:00',
                 'time.source': '2019-09-30T13:49:49+00:00',
                 'protocol.transport': 'udp',
                 } for destport in [17875, 24526, 54449, 9314, 4903,
-                                   1568, 20749, 30524, 59316, 60704]]
+                                   1568, 20749, 30524, 59316, 60704]] + [
+          {'classification.type': 'spam',
+           'classification.identifier': 'spam',
+           'time.source': '2019-10-02T23:00:17+00:00',
+           },
+          ]
+# The number of events a single line in the raw data produces
+NUM_EVENTS = [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+              1, 10, 1]
 RAWS = []
 for i, line in enumerate(RAW_LINES[3:]):
     for count in range(NUM_EVENTS[i]):
@@ -187,7 +194,6 @@ class TestCymruCAPProgramParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = CymruCAPProgramParserBot
-        cls.default_input_message = {'__type': 'Report', 'raw': 'Cg=='}
 
     def test_events(self):
         """ Test if correct Events have been produced. """

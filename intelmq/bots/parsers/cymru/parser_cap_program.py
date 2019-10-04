@@ -23,6 +23,8 @@ MAPPING_STATIC = {'bot': {
                       },
     'scanner': {'classification.type': 'scanner',
                 'classification.identifier': 'scanner'},
+    'spam': {'classification.type': 'spam',
+                'classification.identifier': 'spam'},
 }
 MAPPING_COMMENT = {'bruteforce': ('classification.identifier', 'protocol.application'),
                    'phishing': ('source.url', )}
