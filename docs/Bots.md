@@ -853,6 +853,25 @@ http://www.team-cymru.com/bogon-reference.html
 * `cache (redis db):` none
 * `description:` Parses data from full bogons feed.
 
+* * *
+
+### Have I Been Pwned Callback Parser
+
+#### Information:
+* `name:` intelmq.bots.parsers.hibp.parser_callback
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses data from Have I Been Pwned feed.
+
+#### Description
+
+Parsers the data from a Callback of a Have I Been Pwned Enterprise Subscription.
+
+Parses breaches and pastes and creates one event per e-mail address. The e-mail address is stored in `source.account`.
+`classification.type` is `leak` and `classification.identifier` is `breach` or `paste`.
+
+* * *
+
 ### HTML Table Parser
 
 #### Configuration parameters

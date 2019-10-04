@@ -27,6 +27,7 @@ class HIBPCallbackParserBot(ParserBot):
         event["extra.domain_emails"] = request["DomainEmails"]
         try:
             event["extra.breach"] = request["Breach"]
+            event['classification.identifier'] = 'breach'
             try:
                 # for real
                 event["time.source"] = request["Breach"]["AddedDate"]
@@ -37,6 +38,7 @@ class HIBPCallbackParserBot(ParserBot):
             pass
         try:
             event["extra.paste"] = request["Paste"]
+            event['classification.identifier'] = 'paste'
         except KeyError:
             pass
 
