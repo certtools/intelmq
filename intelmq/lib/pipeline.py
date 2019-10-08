@@ -456,6 +456,10 @@ class Amqp(Pipeline):
     def setup_channel(self):
         self.channel = self.connection.channel()
         self.channel.confirm_delivery()
+
+        if self.exchange:
+            # Do not declare and use queues if an exchange is given
+            return
         if self.source_queue:
             self.channel.queue_declare(queue=self.source_queue, durable=True,
                                        arguments=self.queue_args)
