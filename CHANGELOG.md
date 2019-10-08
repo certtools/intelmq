@@ -20,6 +20,7 @@ CHANGELOG
   - New internal variable `_has_message` to keep the state of the pipeline.
   - Split receive and acknowledge into public-facing and private methods.
   - Add `reject_message` method to the Pipeline class for explicit requeue of messages.
+  - AMQP: Make exchange configurable
 - `intelmq.lib.bot`:
   - Log message after successful bot initialization, no log message anymore for ready pipeline.
   - Use existing current message if receive is called and the current message still exists.
