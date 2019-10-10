@@ -146,6 +146,7 @@ CHANGELOG
   - Close socket on shutdown, fixes reloading.
   - Marked as non-threadable.
 - `intelmq.bots.collectors.rt.collector_rt`: Check for matching URLs if no `attachment_regex` is given.
+- `intelmq.bots.collectors.stomp.collector_stomp`: Handle disconnects by actively reconnecting.
 
 #### Parsers
 - `intelmq.bots.cymru.parser_cap_program`: Fix parsing of the new `$certname_$date.txt` report format (#1443):
