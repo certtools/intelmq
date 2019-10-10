@@ -1080,8 +1080,12 @@
             "parameters": {
                 "exchange": "/exchange/_push",
                 "heartbeat": 60000,
+                "message_hierarchical_output": false,
+                "message_jsondict_as_string": false,
+                "message_with_type": false,
                 "port": 61614,
                 "server": "127.0.0.1",
+                "single_key": false,
                 "ssl_ca_certificate": "<insert path to CA file>",
                 "ssl_client_certificate": "<insert path to client cert file>",
                 "ssl_client_certificate_key": "<insert path to client cert key file>"

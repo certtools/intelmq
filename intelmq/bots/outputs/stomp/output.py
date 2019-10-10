@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-TODO: Test this with a real stomp server
-"""
 import os.path
 
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import MessageFactory
+from intelmq.lib.utils import base64_decode
+
 
 try:
     import stomp
@@ -15,6 +13,8 @@ except ImportError:
 
 class StompOutputBot(Bot):
     """ main class for the STOMP protocol output bot """
+
+    conn = None
 
     def init(self):
         if stomp is None:
@@ -34,6 +34,12 @@ class StompOutputBot(Bot):
         self.http_verify_cert = getattr(self.parameters,
                                         'http_verify_cert', True)
 
+        self.hierarchical = getattr(self.parameters, "message_hierarchical", False)
+        self.with_type = getattr(self.parameters, "message_with_type", False)
+        self.jsondict_as_string = getattr(self.parameters, "message_jsondict_as_string", False)
+
+        self.single_key = getattr(self.parameters, 'single_key', None)
+
         # check if certificates exist
         for f in [self.ssl_ca_cert, self.ssl_cl_cert, self.ssl_cl_cert_key]:
             if not os.path.isfile(f):
@@ -44,22 +50,39 @@ class StompOutputBot(Bot):
                                      ssl_key_file=self.ssl_cl_cert_key,
                                      ssl_cert_file=self.ssl_cl_cert,
                                      ssl_ca_certs=self.ssl_ca_cert,
-                                     wait_on_receipt=True,
                                      heartbeats=(self.heartbeat,
                                                  self.heartbeat))
+        self.connect()
 
+    def connect(self):
+        self.logger.debug('Connecting.')
         # based on the documentation at:
         # https://github.com/jasonrbriggs/stomp.py/wiki/Simple-Example
         self.conn.start()
-        self.conn.connect(wait=False)
+        self.conn.connect(wait=True)
+        self.logger.debug('Connected.')
 
     def shutdown(self):
-        self.conn.disconnect()
+        if self.conn:
+            self.conn.disconnect()
 
     def process(self):
-        message = self.receive_message()
-        message = MessageFactory.serialize(message)
-        self.conn.send(body=message, destination=self.exchange)
+        event = self.receive_message()
+
+        if self.single_key:
+            if self.single_key == 'raw':
+                body = base64_decode(event.get('raw', ''))
+            else:
+                body = str(event.get(self.single_key))
+        else:
+            if not self.keep_raw_field:
+                del event['raw']
+            body = event.to_json(hierarchical=self.hierarchical,
+                                 with_type=self.with_type,
+                                 jsondict_as_string=self.jsondict_as_string)
+
+        self.conn.send(body=body,
+                       destination=self.exchange)
         self.acknowledge_message()
 
 
