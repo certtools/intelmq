@@ -42,9 +42,10 @@ CHANGELOG
   - Support fields `destination_port_numbers`, `port`.
   - Support for all proxy types without ports.
   - Use Country Code of AS as `source.geolocation.cc`.
-  - Support for 'scanner' category.
+  - Support for 'scanner' and 'spam' categories.
   - Handle bogus lines with missing separator.
   - Fix bug preventing use of old format after using the new format.
+  - Handle postfix ` (total_count:..)` for destination port numbers.
 
 #### Experts
 - `intelmq.bots.experts.cymru_whois.expert`: Add optional parameter `overwrite`, current behavior was `True`, default if not given is `True` now, will change to `False` in 3.0.0 (#1452, #1455).
