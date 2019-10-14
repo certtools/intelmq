@@ -14,7 +14,7 @@ from intelmq.lib.utils import base64_decode
 
 class HIBPCallbackParserBot(ParserBot):
     def recover_line(self, line):
-        return json.dumps(line)
+        return json.dumps(line, sort_keys=True)
 
     def parse(self, report):
         return [json.loads(base64_decode(report["raw"]))]
