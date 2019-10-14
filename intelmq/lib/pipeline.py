@@ -417,6 +417,9 @@ class Amqp(Pipeline):
         self.ssl = getattr(self.parameters,
                            "{}_pipeline_ssl".format(queues_type),
                            False)
+        self.exchange = getattr(self.parameters,
+                                "{}_pipeline_amqp_exchange".format(queues_type),
+                                "")
         self.load_balance_iterator = 0
         self.kwargs = {}
         if self.username and self.password:
@@ -453,6 +456,10 @@ class Amqp(Pipeline):
     def setup_channel(self):
         self.channel = self.connection.channel()
         self.channel.confirm_delivery()
+
+        if self.exchange:
+            # Do not declare and use queues if an exchange is given
+            return
         if self.source_queue:
             self.channel.queue_declare(queue=self.source_queue, durable=True,
                                        arguments=self.queue_args)
@@ -486,7 +493,7 @@ class Amqp(Pipeline):
 
         retval = False
         try:
-            retval = self.channel.basic_publish(exchange='',
+            retval = self.channel.basic_publish(exchange=self.exchange,
                                                 routing_key=destination_queue,
                                                 body=message,
                                                 properties=self.properties,

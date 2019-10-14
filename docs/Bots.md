@@ -2129,6 +2129,38 @@ from your installation.
 
 * * *
 
+### STOMP
+
+#### Information:
+* `name`: intelmq.bots.outputs.stomp.output
+* `lookup`: yes
+* `public`: yes
+* `cache (redis db)`: none
+* `description`: This collector will push data to any STOMP stream. STOMP stands for Streaming Text Oriented Messaging Protocol. See: https://en.wikipedia.org/wiki/Streaming_Text_Oriented_Messaging_Protocol
+
+#### Requirements:
+
+Install the stomp.py library, e.g `apt install python3-stomp.py` or `pip install stomp.py`.
+
+You need a CA certificate, client certificate and key file from the organization / server you are connecting to.
+Also you will need a so called "exchange point".
+
+#### Configuration Parameters:
+
+* `exchange`: The exchange to push at
+* `heartbeat`: default: 60000
+* `message_hierarchical_output`: Boolean, default: false
+* `message_jsondict_as_string`: Boolean, default: false
+* `message_with_type`: Boolean, default: false
+* `port`: Integer, default: 61614
+* `server`: Host or IP address of the STOMP server
+* `single_key`: Boolean or string (field name), default: false
+* `ssl_ca_certificate`: path to CA file
+* `ssl_client_certificate`: path to client cert file
+* `ssl_client_certificate_key`: path to client cert key file
+
+* * *
+
 ### TCP
 
 #### Information:

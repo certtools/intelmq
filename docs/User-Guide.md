@@ -268,13 +268,15 @@ You need to set the parameter `source_pipeline_broker`/`destination_pipeline_bro
 * `destination_pipeline_username`
 * `destination_pipeline_password`
 * `destination_pipeline_socket_timeout` (default: no timeout)
-* `destination_pipeline_amqp_virtual_host` (default: `'/`)
+* `destination_pipeline_amqp_exchange`: Only change/set this if you know what you do. If set, the destination queues are not declared as queues, but used as routing key. (default: `''`).
+* `destination_pipeline_amqp_virtual_host` (default: `'/'`)
 * `source_pipeline_host` (default: `'127.0.0.1'`)
 * `source_pipeline_port` (default: 5672)
 * `source_pipeline_username`
 * `source_pipeline_password`
 * `source_pipeline_socket_timeout` (default: no timeout)
-* `source_pipeline_amqp_virtual_host` (default: `'/`)
+* `source_pipeline_amqp_exchange`: Only change/set this if you know what you do. If set, the destination queues are not declared as queues, but used as routing key. (default: `''`).
+* `source_pipeline_amqp_virtual_host` (default: `'/'`)
 
 For getting the queue sizes, `intelmqctl` needs to connect to the monitoring interface of RabbitMQ. If the monitoring interface is not available under "http://{host}:15671" you can manually set using the parameter `intelmqctl_rabbitmq_monitoring_url`.
 In a RabbitMQ's default configuration you might not provide a user account, as by default the administrator (`guest`:`guest`) allows full access from localhost. If you create a separate user account, make sure to add the tag "monitoring" to it, otherwise IntelMQ can't fetch the queue sizes.
