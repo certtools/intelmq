@@ -290,7 +290,7 @@
             "description": "Stomp Collector - e.g. for CERT.pl's N6 feed via STOMP. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.stomp.collector",
             "parameters": {
-                "exchange": "<INSERT your exchange point as given by CERT.pl>",
+                "exchange": "<INSERT your exchange point>",
                 "name": "Stomp",
                 "port": 61614,
                 "provider": "N6",
