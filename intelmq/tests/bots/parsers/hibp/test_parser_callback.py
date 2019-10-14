@@ -24,6 +24,7 @@ BR_EV = {"feed.name": "HIBP Enterprise",
          "extra.breach": BREACHREQUEST["Breach"],
          "classification.taxonomy": "information content security",
          "classification.type": "leak",
+         "classification.identifier": "breach",
          "source.account": "test2@example.com",
          "source.fqdn": "example.com",
          "__type": "Event"
@@ -43,6 +44,7 @@ PA_EV = {"feed.name": "HIBP Enterprise",
          "extra.paste": PASTEREQUEST["Paste"],
          "classification.taxonomy": "information content security",
          "classification.type": "leak",
+         "classification.identifier": "paste",
          "source.account": "test2@example.com",
          "source.fqdn": "example.com",
          "__type": "Event"
@@ -64,6 +66,7 @@ BR_REAL_EV = {"feed.name": "HIBP Enterprise",
               "extra.breach": BREACHREALREQUEST["Breach"],
               "classification.taxonomy": "information content security",
               "classification.type": "leak",
+              "classification.identifier": "breach",
               "source.fqdn": "example.com",
               "__type": "Event"
               }

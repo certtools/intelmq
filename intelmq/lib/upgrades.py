@@ -253,7 +253,8 @@ def v210_deprecations_1(defaults, runtime, dry_run):
     changed = None
     for bot_id, bot in runtime.items():
         if bot["module"] == "intelmq.bots.collectors.rt.collector_rt":
-            if "extract_files" in bot["parameters"]:  # from 29c4b2c42b126ef51ac7287edc1a9fee28ab27fd to ce96e6d995d420e117a49a22d3bfdea762d899ec
+            # from 29c4b2c42b126ef51ac7287edc1a9fee28ab27fd to ce96e6d995d420e117a49a22d3bfdea762d899ec
+            if "extract_files" in bot["parameters"]:
                 bot["parameters"]["extract_attachment"] = bot["parameters"]["extract_files"]
                 del bot["parameters"]["extract_files"]
                 changed = True

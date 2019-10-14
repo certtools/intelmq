@@ -815,7 +815,7 @@ class Bot(object):
 
          * extract_files
         """
-        self.extract_files = self._parse_extract_file_parameter('extract_files')
+        self._parse_extract_file_parameter('extract_files')
 
     def _parse_extract_file_parameter(self, parameter_name='extract_files'):
         """
