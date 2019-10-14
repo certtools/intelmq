@@ -1662,19 +1662,18 @@ server {
 *  * `attachment_regex`: `\\.csv\\.zip$`
 *  * `extract_attachment`: `True`
 *  * `extract_download`: `False`
-*  * `http_password`: `None`
-*  * `http_username`: `None`
+*  * `http_password`: `{{ your HTTP Authentication password or null }}`
+*  * `http_username`: `{{ your HTTP Authentication username or null }}`
 *  * `password`: `__PASSWORD__`
 *  * `provider`: `ShadowServer`
 *  * `rate_limit`: `3600`
-*  * `search_not_older_than`: `None`
+*  * `search_not_older_than`: `{{ relative time or null }}`
 *  * `search_owner`: `nobody`
 *  * `search_queue`: `Incident Reports`
 *  * `search_requestor`: `autoreports@shadowserver.org`
 *  * `search_status`: `new`
 *  * `search_subject_like`: `\[__COUNTRY__\] Shadowserver __COUNTRY__`
 *  * `set_status`: `open`
-*  * `ssl_client_certificate`: `None`
 *  * `take_ticket`: `True`
 *  * `uri`: `http://localhost/rt/REST/1.0`
 *  * `url_regex`: `https://dl.shadowserver.org/[a-zA-Z0-9?_-]*`
