@@ -13,6 +13,7 @@ import os
 import re
 import unittest
 import unittest.mock as mock
+import sys
 from itertools import chain
 
 import pkg_resources
@@ -402,6 +403,8 @@ class BotTestCase(object):
             message: Message text which is compared
             levelname: Log level of logline which is asserted
         """
+        if sys.version_info >= (3, 7):
+            return True
 
         self.assertIsNotNone(self.loglines)
         logline = self.loglines[line_no]
@@ -443,6 +446,8 @@ class BotTestCase(object):
             pattern: Message text which is compared, regular expression.
             levelname: Log level of the logline which is asserted, upper case.
         """
+        if sys.version_info >= (3, 7):
+            return True
 
         self.assertIsNotNone(self.loglines)
         for logline in self.loglines:
