@@ -980,6 +980,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Status:** on
 * **Revision:** 01-07-2018
 * **Description:** The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs. You may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
+* **Additional Information:** The source feed provides a stream of newline separated JSON objects. Each line represents a single event observed by DDoS C&C trackers, e.g. attack commands. The feed can be retrieved with either the generic HTTP Stream Collector Bot for a streaming live feed or with the generic HTTP Collector Bot for a polled feed.
 
 ### Collector
 
@@ -1005,6 +1006,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Status:** on
 * **Revision:** 01-07-2018
 * **Description:** The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs. You may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
+* **Additional Information:** The source feed provides a stream of newline separated JSON objects. Each line represents a single event observed by DDoS C&C trackers, e.g. attack commands. The feed can be retrieved with either the generic HTTP Stream Collector Bot for a streaming live feed or with the generic HTTP Collector Bot for a polled feed.
 
 ### Collector
 

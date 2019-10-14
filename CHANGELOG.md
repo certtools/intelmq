@@ -89,7 +89,7 @@ CHANGELOG
   - Add ViriBack feed.
   - Add Have I Been Pwned Enterprise Callback.
 - `intelmq.tests.bots.outputs.amqptopic.test_output`: Added.
-- Moved the Shadowserver Parser documentation from a separate README to the central Bots.md file.
+- Move the documentation of most bots from separate README files to the central Bots.md and feeds.yaml files.
 
 ### Packaging
 
