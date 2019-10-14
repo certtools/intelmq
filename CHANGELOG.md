@@ -2,10 +2,8 @@ CHANGELOG
 ==========
 
 
-2.0.2 (unreleased)
+2.0.2 (2019-10-14)
 -----------------
-
-### Configuration
 
 ### Core
 - `intelmq.lib.bot.CollectorBot`: Support the deprecated parameter `feed` until version 2.2 as the documentation was not properly updated (#1445).
@@ -21,10 +19,6 @@ CHANGELOG
 - `intelmq.lib.pipeline.Amqp`:
   - use default SSL context for client purposes, fixes compatibility with python < 3.6 if TLS is used.
   - Reconnect once on sending messages if disconnect detected.
-
-### Development
-
-### Harmonization
 
 ### Bots
 #### Collectors
@@ -55,8 +49,6 @@ CHANGELOG
 #### Outputs
 - `intelmq.bots.outputs.amqptopic.output`: use default SSL context for client purposes, fixes compatibility with python < 3.6 if TLS is used.
 
-### Documentation
-
 ### Packaging
 - Rules:
   - Exclude intelmqsetup tool in packages
@@ -84,6 +76,14 @@ CHANGELOG
   - Add `PIDFile` parameter to service file.
 
 ### Known issues
+- MongoDB authentication: compatibility on different MongoDB and pymongo versions (#1439)
+- ctl: shell colorizations are logged (#1436)
+- http stream collector: retry on regular connection problems? (#1435)
+- tests: capture logging with context manager (#1342)
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952)
+- n6 parser: mapping is modified within each run (#905)
+- reverse DNS: Only first record is used (#877)
+- Corrupt dump files when interrupted during writing (#870)
 
 
 2.0.1 (2019-08-23)
