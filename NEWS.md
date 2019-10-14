@@ -3,21 +3,31 @@ NEWS
 
 See the changelog for a full list of changes.
 
+
+2.0.2 Bugfix release (2019-10-14)
+---------------------------------
+
+Run `intelmqctl upgrade-config` and `intelmqctl check` after the upgrade.
+
+### Configuration
+The deprecated parameter `feed` for collectors is again supported as the documentation as not properly updated. The support will be removed before version 2.2.
+
+#### RIPE expert
+In the upgrade function for version 1.1.0 (in effect in version 2.0.1) the addition of the parameter `query_ripe_stat_ip` was not correctly done and is maybe missing. A new upgrade function re-adds it with the value of `query_ripe_stat_ip`.
+
+#### Cymru CAP Feed Migration
+
+The Cymru CAP Feed is (being) migrated to a new URL with a different format and more data. Look at the feed's documentation for more information.
+
+#### Cymru Whois Expert, Modify Expert & Reverse DNS Expert
+These bots overwrite existing fields by default. A parameter `overwrite` has been added to make this optional, with the default value of `True` for backwards compatibility. If the parameter is not set, a warning is logged. The default value will change to `False` in version 3.0.0. The default for all new bots (in `BOTS`) is `False` already.
+
+
 2.0.1 Bugfix release (2019-08-23)
 ---------------------------------
 
-### Requirements
-
 ### Tools
-intelmqctl has a new function `upgrade-config` to upgrade the configuration from previous installations. It is recommended to call this function after every upgrade.
-
-### Harmonization
-
-### Configuration
-
-### Libraries
-
-### Postgres databases
+intelmqctl has a new function `intelmqctl upgrade-config` to upgrade the configuration from previous installations. It is recommended to call this function after every upgrade.
 
 
 2.0.0 Major release (2019-05-22)

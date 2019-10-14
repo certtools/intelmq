@@ -120,7 +120,7 @@ For example:
     "abusech-feodo-domains-collector": {
         "parameters": {
             "provider": "Abuse.ch",
-            "feed": "Abuse.ch Feodo Domains",
+            "name": "Abuse.ch Feodo Domains",
             "http_url": "http://example.org/feodo-domains.txt"
         },
         "name": "Generic URL Fetcher",
@@ -147,7 +147,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 
 **Feed parameters**: Common configuration options for all collectors.
 
-* `feed`: Name for the feed (`feed.name`).
+* `name`: Name for the feed (`feed.name`). In IntelMQ versions smaller than 2.2 the parameter name `feed` is also supported.
 * `accuracy`: Accuracy for the data of the feed (`feed.accuracy`).
 * `code`: Code for the feed (`feed.code`).
 * `documentation`: Link to documentation for the feed (`feed.documentation`).
@@ -1017,6 +1017,7 @@ FIXME
 #### Configuration Parameters:
 
 * **Cache parameters** (see in section [common parameters](#common-parameters))
+* `overwrite`: Overwrite existing fields. Default: `True` if not given (for backwards compatibility, will change in version 3.0.0)
 
 * * *
 
@@ -1456,6 +1457,7 @@ For both `source.ip` and `destination.ip` the PTR record is fetched and the firs
 
 * **Cache parameters** (see in section [common parameters](#common-parameters))
 * `cache_ttl_invalid_response`: The TTL for cached invalid responses.
+* `overwrite`: Overwrite existing fields. Default: `True` if not given (for backwards compatibility, will change in version 3.0.0)
 
 * * *
 

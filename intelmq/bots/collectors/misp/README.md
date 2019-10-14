@@ -17,11 +17,11 @@ A sample configuration for this bot is as follows (see also the BOTS file):
     "description": "Collect events from a MISP server.",
     "module": "intelmq.bots.collectors.misp.collector",
     "parameters": {
-        "feed": "misp_generic",
         "misp_url": "<URL of MISP server (with trailing '/')>",
         "misp_key": "<MISP Authkey>",
         "misp_tag_to_process": "<MISP tag for events to be processed>",
         "misp_tag_processed": "<MISP tag for processed events>",
+        "name": "misp_generic",
         "rate_limit": 3600
     }
 },

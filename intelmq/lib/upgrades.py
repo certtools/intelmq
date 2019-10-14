@@ -17,12 +17,13 @@ __all__ = ['v100_dev7_modify_syntax',
            'v112_feodo_tracker_domains',
            'v200_defaults_ssl_ca_certificate',
            'v111_defaults_process_manager',
+           'v202_fixes',
            ]
 
 
 def v200_defaults_statistics(defaults, runtime, dry_run):
     """
-    Inserting "statistics_*" parameters into defaults.conf file
+    Inserting `statistics_*` parameters into defaults configuration file
     """
     values = {"statistics_database": 3,
               "statistics_host": "127.0.0.1",
@@ -39,7 +40,7 @@ def v200_defaults_statistics(defaults, runtime, dry_run):
 
 def v200_defaults_broker(defaults, runtime, dry_run):
     """
-    Inserting "*_pipeline_broker" and deleting broker into/from defaults configuration
+    Inserting `*_pipeline_broker` and deleting broker into/from defaults configuration
     """
     changed = None
     values = {"destination_pipeline_broker": defaults.get("broker", "redis"),
@@ -109,7 +110,7 @@ def v110_shadowserver_feednames(defaults, runtime, dry_run):
 
 def v110_deprecations(defaults, runtime, dry_run):
     """
-    Checking for deprecated runtime configurations
+    Checking for deprecated runtime configurations (stomp collector, cymru parser, ripe expert)
     """
     mapping = {
         "intelmq.bots.collectors.n6.collector_stomp": "intelmq.bots.collectors.stomp.collector",
@@ -127,13 +128,14 @@ def v110_deprecations(defaults, runtime, dry_run):
             if bot["parameters"].get("query_ripe_stat"):
                 if "query_ripe_stat_asn" not in bot["parameters"]:
                     bot["parameters"]["query_ripe_stat_asn"] = bot["parameters"]["query_ripe_stat"]
-                if "query_ripe_stat_asn" not in bot["parameters"]:
-                    bot["parameters"]["query_ripe_stat_ip"] = bot["parameters"]["query_ripe_stat_ip"]
+                if "query_ripe_stat_ip" not in bot["parameters"]:
+                    bot["parameters"]["query_ripe_stat_ip"] = bot["parameters"]["query_ripe_stat"]
                 del bot["parameters"]["query_ripe_stat"]
                 changed = True
-        if bot["group"] == 'Collector' and bot["parameters"].get("feed"):
+        if bot["group"] == 'Collector' and bot["parameters"].get("feed") and not bot["parameters"].get("name"):
             try:
-                bot["parameters"]["feed"] = bot["parameters"]["name"]
+                bot["parameters"]["name"] = bot["parameters"]["feed"]
+                del bot["parameters"]["feed"]
             except KeyError:
                 pass
             else:
@@ -214,6 +216,35 @@ def v111_defaults_process_manager(defaults, runtime, dry_run):
     return changed, defaults, runtime
 
 
+def v202_fixes(defaults, runtime, dry_run):
+    """
+    Migrating collector parameter `feed` to `name`. RIPE expert set: `query_ripe_stat_ip` with `query_ripe_stat_asn` as default
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["group"] == 'Collector' and bot["parameters"].get("feed"):
+            try:
+                bot["parameters"]["name"] = bot["parameters"]["feed"]
+                del bot["parameters"]["feed"]
+            except KeyError:
+                pass
+            else:
+                changed = True
+        if bot["module"] == "intelmq.bots.experts.ripe.expert":
+            if "query_ripe_stat_asn" in bot["parameters"]:
+                if "query_ripe_stat_ip" not in bot["parameters"]:
+                    bot["parameters"]["query_ripe_stat_ip"] = bot["parameters"]["query_ripe_stat_asn"]
+                    changed = True
+        if bot["module"] in ("intelmq.bots.experts.cymru_whois.expert",
+                             "intelmq.bots.experts.reverse_dns.expert",
+                             "intelmq.bots.experts.modify.expert"):
+            if "overwrite" not in bot["parameters"]:
+                bot["parameters"]["overwrite"] = True
+                changed = True
+
+    return changed, defaults, runtime
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -222,4 +253,5 @@ UPGRADES = OrderedDict([
     ((2, 0, 0), (v200_defaults_statistics, v200_defaults_broker,
                  v200_defaults_ssl_ca_certificate)),
     ((2, 0, 1), ()),
+    ((2, 0, 2), (v202_fixes, )),
 ])

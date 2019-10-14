@@ -2,7 +2,7 @@
 import time
 import warnings
 from itertools import chain
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 import ssl
 
 import redis
@@ -372,7 +372,7 @@ class Amqp(Pipeline):
         if self.username and self.password:
             self.kwargs['credentials'] = pika.PlainCredentials(self.username, self.password)
         if self.ssl:
-            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.SSLContext())
+            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.create_default_context(ssl.Purpose.CLIENT_AUTH))
         pika_version = tuple(int(x) for x in pika.__version__.split('.'))
         if pika_version < (0, 11):
             self.kwargs['heartbeat_interval'] = 10
@@ -390,13 +390,17 @@ class Amqp(Pipeline):
         if not self.monitoring_url.endswith('/'):
             self.monitoring_url = "%s/" % self.monitoring_url
 
-    def connect(self, channelonly=False):
+    def connect(self):
+        self.channel = None
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
                                                                             port=int(self.port),
                                                                             socket_timeout=self.socket_timeout,
                                                                             virtual_host=self.virtual_host,
                                                                             **self.kwargs
                                                                             ))
+        self.setup_channel()
+
+    def setup_channel(self):
         self.channel = self.connection.channel()
         self.channel.confirm_delivery()
         if self.source_queue:
@@ -406,6 +410,12 @@ class Amqp(Pipeline):
             for destination_queue in path:
                 self.channel.queue_declare(queue=destination_queue, durable=True,
                                            arguments=self.queue_args)
+
+    def check_connection(self):
+        if not self.connection or self.connection.is_closed:
+            self.connect()
+        if not self.channel or self.channel.is_closed:
+            self.setup_channel()
 
     def disconnect(self):
         try:
@@ -421,7 +431,9 @@ class Amqp(Pipeline):
         self.load_configurations(queues_type)
         super(Amqp, self).set_queues(queues, queues_type)
 
-    def _send(self, destination_queue, message):
+    def _send(self, destination_queue, message, reconnect=True):
+        self.check_connection()
+
         retval = False
         try:
             retval = self.channel.basic_publish(exchange='',
@@ -431,7 +443,11 @@ class Amqp(Pipeline):
                                                 mandatory=True,
                                                 )
         except Exception as exc:  # UnroutableError, NackError in 1.0.0
-            raise exceptions.PipelineError(exc)
+            if reconnect and isinstance(exc, pika.exceptions.ConnectionClosed):
+                self.connect()
+                self._send(destination_queue, message, reconnect=False)
+            else:
+                raise exceptions.PipelineError(exc)
         else:
             if not self.publish_raises_nack and not retval:
                 raise exceptions.PipelineError('Sent message was not confirmed.')

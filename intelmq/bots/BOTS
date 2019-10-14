@@ -222,9 +222,9 @@
             "description": "Listens to McAfee openDXL fabric",
             "module": "intelmq.bots.collectors.opendxl.collector",
             "parameters": {
-                "feed": "<Feed Name>",
                 "dxl_config_file": "<insert /path/to/dxlclient.config>",
-                "dxl_topic": "/mcafee/event/atd/file/report"
+                "dxl_topic": "/mcafee/event/atd/file/report",
+                "name": "<Feed Name>"
             }
         },
         "Microsoft Azure": {
@@ -271,7 +271,7 @@
             "description": "Stomp Collector - e.g. for CERT.pl's N6 feed via STOMP. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.stomp.collector",
             "parameters": {
-                "exchange": "<INSERT your exchange point as given by CERT.pl>",
+                "exchange": "<INSERT your exchange point>",
                 "name": "Stomp",
                 "port": 61614,
                 "provider": "N6",
@@ -678,7 +678,8 @@
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_password": null,
                 "redis_cache_port": "6379",
-                "redis_cache_ttl": "86400"
+                "redis_cache_ttl": "86400",
+                "overwrite": false
             }
         },
         "Deduplicator": {
@@ -784,7 +785,8 @@
             "module": "intelmq.bots.experts.modify.expert",
             "parameters": {
                 "case_sensitive": true,
-                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf"
+                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf",
+                "overwrite": false
             }
         },
         "National CERT by CERT.at": {
@@ -838,7 +840,8 @@
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_password": null,
                 "redis_cache_port": "6379",
-                "redis_cache_ttl": "86400"
+                "redis_cache_ttl": "86400",
+                "overwrite": false
             }
         },
         "Sieve": {

@@ -12,6 +12,7 @@ RefuseManualStop=no
 
 [Service]
 Type=$type
+PIDFile=/run/intelmq/$bot.pid
 ExecStart=$bot_run_cmd
 User=$INTELMQ_USER
 Group=$INTELMQ_GROUP

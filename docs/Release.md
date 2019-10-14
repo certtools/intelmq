@@ -9,10 +9,14 @@
 - [Announcements](#announcements)
 - [Prepare new version](#prepare-new-version)
 
-Make sure the current state is really final ;)
-You can test most of the steps described here locally before doing it real.
 
-Assumption: You are working on branch maintenance, the next version is a bug fix release. For feature releaese it is slightly different.
+General assumption: You are working on branch maintenance, the next version is a bug fix release. For feature releaese it is slightly different.
+
+## Check before
+
+ * Make sure the current state is really final ;)
+   You can test most of the steps described here locally before doing it real.
+ * Check the upgrade functions in `intelmq/lib/upgrades.py`.
 
 ## Documentation
 

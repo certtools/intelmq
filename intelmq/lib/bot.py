@@ -601,12 +601,12 @@ class Bot(object):
         if message is None or getattr(self.parameters, 'testing', False):
             return
 
-        self.logger.info('Dumping message from pipeline to dump file.')
-        timestamp = datetime.utcnow()
-        timestamp = timestamp.isoformat()
+        self.logger.info('Dumping message to dump file.')
 
         dump_file = os.path.join(self.parameters.logging_path, self.__bot_id + ".dump")
 
+        timestamp = datetime.utcnow()
+        timestamp = timestamp.isoformat()
         new_dump_data = {}
         new_dump_data[timestamp] = {}
         new_dump_data[timestamp]["bot_id"] = self.__bot_id
@@ -622,7 +622,7 @@ class Bot(object):
             # new dump file
             mode = 'w'
         with open(dump_file, mode) as fp:
-            for i in range(50):
+            for i in range(60):
                 try:
                     fcntl.flock(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 except BlockingIOError:
@@ -992,6 +992,12 @@ class CollectorBot(Bot):
     def __add_report_fields(self, report: dict):
         if hasattr(self.parameters, 'name'):
             report.add("feed.name", self.parameters.name)
+        if hasattr(self.parameters, 'feed'):
+            warnings.warn("The parameter 'feed' is deprecated and will be "
+                          "removed in version 2.2. Use 'name' instead.",
+                          DeprecationWarning)
+            if "feed.name" not in report:
+                report.add("feed.name", self.parameters.feed)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
         if hasattr(self.parameters, 'documentation'):

@@ -46,12 +46,15 @@ STATUSES = {
 }
 
 MESSAGES = {
+    'enabled': 'Bot %s is enabled.',
     'disabled': 'Bot %s is disabled.',
     'starting': 'Starting %s...',
     'running': 'Bot %s is running.',
     'stopped': 'Bot %s is stopped.',
     'stopping': 'Stopping bot %s...',
     'reloading': 'Reloading bot %s ...',
+    'enabling': 'Enabling %s.',
+    'disabling': 'Disabling %s.',
     'reloaded': 'Bot %s is reloaded.',
 }
 
@@ -643,13 +646,17 @@ class IntelMQController():
         self.parameters = Parameters()
 
         # Try to get log_level from defaults_configuration, else use default
+        defaults_loading_exc = None
         try:
             self.load_defaults_configuration()
-        except Exception:
+        except Exception as exc:
+            defaults_loading_exc = exc
             log_level = DEFAULT_LOGGING_LEVEL
         else:
             log_level = self.parameters.logging_level.upper()
-            logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
+        # make sure that logging_level_stream is always at least INFO or more verbose
+        # otherwise the output on stdout/stderr is less than the user expects
+        logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
 
         try:
             logger = utils.log('intelmqctl', log_level=log_level,
@@ -661,6 +668,10 @@ class IntelMQController():
                                logging_level_stream=logging_level_stream)
             logger.error('Not logging to file: %s', exc)
         self.logger = logger
+        if defaults_loading_exc:
+            self.logger.exception('Loading the defaults configuration failed!',
+                                  exc_info=defaults_loading_exc)
+
         self.interactive = interactive
         if not utils.drop_privileges():
             logger.warning('Running intelmqctl as root is highly discouraged!')
@@ -746,7 +757,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
-        self.load_defaults_configuration()
         try:
             self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
@@ -782,19 +792,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                 help='choose if it should return regular text '
                                      'or other machine-readable')
 
-            parser.add_argument('--quiet', '-q', action='store_const',
+            parser.add_argument('--quiet', '-q', action='store_true',
                                 help='Quiet mode, useful for reloads initiated '
-                                     'scripts like logrotate',
-                                const=True)
+                                     'scripts like logrotate')
 
             subparsers = parser.add_subparsers(title='subcommands')
 
             parser_list = subparsers.add_parser('list', help='Listing bots or queues')
             parser_list.add_argument('kind', choices=['bots', 'queues', 'queues-and-status'])
-            parser_list.add_argument('--non-zero', '--quiet', '-q', action='store_const',
+            parser_list.add_argument('--non-zero', '--quiet', '-q', action='store_true',
                                      help='Only list non-empty queues '
-                                          'or the IDs of enabled bots.',
-                                     const=True)
+                                          'or the IDs of enabled bots.')
             parser_list.set_defaults(func=self.list)
 
             parser_clear = subparsers.add_parser('clear', help='Clear a queue')
@@ -849,12 +857,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             parser_check = subparsers.add_parser('check',
                                                  help='Check installation and configuration')
-            parser_check.add_argument('--quiet', '-q', action='store_const',
-                                      help='Only print warnings and errors.',
-                                      const=True)
-            parser_check.add_argument('--no-connections', '-C', action='store_const',
-                                      help='Do not test the connections to services like redis.',
-                                      const=True)
+            parser_check.add_argument('--quiet', '-q', action='store_true',
+                                      help='Only print warnings and errors.')
+            parser_check.add_argument('--no-connections', '-C', action='store_true',
+                                      help='Do not test the connections to services like redis.')
             parser_check.set_defaults(func=self.check)
 
             parser_help = subparsers.add_parser('help',
@@ -979,8 +985,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         if bot_id is None:
             return self.botnet_reload(group=group)
         else:
+            if self.bot_process_manager.bot_status(bot_id) == 'disabled':
+                return 0, 'disabled'
             status = self.bot_process_manager.bot_reload(bot_id, getstatus)
-            if status in ['running']:
+            if status in ['running', 'disabled']:
                 return 0, status
             else:
                 return 1, status
@@ -1008,13 +1016,23 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 return 1, status
 
     def bot_enable(self, bot_id):
-        self.runtime_configuration[bot_id]['enabled'] = True
-        self.write_updated_runtime_config()
+        if self._is_enabled(bot_id):
+            log_bot_message('enabled', bot_id)
+        else:
+            log_bot_message('enabling', bot_id)
+            self.runtime_configuration[bot_id]['enabled'] = True
+            self.write_updated_runtime_config()
         return self.bot_status(bot_id)
 
     def bot_disable(self, bot_id):
-        self.runtime_configuration[bot_id]['enabled'] = False
-        self.write_updated_runtime_config()
+        """
+        If Bot is already disabled, the "Bot ... is disabled" message is
+        printed by the wrapping function already.
+        """
+        if self._is_enabled(bot_id):
+            log_bot_message('disabling', bot_id)
+            self.runtime_configuration[bot_id]['enabled'] = False
+            self.write_updated_runtime_config()
         return self.bot_status(bot_id)
 
     def _is_enabled(self, bot_id):
@@ -1022,6 +1040,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def botnet_start(self, group=None):
         botnet_status = {}
+        log_botnet_message('starting', group)
 
         if group:
             bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
@@ -1089,6 +1108,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         return retval, botnet_status
 
     def botnet_restart(self, group=None):
+        log_botnet_message('restarting')
         retval_stop, _ = self.botnet_stop(group=group)
         retval_start, status = self.botnet_start(group=group)
         if retval_stop > retval_start:  # In case the stop operation was not successful, exit 1
@@ -1609,7 +1629,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                             todo.append((version, funcs, False))
             else:
                 self.logger.info("Found no previous version, doing all upgrades.")
-                todo = upgrades.UPGRADES.items()
+                todo = [(version, bunch, True) for version, bunch in upgrades.UPGRADES.items()]
 
             """
             todo is now a list of tuples of functions.

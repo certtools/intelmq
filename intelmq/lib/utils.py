@@ -192,7 +192,7 @@ def load_configuration(configuration_filepath: str) -> dict:
     """
     if os.path.exists(configuration_filepath):
         with open(configuration_filepath, 'r') as fpconfig:
-            config = json.loads(fpconfig.read())
+            config = json.load(fpconfig)
     else:
         raise ValueError('File not found: %r.' % configuration_filepath)
     return config
