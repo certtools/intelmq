@@ -89,7 +89,7 @@ CHANGELOG
   - Add ViriBack feed.
   - Add Have I Been Pwned Enterprise Callback.
 - `intelmq.tests.bots.outputs.amqptopic.test_output`: Added.
-- Moved the Shadowserver Parser documentation from a separate README to the central Bots.md file.
+- Move the documentation of most bots from separate README files to the central Bots.md and feeds.yaml files.
 
 ### Packaging
 
@@ -99,6 +99,7 @@ CHANGELOG
 - Tests for `utils.unzip`.
 - Add a new asset: Zip archive with two files, same as with tar.gz archive.
 - Added tests for the Mail Attachment & Mail URL collectors.
+- Ignore logging-tests on Python 3.7 temporarily (#1342).
 
 ### Tools
 - intelmqctl:

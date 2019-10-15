@@ -309,6 +309,20 @@ The resulting reports contains the following special fields:
  * `extra.email_message_id`: The email's message ID
  * `extra.file_name`: The file name of the downloaded file (extracted from the HTTP Response Headers if possible).
 
+##### Chunking
+
+For line-based inputs the bot can split up large reports into smaller chunks.
+
+This is particularly important for setups that use Redis as a message queue
+which has a per-message size limitation of 512 MB.
+
+To configure chunking, set `chunk_size` to a value in bytes.
+`chunk_replicate_header` determines whether the header line should be repeated
+for each chunk that is passed on to a parser bot.
+
+Specifically, to configure a large file input to work around Redis' size
+limitation set `chunk_size` to something like `384000000`, i.e., ~384 MB.
+
 * * *
 
 ### Generic Mail Attachment Fetcher
@@ -385,7 +399,9 @@ The resulting reports contains the following special fields:
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` collect messages from a file.
+* `description:` This bot is capable of reading files from the local file-system.
+  This is handy for testing purposes, or when you need to react to spontaneous
+  events. In combination with the Generic CSV Parser this should work great.
 
 #### Configuration Parameters:
 
@@ -397,6 +413,35 @@ The resulting reports contains the following special fields:
 The resulting reports contains the following special fields:
  * `feed.url`: The URI using the `file://` scheme and localhost, with the full path to the processed file.
  * `extra.file_name`: The file name (without path) of the processed file.
+
+#### Chunking
+
+Additionally, for line-based inputs the bot can split up large reports into
+smaller chunks.
+
+This is particularly important for setups that use Redis as a message queue
+which has a per-message size limitation of 512 MB.
+
+To configure chunking, set `chunk_size` to a value in bytes.
+`chunk_replicate_header` determines whether the header line should be repeated
+for each chunk that is passed on to a parser bot.
+
+Specifically, to configure a large file input to work around Redis' size
+limitation set `chunk_size` to something like `384000`, i.e., ~384 MB.
+
+#### Workflow
+
+The bot loops over all files in `path` and tests if their file name matches
+*postfix, e.g. `*.csv`. If yes, the file will be read and inserted into the
+queue.
+
+If `delete_file` is set, the file will be deleted after processing. If deletion
+is not possible, the bot will stop.
+
+To prevent data loss, the bot also stops when no `postfix` is set and
+`delete_file` was set. This can not be overridden.
+
+The bot always sets the file name as feed.url
 
 * * *
 
@@ -428,7 +473,7 @@ Requires the rsync executable
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` collect messages from a MISP server.
+* `description:` collect messages from [MISP](https://github.com/MISP), a malware information sharing platform. server.
 
 #### Configuration Parameters:
 
@@ -438,6 +483,16 @@ Requires the rsync executable
 * `misp_verify`: (default: `true`)
 * `misp_tag_to_process`: MISP tag for events to be processed
 * `misp_tag_processed`: MISP tag for processed events
+
+#### Workflow
+This collector will search for events on a MISP server that have a
+`to_process` tag attached to them (see the `misp_tag_to_process` parameter)
+and collect them for processing by IntelMQ. Once the MISP event has been
+processed the `to_process` tag is removed from the MISP event and a
+`processed` tag is then attached (see the `misp_tag_processed` parameter).
+
+**NB.** The MISP tags must be configured to be 'exportable' otherwise they will
+not be retrieved by the collector.
 
 * * *
 
@@ -450,6 +505,12 @@ Requires the rsync executable
 * `public:` yes
 * `cache (redis db):` none
 * `description:` Request Tracker Collector fetches attachments from an RTIR instance.
+
+You need the rt-library >= 1.9 from nic.cz, available via [pypi](https://pypi.org/project/rt/): `pip3 install rt`
+
+This rt bot will connect to RT and inspect the given `search_queue` for tickets matching all criteria in `search_*`, 
+Any matches will be inspected. For each match, all (RT-) attachments of the matching RT tickets are iterated over and within this loop, the first matching filename in the attachment is processed.
+If none of the filename matches apply, the contents of the first (RT-) "history" item is matched against the URL-regex.
 
 #### Configuration Parameters:
 
@@ -481,6 +542,31 @@ The resulting reports contains the following special fields:
  * `extra.ticket_queue`: The ticket's queue
  * `extra.file_name`: The name of the extracted file, the name of the downloaded file or the attachments' filename without `.gz` postfix.
  * `time.observation`: The creation time of the ticket or attachment.
+
+##### Search
+
+The parameters prefixed with `search_` allow configuring the ticket search.
+
+Empty strings and `null` as value for search parameters are ignored.
+
+##### File downloads
+
+Attachments can be optionally unzipped, remote files are downloaded with the `http_*` settings applied (see `defaults.conf`).
+
+If `url_regex` or `attachment_regex` are empty strings, false or null, they are ignored.
+
+##### Ticket processing
+
+Optionally, the RT bot can "take" RT tickets (i.e. the `user` is assigned this ticket now) and/or the status can be changed (leave `set_status` empty in case you don't want to change the status). Please note however that you **MUST** do one of the following: either "take" the ticket  or set the status (`set_status`). Otherwise, the search will find the ticket every time and we will have generated an endless loop.
+
+In case a resource needs to be fetched and this resource is permanently not available (status code is 4xx), the ticket status will be set according to the configuration to avoid processing the ticket over and over.
+For temporary failures the status is not modified, instead the ticket will be skipped in this run.
+
+##### Time search
+
+To find only tickets newer than a given absolute or relative time, you can use the `search_not_older_than` parameter. Absolute time specification can be anything parseable by dateutil, best use a ISO format.
+
+Relative must be in this format: `[number] [timespan]s`, e.g. `3 days`. Timespan can be hour, day, week, month, year. Trailing 's' is supported for all timespans. Relative times are subtracted from the current time directly before the search is performed.
 
 * * *
 
@@ -551,25 +637,35 @@ Requires the shodan library to be installed:
 * `cache (redis db):` none
 * `description:` This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.
 
+#### Requirements
+The Sleekxmpp - Library needs to be installed on your System
+```bash
+pip3 install -r intelmq/bots/collectors/xmpp/REQUIREMENTS.txt
+```
+
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* `xmpp_server`: FIXME
-* `xmpp_user`: FIXME
-* `xmpp_password`: FIXME
-* `xmpp_room`: FIXME
-* `xmpp_room_nick`: FIXME
-* `xmpp_room_password`: FIXME
-* `ca_certs`: FIXME (default: `/etc/ssl/certs/ca-certificates.crt`)
-* `strip_message`: FIXME (default: `true`)
-* `pass_full_xml`: FIXME (default: `false`)
+* `xmpp_server`: The domain name of the server of the XMPP-Account (part after the @ sign)
+* `xmpp_user`: The username of the XMPP-Account the collector shall use (part before the @ sign)
+* `xmpp_password`: The password of the XMPP-Account
+* `xmpp_room`: The room which which has to be joined by the XMPP-Collector (full address room@conference.server.tld)
+* `xmpp_room_nick`: The username / nickname the collector shall use within the room
+* `xmpp_room_password`: The password which might be required to join a room
+ - `use_muc` : If this parameter is `true`, the bot will join the room `xmpp_room`.
+ - `xmpp_userlist`: An array of usernames whose messages will (not) be processed.
+ - `xmpp_whitelist_mode`: If `true` the list provided in `xmpp_userlist` is a whitelist. Else it is a blacklist.
+    In case of a whitelist, only messages from the configured users will be processed, else their messages are not
+    processed. Default is `false` / blacklist.
+* `ca_certs`: A path to a file containing the CA's which should be used (default: `/etc/ssl/certs/ca-certificates.crt`)
+* `strip_message`: If `true` trailing white space will be removed from the message. Does not happen if `pass_full_xml` is set to `true` (default: `true`)
+* `pass_full_xml`: If this parameter is set to `true` the collector will read the full-xmpp-xml message and add it to the pipeline.
+   this is useful if other systems like AbuseHelper should be processed. (default: `false`)
 
 * * *
 
 
 ### Alien Vault OTX
-
-See the README.md
 
 #### Information:
 * `name:` intelmq.bots.collectors.alienvault_otx.collector
@@ -578,16 +674,23 @@ See the README.md
 * `cache (redis db):` none
 * `description:` collect report messages from Alien Vault OTX API
 
+#### Requirements
+
+Install the library from GitHub, as there is no package in PyPi:
+```bash
+pip3 install -r intelmq/bots/collectors/alienvault_otx/REQUIREMENTS.txt
+```
+
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* `api_key`: location of information resource (e.g. FIXME)
+* `api_key`: API Key
+* `modified_pulses_only`: get only modified pulses instead of all, set to it to true or false, default false
+* `interval`: if "modified_pulses_only" is set, define the time in hours (integer value) to get modified pulse since then, default 24 hours
 
 * * *
 
 ### Blueliv Crimeserver
-
-See the README.md
 
 #### Information:
 * `name:` intelmq.bots.collectors.blueliv.collector_crimeserver
@@ -596,10 +699,19 @@ See the README.md
 * `cache (redis db):` none
 * `description:` collect report messages from Blueliv API
 
+For more information visit https://github.com/Blueliv/api-python-sdk
+
+#### Requirements
+
+Install the required library:
+```bash
+pip3 install -r intelmq/bots/collectors/blueliv/REQUIREMENTS.txt
+```
+
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* `api_key`: location of information resource
+* `api_key`: location of information resource, see https://map.blueliv.com/?redirect=get-started#signup
 * `api_url`: The optional API endpoint, by default `https://freeapi.blueliv.com`.
 
 * * *
@@ -687,14 +799,19 @@ The cache is used to remember which files have already been downloaded. Make sur
 
 ### Stomp
 
-See the README.md in `intelmq/bots/collectors/stomp/`
-
 #### Information:
 * `name:` intelmq.bots.collectors.stomp.collector
 * `lookup:` yes
 * `public:` no
 * `cache (redis db):` none
 * `description:` collect messages from a stomp server
+
+#### Requirements
+
+Install the stomp.py library from pypi:
+```bash
+pip3 install -r intelmq/bots/collectors/stomp/REQUIREMENTS.txt
+```
 
 #### Configuration Parameters:
 
@@ -819,6 +936,47 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
  * `"columns_required"`: A list of true/false for each column. By default, it is true for every column.
 
+* * *
+
+### Fraunhofer DDos Attack Parser
+
+#### Information:
+* `name:` `intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc` and `intelmq.bots.parsers.fraunhofer.parser_ddosattack_target`
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses data from Fraunhofer's DDoS Attack feed.
+
+#### Description
+
+The parser bots generate c&c events and ddos events, depending on the
+information retrieved from the feed. The feed delivers reports with different
+message types and different C&C types based on the type of tracked C&C servers
+and the type of commands received. If the c&c parser bot receives a report with
+a known C&C type but with an unknown message type, it generates a C&C event
+with an adjusted feed.accuracy given by the parameter
+unknown_messagetype_accuracy, if set. This feature can be used to lower the
+accuracy of events in case of unknown behavior of the tracked C&Cs, while
+keeping a high accuracy otherwise. For this feature to work, set the default
+feed.accuracy of the collector bot feeding this parser bot to a high value,
+while setting the value of the c&c parser bot's unknown_messagetype_accuracy
+to a lower value. The c&c parser bot will not change the feed.accuracy value
+if the tracker was able to interpret the C&C communication, giving a high
+chance, that the tracked server is actually a real live C&C server.
+If the tracker was not able to completely interpret the C&C communication, the
+feed.accuracy will be set to the lower value of the
+unknown_messagetype_accuracy parameter. There is still a certain probability
+that the tracked server is a real C&C, but it could not be confirmed.
+The target parser bot generates one ddos event for every target found in the
+attack commands of the tracked C&C server, which could be more than one for a
+single event from the tracker feed. 
+
+#### Configuration
+
+* `unknown_messagetype_accuracy`: A float between 0 an 100 representing the
+  accuracy of a c&c event for reports with unknown message types. Replaces the
+  feed.accuracy with the given value for these events.
+
+* * *
 
 ### Cymru CAP Program
 
@@ -1001,6 +1159,22 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
 
 * * *
 
+### MISP
+
+* `name:` intelmq.bots.parsers.misp.parser
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses MISP events
+
+#### Description
+
+MISP events collected by the MISPCollectorBot are passed to this parser
+for processing. Supported MISP event categories and attribute types are
+defined in the `SUPPORTED_MISP_CATEGORIES` and `MISP_TYPE_MAPPING` class
+constants.
+
+* * *
+
 ### Twitter
 
 #### Information:
@@ -1008,6 +1182,7 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
 * `public:` no
 * `cache (redis db):` none
 * `description:` Extracts urls from text, fuzzy, aimed at parsing tweets
+
 #### Configuration Parameters:
 
 * `domain_whitelist`: domains to be filetered out
@@ -1149,31 +1324,50 @@ The parser is by far not complete as there are a lot of fields in a big nested s
 * `ignore_errors`: Boolean (default true)
 * `minimal_mode`: Boolean (default false)
 
+* * *
+
+### ZoneH
+
+#### Information
+* `name:` intelmq.bots.parsers.zoneh.parser
+* `public:` yes
+* `description:` Parses data from zoneh.
+
+#### Description
+This bot is designed to consume defacement reports from zone-h.org. It expects
+fields normally present in CSV files distributed by email.
+
+* * *
 
 ## Experts
 
 ### Abusix
-
-See the README.md
 
 #### Information:
 * `name:` abusix
 * `lookup:` dns
 * `public:` yes
 * `cache (redis db):` 5
-* `description:` FIXME
+* `description:` RIPE abuse contacts resolving through DNS TXT queries
 * `notes`: https://abusix.com/contactdb.html
 
 #### Configuration Parameters:
 
 * **Cache parameters** (see in section [common parameters](#common-parameters))
-FIXME
+
+#### Requirements
+This bot can optionally use the python module *querycontacts* by abusix itself:
+https://pypi.org/project/querycontacts/
+
+```bash
+pip3 install querycontacts
+```
+If the package is not installed, our own routines are used.
 
 * * *
 
 ### ASN Lookup
 
-See the README.md
 
 #### Information:
 * `name:` ASN lookup
@@ -1184,7 +1378,31 @@ See the README.md
 
 #### Configuration Parameters:
 
-FIXME
+* `database`: Path to the downloaded database.
+
+#### Requirements
+
+Install pyasn module
+```bash
+pip3 install pyasn 
+```
+
+#### Database
+* Download database and convert:
+```
+# cd /tmp/
+# pyasn_util_download.py --latest
+# pyasn_util_convert.py --single <downloaded_filename.bz2>  ipasn.dat
+```
+
+Note: the '<' '>' characters only are syntactic markings, no shell redirection is necessary.
+
+* Copy database to IntelMQ:
+```
+# mkdir /opt/intelmq/var/lib/bots/asn_lookup
+# mv /tmp/ipasn.dat /opt/intelmq/var/lib/bots/asn_lookup/
+# chown -R intelmq.intelmq /opt/intelmq/var/lib/bots/asn_lookup
+```
 
 * * *
 
@@ -1233,11 +1451,11 @@ Privatly registered suffixes (such as `blogspot.co.at`) which are part of the
 public suffix list too, are ignored.
 
 #### Information:
-* `name:` deduplicator
-* `lookup:` redis cache
+* `name:` domain suffix
+* `lookup:` no
 * `public:` yes
-* `cache (redis db):` 6
-* `description:` message deduplicator
+* `cache (redis db):` -
+* `description:` extracts the domain suffix from the FQDN
 
 #### Configuration Parameters:
 
@@ -1272,19 +1490,59 @@ And additionally the exceptions, together with the above wildcard rule:
 
 ### Deduplicator
 
-See the README.md
 
 #### Information:
 * `name:` deduplicator
 * `lookup:` redis cache
 * `public:` yes
 * `cache (redis db):` 6
-* `description:` message deduplicator
+* `description:` Bot responsible for ignore duplicated messages. The bot can be configured to perform deduplication just looking to specific fields on the message.
 
 #### Configuration Parameters:
 
 * **Cache parameters** (see in section [common parameters](#common-parameters))
-Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
+* `bypass`- true or false value to bypass the eduplicator. When set to true, messages will not be deduplicated. Default: false
+
+##### Parameters for "fine-grained" deduplication
+
+* `filter_type`: type of the filtering which can be "blacklist" or "whitelist". The filter type will be used to define how Deduplicator bot will interpret the the parameter `filter_keys` in order to decide whether an event has already been seen or not, i.e., duplicated event or a completely new event.
+  * "whitelist" configuration: only the keys listed in `filter_keys` will be considered to verify if an event is duplicated or not.
+  * "blacklist" configuration: all keys except those in `filter_keys` will be considered to verify if an event is duplicated or not.
+* `filter_keys`: string with multiple keys separated by comma. Please note that `time.observation` key will not be considered even if defined, because the system always ignore that key.
+
+##### Parameters Configuration Example
+
+###### Example 1
+
+The bot with this configuration will detect duplication only based on `source.ip` and `destination.ip` keys.
+
+```
+"parameters": {
+    "redis_cache_db": 6,
+    "redis_cache_host": "127.0.0.1",
+    "redis_cache_password": null,
+    "redis_cache_port": 6379,
+    "redis_cache_ttl": 86400,
+    "filter_type": "whitelist",
+    "filter_keys": "source.ip,destination.ip",
+}
+```
+
+###### Example 2
+
+The bot with this configuration will detect duplication based on all keys, except `source.ip` and `destination.ip` keys.
+
+```
+"parameters": {
+    "redis_cache_db": 6,
+    "redis_cache_host": "127.0.0.1",
+    "redis_cache_password": null,
+    "redis_cache_port": 6379,
+    "redis_cache_ttl": 86400,
+    "filter_type": "blacklist",
+    "filter_keys": "source.ip,destination.ip",
+}
+```
 
 * * *
 
@@ -1419,7 +1677,46 @@ Order of operation: `strip -> replace -> split`. These three methods can be comb
 
 ### Generic DB Lookup
 
-See the README.md
+This bot is capable for enriching intelmq events by lookups to a database.
+Currently only PostgreSQL and SQLite are supported.
+
+If more than one result is returned, a ValueError is raised.
+
+#### Information:
+* `name:` `intelmq.bots.experts.generic_db_lookup.expert`
+* `lookup:` database
+* `public:` yes
+* `cache (redis db):` none
+* `description:` This bot is capable for enriching intelmq events by lookups to a database.
+
+#### Configuration Parameters:
+
+##### Connection
+
+* `engine`: `postgresql` or `sqlite`
+* `database`: string, defaults to "intelmq", database name or the SQLLite filename
+* `table`: defaults to "contacts"
+
+##### PostgreSQL specific
+* `host`: string, defaults to "localhost"
+* `password`: string
+* `port`: integer, defaults to 5432
+* `sslmode`: string, defaults to "require"
+* `user`: defaults to "intelmq"
+
+##### Lookup
+
+* `match_fields`: defaults to `{"source.asn": "asn"}`
+
+The value is a key-value mapping an arbitrary number **intelmq** field names **to table** column names.
+The values are compared with `=` only.
+
+##### Replace fields.
+
+* `overwrite`: defaults to `false`. Is applied per field
+* `replace_fields`: defaults to `{"contact": "source.abuse_contact"}`
+
+`replace_fields` is again a key-value mapping an arbitrary number of **table** column names **to intelmq** field names 
 
 * * *
 
@@ -1781,8 +2078,6 @@ FIXME
 
 ### Tor Nodes
 
-See the README.md
-
 #### Information:
 * `name:` tor-nodes
 * `lookup:` local database
@@ -1792,7 +2087,10 @@ See the README.md
 
 #### Configuration Parameters:
 
-FIXME
+* `database`: Path to the database
+
+#### Database
+Use the included script `update-tor-nodes` to download the database.
 
 ### Url2FQDN
 
