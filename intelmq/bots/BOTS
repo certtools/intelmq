@@ -1,5 +1,23 @@
 {
     "Collector": {
+        "AMQP": {
+            "description": "Collecting from a (remote) AMQP Server and fetching either intelmq or any other messages.",
+            "module": "intelmq.bots.collectors.amqp.collector_amqp",
+            "parameters": {
+                "connection_attempts": 3,
+                "connection_heartbeat": 3600,
+                "connection_host": "127.0.0.1",
+                "connection_port": 5672,
+                "connection_vhost": "<your virtual host>",
+                "expect_intelmq_message": false,
+                "name": "My Queue",
+                "password": "<your amqp password>",
+                "provider": "AMQP Collector",
+                "queue_name": "<your routing key>",
+                "username": "<your amqp username>",
+                "use_ssl": false
+            }
+        },
         "API": {
             "description": "Bot for collecting data using API.",
             "module": "intelmq.bots.collectors.api.collector_api",
@@ -133,6 +151,8 @@
             "module": "intelmq.bots.collectors.rt.collector_rt",
             "parameters": {
                 "attachment_regex": "\\.csv\\.zip$",
+                "extract_attachment": true,
+                "extract_download": true,
                 "http_password": null,
                 "http_username": null,
                 "name": "__FEED__",
@@ -148,7 +168,6 @@
                 "set_status": "open",
                 "ssl_client_certificate": null,
                 "take_ticket": true,
-                "unzip_attachment": true,
                 "uri": "http://localhost/rt/REST/1.0",
                 "url_regex": "https://dl.shadowserver.org/[a-zA-Z0-9?_-]*",
                 "user": "intelmq"
@@ -453,6 +472,11 @@
                 "type_translation": null
             }
         },
+        "Have I been Pwned Enterprise Callback": {
+            "description": "Parses the data sent by the 'Have I Been Pwned' Callback for Enterprise Subscribers",
+            "module": "intelmq.bots.parsers.hibp.parser_callback",
+            "parameters": {}
+        },
         "HTML Table": {
             "description": "HTML Table Parser is a bot configurable to parse different html table data.",
             "module": "intelmq.bots.parsers.html_table.parser",
@@ -730,10 +754,25 @@
                 "filter_value": "<PT>"
             }
         },
+        "Format Field": {
+            "description": "Format Expert is the bot responsible for string method operations on column values.",
+            "module": "intelmq.bots.experts.format_field.expert",
+            "parameters": {
+                "strip_columns": "malware.name",
+                "strip_chars": " ",
+                "split_column": "",
+                "split_separator": ",",
+                "replace_column": "",
+                "old_value": "",
+                "new_value": "",
+                "replace_count": 1
+            }
+        },
         "Generic DB Lookup": {
             "description": "Fetches data from a database.",
             "module": "intelmq.bots.experts.generic_db_lookup.expert",
             "parameters": {
+                "engine": "<postgresql OR sqlite>",
                 "database": "intelmq",
                 "host": "localhost",
                 "match_fields": {
@@ -749,6 +788,14 @@
                 "sslmode": "require",
                 "table": "contacts",
                 "user": "intelmq"
+            }
+        },
+        "Geohash": {
+            "description": "Computes the geohashes from longitude/latitude information.",
+            "module": "intelmq.bots.experts.geohash.expert",
+            "parameters": {
+                "overwrite": false,
+                "precision": 7
             }
         },
         "Gethostbyname": {
@@ -983,21 +1030,6 @@
                 "replacement_char": "_"
             }
         },
-        "PostgreSQL": {
-            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database. When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit",
-            "module": "intelmq.bots.outputs.postgresql.output",
-            "parameters": {
-                "autocommit": true,
-                "database": "intelmq-events",
-                "host": "localhost",
-                "jsondict_as_string": true,
-                "password": "<password>",
-                "port": "5432",
-                "sslmode": "require",
-                "table": "events",
-                "user": "intelmq"
-            }
-        },
         "REST API": {
             "description": "REST API is the bot responsible to send events to a REST API listener through POST.",
             "module": "intelmq.bots.outputs.restapi.output",
@@ -1048,11 +1080,31 @@
             "parameters": {
                 "exchange": "/exchange/_push",
                 "heartbeat": 60000,
+                "message_hierarchical_output": false,
+                "message_jsondict_as_string": false,
+                "message_with_type": false,
                 "port": 61614,
                 "server": "127.0.0.1",
+                "single_key": false,
                 "ssl_ca_certificate": "<insert path to CA file>",
                 "ssl_client_certificate": "<insert path to client cert file>",
                 "ssl_client_certificate_key": "<insert path to client cert key file>"
+            }
+        },
+        "SQL": {
+            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database. When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit",
+            "module": "intelmq.bots.outputs.sql.output",
+            "parameters": {
+                "autocommit": true,
+                "database": "intelmq-events",
+                "engine": "<postgresql OR sqlite>",
+                "host": "localhost",
+                "jsondict_as_string": true,
+                "password": "<password>",
+                "port": "5432",
+                "sslmode": "require",
+                "table": "events",
+                "user": "intelmq"
             }
         },
         "TCP": {
@@ -1064,6 +1116,13 @@
                 "ip": "<ip>",
                 "port": "<port>",
                 "separator": "<nothing or \\n or sth>"
+            }
+        },
+        "Touch": {
+            "description": "Touches a file for every event received.",
+            "module": "intelmq.bots.outputs.touch.output",
+            "parameters": {
+                "path": "<path to a file>"
             }
         },
         "UDP": {

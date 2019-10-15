@@ -7,12 +7,18 @@ https://github.com/martinrusev/imbox/commit/7c6cc2fb5f7e39c1496d68f3d432eec19517
 Uses the common mail iteration method from the lib file.
 """
 import re
-import zipfile
+from intelmq.lib.utils import unzip
+from intelmq.lib.exceptions import InvalidArgument
 
 from .lib import MailCollectorBot
 
 
 class MailAttachCollectorBot(MailCollectorBot):
+
+    def init(self):
+        super().init()
+        if not getattr(self.parameters, 'attach_regex', None):
+            raise InvalidArgument('attach_regex', expected='string')
 
     def process_message(self, uid, message):
         seen = False
@@ -29,16 +35,23 @@ class MailAttachCollectorBot(MailCollectorBot):
 
                 self.logger.debug("Found suitable attachment %s.", attach_filename)
 
-                if self.parameters.attach_unzip:
-                    zipped = zipfile.ZipFile(attach['content'])
-                    raw_report = zipped.read(zipped.namelist()[0])
-                else:
-                    raw_report = attach['content'].read()
-
                 report = self.new_report()
-                report.add("raw", raw_report)
 
-                self.send_message(report)
+                if self.extract_files:
+                    raw_reports = unzip(attach['content'].read(), self.extract_files,
+                                        return_names=True, logger=self.logger)
+                else:
+                    raw_reports = ((None, attach['content'].read()), )
+
+                for file_name, raw_report in raw_reports:
+                    report = self.new_report()
+                    report.add("raw", raw_report)
+                    if file_name:
+                        report.add("extra.file_name", file_name)
+                    report["extra.email_subject"] = message.subject
+                    report["extra.email_from"] = ','.join(x['email'] for x in message.sent_from)
+                    report["extra.email_message_id"] = message.message_id
+                    self.send_message(report)
 
                 # Only mark read if message relevant to this instance,
                 # so other instances watching this mailbox will still

@@ -62,10 +62,12 @@ class TestConf(unittest.TestCase):
         # Check Json syntax and style
         self.assertEqual(to_json(interpreted), fcontent)
 
-        # check if everything from report is in event and equal, except raw-description
+        # check if everything from report is in event and equal, except raw's and extra's description
         del interpreted['report']['raw']['description']
+        del interpreted['report']['extra']['description']
         event_copy = interpreted['event'].copy()
         del event_copy['raw']['description']
+        del event_copy['extra']['description']
         self.assertDictContainsSubset(interpreted['report'], event_copy)
 
         # check for valid regex, length and type

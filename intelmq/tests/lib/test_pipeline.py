@@ -98,6 +98,18 @@ class TestPythonlist(unittest.TestCase):
         self.assertEqual(self.pipe.count_queued_messages('test-bot-input', 'test-bot-output'),
                          {'test-bot-input': 1, 'test-bot-output': 2})
 
+    def test_has_message(self):
+        self.assertFalse(self.pipe._has_message)
+        self.pipe.state['test-bot-input'] = [SAMPLES['normal'][0]]
+        self.pipe.receive()
+        self.assertTrue(self.pipe._has_message)
+
+    def test_reject(self):
+        self.pipe.state['test-bot-input'] = [SAMPLES['normal'][0]]
+        self.pipe.receive()
+        self.pipe.reject_message()
+        self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
+
     def tearDown(self):
         self.pipe.state = {}
 
@@ -141,6 +153,18 @@ class TestRedis(unittest.TestCase):
         self.pipe.send(SAMPLES['normal'][1])
         self.pipe.send(SAMPLES['unicode'][0])
         self.assertEqual(self.pipe.count_queued_messages('test'), {'test': 3})
+
+    def test_has_message(self):
+        self.assertFalse(self.pipe._has_message)
+        self.pipe.send(SAMPLES['normal'][0])
+        self.pipe.receive()
+        self.assertTrue(self.pipe._has_message)
+
+    def test_reject(self):
+        self.pipe.send(SAMPLES['normal'][0])
+        self.pipe.receive()
+        self.pipe.reject_message()
+        self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
 
     def tearDown(self):
         self.pipe.disconnect()
@@ -189,6 +213,18 @@ class TestAmqp(unittest.TestCase):
         self.pipe.send(SAMPLES['unicode'][0])
         time.sleep(0.006)
         self.assertEqual(self.pipe.count_queued_messages('test'), {'test': 3})
+
+    def test_has_message(self):
+        self.assertFalse(self.pipe._has_message)
+        self.pipe.send(SAMPLES['normal'][0])
+        self.pipe.receive()
+        self.assertTrue(self.pipe._has_message)
+
+    def test_reject(self):
+        self.pipe.send(SAMPLES['normal'][0])
+        self.pipe.receive()
+        self.pipe.reject_message()
+        self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
 
     def tearDown(self):
         self.clear()

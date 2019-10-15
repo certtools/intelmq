@@ -2,7 +2,7 @@
 from html.parser import HTMLParser
 
 from intelmq.lib import utils
-from intelmq.lib.bot import ParserBot
+from intelmq.lib.bot import Bot
 
 
 class MyHTMLParser(HTMLParser):
@@ -21,7 +21,7 @@ class MyHTMLParser(HTMLParser):
 parser = MyHTMLParser()
 
 
-class WebinspektorParserBot(ParserBot):
+class WebinspektorParserBot(Bot):
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])

@@ -24,10 +24,6 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import DateTime
 
-TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
-                    'windows_nt': DateTime.from_windows_nt,
-                    'epoch_millis': DateTime.from_epoch_millis,
-                    None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
 
 try:
     from bs4 import BeautifulSoup as bs
@@ -62,24 +58,30 @@ class HTMLTableParserBot(Bot):
         self.split_index = getattr(self.parameters, "split_index", 0)
 
         self.time_format = getattr(self.parameters, "time_format", None)
-        if self.time_format not in TIME_CONVERSIONS.keys():
+        if self.time_format and self.time_format.split('|')[0] not in DateTime.TIME_CONVERSIONS.keys():
             raise InvalidArgument('time_format', got=self.time_format,
-                                  expected=list(TIME_CONVERSIONS.keys()),
+                                  expected=list(DateTime.TIME_CONVERSIONS.keys()),
                                   docs='docs/Bots.md')
         self.default_url_protocol = getattr(self.parameters, 'default_url_protocol', 'http://')
+
+        self.parser = getattr(self.parameters, 'html_parser', 'html.parser')
 
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])
 
-        soup = bs(raw_report, 'html.parser')
-        if self.attr_name is not None:
+        soup = bs(raw_report, self.parser)
+        if self.attr_name:
             table = soup.find_all('table', attrs={self.attr_name: self.attr_value})
+            self.logger.debug('Found %d table(s) by attribute %r: %r.',
+                              (len(table), self.attr_name, self.attr_value))
         else:
             table = soup.find_all('table')
+            self.logger.debug('Found %d table(s).', len(table))
         table = table[self.table_index]
 
         rows = table.find_all('tr')[self.skip_row:]
+        self.logger.debug('Handling %d row(s).', len(rows))
 
         for feed in rows:
 
@@ -106,9 +108,9 @@ class HTMLTableParserBot(Bot):
                     if key in ["time.source", "time.destination"]:
                         try:
                             data = int(data)
-                        except:
+                        except ValueError:
                             pass
-                        data = TIME_CONVERSIONS[self.time_format](data)
+                        data = DateTime.convert(data, format=self.time_format)
 
                     elif key.endswith('.url'):
                         if not data:

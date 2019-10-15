@@ -2,6 +2,123 @@ CHANGELOG
 ==========
 
 
+2.1.0 (2019-10-15)
+-----------------
+
+### Core
+- `intelmq.lib.harmonization`:
+  - Use correct parent classes.
+  - Add `DateTime.convert` as interface for all existing conversion functions.
+  - add `DateTime.convert_from_format`.
+  - add `DateTime.convert_from_format_midnight`.
+  - add `DateTime.convert_fuzzy`.
+- `intelmq.lib.pipeline`:
+  - Redis: Use single connection client if calling bot is not multithreaded. Gives a small speed advantage.
+  - Require the bot instance as parameter for all pipeline classes.
+  - New internal variable `_has_message` to keep the state of the pipeline.
+  - Split receive and acknowledge into public-facing and private methods.
+  - Add `reject_message` method to the Pipeline class for explicit requeue of messages.
+  - AMQP:
+    - Make exchange configurable.
+    - If exchange is set, the queues are not declared, the queue name is for routing used by exchanges.
+- `intelmq.lib.bot`:
+  - Log message after successful bot initialization, no log message anymore for ready pipeline.
+  - Use existing current message if receive is called and the current message still exists.
+  - Fix handling of received messaged after a sighup that happend during a blocking receving connection using explicit rejection (#1438).
+  - New method `_parse_common_parameters` called before `init` to parse commonly used argument. Currently supported: `extract_files`.
+- `intelmq.lib.test`:
+  - Fix the tests broker by providing the testing pipeline.
+- `intelmq.lib.utils`:
+  - `unzip`:
+    - new parameter `return_names` to optionally return the file names.
+    - support for zip
+    - new parameters `try_zip`, `try_gzip` and `try_tar` to control which compressions are tried.
+    - rewritten to an iterative approach
+  - add `file_name_from_response` to extract a file name from a Response object for downloaded files.
+- `intelmq.lib.upgrades`: Added `v210_deprecations` for deprecated parameters.
+
+### Harmonization
+- Add extra to reports.
+
+### Bots
+#### Collectors
+- `intelmq.bots.collectors.http.collector_http`:
+  - More extensive usage of `intelmq.lib.utils.unzip`.
+  - Save the file names in the report if files have been extracted form an archive.
+- `intelmq.bots.collectors.rt.collector_rt`:
+  - Save ticket information/metadata in the extra fields of the report.
+  - Support for RT 3.8 and RT 4.4.
+  - New parameters `extract_attachment` and `extract_download` for generic archive extraction and consistency. The parameter `unzip_attachment` is deprecated.
+- `intelmq.bots.collectors.mail.*`: Save email information/metadata in the extra fields of the report. See the bots documentation for a complete list of provided data.
+  - `intelmq.bots.collectors.mail.collector_mail_attach`: Check for existence/validity of the `attach_regex` parameter.
+  - Use the lib's `unzip` function for uncompressing attachments and use the .
+  - `intelmq.bots.collectors.mail.collector_mail_url`: Save the file name of the downloaded file as `extra.file_name`.
+- `intelmq.bots.collectors.amqp.collector_amqp`: New collector to collect data from (remote) AMQP servers, for bot IntelMQ as well as external data.
+  - use default SSL context for client purposes, fixes compatibility with python < 3.6 if TLS is used.
+
+#### Parsers
+- `intelmq.bot.parsers.html_table.parser`:
+  * New parameter "html_parser".
+  * Use time conversion functions directly from `intelmq.lib.harmonization.DateTime.convert`.
+  - Limit lxml dependency on 3.4 to < 4.4.0 (incompatibility).
+- `intelmq.bots.parsers.netlab_360.parser`: Add support for hajime scanners.
+- `intelmq.bots.parsers.hibp.parser_callback`: A new parser to parse data retrieved from a HIBP Enterprise Subscription.
+- `intelmq.bots.parsers.shadowserver.parser`:
+  - Ability to detect the feed base on the reports's field `extra.file_name`, so the parameter `feedname` is no longer required and one configured parser can parse any feed (#1442).
+
+#### Experts
+- Add geohash expert.
+- `intelmq.bot.experts.generic_db_lookup.expert`
+  - new optional parameter `engine` with `postgresql` (default) and `sqlite` (new) as possible values.
+
+#### Outputs
+- Add `intelmq.bots.outputs.touch.output`.
+- `intelmq.bot.outputs.postgresql.output`:
+  - deprecated in favor of `intelmq.bot.outputs.sql.output`
+  - Compatibility shim will be available in the 2.x series.
+- `intelmq.bot.outputs.sql.output` added generic SQL output bot. Comparted to
+  - new optional parameter `engine` with `postgresql` (default) and `sqlite` (new) as possible values.
+- `intelmq.bots.outputs.stomp.output`: New parameters `message_hierarchical_output`, `message_jsondict_as_string`, `message_with_type`, `single_key`.
+
+### Documentation
+- Feeds:
+  - Add ViriBack feed.
+  - Add Have I Been Pwned Enterprise Callback.
+- `intelmq.tests.bots.outputs.amqptopic.test_output`: Added.
+- Move the documentation of most bots from separate README files to the central Bots.md and feeds.yaml files.
+
+### Tests
+- Travis:
+  - Use UTC timezone.
+- Tests for `utils.unzip`.
+- Add a new asset: Zip archive with two files, same as with tar.gz archive.
+- Added tests for the Mail Attachment & Mail URL collectors.
+- Ignore logging-tests on Python 3.7 temporarily (#1342).
+
+### Tools
+- intelmqctl:
+  - Use green and red text color for some interactive output to indicate obvious errors or the absence of them.
+- intelmqdump:
+  - New edit action `v` to modify a message saved in the dump (#1284).
+
+### Contrib
+* malware name mapping:
+  * Add support for MISP treat actors data, see it's README for more information.
+    * And handle empty synonyms in misp's galxies data.
+  * Move apply-Script to the new EventDB directory
+* EventDB: Scripts for applying malware name mapping and domain suffixes to an EventDB.
+
+### Known issues
+- MongoDB authentication: compatibility on different MongoDB and pymongo versions (#1439)
+- ctl: shell colorizations are logged (#1436)
+- http stream collector: retry on regular connection problems? (#1435)
+- tests: capture logging with context manager (#1342)
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952)
+- n6 parser: mapping is modified within each run (#905)
+- reverse DNS: Only first record is used (#877)
+- Corrupt dump files when interrupted during writing (#870)
+
+
 2.0.2 (2019-10-14)
 -----------------
 
@@ -710,7 +827,7 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
     False: An existing value will not be overwritten (previously an exception has been raised when the value was given).
     None (default): If the value exists an `KeyExists` exception is thrown (previously the same as False).
     This allows shorter code in the bots, as an 'overwrite' configuration parameter can be directly passed to the function.
-  - The message class has now the possibility to return a default value for non-exisiting fields, see `Message.set_default_value`.
+  - The message class has now the possibility to return a default value for non-existing fields, see `Message.set_default_value`.
   - Message.get behaves the same like `Message.__getitem__` (#1305).
 - Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
 - lib/pipeline:

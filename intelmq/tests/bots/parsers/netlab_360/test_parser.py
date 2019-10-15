@@ -17,6 +17,10 @@ with open(os.path.join(os.path.dirname(__file__), 'magnitude.txt')) as handle:
 with open(os.path.join(os.path.dirname(__file__), 'mirai.txt')) as handle:
     MIRAI_FILE = handle.read()
 
+with open(os.path.join(os.path.dirname(__file__), 'hajime.txt')) as handle:
+    HAJIME_FILE = handle.read()
+
+
 DGA_REPORT = {'feed.name': 'Netlab 360 DGA',
               'feed.url': 'http://data.netlab.360.com/feeds/dga/dga.txt',
               '__type': 'Report',
@@ -87,6 +91,23 @@ MIRAI_EVENTS = {'feed.name': 'Netlab 360 Mirai Scanner',
                     'classification.identifier': 'mirai',
                     'raw': 'MjAxNi0wOC0wMSAxMjo0NjowMQlzaXA9MTA5Ljg2LjE4Mi4yNDkJZHBvcnQ9MjM=',
                    }
+HAJIME_REPORT = {'feed.name': 'Netlab 360 Hajime Scanner',
+                 'feed.url': 'https://data.netlab.360.com/feeds/hajime-scanner/bot.list',
+                 '__type': 'Report',
+                 'time.observation': '2016-01-01T00:00:00+00:00',
+                 'raw': utils.base64_encode(HAJIME_FILE)
+                 }
+
+HAJIME_EVENTS = {'feed.name': 'Netlab 360 Hajime Scanner',
+                 'feed.url': 'https://data.netlab.360.com/feeds/hajime-scanner/bot.list',
+                 '__type': 'Event',
+                 'time.observation': '2016-01-01T00:00:00+00:00',
+                 'time.source': '2017-09-11T00:00:00+00:00',
+                 'source.ip': '192.0.2.45',
+                 'classification.type': 'scanner',
+                 'classification.identifier': 'hajime',
+                 'raw': 'MjAxNy0wOS0xMQlpcD0xOTIuMC4yLjQ1',
+                   }
 
 
 class TestNetlab360ParserBot(test.BotTestCase, unittest.TestCase):
@@ -112,6 +133,12 @@ class TestNetlab360ParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = MIRAI_REPORT
         self.run_bot()
         self.assertMessageEqual(0, MIRAI_EVENTS)
+
+    def test_hajime(self):
+        self.input_message = HAJIME_REPORT
+        self.run_bot()
+        self.assertMessageEqual(0, HAJIME_EVENTS)
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

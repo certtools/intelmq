@@ -18,6 +18,7 @@ OUTPUT = {"__type": "Report",
           "feed.accuracy": 100.,
           "feed.url": "file://localhost" + PATH,
           "raw": utils.base64_encode(EXAMPLE_FILE),
+          "extra.file_name": "testfile.txt",
           }
 
 
