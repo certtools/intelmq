@@ -3,14 +3,10 @@ NEWS
 
 See the changelog for a full list of changes.
 
-2.1.0 Feature release (unreleased)
+2.1.0 Feature release (2019-10-15)
 ----------------------------------
 
-### Requirements
-
-### Tools
-
-### Harmonization
+Run `intelmqctl upgrade-config` and `intelmqctl check` after the upgrade.
 
 ### Configuration
 #### Shadowserver Parser
@@ -25,10 +21,6 @@ The PostgreSQL Output Bot has been integrated into the new and generic SQL Outpu
 * parameters:
   * new: `engine` = `postgresql`
 IntelMQ versions 2.x will be compatible with previous configurations. `intelmqctl upgrade-config` migrates configurations.
-
-### Libraries
-
-### Postgres databases
 
 
 2.0.2 Bugfix release (2019-10-14)

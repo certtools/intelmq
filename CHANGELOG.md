@@ -2,10 +2,8 @@ CHANGELOG
 ==========
 
 
-2.1.0 (unreleased)
+2.1.0 (2019-10-15)
 -----------------
-
-### Configuration
 
 ### Core
 - `intelmq.lib.harmonization`:
@@ -38,8 +36,6 @@ CHANGELOG
     - rewritten to an iterative approach
   - add `file_name_from_response` to extract a file name from a Response object for downloaded files.
 - `intelmq.lib.upgrades`: Added `v210_deprecations` for deprecated parameters.
-
-### Development
 
 ### Harmonization
 - Add extra to reports.
@@ -91,8 +87,6 @@ CHANGELOG
 - `intelmq.tests.bots.outputs.amqptopic.test_output`: Added.
 - Move the documentation of most bots from separate README files to the central Bots.md and feeds.yaml files.
 
-### Packaging
-
 ### Tests
 - Travis:
   - Use UTC timezone.
@@ -115,6 +109,15 @@ CHANGELOG
 * EventDB: Scripts for applying malware name mapping and domain suffixes to an EventDB.
 
 ### Known issues
+- MongoDB authentication: compatibility on different MongoDB and pymongo versions (#1439)
+- ctl: shell colorizations are logged (#1436)
+- http stream collector: retry on regular connection problems? (#1435)
+- tests: capture logging with context manager (#1342)
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952)
+- n6 parser: mapping is modified within each run (#905)
+- reverse DNS: Only first record is used (#877)
+- Corrupt dump files when interrupted during writing (#870)
+
 
 2.0.2 (2019-10-14)
 -----------------

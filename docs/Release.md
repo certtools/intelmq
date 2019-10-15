@@ -10,7 +10,7 @@
 - [Prepare new version](#prepare-new-version)
 
 
-General assumption: You are working on branch maintenance, the next version is a bug fix release. For feature releaese it is slightly different.
+General assumption: You are working on branch maintenance, the next version is a bug fix release. For feature releaeses it is slightly different.
 
 ## Check before
 

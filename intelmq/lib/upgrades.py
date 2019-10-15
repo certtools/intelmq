@@ -18,7 +18,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v200_defaults_ssl_ca_certificate',
            'v111_defaults_process_manager',
            'v202_fixes',
-           'v210_deprecations_1',
+           'v210_deprecations',
            ]
 
 
@@ -246,7 +246,7 @@ def v202_fixes(defaults, runtime, dry_run):
     return changed, defaults, runtime
 
 
-def v210_deprecations_1(defaults, runtime, dry_run):
+def v210_deprecations(defaults, runtime, dry_run):
     """
     Migrating configuration.
     """
@@ -284,5 +284,5 @@ UPGRADES = OrderedDict([
                  v200_defaults_ssl_ca_certificate)),
     ((2, 0, 1), ()),
     ((2, 0, 2), (v202_fixes, )),
-    ((2, 1, 0), (v210_deprecations_1, )),
+    ((2, 1, 0), (v210_deprecations, )),
 ])
