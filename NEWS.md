@@ -3,6 +3,25 @@ NEWS
 
 See the changelog for a full list of changes.
 
+2.1.0 Feature release (2019-10-15)
+----------------------------------
+
+Run `intelmqctl upgrade-config` and `intelmqctl check` after the upgrade.
+
+### Configuration
+#### Shadowserver Parser
+
+The Shadowserver Parser is now able to detect the feed base on the report's field `extra.file_name`, added by collectors. Have a look at their documentation for more details.
+
+#### PostgreSQL Output
+The PostgreSQL Output Bot has been integrated into the new and generic SQL Output Bot
+* module name:
+  * old: `intelmq.bots.outputs.postgresql.output`
+  * new: `intelmq.bots.outputs.sql.output`
+* parameters:
+  * new: `engine` = `postgresql`
+IntelMQ versions 2.x will be compatible with previous configurations. `intelmqctl upgrade-config` migrates configurations.
+
 
 2.0.2 Bugfix release (2019-10-14)
 ---------------------------------

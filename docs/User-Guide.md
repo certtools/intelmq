@@ -268,13 +268,15 @@ You need to set the parameter `source_pipeline_broker`/`destination_pipeline_bro
 * `destination_pipeline_username`
 * `destination_pipeline_password`
 * `destination_pipeline_socket_timeout` (default: no timeout)
-* `destination_pipeline_amqp_virtual_host` (default: `'/`)
+* `destination_pipeline_amqp_exchange`: Only change/set this if you know what you do. If set, the destination queues are not declared as queues, but used as routing key. (default: `''`).
+* `destination_pipeline_amqp_virtual_host` (default: `'/'`)
 * `source_pipeline_host` (default: `'127.0.0.1'`)
 * `source_pipeline_port` (default: 5672)
 * `source_pipeline_username`
 * `source_pipeline_password`
 * `source_pipeline_socket_timeout` (default: no timeout)
-* `source_pipeline_amqp_virtual_host` (default: `'/`)
+* `source_pipeline_amqp_exchange`: Only change/set this if you know what you do. If set, the destination queues are not declared as queues, but used as routing key. (default: `''`).
+* `source_pipeline_amqp_virtual_host` (default: `'/'`)
 
 For getting the queue sizes, `intelmqctl` needs to connect to the monitoring interface of RabbitMQ. If the monitoring interface is not available under "http://{host}:15671" you can manually set using the parameter `intelmqctl_rabbitmq_monitoring_url`.
 In a RabbitMQ's default configuration you might not provide a user account, as by default the administrator (`guest`:`guest`) allows full access from localhost. If you create a separate user account, make sure to add the tag "monitoring" to it, otherwise IntelMQ can't fetch the queue sizes.
@@ -657,6 +659,11 @@ Interactive actions after a file has been selected:
   > s 0,4,5
   Show the selected IP in a readable format. It's still a raw format from
   repr, but with newlines for message and traceback.
+- v, Edit by ID
+  > v id
+  > v 0
+  > v 1,2
+  Opens an editor (by calling `sensible-editor`) on the message. The modified message is then saved in the dump.
 - q, Quit
   > q
 
@@ -702,7 +709,7 @@ rm -r /opt/intelmq
 First of all, IntelMQ is a message (event) processing system: it collects feeds, processes them, enriches them, filters them and then stores them somewhere or sends them to another system. It does this in a composable, data flow oriented fashion, based on single events. There are no aggregation or grouping features. Now, if you want to integrate IntelMQ with your ticket system or some other system, you need to send its output to somewhere where your ticket system or other services can pick up IntelMQ's data. This could be a database, splunk, or you could send your events directly via email to a ticket system.
 
 Different users came up with different solutions for this, each of them fitting their own organisation. Hence these solutions are not part of the core IntelMQ repository. 
-  * CERT.at uses a postgresql DB (postgres output bot) and has a small tool `intelmqcli` which fetches the events in the postgresql DB which are marked as "new" and will group them and send them out via the RT ticket system.
+  * CERT.at uses a postgresql DB (sql output bot) and has a small tool `intelmqcli` which fetches the events in the postgresql DB which are marked as "new" and will group them and send them out via the RT ticket system.
   * Others, including BSI, use a tool called `intelmq-mailgen`. It sends E-Mails to the recipients, optionally PGP-signed with defined text-templates, CSV formatted attachments with grouped events and generated ticket numbers.
 
 The following lists external github repositories which you might consult for examples on how to integrate IntelMQ into your workflow:

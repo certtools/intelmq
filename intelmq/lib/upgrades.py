@@ -18,6 +18,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v200_defaults_ssl_ca_certificate',
            'v111_defaults_process_manager',
            'v202_fixes',
+           'v210_deprecations',
            ]
 
 
@@ -245,6 +246,35 @@ def v202_fixes(defaults, runtime, dry_run):
     return changed, defaults, runtime
 
 
+def v210_deprecations(defaults, runtime, dry_run):
+    """
+    Migrating configuration.
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.rt.collector_rt":
+            # from 29c4b2c42b126ef51ac7287edc1a9fee28ab27fd to ce96e6d995d420e117a49a22d3bfdea762d899ec
+            if "extract_files" in bot["parameters"]:
+                bot["parameters"]["extract_attachment"] = bot["parameters"]["extract_files"]
+                del bot["parameters"]["extract_files"]
+                changed = True
+            if "unzip_attachment" not in bot["parameters"]:
+                continue
+            if "extract_files" not in bot["parameters"]:
+                bot["parameters"]["extract_attachment"] = bot["parameters"]["unzip_attachment"]
+            del bot["parameters"]["unzip_attachment"]
+            changed = True
+        if bot["module"] in ("intelmq.bots.experts.generic_db_lookup.expert",
+                             "intelmq.bots.outputs.postgresql.output"):
+            if "engine" not in bot["parameters"]:
+                bot["parameters"]["engine"] = "postgresql"
+                changed = True
+            if bot["module"] == "intelmq.bots.outputs.postgresql.output":
+                bot["module"] = "intelmq.bots.outputs.sql.output"
+                changed = True
+    return changed, defaults, runtime
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -254,4 +284,5 @@ UPGRADES = OrderedDict([
                  v200_defaults_ssl_ca_certificate)),
     ((2, 0, 1), ()),
     ((2, 0, 2), (v202_fixes, )),
+    ((2, 1, 0), (v210_deprecations, )),
 ])

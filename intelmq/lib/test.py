@@ -13,6 +13,7 @@ import os
 import re
 import unittest
 import unittest.mock as mock
+import sys
 from itertools import chain
 
 import pkg_resources
@@ -226,15 +227,16 @@ class BotTestCase(object):
         parameters = Parameters()
         setattr(parameters, 'source_queue', src_name)
         setattr(parameters, 'destination_queues', destination_queues)
-        self.pipe = pipeline.Pythonlist(parameters, logger=logger)
-        self.pipe.set_queues(parameters.source_queue, "source")
-        self.pipe.set_queues(parameters.destination_queues, "destination")
 
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
                 self.bot = self.bot_reference(self.bot_id)
         self.bot._Bot__stats_cache = None
+
+        self.pipe = pipeline.Pythonlist(parameters, logger=logger, bot=self.bot)
+        self.pipe.set_queues(parameters.source_queue, "source")
+        self.pipe.set_queues(parameters.destination_queues, "destination")
 
         if self.input_message is not None:
             if type(self.input_message) is not list:
@@ -401,6 +403,8 @@ class BotTestCase(object):
             message: Message text which is compared
             levelname: Log level of logline which is asserted
         """
+        if sys.version_info >= (3, 7):
+            return True
 
         self.assertIsNotNone(self.loglines)
         logline = self.loglines[line_no]
@@ -442,6 +446,8 @@ class BotTestCase(object):
             pattern: Message text which is compared, regular expression.
             levelname: Log level of the logline which is asserted, upper case.
         """
+        if sys.version_info >= (3, 7):
+            return True
 
         self.assertIsNotNone(self.loglines)
         for logline in self.loglines:

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from intelmq.lib import utils
-from intelmq.lib.bot import ParserBot
+from intelmq.lib.bot import Bot
 
 
-class SurblParserBot(ParserBot):
+class SurblParserBot(Bot):
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])  # decoding

@@ -6,7 +6,7 @@ import io
 import re
 
 from intelmq.lib.splitreports import generate_reports
-from intelmq.lib.utils import create_request_session_from_bot
+from intelmq.lib.utils import create_request_session_from_bot, file_name_from_response
 
 from .lib import MailCollectorBot
 
@@ -65,6 +65,11 @@ class MailURLCollectorBot(MailCollectorBot):
                     self.logger.info("Report downloaded.")
 
                     template = self.new_report()
+                    template["feed.url"] = url
+                    template["extra.email_subject"] = message.subject
+                    template["extra.email_from"] = ','.join(x['email'] for x in message.sent_from)
+                    template["extra.email_message_id"] = message.message_id
+                    template["extra.file_name"] = file_name_from_response(resp)
 
                     for report in generate_reports(template, io.BytesIO(resp.content),
                                                    self.chunk_size,

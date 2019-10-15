@@ -17,6 +17,11 @@ class MailCollectorBot(CollectorBot):
         if imbox is None:
             raise ValueError('Could not import imbox. Please install it.')
 
+        if getattr(self.parameters, 'attach_unzip', None) and not self.extract_files:
+            self.parameters.extract_files = True
+            self.logger.warning("The parameter 'attach_unzip' is deprecated and will "
+                                "be removed in version 4.0. Use 'extract_files' instead.")
+
     def connect_mailbox(self):
         self.logger.debug("Connecting to %s.", self.parameters.mail_host)
         ca_file = getattr(self.parameters, 'ssl_ca_certificate', None)

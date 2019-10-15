@@ -11,6 +11,7 @@ import io
 import os
 import tempfile
 import unittest
+import requests
 
 import intelmq.lib.utils as utils
 
@@ -191,6 +192,57 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(utils.version_smaller((1, 0, 0, 'beta', 3), (1, 0, 0, 'alpha', 0)))
         self.assertFalse(utils.version_smaller((1, 0, 0), (1, 0, 0, 'alpha', 99)))
         self.assertFalse(utils.version_smaller((1, 0, 0), (1, 0, 0, 'beta')))
+
+    def test_unzip_tar_gz(self):
+        """ Test the unzip function with a tar gz file. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/two_files.tar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True)
+        self.assertEqual(tuple(result), (b'bar text\n', b'foo text\n'))
+
+    def test_unzip_tar_gz_return_names(self):
+        """ Test the unzip function with a tar gz file and return_names. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/two_files.tar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True, return_names=True)
+        self.assertEqual(tuple(result), (('bar', b'bar text\n'),
+                                         ('foo', b'foo text\n')))
+
+    def test_unzip_gz(self):
+        """ Test the unzip function with a gz file. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/foobar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True)
+        self.assertEqual(result, (b'bar text\n', ))
+
+    def test_unzip_gz_name(self):
+        """ Test the unzip function with a gz file. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/foobar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True, return_names=True)
+        self.assertEqual(result, ((None, b'bar text\n'), ))
+
+    def test_unzip_zip(self):
+        """ Test the unzip function with a zip file. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/two_files.zip')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True)
+        self.assertEqual(tuple(result), (b'bar text\n', b'foo text\n'))
+
+    def test_unzip_zip_return_names(self):
+        """ Test the unzip function with a zip file and return_names. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/two_files.zip')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True, return_names=True)
+        self.assertEqual(tuple(result), (('bar', b'bar text\n'),
+                                         ('foo', b'foo text\n')))
+
+    def test_file_name_from_response(self):
+        """ test file_name_from_response """
+        response = requests.Response()
+        response.headers['Content-Disposition'] = 'attachment; filename=2019-09-09-drone_brute_force-austria-geo.csv'
+        self.assertEqual(utils.file_name_from_response(response),
+                         '2019-09-09-drone_brute_force-austria-geo.csv')
 
 
 if __name__ == '__main__':  # pragma: no cover

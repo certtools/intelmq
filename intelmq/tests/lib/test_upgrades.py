@@ -92,6 +92,106 @@ DEP_110_EXP = {"n6-collector": {
         "query_ripe_stat_ip": True,
     },
 }}
+V210 = {"test-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.rt.collector_rt",
+    "parameters": {
+        "unzip_attachment": True,
+    }
+},
+    "test-collector2": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.rt.collector_rt",
+    "parameters": {
+    },
+},
+    "postgresql-output": {
+    "group": "Output",
+    "module": "intelmq.bots.outputs.postgresql.output",
+    "parameters": {
+        "autocommit": True,
+        "database": "intelmq-events",
+        "host": "localhost",
+                "jsondict_as_string": True,
+                "password": "<password>",
+                "port": "5432",
+                "sslmode": "require",
+                "table": "events",
+                "user": "intelmq"
+    },
+},
+    "db-lookup": {
+    "module": "intelmq.bots.experts.generic_db_lookup.expert",
+    "parameters": {
+        "database": "intelmq",
+        "host": "localhost",
+                "match_fields": {
+                    "source.asn": "asn"
+                },
+        "overwrite": False,
+        "password": "<password>",
+        "port": "5432",
+                "replace_fields": {
+                    "contact": "source.abuse_contact",
+                    "note": "comment"
+                },
+        "sslmode": "require",
+        "table": "contacts",
+        "user": "intelmq"
+    }
+}
+}
+V210_EXP = {"test-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.rt.collector_rt",
+    "parameters": {
+        "extract_attachment": True,
+    }
+},
+    "test-collector2": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.rt.collector_rt",
+    "parameters": {
+    },
+},
+    "postgresql-output": {
+    "group": "Output",
+    "module": "intelmq.bots.outputs.sql.output",
+    "parameters": {
+        "autocommit": True,
+        "database": "intelmq-events",
+        "engine": "postgresql",
+        "host": "localhost",
+                "jsondict_as_string": True,
+                "password": "<password>",
+                "port": "5432",
+                "sslmode": "require",
+                "table": "events",
+                "user": "intelmq"
+    },
+},
+    "db-lookup": {
+    "module": "intelmq.bots.experts.generic_db_lookup.expert",
+    "parameters": {
+        "engine": "postgresql",
+        "database": "intelmq",
+        "host": "localhost",
+                "match_fields": {
+                    "source.asn": "asn"
+                },
+        "overwrite": False,
+        "password": "<password>",
+        "port": "5432",
+                "replace_fields": {
+                    "contact": "source.abuse_contact",
+                    "note": "comment"
+                },
+        "sslmode": "require",
+        "table": "contacts",
+        "user": "intelmq"
+    }
+}
+}
 
 
 def generate_function(function):
@@ -134,6 +234,12 @@ class TestUpgradeLib(unittest.TestCase):
         result = upgrades.v202_fixes({}, V202, False)
         self.assertTrue(result[0])
         self.assertEqual(V202_EXP, result[2])
+
+    def test_v210_deprecations(self):
+        """ Test v210_deprecations """
+        result = upgrades.v210_deprecations({}, V210, True)
+        self.assertTrue(result[0])
+        self.assertEqual(V210_EXP, result[2])
 
 
 for name in upgrades.__all__:

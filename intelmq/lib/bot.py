@@ -31,7 +31,7 @@ from intelmq.lib import cache, exceptions, utils
 from intelmq.lib.pipeline import PipelineFactory
 from intelmq.lib.utils import RewindableFileHandle
 
-__all__ = ['Bot', 'CollectorBot', 'ParserBot']
+__all__ = ['Bot', 'CollectorBot', 'ParserBot', 'SQLBot']
 
 
 class Bot(object):
@@ -112,7 +112,7 @@ class Bot(object):
 
             """ Multithreading """
             if (getattr(self.parameters, 'instances_threads', 0) > 1 and
-                not self.is_multithreaded and
+                    not self.is_multithreaded and
                     self.is_multithreadable and
                     not disable_multithreading):
                 self.logger.handlers = []
@@ -124,6 +124,7 @@ class Bot(object):
                                                    stack: Optional[object]):
                     for event in sighup_events:
                         event.set()
+
                 signal.signal(signal.SIGHUP, handle_sighup_signal_threading)
 
                 for i in range(num_instances):
@@ -153,6 +154,7 @@ class Bot(object):
             self.__load_pipeline_configuration()
             self.__load_harmonization_configuration()
 
+            self._parse_common_parameters()
             self.init()
 
             if not self.__instance_id:
@@ -177,6 +179,7 @@ class Bot(object):
 
             self.stop()
             raise
+        self.logger.info("Bot initialization completed.")
 
         self.__stats_cache = cache.Cache(host=getattr(self.parameters,
                                                       "statistics_host",
@@ -481,7 +484,7 @@ class Bot(object):
     def __check_bot_id(self, name: str):
         res = re.fullmatch(r'([0-9a-zA-Z\-]+)(\.[0-9]+)?', name)
         if res:
-            if not(res.group(2) and threading.current_thread() == threading.main_thread()):
+            if not (res.group(2) and threading.current_thread() == threading.main_thread()):
                 return name, res.group(1), res.group(2)[1:] if res.group(2) else None
         self.__log_buffer.append(('error',
                                   "Invalid bot id, must match '"
@@ -494,8 +497,10 @@ class Bot(object):
             self.__source_pipeline = PipelineFactory.create(self.parameters,
                                                             logger=self.logger,
                                                             direction="source",
-                                                            queues=self.__source_queues)
+                                                            queues=self.__source_queues,
+                                                            bot=self)
             self.__source_pipeline.connect()
+            self.__current_message = None
             self.logger.debug("Connected to source queue.")
 
         if self.__destination_queues:
@@ -509,8 +514,6 @@ class Bot(object):
             self.logger.debug("Connected to destination queues.")
         else:
             self.logger.debug("No destination queues to load.")
-
-        self.logger.info("Pipeline ready.")
 
     def __disconnect_pipelines(self):
         """ Disconnecting pipelines. """
@@ -556,16 +559,33 @@ class Bot(object):
                                              path_permissive=path_permissive)
 
     def receive_message(self):
+        """
+
+
+        If the bot is reloaded when waiting for an incoming message, the received message
+        will be rejected to the pipeline in the first place to get to a clean state.
+        Then, after reloading, the message will be retrieved again.
+        """
+        if self.__current_message:
+            self.logger.debug("Reusing existing current message as incoming.")
+            return self.__current_message
+
         self.logger.debug('Waiting for incoming message.')
         message = None
         while not message:
             message = self.__source_pipeline.receive()
             if not message:
                 self.logger.warning('Empty message received. Some previous bot sent invalid data.')
+                self.__handle_sighup()
                 continue
 
-        # handle a sighup which happened during blocking read
-        self.__handle_sighup()
+        # * handle a sighup which happened during blocking read
+        # * re-queue the message before reloading
+        #   https://github.com/certtools/intelmq/issues/1438
+        if self.__sighup.is_set():
+            self.__source_pipeline.reject_message()
+            self.__handle_sighup()
+            return self.receive_message()
 
         try:
             self.__current_message = libmessage.MessageFactory.unserialize(message,
@@ -789,6 +809,32 @@ class Bot(object):
         """
         pass
 
+    def _parse_common_parameters(self):
+        """
+        Parses and sanitizes commonly used parameters:
+
+         * extract_files
+        """
+        self._parse_extract_file_parameter('extract_files')
+
+    def _parse_extract_file_parameter(self, parameter_name='extract_files'):
+        """
+        Parses and sanitizes commonly used parameters:
+
+         * extract_files
+        """
+        parameter_value = getattr(self.parameters, parameter_name, None)
+        setattr(self, parameter_name, parameter_value)
+        if parameter_value and isinstance(parameter_value, str):
+            setattr(self, parameter_name, parameter_value.split(","))
+            self.logger.debug('Extracting files from archives: '
+                              "'%s'.", "', '".join(getattr(self, parameter_name)))
+        elif parameter_value and isinstance(parameter_value, (list, tuple)):
+            self.logger.debug('Extracting files from archives: '
+                              "'%s'.", "', '".join(parameter_value))
+        elif parameter_value:
+            self.logger.debug('Extracting all files from archives.')
+
 
 class ParserBot(Bot):
     csv_params = {}
@@ -1011,6 +1057,7 @@ class CollectorBot(Bot):
         """"
         Parameters:
             messages: Instances of intelmq.lib.message.Message class
+            path: Named queue the message will be send to
             auto_add: Add some default report fields form parameters
         """
         messages = filter(self.__filter_empty_report, messages)
@@ -1020,6 +1067,104 @@ class CollectorBot(Bot):
 
     def new_report(self):
         return libmessage.Report()
+
+
+class SQLBot(Bot):
+    """
+    Inherit this bot so that it handles DB connection for you.
+    You do not have to bother:
+        * connecting database in the self.init() method, just call super().init(), self.cur will be set
+        * catching exceptions, just call self.execute() instead of self.cur.execute()
+        * self.format_char will be set to '%s' in PostgreSQL and to '?' in SQLite
+    """
+
+    POSTGRESQL = "postgresql"
+    SQLITE = "sqlite"
+    default_engine = "postgresql"
+
+    def init(self):
+        self.engine_name = getattr(self.parameters, 'engine', self.default_engine).lower()
+        engines = {SQLBot.POSTGRESQL: (self._init_postgresql, "%s"),
+                   SQLBot.SQLITE: (self._init_sqlite, "?")}
+        for key, val in engines.items():
+            if self.engine_name == key:
+                val[0]()
+                self.format_char = val[1]
+                break
+        else:
+            raise ValueError("Wrong parameter 'engine' {0!r}, possible values are {1}".format(self.engine_name, engines))
+
+    def _connect(self, engine, connect_args, autocommitable=False):
+        self.engine = engine  # imported external library that connects to the DB
+        self.logger.debug("Connecting to database.")
+
+        try:
+            self.con = self.engine.connect(**connect_args)
+            if autocommitable:  # psycopg2 has it, sqlite3 has not
+                self.con.autocommit = getattr(self.parameters, 'autocommit', True)  # True prevents deadlocks
+            self.cur = self.con.cursor()
+        except (self.engine.Error, Exception):
+            self.logger.exception('Failed to connect to database.')
+            self.stop()
+        self.logger.info("Connected to database.")
+
+    def _init_postgresql(self):
+        try:
+            import psycopg2
+            import psycopg2.extras
+        except ImportError:
+            raise ValueError("Could not import 'psycopg2'. Please install it.")
+
+        self._connect(psycopg2,
+                      {"database": self.parameters.database,
+                       "user": self.parameters.user,
+                       "password": self.parameters.password,
+                       "host": self.parameters.host,
+                       "port": self.parameters.port,
+                       "sslmode": self.parameters.sslmode,
+                       "connect_timeout": getattr(self.parameters, 'connect_timeout', 5)
+                       },
+                      autocommitable=True)
+
+    def _init_sqlite(self):
+        try:
+            import sqlite3
+        except ImportError:
+            raise ValueError("Could not import 'sqlite3'. Please install it.")
+
+        self._connect(sqlite3,
+                      {"database": self.parameters.database,
+                       "timeout": getattr(self.parameters, 'connect_timeout', 5)
+                       }
+                      )
+
+    def execute(self, query, values, rollback=False):
+        try:
+            self.logger.debug('Executing %r.', query, values)
+            # note: this assumes, the DB was created with UTF-8 support!
+            self.cur.execute(query, values)
+            self.logger.debug('Done.')
+        except (self.engine.InterfaceError, self.engine.InternalError,
+                self.engine.OperationalError, AttributeError):
+            if rollback:
+                try:
+                    self.con.rollback()
+                    self.logger.exception('Executed rollback command '
+                                          'after failed query execution.')
+                except self.engine.OperationalError:
+                    self.logger.exception('Executed rollback command '
+                                          'after failed query execution.')
+                    self.init()
+                except Exception:
+                    self.logger.exception('Cursor has been closed, connecting '
+                                          'again.')
+                    self.init()
+            else:
+                self.logger.exception('Database connection problem, connecting again.')
+                self.init()
+        else:
+            return True
+        return False
 
 
 class Parameters(object):
