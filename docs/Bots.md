@@ -2625,7 +2625,7 @@ Sends a MIME Multipart message containing the text and the event as CSV for ever
 
 For several strings you can use values from the string using the
 [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax).
-Access the event's values with `{ev[source.ip]}` and similar.
+Access the event's values with `{ev[source.ip]}` and similar. Any not existing fields will result in `None`.
 
 Authentication is optional. If both username and password are given, these
 mechanism are tried: CRAM-MD5, PLAIN, and LOGIN.

@@ -2,6 +2,40 @@ CHANGELOG
 ==========
 
 
+2.1.1 (unreleased)
+------------------
+
+### Configuration
+
+### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+- `intelmq.bots.outputs.smtp`: Allow non-existent field in text formatting by using a default value `None` instead of throwing errors.
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
 2.1.0 (2019-10-15)
 -----------------
 

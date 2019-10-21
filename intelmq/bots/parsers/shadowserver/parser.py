@@ -41,7 +41,8 @@ class ShadowserverParserBot(ParserBot):
                 self.logger.info('Using fixed feed name %r for parsing reports.' % self.feedname)
             else:
                 self.logger.info('Could not determine the feed by the feed name %r given by parameter. '
-                                 'Will determine the feed from the file names.')
+                                 'Will determine the feed from the file names.',
+                                 self.feedname)
 
         # Set a switch if the parser shall reset the feed.name,
         #  for this event

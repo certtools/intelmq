@@ -17,8 +17,6 @@ time_format: string
 type: string
 """
 
-from dateutil.parser import parse
-
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import InvalidArgument
