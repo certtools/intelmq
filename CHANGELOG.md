@@ -17,6 +17,7 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.shadowserver.parser`: Fix logging message if the parameter `feedname` is not present.
 
 #### Experts
 
@@ -24,6 +25,8 @@ CHANGELOG
 - `intelmq.bots.outputs.smtp`: Allow non-existent field in text formatting by using a default value `None` instead of throwing errors.
 
 ### Documentation
+- Feeds:
+  - Fix configuration of `Feodo Tracker Browse` feed.
 
 ### Packaging
 
