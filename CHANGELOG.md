@@ -21,6 +21,7 @@ CHANGELOG
 #### Experts
 
 #### Outputs
+- `intelmq.bots.outputs.smtp`: Allow non-existent field in text formatting by using a default value `None` instead of throwing errors.
 
 ### Documentation
 

@@ -27,6 +27,7 @@ class SMTPOutputBot(Bot):
 
     def process(self):
         event = self.receive_message()
+        event.set_default_value()
 
         csvfile = io.StringIO()
         writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames,
