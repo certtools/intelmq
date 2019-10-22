@@ -27,6 +27,8 @@ CHANGELOG
 ### Documentation
 - Feeds:
   - Fix configuration of `Feodo Tracker Browse` feed.
+- Bots:
+  - Sieve expert: Document behavior of `!=` with lists.
 
 ### Packaging
 

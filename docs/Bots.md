@@ -2184,6 +2184,13 @@ specified with quotes. Following operators may be used to match events:
   In this case, the event will match if it contains a key `source.ip` with
   either value `8.8.8.8` or `8.8.4.4`.
 
+  With inequality operators, the behavior is the same, so it matches if any expression does not match:
+
+  ```if source.ip != ['8.8.8.8', '8.8.4.4'] { ... }```
+
+  Events with values like `8.8.8.8` or `8.8.4.4` will match, as they are always unequal to the other value.
+  The result is *not* that the field must be unequal to all given values.
+
 
 ##### Actions
 
