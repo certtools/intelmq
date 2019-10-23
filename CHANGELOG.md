@@ -8,6 +8,7 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.pipeline`: AMQP: using port 15672 as default (like RabbitMQ's defaults) for the monitoring interface for getting statistical data (`intelmqctl_rabbitmq_monitoring_url`).
 
 ### Development
 

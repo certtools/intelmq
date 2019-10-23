@@ -439,7 +439,7 @@ class Amqp(Pipeline):
 
         self.monitoring_url = getattr(self.parameters,
                                       'intelmqctl_rabbitmq_monitoring_url',
-                                      'http://%s:15671/' % self.host)
+                                      'http://%s:15672/' % self.host)
         if not self.monitoring_url.endswith('/'):
             self.monitoring_url = "%s/" % self.monitoring_url
 
