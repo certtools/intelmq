@@ -21,6 +21,7 @@ CHANGELOG
 #### Experts
 
 #### Outputs
+- `intelmq.bots.outputs.amqptopic`: Allow formatting the routing key with event data by the new parameter `format_routing_key` (boolean).
 
 ### Documentation
 

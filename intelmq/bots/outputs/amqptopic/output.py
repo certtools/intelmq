@@ -56,6 +56,7 @@ class AMQPTopicOutputBot(Bot):
             connection_attempts=self.parameters.connection_attempts,
             **self.kwargs)
         self.routing_key = self.parameters.routing_key
+        self.format_routing_key = getattr(self.parameters, 'format_routing_key', False)
         self.properties = pika.BasicProperties(
             content_type=self.content_type, delivery_mode=self.delivery_mode)
 
@@ -117,10 +118,14 @@ class AMQPTopicOutputBot(Bot):
 
         # replace unicode characters when encoding (#1296)
         body = body.encode(errors='backslashreplace')
+        if self.format_routing_key:
+            routing_key = self.routing_key.format(ev=event)
+        else:
+            routing_key = self.routing_key
 
         try:
             if not self.channel.basic_publish(exchange=self.exchange,
-                                              routing_key=self.routing_key,
+                                              routing_key=routing_key,
                                               body=body,
                                               properties=self.properties,
                                               mandatory=True):
