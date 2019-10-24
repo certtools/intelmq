@@ -930,7 +930,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, expected)
 
     def test_named_queues(self):
-        """ Test == numeric match """
+        """ Test named queues """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
                                               'test_sieve_files/test_named_queues.sieve')
 
@@ -1057,6 +1057,16 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = event
         self.run_bot()
         self.assertMessageEqual(0, test_minus_update)
+
+    def test_multiple_paths(self):
+        """ Test path = ['one', 'two'] """
+        self.input_message = EXAMPLE_INPUT
+        self.prepare_bot(destination_queues={"_default", "one", "two"},
+                         parameters={'file': os.path.join(os.path.dirname(__file__),
+                                                          'test_sieve_files/test_named_queues_multi.sieve')})
+        self.run_bot(prepare=False)
+        self.assertMessageEqual(0, EXAMPLE_INPUT, path='one')
+        self.assertMessageEqual(0, EXAMPLE_INPUT, path='two')
 
 
 if __name__ == '__main__':  # pragma: no cover

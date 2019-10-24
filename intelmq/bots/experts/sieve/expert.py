@@ -103,8 +103,14 @@ class SieveExpertBot(Bot):
 
         # forwarding decision
         if procedure != Procedure.DROP:
-            path = getattr(event, "path", "_default")
-            self.send_message(event, path=path)
+            paths = getattr(event, "path", ("_default", ))
+            if hasattr(paths, 'values'):  # PathValueList
+                paths = tuple(path.value for path in paths.values)
+            elif hasattr(paths, 'value'):  # SinglePathValue
+                paths = (paths.value, )
+            # else: default value -> pass
+            for path in paths:
+                self.send_message(event, path=path)
 
         self.acknowledge_message()
 

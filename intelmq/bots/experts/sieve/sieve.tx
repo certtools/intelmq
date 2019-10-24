@@ -65,6 +65,10 @@ AssignOperator:
   | '-='
 ;
 
+PathValue: SinglePathValue | PathValueList ;
+SinglePathValue: value=STRING ;
+PathValueList: '[' values+=SinglePathValue[','] ']' ;
+
 Action: action=DropAction
     | ( action=KeepAction
         | action=PathAction
@@ -75,7 +79,7 @@ Action: action=DropAction
       );
 DropAction: 'drop';
 KeepAction: 'keep';
-PathAction: 'path' path=STRING;
+PathAction: 'path' path=PathValue;
 AddAction: 'add' key=Key operator=AssignOperator value=STRING;              // add key/value without overwriting existing key
 AddForceAction: 'add!' key=Key operator=AssignOperator value=STRING;        // add key/value, overwriting existing key
 UpdateAction: 'update' key=Key operator=AssignOperator value=STRING;        // update key/value, do not create if not exists

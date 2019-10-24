@@ -2612,6 +2612,20 @@ in the sieve file will be forwarded to the next bot in the pipeline, unless the
 
    ``path 'named-queue'``
 
+   You can as well set multiple destination paths with the same syntax as for value lists:
+
+   ``path ['one', 'two']``
+
+   This will result in two identical message, one sent to the path `one` and the other sent to the path `two`.
+
+   If the path is not configured, the error looks like:
+
+   ```
+     File "/path/to/intelmq/intelmq/lib/pipeline.py", line 353, in send
+       for destination_queue in self.destination_queues[path]:
+   KeyError: 'one'
+   ```
+
  * `drop` marks the event to be dropped. The event will not be forwarded to the next bot in the pipeline. The sieve file processing is interrupted upon
    reaching this action. No other actions may be specified besides the `drop` action within `{` and `}`.
 

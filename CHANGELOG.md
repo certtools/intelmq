@@ -78,6 +78,8 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - The script `update-rfiprisk-data` is now deprecated and will be removed in version 3.0.
 - Added `intelmq.bots.experts.threshold` (PR#1608 by Karl-Johan Karlsson).
 - Added `intelmq.bots.experts.splunk_saved_search.expert` (PR#1666 by Karl-Johan Karlsson).
+- `intelmq.bots.experts.sieve.expert`:
+  - Added possibility to give multiple queue names for the `path` directive (#1462).
 
 #### Outputs
 - `intelmq.bots.outputs.rt`: Added Request Tracker output bot (PR#1589 by Marius Urkis).
