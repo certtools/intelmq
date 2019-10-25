@@ -143,7 +143,8 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('classification.identifier', 'spam')
                 if row_splitted[7] == '25':
                     event.add('protocol.application', 'smtp')
-                event.add('event_description.text', 'This device is sending spam as part of a botnet. See abuseat.org for more details.')
+                event.add('event_description.text', 'This device is sending spam as part of a botnet. '
+                                                    'See abuseat.org for more details.')
                 event.add('event_description.url', 'https://www.abuseat.org/lookup.cgi')
                 event.add('feed.documentation', 'https://www.abuseat.org/lookup.cgi', overwrite=False)
             else:

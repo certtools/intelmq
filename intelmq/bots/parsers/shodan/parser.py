@@ -190,7 +190,7 @@ class ShodanParserBot(Bot):
 
             event['extra.shodan'] = decoded
             event['classification.type'] = 'other'
-            event['classification.identifier'] = 'shodan-scan'
+            event['classification.identifier'] = 'network-scan'
         else:
             event.update(self.apply_mapping(MAPPING, decoded))
             event.add('classification.type', 'other')
