@@ -639,6 +639,7 @@ class IntelMQController():
                 'json': machine-readable output for managers
             quiet: False by default, can be activated for cron jobs etc.
         """
+        self.interactive = interactive
         global RETURN_TYPE
         RETURN_TYPE = return_type
         global logger
@@ -674,7 +675,6 @@ class IntelMQController():
             self.logger.exception('Loading the defaults configuration failed!',
                                   exc_info=defaults_loading_exc)
 
-        self.interactive = interactive
         if not utils.drop_privileges():
             logger.warning('Running intelmqctl as root is highly discouraged!')
 

@@ -40,8 +40,12 @@ CHANGELOG
 ------------------
 
 ### Configuration
+- Default configuration:
+  - Remove discontinued feed "Feodo Tracker Domains" from default configuration.
+  - Add "Feodo Tracker Browse" feed to default configuration.
 
 ### Core
+- `intelmq.lib.pipeline`: AMQP: using port 15672 as default (like RabbitMQ's defaults) for the monitoring interface for getting statistical data (`intelmqctl_rabbitmq_monitoring_url`).
 
 ### Development
 
@@ -51,6 +55,9 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.shadowserver.parser`: Fix logging message if the parameter `feedname` is not present.
+- `intelmq.bots.parsers.shodan.parser`: Also add field `classification.identifier` (`'network-scan'`) in minimal mode.
+- `intelmq.bots.parsers.spamhaus.parser_cert`: Add support for category `'misc'`.
 
 #### Experts
 
@@ -58,6 +65,10 @@ CHANGELOG
 - `intelmq.bots.outputs.smtp`: Allow non-existent field in text formatting by using a default value `None` instead of throwing errors.
 
 ### Documentation
+- Feeds:
+  - Fix configuration of `Feodo Tracker Browse` feed.
+- Bots:
+  - Sieve expert: Document behavior of `!=` with lists.
 
 ### Packaging
 

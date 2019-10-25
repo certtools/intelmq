@@ -29,6 +29,8 @@ See the changelog for a full list of changes.
 ### Harmonization
 
 ### Configuration
+#### Defaults
+For AMQP brokers, the port 15671 was used as default for connecting to the management interface. But RabbitMQ's default is 15672. This was corrected in this version. If you changed the port in RabbitMQ or IntelMQ (`intelmqctl_rabbitmq_monitoring_url`), the settings needs to be adapted.
 
 ### Libraries
 
