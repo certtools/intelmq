@@ -20,6 +20,7 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.parser`: Fix logging message if the parameter `feedname` is not present.
 - `intelmq.bots.parsers.shodan.parser`: Also add field `classification.identifier` (`'shodan-scan'`) in minimal mode.
+- `intelmq.bots.parsers.spamhaus.parser_cert`: Add support for category `'misc'`.
 
 #### Experts
 
