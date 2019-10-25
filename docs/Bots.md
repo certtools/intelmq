@@ -1939,6 +1939,8 @@ Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feo
 
 If the rule is a string, a regex-search is performed, also for numeric values (`str()` is called on them). If the rule is numeric for numeric values, a simple comparison is done. If other types are mixed, a warning will be thrown.
 
+For boolean values, the comparison value needs to be `true` or `false` as in JSON they are written all-lowercase.
+
 * * *
 
 ### National CERT contact lookup by CERT.AT
