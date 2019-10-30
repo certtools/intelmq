@@ -62,7 +62,10 @@ CHANGELOG
 #### Experts
 
 #### Outputs
-- `intelmq.bots.outputs.smtp`: Allow non-existent field in text formatting by using a default value `None` instead of throwing errors.
+- `intelmq.bots.outputs.smtp`:
+  - Allow non-existent field in text formatting by using a default value `None` instead of throwing errors.
+  - Fix Authentication (#1464).
+  - Fix sending to multiple recipients (#1464).
 
 ### Documentation
 - Feeds:
