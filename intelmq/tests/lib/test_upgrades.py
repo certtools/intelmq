@@ -2,8 +2,11 @@
 Tests the upgrade functions.
 """
 import unittest
+import pkg_resources
+from copy import deepcopy
 
 import intelmq.lib.upgrades as upgrades
+from intelmq.lib.utils import load_configuration
 
 
 V202 = {"test-collector": {
@@ -192,6 +195,14 @@ V210_EXP = {"test-collector": {
     }
 }
 }
+HARM = load_configuration(pkg_resources.resource_filename('intelmq',
+                                                          'etc/harmonization.conf'))
+V210_HARM = deepcopy(HARM)
+del V210_HARM['report']['extra']
+MISSING_REPORT = deepcopy(HARM)
+del MISSING_REPORT['report']
+WRONG_TYPE = deepcopy(HARM)
+WRONG_TYPE['event']['source.asn']['type'] = 'String'
 
 
 def generate_function(function):
@@ -240,6 +251,24 @@ class TestUpgradeLib(unittest.TestCase):
         result = upgrades.v210_deprecations({}, V210, True)
         self.assertTrue(result[0])
         self.assertEqual(V210_EXP, result[2])
+
+    def test_v211_harmonization(self):
+        """ Test v211_harmonization """
+        result = upgrades.harmonization({}, {}, V210_HARM, False)
+        self.assertTrue(result[0])
+        self.assertEqual(HARM, result[3])
+
+    def test_missing_report_harmonization(self):
+        """ Test missing report in harmonization """
+        result = upgrades.harmonization({}, {}, MISSING_REPORT, False)
+        self.assertTrue(result[0])
+        self.assertEqual(HARM, result[3])
+
+    def test_wrong_type_harmonization(self):
+        """ Test wrong type in harmonization """
+        result = upgrades.harmonization({}, {}, WRONG_TYPE, False)
+        self.assertTrue(result[0])
+        self.assertEqual(HARM, result[3])
 
 
 for name in upgrades.__all__:

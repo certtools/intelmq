@@ -27,6 +27,13 @@ See the changelog for a full list of changes.
 ### Tools
 
 ### Harmonization
+In version 2.1.0 a new field `extra` has been added to *Reports*. You need to add this to the *report* section in your harmonization configuration:
+```json
+        "extra": {
+            "description": "All anecdotal information of the report, which cannot be parsed into the data harmonization elements. E.g. subject of mails, etc. This is data is not automatically propagated to the events.",
+            "type": "JSONDict"
+        },
+```
 
 ### Configuration
 #### Defaults
