@@ -41,7 +41,7 @@ class TestSMTPOutputBot(test.BotTestCase, unittest.TestCase):
         self.assertEqual(SENT_MESSAGE[0].get_payload()[1].get_payload(), '''source.ip;time.source;source.url
 127.0.0.1;;http://example.com/
 ''')
-        self.assertEqual({'from_addr': 'myself', 'to_addrs': 'you'},
+        self.assertEqual({'from_addr': 'myself', 'to_addrs': ['you']},
                          SENT_MESSAGE[1])
 
 
