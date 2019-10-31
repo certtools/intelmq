@@ -5,8 +5,9 @@
 SPDX-License-Identifier: AGPL-3.0
 """
 from collections import OrderedDict
+from pkg_resources import resource_filename
 
-import intelmq.lib.utils as utils
+from intelmq.lib.utils import load_configuration, write_configuration
 
 __all__ = ['v100_dev7_modify_syntax',
            'v110_shadowserver_feednames',
@@ -166,7 +167,7 @@ def v100_dev7_modify_syntax(defaults, runtime, dry_run):
     for bot_id, bot in runtime.items():
         if bot["module"] == "intelmq.bots.experts.modify.expert":
             if "configuration_path" in bot["parameters"]:
-                config = utils.load_configuration(bot["parameters"]["configuration_path"])
+                config = load_configuration(bot["parameters"]["configuration_path"])
                 if type(config) is dict:
                     new_config = modify_expert_convert_config(config)
                     if len(config) != len(new_config):
@@ -177,8 +178,8 @@ def v100_dev7_modify_syntax(defaults, runtime, dry_run):
                               bot["parameters"]["configuration_path"])
                         continue
                     try:
-                        utils.write_configuration(bot["parameters"]["configuration_path"],
-                                                  new_config)
+                        write_configuration(bot["parameters"]["configuration_path"],
+                                            new_config)
                     except PermissionError:
                         return ('Can\'t update %s\'s configuration: Permission denied.' % bot_id,
                                 defaults, runtime)
@@ -275,6 +276,29 @@ def v210_deprecations(defaults, runtime, dry_run):
     return changed, defaults, runtime
 
 
+def harmonization(defaults, runtime, harmonization, dry_run):
+    """
+    Checks if all harmonization fields and types are correct.
+    """
+    changed = None
+    original = load_configuration(resource_filename('intelmq',
+                                                    'etc/harmonization.conf'))
+    for msg_type, msg in original.items():
+        if msg_type not in harmonization:
+            harmonization[msg_type] = msg
+            changed = True
+            continue
+        for fieldname, field in msg.items():
+            if fieldname not in harmonization[msg_type]:
+                harmonization[msg_type][fieldname] = field
+                changed = True
+                continue
+            if harmonization[msg_type][fieldname]['type'] != original[msg_type][fieldname]['type']:
+                harmonization[msg_type][fieldname]['type'] = original[msg_type][fieldname]['type']
+                changed = True
+    return changed, defaults, runtime, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -287,3 +311,5 @@ UPGRADES = OrderedDict([
     ((2, 1, 0), (v210_deprecations, )),
     ((2, 1, 1), ()),
 ])
+
+ALWAYS = (harmonization, )
