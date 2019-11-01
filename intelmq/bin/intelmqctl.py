@@ -57,6 +57,7 @@ MESSAGES = {
     'enabling': 'Enabling %s.',
     'disabling': 'Disabling %s.',
     'reloaded': 'Bot %s is reloaded.',
+    'restarting': 'Restarting %s...',
 }
 
 ERROR_MESSAGES = {
