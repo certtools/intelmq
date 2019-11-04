@@ -20,7 +20,7 @@ class CSVConverterExpertBot(Bot):
             row.append(event[field])
         writer.writerow(row)
         event['output'] = out.getvalue().rstrip()
-        
+
         self.send_message(event)
         self.acknowledge_message()
 

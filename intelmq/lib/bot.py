@@ -1190,7 +1190,7 @@ class OutputBot(Bot):
         self.single_key = getattr(self.parameters, 'single_key', None)
         self.keep_raw_field = getattr(self.parameters, 'keep_raw_field', False)
 
-    def export_event(self, event, return_type: Optional[type]=None):
+    def export_event(self, event, return_type: Optional[type] = None):
         """
         exports an event according to the following parameters:
             * message_hierarchical
