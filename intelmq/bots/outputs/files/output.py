@@ -5,12 +5,11 @@ import os
 import socket
 import time
 from os import path
-
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import ConfigurationError
 
 
-class FilesOutputBot(Bot):
+class FilesOutputBot(OutputBot):
 
     def init(self):
         self.tmp = self._ensure_path(self.parameters.tmp)
@@ -60,10 +59,8 @@ class FilesOutputBot(Bot):
 
     def process(self):
         event = self.receive_message()
-        if self.parameters.single_key:
-            event_data = str(event.get(self.parameters.single_key))
-        else:
-            event_data = event.to_json(hierarchical=self.parameters.hierarchical_output)
+        event_data = self.export_event(event, return_type=str)
+
         # Create file in tmp dir
         f, name = self.create_unique_file()
         f.write(event_data)

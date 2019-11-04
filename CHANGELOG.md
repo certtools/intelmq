@@ -108,6 +108,8 @@ CHANGELOG
   - Use existing current message if receive is called and the current message still exists.
   - Fix handling of received messaged after a sighup that happend during a blocking receving connection using explicit rejection (#1438).
   - New method `_parse_common_parameters` called before `init` to parse commonly used argument. Currently supported: `extract_files`.
+  - New class `OutputBot`:
+    - Method `export_event` to format/export events according to the parameters given by the user.
 - `intelmq.lib.test`:
   - Fix the tests broker by providing the testing pipeline.
 - `intelmq.lib.utils`:
@@ -152,6 +154,7 @@ CHANGELOG
 - Add geohash expert.
 - `intelmq.bot.experts.generic_db_lookup.expert`
   - new optional parameter `engine` with `postgresql` (default) and `sqlite` (new) as possible values.
+- `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
 
 #### Outputs
 - Add `intelmq.bots.outputs.touch.output`.
@@ -160,7 +163,10 @@ CHANGELOG
   - Compatibility shim will be available in the 2.x series.
 - `intelmq.bot.outputs.sql.output` added generic SQL output bot. Comparted to
   - new optional parameter `engine` with `postgresql` (default) and `sqlite` (new) as possible values.
-- `intelmq.bots.outputs.stomp.output`: New parameters `message_hierarchical_output`, `message_jsondict_as_string`, `message_with_type`, `single_key`.
+- `intelmq.bots.outputs.stomp.output`: New parameters `message_hierarchical`, `message_jsondict_as_string`, `message_with_type`, `single_key`.
+- `intelmq.bots.outputs.amqptopic`: Use `OutputBot` and `export_event`.
+- `intelmq.bots.outputs.file`: Use `OutputBot` and `export_event`.
+- `intelmq.bots.outputs.files`: Use `OutputBot` and `export_event`.
 
 ### Documentation
 - Feeds:
@@ -176,6 +182,7 @@ CHANGELOG
 - Add a new asset: Zip archive with two files, same as with tar.gz archive.
 - Added tests for the Mail Attachment & Mail URL collectors.
 - Ignore logging-tests on Python 3.7 temporarily (#1342).
+- Added tests for `intelmq.lib.bot.OutputBot` and `intelmq.lib.bot.OutputBot.export_event`.
 
 ### Tools
 - intelmqctl:

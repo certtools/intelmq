@@ -683,6 +683,14 @@
                 "database": "/opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat"
             }
         },
+        "CSV Converter": {
+            "description": "Converts data to CSV.",
+            "module": "intelmq.bots.experts.csv_converter.expert",
+            "parameters": {
+                "delimiter": ",",
+                "fieldnames": "time.source,classification.type,source.ip"
+            }
+        },
         "Abusix": {
             "description": "Abusix is the bot responsible to get the correspondent abuse contact from source IP and destination IP of the events.",
             "module": "intelmq.bots.experts.abusix.expert",
@@ -991,7 +999,10 @@
                 "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
                 "format_filename": false,
                 "hierarchical_output": false,
-                "single_key": null
+                "keep_raw_field": false,
+                "message_jsondict_as_string": false,
+                "message_with_type": false,
+                "single_key": false
             }
         },
         "Files": {
@@ -1000,7 +1011,10 @@
             "parameters": {
                 "dir": "/opt/intelmq/var/lib/bots/files-output/incoming",
                 "hierarchical_output": false,
-                "single_key": null,
+                "keep_raw_field": false,
+                "message_jsondict_as_string": false,
+                "message_with_type": false,
+                "single_key": false,
                 "suffix": ".json",
                 "tmp": "/opt/intelmq/var/lib/bots/files-output/tmp"
             }
@@ -1096,6 +1110,7 @@
             "parameters": {
                 "exchange": "/exchange/_push",
                 "heartbeat": 60000,
+                "keep_raw_field": false,
                 "message_hierarchical_output": false,
                 "message_jsondict_as_string": false,
                 "message_with_type": false,
