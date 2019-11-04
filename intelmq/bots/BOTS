@@ -683,6 +683,14 @@
                 "database": "/opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat"
             }
         },
+        "CSV Converter": {
+            "description": "Converts data to CSV.",
+            "module": "intelmq.bots.experts.csv_converter.expert",
+            "parameters": {
+                "delimiter": ",",
+                "fieldnames": "time.source,classification.type,source.ip"
+            }
+        },
         "Abusix": {
             "description": "Abusix is the bot responsible to get the correspondent abuse contact from source IP and destination IP of the events.",
             "module": "intelmq.bots.experts.abusix.expert",

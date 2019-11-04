@@ -154,6 +154,7 @@ CHANGELOG
 - Add geohash expert.
 - `intelmq.bot.experts.generic_db_lookup.expert`
   - new optional parameter `engine` with `postgresql` (default) and `sqlite` (new) as possible values.
+- `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
 
 #### Outputs
 - Add `intelmq.bots.outputs.touch.output`.

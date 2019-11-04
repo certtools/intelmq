@@ -39,6 +39,7 @@
 - [Experts](#experts)
   - [Abusix](#abusix)
   - [ASN Lookup](#asn-lookup)
+  - [CSV Converter](#csv-converter)
   - [Copy Extra](#copy-extra)
   - [Cymru Whois](#cymru-whois)
   - [Deduplicator](#deduplicator)
@@ -1403,6 +1404,28 @@ Note: the '<' '>' characters only are syntactic markings, no shell redirection i
 # mv /tmp/ipasn.dat /opt/intelmq/var/lib/bots/asn_lookup/
 # chown -R intelmq.intelmq /opt/intelmq/var/lib/bots/asn_lookup
 ```
+
+* * *
+
+### CSV Converter
+
+
+#### Information:
+* `name`: `intelmq.bots.experts.csv_converter.expert
+* `lookup`: no
+* `public`: yes
+* `cache (redis db)`: none
+* `description`: Converts an event to CSV format, saved in the `output` field.
+
+#### Configuration Parameters:
+
+ * `delimiter`: String, default `","`
+ * `fieldnames`: Comma-separated list of field names, e.g. `"time.source,classification.type,source.ip"`
+
+#### Usage
+
+To use the CSV-converted data in an output bot - for example in a file output,
+use the configuration parameter `single_key` of the output bot and set it to `output`.
 
 * * *
 
