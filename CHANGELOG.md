@@ -108,6 +108,8 @@ CHANGELOG
   - Use existing current message if receive is called and the current message still exists.
   - Fix handling of received messaged after a sighup that happend during a blocking receving connection using explicit rejection (#1438).
   - New method `_parse_common_parameters` called before `init` to parse commonly used argument. Currently supported: `extract_files`.
+  - New class `OutputBot`:
+    - Method `export_event` to format/export events according to the parameters given by the user.
 - `intelmq.lib.test`:
   - Fix the tests broker by providing the testing pipeline.
 - `intelmq.lib.utils`:
@@ -176,6 +178,7 @@ CHANGELOG
 - Add a new asset: Zip archive with two files, same as with tar.gz archive.
 - Added tests for the Mail Attachment & Mail URL collectors.
 - Ignore logging-tests on Python 3.7 temporarily (#1342).
+- Added tests for `intelmq.lib.bot.OutputBot` and `intelmq.lib.bot.OutputBot.export_event`.
 
 ### Tools
 - intelmqctl:

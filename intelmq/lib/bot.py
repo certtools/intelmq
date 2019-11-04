@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-
+The base classes for all Bots
 """
 import atexit
 import csv
@@ -29,9 +29,9 @@ from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      RUNTIME_CONF_FILE, __version__)
 from intelmq.lib import cache, exceptions, utils
 from intelmq.lib.pipeline import PipelineFactory
-from intelmq.lib.utils import RewindableFileHandle
+from intelmq.lib.utils import RewindableFileHandle, base64_decode
 
-__all__ = ['Bot', 'CollectorBot', 'ParserBot', 'SQLBot']
+__all__ = ['Bot', 'CollectorBot', 'ParserBot', 'SQLBot', 'OutputBot']
 
 
 class Bot(object):
@@ -1165,6 +1165,75 @@ class SQLBot(Bot):
         else:
             return True
         return False
+
+
+class OutputBot(Bot):
+    """
+    Base class for outputs.
+    """
+
+    def __init__(self, bot_id: str, start=False, sighup_event=None,
+                 disable_multithreading=None):
+        super().__init__(bot_id=bot_id)
+        if self.__class__.__name__ == 'OutputBot':
+            self.logger.error('OutputBot can\'t be started itself. '
+                              'Possible Misconfiguration.')
+            self.stop()
+        self.group = 'Output'
+
+        self.hierarchical = getattr(self.parameters, "hierarchical_output",  # file and files
+                                    getattr(self.parameters, "message_hierarchical",  # stomp and amqp code
+                                            getattr(self.parameters, "message_hierarchical_output", False)))  # stomp and amqp docs
+        self.with_type = getattr(self.parameters, "message_with_type", False)
+        self.jsondict_as_string = getattr(self.parameters, "message_jsondict_as_string", False)
+
+        self.single_key = getattr(self.parameters, 'single_key', None)
+        self.keep_raw_field = getattr(self.parameters, 'keep_raw_field', False)
+
+    def export_event(self, event, return_type: Optional[type]=None):
+        """
+        exports an event according to the following parameters:
+            * message_hierarchical
+            * message_with_type
+            * message_jsondict_as_string
+            * single_key
+            * keep_raw_field
+
+        Parameters:
+            return_type: Ensure that the returned value is of the given type.
+                Optional. For example: str
+                If the resulting value is not an instance of this type, the
+                given object is called with the value as parameter E.g. `str(retval)`
+        """
+        if self.single_key:
+            if self.single_key == 'raw':
+                return base64_decode(event.get('raw', ''))
+            elif self.single_key == 'output':
+                retval = event.get(self.single_key)
+                if return_type is str:
+                    loaded = json.loads(retval)
+                    if isinstance(loaded, return_type):
+                        return loaded
+                else:
+                    retval = json.loads(retval)
+            else:
+                retval = event.get(self.single_key)
+        else:
+            if not self.keep_raw_field:
+                if 'raw' in event:
+                    del event['raw']
+            if return_type is str:
+                return event.to_json(hierarchical=self.hierarchical,
+                                     with_type=self.with_type,
+                                     jsondict_as_string=self.jsondict_as_string)
+            else:
+                retval = event.to_dict(hierarchical=self.hierarchical,
+                                       with_type=self.with_type,
+                                       jsondict_as_string=self.jsondict_as_string)
+
+        if return_type and not isinstance(retval, return_type):
+            return return_type(retval)
+        return retval
 
 
 class Parameters(object):
