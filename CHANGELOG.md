@@ -162,7 +162,10 @@ CHANGELOG
   - Compatibility shim will be available in the 2.x series.
 - `intelmq.bot.outputs.sql.output` added generic SQL output bot. Comparted to
   - new optional parameter `engine` with `postgresql` (default) and `sqlite` (new) as possible values.
-- `intelmq.bots.outputs.stomp.output`: New parameters `message_hierarchical_output`, `message_jsondict_as_string`, `message_with_type`, `single_key`.
+- `intelmq.bots.outputs.stomp.output`: New parameters `message_hierarchical`, `message_jsondict_as_string`, `message_with_type`, `single_key`.
+- `intelmq.bots.outputs.amqptopic`: Use `OutputBot` and `export_event`.
+- `intelmq.bots.outputs.file`: Use `OutputBot` and `export_event`.
+- `intelmq.bots.outputs.files`: Use `OutputBot` and `export_event`.
 
 ### Documentation
 - Feeds:

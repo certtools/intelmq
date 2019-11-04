@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import ssl
 
-from intelmq.lib.bot import Bot
-from intelmq.lib.utils import base64_decode
+from intelmq.lib.bot import OutputBot
 
 try:
     import pika
@@ -10,7 +9,7 @@ except ImportError:
     pika = None
 
 
-class AMQPTopicOutputBot(Bot):
+class AMQPTopicOutputBot(OutputBot):
     connection = None
 
     def init(self):
@@ -32,7 +31,6 @@ class AMQPTopicOutputBot(Bot):
         else:
             self.publish_raises_nack = True
 
-        self.keep_raw_field = self.parameters.keep_raw_field
         self.delivery_mode = self.parameters.delivery_mode
         self.content_type = self.parameters.content_type
         self.exchange = self.parameters.exchange_name
@@ -61,12 +59,6 @@ class AMQPTopicOutputBot(Bot):
             content_type=self.content_type, delivery_mode=self.delivery_mode)
 
         self.connect_server()
-
-        self.hierarchical = getattr(self.parameters, "message_hierarchical", False)
-        self.with_type = getattr(self.parameters, "message_with_type", False)
-        self.jsondict_as_string = getattr(self.parameters, "message_jsondict_as_string", False)
-
-        self.single_key = getattr(self.parameters, 'single_key', None)
 
     def connect_server(self):
         self.logger.info('AMQP Connecting to %s:%s/%s.',
@@ -103,18 +95,7 @@ class AMQPTopicOutputBot(Bot):
             self.connect_server()
 
         event = self.receive_message()
-
-        if self.single_key:
-            if self.single_key == 'raw':
-                body = base64_decode(event.get('raw', ''))
-            else:
-                body = str(event.get(self.single_key))
-        else:
-            if not self.keep_raw_field:
-                del event['raw']
-            body = event.to_json(hierarchical=self.hierarchical,
-                                 with_type=self.with_type,
-                                 jsondict_as_string=self.jsondict_as_string)
+        body = self.export_event(event, return_type=str)
 
         # replace unicode characters when encoding (#1296)
         body = body.encode(errors='backslashreplace')
