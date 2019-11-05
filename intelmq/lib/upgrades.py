@@ -23,7 +23,7 @@ __all__ = ['v100_dev7_modify_syntax',
            ]
 
 
-def v200_defaults_statistics(defaults, runtime, dry_run):
+def v200_defaults_statistics(defaults, runtime, harmonization, dry_run):
     """
     Inserting `statistics_*` parameters into defaults configuration file
     """
@@ -37,10 +37,10 @@ def v200_defaults_statistics(defaults, runtime, dry_run):
         if key not in defaults:
             defaults[key] = value
             changed = True
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v200_defaults_broker(defaults, runtime, dry_run):
+def v200_defaults_broker(defaults, runtime, harmonization, dry_run):
     """
     Inserting `*_pipeline_broker` and deleting broker into/from defaults configuration
     """
@@ -56,10 +56,10 @@ def v200_defaults_broker(defaults, runtime, dry_run):
         del defaults["broker"]
         changed = True
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v112_feodo_tracker_ips(defaults, runtime, dry_run):
+def v112_feodo_tracker_ips(defaults, runtime, harmonization, dry_run):
     """
     Fix URL of feodotracker IPs feed in runtime configuration
     """
@@ -69,10 +69,10 @@ def v112_feodo_tracker_ips(defaults, runtime, dry_run):
             bot["parameters"]["http_url"] = "https://feodotracker.abuse.ch/downloads/ipblocklist.csv"
             changed = True
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v112_feodo_tracker_domains(defaults, runtime, dry_run):
+def v112_feodo_tracker_domains(defaults, runtime, harmonization, dry_run):
     """
     Search for discontinued feodotracker domains feed
     """
@@ -82,14 +82,14 @@ def v112_feodo_tracker_domains(defaults, runtime, dry_run):
             found = bot_id
 
     if not found:
-        return None, defaults, runtime
+        return None, defaults, runtime, harmonization
     else:
         return ('The discontinued feed "Feodo Tracker Domains" has been found '
                 'as bot %r. Remove it yourself please.' % found,
-                defaults, runtime)
+                defaults, runtime, harmonization)
 
 
-def v110_shadowserver_feednames(defaults, runtime, dry_run):
+def v110_shadowserver_feednames(defaults, runtime, harmonization, dry_run):
     """
     Replace deprecated Shadowserver feednames
     """
@@ -107,10 +107,10 @@ def v110_shadowserver_feednames(defaults, runtime, dry_run):
                 changed = True
                 bot["parameters"]["feedname"] = mapping[bot["parameters"]["feedname"]]
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v110_deprecations(defaults, runtime, dry_run):
+def v110_deprecations(defaults, runtime, harmonization, dry_run):
     """
     Checking for deprecated runtime configurations (stomp collector, cymru parser, ripe expert)
     """
@@ -143,7 +143,7 @@ def v110_deprecations(defaults, runtime, dry_run):
             else:
                 changed = True
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
 def modify_expert_convert_config(old):
@@ -159,7 +159,7 @@ def modify_expert_convert_config(old):
     return config
 
 
-def v100_dev7_modify_syntax(defaults, runtime, dry_run):
+def v100_dev7_modify_syntax(defaults, runtime, harmonization, dry_run):
     """
     Migrate modify bot configuration format
     """
@@ -182,23 +182,23 @@ def v100_dev7_modify_syntax(defaults, runtime, dry_run):
                                             new_config)
                     except PermissionError:
                         return ('Can\'t update %s\'s configuration: Permission denied.' % bot_id,
-                                defaults, runtime)
+                                defaults, runtime, harmonization)
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v200_defaults_ssl_ca_certificate(defaults, runtime, dry_run):
+def v200_defaults_ssl_ca_certificate(defaults, runtime, harmonization, dry_run):
     """
     Add ssl_ca_certificate to defaults
     """
     if "ssl_ca_certificate" not in defaults:
         defaults["ssl_ca_certificate"] = None
-        return True, defaults, runtime
+        return True, defaults, runtime, harmonization
     else:
-        return None, defaults, runtime
+        return None, defaults, runtime, harmonization
 
 
-def v111_defaults_process_manager(defaults, runtime, dry_run):
+def v111_defaults_process_manager(defaults, runtime, harmonization, dry_run):
     """
     Fix typo in proccess_manager parameter
     """
@@ -215,10 +215,10 @@ def v111_defaults_process_manager(defaults, runtime, dry_run):
             defaults["process_manager"] = "intelmq"
             changed = True
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v202_fixes(defaults, runtime, dry_run):
+def v202_fixes(defaults, runtime, harmonization, dry_run):
     """
     Migrating collector parameter `feed` to `name`. RIPE expert set: `query_ripe_stat_ip` with `query_ripe_stat_asn` as default
     """
@@ -244,12 +244,12 @@ def v202_fixes(defaults, runtime, dry_run):
                 bot["parameters"]["overwrite"] = True
                 changed = True
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v210_deprecations(defaults, runtime, dry_run):
+def v210_deprecations(defaults, runtime, harmonization, dry_run):
     """
-    Migrating configuration.
+    Migrating configuration
     """
     changed = None
     for bot_id, bot in runtime.items():
@@ -273,12 +273,12 @@ def v210_deprecations(defaults, runtime, dry_run):
             if bot["module"] == "intelmq.bots.outputs.postgresql.output":
                 bot["module"] = "intelmq.bots.outputs.sql.output"
                 changed = True
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
 def harmonization(defaults, runtime, harmonization, dry_run):
     """
-    Checks if all harmonization fields and types are correct.
+    Checks if all harmonization fields and types are correct
     """
     changed = None
     original = load_configuration(resource_filename('intelmq',

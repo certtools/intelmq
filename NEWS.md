@@ -9,9 +9,10 @@ See the changelog for a full list of changes.
 ### Requirements
 
 ### Tools
+`intelmqctl check` and `intelmqctl upgrade-config` checks/applies a generic harmonization upgrade, checking for it's completeness.
 
 ### Harmonization
-In version 2.1.0 a new field `extra` has been added to *Reports*. You need to add this to the *report* section in your harmonization configuration:
+In version 2.1.0 a new field `extra` has been added to *Reports*. You need to add this to the *report* section in your harmonization configuration, or run `intelmqctl upgrade-config`:
 ```json
         "extra": {
             "description": "All anecdotal information of the report, which cannot be parsed into the data harmonization elements. E.g. subject of mails, etc. This is data is not automatically propagated to the events.",
