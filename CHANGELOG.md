@@ -46,6 +46,7 @@ CHANGELOG
 
 ### Core
 - `intelmq.lib.pipeline`: AMQP: using port 15672 as default (like RabbitMQ's defaults) for the monitoring interface for getting statistical data (`intelmqctl_rabbitmq_monitoring_url`).
+- `intelmq.lib.upgrades`: Added a generic upgrade function for harmonization, checking of all message types, it's fields and their types.
 
 ### Development
 
@@ -78,6 +79,9 @@ CHANGELOG
 ### Tests
 
 ### Tools
+- `intelmq.bin.intelmqctl`:
+  - check: Check if running the upgrade function for harmonization is necessary.
+  - upgrade-config: Run the upgrade function for harmonization.
 
 ### Contrib
 
