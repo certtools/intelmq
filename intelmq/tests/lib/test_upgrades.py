@@ -208,7 +208,7 @@ WRONG_TYPE['event']['source.asn']['type'] = 'String'
 def generate_function(function):
     def test_function(self):
         """ Test if no errors happen for upgrade function %s. """ % function.__name__
-        function({}, {}, dry_run=True)
+        function({}, {}, {}, dry_run=True)
     return test_function
 
 
@@ -236,19 +236,19 @@ class TestUpgradeLib(unittest.TestCase):
 
     def test_v110_deprecations(self):
         """ Test v110_deprecations """
-        result = upgrades.v110_deprecations({}, DEP_110, False)
+        result = upgrades.v110_deprecations({}, DEP_110, {}, False)
         self.assertTrue(result[0])
         self.assertEqual(DEP_110_EXP, result[2])
 
     def test_v202_fixes(self):
         """ Test v202_feed_name """
-        result = upgrades.v202_fixes({}, V202, False)
+        result = upgrades.v202_fixes({}, V202, {}, False)
         self.assertTrue(result[0])
         self.assertEqual(V202_EXP, result[2])
 
     def test_v210_deprecations(self):
         """ Test v210_deprecations """
-        result = upgrades.v210_deprecations({}, V210, True)
+        result = upgrades.v210_deprecations({}, V210, {}, True)
         self.assertTrue(result[0])
         self.assertEqual(V210_EXP, result[2])
 
