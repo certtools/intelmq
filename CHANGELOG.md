@@ -13,6 +13,9 @@ CHANGELOG
 ### Core
 - `intelmq.lib.pipeline`: AMQP: using port 15672 as default (like RabbitMQ's defaults) for the monitoring interface for getting statistical data (`intelmqctl_rabbitmq_monitoring_url`).
 - `intelmq.lib.upgrades`: Added a generic upgrade function for harmonization, checking of all message types, it's fields and their types.
+- `intelmq.lib.utils`:
+  - `TimeoutHTTPAdapter`: A subclass of `requests.adapters.HTTPAdapter` with the possibility to set the timeout per adapter.
+  - `create_request_session_from_bot`: Use the `TimeoutHTTPAdapter` with the user-defined timeout. Previously the timeout was not functional.
 
 ### Development
 
