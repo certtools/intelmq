@@ -88,6 +88,7 @@ CHANGELOG
 - `intelmq.bin.intelmqctl`:
   - check: Check if running the upgrade function for harmonization is necessary.
   - upgrade-config: Run the upgrade function for harmonization.
+  - `intelmqctl restart` did throw an error as the message for restarting was not defined (#1465).
 
 ### Contrib
 
