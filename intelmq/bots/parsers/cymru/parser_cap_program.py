@@ -294,7 +294,7 @@ class CymruCAPProgramParserBot(ParserBot):
                         event.add('extra.protocol.transport', int(value))
                     else:
                         raise ValueError('Unknown protocol %r, please report a bug'
-                                     '' % value)
+                                         '' % value)
             elif key == 'hostname':
                 event['source.fqdn'] = value
             elif key == 'proxy_type':
