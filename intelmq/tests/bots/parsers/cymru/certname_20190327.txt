@@ -6,7 +6,7 @@ bot|172.16.0.21|64496|2019-03-25 03:44:22|family: nivdort;dest_addr: 172.16.0.22
 bruteforce|172.16.0.21|64496|2019-01-10 22:25:58|ssh;|Example AS Name, AT
 controller|172.16.0.21|64496|2019-03-25 17:47:40|family: stealrat;protocol: 6;|Example AS Name, AT
 controller|172.16.0.21|64496|2019-03-25 05:01:47|family: http_post;hostname: www.example.com;|Example AS Name, AT
-darknet|172.16.0.21|64496|2019-03-25 17:24:06|darknet_port: 23, 2323;protocol: 6;|Example AS Name, AT
+darknet|172.16.0.21|64496|2019-03-25 17:24:06|darknet_port: 23, 2323;protocol: 182;|Example AS Name, AT
 darknet|172.16.0.21|64496|2019-03-25 04:27:11|ports_scanned: 55756;protocol: 17;|Example AS Name, AT
 honeypot|172.16.0.21|64496|2019-03-25 14:08:53|honeypot_port: 22;protocol: 6;|Example AS Name, AT
 phishing|172.16.0.21|64496|2019-03-20 13:03:18|http://www.example.com/;|Example AS Name, AT
@@ -25,3 +25,4 @@ controller|172.16.0.21|64496|2019-09-22 05:39:38|family: http_post;hostname: sub
 scanner|172.16.0.21|64496|2019-09-19 00:03:13|destination_port_numbers: 57518;port: 55133;protocol: 6;|Example AS Name, AT
 darknet|172.16.0.21|64496|2019-09-30 13:49:49|destination_port_numbers: 17875,24526,54449,9314,4903,1568,20749,30524,59316,60704 (total_count:19);port: 40434;protocol: 17;|Example AS Name, AT
 spam|172.16.0.21|64496|2019-10-02 23:00:17||Example AS Name, AT
+phishing|172.16.0.21|64496|2019-10-23 12:46:18||Example AS Name, AT

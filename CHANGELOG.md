@@ -25,6 +25,9 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver.parser`: Fix logging message if the parameter `feedname` is not present.
 - `intelmq.bots.parsers.shodan.parser`: Also add field `classification.identifier` (`'network-scan'`) in minimal mode.
 - `intelmq.bots.parsers.spamhaus.parser_cert`: Add support for category `'misc'`.
+- `intelmq.bots.parsers.cymru.parser_cap_program`:
+  - Add support for phishing events without URL.
+  - Add support for protocols >= 143 (unassigned, experients, testing, reserved), saving the number to extra, as the data would be bogous.
 
 #### Experts
 

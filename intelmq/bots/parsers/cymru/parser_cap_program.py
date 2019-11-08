@@ -245,9 +245,10 @@ class CymruCAPProgramParserBot(ParserBot):
         event.add('source.as_name', ', '.join(asninfo_split[:-1]))  # contains CC at the end
         event.add('source.geolocation.cc', asninfo_split[-1])
         if category in MAPPING_COMMENT:
-            assert len(comment_split) == 1
-            for field in MAPPING_COMMENT[category]:
-                event.add(field, comment_split[0])
+            # if the comment is missing, we can't add that information
+            if comment_split:
+                for field in MAPPING_COMMENT[category]:
+                    event.add(field, comment_split[0])
 
         try:
             for key, value in MAPPING_STATIC[category].items():
@@ -288,7 +289,11 @@ class CymruCAPProgramParserBot(ParserBot):
                 try:
                     event.add('protocol.transport', PROTOCOL_MAPPING[value])
                 except KeyError:
-                    raise ValueError('Unknown protocol %r, please report a bug'
+                    if int(value) >= 143:
+                        # unassigned, experients, testing, reserved
+                        event.add('extra.protocol.transport', int(value))
+                    else:
+                        raise ValueError('Unknown protocol %r, please report a bug'
                                      '' % value)
             elif key == 'hostname':
                 event['source.fqdn'] = value

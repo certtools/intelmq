@@ -57,13 +57,13 @@ EVENTS = [{'time.source': '2019-03-22T11:18:52+00:00',
            'classification.identifier': 'darknet',
            'destination.port': 23,
            'time.source': '2019-03-25T17:24:06+00:00',
-           'protocol.transport': 'tcp',
+           'extra.protocol.transport': 182,
            },
           {'classification.type': 'scanner',
            'classification.identifier': 'darknet',
            'destination.port': 2323,
            'time.source': '2019-03-25T17:24:06+00:00',
-           'protocol.transport': 'tcp',
+           'extra.protocol.transport': 182,
            },
           {'classification.type': 'scanner',
            'classification.identifier': 'darknet',
@@ -176,10 +176,14 @@ EVENTS = [{'time.source': '2019-03-22T11:18:52+00:00',
            'classification.identifier': 'spam',
            'time.source': '2019-10-02T23:00:17+00:00',
            },
+          {'time.source': '2019-10-23T12:46:18+00:00',
+           'classification.type': 'phishing',
+           'classification.identifier': 'phishing',
+           },
           ]
 # The number of events a single line in the raw data produces
 NUM_EVENTS = [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              1, 10, 1]
+              1, 10, 1, 1]
 RAWS = []
 for i, line in enumerate(RAW_LINES[3:]):
     for count in range(NUM_EVENTS[i]):
