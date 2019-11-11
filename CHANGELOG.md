@@ -31,6 +31,8 @@ CHANGELOG
 - `intelmq.bots.parsers.cymru.parser_cap_program`:
   - Add support for phishing events without URL.
   - Add support for protocols >= 143 (unassigned, experients, testing, reserved), saving the number to extra, as the data would be bogous.
+- `intelmq.bots.parsers.microsoft.parser_bingmurls`:
+  - Save the `Tags` data as `source.geolocation.cc`.
 
 #### Experts
 
