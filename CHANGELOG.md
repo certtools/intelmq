@@ -2,7 +2,7 @@ CHANGELOG
 ==========
 
 
-2.1.1 (unreleased)
+2.1.1 (2019-11-11)
 ------------------
 
 ### Configuration
@@ -17,20 +17,14 @@ CHANGELOG
   - `TimeoutHTTPAdapter`: A subclass of `requests.adapters.HTTPAdapter` with the possibility to set the timeout per adapter.
   - `create_request_session_from_bot`: Use the `TimeoutHTTPAdapter` with the user-defined timeout. Previously the timeout was not functional.
 
-### Development
-
-### Harmonization
-
 ### Bots
-#### Collectors
-
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.parser`: Fix logging message if the parameter `feedname` is not present.
 - `intelmq.bots.parsers.shodan.parser`: Also add field `classification.identifier` (`'network-scan'`) in minimal mode.
 - `intelmq.bots.parsers.spamhaus.parser_cert`: Add support for category `'misc'`.
 - `intelmq.bots.parsers.cymru.parser_cap_program`:
   - Add support for phishing events without URL.
-  - Add support for protocols >= 143 (unassigned, experients, testing, reserved), saving the number to extra, as the data would be bogous.
+  - Add support for protocols >= 143 (unassigned, experiments, testing, reserved), saving the number to extra, as the data would be bogus.
 - `intelmq.bots.parsers.microsoft.parser_bingmurls`:
   - Save the `Tags` data as `source.geolocation.cc`.
 
@@ -49,9 +43,8 @@ CHANGELOG
 - Bots:
   - Sieve expert: Document behavior of `!=` with lists.
 
-### Packaging
-
 ### Tests
+- Adaption and extension of the test cases to the changes.
 
 ### Tools
 - `intelmq.bin.intelmqctl`:
@@ -59,9 +52,15 @@ CHANGELOG
   - upgrade-config: Run the upgrade function for harmonization.
   - `intelmqctl restart` did throw an error as the message for restarting was not defined (#1465).
 
-### Contrib
-
 ### Known issues
+- MongoDB authentication: compatibility on different MongoDB and pymongo versions (#1439)
+- ctl: shell colorizations are logged (#1436)
+- http stream collector: retry on regular connection problems? (#1435)
+- tests: capture logging with context manager (#1342)
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952)
+- n6 parser: mapping is modified within each run (#905)
+- reverse DNS: Only first record is used (#877)
+- Corrupt dump files when interrupted during writing (#870)
 
 
 2.1.0 (2019-10-15)
