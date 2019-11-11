@@ -35,6 +35,7 @@ CHANGELOG
   - Save the `Tags` data as `source.geolocation.cc`.
 
 #### Experts
+- `intelmq.bots.experts.modify.expert`: Fix bug with setting non-string values (#1460).
 
 #### Outputs
 - `intelmq.bots.outputs.smtp`:
