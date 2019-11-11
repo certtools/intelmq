@@ -1939,6 +1939,8 @@ Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feo
 
 If the rule is a string, a regex-search is performed, also for numeric values (`str()` is called on them). If the rule is numeric for numeric values, a simple comparison is done. If other types are mixed, a warning will be thrown.
 
+For boolean values, the comparison value needs to be `true` or `false` as in JSON they are written all-lowercase.
+
 * * *
 
 ### National CERT contact lookup by CERT.AT
@@ -2183,6 +2185,13 @@ specified with quotes. Following operators may be used to match events:
 
   In this case, the event will match if it contains a key `source.ip` with
   either value `8.8.8.8` or `8.8.4.4`.
+
+  With inequality operators, the behavior is the same, so it matches if any expression does not match:
+
+  ```if source.ip != ['8.8.8.8', '8.8.4.4'] { ... }```
+
+  Events with values like `8.8.8.8` or `8.8.4.4` will match, as they are always unequal to the other value.
+  The result is *not* that the field must be unequal to all given values.
 
 
 ##### Actions
@@ -2625,7 +2634,7 @@ Sends a MIME Multipart message containing the text and the event as CSV for ever
 
 For several strings you can use values from the string using the
 [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax).
-Access the event's values with `{ev[source.ip]}` and similar.
+Access the event's values with `{ev[source.ip]}` and similar. Any not existing fields will result in `None`.
 
 Authentication is optional. If both username and password are given, these
 mechanism are tried: CRAM-MD5, PLAIN, and LOGIN.

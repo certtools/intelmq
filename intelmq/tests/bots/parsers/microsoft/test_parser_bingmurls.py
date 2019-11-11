@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-           "Tags": "extra.tags",
-"""
 import json
 import os
 import unittest
@@ -40,7 +37,7 @@ EXAMPLE_EVENTS = [{
     'extra.indicator_provider': 'Bing',
     'extra.indicator_expiration_date_time': '2018-06-28T10:49:29Z',
     'extra.threat_detection_product': 'Forefront',
-    'extra.tags': ['com'],
+    'source.geolocation.cc': 'AT',
     }, {
     "__type": "Event",
     'classification.type': 'blacklist',
@@ -59,7 +56,7 @@ EXAMPLE_EVENTS = [{
     'extra.indicator_provider': 'Bing',
     'extra.indicator_expiration_date_time': '2018-06-28T10:49:29Z',
     'extra.threat_detection_product': 'Forefront',
-    'extra.tags': ['org'],
+    'source.geolocation.cc': 'DE',
     },
     ]
 

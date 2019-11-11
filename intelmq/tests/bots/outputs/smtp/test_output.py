@@ -24,7 +24,7 @@ class TestSMTPOutputBot(test.BotTestCase, unittest.TestCase):
                          "smtp_host": "",
                          "smtp_port": 25,
                          "text": 'foobar',
-                         "subject": "sub",
+                         "subject": "type: {ev[classification.type]}",
                          "mail_from": "myself",
                          "mail_to": "you"}
 
@@ -34,14 +34,14 @@ class TestSMTPOutputBot(test.BotTestCase, unittest.TestCase):
             with unittest.mock.patch('smtplib.SMTP.close'):
                 self.run_bot()
 
-        self.assertEqual(SENT_MESSAGE[0]['Subject'], 'sub')
+        self.assertEqual(SENT_MESSAGE[0]['Subject'], 'type: None')
         self.assertEqual(SENT_MESSAGE[0]['From'], 'myself')
         self.assertEqual(SENT_MESSAGE[0]['To'], 'you')
         self.assertEqual(SENT_MESSAGE[0].get_payload()[0].get_payload(), 'foobar')
         self.assertEqual(SENT_MESSAGE[0].get_payload()[1].get_payload(), '''source.ip;time.source;source.url
 127.0.0.1;;http://example.com/
 ''')
-        self.assertEqual({'from_addr': 'myself', 'to_addrs': 'you'},
+        self.assertEqual({'from_addr': 'myself', 'to_addrs': ['you']},
                          SENT_MESSAGE[1])
 
 

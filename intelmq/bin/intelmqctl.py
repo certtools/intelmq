@@ -57,6 +57,7 @@ MESSAGES = {
     'enabling': 'Enabling %s.',
     'disabling': 'Disabling %s.',
     'reloaded': 'Bot %s is reloaded.',
+    'restarting': 'Restarting %s...',
 }
 
 ERROR_MESSAGES = {
@@ -639,6 +640,7 @@ class IntelMQController():
                 'json': machine-readable output for managers
             quiet: False by default, can be activated for cron jobs etc.
         """
+        self.interactive = interactive
         global RETURN_TYPE
         RETURN_TYPE = return_type
         global logger
@@ -674,7 +676,6 @@ class IntelMQController():
             self.logger.exception('Loading the defaults configuration failed!',
                                   exc_info=defaults_loading_exc)
 
-        self.interactive = interactive
         if not utils.drop_privileges():
             logger.warning('Running intelmqctl as root is highly discouraged!')
 
@@ -1434,6 +1435,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         if extra_type != 'JSONDict':
             check_logger.warning("'extra' field needs to be of type 'JSONDict'.")
             retval = 1
+        if upgrades.harmonization({}, {}, files[HARMONIZATION_CONF_FILE],
+                                  dry_run=True)[0]:
+            check_logger.warning("Harmonization needs an upgrade, call "
+                                 "intelmqctl upgrade-config.")
 
         check_logger.info('Checking for bots.')
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
@@ -1543,6 +1548,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         defaults = utils.load_configuration(DEFAULTS_CONF_FILE)
         runtime = utils.load_configuration(RUNTIME_CONF_FILE)
+        harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
         if dry_run:
             self.logger.info('Doing a dry run, not writing anything now.')
 
@@ -1561,11 +1567,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                   ', '.join(upgrades.__all__))
                 return 1, 'error'
             try:
-                retval, defaults_new, runtime_new = getattr(upgrades, function)(defaults, runtime, dry_run)
+                retval, defaults_new, runtime_new, harmonization_new = getattr(
+                    upgrades, function)(defaults, runtime, harmonization, dry_run)
                 # Handle changed configurations
                 if retval is True and not dry_run:
                     utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new)
                     utils.write_configuration(RUNTIME_CONF_FILE, runtime_new)
+                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization_new)
             except Exception:
                 self.logger.exception('Upgrade %r failed, please report this bug '
                                       'with the shown traceback.',
@@ -1633,6 +1641,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 self.logger.info("Found no previous version, doing all upgrades.")
                 todo = [(version, bunch, True) for version, bunch in upgrades.UPGRADES.items()]
 
+            todo.extend([(None, (function, ), False)
+                         for function in upgrades.ALWAYS])
+
             """
             todo is now a list of tuples of functions.
             todo = [
@@ -1647,7 +1658,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             error = False
             for version, bunch, version_new in todo:
-                if version_new:
+                if version and version_new:
                     self.logger.info('Upgrading to version %s.',
                                      '.'.join(map(str, version)))
                 for function in bunch:
@@ -1660,7 +1671,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                               "time": datetime.datetime.now().isoformat()
                               }
                     try:
-                        retval, defaults, runtime = function(defaults, runtime, dry_run)
+                        retval, defaults, runtime, harmonization = function(defaults, runtime, harmonization, dry_run)
                     except Exception:
                         self.logger.exception('%s: Upgrade failed, please report this bug '
                                               'with the traceback.', docstring)
@@ -1682,15 +1693,25 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                               'as bug.', docstring, retval)
                             result['success'] = False
                         result['retval'] = retval
-                    state['results'].append(result)
-                    state['upgrades'][function.__name__] = result['success']
+
+                    if version or retval is not None:
+                        """
+                        do not add it to the results if it is run always
+                        and was a no-op.
+                        """
+                        state['results'].append(result)
+                    if version:
+                        """
+                        Only add it to the upgrades list if it is specific to a function
+                        """
+                        state['upgrades'][function.__name__] = result['success']
 
                     if not result['success']:
                         error = True
                         break
                 if error:
                     break
-                if version_new:
+                if version and version_new:
                     state['version_history'].append(version)
 
             if error:
@@ -1706,6 +1727,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 if not dry_run:
                     utils.write_configuration(DEFAULTS_CONF_FILE, defaults)
                     utils.write_configuration(RUNTIME_CONF_FILE, runtime)
+                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization)
             except Exception as exc:
                 self.logger.error('Writing defaults or runtime configuration '
                                   'did not succeed: %s\nFix the problem and '

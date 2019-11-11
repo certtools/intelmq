@@ -25,13 +25,14 @@ INPUT = [{'feed.name': 'Abuse.ch',
          {'source.port': 80, 'malware.name': 'zeus'},
          {'malware.name': 'xcodeghost'},
          {'malware.name': 'securityscorecard-someexample-value'},
-         {'malware.name': 'anyvalue'},
+         {'malware.name': 'anyvalue'},  # 5
+         {},
          {'source.tor_node': True},
          {'source.tor_node': False},
          {},
-         {'feed.accuracy': 5.22},
+         {'feed.accuracy': 5.22},  # 10
          {'feed.accuracy': 100},
-         {},
+         {'comment': 'integer value'},
          ]
 OUTPUT = [{'classification.identifier': 'feodo'},
           {'classification.identifier': 'foobar'},
@@ -39,13 +40,14 @@ OUTPUT = [{'classification.identifier': 'feodo'},
            'classification.identifier': 'zeus'},
           {'classification.identifier': 'xcodeghost'},
           {'classification.identifier': 'someexample-value'},
-          {'classification.identifier': 'anyvalue'},
+          {'classification.identifier': 'anyvalue'},  # 5
+          {'classification.type': 'vulnerable service'},
           {'event_description.text': 'This is a TOR node.'},
           {'event_description.text': 'This is not a TOR node.'},
           {'event_description.text': 'We don\'t know if this is a TOR node.'},
-          {'event_description.text': 'Accuracy is 10% or lower.'},
+          {'event_description.text': 'Accuracy is 10% or lower.'},  # 10
           {'event_description.text': 'Accuracy is the highest.'},
-          {'classification.type': 'vulnerable service'},
+          {'extra.test': 1, 'event_description.text': 'We don\'t know if this is a TOR node.'},
           ]
 for index in range(len(INPUT)):
     copy1 = EVENT_TEMPL.copy()
@@ -92,16 +94,16 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_types(self):
         """
-        boolean etc
+        boolean, int etc
         """
         config_path = resource_filename('intelmq',
                                         'tests/bots/experts/modify/types.conf')
-        parameters = {'configuration_path': config_path}
-        self.input_message = INPUT[6:11]
-        self.allowed_warning_count = 1
-        self.prepare_bot(parameters=parameters)
-        self.run_bot(prepare=False, iterations=len(INPUT[6:11]))
-        for position, event_out in enumerate(OUTPUT[6:11]):
+        parameters = {'configuration_path': config_path,
+                      'overwrite': True}
+        self.input_message = INPUT[7:13]
+        self.run_bot(parameters=parameters,
+                     iterations=len(INPUT[7:13]))
+        for position, event_out in enumerate(OUTPUT[7:13]):
             self.assertMessageEqual(position, event_out)
 
     def test_overwrite(self):
@@ -110,10 +112,10 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
         """
         config_path = resource_filename('intelmq',
                                         'tests/bots/experts/modify/overwrite.conf')
-        self.input_message = EVENT_TEMPL
+        self.input_message = INPUT[6]
         self.allowed_warning_count = 1
         self.run_bot(parameters={'configuration_path': config_path})
-        self.assertMessageEqual(0, OUTPUT[11])
+        self.assertMessageEqual(0, OUTPUT[6])
 
     def test_overwrite_not(self):
         """

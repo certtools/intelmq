@@ -3,6 +3,26 @@ NEWS
 
 See the changelog for a full list of changes.
 
+2.1.1 Bugfix release (2019-11-11)
+---------------------------------
+
+### Tools
+`intelmqctl check` and `intelmqctl upgrade-config` checks/applies a generic harmonization upgrade, checking for it's completeness.
+
+### Harmonization
+In version 2.1.0 a new field `extra` has been added to *Reports*. You need to add this to the *report* section in your harmonization configuration, or run `intelmqctl upgrade-config`:
+```json
+        "extra": {
+            "description": "All anecdotal information of the report, which cannot be parsed into the data harmonization elements. E.g. subject of mails, etc. This is data is not automatically propagated to the events.",
+            "type": "JSONDict"
+        },
+```
+
+### Configuration
+#### Defaults
+For AMQP brokers, the port 15671 was used as default for connecting to the management interface. But RabbitMQ's default is 15672. This was corrected in this version. If you changed the port in RabbitMQ or IntelMQ (`intelmqctl_rabbitmq_monitoring_url`), the settings needs to be adapted.
+
+
 2.1.0 Feature release (2019-10-15)
 ----------------------------------
 
