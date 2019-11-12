@@ -30,6 +30,7 @@
 - [Parsers](#parsers)
   - [Not complete](#not-complete)
   - [Generic CSV Parser](#generic-csv-parser)
+  - [Calidog Certstream](#calidog-certstream)
   - [Cymru CAP Program](#cymru-cap-program)
   - [Cymru Full Bogons](#cymru-full-bogons)
   - [HTML Table Parser](#html-table-parser)
@@ -935,6 +936,25 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
  * `"type_translation"`: If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
  * `"columns_required"`: A list of true/false for each column. By default, it is true for every column.
+
+* * *
+
+### Calidog Certstream
+
+
+#### Information:
+* `name:` intelmq.bots.parsers.calidog.parser_certstream
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` parsers data from Certificate Transparency Log
+
+#### Description
+
+For each domain in the `leaf_cert.all_domains` object one event with the domain in `source.fqdn` (and `source.ip` as fallback) is produced.
+The seen-date is saved in `time.source` and the classification type is `other`.
+
+* **Feed parameters** (see above)
 
 * * *
 
