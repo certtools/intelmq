@@ -1564,6 +1564,14 @@ The bot with this configuration will detect duplication based on all keys, excep
 }
 ```
 
+#### Flushing the cache
+
+To flush the deduplicator's cache, you can use the `redis-cli` tool. Enter the database used by the bot and submit the `flushdb` command:
+```
+redis-cli -n 6
+flushdb
+```
+
 * * *
 
 ### DO Portal Expert Bot
