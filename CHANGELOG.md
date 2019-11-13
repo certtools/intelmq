@@ -17,6 +17,7 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.shadowserver.config`: Add some missing fields for accessible-rdp (#1463).
 
 #### Experts
 
