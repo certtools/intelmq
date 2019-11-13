@@ -200,7 +200,7 @@ Multihreading is disabled for all Collectors, as this would lead to duplicated d
 * `connection_heartbeat`: Heartbeat to server, in seconds, defaults to 3600
 * `connection_host`: Name/IP for the AMQP server, defaults to 127.0.0.1
 * `connection_port`: Port for the AMQP server, defaults to 5672
-* `connection_vhost`: Virtual host to connect, on a http(s) connection would be http:/IP/<your virtual host>
+* `connection_vhost`: Virtual host to connect, on an http(s) connection would be http:/IP/<your virtual host>
 * `expect_intelmq_message`: Boolean, if the data is from IntelMQ or not. Default: `false`. If true, then the data can be any Report or Event and will be passed to the next bot as is. Otherwise a new report is created with the raw data.
 * `password`: Password for authentication on your AMQP server
 * `queue_name`: The name of the queue to fetch data from
@@ -218,7 +218,7 @@ Currently only fetching from a queue is supported can be extended in the future.
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` collect report messages from a HTTP REST API
+* `description:` collect report messages from an HTTP REST API
 
 #### Configuration Parameters:
 
@@ -252,7 +252,7 @@ You may use a `JSON` specifying [time-delta](https://docs.python.org/3/library/d
 
 Zipped files are automatically extracted if detected.
 
-For extracted files, every extracted file is sent in it's own report. Every report has a field named `extra.file_name` with the file name in the archive the content was extracted from.
+For extracted files, every extracted file is sent in its own report. Every report has a field named `extra.file_name` with the file name in the archive the content was extracted from.
 
 * * *
 
@@ -301,7 +301,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `url_regex`: regular expression of the feed URL to search for in the mail body
 * `sent_from`: filter messages by sender
 * `sent_to`: filter messages by recipient
-* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
+* `ssl_ca_certificate`: Optional string of path to trusted CA certificate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
 The resulting reports contains the following special fields:
  * `feed.url`: The URL the data was downloaded from
@@ -380,7 +380,7 @@ The resulting reports contains the following special fields:
 * `subject_regex`: regular expression to look for a subject
 * `sent_from`: filter messages by sender
 * `sent_to`: filter messages by recipient
-* `ssl_ca_certificate`: Optional string of path to trusted CA certicate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
+* `ssl_ca_certificate`: Optional string of path to trusted CA certificate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 * `content_types`: Which bodies to use based on the content_type. Default: `true`/`['html', 'plain']` for all:
   - string with comma separated values, e.g. `['html', 'plain']`
   - `true`, `false`, `null`: Same as default value
@@ -440,7 +440,7 @@ If `delete_file` is set, the file will be deleted after processing. If deletion
 is not possible, the bot will stop.
 
 To prevent data loss, the bot also stops when no `postfix` is set and
-`delete_file` was set. This can not be overridden.
+`delete_file` was set. This cannot be overridden.
 
 The bot always sets the file name as feed.url
 
@@ -650,7 +650,7 @@ pip3 install -r intelmq/bots/collectors/xmpp/REQUIREMENTS.txt
 * `xmpp_server`: The domain name of the server of the XMPP-Account (part after the @ sign)
 * `xmpp_user`: The username of the XMPP-Account the collector shall use (part before the @ sign)
 * `xmpp_password`: The password of the XMPP-Account
-* `xmpp_room`: The room which which has to be joined by the XMPP-Collector (full address room@conference.server.tld)
+* `xmpp_room`: The room which has to be joined by the XMPP-Collector (full address room@conference.server.tld)
 * `xmpp_room_nick`: The username / nickname the collector shall use within the room
 * `xmpp_room_password`: The password which might be required to join a room
  - `use_muc` : If this parameter is `true`, the bot will join the room `xmpp_room`.
@@ -720,7 +720,7 @@ pip3 install -r intelmq/bots/collectors/blueliv/REQUIREMENTS.txt
 ### Calidog Certstream
 
 A Bot to collect data from the Certificate Transparency Log (CTL)
-This bot works based on certstream libary (https://github.com/CaliDog/certstream-python)
+This bot works based on certstream library (https://github.com/CaliDog/certstream-python)
 
 #### Information:
 * `name:` intelmq.bots.collectors.calidog.collector_certstream
@@ -748,7 +748,7 @@ This bot works based on certstream libary (https://github.com/CaliDog/certstream
 
 * **Feed parameters** (see above)
 * `dxl_config_file`: location of the config file containing required information to connect $
-* `dxl_topic`: the name of the DXL topix to subscribe
+* `dxl_topic`: the name of the DXL topic to subscribe
 
 * * *
 
@@ -847,7 +847,7 @@ Collects tweets from target_timelines. Up to tweet_count tweets from each user a
 * `include_rts`: whether to include retweets by given screen_name
 * `consumer_key`: Twitter api login data
 * `consumer_secret`: Twitter api login data
-* `acces_token_key`: Twitter api login data
+* `access_token_key`: Twitter api login data
 * `access_token_secret`: Twitter api login data
 
 ### API collector bot
@@ -908,8 +908,8 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
         - parse a value and ignore if it fails  `"columns": "source.url|__IGNORE__"`
 
- * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaulated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`.
- * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data.
+ * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaluated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`.
+ * `"default_url_protocol"`: For URLs you can give a default protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
  * `"skip_header"`: Boolean, skip the first line of the file, optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
  * `time_format`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
@@ -1113,7 +1113,7 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
     "attribute_value": "details"
     ```
  * `"table_index"`: Index of the table if multiple tables present. If `attribute_name` and `attribute_value` given, index according to tables remaining after filtering with table attribute. Default: `0`.
- * `"split_column"`: Padded column to be splitted to get values, to be used in conjection with `split_separator` and `split_index`, optional.
+ * `"split_column"`: Padded column to be split to get values, to be used in conjunction with `split_separator` and `split_index`, optional.
  * `"split_separator"`: Delimiter string for padded column.
  * `"split_index"`: Index of unpadded string in returned list from splitting `split_column` with `split_separator` as delimiter string. Default: `0`.
     E.g.
@@ -1205,7 +1205,7 @@ constants.
 
 #### Configuration Parameters:
 
-* `domain_whitelist`: domains to be filetered out
+* `domain_whitelist`: domains to be filtered out
 * `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
 * `classification_type`: string with a valid classification type as defined in data harmonization
 * `default_scheme`: Default scheme for URLs if not given. See also the next section.
@@ -1325,7 +1325,7 @@ Add a new feedformat and conversions if required to the file
 `config.py`. Don't forget to update the `feed_idx` dict.
 It is required to look up the correct configuration.
 
-Look a the documentation in the bots's `config.py` file for more information.
+Look at the documentation in the bots's `config.py` file for more information.
 
 * * *
 
@@ -1521,11 +1521,11 @@ And additionally the exceptions, together with the above wildcard rule:
 #### Configuration Parameters:
 
 * **Cache parameters** (see in section [common parameters](#common-parameters))
-* `bypass`- true or false value to bypass the eduplicator. When set to true, messages will not be deduplicated. Default: false
+* `bypass`- true or false value to bypass the deduplicator. When set to true, messages will not be deduplicated. Default: false
 
 ##### Parameters for "fine-grained" deduplication
 
-* `filter_type`: type of the filtering which can be "blacklist" or "whitelist". The filter type will be used to define how Deduplicator bot will interpret the the parameter `filter_keys` in order to decide whether an event has already been seen or not, i.e., duplicated event or a completely new event.
+* `filter_type`: type of the filtering which can be "blacklist" or "whitelist". The filter type will be used to define how Deduplicator bot will interpret the parameter `filter_keys` in order to decide whether an event has already been seen or not, i.e., duplicated event or a completely new event.
   * "whitelist" configuration: only the keys listed in `filter_keys` will be considered to verify if an event is duplicated or not.
   * "blacklist" configuration: all keys except those in `filter_keys` will be considered to verify if an event is duplicated or not.
 * `filter_keys`: string with multiple keys separated by comma. Please note that `time.observation` key will not be considered even if defined, because the system always ignore that key.
@@ -1982,7 +1982,7 @@ For boolean values, the comparison value needs to be `true` or `false` as in JSO
 
 #### Configuration Parameters:
 
-* `filter`: (true/false) act as a a filter for AT.
+* `filter`: (true/false) act as a filter for AT.
 * `overwrite_cc`: set to true if you want to overwrite any potentially existing cc fields in the event.
 
 * * *
@@ -1996,7 +1996,7 @@ This Bot tags events with score found in recorded futures large IP risklist.
 * `lookup:` local database
 * `public:` no
 * `cache (redis db):` none
-* `description:` Record risk score associated to source and destination IP if they are present. Assigns 0 to to IPs not in the RF list.
+* `description:` Record risk score associated to source and destination IP if they are present. Assigns 0 to IP addresses not in the RF list.
 
 #### Configuration Parameters:
 
@@ -2257,7 +2257,7 @@ Example:
    or with the command `keep`. The named queue needs to configured in the
    pipeline, see the User Guide for more information.
 
-   ```path 'named-queue```
+   ```path 'named-queue'```
 
  * `drop` marks the event to be dropped. The event will not be forwarded to the
  next bot in the pipeline. The sieve file processing is interrupted upon
@@ -2343,7 +2343,7 @@ writes it to `source.fqdn` or `destination.fqdn` if it is a hostname, or
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
-* `description:` Waits for a some time or until a queue size is lower than a given numer.
+* `description:` Waits for a some time or until a queue size is lower than a given number.
 
 #### Configuration Parameters:
 
@@ -2384,7 +2384,7 @@ See https://www.rabbitmq.com/tutorials/amqp-concepts.html for more details on am
 * connection_heartbeat  : Heartbeat to server, in seconds, defaults to 3600
 * connection_host       : Name/IP for the AMQP server, defaults to 127.0.0.1
 * connection_port       : Port for the AMQP server, defaults to 5672
-* connection_vhost      : Virtual host to connect, on a http(s) connection would be http:/IP/<your virtual host>
+* connection_vhost      : Virtual host to connect, on an http(s) connection would be http:/IP/<your virtual host>
 * content_type          : Content type to deliver to AMQP server, currently only supports "application/json"
 * delivery_mode         : 1 - Non-persistent, 2 - Persistent. On persistent mode, messages are delivered to 'durable' queues and will be saved to disk.
 * exchange_durable      : If set to True, the exchange will survive broker restart, otherwise will be a transient exchange.
@@ -2394,10 +2394,10 @@ See https://www.rabbitmq.com/tutorials/amqp-concepts.html for more details on am
 * password              : Password for authentication on your AMQP server
 * require_confirmation  : If set to True, an exception will be raised if a confirmation error is received
 * routing_key           : The routing key for your amqptopic
-* `single_key`          : Only send a the field instead of the full event (expecting a field name as string)
+* `single_key`          : Only send the field instead of the full event (expecting a field name as string)
 * username              : Username for authentication on your AMQP server
 * `use_ssl`             : Use ssl for the connection, make sure to also set the correct port, usually 5671 (`true`/`false`)
-* message_hierarchical_output: Convert the message to hierachical JSON, default: false
+* message_hierarchical_output: Convert the message to hierarchical JSON, default: false
 * message_with_type     : Include the type in the sent message, default: false
 * message_jsondict_as_string: Convert fields of type JSONDict (extra) as string, default: false
 
@@ -2465,7 +2465,7 @@ This output bot discards all incoming messages.
 * `use_ssl`: Whether to use SSL/TLS when connecting to Elasticsearch. Default: False
 * `http_verify_cert`: Whether to require verification of the server's certificate. Default: False
 * `ssl_ca_certificate`: An optional path to a certificate bundle to use for verifying the server
-* `ssl_show_warnings`: Whether to show warnings if the server's certificate can not be verified. Default: True
+* `ssl_show_warnings`: Whether to show warnings if the server's certificate cannot be verified. Default: True
 * `replacement_char`: If set, dots ('.') in field names will be replaced with this character prior to indexing. This is for backward compatibility with ES 2.X. Default: null. Recommended for ES2.X: '_'
 * `flatten_fields1: In ES, some query and aggregations work better if the fields are flat and not JSON. Here you can provide a list of fields to convert.
                        Can be a list of strings (fieldnames) or a string with field names separated by a comma (,). eg `extra,field2` or `['extra', 'field2']`
@@ -2500,7 +2500,7 @@ Multihreading is disabled for this bot, as this would lead to corrupted files.
 * `encoding_errors_mode`: By default `'strict'`, see for more details and options: https://docs.python.org/3/library/functions.html#open For example with `'backslashreplace'` all characters which cannot be properly encoded will be written escaped with backslashes.
 * `file`: file path of output file. Missing directories will be created if possible with the mode 755.
 * `format_filename`: Boolean if the filename should be formatted (default: `false`).
-* `hierarchial_output`: If true, the resulting dictionary will be hierarchical (field names split by dot).
+* `hierarchical_output`: If true, the resulting dictionary will be hierarchical (field names split by dot).
 * `single_key`: if `none`, the whole event is saved (default); otherwise the bot saves only contents of the specified key. In case of `raw` the data is base64 decoded.
 
 ##### Filename formatting
@@ -2551,7 +2551,7 @@ If the field used in the format string is not defined, `None` will be used as fa
 * `esm_user`: username of user entitled to write to watchlist
 * `esm_pw`: password of user
 * `esm_watchlist`: name of the watchlist to write to
-* `field`: name of the intelMQ field to be written to ESM
+* `field`: name of the IntelMQ field to be written to ESM
 
 * * *
 
@@ -2602,7 +2602,7 @@ The bot has been tested with pymongo versions 2.7.1 and 3.4.
 * `redis_password`: remote server password
 * `redis_queue`: remote server list (queue), e.g.: "remote-server-queue"
 * `redis_server_ip`: remote server IP address, e.g.: 127.0.0.1
-* `redis_server_port`: remote server Port, e.g: 6379
+* `redis_server_port`: remote server Port, e.g.: 6379
 * `redis_timeout`: Connection timeout, in msecs, e.g.: 50000
 * `hierarchical_output`: whether output should be sent in hierarchical json format (default: false)
 * `with_type`: Send the `__type` field (default: true)
@@ -2776,7 +2776,7 @@ psql -h localhost intelmq-events intelmq </tmp/initdb.sql
 
 #### Requirements:
 
-Install the stomp.py library, e.g `apt install python3-stomp.py` or `pip install stomp.py`.
+Install the stomp.py library, e.g. `apt install python3-stomp.py` or `pip install stomp.py`.
 
 You need a CA certificate, client certificate and key file from the organization / server you are connecting to.
 Also you will need a so called "exchange point".
@@ -2848,7 +2848,7 @@ Multihreading is disabled for this bot.
 #### Configuration Parameters:
 
 * `field_delimiter`: If the format is 'delimited' this will be added between fields. String, default: `"|"`
-* `format`: Can be `'json'` or `'delimited'`. The Json format outputs the event 'as-is'. Delimited will descontruct the event and print each field:value separated by the field delimit. See examples bellow.
+* `format`: Can be `'json'` or `'delimited'`. The Json format outputs the event 'as-is'. Delimited will deconstruct the event and print each field:value separated by the field delimit. See examples bellow.
 * `header`: Header text to be sent in the udp datagram, string.
 * `keep_raw_field`: boolean, default: false
 * `udp_host`: Destination's server's Host name or IP address
@@ -2913,7 +2913,7 @@ pip3 install -r intelmq/bots/collectors/xmpp/REQUIREMENTS.txt
 - `xmpp_password` : The password of the XMPP-Account
 - `xmpp_to_user` : The username of the receiver
 - `xmpp_to_server` : The domain name of the receiver
-- `xmpp_room` : The room which which has to be joined by the output (full address a@conference.b.com)
+- `xmpp_room` : The room which has to be joined by the output (full address a@conference.b.com)
 - `xmpp_room_nick` : The username / nickname the output shall use within the room.
 - `xmpp_room_password` : The password which might be required to join a room
 - `use_muc` : If this parameter is `true`, the bot will join the room `xmpp_room`.
