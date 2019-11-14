@@ -25,6 +25,7 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
+- Remove some hardcoded `/opt/intelmq/` paths from code comments and program outputs.
 
 ### Packaging
 
