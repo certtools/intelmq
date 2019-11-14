@@ -20,6 +20,7 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver.config`: Add some missing fields for accessible-rdp (#1463).
 
 #### Experts
+- `intelmq.bots.experts.national_cert_contact_certat`: Handle empty responses by server (#1467).
 
 #### Outputs
 
