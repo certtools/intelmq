@@ -49,6 +49,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.utils`:
+  - log: Do not raise an exception if logging to neither file nor syslog is requested.
 
 ### Development
 
@@ -61,12 +63,15 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver.config`: Add some missing fields for accessible-rdp (#1463).
 
 #### Experts
+- `intelmq.bots.experts.national_cert_contact_certat`: Handle empty responses by server (#1467).
 
 #### Outputs
 
 ### Documentation
+- Remove some hardcoded `/opt/intelmq/` paths from code comments and program outputs.
 
 ### Packaging
+- debian/rules: Only replace `/opt/intelmq/` with LSB-paths in some certain files, not the whole tree, avoiding wrong replacements.
 
 ### Tests
 
