@@ -13,7 +13,7 @@
     "NetworkDestinationIPv4": "127.5.9.48",
     "NetworkDestinationPort": 80,
     "Tags": [
-      "com"
+      "at"
     ],
     "ThreatDetectionProduct": "Forefront",
     "TLPLevel": "Amber",
@@ -34,7 +34,7 @@
     "NetworkDestinationIPv4": "198.51.48.124",
     "NetworkDestinationPort": 80,
     "Tags": [
-      "org"
+      "de"
     ],
     "ThreatDetectionProduct": "Forefront",
     "TLPLevel": "Amber",

@@ -12,6 +12,7 @@ For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
     - [Miscellaneous](#miscellaneous)
 - [Pipeline Configuration](#pipeline-configuration)
 - [Runtime Configuration](#runtime-configuration)
+  - [Multithreading (Beta)](#multithreading-beta)
 - [Harmonization Configuration](#harmonization-configuration)
 - [Utilities](#utilities)
 - [Management](#management)
@@ -124,6 +125,7 @@ If the path `_on_error` exists for a bot, the message is also sent to this queue
 * **`load_balance`** - this option allows you to choose the behavior of the queue. Use the following values:
     * **`true`** - splits the messages into several queues without duplication
     * **`false`** - duplicates the messages into each queue
+    * When using AMQP as message broker, take a look at the [Multithreading](#multithreading-beta) section and the `instances_threads` parameter.
 
 * **`broker`** - select which broker intelmq can use. Use the following values:
     * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ (in development). But note that persistence has to be manually activated. See http://redis.io/topics/persistence
