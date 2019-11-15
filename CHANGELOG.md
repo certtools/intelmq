@@ -8,6 +8,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.utils`:
+  - log: Do not raise an exception if logging to neither file nor syslog is requested.
 
 ### Development
 
