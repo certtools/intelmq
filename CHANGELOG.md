@@ -30,10 +30,13 @@ CHANGELOG
 
 ### Packaging
 - `setup.py` do not try to install any data to `/opt/intelmq/` as the behavior is inconsistent on various systems and with `intelmqsetup` we have a tool to create the structure and files anyway.
+- debian/rules:
+  - Provide a blank state file in the package.
 
 ### Tests
 
 ### Tools
+- `intelmqctl`: `upgrade-config`: Allow setting the state file location with the `--state-file` parameter.
 
 ### Contrib
 

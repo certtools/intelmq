@@ -928,6 +928,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_upgrade_conf.add_argument('-f', '--force',
                                              action='store_true',
                                              help='Force running the upgrade procedure.')
+            parser_upgrade_conf.add_argument('--state-file',
+                                             help='The state file location to use.',
+                                             default=STATE_FILE_PATH)
             parser_upgrade_conf.set_defaults(func=self.upgrade_conf)
 
             self.parser = parser
@@ -1487,7 +1490,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 self.logger.info('No issues found.')
                 return retval, 'success'
 
-    def upgrade_conf(self, previous=None, dry_run=None, function=None, force=None):
+    def upgrade_conf(self, previous=None, dry_run=None, function=None,
+                     force=None, state_file: str = STATE_FILE_PATH):
         """
         Upgrade the IntelMQ configuration after a version upgrade.
 
@@ -1495,6 +1499,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             previous: Assume the given version as the previous version
             function: Only execute this upgrade function
             force: Also upgrade if not necessary
+            state_file: location of the state file
 
         state file:
 
@@ -1520,11 +1525,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                  "time": "..."}
                 ]
         """
-        if os.path.isfile(STATE_FILE_PATH):
-            if not os.access(STATE_FILE_PATH, os.W_OK) and not dry_run:
+        if os.path.isfile(state_file):
+            if not os.access(state_file, os.W_OK) and not dry_run:
                 self.logger.error("State file %r is not writable.")
                 return 1, "State file %r is not writable."
-            state = utils.load_configuration(STATE_FILE_PATH)
+            state = utils.load_configuration(state_file)
         else:
             """
             We create the state file directly before any upgrade function.
@@ -1536,13 +1541,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                      "results": []}
             if dry_run:
                 self.logger.info('Would create state file now at %r.',
-                                 STATE_FILE_PATH)
+                                 state_file)
                 return 0, 'success'
             try:
-                utils.write_configuration(STATE_FILE_PATH, state, new=True)
+                utils.write_configuration(state_file, state, new=True)
             except Exception as exc:
-                self.logger.error('Error writing state file %r: %s.', STATE_FILE_PATH, exc)
-                return 1, 'Error writing state file %r: %s.' % (STATE_FILE_PATH, exc)
+                self.logger.error('Error writing state file %r: %s.', state_file, exc)
+                return 1, 'Error writing state file %r: %s.' % (state_file, exc)
             self.logger.error('Successfully wrote initial state file. Please re-run this program.')
             return 0, 'success'
 
@@ -1603,7 +1608,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             state['results'].append(result)
             state['upgrades'][function] = result['success']
             if not dry_run:
-                utils.write_configuration(STATE_FILE_PATH, state)
+                utils.write_configuration(state_file, state)
 
             if result['success']:
                 return 0, 'success'
@@ -1717,7 +1722,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             if error:
                 # some upgrade function had a problem
                 if not dry_run:
-                    utils.write_configuration(STATE_FILE_PATH, state)
+                    utils.write_configuration(state_file, state)
                 self.logger.error('Some migration did not succeed or '
                                   'manual intervention is needed. Look at '
                                   'the output above. Afterwards, re-run '
@@ -1742,7 +1747,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                     self.logger.info('Nothing to do!')
 
             if not dry_run:
-                utils.write_configuration(STATE_FILE_PATH, state)
+                utils.write_configuration(state_file, state)
 
         if error:
             return 1, 'error'
