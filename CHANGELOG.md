@@ -28,6 +28,7 @@ CHANGELOG
 - Remove some hardcoded `/opt/intelmq/` paths from code comments and program outputs.
 
 ### Packaging
+- debian/rules: Only replace `/opt/intelmq/` with LSB-paths in some certain files, not the whole tree, avoiding wrong replacements.
 
 ### Tests
 
