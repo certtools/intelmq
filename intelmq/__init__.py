@@ -1,7 +1,15 @@
 from .version import __version__, __version_info__
 import os
 
-if os.getenv('INTELMQ_PATHS_NO_OPT', False):
+
+path = "opt"
+if os.getenv("INTELMQ_ROOT_DIR", False):
+    path = "opt"
+elif os.getenv('INTELMQ_PATHS_NO_OPT', False):
+    path = "lsb"
+
+
+if path == "lsb":
     ROOT_DIR = ""
     CONFIG_DIR = "/etc/intelmq/"
     DEFAULT_LOGGING_LEVEL = "INFO"
@@ -13,8 +21,8 @@ if os.getenv('INTELMQ_PATHS_NO_OPT', False):
     RUNTIME_CONF_FILE = os.path.join(CONFIG_DIR, "runtime.conf")
     VAR_RUN_PATH = "/var/run/intelmq/"
     VAR_STATE_PATH = "/var/lib/intelmq/bots/"
-else:
-    ROOT_DIR = "/opt/intelmq/"
+elif path == "opt":
+    ROOT_DIR = os.getenv("INTELMQ_ROOT_DIR", "/opt/intelmq/")
     CONFIG_DIR = os.path.join(ROOT_DIR, "etc/")
     DEFAULT_LOGGING_LEVEL = "INFO"
     BOTS_FILE = os.path.join(CONFIG_DIR, "BOTS")

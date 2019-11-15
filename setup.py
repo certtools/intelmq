@@ -18,20 +18,6 @@ if sys.version_info < (3, 5):
     REQUIRES.append('typing')
 
 
-DATA = [
-    ('/opt/intelmq/etc/',
-     ['intelmq/bots/BOTS',
-      ],
-     ),
-    ('/opt/intelmq/etc/examples',
-     ['intelmq/etc/defaults.conf',
-      'intelmq/etc/harmonization.conf',
-      'intelmq/etc/pipeline.conf',
-      'intelmq/etc/runtime.conf',
-      ],
-     ),
-]
-
 exec(open(os.path.join(os.path.dirname(__file__),
                        'intelmq/version.py')).read())  # defines __version__
 BOTS = []
@@ -94,7 +80,6 @@ setup(
         'Topic :: Security',
     ],
     keywords='incident handling cert csirt',
-    data_files=DATA,
     entry_points={
         'console_scripts': [
             'intelmqctl = intelmq.bin.intelmqctl:main',

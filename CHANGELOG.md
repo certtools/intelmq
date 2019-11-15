@@ -8,6 +8,7 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- The environment variable `INTELMQ_ROOT_DIR` can be used to set custom root directories instead of `/opt/intelmq/` (#805).
 
 ### Development
 
@@ -25,8 +26,10 @@ CHANGELOG
 - `intelmq.bots.outputs.amqptopic`: Allow formatting the routing key with event data by the new parameter `format_routing_key` (boolean).
 
 ### Documentation
+- Document usage of the `INTELMQ_ROOT_DIR` environment variable.
 
 ### Packaging
+- `setup.py` do not try to install any data to `/opt/intelmq/` as the behavior is inconsistent on various systems and with `intelmqsetup` we have a tool to create the structure and files anyway.
 
 ### Tests
 
