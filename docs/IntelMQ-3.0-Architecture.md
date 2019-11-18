@@ -4,7 +4,21 @@ Author: Aaron Kaplan <kaplan@cert.at>
 
 ## Use-cases
 
+XXX fill in a complete list of use cases XXX
+
+## Users
+
+XXX fill in a complete list of use cases XXX
+
+## RESTful API
+
+For automation purposes, we will need a typical RESTful API to manage, control, monitor the IntelMQ "botnet" and read and set configs.
+See [#1424](https://github.com/certtools/intelmq/issues/1424)
+
 ## UX
+
+
+
 
 ### Devops/ Sysadmin perspective
 

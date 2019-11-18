@@ -11,14 +11,14 @@ Sets up an intelmq environment after installation or upgrade by
  * providing example configuration files if not already existing
 
 Reasoning:
-Pip does not (and cannot) create `/opt/intelmq`, as described in
+Pip does not (and cannot) create `/opt/intelmq`/user-given ROOT_DIR, as described in
 https://github.com/certtools/intelmq/issues/819
 """
 import glob
 import os
 import shutil
-import site
 import sys
+import pkg_resources
 
 from pwd import getpwuid
 
@@ -28,33 +28,22 @@ from intelmq import (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
 
 def main():
     if os.geteuid() != 0:
-        sys.exit('You need to run this program as root.')
+        sys.exit('You need to run this program as root (for setting file ownership)')
 
-    if not ROOT_DIR.startswith('/opt/'):
+    if not ROOT_DIR:
         sys.exit('Not a pip-installation of IntelMQ, nothing to initialize.')
 
-    intelmq_path = os.path.join(site.getsitepackages()[0], 'opt/intelmq/')
-    opt_path = os.path.join(site.getsitepackages()[0], 'opt/')
-    if os.path.isdir(intelmq_path) and os.path.isdir(ROOT_DIR):
-        print('%r already exists, not moving %r there.' % (ROOT_DIR,
-                                                           intelmq_path))
-    elif os.path.isdir(intelmq_path):
-        shutil.move(intelmq_path, '/opt/')
-        print('Moved %r to %r.' % (intelmq_path, '/opt/'))
-        try:
-            os.rmdir(opt_path)
-        except OSError:
-            print('Directory %r is not empty, did not remove it.' % opt_path)
-    create_dirs = ('/opt/intelmq/var/lib/bots/file-output',
-                   '/opt/intelmq/var/run',
-                   '/opt/intelmq/var/log')
+    create_dirs = ('%s/bots/file-output' % VAR_STATE_PATH,
+                   VAR_RUN_PATH,
+                   DEFAULT_LOGGING_PATH,
+                   CONFIG_DIR)
     for create_dir in create_dirs:
         if not os.path.isdir(create_dir):
             os.makedirs(create_dir, mode=0o755,
                         exist_ok=True)
             print('Created directory %r.' % create_dir)
 
-    example_confs = glob.glob(os.path.join(CONFIG_DIR, 'examples/*.conf'))
+    example_confs = glob.glob(pkg_resources.resource_filename('intelmq', 'etc/*.conf'))
     for example_conf in example_confs:
         fname = os.path.split(example_conf)[-1]
         if os.path.exists(os.path.join(CONFIG_DIR, fname)):

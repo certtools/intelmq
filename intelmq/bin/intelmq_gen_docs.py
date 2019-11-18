@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os.path
 import textwrap
 
-import pkg_resources
 import yaml
 
 import intelmq.lib.harmonization
@@ -27,12 +27,13 @@ TYPE_SECTION = """### {}
 {}
 
 """
+BASEDIR = os.path.join(os.path.dirname(__file__), '../../')
 
 
 def harm_docs():
     output = HEADER
 
-    with open(pkg_resources.resource_filename('intelmq', 'etc/harmonization.conf')) as fhandle:
+    with open(os.path.join(BASEDIR, 'intelmq/etc/harmonization.conf')) as fhandle:
         HARM = json.load(fhandle)['event']
 
     for key, value in sorted(HARM.items()):
@@ -67,7 +68,7 @@ def info(key, value=""):
 
 
 def feeds_docs():
-    with open(pkg_resources.resource_filename('intelmq', 'etc/feeds.yaml')) as fhandle:
+    with open(os.path.join(BASEDIR, 'intelmq/etc/feeds.yaml')) as fhandle:
         config = yaml.safe_load(fhandle.read())
 
     toc = ""
@@ -142,7 +143,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 
 if __name__ == '__main__':  # pragma: no cover
-    with open(pkg_resources.resource_filename('intelmq', '../docs/Harmonization-fields.md'), 'w') as handle:
+    with open(os.path.join(BASEDIR, 'docs/Harmonization-fields.md'), 'w') as handle:
         handle.write(harm_docs())
-    with open(pkg_resources.resource_filename('intelmq', '../docs/Feeds.md'), 'w') as handle:
+    with open(os.path.join(BASEDIR, 'docs/Feeds.md'), 'w') as handle:
         handle.write(feeds_docs())

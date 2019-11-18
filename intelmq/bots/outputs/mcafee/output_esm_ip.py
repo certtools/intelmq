@@ -7,7 +7,7 @@ esm_ip: IP Address of ESM
 esm_user: username to connect to ESM
 esm_password: Password of esm_user
 esm_watchlist: Destination watchlist to update
-field: field from intelMQ message to extract (e.g. destination.ip)
+field: field from IntelMQ message to extract (e.g. destination.ip)
 
 """
 

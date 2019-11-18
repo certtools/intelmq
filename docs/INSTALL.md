@@ -133,11 +133,11 @@ pip3 install intelmq
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 sudo intelmqsetup
 ```
-
+`intelmqsetup` will create all necessary directories, provides a default configuration for new setups. See [the user-guide section on paths](User-Guide.md#opt-and-lsb-paths) for more information on them and how to influence them.
 
 ## Additional Information
 
-Following any one of the installation methods mentioned before setup the IntelMQ base. However, some bots have additional dependencies which are mentioned in their own documentation available on this [directory](https://github.com/certtools/intelmq/tree/develop/intelmq/bots).
+Following any one of the installation methods mentioned before, will setup the IntelMQ base. However, some bots may have additional dependencies which are mentioned in their own documentation available on in the [Bots documentation](https://github.com/certtools/intelmq/tree/develop/docs/Bots.md).
 
 
 # Afterwards

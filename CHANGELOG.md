@@ -8,6 +8,7 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- The environment variable `INTELMQ_ROOT_DIR` can be used to set custom root directories instead of `/opt/intelmq/` (#805).
 
 ### Development
 
@@ -19,17 +20,23 @@ CHANGELOG
 #### Parsers
 
 #### Experts
+- `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
 
 #### Outputs
 - `intelmq.bots.outputs.amqptopic`: Allow formatting the routing key with event data by the new parameter `format_routing_key` (boolean).
 
 ### Documentation
+- Document usage of the `INTELMQ_ROOT_DIR` environment variable.
 
 ### Packaging
+- `setup.py` do not try to install any data to `/opt/intelmq/` as the behavior is inconsistent on various systems and with `intelmqsetup` we have a tool to create the structure and files anyway.
+- debian/rules:
+  - Provide a blank state file in the package.
 
 ### Tests
 
 ### Tools
+- `intelmqctl`: `upgrade-config`: Allow setting the state file location with the `--state-file` parameter.
 
 ### Contrib
 
@@ -42,6 +49,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.utils`:
+  - log: Do not raise an exception if logging to neither file nor syslog is requested.
 
 ### Development
 
@@ -51,14 +60,18 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.shadowserver.config`: Add some missing fields for accessible-rdp (#1463).
 
 #### Experts
+- `intelmq.bots.experts.national_cert_contact_certat`: Handle empty responses by server (#1467).
 
 #### Outputs
 
 ### Documentation
+- Remove some hardcoded `/opt/intelmq/` paths from code comments and program outputs.
 
 ### Packaging
+- debian/rules: Only replace `/opt/intelmq/` with LSB-paths in some certain files, not the whole tree, avoiding wrong replacements.
 
 ### Tests
 
@@ -200,7 +213,6 @@ CHANGELOG
 - Add geohash expert.
 - `intelmq.bot.experts.generic_db_lookup.expert`
   - new optional parameter `engine` with `postgresql` (default) and `sqlite` (new) as possible values.
-- `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
 
 #### Outputs
 - Add `intelmq.bots.outputs.touch.output`.
