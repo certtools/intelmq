@@ -21,6 +21,7 @@ CHANGELOG
 #### Experts
 
 #### Outputs
+- `intelmq.bots.outputs.restapi.output`: Fix logging of response body if response status code was not ok.
 
 ### Documentation
 
