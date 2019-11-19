@@ -25,7 +25,7 @@ install:
   - if [[ $mode == codestyle ]]; then pip install pycodestyle; fi
   - if [[ -v requirements ]]; then sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers; fi
   - if [[ -v requirements ]]; then sudo pip install .; fi
-  - if [[ -v requirements ]]; then intelmqsetup; fi
+  - if [[ -v requirements ]]; then sudo intelmqsetup; fi
 before_script:
   - if [[ $requirements == true ]] ; then psql -c "CREATE USER intelmq WITH SUPERUSER" -U postgres; fi
   - if [[ $requirements == true ]] ; then psql -c "CREATE DATABASE intelmq" -U intelmq template1; fi
