@@ -36,6 +36,7 @@ CHANGELOG
   - Updated `fix-intelmq-paths.patch`.
 
 ### Tests
+- Travis: Use `intelmqsetup` here too.
 
 ### Tools
 - `intelmqctl`: `upgrade-config`: Allow setting the state file location with the `--state-file` parameter.
