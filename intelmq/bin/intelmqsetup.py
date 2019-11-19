@@ -14,6 +14,7 @@ Reasoning:
 Pip does not (and cannot) create `/opt/intelmq`/user-given ROOT_DIR, as described in
 https://github.com/certtools/intelmq/issues/819
 """
+import argparse
 import glob
 import os
 import shutil
@@ -26,14 +27,14 @@ from intelmq import (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
                      VAR_STATE_PATH)
 
 
-def main():
-    if os.geteuid() != 0:
+def intelmqsetup(ownership=True):
+    if os.geteuid() != 0 and ownership:
         sys.exit('You need to run this program as root (for setting file ownership)')
 
     if not ROOT_DIR:
         sys.exit('Not a pip-installation of IntelMQ, nothing to initialize.')
 
-    create_dirs = ('%s/bots/file-output' % VAR_STATE_PATH,
+    create_dirs = ('%s/file-output' % VAR_STATE_PATH,
                    VAR_RUN_PATH,
                    DEFAULT_LOGGING_PATH,
                    CONFIG_DIR)
@@ -52,11 +53,21 @@ def main():
             shutil.copy(example_conf, CONFIG_DIR)
             print('Use example %r.' % fname)
 
-    print('Setting intelmq as owner for it\'s directories.')
-    for obj in (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
-                VAR_STATE_PATH, VAR_STATE_PATH + 'file-output'):
-        if getpwuid(os.stat(obj).st_uid).pw_name != 'intelmq':
-            shutil.chown(obj, user='intelmq')
+    if ownership:
+        print('Setting intelmq as owner for it\'s directories.')
+        for obj in (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
+                    VAR_STATE_PATH, VAR_STATE_PATH + 'file-output'):
+            if getpwuid(os.stat(obj).st_uid).pw_name != 'intelmq':
+                shutil.chown(obj, user='intelmq')
+
+
+def main():
+    parser = argparse.ArgumentParser("Set's up directories and example "
+                                     "configurations for IntelMQ.")
+    parser.add_argument('--skip-ownership', action='store_true',
+                        help='Skip setting file ownership')
+    args = parser.parse_args()
+    intelmqsetup(ownership=not args.skip_ownership)
 
 
 if __name__ == '__main__':

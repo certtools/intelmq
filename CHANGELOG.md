@@ -40,6 +40,7 @@ CHANGELOG
 
 ### Tools
 - `intelmqctl`: `upgrade-config`: Allow setting the state file location with the `--state-file` parameter.
+- `intelmqsetup`: Add argument parsing and an option to skip setting file ownership, possibly not requiring root permissions.
 
 ### Contrib
 
