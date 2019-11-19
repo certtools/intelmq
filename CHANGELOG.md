@@ -69,6 +69,7 @@ CHANGELOG
 - `intelmq.bots.experts.national_cert_contact_certat`: Handle empty responses by server (#1467).
 
 #### Outputs
+- `intelmq.bots.outputs.restapi.output`: Fix logging of response body if response status code was not ok.
 
 ### Documentation
 - Remove some hardcoded `/opt/intelmq/` paths from code comments and program outputs.
