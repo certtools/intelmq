@@ -32,6 +32,8 @@ CHANGELOG
 - `setup.py` do not try to install any data to `/opt/intelmq/` as the behavior is inconsistent on various systems and with `intelmqsetup` we have a tool to create the structure and files anyway.
 - debian/rules:
   - Provide a blank state file in the package.
+- Patches:
+  - Updated `fix-intelmq-paths.patch`.
 
 ### Tests
 
