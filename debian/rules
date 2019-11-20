@@ -34,7 +34,7 @@ override_dh_auto_install: $(BOTDOCS)
 	rm intelmq/bin/rewrite_config_files.py
 	rm intelmq/bin/intelmq_gen_docs.py intelmq/tests/bin/test_gen_docs.py
 	sed -i -e '/#!\/usr\/bin\//d' intelmq/bin/*.py
-	find . -type f -exec sed -i -f debian/sedfile {} \;
+	sed -i -f debian/sedfile intelmq/bots/BOTS intelmq/etc/* docs/intelmqctl.md docs/Bots.md
 	python3 setup.py install --root=debian/intelmq --prefix=/usr
 	mv debian/intelmq/etc/intelmq/examples/* debian/intelmq/etc/intelmq/
 	rmdir debian/intelmq/etc/intelmq/examples

@@ -344,8 +344,6 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, lo
             handler = logging.handlers.SysLogHandler(address=syslog)
         handler.setLevel(log_level)
         handler.setFormatter(logging.Formatter(LOG_FORMAT_SYSLOG))
-    else:
-        raise ValueError("Invalid configuration, neither log_path is given nor syslog is used.")
 
     if log_path or syslog:
         logger.addHandler(handler)

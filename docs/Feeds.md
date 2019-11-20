@@ -666,6 +666,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Status:** on
 * **Revision:** 15-06-2018
 * **Description:** HTTP Websocket Stream from certstream.calidog.io providing data from Certificate Transparency Logs.
+* **Additional Information:** Be aware that this feed provides a lot of data and may overload your system quickly.
 
 ### Collector
 
