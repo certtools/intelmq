@@ -15,6 +15,8 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.misp.collector`:
+  - Add compatibility with current pymisp versions and versions released after January 2020 (PR #1468).
 
 #### Parsers
 

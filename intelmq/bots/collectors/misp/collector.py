@@ -9,6 +9,10 @@ Parameters:
   - misp_tag_to_process: MISP tag identifying events to be processed
   - misp_tag_processed: MISP tag identifying events that have been processed
 
+
+pymisp versions released after January 2020 will no longer support the
+"old" PyMISP class.
+For compatibiltiy older versions of pymisp still work with this bot
 """
 import json
 import sys
@@ -46,8 +50,9 @@ class MISPCollectorBot(CollectorBot):
         )
 
         # Process the response and events
+
+        # Compatibility with old pymisp versions before 2019:
         if 'response' in misp_result:
-            # Old response content
             misp_result = misp_result['response']
 
         # Extract the MISP event details
@@ -61,17 +66,16 @@ class MISPCollectorBot(CollectorBot):
             self.send_message(report)
 
         # Finally, update the tags on the MISP events.
-        # Note PyMISP does not currently support this so we use
-        # the API URLs directly with the requests module.
 
         for misp_event in misp_result:
+            if hasattr(self.parameters, 'misp_tag_processed'):
+                # Add a 'processed' tag to the event
+                self.misp.tag(misp_event['uuid'],
+                              self.parameters.misp_tag_processed)
+
             # Remove the 'to be processed' tag
             self.misp.untag(misp_event['uuid'],
                             self.parameters.misp_tag_to_process)
-
-            # Add a 'processed' tag to the event
-            self.misp.tag(misp_event['uuid'],
-                          self.parameters.misp_tag_processed)
 
 
 BOT = MISPCollectorBot
