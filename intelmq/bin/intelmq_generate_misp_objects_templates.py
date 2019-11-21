@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+"""
+Generates a MISP object template
+see https://github.com/MISP/misp-objects/
+"""
 import json
 from pathlib import Path
 from uuid import uuid4
@@ -9,7 +12,7 @@ import argparse
 
 class MISPObjectTemplateGenerator:
 
-    def __init__(self, object_templates_path: Path, harmonisation_file_path: Path):
+    def __init__(self, object_templates_path: Path, harmonization_file_path: Path):
         intelmq_event_template_name = 'intelmq_event'
         intelmq_report_template_name = 'intelmq_report'
         event_template_dir = object_templates_path / 'objects' / intelmq_event_template_name
@@ -27,7 +30,7 @@ class MISPObjectTemplateGenerator:
                 'name': intelmq_event_template_name,
                 'uuid': str(uuid4()),
                 'meta-category': 'network',
-                'description': 'Intel MQ Event',
+                'description': 'IntelMQ Event',
                 'version': 1,
                 'attributes': {}
             }
@@ -42,12 +45,12 @@ class MISPObjectTemplateGenerator:
                 'name': intelmq_report_template_name,
                 'uuid': str(uuid4()),
                 'meta-category': 'network',
-                'description': 'Intel MQ Report',
+                'description': 'IntelMQ Report',
                 'version': 1,
                 'attributes': {}
             }
 
-        with harmonisation_file_path.open() as f:
+        with harmonization_file_path.open() as f:
             self.intelmq_fields = json.load(f)
 
     def _intelmq_misp_mapping(self, content, object_relation):
@@ -64,11 +67,11 @@ class MISPObjectTemplateGenerator:
             attribute['misp-attribute'] = 'text'
         elif content['type'] == 'Float':
             attribute['misp-attribute'] = 'float'
-        elif (content['type'] in ['IPAddress', 'IPNetwork']
-                and object_relation.startswith('destination')):
+        elif (content['type'] in ['IPAddress', 'IPNetwork'] and
+              object_relation.startswith('destination')):
             attribute['misp-attribute'] = 'ip-dst'
-        elif (content['type'] in ['IPAddress', 'IPNetwork']
-                and object_relation.startswith('source')):
+        elif (content['type'] in ['IPAddress', 'IPNetwork'] and
+              object_relation.startswith('source')):
             attribute['misp-attribute'] = 'ip-src'
         elif content['type'] == 'Integer':
             attribute['misp-attribute'] = 'counter'
@@ -102,18 +105,21 @@ class MISPObjectTemplateGenerator:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Generate or update MISP object templates.')
-    parser.add_argument("--objects", required=True, help="Path to misp-objects repository")
-    parser.add_argument("--harmonisation", required=True, help="Path to harmonization.conf")
+    parser.add_argument("--objects", required=True,
+                        help="Path to misp-objects repository. "
+                             "The generated template will be written to this path or updated in this path.")
+    parser.add_argument("--harmonization", required=True,
+                        help="Path to harmonization.conf to be used.")
     args = parser.parse_args()
 
     objects = Path(args.objects)
     if not objects.exists():
-        raise Exception(f'Path to misp-objects repository does not exists: {args.path}')
+        raise Exception('Path to misp-objects repository does not exists: {args.objects}'.format(args=args))
 
-    harmonisation_file = Path(args.harmonisation)
-    if not harmonisation_file.exists():
-        raise Exception(f'Path to misp-objects repository does not exists: {args.harmonisation}')
+    harmonization_file = Path(args.harmonization)
+    if not harmonization_file.exists():
+        raise Exception('Path to harmonization configuration does not exists: {args.harmonization}'.format(args=args))
 
-    g = MISPObjectTemplateGenerator(objects, harmonisation_file)
+    g = MISPObjectTemplateGenerator(objects, harmonization_file)
     g.generate_templates()
     g.dump_templates()
