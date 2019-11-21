@@ -475,16 +475,16 @@ Requires the rsync executable
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` collect messages from [MISP](https://github.com/MISP), a malware information sharing platform. server.
+* `description:` collect messages from [MISP](https://github.com/MISP), a malware information sharing platform server.
 
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* `misp_url`: url of MISP server (with trailing '/')
+* `misp_url`: URL of MISP server (with trailing '/')
 * `misp_key`: MISP Authkey
-* `misp_verify`: (default: `true`)
+* `misp_verify`: Verify the SSL certicate of the server, boolean (default: `true`)
 * `misp_tag_to_process`: MISP tag for events to be processed
-* `misp_tag_processed`: MISP tag for processed events
+* `misp_tag_processed`: MISP tag for processed events, optional
 
 #### Workflow
 This collector will search for events on a MISP server that have a
