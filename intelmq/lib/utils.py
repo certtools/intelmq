@@ -32,6 +32,7 @@ from typing import Any, Generator, Iterator, Optional, Sequence, Union
 
 import dateutil.parser
 from dateutil.relativedelta import relativedelta
+from termstyle import red
 
 import intelmq
 
@@ -268,9 +269,10 @@ class StreamHandler(logging.StreamHandler):
             msg = self.format(record)
             if record.levelno < logging.WARNING:  # debug, info
                 stream = sys.stdout
+                stream.write(msg)
             else:  # warning, error, critical
                 stream = sys.stderr
-            stream.write(msg)
+                stream.write(red(msg))
             stream.write(self.terminator)
             self.flush()
         except Exception:
