@@ -253,6 +253,8 @@ def load_parameters(*configs: dict) -> Parameters:
 
 
 class FileHandler(logging.FileHandler):
+    shell_color_pattern = re.compile(r'\x1b\[\d+m')
+
     def emit_print(self, record):
         print(record.msg, record.args)
 
@@ -261,6 +263,13 @@ class FileHandler(logging.FileHandler):
         if type is OSError and value.errno == 28:
             self.emit = self.emit_print
             raise
+
+    def emit(self, record):
+        """
+        Strips shell colorization from messages
+        """
+        record.msg = self.shell_color_pattern.sub('', record.msg)
+        super().emit(record)
 
 
 class StreamHandler(logging.StreamHandler):

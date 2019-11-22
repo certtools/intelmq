@@ -82,7 +82,7 @@ class TestUtils(unittest.TestCase):
             logger = utils.log(name, log_path=tempfile.tempdir,
                                stream=io.StringIO())
 
-            logger.info(LINES['spare'][0])
+            logger.info(termstyle.green(LINES['spare'][0]))
             logger.error(LINES['spare'][1])
             logger.critical(LINES['spare'][2])
             handle.seek(0)
@@ -92,8 +92,11 @@ class TestUtils(unittest.TestCase):
             for ind, line in enumerate(file_lines):
                 self.assertRegex(line.strip(), line_format[ind])
 
-    def test_stream_logger(self):
-        """Tests if a logger for a stream can be generated with log()."""
+    def test_stream_logger_given(self):
+        """
+        Tests if a logger for a stream can be generated with log()
+        if the stream is explicitly given.
+        """
 
         stream = io.StringIO()
         with tempfile.NamedTemporaryFile() as handle:
