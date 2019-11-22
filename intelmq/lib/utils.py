@@ -299,7 +299,7 @@ class ListHandler(logging.StreamHandler):
         self.buffer.append((record.levelname.lower(), record.getMessage()))
 
 
-def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, log_level: str = "DEBUG",
+def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, log_level: str = intelmq.DEFAULT_LOGGING_LEVEL,
         stream: Optional[object] = None, syslog: Union[bool, str, list, tuple] = None,
         log_format_stream: str = LOG_FORMAT_STREAM,
         logging_level_stream: Optional[str] = None):
@@ -311,7 +311,7 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, lo
         name: filename for logfile or string preceding lines in stream
         log_path: Path to log directory, defaults to DEFAULT_LOGGING_PATH
             If False, nothing is logged to files.
-        log_level: default is "DEBUG"
+        log_level: default is %r
         stream: By default (None), stdout and stderr will be used depending on the level.
             If False, stream output is not used.
             For everything else, the argument is used as stream output.
@@ -332,7 +332,7 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, lo
         LOG_FORMAT: Default log format for file handler
         LOG_FORMAT_STREAM: Default log format for stream handler
         LOG_FORMAT_SYSLOG: Default log format for syslog
-    """
+    """ % intelmq.DEFAULT_LOGGING_LEVEL
     logging.captureWarnings(True)
     warnings_logger = logging.getLogger("py.warnings")
     # set the name of the warnings logger to the bot neme, see #1184
