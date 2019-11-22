@@ -6,12 +6,15 @@ Decoding and Encoding, Logging functionality (file and stream), and log
 parsing.
 base64 de-/encoding is not tested yet, as we fully rely on the module.
 """
+import contextlib
 import datetime
 import io
 import os
 import tempfile
 import unittest
 import requests
+
+import termstyle
 
 import intelmq.lib.utils as utils
 
@@ -79,7 +82,7 @@ class TestUtils(unittest.TestCase):
             logger = utils.log(name, log_path=tempfile.tempdir,
                                stream=io.StringIO())
 
-            logger.info(LINES['spare'][0])
+            logger.info(termstyle.green(LINES['spare'][0]))
             logger.error(LINES['spare'][1])
             logger.critical(LINES['spare'][2])
             handle.seek(0)
@@ -89,8 +92,11 @@ class TestUtils(unittest.TestCase):
             for ind, line in enumerate(file_lines):
                 self.assertRegex(line.strip(), line_format[ind])
 
-    def test_stream_logger(self):
-        """Tests if a logger for a stream can be generated with log()."""
+    def test_stream_logger_given(self):
+        """
+        Tests if a logger for a stream can be generated with log()
+        if the stream is explicitly given.
+        """
 
         stream = io.StringIO()
         with tempfile.NamedTemporaryFile() as handle:
@@ -106,6 +112,21 @@ class TestUtils(unittest.TestCase):
 
             line_format = [line.format(name) for line in LINES['short']]
             self.assertSequenceEqual(line_format, stream_lines)
+
+    def test_stream_logger(self):
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        with contextlib.redirect_stdout(stdout):
+            with contextlib.redirect_stderr(stderr):
+                logger = utils.log('test-bot', log_path=None)
+                logger.info(LINES['spare'][0])
+                logger.error(LINES['spare'][1])
+                logger.critical(LINES['spare'][2])
+        line_format = [line.format('test-bot') for line in LINES['short']]
+        self.assertEqual(stdout.getvalue(), line_format[0] + '\n')
+        self.assertEqual(stderr.getvalue(),
+                         '\n'.join((termstyle.red(line_format[1]),
+                                    termstyle.red(line_format[2]))) + '\n')
 
     def test_parse_logline(self):
         """Tests if the parse_logline() function works as expected"""

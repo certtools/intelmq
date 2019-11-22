@@ -23,7 +23,7 @@ from collections import OrderedDict
 
 import pkg_resources
 import psutil
-from termstyle import red, green
+from termstyle import green
 
 from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
@@ -61,13 +61,13 @@ MESSAGES = {
 }
 
 ERROR_MESSAGES = {
-    'starting': red('Bot %s failed to START.'),
-    'running': red('Bot %s is still running.'),
+    'starting': 'Bot %s failed to START.',
+    'running': 'Bot %s is still running.',
     'stopped': 'Bot %s was NOT RUNNING.',
-    'stopping': red('Bot %s failed to STOP.'),
-    'not found': red('Bot %s failed to START because the file cannot be found.'),
-    'access denied': red('Bot %s failed to %s because of missing permissions.'),
-    'unknown': red('Status of Bot %s is unknown: %r.'),
+    'stopping': 'Bot %s failed to STOP.',
+    'not found': 'Bot %s failed to START because the file cannot be found.',
+    'access denied': 'Bot %s failed to %s because of missing permissions.',
+    'unknown': 'Status of Bot %s is unknown: %r.',
 }
 
 LOG_LEVEL = OrderedDict([

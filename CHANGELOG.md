@@ -56,6 +56,8 @@ CHANGELOG
 ### Core
 - `intelmq.lib.utils`:
   - log: Do not raise an exception if logging to neither file nor syslog is requested.
+  - logging StreamHandler: Colorize all warning and error messages red.
+  - logging FileHandler: Strip all shell colorizations from the messages (#1436).
 
 ### Development
 
