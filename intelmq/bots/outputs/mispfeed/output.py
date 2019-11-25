@@ -43,6 +43,7 @@ class MISPFeedOutputBot(OutputBot):
             if last_max_time < datetime.datetime.now():
                 self.min_time_current = datetime.datetime.now()
                 self.max_time_current = self.min_time_current + self.timedelta
+                self.current_event = None
             else:
                 self.min_time_current = last_min_time
                 self.max_time_current = last_max_time
