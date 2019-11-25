@@ -54,7 +54,7 @@ class MISPObjectTemplateGenerator:
             self.intelmq_fields = json.load(f)
 
     def _intelmq_misp_mapping(self, content, object_relation):
-        attribute = {'description': content['description']}
+        attribute = {'description': content['description'], 'ui-priority': 1}
         if content['type'] in ['String', 'LowercaseString', 'ClassificationType',
                                'UppercaseString', 'Registry', 'JSONDict', 'JSON',
                                'TLP', 'Base64']:
@@ -62,7 +62,7 @@ class MISPObjectTemplateGenerator:
         elif content['type'] == 'DateTime':
             attribute['misp-attribute'] = 'datetime'
         elif content['type'] == 'ASN':
-            attribute['misp-attribute'] = 'asn'
+            attribute['misp-attribute'] = 'AS'
         elif content['type'] == 'FQDN':
             attribute['misp-attribute'] = 'text'
         elif content['type'] == 'Float':
