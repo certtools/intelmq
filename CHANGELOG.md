@@ -1416,7 +1416,7 @@ v1.0.0.dev7 Beta release (2017-05-09)
 #### Experts
 - added `bots.experts.field_reducer`, `bots.outputs.smtp`.
 - `bots.experts.deduplicator`: `ignore_keys` has been renamed to `filter_keys` and `filter_type` has been removed.
-- `bots.experts.modify`: The configration is now list-based for a consistent ordering.
+- `bots.experts.modify`: The configuration is now list-based for a consistent ordering.
 - `bots.experts.tor_node` as an optional parameter `overwrite`.
 
 ### Harmonization
