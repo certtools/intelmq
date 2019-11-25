@@ -1030,6 +1030,16 @@
                 "field": "source.ip"
             }
         },
+        "MISP Feed": {
+            "description": "Generate an output in MISP Feed format.",
+            "module": "intelmq.bots.outputs.mispfeed.output",
+            "parameters": {
+                "misp_org_name": "<org name creating the events>",
+                "misp_org_uuid": "<org uuid creating the events>",
+                "output_dir": "/opt/intelmq/var/lib/bots/mispfeed-output",
+                "interval_event": "{\"hours\": 1}"
+            }
+        },
         "MongoDB": {
             "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
             "module": "intelmq.bots.outputs.mongodb.output",
