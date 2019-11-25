@@ -85,8 +85,10 @@ CHANGELOG
 
 ### Packaging
 - debian/rules: Only replace `/opt/intelmq/` with LSB-paths in some certain files, not the whole tree, avoiding wrong replacements.
+- debian/rules and debian/intelmq.install: Do install the examples configuration directly instead of working around the abandoned examples directory.
 
 ### Tests
+- `lib/test_utils`: Skip some tests on Python 3.4 because `contextlib.redirect_stdout` and `contextlib.redirect_sterr` are not supported on this version.
 
 ### Tools
 
@@ -1469,7 +1471,7 @@ v1.0.0.dev7 Beta release (2017-05-09)
 #### Experts
 - added `bots.experts.field_reducer`, `bots.outputs.smtp`.
 - `bots.experts.deduplicator`: `ignore_keys` has been renamed to `filter_keys` and `filter_type` has been removed.
-- `bots.experts.modify`: The configration is now list-based for a consistent ordering.
+- `bots.experts.modify`: The configuration is now list-based for a consistent ordering.
 - `bots.experts.tor_node` as an optional parameter `overwrite`.
 
 ### Harmonization

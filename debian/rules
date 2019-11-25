@@ -36,8 +36,6 @@ override_dh_auto_install: $(BOTDOCS)
 	sed -i -e '/#!\/usr\/bin\//d' intelmq/bin/*.py
 	sed -i -f debian/sedfile intelmq/bots/BOTS intelmq/etc/* docs/intelmqctl.md docs/Bots.md
 	python3 setup.py install --root=debian/intelmq --prefix=/usr
-	mv debian/intelmq/etc/intelmq/examples/* debian/intelmq/etc/intelmq/
-	rmdir debian/intelmq/etc/intelmq/examples
 	# these are already in /usr/bin/
 	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/maxmind_geoip/update-geoip-data
 	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/asn_lookup/update-asn-data
