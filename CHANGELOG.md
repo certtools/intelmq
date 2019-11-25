@@ -38,6 +38,7 @@ CHANGELOG
 - debian/rules: Only replace `/opt/intelmq/` with LSB-paths in some certain files, not the whole tree, avoiding wrong replacements.
 
 ### Tests
+- `lib/test_utils`: Skip some tests on Python 3.4 because `contextlib.redirect_stdout` and `contextlib.redirect_sterr` are not supported on this version.
 
 ### Tools
 
