@@ -2,6 +2,7 @@
 import ssl
 
 from intelmq.lib.bot import OutputBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import pika
@@ -14,7 +15,7 @@ class AMQPTopicOutputBot(OutputBot):
 
     def init(self):
         if pika is None:
-            raise ValueError("Could not import library 'pika'. Please install it.")
+            raise MissingDependencyError("pika")
 
         self.connection = None
         self.channel = None

@@ -18,6 +18,7 @@ import json
 import sys
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     if sys.version_info >= (3, 6):
@@ -36,7 +37,7 @@ class MISPCollectorBot(CollectorBot):
 
     def init(self):
         if PyMISP is None:
-            raise ValueError('Could not import pymisp. Please install it.')
+            raise MissingDependencyError("pymisp")
 
         # Initialize MISP connection
         self.misp = PyMISP(self.parameters.misp_url,

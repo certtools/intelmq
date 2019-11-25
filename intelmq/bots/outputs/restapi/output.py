@@ -7,13 +7,14 @@ except ImportError:
 
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 
 class RestAPIOutputBot(Bot):
 
     def init(self):
         if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
+            raise MissingDependencyError("requests")
 
         self.set_request_parameters()
 

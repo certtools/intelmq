@@ -3,6 +3,7 @@ import os.path
 
 from intelmq.lib.bot import OutputBot
 from intelmq.lib.utils import base64_decode
+from intelmq.lib.exceptions import MissingDependencyError
 
 
 try:
@@ -18,7 +19,7 @@ class StompOutputBot(OutputBot):
 
     def init(self):
         if stomp is None:
-            raise ValueError('Could not import stomp. Please install it.')
+            raise MissingDependencyError("stomp")
 
         self.server = getattr(self.parameters, 'server', '127.0.0.1')
         self.port = getattr(self.parameters, 'port', 61614)

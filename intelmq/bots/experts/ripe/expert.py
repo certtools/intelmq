@@ -11,6 +11,7 @@ from contextlib import contextmanager
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import requests
@@ -60,7 +61,7 @@ class RIPEExpertBot(Bot):
 
     def init(self):
         if requests is None:
-            raise ValueError("Could not import 'requests'. Please install the package.")
+            raise MissingDependencyError("requests")
 
         self.__mode = getattr(self.parameters, 'mode', 'append')
         self.__query = {

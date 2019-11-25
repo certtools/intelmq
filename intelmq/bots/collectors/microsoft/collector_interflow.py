@@ -38,6 +38,7 @@ from dateutil import parser
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.cache import Cache
 from intelmq.lib.utils import parse_relative, create_request_session_from_bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import requests
@@ -65,7 +66,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
 
     def init(self):
         if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
+            raise MissingDependencyError("requests")
 
         self.set_request_parameters()
 

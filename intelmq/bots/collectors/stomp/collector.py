@@ -2,6 +2,7 @@
 import os.path
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import stomp
@@ -57,7 +58,7 @@ class StompCollectorBot(CollectorBot):
 
     def init(self):
         if stomp is None:
-            raise ValueError('Could not import stomp. Please install it.')
+            raise MissingDependencyError("stomp")
 
         self.server = getattr(self.parameters, 'server', 'n6stream.cert.pl')
         self.port = getattr(self.parameters, 'port', 61614)

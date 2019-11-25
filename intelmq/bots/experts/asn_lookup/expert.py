@@ -2,6 +2,7 @@
 import os
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import pyasn
@@ -13,7 +14,7 @@ class ASNLookupExpertBot(Bot):
 
     def init(self):
         if pyasn is None:
-            raise ValueError('Could not import pyasn. Please install it.')
+            raise MissingDependencyError("pyasn")
 
         try:
             self.database = pyasn.pyasn(self.parameters.database)

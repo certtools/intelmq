@@ -9,12 +9,15 @@ CHANGELOG
 
 ### Core
 - The environment variable `INTELMQ_ROOT_DIR` can be used to set custom root directories instead of `/opt/intelmq/` (#805).
+- `intelmq.lib.exceptions`: Added `MissingDependencyError` for show error messages about a missing library and how to install it (#1471).
 
 ### Development
 
 ### Harmonization
 
 ### Bots
+- Bots with dependencies: Use of `intelmq.lib.exceptions.MissingDependencyError`.
+
 #### Collectors
 
 #### Parsers
