@@ -90,7 +90,7 @@ class MISPFeedOutputBot(OutputBot):
             try:
                 obj.add_attribute(object_relation, value=value)
             except NewAttributeError:
-                # This entry isn't listed in teh harmonization file, ignoring.
+                # This entry isn't listed in the harmonization file, ignoring.
                 pass
 
         feed_output = self.current_event.to_feed(with_meta=False)
@@ -108,10 +108,13 @@ class MISPFeedOutputBot(OutputBot):
         try:
             created = MISPFeedOutputBot.check_output_dir(parameters['output_dir'])
         except IOError:
-            return [["error", "Directory %r of parameter 'output_dir' does not exist and could not be created." % parameters['output_dir']]]
+            return [["error",
+                     "Directory %r of parameter 'output_dir' does not exist and could not be created." % parameters['output_dir']]]
         else:
             if created:
-                return [["info", "Directory %r of parameter 'output_dir' did not exist, but has now been created." % parameters['output_dir']]]
+                return [["info",
+                         "Directory %r of parameter 'output_dir' did not exist, but has now been created."
+                         "" % parameters['output_dir']]]
 
 
 BOT = MISPFeedOutputBot
