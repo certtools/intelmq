@@ -8,6 +8,7 @@ import ssl
 from intelmq.bots.outputs.amqptopic.output import AMQPTopicOutputBot
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import MessageFactory
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import pika
@@ -23,7 +24,7 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
 
     def init(self):
         if pika is None:
-            raise ValueError("Could not import library 'pika'. Please install it.")
+            raise MissingDependencyError("pika")
 
         self.connection = None
         self.channel = None

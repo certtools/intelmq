@@ -7,6 +7,7 @@ import traceback
 __all__ = ['InvalidArgument', 'ConfigurationError', 'IntelMQException',
            'IntelMQHarmonizationException', 'InvalidKey', 'InvalidValue',
            'KeyExists', 'KeyNotExists', 'PipelineError',
+           'MissingDependencyError',
            ]
 
 
@@ -100,4 +101,16 @@ class KeyNotExists(IntelMQHarmonizationException):
 
     def __init__(self, key):
         message = "key %s not exists" % repr(key)
+        super().__init__(message)
+
+
+class MissingDependencyError(IntelMQException):
+    """
+    A missing dependency was detected. Log instructions on installation.
+    """
+    def __init__(self, dependency):
+        message = ("Could not load dependency {dependency!r}, please install it "
+                   "with apt/yum/dnf/zypper (possibly named "
+                   "python3-{dependency}) or pip3."
+                   "".format(dependency=dependency))
         super().__init__(message)

@@ -21,6 +21,7 @@ from datetime import datetime, timedelta
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import unzip, create_request_session_from_bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import requests
@@ -43,7 +44,7 @@ class HTTPCollectorBot(CollectorBot):
 
     def init(self):
         if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
+            raise MissingDependencyError("requests")
 
         self.set_request_parameters()
 

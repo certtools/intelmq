@@ -11,6 +11,7 @@ import urllib.parse
 import pytz
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import azure.storage
@@ -21,7 +22,7 @@ except ImportError:
 class MicrosoftAzureCollectorBot(CollectorBot):
     def init(self):
         if azure is None:
-            raise ValueError('Could not import azure.storage. Please install it.')
+            raise MissingDependencyError("azure.storage")
 
         if hasattr(self.parameters, 'https_proxy'):
             parsed = urllib.parse.urlparse(self.parameters.https_proxy)

@@ -1113,7 +1113,7 @@ class SQLBot(Bot):
             import psycopg2
             import psycopg2.extras
         except ImportError:
-            raise ValueError("Could not import 'psycopg2'. Please install it.")
+            raise exceptions.MissingDependencyError("psycopg2")
 
         self._connect(psycopg2,
                       {"database": self.parameters.database,
@@ -1130,7 +1130,7 @@ class SQLBot(Bot):
         try:
             import sqlite3
         except ImportError:
-            raise ValueError("Could not import 'sqlite3'. Please install it.")
+            raise exceptions.MissingDependencyError("sqlite3")
 
         self._connect(sqlite3,
                       {"database": self.parameters.database,

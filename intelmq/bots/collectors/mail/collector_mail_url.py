@@ -9,6 +9,7 @@ from intelmq.lib.splitreports import generate_reports
 from intelmq.lib.utils import create_request_session_from_bot, file_name_from_response
 
 from .lib import MailCollectorBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import requests
@@ -21,7 +22,7 @@ class MailURLCollectorBot(MailCollectorBot):
     def init(self):
         super().init()
         if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
+            raise MissingDependencyError("requests")
 
         # Build request
         self.set_request_parameters()

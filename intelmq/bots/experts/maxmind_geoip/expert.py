@@ -5,6 +5,7 @@ This product includes GeoLite2 data created by MaxMind, available from
 """
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import geoip2.database
@@ -16,7 +17,7 @@ class GeoIPExpertBot(Bot):
 
     def init(self):
         if geoip2 is None:
-            raise ValueError('Could not import geoip2. Please install it.')
+            raise MissingDependencyError("geoip2")
 
         try:
             self.database = geoip2.database.Reader(self.parameters.database)
