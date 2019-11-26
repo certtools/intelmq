@@ -57,11 +57,13 @@ class MISPFeedOutputBot(OutputBot):
             self.min_time_current = datetime.datetime.now()
             self.max_time_current = self.min_time_current + self.timedelta
             self.current_event = MISPEvent()
-            self.current_event.info = f'IntelMQ event {self.min_time_current.isoformat()} - {self.max_time_current.isoformat()}'
+            self.current_event.info = ('IntelMQ event {begin} - {end}'
+                                       ''.format(begin=self.min_time_current.isoformat(),
+                                                 end=self.max_time_current.isoformat()))
             self.current_event.set_date(datetime.date.today())
             self.current_event.Orgc = self.misp_org
             self.current_event.uuid = str(uuid4())
-            self.current_file = self.output_dir / f'{self.current_event.uuid}.json'
+            self.current_file = self.output_dir / '{self.current_event.uuid}.json'.format(self=self)
             with (self.output_dir / '.current').open('w') as f:
                 f.write(str(self.current_file))
 
