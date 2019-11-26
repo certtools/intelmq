@@ -29,7 +29,7 @@ class MISPFeedOutputBot(OutputBot):
         if not hasattr(self.parameters, 'interval_event'):
             self.timedelta = datetime.timedelta(hours=1)
         else:
-            self.timedelta = datetime.timedelta(**json.loads(self.parameters.interval_event))
+            self.timedelta = datetime.timedelta(minutes=parse_relative(self.parameters.interval_event))
 
         if (self.output_dir / '.current').exists():
             with (self.output_dir / '.current').open() as f:

@@ -1037,7 +1037,7 @@
                 "misp_org_name": "<org name creating the events>",
                 "misp_org_uuid": "<org uuid creating the events>",
                 "output_dir": "/opt/intelmq/var/lib/bots/mispfeed-output",
-                "interval_event": "{\"hours\": 1}"
+                "interval_event": "1 hour"
             }
         },
         "MongoDB": {
