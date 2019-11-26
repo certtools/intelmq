@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import unittest
+from tempfile import TemporaryDirectory
 
 import intelmq.lib.test as test
-from intelmq.bots.outputs.mispfeed.output import MISPFeedOutputBot
+from intelmq.bots.outputs.misp.output_feed import MISPFeedOutputBot
 
 EXAMPLE_EVENT = {"classification.type": "malware",
                  "destination.port": 9796,
@@ -35,13 +36,18 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = MISPFeedOutputBot
         cls.default_input_message = EXAMPLE_EVENT
+        cls.directory = TemporaryDirectory()
         cls.sysconfig = {"misp_org_name": 'IntelMQTestOrg',
                          "misp_org_uuid": "b89da4c2-0f74-11ea-96a1-6fa873a0eb4d",
-                         "output_dir": "/opt/intelmq/var/lib/bots/mispfeed-output/",
-                         "interval_event": '{"hours": 1}'}
+                         "output_dir": cls.directory.name,
+                         "interval_event": '1 hour'}
 
     def test_event(self):
         self.run_bot()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.directory.cleanup()
 
 
 if __name__ == '__main__':  # pragma: no cover
