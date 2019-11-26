@@ -6,9 +6,14 @@ from uuid import uuid4
 import re
 
 from intelmq.lib.bot import OutputBot
+from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.utils import parse_relative
 
-from pymisp import MISPEvent, MISPOrganisation, NewAttributeError
-from pymisp.tools import feed_meta_generator
+try:
+    from pymisp import MISPEvent, MISPOrganisation, NewAttributeError
+    from pymisp.tools import feed_meta_generator
+except ImportError as err:
+    MISPEvent = None
 
 
 # NOTE: This module is compatible with Python 3.6+
@@ -18,6 +23,9 @@ class MISPFeedOutputBot(OutputBot):
     is_multithreadable = False
 
     def init(self):
+        if MISPEvent is None:
+            raise MissingDependencyError('pymisp', version='>=2.4.117.3')
+
         self.current_event = None
 
         self.misp_org = MISPOrganisation()
