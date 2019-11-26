@@ -82,6 +82,7 @@
       - [Filename formatting](#filename-formatting)
   - [Files](#files)
   - [McAfee Enterprise Security Manager](#mcafee-enterprise-security-manager)
+  - [MISP Feed](#misp-feed)
   - [MongoDB](#mongodb)
     - [Installation Requirements](#installation-requirements)
   - [Redis](#redis)
@@ -2575,6 +2576,29 @@ If the field used in the format string is not defined, `None` will be used as fa
 * `esm_pw`: password of user
 * `esm_watchlist`: name of the watchlist to write to
 * `field`: name of the IntelMQ field to be written to ESM
+
+* * *
+
+### MISP Feed
+
+#### Information:
+* `name:` `intelmq.bots.outputs.misp.output_feed`
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Create a directory layout in the MISP Feed format
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `misp_org_name`: Org name which creates the event, string
+* `misp_org_uuid`: Org UUID which creates the event, string
+* `output_dir`: Output directory path, e.g. `/opt/intelmq/var/lib/bots/mispfeed-output`. Will be created if it does not exist and possible.
+* `interval_event`: The output bot creates one event per each interval, all data in this time frame is part of this event. Default "1 hour", string.
+
+#### Usage in MISP
+
+Configure the destination directory of this feed as feed in MISP, either as local location, or served via a web server. See [the MISP documentation on Feeds](https://www.circl.lu/doc/misp/managing-feeds/) for more information
 
 * * *
 
