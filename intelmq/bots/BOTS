@@ -1032,7 +1032,7 @@
         },
         "MISP Feed": {
             "description": "Generate an output in MISP Feed format.",
-            "module": "intelmq.bots.outputs.mispfeed.output",
+            "module": "intelmq.bots.outputs.misp.output_feed",
             "parameters": {
                 "misp_org_name": "<org name creating the events>",
                 "misp_org_uuid": "<org uuid creating the events>",
