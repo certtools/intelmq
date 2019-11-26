@@ -22,6 +22,13 @@ except ImportError as err:
 class MISPFeedOutputBot(OutputBot):
     is_multithreadable = False
 
+    @staticmethod
+    def check_output_dir(dirname):
+        output_dir = Path(dirname)
+        if not output_dir.exists():
+            output_dir.mkdir(mode=0o755, parents=True, exist_ok=True)
+            return True
+
     def init(self):
         if MISPEvent is None:
             raise MissingDependencyError('pymisp', version='>=2.4.117.3')
@@ -33,6 +40,7 @@ class MISPFeedOutputBot(OutputBot):
         self.misp_org.uuid = self.parameters.misp_org_uuid
 
         self.output_dir = Path(self.parameters.output_dir)
+        MISPFeedOutputBot.check_output_dir(self.output_dir)
 
         if not hasattr(self.parameters, 'interval_event'):
             self.timedelta = datetime.timedelta(hours=1)
@@ -97,13 +105,13 @@ class MISPFeedOutputBot(OutputBot):
     def check(parameters):
         if 'output_dir' not in parameters:
             return [["error", "Parameter 'output_dir' not given."]]
-        output_dir = Path(parameters.output_dir)
         try:
-            output_dir.mkdir(mode=0o755, parents=True, exist_ok=True)
+            created = MISPFeedOutputBot.check_output_dir(parameters['output_dir'])
         except IOError:
-            return [["error", "Directory (%r) of parameter 'file' does not exist and could not be created." % output_dir]]
+            return [["error", "Directory %r of parameter 'output_dir' does not exist and could not be created." % parameters['output_dir']]]
         else:
-            return [["info", "Directory (%r) of parameter 'file' did not exist, but has now been created." % output_dir]]
+            if created:
+                return [["info", "Directory %r of parameter 'output_dir' did not exist, but has now been created." % parameters['output_dir']]]
 
 
 BOT = MISPFeedOutputBot
