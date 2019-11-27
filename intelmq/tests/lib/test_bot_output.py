@@ -12,7 +12,7 @@ from json import dumps
 
 RAW = {"__type": "Event", "raw": "Cg=="}
 DICT = {"foo": "bar", "foobar": 1}
-OUTPUT_DICT = {"__type": "Event", "output": dumps(DICT)}
+OUTPUT_DICT = {"__type": "Event", "output": dumps(DICT, sort_keys=True)}
 STRING = "foobar!"
 OUTPUT_STRING = {"__type": "Event", "output": dumps(STRING)}
 INT = 123
@@ -85,7 +85,8 @@ class TestDummyOutputBot(BotTestCase, TestCase):
                                  "message_with_type": False,
                                  "return_type": str,
                                  })
-        self.assertEqual(self.bot.result, dumps(RAW_HIERARCHICAL))
+        self.assertEqual(self.bot.result, dumps(RAW_HIERARCHICAL,
+                                                sort_keys=True))
 
     def test_export_now_raw_type(self):
         self.input_message = INPUT
