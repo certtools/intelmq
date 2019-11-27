@@ -22,7 +22,6 @@ import xmlrpc.client
 from collections import OrderedDict
 
 import pkg_resources
-import psutil
 from termstyle import green
 
 from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,
@@ -31,8 +30,14 @@ from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,
                      DEFAULT_LOGGING_PATH, __version_info__)
 from intelmq.lib import utils
 from intelmq.lib.bot_debugger import BotDebugger
+from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.pipeline import PipelineFactory
 import intelmq.lib.upgrades as upgrades
+
+try:
+    import psutil
+except ImportError:
+    psutil = None
 
 
 class Parameters(object):
@@ -131,6 +136,9 @@ class IntelMQProcessManager:
         self.__runtime_configuration = runtime_configuration
         self.logger = logger
         self.controller = controller
+
+        if psutil is None:
+            raise MissingDependencyError('psutil')
 
         if not os.path.exists(self.PIDDIR):
             try:
