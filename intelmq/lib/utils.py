@@ -644,7 +644,8 @@ def drop_privileges() -> bool:
         try:
             os.setgid(grp.getgrnam('intelmq').gr_gid)
             os.setuid(pwd.getpwnam('intelmq').pw_uid)
-        except OSError:
+        except (OSError, KeyError):
+            # KeyError: User or group 'intelmq' does not exist
             return False
     if os.geteuid() != 0:  # For the unprobably possibility that intelmq is root
         return True
