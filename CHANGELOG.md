@@ -41,6 +41,7 @@ CHANGELOG
 
 ### Tests
 - Travis: Use `intelmqsetup` here too.
+  - Install required `python3-termstyle` for the Debian package build test.
 - Added tests for the new bot `intelmq.bots.outputs.misp.output_feed` (#1473).
 
 ### Tools
