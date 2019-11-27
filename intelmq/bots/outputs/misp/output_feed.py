@@ -12,7 +12,8 @@ from intelmq.lib.utils import parse_relative
 try:
     from pymisp import MISPEvent, MISPOrganisation, NewAttributeError
     from pymisp.tools import feed_meta_generator
-except ImportError as err:
+except (ImportError, SyntaxError):
+    # catching SyntaxError because of https://github.com/MISP/PyMISP/issues/501
     MISPEvent = None
 
 
