@@ -68,6 +68,7 @@ CHANGELOG
   - logging FileHandler: Strip all shell colorizations from the messages (#1436).
 - `intelmq.lib.message`:
   - `Message.to_json`: Set `sort_keys=True` to get reproducible results.
+  - `drop_privileges`: Handle situations where the user or group `intelmq` does not exist.
 
 ### Development
 
