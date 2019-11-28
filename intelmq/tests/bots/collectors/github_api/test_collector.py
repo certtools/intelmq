@@ -2,7 +2,6 @@
 """
 Testing Github API Collectors
 """
-from copy import deepcopy
 import json
 import os
 from unittest import TestCase, main as unittest_main
@@ -17,10 +16,16 @@ with open(os.path.join(os.path.dirname(__file__), 'example_github_repo_contents_
     RAW_CONTENTS = handle.read()
     JSON_CONTENTS = json.loads(RAW_CONTENTS)
 
-EXAMPLE_CONTENT_JSON = {
-    "Description": "md5",
-    "Identifier": "iubegr73b497fb398br9v3br98ufh3r"
-}
+EXAMPLE_CONTENT_JSON = [
+    {
+        "Description": "md5",
+        "Identifier": "iubegr73b497fb398br9v3br98ufh3r"
+    },
+    {
+        "Description": "",
+        "Identifier": "iubegr73b497iubegr73b497fb398br9v3br98ufh3rfb398br9v3br98ufh3r"
+    }
+]
 EXAMPLE_CONTENT_STR = str(EXAMPLE_CONTENT_JSON)
 
 SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST = {
@@ -29,7 +34,7 @@ SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST = {
         'basic_auth_username': 'dummy_user',
         'basic_auth_password': 'dummy_password',
         'repository': 'author/repository',
-        'extra_fields': ['size'],
+        'extra_fields': ['size', 'sha'],
         'regex': '.*.txt'
     },
     'EXPECTED_REPORTS': [
@@ -37,18 +42,10 @@ SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST = {
             "__type": "Report",
             "feed.name": "Github feed",
             "feed.accuracy": 100.,
-            "feed.url": "https://api.github.com/repos/author/repository/contents",
-            "raw": utils.base64_encode(
-                str(
-                    {
-                        'filepath': JSON_CONTENTS[1]['path'],
-                        'download_url': JSON_CONTENTS[1]['download_url'],
-                        'content': EXAMPLE_CONTENT_JSON,
-                        'sha': JSON_CONTENTS[1]['sha'],
-                        'size': JSON_CONTENTS[1]['size']
-                    }
-                )
-            )
+            "feed.url": JSON_CONTENTS[1]['download_url'],
+            "raw": utils.base64_encode(EXAMPLE_CONTENT_STR),
+            "extra.file_metadata.sha": JSON_CONTENTS[1]['sha'],
+            "extra.file_metadata.size": JSON_CONTENTS[1]['size']
         }
     ]
 }
@@ -76,13 +73,12 @@ SHOULD_FAIL_WITH_BAD_CREDENTIALS = {
 
 
 def print_requests_get_parameters(url, *args, **kwargs):
-    main_mock = MagicMock()
-    main_mock.reset_mock()
-    main_mock.return_value.json = MagicMock()
     if 'headers' in kwargs and kwargs['headers']['Accept'] == 'application/vnd.github.v3.text-match+json':
         """
         mocking of Github API requests
         """
+        main_mock = MagicMock()
+        main_mock.return_value.json = MagicMock()
         main_mock.return_value = RAW_CONTENTS
         main_mock.json.return_value = JSON_CONTENTS
         return main_mock
@@ -90,8 +86,7 @@ def print_requests_get_parameters(url, *args, **kwargs):
         """
         mocking of basic GET request
         """
-        main_mock.return_value = EXAMPLE_CONTENT_STR
-        main_mock.json.return_value = EXAMPLE_CONTENT_JSON
+        main_mock = MagicMock(content=EXAMPLE_CONTENT_STR)
         return main_mock
 
 
@@ -148,17 +143,8 @@ class TestGithubContentsAPICollectorBot(test.BotTestCase, TestCase):
             "__type": "Report",
             "feed.name": "Github feed",
             "feed.accuracy": 100.,
-            "feed.url": "https://api.github.com/repos/author/repository/contents",
-            "raw": utils.base64_encode(
-                str(
-                    {
-                        'filepath': JSON_CONTENTS[1]['path'],
-                        'download_url': JSON_CONTENTS[1]['download_url'],
-                        'content': EXAMPLE_CONTENT_JSON,
-                        'sha': JSON_CONTENTS[1]['sha']
-                    }
-                )
-            )
+            "feed.url": JSON_CONTENTS[1]['download_url'],
+            "raw": utils.base64_encode(EXAMPLE_CONTENT_STR)
         })
 
     def test_collector_init_should_fail_with_invalid_argument(self):
@@ -182,17 +168,3 @@ class TestGithubContentsAPICollectorBot(test.BotTestCase, TestCase):
 
 if __name__ == '__main__':  # pragma: no cover
     unittest_main()
-
-
-def pretty_print_json(obj):
-    import json
-
-    if type(obj) in [str, bytes]:
-        try:
-            parsed_object = json.loads(obj)
-        except Exception:
-            print(obj)
-    elif type(obj) in [dict]:
-        parsed_object = obj
-
-    print(json.dumps(obj, indent=2, sort_keys=True))

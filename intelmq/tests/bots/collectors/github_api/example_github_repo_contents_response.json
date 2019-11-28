@@ -7,7 +7,7 @@
     "url": "some_url",
     "html_url": "some_html_url",
     "git_url": "some_git_url",
-    "download_url": "a_download_url",
+    "download_url": "https://a_download.url/test_file_1.md",
     "type": "file",
     "_links": {
       "self": "I_url",
@@ -23,7 +23,7 @@
     "url": "some_url",
     "html_url": "some_html_url",
     "git_url": "some_git_url",
-    "download_url": "a_download_url",
+    "download_url": "https://a_download.url/contents.txt",
     "type": "file",
     "_links": {
       "self": "I_url",

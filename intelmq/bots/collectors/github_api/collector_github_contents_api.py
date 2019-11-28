@@ -41,8 +41,10 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
         try:
             for item in self.__recurse_repository_files(self.__base_api_url):
                 report = self.new_report()
-                report['raw'] = str(item)
-                report['feed.url'] = self.__base_api_url
+                report['raw'] = item['content']
+                report['feed.url'] = item['download_url']
+                for extra_key, extra_value in item['extra'].items():
+                    report.add('extra.file_metadata.' + extra_key, extra_value)
                 self.send_message(report)
         except requests.RequestException as e:
             raise ConnectionError(e)
@@ -57,14 +59,13 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
             elif github_file['type'] == 'file' and bool(re.search(getattr(self.parameters, 'regex', '.*.json'),
                                                                   github_file['name'])):
                 extracted_github_file_data = {
-                    'filepath': github_file['path'],
                     'download_url': github_file['download_url'],
-                    'content': requests.get(github_file['download_url']).json(),
-                    'sha': github_file['sha']
+                    'content': requests.get(github_file['download_url']).content,
+                    'extra': {}
                 }
                 for field_name in getattr(self.parameters, 'extra_fields', []):
                     if field_name in github_file:
-                        extracted_github_file_data[field_name] = github_file[field_name]
+                        extracted_github_file_data['extra'][field_name] = github_file[field_name]
                     else:
                         self.logger.warning("Field '{}' does not exist in the Github file data.".format(field_name))
                 extracted_github_files.append(extracted_github_file_data)
