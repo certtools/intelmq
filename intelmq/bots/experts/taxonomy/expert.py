@@ -13,28 +13,29 @@ from intelmq.lib.bot import Bot
 TAXONOMY = {
     # type       # taxonomy
     # sorted!
-    "spam": "abusive content",
+    "spam": "abusive-content",
     "harmful-speech": "abusive-content",
     "violence": "abusive-content",
     "ddos": "availability",
     "dos": "availability",
     "outage": "availability",
     "sabotage": "availability",
+    "misconfiguration": "availability",
     "copyright": "fraud",
     "masquerade": "fraud",
     "phishing": "fraud",
     "unauthorized-use-of-resources": "fraud",
-    "Unauthorised-information-access": "information content security",
-    "Unauthorised-information-modification": "information content security",
-    "data-loss": "information content security",
+    "unauthorised-information-access": "information-content-security",
+    "unauthorised-information-modification": "information-content-security",
+    "data-loss": "information-content-security",
     "dropzone": "information content security",  # not in ENISA eCSIRT-II taxonomy
     "leak": "information content security",  # not in ENISA eCSIRT-II taxonomy
-    "scanner": "information gathering",
+    "scanner": "information-gathering",
     "sniffing": "information-gathering",
     "social-engineering": "information-gathering",
-    "brute-force": "intrusion attempts",
-    "exploit": "intrusion attempts",
-    "ids-alert": "intrusion attempts",
+    "brute-force": "intrusion-attempts",
+    "exploit": "intrusion-attempts",
+    "ids-alert": "intrusion-attempts",
     "application-compromise": "intrusions",
     "backdoor": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "burglary": "intrusions",
@@ -44,15 +45,16 @@ TAXONOMY = {
     "unauthorized-command": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "unauthorized-login": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "unprivileged-account-compromise": "intrusions",
-    "c2server": "malicious code",  # ENISA eCSIRT-II taxonomy: 'c2server'
-    "dga domain": "malicious code",  # not in ENISA eCSIRT-II taxonomy
-    "infected-system": "malicious code",  # ENISA eCSIRT-II taxonomy: 'infected-system'
-    "malware": "malicious code",  # not in ENISA eCSIRT-II taxonomy
-    "malware-configuration": "malicious code",  # ENISA eCSIRT-II taxonomy: 'malware-configuration'
-    "malware-distribution": "malicious code",
-    "ransomware": "malicious code",  # not in ENISA eCSIRT-II taxonomy
-    "blacklist": "other",
-    "other": "other",  # not in ENISA eCSIRT-II taxonomy
+    "c2-server": "malicious-code",
+    "dga-domain": "malicious-code",  # not in ENISA eCSIRT-II taxonomy
+    "infected-system": "malicious-code",
+    "malware": "malicious-code",  # not in ENISA eCSIRT-II taxonomy
+    "malware-configuration": "malicious-code",
+    "malware-distribution": "malicious-code",
+    "ransomware": "malicious-code",  # not in ENISA eCSIRT-II taxonomy
+    "blacklist": "other",  # not in ENISA eCSIRT-II taxonomy
+    "other": "other",
+    "undetermined": "other",
     "proxy": "other",  # not in ENISA eCSIRT-II taxonomy
     "tor": "other",  # not in ENISA eCSIRT-II taxonomy
     "unknown": "other",  # not in ENISA eCSIRT-II taxonomy
@@ -60,8 +62,8 @@ TAXONOMY = {
     "ddos-amplifier": "vulnerable",
     "information-disclosure": "vulnerable",
     "potentially-unwanted-accessible": "vulnerable",
-    "vulnerable client": "vulnerable",  # not in ENISA eCSIRT-II taxonomy
-    "vulnerable service": "vulnerable",  # not in ENISA eCSIRT-II taxonomy
+    "vulnerable-client": "vulnerable",  # not in ENISA eCSIRT-II taxonomy
+    "vulnerable-service": "vulnerable",  # not in ENISA eCSIRT-II taxonomy
     "vulnerable-system": "vulnerable",
     "weak-crypto": "vulnerable",
 }
