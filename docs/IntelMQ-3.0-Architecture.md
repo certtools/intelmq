@@ -1,6 +1,6 @@
 # Idea list and architecture of IntelMQ 3.0
 
-Author: Aaron Kaplan <kaplan@cert.at>
+Authors: Aaron Kaplan <kaplan@cert.at>, Sebastian Wagner <wagner@cert.at>
 
 ## Use-cases
 
@@ -69,5 +69,10 @@ _Think about_:
 _Category_: SHOULD
 
 
+## Notification settings
 
+_Task_: Keep notification settings per event: Where to (destination mail/host address), how (protocol, authentication (ssl client certificate), etc), how often/time information (intervals etv.)
 
+_Background_: CERTs (and potentially other groups of users) need to specify where the events should be sent to, how often etc. Currently only destination email addresses can be saved (`source.abuse_contact`), which is not enough for most use-cases. There exist some custom solutions (e.g. `notify` boolean at cert.at, `extra.processing` dictionary at BSI), but no least common denominator. See also https://github.com/certtools/intelmq/issues/758
+
+_Category_: this feature should be OPTIONAL but is NEEDED by several users.
