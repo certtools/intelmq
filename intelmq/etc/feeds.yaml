@@ -1827,3 +1827,23 @@ providers:
       revision: 11-09-2019
       status: on
       documentation: https://haveibeenpwned.com/EnterpriseSubscriber/
+  Strangereal Intel:
+    DailyIOC:
+      description: Daily IOC from tweets and articles
+      additional_information: |
+        collector's `extra_fields` parameter may be any of fields from the github [content API response](https://developer.github.com/v3/repos/contents/)
+      bots:
+        collector:
+          module: intelmq.bots.collectors.github_api.collector_github_contents_api
+          parameters:
+            basic_auth_username: USERNAME
+            basic_auth_password: PASSWORD
+            repository: StrangerealIntel/DailyIOC
+            regex: .*.json
+        parser:
+          module: intelmq.bots.parsers.github_feed
+          parameters:
+      revision: 05-12-2019
+      status: on
+      documentation: https://github.com/StrangerealIntel/DailyIOC
+

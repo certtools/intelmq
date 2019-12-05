@@ -42,6 +42,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [PrecisionSec](#precisionsec)
 - [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
+- [Strangereal Intel](#strangereal-intel)
 - [Sucuri](#sucuri)
 - [Surbl](#surbl)
 - [Taichung](#taichung)
@@ -1792,6 +1793,31 @@ server {
 ### Parser
 
 * **Module:** intelmq.bots.parsers.spamhaus.parser_drop
+* **Configuration Parameters:**
+
+
+# Strangereal Intel
+
+## DailyIOC
+
+* **Status:** on
+* **Revision:** 05-12-2019
+* **Documentation:** https://github.com/StrangerealIntel/DailyIOC
+* **Description:** Daily IOC from tweets and articles
+* **Additional Information:** collector's `extra_fields` parameter may be any of fields from the github [content API response](https://developer.github.com/v3/repos/contents/)
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.github_api.collector_github_contents_api
+* **Configuration Parameters:**
+*  * `basic_auth_password`: `PASSWORD`
+*  * `basic_auth_username`: `USERNAME`
+*  * `regex`: `.*.json`
+*  * `repository`: `StrangerealIntel/DailyIOC`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.github_feed
 * **Configuration Parameters:**
 
 
