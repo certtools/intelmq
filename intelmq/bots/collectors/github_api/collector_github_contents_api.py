@@ -6,7 +6,7 @@ PARAMETERS:
     'basic_auth_username': github Basic authentication username (REQUIRED)
     'basic_auth_password': github Basic authentication password (REQUIRED)
     'repository': only one format ('<author>/<repo>') is acceptable (REQUIRED)
-    'extra_fields': fields to extract from file (DEFAULT = [])
+    'extra_fields': comma-separated list of fields to extract from file (DEFAULT = [])
     'regex': file regex (DEFAULT = '*.json')
 """
 import re
@@ -36,6 +36,13 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
             raise InvalidArgument('regex', expected='string', got=None)
         if not hasattr(self.parameters, 'repository'):
             raise InvalidArgument('repository', expected='string')
+        if hasattr(self.parameters, 'extra_fields'):
+            try:
+                self.__extra_fields = [x.strip() for x in getattr(self.parameters, 'extra_fields').split(',')]
+            except Exception:
+                raise InvalidArgument('extra_fields', expected='comma-separated list')
+        else:
+            self.__extra_fields = []
 
     def process_request(self):
         try:
@@ -63,7 +70,7 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
                     'content': requests.get(github_file['download_url']).content,
                     'extra': {}
                 }
-                for field_name in getattr(self.parameters, 'extra_fields', []):
+                for field_name in self.__extra_fields:
                     if field_name in github_file:
                         extracted_github_file_data['extra'][field_name] = github_file[field_name]
                     else:

@@ -34,7 +34,7 @@ SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST = {
         'basic_auth_username': 'dummy_user',
         'basic_auth_password': 'dummy_password',
         'repository': 'author/repository',
-        'extra_fields': ['size', 'sha'],
+        'extra_fields': 'size, sha',
         'regex': '.*.txt'
     },
     'EXPECTED_REPORTS': [
@@ -56,7 +56,7 @@ SHOULD_FAIL_BECAUSE_REPOSITORY_IS_NOT_VALID_CONFIG = {
         'basic_auth_username': 'dummy_user',
         'basic_auth_password': 'dummy_password',
         'repository': 'author/',
-        'extra_fields': ['size'],
+        'extra_fields': 'size',
         'regex': '.*.txt'
     }
 }
@@ -132,7 +132,7 @@ class TestGithubContentsAPICollectorBot(test.BotTestCase, TestCase):
         requests_get_mock.side_effect = print_requests_get_parameters
 
         custom_config = SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST['CONFIG'].copy()
-        custom_config['extra_fields'] = ['aaa', 'bbb']
+        custom_config['extra_fields'] = 'aaa,bbb'
 
         self.allowed_warning_count = 2
         self.run_bot(parameters=custom_config, prepare=True)
