@@ -939,13 +939,12 @@
                 "overwrite": false
             }
         },
-        "MISPExpert": {
+        "MISP": {
             "description": "An expert to for looking up values in MISP.",
             "module": "intelmq.bots.experts.misp.expert",
             "parameters": {
                 "misp_key": "<insert MISP Authkey>",
-                "misp_url": "<insert url of MISP server (with trailing '/')>",
-                "misp_verify": true
+                "misp_url": "<insert url of MISP server (with trailing '/')>"
             }
         }
     },

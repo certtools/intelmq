@@ -24,13 +24,15 @@ CHANGELOG
 
 #### Experts
 - `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
+- `intelmq.bots.experts.misp`: Added (PR#1475).
 
 #### Outputs
 - `intelmq.bots.outputs.amqptopic`: Allow formatting the routing key with event data by the new parameter `format_routing_key` (boolean).
-- `intelmq.bots.outputs.misp.output_feed`: Added, creates a MISP Feed (#1473).
+- `intelmq.bots.outputs.misp.output_feed`: Added, creates a MISP Feed (PR#1473).
 
 ### Documentation
 - Document usage of the `INTELMQ_ROOT_DIR` environment variable.
+- Added document on MISP integration possibilities.
 
 ### Packaging
 - `setup.py` do not try to install any data to `/opt/intelmq/` as the behavior is inconsistent on various systems and with `intelmqsetup` we have a tool to create the structure and files anyway.

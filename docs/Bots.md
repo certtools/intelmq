@@ -56,6 +56,7 @@
   - [Gethostbyname](#gethostbyname)
   - [IDEA](#idea)
   - [MaxMind GeoIP](#maxmind-geoip)
+  - [MISP](#misp)
   - [Modify](#modify)
     - [Configuration File](#configuration-file)
       - [Actions](#actions)
@@ -1794,7 +1795,7 @@ Converts the event to IDEA format and saves it as JSON in the field `output`. Al
 Documentation about IDEA: https://idea.cesnet.cz/en/index
 
 #### Information:
-* `name:` idea
+* `name:` intelmq.bots.experts.idea.expert
 * `lookup:` local config
 * `public:` yes
 * `cache (redis db):` none
@@ -1809,7 +1810,7 @@ Documentation about IDEA: https://idea.cesnet.cz/en/index
 ### MaxMind GeoIP
 
 #### Information:
-* `name:` maxmind-geoip
+* `name:` intelmq.bots.experts.maxmind_geoip.expert
 * `lookup:` local database
 * `public:` yes
 * `cache (redis db):` none
@@ -1829,6 +1830,25 @@ You may want to use a shell script provided in the contrib directory to keep the
 * `database`: Path to the local database, e.g. `"/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"`
 * `overwrite`: boolean
 * `use_registered`: boolean. MaxMind has two country ISO codes: One for the physical location of the address and one for the registered location. Default is `false` (backwards-compatibility). See also https://github.com/certtools/intelmq/pull/1344 for a short explanation.
+
+### MISP
+
+Queries a MISP instance for the `source.ip` and adds the MISP Attribute UUID and MISP Event ID of the newest attribute found.
+
+#### Information:
+* `name:` intelmq.bots.experts.misp.expert
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` IP address to MISP attribute and event
+
+#### Configuration Parameters:
+
+* `misp_key`: MISP Authkey
+* `misp_url`: URL of MISP server (with trailing '/')
+
+Generic parameters used in this bot:
+* `http_verify_cert`: Verify the SSL certicate of the server, boolean (default: `true`)
 
 * * *
 
