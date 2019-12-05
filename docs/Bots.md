@@ -484,9 +484,11 @@ Requires the rsync executable
 * **Feed parameters** (see above)
 * `misp_url`: URL of MISP server (with trailing '/')
 * `misp_key`: MISP Authkey
-* `misp_verify`: Verify the SSL certicate of the server, boolean (default: `true`)
 * `misp_tag_to_process`: MISP tag for events to be processed
 * `misp_tag_processed`: MISP tag for processed events, optional
+
+Generic parameters used in this bot:
+* `http_verify_cert`: Verify the SSL certicate of the server, boolean (default: `true`)
 
 #### Workflow
 This collector will search for events on a MISP server that have a

@@ -19,6 +19,7 @@ CHANGELOG
 - Bots with dependencies: Use of `intelmq.lib.exceptions.MissingDependencyError`.
 
 #### Collectors
+- `intelmq.bots.collectors.misp.collector`: Deprecate parameter `misp_verify` in favor of generic parameter `http_verify_cert`.
 
 #### Parsers
 

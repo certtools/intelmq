@@ -15,6 +15,7 @@ pymisp versions released after January 2020 will no longer support the
 For compatibiltiy older versions of pymisp still work with this bot
 """
 import json
+import warnings
 import sys
 
 from intelmq.lib.bot import CollectorBot
@@ -39,10 +40,15 @@ class MISPCollectorBot(CollectorBot):
         if PyMISP is None:
             raise MissingDependencyError("pymisp")
 
+        if hasattr(self.parameters, 'misp_verify'):
+            self.parameters.http_verify_cert = self.parameters.misp_verify
+            warnings.warn("The parameter 'misp_verify' is deprecated in favor of"
+                          "'http_verify_cert'.", DeprecationWarning)
+
         # Initialize MISP connection
         self.misp = PyMISP(self.parameters.misp_url,
                            self.parameters.misp_key,
-                           self.parameters.misp_verify)
+                           self.parameters.http_verify_cert)
 
     def process(self):
         # Grab the events from MISP
