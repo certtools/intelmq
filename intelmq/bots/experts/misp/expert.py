@@ -5,30 +5,32 @@ An expert to for looking up values in MISP.
 Parameters:
   - misp_url: URL of the MISP server
   - misp_key: API key for accessing MISP
-  - misp_verify: true or false, check the validity of the certificate
+  - http_verify_cert: true or false, check the validity of the certificate
 """
 import sys
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     if sys.version_info >= (3, 6):
         from pymisp import ExpandedPyMISP
-
 except ImportError:
-    PyMISP = None
+    ExpandedPyMISP = None
 
 
 class MISPExpertBot(Bot):
 
     def init(self):
-        if PyMISP is None:
-            raise ValueError("Could not import pymisp. Please install it and make sure you're using python 3.6+.")
+        if sys.version_info < (3, 6):
+            raise ValueError('This bot requires Python >= 3.6.')
+        if ExpandedPyMISP is None:
+            raise MissingDependencyError('pymisp', '>=2.4.117.3')
 
         # Initialize MISP connection
         self.misp = ExpandedPyMISP(self.parameters.misp_url,
                                    self.parameters.misp_key,
-                                   self.parameters.misp_verify)
+                                   self.parameters.http_verify_cert)
 
     def process(self):
         event = self.receive_message()
