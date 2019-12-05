@@ -52,6 +52,7 @@ CHANGELOG
 - `intelmq_generate_misp_objects_templates.py`: Tool to create a MISP object template (#1470).
 
 ### Contrib
+* Added `development-tools`.
 
 ### Known issues
 
