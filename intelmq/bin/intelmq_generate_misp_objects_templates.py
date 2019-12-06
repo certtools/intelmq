@@ -82,7 +82,7 @@ class MISPObjectTemplateGenerator:
         elif content['type'] == 'Accuracy':
             attribute['misp-attribute'] = 'float'
         else:
-            raise Exception(f'Unknown type {content["type"]}: {object_relation} - {content}')
+            raise Exception('Unknown type {content["type"]}: {object_relation} - {content}')
         return attribute
 
     def generate_templates(self):
