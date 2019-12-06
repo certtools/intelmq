@@ -48,6 +48,11 @@ class GithubFeedParserBot(Bot):
     def parse(self, report, json_content: dict):
         event = self.new_event(report)
 
+        # add extra metadata from report (when coming from Github API collector)
+        if 'extra.file_metadata' in report.keys():
+            for k, v in report.get('extra.file_metadata').items():
+                event.add('extra.file_metadata.' + k, v)
+
         for knonw_feed, feed_parser in self.__supported_feeds.items():
             if knonw_feed in report.get('feed.url'):
                 return feed_parser(self.logger).parse(event, json_content)
@@ -64,6 +69,7 @@ class GithubFeedParserBot(Bot):
             :param event: output event object
             :param json_content: IOC(s) in JSON format
             """
+
             class Next(Exception):
                 pass
 

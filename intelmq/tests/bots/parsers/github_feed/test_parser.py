@@ -50,6 +50,19 @@ class TestGithubFeedParserBot(test.BotTestCase, unittest.TestCase):
 
         self.assertRegexpMatchesLog("Unknown feed '{}'.".format(wrong_report['feed.url']))
 
+    def test_extra_fields_are_present_in_generated_event(self):
+        custom_report = EXAMPLE_STRANGEREALINTEL_REPORT.copy()
+        custom_report['extra.file_metadata'] = {
+            'sha': 'e345678934567893456789',
+            'size': 111
+        }
+
+        self.input_message = custom_report
+        self.run_bot()
+
+        for event in self.get_output_queue():
+            assert 'extra.file_metadata.sha' in event and 'extra.file_metadata.size' in event
+
     def test_strangerealintel_feed_processing_is_successful(self):
         self.run_bot()
 

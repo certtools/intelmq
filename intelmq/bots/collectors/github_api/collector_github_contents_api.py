@@ -50,8 +50,8 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
                 report = self.new_report()
                 report['raw'] = item['content']
                 report['feed.url'] = item['download_url']
-                for extra_key, extra_value in item['extra'].items():
-                    report.add('extra.file_metadata.' + extra_key, extra_value)
+                if item['extra'] != {}:
+                    report.add('extra.file_metadata', item['extra'])
                 self.send_message(report)
         except requests.RequestException as e:
             raise ConnectionError(e)

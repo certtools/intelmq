@@ -44,8 +44,10 @@ SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST = {
             "feed.accuracy": 100.,
             "feed.url": JSON_CONTENTS[1]['download_url'],
             "raw": utils.base64_encode(EXAMPLE_CONTENT_STR),
-            "extra.file_metadata.sha": JSON_CONTENTS[1]['sha'],
-            "extra.file_metadata.size": JSON_CONTENTS[1]['size']
+            "extra.file_metadata": {
+                "sha": JSON_CONTENTS[1]['sha'],
+                "size": JSON_CONTENTS[1]['size']
+            }
         }
     ]
 }
