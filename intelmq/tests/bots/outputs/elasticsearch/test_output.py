@@ -143,7 +143,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
                           "elastic_index": "intelmq",
                           "elastic_doctype": "events",
                           "rotate_index": "daily"}
-        self.assertRaises(RuntimeError, self.run_bot())
+        self.assertRaises(RuntimeError, self.run_bot
 
     def test_get_event_date(self):
         """

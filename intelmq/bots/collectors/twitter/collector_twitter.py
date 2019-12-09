@@ -58,12 +58,12 @@ class TwitterCollectorBot(CollectorBot):
             raise MissingDependencyError("twitter")
         self.current_time_in_seconds = int(time.time())
         self.target_timelines = []
-        if getattr(self.parameters, "target_timelines", '') is not '':
+        if getattr(self.parameters, "target_timelines", '') != '':
             self.target_timelines.extend(
                 self.parameters.target_timelines.split(','))
         self.tweet_count = int(getattr(self.parameters, "tweet_count", 20))
         self.follow_urls = []
-        if getattr(self.parameters, "follow_urls", '') is not '':
+        if getattr(self.parameters, "follow_urls", '') != '':
             self.follow_urls.extend(
                 self.parameters.follow_urls.split(','))
         self.include_rts = getattr(self.parameters, "include_rts", False)
