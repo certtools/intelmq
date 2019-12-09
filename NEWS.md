@@ -7,6 +7,7 @@ See the changelog for a full list of changes.
 ----------------------------------
 
 ### Requirements
+- IntelMQ no longer supports Python 3.4, Python `>=` 3.5 is required.
 
 ### Tools
 

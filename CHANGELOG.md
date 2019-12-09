@@ -20,8 +20,11 @@ CHANGELOG
 
 #### Collectors
 - `intelmq.bots.collectors.misp.collector`: Deprecate parameter `misp_verify` in favor of generic parameter `http_verify_cert`.
+- `intelmq.bots.collectors.tcp.collector`: Drop compatibility with Python 3.4.
 
 #### Parsers
+- `intelmq.bots.parsers.autoshun.parser`: Drop compatibility with Python 3.4.
+- `intelmq.bots.parsers.html_table.parser`: Drop compatibility with Python 3.4.
 
 #### Experts
 - `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
@@ -45,6 +48,9 @@ CHANGELOG
 ### Tests
 - Travis: Use `intelmqsetup` here too.
   - Install required build dependencies for the Debian package build test.
+  - This version is no longer automatically tested on Python `<` 3.5.
+  - Also run the tests on Python 3.8.
+  - Run the debian packaging tests on Python 3.5 and the codestyle test on 3.8.
 - Added tests for the new bot `intelmq.bots.outputs.misp.output_feed` (#1473).
 - Added tests for the new bot `intelmq.bots.experts.misp.expert` (#1473).
 

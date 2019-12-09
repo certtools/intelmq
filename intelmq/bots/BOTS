@@ -183,7 +183,7 @@
             }
         },
         "TCP": {
-            "description": "TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance). Might not be working on Python3.4.6.",
+            "description": "TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance).",
             "module": "intelmq.bots.collectors.tcp.collector",
             "parameters": {
                 "ip": "<ip>",

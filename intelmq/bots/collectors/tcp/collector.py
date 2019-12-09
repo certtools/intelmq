@@ -60,10 +60,7 @@ class TCPCollectorBot(CollectorBot):
                             struct.pack('ii', 1, 0))  # immediately unbind port after closing so that we can restart
         self.con.bind(self.address)
         self.con.settimeout(15)
-        if sys.version_info[1] > 4:  # remove when we're having Python 3.5+, let here `self.con.listen()`
-            self.con.listen()
-        else:
-            self.con.listen(1)
+        self.con.listen()
         self.logger.info("Connected successfully to %s:%s.", self.address[0], self.address[1])
 
     def shutdown(self):

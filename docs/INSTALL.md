@@ -1,7 +1,6 @@
 **Table of Contents:**
 - [Requirements](#requirements)
 - [Install Dependencies](#install-dependencies)
-  - [Debian 8](#debian-8)
   - [Ubuntu 16.04 / Ubuntu 18.04 / Debian 9](#ubuntu-1604--ubuntu-1804--debian-9)
   - [CentOS 7 / RHEL 7](#centos-7--rhel-7)
   - [openSUSE Leap 15.0 / 15.1](#opensuse-leap-150--151)
@@ -34,23 +33,6 @@ Other distributions which are (most probably) supported include RHEL, Fedora and
 
 If you are using native packages, you can simply skip this section as all dependencies are installed automatically.
 
-## Debian 8
-
-```bash
-apt-get install python3 python3-pip
-apt-get install build-essential libffi-dev
-apt-get install python3-dev
-apt-get install redis-server
-```
-
-**Special note for Debian 8**:
-if you are using Debian 8, you need to install this package extra: ``apt-get install libgnutls28-dev``.
-In addition, Debian 8 has an old version of pip3. Please get a current one via:
-```bash
-curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
-python3.4 /tmp/get-pip.py
-```
-
 ## Ubuntu 16.04 / Ubuntu 18.04 / Debian 9
 
 ```bash
@@ -71,12 +53,6 @@ yum install epel-release
 yum install python34 python34-devel
 yum install gcc gcc-c++
 yum install redis
-```
-
-Install the last pip version:
-```bash
-curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
-python3.4 /tmp/get-pip.py
 ```
 
 ## openSUSE 15.0 / 15.1
