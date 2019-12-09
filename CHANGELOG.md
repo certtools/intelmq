@@ -19,18 +19,21 @@ CHANGELOG
 - Bots with dependencies: Use of `intelmq.lib.exceptions.MissingDependencyError`.
 
 #### Collectors
+- `intelmq.bots.collectors.misp.collector`: Deprecate parameter `misp_verify` in favor of generic parameter `http_verify_cert`.
 
 #### Parsers
 
 #### Experts
 - `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
+- `intelmq.bots.experts.misp`: Added (PR#1475).
 
 #### Outputs
 - `intelmq.bots.outputs.amqptopic`: Allow formatting the routing key with event data by the new parameter `format_routing_key` (boolean).
-- `intelmq.bots.outputs.misp.output_feed`: Added, creates a MISP Feed (#1473).
+- `intelmq.bots.outputs.misp.output_feed`: Added, creates a MISP Feed (PR#1473).
 
 ### Documentation
 - Document usage of the `INTELMQ_ROOT_DIR` environment variable.
+- Added document on MISP integration possibilities.
 
 ### Packaging
 - `setup.py` do not try to install any data to `/opt/intelmq/` as the behavior is inconsistent on various systems and with `intelmqsetup` we have a tool to create the structure and files anyway.
@@ -41,8 +44,9 @@ CHANGELOG
 
 ### Tests
 - Travis: Use `intelmqsetup` here too.
-  - Install required `python3-termstyle` for the Debian package build test.
+  - Install required build dependencies for the Debian package build test.
 - Added tests for the new bot `intelmq.bots.outputs.misp.output_feed` (#1473).
+- Added tests for the new bot `intelmq.bots.experts.misp.expert` (#1473).
 
 ### Tools
 - `intelmqctl`:
@@ -52,6 +56,7 @@ CHANGELOG
 - `intelmq_generate_misp_objects_templates.py`: Tool to create a MISP object template (#1470).
 
 ### Contrib
+* Added `development-tools`.
 
 ### Known issues
 
@@ -68,6 +73,7 @@ CHANGELOG
   - logging FileHandler: Strip all shell colorizations from the messages (#1436).
 - `intelmq.lib.message`:
   - `Message.to_json`: Set `sort_keys=True` to get reproducible results.
+  - `drop_privileges`: Handle situations where the user or group `intelmq` does not exist.
 
 ### Development
 

@@ -20,6 +20,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v111_defaults_process_manager',
            'v202_fixes',
            'v210_deprecations',
+           'v220_configuration_1',
            ]
 
 
@@ -276,6 +277,22 @@ def v210_deprecations(defaults, runtime, harmonization, dry_run):
     return changed, defaults, runtime, harmonization
 
 
+def v220_configuration_1(defaults, runtime, harmonization, dry_run):
+    """
+    Migrating configuration
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.misp.collector":
+            if "misp_verify" not in bot["parameters"]:
+                continue
+            if bot["parameters"]["misp_verify"] != defaults["http_verify_cert"]:
+                bot["parameters"]["http_verify_cert"] = bot["parameters"]["misp_verify"]
+            del bot["parameters"]["misp_verify"]
+            changed = True
+    return changed, defaults, runtime, harmonization
+
+
 def harmonization(defaults, runtime, harmonization, dry_run):
     """
     Checks if all harmonization fields and types are correct
@@ -311,7 +328,7 @@ UPGRADES = OrderedDict([
     ((2, 1, 0), (v210_deprecations, )),
     ((2, 1, 1), ()),
     ((2, 1, 2), ()),
-    ((2, 2, 0), ()),
+    ((2, 2, 0), (v220_configuration_1, )),
 ])
 
 ALWAYS = (harmonization, )
