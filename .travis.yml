@@ -5,7 +5,6 @@ env:
   - requirements=true
   - requirements=false
 python:
-  - 3.4
   - 3.5
   - 3.6
   - 3.7
@@ -13,6 +12,8 @@ matrix:
   include:
   - python: 3.4
     env: mode=debian
+  - python: 3.4
+    env: requirements=false
   - python: 3.6
     env: mode=codestyle
 install:

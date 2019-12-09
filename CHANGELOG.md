@@ -102,6 +102,7 @@ CHANGELOG
 
 ### Tests
 - `lib/test_utils`: Skip some tests on Python 3.4 because `contextlib.redirect_stdout` and `contextlib.redirect_sterr` are not supported on this version.
+- Travis: Stop running tests with all optional dependencies on Python 3.4, as more and more libraries are dropping support for it. Tests on the core and code without non-optional requirements are not affected.
 
 ### Tools
 
