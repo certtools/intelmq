@@ -321,9 +321,6 @@ class Pythonlist(Pipeline):
     def disconnect(self):
         pass
 
-    def sleep(self, interval):
-        warnings.warn("'Pipeline.sleep' will be removed in version 2.0.", DeprecationWarning)
-
     def set_queues(self, queues, queues_type):
         super().set_queues(queues, queues_type)
         self.state[self.internal_queue] = []
