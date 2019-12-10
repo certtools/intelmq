@@ -57,8 +57,8 @@ class Bot(object):
     # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
     collector_empty_process = False
 
-    def __init__(self, bot_id: str, start=False, sighup_event=None,
-                 disable_multithreading=None):
+    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
+                 disable_multithreading: bool = None):
         self.__log_buffer = []
         self.parameters = Parameters()
 
@@ -380,7 +380,7 @@ class Bot(object):
             self.__stats()
             self.__handle_sighup()
 
-    def __stats(self, force=False):
+    def __stats(self, force: bool = False):
         """
         Flush stats to redis
 
@@ -526,12 +526,14 @@ class Bot(object):
             self.__destination_pipeline = None
             self.logger.debug("Disconnected from destination pipeline.")
 
-    def send_message(self, *messages, path="_default", auto_add=None,
-                     path_permissive=False):
+    def send_message(self, *messages, path: str = "_default", auto_add=None,
+                     path_permissive: bool = False):
         """
         Parameters:
             messages: Instances of intelmq.lib.message.Message class
             auto_add: ignored
+            path_permissive: If true, do not raise an error if the path is
+                not configured
         """
         for message in messages:
             if not message:
@@ -817,7 +819,7 @@ class Bot(object):
         """
         self._parse_extract_file_parameter('extract_files')
 
-    def _parse_extract_file_parameter(self, parameter_name='extract_files'):
+    def _parse_extract_file_parameter(self, parameter_name: str ='extract_files'):
         """
         Parses and sanitizes commonly used parameters:
 
@@ -842,8 +844,8 @@ class ParserBot(Bot):
     handle = None
     current_line = None
 
-    def __init__(self, bot_id: str, start=False, sighup_event=None,
-                 disable_multithreading=None):
+    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
+                 disable_multithreading: bool = None):
         super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'ParserBot':
             self.logger.error('ParserBot can\'t be started itself. '
@@ -851,7 +853,7 @@ class ParserBot(Bot):
             self.stop()
         self.group = 'Parser'
 
-    def parse_csv(self, report: dict):
+    def parse_csv(self, report: libmessage.Report):
         """
         A basic CSV parser.
         """
@@ -866,7 +868,7 @@ class ParserBot(Bot):
             self.current_line = self.handle.current_line
             yield line
 
-    def parse_csv_dict(self, report: dict):
+    def parse_csv_dict(self, report: libmessage.Report):
         """
         A basic CSV Dictionary parser.
         """
@@ -887,7 +889,7 @@ class ParserBot(Bot):
             self.current_line = self.handle.current_line
             yield line
 
-    def parse_json(self, report: dict):
+    def parse_json(self, report: libmessage.Report):
         """
         A basic JSON parser
         """
@@ -895,7 +897,7 @@ class ParserBot(Bot):
         for line in json.loads(raw_report):
             yield line
 
-    def parse(self, report: dict):
+    def parse(self, report: libmessage.Report):
         """
         A generator yielding the single elements of the data.
 
@@ -916,7 +918,7 @@ class ParserBot(Bot):
             if not any([line.startswith(prefix) for prefix in self.ignore_lines_starting]):
                 yield line
 
-    def parse_line(self, line, report):
+    def parse_line(self, line: Any, report: libmessage.Report):
         """
         A generator which can yield one or more messages contained in line.
 
@@ -1019,8 +1021,8 @@ class CollectorBot(Bot):
 
     is_multithreadable = False
 
-    def __init__(self, bot_id: str, start=False, sighup_event=None,
-                 disable_multithreading=None):
+    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
+                 disable_multithreading: bool = None):
         super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'CollectorBot':
             self.logger.error('CollectorBot can\'t be started itself. '
@@ -1028,14 +1030,14 @@ class CollectorBot(Bot):
             self.stop()
         self.group = 'Collector'
 
-    def __filter_empty_report(self, message: dict):
+    def __filter_empty_report(self, message: libmessage.Report):
         if 'raw' not in message:
             self.logger.warning('Ignoring report without raw field. '
                                 'Possible bug or misconfiguration of this bot.')
             return False
         return True
 
-    def __add_report_fields(self, report: dict):
+    def __add_report_fields(self, report: libmessage.Report):
         if hasattr(self.parameters, 'name'):
             report.add("feed.name", self.parameters.name)
         if hasattr(self.parameters, 'feed'):
@@ -1053,7 +1055,7 @@ class CollectorBot(Bot):
         report.add("feed.accuracy", self.parameters.accuracy)
         return report
 
-    def send_message(self, *messages, path="_default", auto_add=True):
+    def send_message(self, *messages, path: str = "_default", auto_add: bool = True):
         """"
         Parameters:
             messages: Instances of intelmq.lib.message.Message class
@@ -1094,7 +1096,7 @@ class SQLBot(Bot):
         else:
             raise ValueError("Wrong parameter 'engine' {0!r}, possible values are {1}".format(self.engine_name, engines))
 
-    def _connect(self, engine, connect_args, autocommitable=False):
+    def _connect(self, engine, connect_args: dict, autocommitable: bool = False):
         self.engine = engine  # imported external library that connects to the DB
         self.logger.debug("Connecting to database.")
 
@@ -1138,7 +1140,7 @@ class SQLBot(Bot):
                        }
                       )
 
-    def execute(self, query, values, rollback=False):
+    def execute(self, query: str, values: tuple, rollback=False):
         try:
             self.logger.debug('Executing %r.', query, values)
             # note: this assumes, the DB was created with UTF-8 support!
@@ -1172,8 +1174,8 @@ class OutputBot(Bot):
     Base class for outputs.
     """
 
-    def __init__(self, bot_id: str, start=False, sighup_event=None,
-                 disable_multithreading=None):
+    def __init__(self, bot_id: str, start: bool=False, sighup_event=None,
+                 disable_multithreading: bool = None):
         super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'OutputBot':
             self.logger.error('OutputBot can\'t be started itself. '
@@ -1190,7 +1192,8 @@ class OutputBot(Bot):
         self.single_key = getattr(self.parameters, 'single_key', None)
         self.keep_raw_field = getattr(self.parameters, 'keep_raw_field', False)
 
-    def export_event(self, event, return_type: Optional[type] = None):
+    def export_event(self, event: libmessage.Event,
+                     return_type: Optional[type] = None):
         """
         exports an event according to the following parameters:
             * message_hierarchical
