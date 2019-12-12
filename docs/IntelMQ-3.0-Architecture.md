@@ -87,7 +87,7 @@ _Task_: Create a Kafka MQ backend: add Kafka as a replaceable MQ for IntelMQ 3.0
 
 _Background_: IntelMQ 2.0 supports AMQP (RabbitMQ) next to redis as a message queue. Many organisations use Kafka internally. Support connecting to their other work flows.
 
-_Think about_: 
+_Think about_: Using [Apache Pulsar](https://pulsar.apache.org/)
 
 
 _Category_: SHOULD
