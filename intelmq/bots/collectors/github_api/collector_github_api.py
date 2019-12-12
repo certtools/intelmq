@@ -22,22 +22,21 @@ class GithubAPICollectorBot(CollectorBot):
 
     def init(self):
         if requests is None:
-            raise ValueError('Cound not import requests. Please install it.')
+            raise ValueError('Could not import requests. Please install it.')
 
         self.__user_headers = static_params['headers']
-        if not (hasattr(self.parameters, 'basic_auth_username') and hasattr(self.parameters, 'basic_auth_password')):
-            self.logger.warning('Authentication parameters are incomplete, using unauthenticated API access instead')
-        else:
-            # include Authorization header only if both username and password exists
+        if hasattr(self.parameters, 'basic_auth_username') and hasattr(self.parameters, 'basic_auth_password'):
             self.__user_headers.update(self.__produce_auth_header(getattr(self.parameters, 'basic_auth_username'),
                                                                   getattr(self.parameters, 'basic_auth_password')))
+        else:
+            self.logger.warning('Using unauthenticated API access, means the request limit is at 60 per hour.')
 
     def process(self):
         self.process_request()
 
     def process_request(self):
         """
-        Requests giithub API with specific path and functionality
+        Requests github API with specific path and functionality
         """
         raise NotImplementedError
 

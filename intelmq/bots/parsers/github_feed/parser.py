@@ -27,7 +27,7 @@ class GithubFeedParserBot(Bot):
 
     def init(self):
         if validators is None:
-            raise ValueError('Cound not import validators. Please install it.')
+            raise ValueError('Could not import validators. Please install it.')
         self.__supported_feeds = {
             'StrangerealIntel/DailyIOC': lambda logger: self.StrangerealIntelDailyIOC(logger)
         }
