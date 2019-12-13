@@ -17,6 +17,7 @@ CHANGELOG
   - `drop_privileges`: Handle situations where the user or group `intelmq` does not exist.
 - `intelmq.lib.pipeline`:
   - `Amqp._send` and `Amqp._acknowledge`: Log traceback in debug mode in case of errors and necessary re-connections.
+  - `Amqp._acknowledge`: Reset delivery tag if acknowledge was successful.
 
 ### Development
 

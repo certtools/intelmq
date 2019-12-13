@@ -556,6 +556,8 @@ class Amqp(Pipeline):
             self.channel.basic_ack(delivery_tag=self.delivery_tag)
         except Exception as e:
             raise exceptions.PipelineError(e)
+        else:
+            self.delivery_tag = None
 
     def _get_queues(self) -> dict:
         if self.username and self.password:
