@@ -517,7 +517,8 @@ If none of the filename matches apply, the contents of the first (RT-) "history"
 
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
-* `extract_files`: Optional, boolean or list of strings. See documentation of the Generic URL Fetcher for more details.
+* `extract_attachment`: Optional, boolean or list of strings. See documentation of the Generic URL Fetcher parameter `extract_files` for more details.
+* `extract_download`: Optional, boolean or list of strings. See documentation of the Generic URL Fetcher parameter `extract_files` for more details.
 * `uri`: url of the REST interface of the RT
 * `user`: RT username
 * `password`: RT password
@@ -530,7 +531,7 @@ If none of the filename matches apply, the contents of the first (RT-) "history"
 * `take_ticket`: whether to take the ticket (default: `true`)
 * `url_regex`: regular expression of an URL to search for in the ticket
 * `attachment_regex`: regular expression of an attachment in the ticket
-* `unzip_attachment`: whether to unzip a found attachment. Only the first file in the archive is used.
+* `unzip_attachment`: whether to unzip a found attachment. Only the first file in the archive is used. Deprecated in favor of `extract_attachment`.
 
 The parameter `http_timeout_max_tries` is of no use in this collector.
 
