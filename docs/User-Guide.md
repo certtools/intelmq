@@ -51,11 +51,7 @@ systemctl start redis.service
 ## /opt and LSB paths
 
 If you installed the packages, standard Linux paths (LSB paths) are used: `/var/log/intelmq/`, `/etc/intelmq/`, `/var/lib/intelmq/`, `/var/run/intelmq/`.
-<<<<<<< HEAD
-Otherwise, the configuration directory is `/opt/intelmq/etc/`. Using the environment variable `INTELMQ_ROOT_DIR` allows setting any arbitrary root directory.
-=======
 Otherwise, the configuration directory is `/opt/intelmq/etc/`.
->>>>>>> maintenance
 
 You can switch this by setting the environment variables `INTELMQ_PATHS_NO_OPT` and `INTELMQ_PATHS_OPT`, respectively.
 * When installing the Python packages, you can set `INTELMQ_PATHS_NO_OPT` to something non-empty to use LSB-paths.
