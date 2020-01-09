@@ -488,7 +488,7 @@ Requires the rsync executable
 * `misp_tag_processed`: MISP tag for processed events, optional
 
 Generic parameters used in this bot:
-* `http_verify_cert`: Verify the SSL certicate of the server, boolean (default: `true`)
+* `http_verify_cert`: Verify the TLS certicate of the server, boolean (default: `true`)
 
 #### Workflow
 This collector will search for events on a MISP server that have a
@@ -1850,7 +1850,7 @@ Queries a MISP instance for the `source.ip` and adds the MISP Attribute UUID and
 * `misp_url`: URL of MISP server (with trailing '/')
 
 Generic parameters used in this bot:
-* `http_verify_cert`: Verify the SSL certicate of the server, boolean (default: `true`)
+* `http_verify_cert`: Verify the TLS certicate of the server, boolean (default: `true`)
 
 * * *
 
