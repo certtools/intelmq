@@ -4,14 +4,15 @@
 Parameters:
   - misp_url: URL of the MISP server
   - misp_key: API key for accessing MISP
-  - misp_verify: true or false, check the validity of the certificate
   - misp_tag_to_process: MISP tag identifying events to be processed
   - misp_tag_processed: MISP tag identifying events that have been processed
 
 
 PyMISP versions released after January 2020 will no longer support the
 "old" PyMISP class.
-For compatibility older versions of pymisp still work with this bot
+For compatibility:
+ * older versions of pymisp still work with this bot
+ * the deprecated parameter `misp_verify` will create a DeprecationWarning
 """
 import json
 import warnings
