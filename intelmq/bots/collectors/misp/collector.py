@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-A collector for grabbing appropriately tagged events from MISP.
+"""A collector for grabbing appropriately tagged events from MISP.
 
 Parameters:
   - misp_url: URL of the MISP server
@@ -10,9 +9,9 @@ Parameters:
   - misp_tag_processed: MISP tag identifying events that have been processed
 
 
-pymisp versions released after January 2020 will no longer support the
+PyMISP versions released after January 2020 will no longer support the
 "old" PyMISP class.
-For compatibiltiy older versions of pymisp still work with this bot
+For compatibility older versions of pymisp still work with this bot
 """
 import json
 import warnings
