@@ -1796,8 +1796,7 @@ Documentation about IDEA: https://idea.cesnet.cz/en/index
 
 The bot requires the maxmind's `geoip2` Python library, version 2.2.0 has been tested.
 
-The database is available at https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
-You need to unzip it.
+To download the database a free license key is required. More information can be found at https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/
 
 You may want to use a shell script provided in the contrib directory to keep the database up to date: `contrib/cron-jobs/update-geoip-data`
 

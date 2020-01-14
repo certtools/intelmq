@@ -15,6 +15,10 @@ See the changelog for a full list of changes.
 
 ### Configuration
 
+#### MaxMind GeoIP
+MaxMind requires a registration before being able to download the GeoLite2 database starting with 2019-12-30: https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/
+If the provided `update-geoip-data` script is used, the license key can now be set second parameter.
+
 ### Libraries
 
 ### Postgres databases
