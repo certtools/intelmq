@@ -33,7 +33,7 @@ CHANGELOG
 
 #### Experts
 - `intelmq.bots.experts.national_cert_contact_certat`: Handle empty responses by server (#1467).
-- `intelmq.bots.experts.maxmind_geoip`: The script `update-geoip-data` now requires a license key as second parameter because of upstream changes.
+- `intelmq.bots.experts.maxmind_geoip`: The script `update-geoip-data` now requires a license key as second parameter because of upstream changes (#1484)).
 
 #### Outputs
 - `intelmq.bots.outputs.restapi.output`: Fix logging of response body if response status code was not ok.
