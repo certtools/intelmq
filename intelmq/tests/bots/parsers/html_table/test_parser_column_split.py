@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import os
 import unittest
 
@@ -10,6 +11,7 @@ from intelmq.bots.parsers.html_table.parser import HTMLTableParserBot
 with open(os.path.join(os.path.dirname(__file__), 'html_table_column_split.data')) as handle:
     SAMPLE_FILE = handle.read()
 
+THIS_YEAR = datetime.date.today().year
 EXAMPLE_REPORT = {"feed.name": "HTML Table Feed",
                   "feed.url": "http://vxvault.net/ViriList.php",
                   "raw": utils.base64_encode(SAMPLE_FILE),
@@ -20,7 +22,7 @@ EXAMPLE_EVENT = {"feed.name": "HTML Table Feed",
                  "feed.url": "http://vxvault.net/ViriList.php",
                  "__type": "Event",
                  "source.url": "http://lingvaworld.ru/media/system/css/messg.jpg",
-                 "time.source": "2019-02-15T00:00:00+00:00",
+                 "time.source": "%d-02-15T00:00:00+00:00" % THIS_YEAR,
                  "classification.type": "malware",
                  "source.ip": "81.177.135.172",
                  "time.observation": "2019-01-01T00:00:00+00:00",

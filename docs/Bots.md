@@ -522,7 +522,8 @@ If none of the filename matches apply, the contents of the first (RT-) "history"
 
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
-* `extract_files`: Optional, boolean or list of strings. See documentation of the Generic URL Fetcher for more details.
+* `extract_attachment`: Optional, boolean or list of strings. See documentation of the Generic URL Fetcher parameter `extract_files` for more details.
+* `extract_download`: Optional, boolean or list of strings. See documentation of the Generic URL Fetcher parameter `extract_files` for more details.
 * `uri`: url of the REST interface of the RT
 * `user`: RT username
 * `password`: RT password
@@ -535,7 +536,7 @@ If none of the filename matches apply, the contents of the first (RT-) "history"
 * `take_ticket`: whether to take the ticket (default: `true`)
 * `url_regex`: regular expression of an URL to search for in the ticket
 * `attachment_regex`: regular expression of an attachment in the ticket
-* `unzip_attachment`: whether to unzip a found attachment. Only the first file in the archive is used.
+* `unzip_attachment`: whether to unzip a found attachment. Only the first file in the archive is used. Deprecated in favor of `extract_attachment`.
 
 The parameter `http_timeout_max_tries` is of no use in this collector.
 
@@ -1822,8 +1823,7 @@ Documentation about IDEA: https://idea.cesnet.cz/en/index
 
 The bot requires the maxmind's `geoip2` Python library, version 2.2.0 has been tested.
 
-The database is available at https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
-You need to unzip it.
+To download the database a free license key is required. More information can be found at https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/
 
 You may want to use a shell script provided in the contrib directory to keep the database up to date: `contrib/cron-jobs/update-geoip-data`
 
@@ -2506,14 +2506,14 @@ This output bot discards all incoming messages.
                        'monthly' --> intelmq-2018-02
                        'yearly' --> intelmq-2018
 * `elastic_doctype`: Elasticsearch document type for the event. Default: events
-* `http_username`: http_auth basic username
-* `http_password`: http_auth basic password
+* `http_username`: HTTP basic authentication username
+* `http_password`: HTTP basic authentication password
 * `use_ssl`: Whether to use SSL/TLS when connecting to Elasticsearch. Default: False
 * `http_verify_cert`: Whether to require verification of the server's certificate. Default: False
 * `ssl_ca_certificate`: An optional path to a certificate bundle to use for verifying the server
 * `ssl_show_warnings`: Whether to show warnings if the server's certificate cannot be verified. Default: True
 * `replacement_char`: If set, dots ('.') in field names will be replaced with this character prior to indexing. This is for backward compatibility with ES 2.X. Default: null. Recommended for ES2.X: '_'
-* `flatten_fields1: In ES, some query and aggregations work better if the fields are flat and not JSON. Here you can provide a list of fields to convert.
+* `flatten_fields`: In ES, some query and aggregations work better if the fields are flat and not JSON. Here you can provide a list of fields to convert.
                        Can be a list of strings (fieldnames) or a string with field names separated by a comma (,). eg `extra,field2` or `['extra', 'field2']`
                        Default: ['extra']
 

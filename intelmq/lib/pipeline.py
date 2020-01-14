@@ -501,6 +501,9 @@ class Amqp(Pipeline):
                                                 )
         except Exception as exc:  # UnroutableError, NackError in 1.0.0
             if reconnect and isinstance(exc, pika.exceptions.ConnectionClosed):
+                self.logger.debug('Error sending the message. '
+                                  'Will re-connect and re-send.',
+                                  exc_info=True)
                 self.connect()
                 self._send(destination_queue, message, reconnect=False)
             else:
@@ -547,10 +550,15 @@ class Amqp(Pipeline):
         try:
             self.channel.basic_ack(delivery_tag=self.delivery_tag)
         except pika.exceptions.ConnectionClosed:
+            self.logger.debug('Error sending the message. '
+                              'Will re-connect and re-send.',
+                              exc_info=True)
             self.connect()
             self.channel.basic_ack(delivery_tag=self.delivery_tag)
         except Exception as e:
             raise exceptions.PipelineError(e)
+        else:
+            self.delivery_tag = None
 
     def _get_queues(self) -> dict:
         if self.username and self.password:
