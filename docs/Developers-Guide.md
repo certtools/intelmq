@@ -106,18 +106,10 @@ pip3 install -e .
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 
-mkdir /opt/intelmq
-mkdir -p /opt/intelmq/var/lib/bots/file-output/
-mkdir -p /opt/intelmq/var/log/
-
-cp -R /opt/dev_intelmq/intelmq/etc /opt/intelmq/
-cp -R /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/
-
-chmod -R 0770 /opt/intelmq
-chown -R intelmq.intelmq /opt/intelmq
+intelmqsetup
 ```
 
-**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any configuration file, keep using `/opt/intelmq` and then, before commit, change the configurations files on `/opt/dev_intelmq/intelmq/etc/` with your changes on `/opt/intelmq/etc/`.
+**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any shipped configuration file, you need to apply the changes in your repository `/opt/dev_intelmq/intelmq/etc/`.
 
 
 ## How to develop

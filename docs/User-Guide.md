@@ -59,15 +59,9 @@ You can switch this by setting the environment variables `INTELMQ_PATHS_NO_OPT` 
 
 ## Overview
 
-All configration files are in the JSON format.
-If you installed with packages, a default setup with some examples is provided,
-*otherwise* it is available in `etc/examples` (so it does not overwrite your local configuration).
-Prior to the first run, copy them to `etc`:
+All configuration files are in the JSON format.
+For new installations a default setup with some examples is provided by the `intelmqsetup` tool. If this is not the case, make sure the program was run (see installation instructions).
 
-```bash
-cd /opt/intelmq/etc
-cp -a examples/* .
-```
 
 * `defaults.conf`: default values for all bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
