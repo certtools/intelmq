@@ -40,10 +40,11 @@ class MISPAPIOutputBot(OutputBot):
         if pymisp is None:
             raise MissingDependencyError('pymisp', version='>=2.4.120')
 
-        self.logger.info("Significant fields are {}.".format(
+        self.logger.info('Significant fields are {}.'.format(
             self.parameters.significant_fields))
 
-        # Initialize MISP connection
+        self.logger.info('Connecting to MISP instance at {}.'.format(
+            self.parameters.misp_url))
         self.misp = pymisp.api.PyMISP(self.parameters.misp_url,
                                       self.parameters.misp_key,
                                       self.parameters.http_verify_cert)
