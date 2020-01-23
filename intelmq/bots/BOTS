@@ -1047,6 +1047,15 @@
                 "interval_event": "1 hour"
             }
         },
+        "MISP API": {
+            "description": "Insert events into a MISP instance.",
+            "module": "intelmq.bots.outputs.misp.output_api",
+            "parameters": {
+                "misp_key": "<insert MISP Authkey>",
+                "misp_url": "<insert url of MISP server (with trailing '/')>",
+                "misp_tag_for_bot": "<insert MISP tag to mark inserted events>"
+            }
+        },
         "MongoDB": {
             "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
             "module": "intelmq.bots.outputs.mongodb.output",

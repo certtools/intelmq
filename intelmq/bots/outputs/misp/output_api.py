@@ -10,13 +10,12 @@ Author(s):
 Parameters:
   - misp_url: URL of the MISP server
   - misp_key: API key for accessing MISP
-  - misp_verify: true or false, check the validity of the certificate
 
-TODO, this is just a stub, WIP
 Tested with pymisp v2.4.120 (which needs python v>=3.6).
+
+WARNING: TODO, WIP: currently inserts the event unconditionally!
 """
 import json
-from uuid import uuid4
 
 from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
@@ -24,56 +23,57 @@ from intelmq.lib.exceptions import MissingDependencyError
 try:
     import pymisp
 except ImportError:
-    MISPEvent = None
+    pymisp = None
 
 class MISPAPIOutputBot(OutputBot):
     is_multithreadable = False
 
     def init(self):
-        if MISPEvent is None:
+        if pymisp is None:
             raise MissingDependencyError('pymisp', version='>=2.4.120')
 
-
         # Initialize MISP connection
-        self.misp = PyMISP(self.parameters.misp_url,
-                           self.parameters.misp_key,
-                           self.parameters.http_verify_cert)
+        self.misp = pymisp.api.PyMISP(self.parameters.misp_url,
+                                      self.parameters.misp_key,
+                                      self.parameters.http_verify_cert)
 
-
-        self.current_event = None
-
-        self.misp_org = pymisp.MISPOrganisation()
-        self.misp_org.name = self.parameters.misp_org_name
-        self.misp_org.uuid = self.parameters.misp_org_uuid
-
-        self.current_event = MISPEvent()
-
+        self.misp.toggle_global_pythonify()
 
     def process(self):
+        intelmq_event = self.receive_message().to_dict(jsondict_as_string=True)
 
-            self.current_event = MISPEvent()
-            self.current_event.info = ('IntelMQ event {begin} - {end}'
-                                       ''.format(begin=self.min_time_current.isoformat(),
-                                                 end=self.max_time_current.isoformat()))
-            self.current_event.set_date(datetime.date.today())
-            self.current_event.Orgc = self.misp_org
-            self.current_event.uuid = str(uuid4())
+        # TODO search for existing events
 
-        event = self.receive_message().to_dict(jsondict_as_string=True)
+        # else insert a new one
 
-        obj = self.current_event.add_object(name='intelmq_event')
-        for object_relation, value in event.items():
+        new_misp_event = pymisp.MISPEvent()
+
+        new_misp_event.info = 'Created by IntelMQ MISP API Output Bot.'
+        new_misp_event.add_tag(self.parameters.misp_tag_for_bot)
+
+        obj = new_misp_event.add_object(name='intelmq_event')
+        for object_relation, value in intelmq_event.items():
             try:
                 obj.add_attribute(object_relation, value=value)
             except NewAttributeError:
-                # This entry isn't listed in the harmonization file, ignoring.
-                pass
+                msg = 'Ignoring "{}":"{}" because not in hamonization file.'
+                self.logger.debug(msg.format(object_relation, value))
+
+        misp_event = self.misp.add_event(new_misp_event)
+        self.logger.info(
+                'Inserted new MISP event with id: {}'.format(misp_event.id))
 
         self.acknowledge_message()
 
     @staticmethod
     def check(parameters):
-        pass
+        required_parameters = ['misp_url', 'misp_key', 'misp_tag_for_bot']
+        missing_parameters = []
+        for para in required_parameters:
+            if para not in parameters:
+                missing_parameters.append(para)
 
+        if len(missing_parameters) > 0 :
+            return [["error", "Parameters missing: " + str(missing_parameters)]]
 
 BOT = MISPAPIOutputBot
