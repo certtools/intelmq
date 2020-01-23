@@ -1053,7 +1053,8 @@
             "parameters": {
                 "misp_key": "<insert MISP Authkey>",
                 "misp_url": "<insert url of MISP server (with trailing '/')>",
-                "misp_tag_for_bot": "<insert MISP tag to mark inserted events>"
+                "misp_tag_for_bot": "<insert MISP tag to mark inserted events>",
+                "significant_fields": "<insert list of significant fields>"
             }
         },
         "MongoDB": {
