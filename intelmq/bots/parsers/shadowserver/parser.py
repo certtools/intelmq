@@ -29,7 +29,7 @@ class ShadowserverParserBot(ParserBot):
 
     recover_line = ParserBot.recover_line_csv_dict
     csv_params = {'dialect': 'unix'}
-    __is_filename_regex = re.compile(r'\d{4}-\d{2}-\d{2}-(\w+)(-\w+)*\.csv')
+    __is_filename_regex = re.compile(r'(?:\d{4}-\d{2}-\d{2}-)?(\w+)(-\w+)*\.csv')
     sparser_config = None
     feedname = None
 
