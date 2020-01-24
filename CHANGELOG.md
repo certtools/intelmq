@@ -8,6 +8,7 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `__init__`: Resolve absolute path for `STATE_FILE_PATH` variable (resolves `..`).
 - `intelmq.lib.utils`:
   - log: Do not raise an exception if logging to neither file nor syslog is requested.
   - logging StreamHandler: Colorize all warning and error messages red.
@@ -51,6 +52,7 @@ CHANGELOG
 - `tests.bots.parsers.html_table`: Make tests independent of current year.
 
 ### Tools
+- `intelmqctl upgrade-config`: Fix missing substitution in error message "State file %r is not writable.".
 
 ### Contrib
 

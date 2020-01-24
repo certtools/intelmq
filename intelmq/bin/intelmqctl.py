@@ -1520,8 +1520,9 @@ Make a backup of your configuration first, also including bot's configuration fi
         """
         if os.path.isfile(STATE_FILE_PATH):
             if not os.access(STATE_FILE_PATH, os.W_OK) and not dry_run:
-                self.logger.error("State file %r is not writable.")
-                return 1, "State file %r is not writable."
+                self.logger.error("State file %r is not writable.",
+                                  STATE_FILE_PATH)
+                return 1, "State file %r is not writable." % STATE_FILE_PATH
             state = utils.load_configuration(STATE_FILE_PATH)
         else:
             """

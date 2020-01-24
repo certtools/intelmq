@@ -26,4 +26,5 @@ else:
     VAR_RUN_PATH = os.path.join(ROOT_DIR, "var/run/")
     VAR_STATE_PATH = os.path.join(ROOT_DIR, "var/lib/bots/")
 
-STATE_FILE_PATH = os.path.join(VAR_STATE_PATH, '../state.json')
+STATE_FILE_PATH = path = os.path.abspath(os.path.join(VAR_STATE_PATH,
+                                                      '../state.json'))
