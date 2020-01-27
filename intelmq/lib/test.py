@@ -356,7 +356,6 @@ class BotTestCase(object):
         """
         Test if Bot has a valid name.
         Must be CamelCase and end with CollectorBot etc.
-        Test class name must be Test{botclassname}
         """
         counter = 0
         for type_name, type_match in self.bot_types.items():
@@ -369,8 +368,6 @@ class BotTestCase(object):
             self.fail("Bot name {!r} does not match one of {!r}"
                       "".format(self.bot_name, list(self.bot_types.values())))  # pragma: no cover
 
-        self.assertEqual('Test{}'.format(self.bot_name),
-                         self.__class__.__name__.split('_')[0])
 
     def assertAnyLoglineEqual(self, message: str, levelname: str = "ERROR"):
         """
