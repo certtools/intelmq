@@ -29,20 +29,25 @@ class ShadowserverParserBot(ParserBot):
 
     recover_line = ParserBot.recover_line_csv_dict
     csv_params = {'dialect': 'unix'}
-    __is_filename_regex = re.compile(r'(?:\d{4}-\d{2}-\d{2}-)?(\w+)(-\w+)*\.csv')
+    __is_filename_regex = re.compile(r'^(?:\d{4}-\d{2}-\d{2}-)?(\w+)(-\w+)*\.csv$')
     sparser_config = None
     feedname = None
+    mode = None
 
     def init(self):
-        if hasattr(self.parameters, 'feedname'):
+        if getattr(self.parameters, 'feedname', None):
             self.feedname = self.parameters.feedname
             self.sparser_config = config.get_feed_by_feedname(self.feedname)
             if self.sparser_config:
                 self.logger.info('Using fixed feed name %r for parsing reports.' % self.feedname)
+                self.mode = 'fixed'
             else:
                 self.logger.info('Could not determine the feed by the feed name %r given by parameter. '
                                  'Will determine the feed from the file names.',
                                  self.feedname)
+                self.mode = 'detect'
+        else:
+            self.mode = 'detect'
 
         # Set a switch if the parser shall reset the feed.name,
         #  for this event
@@ -52,7 +57,7 @@ class ShadowserverParserBot(ParserBot):
                 self.overwrite = True
 
     def parse(self, report):
-        if self.sparser_config and hasattr(self.parameters, 'feedname'):
+        if self.mode == 'fixed':
             return self.parse_csv_dict(report)
 
         # Set config to parse report

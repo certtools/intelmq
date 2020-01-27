@@ -31,7 +31,9 @@ CHANGELOG
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.config`: Add some missing fields for the feed `accessible-rdp` (#1463).
-- `intelmq.bots.parsers.shadowserver.parser`: Feed-detection based on file names: The prefixed date is optional now.
+- `intelmq.bots.parsers.shadowserver.parser`:
+  - Feed-detection based on file names: The prefixed date is optional now.
+  - Feed-detection based on file names: Re-detect feed for every report received (#1493).
 
 #### Experts
 - `intelmq.bots.experts.national_cert_contact_certat`: Handle empty responses by server (#1467).

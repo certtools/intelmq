@@ -26,7 +26,7 @@ REPORT3 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
 REPORT4 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
            "__type": "Report",
            "time.observation": "2015-01-01T00:00:00+00:00",
-           "extra.file_name": "wrong-filename.csv",
+           "extra.file_name": "2020.wrong-filename.csv",
 }
 
 
@@ -84,7 +84,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = REPORT4
         self.allowed_error_count = 1
         self.run_bot()
-        self.assertLogMatches(pattern="ValueError: Report's 'extra.file_name' 'wrong-filename.csv' is not valid." )
+        self.assertLogMatches(pattern="ValueError: Report's 'extra.file_name' '2020.wrong-filename.csv' is not valid." )
 
 
 
