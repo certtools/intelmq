@@ -239,7 +239,7 @@ class BotTestCase(object):
         self.pipe.set_queues(parameters.destination_queues, "destination")
 
         if self.input_message is not None:
-            if type(self.input_message) is not list:
+            if not isinstance(self.input_message, (list, tuple)):
                 self.input_message = [self.input_message]
             self.input_queue = []
             for msg in self.input_message:
