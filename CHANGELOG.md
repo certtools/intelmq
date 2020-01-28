@@ -2,10 +2,8 @@ CHANGELOG
 ==========
 
 
-2.1.2 (unreleased)
+2.1.2 (2020-01-28)
 ------------------
-
-### Configuration
 
 ### Core
 - `__init__`: Resolve absolute path for `STATE_FILE_PATH` variable (resolves `..`).
@@ -19,10 +17,6 @@ CHANGELOG
 - `intelmq.lib.pipeline`:
   - `Amqp._send` and `Amqp._acknowledge`: Log traceback in debug mode in case of errors and necessary re-connections.
   - `Amqp._acknowledge`: Reset delivery tag if acknowledge was successful.
-
-### Development
-
-### Harmonization
 
 ### Bots
 #### Collectors
@@ -57,9 +51,17 @@ CHANGELOG
 ### Tools
 - `intelmqctl upgrade-config`: Fix missing substitution in error message "State file %r is not writable.".
 
-### Contrib
-
 ### Known issues
+- bots trapped in endless loop if decoding of raw message fails (#1494)
+- intelmqctl status of processes: need to check bot id too (#1492)
+- MongoDB authentication: compatibility on different MongoDB and pymongo versions (#1439)
+- ctl: shell colorizations are logged (#1436)
+- http stream collector: retry on regular connection problems? (#1435)
+- tests: capture logging with context manager (#1342)
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952)
+- n6 parser: mapping is modified within each run (#905)
+- reverse DNS: Only first record is used (#877)
+- Corrupt dump files when interrupted during writing (#870)
 
 
 2.1.1 (2019-11-11)
