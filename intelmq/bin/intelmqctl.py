@@ -65,7 +65,7 @@ ERROR_MESSAGES = {
     'running': 'Bot %s is still running.',
     'stopped': 'Bot %s was NOT RUNNING.',
     'stopping': 'Bot %s failed to STOP.',
-    'not found': 'Bot %s failed to START because the file cannot be found.',
+    'not found': 'Bot %s FAILED to start because the executable cannot be found. Check your PATH variable and your the installation.',
     'access denied': 'Bot %s failed to %s because of missing permissions.',
     'unknown': 'Status of Bot %s is unknown: %r.',
 }
