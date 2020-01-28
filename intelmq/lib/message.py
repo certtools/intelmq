@@ -468,7 +468,7 @@ class Message(dict):
 
     def to_json(self, hierarchical=False, with_type=False, jsondict_as_string=False):
         json_dict = self.to_dict(hierarchical=hierarchical, with_type=with_type)
-        return json.dumps(json_dict, ensure_ascii=False)
+        return json.dumps(json_dict, ensure_ascii=False, sort_keys=True)
 
     def __eq__(self, other) -> bool:
         """

@@ -50,6 +50,9 @@ class NationalCERTContactCertATExpertBot(Bot):
                     'sep': 'semicolon',
                 }
                 req = self.session.get(URL, params=parameters)
+                if not req.text:
+                    # empty response
+                    continue
                 response = req.text.strip().split(';')
 
                 ccfield = '{}.geolocation.cc'.format(section)

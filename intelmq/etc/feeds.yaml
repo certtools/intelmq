@@ -1715,7 +1715,7 @@ providers:
   Calidog:
     CertStream:
       description: HTTP Websocket Stream from certstream.calidog.io providing data from Certificate Transparency Logs.
-      additional_information:
+      additional_information: Be aware that this feed provides a lot of data and may overload your system quickly.
       bots:
         collector:
           module: intelmq.bots.collectors.certstream.collector_certstream

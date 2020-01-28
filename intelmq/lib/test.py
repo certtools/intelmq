@@ -239,7 +239,7 @@ class BotTestCase(object):
         self.pipe.set_queues(parameters.destination_queues, "destination")
 
         if self.input_message is not None:
-            if type(self.input_message) is not list:
+            if not isinstance(self.input_message, (list, tuple)):
                 self.input_message = [self.input_message]
             self.input_queue = []
             for msg in self.input_message:
@@ -272,6 +272,7 @@ class BotTestCase(object):
                     self.bot.start(error_on_pipeline=error_on_pipeline,
                                    source_pipeline=self.pipe,
                                    destination_pipeline=self.pipe)
+                self.bot.stop(exitcode=0)
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
 
@@ -356,7 +357,6 @@ class BotTestCase(object):
         """
         Test if Bot has a valid name.
         Must be CamelCase and end with CollectorBot etc.
-        Test class name must be Test{botclassname}
         """
         counter = 0
         for type_name, type_match in self.bot_types.items():
@@ -368,9 +368,6 @@ class BotTestCase(object):
         if counter != len(self.bot_types) - 1:
             self.fail("Bot name {!r} does not match one of {!r}"
                       "".format(self.bot_name, list(self.bot_types.values())))  # pragma: no cover
-
-        self.assertEqual('Test{}'.format(self.bot_name),
-                         self.__class__.__name__.split('_')[0])
 
     def assertAnyLoglineEqual(self, message: str, levelname: str = "ERROR"):
         """

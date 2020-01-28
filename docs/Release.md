@@ -17,6 +17,7 @@ General assumption: You are working on branch maintenance, the next version is a
  * Make sure the current state is really final ;)
    You can test most of the steps described here locally before doing it real.
  * Check the upgrade functions in `intelmq/lib/upgrades.py`.
+ * Close the milestone on github and move any open issues to the next one.
 
 ## Documentation
 

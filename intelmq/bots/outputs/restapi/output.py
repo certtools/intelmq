@@ -51,7 +51,8 @@ class RestAPIOutputBot(Bot):
                              "" % timeoutretries)
 
         if not req.ok:
-            self.logger.debug("Error during message sending with response body: %r.", r.text)
+            self.logger.debug("Error during message sending, response body: %r.",
+                              req.text)
         req.raise_for_status()
         self.logger.debug('Sent message.')
         self.acknowledge_message()
