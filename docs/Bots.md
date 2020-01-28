@@ -1238,7 +1238,7 @@ This does not affect URLs which already include the scheme.
 
 #### How this bot works?
 
-There are two possibilities TODO.
+There are two possibilities for the bot to determine which feed the data belongs to in order to determine the correct mapping of the columns:
 
 #### Automatic feed detection
 Since IntelMQ version 2.1 the parser can detect the feed based on metadata provided by the collector.
@@ -1250,6 +1250,7 @@ If this lookup is not possible, and the feed name is not given as parameter, the
 
 The field `extra.file_name` has the following structure:
 `%Y-%m-%d-${report_name}[-suffix].csv` where suffix can be something like `country-geo`. For example, some possible filenames are `2019-01-01-scan_http-country-geo.csv` or `2019-01-01-scan_tftp.csv`. The important part is `${report_name}`, between the date and the suffix.
+Since version 2.1.2 the date in the filename is optional, so filenames like `scan_tftp.csv` are also detected.
 
 #### Fixed feed name
 If the method above is not possible and for upgraded instances, the feed can be set with the `feedname` parameter.

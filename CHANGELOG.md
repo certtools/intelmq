@@ -75,6 +75,7 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `__init__`: Resolve absolute path for `STATE_FILE_PATH` variable (resolves `..`).
 - `intelmq.lib.utils`:
   - log: Do not raise an exception if logging to neither file nor syslog is requested.
   - logging StreamHandler: Colorize all warning and error messages red.
@@ -97,6 +98,9 @@ CHANGELOG
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.config`: Add some missing fields for the feed `accessible-rdp` (#1463).
+- `intelmq.bots.parsers.shadowserver.parser`:
+  - Feed-detection based on file names: The prefixed date is optional now.
+  - Feed-detection based on file names: Re-detect feed for every report received (#1493).
 
 #### Experts
 - `intelmq.bots.experts.national_cert_contact_certat`: Handle empty responses by server (#1467).
@@ -118,6 +122,7 @@ CHANGELOG
 - `tests.bots.parsers.html_table`: Make tests independent of current year.
 
 ### Tools
+- `intelmqctl upgrade-config`: Fix missing substitution in error message "State file %r is not writable.".
 
 ### Contrib
 
