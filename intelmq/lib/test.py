@@ -369,7 +369,6 @@ class BotTestCase(object):
             self.fail("Bot name {!r} does not match one of {!r}"
                       "".format(self.bot_name, list(self.bot_types.values())))  # pragma: no cover
 
-
     def assertAnyLoglineEqual(self, message: str, levelname: str = "ERROR"):
         """
         Asserts if any logline matches a specific requirement.

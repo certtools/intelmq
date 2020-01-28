@@ -1,3 +1,9 @@
+intelmq (2.1.2-1) stable; urgency=medium
+
+  * Update to 2.1.2.
+
+ -- Wagner Sebastian <wagner@cert.at>  Tue, 28 Jan 2020 16:43:16 +0100
+
 intelmq (2.1.2~alpha1-1) stable; urgency=medium
 
   * Update to 2.1.2~alpha1
