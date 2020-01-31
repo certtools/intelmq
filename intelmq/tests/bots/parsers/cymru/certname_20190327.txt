@@ -26,3 +26,4 @@ scanner|172.16.0.21|64496|2019-09-19 00:03:13|destination_port_numbers: 57518;po
 darknet|172.16.0.21|64496|2019-09-30 13:49:49|destination_port_numbers: 17875,24526,54449,9314,4903,1568,20749,30524,59316,60704 (total_count:19);port: 40434;protocol: 17;|Example AS Name, AT
 spam|172.16.0.21|64496|2019-10-02 23:00:17||Example AS Name, AT
 phishing|172.16.0.21|64496|2019-10-23 12:46:18||Example AS Name, AT
+darknet|172.16.0.21|64496|2020-01-10 09:17:17|destination_port_numbers: 0;protocol: 11;|Example AS Name, AT
