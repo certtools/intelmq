@@ -12,6 +12,8 @@ See the changelog for a full list of changes.
 ### Tools
 
 ### Harmonization
+The regular expression of the field `protocol.transport` has been updated to accommodate the value `nvp-ii`.
+`intelmqctl upgrade-config` handles the change to automatically upgrade your configuration.
 
 ### Configuration
 

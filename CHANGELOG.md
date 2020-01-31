@@ -8,10 +8,13 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.upgrades`:
+  - Harmonization upgrade: Also check and update regular expressions
 
 ### Development
 
 ### Harmonization
+- `protocol.transport`: Adapt regular expression to allow the value `nvp-ii` (protocol 11).
 
 ### Bots
 #### Collectors
