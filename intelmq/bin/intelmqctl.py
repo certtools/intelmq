@@ -1334,7 +1334,7 @@ Make a backup of your configuration first, also including bot's configuration fi
                 with open(filename) as file_handle:
                     files[filename] = json.load(file_handle)
             except (IOError, ValueError) as exc:  # pragma: no cover
-                check_logger.error('Coud not load %r: %s.', filename, exc)
+                check_logger.error('Could not load %r: %s.', filename, exc)
                 retval = 1
         if retval:
             if RETURN_TYPE == 'json':
