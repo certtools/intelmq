@@ -49,6 +49,12 @@ class ModifyExpertBot(Bot):
         else:
             self.re_kwargs = {'flags': re.IGNORECASE}
 
+        if not hasattr(self.parameters, 'overwrite'):
+            self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
+                                "Please set it explicitly, default will change to "
+                                "'False' in version 3.0.0'.")
+        self.overwrite = getattr(self.parameters, 'overwrite', True)
+
         # regex compilation
         self.config = []
         for rule in config:
@@ -90,10 +96,14 @@ class ModifyExpertBot(Bot):
 
     def apply_action(self, event, action, matches):
         for name, value in action.items():
-            event.add(name, value.format(msg=event,
-                                         matches={k: MatchGroupMapping(v)
-                                                  for (k, v) in matches.items()}),
-                      overwrite=True)
+            try:
+                newvalue = value.format(msg=event,
+                                        matches={k: MatchGroupMapping(v)
+                                                 for (k, v) in matches.items()})
+            except AttributeError:  # value has ne format: int, bool etc
+                newvalue = value
+            event.add(name, newvalue,
+                      overwrite=self.overwrite)
 
     def process(self):
         event = self.receive_message()

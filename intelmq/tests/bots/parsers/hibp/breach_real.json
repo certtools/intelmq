@@ -1,0 +1,24 @@
+{
+  "Domain": "example.com",
+  "DomainEmails": [
+    "user.name1@example.com",
+    "user.name2@example.com"
+  ],
+  "Breach": {
+    "PwnCount": 23165793,
+    "AddedDate": "2019-09-30T17:15:11Z",
+    "BreachDate": "2018-12-13",
+    "IsVerified": true,
+    "IsSensitive": false,
+    "DataClasses": [
+      "Email addresses",
+      "Passwords"
+    ],
+    "IsFabricated": false,
+    "Title": "Wanelo",
+    "Description": "In approximately December 2018, ...",
+    "IsSpamList": false,
+    "Domain": "wanelo.com",
+    "Name": "Wanelo"
+  }
+}

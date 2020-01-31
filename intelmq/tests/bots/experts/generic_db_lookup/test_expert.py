@@ -43,12 +43,13 @@ class TestGenericDBLookupExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = GenericDBLookupExpertBot
         cls.default_input_message = INPUT1
-        cls.sysconfig = {"host": "localhost",
+        cls.sysconfig = {"engine": "postgresql",
+                         "host": "localhost",
                          "port": 5432,
                          "database": "intelmq",
                          "user": "intelmq",
                          "password": "intelmq",
-                         "sslmode": "require",
+                         "sslmode": "allow",
                          "table": "lookuptests",
                          "match_fields": {"source.asn": "asn"},
                          "replace_fields": {"note": "comment",

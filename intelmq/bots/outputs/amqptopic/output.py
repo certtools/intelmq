@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import ssl
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import pika
@@ -8,12 +10,12 @@ except ImportError:
     pika = None
 
 
-class AMQPTopicOutputBot(Bot):
+class AMQPTopicOutputBot(OutputBot):
     connection = None
 
     def init(self):
         if pika is None:
-            raise ValueError("Could not import library 'pika'. Please install it.")
+            raise MissingDependencyError("pika")
 
         self.connection = None
         self.channel = None
@@ -30,7 +32,6 @@ class AMQPTopicOutputBot(Bot):
         else:
             self.publish_raises_nack = True
 
-        self.keep_raw_field = self.parameters.keep_raw_field
         self.delivery_mode = self.parameters.delivery_mode
         self.content_type = self.parameters.content_type
         self.exchange = self.parameters.exchange_name
@@ -43,6 +44,10 @@ class AMQPTopicOutputBot(Bot):
         if self.parameters.username and self.parameters.password:
             self.kwargs['credentials'] = pika.PlainCredentials(self.parameters.username,
                                                                self.parameters.password)
+
+        if getattr(self.parameters, 'use_ssl', False):
+            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.create_default_context(ssl.Purpose.CLIENT_AUTH))
+
         self.connection_parameters = pika.ConnectionParameters(
             host=self.connection_host,
             port=self.connection_port,
@@ -50,14 +55,11 @@ class AMQPTopicOutputBot(Bot):
             connection_attempts=self.parameters.connection_attempts,
             **self.kwargs)
         self.routing_key = self.parameters.routing_key
+        self.format_routing_key = getattr(self.parameters, 'format_routing_key', False)
         self.properties = pika.BasicProperties(
             content_type=self.content_type, delivery_mode=self.delivery_mode)
 
         self.connect_server()
-
-        self.hierarchical = getattr(self.parameters, "message_hierarchical", False)
-        self.with_type = getattr(self.parameters, "message_with_type", False)
-        self.jsondict_as_string = getattr(self.parameters, "message_jsondict_as_string", False)
 
     def connect_server(self):
         self.logger.info('AMQP Connecting to %s:%s/%s.',
@@ -94,17 +96,18 @@ class AMQPTopicOutputBot(Bot):
             self.connect_server()
 
         event = self.receive_message()
+        body = self.export_event(event, return_type=str)
 
-        if not self.keep_raw_field:
-            del event['raw']
-        body = event.to_json(hierarchical=self.hierarchical,
-                             with_type=self.with_type,
-                             jsondict_as_string=self.jsondict_as_string).encode(errors='backslashreplace')
+        # replace unicode characters when encoding (#1296)
+        body = body.encode(errors='backslashreplace')
+        if self.format_routing_key:
+            routing_key = self.routing_key.format(ev=event)
+        else:
+            routing_key = self.routing_key
 
         try:
             if not self.channel.basic_publish(exchange=self.exchange,
-                                              routing_key=self.routing_key,
-                                              # replace unicode characters when encoding (#1296)
+                                              routing_key=routing_key,
                                               body=body,
                                               properties=self.properties,
                                               mandatory=True):

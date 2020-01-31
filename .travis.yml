@@ -5,28 +5,27 @@ env:
   - requirements=true
   - requirements=false
 python:
-  - 3.4
   - 3.5
   - 3.6
   - 3.7
+  - 3.8
 matrix:
   include:
-  - python: 3.4
+  - python: 3.5
     env: mode=debian
-  - python: 3.6
+  - python: 3.8
     env: mode=codestyle
 install:
   - set -e
   - if [[ -v requirements ]]; then sudo apt-get install polipo lighttpd; fi
-  - if [[ $mode == debian ]]; then sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt fakeroot dh-systemd safe-rm; fi
-  - if [[ $requirements == true ]]; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; pip install lxml; fi
+  - if [[ $mode == debian ]]; then sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt fakeroot dh-systemd safe-rm; pip3 install requests; pip3 install redis; pip3 install dnspython; pip3 install psutil; pip3 install python-dateutil; pip3 install termstyle; pip3 install pytz; pip3 install typing; fi
+  - if [[ $requirements == true ]]; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
   - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then sudo pip install typing; fi
   - if [[ -v requirements ]]; then pip install Cerberus!=1.3 codecov pyyaml; fi
   - if [[ $mode == codestyle ]]; then pip install pycodestyle; fi
   - if [[ -v requirements ]]; then sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers; fi
   - if [[ -v requirements ]]; then sudo pip install .; fi
-  - if [[ -v requirements ]]; then sudo cp /opt/intelmq/etc/examples/* /opt/intelmq/etc/; fi
-  - if [[ -v requirements ]]; then sudo chown -R $USER /opt/intelmq/; fi
+  - if [[ -v requirements ]]; then sudo intelmqsetup --skip-ownership; fi
 before_script:
   - if [[ $requirements == true ]] ; then psql -c "CREATE USER intelmq WITH SUPERUSER" -U postgres; fi
   - if [[ $requirements == true ]] ; then psql -c "CREATE DATABASE intelmq" -U intelmq template1; fi
@@ -45,7 +44,7 @@ before_script:
   - if [[ $mode == debian ]]; then popd; fi
   - if [[ -v requirements ]]; then sudo cp intelmq/tests/assets/* /var/www/html/ && sudo touch /var/www/html/$(date +%Y).txt; fi
 script:
-  - if [[ $requirements == true ]]; then TZ=utc INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; elif [[ $requirements == false ]]; then TZ=utc INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
+  - if [[ $requirements == true ]]; then TZ=utc INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; find contrib/ -name "test*.py" -exec nosetests {} \+; elif [[ $requirements == false ]]; then INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
   - if [[ $mode == codestyle ]]; then pycodestyle intelmq/{bots,lib,bin}; fi
   - if [[ $mode == debian ]]; then pushd ../build; fi
   - if [[ $mode == debian ]]; then DEB_BUILD_OPTIONS='nocheck' dpkg-buildpackage -us -uc -d; fi

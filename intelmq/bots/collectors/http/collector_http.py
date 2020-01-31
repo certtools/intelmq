@@ -17,12 +17,11 @@ http_proxy, https_proxy: string
 http_timeout_sec: tuple of two floats or float
 http_timeout_max_tries: an integer depicting how often a connection attempt is retried
 """
-import io
-import zipfile
 from datetime import datetime, timedelta
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import unzip
+from intelmq.lib.utils import unzip, create_request_session_from_bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import requests
@@ -45,13 +44,13 @@ class HTTPCollectorBot(CollectorBot):
 
     def init(self):
         if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
+            raise MissingDependencyError("requests")
 
         self.set_request_parameters()
-        self.extract_files = getattr(self.parameters, "extract_files", None)
+
+        self.session = create_request_session_from_bot(self)
 
     def process(self):
-
         formatting = getattr(self.parameters, 'http_url_formatting', False)
         if formatting:
             try:
@@ -69,25 +68,7 @@ class HTTPCollectorBot(CollectorBot):
 
         self.logger.info("Downloading report from %r.", http_url)
 
-        timeoutretries = 0
-        resp = None
-
-        while timeoutretries < self.http_timeout_max_tries and resp is None:
-            try:
-                resp = requests.get(url=http_url, auth=self.auth,
-                                    proxies=self.proxy, headers=self.http_header,
-                                    verify=self.http_verify_cert,
-                                    cert=self.ssl_client_cert,
-                                    timeout=self.http_timeout_sec)
-
-            except requests.exceptions.Timeout:
-                timeoutretries += 1
-                self.logger.warn("Timeout whilst downloading the report.")
-
-        if resp is None and timeoutretries >= self.http_timeout_max_tries:
-            self.logger.error("Request timed out %i times in a row.",
-                              timeoutretries)
-            return
+        resp = self.session.get(url=http_url)
 
         if resp.status_code // 100 != 2:
             raise ValueError('HTTP response status code was %i.' % resp.status_code)
@@ -95,29 +76,28 @@ class HTTPCollectorBot(CollectorBot):
         self.logger.info("Report downloaded.")
 
         raw_reports = []
-        try:
-            zfp = zipfile.ZipFile(io.BytesIO(resp.content), "r")
-        except zipfile.BadZipfile:
-            raw_reports.append(resp.text)
-        else:
-            self.logger.info('Extracting files:'
-                             "'%s'.", "', '".join(zfp.namelist()))
-            for filename in zfp.namelist():
-                raw_reports.append(zfp.read(filename))
-
-        if self.extract_files:
-            if isinstance(self.extract_files, str) and len(self.extract_files):
-                self.extract_files = self.extract_files.split(",")
-                self.logger.info('Extracting files from archive: '
-                                 "'%s'.", "', '".join(self.extract_files))
+        if not self.extract_files:
+            try:
+                raw_reports = tuple(unzip(resp.content, True, try_gzip=False,
+                                          try_tar=False, logger=self.logger,
+                                          return_names=True))
+            except ValueError:
+                raw_reports.append((None, resp.text))
             else:
-                self.logger.info('Extracting all files from archive.')
-            raw_reports = [file for file in unzip(resp.content, self.extract_files)]
+                self.logger.info('Extracting files: '
+                                 "'%s'.", "', '".join([file_name
+                                                       for file_name, _
+                                                       in raw_reports]))
+        else:
+            raw_reports = unzip(resp.content, self.extract_files,
+                                return_names=True, logger=self.logger)
 
-        for raw_report in raw_reports:
+        for file_name, raw_report in raw_reports:
             report = self.new_report()
             report.add("raw", raw_report)
             report.add("feed.url", http_url)
+            if file_name:
+                report.add("extra.file_name", file_name)
             self.send_message(report)
 
 

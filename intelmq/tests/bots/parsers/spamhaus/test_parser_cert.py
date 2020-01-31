@@ -222,6 +222,19 @@ EXAMPLE_EVENTS_PARTS = [{'source.ip': '109.126.64.2',
                          'protocol.transport': 'tcp',
                          'event_description.text': 'This device sent extortion mails.',
                          },
+                        {'source.ip': '172.20.148.82',
+                         'source.asn': 65551,
+                         'time.source': '2019-10-13T08:39:35+00:00',
+                         'classification.type': 'spam',
+                         'classification.identifier': 'spam',
+                         'protocol.application': 'smtp',
+                         'destination.port': 25,
+                         'source.geolocation.cc': 'AT',
+                         'protocol.transport': 'tcp',
+                         'event_description.text': 'This device is sending spam as part of a botnet. See abuseat.org for more details.',
+                         'event_description.url': 'https://www.abuseat.org/lookup.cgi',
+                         'feed.documentation': 'https://www.abuseat.org/lookup.cgi',
+                         },
                         ]
 
 
@@ -244,6 +257,7 @@ class TestSpamhausCERTParserBot(test.BotTestCase, unittest.TestCase):
             event_['raw'] = utils.base64_encode('\n'.join((FILE_LINES[0],
                                                            FILE_LINES[1+position])))
             self.assertMessageEqual(position, event_)
+        self.assertOutputQueueLen(len(EXAMPLE_EVENTS_PARTS))
 
 
 if __name__ == '__main__':  # pragma: no cover

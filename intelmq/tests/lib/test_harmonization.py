@@ -458,10 +458,11 @@ class TestHarmonization(unittest.TestCase):
 
     def test_tlp_sanitize(self):
         """ Test TLP.sanitize with valid arguments. """
-        self.assertTrue(harmonization.TLP.is_valid('TLP:RED',
-                                                   sanitize=True))
-        self.assertTrue(harmonization.TLP.is_valid('red ',
-                                                   sanitize=True))
+        self.assertTrue(harmonization.TLP.is_valid('TLP:RED', sanitize=True))
+        self.assertTrue(harmonization.TLP.is_valid('red ', sanitize=True))
+        self.assertTrue(harmonization.TLP.is_valid('tlp amber ', sanitize=True))
+        self.assertEqual(harmonization.TLP.sanitize('tlp:amber'), 'AMBER')
+        self.assertEqual(harmonization.TLP.sanitize('tlp amber'), 'AMBER')
 
     def test_tlp_sanitize_invalid(self):
         """ Test TLP.is_valid with invalid arguments. """

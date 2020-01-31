@@ -4,11 +4,10 @@ import os
 from collections import defaultdict
 from pathlib import Path
 
-from intelmq.lib.bot import Bot
-from intelmq.lib.utils import base64_decode
+from intelmq.lib.bot import OutputBot
 
 
-class FileOutputBot(Bot):
+class FileOutputBot(OutputBot):
     file = None
     is_multithreadable = False
 
@@ -23,7 +22,6 @@ class FileOutputBot(Bot):
         if not self.format_filename:
             self.open_file(self.parameters.file)
         self.logger.info("File %r is open.", self.parameters.file)
-        self.single_key = getattr(self.parameters, 'single_key', None)
 
     def open_file(self, filename: str = None):
         if self.file is not None:
@@ -47,21 +45,24 @@ class FileOutputBot(Bot):
             ev.update(event)
             # remove once #671 is done
             if 'time.observation' in ev:
-                ev['time.observation'] = datetime.datetime.strptime(ev['time.observation'],
-                                                                    '%Y-%m-%dT%H:%M:%S+00:00')
+                try:
+                    ev['time.observation'] = datetime.datetime.strptime(ev['time.observation'],
+                                                                        '%Y-%m-%dT%H:%M:%S+00:00')
+                except ValueError:
+                    ev['time.observation'] = datetime.datetime.strptime(ev['time.observation'],
+                                                                        '%Y-%m-%dT%H:%M:%S.%f+00:00')
             if 'time.source' in ev:
-                ev['time.source'] = datetime.datetime.strptime(ev['time.source'],
-                                                               '%Y-%m-%dT%H:%M:%S+00:00')
+                try:
+                    ev['time.source'] = datetime.datetime.strptime(ev['time.source'],
+                                                                   '%Y-%m-%dT%H:%M:%S+00:00')
+                except ValueError:
+                    ev['time.source'] = datetime.datetime.strptime(ev['time.source'],
+                                                                   '%Y-%m-%dT%H:%M:%S.%f+00:00')
             filename = self.parameters.file.format(event=ev)
             if not self.file or filename != self.file.name:
                 self.open_file(filename)
 
-        if self.single_key:
-            event_data = str(event.get(self.single_key))
-            if self.single_key == 'raw':
-                event_data = base64_decode(event_data)
-        else:
-            event_data = event.to_json(hierarchical=self.parameters.hierarchical_output)
+        event_data = self.export_event(event, return_type=str)
 
         try:
             self.file.write(event_data)

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-import io
 import re
-import zipfile
 from datetime import datetime, timedelta
 
 from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import parse_relative
+from intelmq.lib.utils import (parse_relative, create_request_session_from_bot,
+                               file_name_from_response, unzip)
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import rt
@@ -30,11 +30,9 @@ class RTCollectorBot(CollectorBot):
 
     def init(self):
         if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
+            raise MissingDependencyError("requests")
         if rt is None:
-            raise ValueError('Could not import rt. Please install it.')
-
-        self.set_request_parameters()
+            raise MissingDependencyError("rt")
 
         if getattr(self.parameters, 'search_not_older_than', None):
             try:
@@ -50,6 +48,23 @@ class RTCollectorBot(CollectorBot):
                 self.not_older_than_type = 'relative'
         else:
             self.not_older_than_type = False
+
+        self.set_request_parameters()
+        self.session = create_request_session_from_bot(self)
+        self._parse_extract_file_parameter('extract_attachment')
+        self._parse_extract_file_parameter('extract_download')
+
+        if hasattr(self.parameters, 'unzip_attachment'):
+            self.logger.warning("The parameter 'unzip_attachment' is deprecated and "
+                                "will be removed in version 3.0 in favor of the "
+                                "more generic and powerful 'extract_attachment'. "
+                                "Look at the Bots documentation for more details.")
+            if not self.extract_attachment:
+                self.extract_attachment = self.parameters.unzip_attachment
+            else:
+                self.logger.warn("Both 'extract_attachment' and the deprecated "
+                                 "'unzip_attachment' parameter are in use. Ignoring "
+                                 "the latter one.")
 
     def process(self):
         RT = rt.Rt(self.parameters.uri, self.parameters.user,
@@ -77,43 +92,40 @@ class RTCollectorBot(CollectorBot):
             ticket_id = int(ticket['id'].split('/')[1])
             self.logger.debug('Process ticket %s.', ticket_id)
             content = 'attachment'
-            for (att_id, att_name, _, _) in RT.get_attachments(ticket_id):
-                if not self.parameters.attachment_regex:
-                    break
-                if re.search(self.parameters.attachment_regex, att_name):
-                    self.logger.debug('Found attachment %s: %r.',
-                                      att_id, att_name)
-                    break
-            else:
-                urlmatch = False
-                if self.parameters.url_regex:
-                    ticket = RT.get_history(ticket_id)[0]
-                    created = ticket['Created']
-                    urlmatch = re.search(self.parameters.url_regex, ticket['Content'])
+            success = False
+            if self.parameters.attachment_regex:
+                for (att_id, att_name, _, _) in RT.get_attachments(ticket_id):
+                    if re.search(self.parameters.attachment_regex, att_name):
+                        self.logger.debug('Found attachment %s: %r.',
+                                          att_id, att_name)
+                        success = True
+                        content = 'attachment'
+                        self.extract_files = self.extract_attachment
+                        break
+            if not success and self.parameters.url_regex:
+                ticket = RT.get_history(ticket_id)[0]
+                created = ticket['Created']
+                urlmatch = re.search(self.parameters.url_regex, ticket['Content'])
                 if urlmatch:
                     content = 'url'
+                    self.extract_files = self.extract_download
+
                     url = urlmatch.group(0)
-                    self.logger.info('Matching URL found %r.', url)
-                else:
-                    self.logger.debug('No matching attachment or URL found.')
-                    continue
+                    self.logger.debug('Matching URL found %r.', url)
+                    success = True
+            if not success:
+                self.logger.info('No matching attachment or URL found.')
+                continue
+
+            report = self.new_report()
+
             if content == 'attachment':
                 attachment = RT.get_attachment_content(ticket_id, att_id)
                 created = RT.get_attachment(ticket_id, att_id)['Created']
 
-                if self.parameters.unzip_attachment:
-                    file_obj = io.BytesIO(attachment)
-                    zipped = zipfile.ZipFile(file_obj)
-                    raw = zipped.read(zipped.namelist()[0])
-                else:
-                    raw = attachment
+                raw = attachment
             else:
-                resp = requests.get(url=url, auth=self.auth,
-                                    proxies=self.proxy,
-                                    headers=self.http_header,
-                                    verify=self.http_verify_cert,
-                                    cert=self.ssl_client_cert,
-                                    timeout=self.http_timeout_sec)
+                resp = self.session.get(url=url)
 
                 response_code_class = resp.status_code // 100
                 if response_code_class != 2:
@@ -132,13 +144,52 @@ class RTCollectorBot(CollectorBot):
                         self.logger.info('Skipping now.')
                         continue
                 self.logger.info("Report #%d downloaded.", ticket_id)
-                raw = resp.text
+                if self.extract_download:
+                    raw = resp.content
+                else:
+                    raw = resp.text
+                report["extra.file_name"] = file_name_from_response(resp)
 
-            report = self.new_report()
-            report.add("raw", raw)
             report.add("rtir_id", ticket_id)
             report.add("time.observation", created + ' UTC', overwrite=True)
-            self.send_message(report)
+            """
+            On RT 3.8 these fields are only available on the original ticket, not the
+            first history element as in 4.4
+            """
+            if "Subject" not in ticket:
+                ticket = RT.get_ticket(ticket_id)
+            report.add("extra.email_subject", ticket["Subject"])
+            report.add("extra.ticket_subject", ticket["Subject"])
+            report.add("extra.email_from", ','.join(ticket["Requestors"]))
+            report.add("extra.ticket_requestors", ','.join(ticket["Requestors"]))
+            report.add("extra.ticket_queue", ticket["Queue"])
+            report.add("extra.ticket_status", ticket["Status"])
+            report.add("extra.ticket_owner", ticket["Owner"])
+
+            if self.extract_files:
+                try:
+                    unzipped = unzip(raw, self.extract_files,
+                                     return_names=True, logger=self.logger)
+                except ValueError:
+                    self.logger.error('Could not uncompress the file. Skipping for now.')
+                    continue
+                for file_name, raw_report in unzipped:
+                    """
+                    File name priority is:
+                        From the archive (zip, tar.gz)
+                        From the HTTP Response
+                        From the Attachment name
+                        For gz attachments, only the last options works
+                    """
+                    report_new = report.copy()
+                    report_new.add("raw", raw_report)
+                    report_new.add("extra.file_name", file_name, overwrite=True)
+                    if "extra.file_name" not in report_new and att_name.endswith('.gz'):
+                        report_new["extra.file_name"] = att_name[:-3]
+                    self.send_message(report_new)
+            else:
+                report.add("raw", raw)
+                self.send_message(report)
 
             if self.parameters.take_ticket:
                 try:

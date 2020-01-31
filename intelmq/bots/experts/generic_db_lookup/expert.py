@@ -3,47 +3,17 @@
 Generic DB Lookup
 """
 
-from intelmq.lib.bot import Bot
-
-try:
-    import psycopg2
-    import psycopg2.extras
-except ImportError:
-    psycopg2 = None
+from intelmq.lib.bot import SQLBot
 
 
-class GenericDBLookupExpertBot(Bot):
+class GenericDBLookupExpertBot(SQLBot):
 
     def init(self):
-        self.logger.debug("Connecting to database.")
-        if psycopg2 is None:
-            raise ValueError('Could not import psycopg2. Please install it.')
-
-        try:
-            if hasattr(self.parameters, 'connect_timeout'):
-                connect_timeout = self.parameters.connect_timeout
-            else:
-                connect_timeout = 5
-
-            self.con = psycopg2.connect(database=self.parameters.database,
-                                        user=self.parameters.user,
-                                        password=self.parameters.password,
-                                        host=self.parameters.host,
-                                        port=self.parameters.port,
-                                        sslmode=self.parameters.sslmode,
-                                        connect_timeout=connect_timeout,
-                                        )
-            self.con.autocommit = True  # prevents deadlocks
-            self.cur = self.con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-
-        except Exception:
-            self.logger.exception('Failed to connect to database.')
-            self.stop()
-        self.logger.info("Connected to PostgreSQL.")
+        super().init()
 
         self.replace = self.parameters.replace_fields
         self.match = self.parameters.match_fields
-        query = 'SELECT "{replace}" FROM "{table}" WHERE ' + 'AND '.join(['"{}" = %s '] * len(self.match))
+        query = 'SELECT "{replace}" FROM "{table}" WHERE ' + 'AND '.join(['"{}" = ' + self.format_char + ' '] * len(self.match))
         self.query = query.format(*self.match.values(),
                                   table=self.parameters.table,
                                   replace='", "'.join(self.replace.keys()))
@@ -65,25 +35,24 @@ class GenericDBLookupExpertBot(Bot):
             self.acknowledge_message()
             return
 
-        try:
-            self.logger.debug('Executing %r.', self.cur.mogrify(self.query,
-                                                                [event[key] for key in self.match.keys()]))
-            self.cur.execute(self.query, [event[key] for key in self.match.keys()])
-            self.logger.debug('Done.')
-        except (psycopg2.InterfaceError, psycopg2.InternalError,
-                psycopg2.OperationalError, AttributeError):
-            self.logger.exception('Database connection problem, connecting again.')
-            self.init()
-        else:
+        if self.execute(self.query, [event[key] for key in self.match.keys()]):
             if self.cur.rowcount > 1:
                 raise ValueError('Lookup returned more then one result. Please inspect.')
-            elif self.cur.rowcount == 1:
-                result = self.cur.fetchone()
-                for key, value in self.replace.items():
-                    event.add(value, result[key], overwrite=True)
-                self.logger.debug('Applied.')
-            else:
-                self.logger.debug('No row found.')
+            elif self.cur.rowcount == 1 or (self.cur.rowcount == -1 and self.parameters.engine == SQLBot.SQLITE):
+                result = None
+                if self.cur.rowcount == 1:
+                    result = self.cur.fetchone()
+                elif self.cur.rowcount == -1 and self.parameters.engine == SQLBot.SQLITE:
+                    # https://docs.python.org/2/library/sqlite3.html#sqlite3.Cursor.rowcount
+                    # since the DB’s own support for the determination is quirky we try to fetch even when rowcount=-1
+                    result = self.cur.fetchone()
+
+                if result:
+                    for i, (key, value) in enumerate(self.replace.items()):
+                        event.add(value, result[i], overwrite=True)
+                    self.logger.debug('Applied.')
+                else:
+                    self.logger.debug('No row found.')
 
             self.send_message(event)
             self.acknowledge_message()

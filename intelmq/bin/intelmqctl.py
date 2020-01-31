@@ -22,16 +22,22 @@ import xmlrpc.client
 from collections import OrderedDict
 
 import pkg_resources
-import psutil
+from termstyle import green
 
 from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
-                     RUNTIME_CONF_FILE, VAR_RUN_PATH, VAR_STATE_PATH,
-                     __version_info__)
+                     RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
+                     DEFAULT_LOGGING_PATH, __version_info__)
 from intelmq.lib import utils
 from intelmq.lib.bot_debugger import BotDebugger
+from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.pipeline import PipelineFactory
 import intelmq.lib.upgrades as upgrades
+
+try:
+    import psutil
+except ImportError:
+    psutil = None
 
 
 class Parameters(object):
@@ -46,13 +52,17 @@ STATUSES = {
 }
 
 MESSAGES = {
+    'enabled': 'Bot %s is enabled.',
     'disabled': 'Bot %s is disabled.',
     'starting': 'Starting %s...',
-    'running': 'Bot %s is running.',
+    'running': green('Bot %s is running.'),
     'stopped': 'Bot %s is stopped.',
     'stopping': 'Stopping bot %s...',
     'reloading': 'Reloading bot %s ...',
+    'enabling': 'Enabling %s.',
+    'disabling': 'Disabling %s.',
     'reloaded': 'Bot %s is reloaded.',
+    'restarting': 'Restarting %s...',
 }
 
 ERROR_MESSAGES = {
@@ -60,7 +70,8 @@ ERROR_MESSAGES = {
     'running': 'Bot %s is still running.',
     'stopped': 'Bot %s was NOT RUNNING.',
     'stopping': 'Bot %s failed to STOP.',
-    'not found': 'Bot %s failed to START because the file cannot be found.',
+    'not found': ('Bot %s FAILED to start because the executable cannot be found. '
+                  'Check your PATH variable and your the installation.'),
     'access denied': 'Bot %s failed to %s because of missing permissions.',
     'unknown': 'Status of Bot %s is unknown: %r.',
 }
@@ -126,6 +137,9 @@ class IntelMQProcessManager:
         self.__runtime_configuration = runtime_configuration
         self.logger = logger
         self.controller = controller
+
+        if psutil is None:
+            raise MissingDependencyError('psutil')
 
         if not os.path.exists(self.PIDDIR):
             try:
@@ -232,8 +246,15 @@ class IntelMQProcessManager:
             return 'running'
         else:
             if getstatus:
-                time.sleep(0.5)
+                # Wait for up to 2 seconds until the bot stops, #1434
+                starttime = time.time()
+                remaining = 2
                 status = self.__status_process(pid, module, bot_id)
+                while status is True and remaining > 0:
+                    status = self.__status_process(pid, module, bot_id)
+                    time.sleep(0.1)
+                    remaining = 2 - (time.time() - starttime)
+
                 if status is True:
                     log_bot_error('running', bot_id)
                     return 'running'
@@ -628,6 +649,7 @@ class IntelMQController():
                 'json': machine-readable output for managers
             quiet: False by default, can be activated for cron jobs etc.
         """
+        self.interactive = interactive
         global RETURN_TYPE
         RETURN_TYPE = return_type
         global logger
@@ -636,13 +658,18 @@ class IntelMQController():
         self.parameters = Parameters()
 
         # Try to get log_level from defaults_configuration, else use default
+        defaults_loading_exc = None
         try:
             self.load_defaults_configuration()
-        except Exception:
+        except Exception as exc:
+            defaults_loading_exc = exc
             log_level = DEFAULT_LOGGING_LEVEL
+            logging_level_stream = 'DEBUG'
         else:
             log_level = self.parameters.logging_level.upper()
-            logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
+        # make sure that logging_level_stream is always at least INFO or more verbose
+        # otherwise the output on stdout/stderr is less than the user expects
+        logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
 
         try:
             logger = utils.log('intelmqctl', log_level=log_level,
@@ -654,7 +681,10 @@ class IntelMQController():
                                logging_level_stream=logging_level_stream)
             logger.error('Not logging to file: %s', exc)
         self.logger = logger
-        self.interactive = interactive
+        if defaults_loading_exc:
+            self.logger.exception('Loading the defaults configuration failed!',
+                                  exc_info=defaults_loading_exc)
+
         if not utils.drop_privileges():
             logger.warning('Running intelmqctl as root is highly discouraged!')
 
@@ -668,7 +698,7 @@ class IntelMQController():
         DESCRIPTION = """
         description: intelmqctl is the tool to control intelmq system.
 
-        Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
+        Outputs are logged to %s/intelmqctl.log""" % DEFAULT_LOGGING_PATH
         EPILOG = '''
         intelmqctl [start|stop|restart|status|reload] --group [collectors|parsers|experts|outputs]
         intelmqctl [start|stop|restart|status|reload] bot-id
@@ -680,7 +710,7 @@ class IntelMQController():
         intelmqctl run bot-id console
         intelmqctl clear queue-id
         intelmqctl check
-        intelmqctl upgrade-conf
+        intelmqctl upgrade-config
 
 Starting a bot:
     intelmqctl start bot-id
@@ -732,14 +762,11 @@ Default is INFO. Number of lines defaults to 10, -1 gives all. Result
 can be longer due to our logging format!
 
 Upgrade from a previous version:
-    intelmqctl upgrade-conf
-Make a backup of your configuration first, also including bot's configuration files.
-
-Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
+    intelmqctl upgrade-config
+Make a backup of your configuration first, also including bot's configuration files.'''
 
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
-        self.load_defaults_configuration()
         try:
             self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
@@ -775,19 +802,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                 help='choose if it should return regular text '
                                      'or other machine-readable')
 
-            parser.add_argument('--quiet', '-q', action='store_const',
+            parser.add_argument('--quiet', '-q', action='store_true',
                                 help='Quiet mode, useful for reloads initiated '
-                                     'scripts like logrotate',
-                                const=True)
+                                     'scripts like logrotate')
 
             subparsers = parser.add_subparsers(title='subcommands')
 
             parser_list = subparsers.add_parser('list', help='Listing bots or queues')
             parser_list.add_argument('kind', choices=['bots', 'queues', 'queues-and-status'])
-            parser_list.add_argument('--non-zero', '--quiet', '-q', action='store_const',
+            parser_list.add_argument('--non-zero', '--quiet', '-q', action='store_true',
                                      help='Only list non-empty queues '
-                                          'or the IDs of enabled bots.',
-                                     const=True)
+                                          'or the IDs of enabled bots.')
             parser_list.set_defaults(func=self.list)
 
             parser_clear = subparsers.add_parser('clear', help='Clear a queue')
@@ -842,12 +867,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             parser_check = subparsers.add_parser('check',
                                                  help='Check installation and configuration')
-            parser_check.add_argument('--quiet', '-q', action='store_const',
-                                      help='Only print warnings and errors.',
-                                      const=True)
-            parser_check.add_argument('--no-connections', '-C', action='store_const',
-                                      help='Do not test the connections to services like redis.',
-                                      const=True)
+            parser_check.add_argument('--quiet', '-q', action='store_true',
+                                      help='Only print warnings and errors.')
+            parser_check.add_argument('--no-connections', '-C', action='store_true',
+                                      help='Do not test the connections to services like redis.')
             parser_check.set_defaults(func=self.check)
 
             parser_help = subparsers.add_parser('help',
@@ -899,17 +922,23 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                        choices=self.runtime_configuration.keys())
             parser_status.set_defaults(func=self.bot_disable)
 
-            parser_upgrade = subparsers.add_parser('upgrade-conf',
-                                                   help='Upgrade IntelMQ configuration to a newer version.')
-            parser_upgrade.add_argument('-p', '--previous',
-                                        help='Use this version as the previous one.')
-            parser_upgrade.add_argument('-d', '--function',
-                                        help='Run this upgrade function.',
-                                        choices=upgrades.__all__)
-            parser_upgrade.add_argument('-f', '--force',
-                                        action='store_true',
-                                        help='Force running the upgrade procedure.')
-            parser_upgrade.set_defaults(func=self.upgrade)
+            parser_upgrade_conf = subparsers.add_parser('upgrade-config',
+                                                        help='Upgrade IntelMQ configuration to a newer version.')
+            parser_upgrade_conf.add_argument('-p', '--previous',
+                                             help='Use this version as the previous one.')
+            parser_upgrade_conf.add_argument('-d', '--dry-run',
+                                             action='store_true', default=False,
+                                             help='Do not write any files.')
+            parser_upgrade_conf.add_argument('-u', '--function',
+                                             help='Run this upgrade function.',
+                                             choices=upgrades.__all__)
+            parser_upgrade_conf.add_argument('-f', '--force',
+                                             action='store_true',
+                                             help='Force running the upgrade procedure.')
+            parser_upgrade_conf.add_argument('--state-file',
+                                             help='The state file location to use.',
+                                             default=STATE_FILE_PATH)
+            parser_upgrade_conf.set_defaults(func=self.upgrade_conf)
 
             self.parser = parser
 
@@ -969,8 +998,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         if bot_id is None:
             return self.botnet_reload(group=group)
         else:
+            if self.bot_process_manager.bot_status(bot_id) == 'disabled':
+                return 0, 'disabled'
             status = self.bot_process_manager.bot_reload(bot_id, getstatus)
-            if status in ['running']:
+            if status in ['running', 'disabled']:
                 return 0, status
             else:
                 return 1, status
@@ -980,6 +1011,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             return self.botnet_restart(group=group)
         else:
             status_stop = self.bot_stop(bot_id)
+            # Exit if stopping the bot did not work, #1434
+            if status_stop[0] != 0:
+                return status_stop
+
             status_start = self.bot_start(bot_id)
             return status_stop[0] | status_start[0], [status_stop[1], status_start[1]]
 
@@ -994,13 +1029,23 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 return 1, status
 
     def bot_enable(self, bot_id):
-        self.runtime_configuration[bot_id]['enabled'] = True
-        self.write_updated_runtime_config()
+        if self._is_enabled(bot_id):
+            log_bot_message('enabled', bot_id)
+        else:
+            log_bot_message('enabling', bot_id)
+            self.runtime_configuration[bot_id]['enabled'] = True
+            self.write_updated_runtime_config()
         return self.bot_status(bot_id)
 
     def bot_disable(self, bot_id):
-        self.runtime_configuration[bot_id]['enabled'] = False
-        self.write_updated_runtime_config()
+        """
+        If Bot is already disabled, the "Bot ... is disabled" message is
+        printed by the wrapping function already.
+        """
+        if self._is_enabled(bot_id):
+            log_bot_message('disabling', bot_id)
+            self.runtime_configuration[bot_id]['enabled'] = False
+            self.write_updated_runtime_config()
         return self.bot_status(bot_id)
 
     def _is_enabled(self, bot_id):
@@ -1008,6 +1053,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def botnet_start(self, group=None):
         botnet_status = {}
+        log_botnet_message('starting', group)
 
         if group:
             bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
@@ -1075,6 +1121,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         return retval, botnet_status
 
     def botnet_restart(self, group=None):
+        log_botnet_message('restarting')
         retval_stop, _ = self.botnet_stop(group=group)
         retval_start, status = self.botnet_start(group=group)
         if retval_stop > retval_start:  # In case the stop operation was not successful, exit 1
@@ -1112,9 +1159,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def write_updated_runtime_config(self, filename=RUNTIME_CONF_FILE):
         try:
-            with open(RUNTIME_CONF_FILE, 'w') as handle:
-                json.dump(self.runtime_configuration, fp=handle, indent=4, sort_keys=True,
-                          separators=(',', ': '))
+            utils.write_configuration(filename, self.runtime_configuration)
         except PermissionError:
             self.abort('Can\'t update runtime configuration: Permission denied.')
         return True
@@ -1336,10 +1381,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 if field not in bot_config:
                     check_logger.warning('Bot %r has no %r.', bot_id, field)
                     retval = 1
-            if 'module' in bot_config and bot_config['module'] == 'bots.collectors.n6.collector_stomp':
-                check_logger.warning("The module 'bots.collectors.n6.collector_stomp' is deprecated and will be removed in "
-                                     "version 2.0. Please use intelmq.bots.collectors."
-                                     "stomp.collector instead for bot %r." % bot_id)
             if 'run_mode' in bot_config and bot_config['run_mode'] not in ['continuous', 'scheduled']:
                 message = "Bot %r has invalid `run_mode` %r. Must be 'continuous' or 'scheduled'."
                 check_logger.warning(message, bot_id, bot_config['run_mode'])
@@ -1388,7 +1429,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         for event_type, event_type_conf in files[HARMONIZATION_CONF_FILE].items():
             for harm_type_name, harm_type in event_type_conf.items():
                 if "description" not in harm_type:
-                    check_logger.warn('Missing description for type %r.', harm_type_name)
+                    check_logger.warning('Missing description for type %r.', harm_type_name)
                 if "type" not in harm_type:
                     check_logger.error('Missing type for type %r.', harm_type_name)
                     retval = 1
@@ -1404,6 +1445,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         if extra_type != 'JSONDict':
             check_logger.warning("'extra' field needs to be of type 'JSONDict'.")
             retval = 1
+        if upgrades.harmonization({}, {}, files[HARMONIZATION_CONF_FILE],
+                                  dry_run=True)[0]:
+            check_logger.warning("Harmonization needs an upgrade, call "
+                                 "intelmqctl upgrade-config.")
 
         check_logger.info('Checking for bots.')
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
@@ -1429,8 +1474,15 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                        bot['module'], bot_id)
                     retval = 1
 
-        # TODO: Check migrations from state file, and if the latter exists
-        # check if all functions have been executed successfully
+        if os.path.isfile(STATE_FILE_PATH):
+            state = utils.load_configuration(STATE_FILE_PATH)
+            for functionname in upgrades.__all__:
+                if not state['upgrades'].get(functionname, False):
+                    check_logger.error("Upgrade function %s not completed (successfully). "
+                                       "Please run 'intelmqctl upgrade-config'.",
+                                       functionname)
+        else:
+            check_logger.error("No state file found. Please call 'intelmqctl upgrade-config'.")
 
         if RETURN_TYPE == 'json':
             if retval:
@@ -1445,7 +1497,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 self.logger.info('No issues found.')
                 return retval, 'success'
 
-    def upgrade(self, previous=None, function=None, force=None):
+    def upgrade_conf(self, previous=None, dry_run=None, function=None,
+                     force=None, state_file: str = STATE_FILE_PATH):
         """
         Upgrade the IntelMQ configuration after a version upgrade.
 
@@ -1453,6 +1506,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             previous: Assume the given version as the previous version
             function: Only execute this upgrade function
             force: Also upgrade if not necessary
+            state_file: location of the state file
 
         state file:
 
@@ -1478,13 +1532,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                  "time": "..."}
                 ]
         """
-        state_file_path = os.path.join(VAR_STATE_PATH, '../state.json')
-        if os.path.isfile(state_file_path):
-            if not os.access(state_file_path, os.W_OK):
-                self.logger.error("State file %r is not writable.")
-                return 1, "State file %r is not writable."
-            with open(state_file_path, 'r') as state_handle:
-                state = json.load(state_handle)
+        if os.path.isfile(state_file):
+            if not os.access(state_file, os.W_OK) and not dry_run:
+                self.logger.error("State file %r is not writable.", state_file)
+                return 1, "State file %r is not writable." % state_file
+            state = utils.load_configuration(state_file)
         else:
             """
             We create the state file directly before any upgrade function.
@@ -1494,16 +1546,23 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             state = {"version_history": [],
                      "upgrades": {},
                      "results": []}
+            if dry_run:
+                self.logger.info('Would create state file now at %r.',
+                                 state_file)
+                return 0, 'success'
             try:
-                with open(state_file_path, 'w') as state_handle:
-                    json.dump(state, fp=state_handle,
-                              indent=4, sort_keys=True,
-                              separators=(',', ': '))
+                utils.write_configuration(state_file, state, new=True)
             except Exception as exc:
-                self.logger.error('Error writing state file %r: %s.', state_file_path, exc)
-                return 1, 'Error writing state file %r: %s.' % (state_file_path, exc)
+                self.logger.error('Error writing state file %r: %s.', state_file, exc)
+                return 1, 'Error writing state file %r: %s.' % (state_file, exc)
             self.logger.error('Successfully wrote initial state file. Please re-run this program.')
             return 0, 'success'
+
+        defaults = utils.load_configuration(DEFAULTS_CONF_FILE)
+        runtime = utils.load_configuration(RUNTIME_CONF_FILE)
+        harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
+        if dry_run:
+            self.logger.info('Doing a dry run, not writing anything now.')
 
         if function:
             if not force and state['upgrades'].get(function, False):
@@ -1516,11 +1575,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                       }
             if not hasattr(upgrades, function):
                 self.logger.error('This function does not exist. '
-                                  'Available functions are %s'
-                                  '' % ', '.join(upgrades.__all__))
+                                  'Available functions are %s',
+                                  ', '.join(upgrades.__all__))
                 return 1, 'error'
             try:
-                retval = getattr(upgrades, function)()
+                retval, defaults_new, runtime_new, harmonization_new = getattr(
+                    upgrades, function)(defaults, runtime, harmonization, dry_run)
+                # Handle changed configurations
+                if retval is True and not dry_run:
+                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new)
+                    utils.write_configuration(RUNTIME_CONF_FILE, runtime_new)
+                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization_new)
             except Exception:
                 self.logger.exception('Upgrade %r failed, please report this bug '
                                       'with the shown traceback.',
@@ -1549,10 +1614,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             state['results'].append(result)
             state['upgrades'][function] = result['success']
-            with open(state_file_path, 'w') as state_handle:
-                json.dump(state, fp=state_handle,
-                          indent=4, sort_keys=True,
-                          separators=(',', ': '))
+            if not dry_run:
+                utils.write_configuration(state_file, state)
 
             if result['success']:
                 return 0, 'success'
@@ -1567,11 +1630,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         if __version_info__ in state["version_history"] and not force:
             return 0, "Nothing to do."
         else:
-            if not (os.access(state_file_path, os.W_OK) or
-                    os.access(os.path.dirname(state_file_path), os.W_OK)):
-                self.logger.error('File %s cannot be written. Check the permissions.',
-                                  state_file_path)
-                return 1, 'error'
             if state["version_history"] and not previous and not force:
                 previous = state["version_history"][-1]
                 self.logger.info("Found previous version %s in state file.",
@@ -1580,16 +1638,41 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 todo = []
                 for version, functions in upgrades.UPGRADES.items():
                     if utils.version_smaller(tuple(previous), version):
-                        todo.append((version, functions))
+                        todo.append((version, functions, True))
+                    else:
+                        funcs = []
+                        for function in functions:
+                            fname = function.__name__
+                            if not state['upgrades'].get(fname, False):
+                                self.logger.info("Catch up function %s from version %s.",
+                                                 fname, '.'.join(str(x) for x in version))
+                                funcs.append(function)
+                        if funcs:
+                            todo.append((version, funcs, False))
             else:
                 self.logger.info("Found no previous version, doing all upgrades.")
-                todo = upgrades.UPGRADES.items()
+                todo = [(version, bunch, True) for version, bunch in upgrades.UPGRADES.items()]
 
-            # todo is now a list of tuples of functions.
-            # all functions in a tuple (bunch) must be processed successfully to continue
+            todo.extend([(None, (function, ), False)
+                         for function in upgrades.ALWAYS])
 
-            for version, bunch in todo:
-                self.logger.info('Upgrading to version %s.' % '.'.join(map(str, version)))
+            """
+            todo is now a list of tuples of functions.
+            todo = [
+                    (version, tuple of functions, bool if the version is new)
+                    ...
+                    ]
+            all functions in a tuple (bunch) must be processed successfully to continue
+            the third value is to catch some situations:
+                if the function has been inserted later, we do not say this is an upgrade to a newer version
+                and do not append the version to the version history again
+            """
+
+            error = False
+            for version, bunch, version_new in todo:
+                if version and version_new:
+                    self.logger.info('Upgrading to version %s.',
+                                     '.'.join(map(str, version)))
                 for function in bunch:
                     if not force and state['upgrades'].get(function.__name__, False):
                         # already performed
@@ -1600,7 +1683,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                               "time": datetime.datetime.now().isoformat()
                               }
                     try:
-                        retval = function()
+                        retval, defaults, runtime, harmonization = function(defaults, runtime, harmonization, dry_run)
                     except Exception:
                         self.logger.exception('%s: Upgrade failed, please report this bug '
                                               'with the traceback.', docstring)
@@ -1622,32 +1705,61 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                               'as bug.', docstring, retval)
                             result['success'] = False
                         result['retval'] = retval
-                    state['results'].append(result)
-                    state['upgrades'][function.__name__] = result['success']
+
+                    if version or retval is not None:
+                        """
+                        do not add it to the results if it is run always
+                        and was a no-op.
+                        """
+                        state['results'].append(result)
+                    if version:
+                        """
+                        Only add it to the upgrades list if it is specific to a function
+                        """
+                        state['upgrades'][function.__name__] = result['success']
 
                     if not result['success']:
-                        with open(state_file_path, 'w') as state_handle:
-                            json.dump(state, fp=state_handle,
-                                      indent=4, sort_keys=True,
-                                      separators=(',', ': '))
-                        self.logger.error('Some migration did not succeed or '
-                                          'manual intervention is needed. Look at '
-                                          'the output above. Afterwards, re-run '
-                                          'this program.')
-                        return 1, 'error'
-                state['version_history'].append(version)
+                        error = True
+                        break
+                if error:
+                    break
+                if version and version_new:
+                    state['version_history'].append(version)
 
-            if todo:
-                self.logger.info('Configuration upgrade successful!')
-            else:
-                self.logger.info('Nothing to do!')
+            if error:
+                # some upgrade function had a problem
+                if not dry_run:
+                    utils.write_configuration(state_file, state)
+                self.logger.error('Some migration did not succeed or '
+                                  'manual intervention is needed. Look at '
+                                  'the output above. Afterwards, re-run '
+                                  'this program.')
 
-            with open(state_file_path, 'w') as state_handle:
-                json.dump(state, fp=state_handle,
-                          indent=4, sort_keys=True,
-                          separators=(',', ': '))
+            try:
+                if not dry_run:
+                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults)
+                    utils.write_configuration(RUNTIME_CONF_FILE, runtime)
+                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization)
+            except Exception as exc:
+                self.logger.error('Writing defaults or runtime configuration '
+                                  'did not succeed: %s\nFix the problem and '
+                                  'afterwards, re-run this program.',
+                                  exc)
+                return 1, 'error'
 
-        return 0, 'success'
+            if not error:
+                if todo:
+                    self.logger.info('Configuration upgrade successful!')
+                else:
+                    self.logger.info('Nothing to do!')
+
+            if not dry_run:
+                utils.write_configuration(state_file, state)
+
+        if error:
+            return 1, 'error'
+        else:
+            return 0, 'success'
 
 
 def main():  # pragma: no cover

@@ -375,6 +375,23 @@ providers:
       revision: 20-01-2018
       status: on
       documentation:
+    Hajime Scanner:
+      description: 'This feed lists IP address for know Hajime bots network. These IPs data are obtained by joining the DHT network and interacting with the Hajime node'
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://data.netlab.360.com/feeds/hajime-scanner/bot.list
+            rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.netlab_360.parser
+          parameters:
+      revision: 01-08-2019
+      status: on
+      documentation:
   Abuse.ch:
     Zeus Tracker IPs:
       description: This list only includes IPv4 addresses that are used by the ZeuS
@@ -494,8 +511,8 @@ providers:
         parser:
           module: intelmq.bots.parsers.html_table.parser
           parameters:
-            columns: ["time.source", "source.ip", "malware.name", "status", "extra.SBL", "source.as_name", "source.geolocation.cc"]
-            ignore_values: ["", "", "", "", "Not listed", "", ""]
+            columns: "time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc"
+            ignore_values: ",,,,Not listed,,"
             skip_table_head: True
             type: c2server
       revision: 19-03-2019
@@ -540,14 +557,19 @@ providers:
         for the ASNs and/or netblocks with a CSIRT's jurisdiction. This includes such
         information as bot infected hosts, command and control systems, open resolvers,
         malware urls, phishing urls, and brute force attacks
-      additional_information:
+      additional_information: |
+        "Two feeds types are offered:
+         * The new https://www.cymru.com/$certname/$certname_{time[%Y%m%d]}.txt
+         * and the old https://www.cymru.com/$certname/infected_{time[%Y%m%d]}.txt
+         Both formats are supported by the parser and the new one is recommended.
+         As of 2019-09-12 the old format will be retired soon."
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_password: "{{your password}}"
             http_url_formatting: true
-            http_url: https://www.cymru.com/{{your organization name}}/infected_{time[%Y%m%d]}.txt
+            http_url: https://www.cymru.com/$certname/$certname_{time[%Y%m%d]}.txt
             http_username: "{{your login}}"
             rate_limit: 86400
             name: __FEED__
@@ -1483,10 +1505,9 @@ providers:
       status: on
       documentation:
   ShadowServer:
-    Custom:
+    Via IMAP:
       description: Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
-        The reports can be retrieved from the URL in the mail or from the attachment.
-      additional_information:
+      additional_information: The configuration retrieves the data from a e-mails via IMAP from the attachments.
       bots:
         collector:
           module: intelmq.bots.collectors.mail.collector_mail_attach
@@ -1502,6 +1523,38 @@ providers:
             folder: INBOX
             name: __FEED__
             provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.shadowserver.parser
+          parameters:
+      revision: 20-01-2018
+      status: on
+      documentation:
+    Via Request Tracker:
+      description: Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
+      additional_information: The configuration retrieves the data from a RT/RTIR ticketing instance via the attachment or an download.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.rt.collector_rt
+          parameters:
+            attachment_regex: \\.csv\\.zip$
+            extract_attachment: true
+            extract_download: false
+            http_password: "{{ your HTTP Authentication password or null }}"
+            http_username: "{{ your HTTP Authentication username or null }}"
+            password: __PASSWORD__
+            provider: __PROVIDER__
+            rate_limit: 3600
+            search_not_older_than: "{{ relative time or null }}"
+            search_owner: nobody
+            search_queue: Incident Reports
+            search_requestor: autoreports@shadowserver.org
+            search_status: new
+            search_subject_like: \[__COUNTRY__\] Shadowserver __COUNTRY__
+            set_status: open
+            take_ticket: true
+            uri: http://localhost/rt/REST/1.0
+            url_regex: https://dl.shadowserver.org/[a-zA-Z0-9?_-]*
+            user: __USERNAME__
         parser:
           module: intelmq.bots.parsers.shadowserver.parser
           parameters:
@@ -1533,7 +1586,11 @@ providers:
       description: The Fraunhofer DDoS attack feed provides information about
         tracked C&C servers and detected attack commands from these C&Cs. You
         may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
-      additional_information:
+      additional_information: The source feed provides a stream of newline separated JSON objects.
+        Each line represents a single event observed by DDoS C&C trackers, e.g. attack
+        commands. The feed can be retrieved with either the generic HTTP Stream
+        Collector Bot for a streaming live feed or with the generic HTTP Collector Bot
+        for a polled feed.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http_stream
@@ -1556,7 +1613,11 @@ providers:
       description: The Fraunhofer DDoS attack feed provides information about
         tracked C&C servers and detected attack commands from these C&Cs. You
         may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
-      additional_information:
+      additional_information: The source feed provides a stream of newline separated JSON objects.
+        Each line represents a single event observed by DDoS C&C trackers, e.g. attack
+        commands. The feed can be retrieved with either the generic HTTP Stream
+        Collector Bot for a streaming live feed or with the generic HTTP Collector Bot
+        for a polled feed.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http_stream
@@ -1654,7 +1715,7 @@ providers:
   Calidog:
     CertStream:
       description: HTTP Websocket Stream from certstream.calidog.io providing data from Certificate Transparency Logs.
-      additional_information:
+      additional_information: Be aware that this feed provides a lot of data and may overload your system quickly.
       bots:
         collector:
           module: intelmq.bots.collectors.certstream.collector_certstream
@@ -1728,3 +1789,41 @@ providers:
       revision: 02-04-2019
       status: on
       documentation: https://precisionsec.com/threat-intelligence-feeds/agent-tesla/
+  Have I Been Pwned:
+    Enterprise Callback:
+      description: With the Enterprise Subscription of 'Have I Been Pwned' you are able to provide a callback URL and any new leak data is submitted to it. It is recommended to put a webserver with Authorization check, TLS etc. in front of the API collector.
+      additional_information: |
+        "A minimal nginx configuration could look like:
+        ```
+        server {
+            listen 443 ssl http2;
+            server_name [your host name];
+            client_max_body_size 50M;
+            
+            ssl_certificate [path to your key];
+            ssl_certificate_key [path to your certificate];
+            
+            location /[your private url] {
+                 if ($http_authorization != '[your private password]') {
+                     return 403;
+                 }
+                 proxy_pass http://localhost:5001/intelmq/push;
+                 proxy_read_timeout 30;
+                 proxy_connect_timeout 30;
+             }
+        }
+        ```
+        "
+      bots:
+        collector:
+          module: intelmq.bots.collectors.api.collector_api
+          parameters:
+            port: 5001
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.hibp.parser_callback
+          parameters:
+      revision: 11-09-2019
+      status: on
+      documentation: https://haveibeenpwned.com/EnterpriseSubscriber/

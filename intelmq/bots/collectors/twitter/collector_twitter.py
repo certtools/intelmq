@@ -35,6 +35,8 @@ To get api login data see: https://python-twitter.readthedocs.io/en/latest/getti
 import time
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.utils import create_request_session_from_bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import requests
@@ -51,17 +53,17 @@ class TwitterCollectorBot(CollectorBot):
 
     def init(self):
         if requests is None:
-            raise ValueError("Could not import 'requests'. Please install it.")
+            raise MissingDependencyError("requests")
         if twitter is None:
-            raise ValueError("Could not import 'twitter'. Please install it.")
+            raise MissingDependencyError("twitter")
         self.current_time_in_seconds = int(time.time())
         self.target_timelines = []
-        if getattr(self.parameters, "target_timelines", '') is not '':
+        if getattr(self.parameters, "target_timelines", '') != '':
             self.target_timelines.extend(
                 self.parameters.target_timelines.split(','))
         self.tweet_count = int(getattr(self.parameters, "tweet_count", 20))
         self.follow_urls = []
-        if getattr(self.parameters, "follow_urls", '') is not '':
+        if getattr(self.parameters, "follow_urls", '') != '':
             self.follow_urls.extend(
                 self.parameters.follow_urls.split(','))
         self.include_rts = getattr(self.parameters, "include_rts", False)
@@ -74,14 +76,17 @@ class TwitterCollectorBot(CollectorBot):
             access_token_secret=self.parameters.access_token_secret,
             tweet_mode="extended")
 
+        self.set_request_parameters()
+        self.session = create_request_session_from_bot(self)
+
     def get_text_from_url(self, url: str) -> str:
         if "pastebin.com" in url:
             self.logger.debug('Processing url %r.', url)
             if "raw" not in url:
-                request = requests.get(
+                request = self.session.get(
                     url.replace("pastebin.com", "pastebin.com/raw"))
             else:
-                request = requests.get(url)
+                request = self.session.get(url)
             return request.text
         return ''
 

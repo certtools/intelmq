@@ -21,9 +21,10 @@ import re
 
 import pkg_resources
 
-from intelmq.lib.bot import ParserBot, utils
+from intelmq.lib.bot import Bot, utils
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import ClassificationType
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     from url_normalize import url_normalize
@@ -39,16 +40,16 @@ except ImportError:
     update_tld_names = None
 
 
-class TwitterParserBot(ParserBot):
+class TwitterParserBot(Bot):
     def init(self):
         if url_normalize is None:
-            raise ValueError("Could not import 'url-normalize'. Please install it.")
+            raise MissingDependencyError("url-normalize")
         url_version = pkg_resources.get_distribution("url-normalize").version
         if tuple(int(v) for v in url_version.split('.')) < (1, 4, 1) and hasattr(self.parameters, 'default_scheme'):
             raise ValueError("Parameter 'default_scheme' given but 'url-normalize' version %r does not support it. "
                              "Get at least version '1.4.1'." % url_version)
         if get_tld is None:
-            raise ValueError("Could not import 'tld'. Please install it.")
+            raise MissingDependencyError("tld")
         try:
             update_tld_names()
         except tld.exceptions.TldIOError:

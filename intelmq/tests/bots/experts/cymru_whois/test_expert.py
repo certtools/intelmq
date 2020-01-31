@@ -16,7 +16,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.network": "93.184.216.0/24",
                   "source.allocated": "2008-06-02T00:00:00+00:00",
                   "source.asn": 15133,
-                  "source.as_name": "EDGECAST - MCI Communications Services, Inc. d/b/a Verizon Business, US",
+                  "source.as_name": "EDGECAST, US",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
@@ -27,7 +27,7 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "destination.ip": "2001:500:88:200::8",  # iana.org
                    "destination.registry": "ARIN",
                    "destination.allocated": "2010-02-18T00:00:00+00:00",
-                   "destination.as_name": "ICANN-DC - ICANN, US",
+                   "destination.as_name": "ICANN-DC, US",
                    "destination.geolocation.cc": "US",
                    "time.observation": "2015-01-01T00:00:00+00:00",
                    "destination.asn": 16876,
@@ -75,6 +75,17 @@ EXAMPLE_6TO4_OUTPUT = {"__type": "Event",
                   "source.as_name": "SURFNET-NL SURFnet, The Netherlands, NL",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
+OVERWRITE_OUT = {"__type": "Event",
+                  "source.ip": "93.184.216.34",
+                  "source.geolocation.cc": "AA",
+                  "source.registry": "LACNIC",
+                  "source.network": "93.184.216.0/24",
+                  "source.allocated": "2008-06-02T00:00:00+00:00",
+                  "source.asn": 15133,
+                  "source.as_name": "EDGECAST, US",
+                  "time.observation": "2015-01-01T00:00:00+00:00",
+                  }
+
 
 @test.skip_redis()
 @test.skip_internet()
@@ -88,6 +99,7 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = CymruExpertBot
         cls.use_cache = True
+        cls.sysconfig = {'overwrite': True}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
@@ -113,6 +125,13 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EXAMPLE_6TO4_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_6TO4_OUTPUT)
+
+    def test_overwrite(self):
+        self.input_message = EXAMPLE_INPUT.copy()
+        self.input_message["source.geolocation.cc"] = "AA"
+        self.input_message["source.registry"] = "LACNIC"
+        self.run_bot(parameters={'overwrite' : False})
+        self.assertMessageEqual(0, OVERWRITE_OUT)
 
     @unittest.expectedFailure
     def test_missing_asn(self):

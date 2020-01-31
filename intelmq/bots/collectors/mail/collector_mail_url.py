@@ -6,8 +6,10 @@ import io
 import re
 
 from intelmq.lib.splitreports import generate_reports
+from intelmq.lib.utils import create_request_session_from_bot, file_name_from_response
 
 from .lib import MailCollectorBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import requests
@@ -20,10 +22,11 @@ class MailURLCollectorBot(MailCollectorBot):
     def init(self):
         super().init()
         if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
+            raise MissingDependencyError("requests")
 
         # Build request
         self.set_request_parameters()
+        self.session = create_request_session_from_bot(self)
 
         self.chunk_size = getattr(self.parameters, 'chunk_size', None)
         self.chunk_replicate_header = getattr(self.parameters,
@@ -42,24 +45,11 @@ class MailURLCollectorBot(MailCollectorBot):
                 url = url.strip()
 
                 self.logger.info("Downloading report from %r.", url)
-                timeoutretries = 0
-                resp = None
-                while timeoutretries < self.http_timeout_max_tries and resp is None:
-                    try:
-                        resp = requests.get(url=url,
-                                            auth=self.auth, proxies=self.proxy,
-                                            headers=self.http_header,
-                                            verify=self.http_verify_cert,
-                                            cert=self.ssl_client_cert,
-                                            timeout=self.http_timeout_sec)
-
-                    except requests.exceptions.Timeout:
-                        timeoutretries += 1
-                        self.logger.warn("Timeout whilst downloading the report.")
-
-                if resp is None and timeoutretries >= self.http_timeout_max_tries:
+                try:
+                    resp = self.session.get(url=url)
+                except requests.exceptions.Timeout:
                     self.logger.error("Request timed out %i times in a row. " %
-                                      timeoutretries)
+                                      self.http_timeout_max_tries)
                     erroneous = True
                     # The download timed out too often, leave the Loop.
                     continue
@@ -76,6 +66,11 @@ class MailURLCollectorBot(MailCollectorBot):
                     self.logger.info("Report downloaded.")
 
                     template = self.new_report()
+                    template["feed.url"] = url
+                    template["extra.email_subject"] = message.subject
+                    template["extra.email_from"] = ','.join(x['email'] for x in message.sent_from)
+                    template["extra.email_message_id"] = message.message_id
+                    template["extra.file_name"] = file_name_from_response(resp)
 
                     for report in generate_reports(template, io.BytesIO(resp.content),
                                                    self.chunk_size,

@@ -8,8 +8,10 @@ https://github.com/RIPE-NCC/whois/wiki/WHOIS-REST-API-abuse-contact
 import json
 from contextlib import contextmanager
 
+import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import requests
@@ -59,7 +61,7 @@ class RIPEExpertBot(Bot):
 
     def init(self):
         if requests is None:
-            raise ValueError("Could not import 'requests'. Please install the package.")
+            raise MissingDependencyError("requests")
 
         self.__mode = getattr(self.parameters, 'mode', 'append')
         self.__query = {
@@ -74,12 +76,8 @@ class RIPEExpertBot(Bot):
         self.__initialize_cache()
 
     def __initialize_http_session(self):
-        self.http_session = requests.Session()
         self.set_request_parameters()
-        self.http_session.proxies.update(self.proxy)
-        self.http_session.headers.update(self.http_header)
-        self.http_session.verify = self.http_verify_cert
-        self.http_session.cert = self.ssl_client_cert
+        self.http_session = utils.create_request_session_from_bot(self)
 
     def __initialize_cache(self):
         cache_host = getattr(self.parameters, 'redis_cache_host')
@@ -137,7 +135,9 @@ class RIPEExpertBot(Bot):
             else:
                 return json.loads(cached_value)
         else:
-            response = self.http_session.get(self.QUERY[type].format(resource), data="", timeout=self.http_timeout_sec)
+            response = self.http_session.get(self.QUERY[type].format(resource),
+                                             data="", timeout=self.http_timeout_sec)
+
             if response.status_code != 200:
                 if type == 'db_asn' and response.status_code == 404:
                     """ If no abuse contact could be found, a 404 is given. """

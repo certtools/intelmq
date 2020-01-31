@@ -6,11 +6,16 @@ Decoding and Encoding, Logging functionality (file and stream), and log
 parsing.
 base64 de-/encoding is not tested yet, as we fully rely on the module.
 """
+import contextlib
 import datetime
 import io
 import os
 import tempfile
 import unittest
+import requests
+import sys
+
+import termstyle
 
 import intelmq.lib.utils as utils
 
@@ -78,7 +83,7 @@ class TestUtils(unittest.TestCase):
             logger = utils.log(name, log_path=tempfile.tempdir,
                                stream=io.StringIO())
 
-            logger.info(LINES['spare'][0])
+            logger.info(termstyle.green(LINES['spare'][0]))
             logger.error(LINES['spare'][1])
             logger.critical(LINES['spare'][2])
             handle.seek(0)
@@ -88,8 +93,11 @@ class TestUtils(unittest.TestCase):
             for ind, line in enumerate(file_lines):
                 self.assertRegex(line.strip(), line_format[ind])
 
-    def test_stream_logger(self):
-        """Tests if a logger for a stream can be generated with log()."""
+    def test_stream_logger_given(self):
+        """
+        Tests if a logger for a stream can be generated with log()
+        if the stream is explicitly given.
+        """
 
         stream = io.StringIO()
         with tempfile.NamedTemporaryFile() as handle:
@@ -105,6 +113,21 @@ class TestUtils(unittest.TestCase):
 
             line_format = [line.format(name) for line in LINES['short']]
             self.assertSequenceEqual(line_format, stream_lines)
+
+    def test_stream_logger(self):
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        with contextlib.redirect_stdout(stdout):
+            with contextlib.redirect_stderr(stderr):
+                logger = utils.log('test-bot', log_path=None)
+                logger.info(LINES['spare'][0])
+                logger.error(LINES['spare'][1])
+                logger.critical(LINES['spare'][2])
+        line_format = [line.format('test-bot') for line in LINES['short']]
+        self.assertEqual(stdout.getvalue(), line_format[0] + '\n')
+        self.assertEqual(stderr.getvalue(),
+                         '\n'.join((termstyle.red(line_format[1]),
+                                    termstyle.red(line_format[2]))) + '\n')
 
     def test_parse_logline(self):
         """Tests if the parse_logline() function works as expected"""
@@ -191,6 +214,57 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(utils.version_smaller((1, 0, 0, 'beta', 3), (1, 0, 0, 'alpha', 0)))
         self.assertFalse(utils.version_smaller((1, 0, 0), (1, 0, 0, 'alpha', 99)))
         self.assertFalse(utils.version_smaller((1, 0, 0), (1, 0, 0, 'beta')))
+
+    def test_unzip_tar_gz(self):
+        """ Test the unzip function with a tar gz file. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/two_files.tar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True)
+        self.assertEqual(tuple(result), (b'bar text\n', b'foo text\n'))
+
+    def test_unzip_tar_gz_return_names(self):
+        """ Test the unzip function with a tar gz file and return_names. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/two_files.tar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True, return_names=True)
+        self.assertEqual(tuple(result), (('bar', b'bar text\n'),
+                                         ('foo', b'foo text\n')))
+
+    def test_unzip_gz(self):
+        """ Test the unzip function with a gz file. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/foobar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True)
+        self.assertEqual(result, (b'bar text\n', ))
+
+    def test_unzip_gz_name(self):
+        """ Test the unzip function with a gz file. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/foobar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True, return_names=True)
+        self.assertEqual(result, ((None, b'bar text\n'), ))
+
+    def test_unzip_zip(self):
+        """ Test the unzip function with a zip file. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/two_files.zip')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True)
+        self.assertEqual(tuple(result), (b'bar text\n', b'foo text\n'))
+
+    def test_unzip_zip_return_names(self):
+        """ Test the unzip function with a zip file and return_names. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/two_files.zip')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True, return_names=True)
+        self.assertEqual(tuple(result), (('bar', b'bar text\n'),
+                                         ('foo', b'foo text\n')))
+
+    def test_file_name_from_response(self):
+        """ test file_name_from_response """
+        response = requests.Response()
+        response.headers['Content-Disposition'] = 'attachment; filename=2019-09-09-drone_brute_force-austria-geo.csv'
+        self.assertEqual(utils.file_name_from_response(response),
+                         '2019-09-09-drone_brute_force-austria-geo.csv')
 
 
 if __name__ == '__main__':  # pragma: no cover

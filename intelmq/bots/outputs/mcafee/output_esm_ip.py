@@ -7,11 +7,12 @@ esm_ip: IP Address of ESM
 esm_user: username to connect to ESM
 esm_password: Password of esm_user
 esm_watchlist: Destination watchlist to update
-field: field from intelMQ message to extract (e.g. destination.ip)
+field: field from IntelMQ message to extract (e.g. destination.ip)
 
 """
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     from mfe_saw.esm import ESM
@@ -23,7 +24,7 @@ class ESMIPOutputBot(Bot):
 
     def init(self):
         if ESM is None:
-            raise ValueError("Could not import 'mfe_saw'. Please install it.")
+            raise MissingDependencyError("mfe_saw")
 
         self.esm = ESM()
         try:

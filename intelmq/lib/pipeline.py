@@ -2,7 +2,8 @@
 import time
 import warnings
 from itertools import chain
-from typing import Dict, Optional, Union
+from typing import Optional, Union
+import ssl
 
 import redis
 
@@ -27,11 +28,13 @@ class PipelineFactory(object):
     @staticmethod
     def create(parameters: object, logger: object,
                direction: Optional[str] = None,
-               queues: Optional[Union[str, list, dict]] = None):
+               queues: Optional[Union[str, list, dict]] = None,
+               bot=None):
         """
         parameters: Parameters object
         direction: "source" or "destination", optional, needed for queues
         queues: needs direction to be set, calls set_queues
+        bot: Bot instance
         """
         if direction not in [None, "source", "destination"]:
             raise exceptions.InvalidArgument("direction", got=direction,
@@ -46,7 +49,7 @@ class PipelineFactory(object):
                 broker = parameters.broker.title()
             else:
                 broker = "Redis"
-        pipe = getattr(intelmq.lib.pipeline, broker)(parameters, logger)
+        pipe = getattr(intelmq.lib.pipeline, broker)(parameters, logger, bot)
         if queues and not direction:
             raise ValueError("Parameter 'direction' must be given when using "
                              "the queues parameter.")
@@ -58,13 +61,16 @@ class PipelineFactory(object):
 
 class Pipeline(object):
     has_internal_queues = False
+    # If the class currently holds a message, restricts the actions
+    _has_message = False
 
-    def __init__(self, parameters, logger):
+    def __init__(self, parameters, logger, bot):
         self.parameters = parameters
         self.destination_queues = {}  # type: dict[str, list]
         self.internal_queue = None
         self.source_queue = None
         self.logger = logger
+        self.bot = bot
 
     def connect(self):
         raise NotImplementedError
@@ -72,7 +78,7 @@ class Pipeline(object):
     def disconnect(self):
         raise NotImplementedError
 
-    def set_queues(self, queues, queues_type):
+    def set_queues(self, queues: Optional[str], queues_type: str):
         """
         :param queues: For source queue, it's just string.
                     For destination queue, it can be one of the following:
@@ -107,10 +113,44 @@ class Pipeline(object):
         else:
             raise exceptions.InvalidArgument('queues_type', got=queues_type, expected=['source', 'destination'])
 
+    def send(self, message: str, path: str = "_default",
+             path_permissive: bool = False):
+        raise NotImplementedError
+
+    def receive(self) -> str:
+        if self._has_message:
+            raise exceptions.PipelineError("There's already a message, first "
+                                           "acknowledge the existing one.")
+
+        retval = self._receive()
+        self._has_message = True
+        return retval
+
+    def _receive(self) -> str:
+        raise NotImplementedError
+
+    def acknowledge(self):
+        if not self._has_message:
+            raise exceptions.PipelineError("No message to acknowledge.")
+        self._acknowledge()
+        self._has_message = False
+
+    def _acknowledge(self):
+        raise NotImplementedError
+
+    def clear_queue(self, queue):
+        raise NotImplementedError
+
     def nonempty_queues(self) -> set:
         raise NotImplementedError
 
-    def send(self, message, path="_default", path_permissive=False):
+    def reject_message(self):
+        if not self._has_message:
+            raise exceptions.PipelineError("No message to acknowledge.")
+        self._reject_message()
+        self._has_message = False
+
+    def _reject_message(self):
         raise NotImplementedError
 
 
@@ -138,6 +178,8 @@ class Redis(Pipeline):
         self.load_balance_iterator = 0
 
     def connect(self):
+        redis_version = tuple(int(x) for x in redis.__version__.split('.'))
+
         if self.host.startswith("/"):
             kwargs = {"unix_socket_path": self.host}
 
@@ -150,6 +192,9 @@ class Redis(Pipeline):
                 "port": int(self.port),
                 "socket_timeout": self.socket_timeout,
             }
+        if self.bot and self.bot.is_multithreaded and redis_version >= (3, 3):
+            # Should give a small performance increase, but is not thread-safe.
+            kwargs['single_connection_client'] = True
 
         self.pipe = redis.Redis(db=self.db, password=self.password, **kwargs)
 
@@ -160,7 +205,8 @@ class Redis(Pipeline):
         self.load_configurations(queues_type)
         super().set_queues(queues, queues_type)
 
-    def send(self, message, path="_default", path_permissive=False):
+    def send(self, message: str, path: str = "_default",
+             path_permissive: bool = False):
         if path not in self.destination_queues and path_permissive:
             return
 
@@ -188,7 +234,7 @@ class Redis(Pipeline):
                                       'Look at redis\'s logs.')
                 raise exceptions.PipelineError(exc)
 
-    def receive(self):
+    def _receive(self) -> str:
         if self.source_queue is None:
             raise exceptions.ConfigurationError('pipeline', 'No source queue given.')
         try:
@@ -206,13 +252,18 @@ class Redis(Pipeline):
         except Exception as exc:
             raise exceptions.PipelineError(exc)
 
-    def acknowledge(self):
+    def _acknowledge(self):
         try:
-            return self.pipe.rpop(self.internal_queue)
+            retval = self.pipe.rpop(self.internal_queue)
         except Exception as e:
             raise exceptions.PipelineError(e)
+        else:
+            if not retval:
+                raise exceptions.PipelineError("Could not pop message from internal queue"
+                                               "for acknowledgement. Return value was %r."
+                                               "" % retval)
 
-    def count_queued_messages(self, *queues):
+    def count_queued_messages(self, *queues) -> dict:
         queue_dict = {}
         for queue in queues:
             try:
@@ -225,9 +276,13 @@ class Redis(Pipeline):
         """Clears a queue by removing (deleting) the key,
         which is the same as an empty list in Redis"""
         try:
-            return self.pipe.delete(queue)
+            retval = self.pipe.delete(queue)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
+        else:
+            if retval not in (0, 1):
+                raise exceptions.PipelineError("Error on redis queue deletion: Return value"
+                                               " was not 0 or 1 but %r." % retval)
 
     def nonempty_queues(self) -> set:
         """ Returns a list of all currently non-empty queues. """
@@ -235,6 +290,11 @@ class Redis(Pipeline):
             self.set_queues(None, "source")
             self.connect()
         return {queue.decode() for queue in self.pipe.keys()}
+
+    def _reject_message(self):
+        """
+        Rejecting is a no-op as the message is in the internal queue anyway.
+        """
 
 # Algorithm
 # ---------
@@ -261,9 +321,6 @@ class Pythonlist(Pipeline):
     def disconnect(self):
         pass
 
-    def sleep(self, interval):
-        warnings.warn("'Pipeline.sleep' will be removed in version 2.0.", DeprecationWarning)
-
     def set_queues(self, queues, queues_type):
         super().set_queues(queues, queues_type)
         self.state[self.internal_queue] = []
@@ -271,7 +328,8 @@ class Pythonlist(Pipeline):
         for destination_queue in chain.from_iterable(self.destination_queues.values()):
             self.state[destination_queue] = []
 
-    def send(self, message, path="_default", path_permissive=False):
+    def send(self, message: str, path: str = "_default",
+             path_permissive: bool = False):
         """Sends a message to the destination queues"""
         if path not in self.destination_queues and path_permissive:
             return
@@ -282,7 +340,7 @@ class Pythonlist(Pipeline):
             else:
                 self.state[destination_queue] = [utils.encode(message)]
 
-    def receive(self):
+    def _receive(self) -> str:
         """
         Receives the last not yet acknowledged message.
 
@@ -300,11 +358,11 @@ class Pythonlist(Pipeline):
 
         return utils.decode(first_msg)
 
-    def acknowledge(self):
+    def _acknowledge(self):
         """Removes a message from the internal queue and returns it"""
-        return self.state.get(self.internal_queue, [None]).pop(0)
+        self.state.get(self.internal_queue, [None]).pop(0)
 
-    def count_queued_messages(self, *queues):
+    def count_queued_messages(self, *queues) -> dict:
         """Returns the amount of queued messages
            over all given queue names.
         """
@@ -320,12 +378,17 @@ class Pythonlist(Pipeline):
         """ Empties given queue. """
         self.state[queue] = []
 
+    def _reject_message(self):
+        """
+        No-op because of the internal queue
+        """
+
 
 class Amqp(Pipeline):
     queue_args = {'x-queue-mode': 'lazy'}
 
-    def __init__(self, parameters, logger):
-        super(Amqp, self).__init__(parameters, logger)
+    def __init__(self, parameters, logger, bot):
+        super(Amqp, self).__init__(parameters, logger, bot)
         if pika is None:
             raise ValueError("To use AMQP you must install the 'pika' library.")
         self.properties = pika.BasicProperties(delivery_mode=2)  # message persistence
@@ -351,10 +414,18 @@ class Amqp(Pipeline):
         self.virtual_host = getattr(self.parameters,
                                     "{}_pipeline_amqp_virtual_host".format(queues_type),
                                     '/')
+        self.ssl = getattr(self.parameters,
+                           "{}_pipeline_ssl".format(queues_type),
+                           False)
+        self.exchange = getattr(self.parameters,
+                                "{}_pipeline_amqp_exchange".format(queues_type),
+                                "")
         self.load_balance_iterator = 0
         self.kwargs = {}
         if self.username and self.password:
             self.kwargs['credentials'] = pika.PlainCredentials(self.username, self.password)
+        if self.ssl:
+            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.create_default_context(ssl.Purpose.CLIENT_AUTH))
         pika_version = tuple(int(x) for x in pika.__version__.split('.'))
         if pika_version < (0, 11):
             self.kwargs['heartbeat_interval'] = 10
@@ -366,15 +437,29 @@ class Amqp(Pipeline):
         else:
             self.publish_raises_nack = True
 
-    def connect(self, channelonly=False):
+        self.monitoring_url = getattr(self.parameters,
+                                      'intelmqctl_rabbitmq_monitoring_url',
+                                      'http://%s:15672/' % self.host)
+        if not self.monitoring_url.endswith('/'):
+            self.monitoring_url = "%s/" % self.monitoring_url
+
+    def connect(self):
+        self.channel = None
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
                                                                             port=int(self.port),
                                                                             socket_timeout=self.socket_timeout,
                                                                             virtual_host=self.virtual_host,
                                                                             **self.kwargs
                                                                             ))
+        self.setup_channel()
+
+    def setup_channel(self):
         self.channel = self.connection.channel()
         self.channel.confirm_delivery()
+
+        if self.exchange:
+            # Do not declare and use queues if an exchange is given
+            return
         if self.source_queue:
             self.channel.queue_declare(queue=self.source_queue, durable=True,
                                        arguments=self.queue_args)
@@ -382,6 +467,12 @@ class Amqp(Pipeline):
             for destination_queue in path:
                 self.channel.queue_declare(queue=destination_queue, durable=True,
                                            arguments=self.queue_args)
+
+    def check_connection(self):
+        if not self.connection or self.connection.is_closed:
+            self.connect()
+        if not self.channel or self.channel.is_closed:
+            self.setup_channel()
 
     def disconnect(self):
         try:
@@ -397,22 +488,32 @@ class Amqp(Pipeline):
         self.load_configurations(queues_type)
         super(Amqp, self).set_queues(queues, queues_type)
 
-    def _send(self, destination_queue, message):
+    def _send(self, destination_queue, message, reconnect=True):
+        self.check_connection()
+
         retval = False
         try:
-            retval = self.channel.basic_publish(exchange='',
+            retval = self.channel.basic_publish(exchange=self.exchange,
                                                 routing_key=destination_queue,
                                                 body=message,
                                                 properties=self.properties,
                                                 mandatory=True,
                                                 )
         except Exception as exc:  # UnroutableError, NackError in 1.0.0
-            raise exceptions.PipelineError(exc)
+            if reconnect and isinstance(exc, pika.exceptions.ConnectionClosed):
+                self.logger.debug('Error sending the message. '
+                                  'Will re-connect and re-send.',
+                                  exc_info=True)
+                self.connect()
+                self._send(destination_queue, message, reconnect=False)
+            else:
+                raise exceptions.PipelineError(exc)
         else:
             if not self.publish_raises_nack and not retval:
                 raise exceptions.PipelineError('Sent message was not confirmed.')
 
-    def send(self, message: str, path="_default", path_permissive=False) -> None:
+    def send(self, message: str, path: str = "_default",
+             path_permissive: bool = False):
         """
         In principle we could use AMQP's exchanges here but that architecture is incompatible
         to the format of our pipeline.conf file.
@@ -434,7 +535,7 @@ class Amqp(Pipeline):
         for destination_queue in queues:
             self._send(destination_queue, message)
 
-    def receive(self) -> str:
+    def _receive(self) -> str:
         if self.source_queue is None:
             raise exceptions.ConfigurationError('pipeline', 'No source queue given.')
         try:
@@ -445,14 +546,19 @@ class Amqp(Pipeline):
         except Exception as exc:
             raise exceptions.PipelineError(exc)
 
-    def acknowledge(self):
+    def _acknowledge(self):
         try:
             self.channel.basic_ack(delivery_tag=self.delivery_tag)
         except pika.exceptions.ConnectionClosed:
+            self.logger.debug('Error sending the message. '
+                              'Will re-connect and re-send.',
+                              exc_info=True)
             self.connect()
             self.channel.basic_ack(delivery_tag=self.delivery_tag)
         except Exception as e:
             raise exceptions.PipelineError(e)
+        else:
+            self.delivery_tag = None
 
     def _get_queues(self) -> dict:
         if self.username and self.password:
@@ -462,7 +568,7 @@ class Amqp(Pipeline):
         if requests is None:
             self.logger.error("Library 'requests' is needed to get queue status. Please install it.")
             return {}
-        response = requests.get('http://%s:15672/api/queues' % self.host, auth=auth,
+        response = requests.get(self.monitoring_url + 'api/queues', auth=auth,
                                 timeout=5)
         if response.status_code == 401:
             if response.json()['error'] == 'not_authorised':
@@ -494,3 +600,6 @@ class Amqp(Pipeline):
     def nonempty_queues(self) -> set:
         result = self._get_queues()
         return {name for name, count in result.items() if count}
+
+    def _reject_message(self):
+        self.channel.basic_nack(delivery_tag=self.delivery_tag, requeue=True)

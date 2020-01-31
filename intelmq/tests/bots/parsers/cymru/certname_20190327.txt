@@ -1,15 +1,29 @@
 #generated on 20190326
-#category|address|asn|timestamp|notes|asninfo
+#category|address|asn|timestamp|optional_information|asninfo
 
 bot|172.16.0.21|64496|2019-03-22 11:18:52|family: Conficker;|Example AS Name, AT
 bot|172.16.0.21|64496|2019-03-25 03:44:22|family: nivdort;dest_addr: 172.16.0.22; dest_port: 80;protocol: 6;|Example AS Name, AT
 bruteforce|172.16.0.21|64496|2019-01-10 22:25:58|ssh;|Example AS Name, AT
 controller|172.16.0.21|64496|2019-03-25 17:47:40|family: stealrat;protocol: 6;|Example AS Name, AT
-controller|172.16.0.21|64496|2019-03-25 05:01:47|family: http_post;hostname: www.pfeffer.at;|Example AS Name, AT
-darknet|172.16.0.21|64496|2019-03-25 17:24:06|darknet_port: 23, 2323;protocol: 6;|Example AS Name, AT
+controller|172.16.0.21|64496|2019-03-25 05:01:47|family: http_post;hostname: www.example.com;|Example AS Name, AT
+darknet|172.16.0.21|64496|2019-03-25 17:24:06|darknet_port: 23, 2323;protocol: 182;|Example AS Name, AT
 darknet|172.16.0.21|64496|2019-03-25 04:27:11|ports_scanned: 55756;protocol: 17;|Example AS Name, AT
 honeypot|172.16.0.21|64496|2019-03-25 14:08:53|honeypot_port: 22;protocol: 6;|Example AS Name, AT
 phishing|172.16.0.21|64496|2019-03-20 13:03:18|http://www.example.com/;|Example AS Name, AT
 proxy|172.16.0.21|64496|2019-03-25 16:00:00|proxy_type: http-34320;|Example AS Name, AT
 proxy|172.16.0.21|64496|2019-03-25 10:38:00|socks4-61039;|Example AS Name, AT
 openresolvers|172.16.0.21|64496|2019-03-25 06:29:38||Example AS Name, AT
+proxy|172.16.0.21|64496|2019-09-11 08:05:00|proxy_type: httppost;|Example AS Name, AT
+bot|172.16.0.21|64496|2019-09-11 16:39:57|srcport 61458 mwtype Conficker dstaddr 172.16.0.22|Example AS Name, AT
+bot|172.16.0.21|64496|2019-09-11 00:31:30|family: azorult;dest_addr: 172.16.0.22; dest_port: 80;port: 15390;protocol: 6;|Example AS Name, AT
+honeypot|172.16.0.21|64496|2019-09-11 11:07:58|destination_port_numbers: 445;port: 53488;protocol: 6;|Example AS Name, AT
+darknet|172.16.0.21|64496|2019-09-11 11:57:37|destination_port_numbers: 23;port: 23365;protocol: 6;|Example AS Name, AT
+darknet|172.16.0.21|64496|2019-09-11 00:49:45|destination_port_numbers: 3;port: 3;protocol: 1;|Example AS Name, AT
+proxy|172.16.0.21|64496|2019-09-12 07:01:00|proxy_type: socks4;|Example AS Name, AT
+scanner|172.16.0.21|64496|2019-09-17 02:58:48|port: 53912;protocol: 6;|Example AS Name, AT
+controller|172.16.0.21|64496|2019-09-22 05:39:38|family: http_post;hostname: sub.example.comport: 80;|Example AS Name, AT
+scanner|172.16.0.21|64496|2019-09-19 00:03:13|destination_port_numbers: 57518;port: 55133;protocol: 6;|Example AS Name, AT
+darknet|172.16.0.21|64496|2019-09-30 13:49:49|destination_port_numbers: 17875,24526,54449,9314,4903,1568,20749,30524,59316,60704 (total_count:19);port: 40434;protocol: 17;|Example AS Name, AT
+spam|172.16.0.21|64496|2019-10-02 23:00:17||Example AS Name, AT
+phishing|172.16.0.21|64496|2019-10-23 12:46:18||Example AS Name, AT
+darknet|172.16.0.21|64496|2020-01-10 09:17:17|destination_port_numbers: 0;protocol: 11;|Example AS Name, AT

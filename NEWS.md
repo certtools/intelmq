@@ -3,10 +3,11 @@ NEWS
 
 See the changelog for a full list of changes.
 
-2.1.0 Feature release (unreleased)
+2.2.0 Feature release (unreleased)
 ----------------------------------
 
 ### Requirements
+- IntelMQ no longer supports Python 3.4, Python `>=` 3.5 is required.
 
 ### Tools
 
@@ -19,21 +20,99 @@ See the changelog for a full list of changes.
 ### Postgres databases
 
 
-2.0.1 Bugfix release (unreleased)
+2.1.3 Bugfix release (unreleased)
 ---------------------------------
 
 ### Requirements
 
 ### Tools
-intelmqctl has a new function `upgrade-conf` to upgrade the configuration from previous installations.
 
 ### Harmonization
+The regular expression of the field `protocol.transport` has been updated to accommodate the value `nvp-ii`.
+`intelmqctl upgrade-config` handles the change to automatically upgrade your configuration.
 
 ### Configuration
 
 ### Libraries
 
 ### Postgres databases
+
+
+2.1.2 Bugfix release (2020-01-28)
+---------------------------------
+
+#### MaxMind GeoIP
+MaxMind requires a registration before being able to download the GeoLite2 database starting with 2019-12-30: https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/
+If the provided `update-geoip-data` script is used, the license key can now be set second parameter.
+
+### Libraries
+When using MISP integrations, make sure your currently installed PyMISP version supports the installed Python version. Any PyMISP version newer than 2.4.119.1 requires Python 3.6 or newer.
+
+
+2.1.1 Bugfix release (2019-11-11)
+---------------------------------
+
+### Tools
+`intelmqctl check` and `intelmqctl upgrade-config` checks/applies a generic harmonization upgrade, checking for it's completeness.
+
+### Harmonization
+In version 2.1.0 a new field `extra` has been added to *Reports*. You need to add this to the *report* section in your harmonization configuration, or run `intelmqctl upgrade-config`:
+```json
+        "extra": {
+            "description": "All anecdotal information of the report, which cannot be parsed into the data harmonization elements. E.g. subject of mails, etc. This is data is not automatically propagated to the events.",
+            "type": "JSONDict"
+        },
+```
+
+### Configuration
+#### Defaults
+For AMQP brokers, the port 15671 was used as default for connecting to the management interface. But RabbitMQ's default is 15672. This was corrected in this version. If you changed the port in RabbitMQ or IntelMQ (`intelmqctl_rabbitmq_monitoring_url`), the settings needs to be adapted.
+
+
+2.1.0 Feature release (2019-10-15)
+----------------------------------
+
+Run `intelmqctl upgrade-config` and `intelmqctl check` after the upgrade.
+
+### Configuration
+#### Shadowserver Parser
+
+The Shadowserver Parser is now able to detect the feed base on the report's field `extra.file_name`, added by collectors. Have a look at their documentation for more details.
+
+#### PostgreSQL Output
+The PostgreSQL Output Bot has been integrated into the new and generic SQL Output Bot
+* module name:
+  * old: `intelmq.bots.outputs.postgresql.output`
+  * new: `intelmq.bots.outputs.sql.output`
+* parameters:
+  * new: `engine` = `postgresql`
+IntelMQ versions 2.x will be compatible with previous configurations. `intelmqctl upgrade-config` migrates configurations.
+
+
+2.0.2 Bugfix release (2019-10-14)
+---------------------------------
+
+Run `intelmqctl upgrade-config` and `intelmqctl check` after the upgrade.
+
+### Configuration
+The deprecated parameter `feed` for collectors is again supported as the documentation as not properly updated. The support will be removed before version 2.2.
+
+#### RIPE expert
+In the upgrade function for version 1.1.0 (in effect in version 2.0.1) the addition of the parameter `query_ripe_stat_ip` was not correctly done and is maybe missing. A new upgrade function re-adds it with the value of `query_ripe_stat_ip`.
+
+#### Cymru CAP Feed Migration
+
+The Cymru CAP Feed is (being) migrated to a new URL with a different format and more data. Look at the feed's documentation for more information.
+
+#### Cymru Whois Expert, Modify Expert & Reverse DNS Expert
+These bots overwrite existing fields by default. A parameter `overwrite` has been added to make this optional, with the default value of `True` for backwards compatibility. If the parameter is not set, a warning is logged. The default value will change to `False` in version 3.0.0. The default for all new bots (in `BOTS`) is `False` already.
+
+
+2.0.1 Bugfix release (2019-08-23)
+---------------------------------
+
+### Tools
+intelmqctl has a new function `intelmqctl upgrade-config` to upgrade the configuration from previous installations. It is recommended to call this function after every upgrade.
 
 
 2.0.0 Major release (2019-05-22)

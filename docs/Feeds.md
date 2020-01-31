@@ -26,6 +26,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [DynDNS](#dyndns)
 - [Fraunhofer](#fraunhofer)
 - [HPHosts](#hphosts)
+- [Have I Been Pwned](#have-i-been-pwned)
 - [Malc0de](#malc0de)
 - [Malware Domain List](#malware-domain-list)
 - [Malware Domains](#malware-domains)
@@ -79,8 +80,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['time.source', 'source.ip', 'malware.name', 'status', 'extra.SBL', 'source.as_name', 'source.geolocation.cc']`
-*  * `ignore_values`: `['', '', '', '', 'Not listed', '', '']`
+*  * `columns`: `time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc`
+*  * `ignore_values`: `,,,,Not listed,,`
 *  * `skip_table_head`: `True`
 *  * `type`: `c2server`
 
@@ -665,6 +666,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Status:** on
 * **Revision:** 15-06-2018
 * **Description:** HTTP Websocket Stream from certstream.calidog.io providing data from Certificate Transparency Logs.
+* **Additional Information:** Be aware that this feed provides a lot of data and may overload your system quickly.
 
 ### Collector
 
@@ -979,6 +981,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Status:** on
 * **Revision:** 01-07-2018
 * **Description:** The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs. You may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
+* **Additional Information:** The source feed provides a stream of newline separated JSON objects. Each line represents a single event observed by DDoS C&C trackers, e.g. attack commands. The feed can be retrieved with either the generic HTTP Stream Collector Bot for a streaming live feed or with the generic HTTP Collector Bot for a polled feed.
 
 ### Collector
 
@@ -1004,6 +1007,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Status:** on
 * **Revision:** 01-07-2018
 * **Description:** The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs. You may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
+* **Additional Information:** The source feed provides a stream of newline separated JSON objects. Each line represents a single event observed by DDoS C&C trackers, e.g. attack commands. The feed can be retrieved with either the generic HTTP Stream Collector Bot for a streaming live feed or with the generic HTTP Collector Bot for a polled feed.
 
 ### Collector
 
@@ -1068,6 +1072,50 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.parsers.hphosts.parser
 * **Configuration Parameters:**
 *  * `error_log_message`: `false`
+
+
+# Have I Been Pwned
+
+## Enterprise Callback
+
+* **Status:** on
+* **Revision:** 11-09-2019
+* **Documentation:** https://haveibeenpwned.com/EnterpriseSubscriber/
+* **Description:** With the Enterprise Subscription of 'Have I Been Pwned' you are able to provide a callback URL and any new leak data is submitted to it. It is recommended to put a webserver with Authorization check, TLS etc. in front of the API collector.
+* **Additional Information:** "A minimal nginx configuration could look like:
+```
+server {
+    listen 443 ssl http2;
+    server_name [your host name];
+    client_max_body_size 50M;
+    
+    ssl_certificate [path to your key];
+    ssl_certificate_key [path to your certificate];
+    
+    location /[your private url] {
+         if ($http_authorization != '[your private password]') {
+             return 403;
+         }
+         proxy_pass http://localhost:5001/intelmq/push;
+         proxy_read_timeout 30;
+         proxy_connect_timeout 30;
+     }
+}
+```
+"
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.api.collector_api
+* **Configuration Parameters:**
+*  * `name`: `Enterprise Callback`
+*  * `port`: `5001`
+*  * `provider`: `Have I Been Pwned`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.hibp.parser_callback
+* **Configuration Parameters:**
 
 
 # Malc0de
@@ -1324,6 +1372,27 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
+## Hajime Scanner
+
+* **Status:** on
+* **Revision:** 01-08-2019
+* **Description:** This feed lists IP address for know Hajime bots network. These IPs data are obtained by joining the DHT network and interacting with the Hajime node
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://data.netlab.360.com/feeds/hajime-scanner/bot.list`
+*  * `name`: `Hajime Scanner`
+*  * `provider`: `Netlab 360`
+*  * `rate_limit`: `3600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.netlab_360.parser
+* **Configuration Parameters:**
+
+
 ## Magnitude EK
 
 * **Status:** on
@@ -1553,11 +1622,12 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 # ShadowServer
 
-## Custom
+## Via IMAP
 
 * **Status:** on
 * **Revision:** 20-01-2018
-* **Description:** Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports). The reports can be retrieved from the URL in the mail or from the attachment.
+* **Description:** Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
+* **Additional Information:** The configuration retrieves the data from a e-mails via IMAP from the attachments.
 
 ### Collector
 
@@ -1570,10 +1640,47 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `mail_password`: `__PASSWORD__`
 *  * `mail_ssl`: `True`
 *  * `mail_user`: `__USERNAME__`
-*  * `name`: `Custom`
+*  * `name`: `Via IMAP`
 *  * `provider`: `ShadowServer`
 *  * `rate_limit`: `86400`
 *  * `subject_regex`: `__REGEX__`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.shadowserver.parser
+* **Configuration Parameters:**
+
+
+## Via Request Tracker
+
+* **Status:** on
+* **Revision:** 20-01-2018
+* **Description:** Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
+* **Additional Information:** The configuration retrieves the data from a RT/RTIR ticketing instance via the attachment or an download.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.rt.collector_rt
+* **Configuration Parameters:**
+*  * `attachment_regex`: `\\.csv\\.zip$`
+*  * `extract_attachment`: `True`
+*  * `extract_download`: `False`
+*  * `http_password`: `{{ your HTTP Authentication password or null }}`
+*  * `http_username`: `{{ your HTTP Authentication username or null }}`
+*  * `password`: `__PASSWORD__`
+*  * `provider`: `ShadowServer`
+*  * `rate_limit`: `3600`
+*  * `search_not_older_than`: `{{ relative time or null }}`
+*  * `search_owner`: `nobody`
+*  * `search_queue`: `Incident Reports`
+*  * `search_requestor`: `autoreports@shadowserver.org`
+*  * `search_status`: `new`
+*  * `search_subject_like`: `\[__COUNTRY__\] Shadowserver __COUNTRY__`
+*  * `set_status`: `open`
+*  * `take_ticket`: `True`
+*  * `uri`: `http://localhost/rt/REST/1.0`
+*  * `url_regex`: `https://dl.shadowserver.org/[a-zA-Z0-9?_-]*`
+*  * `user`: `__USERNAME__`
 
 ### Parser
 
@@ -1764,13 +1871,18 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Status:** on
 * **Revision:** 20-01-2018
 * **Description:** Team Cymru provides daily lists of compromised or abused devices for the ASNs and/or netblocks with a CSIRT's jurisdiction. This includes such information as bot infected hosts, command and control systems, open resolvers, malware urls, phishing urls, and brute force attacks
+* **Additional Information:** "Two feeds types are offered:
+ * The new https://www.cymru.com/$certname/$certname_{time[%Y%m%d]}.txt
+ * and the old https://www.cymru.com/$certname/infected_{time[%Y%m%d]}.txt
+ Both formats are supported by the parser and the new one is recommended.
+ As of 2019-09-12 the old format will be retired soon."
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_password`: `{{your password}}`
-*  * `http_url`: `https://www.cymru.com/{{your organization name}}/infected_{time[%Y%m%d]}.txt`
+*  * `http_url`: `https://www.cymru.com/$certname/$certname_{time[%Y%m%d]}.txt`
 *  * `http_url_formatting`: `True`
 *  * `http_username`: `{{your login}}`
 *  * `name`: `CAP`

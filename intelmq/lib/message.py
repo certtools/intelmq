@@ -9,7 +9,7 @@ import json
 import re
 import warnings
 from collections import defaultdict
-from typing import Any, Dict, Optional, Sequence, Union
+from typing import Any, Optional, Sequence, Union
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
@@ -468,11 +468,12 @@ class Message(dict):
 
     def to_json(self, hierarchical=False, with_type=False, jsondict_as_string=False):
         json_dict = self.to_dict(hierarchical=hierarchical, with_type=with_type)
-        return json.dumps(json_dict, ensure_ascii=False)
+        return json.dumps(json_dict, ensure_ascii=False, sort_keys=True)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: dict) -> bool:
         """
-        Necessary as we have an additional member harmonization_config and types.
+        Wrapper is necessary as we have additional members
+        harmonization_config and types.
         The additional checks are only performed for subclasses of Message.
 
         Comparison with other types e.g. dicts does not check the harmonization_config.
@@ -487,7 +488,7 @@ class Message(dict):
             return True
         return False
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: dict) -> bool:
         return not self.__eq__(other)
 
     def set_default_value(self, value: Any = None):
@@ -497,7 +498,7 @@ class Message(dict):
         self._default_value_set = True
         self.default_value = value
 
-    def __contains__(self, item) -> bool:
+    def __contains__(self, item: str) -> bool:
         if item == 'extra':
             return 'extra' in self.to_dict(hierarchical=True)
         return super().__contains__(item)

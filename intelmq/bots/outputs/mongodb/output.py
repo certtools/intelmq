@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-pymongo library automatically tries to reconnect if connection has been lost
+pymongo library automatically tries to reconnect if connection has been lost.
 """
 
 import dateutil.parser
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import pymongo
@@ -14,28 +15,42 @@ except ImportError:
 
 
 class MongoDBOutputBot(Bot):
+    client = None
 
     def init(self):
         if pymongo is None:
-            raise ValueError('Could not import pymongo. Please install it.')
+            raise MissingDependencyError("pymongo")
 
         self.pymongo_3 = pymongo.version_tuple >= (3, )
+        self.pymongo_35 = pymongo.version_tuple >= (3, 5)
 
         self.replacement_char = getattr(self.parameters, 'replacement_char', '_')
         if self.replacement_char == '.':
             raise ValueError('replacement_char should be different than .')
+
+        self.username = getattr(self.parameters, "db_user", None)
+        self.password = getattr(self.parameters, "db_pass", None)
+        if not self.password:  # checking for username is sufficient then
+            self.username = None
+
         self.connect()
 
     def connect(self):
         self.logger.debug('Connecting to MongoDB server.')
         try:
-            self.client = pymongo.MongoClient(self.parameters.host,
-                                              int(self.parameters.port))
+            if self.pymongo_35 and self.username:
+                self.client = pymongo.MongoClient(self.parameters.host,
+                                                  int(self.parameters.port),
+                                                  username=self.username,
+                                                  password=self.password)
+            else:
+                self.client = pymongo.MongoClient(self.parameters.host,
+                                                  int(self.parameters.port))
         except pymongo.errors.ConnectionFailure:
             raise ValueError('Connection to MongoDB server failed.')
         else:
             db = self.client[self.parameters.database]
-            if hasattr(self.parameters, 'db_user') and hasattr(self.parameters, 'db_pass'):
+            if self.username and not self.pymongo_35:
                 self.logger.debug('Trying to authenticate to database %s.',
                                   self.parameters.database)
                 try:
@@ -79,7 +94,8 @@ class MongoDBOutputBot(Bot):
             self.acknowledge_message()
 
     def shutdown(self):
-        self.client.close()
+        if self.client:
+            self.client.close()
 
 
 BOT = MongoDBOutputBot

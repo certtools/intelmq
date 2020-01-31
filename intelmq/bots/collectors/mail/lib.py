@@ -4,6 +4,7 @@ import re
 import ssl
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import imbox
@@ -15,7 +16,12 @@ class MailCollectorBot(CollectorBot):
 
     def init(self):
         if imbox is None:
-            raise ValueError('Could not import imbox. Please install it.')
+            raise MissingDependencyError("imbox")
+
+        if getattr(self.parameters, 'attach_unzip', None) and not self.extract_files:
+            self.parameters.extract_files = True
+            self.logger.warning("The parameter 'attach_unzip' is deprecated and will "
+                                "be removed in version 4.0. Use 'extract_files' instead.")
 
     def connect_mailbox(self):
         self.logger.debug("Connecting to %s.", self.parameters.mail_host)

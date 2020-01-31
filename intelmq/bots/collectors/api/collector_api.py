@@ -5,6 +5,7 @@ API Collector bot
 from threading import Thread
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import tornado.web
@@ -25,17 +26,18 @@ else:
 
 class APICollectorBot(CollectorBot):
     collector_empty_process = True
+    is_multithreadable = False
 
     def init(self):
         if IOLoop is None:
-            raise ValueError("Could not import 'tornado'. Please install it.")
+            raise MissingDependencyError("tornado")
 
         app = Application(self.request_handler, [
             ("/intelmq/push", MainHandler),
         ])
 
         self.port = getattr(self.parameters, 'port', 5000)
-        app.listen(self.port)
+        self.server = app.listen(self.port)
         self.eventLoopThread = Thread(target=IOLoop.current().start)
         self.eventLoopThread.daemon = True
         self.eventLoopThread.start()
@@ -49,7 +51,11 @@ class APICollectorBot(CollectorBot):
         pass
 
     def shutdown(self):
-        IOLoop.current().stop()
+        if self.server:
+            # Closes the server and the socket, prevents address already in use
+            self.server.stop()
+        if IOLoop.current():
+            IOLoop.current().stop()
 
 
 BOT = APICollectorBot

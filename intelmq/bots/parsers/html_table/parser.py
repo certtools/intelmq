@@ -17,12 +17,11 @@ time_format: string
 type: string
 """
 
-from dateutil.parser import parse
-
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import DateTime
+from intelmq.lib.exceptions import MissingDependencyError
 
 
 try:
@@ -35,7 +34,7 @@ class HTMLTableParserBot(Bot):
 
     def init(self):
         if bs is None:
-            raise ValueError("Could not import 'beautifulsoup4'. Please install it.")
+            raise MissingDependencyError("beautifulsoup4")
 
         self.columns = self.parameters.columns
         # convert columns to an array

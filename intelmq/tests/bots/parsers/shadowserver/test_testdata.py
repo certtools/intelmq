@@ -18,13 +18,13 @@ for filename in os.listdir(os.path.join(os.path.dirname(__file__), 'testdata')):
     REPORTS[shortname] = {"raw": utils.base64_encode(EXAMPLE_FILE),
                           "__type": "Report",
                           "time.observation": "2015-01-01T00:00:00+00:00",
+                          "extra.file_name": "2019-01-01-{}-test-test.csv".format(shortname),
                           }
 
 
 def generate_feed_function(feedname):
     def test_feed(self):
         """ Test if no errors happen for feed %s. """ % feedname
-        self.sysconfig = {'feedname': feedname}
         self.input_message = REPORTS[feedname]
         self.run_bot()
     return test_feed
@@ -38,7 +38,6 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = ShadowserverParserBot
-        cls.sysconfig = {'feedname': 'Accessible-CWMP'}
 
 
 for key in REPORTS:

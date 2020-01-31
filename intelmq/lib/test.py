@@ -13,6 +13,7 @@ import os
 import re
 import unittest
 import unittest.mock as mock
+import sys
 from itertools import chain
 
 import pkg_resources
@@ -226,9 +227,6 @@ class BotTestCase(object):
         parameters = Parameters()
         setattr(parameters, 'source_queue', src_name)
         setattr(parameters, 'destination_queues', destination_queues)
-        self.pipe = pipeline.Pythonlist(parameters, logger=logger)
-        self.pipe.set_queues(parameters.source_queue, "source")
-        self.pipe.set_queues(parameters.destination_queues, "destination")
 
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
@@ -236,8 +234,12 @@ class BotTestCase(object):
                 self.bot = self.bot_reference(self.bot_id)
         self.bot._Bot__stats_cache = None
 
+        self.pipe = pipeline.Pythonlist(parameters, logger=logger, bot=self.bot)
+        self.pipe.set_queues(parameters.source_queue, "source")
+        self.pipe.set_queues(parameters.destination_queues, "destination")
+
         if self.input_message is not None:
-            if type(self.input_message) is not list:
+            if not isinstance(self.input_message, (list, tuple)):
                 self.input_message = [self.input_message]
             self.input_queue = []
             for msg in self.input_message:
@@ -253,15 +255,16 @@ class BotTestCase(object):
                 self.input_queue = [self.default_input_message]
 
     def run_bot(self, iterations: int = 1, error_on_pipeline: bool = False,
-                prepare=True):
+                prepare=True, parameters={}):
         """
         Call this method for actually doing a test run for the specified bot.
 
         Parameters:
             iterations: Bot instance will be run the given times, defaults to 1.
+            parameters: passed to prepare_bot
         """
         if prepare:
-            self.prepare_bot()
+            self.prepare_bot(parameters=parameters)
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
@@ -269,6 +272,7 @@ class BotTestCase(object):
                     self.bot.start(error_on_pipeline=error_on_pipeline,
                                    source_pipeline=self.pipe,
                                    destination_pipeline=self.pipe)
+                self.bot.stop(exitcode=0)
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
 
@@ -353,7 +357,6 @@ class BotTestCase(object):
         """
         Test if Bot has a valid name.
         Must be CamelCase and end with CollectorBot etc.
-        Test class name must be Test{botclassname}
         """
         counter = 0
         for type_name, type_match in self.bot_types.items():
@@ -365,9 +368,6 @@ class BotTestCase(object):
         if counter != len(self.bot_types) - 1:
             self.fail("Bot name {!r} does not match one of {!r}"
                       "".format(self.bot_name, list(self.bot_types.values())))  # pragma: no cover
-
-        self.assertEqual('Test{}'.format(self.bot_name),
-                         self.__class__.__name__.split('_')[0])
 
     def assertAnyLoglineEqual(self, message: str, levelname: str = "ERROR"):
         """
@@ -400,6 +400,8 @@ class BotTestCase(object):
             message: Message text which is compared
             levelname: Log level of logline which is asserted
         """
+        if sys.version_info >= (3, 7):
+            return True
 
         self.assertIsNotNone(self.loglines)
         logline = self.loglines[line_no]
@@ -441,6 +443,8 @@ class BotTestCase(object):
             pattern: Message text which is compared, regular expression.
             levelname: Log level of the logline which is asserted, upper case.
         """
+        if sys.version_info >= (3, 7):
+            return True
 
         self.assertIsNotNone(self.loglines)
         for logline in self.loglines:
