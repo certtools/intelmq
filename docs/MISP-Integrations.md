@@ -8,7 +8,8 @@ Look at the Bots' documentation for more information.
 
 ## Coming soon: MISP Expert
 
-The MISP Expert will MISP by API for attributes/events matching data of the event.
+The MISP Expert will search MISP by API
+for attributes/events matching data of the event.
 
 Look at the Bots' documentation for more information.
 

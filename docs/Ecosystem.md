@@ -22,6 +22,8 @@ This is not a software itself but listed here because the term it is often menti
 
 The EventDB is a (usually PostgreSQL) database with data from intelmq.
 
+For some related scripts see the [contrib/eventdb](../contrib/eventdb) directory and the [eventdb-stats](https://github.com/wagner-certat/eventdb-stats) repository for simple statistics generation.
+
 ## intelmq-webinput-csv
 
 A web-based interface to inject CSV data into IntelMQ with on-line validation and live feedback.
@@ -55,3 +57,9 @@ https://github.com/certat/do-portal/
 A Grafana-based statistics portal for the EventDB. Integrated in do-portal.
 
 https://github.com/certtools/stats-portal/
+
+## Malware Name Mapping
+
+A mapping for malware names of different feeds with different namings to a common family name.
+
+https://github.com/certtools/malware_name_mapping

@@ -309,7 +309,8 @@ class Bot(object):
 
             finally:
                 if getattr(self.parameters, 'testing', False):
-                    self.stop(exitcode=0)
+                    self.logger.debug('Testing environment detected, returning now.')
+                    return
                     break
 
                 do_rate_limit = False

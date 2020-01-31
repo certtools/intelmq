@@ -106,18 +106,10 @@ pip3 install -e .
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 
-mkdir /opt/intelmq
-mkdir -p /opt/intelmq/var/lib/bots/file-output/
-mkdir -p /opt/intelmq/var/log/
-
-cp -R /opt/dev_intelmq/intelmq/etc /opt/intelmq/
-cp -R /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/
-
-chmod -R 0770 /opt/intelmq
-chown -R intelmq.intelmq /opt/intelmq
+intelmqsetup
 ```
 
-**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any configuration file, keep using `/opt/intelmq` and then, before commit, change the configurations files on `/opt/dev_intelmq/intelmq/etc/` with your changes on `/opt/intelmq/etc/`.
+**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any shipped configuration file, you need to apply the changes in your repository `/opt/dev_intelmq/intelmq/etc/`.
 
 
 ## How to develop
@@ -456,13 +448,10 @@ You will get all logging outputs directly on stderr as well as in the log file.
 ## Template
 Please adjust the doc strings accordingly and remove the in-line comments (`#`).
 ```python
-# -*- coding: utf-8 -*-
-"""
-ExampleParserBot parses data from example.com.
+"""Parse data from example.com, be a nice ExampleParserBot.
 
 Document possible necessary configurations.
 """
-from __future__ import unicode_literals
 import sys
 
 # imports for additional libraries and intelmq
@@ -614,8 +603,7 @@ You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e
 class MyParserBot(ParserBot):
 
     def parse(self, report):
-        """
-        A generator yielding the single elements of the data.
+        """A generator yielding the single elements of the data.
 
         Comments, headers etc. can be processed here. Data needed by
         `self.parse_line` can be saved in `self.tempdata` (list).
@@ -628,8 +616,7 @@ class MyParserBot(ParserBot):
             yield line.strip()
 
     def parse_line(self, line, report):
-        """
-        A generator which can yield one or more messages contained in line.
+        """A generator which can yield one or more messages contained in line.
 
         Report has the full message, thus you can access some metadata.
         Override for your use.
@@ -659,8 +646,7 @@ class MyParserBot(ParserBot):
         self.acknowledge_message()
 
     def recover_line(self, line):
-        """
-        Reverse of parse for single lines.
+        """Reverse of parse for single lines.
 
         Recovers a fully functional report with only the problematic line.
         """
@@ -685,9 +671,6 @@ Ideally an example contains not only the ideal case which should succeed, but al
 Most existing bots are only tested with one message. For newly written test it is appreciable to have tests including more then one message, e.g. a parser fed with an report consisting of multiple events.
 
 ```python
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import unittest
 
 import intelmq.lib.test as test
@@ -695,9 +678,7 @@ from intelmq.bots.parsers.exampleparser.parser import ExampleParserBot  # adjust
 
 
 class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test class name
-    """
-    A TestCase for ExampleParserBot.
-    """
+    """A TestCase for ExampleParserBot."""
 
     @classmethod
     def set_bot(cls):
@@ -706,13 +687,13 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
 
     # This is an example how to test the log output
     def test_log_test_line(self):
-        """ Test if bot does log example message. """
+        """Test if bot does log example message."""
         self.run_bot()
         self.assertRegexpMatches(self.loglines_buffer,
                                  "INFO - Lorem ipsum dolor sit amet")
 
     def test_event(self):
-        """ Test if correct Event has been produced. """
+        """Test if correct Event has been produced."""
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_REPORT)
 
