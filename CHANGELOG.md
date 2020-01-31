@@ -20,6 +20,7 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parser.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`).
 
 #### Experts
 
