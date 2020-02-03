@@ -33,7 +33,7 @@ CHANGELOG
 ### Tests
 
 ### Tools
-- `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1499).
+- `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
 
 ### Contrib
 
