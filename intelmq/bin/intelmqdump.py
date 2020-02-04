@@ -389,9 +389,9 @@ def main():
                                                   content=json.loads(content[meta[entry][0]]['message']),
                                                   new=True,
                                                   backup=False)
-                        proc = subprocess.call(['sensible-editor', filename])
-                        if proc != 0:
-                            print(red('Calling editor failed.'))
+                        proc = subprocess.run(['sensible-editor', filename])
+                        if proc.returncode != 0:
+                            print(red('Calling editor failed with exitcode %r.' % proc.returncode))
                         else:
                             tmphandle.seek(0)
                             content[meta[entry][0]]['message'] = tmphandle.read()
