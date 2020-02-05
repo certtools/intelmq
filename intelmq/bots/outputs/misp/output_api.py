@@ -13,10 +13,14 @@ Parameters:
   - misp_tag_for_bot: str used to mark MISP events
   - significant_fields: list of intelmq field names
 
-The significant field values will be searched for in MISP attribute values
-and if all found in the same MISP event, no new one will be created.
-If a new one will be created those will be the attributes where
-correlation is enabled.
+The significant field values will be searched for in all MISP attribute values
+and if all values are found in the same MISP event, no new MISP event
+will be created.
+
+If a new MISP event is inserted the significant_fields will be the attributes
+where correlation is enabled. (The reason is a technical limitation of the
+search functionality exposed by the MISP/pymisp 2.4.120 API.)
+
 Example::
 
     "significant_fields": ["source.fqdn", "source.reverse_dns"]
