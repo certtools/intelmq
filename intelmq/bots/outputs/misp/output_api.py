@@ -8,9 +8,10 @@ Author(s):
   * Bernhard Reiter <bernhard@intevation.de>
 
 Parameters:
-  - misp_url: URL of the MISP server
+  - add_feed_provider_as_tag: bool (default True)
   - misp_key: API key for accessing MISP
   - misp_tag_for_bot: str used to mark MISP events
+  - misp_url: URL of the MISP server
   - significant_fields: list of intelmq field names
 
 The significant field values will be searched for in all MISP attribute values
@@ -84,8 +85,14 @@ class MISPAPIOutputBot(OutputBot):
 
         new_misp_event.info = 'Created by IntelMQ MISP API Output Bot.'
         new_misp_event.add_tag(self.parameters.misp_tag_for_bot)
+        if (self.parameters.add_feed_provider_as_tag and
+                'feed.provider' in intelmq_event):
+            new_tag = 'IntelMQ:feed.provider="{}"'.format(
+                intelmq_event['feed.provider'])
+            new_misp_event.add_tag(new_tag)
 
         obj = new_misp_event.add_object(name='intelmq_event')
+
         for object_relation, value in intelmq_event.items():
             disable_correlation = True
 
@@ -105,8 +112,13 @@ class MISPAPIOutputBot(OutputBot):
 
     @staticmethod
     def check(parameters):
-        required_parameters = ['misp_url', 'misp_key',
-                               'misp_tag_for_bot', 'significant_fields']
+        required_parameters = [
+            'add_feed_provider_as_tag',
+            'misp_key',
+            'misp_tag_for_bot',
+            'misp_url',
+            'significant_fields'
+            ]
         missing_parameters = []
         for para in required_parameters:
             if para not in parameters:
