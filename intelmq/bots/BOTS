@@ -1052,8 +1052,11 @@
             "module": "intelmq.bots.outputs.misp.output_api",
             "parameters": {
                 "add_feed_provider_as_tag": true,
+                "misp_additional_correlation_fields": [],
+                "misp_additional_tags": [],
                 "misp_key": "<insert MISP Authkey>",
                 "misp_tag_for_bot": "<insert MISP tag to mark inserted events>",
+                "misp_to_ids_fields": [],
                 "misp_url": "<insert url of MISP server (with trailing '/')>",
                 "significant_fields": "<insert list of significant fields>"
             }

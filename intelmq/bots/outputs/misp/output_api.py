@@ -8,9 +8,15 @@ Author(s):
   * Bernhard Reiter <bernhard@intevation.de>
 
 Parameters:
-  - add_feed_provider_as_tag: bool (default True)
+  - add_feed_provider_as_tag: bool (use true when in doubt)
+  - misp_additional_correlation_fields: list of fields for which
+        the correlation flags will be enabled (in addition to those which are
+        in significant_fields)
+  - misp_additional_tags: list of tags to set not be searched for
+        when looking for duplicates
   - misp_key: API key for accessing MISP
   - misp_tag_for_bot: str used to mark MISP events
+  - misp_to_ids_fields: list of fields for which the to_ids flags will be set
   - misp_url: URL of the MISP server
   - significant_fields: list of intelmq field names
 
@@ -22,9 +28,13 @@ If a new MISP event is inserted the significant_fields will be the attributes
 where correlation is enabled. (The reason is a technical limitation of the
 search functionality exposed by the MISP/pymisp 2.4.120 API.)
 
-Example::
+Example (of some parameters in JSON)::
 
-    "significant_fields": ["source.fqdn", "source.reverse_dns"]
+    "add_feed_provider_as_tag": true,
+    "misp_additional_correlation_fields": ["source.asn"],
+    "misp_additional_tags": ["OSINT", "osint:certainty==\"90\""],
+    "misp_to_ids_fields": ["source.fqdn", "source.reverse_dns"],
+    "significant_fields": ["source.fqdn", "source.reverse_dns"],
 
 
 Tested with pymisp v2.4.120 (which needs python v>=3.6).
@@ -84,24 +94,37 @@ class MISPAPIOutputBot(OutputBot):
         new_misp_event = pymisp.MISPEvent()
 
         new_misp_event.info = 'Created by IntelMQ MISP API Output Bot.'
+
+        # set the tags
         new_misp_event.add_tag(self.parameters.misp_tag_for_bot)
+
         if (self.parameters.add_feed_provider_as_tag and
                 'feed.provider' in intelmq_event):
             new_tag = 'IntelMQ:feed.provider="{}"'.format(
                 intelmq_event['feed.provider'])
             new_misp_event.add_tag(new_tag)
 
+        for new_tag in self.parameters.misp_additional_tags:
+            new_misp_event.add_tag(new_tag)
+
+        # build the MISPObject and its attributes
         obj = new_misp_event.add_object(name='intelmq_event')
 
-        for object_relation, value in intelmq_event.items():
-            disable_correlation = True
+        fields_to_correlate = (
+            self.parameters.significant_fields +
+            self.parameters.misp_additional_correlation_fields
+        )
 
-            if object_relation in self.parameters.significant_fields:
-                disable_correlation = False
+        for object_relation, value in intelmq_event.items():
             try:
-                obj.add_attribute(object_relation,
-                                  value=value,
-                                  disable_correlation=disable_correlation)
+                obj.add_attribute(
+                    object_relation,
+                    value=value,
+                    disable_correlation=(
+                        object_relation not in fields_to_correlate),
+                    to_ids=(
+                        object_relation in self.parameters.misp_to_ids_fields)
+                )
             except pymisp.NewAttributeError:
                 msg = 'Ignoring "{}":"{}" as not in object template.'
                 self.logger.debug(msg.format(object_relation, value))
@@ -114,8 +137,11 @@ class MISPAPIOutputBot(OutputBot):
     def check(parameters):
         required_parameters = [
             'add_feed_provider_as_tag',
+            'misp_additional_correlation_fields',
+            'misp_additional_tags',
             'misp_key',
             'misp_tag_for_bot',
+            'misp_to_ids_fields',
             'misp_url',
             'significant_fields'
             ]
