@@ -74,31 +74,34 @@ class MISPAPIOutputBot(OutputBot):
             msg = 'Found MISP events matching {}: {} not inserting.'
             self.logger.info(msg.format(vquery, [event.id for event in r]))
         else:
-            # insert a new one
-            new_misp_event = pymisp.MISPEvent()
-
-            new_misp_event.info = 'Created by IntelMQ MISP API Output Bot.'
-            new_misp_event.add_tag(self.parameters.misp_tag_for_bot)
-
-            obj = new_misp_event.add_object(name='intelmq_event')
-            for object_relation, value in intelmq_event.items():
-                disable_correlation = True
-
-                if object_relation in self.parameters.significant_fields:
-                    disable_correlation = False
-                try:
-                    obj.add_attribute(object_relation,
-                                      value=value,
-                                      disable_correlation=disable_correlation)
-                except pymisp.NewAttributeError:
-                    msg = 'Ignoring "{}":"{}" as not in object template.'
-                    self.logger.debug(msg.format(object_relation, value))
-
-            misp_event = self.misp.add_event(new_misp_event)
-            self.logger.info(
-                'Inserted new MISP event with id: {}'.format(misp_event.id))
+            self._insert_misp_event(intelmq_event)
 
         self.acknowledge_message()
+
+    def _insert_misp_event(self, intelmq_event):
+        """Insert a new MISPEvent."""
+        new_misp_event = pymisp.MISPEvent()
+
+        new_misp_event.info = 'Created by IntelMQ MISP API Output Bot.'
+        new_misp_event.add_tag(self.parameters.misp_tag_for_bot)
+
+        obj = new_misp_event.add_object(name='intelmq_event')
+        for object_relation, value in intelmq_event.items():
+            disable_correlation = True
+
+            if object_relation in self.parameters.significant_fields:
+                disable_correlation = False
+            try:
+                obj.add_attribute(object_relation,
+                                  value=value,
+                                  disable_correlation=disable_correlation)
+            except pymisp.NewAttributeError:
+                msg = 'Ignoring "{}":"{}" as not in object template.'
+                self.logger.debug(msg.format(object_relation, value))
+
+        misp_event = self.misp.add_event(new_misp_event)
+        self.logger.info(
+            'Inserted new MISP event with id: {}'.format(misp_event.id))
 
     @staticmethod
     def check(parameters):
