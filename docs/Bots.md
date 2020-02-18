@@ -2638,19 +2638,19 @@ Configure the destination directory of this feed as feed in MISP, either as loca
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* `add_feed_provider_as_tag`: bool (use true when in doubt)
+* `add_feed_provider_as_tag`: bool (use `true` when in doubt)
 * `misp_additional_correlation_fields`: list of fields for which
       the correlation flags will be enabled (in addition to those which are
       in significant_fields)
 * `misp_additional_tags`: list of tags to set not be searched for
       when looking for duplicates
-* `misp_key`: API key for accessing MISP
-* `misp_publish`: Boolean if a new MISP event should be set to "publish".
+* `misp_key`: str, API key for accessing MISP
+* `misp_publish`: bool, if a new MISP event should be set to "publish".
       Expert setting as MISP may really make it "public"!
-      (Use false when in doubt.)
-* `misp_tag_for_bot`: str used to mark MISP events
+      (Use `false` when in doubt.)
+* `misp_tag_for_bot`: str, used to mark MISP events
 * `misp_to_ids_fields`: list of fields for which the `to_ids` flags will be set
-* `misp_url`: URL of the MISP server
+* `misp_url`: str, URL of the MISP server
 * `significant_fields`: list of intelmq field names
 
 The significant field values will be searched for in all MISP attribute values
@@ -2666,6 +2666,9 @@ events is what MISP can handle, as IntelMQ can process many more events faster
 than MISP (which is by design as MISP is for manual handling).
 Also remove the fields of the IntelMQ events with an expert bot
 that you do not want to be inserted into MISP.
+
+(More details can be found in the docstring of
+[`output_api.py`](../bots/output/misp/output_api.py)].
 
 * * *
 

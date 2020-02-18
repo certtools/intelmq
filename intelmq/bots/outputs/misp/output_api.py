@@ -17,13 +17,13 @@ Parameters:
         in significant_fields)
   - misp_additional_tags: list of tags to set not be searched for
         when looking for duplicates
-  - misp_key: API key for accessing MISP
-  - misp_publish: Boolean if a new MISP event should be set to "publish".
+  - misp_key: str, API key for accessing MISP
+  - misp_publish: bool, if a new MISP event should be set to "publish".
         Expert setting as MISP may really make it "public"!
         (Use false when in doubt.)
-  - misp_tag_for_bot: str used to mark MISP events
+  - misp_tag_for_bot: str, used to mark MISP events
   - misp_to_ids_fields: list of fields for which the to_ids flags will be set
-  - misp_url: URL of the MISP server
+  - misp_url: str, URL of the MISP server
   - significant_fields: list of intelmq field names
 
 The significant field values will be searched for in all MISP attribute values
