@@ -313,6 +313,16 @@ def harmonization(defaults, runtime, harmonization, dry_run):
             if harmonization[msg_type][fieldname]['type'] != original[msg_type][fieldname]['type']:
                 harmonization[msg_type][fieldname]['type'] = original[msg_type][fieldname]['type']
                 changed = True
+            installed_regex = harmonization[msg_type][fieldname].get('regex')
+            original_regex = original[msg_type][fieldname].get('regex')
+            if original_regex and original_regex != installed_regex:
+                harmonization[msg_type][fieldname]['regex'] = original[msg_type][fieldname]['regex']
+                changed = True
+            installed_regex = harmonization[msg_type][fieldname].get('iregex')
+            original_regex = original[msg_type][fieldname].get('iregex')
+            if original_regex and original_regex != installed_regex:
+                harmonization[msg_type][fieldname]['iregex'] = original[msg_type][fieldname]['iregex']
+                changed = True
     return changed, defaults, runtime, harmonization
 
 

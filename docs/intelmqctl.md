@@ -239,8 +239,10 @@ If you wish to display the processed message as well, you the **--show-sent|-s**
 
 ### disable
 
-Sets the `enabled` flag in runtime.conf to `false`.
-Assume the bot is now enabled (default for all bots).
+Sets the `enabled` flag in the runtime configuration of the bot to `false`.
+By default, all bots are enabled.
+
+Example output:
 
 ```bash
 > intelmqctl status file-output
@@ -252,8 +254,9 @@ intelmqctl: file-output is disabled.
 
 ### enable
 
-Ensures that the `enabled` flag in runtime.conf is not set to `false`.
-Assume that the bot is now dibbled.
+Sets the `enabled` flag in the runtime configuration of the bot to `true`.
+
+Example output:
 
 ```bash
 > intelmqctl status file-output

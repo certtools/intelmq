@@ -59,6 +59,11 @@ Interactive actions after a file has been selected:
   > s 0,4,5
   Show the selected IP in a readable format. It's still a raw format from
   repr, but with newlines for message and traceback.
+- v, Edit by ID
+  > v id
+  > v 0
+  > v 1,2
+  Opens an editor (by calling `sensible-editor`) on the message. The modified message is then saved in the dump.
 - q, Quit
   > q
 """
@@ -72,7 +77,7 @@ ACTIONS = {'r': ('(r)ecover by ids', True, False),
            'd': ('(d)elete file', False, True),
            's': ('(s)how by ids', True, False),
            'q': ('(q)uit', False, True),
-           'v': ('edit id', True, False),
+           'v': ('edit id (v)', True, False),
            }
 AVAILABLE_IDS = [key for key, value in ACTIONS.items() if value[1]]
 
@@ -389,9 +394,9 @@ def main():
                                                   content=json.loads(content[meta[entry][0]]['message']),
                                                   new=True,
                                                   backup=False)
-                        proc = subprocess.call(['sensible-editor', filename])
-                        if proc != 0:
-                            print(red('Calling editor failed.'))
+                        proc = subprocess.run(['sensible-editor', filename])
+                        if proc.returncode != 0:
+                            print(red('Calling editor failed with exitcode %r.' % proc.returncode))
                         else:
                             tmphandle.seek(0)
                             content[meta[entry][0]]['message'] = tmphandle.read()

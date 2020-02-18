@@ -33,6 +33,11 @@ class TestRsyncCollectorBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(iterations=1)
         self.assertMessageEqual(0, OUTPUT)
 
+    def test_fail(self):
+        self.allowed_error_count = 1
+        self.run_bot(iterations=1, parameters={"rsync_path": "/foobar"})
+        self.assertLogMatches('.*failed with exitcode.*')
+
     @classmethod
     def tearDownClass(cls):
         cls.base_dir.cleanup()

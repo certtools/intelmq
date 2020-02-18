@@ -24,7 +24,7 @@ import pkg_resources
 from pwd import getpwuid
 
 from intelmq import (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
-                     VAR_STATE_PATH)
+                     VAR_STATE_PATH, BOTS_FILE)
 
 
 def intelmqsetup(ownership=True):
@@ -52,6 +52,10 @@ def intelmqsetup(ownership=True):
         else:
             shutil.copy(example_conf, CONFIG_DIR)
             print('Use example %r.' % fname)
+
+    print('Writing BOTS file.')
+    shutil.copy(pkg_resources.resource_filename('intelmq', 'bots/BOTS'),
+                BOTS_FILE)
 
     if ownership:
         print('Setting intelmq as owner for it\'s directories.')

@@ -224,6 +224,8 @@ MISSING_REPORT = deepcopy(HARM)
 del MISSING_REPORT['report']
 WRONG_TYPE = deepcopy(HARM)
 WRONG_TYPE['event']['source.asn']['type'] = 'String'
+WRONG_REGEX = deepcopy(HARM)
+WRONG_REGEX['event']['protocol.transport']['iregex'] = 'foobar'
 
 
 def generate_function(function):
@@ -299,6 +301,12 @@ class TestUpgradeLib(unittest.TestCase):
     def test_wrong_type_harmonization(self):
         """ Test wrong type in harmonization """
         result = upgrades.harmonization({}, {}, WRONG_TYPE, False)
+        self.assertTrue(result[0])
+        self.assertEqual(HARM, result[3])
+
+    def test_wrong_regex_harmonization(self):
+        """ Test wrong regex in harmonization """
+        result = upgrades.harmonization({}, {}, WRONG_REGEX, False)
         self.assertTrue(result[0])
         self.assertEqual(HARM, result[3])
 
