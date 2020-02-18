@@ -2668,7 +2668,7 @@ Also remove the fields of the IntelMQ events with an expert bot
 that you do not want to be inserted into MISP.
 
 (More details can be found in the docstring of
-[`output_api.py`](../../intelmq/bots/outputs/misp/output_api.py)).
+[`output_api.py`](../intelmq/bots/outputs/misp/output_api.py)).
 
 * * *
 
