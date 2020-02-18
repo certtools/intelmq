@@ -93,7 +93,11 @@ class MISPAPIOutputBot(OutputBot):
         """Insert a new MISPEvent."""
         new_misp_event = pymisp.MISPEvent()
 
-        new_misp_event.info = 'Created by IntelMQ MISP API Output Bot.'
+        if 'feed.provider' in intelmq_event:
+            new_misp_event.info = 'from {} via IntelMQ'.format(
+                                    intelmq_event['feed.provider'])
+        else:
+            new_misp_event.info = 'via IntelMQ'
 
         # set the tags
         new_misp_event.add_tag(self.parameters.misp_tag_for_bot)
