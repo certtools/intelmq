@@ -7,6 +7,9 @@ Funding: of initial version by SUNET
 Author(s):
   * Bernhard Reiter <bernhard@intevation.de>
 
+TODO: A shortened copy of this documentation is kept at `docs/Bots.md`, please
+      keep it current, when changing something.
+
 Parameters:
   - add_feed_provider_as_tag: bool (use true when in doubt)
   - misp_additional_correlation_fields: list of fields for which
@@ -26,10 +29,19 @@ Parameters:
 The significant field values will be searched for in all MISP attribute values
 and if all values are found in the same MISP event, no new MISP event
 will be created.
-
-If a new MISP event is inserted the significant_fields will be the attributes
-where correlation is enabled. (The reason is a technical limitation of the
+(The reason that all values are matched without considering the
+attribute type is a technical limitation of the
 search functionality exposed by the MISP/pymisp 2.4.120 API.)
+
+If a new MISP event is inserted the `significant_fields` and the
+`misp_additional_correlation_fields` will be the attributes
+where correlation is enabled.
+
+Make sure to build the IntelMQ Botnet in a way the rate of incoming
+events is what MISP can handle, as IntelMQ can process many more events faster
+than MISP (which is by design as MISP is for manual handling).
+Also remove the fields of the IntelMQ events with an expert bot
+that you do not want to be inserted into MISP.
 
 Example (of some parameters in JSON)::
 
