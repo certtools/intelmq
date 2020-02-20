@@ -1634,7 +1634,7 @@ server {
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv.zip`
-*  * `attach_unzip`: `True`
+*  * `extract_files`: `true`
 *  * `folder`: `INBOX`
 *  * `mail_host`: `__HOST__`
 *  * `mail_password`: `__PASSWORD__`
@@ -2121,7 +2121,7 @@ server {
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv`
-*  * `attach_unzip`: `False`
+*  * `extract_files`: `false`
 *  * `folder`: `INBOX`
 *  * `mail_host`: `__HOST__`
 *  * `mail_password`: `__PASSWORD__`
