@@ -10,6 +10,7 @@ CHANGELOG
 ### Core
 - `intelmq.lib.upgrades`:
   - Harmonization upgrade: Also check and update regular expressions
+  - Add function to migrate the deprecated paramaeter `attach_unzip` to `extract_files` for the mail attachment collector.
 
 ### Development
 

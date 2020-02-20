@@ -20,6 +20,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v111_defaults_process_manager',
            'v202_fixes',
            'v210_deprecations',
+           'v213_deprecations',
            ]
 
 
@@ -276,6 +277,26 @@ def v210_deprecations(defaults, runtime, harmonization, dry_run):
     return changed, defaults, runtime, harmonization
 
 
+def v213_deprecations(defaults, runtime, harmonization, dry_run):
+    """
+    migrate attach_unzip to extract_files for mail attachment collector
+
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.mail.collector_mail_attach":
+            if "attach_unzip" not in bot["parameters"]:
+                continue
+            if "extract_files" in bot["parameters"] and "attach_unzip" in bot["parameters"]:
+                del bot["parameters"]["attach_unzip"]
+                changed = True
+            elif "extract_files" not in bot["parameters"] and "attach_unzip" in bot["parameters"]:
+                bot["parameters"]["extract_files"] = bot["parameters"]["attach_unzip"]
+                del bot["parameters"]["attach_unzip"]
+                changed = True
+    return changed, defaults, runtime, harmonization
+
+
 def harmonization(defaults, runtime, harmonization, dry_run):
     """
     Checks if all harmonization fields and types are correct
@@ -321,7 +342,7 @@ UPGRADES = OrderedDict([
     ((2, 1, 0), (v210_deprecations, )),
     ((2, 1, 1), ()),
     ((2, 1, 2), ()),
-    ((2, 1, 3), ()),
+    ((2, 1, 3), (v213_deprecations, )),
 ])
 
 ALWAYS = (harmonization, )
