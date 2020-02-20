@@ -18,7 +18,7 @@ class MailCollectorBot(CollectorBot):
             raise ValueError('Could not import imbox. Please install it.')
 
         if getattr(self.parameters, 'attach_unzip', None) and not self.extract_files:
-            self.parameters.extract_files = True
+            self.extract_files = True
             self.logger.warning("The parameter 'attach_unzip' is deprecated and will "
                                 "be removed in version 4.0. Use 'extract_files' instead.")
 
