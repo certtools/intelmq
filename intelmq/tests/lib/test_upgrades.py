@@ -195,6 +195,37 @@ V210_EXP = {"test-collector": {
     }
 }
 }
+V213 = {"test-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.mail.collector_mail_attach",
+    "parameters": {
+        "attach_unzip": True,
+    }
+},
+    "test-collector2": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.mail.collector_mail_attach",
+    "parameters": {
+        "attach_unzip": False,
+        "extract_files": True,
+    }
+}
+}
+V213_EXP = {"test-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.mail.collector_mail_attach",
+    "parameters": {
+        "extract_files": True,
+    }
+},
+    "test-collector2": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.mail.collector_mail_attach",
+    "parameters": {
+        "extract_files": True,
+    },
+}
+}
 V220_MISP_VERIFY_FALSE = {
 "misp-collector": {
         "module": "intelmq.bots.collectors.misp.collector",
@@ -309,6 +340,12 @@ class TestUpgradeLib(unittest.TestCase):
         result = upgrades.harmonization({}, {}, WRONG_REGEX, False)
         self.assertTrue(result[0])
         self.assertEqual(HARM, result[3])
+
+    def test_v213_deprecations(self):
+        """ Test v213_fixes """
+        result = upgrades.v213_deprecations({}, V213, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual(V213_EXP, result[2])
 
 
 for name in upgrades.__all__:

@@ -6,6 +6,7 @@ Created on Tue Sep 10 17:10:54 2019
 @author: sebastian
 """
 import os
+from copy import deepcopy
 
 if os.getenv('INTELMQ_TEST_EXOTIC'):
     from imbox.parser import parse_email
@@ -32,9 +33,10 @@ class MockedImbox():
 
 class MockedZipImbox(MockedImbox):
     def messages(self, *args, **kwargs):
-        yield 0, EMAIL_ZIP_FOOBAR
+        # without deepcopy only the first read() in the attachment works
+        yield 0, deepcopy(EMAIL_ZIP_FOOBAR)
 
 
 class MockedTxtImbox(MockedImbox):
     def messages(self, *args, **kwargs):
-        yield 0, EMAIL_TXT_FOOBAR
+        yield 0, deepcopy(EMAIL_TXT_FOOBAR)

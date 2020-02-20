@@ -77,6 +77,7 @@ CHANGELOG
 ### Core
 - `intelmq.lib.upgrades`:
   - Harmonization upgrade: Also check and update regular expressions
+  - Add function to migrate the deprecated paramaeter `attach_unzip` to `extract_files` for the mail attachment collector.
 
 ### Development
 
@@ -85,6 +86,7 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.mail.collector_mail_attach`: fix handling of deprecated parameter name `attach_unzip`.
 
 #### Parsers
 - `intelmq.bots.parser.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`).
