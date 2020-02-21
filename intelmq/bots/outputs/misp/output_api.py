@@ -53,7 +53,7 @@ Example (of some parameters in JSON)::
     "significant_fields": ["source.fqdn", "source.reverse_dns"],
 
 
-Tested with pymisp v2.4.120 (which needs python v>=3.6).
+Originally developed with pymisp v2.4.120 (which needs python v>=3.6).
 """
 from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError

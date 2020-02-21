@@ -2635,6 +2635,9 @@ Configure the destination directory of this feed as feed in MISP, either as loca
 * `cache (redis db):` none
 * `description:` Connect to a MISP instance and add event as MISPObject if not there already.
 
+The PyMISP library is required, see
+[REQUIREMENTS.txt](../intelmq/bots/outputs/misp/REQUIREMENTS.txt).
+
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
