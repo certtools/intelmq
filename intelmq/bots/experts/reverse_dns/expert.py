@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-import dns
+import dns.resolver
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
