@@ -24,6 +24,9 @@ CHANGELOG
 #### Collectors
 - `intelmq.bots.collectors.misp.collector`: Deprecate parameter `misp_verify` in favor of generic parameter `http_verify_cert`.
 - `intelmq.bots.collectors.tcp.collector`: Drop compatibility with Python 3.4.
+- `intelmq.bots.collectors.stomp.collector`:
+  - Check the stomp.py version and show an error message if it did not match.
+  - For stomp.py versions `>= 5.0.0` redirect the `stomp.PrintingListener` output to debug logging.
 
 #### Parsers
 - `intelmq.bots.parsers.autoshun.parser`: Drop compatibility with Python 3.4.

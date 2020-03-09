@@ -19,6 +19,9 @@ else:
             self.conn = conn
             self.destination = destination
             super().__init__()
+            if stomp.__version__ >= (5, 0, 0):
+                # set the function directly, as the argument print_to_log logs to the generic logger
+                self._PrintingListener__print = n6stompcollector.logger.debug
 
         def on_heartbeat_timeout(self):
             self.stompbot.logger.info("Heartbeat timeout. Attempting to re-connect.")
@@ -61,7 +64,8 @@ class StompCollectorBot(CollectorBot):
         if stomp is None:
             raise MissingDependencyError("stomp")
         elif stomp.__version__ < (4, 1, 8):
-            raise MissingDependencyError("stomp", version="4.1.8")
+            raise MissingDependencyError("stomp", version="4.1.8",
+                                         installed=stomp.__version__)
 
         self.server = getattr(self.parameters, 'server', 'n6stream.cert.pl')
         self.port = getattr(self.parameters, 'port', 61614)
