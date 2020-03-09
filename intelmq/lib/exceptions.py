@@ -111,12 +111,18 @@ class MissingDependencyError(IntelMQException):
     """
     A missing dependency was detected. Log instructions on installation.
     """
-    def __init__(self, dependency: str, version: str = None):
+    def __init__(self, dependency: str, version: str = None, installed: str = None):
         appendix = ""
         if version:
             appendix = (" Please note that this bot requires "
-                        "{dependency} {version}!".format(dependency=dependency,
-                                                         version=version))
+                        "{dependency} version {version} or higher!"
+                        "".format(dependency=dependency,
+                                  version=version))
+            if installed:
+                if isinstance(installed, tuple):
+                    installed = ".".join(map(str, installed))
+                appendix = appendix + (" Installed is version {installed!r}."
+                                       "".format(installed=installed))
         message = ("Could not load dependency {dependency!r}, please install it "
                    "with apt/yum/dnf/zypper (possibly named "
                    "python3-{dependency}) or pip3.{appendix}"
