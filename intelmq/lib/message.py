@@ -109,7 +109,7 @@ class Message(dict):
         if (classname == 'event' and 'extra' in self.harmonization_config and
            self.harmonization_config['extra']['type'] == 'JSON'):
             warnings.warn("Assuming harmonization type 'JSONDict' for harmonization field 'extra'. "
-                          "This assumption will be removed in version 2.0.", DeprecationWarning)
+                          "This assumption will be removed in version 3.0.", DeprecationWarning)
             self.harmonization_config['extra']['type'] = 'JSONDict'
         for harm_key in self.harmonization_config.keys():
             if not re.match('^[a-z_](.[a-z_0-9]+)*$', harm_key) and harm_key != '__type':
