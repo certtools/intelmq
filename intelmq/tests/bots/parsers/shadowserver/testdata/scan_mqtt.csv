@@ -1,0 +1,3 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","anonymous_access","raw_response","hex_code","code"
+"2020-03-14 05:45:48","123.45.67.89","tcp",1883,"some.host.com","mqtt",12345,"AA","REGION","CITY",518210,0,"Y",20020000,00,"Connection Accepted"
+"2020-03-14 05:45:51","123.45.67.90","tcp",1883,"another.host.com","mqtt",12345,"AA","REGION","CITY",454110,0,"N",20020003,03,"Connection Refused, Server unavailable"
