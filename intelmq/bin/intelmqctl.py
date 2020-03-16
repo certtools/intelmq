@@ -27,7 +27,8 @@ from termstyle import green
 from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
-                     DEFAULT_LOGGING_PATH, __version_info__)
+                     DEFAULT_LOGGING_PATH, __version_info__,
+                     CONFIG_DIR, ROOT_DIR)
 from intelmq.lib import utils
 from intelmq.lib.bot_debugger import BotDebugger
 from intelmq.lib.exceptions import MissingDependencyError
@@ -711,6 +712,7 @@ class IntelMQController():
         intelmqctl clear queue-id
         intelmqctl check
         intelmqctl upgrade-config
+        intelmqctl debug
 
 Starting a bot:
     intelmqctl start bot-id
@@ -763,7 +765,12 @@ can be longer due to our logging format!
 
 Upgrade from a previous version:
     intelmqctl upgrade-config
-Make a backup of your configuration first, also including bot's configuration files.'''
+Make a backup of your configuration first, also including bot's configuration files.
+
+Get some debugging output on the settings and the enviroment (to be extended):
+    intelmqctl debug --get-paths
+    intelmqctl debug --get-environment-variables
+'''
 
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
@@ -939,6 +946,16 @@ Make a backup of your configuration first, also including bot's configuration fi
                                              help='The state file location to use.',
                                              default=STATE_FILE_PATH)
             parser_upgrade_conf.set_defaults(func=self.upgrade_conf)
+
+            parser_debug = subparsers.add_parser('debug', help='Get debugging output.')
+            parser_debug.add_argument('--get-paths', help='Give all paths',
+                                      action='append_const', dest='sections',
+                                      const='paths')
+            parser_debug.add_argument('--get-environment-variables',
+                                      help='Give environment variables',
+                                      action='append_const', dest='sections',
+                                      const='environment_variables')
+            parser_debug.set_defaults(func=self.debug)
 
             self.parser = parser
 
@@ -1761,6 +1778,37 @@ Make a backup of your configuration first, also including bot's configuration fi
         else:
             return 0, 'success'
 
+    def debug(self, sections=None):
+        """
+        Give debugging output
+        get_paths:
+            print path information
+        """
+
+        output = {}
+        if sections is None or 'paths' in sections:
+            output['paths'] = []
+            variables = globals()
+            if RETURN_TYPE == 'text':
+                print('Paths:')
+            for path in ('BOTS_FILE', 'DEFAULTS_CONF_FILE',
+                 'HARMONIZATION_CONF_FILE', 'PIPELINE_CONF_FILE',
+                 'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
+                 'DEFAULT_LOGGING_PATH', '__file__',
+                 'CONFIG_DIR', 'ROOT_DIR'):
+                output['paths'].append((path, variables[path]))
+                if RETURN_TYPE == 'text':
+                    print('%s: %r' % output['paths'][-1])
+        if sections is None or 'environment_variables' in sections:
+            output['environment_variables'] = []
+            if RETURN_TYPE == 'text':
+                print('Environment variables:')
+            for variable in ('INTELMQ_ROOT_DIR', 'INTELMQ_PATHS_NO_OPT',
+                             'INTELMQ_PATHS_OPT', 'INTELMQ_MANGER_CONTROLLER_CMD'):
+                output['environment_variables'].append((variable, os.getenv(variable)))
+                if RETURN_TYPE == 'text':
+                    print('%s: %r' % output['environment_variables'][-1])
+        return 0, output
 
 def main():  # pragma: no cover
     x = IntelMQController(interactive=True)
