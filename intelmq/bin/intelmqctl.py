@@ -1792,10 +1792,10 @@ Get some debugging output on the settings and the enviroment (to be extended):
             if RETURN_TYPE == 'text':
                 print('Paths:')
             for path in ('BOTS_FILE', 'DEFAULTS_CONF_FILE',
-                 'HARMONIZATION_CONF_FILE', 'PIPELINE_CONF_FILE',
-                 'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
-                 'DEFAULT_LOGGING_PATH', '__file__',
-                 'CONFIG_DIR', 'ROOT_DIR'):
+                         'HARMONIZATION_CONF_FILE', 'PIPELINE_CONF_FILE',
+                         'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
+                         'DEFAULT_LOGGING_PATH', '__file__',
+                         'CONFIG_DIR', 'ROOT_DIR'):
                 output['paths'].append((path, variables[path]))
                 if RETURN_TYPE == 'text':
                     print('%s: %r' % output['paths'][-1])
@@ -1809,6 +1809,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 if RETURN_TYPE == 'text':
                     print('%s: %r' % output['environment_variables'][-1])
         return 0, output
+
 
 def main():  # pragma: no cover
     x = IntelMQController(interactive=True)

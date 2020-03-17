@@ -111,7 +111,7 @@ class MISPAPIOutputBot(OutputBot):
 
         if 'feed.provider' in intelmq_event:
             new_misp_event.info = 'from {} via IntelMQ'.format(
-                                    intelmq_event['feed.provider'])
+                intelmq_event['feed.provider'])
         else:
             new_misp_event.info = 'via IntelMQ'
 
@@ -167,7 +167,7 @@ class MISPAPIOutputBot(OutputBot):
             'misp_to_ids_fields',
             'misp_url',
             'significant_fields'
-            ]
+        ]
         missing_parameters = []
         for para in required_parameters:
             if para not in parameters:
