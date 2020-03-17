@@ -84,6 +84,7 @@
   - [Files](#files)
   - [McAfee Enterprise Security Manager](#mcafee-enterprise-security-manager)
   - [MISP Feed](#misp-feed)
+  - [MISP API](#misp-api)
   - [MongoDB](#mongodb)
     - [Installation Requirements](#installation-requirements)
   - [Redis](#redis)
@@ -2622,6 +2623,55 @@ If the field used in the format string is not defined, `None` will be used as fa
 #### Usage in MISP
 
 Configure the destination directory of this feed as feed in MISP, either as local location, or served via a web server. See [the MISP documentation on Feeds](https://www.circl.lu/doc/misp/managing-feeds/) for more information
+
+* * *
+
+### MISP API
+
+#### Information:
+* `name:` `intelmq.bots.outputs.misp.output_api`
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Connect to a MISP instance and add event as MISPObject if not there already.
+
+The PyMISP library is required, see
+[REQUIREMENTS.txt](../intelmq/bots/outputs/misp/REQUIREMENTS.txt).
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `add_feed_provider_as_tag`: bool (use `true` when in doubt)
+* `misp_additional_correlation_fields`: list of fields for which
+      the correlation flags will be enabled (in addition to those which are
+      in significant_fields)
+* `misp_additional_tags`: list of tags to set not be searched for
+      when looking for duplicates
+* `misp_key`: str, API key for accessing MISP
+* `misp_publish`: bool, if a new MISP event should be set to "publish".
+      Expert setting as MISP may really make it "public"!
+      (Use `false` when in doubt.)
+* `misp_tag_for_bot`: str, used to mark MISP events
+* `misp_to_ids_fields`: list of fields for which the `to_ids` flags will be set
+* `misp_url`: str, URL of the MISP server
+* `significant_fields`: list of intelmq field names
+
+The significant field values will be searched for in all MISP attribute values
+and if all values are found in the same MISP event, no new MISP event
+will be created.
+
+If a new MISP event is inserted the `significant_fields` and the
+`misp_additional_correlation_fields` will be the attributes
+where correlation is enabled.
+
+Make sure to build the IntelMQ Botnet in a way the rate of incoming
+events is what MISP can handle, as IntelMQ can process many more events faster
+than MISP (which is by design as MISP is for manual handling).
+Also remove the fields of the IntelMQ events with an expert bot
+that you do not want to be inserted into MISP.
+
+(More details can be found in the docstring of
+[`output_api.py`](../intelmq/bots/outputs/misp/output_api.py)).
 
 * * *
 

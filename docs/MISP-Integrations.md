@@ -18,3 +18,10 @@ Look at the Bots' documentation for more information.
 This bot creates a complete "MISP feed" ready to be configured in MISP as incoming data source.
 
 Look at the Bots' documentation for more information.
+
+
+## MISP API Output
+
+Can be used to directly create MISP events in a MISP instance.
+
+Look at the Bots' documentation for more information.
