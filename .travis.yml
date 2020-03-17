@@ -20,7 +20,6 @@ install:
   - if [[ -v requirements ]]; then sudo apt-get install polipo lighttpd; fi
   - if [[ $mode == debian ]]; then sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt fakeroot dh-systemd safe-rm; pip3 install requests; pip3 install redis; pip3 install dnspython; pip3 install psutil; pip3 install python-dateutil; pip3 install termstyle; pip3 install pytz; pip3 install typing; fi
   - if [[ $requirements == true ]]; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
-  - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then sudo pip install typing; fi
   - if [[ -v requirements ]]; then pip install Cerberus!=1.3 codecov pyyaml; fi
   - if [[ $mode == codestyle ]]; then pip install pycodestyle; fi
   - if [[ -v requirements ]]; then sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers; fi

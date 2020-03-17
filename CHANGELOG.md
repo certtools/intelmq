@@ -113,6 +113,7 @@ CHANGELOG
 - patches: `fix-logrotate-path.patch`: also include path to rotated file in patch
 
 ### Tests
+- Dropping Travis tests for 3.4 as required libraries dropped 3.4 support.
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).

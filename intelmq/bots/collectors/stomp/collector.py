@@ -96,7 +96,7 @@ class StompCollectorBot(CollectorBot):
 
         self.conn.set_listener('', StompListener(self, self.conn, self.exchange))
         connect_and_subscribe(self.conn, self.logger, self.exchange,
-                               start=stomp.__version__ < (4, 1, 20))
+                              start=stomp.__version__ < (4, 1, 20))
 
     def shutdown(self):
         if not stomp or not self.conn:
