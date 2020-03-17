@@ -2174,6 +2174,36 @@ accessible_ftp = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-mqtt-report/
+open_mqtt = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-mqtt' in constant_fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'anonymous_access', convert_bool),
+        ('extra.', 'raw_response', validate_to_none),
+        ('extra.', 'hex_code', validate_to_none),
+        ('extra.', 'code', validate_to_none)
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'open-mqtt',
+        'protocol.application': 'mqtt',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2208,6 +2238,7 @@ mapping = (
     ('Open-IPMI', 'scan_ipmi', open_ipmi),
     ('Open-LDAP', 'scan_ldap', open_ldap),
     ('Open-LDAP-TCP', 'scan_ldap_tcp', open_ldap),
+    ('Open-MQTT', 'scan_mqtt', open_mqtt),
     ('Open-MSSQL', 'scan_mssql', open_mssql),
     ('Open-Memcached', 'scan_memcached', open_memcached),
     ('Open-MongoDB', 'scan_mongodb', open_mongodb),
