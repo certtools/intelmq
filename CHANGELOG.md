@@ -41,6 +41,7 @@ CHANGELOG
 #### Outputs
 - `intelmq.bots.outputs.amqptopic`: Allow formatting the routing key with event data by the new parameter `format_routing_key` (boolean).
 - `intelmq.bots.outputs.misp.output_feed`: Added, creates a MISP Feed (PR#1473).
+- `intelmq.bots.outputs.misp.output_api`: Added, pushes to MISP via the API (PR#1506).
 
 ### Documentation
 - Document usage of the `INTELMQ_ROOT_DIR` environment variable.

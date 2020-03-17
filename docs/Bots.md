@@ -2612,6 +2612,9 @@ If the field used in the format string is not defined, `None` will be used as fa
 * `cache (redis db):` none
 * `description:` Create a directory layout in the MISP Feed format
 
+The PyMISP library >= 2.4.119.1 is required, see
+[REQUIREMENTS.txt](../intelmq/bots/outputs/misp/REQUIREMENTS.txt).
+
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
@@ -2635,7 +2638,7 @@ Configure the destination directory of this feed as feed in MISP, either as loca
 * `cache (redis db):` none
 * `description:` Connect to a MISP instance and add event as MISPObject if not there already.
 
-The PyMISP library is required, see
+The PyMISP library >= 2.4.120 is required, see
 [REQUIREMENTS.txt](../intelmq/bots/outputs/misp/REQUIREMENTS.txt).
 
 #### Configuration Parameters:
