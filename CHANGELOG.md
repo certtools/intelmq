@@ -32,6 +32,7 @@ CHANGELOG
 ### Documentation
 
 ### Packaging
+- patches: `fix-logrotate-path.patch`: also include path to rotated file in patch
 
 ### Tests
 
