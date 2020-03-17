@@ -33,6 +33,7 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.autoshun.parser`: Drop compatibility with Python 3.4.
 - `intelmq.bots.parsers.html_table.parser`: Drop compatibility with Python 3.4.
+- `intelmq.bots.parsers.shadowserver.parser`: Add suppor for MQTT feed (PR#1512).
 
 #### Experts
 - `intelmq.bots.experts.csv_converter`: Added as converter to CSV.

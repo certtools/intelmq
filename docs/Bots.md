@@ -1299,6 +1299,7 @@ These are the supported feed name and their corresponding file name for automati
 | Open-mDNS | `scan_mdns` |
 | Open-Memcached | `scan_memcached` |
 | Open-MongoDB | `scan_mongodb` |
+| Open-MQTT | `scan_mqtt` |
 | Open-MSSQL | `scan_mssql` |
 | Open-NATPMP | `scan_nat_pmp` |
 | Open-NetBIOS-Nameservice | `scan_netbios` |
