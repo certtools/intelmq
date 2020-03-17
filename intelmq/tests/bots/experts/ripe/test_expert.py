@@ -214,6 +214,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, DB_404_AS)
 
+    @unittest.expectedFailure
     def test_geolocation(self):
         self.input_message = GEOLOCA_INPUT1
         self.sysconfig = {'query_ripe_db_asn': False,
@@ -224,6 +225,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, GEOLOCA_OUTPUT1)
 
+    @unittest.expectedFailure
     def test_geolocation_overwrite(self):
         self.input_message = GEOLOCA_INPUT2
         self.sysconfig = {'mode': 'replace',
@@ -235,6 +237,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, GEOLOCA_OUTPUT1)
 
+    @unittest.expectedFailure
     def test_geolocation_not_overwrite(self):
         self.input_message = GEOLOCA_INPUT2
         self.sysconfig = {'query_ripe_db_asn': False,
@@ -250,6 +253,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, INDEX_ERROR)
 
+    @unittest.expectedFailure
     def test_country_question_mark(self):
         """
         Response has '?' as country
