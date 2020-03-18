@@ -59,8 +59,8 @@ override_dh_auto_install: $(BOTDOCS)
 	done
 	# remove program not needed for packages
 	rm debian/intelmq/usr/bin/intelmqsetup
-	# create empty state file
-	INTELMQ_ROOT_DIR=intelmq/ ROOT_DIR=intelmq/ PYTHONPATH=. python3 intelmq/bin/intelmqsetup.py --skip-ownership --state-file debian/intelmq/var/lib/intelmq/state.json
+	# create directory layout and empty state file
+	ROOT_DIR=debian/intelmq/ PYTHONPATH=. python3 intelmq/bin/intelmqsetup.py --skip-ownership --state-file debian/intelmq/var/lib/intelmq/state.json
 
 override_dh_install:
 	dh_install
