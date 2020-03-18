@@ -233,6 +233,7 @@ def write_configuration(configuration_filepath: str,
         json.dump(content, fp=handle, indent=4,
                   sort_keys=True,
                   separators=(',', ': '))
+        handle.write('\n')
 
 
 def load_parameters(*configs: dict) -> Parameters:

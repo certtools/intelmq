@@ -16,6 +16,7 @@ CHANGELOG
   - Added optional parameter `installed` to show the installed version.
 - Adding more type annotations for core libraries.
 - `intelmq.lib.pipeline.Pythonlist.sleep`: Drop deprecated method.
+- `intelmq.lib.utils`: `write_configuration`: append a newline at end of configuration/file to allow proper comparisons & diffs.
 
 ### Development
 
