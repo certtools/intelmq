@@ -6,6 +6,7 @@ CHANGELOG
 ------------------
 
 ### Configuration
+- Update default runtime configuration with `upgrade-conf`.
 
 ### Core
 - `__init__`: Changes to the path-handling, see [User Guide, section _/opt and LSB paths_](docs/User-Guide.md#opt-and-lsb-paths) for more information
