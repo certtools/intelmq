@@ -638,7 +638,8 @@ PROCESS_MANAGER = {'intelmq': IntelMQProcessManager, 'supervisor': SupervisorPro
 
 class IntelMQController():
 
-    def __init__(self, interactive: bool = False, return_type: str = "python", quiet: bool = False) -> None:
+    def __init__(self, interactive: bool = False, return_type: str = "python", quiet: bool = False,
+                 no_file_logging: bool = False) -> None:
         """
         Initializes intelmqctl.
 
@@ -649,6 +650,7 @@ class IntelMQController():
                 'text': user-friendly output for cli, default for interactive use
                 'json': machine-readable output for managers
             quiet: False by default, can be activated for cron jobs etc.
+            no_file_logging: do not log to the log file
         """
         self.interactive = interactive
         global RETURN_TYPE
@@ -673,6 +675,8 @@ class IntelMQController():
         logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
 
         try:
+            if no_file_logging:
+                raise FileNotFoundError
             logger = utils.log('intelmqctl', log_level=log_level,
                                log_format_stream=utils.LOG_FORMAT_SIMPLE,
                                logging_level_stream=logging_level_stream)

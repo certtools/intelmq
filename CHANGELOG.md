@@ -74,6 +74,7 @@ CHANGELOG
   - Add new command `debug` to ouput some information for debugging. Currently implemented:
     - paths
     - environment variables
+  - `IntelMQController`: New argument `--no-file-logging` to disable logging to file.
 - `intelmqsetup`:
   - Add argument parsing and an option to skip setting file ownership, possibly not requiring root permissions.
   - Call `intelmqctl upgrade-config` and add argument for the state file path (#1491).

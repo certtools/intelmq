@@ -66,7 +66,7 @@ def intelmqsetup(ownership=True, state_file=STATE_FILE_PATH):
                 shutil.chown(obj, user='intelmq')
 
     print('Calling `intelmqctl upgrade-config to update/create state file')
-    controller = IntelMQController(interactive=False)
+    controller = IntelMQController(interactive=False, no_file_logging=True)
     controller.upgrade_conf(state_file=state_file)
 
 
