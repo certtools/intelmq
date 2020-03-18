@@ -1572,8 +1572,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
             except Exception as exc:
                 self.logger.error('Error writing state file %r: %s.', state_file, exc)
                 return 1, 'Error writing state file %r: %s.' % (state_file, exc)
-            self.logger.error('Successfully wrote initial state file. Please re-run this program.')
-            return 0, 'success'
+            self.logger.info('Successfully wrote initial state file.')
 
         defaults = utils.load_configuration(DEFAULTS_CONF_FILE)
         runtime = utils.load_configuration(RUNTIME_CONF_FILE)

@@ -67,11 +67,14 @@ CHANGELOG
 ### Tools
 - `intelmqctl`:
   - `upgrade-config`: Allow setting the state file location with the `--state-file` parameter.
+  - `upgrade-config`: Do not require a second run anymore, if the state file is newly created (#1491).
   - Only require `psutil` for the `IntelMQProcessManager`, not for process manager independent calls like `upgrade-config` or `check`.
   - Add new command `debug` to ouput some information for debugging. Currently implemented:
     - paths
     - environment variables
-- `intelmqsetup`: Add argument parsing and an option to skip setting file ownership, possibly not requiring root permissions.
+- `intelmqsetup`:
+  - Add argument parsing and an option to skip setting file ownership, possibly not requiring root permissions.
+  - Call `intelmqctl upgrade-config` and add argument for the state file path (#1491).
 - `intelmq_generate_misp_objects_templates.py`: Tool to create a MISP object template (#1470).
 
 ### Contrib
