@@ -222,8 +222,9 @@ def v111_defaults_process_manager(defaults, runtime, harmonization, dry_run):
 
 def v202_fixes(defaults, runtime, harmonization, dry_run):
     """
-    Migrate Collector parameter `feed` to `name`. RIPE expert set `query_ripe_stat_ip` with `query_ripe_stat_asn` as default.""" + \
-        "Set cymru whois expert `overwrite` to true."
+    Migrate Collector parameter `feed` to `name`. RIPE expert set `query_ripe_stat_ip` with `query_ripe_stat_asn` as default.
+    Set cymru whois expert `overwrite` to true.
+    """
     changed = None
     for bot_id, bot in runtime.items():
         if bot["group"] == 'Collector' and bot["parameters"].get("feed"):

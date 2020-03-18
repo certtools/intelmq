@@ -1707,7 +1707,8 @@ Get some debugging output on the settings and the enviroment (to be extended):
                         # already performed
                         continue
 
-                    docstring = textwrap.dedent(function.__doc__).strip()
+                    # shown text should have only one line
+                    docstring = textwrap.dedent(function.__doc__).strip().replace('\n', ' ')
                     result = {"function": function.__name__,
                               "time": datetime.datetime.now().isoformat()
                               }
