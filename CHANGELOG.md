@@ -68,8 +68,10 @@ CHANGELOG
 
 ### Tools
 - `intelmqctl`:
-  - `upgrade-config`: Allow setting the state file location with the `--state-file` parameter.
-  - `upgrade-config`: Do not require a second run anymore, if the state file is newly created (#1491).
+  - `upgrade-config`:
+    - Allow setting the state file location with the `--state-file` parameter.
+    - Do not require a second run anymore, if the state file is newly created (#1491).
+    - New parameter `no_backup`/`--no-backup` to skip creation of `.bak` files for state and configuration files.
   - Only require `psutil` for the `IntelMQProcessManager`, not for process manager independent calls like `upgrade-config` or `check`.
   - Add new command `debug` to ouput some information for debugging. Currently implemented:
     - paths

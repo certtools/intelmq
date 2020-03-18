@@ -949,6 +949,9 @@ Get some debugging output on the settings and the enviroment (to be extended):
             parser_upgrade_conf.add_argument('--state-file',
                                              help='The state file location to use.',
                                              default=STATE_FILE_PATH)
+            parser_upgrade_conf.add_argument('--no-backup',
+                                             help='Do not create backups of state and configuration files.',
+                                             action='store_true')
             parser_upgrade_conf.set_defaults(func=self.upgrade_conf)
 
             parser_debug = subparsers.add_parser('debug', help='Get debugging output.')
@@ -1519,7 +1522,8 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 return retval, 'success'
 
     def upgrade_conf(self, previous=None, dry_run=None, function=None,
-                     force=None, state_file: str = STATE_FILE_PATH):
+                     force=None, state_file: str = STATE_FILE_PATH,
+                     no_backup=False):
         """
         Upgrade the IntelMQ configuration after a version upgrade.
 
@@ -1528,6 +1532,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
             function: Only execute this upgrade function
             force: Also upgrade if not necessary
             state_file: location of the state file
+            no_backup: Do not create backups of state and configuration files
 
         state file:
 
@@ -1603,9 +1608,12 @@ Get some debugging output on the settings and the enviroment (to be extended):
                     upgrades, function)(defaults, runtime, harmonization, dry_run)
                 # Handle changed configurations
                 if retval is True and not dry_run:
-                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new)
-                    utils.write_configuration(RUNTIME_CONF_FILE, runtime_new)
-                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization_new)
+                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new,
+                                              backup=not no_backup)
+                    utils.write_configuration(RUNTIME_CONF_FILE, runtime_new,
+                                              backup=not no_backup)
+                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization_new,
+                                              backup=not no_backup)
             except Exception:
                 self.logger.exception('Upgrade %r failed, please report this bug '
                                       'with the shown traceback.',
@@ -1635,7 +1643,8 @@ Get some debugging output on the settings and the enviroment (to be extended):
             state['results'].append(result)
             state['upgrades'][function] = result['success']
             if not dry_run:
-                utils.write_configuration(state_file, state)
+                utils.write_configuration(state_file, state,
+                                          backup=not no_backup)
 
             if result['success']:
                 return 0, 'success'
@@ -1749,7 +1758,8 @@ Get some debugging output on the settings and the enviroment (to be extended):
             if error:
                 # some upgrade function had a problem
                 if not dry_run:
-                    utils.write_configuration(state_file, state)
+                    utils.write_configuration(state_file, state,
+                                              backup=not no_backup)
                 self.logger.error('Some migration did not succeed or '
                                   'manual intervention is needed. Look at '
                                   'the output above. Afterwards, re-run '
@@ -1757,9 +1767,12 @@ Get some debugging output on the settings and the enviroment (to be extended):
 
             try:
                 if not dry_run:
-                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults)
-                    utils.write_configuration(RUNTIME_CONF_FILE, runtime)
-                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization)
+                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults,
+                                              backup=not no_backup)
+                    utils.write_configuration(RUNTIME_CONF_FILE, runtime,
+                                              backup=not no_backup)
+                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization,
+                                              backup=not no_backup)
             except Exception as exc:
                 self.logger.error('Writing defaults or runtime configuration '
                                   'did not succeed: %s\nFix the problem and '
@@ -1774,7 +1787,8 @@ Get some debugging output on the settings and the enviroment (to be extended):
                     self.logger.info('Nothing to do!')
 
             if not dry_run:
-                utils.write_configuration(state_file, state)
+                utils.write_configuration(state_file, state,
+                                          backup=not no_backup)
 
         if error:
             return 1, 'error'
