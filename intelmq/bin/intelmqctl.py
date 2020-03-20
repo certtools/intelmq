@@ -691,7 +691,7 @@ class IntelMQController():
                                   exc_info=defaults_loading_exc)
 
         if not utils.drop_privileges():
-            logger.warning('Running intelmqctl as root is highly discouraged!')
+            self.abort('IntelMQ must not run as root. Dropping privileges did not work.')
 
         APPNAME = "intelmqctl"
         try:

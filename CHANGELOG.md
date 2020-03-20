@@ -79,6 +79,7 @@ CHANGELOG
     - paths
     - environment variables
   - `IntelMQController`: New argument `--no-file-logging` to disable logging to file.
+  - If dropping privileges does not work, `intelmqctl` will now abort (#1489).
 - `intelmqsetup`:
   - Add argument parsing and an option to skip setting file ownership, possibly not requiring root permissions.
   - Call `intelmqctl upgrade-config` and add argument for the state file path (#1491).
