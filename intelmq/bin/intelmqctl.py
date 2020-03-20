@@ -639,7 +639,7 @@ PROCESS_MANAGER = {'intelmq': IntelMQProcessManager, 'supervisor': SupervisorPro
 class IntelMQController():
 
     def __init__(self, interactive: bool = False, return_type: str = "python", quiet: bool = False,
-                 no_file_logging: bool = False) -> None:
+                 no_file_logging: bool = False, drop_privileges: bool = True) -> None:
         """
         Initializes intelmqctl.
 
@@ -651,6 +651,7 @@ class IntelMQController():
                 'json': machine-readable output for managers
             quiet: False by default, can be activated for cron jobs etc.
             no_file_logging: do not log to the log file
+            drop_privileges: Drop privileges and fail if it did not work.
         """
         self.interactive = interactive
         global RETURN_TYPE
@@ -690,7 +691,7 @@ class IntelMQController():
             self.logger.exception('Loading the defaults configuration failed!',
                                   exc_info=defaults_loading_exc)
 
-        if not utils.drop_privileges():
+        if drop_privileges and not utils.drop_privileges():
             self.abort('IntelMQ must not run as root. Dropping privileges did not work.')
 
         APPNAME = "intelmqctl"
