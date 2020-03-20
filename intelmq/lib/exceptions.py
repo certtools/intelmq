@@ -133,10 +133,12 @@ class MissingDependencyError(IntelMQException):
         """
         appendix = ""
         if version:
+            higher = " or higher" if not any(x in version for x in '<>=') else ""
             appendix = (" Please note that this bot requires "
-                        "{dependency} version {version} or higher!"
+                        "{dependency} version {version}{higher}!"
                         "".format(dependency=dependency,
-                                  version=version))
+                                  version=version,
+                                  higher=higher))
             if installed:
                 if isinstance(installed, tuple):
                     installed = ".".join(map(str, installed))

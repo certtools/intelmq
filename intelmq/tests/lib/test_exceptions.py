@@ -15,28 +15,33 @@ class TestUtils(unittest.TestCase):
         installed = '1.0.0'
         additional = 'This is the end.'
 
-        exc = excs.MissingDependencyError(depname)
-        self.assertIn(repr(depname), str(exc))
+        exc = str(excs.MissingDependencyError(depname))
+        self.assertIn(repr(depname), exc)
 
-        exc = excs.MissingDependencyError(depname, version)
-        self.assertIn(repr(depname), str(exc))
-        self.assertIn(version, str(exc))
+        exc = str(excs.MissingDependencyError(depname, version))
+        self.assertIn(repr(depname), exc)
+        self.assertIn(version, exc)
+        self.assertIn('or higher', exc)
 
-        exc = excs.MissingDependencyError(depname, version, installed)
-        self.assertIn(repr(depname), str(exc))
-        self.assertIn(version, str(exc))
-        self.assertIn(repr(installed), str(exc))
+        exc = str(excs.MissingDependencyError(depname, '>1.0,<2.0'))
+        self.assertIn(repr(depname), exc)
+        self.assertNotIn('or higher', exc)
+
+        exc = str(excs.MissingDependencyError(depname, version, installed))
+        self.assertIn(repr(depname), exc)
+        self.assertIn(version, exc)
+        self.assertIn(repr(installed), exc)
 
         # installed should not show up if version is not given
-        exc = excs.MissingDependencyError(depname, installed=installed)
-        self.assertIn(repr(depname), str(exc))
-        self.assertNotIn(version, str(exc))
-        self.assertNotIn(repr(installed), str(exc))
+        exc = str(excs.MissingDependencyError(depname, installed=installed))
+        self.assertIn(repr(depname), exc)
+        self.assertNotIn(version, exc)
+        self.assertNotIn(repr(installed), exc)
 
         # additional text at the end
-        exc = excs.MissingDependencyError(depname, additional_text=additional)
-        self.assertIn(repr(depname), str(exc))
-        self.assertTrue(str(exc).endswith(" %s" % additional))
+        exc = str(excs.MissingDependencyError(depname, additional_text=additional))
+        self.assertIn(repr(depname), exc)
+        self.assertTrue(exc.endswith(" %s" % additional))
 
 
 if __name__ == '__main__':  # pragma: no cover
