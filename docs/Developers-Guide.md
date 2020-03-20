@@ -169,14 +169,17 @@ or the package management of your operating system.
 
 ### Run the tests
 
-All changes have to be tested and new contributions should be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
+All changes have to be tested and new contributions should be accompanied by according unit tests.
+Please do not run the tests as root just like any other IntelMQ component for security reasons. Any other unprivileged user is possible.
+
+You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
 
     cd /opt/dev_intelmq
-    python3 -m unittest {discover|filename}  # or
-    nosetests3 [filename]  # alternatively nosetests or nosetests-3.5 depending on your installation, or
-    python3 setup.py test  # uses a build environment (no external dependencies)
+    sudo -u intelmq python3 -m unittest {discover|filename}  # or
+    sudo -u intelmq nosetests3 [filename]  # alternatively nosetests or nosetests-3.5 depending on your installation, or
+    sudo -u intelmq python3 setup.py test  # uses a build environment (no external dependencies)
 
-It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, give the file path as argument.
+Some bots need local databases to succeed. If you only want to test one explicit test file, give the file path as argument.
 
 There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing, which triggers on pull requests. You can also easily activate it for your forks.
 
