@@ -18,6 +18,7 @@ CHANGELOG
 - Adding more type annotations for core libraries.
 - `intelmq.lib.pipeline.Pythonlist.sleep`: Drop deprecated method.
 - `intelmq.lib.utils`: `write_configuration`: append a newline at end of configuration/file to allow proper comparisons & diffs.
+- `intelmq.lib.test`: `BotTestCase` drops privileges upon initialization (#1489).
 
 ### Development
 
