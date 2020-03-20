@@ -62,13 +62,22 @@ try:
     import pymisp
 except ImportError:
     pymisp = None
+    import_fail_reason = 'import'
+except SyntaxError:
+    pymisp = None
+    import_fail_reason = 'syntax'
 
 
 class MISPAPIOutputBot(OutputBot):
     is_multithreadable = False
 
     def init(self):
-        if pymisp is None:
+        if pymisp is None and import_fail_reason == 'syntax':
+            raise MissingDependencyError("pymisp",
+                                         version='>=2.4.120',
+                                         additional_text="Python versions >= 3.6 are "
+                                                         "required for this 'pymisp' version.")
+        elif pymisp is None:
             raise MissingDependencyError('pymisp', version='>=2.4.120')
 
         self.logger.info('Significant fields are {}.'.format(

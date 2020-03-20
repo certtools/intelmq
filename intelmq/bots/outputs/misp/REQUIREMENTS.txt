@@ -1,1 +1,1 @@
-pymisp>=2.4.120
+pymisp>=2.4.120; python_version >= '3.6'
