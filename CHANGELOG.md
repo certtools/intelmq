@@ -14,6 +14,7 @@ CHANGELOG
   - The environment variable `ROOT_DIR` can be used to set custom root directories instead of `/` (#805) in case of LSB-path installations.
 - `intelmq.lib.exceptions`: Added `MissingDependencyError` for show error messages about a missing library and how to install it (#1471).
   - Added optional parameter `installed` to show the installed version.
+  - Added optional parameter `additional_text` to show arbitrary text.
 - Adding more type annotations for core libraries.
 - `intelmq.lib.pipeline.Pythonlist.sleep`: Drop deprecated method.
 - `intelmq.lib.utils`: `write_configuration`: append a newline at end of configuration/file to allow proper comparisons & diffs.
@@ -65,6 +66,7 @@ CHANGELOG
   - Run the debian packaging tests on Python 3.5 and the codestyle test on 3.8.
 - Added tests for the new bot `intelmq.bots.outputs.misp.output_feed` (#1473).
 - Added tests for the new bot `intelmq.bots.experts.misp.expert` (#1473).
+- Added tests for `intelmq.lib.exceptions`.
 
 ### Tools
 - `intelmqctl`:

@@ -4,7 +4,7 @@
 '''
 import traceback
 
-from typing import Any
+from typing import Any, Optional
 
 __all__ = ['InvalidArgument', 'ConfigurationError', 'IntelMQException',
            'IntelMQHarmonizationException', 'InvalidKey', 'InvalidValue',
@@ -111,7 +111,26 @@ class MissingDependencyError(IntelMQException):
     """
     A missing dependency was detected. Log instructions on installation.
     """
-    def __init__(self, dependency: str, version: str = None, installed: str = None):
+    def __init__(self, dependency: str, version: Optional[str] = None,
+                 installed: Optional[str] = None,
+                 additional_text: Optional[str] = None):
+        """
+        Parameters
+        ----------
+        dependency : str
+            The dependency name.
+        version : Optional[str], optional
+            The required version. The default is None.
+        installed : Optional[str], optional
+            The currently installed version. Requires 'version' to be given The default is None.
+        additional_text : Optional[str], optional
+            Arbitrary additional text to show. The default is None.
+
+        Returns
+        -------
+        IntelMQException: with prepared text
+
+        """
         appendix = ""
         if version:
             appendix = (" Please note that this bot requires "
@@ -123,6 +142,8 @@ class MissingDependencyError(IntelMQException):
                     installed = ".".join(map(str, installed))
                 appendix = appendix + (" Installed is version {installed!r}."
                                        "".format(installed=installed))
+        if additional_text:
+            appendix = "%s %s" % (appendix, additional_text)
         message = ("Could not load dependency {dependency!r}, please install it "
                    "with apt/yum/dnf/zypper (possibly named "
                    "python3-{dependency}) or pip3.{appendix}"
