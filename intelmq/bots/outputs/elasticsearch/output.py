@@ -11,6 +11,7 @@ from datetime import datetime
 from json import loads
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     from elasticsearch import Elasticsearch
@@ -54,7 +55,7 @@ class ElasticsearchOutputBot(Bot):
 
     def init(self):
         if Elasticsearch is None:
-            raise ValueError('Missing elasticsearch module.')
+            raise MissingDependencyError('elasticsearch', version='>=5.0.0,<6.0.0')
 
         self.elastic_host = getattr(self.parameters,
                                     'elastic_host', '127.0.0.1')
