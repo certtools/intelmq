@@ -22,6 +22,8 @@ CHANGELOG
 - `intelmq.lib.bot`:
   - New class `OutputBot`:
     - Method `export_event` to format/export events according to the parameters given by the user.
+- `intelmq.lib.harmonization`:
+  - New class `ClassificationTaxonomy` with fixed list of taxonomies and sanitiation
 
 ### Development
 

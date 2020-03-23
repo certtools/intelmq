@@ -4,6 +4,7 @@ The following types are implemented with sanitize() and is_valid() functions:
 
  - Base64
  - Boolean
+ - ClassificationTaxonomy
  - ClassificationType
  - DateTime
  - FQDN
@@ -44,6 +45,7 @@ __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
            'Integer', 'JSON', 'JSONDict', 'LowercaseString', 'Registry',
            'String', 'URL', 'ASN', 'UppercaseString', 'TLP',
+           'ClassificationTaxonomy',
            ]
 
 
@@ -168,6 +170,70 @@ class Boolean(GenericType):
             elif value == 1:
                 return True
         return None
+
+
+class ClassificationTaxonomy(String):
+    """
+    `classification.taxonomy` type.
+
+    The mapping follows
+    Reference Security Incident Taxonomy Working Group – RSIT WG
+    https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
+
+    These old values are automatically mapped to the new ones:
+        'abusive content' -> 'abusive-content'
+        'information gathering' -> 'information-gathering'
+        'intrusion attempts' -> 'intrusion-attempts'
+        'malicious code' -> 'malicious-code'
+
+    Allowed values are:
+     * """
+
+    allowed_values = ['abusive-content',
+                      'availability',
+                      'fraud',
+                      'information-content-security',
+                      'information-gathering',
+                      'intrusion-attempts',
+                      'intrusions',
+                      'malicious-code',
+                      'other',
+                      'test',
+                      'vulnerable',
+                      ]
+
+    __doc__ += '\n     * '.join(allowed_values)
+
+    @staticmethod
+    def is_valid(value: str, sanitize: bool = False) -> bool:
+        if sanitize:
+            value = ClassificationTaxonomy().sanitize(value)
+
+        if not GenericType().is_valid(value):
+            return False
+
+        if not isinstance(value, str):
+            return False
+
+        if value not in ClassificationTaxonomy().allowed_values:
+            return False
+
+        return True
+
+    @staticmethod
+    def sanitize(value: str) -> Optional[str]:
+        value = LowercaseString.sanitize(value)
+        if not value:
+            return None
+        if value == 'abusive content':
+            value = 'abusive-content'
+        elif value == 'information gathering':
+            value = 'information-gathering'
+        elif value == 'intrusion attempts':
+            value = 'intrusion-attempts'
+        elif value == 'malicious code':
+            value = 'malicious-code'
+        return GenericType().sanitize(value)
 
 
 class ClassificationType(String):

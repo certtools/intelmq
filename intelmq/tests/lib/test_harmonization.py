@@ -486,6 +486,18 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.ClassificationType.is_valid('botnet-drone'))
         self.assertFalse(harmonization.ClassificationType.is_valid('botnet drone'))
 
+    def test_classification_taxonomy_valid(self):
+        """ Test ClassificationTaxonomy.is_valid with valid arguments. """
+        self.assertTrue(harmonization.ClassificationTaxonomy.is_valid('abusive-content'))
+
+    def test_classification_taxonomy_invalid(self):
+        """ Test ClassificationTaxonomy.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.ClassificationTaxonomy.is_valid('abusive content'))
+
+    def test_classification_taxonomy_sanitize(self):
+        """ Test ClassificationTaxonomy.sanitize with valid arguments. """
+        self.assertTrue(harmonization.ClassificationTaxonomy.sanitize('abusive content'))
+
 
 def generate_nonetest_function(typeclassname):
     typeclass = getattr(harmonization, typeclassname)

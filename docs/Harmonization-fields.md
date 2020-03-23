@@ -5,7 +5,7 @@ Harmonization field names
 |Section|Name|Type|Description|
 |:------|:---|:---|:----------|
 |Classification|classification.identifier|[String](#string)|The lowercase identifier defines the actual software or service (e.g. 'heartbleed' or 'ntp_version') or standardized malware name (e.g. 'zeus'). Note that you MAY overwrite this field during processing for your individual setup. This field is not standardized across IntelMQ setups/users.|
-|Classification|classification.taxonomy|[LowercaseString](#lowercasestring)|We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).|
+|Classification|classification.taxonomy|[ClassificationTaxonomy](#classificationtaxonomy)|We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).|
 |Classification|classification.type|[ClassificationType](#classificationtype)|The abuse type IOC is one of the most crucial pieces of information for any given abuse event. The main idea of dynamic typing is to keep our ontology flexible, since we need to evolve with the evolving threatscape of abuse data. In contrast with the static taxonomy below, the dynamic typing is used to perform business decisions in the abuse handling pipeline. Furthermore, the value data set should be kept as minimal as possible to avoid “type explosion”, which in turn dilutes the business value of the dynamic typing. In general, we normally have two types of abuse type IOC: ones referring to a compromised resource or ones referring to pieces of the criminal infrastructure, such as a command and control servers for example.|
 | |comment|[String](#string)|Free text commentary about the abuse event inserted by an analyst.|
 |Destination|destination.abuse_contact|[LowercaseString](#lowercasestring)|Abuse contact for destination address. A comma separated list.|
@@ -120,6 +120,33 @@ Boolean type. Without sanitation only python bool is accepted.
 
 Sanitation accepts string 'true' and 'false' and integers 0 and 1.
 
+
+### ClassificationTaxonomy
+
+`classification.taxonomy` type.
+
+The mapping follows
+Reference Security Incident Taxonomy Working Group – RSIT WG
+https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
+
+These old values are automatically mapped to the new ones:
+    'abusive content' -> 'abusive-content'
+    'information gathering' -> 'information-gathering'
+    'intrusion attempts' -> 'intrusion-attempts'
+    'malicious code' -> 'malicious-code'
+
+Allowed values are:
+ * abusive-content
+ * availability
+ * fraud
+ * information-content-security
+ * information-gathering
+ * intrusion-attempts
+ * intrusions
+ * malicious-code
+ * other
+ * test
+ * vulnerable
 
 ### ClassificationType
 
