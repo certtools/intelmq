@@ -631,7 +631,7 @@ See also the changelog for 2.0.0.beta1 below.
 - See the Core section for the changes in the allowed values for `classification.type`.
 
 ### Bots
-- Use the new RSIT types in several types, see above
+- Use the new RSIT types in several bots, see above
 
 #### Parsers
 - `intelmq.bots.parsers.spamhaus.parser_cert`: Added support for `extortion` events.
