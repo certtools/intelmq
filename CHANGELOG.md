@@ -19,6 +19,9 @@ CHANGELOG
 - `intelmq.lib.pipeline.Pythonlist.sleep`: Drop deprecated method.
 - `intelmq.lib.utils`: `write_configuration`: append a newline at end of configuration/file to allow proper comparisons & diffs.
 - `intelmq.lib.test`: `BotTestCase` drops privileges upon initialization (#1489).
+- `intelmq.lib.bot`:
+  - New class `OutputBot`:
+    - Method `export_event` to format/export events according to the parameters given by the user.
 
 ### Development
 
@@ -44,7 +47,11 @@ CHANGELOG
 - `intelmq.bots.experts.misp`: Added (PR#1475).
 
 #### Outputs
-- `intelmq.bots.outputs.amqptopic`: Allow formatting the routing key with event data by the new parameter `format_routing_key` (boolean).
+- `intelmq.bots.outputs.amqptopic`:
+  - Use `OutputBot` and `export_event`.
+  - Allow formatting the routing key with event data by the new parameter `format_routing_key` (boolean).
+- `intelmq.bots.outputs.file`: Use `OutputBot` and `export_event`.
+- `intelmq.bots.outputs.files`: Use `OutputBot` and `export_event`.
 - `intelmq.bots.outputs.misp.output_feed`: Added, creates a MISP Feed (PR#1473).
 - `intelmq.bots.outputs.misp.output_api`: Added, pushes to MISP via the API (PR#1506).
 
@@ -68,6 +75,7 @@ CHANGELOG
 - Added tests for the new bot `intelmq.bots.outputs.misp.output_feed` (#1473).
 - Added tests for the new bot `intelmq.bots.experts.misp.expert` (#1473).
 - Added tests for `intelmq.lib.exceptions`.
+- Added tests for `intelmq.lib.bot.OutputBot` and `intelmq.lib.bot.OutputBot.export_event`.
 
 ### Tools
 - `intelmqctl`:
@@ -282,8 +290,6 @@ CHANGELOG
   - Use existing current message if receive is called and the current message still exists.
   - Fix handling of received messaged after a SIGHUP that happened during a blocking receiving connection using explicit rejection (#1438).
   - New method `_parse_common_parameters` called before `init` to parse commonly used argument. Currently supported: `extract_files`.
-  - New class `OutputBot`:
-    - Method `export_event` to format/export events according to the parameters given by the user.
 - `intelmq.lib.test`:
   - Fix the tests broker by providing the testing pipeline.
 - `intelmq.lib.utils`:
@@ -337,9 +343,6 @@ CHANGELOG
 - `intelmq.bot.outputs.sql.output` added generic SQL output bot. Comparted to
   - new optional parameter `engine` with `postgresql` (default) and `sqlite` (new) as possible values.
 - `intelmq.bots.outputs.stomp.output`: New parameters `message_hierarchical`, `message_jsondict_as_string`, `message_with_type`, `single_key`.
-- `intelmq.bots.outputs.amqptopic`: Use `OutputBot` and `export_event`.
-- `intelmq.bots.outputs.file`: Use `OutputBot` and `export_event`.
-- `intelmq.bots.outputs.files`: Use `OutputBot` and `export_event`.
 
 ### Documentation
 - Feeds:
@@ -355,7 +358,6 @@ CHANGELOG
 - Add a new asset: Zip archive with two files, same as with `.tar.gz` archive.
 - Added tests for the Mail Attachment & Mail URL collectors.
 - Ignore logging-tests on Python 3.7 temporarily (#1342).
-- Added tests for `intelmq.lib.bot.OutputBot` and `intelmq.lib.bot.OutputBot.export_event`.
 
 ### Tools
 - intelmqctl:
