@@ -48,10 +48,8 @@ TAXONOMY = {
     "c2-server": "malicious-code",
     "dga domain": "malicious-code",  # not in ENISA eCSIRT-II taxonomy
     "infected-system": "malicious-code",
-    "malware": "malicious-code",  # not in ENISA eCSIRT-II taxonomy
     "malware-configuration": "malicious-code",
     "malware-distribution": "malicious-code",
-    "ransomware": "malicious-code",  # not in ENISA eCSIRT-II taxonomy
     "blacklist": "other",  # not in ENISA eCSIRT-II taxonomy
     "other": "other",
     "undetermined": "other",

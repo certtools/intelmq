@@ -16,7 +16,7 @@ providers:
           module: intelmq.bots.parsers.html_table.parser
           parameters:
             columns: ["malware.name", "source.url", "source.ip", "time.source"]
-            type: malware
+            type: malware-distribution
             time_format: from_format_midnight|%d-%m-%Y
             html_parser: lxml
       revision: 27-06-2018
@@ -1785,7 +1785,7 @@ providers:
             columns: ["source.ip|source.url", "time.source"]
             skip_table_head: true
             default_url_protocol: http://
-            type: malware
+            type: malware-distribution
       revision: 02-04-2019
       status: on
       documentation: https://precisionsec.com/threat-intelligence-feeds/agent-tesla/

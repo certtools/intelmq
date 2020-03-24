@@ -256,6 +256,10 @@ class ClassificationType(String):
         'leak' -> 'data-leak'
         'vulnerable client' -> 'vulnerable-system'
         'vulnerable service' -> 'vulnerable-system'
+        'ransomware' -> 'infected-system'
+
+    This old values can not be automatically mapped as they are ambiguous:
+        'malware': Either 'infected-system' or 'malware-distribution'
 
     Allowed values are:
      * """
@@ -281,7 +285,6 @@ class ClassificationType(String):
                       'infected-system',
                       'information-disclosure',
                       'data-leak',
-                      'malware',
                       'malware-configuration',
                       'malware-distribution',
                       'masquerade',
@@ -292,7 +295,6 @@ class ClassificationType(String):
                       'potentially-unwanted-accessible',
                       'privileged-account-compromise',
                       'proxy',
-                      'ransomware',
                       'sabotage',
                       'scanner',
                       'sniffing',
@@ -359,6 +361,8 @@ class ClassificationType(String):
         # https://github.com/certtools/intelmq/issues/1409
         elif value == 'leak':
             value = 'data-leak'
+        elif value == 'ransomware':
+            value = 'infected-system'
         return GenericType().sanitize(value)
 
 

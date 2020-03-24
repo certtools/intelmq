@@ -168,6 +168,10 @@ These old values are automatically mapped to the new ones:
     'leak' -> 'data-leak'
     'vulnerable client' -> 'vulnerable-system'
     'vulnerable service' -> 'vulnerable-system'
+    'ransomware' -> 'infected-system'
+
+This old values can not be automatically mapped as they are ambiguous:
+    'malware': Either 'infected-system' or 'malware-distribution'
 
 Allowed values are:
  * application-compromise
@@ -191,7 +195,6 @@ Allowed values are:
  * infected-system
  * information-disclosure
  * data-leak
- * malware
  * malware-configuration
  * malware-distribution
  * masquerade
@@ -202,7 +205,6 @@ Allowed values are:
  * potentially-unwanted-accessible
  * privileged-account-compromise
  * proxy
- * ransomware
  * sabotage
  * scanner
  * sniffing

@@ -5,11 +5,11 @@ from intelmq.lib.bot import ParserBot
 CLASSIFICATION = {
     "c2server": "c2-server",
     "scanning host": "scanner",
-    "malicious host": "malware",
+    "malicious host": "infected-system",
     "spamming": "spam",
-    "malware domain": "malware",
-    "malware ip": "malware",
-    "malware distribution": "malware",
+    "malware domain": "malware-distribution",
+    "malware ip": "malware-distribution",
+    "malware distribution": "malware-distribution",
 }
 
 

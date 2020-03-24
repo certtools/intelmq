@@ -10,7 +10,7 @@ with open(os.path.join(os.path.dirname(__file__), 'recent30.html'), 'rb') as fh:
     RAW = base64.b64encode(fh.read()).decode()
 
 OUTPUT1 = {'__type': 'Event',
-           'classification.type': 'malware',
+           'classification.type': 'malware-distribution',
            'event_description.text': 'Malware Provider',
            'raw': 'PHRkPjE8L3RkPjx0ZD48aW1nIHNyYz0icmVjZW50MzBfZmlsZXMvdXMuZ2lmIiBhbHQ9IiI+PHNwYW4'
                   'gc3R5bGU9ImNvbG9yOiBibGFjazsiPjE5Mi44OC45OS40PC9zcGFuPjwvdGQ+PHRkPk1hbHdhcmUgUH'
@@ -20,7 +20,7 @@ OUTPUT1 = {'__type': 'Event',
            'source.ip': '192.88.99.4',
            'time.source': '2016-11-08T14:49:17+00:00'}
 OUTPUT2 = {'__type': 'Event',
-           'classification.type': 'malware',
+           'classification.type': 'malware-distribution',
            'event_description.text': 'Malware Provider',
            'raw': 'PHRkPjI8L3RkPjx0ZD48aW1nIHNyYz0icmVjZW50MzBfZmlsZXMvcnUuZ2lmIiBhbHQ9IiI+PHNwYW4'
                   'gc3R5bGU9ImNvbG9yOiBibGFjazsiPjE5Mi4wLjAuNTwvc3Bhbj48L3RkPjx0ZD5NYWx3YXJlIFByb3'

@@ -1382,7 +1382,7 @@ sandbox_url = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'malicious-code',
-        'classification.type': 'malware',
+        'classification.type': 'malware-distribution',
         'classification.identifier': 'sandbox-url',
     },
 }

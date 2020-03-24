@@ -1,4 +1,4 @@
-if classification.type == ['infected-system','malware','ransomware'] {
+if classification.type == ['infected-system'] {
 
 add comment='infected hosts'
 

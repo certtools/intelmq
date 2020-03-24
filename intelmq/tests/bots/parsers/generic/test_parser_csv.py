@@ -26,7 +26,7 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "source.ip": "198.105.221.5",
                  "source.fqdn": "mail5.bulls.unisonplatform.com",
                  "event_description.text": "Really bad actor site comment",
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "raw": utils.base64_encode(SAMPLE_SPLIT[1].replace('\t', ',')+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
@@ -50,7 +50,7 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                                      "__IGNORE__", "source.url", "source.ip",
                                      "source.fqdn", "__IGNORE__"],
                          "delimiter": "\t",
-                         "type": "malware",
+                         "type": "malware-distribution",
                          "default_url_protocol": "http://"}
 
     def test_event(self):
@@ -65,7 +65,7 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                                      "__IGNORE__, source.url, source.ip,"
                                      "source.fqdn, __IGNORE__",
                           "delimiter": "\t",
-                          "type": "malware",
+                          "type": "malware-distribution",
                           "column_regex_search": "",
                           "type_translation": "",
                           "default_url_protocol": "http://"}

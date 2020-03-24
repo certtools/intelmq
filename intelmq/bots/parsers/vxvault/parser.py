@@ -31,7 +31,7 @@ class VXVaultParserBot(ParserBot):
         if not event.add("source.ip", hostname, raise_failure=False):
             event.add("source.fqdn", hostname)
 
-        event.add('classification.type', 'malware')
+        event.add('classification.type', 'malware-distribution')
         event.add("source.url", url)
         if port:
             event.add("source.port", port)

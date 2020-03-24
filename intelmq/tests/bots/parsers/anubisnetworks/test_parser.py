@@ -14,7 +14,7 @@ EXAMPLE_REPORT = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a4
                   "time.observation": "2016-04-19T23:16:08+00:00"
                   }
 
-EXAMPLE_EVENT  = {"classification.type": "malware",
+EXAMPLE_EVENT  = {"classification.type": "infected-system",
                   "destination.port": 80,
                   "feed.accuracy": 100.0,
                   "malware.name": "nivdort",
@@ -78,7 +78,7 @@ EXAMPLE_EVENT2  = {"feed.name": "AnubisNetworks",
                           "b3J0IjoiODAifSwiX3RzIjoxNDYxMTA3NzU0LCJfZ2VvX2Vu"
                           "dl9yZW1vdGVfYWRkciI6eyJjb3VudHJ5X25hbWUiOiJEb21p"
                           "bmljYW4gUmVwdWJsaWMifX0=",
-                   "classification.type": "malware",
+                   "classification.type": "infected-system",
                    "event_description.text": "Sinkhole attempted connection"
                    }
 

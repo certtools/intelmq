@@ -24,7 +24,7 @@ class URLVirParserBot(ParserBot):
             if self.lastgenerated:
                 event.add('time.source', self.lastgenerated)
             event.add('raw', line)
-            event.add('classification.type', 'malware')
+            event.add('classification.type', 'malware-distribution')
 
             if report['feed.url'] in URLVirParserBot.IP_FEED:
                 event.add('source.ip', value)

@@ -38,6 +38,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - The taxonomy `information gathering` has been rename to `information-gathering`.
 - The taxonomy `malicious code` has been renamed to `malicious-code`.
   - The type `c2server` has been renamed to `c2-server`.
+  - The type `malware` has been integrated into `infected-system` and `malware-distribution`, respectively.
+  - The type `ransomware` has been integrated into `infected-system`.
 - For the taxonomy 'availability', the type `misconfiguration` is new.
 - For the taxonomy 'other', the type `undetermined` is new.
 - For the taxonomy 'vulnerable':

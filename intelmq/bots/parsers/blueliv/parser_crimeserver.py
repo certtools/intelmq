@@ -9,7 +9,7 @@ from intelmq.lib.bot import Bot
 
 TYPES = {
     'PHISHING': 'phishing',
-    'MALWARE': 'malware',
+    'MALWARE': 'malware-distribution',
     'EXPLOIT_KIT': 'exploit',
     'BACKDOOR': 'backdoor',
     'TOR_IP': 'proxy',

@@ -21,7 +21,7 @@ EXAMPLE_EVENT = {"feed.name": "HTML Table Feed",
                  "__type": "Event",
                  "time.source": "2019-02-15T00:00:00+00:00",
                  "malware.name": "amadey",
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "source.ip": "51.15.130.100",
                  "source.url": "http://servicestatus.one/b2ccsaG/login.php",
                  "time.observation": "2019-01-01T00:00:00+00:00",
@@ -53,7 +53,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
                                      "malware.name", "__IGNORE__"],
                          "skip_head": True,
                          "default_url_protocol": "http://",
-                         "type": "malware"}
+                         "type": "malware-distribution"}
 
     def test_event(self):
         """ Test if correct Event has been produced. """

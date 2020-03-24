@@ -25,7 +25,7 @@ EXAMPLE_EVENTS = [{"feed.url": "http://security-research.dyndns.org/pub/botnet/p
                    "raw": "LyAyNTMwOC5leGFtcGxlLmNvbSBodHRwOi8vMjUzMDguZXhhbXBsZS5jb20vdXJsIG1hbGljaW91cy5leGFtcGxlLm5ldA==",
                    "time.observation": "2015-11-02T13:11:44+00:00",
                    "time.source": "2016-03-15T07:47:49+00:00",
-                   "classification.type": "malware",
+                   "classification.type": "malware-distribution",
                    "destination.fqdn": "malicious.example.net",
                    "event_description.text": "has malicious code redirecting to malicious host",
                    "__type": "Event"
@@ -49,7 +49,7 @@ EXAMPLE_EVENTS = [{"feed.url": "http://security-research.dyndns.org/pub/botnet/p
                    "raw": "LyAzNjAxNS5leGFtcGxlLmNvbSBodHRwOi8vMzYwMTUuZXhhbXBsZS5jb20vdXJsIG1hbGljaW91czIuZXhhbXBsZS5uZXQ=",
                    "time.observation": "2015-11-02T13:11:44+00:00",
                    "time.source": "2016-03-15T07:47:49+00:00",
-                   "classification.type": "malware",
+                   "classification.type": "malware-distribution",
                    "destination.fqdn": "malicious2.example.net",
                    "event_description.text": "has malicious code redirecting to malicious host",
                    "__type": "Event"

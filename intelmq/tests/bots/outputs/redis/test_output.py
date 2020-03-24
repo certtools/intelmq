@@ -10,7 +10,7 @@ import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.outputs.redis.output import RedisOutputBot
 
-EXAMPLE_EVENT = {"classification.type": "malware",
+EXAMPLE_EVENT = {"classification.type": "infected-system",
                  "destination.port": 9796,
                  "feed.accuracy": 100.0,
                  "destination.ip": "52.18.196.169",

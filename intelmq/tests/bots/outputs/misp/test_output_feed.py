@@ -6,7 +6,7 @@ from tempfile import TemporaryDirectory
 import intelmq.lib.test as test
 from intelmq.bots.outputs.misp.output_feed import MISPFeedOutputBot
 
-EXAMPLE_EVENT = {"classification.type": "malware",
+EXAMPLE_EVENT = {"classification.type": "infected-system",
                  "destination.port": 9796,
                  "feed.accuracy": 100.0,
                  "destination.ip": "52.18.196.169",

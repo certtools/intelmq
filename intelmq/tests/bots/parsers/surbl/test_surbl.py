@@ -23,7 +23,7 @@ EVENT1 = {"__type": "Event",
           }
 EVENT2 = {"__type": "Event",
           "source.fqdn": "domain2",
-          "classification.type": "malware",
+          "classification.type": "malware-distribution",
           "feed.name": "surbl",
           "raw": utils.base64_encode(".domain2"),
           "time.observation": "2018-01-24T15:58:48+00:00"

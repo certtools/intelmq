@@ -32,8 +32,6 @@ class IdeaExpertBot(Bot):
         "dropzone": "Information.UnauthorizedAccess",
         "infected-system": "Malware",
         "malware-configuration": "Malware",
-        "ransomware": "Malware",
-        "malware": "Malware",
         "c2-server": "Intrusion.Botnet",
         "exploit": "Attempt.Exploit",
         "brute-force": "Attempt.Login",

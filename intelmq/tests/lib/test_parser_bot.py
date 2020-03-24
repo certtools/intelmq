@@ -29,7 +29,7 @@ EXAMPLE_EVENT = {"feed.url": "http://www.example.com/",
                  "source.account": "report@example.org",
                  "time.observation": "2015-08-11T13:03:40+00:00",
                  "__type": "Event",
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "event_description.text": "example description",
                  "source.asn": 1,
                  "feed.name": "Example",
@@ -59,7 +59,7 @@ EXAMPLE_REPO_1 = {"feed.url": "http://www.example.com/",
 EXAMPLE_EVE_1 = {"feed.url": "http://www.example.com/",
                  "source.ip": "192.0.2.3",
                  "__type": "Event",
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "feed.name": "Example",
                  'raw': 'c291cmNlLmlwLGZvb2Jhcg0KMTkyLjAuMi4zLGJsbGFh'
                  }
@@ -90,7 +90,7 @@ class DummyParserBot(bot.ParserBot):
             event['event_description.text'] = line[4]
             event['source.account'] = line[5]
             event['source.asn'] = line[6]
-            event['classification.type'] = 'malware'
+            event['classification.type'] = 'malware-distribution'
             event['raw'] = '\n'.join(self.tempdata+[','.join(line)])
             yield event
 
@@ -108,7 +108,7 @@ class DummyCSVParserBot(bot.ParserBot):
     def parse_line(self, line, report):
         event = self.new_event(report)
         event['source.ip'] = line['source.ip']
-        event['classification.type'] = 'malware'
+        event['classification.type'] = 'malware-distribution'
         event['raw'] = self.recover_line(line)
         yield event
 

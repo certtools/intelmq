@@ -17,15 +17,17 @@ A few classification scheme has been updated to better match the [Reference Secu
 
 | old taxonomy name | old type name | new taxonomy name | new type name |
 |-|-|-|-|-|-|-|-|
-| abusive content              |                                       | abusive-content               |                                       |
-| information content security |                                       | information-content-security  |                                       |
-| information content security | leak                                  | information-content-security  | data-leak                             |
-| intrusion attempts           |                                       | intrusion-attempts            |                                       |
-| information gathering        |                                       | information-gathering         |                                       |
-| malicious code               |                                       | malicious-code                |                                       |
-| malicious code               | c2server                              | malicious-code                | c2-server                             |
-| vulnerable                   | vulnerable client                     | vulnerable                    | vulnerable-system                     |
-| vulnerable                   | vulnerable service                    | vulnerable                    | vulnerable-system                     |
+| abusive content              |                    | abusive-content              |                                        |
+| information content security |                    | information-content-security |                                        |
+| information content security | leak               | information-content-security | data-leak                              |
+| intrusion attempts           |                    | intrusion-attempts           |                                        |
+| information gathering        |                    | information-gathering        |                                        |
+| malicious code               |                    | malicious-code               |                                        |
+| malicious code               | c2server           | malicious-code               | c2-server                              |
+| malicious code               | malware            | malicious-code               | infected-system / malware-distribution |
+| malicious code               | ransomware         | malicious-code               | infected-system                        |
+| vulnerable                   | vulnerable client  | vulnerable                   | vulnerable-system                      |
+| vulnerable                   | vulnerable service | vulnerable                   | vulnerable-system                      |
 
 - For the taxonomy 'availability', the type `misconfiguration` is new.
 - For the taxonomy 'other', the type `undetermined` is new.
@@ -63,6 +65,18 @@ UPDATE events
 UPDATE events
    SET "classification.type" = 'vulnerable-system'
    WHERE "classification.taxonomy" = 'vulnerable' AND ("classification.type" = 'vulnerable service' OR "classification.type" = 'vulnerable client');
+```
+Depending on the data (e.g. feed), the correct statement for the `malware` type deprecation may be either this:
+```sql
+UPDATE events
+   SET "classification.type" = 'infected-system'
+   WHERE "classification.taxonomy" = 'malicious-code' AND ("classification.type" = 'malware' OR "classification.type" = 'ransomware');
+```
+or this:
+```sql
+UPDATE events
+   SET "classification.type" = 'malware-distribution'
+   WHERE "classification.taxonomy" = 'malicious-code' AND ("classification.type" = 'malware' OR "classification.type" = 'ransomware');
 ```
 
 2.1.3 Bugfix release (unreleased)

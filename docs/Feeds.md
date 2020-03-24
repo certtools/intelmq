@@ -1617,7 +1617,7 @@ server {
 *  * `columns`: `['source.ip|source.url', 'time.source']`
 *  * `default_url_protocol`: `http://`
 *  * `skip_table_head`: `True`
-*  * `type`: `malware`
+*  * `type`: `malware-distribution`
 
 
 # ShadowServer
@@ -2082,7 +2082,7 @@ server {
 *  * `columns`: `['malware.name', 'source.url', 'source.ip', 'time.source']`
 *  * `html_parser`: `lxml`
 *  * `time_format`: `from_format_midnight|%d-%m-%Y`
-*  * `type`: `malware`
+*  * `type`: `malware-distribution`
 
 
 # WebInspektor

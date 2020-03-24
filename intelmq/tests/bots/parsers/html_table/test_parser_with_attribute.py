@@ -19,7 +19,7 @@ EXAMPLE_REPORT = {"feed.name": "HTML Table Feed",
                   }
 
 EXAMPLE_EVENT = {"__type": "Event",
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "feed.name": "HTML Table Feed",
                  "malware.hash.md5": "A5144B1F31AAD413075FFBD9D91D4EB9",
                  "raw": "PHRyPgo8dGQgY2xhc3M9ImZvbmNlIj4wMi0xNTwvdGQ+Cjx0Z"
@@ -36,7 +36,7 @@ EXAMPLE_EVENT1 = {"feed.name": "HTML Table Feed",
                   "__type": "Event",
                   "time.source": "2019-02-15T00:00:00+00:00",
                   "malware.name": "amadey",
-                  "classification.type": "malware",
+                  "classification.type": "malware-distribution",
                   "source.ip": "51.15.130.100",
                   "source.url": "http://servicestatus.one/b2ccsaG/login.php",
                   "time.observation": "2019-01-01T00:00:00+00:00",
@@ -45,7 +45,7 @@ EXAMPLE_EVENT1 = {"feed.name": "HTML Table Feed",
                          "S4xNS4xMzAuMTAwPC90ZD4KPHRkPkFtYWRleTwvdGQ+CjwvdHI+"}
 
 EXAMPLE_EVENT2 = {"__type": "Event",
-                  "classification.type": "malware",
+                  "classification.type": "malware-distribution",
                   "feed.name": "HTML Table Feed",
                   "raw": "PHRyPgo8dGQgc3R5bGU9InRleHQtYWxpZ246IGxlZnQ7IHdvc"
                          "mQtd3JhcDpicmVhay13b3JkOyI+aHR0cDovL3d3dy5yeWFubW"
@@ -74,7 +74,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
                           "attribute_name": "id",
                           "attribute_value": "details",
                           "default_url_protocol": "http://",
-                          "type": "malware"}
+                          "type": "malware-distribution"}
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
@@ -85,7 +85,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
                           "default_url_protocol": "http://",
                           "attribute_name": "class",
                           "attribute_value": "ExploitTable",
-                          "type": "malware"}
+                          "type": "malware-distribution"}
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT1)
 
@@ -95,7 +95,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
                           "default_url_protocol": "http://",
                           "attribute_name": "style",
                           "attribute_value": "table-layout: fixed;",
-                          "type": "malware"}
+                          "type": "malware-distribution"}
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT2)
 

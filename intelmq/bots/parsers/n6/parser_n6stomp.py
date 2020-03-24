@@ -45,7 +45,7 @@ mapping['phish']        = {"taxonomy": "fraud",
 mapping['proxy']        = {"taxonomy": "other",
                            "type": "proxy", "identifier": "openproxy"}
 mapping['sandbox-url']  = {"taxonomy": "malicious-code",
-                           "type": "malware", "identifier": "sandboxurl"}
+                           "type": "infected-system", "identifier": "sandboxurl"}
 mapping['scanning']     = {"taxonomy": "information-gathering",
                            "type": "scanner", "identifier": "scanning"}
 mapping['server-exploit'] = {"taxonomy": "malicious-code",
@@ -57,7 +57,7 @@ mapping['spam-url']     = {"taxonomy": "abusive-content",
 mapping['tor']          = {"taxonomy": "other",
                            "type": "tor", "identifier": "tor exit node"}
 mapping['webinject']    = {"taxonomy": "malicious-code",
-                           "type": "malware", "identifier": "malware"}
+                           "type": "malware-distribution", "identifier": "malware"}
 mapping['vulnerable']   = {"taxonomy": "vulnerable",
                            "type": "other", "identifier": "vulnerable"}
 mapping['other']        = {"taxonomy": "other",

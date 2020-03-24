@@ -26,7 +26,7 @@ EVENT1 = {"raw": "PHRyPjx0ZD5Mb2tpYm90PC90ZD48dGQ+YWNwdHcuaWN1L2NsYXAvZml2ZS9Qdn
           "feed.url": "http://tracker.viriback.com/",
           "source.url": "http://acptw.icu/clap/five/PvqDq929BSx_A_D_M1n_a.php",
           "source.ip": "62.173.140.190",
-          "classification.type": "malware",
+          "classification.type": "malware-distribution",
           "malware.name": "lokibot",
           "feed.name": "Viriback"}
 
@@ -37,7 +37,7 @@ EVENT2 = {"raw": "PHRyPjx0ZD5Mb2tpYm90PC90ZD48dGQ+aXZhbmRhcmluYS50b3AvamFtL1B2cU
           "feed.url": "http://tracker.viriback.com/",
           "source.url": "http://ivandarina.top/jam/PvqDq929BSx_A_D_M1n_a.php",
           "source.ip": "198.23.213.114",
-          "classification.type": "malware",
+          "classification.type": "malware-distribution",
           "malware.name": "lokibot",
           "feed.name": "Viriback"}
 
@@ -48,7 +48,7 @@ EVENT3 = {"raw": "PHRyPjx0ZD5Mb2tpYm90PC90ZD48dGQ+YWRhbXNqZWYudG9wL2plZi9QdnFEcT
           "feed.url": "http://tracker.viriback.com/",
           "source.url": "http://adamsjef.top/jef/PvqDq929BSx_A_D_M1n_a.php",
           "source.ip": "198.23.213.114",
-          "classification.type": "malware",
+          "classification.type": "malware-distribution",
           "malware.name": "lokibot",
           "feed.name": "Viriback"}
 
@@ -64,7 +64,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
                                      'source.url',
                                      'source.ip',
                                      'time.source'],
-                          'type': 'malware',
+                          'type': 'malware-distribution',
                           'time_format': 'from_format_midnight|%d-%m-%Y',
                           'html_parser': 'lxml',
                           }

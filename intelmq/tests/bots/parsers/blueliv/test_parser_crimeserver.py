@@ -21,7 +21,7 @@ EXAMPLE_REPORT = {"feed.name": "Blueliv Crimeserver",
 EXAMPLE_EVENTS = [{
     "__type": "Event",
     "feed.name": "Blueliv Crimeserver",
-    "classification.type": "malware",
+    "classification.type": "malware-distribution",
     "raw": utils.base64_encode(EXAMPLE_LINES[0][:-1]),
     "extra.confidence": 4,
     "extra.time_updated": "2015-12-09T04:45:53+0000",

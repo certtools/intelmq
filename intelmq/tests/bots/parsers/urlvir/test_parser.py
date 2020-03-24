@@ -28,7 +28,7 @@ HOSTS_EVENTS = [{'feed.name': 'URLVir Export Hosts',
                  'raw': 'aW5kaXJsaXZleHN0b3JlLmNvbQ==',
                  'time.source': '2016-12-04T12:29:00+00:00',
                  'source.fqdn': 'indirlivexstore.com',
-                 'classification.type': 'malware',
+                 'classification.type': 'malware-distribution',
                  'event_description.text': 'Active Malicious Hosts',
                  'event_description.url': 'http://www.urlvir.com/search-host/indirlivexstore.com/'
                 },
@@ -39,7 +39,7 @@ HOSTS_EVENTS = [{'feed.name': 'URLVir Export Hosts',
                  'raw': 'MTg4LjEzOC42OC4xNzc=',
                  'time.source': '2016-12-04T12:29:00+00:00',
                  'source.ip': '188.138.68.177',
-                 'classification.type': 'malware',
+                 'classification.type': 'malware-distribution',
                  'event_description.text': 'Active Malicious Hosts',
                  'event_description.url': 'http://www.urlvir.com/search-ip-address/188.138.68.177/'
                 }]
@@ -58,7 +58,7 @@ IP_ADDRESS_EVENTS = {'feed.name': 'URLVir Export IP Addresses',
                      'raw': 'MTAzLjYuMjQ2Ljgz',
                      'time.source': '2016-12-04T12:29:00+00:00',
                      'source.ip': '103.6.246.83',
-                     'classification.type': 'malware',
+                     'classification.type': 'malware-distribution',
                      'event_description.text': 'Active Malicious IP Addresses Hosting Malware',
                      'event_description.url': 'http://www.urlvir.com/search-ip-address/103.6.246.83/'
                     }

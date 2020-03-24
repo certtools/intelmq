@@ -26,7 +26,7 @@ EXAMPLE_EVENT1 = {
     "raw": utils.base64_encode('\r\n'.join(EXAMPLE_FILE_SPLIT[:2])),
     "time.observation": "2018-01-01T01:00:00+00:00",
     "extra.cert_eu_time_observation": "2019-04-01T10:13:23+00:00",
-    "classification.type": "malware",
+    "classification.type": "malware-distribution",
     "time.source": "2019-04-01T03:13:20+00:00",
     "tlp": "AMBER",
     "event_description.text": "A URL is the most common resource with reference to malware binary distribution.",
