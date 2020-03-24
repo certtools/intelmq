@@ -28,7 +28,7 @@
                     },
                     "revision": {
                         "required": true,
-                        "type": "string"
+                        "type": "date"
                     },
                     "status": {
                         "required": true,
