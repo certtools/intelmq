@@ -3,6 +3,22 @@ NEWS
 
 See the changelog for a full list of changes.
 
+3.0.0 Major release (unreleased)
+--------------------------------
+
+### Requirements
+
+### Tools
+
+### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
 2.2.0 Feature release (unreleased)
 ----------------------------------
 

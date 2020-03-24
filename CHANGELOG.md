@@ -2,6 +2,39 @@ CHANGELOG
 ==========
 
 
+3.0.0 (unreleased)
+------------------
+
+### Configuration
+
+### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
 2.2.0 (unreleased)
 ------------------
 
