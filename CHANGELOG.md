@@ -8,10 +8,29 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.harmonization`:
+  - New class `ClassificationTaxonomy` with fixed list of taxonomies and sanitiation
 
 ### Development
 
 ### Harmonization
+Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old namings are still supported until at least version 3.0.
+- The taxonomy `abusive content` has been renamed to `abusive-content`.
+- The taxonomy `information content security` has been renamed to `information-content-security`.
+  - The validation of type `unauthorised-information-access` has been fixed, a bug prevented the use of it.
+  - The validation of type `unauthorised-information-modification` has been fixed, a bug prevented the use of it.
+  - The type `leak` has been renamed to `data-leak`.
+- The taxonomy `intrusion attempts` has been renamed to `intrusion-attempts`.
+- The taxonomy `information gathering` has been rename to `information-gathering`.
+- The taxonomy `malicious code` has been renamed to `malicious-code`.
+  - The type `c2server` has been renamed to `c2-server`.
+  - The type `malware` has been integrated into `infected-system` and `malware-distribution`, respectively.
+  - The type `ransomware` has been integrated into `infected-system`.
+- For the taxonomy 'availability', the type `misconfiguration` is new.
+- For the taxonomy 'other', the type `unknown` has been renamed to `undetermined`.
+- For the taxonomy 'vulnerable':
+  - The type `vulnerable client` has been renamed to `vulnerable-system`.
+  - The type `vulnerable service` has been renamed to `vulnerable-system`.
 
 ### Bots
 #### Collectors
@@ -55,29 +74,10 @@ CHANGELOG
 - `intelmq.lib.bot`:
   - New class `OutputBot`:
     - Method `export_event` to format/export events according to the parameters given by the user.
-- `intelmq.lib.harmonization`:
-  - New class `ClassificationTaxonomy` with fixed list of taxonomies and sanitiation
 
 ### Development
 
 ### Harmonization
-Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old namings are still supported until at least version 3.0.
-- The taxonomy `abusive content` has been renamed to `abusive-content`.
-- The taxonomy `information content security` has been renamed to `information-content-security`.
-  - The validation of type `unauthorised-information-access` has been fixed, a bug prevented the use of it.
-  - The validation of type `unauthorised-information-modification` has been fixed, a bug prevented the use of it.
-  - The type `leak` has been renamed to `data-leak`.
-- The taxonomy `intrusion attempts` has been renamed to `intrusion-attempts`.
-- The taxonomy `information gathering` has been rename to `information-gathering`.
-- The taxonomy `malicious code` has been renamed to `malicious-code`.
-  - The type `c2server` has been renamed to `c2-server`.
-  - The type `malware` has been integrated into `infected-system` and `malware-distribution`, respectively.
-  - The type `ransomware` has been integrated into `infected-system`.
-- For the taxonomy 'availability', the type `misconfiguration` is new.
-- For the taxonomy 'other', the type `unknown` has been renamed to `undetermined`.
-- For the taxonomy 'vulnerable':
-  - The type `vulnerable client` has been renamed to `vulnerable-system`.
-  - The type `vulnerable service` has been renamed to `vulnerable-system`.
 
 ### Bots
 - Bots with dependencies: Use of `intelmq.lib.exceptions.MissingDependencyError`.

@@ -11,25 +11,7 @@ See the changelog for a full list of changes.
 ### Tools
 
 ### Harmonization
-
-### Configuration
-
-### Libraries
-
-### Postgres databases
-
-
-2.2.0 Feature release (unreleased)
-----------------------------------
-
-### Requirements
-- IntelMQ no longer supports Python 3.4, Python `>=` 3.5 is required.
-
-### Tools
-
-### Harmonization
-
-A few classification scheme has been updated to better match the [Reference Security Incident Taxonomy](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed:
+The classification scheme has been updated to better match the [Reference Security Incident Taxonomy](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed:
 
 | old taxonomy name | old type name | new taxonomy name | new type name |
 |-|-|-|-|
@@ -56,7 +38,7 @@ The old names can still be used in code, and they are automatically converted to
 ### Libraries
 
 ### Postgres databases
-The following statements optionally update existing data.
+The following statements optionally update existing data for the harmonization classification changes:
 ```SQL
 UPDATE events
    SET "classification.taxonomy" = 'abusive-content'
@@ -98,6 +80,24 @@ UPDATE events
    SET "classification.type" = 'malware-distribution'
    WHERE "classification.taxonomy" = 'malicious-code' AND ("classification.type" = 'malware' OR "classification.type" = 'ransomware');
 ```
+
+
+2.2.0 Feature release (unreleased)
+----------------------------------
+
+### Requirements
+- IntelMQ no longer supports Python 3.4, Python `>=` 3.5 is required.
+
+### Tools
+
+### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
 
 2.1.3 Bugfix release (unreleased)
 ---------------------------------
