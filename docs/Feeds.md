@@ -83,7 +83,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `columns`: `time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc`
 *  * `ignore_values`: `,,,,Not listed,,`
 *  * `skip_table_head`: `True`
-*  * `type`: `c2server`
+*  * `type`: `c2-server`
 
 
 ## Feodo Tracker IPs
@@ -753,7 +753,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `columns`: `['time.source', 'source.url', 'source.ip', 'malware.name', '__IGNORE__']`
 *  * `default_url_protocol`: `http://`
 *  * `skip_table_head`: `True`
-*  * `type`: `c2server`
+*  * `type`: `c2-server`
 
 
 # DShield

@@ -24,8 +24,8 @@ EXAMPLE_ZEUS_EVENT = {"feed.url": "https://zeustracker.abuse.ch/blocklist.php?do
                        "source.ip": "101.200.81.187",
                        "raw": utils.base64_encode(HEADER + LINES[6]),
                        "time.observation": "2015-11-02T13:11:44+00:00",
-                       "classification.taxonomy": "malicious code",
-                       "classification.type": "c2server",
+                       "classification.taxonomy": "malicious-code",
+                       "classification.type": "c2-server",
                        "malware.name": "zeus",
                        "__type": "Event"
                        }

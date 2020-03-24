@@ -30,8 +30,8 @@ EXAMPLE_FEODO_EVENT = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipbl
                        "extra.last_online": "2019-03-05T00:00:00+00:00",
                        "extra.feed_last_generated": "2019-03-05T22:10:24+00:00",
                        "time.source": "2019-03-05T00:00:00+00:00",
-                       "classification.taxonomy": "malicious code",
-                       "classification.type": "c2server",
+                       "classification.taxonomy": "malicious-code",
+                       "classification.type": "c2-server",
                        "malware.name": "heodo",
                        "__type": "Event"
                        }
@@ -44,8 +44,8 @@ EXAMPLE_FEODO_EVENT1 = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipb
                         "extra.feed_last_generated": "2019-03-05T22:10:24+00:00",
                         "extra.first_seen": "2017-12-18T23:36:45+00:00",
                         "time.source": "2017-12-18T23:36:45+00:00",
-                        "classification.taxonomy": "malicious code",
-                        "classification.type": "c2server",
+                        "classification.taxonomy": "malicious-code",
+                        "classification.type": "c2-server",
                         "malware.name": "heodo",
                         "__type": "Event"
                         }

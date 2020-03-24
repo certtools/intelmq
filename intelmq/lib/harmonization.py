@@ -248,9 +248,11 @@ class ClassificationType(String):
     These old values are automatically mapped to the new ones:
         'botnet drone' -> 'infected-system'
         'ids alert' -> 'ids-alert'
-        'c&c' -> 'c2server'
+        'c&c' -> 'c2-server'
+        'c2server' -> 'c2-server'
         'infected system' -> 'infected-system'
         'malware configuration' -> 'malware-configuration'
+        'Unauthorised-information-access' -> 'unauthorised-information-access'
 
     Allowed values are:
      * """
@@ -267,7 +269,7 @@ class ClassificationType(String):
                       'ddos',
                       'ddos-amplifier',
                       'defacement',
-                      'dga-domain',
+                      'dga domain',
                       'dos',
                       'dropzone',
                       'exploit',
@@ -295,8 +297,8 @@ class ClassificationType(String):
                       'spam',
                       'test',
                       'tor',
-                      'Unauthorised-information-access',
-                      'Unauthorised-information-modification',
+                      'unauthorised-information-access',
+                      'unauthorised-information-modification',
                       'unauthorized-command',
                       'unauthorized-login',
                       'unauthorized-use-of-resources',
@@ -307,6 +309,7 @@ class ClassificationType(String):
                       'vulnerable-service',
                       'vulnerable-system',
                       'weak-crypto',
+                      'undetermined',
                       ]
 
     __doc__ += '\n     * '.join(allowed_values)
@@ -337,11 +340,17 @@ class ClassificationType(String):
         elif value == 'ids alert':
             value = 'ids-alert'
         elif value == 'c&c':
-            value = 'c2server'
+            value = 'c2-server'
+        elif value == 'c2server':
+            value = 'c2-server'
         elif value == 'infected system':
             value = 'infected-system'
         elif value == 'malware configuration':
             value = 'malware-configuration'
+        # RSIT 2020-01-28
+        # https://github.com/certtools/intelmq/pull/1476/files
+        elif value == 'Unauthorised-information-access':
+            value = 'unauthorised-information-access'
         return GenericType().sanitize(value)
 
 

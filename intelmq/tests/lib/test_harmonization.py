@@ -17,7 +17,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.Boolean.is_valid(False))
 
     def test_boolean_valid_other(self):
-        """ Test Boolean.is_valid with otehr invalid values. """
+        """ Test Boolean.is_valid with other invalid values. """
         self.assertFalse(harmonization.Boolean.is_valid(None,))
         self.assertFalse(harmonization.Boolean.is_valid('True'))
         self.assertFalse(harmonization.Boolean.is_valid(0))

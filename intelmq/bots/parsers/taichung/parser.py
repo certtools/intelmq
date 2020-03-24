@@ -7,7 +7,7 @@ from intelmq.lib.bot import Bot
 
 CLASSIFICATION = {
     "brute-force": ["brute-force", "brute force", "mysql"],
-    "c2server": ["c&c server"],
+    "c2-server": ["c&c server"],
     "infected-system": ["irc-botnet"],
     "malware": ["malware provider", "malware website", '\u60e1\u610f', "worm"],
     "scanner": ["scan"],

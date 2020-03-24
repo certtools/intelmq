@@ -41,7 +41,7 @@ class HIBPCallbackParserBot(ParserBot):
         except KeyError:
             pass
 
-        event['classification.taxonomy'] = 'information content security'
+        event['classification.taxonomy'] = 'information-content-security'
         event['classification.type'] = 'leak'
 
         for email in sorted(filter(bool, set([request.get('Email')] + request["DomainEmails"]))):

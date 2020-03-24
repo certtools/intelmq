@@ -13,12 +13,56 @@ See the changelog for a full list of changes.
 
 ### Harmonization
 
+A few classification scheme has been updated to better match the [Reference Security Incident Taxonomy](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed:
+
+| old taxonomy name | old type name | new taxonomy name | new type name |
+|-|-|-|-|-|-|-|-|
+| abusive content              |                                       | abusive-content               |                                       |
+| information content security |                                       | information-content-security  |                                       |
+| intrusion attempts           |                                       | intrusion-attempts            |                                       |
+| information gathering        |                                       | information-gathering         |                                       |
+| malicious code               |                                       | malicious-code                |                                       |
+| malicious code               | c2server                              | malicious-code                | c2-server                             |
+| vulnerable                   | vulnerable client                     | vulnerable                    | vulnerable-client                     |
+| vulnerable                   | vulnerable service                    | vulnerable                    | vulnerable-service                    |
+
+- For the taxonomy 'availability', the type `misconfiguration` is new.
+- For the taxonomy 'other', the type `undetermined` is new.
+
+The old names can still be used in code, and they are automatically converted to the new names.
+
 ### Configuration
 
 ### Libraries
 
 ### Postgres databases
-
+The following statements optionally update existing data.
+```SQL
+UPDATE events
+   SET "classification.taxonomy" = 'abusive-content'
+   WHERE "classification.taxonomy" = 'abusive content';
+UPDATE events
+   SET "classification.taxonomy" = 'information content security'
+   WHERE "classification.taxonomy" = 'information-content-security';
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion attempts'
+   WHERE "classification.taxonomy" = 'intrusion-attempts';
+UPDATE events
+   SET "classification.taxonomy" = 'information gathering'
+   WHERE "classification.taxonomy" = 'information-gathering';
+UPDATE events
+   SET "classification.taxonomy" = 'malicious code'
+   WHERE "classification.taxonomy" = 'malicious-code';
+UPDATE events
+   SET "classification.type" = 'c2-server'
+   WHERE "classification.taxonomy" = 'malicious-code' AND "classification.type" = 'c2server';
+UPDATE events
+   SET "classification.type" = 'vulnerable-client'
+   WHERE "classification.taxonomy" = 'vulnerable' AND "classification.type" = 'vulnerable client';
+UPDATE events
+   SET "classification.type" = 'vulnerable-service'
+   WHERE "classification.taxonomy" = 'vulnerable' AND "classification.type" = 'vulnerable service';
+```
 
 2.1.3 Bugfix release (unreleased)
 ---------------------------------

@@ -19,7 +19,7 @@ EXAMPLE_REPORT = {'feed.name': 'Drone Brute Force',
                   }
 EVENTS = [{'__type': 'Event',
            'classification.identifier': 'ssh',
-           'classification.taxonomy': 'intrusion attempts',
+           'classification.taxonomy': 'intrusion-attempts',
            'classification.type': 'brute-force',
            'extra.client_version': 'SSH-2.0-libssh2_1.7.0',
            'destination.asn': 65536,

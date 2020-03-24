@@ -31,8 +31,8 @@ class AbusechDomainParserBot(ParserBot):
         else:
             event = self.new_event(report)
             event.add('time.source', self.lastgenerated)
-            event.add('classification.taxonomy', 'malicious code')
-            event.add('classification.type', 'c2server')
+            event.add('classification.taxonomy', 'malicious-code')
+            event.add('classification.type', 'c2-server')
             event.add('source.fqdn', line)
             event.add("raw", line)
             event.add("malware.name", SOURCE_FEEDS[report["feed.url"]])

@@ -24,8 +24,8 @@ EXAMPLE_EVENT = {"feed.url": "https://feodotracker.abuse.ch/blocklist/?download=
                  "raw": "YXJ0YS5yb21haWwzYXJuZXN0LmluZm8=",
                  "time.observation": "2015-11-02T13:11:44+00:00",
                  "time.source": "2016-02-23T14:55:49+00:00",
-                 "classification.taxonomy": "malicious code",
-                 "classification.type": "c2server",
+                 "classification.taxonomy": "malicious-code",
+                 "classification.type": "c2-server",
                  "malware.name": "cridex",
                  "__type": "Event"
                  }

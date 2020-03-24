@@ -13,14 +13,14 @@ from intelmq.lib.harmonization import DateTime
 __all__ = ['N6StompParserBot']
 mapping = {}
 mapping['amplifier']    = {"taxonomy": "vulnerable",
-                           "type": "vulnerable service",
+                           "type": "vulnerable-service",
                            "identifier": "amplifier"}
-mapping['bots']         = {"taxonomy": "malicious code",
+mapping['bots']         = {"taxonomy": "malicious-code",
                            "type": "infected-system", "identifier": "malware-generic"}
 mapping['backdoor']     = {"taxonomy": "intrusions",
                            "type": "backdoor", "identifier": "hacked server"}
-mapping['cnc']          = {"taxonomy": "malicious code",
-                           "type": "c2server", "identifier": "c&c server"}
+mapping['cnc']          = {"taxonomy": "malicious-code",
+                           "type": "c2-server", "identifier": "c&c server"}
 mapping['dns-query']    = {"taxonomy": "other",
                            "type": "other", "identifier": "dns-query"}
 mapping['dos-attacker'] = {"taxonomy": "availability",
@@ -33,30 +33,30 @@ mapping['flow-anomaly'] = {"taxonomy": "other",
                            "type": "other", "identifier": "flow-anomaly"}
 mapping['fraud']        = {"taxonomy": "fraud",
                            "type": "account numbers", "identifier": "fraud"}
-mapping['leak']         = {"taxonomy": "information content security",
+mapping['leak']         = {"taxonomy": "information-content-security",
                            "type": "leak", "identifier": "leak"}
-mapping['malurl']       = {"taxonomy": "malicious code",
+mapping['malurl']       = {"taxonomy": "malicious-code",
                            "type": "exploit", "identifier": "malurl"}
-mapping['malware-action'] = {"taxonomy": "malicious code",
+mapping['malware-action'] = {"taxonomy": "malicious-code",
                              "type": "malware-configuration",
                              "identifier": "malware-configuration"}
 mapping['phish']        = {"taxonomy": "fraud",
                            "type": "phishing", "identifier": "phishing"}
 mapping['proxy']        = {"taxonomy": "other",
                            "type": "proxy", "identifier": "openproxy"}
-mapping['sandbox-url']  = {"taxonomy": "malicious code",
+mapping['sandbox-url']  = {"taxonomy": "malicious-code",
                            "type": "malware", "identifier": "sandboxurl"}
-mapping['scanning']     = {"taxonomy": "information gathering",
+mapping['scanning']     = {"taxonomy": "information-gathering",
                            "type": "scanner", "identifier": "scanning"}
-mapping['server-exploit'] = {"taxonomy": "malicious code",
+mapping['server-exploit'] = {"taxonomy": "malicious-code",
                              "type": "exploit", "identifier": "server-exploit"}
-mapping['spam']         = {"taxonomy": "abusive content",
+mapping['spam']         = {"taxonomy": "abusive-content",
                            "type": "spam", "identifier": "spam"}
-mapping['spam-url']     = {"taxonomy": "abusive content",
+mapping['spam-url']     = {"taxonomy": "abusive-content",
                            "type": "spam", "identifier": "spam-url"}
 mapping['tor']          = {"taxonomy": "other",
                            "type": "tor", "identifier": "tor exit node"}
-mapping['webinject']    = {"taxonomy": "malicious code",
+mapping['webinject']    = {"taxonomy": "malicious-code",
                            "type": "malware", "identifier": "malware"}
 mapping['vulnerable']   = {"taxonomy": "vulnerable",
                            "type": "other", "identifier": "vulnerable"}

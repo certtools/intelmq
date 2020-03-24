@@ -627,7 +627,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
         # Match the second rule
         string_value_list_match_2 = EXAMPLE_INPUT.copy()
-        string_value_list_match_2['classification.type'] = 'c2server'
+        string_value_list_match_2['classification.type'] = 'c2-server'
         string_value_list_expected_result_2 = string_value_list_match_2.copy()
         string_value_list_expected_result_2['comment'] = 'malicious server / service'
         self.input_message = string_value_list_match_2

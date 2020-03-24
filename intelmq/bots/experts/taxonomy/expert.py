@@ -28,8 +28,8 @@ TAXONOMY = {
     "unauthorised-information-access": "information-content-security",
     "unauthorised-information-modification": "information-content-security",
     "data-loss": "information-content-security",
-    "dropzone": "information content security",  # not in ENISA eCSIRT-II taxonomy
-    "leak": "information content security",  # not in ENISA eCSIRT-II taxonomy
+    "dropzone": "information-content-security",  # not in ENISA eCSIRT-II taxonomy
+    "leak": "information-content-security",  # not in ENISA eCSIRT-II taxonomy
     "scanner": "information-gathering",
     "sniffing": "information-gathering",
     "social-engineering": "information-gathering",
@@ -46,7 +46,7 @@ TAXONOMY = {
     "unauthorized-login": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "unprivileged-account-compromise": "intrusions",
     "c2-server": "malicious-code",
-    "dga-domain": "malicious-code",  # not in ENISA eCSIRT-II taxonomy
+    "dga domain": "malicious-code",  # not in ENISA eCSIRT-II taxonomy
     "infected-system": "malicious-code",
     "malware": "malicious-code",  # not in ENISA eCSIRT-II taxonomy
     "malware-configuration": "malicious-code",

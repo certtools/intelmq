@@ -24,7 +24,7 @@ EVENTS = [{
     'feed.name': 'report feedname',
     "classification.identifier": "dns-open-resolver",
     "classification.taxonomy": "vulnerable",
-    "classification.type": "vulnerable service",
+    "classification.type": "vulnerable-service",
     "extra.dns_version": "dnsmasq-2.66",
     "extra.min_amplification": 4.619,
     "extra.tag": "openresolver",

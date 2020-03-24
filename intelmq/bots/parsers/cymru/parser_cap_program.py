@@ -9,7 +9,7 @@ MAPPING_STATIC = {'bot': {
     'bruteforce': {
     'classification.type': 'brute-force'},
     'controller': {
-    'classification.type': 'c2server'},
+    'classification.type': 'c2-server'},
     'darknet': {'classification.type': 'scanner',
                 'classification.identifier': 'darknet'},
     'phishing': {'classification.type': 'phishing',
@@ -17,7 +17,7 @@ MAPPING_STATIC = {'bot': {
     'proxy': {'classification.type': 'proxy',
               'classification.identifier': 'openproxy'},
     'honeypot': {'classification.type': 'scanner'},
-    'openresolvers': {'classification.type': 'vulnerable service',
+    'openresolvers': {'classification.type': 'vulnerable-service',
                       'classification.identifier': 'dns-open-resolver',
                       'protocol.application': 'dns',
                       },
@@ -130,7 +130,7 @@ class CymruCAPProgramParserBot(ParserBot):
             # ddosreport|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<PROTOCOL> <PORT>] [category: <CATEGORY>]
             # [servpass: <PASSWORD>] [SSL] [url: <URL>]|ASNAME
             raise NotImplementedError('Report %r not implemented, format is unknown.' % report_type)
-            event['classification.type'] = 'c2server'
+            event['classification.type'] = 'c2-server'
             event['protocol.application'] = comment_split[0]
             event['source.port'] = comment_split[1]
             # TODO: category? password? ssl?
@@ -154,7 +154,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event.add('classification.identifier', 'malwareurl')
         elif report_type == 'openresolvers':
             # openresolvers|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS||ASNAME
-            event['classification.type'] = 'vulnerable service'
+            event['classification.type'] = 'vulnerable-service'
             event['classification.identifier'] = 'dns-open-resolver'
             event['protocol.application'] = 'dns'
         elif report_type == 'phishing':

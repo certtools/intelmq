@@ -160,9 +160,11 @@ with extensions.
 These old values are automatically mapped to the new ones:
     'botnet drone' -> 'infected-system'
     'ids alert' -> 'ids-alert'
-    'c&c' -> 'c2server'
+    'c&c' -> 'c2-server'
+    'c2server' -> 'c2-server'
     'infected system' -> 'infected-system'
     'malware configuration' -> 'malware-configuration'
+    'Unauthorised-information-access' -> 'unauthorised-information-access'
 
 Allowed values are:
  * application-compromise
@@ -170,7 +172,7 @@ Allowed values are:
  * blacklist
  * brute-force
  * burglary
- * c2server
+ * c2-server
  * compromised
  * copyright
  * data-loss
@@ -190,6 +192,7 @@ Allowed values are:
  * malware-configuration
  * malware-distribution
  * masquerade
+ * misconfiguration
  * other
  * outage
  * phishing
@@ -204,18 +207,19 @@ Allowed values are:
  * spam
  * test
  * tor
- * Unauthorised-information-access
- * Unauthorised-information-modification
+ * unauthorised-information-access
+ * unauthorised-information-modification
  * unauthorized-command
  * unauthorized-login
  * unauthorized-use-of-resources
  * unknown
  * unprivileged-account-compromise
  * violence
- * vulnerable client
- * vulnerable service
+ * vulnerable-client
+ * vulnerable-service
  * vulnerable-system
  * weak-crypto
+ * undetermined
 
 ### DateTime
 

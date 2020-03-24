@@ -28,6 +28,20 @@ CHANGELOG
 ### Development
 
 ### Harmonization
+Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old namings are still supported until at least version 3.0.
+- The taxonomy `abusive content` has been renamed to `abusive-content`.
+- The taxonomy `information content security` has been renamed to `information-content-security`.
+  - The validation of type `unauthorised-information-access` has been fixed, a bug prevented the use of it.
+  - The validation of type `unauthorised-information-modification` has been fixed, a bug prevented the use of it.
+- The taxonomy `intrusion attempts` has been renamed to `intrusion-attempts`.
+- The taxonomy `information gathering` has been rename to `information-gathering`.
+- The taxonomy `malicious code` has been renamed to `malicious-code`.
+  - The type `c2server` has been renamed to `c2-server`.
+- For the taxonomy 'availability', the type `misconfiguration` is new.
+- For the taxonomy 'other', the type `undetermined` is new.
+- For the taxonomy 'vulnerable':
+  - The type `vulnerable client` has been renamed to `vulnerable-client`.
+  - The type `vulnerable service` has been renamed to `vulnerable-service`.
 
 ### Bots
 - Bots with dependencies: Use of `intelmq.lib.exceptions.MissingDependencyError`.

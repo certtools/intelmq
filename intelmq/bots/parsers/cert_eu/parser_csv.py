@@ -21,7 +21,7 @@ class CertEUCSVParserBot(ParserBot):
         "blacklist": "blacklist",
         "botnet drone": "infected-system",
         "brute-force": "brute-force",
-        "c2server": "c2server",
+        "c2server": "c2-server",
         "compromised server": "compromised",
         "ddos infrastructure": "ddos",
         "ddos target": "ddos",
@@ -36,7 +36,7 @@ class CertEUCSVParserBot(ParserBot):
         "scanner": "scanner",
         "spam infrastructure": "spam",
         "test": "test",
-        "vulnerable service": "vulnerable service"
+        "vulnerable service": "vulnerable-service"
     })
 
     unknown_fields = ["threat type", "ns1", "ns2", "response", "recent"]

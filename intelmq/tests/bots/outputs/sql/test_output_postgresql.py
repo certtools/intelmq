@@ -21,7 +21,7 @@ INPUT1 = {"__type": "Event",
 OUTPUT1 = INPUT1.copy()
 del OUTPUT1['__type']
 INPUT_EXTRA = {"__type": "Event",
-               "classification.type": "vulnerable service",
+               "classification.type": "vulnerable-service",
                "extra.asn": 64496,
                "extra.ip": "192.0.2.1",
                }
@@ -69,7 +69,7 @@ class TestSQLOutputBot(test.BotTestCase, unittest.TestCase):
         """
         self.input_message = INPUT_EXTRA
         self.run_bot()
-        self.cur.execute('SELECT "extra" FROM tests WHERE "classification.type" = \'vulnerable service\'')
+        self.cur.execute('SELECT "extra" FROM tests WHERE "classification.type" = \'vulnerable-service\'')
         self.assertEqual(self.cur.rowcount, 1)
         from_db = {k: v for k, v in self.cur.fetchone().items() if v is not None}
         self.assertEqual(from_db['extra'], {"asn": 64496, "ip": "192.0.2.1"})

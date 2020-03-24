@@ -84,8 +84,8 @@ class AbusechIPParserBot(ParserBot):
         defaults = {
             ('malware.name', FEEDS[feed_url]['malware']),
             ('raw', self.recover_line(line)),
-            ('classification.type', 'c2server'),
-            ('classification.taxonomy', 'malicious code'),
+            ('classification.type', 'c2-server'),
+            ('classification.taxonomy', 'malicious-code'),
             ('extra.feed_last_generated', self.__last_generated_date)
         }
 
