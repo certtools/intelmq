@@ -33,7 +33,7 @@ class AlienVaultParserBot(ParserBot):
                 event.add('classification.type',
                           CLASSIFICATION[ctype.lower()])
             else:
-                event.add('classification.type', "unknown")
+                event.add('classification.type', "undetermined")
 
             if len(values[6].strip()) > 0:
                 geo_coordinates = values[6].strip().split(",")

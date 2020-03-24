@@ -130,7 +130,6 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |other|other|All incidents which don't fit in one of the given categories should be put into this class.|
 |other|proxy|This refers to the use of proxies from inside your network. Not in ENISA eCSIRT-II taxonomy.|
 |other|tor|This IOC refers to incidents related to TOR network infrastructure. Not in ENISA eCSIRT-II taxonomy.|
-|other|unknown|Unknown classification. Not in ENISA eCSIRT-II taxonomy.|
 |other|undetermined|The categorisation of the incident is unknown/undetermined.|
 |test|test|Meant for testing.|
 |vulnerable|ddos-amplifier|Publicly accessible services that can be abused for conducting DDoS reflection/amplification attacks, e.g. DNS open-resolvers or NTP servers with monlist enabled.|

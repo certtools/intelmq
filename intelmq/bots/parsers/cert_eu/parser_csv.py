@@ -16,7 +16,7 @@ from intelmq.lib.harmonization import DateTime
 
 class CertEUCSVParserBot(ParserBot):
 
-    abuse_to_intelmq = defaultdict(lambda: "unknown", {
+    abuse_to_intelmq = defaultdict(lambda: "other", {
         "backdoor": "backdoor",
         "blacklist": "blacklist",
         "botnet drone": "infected-system",

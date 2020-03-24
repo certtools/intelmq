@@ -809,7 +809,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_multiple_actions.sieve')
 
         event = EXAMPLE_INPUT.copy()
-        event['classification.type'] = 'unknown'
+        event['classification.type'] = 'undetermined'
         self.input_message = event
         self.run_bot()
 

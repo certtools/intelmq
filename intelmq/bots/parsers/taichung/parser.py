@@ -23,7 +23,7 @@ class TaichungCityNetflowParserBot(Bot):
             for keyword in keywords:
                 if keyword in value:
                     return event_type
-        return "unknown"
+        return "undetermined"
 
     def process(self):
         report = self.receive_message()

@@ -20,7 +20,7 @@ EXAMPLE_INPUT2 = {"__type": "Event",
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 EXAMPLE_OUTPUT2 = {"__type": "Event",
-                  "classification.type": "unknown",
+                  "classification.type": "undetermined",
                   "classification.taxonomy": "other",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
@@ -30,17 +30,17 @@ EXAMPLE_INPUT3 = {"__type": "Event",
                  }
 EXAMPLE_OUTPUT3 = {"__type": "Event",
                  "classification.taxonomy": "vulnerable",
-                  "classification.type": "unknown",
+                  "classification.type": "undetermined",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT4 = {"__type": "Event",
                  "classification.taxonomy": "vulnerable",
-                  "classification.type": "unknown",
+                  "classification.type": "undetermined",
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 EXAMPLE_OUTPUT4 = {"__type": "Event",
                  "classification.taxonomy": "vulnerable",
-                  "classification.type": "unknown",
+                  "classification.type": "undetermined",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 

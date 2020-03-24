@@ -169,6 +169,7 @@ These old values are automatically mapped to the new ones:
     'vulnerable client' -> 'vulnerable-system'
     'vulnerable service' -> 'vulnerable-system'
     'ransomware' -> 'infected-system'
+    'unknown' -> 'undetermined'
 
 This old values can not be automatically mapped as they are ambiguous:
     'malware': Either 'infected-system' or 'malware-distribution'
@@ -217,7 +218,6 @@ Allowed values are:
  * unauthorized-command
  * unauthorized-login
  * unauthorized-use-of-resources
- * unknown
  * unprivileged-account-compromise
  * violence
  * vulnerable-system

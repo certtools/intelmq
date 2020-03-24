@@ -28,6 +28,7 @@ A few classification scheme has been updated to better match the [Reference Secu
 | malicious code               | ransomware         | malicious-code               | infected-system                        |
 | vulnerable                   | vulnerable client  | vulnerable                   | vulnerable-system                      |
 | vulnerable                   | vulnerable service | vulnerable                   | vulnerable-system                      |
+| other                        | unknown            | other                        | undetermined                           |
 
 - For the taxonomy 'availability', the type `misconfiguration` is new.
 - For the taxonomy 'other', the type `undetermined` is new.
@@ -65,6 +66,9 @@ UPDATE events
 UPDATE events
    SET "classification.type" = 'vulnerable-system'
    WHERE "classification.taxonomy" = 'vulnerable' AND ("classification.type" = 'vulnerable service' OR "classification.type" = 'vulnerable client');
+UPDATE events
+   SET "classification.type" = 'undetermined'
+   WHERE "classification.taxonomy" = 'other' AND "classification.type" = 'unknown';
 ```
 Depending on the data (e.g. feed), the correct statement for the `malware` type deprecation may be either this:
 ```sql

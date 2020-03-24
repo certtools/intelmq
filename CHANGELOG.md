@@ -41,7 +41,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
   - The type `malware` has been integrated into `infected-system` and `malware-distribution`, respectively.
   - The type `ransomware` has been integrated into `infected-system`.
 - For the taxonomy 'availability', the type `misconfiguration` is new.
-- For the taxonomy 'other', the type `undetermined` is new.
+- For the taxonomy 'other', the type `unknown` has been renamed to `undetermined`.
 - For the taxonomy 'vulnerable':
   - The type `vulnerable client` has been renamed to `vulnerable-system`.
   - The type `vulnerable service` has been renamed to `vulnerable-system`.

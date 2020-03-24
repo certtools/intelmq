@@ -15,7 +15,7 @@ EXAMPLE_EVENT = {"feed.name": "Test feed",
                  "raw": "Zm9vYmFyCg==",
                  "__type": "Event",
                  "time.observation": "2015-01-01T00:00:00+00:00",
-                 "classification.type": "unknown"
+                 "classification.type": "undetermined"
                  }
 with open(os.path.join(os.path.dirname(__file__), 'data.json'), 'rb') as fh:
     RAW = base64.b64encode(fh.read()).decode()

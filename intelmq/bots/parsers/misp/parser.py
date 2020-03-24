@@ -30,7 +30,7 @@ class MISPParserBot(Bot):
         'ecsirt:intrusions="backdoor"': 'backdoor',
         'ecsirt:vulnerable="vulnerable-service"': 'vulnerable-system',
         'ecsirt:other="blacklist"': 'blacklist',
-        'ecsirt:other="unknown"': 'unknown',
+        'ecsirt:other="unknown"': 'undetermined',
         'ecsirt:test="test"': 'test',
     }
 

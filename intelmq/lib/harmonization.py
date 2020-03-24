@@ -257,6 +257,7 @@ class ClassificationType(String):
         'vulnerable client' -> 'vulnerable-system'
         'vulnerable service' -> 'vulnerable-system'
         'ransomware' -> 'infected-system'
+        'unknown' -> 'undetermined'
 
     This old values can not be automatically mapped as they are ambiguous:
         'malware': Either 'infected-system' or 'malware-distribution'
@@ -307,7 +308,6 @@ class ClassificationType(String):
                       'unauthorized-command',
                       'unauthorized-login',
                       'unauthorized-use-of-resources',
-                      'unknown',
                       'unprivileged-account-compromise',
                       'violence',
                       'vulnerable-system',
@@ -363,6 +363,8 @@ class ClassificationType(String):
             value = 'data-leak'
         elif value == 'ransomware':
             value = 'infected-system'
+        elif value == 'unknown':
+            value = 'undetermined'
         return GenericType().sanitize(value)
 
 

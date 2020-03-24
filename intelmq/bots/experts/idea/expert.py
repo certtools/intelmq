@@ -45,7 +45,7 @@ class IdeaExpertBot(Bot):
         "data-leak": "Information",
         "tor": "Other",
         "other": "Other",
-        "unknown": "Other",
+        "undetermined": "Other",
         "test": "Test",
         "unauthorized-command": "Intrusion.AdminCompromise",
         "unauthorized-login": "Intrusion.AdminCompromise",
@@ -110,10 +110,10 @@ class IdeaExpertBot(Bot):
                 s["feed.name"],
                 s.get("event_description.text",
                       s.get("comment",
-                            s.get("classification.type", "unknown")))
+                            s.get("classification.type", "undetermined")))
             ),
             "Category": [
-                lambda s: self.type_to_category[s.get("classification.type", "unknown")],
+                lambda s: self.type_to_category[s.get("classification.type", "undetermined")],
                 lambda s: "Test" if self.parameters.test_mode else None
             ],
             "DetectTime": "time.observation",

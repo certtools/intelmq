@@ -67,7 +67,7 @@ class TwitterParserBot(Bot):
                     expected="even number of ; separeted strings")
             for i in range(int(len(temp) / 2)):
                 self.substitutions.append([temp[2 * i], temp[2 * i + 1]])
-        self.classification_type = getattr(self.parameters, "classification_type", "unknown")
+        self.classification_type = getattr(self.parameters, "classification_type", "undetermined")
         if not ClassificationType.is_valid(self.classification_type):
             self.classification_type = 'unknown'
 

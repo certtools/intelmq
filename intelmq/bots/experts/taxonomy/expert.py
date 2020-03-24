@@ -55,7 +55,6 @@ TAXONOMY = {
     "undetermined": "other",
     "proxy": "other",  # not in ENISA eCSIRT-II taxonomy
     "tor": "other",  # not in ENISA eCSIRT-II taxonomy
-    "unknown": "other",  # not in ENISA eCSIRT-II taxonomy
     "test": "test",
     "ddos-amplifier": "vulnerable",
     "information-disclosure": "vulnerable",
@@ -77,9 +76,9 @@ class TaxonomyExpertBot(Bot):
             event.add("classification.taxonomy", taxonomy)
         elif "classification.taxonomy" not in event and "classification.type" not in event:
             event.add("classification.taxonomy", 'other')
-            event.add("classification.type", 'unknown')
+            event.add("classification.type", 'undetermined')
         elif "classification.taxonomy" in event and "classification.type" not in event:
-            event.add("classification.type", 'unknown')
+            event.add("classification.type", 'undetermined')
         else:
             # classification given, type given... don't change it
             pass
