@@ -49,7 +49,7 @@ class SpamhausCERTParserBot(ParserBot):
 
             malware = row_splitted[4].lower()
             if malware == 'openrelay':
-                event.add('classification.type', 'vulnerable-service')
+                event.add('classification.type', 'vulnerable-system')
                 event.add('classification.identifier', 'openrelay')
                 event.add('protocol.application', 'smtp')
             elif malware == 'sshauth':

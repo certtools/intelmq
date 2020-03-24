@@ -21,7 +21,7 @@ INPUT1 = {"__type": "Event",
 OUTPUT1 = INPUT1.copy()
 del OUTPUT1['__type']
 INPUT_EXTRA = {"__type": "Event",
-               "classification.type": "vulnerable-service",
+               "classification.type": "vulnerable-system",
                "extra.asn": 64496,
                "extra.ip": "192.0.2.1",
                }

@@ -13,7 +13,7 @@ from intelmq.lib.harmonization import DateTime
 __all__ = ['N6StompParserBot']
 mapping = {}
 mapping['amplifier']    = {"taxonomy": "vulnerable",
-                           "type": "vulnerable-service",
+                           "type": "vulnerable-system",
                            "identifier": "amplifier"}
 mapping['bots']         = {"taxonomy": "malicious-code",
                            "type": "infected-system", "identifier": "malware-generic"}

@@ -62,8 +62,6 @@ TAXONOMY = {
     "ddos-amplifier": "vulnerable",
     "information-disclosure": "vulnerable",
     "potentially-unwanted-accessible": "vulnerable",
-    "vulnerable-client": "vulnerable",  # not in ENISA eCSIRT-II taxonomy
-    "vulnerable-service": "vulnerable",  # not in ENISA eCSIRT-II taxonomy
     "vulnerable-system": "vulnerable",
     "weak-crypto": "vulnerable",
 }

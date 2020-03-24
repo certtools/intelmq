@@ -28,7 +28,7 @@ class MISPParserBot(Bot):
         'ecsirt:intrusions="defacement"': 'defacement',
         'ecsirt:intrusions="compromised"': 'compromised',
         'ecsirt:intrusions="backdoor"': 'backdoor',
-        'ecsirt:vulnerable="vulnerable-service"': 'vulnerable-service',
+        'ecsirt:vulnerable="vulnerable-service"': 'vulnerable-system',
         'ecsirt:other="blacklist"': 'blacklist',
         'ecsirt:other="unknown"': 'unknown',
         'ecsirt:test="test"': 'test',

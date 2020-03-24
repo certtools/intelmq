@@ -24,8 +24,8 @@ A few classification scheme has been updated to better match the [Reference Secu
 | information gathering        |                                       | information-gathering         |                                       |
 | malicious code               |                                       | malicious-code                |                                       |
 | malicious code               | c2server                              | malicious-code                | c2-server                             |
-| vulnerable                   | vulnerable client                     | vulnerable                    | vulnerable-client                     |
-| vulnerable                   | vulnerable service                    | vulnerable                    | vulnerable-service                    |
+| vulnerable                   | vulnerable client                     | vulnerable                    | vulnerable-system                     |
+| vulnerable                   | vulnerable service                    | vulnerable                    | vulnerable-system                     |
 
 - For the taxonomy 'availability', the type `misconfiguration` is new.
 - For the taxonomy 'other', the type `undetermined` is new.
@@ -61,11 +61,8 @@ UPDATE events
    SET "classification.type" = 'c2-server'
    WHERE "classification.taxonomy" = 'malicious-code' AND "classification.type" = 'c2server';
 UPDATE events
-   SET "classification.type" = 'vulnerable-client'
-   WHERE "classification.taxonomy" = 'vulnerable' AND "classification.type" = 'vulnerable client';
-UPDATE events
-   SET "classification.type" = 'vulnerable-service'
-   WHERE "classification.taxonomy" = 'vulnerable' AND "classification.type" = 'vulnerable service';
+   SET "classification.type" = 'vulnerable-system'
+   WHERE "classification.taxonomy" = 'vulnerable' AND ("classification.type" = 'vulnerable service' OR "classification.type" = 'vulnerable client');
 ```
 
 2.1.3 Bugfix release (unreleased)

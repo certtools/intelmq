@@ -41,7 +41,7 @@ OUTPUT = [{'classification.identifier': 'feodo'},
           {'classification.identifier': 'xcodeghost'},
           {'classification.identifier': 'someexample-value'},
           {'classification.identifier': 'anyvalue'},  # 5
-          {'classification.type': 'vulnerable-service'},
+          {'classification.type': 'vulnerable-system'},
           {'event_description.text': 'This is a TOR node.'},
           {'event_description.text': 'This is not a TOR node.'},
           {'event_description.text': 'We don\'t know if this is a TOR node.'},

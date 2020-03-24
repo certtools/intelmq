@@ -17,7 +17,7 @@ MAPPING_STATIC = {'bot': {
     'proxy': {'classification.type': 'proxy',
               'classification.identifier': 'openproxy'},
     'honeypot': {'classification.type': 'scanner'},
-    'openresolvers': {'classification.type': 'vulnerable-service',
+    'openresolvers': {'classification.type': 'vulnerable-system',
                       'classification.identifier': 'dns-open-resolver',
                       'protocol.application': 'dns',
                       },
@@ -154,7 +154,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event.add('classification.identifier', 'malwareurl')
         elif report_type == 'openresolvers':
             # openresolvers|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS||ASNAME
-            event['classification.type'] = 'vulnerable-service'
+            event['classification.type'] = 'vulnerable-system'
             event['classification.identifier'] = 'dns-open-resolver'
             event['protocol.application'] = 'dns'
         elif report_type == 'phishing':

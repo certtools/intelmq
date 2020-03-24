@@ -254,6 +254,8 @@ class ClassificationType(String):
         'malware configuration' -> 'malware-configuration'
         'Unauthorised-information-access' -> 'unauthorised-information-access'
         'leak' -> 'data-leak'
+        'vulnerable client' -> 'vulnerable-system'
+        'vulnerable service' -> 'vulnerable-system'
 
     Allowed values are:
      * """
@@ -306,8 +308,6 @@ class ClassificationType(String):
                       'unknown',
                       'unprivileged-account-compromise',
                       'violence',
-                      'vulnerable-client',
-                      'vulnerable-service',
                       'vulnerable-system',
                       'weak-crypto',
                       'undetermined',
@@ -352,6 +352,10 @@ class ClassificationType(String):
         # https://github.com/certtools/intelmq/pull/1476/files
         elif value == 'Unauthorised-information-access':
             value = 'unauthorised-information-access'
+        elif value == 'vulnerable client':
+            value = 'vulnerable-system'
+        elif value == 'vulnerable service':
+            value = 'vulnerable-system'
         # https://github.com/certtools/intelmq/issues/1409
         elif value == 'leak':
             value = 'data-leak'

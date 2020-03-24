@@ -41,8 +41,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - For the taxonomy 'availability', the type `misconfiguration` is new.
 - For the taxonomy 'other', the type `undetermined` is new.
 - For the taxonomy 'vulnerable':
-  - The type `vulnerable client` has been renamed to `vulnerable-client`.
-  - The type `vulnerable service` has been renamed to `vulnerable-service`.
+  - The type `vulnerable client` has been renamed to `vulnerable-system`.
+  - The type `vulnerable service` has been renamed to `vulnerable-system`.
 
 ### Bots
 - Bots with dependencies: Use of `intelmq.lib.exceptions.MissingDependencyError`.

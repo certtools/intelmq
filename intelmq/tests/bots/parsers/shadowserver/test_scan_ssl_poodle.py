@@ -18,7 +18,7 @@ EXAMPLE_REPORT = {'feed.name': 'SSL POODLE Vulnerable Servers',
                   "extra.file_name": "2019-01-01-scan_ssl_poodle-test-geo.csv",
                   }
 EVENTS = [{'classification.taxonomy': 'vulnerable',
-           'classification.type': 'vulnerable-service',
+           'classification.type': 'vulnerable-system',
            'classification.identifier': 'ssl-poodle',
            'extra.browser_error': 'x509: unknown error',
            'extra.browser_trusted': False,

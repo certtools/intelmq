@@ -36,7 +36,7 @@ class CertEUCSVParserBot(ParserBot):
         "scanner": "scanner",
         "spam infrastructure": "spam",
         "test": "test",
-        "vulnerable service": "vulnerable-service"
+        "vulnerable service": "vulnerable-system"
     })
 
     unknown_fields = ["threat type", "ns1", "ns2", "response", "recent"]

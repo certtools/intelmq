@@ -166,6 +166,8 @@ These old values are automatically mapped to the new ones:
     'malware configuration' -> 'malware-configuration'
     'Unauthorised-information-access' -> 'unauthorised-information-access'
     'leak' -> 'data-leak'
+    'vulnerable client' -> 'vulnerable-system'
+    'vulnerable service' -> 'vulnerable-system'
 
 Allowed values are:
  * application-compromise
@@ -216,8 +218,6 @@ Allowed values are:
  * unknown
  * unprivileged-account-compromise
  * violence
- * vulnerable-client
- * vulnerable-service
  * vulnerable-system
  * weak-crypto
  * undetermined
