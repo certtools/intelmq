@@ -46,7 +46,7 @@ class IdeaExpertBot(Bot):
         "blacklist": "Other",
         "dga domain": "Anomaly.Behaviour",
         "proxy": "Vulnerable.Config",
-        "leak": "Information",
+        "data-leak": "Information",
         "tor": "Other",
         "other": "Other",
         "unknown": "Other",

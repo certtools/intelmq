@@ -33,6 +33,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - The taxonomy `information content security` has been renamed to `information-content-security`.
   - The validation of type `unauthorised-information-access` has been fixed, a bug prevented the use of it.
   - The validation of type `unauthorised-information-modification` has been fixed, a bug prevented the use of it.
+  - The type `leak` has been renamed to `data-leak`.
 - The taxonomy `intrusion attempts` has been renamed to `intrusion-attempts`.
 - The taxonomy `information gathering` has been rename to `information-gathering`.
 - The taxonomy `malicious code` has been renamed to `malicious-code`.

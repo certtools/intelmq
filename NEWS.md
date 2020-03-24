@@ -19,6 +19,7 @@ A few classification scheme has been updated to better match the [Reference Secu
 |-|-|-|-|-|-|-|-|
 | abusive content              |                                       | abusive-content               |                                       |
 | information content security |                                       | information-content-security  |                                       |
+| information content security | leak                                  | information-content-security  | data-leak                             |
 | intrusion attempts           |                                       | intrusion-attempts            |                                       |
 | information gathering        |                                       | information-gathering         |                                       |
 | malicious code               |                                       | malicious-code                |                                       |
@@ -44,6 +45,9 @@ UPDATE events
 UPDATE events
    SET "classification.taxonomy" = 'information content security'
    WHERE "classification.taxonomy" = 'information-content-security';
+UPDATE events
+   SET "classification.type" = 'data-leak'
+   WHERE "classification.type" = 'leak' AND "classification.taxonomy" = 'information-content-security';
 UPDATE events
    SET "classification.taxonomy" = 'intrusion attempts'
    WHERE "classification.taxonomy" = 'intrusion-attempts';

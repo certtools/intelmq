@@ -34,7 +34,7 @@ mapping['flow-anomaly'] = {"taxonomy": "other",
 mapping['fraud']        = {"taxonomy": "fraud",
                            "type": "account numbers", "identifier": "fraud"}
 mapping['leak']         = {"taxonomy": "information-content-security",
-                           "type": "leak", "identifier": "leak"}
+                           "type": "data-leak", "identifier": "leak"}
 mapping['malurl']       = {"taxonomy": "malicious-code",
                            "type": "exploit", "identifier": "malurl"}
 mapping['malware-action'] = {"taxonomy": "malicious-code",

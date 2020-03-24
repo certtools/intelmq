@@ -42,7 +42,7 @@ class HIBPCallbackParserBot(ParserBot):
             pass
 
         event['classification.taxonomy'] = 'information-content-security'
-        event['classification.type'] = 'leak'
+        event['classification.type'] = 'data-leak'
 
         for email in sorted(filter(bool, set([request.get('Email')] + request["DomainEmails"]))):
             if not email:

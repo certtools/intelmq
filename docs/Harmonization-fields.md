@@ -165,6 +165,7 @@ These old values are automatically mapped to the new ones:
     'infected system' -> 'infected-system'
     'malware configuration' -> 'malware-configuration'
     'Unauthorised-information-access' -> 'unauthorised-information-access'
+    'leak' -> 'data-leak'
 
 Allowed values are:
  * application-compromise
@@ -187,7 +188,7 @@ Allowed values are:
  * ids-alert
  * infected-system
  * information-disclosure
- * leak
+ * data-leak
  * malware
  * malware-configuration
  * malware-distribution

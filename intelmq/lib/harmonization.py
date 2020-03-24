@@ -253,6 +253,7 @@ class ClassificationType(String):
         'infected system' -> 'infected-system'
         'malware configuration' -> 'malware-configuration'
         'Unauthorised-information-access' -> 'unauthorised-information-access'
+        'leak' -> 'data-leak'
 
     Allowed values are:
      * """
@@ -277,7 +278,7 @@ class ClassificationType(String):
                       'ids-alert',
                       'infected-system',
                       'information-disclosure',
-                      'leak',
+                      'data-leak',
                       'malware',
                       'malware-configuration',
                       'malware-distribution',
@@ -351,6 +352,9 @@ class ClassificationType(String):
         # https://github.com/certtools/intelmq/pull/1476/files
         elif value == 'Unauthorised-information-access':
             value = 'unauthorised-information-access'
+        # https://github.com/certtools/intelmq/issues/1409
+        elif value == 'leak':
+            value = 'data-leak'
         return GenericType().sanitize(value)
 
 

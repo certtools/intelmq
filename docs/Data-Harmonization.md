@@ -105,7 +105,7 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |information-content-security|unauthorised-information-modification|Unauthorised modification of information, e.g. by an attacker abusing stolen login credentials for a system or application or a ransomware encrypting data.|
 |information-content-security|data-loss|Loss of data, e.g. caused by harddisk failure or physical theft.|
 |information-content-security|dropzone|This IOC refers to place where the compromised machines store the stolen user data. Not in ENISA eCSIRT-II taxonomy.|
-|information-content-security|leak|IOCs relating to leaked credentials or personal data. Not in ENISA eCSIRT-II taxonomy.|
+|information-content-security|data-leak|Leaked confidential information like credentials or personal data.|
 |information gathering|scanner|Attacks that send requests to a system to discover weaknesses. This also includes testing processes to gather information on hosts, services and accounts. Examples: fingerd, DNS querying, ICMP, SMTP (EXPN, RCPT, ...), port scanning.|
 |information-gathering|sniffing|Observing and recording of network traffic (wiretapping).|
 |information-gathering|social-engineering|Gathering information from a human being in a non-technical way (e.g. lies, tricks, bribes, or threats). This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol.|
