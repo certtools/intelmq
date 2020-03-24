@@ -83,14 +83,13 @@ A list of allowed fields and data types can be found in [Harmonization-fields.md
 ## Classification
 
 IntelMQ classifies events using three labels: taxonomy, type and identifier. This tuple of three values can be used for deduplication of events and describes what happened.
-TODO: examples from chat
 
-The taxonomy can be automatically added by the taxonomy expert bot based on the given type. The following taxonomy-type mapping is based on [eCSIRT II Taxonomy](https://www.trusted-introducer.org/Incident-Classification-Taxonomy.pdf):
+The taxonomy can be automatically added by the taxonomy expert bot based on the given type. The following classification scheme follow the [Reference Security Incident Taxonomy](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/):
 
 |Taxonomy|Type|Description|
 |--------|----|-----------|
-|abusive-content|spam|Or 'Unsolicited Bulk Email', this means that the recipient has not granted verifiable permission for the message to be sent and that the message is sent as part of a larger collection of messages, all having a functionally comparable content.|
 |abusive-content|harmful-speech|Discreditation or discrimination of somebody, e.g. cyber stalking, racism or threats against one or more individuals.|
+|abusive-content|spam|Or 'Unsolicited Bulk Email', this means that the recipient has not granted verifiable permission for the message to be sent and that the message is sent as part of a larger collection of messages, all having a functionally comparable content.|
 |abusive-content|violence|Child pornography, glorification of violence, etc.|
 |availability|ddos|Distributed Denial of Service attack, e.g. SYN-Flood or UDP-based reflection/amplification attacks.|
 |availability|dos|Denial of Service attack, e.g. sending specially crafted requests to a web application which causes the application to crash or slow down.|
@@ -101,11 +100,11 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |fraud|masquerade|Type of attack in which one entity illegitimately impersonates the identity of another in order to benefit from it.|
 |fraud|phishing|Masquerading as another entity in order to persuade the user to reveal private credentials.|
 |fraud|unauthorized-use-of-resources|Using resources for unauthorized purposes including profit-making ventures, e.g. the use of e-mail to participate in illegal profit chain letters or pyramid schemes.|
-|information-content-security|unauthorised-information-access|Unauthorized access to information, e.g. by abusing stolen login credentials for a system or application, intercepting traffic or gaining access to physical documents.|
-|information-content-security|unauthorised-information-modification|Unauthorised modification of information, e.g. by an attacker abusing stolen login credentials for a system or application or a ransomware encrypting data.|
+|information-content-security|data-leak|Leaked confidential information like credentials or personal data.|
 |information-content-security|data-loss|Loss of data, e.g. caused by harddisk failure or physical theft.|
 |information-content-security|dropzone|This IOC refers to place where the compromised machines store the stolen user data. Not in ENISA eCSIRT-II taxonomy.|
-|information-content-security|data-leak|Leaked confidential information like credentials or personal data.|
+|information-content-security|unauthorised-information-access|Unauthorized access to information, e.g. by abusing stolen login credentials for a system or application, intercepting traffic or gaining access to physical documents.|
+|information-content-security|unauthorised-information-modification|Unauthorised modification of information, e.g. by an attacker abusing stolen login credentials for a system or application or a ransomware encrypting data.|
 |information gathering|scanner|Attacks that send requests to a system to discover weaknesses. This also includes testing processes to gather information on hosts, services and accounts. Examples: fingerd, DNS querying, ICMP, SMTP (EXPN, RCPT, ...), port scanning.|
 |information-gathering|sniffing|Observing and recording of network traffic (wiretapping).|
 |information-gathering|social-engineering|Gathering information from a human being in a non-technical way (e.g. lies, tricks, bribes, or threats). This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol.|
@@ -138,38 +137,35 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |vulnerable|vulnerable-system|A system which is vulnerable to certain attacks. Example: misconfigured client proxy settings (example: WPAD), outdated operating system version, etc.|
 |vulnerable|weak-crypto|Publicly accessible services offering weak crypto, e.g. web servers susceptible to POODLE/FREAK attacks.|
 
-Meaning of source, destination and local values for each classification type and possible identifiers. The identifier is often a normalized malware name, grouping many variants.
+Examples of the meaning of the *source* and *destination* fields for each classification type and possible identifiers are shown here. Usually the main information is in the *source* fields. The identifier is often a normalized malware name, grouping many variants.
 
-|Type|Source|Destination|Local|Possible identifiers|
+|Type|Source|Destination|Possible identifiers|
 |----|------|-----------|-----|--------------------|
-|backdoor|*backdoored device*||||
-|blacklist|*blacklisted device*||||
-|brute-force|*attacker*|target|||
-|c2server|*(sinkholed) c&c server*|||zeus, palevo, feodo|
-|compromised|*server*||||
-|ddos|*attacker*|target|||
-|defacement|*defaced website*||||
-|dga domain|*infected device*||||
-|dropzone|*server hosting stolen data*||||
-|exploit|*hosting server*||||
-|ids-alert|*triggering device*||||
-|infected-system|*infected device*|*contacted c2c server*|||
-|malware-configuration|*infected device*||||
-|other||||||
-|phishing|*phishing website*||||
-|proxy|*server allowing policy and security bypass*||||
-|scanner|*scanning device*|scanned device||http,modbus,wordpress|
-|spam|*infected device*|targeted server|internal at source||
-|test||||||
-|unknown||||||
-|vulnerable-service|*vulnerable device*||| heartbleed, openresolver, snmp |
-|vulnerable-client|*vulnerable device*||| wpad |
+|backdoor|*backdoored device*|||
+|blacklist|*blacklisted device*|||
+|brute-force|*attacker*|target||
+|c2-server|*(sinkholed) c&c server*||zeus, palevo, feodo|
+|compromised|*server*|||
+|ddos|*attacker*|target||
+|defacement|*defaced website*|||
+|dga domain|*infected device*|||
+|dropzone|*server hosting stolen data*|||
+|exploit|*hosting server*|||
+|ids-alert|*triggering device*|||
+|infected-system|*infected device*|*contacted c2-server*||
+|malware-configuration|*infected device*|||
+|malware-distribution|*server hosting malware*|||
+|phishing|*phishing website*|||
+|proxy|*server allowing policy and security bypass*|||
+|scanner|*scanning device*|scanned device|http,modbus,wordpress|
+|spam|*spamming device*|targeted server|internal at source|
+|vulnerable-system|*vulnerable device, client&server*|| heartbleed, openresolver, snmp, wpad |
 
-Field in italics is the interesting one for CERTs.
+The fields in italics are the interesting ones for (national) CERTs.
 
 Example:
 
-If you know of an IP address that connects to a zeus c&c server, it's about the infected device, thus type malware and identifier zeus. If you want to complain about the c&c server, it's type c&c and identifier zeus. The `malware.name` can have the full name, eg. 'zeus_p2p'.
+If you know of an IP address that connects to a zeus c&c server, it's about the infected device, thus `classification.taxonomy` is *malicious-code*, `classification.type` is *infected-system* and the `classification.identifier` ist zeus. If you want to complain about the c&c server, the event's `classification.type` is *c2server*. The `malware.name` can have the full name, eg. `zeus_p2p`.
 
 ## Minimum recommended requirements for events
 
@@ -177,7 +173,7 @@ Below, we have enumerated the minimum recommended requirements for an actionable
 
 |Category|Key|Terminology|
 |--------|---|-----------|
-|Feed|feed|Should|
+|Feed|feed.name|Should|
 |Classification|classification.type|Should|
 |Classification|classification.taxonomy|Should|
 |Time|time.source|Should|
@@ -191,5 +187,4 @@ Below, we have enumerated the minimum recommended requirements for an actionable
 
 This list of required fields is *not* enforced by IntelMQ.
 
-**NOTE:** This document was copied from [AbuseHelper repository](https://github.com/abusesa/abusehelper/blob/master/docs/Harmonization.md) and improved.
-
+**NOTE:** This document was copied from [AbuseHelper repository](https://github.com/abusesa/abusehelper/blob/master/docs/Harmonization.md) (now [Arctic Security Public documents](https://github.com/arcticsecurity/public/blob/master/docs/Harmonization.md) and improved.

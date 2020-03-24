@@ -171,7 +171,7 @@ These old values are automatically mapped to the new ones:
     'ransomware' -> 'infected-system'
     'unknown' -> 'undetermined'
 
-This old values can not be automatically mapped as they are ambiguous:
+These old values can not be automatically mapped as they are ambiguous:
     'malware': Either 'infected-system' or 'malware-distribution'
 
 Allowed values are:

@@ -4,7 +4,7 @@ import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.taxonomy.expert import TaxonomyExpertBot, TAXONOMY
-from intelmq.lib.harmonization import ClassificationType
+from intelmq.lib.harmonization import ClassificationType, ClassificationTaxonomy
 
 
 EXAMPLE_INPUT1 = {"__type": "Event",

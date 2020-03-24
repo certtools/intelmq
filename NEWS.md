@@ -16,7 +16,7 @@ See the changelog for a full list of changes.
 A few classification scheme has been updated to better match the [Reference Security Incident Taxonomy](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed:
 
 | old taxonomy name | old type name | new taxonomy name | new type name |
-|-|-|-|-|-|-|-|-|
+|-|-|-|-|
 | abusive content              |                    | abusive-content              |                                        |
 | information content security |                    | information-content-security |                                        |
 | information content security | leak               | information-content-security | data-leak                              |
@@ -46,20 +46,20 @@ UPDATE events
    SET "classification.taxonomy" = 'abusive-content'
    WHERE "classification.taxonomy" = 'abusive content';
 UPDATE events
-   SET "classification.taxonomy" = 'information content security'
-   WHERE "classification.taxonomy" = 'information-content-security';
+   SET "classification.taxonomy" = 'information-content-security'
+   WHERE "classification.taxonomy" = 'information content security';
 UPDATE events
    SET "classification.type" = 'data-leak'
    WHERE "classification.type" = 'leak' AND "classification.taxonomy" = 'information-content-security';
 UPDATE events
-   SET "classification.taxonomy" = 'intrusion attempts'
-   WHERE "classification.taxonomy" = 'intrusion-attempts';
+   SET "classification.taxonomy" = 'intrusion-attempts'
+   WHERE "classification.taxonomy" = 'intrusion attempts';
 UPDATE events
-   SET "classification.taxonomy" = 'information gathering'
-   WHERE "classification.taxonomy" = 'information-gathering';
+   SET "classification.taxonomy" = 'information-gathering'
+   WHERE "classification.taxonomy" = 'information gathering';
 UPDATE events
-   SET "classification.taxonomy" = 'malicious code'
-   WHERE "classification.taxonomy" = 'malicious-code';
+   SET "classification.taxonomy" = 'malicious-code'
+   WHERE "classification.taxonomy" = 'malicious code';
 UPDATE events
    SET "classification.type" = 'c2-server'
    WHERE "classification.taxonomy" = 'malicious-code' AND "classification.type" = 'c2server';
