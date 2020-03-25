@@ -348,6 +348,17 @@ def harmonization(defaults, runtime, harmonization, dry_run):
     return changed, defaults, runtime, harmonization
 
 
+def v213_feed_changes(defaults, runtime, harmonization, dry_run):
+    """
+    Migrates feed configuration for changed feed parameters.
+    """
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.http.collector_http":
+            if bot["parameters"].get("http_url") == 'https://www.tc.edu.tw/net/netflow/lkout/recent/30':
+                bot["parameters"]["http_url"] = "https://www.tc.edu.tw/net/netflow/lkout/recent/"
+                changed = True
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -360,7 +371,7 @@ UPGRADES = OrderedDict([
     ((2, 1, 0), (v210_deprecations, )),
     ((2, 1, 1), ()),
     ((2, 1, 2), ()),
-    ((2, 1, 3), (v213_deprecations, )),
+    ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
     ((2, 2, 0), (v220_configuration_1, )),
 ])
 

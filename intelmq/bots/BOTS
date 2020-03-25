@@ -630,9 +630,7 @@
         "Taichung": {
             "description": "Taichung Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.taichung.parser",
-            "parameters": {
-                "error_log_message": false
-            }
+            "parameters": {}
         },
         "Threatminer": {
             "description": "Threatminer Parser is the bot responsible to parse the report and sanitize the information.",

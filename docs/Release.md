@@ -64,6 +64,7 @@ For bigger releases, probably also at IHAP, Twitter, etc. Ask your favorite soci
 
 Increase the version in `intelmq/version.py` and declare it as alpha version.
 Add the new version in `intelmq/lib/upgrades.py`.
+Add a new entry in `debian/changelog` with `dch -v [version] -c debian/changelog`.
 
 Add a new empty changelog and news section. For the changelog:
 
