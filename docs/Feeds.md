@@ -1842,18 +1842,18 @@ server {
 
 # Taichung
 
-## Netflow
+## Netflow Recent
 
 * **Status:** on
 * **Revision:** 2018-01-20
-* **Description:** Abnormal flows detected.
+* **Description:** Abnormal flows detected: Attacking (DoS, Brute-Force, Scanners) and malicious hosts (C&C servers, hosting malware)
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://www.tc.edu.tw/net/netflow/lkout/recent/30`
-*  * `name`: `Netflow`
+*  * `http_url`: `https://www.tc.edu.tw/net/netflow/lkout/recent/`
+*  * `name`: `Netflow Recent`
 *  * `provider`: `Taichung`
 *  * `rate_limit`: `3600`
 
@@ -1861,7 +1861,6 @@ server {
 
 * **Module:** intelmq.bots.parsers.taichung.parser
 * **Configuration Parameters:**
-*  * `error_log_message`: `false`
 
 
 # Team Cymru
