@@ -36,6 +36,7 @@ CHANGELOG
   - Malware: Malware Proxy
   - Warn on new unknown types.
 - `intelmq.bots.parsers.bitcash.parser`: Removed as feed is discontinued.
+- `intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc` and `intelmq.bots.parsers.fraunhofer.parser_ddosattack_target`: Removed as feed is discontinued.
 
 #### Experts
 
@@ -48,6 +49,7 @@ CHANGELOG
   - Add a new field `public` to differentiate between private and public feeds.
   - Adding documentation URLs to nearly all feeds.
   - Remove unavailable Bitcash.cz feed.
+  - Remove unavailable Fraunhofer DDos Attack feeds.
 
 ### Packaging
 - patches: `fix-logrotate-path.patch`: also include path to rotated file in patch

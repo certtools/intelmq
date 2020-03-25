@@ -1494,59 +1494,6 @@ providers:
       revision: 2018-01-20
       documentation: https://dgarchive.caad.fkie.fraunhofer.de/welcome/
       public: no
-    DDoS Attack Feed (C&C):
-      description: The Fraunhofer DDoS attack feed provides information about
-        tracked C&C servers and detected attack commands from these C&Cs. You
-        may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
-      additional_information: The source feed provides a stream of newline separated JSON objects.
-        Each line represents a single event observed by DDoS C&C trackers, e.g. attack
-        commands. The feed can be retrieved with either the generic HTTP Stream
-        Collector Bot for a streaming live feed or with the generic HTTP Collector Bot
-        for a polled feed.
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http_stream
-          parameters:
-            http_url: https://feed.caad.fkie.fraunhofer.de/ddosattackfeed
-            http_password: "{{ your password }}"
-            http_username: "{{ your username }}"
-            rate_limit: 10
-            strip_lines: true
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc
-          parameters:
-            unknown_messagetype_accuracy: 80
-      revision: 2018-07-01
-      documentation:
-      public: no
-    DDoS Attack Feed (Targets):
-      description: The Fraunhofer DDoS attack feed provides information about
-        tracked C&C servers and detected attack commands from these C&Cs. You
-        may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
-      additional_information: The source feed provides a stream of newline separated JSON objects.
-        Each line represents a single event observed by DDoS C&C trackers, e.g. attack
-        commands. The feed can be retrieved with either the generic HTTP Stream
-        Collector Bot for a streaming live feed or with the generic HTTP Collector Bot
-        for a polled feed.
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http_stream
-          parameters:
-            http_url: https://feed.caad.fkie.fraunhofer.de/ddosattackfeed
-            http_password: "{{ your password }}"
-            http_username: "{{ your username }}"
-            rate_limit: 10
-            strip_lines: true
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.fraunhofer.parser_ddosattack_target
-          parameters:
-      revision: 2018-07-01
-      documentation:
-      public: no
   MalwareURL:
     Latest malicious activity:
       description: Latest malicious domains/IPs.

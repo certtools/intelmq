@@ -28,6 +28,9 @@ The Abuse.ch Zeus Tracker has been discontinued on 2019-07-08. The `intelmqctl u
 #### Bitcash.cz Feed
 The Bitcash.cz Banned IPs / Blocklist feed previously available under `https://bitcash.cz/misc/log/blacklist` is no longer available. The `intelmqctl upgrade-config` command warns if you have this feed in use.
 
+#### Fraunhofer DDoS Attack Feed
+The Fraunhofer DDoS Attack feed previously available under `https://feed.caad.fkie.fraunhofer.de/ddosattackfeed/` is no longer available. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
 ### Libraries
 
 ### Postgres databases

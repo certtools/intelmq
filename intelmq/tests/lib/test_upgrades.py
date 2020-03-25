@@ -250,7 +250,21 @@ V213_FEED = {"zeus-collector": {
         "http_url": "https://bitcash.cz/misc/log/blacklist",
     }
 },
-    "taichung-collector": {
+"ddos-attack-c2-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http_stream",
+    "parameters": {
+        "http_url": "https://feed.caad.fkie.fraunhofer.de/ddosattackfeed/",
+    }
+},
+"ddos-attack-targets-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http_stream",
+    "parameters": {
+        "http_url": "https://feed.caad.fkie.fraunhofer.de/ddosattackfeed/",
+    }
+},
+"taichung-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
@@ -272,7 +286,21 @@ V213_FEED_EXP = {"zeus-collector": {
         "http_url": "https://bitcash.cz/misc/log/blacklist",
     }
 },
-    "taichung-collector": {
+"ddos-attack-c2-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http_stream",
+    "parameters": {
+        "http_url": "https://feed.caad.fkie.fraunhofer.de/ddosattackfeed/",
+    }
+},
+"ddos-attack-targets-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http_stream",
+    "parameters": {
+        "http_url": "https://feed.caad.fkie.fraunhofer.de/ddosattackfeed/",
+    }
+},
+"taichung-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
@@ -365,7 +393,10 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertEqual('A discontinued feed "Zeus Tracker" has been found '
                          'as bot zeus-collector. Remove it yourself please. '
                          'The discontinued feed "Bitcash.cz" has been found '
-                         'as bot bitcash-collector. Remove it yourself please.',
+                         'as bot bitcash-collector. Remove it yourself please. '
+                         'The discontinued feed "Fraunhofer DDos Attack" has '
+                         'been found as bot ddos-attack-c2-collector, '
+                         'ddos-attack-targets-collector. Remove it yourself please.',
                          result[0])
         self.assertEqual(V213_FEED_EXP, result[2])
 

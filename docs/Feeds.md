@@ -928,57 +928,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 # Fraunhofer
 
-## DDoS Attack Feed (C&C)
-
-* **Public:** unknown
-* **Revision:** 2018-07-01
-* **Description:** The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs. You may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
-* **Additional Information:** The source feed provides a stream of newline separated JSON objects. Each line represents a single event observed by DDoS C&C trackers, e.g. attack commands. The feed can be retrieved with either the generic HTTP Stream Collector Bot for a streaming live feed or with the generic HTTP Collector Bot for a polled feed.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http_stream
-* **Configuration Parameters:**
-*  * `http_password`: `{{ your password }}`
-*  * `http_url`: `https://feed.caad.fkie.fraunhofer.de/ddosattackfeed`
-*  * `http_username`: `{{ your username }}`
-*  * `name`: `DDoS Attack Feed (C&C)`
-*  * `provider`: `Fraunhofer`
-*  * `rate_limit`: `10`
-*  * `strip_lines`: `True`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc
-* **Configuration Parameters:**
-*  * `unknown_messagetype_accuracy`: `80`
-
-
-## DDoS Attack Feed (Targets)
-
-* **Public:** unknown
-* **Revision:** 2018-07-01
-* **Description:** The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs. You may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
-* **Additional Information:** The source feed provides a stream of newline separated JSON objects. Each line represents a single event observed by DDoS C&C trackers, e.g. attack commands. The feed can be retrieved with either the generic HTTP Stream Collector Bot for a streaming live feed or with the generic HTTP Collector Bot for a polled feed.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http_stream
-* **Configuration Parameters:**
-*  * `http_password`: `{{ your password }}`
-*  * `http_url`: `https://feed.caad.fkie.fraunhofer.de/ddosattackfeed`
-*  * `http_username`: `{{ your username }}`
-*  * `name`: `DDoS Attack Feed (Targets)`
-*  * `provider`: `Fraunhofer`
-*  * `rate_limit`: `10`
-*  * `strip_lines`: `True`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.fraunhofer.parser_ddosattack_target
-* **Configuration Parameters:**
-
-
 ## DGA Archive
 
 * **Public:** unknown
