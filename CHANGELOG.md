@@ -49,6 +49,7 @@ CHANGELOG
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
+- `intelmq_gen_docs`: Feed documentation generation: Handle missing/empty parameters.
 
 ### Contrib
 
