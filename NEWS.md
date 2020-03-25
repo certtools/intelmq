@@ -25,6 +25,9 @@ The `intelmqctl upgrade-config` command takes care of this change.
 #### Abuse.ch Zeus Tracker Feed
 The Abuse.ch Zeus Tracker has been discontinued on 2019-07-08. The `intelmqctl upgrade-config` command warns if you have this feed in use.
 
+#### Bitcash.cz Feed
+The Bitcash.cz Banned IPs / Blocklist feed previously available under `https://bitcash.cz/misc/log/blacklist` is no longer available. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
 ### Libraries
 
 ### Postgres databases

@@ -243,6 +243,13 @@ V213_FEED = {"zeus-collector": {
         "http_url": "https://zeustracker.abuse.ch/blocklist.php?download=badips",
     }
 },
+"bitcash-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "https://bitcash.cz/misc/log/blacklist",
+    }
+},
     "taichung-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
@@ -256,6 +263,13 @@ V213_FEED_EXP = {"zeus-collector": {
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
         "http_url": "https://zeustracker.abuse.ch/blocklist.php?download=badips",
+    }
+},
+"bitcash-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "https://bitcash.cz/misc/log/blacklist",
     }
 },
     "taichung-collector": {
@@ -349,7 +363,9 @@ class TestUpgradeLib(unittest.TestCase):
         """ Test v213_feed_changes """
         result = upgrades.v213_feed_changes({}, V213_FEED, {}, False)
         self.assertEqual('A discontinued feed "Zeus Tracker" has been found '
-                         'as bot zeus-collector. Remove it yourself please.',
+                         'as bot zeus-collector. Remove it yourself please. '
+                         'The discontinued feed "Bitcash.cz" has been found '
+                         'as bot bitcash-collector. Remove it yourself please.',
                          result[0])
         self.assertEqual(V213_FEED_EXP, result[2])
 

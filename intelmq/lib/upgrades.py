@@ -336,7 +336,9 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
     Migrates feed configuration for changed feed parameters.
     """
     found_zeus = []
+    found_bitcash = []
     changed = None
+    messages = []
     for bot_id, bot in runtime.items():
         if bot["module"] == "intelmq.bots.collectors.http.collector_http":
             if bot["parameters"].get("http_url") == 'https://www.tc.edu.tw/net/netflow/lkout/recent/30':
@@ -344,10 +346,16 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
                 changed = True
             if bot["parameters"].get("http_url").startswith("https://zeustracker.abuse.ch/"):
                 found_zeus.append(bot_id)
+            elif bot["parameters"].get("http_url").startswith("https://bitcash.cz/misc/log/blacklist"):
+                found_bitcash.append(bot_id)
     if found_zeus:
-        changed =  ('A discontinued feed "Zeus Tracker" has been found '
-                    'as bot %s. Remove it yourself please.' % ', '.join(found_zeus))
-    return changed, defaults, runtime, harmonization
+        messages.append('A discontinued feed "Zeus Tracker" has been found '
+                        'as bot %s. Remove it yourself please.' % ', '.join(found_zeus))
+    if found_bitcash:
+        messages.append('The discontinued feed "Bitcash.cz" has been found '
+                        'as bot %s. Remove it yourself please.' % ', '.join(found_bitcash))
+    messages = ' '.join(messages)
+    return messages if messages else changed, defaults, runtime, harmonization
 
 
 UPGRADES = OrderedDict([

@@ -12,7 +12,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [AnubisNetworks](#anubisnetworks)
 - [Autoshun](#autoshun)
 - [Bambenek](#bambenek)
-- [Bitcash](#bitcash)
 - [Blocklist.de](#blocklistde)
 - [Blueliv](#blueliv)
 - [CERT.PL](#certpl)
@@ -317,30 +316,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ### Parser
 
 * **Module:** intelmq.bots.parsers.bambenek.parser
-* **Configuration Parameters:**
-
-
-# Bitcash
-
-## Banned IPs
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** https://bitcash.cz
-* **Description:** IPs banned for serious abusing of our services (scanning, sniffing, harvesting, dos attacks).
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `https://bitcash.cz/misc/log/blacklist`
-*  * `name`: `Banned IPs`
-*  * `provider`: `Bitcash`
-*  * `rate_limit`: `3600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.bitcash.parser
 * **Configuration Parameters:**
 
 

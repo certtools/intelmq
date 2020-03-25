@@ -110,25 +110,6 @@ providers:
       revision: 2018-01-20
       documentation: http://www.malwaredomains.com/
       public: yes
-  Bitcash:
-    Banned IPs:
-      description: IPs banned for serious abusing of our services (scanning, sniffing,
-        harvesting, dos attacks).
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://bitcash.cz/misc/log/blacklist
-            rate_limit: 3600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.bitcash.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: https://bitcash.cz
-      public: yes
   ZoneH:
     Defacements:
       description: all the information contained in Zone-H's cybercrime archive were
