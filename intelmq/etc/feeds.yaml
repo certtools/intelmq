@@ -516,7 +516,7 @@ providers:
       revision: 2018-01-20
       documentation: https://www.team-cymru.com/CSIRT-AP.html https://www.cymru.com/$certname/report_info.txt
       public: no
-    Full Bogons:
+    Full Bogons IPv4:
       description: Fullbogons are a larger set which also includes IP space that has
         been allocated to an RIR, but not assigned by that RIR to an actual ISP or
         other end-user. IANA maintains a convenient IPv4 summary page listing allocated
@@ -530,6 +530,29 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt
+            rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.cymru.parser_full_bogons
+          parameters:
+      revision: 2018-01-20
+      documentation: https://www.team-cymru.com/bogon-reference-http.html
+      public: yes
+    Full Bogons IPv6:
+      description: Fullbogons are a larger set which also includes IP space that has
+        been allocated to an RIR, but not assigned by that RIR to an actual ISP or
+        other end-user. IANA maintains a convenient IPv4 summary page listing allocated
+        and reserved netblocks, and each RIR maintains a list of all prefixes that
+        they have assigned to end-users. Our bogon reference pages include additional
+        links and resources to assist those who wish to properly filter bogon prefixes
+        within their networks.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
             rate_limit: 129600
             name: __FEED__
             provider: __PROVIDER__

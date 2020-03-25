@@ -44,6 +44,9 @@ CHANGELOG
 - `intelmq.bots.parsers.taichung.parser`:
   - Migrate to `ParserBot`.
   - Also parse geolocation information if available.
+- `intelmq.bots.parsers.cymru.parser_full_bogons`:
+  - Migrate to `ParserBot`.
+  - Add last updated information in raw.
 
 #### Experts
 - `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
@@ -61,6 +64,8 @@ CHANGELOG
 ### Documentation
 - Document usage of the `INTELMQ_ROOT_DIR` environment variable.
 - Added document on MISP integration possibilities.
+- Feeds:
+  - Added "Full Bogons IPv6" feed.
 
 ### Packaging
 - `setup.py` do not try to install any data to `/opt/intelmq/` as the behavior is inconsistent on various systems and with `intelmqsetup` we have a tool to create the structure and files anyway.
@@ -79,6 +84,7 @@ CHANGELOG
 - Added tests for the new bot `intelmq.bots.experts.misp.expert` (#1473).
 - Added tests for `intelmq.lib.exceptions`.
 - Added tests for `intelmq.lib.bot.OutputBot` and `intelmq.lib.bot.OutputBot.export_event`.
+- Added IPv6 tests for `intelmq.bots.parsers.cymru.parser_full_bogons`.
 
 ### Tools
 - `intelmqctl`:

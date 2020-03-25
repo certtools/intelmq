@@ -1827,7 +1827,7 @@ server {
 * **Configuration Parameters:**
 
 
-## Full Bogons
+## Full Bogons IPv4
 
 * **Public:** yes
 * **Revision:** 2018-01-20
@@ -1839,7 +1839,29 @@ server {
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt`
-*  * `name`: `Full Bogons`
+*  * `name`: `Full Bogons IPv4`
+*  * `provider`: `Team Cymru`
+*  * `rate_limit`: `129600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.cymru.parser_full_bogons
+* **Configuration Parameters:**
+
+
+## Full Bogons IPv6
+
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.team-cymru.com/bogon-reference-http.html
+* **Description:** Fullbogons are a larger set which also includes IP space that has been allocated to an RIR, but not assigned by that RIR to an actual ISP or other end-user. IANA maintains a convenient IPv4 summary page listing allocated and reserved netblocks, and each RIR maintains a list of all prefixes that they have assigned to end-users. Our bogon reference pages include additional links and resources to assist those who wish to properly filter bogon prefixes within their networks.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt`
+*  * `name`: `Full Bogons IPv6`
 *  * `provider`: `Team Cymru`
 *  * `rate_limit`: `129600`
 
