@@ -21,6 +21,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v202_fixes',
            'v210_deprecations',
            'v213_deprecations',
+           'v213_feed_changes',
            'v220_configuration_1',
            ]
 
@@ -352,11 +353,34 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
     """
     Migrates feed configuration for changed feed parameters.
     """
+    found_zeus = []
+    found_bitcash = []
+    found_ddos_attack = []
+    changed = None
+    messages = []
     for bot_id, bot in runtime.items():
         if bot["module"] == "intelmq.bots.collectors.http.collector_http":
             if bot["parameters"].get("http_url") == 'https://www.tc.edu.tw/net/netflow/lkout/recent/30':
                 bot["parameters"]["http_url"] = "https://www.tc.edu.tw/net/netflow/lkout/recent/"
                 changed = True
+            if bot["parameters"].get("http_url").startswith("https://zeustracker.abuse.ch/"):
+                found_zeus.append(bot_id)
+            elif bot["parameters"].get("http_url").startswith("https://bitcash.cz/misc/log/blacklist"):
+                found_bitcash.append(bot_id)
+        if bot["module"] == "intelmq.bots.collectors.http.collector_http_stream":
+            if bot["parameters"].get("http_url").startswith("https://feed.caad.fkie.fraunhofer.de/ddosattackfeed"):
+                found_ddos_attack.append(bot_id)
+    if found_zeus:
+        messages.append('A discontinued feed "Zeus Tracker" has been found '
+                        'as bot %s. Remove it yourself please.' % ', '.join(found_zeus))
+    if found_bitcash:
+        messages.append('The discontinued feed "Bitcash.cz" has been found '
+                        'as bot %s. Remove it yourself please.' % ', '.join(found_bitcash))
+    if found_ddos_attack:
+        messages.append('The discontinued feed "Fraunhofer DDos Attack" has been found '
+                        'as bot %s. Remove it yourself please.' % ', '.join(found_ddos_attack))
+    messages = ' '.join(messages)
+    return messages if messages else changed, defaults, runtime, harmonization
 
 
 UPGRADES = OrderedDict([

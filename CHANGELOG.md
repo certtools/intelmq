@@ -113,6 +113,7 @@ CHANGELOG
   - Harmonization upgrade: Also check and update regular expressions
   - Add function to migrate the deprecated parameter `attach_unzip` to `extract_files` for the mail attachment collector.
   - Add function to migrate changed Taichung URL feed.
+  - Check for discontinued Abuse.CH Zeus Tracker feed.
 
 ### Development
 
@@ -135,12 +136,22 @@ CHANGELOG
   - IDS Alert / known vulnerability exploitation: backdoor
   - Malware: Malware Proxy
   - Warn on new unknown types.
+- `intelmq.bots.parsers.bitcash.parser`: Removed as feed is discontinued.
+- `intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc` and `intelmq.bots.parsers.fraunhofer.parser_ddosattack_target`: Removed as feed is discontinued.
+- `intelmq.bots.parsers.malwaredomains.parser`: Correctly classify `C&C` and `phishing` events.
 
 #### Experts
 
 #### Outputs
 
 ### Documentation
+- Feeds:
+  - Remove unavailable feed Abuse.CH Zeus Tracker.
+  - Remove the field `status`, offline feeds should be removed.
+  - Add a new field `public` to differentiate between private and public feeds.
+  - Adding documentation URLs to nearly all feeds.
+  - Remove unavailable Bitcash.cz feed.
+  - Remove unavailable Fraunhofer DDos Attack feeds.
 
 ### Packaging
 - patches: `fix-logrotate-path.patch`: also include path to rotated file in patch
