@@ -100,10 +100,10 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
             output += "## %s\n\n" % feed
 
-            if feed_info['status']:
-                output += info("status", "on")
+            if feed_info['public']:
+                output += info("public", "yes" if feed_info['public'] else "no")
             else:
-                output += info("status", "off")
+                output += info("public", "unknown")
 
             output += info("revision", feed_info['revision'])
 
