@@ -10,7 +10,8 @@ CHANGELOG
 ### Core
 - `intelmq.lib.upgrades`:
   - Harmonization upgrade: Also check and update regular expressions
-  - Add function to migrate the deprecated paramaeter `attach_unzip` to `extract_files` for the mail attachment collector.
+  - Add function to migrate the deprecated parameter `attach_unzip` to `extract_files` for the mail attachment collector.
+  - Add function to migrate changed Taichung URL feed.
 
 ### Development
 
@@ -23,7 +24,16 @@ CHANGELOG
 - `intelmq.bots.collectors.stomp.collector`: Fix compatibility with stomp.py versions `> 4.1.20` and catch errors on shutdown.
 
 #### Parsers
-- `intelmq.bots.parser.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`).
+- `intelmq.bots.parsers.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`).
+- `intelmq.bots.parsers.taichung.parser`: Support more types/classifications:
+  - Application Compromise: Apache vulnerability & SQL injections
+  - Brute-force: MSSQL & SSH password guess attacks; Office 365, SSH & SIP attacks
+  - C2 Sever: Attack controller
+  - DDoS
+  - DoS: DNS, DoS, Excess connection
+  - IDS Alert / known vulnerability exploitation: backdoor
+  - Malware: Malware Proxy
+  - Warn on new unknown types.
 
 #### Experts
 

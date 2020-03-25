@@ -1,17 +1,31 @@
 # -*- coding: utf-8 -*-
-
+"""
+unmapped:
+    : bing says "Over-the-line",
+"""
 import re
+import warnings
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 
 CLASSIFICATION = {
-    "brute-force": ["brute-force", "brute force", "mysql"],
-    "c2server": ["c&c server"],
+    "brute-force": ["brute-force", "brute force", "mysql",
+                    "mssql 密碼猜測攻擊",  # Password Guess Attack
+                    "office 365 attack", "sip attack", "ssh attack",
+                    "ssh密碼猜測攻擊",  # Password Guess Attack
+                    ],
+    "c2server": ["c&c server", "attack controller"],
     "infected-system": ["irc-botnet"],
-    "malware": ["malware provider", "malware website", '\u60e1\u610f', "worm"],
+    "malware": ["malware provider", "malware website", '\u60e1\u610f', "worm", "malware proxy"],
     "scanner": ["scan"],
     "exploit": ["bash", "php-cgi", "phpmyadmin"],
+    "ddos": ["ddos"],
+    "application-compromise": ["injection"],  # apache vulns, sql
+    "ids-alert": ["backdoor"],  # ids-alert is exploitation of known vulnerability
+    "dos": ["dns", "dos",  # must be after ddos
+            "超量連線",  # google: "Excess connection"
+            ],
 }
 
 
@@ -23,6 +37,8 @@ class TaichungCityNetflowParserBot(Bot):
             for keyword in keywords:
                 if keyword in value:
                     return event_type
+        warnings.warn("Unknown classification: %r. Please report this as bug."
+                      "" % value)
         return "unknown"
 
     def process(self):
@@ -31,7 +47,7 @@ class TaichungCityNetflowParserBot(Bot):
         raw_report = utils.base64_decode(report.get("raw"))
         for row in raw_report.split('<tr>'):
 
-            # Get IP and Type
+            # Get IP Address and Type
             info1 = re.search(
                 r">[\ ]*(\d+\.\d+\.\d+\.\d+)[\ ]*<.*</td><td>([^<]+)</td>", row)
 
@@ -46,8 +62,8 @@ class TaichungCityNetflowParserBot(Bot):
             event = self.new_event(report)
 
             description = info1.group(2)
+            event_type = self.get_type(description)  # without decoding here, b/c of the unicode signs
             description = utils.decode(description)
-            event_type = self.get_type(description)
             time_source = info2.group(1) + " UTC-8"
 
             event.add("time.source", time_source)

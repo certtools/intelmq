@@ -17,6 +17,11 @@ The regular expression of the field `protocol.transport` has been updated to acc
 
 ### Configuration
 
+#### Taichung feed
+The Taichung feed "Netflow (Recent 30)" with URL `https://www.tc.edu.tw/net/netflow/lkout/recent/30` is no longer available and gives an error 500.
+As a drop-in replacement the Parser as well as the Feed documentation are now adapted to the full feed available at `https://www.tc.edu.tw/net/netflow/lkout/recent/`.
+The `intelmqctl upgrade-config` command takes care of this change.
+
 ### Libraries
 
 ### Postgres databases

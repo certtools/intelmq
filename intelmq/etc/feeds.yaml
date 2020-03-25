@@ -604,21 +604,19 @@ providers:
       status: on
       documentation:
   Taichung:
-    Netflow:
-      description: Abnormal flows detected.
+    Netflow Recent:
+      description: "Abnormal flows detected: Attacking (DoS, Brute-Force, Scanners) and malicious hosts (C&C servers, hosting malware)"
       additional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://www.tc.edu.tw/net/netflow/lkout/recent/30
+            http_url: https://www.tc.edu.tw/net/netflow/lkout/recent/
             rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.taichung.parser
-          parameters:
-            error_log_message: 'false'
       revision: 2018-01-20
       status: on
       documentation:
