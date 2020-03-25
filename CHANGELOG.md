@@ -12,6 +12,7 @@ CHANGELOG
   - Harmonization upgrade: Also check and update regular expressions
   - Add function to migrate the deprecated parameter `attach_unzip` to `extract_files` for the mail attachment collector.
   - Add function to migrate changed Taichung URL feed.
+  - Check for discontinued Abuse.CH Zeus Tracker feed.
 
 ### Development
 
@@ -40,6 +41,8 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
+- Feeds:
+  - Remove unavailable feed Abuse.CH Zeus Tracker.
 
 ### Packaging
 - patches: `fix-logrotate-path.patch`: also include path to rotated file in patch

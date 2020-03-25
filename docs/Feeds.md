@@ -154,48 +154,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `type_translation`: `{"malware_download": "malware-distribution"}`
 
 
-## Zeus Tracker Domains
-
-* **Status:** off
-* **Revision:** 2018-01-20
-* **Description:** The ZeuS domain blocklist (BadDomains) is the recommended blocklist if you want to block only ZeuS domain names. It has domain names that ZeuS Tracker believes to be hijacked (level 2). Hence the false positive rate should be much lower compared to the standard ZeuS domain blocklist.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `https://zeustracker.abuse.ch/blocklist.php?download=baddomains`
-*  * `name`: `Zeus Tracker Domains`
-*  * `provider`: `Abuse.ch`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.abusech.parser_domain
-* **Configuration Parameters:**
-
-
-## Zeus Tracker IPs
-
-* **Status:** off
-* **Revision:** 2018-01-20
-* **Description:** This list only includes IPv4 addresses that are used by the ZeuS Trojan. It is the recommended list if you want to block only ZeuS IPs. It excludes IP addresses that ZeuS Tracker believes to be hijacked (level 2) or belong to a free web hosting provider (level 3). Hence the false positive rate should be much lower compared to the standard ZeuS IP blocklist.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `https://zeustracker.abuse.ch/blocklist.php?download=badips`
-*  * `name`: `Zeus Tracker IPs`
-*  * `provider`: `Abuse.ch`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.abusech.parser_ip
-* **Configuration Parameters:**
-
-
 # AlienVault
 
 ## OTX

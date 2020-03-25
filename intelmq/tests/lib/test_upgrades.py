@@ -195,14 +195,14 @@ V210_EXP = {"test-collector": {
     }
 }
 }
-V213 = {"test-collector": {
+V213 = {"mail-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.mail.collector_mail_attach",
     "parameters": {
         "attach_unzip": True,
     }
 },
-    "test-collector2": {
+    "mail-collector2": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.mail.collector_mail_attach",
     "parameters": {
@@ -211,14 +211,14 @@ V213 = {"test-collector": {
     }
 }
 }
-V213_EXP = {"test-collector": {
+V213_EXP = {"mail-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.mail.collector_mail_attach",
     "parameters": {
         "extract_files": True,
     }
 },
-    "test-collector2": {
+    "mail-collector2": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.mail.collector_mail_attach",
     "parameters": {
@@ -236,6 +236,36 @@ WRONG_TYPE = deepcopy(HARM)
 WRONG_TYPE['event']['source.asn']['type'] = 'String'
 WRONG_REGEX = deepcopy(HARM)
 WRONG_REGEX['event']['protocol.transport']['iregex'] = 'foobar'
+V213_FEED = {"zeus-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "https://zeustracker.abuse.ch/blocklist.php?download=badips",
+    }
+},
+    "taichung-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "https://www.tc.edu.tw/net/netflow/lkout/recent/30",
+    },
+}
+}
+V213_FEED_EXP = {"zeus-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "https://zeustracker.abuse.ch/blocklist.php?download=badips",
+    }
+},
+    "taichung-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "https://www.tc.edu.tw/net/netflow/lkout/recent/",
+    },
+}
+}
 
 
 def generate_function(function):
@@ -314,6 +344,14 @@ class TestUpgradeLib(unittest.TestCase):
         result = upgrades.v213_deprecations({}, V213, {}, False)
         self.assertTrue(result[0])
         self.assertEqual(V213_EXP, result[2])
+
+    def test_v213_feed_changes(self):
+        """ Test v213_feed_changes """
+        result = upgrades.v213_feed_changes({}, V213_FEED, {}, False)
+        self.assertEqual('A discontinued feed "Zeus Tracker" has been found '
+                         'as bot zeus-collector. Remove it yourself please.',
+                         result[0])
+        self.assertEqual(V213_FEED_EXP, result[2])
 
 
 for name in upgrades.__all__:

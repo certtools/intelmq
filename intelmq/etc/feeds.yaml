@@ -393,27 +393,6 @@ providers:
       status: on
       documentation:
   Abuse.ch:
-    Zeus Tracker IPs:
-      description: This list only includes IPv4 addresses that are used by the ZeuS
-        Trojan. It is the recommended list if you want to block only ZeuS IPs. It
-        excludes IP addresses that ZeuS Tracker believes to be hijacked (level 2)
-        or belong to a free web hosting provider (level 3). Hence the false positive
-        rate should be much lower compared to the standard ZeuS IP blocklist.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://zeustracker.abuse.ch/blocklist.php?download=badips
-            rate_limit: 129600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.abusech.parser_ip
-          parameters:
-      revision: 2018-01-20
-      status: off
-      documentation:
     Ransomware Tracker:
       description: Ransomware Tracker feed includes FQDN's, URL's, and known IP addresses
         that were used for said FQDN's and URL's for various ransomware families.
@@ -431,26 +410,6 @@ providers:
           parameters:
       revision: 2018-01-20
       status: on
-      documentation:
-    Zeus Tracker Domains:
-      description: The ZeuS domain blocklist (BadDomains) is the recommended blocklist
-        if you want to block only ZeuS domain names. It has domain names that ZeuS
-        Tracker believes to be hijacked (level 2). Hence the false positive rate should
-        be much lower compared to the standard ZeuS domain blocklist.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://zeustracker.abuse.ch/blocklist.php?download=baddomains
-            rate_limit: 129600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.abusech.parser_domain
-          parameters:
-      revision: 2018-01-20
-      status: off
       documentation:
     Feodo Tracker IPs:
       description: 'List of botnet Command&Control servers (C&Cs) tracked by Feodo Tracker,

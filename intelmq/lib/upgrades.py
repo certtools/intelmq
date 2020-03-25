@@ -21,6 +21,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v202_fixes',
            'v210_deprecations',
            'v213_deprecations',
+           'v213_feed_changes',
            ]
 
 
@@ -334,11 +335,19 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
     """
     Migrates feed configuration for changed feed parameters.
     """
+    found_zeus = []
+    changed = None
     for bot_id, bot in runtime.items():
         if bot["module"] == "intelmq.bots.collectors.http.collector_http":
             if bot["parameters"].get("http_url") == 'https://www.tc.edu.tw/net/netflow/lkout/recent/30':
                 bot["parameters"]["http_url"] = "https://www.tc.edu.tw/net/netflow/lkout/recent/"
                 changed = True
+            if bot["parameters"].get("http_url").startswith("https://zeustracker.abuse.ch/"):
+                found_zeus.append(bot_id)
+    if found_zeus:
+        changed =  ('A discontinued feed "Zeus Tracker" has been found '
+                    'as bot %s. Remove it yourself please.' % ', '.join(found_zeus))
+    return changed, defaults, runtime, harmonization
 
 
 UPGRADES = OrderedDict([

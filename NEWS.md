@@ -22,6 +22,9 @@ The Taichung feed "Netflow (Recent 30)" with URL `https://www.tc.edu.tw/net/netf
 As a drop-in replacement the Parser as well as the Feed documentation are now adapted to the full feed available at `https://www.tc.edu.tw/net/netflow/lkout/recent/`.
 The `intelmqctl upgrade-config` command takes care of this change.
 
+#### Abuse.ch Zeus Tracker Feed
+The Abuse.ch Zeus Tracker has been discontinued on 2019-07-08. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
 ### Libraries
 
 ### Postgres databases
