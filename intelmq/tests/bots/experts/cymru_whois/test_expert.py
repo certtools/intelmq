@@ -51,19 +51,6 @@ EMPTY_INPUT = {"__type": "Event",
                "source.ip": "198.105.125.77",  # no result
                "time.observation": "2015-01-01T00:00:00+00:00",
                }
-NO_ASN_INPUT = {"__type": "Event",
-                "source.ip": "212.92.127.126",
-                "time.observation": "2015-01-01T00:00:00+00:00",
-                }
-NO_ASN_OUTPUT = {"__type": "Event",
-                 "source.ip": "212.92.127.126",
-                 "time.observation": "2015-01-01T00:00:00+00:00",
-                 "source.asn": 23456,
-                 "source.geolocation.cc": 'RU',
-                 "source.ip": '212.92.127.126',
-                 "source.network": '212.92.127.0/24',
-                 "source.registry": 'RIPE',
-                 }
 EXAMPLE_6TO4_INPUT = {"__type": "Event",
                  "source.ip": "2002:3ee0:3972:0001::1",
                  "time.observation": "2015-01-01T00:00:00+00:00",
@@ -73,6 +60,13 @@ EXAMPLE_6TO4_OUTPUT = {"__type": "Event",
                   "source.network": "2002::/16",
                   "source.asn": 1103,
                   "source.as_name": "SURFNET-NL SURFnet, The Netherlands, NL",
+                  "time.observation": "2015-01-01T00:00:00+00:00",
+                  }
+EXAMPLE_6TO4_OUTPUT_1 = {"__type": "Event",
+                  "source.ip": "2002:3ee0:3972:0001::1",
+                  "source.network": "2002::/16",
+                  "source.asn": 6939,
+                  "source.as_name": "HURRICANE, US",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 OVERWRITE_OUT = {"__type": "Event",
@@ -122,9 +116,16 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EMPTY_INPUT)
 
     def test_6to4_result(self):
+        """
+        Test the whois for an IPv6 to IPv4 network range.
+        The result can vary, so we test for two possible expected results.
+        """
         self.input_message = EXAMPLE_6TO4_INPUT
         self.run_bot()
-        self.assertMessageEqual(0, EXAMPLE_6TO4_OUTPUT)
+        try:
+            self.assertMessageEqual(0, EXAMPLE_6TO4_OUTPUT)
+        except AssertionError:
+            self.assertMessageEqual(0, EXAMPLE_6TO4_OUTPUT_1)
 
     def test_overwrite(self):
         self.input_message = EXAMPLE_INPUT.copy()
@@ -132,17 +133,6 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message["source.registry"] = "LACNIC"
         self.run_bot(parameters={'overwrite' : False})
         self.assertMessageEqual(0, OVERWRITE_OUT)
-
-    @unittest.expectedFailure
-    def test_missing_asn(self):
-        """
-        No information for ASN.
-
-        https://github.com/certtools/intelmq/issues/635
-        """
-        self.input_message = NO_ASN_INPUT
-        self.run_bot()
-        self.assertMessageEqual(0, NO_ASN_OUTPUT)
 
 
 if __name__ == '__main__':  # pragma: no cover

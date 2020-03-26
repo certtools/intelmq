@@ -112,6 +112,20 @@ The regular expression of the field `protocol.transport` has been updated to acc
 
 ### Configuration
 
+#### Taichung feed
+The Taichung feed "Netflow (Recent 30)" with URL `https://www.tc.edu.tw/net/netflow/lkout/recent/30` is no longer available and gives an error 500.
+As a drop-in replacement the Parser as well as the Feed documentation are now adapted to the full feed available at `https://www.tc.edu.tw/net/netflow/lkout/recent/`.
+The `intelmqctl upgrade-config` command takes care of this change.
+
+#### Abuse.ch Zeus Tracker Feed
+The Abuse.ch Zeus Tracker has been discontinued on 2019-07-08. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
+#### Bitcash.cz Feed
+The Bitcash.cz Banned IPs / Blocklist feed previously available under `https://bitcash.cz/misc/log/blacklist` is no longer available. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
+#### Fraunhofer DDoS Attack Feed
+The Fraunhofer DDoS Attack feed previously available under `https://feed.caad.fkie.fraunhofer.de/ddosattackfeed/` is no longer available. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
 ### Libraries
 
 ### Postgres databases

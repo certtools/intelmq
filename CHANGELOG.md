@@ -93,6 +93,12 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - `intelmq.bots.parsers.autoshun.parser`: Drop compatibility with Python 3.4.
 - `intelmq.bots.parsers.html_table.parser`: Drop compatibility with Python 3.4.
 - `intelmq.bots.parsers.shadowserver.parser`: Add suppor for MQTT feed (PR#1512).
+- `intelmq.bots.parsers.taichung.parser`:
+  - Migrate to `ParserBot`.
+  - Also parse geolocation information if available.
+- `intelmq.bots.parsers.cymru.parser_full_bogons`:
+  - Migrate to `ParserBot`.
+  - Add last updated information in raw.
 
 #### Experts
 - `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
@@ -110,6 +116,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Documentation
 - Document usage of the `INTELMQ_ROOT_DIR` environment variable.
 - Added document on MISP integration possibilities.
+- Feeds:
+  - Added "Full Bogons IPv6" feed.
 
 ### Packaging
 - `setup.py` do not try to install any data to `/opt/intelmq/` as the behavior is inconsistent on various systems and with `intelmqsetup` we have a tool to create the structure and files anyway.
@@ -128,6 +136,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - Added tests for the new bot `intelmq.bots.experts.misp.expert` (#1473).
 - Added tests for `intelmq.lib.exceptions`.
 - Added tests for `intelmq.lib.bot.OutputBot` and `intelmq.lib.bot.OutputBot.export_event`.
+- Added IPv6 tests for `intelmq.bots.parsers.cymru.parser_full_bogons`.
 
 ### Tools
 - `intelmqctl`:
@@ -160,7 +169,11 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Core
 - `intelmq.lib.upgrades`:
   - Harmonization upgrade: Also check and update regular expressions
-  - Add function to migrate the deprecated paramaeter `attach_unzip` to `extract_files` for the mail attachment collector.
+  - Add function to migrate the deprecated parameter `attach_unzip` to `extract_files` for the mail attachment collector.
+  - Add function to migrate changed Taichung URL feed.
+  - Check for discontinued Abuse.CH Zeus Tracker feed.
+- `intelmq.lib.bot`:
+  - `ParserBot.recover_line`: Parameter `line` needs to be optional, fix usage of fallback value `self.current_line`.
 
 ### Development
 
@@ -173,22 +186,48 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - `intelmq.bots.collectors.stomp.collector`: Fix compatibility with stomp.py versions `> 4.1.20` and catch errors on shutdown.
 
 #### Parsers
-- `intelmq.bots.parser.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`).
+- `intelmq.bots.parsers.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`).
+- `intelmq.bots.parsers.taichung.parser`: Support more types/classifications:
+  - Application Compromise: Apache vulnerability & SQL injections
+  - Brute-force: MSSQL & SSH password guess attacks; Office 365, SSH & SIP attacks
+  - C2 Sever: Attack controller
+  - DDoS
+  - DoS: DNS, DoS, Excess connection
+  - IDS Alert / known vulnerability exploitation: backdoor
+  - Malware: Malware Proxy
+  - Warn on new unknown types.
+- `intelmq.bots.parsers.bitcash.parser`: Removed as feed is discontinued.
+- `intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc` and `intelmq.bots.parsers.fraunhofer.parser_ddosattack_target`: Removed as feed is discontinued.
+- `intelmq.bots.parsers.malwaredomains.parser`: Correctly classify `C&C` and `phishing` events.
+- `intelmq.bots.parsers.shadowserver.parser`: More verbose error message for missing report specification (#1507).
 
 #### Experts
 
 #### Outputs
 
 ### Documentation
+- Feeds:
+  - Remove unavailable feed Abuse.CH Zeus Tracker.
+  - Remove the field `status`, offline feeds should be removed.
+  - Add a new field `public` to differentiate between private and public feeds.
+  - Adding documentation URLs to nearly all feeds.
+  - Remove unavailable Bitcash.cz feed.
+  - Remove unavailable Fraunhofer DDos Attack feeds.
 
 ### Packaging
 - patches: `fix-logrotate-path.patch`: also include path to rotated file in patch
 
 ### Tests
 - Dropping Travis tests for 3.4 as required libraries dropped 3.4 support.
+- `intelmq.tests.bots.experts.cymru_whois`:
+  - Drop missing ASN test, does not work anymore.
+  - IPv6 to IPv4 test: Test for two possible results.
+- `intelmq.lib.test`: Fix compatibility of logging capture with Python >= 3.7 by reworking the whole process (#1342).
+- `intelmq.bots.collectors.tcp.test_collector`: Removing custom mocking and bot starting, not necessary anymore.
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
+- `intelmq_gen_docs`: Feed documentation generation: Handle missing/empty parameters.
 
 ### Contrib
 

@@ -34,9 +34,6 @@ class TestBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertLogMatches(levelname='ERROR', pattern='Bot has found a problem')
 
-    @unittest.skipIf(sys.version_info[:2] == (3, 7),
-                     'Unclear behavior with copies of logger in Python 3.7, see '
-                     'https://bugs.python.org/issue9338 and https://github.com/certtools/intelmq/issues/1269')
     def test_logging_level_other(self):
         self.input_message = test_parser_bot.EXAMPLE_SHORT
         self.run_bot(parameters={"logging_level": "DEBUG"})

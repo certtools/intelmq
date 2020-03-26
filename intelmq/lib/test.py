@@ -5,7 +5,6 @@ Utilities for testing intelmq bots.
 The BotTestCase can be used as base class for unittests on bots. It includes
 some basic generic tests (logged errors, correct pipeline setup).
 """
-import copy
 import io
 import json
 import logging
@@ -22,24 +21,26 @@ import redis
 import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
+from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, DEFAULTS_CONF_FILE
 
 __all__ = ['BotTestCase']
 
-BOT_CONFIG = {"http_proxy": None,
-              "https_proxy": None,
-              "broker": "pythonlist",
-              "rate_limit": 0,
-              "retry_delay": 0,
-              "error_retry_delay": 0,
-              "error_max_retries": 0,
-              "redis_cache_host": "localhost",
-              "redis_cache_port": 6379,
-              "redis_cache_db": 4,
-              "redis_cache_ttl": 10,
-              "redis_cache_password": os.environ.get('INTELMQ_TEST_REDIS_PASSWORD'),
-              "testing": True,
-              }
+BOT_CONFIG = utils.load_configuration(pkg_resources.resource_filename('intelmq',
+                                                                      'etc/defaults.conf'))
+BOT_CONFIG.update({"broker": "pythonlist",
+                   "logging_handler": "stream",
+                   "logging_path": None,
+                   "rate_limit": 0,
+                   "retry_delay": 0,
+                   "error_retry_delay": 0,
+                   "error_max_retries": 0,
+                   "redis_cache_host": "localhost",
+                   "redis_cache_port": 6379,
+                   "redis_cache_db": 4,
+                   "redis_cache_ttl": 10,
+                   "redis_cache_password": os.environ.get('INTELMQ_TEST_REDIS_PASSWORD'),
+                   "testing": True,
+                   })
 
 
 class Parameters(object):
@@ -53,14 +54,14 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}, gr
                              "destination-queues": dst_names},
                     }
         elif conf_file == RUNTIME_CONF_FILE:
-            conf = BOT_CONFIG.copy()
-            conf.update(sysconfig)
             return {bot_id: {'description': 'Instance of a bot for automated unit tests.',
                              'group': group,
                              'module': module,
                              'name': 'Test Bot',
-                             'parameters': conf,
+                             'parameters': sysconfig,
                              }}
+        elif conf_file == DEFAULTS_CONF_FILE:
+            return BOT_CONFIG
         elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
@@ -71,16 +72,6 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}, gr
             return utils.load_configuration(conf_file)
 
     return mocked
-
-
-def mocked_logger(logger):
-    def log(name, log_path=None, log_level=None, stream=None, syslog=None):
-        # Return a copy as the bot may modify the logger and we should always return the intial logger
-        logger_new = copy.copy(logger)
-        logger_new.setLevel(log_level)
-        return logger_new
-
-    return log
 
 
 def skip_database():
@@ -188,6 +179,12 @@ class BotTestCase(object):
     def new_event(self):
         return message.Event(harmonization=self.harmonization)
 
+    def get_mocked_logger(self, logger):
+        def log(name, *args, **kwargs):
+            logger.handlers = self.logger_handlers_backup
+            return logger
+        return log
+
     def prepare_bot(self, parameters={}, destination_queues=None):
         """
         Reconfigures the bot with the changed attributes.
@@ -217,16 +214,15 @@ class BotTestCase(object):
                                            module=self.bot_reference.__module__,
                                            )
 
-        logger = logging.getLogger(self.bot_id)
-        logger.setLevel("INFO")
-        console_formatter = logging.Formatter(utils.LOG_FORMAT)
-        console_handler = logging.StreamHandler(self.log_stream)
-        console_handler.setFormatter(console_formatter)
-        logger.addHandler(console_handler)
-        self.mocked_log = mocked_logger(logger)
-        logging.captureWarnings(True)
-        warnings_logger = logging.getLogger("py.warnings")
-        warnings_logger.addHandler(console_handler)
+        self.resulting_config = BOT_CONFIG.copy()
+        self.resulting_config.update(self.sysconfig)
+        self.resulting_config.update(parameters)
+
+        self.logger = utils.log(self.bot_id,
+                                log_path=False, stream=self.log_stream,
+                                log_format_stream=utils.LOG_FORMAT,
+                                log_level=self.resulting_config['logging_level'])
+        self.logger_handlers_backup = self.logger.handlers
 
         parameters = Parameters()
         setattr(parameters, 'source_queue', src_name)
@@ -234,11 +230,11 @@ class BotTestCase(object):
 
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
-            with mock.patch('intelmq.lib.utils.log', self.mocked_log):
+            with mock.patch('intelmq.lib.utils.log', self.get_mocked_logger(self.logger)):
                 self.bot = self.bot_reference(self.bot_id)
         self.bot._Bot__stats_cache = None
 
-        self.pipe = pipeline.Pythonlist(parameters, logger=logger, bot=self.bot)
+        self.pipe = pipeline.Pythonlist(parameters, logger=self.logger, bot=self.bot)
         self.pipe.set_queues(parameters.source_queue, "source")
         self.pipe.set_queues(parameters.destination_queues, "destination")
 
@@ -271,7 +267,7 @@ class BotTestCase(object):
             self.prepare_bot(parameters=parameters)
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
-            with mock.patch('intelmq.lib.utils.log', self.mocked_log):
+            with mock.patch('intelmq.lib.utils.log', self.get_mocked_logger(self.logger)):
                 for run in range(iterations):
                     self.bot.start(error_on_pipeline=error_on_pipeline,
                                    source_pipeline=self.pipe,
@@ -404,9 +400,6 @@ class BotTestCase(object):
             message: Message text which is compared
             levelname: Log level of logline which is asserted
         """
-        if sys.version_info >= (3, 7):
-            return True
-
         self.assertIsNotNone(self.loglines)
         logline = self.loglines[line_no]
         fields = utils.parse_logline(logline)
@@ -447,9 +440,6 @@ class BotTestCase(object):
             pattern: Message text which is compared, regular expression.
             levelname: Log level of the logline which is asserted, upper case.
         """
-        if sys.version_info >= (3, 7):
-            return True
-
         self.assertIsNotNone(self.loglines)
         for logline in self.loglines:
             fields = utils.parse_logline(logline)
