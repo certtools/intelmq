@@ -422,14 +422,25 @@ class TestUpgradeLib(unittest.TestCase):
     def test_v213_feed_changes(self):
         """ Test v213_feed_changes """
         result = upgrades.v213_feed_changes({}, V213_FEED, {}, False)
-        self.assertEqual('A discontinued feed "Zeus Tracker" has been found '
-                         'as bot zeus-collector. Remove it yourself please. '
-                         'The discontinued feed "Bitcash.cz" has been found '
-                         'as bot bitcash-collector. Remove it yourself please. '
-                         'The discontinued feed "Fraunhofer DDos Attack" has '
-                         'been found as bot ddos-attack-c2-collector, '
-                         'ddos-attack-targets-collector. Remove it yourself please.',
-                         result[0])
+        try:
+            self.assertEqual('A discontinued feed "Zeus Tracker" has been found '
+                             'as bot zeus-collector. Remove it yourself please. '
+                             'The discontinued feed "Bitcash.cz" has been found '
+                             'as bot bitcash-collector. Remove it yourself please. '
+                             'The discontinued feed "Fraunhofer DDos Attack" has '
+                             'been found as bot ddos-attack-c2-collector, '
+                             'ddos-attack-targets-collector. Remove it yourself please.',
+                             result[0])
+        except AssertionError:
+            # don't care about the ordering of the bot ids. behaviour differs per python version
+            self.assertEqual('A discontinued feed "Zeus Tracker" has been found '
+                             'as bot zeus-collector. Remove it yourself please. '
+                             'The discontinued feed "Bitcash.cz" has been found '
+                             'as bot bitcash-collector. Remove it yourself please. '
+                             'The discontinued feed "Fraunhofer DDos Attack" has '
+                             'been found as bot ddos-attack-targets-collector, '
+                             'ddos-attack-c2-collector. Remove it yourself please.',
+                             result[0])
         self.assertEqual(V213_FEED_EXP, result[2])
 
 

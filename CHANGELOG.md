@@ -120,6 +120,8 @@ CHANGELOG
   - Add function to migrate the deprecated parameter `attach_unzip` to `extract_files` for the mail attachment collector.
   - Add function to migrate changed Taichung URL feed.
   - Check for discontinued Abuse.CH Zeus Tracker feed.
+- `intelmq.lib.bot`:
+  - `ParserBot.recover_line`: Parameter `line` needs to be optional, fix usage of fallback value `self.current_line`.
 
 ### Development
 
@@ -145,6 +147,7 @@ CHANGELOG
 - `intelmq.bots.parsers.bitcash.parser`: Removed as feed is discontinued.
 - `intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc` and `intelmq.bots.parsers.fraunhofer.parser_ddosattack_target`: Removed as feed is discontinued.
 - `intelmq.bots.parsers.malwaredomains.parser`: Correctly classify `C&C` and `phishing` events.
+- `intelmq.bots.parsers.shadowserver.parser`: More verbose error message for missing report specification (#1507).
 
 #### Experts
 
@@ -164,6 +167,11 @@ CHANGELOG
 
 ### Tests
 - Dropping Travis tests for 3.4 as required libraries dropped 3.4 support.
+- `intelmq.tests.bots.experts.cymru_whois`:
+  - Drop missing ASN test, does not work anymore.
+  - IPv6 to IPv4 test: Test for two possible results.
+- `intelmq.lib.test`: Fix compatibility of logging capture with Python >= 3.7 by reworking the whole process (#1342).
+- `intelmq.bots.collectors.tcp.test_collector`: Removing custom mocking and bot starting, not necessary anymore.
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
