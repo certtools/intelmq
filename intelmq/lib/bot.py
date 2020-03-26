@@ -971,18 +971,42 @@ class ParserBot(Bot):
 
         self.acknowledge_message()
 
-    def recover_line(self, line: str):
+    def recover_line(self, line: Optional[str] = None) -> str:
         """
-        Reverse of parse for single lines.
+        Reverse of "parse" for single lines.
 
-        Recovers a fully functional report with only the problematic line.
+        Recovers a fully functional report with only the problematic line by
+        concatenating all strings in "self.tempdata" with "line" with LF
+        newlines. Works fine for most text files.
+
+        Parameters
+        ----------
+        line : Optional[str], optional
+            The currently process line which should be transferred into it's
+            original appearance. As fallback, "self.current_line" is used if
+            available (depending on self.parse).
+            The default is None.
+
+        Raises
+        ------
+        ValueError
+            If neither the parameter "line" nor the member "self.current_line"
+            is available.
+
+        Returns
+        -------
+        str
+            The reconstructed raw data.
+
         """
         if self.handle and self.handle.first_line and not self.tempdata:
             tempdata = [self.handle.first_line.strip()]
         else:
             tempdata = self.tempdata
-        if self.current_line:
-            line = self.current_line
+        if not line and not self.current_line:
+            raise ValueError('Parameter "line" is not given and '
+                             '"self.current_line" is also None. Please give one of them.')
+        line = line if line else self.current_line
         return '\n'.join(tempdata + [line])
 
     def recover_line_csv(self, line: str):

@@ -13,6 +13,8 @@ CHANGELOG
   - Add function to migrate the deprecated parameter `attach_unzip` to `extract_files` for the mail attachment collector.
   - Add function to migrate changed Taichung URL feed.
   - Check for discontinued Abuse.CH Zeus Tracker feed.
+- `intelmq.lib.bot`:
+  - `ParserBot.recover_line`: Parameter `line` needs to be optional, fix usage of fallback value `self.current_line`.
 
 ### Development
 
