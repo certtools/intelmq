@@ -59,6 +59,9 @@ CHANGELOG
 
 ### Tests
 - Dropping Travis tests for 3.4 as required libraries dropped 3.4 support.
+- `intelmq.tests.bots.experts.cymru_whois`:
+  - Drop missing ASN test, does not work anymore.
+  - IPv6 to IPv4 test: Test for two possible results.
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
