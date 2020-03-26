@@ -63,6 +63,7 @@ CHANGELOG
 - `intelmq.tests.bots.experts.cymru_whois`:
   - Drop missing ASN test, does not work anymore.
   - IPv6 to IPv4 test: Test for two possible results.
+- `intelmq.lib.test`: Fix compatibility of logging capture with Python >= 3.7 by reworking the whole process (#1342).
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
