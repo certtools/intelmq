@@ -253,7 +253,6 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, INDEX_ERROR)
 
-    @unittest.expectedFailure
     def test_country_question_mark(self):
         """
         Response has '?' as country
