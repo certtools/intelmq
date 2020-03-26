@@ -40,6 +40,7 @@ CHANGELOG
 - `intelmq.bots.parsers.bitcash.parser`: Removed as feed is discontinued.
 - `intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc` and `intelmq.bots.parsers.fraunhofer.parser_ddosattack_target`: Removed as feed is discontinued.
 - `intelmq.bots.parsers.malwaredomains.parser`: Correctly classify `C&C` and `phishing` events.
+- `intelmq.bots.parsers.shadowserver.parser`: More verbose error message for missing report specification (#1507).
 
 #### Experts
 

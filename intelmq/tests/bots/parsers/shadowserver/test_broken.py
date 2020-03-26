@@ -86,7 +86,17 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertLogMatches(pattern="ValueError: Report's 'extra.file_name' '2020.wrong-filename.csv' is not valid." )
 
-
+    def test_no_report_name(self):
+        """
+        Test a report without file_name and no given feedname as parameter.
+        Error message should be verbose.
+        """
+        self.allowed_error_count = 1
+        self.run_bot()
+        self.assertLogMatches(pattern="ValueError: No feedname given as parameter and the "
+                                      "processed report has no 'extra.file_name'. "
+                                      "Ensure that at least one is given. "
+                                      "Also have a look at the documentation of the bot.")
 
 
 if __name__ == '__main__':  # pragma: no cover
