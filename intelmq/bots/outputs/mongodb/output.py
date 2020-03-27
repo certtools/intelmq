@@ -36,9 +36,14 @@ class MongoDBOutputBot(Bot):
         self.connect()
 
     def connect(self):
-        self.logger.debug('Connecting to MongoDB server.')
+        self.logger.debug('Getting server info.')
+        server_info = pymongo.MongoClient(self.parameters.host, self.port).server_info()
+        server_version = server_info['version']
+        server_version_split = tuple(server_version.split('.'))
+        self.logger.debug('Connecting to MongoDB server version %s.',
+                          server_version)
         try:
-            if self.pymongo_35 and self.username:
+            if self.pymongo_35 and self.username and server_version_split >= ('3', '4'):
                 self.client = pymongo.MongoClient(self.parameters.host,
                                                   self.port,
                                                   username=self.username,
@@ -50,7 +55,7 @@ class MongoDBOutputBot(Bot):
             raise ValueError('Connection to MongoDB server failed.')
         else:
             db = self.client[self.parameters.database]
-            if self.username and not self.pymongo_35:
+            if self.username and not self.pymongo_35 or server_version_split < ('3', '4'):
                 self.logger.debug('Trying to authenticate to database %s.',
                                   self.parameters.database)
                 try:

@@ -47,6 +47,7 @@ CHANGELOG
 #### Outputs
 - `intelmq.bots.outputs.mongodb`:
   - Set default port 27017.
+  - Use different authentication mechanisms per MongoDB server version to fix compatibility with server version >= 3.4 (#1439)
 
 ### Documentation
 - Feeds:

@@ -2584,7 +2584,7 @@ Saves events in a MongoDB either as hierarchical structure or flat with full key
 pip3 install pymongo>=2.7.1
 ```
 
-The bot has been tested with pymongo versions 2.7.1 and 3.4.
+The bot has been tested with pymongo versions 2.7.1, 3.4 and 3.10.1 (server versions 2.6.10 and 3.6.8).
 
 * * *
 
