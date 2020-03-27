@@ -43,6 +43,7 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver.parser`: More verbose error message for missing report specification (#1507).
 
 #### Experts
+- `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with unicode characters.
 
 #### Outputs
 - `intelmq.bots.outputs.mongodb`:

@@ -1453,6 +1453,8 @@ FIXME
 * `cache (redis db):` 5
 * `description:` IP to geolocation, ASN, BGP prefix
 
+Public documentation: https://www.team-cymru.com/IP-ASN-mapping.html#dns
+
 #### Configuration Parameters:
 
 * **Cache parameters** (see in section [common parameters](#common-parameters))
