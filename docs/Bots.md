@@ -1482,6 +1482,8 @@ FIXME
 * `cache (redis db):` 5
 * `description:` IP to geolocation, ASN, BGP prefix
 
+Public documentation: https://www.team-cymru.com/IP-ASN-mapping.html#dns
+
 #### Configuration Parameters:
 
 * **Cache parameters** (see in section [common parameters](#common-parameters))
@@ -2697,7 +2699,7 @@ Saves events in a MongoDB either as hierarchical structure or flat with full key
 * `db_user` : Database user that should be used if you enabled authentication
 * `db_pass` : Password associated to `db_user`
 * `host`: MongoDB host (FQDN or IP)
-* `port`: MongoDB port
+* `port`: MongoDB port, default: 27017
 * `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionary in sub-dictionaries.
 * `replacement_char`: String (default `'_'`) used as replacement character for the dots in key names if hierarchical output is not used.
 
@@ -2707,7 +2709,7 @@ Saves events in a MongoDB either as hierarchical structure or flat with full key
 pip3 install pymongo>=2.7.1
 ```
 
-The bot has been tested with pymongo versions 2.7.1 and 3.4.
+The bot has been tested with pymongo versions 2.7.1, 3.4 and 3.10.1 (server versions 2.6.10 and 3.6.8).
 
 * * *
 
