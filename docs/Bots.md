@@ -2574,7 +2574,7 @@ Saves events in a MongoDB either as hierarchical structure or flat with full key
 * `db_user` : Database user that should be used if you enabled authentication
 * `db_pass` : Password associated to `db_user`
 * `host`: MongoDB host (FQDN or IP)
-* `port`: MongoDB port
+* `port`: MongoDB port, default: 27017
 * `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionary in sub-dictionaries.
 * `replacement_char`: String (default `'_'`) used as replacement character for the dots in key names if hierarchical output is not used.
 

@@ -29,6 +29,7 @@ class MongoDBOutputBot(Bot):
 
         self.username = getattr(self.parameters, "db_user", None)
         self.password = getattr(self.parameters, "db_pass", None)
+        self.port = int(getattr(self.parameters, "port", 27017))
         if not self.password:  # checking for username is sufficient then
             self.username = None
 
@@ -39,12 +40,12 @@ class MongoDBOutputBot(Bot):
         try:
             if self.pymongo_35 and self.username:
                 self.client = pymongo.MongoClient(self.parameters.host,
-                                                  int(self.parameters.port),
+                                                  self.port,
                                                   username=self.username,
                                                   password=self.password)
             else:
                 self.client = pymongo.MongoClient(self.parameters.host,
-                                                  int(self.parameters.port))
+                                                  self.port)
         except pymongo.errors.ConnectionFailure:
             raise ValueError('Connection to MongoDB server failed.')
         else:

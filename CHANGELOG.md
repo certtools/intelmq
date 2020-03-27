@@ -45,6 +45,8 @@ CHANGELOG
 #### Experts
 
 #### Outputs
+- `intelmq.bots.outputs.mongodb`:
+  - Set default port 27017.
 
 ### Documentation
 - Feeds:
