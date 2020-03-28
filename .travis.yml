@@ -15,6 +15,8 @@ matrix:
     env: mode=debian
   - python: 3.8
     env: mode=codestyle
+before_install:
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.1-amd64.deb && sudo dpkg -i --force-confnew elasticsearch-7.6.1-amd64.deb && sudo service elasticsearch restart
 install:
   - set -e
   - if [[ -v requirements ]]; then sudo apt-get install polipo lighttpd; fi
@@ -51,7 +53,7 @@ script:
 services:
   - redis-server
   - postgresql
-  - elasticsearch
+  # - elasticsearch
   - mongodb
   - rabbitmq
 after_success:
