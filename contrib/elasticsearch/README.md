@@ -18,7 +18,7 @@ pip3 install elasticsearch
 ```
 usage: elasticmapper [-h] --harmonization-file <filepath>
                      [--harmonization-fallback] [--host <ip>] [--index INDEX]
-                     [--index-type INDEX_TYPE] [--output <filepath>]
+                     [--output <filepath>]
 
 Elastic Mapper tool
 
@@ -30,8 +30,6 @@ optional arguments:
                         harmonization fallback to `text` type
   --host <ip>           elasticsearch server IP
   --index INDEX         elasticsearch index
-  --index-type INDEX_TYPE
-                        elasticsearch index type
   --index-template      save the mapping as a template for newly-created indices
   --output <filepath>   write mapping to file
 ```
@@ -41,24 +39,24 @@ optional arguments:
 #### Send only to Elasticsearch
 
 ```
-elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --index=intelmq --index-type=events --host=127.0.0.1
+elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --index=intelmq --host=127.0.0.1
 ```
 
 #### Write only to output file
 
 ```
-elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --index=intelmq --index-type=events --output=/tmp/mapping.txt
+elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --index=intelmq --output=/tmp/mapping.txt
 ```
 
 #### Send to Elasticsearch and write to output file
 ```
-elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --index=intelmq --index-type=events --output=/tmp/mapping.txt --host=127.0.0.1
+elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --index=intelmq --output=/tmp/mapping.txt --host=127.0.0.1
 ```
 
 #### Send to Elasticsearch as a template (see https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-templates.html)
 
 ```
-elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --index=intelmq --index-type=events --host=127.0.0.1 --index-template
+elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --index=intelmq --host=127.0.0.1 --index-template
 ```
 
 #### Harmonization fallback
@@ -66,5 +64,5 @@ elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --inde
 Revert to the default 'text' type in the generated mapping for any fields which have unrecognizable field types.
 
 ```
-elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --index=intelmq --index-type=events --output=/tmp/mapping.txt --host=127.0.0.1 --harmonization-fallback
+elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --index=intelmq --output=/tmp/mapping.txt --host=127.0.0.1 --harmonization-fallback
 ```

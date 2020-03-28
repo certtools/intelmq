@@ -62,7 +62,7 @@ def mapping_properties_from_harmonization(harmonization, replacement_char):
     return __mapping_properties_from_harmonization(properties), err
 
 
-def create_mapping(harmonization, index_type, replacement_char):
+def create_mapping(harmonization, replacement_char):
 
     config = {"enabled": False}
 
@@ -173,13 +173,6 @@ if __name__ == "__main__":
                         required=False,
                         help='elasticsearch index name, or template name if using a template')
 
-    parser.add_argument('--index-type',
-                        action="store",
-                        dest="index_type",
-                        default="events",
-                        required=False,
-                        help='elasticsearch index type')
-
     parser.add_argument('--index-template',
                         action="store_true",
                         dest="index_template",
@@ -206,7 +199,7 @@ if __name__ == "__main__":
     with open(arguments.harmonization_file) as fp:
         harmonization = json.load(fp)
 
-    data, err = create_mapping(harmonization, arguments.index_type, arguments.replacement_char)
+    data, err = create_mapping(harmonization, arguments.replacement_char)
 
     if err:
         if arguments.harmonization_fallback:
