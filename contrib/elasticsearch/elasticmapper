@@ -70,10 +70,7 @@ def create_mapping(harmonization, index_type, replacement_char):
 
     data = {
         "mappings": {
-            index_type: {
-                "_all": config,
-                "properties": properties
-            }
+            "properties": properties
         }
     }
 
