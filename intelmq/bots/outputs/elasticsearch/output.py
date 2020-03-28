@@ -126,7 +126,7 @@ class ElasticsearchOutputBot(Bot):
                                       replacement=self.replacement_char)
 
         self.es.index(index=self.get_index(event_dict, default_date=datetime.today().date()),
-                      doc_type=self.elastic_doctype,
+                      # doc_type=self.elastic_doctype,
                       body=event_dict)
         self.acknowledge_message()
 
