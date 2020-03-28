@@ -56,26 +56,24 @@ ES_SEARCH_REPLACEMENT_CHARS = {
 
 SAMPLE_TEMPLATE = {
     "mappings": {
-        "events": {
-            "properties": {
-                "time.observation": {
-                    "type": "date"
-                },
-                "time.source": {
-                    "type": "date"
-                },
-                "classification.type": {
-                    "type": "keyword"
-                },
-                "source.asn": {
-                    "type": "integer"
-                },
-                "feed.name": {
-                    "type": "text"
-                },
-                "source.ip": {
-                    "type": "ip"
-                }
+        "properties": {
+            "time.observation": {
+                "type": "date"
+            },
+            "time.source": {
+                "type": "date"
+            },
+            "classification.type": {
+                "type": "keyword"
+            },
+            "source.asn": {
+                "type": "integer"
+            },
+            "feed.name": {
+                "type": "text"
+            },
+            "source.ip": {
+                "type": "ip"
             }
         }
     },
@@ -89,7 +87,6 @@ TIMESTAMP_1 = "1869-12-02T00:00:00+00:00"
 TIMESTAMP_2 = "2020-02-02T01:23:45+00:00"
 TIMESTAMP_3 = "2018-09-09T01:23:45+00:00"
 INPUT_TIME_SOURCE = {
-    "__type": "Event",
     "classification.type": "infected-system",
     "source.asn": 64496,
     "source.ip": "192.0.2.1",
@@ -98,7 +95,6 @@ INPUT_TIME_SOURCE = {
     "extra": '{"foo.bar": "test"}'
 }
 INPUT_TIME_OBSERVATION = {
-    "__type": "Event",
     "classification.type": "infected-system",
     "source.asn": 64496,
     "source.ip": "192.0.2.1",
@@ -132,7 +128,9 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         time.sleep(1)  # ES needs some time between inserting and searching
         result = self.con.search(index='intelmq', body=ES_SEARCH)['hits']['hits'][0]
-        self.con.delete(index='intelmq', doc_type='events', id=result['_id'])
+        self.con.delete(index='intelmq',
+                        # doc_type='events',
+                        id=result['_id'])
         self.assertDictEqual(OUTPUT1, result['_source'])
 
     def test_raise_when_no_template(self):
@@ -169,7 +167,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
                                  body=ES_SEARCH_REPLACEMENT_CHARS)['hits']['hits'][0]
 
         self.con.delete(index=self.sysconfig.get('elastic_index'),
-                        doc_type=self.sysconfig.get('elastic_doctype'),
+                        # doc_type=self.sysconfig.get('elastic_doctype'),
                         id=result['_id'])
 
         self.assertDictEqual(OUTPUT1_REPLACEMENT_CHARS, result['_source'])
@@ -257,7 +255,9 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         result_index_name = result["_index"]
 
         # Clean up test event and check that the index name was set correctly
-        self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('elastic_doctype'), id=result['_id'])
+        self.con.delete(index=result_index_name,
+                        # doc_type=self.sysconfig.get('elastic_doctype'),
+                        id=result['_id'])
         self.assertEqual(result_index_name, expected_index_name)
 
 
