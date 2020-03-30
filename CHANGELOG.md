@@ -41,6 +41,7 @@ CHANGELOG
 - `intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc` and `intelmq.bots.parsers.fraunhofer.parser_ddosattack_target`: Removed as feed is discontinued.
 - `intelmq.bots.parsers.malwaredomains.parser`: Correctly classify `C&C` and `phishing` events.
 - `intelmq.bots.parsers.shadowserver.parser`: More verbose error message for missing report specification (#1507).
+- `intelmq.bots.parsers.n6.parser_n6stomp`: Always add n6 field `name` as `malware.name` independent of `category`.
 
 #### Experts
 - `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with unicode characters.
