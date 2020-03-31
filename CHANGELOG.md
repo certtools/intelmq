@@ -70,10 +70,12 @@ CHANGELOG
   - IPv6 to IPv4 test: Test for two possible results.
 - `intelmq.lib.test`: Fix compatibility of logging capture with Python >= 3.7 by reworking the whole process (#1342).
 - `intelmq.bots.collectors.tcp.test_collector`: Removing custom mocking and bot starting, not necessary anymore.
+- Added tests for `intelmq.bin.intelmqctl.IntelMQProcessManager._interpret_commandline`
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
 - `intelmq_gen_docs`: Feed documentation generation: Handle missing/empty parameters.
+- `intelmqctl`: `IntelMQProcessManager`: For the status of running bots also check the bot ID of the commandline and ignore the path of the executable (#1492).
 
 ### Contrib
 
