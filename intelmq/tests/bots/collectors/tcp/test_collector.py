@@ -3,7 +3,6 @@ Testing TCP collector
 """
 import socket
 import struct
-import unittest.mock as mock
 import sys
 import threading
 import unittest

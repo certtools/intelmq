@@ -16,8 +16,7 @@ EXAMPLE_REPORT = {"feed.name": "Microsoft DCU Feed",
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
-EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
-                 "__type": "Event",
+EXAMPLE_EVENT = {"__type": "Event",
                  "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\r\n' +
                                             SAMPLE_SPLIT[1].replace('"', '')+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
@@ -37,8 +36,7 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "source.asn": 65536,
                  "time.source": "2017-03-25T23:59:43+00:00"
                  }
-EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
-                  "__type": "Event",
+EXAMPLE_EVENT2 = {"__type": "Event",
                   "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\r\n' +
                                             SAMPLE_SPLIT[2].replace('"', '')+'\r\n'),
                   "time.observation": "2015-01-01T00:00:00+00:00",

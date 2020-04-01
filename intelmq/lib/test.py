@@ -7,12 +7,10 @@ some basic generic tests (logged errors, correct pipeline setup).
 """
 import io
 import json
-import logging
 import os
 import re
 import unittest
 import unittest.mock as mock
-import sys
 from itertools import chain
 
 import pkg_resources
