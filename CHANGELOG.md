@@ -62,6 +62,7 @@ CHANGELOG
 
 ### Packaging
 - patches: `fix-logrotate-path.patch`: also include path to rotated file in patch
+- fix paths from `/opt` to LSB for `setup.py` and `contrib/logrotate/intelmq` in build process (#1500).
 
 ### Tests
 - Dropping Travis tests for 3.4 as required libraries dropped 3.4 support.
