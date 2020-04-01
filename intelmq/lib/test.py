@@ -310,9 +310,9 @@ class BotTestCase(object):
         self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
 
         allowed_error_count = max(allowed_error_count, self.allowed_error_count)
-        self.assertNotRegexpMatchesLog("(ERROR.*?){%d}" % (allowed_error_count + 1))
-        allowed_warning_count  = max (allowed_warning_count, self.allowed_warning_count)
-        self.assertNotRegexpMatchesLog("(WARNING.*?){%d}" % (allowed_warning_count + 1))
+        self.assertLessEqual(len(re.findall(' - ERROR - ', self.loglines_buffer)), allowed_error_count)
+        allowed_warning_count = max(allowed_warning_count, self.allowed_warning_count)
+        self.assertLessEqual(len(re.findall(' - WARNING - ', self.loglines_buffer)), allowed_warning_count)
         self.assertNotRegexpMatchesLog("CRITICAL")
         """ If no error happened (incl. tracebacks) we can check for formatting """
         if not self.allowed_error_count:

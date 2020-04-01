@@ -18,6 +18,7 @@ CHANGELOG
 - `intelmq.lib.test`:
   - `BotTestCase.run_bot`: Add parameters `allowed_error_count` and `allowed_warning_count` to allow set the number per run, not per test class.
   - Set `source_pipeline_broker` and `destination_pipeline_broker` to `pythonlist` instead of the old `broker`, fixes `intelmq.tests.lib.test_bot.TestBot.test_pipeline_raising`.
+  - Fix test for (allowed) errors and warnings.
 
 ### Development
 
