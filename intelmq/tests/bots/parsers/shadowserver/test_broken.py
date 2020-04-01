@@ -45,8 +45,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         Test a report which does not have valid fields
         """
         self.input_message = REPORT1
-        self.allowed_error_count = 1
-        self.run_bot()
+        self.run_bot(allowed_error_count=1)
         self.assertLogMatches(pattern="Detected report's file name: 'scan_http'.",
                               levelname="DEBUG")
         self.assertLogMatches(pattern="Failed to parse line.")
@@ -59,8 +58,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         Test a report which does not have an optional field.
         """
         self.input_message = REPORT2
-        self.allowed_warning_count = 1
-        self.run_bot()
+        self.run_bot(allowed_warning_count=54)
         self.assertLogMatches(pattern="Detected report's file name: 'scan_ftp'.",
                               levelname="DEBUG")
         self.assertLogMatches(pattern="Optional key 'protocol' not found in feed 'Accessible-FTP'. Possible change in data format or misconfiguration.",
@@ -73,8 +71,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         Test a report which does not have a valid extra.file_name
         """
         self.input_message = REPORT3
-        self.allowed_error_count = 1
-        self.run_bot()
+        self.run_bot(allowed_error_count=1)
         self.assertLogMatches(pattern="ValueError: Could not get a config for 'some_string', check the documentation." )
 
     def test_invalid_filename(self):
@@ -82,8 +79,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         Test a report which does not have a valid extra.file_name
         """
         self.input_message = REPORT4
-        self.allowed_error_count = 1
-        self.run_bot()
+        self.run_bot(allowed_error_count=1)
         self.assertLogMatches(pattern="ValueError: Report's 'extra.file_name' '2020.wrong-filename.csv' is not valid." )
 
     def test_no_report_name(self):
@@ -91,8 +87,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         Test a report without file_name and no given feedname as parameter.
         Error message should be verbose.
         """
-        self.allowed_error_count = 1
-        self.run_bot()
+        self.run_bot(allowed_error_count=1)
         self.assertLogMatches(pattern="ValueError: No feedname given as parameter and the "
                                       "processed report has no 'extra.file_name'. "
                                       "Ensure that at least one is given. "

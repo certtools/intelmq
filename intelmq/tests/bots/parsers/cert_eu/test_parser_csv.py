@@ -30,7 +30,6 @@ EXAMPLE_EVENT1 = {
     "time.source": "2019-04-01T03:13:20+00:00",
     "tlp": "AMBER",
     "event_description.text": "A URL is the most common resource with reference to malware binary distribution.",
-    "source.geolocation.country": "Germany",
     'source.asn': 65536,
     'source.geolocation.city': 'Linz',
     'source.geolocation.country': 'Austria',

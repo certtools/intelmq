@@ -82,7 +82,7 @@ class SieveExpertBot(Bot):
 
             metamodel = SieveExpertBot.init_metamodel()
             SieveExpertBot.read_sieve_file(parameters['file'], metamodel)
-        except Exception as e:
+        except Exception:
             return [['error', 'Validation of Sieve file failed with the following traceback: %r' % traceback.format_exc()]]
 
     def process(self):

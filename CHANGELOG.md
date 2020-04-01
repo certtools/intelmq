@@ -122,6 +122,10 @@ CHANGELOG
   - Check for discontinued Abuse.CH Zeus Tracker feed.
 - `intelmq.lib.bot`:
   - `ParserBot.recover_line`: Parameter `line` needs to be optional, fix usage of fallback value `self.current_line`.
+- `intelmq.lib.test`:
+  - `BotTestCase.run_bot`: Add parameters `allowed_error_count` and `allowed_warning_count` to allow set the number per run, not per test class.
+  - Set `source_pipeline_broker` and `destination_pipeline_broker` to `pythonlist` instead of the old `broker`, fixes `intelmq.tests.lib.test_bot.TestBot.test_pipeline_raising`.
+  - Fix test for (allowed) errors and warnings.
 
 ### Development
 
@@ -169,6 +173,8 @@ CHANGELOG
 
 ### Packaging
 - patches: `fix-logrotate-path.patch`: also include path to rotated file in patch
+- fix paths from `/opt` to LSB for `setup.py` and `contrib/logrotate/intelmq` in build process (#1500).
+- Add runtime dependency `debianutils` for the program `which`, which is required for `intelmqctl`.
 
 ### Tests
 - Dropping Travis tests for 3.4 as required libraries dropped 3.4 support.

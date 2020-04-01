@@ -2,7 +2,7 @@
 import time
 import warnings
 from itertools import chain
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 import ssl
 
 import redis
@@ -594,7 +594,7 @@ class Amqp(Pipeline):
     def clear_queue(self, queue: str) -> bool:
         try:
             self.channel.queue_delete(queue=queue)
-        except pika.exceptions.ChannelClosed as exc:  # channel not found and similar
+        except pika.exceptions.ChannelClosed:  # channel not found and similar
             pass
 
     def nonempty_queues(self) -> set:
