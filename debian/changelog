@@ -1,3 +1,9 @@
+intelmq (2.1.2-2) stable; urgency=medium
+
+  * Add "debianutils" as new dependency, because IntelMQ needs `which`.
+
+ -- Sebastian Wagner <sebastianw@localhost>  Wed, 01 Apr 2020 09:28:23 +0200
+
 intelmq (2.1.2-1) stable; urgency=medium
 
   * Update to 2.1.2.
