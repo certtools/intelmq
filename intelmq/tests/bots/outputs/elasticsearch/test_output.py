@@ -137,16 +137,6 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
                         id=result['_id'])
         self.assertDictEqual(OUTPUT1, result['_source'])
 
-    def test_raise_when_no_template(self):
-        """
-        Test that a bot raises a RuntimeError if 'rotate_index' is set, but a matching template doesn't exist in ES.
-        """
-        self.sysconfig = {"flatten_fields": "extra",
-                          "elastic_index": "intelmq",
-                          "elastic_doctype": "events",
-                          "rotate_index": "daily"}
-        self.assertRaises(RuntimeError, self.bot.init())
-
     def test_get_event_date(self):
         """
         Test whether get_event_date detects the time.source and time.observation fields in an event.
