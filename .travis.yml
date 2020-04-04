@@ -59,7 +59,6 @@ script:
 services:
   - redis-server
   - postgresql
-  - elasticsearch
   - mongodb
   - rabbitmq
 after_success:
