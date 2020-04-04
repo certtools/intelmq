@@ -71,8 +71,6 @@ class ElasticsearchOutputBot(Bot):
                                           'ssl_ca_certificate', None)
         self.ssl_show_warnings = getattr(self.parameters,
                                          'ssl_show_warnings', True)
-        self.elastic_doctype = getattr(self.parameters,
-                                       'elastic_doctype', 'events')
         self.replacement_char = getattr(self.parameters,
                                         'replacement_char', None)
         self.flatten_fields = getattr(self.parameters,
@@ -126,7 +124,6 @@ class ElasticsearchOutputBot(Bot):
                                       replacement=self.replacement_char)
 
         self.es.index(index=self.get_index(event_dict, default_date=datetime.today().date()),
-                      # doc_type=self.elastic_doctype,
                       body=event_dict)
         self.acknowledge_message()
 

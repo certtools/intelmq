@@ -152,7 +152,6 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         """
         self.sysconfig = {"flatten_fields": "extra",
                           "elastic_index": "intelmq",
-                          "elastic_doctype": "events",
                           "replacement_char": "_",
                           "rotate_index": "never"}
         self.run_bot()
@@ -161,7 +160,6 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
                                  body=ES_SEARCH_REPLACEMENT_CHARS)['hits']['hits'][0]
 
         self.con.delete(index=self.sysconfig.get('elastic_index'),
-                        # doc_type=self.sysconfig.get('elastic_doctype'),
                         id=result['_id'])
 
         self.assertDictEqual(OUTPUT1_REPLACEMENT_CHARS, result['_source'])
@@ -172,7 +170,6 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         """
         self.sysconfig = {"flatten_fields": "extra",
                           "elastic_index": "intelmq",
-                          "elastic_doctype": "events",
                           "rotate_index": "daily"}
         expected_index_name = "{}-1869-12-02".format(self.sysconfig.get('elastic_index'))
         self.base_check_expected_index_created(INPUT_TIME_SOURCE, expected_index_name)
@@ -184,7 +181,6 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         """
         self.sysconfig = {"flatten_fields": "extra",
                           "elastic_index": "intelmq",
-                          "elastic_doctype": "events",
                           "rotate_index": "daily"}
         expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
         self.base_check_expected_index_created(INPUT_TIME_OBSERVATION, expected_index_name)
@@ -198,7 +194,6 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
 
         self.sysconfig = {"flatten_fields": "extra",
                           "elastic_index": "intelmq",
-                          "elastic_doctype": "events",
                           "rotate_index": "daily"}
 
         class FakeDateTime(datetime):
@@ -225,7 +220,6 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
 
         self.sysconfig = {"flatten_fields": "extra",
                           "elastic_index": "intelmq",
-                          "elastic_doctype": "events",
                           "rotate_index": "daily"}
 
         self.prepare_bot()
@@ -251,7 +245,6 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
 
         # Clean up test event and check that the index name was set correctly
         self.con.delete(index=result_index_name,
-                        # doc_type=self.sysconfig.get('elastic_doctype'),
                         id=result['_id'])
         self.assertEqual(result_index_name, expected_index_name)
 
