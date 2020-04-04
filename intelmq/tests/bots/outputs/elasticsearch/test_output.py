@@ -11,26 +11,28 @@ from intelmq.bots.outputs.elasticsearch.output import ElasticsearchOutputBot, ge
 if os.environ.get('INTELMQ_TEST_DATABASES'):
     import elasticsearch
 
-INPUT1 = {"__type": "Event",
-          "classification.type": "infected-system",
-          "source.asn": 64496,
-          "source.ip": "192.0.2.1",
-          "feed.name": "Example Feed",
-          "extra": '{"foo.bar": "test"}'
-          }
-OUTPUT1 = {'classification.type': 'infected-system',
-           'extra.foo.bar': 'test',
-           'feed.name': 'Example Feed',
-           'source.asn': 64496,
-           'source.ip': '192.0.2.1',
-           }
+INPUT1 = {
+    "__type": "Event",
+    "classification.type": "infected-system",
+    "source.asn": 64496,
+    "source.ip": "192.0.2.1",
+    "feed.name": "Example Feed",
+    "extra": '{"foo.bar": "test"}'
+}
+OUTPUT1 = {
+    'classification.type': 'infected-system',
+    'extra.foo.bar': 'test',
+    'feed.name': 'Example Feed',
+    'source.asn': 64496,
+    'source.ip': '192.0.2.1',
+}
 OUTPUT1_REPLACEMENT_CHARS = {
     'classification_type': 'infected-system',
     'extra_foo_bar': 'test',
     'feed_name': 'Example Feed',
     'source_asn': 64496,
     'source_ip': '192.0.2.1',
-    }
+}
 ES_SEARCH = {
     "query": {
         "constant_score": {
@@ -87,6 +89,7 @@ TIMESTAMP_1 = "1869-12-02T00:00:00+00:00"
 TIMESTAMP_2 = "2020-02-02T01:23:45+00:00"
 TIMESTAMP_3 = "2018-09-09T01:23:45+00:00"
 INPUT_TIME_SOURCE = {
+    "__type": "Event",
     "classification.type": "infected-system",
     "source.asn": 64496,
     "source.ip": "192.0.2.1",
@@ -95,6 +98,7 @@ INPUT_TIME_SOURCE = {
     "extra": '{"foo.bar": "test"}'
 }
 INPUT_TIME_OBSERVATION = {
+    "__type": "Event",
     "classification.type": "infected-system",
     "source.asn": 64496,
     "source.ip": "192.0.2.1",
@@ -211,6 +215,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
             """
             Passed to bot to force expected datetime value for test.
             """
+
             @classmethod
             def today(cls):
                 return datetime.strptime('2018-09-09T01:23:45+00:00', '%Y-%m-%dT%H:%M:%S+00:00')
