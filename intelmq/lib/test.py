@@ -7,12 +7,10 @@ some basic generic tests (logged errors, correct pipeline setup).
 """
 import io
 import json
-import logging
 import os
 import re
 import unittest
 import unittest.mock as mock
-import sys
 from itertools import chain
 
 import pkg_resources
@@ -27,7 +25,7 @@ __all__ = ['BotTestCase']
 
 BOT_CONFIG = utils.load_configuration(pkg_resources.resource_filename('intelmq',
                                                                       'etc/defaults.conf'))
-BOT_CONFIG.update({"broker": "pythonlist",
+BOT_CONFIG.update({"destination_pipeline_broker": "pythonlist",
                    "logging_handler": "stream",
                    "logging_path": None,
                    "rate_limit": 0,
@@ -39,6 +37,7 @@ BOT_CONFIG.update({"broker": "pythonlist",
                    "redis_cache_db": 4,
                    "redis_cache_ttl": 10,
                    "redis_cache_password": os.environ.get('INTELMQ_TEST_REDIS_PASSWORD'),
+                   "source_pipeline_broker": "pythonlist",
                    "testing": True,
                    })
 
@@ -255,13 +254,17 @@ class BotTestCase(object):
                 self.input_queue = [self.default_input_message]
 
     def run_bot(self, iterations: int = 1, error_on_pipeline: bool = False,
-                prepare=True, parameters={}):
+                prepare=True, parameters={},
+                allowed_error_count=0,
+                allowed_warning_count=0):
         """
         Call this method for actually doing a test run for the specified bot.
 
         Parameters:
             iterations: Bot instance will be run the given times, defaults to 1.
             parameters: passed to prepare_bot
+            allowed_error_count: maximum number allow allowed errors in the logs
+            allowed_warning_count: maximum number allow allowed warnings in the logs
         """
         if prepare:
             self.prepare_bot(parameters=parameters)
@@ -309,8 +312,11 @@ class BotTestCase(object):
                                                self.bot_id), "INFO")
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
         self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
-        self.assertNotRegexpMatchesLog("(ERROR.*?){%d}" % (self.allowed_error_count + 1))
-        self.assertNotRegexpMatchesLog("(WARNING.*?){%d}" % (self.allowed_warning_count + 1))
+
+        allowed_error_count = max(allowed_error_count, self.allowed_error_count)
+        self.assertLessEqual(len(re.findall(' - ERROR - ', self.loglines_buffer)), allowed_error_count)
+        allowed_warning_count = max(allowed_warning_count, self.allowed_warning_count)
+        self.assertLessEqual(len(re.findall(' - WARNING - ', self.loglines_buffer)), allowed_warning_count)
         self.assertNotRegexpMatchesLog("CRITICAL")
         """ If no error happened (incl. tracebacks) we can check for formatting """
         if not self.allowed_error_count:

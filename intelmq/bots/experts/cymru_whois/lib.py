@@ -164,7 +164,7 @@ class Cymru():
 
         if items[4]:
             # unicode characters need to be decoded explicitly
-            # with the help of https://stackoverflow.com/questions/60890590/decoding-unicode-strings-with-base-10-integers-escape-sequences?noredirect=1#comment107731683_60890590
+            # with the help of https://stackoverflow.com/questions/60890590/
             result['as_name'] = items[4].encode('latin1').decode('utf8')
 
         return result
