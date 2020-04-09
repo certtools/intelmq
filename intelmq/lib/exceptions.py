@@ -86,7 +86,7 @@ class InvalidValue(IntelMQHarmonizationException):
         super().__init__(message)
 
 
-class InvalidKey(IntelMQHarmonizationException):
+class InvalidKey(IntelMQHarmonizationException, KeyError):
 
     def __init__(self, key: str):
         message = "invalid key %s" % repr(key)
