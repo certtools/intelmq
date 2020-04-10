@@ -98,5 +98,20 @@
     "asn": 29791,
     "asn_name": "Example AS Name",
     "path": "comm.http.host"
+  },
+  "_geo_comm_http_x_forwarded_for_#1": {
+    "ip": "10.26.116.22",
+    "netmask": 24,
+    "country_code": "AT",
+    "country_name": "Austria",
+    "region": "Salzburg",
+    "region_code": "05",
+    "city": "Salzburg",
+    "postal_code": "5020",
+    "latitude": 47.8007,
+    "longitude": 13.0442,
+    "asn": 1901,
+    "asn_name": "Example AS",
+    "path": "comm.http.x_forwarded_for.#1"
   }
 }

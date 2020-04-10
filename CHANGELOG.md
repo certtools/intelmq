@@ -187,6 +187,7 @@ CHANGELOG
 - `intelmq.lib.test`: Fix compatibility of logging capture with Python >= 3.7 by reworking the whole process (#1342).
 - `intelmq.bots.collectors.tcp.test_collector`: Removing custom mocking and bot starting, not necessary anymore.
 - Added tests for `intelmq.bin.intelmqctl.IntelMQProcessManager._interpret_commandline`
+- Fix and split `tests.bots.experts.ripe.test_expert.test_ripe_stat_error_json`.
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
