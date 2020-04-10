@@ -25,6 +25,11 @@ MAP_geo_env_remote_addr = {"country_code": 'source.geolocation.cc',
 
 class AnubisNetworksParserBot(Bot):
 
+    def init(self):
+        self.malware_as_identifier = getattr(self.parameters,
+                                             'use_malware_familiy_as_classification_identifier',
+                                             True)
+
     def process(self):
         report = self.receive_message()
         raw_report = json.loads(utils.base64_decode(report.get('raw')))
@@ -80,7 +85,13 @@ class AnubisNetworksParserBot(Bot):
                     if subkey == "severity":
                         event.add('extra.malware.severity', subvalue)
                     elif subkey == "family":
-                        event.add('classification.identifier', subvalue)
+                        if self.malware_as_identifier:
+                            event.add('classification.identifier', subvalue)
+                        else:
+                            if subvalue == value['variant']:
+                                pass
+                            else:
+                                event.add('extra.malware.family', subvalue)
                     elif subkey == "variant":
                         event.add('malware.name', subvalue)
                     elif subkey == "categories":

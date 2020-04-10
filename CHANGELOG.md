@@ -47,6 +47,7 @@ CHANGELOG
 - `intelmq.bots.parsers.cymru.parser_full_bogons`:
   - Migrate to `ParserBot`.
   - Add last updated information in raw.
+- `intelmq.bots.parsers.anubisnetworks.parser`: add new parameter `use_malware_familiy_as_classification_identifier`.
 
 #### Experts
 - `intelmq.bots.experts.csv_converter`: Added as converter to CSV.

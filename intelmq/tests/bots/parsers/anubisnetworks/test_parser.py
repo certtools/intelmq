@@ -92,7 +92,6 @@ EXAMPLE_EVENT3  = {"malware.name": "malwname",
                    "destination.port": 80,
                    "raw": EXAMPLE_REPORT3['raw'],
                    "classification.type": "malware",
-                   "classification.identifier": "MalwName",
                    "event_description.text": "Sinkhole attempted connection",
                    "extra.metadata": {
                        "flowbits": [
@@ -239,7 +238,7 @@ class TestAnubisNetworksParserBot(test.BotTestCase, unittest.TestCase):
     def test_third(self):
         """ Test: report from 2020 """
         self.input_message = EXAMPLE_REPORT3
-        self.run_bot()
+        self.run_bot(parameters={'use_malware_familiy_as_classification_identifier': False})
         self.assertMessageEqual(0, EXAMPLE_EVENT3)
 
     def test_dns(self):

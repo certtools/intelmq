@@ -884,6 +884,22 @@ This list is not complete. Look at `intelmq/bots/BOTS` or the list of parsers sh
 
 TODO
 
+### AnubisNetworks Cyberfeed Stream
+
+#### Information
+* `name`: `intelmq.bots.parsers.anubisnetworks.parser`
+* `lookup`: no
+* `public`: yes
+* `cache (redis db)`: none
+* `description`: parsers data from AnubisNetworks Cyberfeed Stream
+
+#### Description
+
+
+#### Configuration parameters
+
+* `use_malware_familiy_as_classification_identifier`: default: `true`. Use the `malw.family` field as `classification.type`. If `false`, check if the same as `malw.variant`. If it is the same, it is ignored. Otherwise saved as `extra.malware.family`.
+
 ### Generic CSV Parser
 
 Lines starting with `'#'` will be ignored. Headers won't be interpreted.

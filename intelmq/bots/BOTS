@@ -348,7 +348,9 @@
         "AnubisNetworks Cyberfeed Stream": {
             "description": "Parses single JSON-events from AnubisNetworks Cyberfeed stream.",
             "module": "intelmq.bots.parsers.anubisnetworks.parser",
-            "parameters": {}
+            "parameters": {
+                "use_malware_familiy_as_classification_identifier": true
+            }
         },
         "Autoshun": {
             "description": "Autoshun Parser is the bot responsible to parse the report and sanitize the information.",
