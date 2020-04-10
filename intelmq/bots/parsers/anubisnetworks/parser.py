@@ -5,6 +5,8 @@ AnubisNetworks Cyberfeed Stream parser
 TODO: Refactor with JSON mapping
 
 There is an old format and a new one - distinguishable by the test cases
+
+Migration to ParserBot does not make sense, as there's only one event per report anyway
 """
 import json
 
