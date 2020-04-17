@@ -54,6 +54,7 @@ The high level goals of using a micro service architecture for IntelMQ 3.0 are:
 
 All of these requirements point towards a container architecture with standardised RESTful API endpoints.
 The RESETful API SHOULD be implemented on the basis of the OpenAPI specs.
+(Note: look at JSON API specs)
 
 
 
