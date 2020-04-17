@@ -42,7 +42,7 @@ The high level goals of using a micro service architecture for IntelMQ 3.0 are:
   * we want to be highly maintainable on an individual (bot- or functionality) level
   * we want to be highly testable in a _standardized_ way. Calling a test function for a bot shall be identical. Tests consist of a) unit tests of the microservice but also b) of integration tests of the micro service with its environment. The self-test shall be run on the current config of the bot/container.
   * a micrsoservice allows for self-inspection: within the context of IntelMQ's bots this means that a bot knows which input it needs to be able to work properly (i.e. which DHO fields are filled out) and which fields it produces. This allows for integration tests.
-  * bots must be independently deployable and a deployment must be *self-contained*. No fiddling should be needed. It should be as easy as docker-compose ...
+  * bots must be independently deployable and a deployment must be *self-contained*.  No fiddling should be needed. It should be as easy as docker-compose ... if a microservice needs to install or fetch external resources (example a DB) before it is ready, it shall do that in the init() function and only then report that it is finished.
   * each micro service MUST focus on one and only one task and excel at doing it
   * each micro service MUST be maintained by a small team. One developer is not enough. There shall be a clear point of contact relationship for each micro service, hence... Think metadata on a bot/container. 
   * a micro service is registered at a registry of IntelMQ 3.0 micro services (which must contain the latest version number, contact info for the developer team, etc)
@@ -104,12 +104,13 @@ Our docker template for a bot shall provide a RESTful API
       * monitoring information (health check, alerts, data rates of the flows, error counters, etc)
       * registering callbacks (or configuring the necessary infos) for a monitoring solution such as check_mk, nagios
 (introspection)
-      * endpoints for configuring syslog flows (where should the bot 
-      * self-update is built-in (to be defined below)
+      * report (in the documentation) on the rough requirements on RAM, disk space, CPU load etc. - think base-line 
+      * endpoints for configuring syslog flows (where should the bot send it to)
+      * Data freshness check is built-in (to be defined below)
 
     * IAM / Authentication & Authorization
-      * a Bot needs to support OpenID connect on it's REST interface ( maybe also  setting encryption settings on the M2M interface (the MQ) )
-
+      * If authentication is needed, a Bot SHOULD support OpenID connect on it's REST interface 
+      * MAYBE also  setting encryption settings on the M2M interface (the MQ) ?
 
     * developer support
      XXX ideas? XXX
@@ -139,11 +140,10 @@ Using the docker template bot, a bot needs to connect to the provided software l
   * standardised alerting mechanism (--> check_mk for nic.at)
 
 
-### Self-update
+### Data freshness
 
-  * check if I am the latest version
   * check if the needed databases (for example maxmind) is the latest version and download it if needed
-  * report self-updates to some syslog/orchestrator
+  * self-updates per se are *not* supported. Patching must be done from the outside.
 
 
 # IntelMQ 3.0 specifics
