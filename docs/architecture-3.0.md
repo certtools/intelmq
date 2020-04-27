@@ -2,6 +2,11 @@ Thoughts INTELMQ 3.0
 ======================
 
 
+# Info
+
+IntelMQ 3.0 will continue to support .deb , .rpm, etc. (also direct pip install), but we will *also* support docker in Version 3.0.
+The following text is about the additional docker support.
+
 
 # Motivation
 
