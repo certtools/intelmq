@@ -119,6 +119,12 @@ Our docker template for a bot shall provide a RESTful API
       * how can we expose / should we expose the debug method of the bot to the container?
 
 
+# Storage
+
+  * most data stays in the MQ bus
+  * config data is on disk
+  * minion S3-like storage?
+  * DB is external of storage, the DB won't scale
 
 Using the docker template bot, a bot needs to connect to the provided software layers which interface the functionalities described above
 
