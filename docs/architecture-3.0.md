@@ -52,7 +52,7 @@ The high level goals of using a micro service architecture for IntelMQ 3.0 are:
   * each micro service MUST be maintained by a small team. One developer is not enough. There shall be a clear point of contact relationship for each micro service, hence... Think metadata on a bot/container. 
   * a micro service is registered at a registry of IntelMQ 3.0 micro services (which must contain the latest version number, contact info for the developer team, etc)
   * a microservice MUST support service discovery. It shall register itself at some orchestrator - compare with registry.
-  * a microservice MUST support monitoring tools (check_mk, etc) and report its status to a monitoring tool
+  * a microservice MUST support monitoring tools (splunk, prometheus, check_mk, etc) and report its status to a monitoring tool
   * a microservice MAY support Identity mgmt tools via OpenID Connect on its' API
   * a microservice MUST be very easily integratable in other frameworks and work-flows. Think: IntelMQ 3.0 micro service components may run (as micro services) within a bigger data processing tool.
   
