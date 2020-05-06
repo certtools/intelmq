@@ -80,7 +80,7 @@ class FilterExpertBot(Bot):
                     return
 
                 now = datetime.now(tz=pytz.timezone('UTC'))
-                if type(self.not_after) is timedelta and event_time > (now - self.not_after):
+                if type(self.not_after) is timedelta and event_time > (now + self.not_after):
                     self.acknowledge_message()
                     self.logger.debug("Filtered out event with time.source %r.", event.get('time.source'))
                     return
