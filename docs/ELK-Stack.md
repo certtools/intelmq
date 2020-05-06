@@ -4,7 +4,21 @@ If you wish to run IntelMQ with ELK (Elasticsearch, Logstash, Kibana) it is enti
 
 ## Configuring IntelMQ for Logstash
 
-In order to pass IntelMQ events to Logstash we are going to need an output queue, particulary orphaned queue (which simply means there is no IntelMQ bot processing events from this queue). However because IntelMQ system does not like to have an orphaned queue (and the IntelMQ Manager does not allow to create one), we will simply add a new bot at the end of the pipeline (or wherever you see fit) and set it's configuration `enabled` to `false`. The bot type does not matter as it's only a forever disabled dummy bot (it's recommended to choose an output bot, e.g. Rest API Output Bot).
+In order to pass IntelMQ events to Logstash we will utilize already installed Redis. Add a new Redis Output Bot to your pipeline. As the minimum fill in the following parameters: `bot-id`, `redis_server_ip` (can be hostname), `redis_server_port`, `redis_password` (if required, else set to empty!), `redis_queue` (name for the queue). Redis IP, port and password can be taken from `defaults.conf`. It is recommended to use a different `redis_db` parameter than used by the IntelMQ (specified in `defaults.conf` as `source_pipeline_db`, `destination_pipeline_db` and `statistics_database`).
+
+Example values:
+```json
+bot-id: logstash-output
+redis_server_ip: 10.10.10.10
+redis_server_port: 6379
+redis_db: 4
+redis_queue: logstash-queue
+```
+
+#### Notes
+
+* Unfortunately you will not be able to monitor this redis queue via IntelMQ Manager.
+
 
 ## Configuring Logstash
 
@@ -20,23 +34,22 @@ input {
   redis {
     host => "10.10.10.10"
     port => 6379
-    db => 2 
+    db => 4 
     data_type => "list"
-    key => "restapi-output-queue"
+    key => "logstash-queue"
   }
 }
 ```
-* `host` - Redis hostname or IP
-* `port` - Redis port
-* `db` - Redis db used (same value as `source_pipeline_db` from defaults.conf of IntelMQ)
-* `data_type` - data type is usually `list`
-* `key` - name of the queue (found in pipeline.conf of IntelMQ as source queue for our dummy bot)
+* `host` - same as redis_server_ip from the Redis Output Bot
+* `port` - the redis_server_port from the Redis Output Bot
+* `db` - the redis_db parameter from the Redis Output Bot
+* `data_type` - set to `list`
+* `key` - same as redis_queue from the Redis Output Bot
 
-**Extra**
+#### Notes
 
-You can also use syntax like this: `host => "${REDIS_HOST:10.10.10.10}"`
-
-The value will then be taken from environment variable `$REDIS_HOST`. If the environment variable is not defined then the default value of `10.10.10.10` will be used instead.
+* You can also use syntax like this: `host => "${REDIS_HOST:10.10.10.10}"`\
+  The value will be taken from environment variable `$REDIS_HOST`. If the environment variable is not defined then the default value of `10.10.10.10` will be used instead.
 
 ### Filter (optional)
 
@@ -52,7 +65,12 @@ filter {
   }
 }
 ```
-I recommend using the `date` filter: generally we have two timestamp fields - `time.source` (provided by feed source this can be understood as when the event happend; however it is not always present) and `time.observation` (when IntelMQ collected this event). Logstash also adds another field `@timestamp` with time of processing by Logstash. While it can be useful for debugging, I recommend to set the `@timestamp` to the same value as `time.observation`.
+
+#### Notes
+
+* It is not recommended to apply any modifications to the data (within the `mutate` key) outside of the IntelMQ. All necessary modifications should be done only by appropriate IntelMQ bots. This example only demonstrates the possibility.
+
+* It is recommended to use the `date` filter: generally we have two timestamp fields - `time.source` (provided by the feed source this can be understood as when the event happend; however it is not always present) and `time.observation` (when IntelMQ collected this event). Logstash also adds another field `@timestamp` with time of processing by Logstash. While it can be useful for debugging, I recommend to set the `@timestamp` to the same value as `time.observation`.
 
 ### Output 
 
@@ -68,301 +86,15 @@ output {
 * `hosts` - Elasticsearch host (or more) with the correct port (9200 by default)
 * `index` - name of the index where to insert data
 
-Our experience, hardware equipment and the amount of events collected led us to having a separate index for each month. This might not necessarily suit your needs.
+#### Notes
+* Authors experience, hardware equipment and the amount of events collected led to having a separate index for each month. This might not necessarily suit your needs, but is a suggested option.
+
+* By default the ELK stack uses unsecure HTTP. It is possible to setup Security for secure connections and basic user management. This is possible with the Basic (free) licence since versions 6.8.0 and 7.1.0.
 
 ## Configuring Elasticsearch
 
-Configuring Elasticsearch is entirely up to you and should be consulted with the [official documentation](https://www.elastic.co/guide/en/elasticsearch/reference/index.html). What you will most likely need is something called [index template](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-templates.html) mappings which I can provide. Again it might not suit your needs so feel free to adjust it for your use case, it is only included as an inspiration.
+Configuring Elasticsearch is entirely up to you and should be consulted with the [official documentation](https://www.elastic.co/guide/en/elasticsearch/reference/index.html). What you will most likely need is something called [index template](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-templates.html) mappings. IntelMQ provides a tool for generating such mappings. See [ElasticMapper Tool](../contrib/elasticsearch/README.md).
 
-```
-{
-    "mappings" : {
-      "event" : {
-        "numeric_detection" : true,
-        "dynamic_templates" : [
-          {
-            "string_fields" : {
-              "mapping" : {
-                "norms" : false,
-                "type" : "text"
-              },
-              "match_mapping_type" : "string",
-              "match" : "*"
-            }
-          }
-        ],
-        "date_detection" : true,
-        "properties" : {
-          "malware" : {
-            "properties" : {
-              "name" : {
-                "type" : "text"
-              },
-              "version" : {
-                "type" : "keyword"
-              },
-              "hash" : {
-                "properties" : {
-                  "sha1" : {
-                    "type" : "keyword"
-                  },
-                  "sha256" : {
-                    "type" : "keyword"
-                  },
-                  "md5" : {
-                    "type" : "keyword"
-                  }
-                }
-              }
-            }
-          },
-          "destination" : {
-            "properties" : {
-              "registry" : {
-                "type" : "keyword"
-              },
-              "fqdn" : {
-                "type" : "keyword"
-              },
-              "domain_suffix" : {
-                "type" : "keyword"
-              },
-              "ip" : {
-                "type" : "ip"
-              },
-              "url" : {
-                "type" : "text"
-              },
-              "network" : {
-                "type" : "keyword"
-              },
-              "local_ip" : {
-                "type" : "ip"
-              },
-              "port" : {
-                "type" : "long"
-              },
-              "abuse_contact" : {
-                "type" : "keyword"
-              },
-              "tor_node" : {
-                "type" : "boolean"
-              },
-              "local_hostname" : {
-                "type" : "text"
-              },
-              "asn" : {
-                "type" : "keyword"
-              },
-              "account" : {
-                "type" : "text"
-              },
-              "reverse_dns" : {
-                "type" : "keyword"
-              },
-              "allocated" : {
-                "type" : "date"
-              },
-              "as_name" : {
-                "type" : "keyword"
-              },
-              "geolocation" : {
-                "properties" : {
-                  "cc" : {
-                    "type" : "keyword"
-                  },
-                  "city" : {
-                    "type" : "keyword"
-                  },
-                  "latitude" : {
-                    "type" : "float"
-                  },
-                  "state" : {
-                    "type" : "keyword"
-                  },
-                  "region" : {
-                    "type" : "keyword"
-                  },
-                  "longitude" : {
-                    "type" : "float"
-                  }
-                }
-              }
-            }
-          },
-          "event_description" : {
-            "properties" : {
-              "text" : {
-                "type" : "text"
-              },
-              "url" : {
-                "type" : "text"
-              },
-              "target" : {
-                "type" : "text"
-              }
-            }
-          },
-          "raw" : {
-            "type" : "keyword"
-          },
-          "misp" : {
-            "properties" : {
-              "attribute_uuid" : {
-                "type" : "keyword"
-              },
-              "event_uuid" : {
-                "type" : "keyword"
-              }
-            }
-          },
-          "source" : {
-            "properties" : {
-              "registry" : {
-                "type" : "keyword"
-              },
-              "fqdn" : {
-                "type" : "keyword"
-              },
-              "domain_suffix" : {
-                "type" : "keyword"
-              },
-              "ip" : {
-                "type" : "ip"
-              },
-              "url" : {
-                "type" : "text"
-              },
-              "network" : {
-                "type" : "keyword"
-              },
-              "local_ip" : {
-                "type" : "ip"
-              },
-              "urlpath" : {
-                "type" : "text"
-              },
-              "port" : {
-                "type" : "long"
-              },
-              "abuse_contact" : {
-                "type" : "keyword"
-              },
-              "tor_node" : {
-                "type" : "boolean"
-              },
-              "local_hostname" : {
-                "type" : "text"
-              },
-              "asn" : {
-                "type" : "keyword"
-              },
-              "account" : {
-                "type" : "text"
-              },
-              "reverse_dns" : {
-                "type" : "keyword"
-              },
-              "allocated" : {
-                "type" : "date"
-              },
-              "as_name" : {
-                "type" : "keyword"
-              },
-              "geolocation" : {
-                "properties" : {
-                  "cc" : {
-                    "type" : "keyword"
-                  },
-                  "city" : {
-                    "type" : "keyword"
-                  },
-                  "latitude" : {
-                    "type" : "float"
-                  },
-                  "state" : {
-                    "type" : "keyword"
-                  },
-                  "region" : {
-                    "type" : "keyword"
-                  },
-                  "longitude" : {
-                    "type" : "float"
-                  }
-                }
-              }
-            }
-          },
-          "classification" : {
-            "properties" : {
-              "identifier" : {
-                "type" : "keyword"
-              },
-              "taxonomy" : {
-                "type" : "keyword"
-              },
-              "type" : {
-                "type" : "keyword"
-              }
-            }
-          },
-          "feed" : {
-            "properties" : {
-              "code" : {
-                "type" : "keyword"
-              },
-              "provider" : {
-                "type" : "keyword"
-              },
-              "documentation" : {
-                "type" : "keyword"
-              },
-              "name" : {
-                "type" : "keyword"
-              },
-              "accuracy" : {
-                "type" : "float"
-              },
-              "url" : {
-                "type" : "text"
-              }
-            }
-          },
-          "protocol" : {
-            "properties" : {
-              "application" : {
-                "type" : "keyword"
-              },
-              "transport" : {
-                "type" : "keyword"
-              }
-            }
-          },
-          "event_hash" : {
-            "type" : "keyword"
-          },
-          "tlp" : {
-            "type" : "keyword"
-          },
-          "comment" : {
-            "type" : "text"
-          },
-          "time" : {
-            "properties" : {
-              "observation" : {
-                "type" : "date"
-              },
-              "source" : {
-                "type" : "date"
-              }
-            }
-          },
-          "status" : {
-            "type" : "keyword"
-          }
-        }
-      }
-    }
-}
-```
+#### Notes
 
+* Default installation of Elasticsearch database allows anyone with cURL and connection capability administrative access to the database. Make sure you secure your toys!
