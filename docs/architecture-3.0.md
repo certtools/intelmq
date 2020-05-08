@@ -221,7 +221,7 @@ A new DHO version implies that some old installations of IntelMQ might still exp
   
   
 ```json
-{ "meta-data": { "version": 2.0, "created-at": '2020/5/1 12:00:00+0', "producer": "cert.at" }, "data": { ... } }
+{ "meta-data": { "version": 2.0, "created-at": "2020/5/1 12:00:00+0", "producer": "cert.at" }, "data": { ... } }
 ```
   * machine readable specs of the DHO 2.0
   * mapping of DHS 2.0 to other formats
