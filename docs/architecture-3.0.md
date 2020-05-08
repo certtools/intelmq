@@ -1,6 +1,4 @@
-Thoughts INTELMQ 3.0
-======================
-
+# Design Ideas for INTELMQ 3.0
 
 
 # Motivation & Introduction
@@ -39,7 +37,8 @@ It will still keep the focus on:
  
  New architecture features will be:
   * Docker support
-  * Better integration into existing best practice monitoring & alerting tools (prometheus, check_mk, etc.) 
+  * Better integration into existing best practice monitoring & alerting tools (prometheus, check_mk, etc.) via new intelmq_statusd
+  * Kafka support
   * Better support for multiple data outputs:
     * Better support for ELK (Elastic Search, Logstash, Kibana) out of the box
     * Better support for Splunk out of the box
@@ -57,7 +56,7 @@ It will still keep the focus on:
   
   
  
- ## Microservice architecture / Docker support
+## Microservice architecture / Docker support
  
  Due to the request (and the current practice ) of many teams, we will add Docker support. Many teams already implemented this in one way or the other. However, there is no uniform standard way in IntelMQ yet to run it in a container stack (possibly as microservice).
  We will try to address this in Version 3.0 in a standardised way which fits to multiple teams.
@@ -89,7 +88,7 @@ All of these requirements point towards a container architecture with standardis
 The RESETful API SHOULD be implemented on the basis of the OpenAPI specs.
 (Note: look at JSON API specs)
 
-# Storage of the Docker image
+### Storage of the Docker image
 
 Often, when deploying docker a relevant question arises: where is data stored? In our case, this is quite easy:
 
@@ -186,12 +185,63 @@ See https://github.com/gethvi/intelmq/blob/develop-api/docs/REST-API.md
 
 
 
+# Other features 
 
 ## MQ: Replaceable MQ & support for Kafka
 
+We will support Kafka as a MQ bus. Any other MQ buses which are urgently needed?
+
+
+## Multiple data outputs
+
+* Better support for ELK (Elastic Search, Logstash, Kibana) out of the box
+* Better support for Splunk out of the box
+* Cassandra output
+* Output to IDS / IPS systems out of the box
+* CSV output (as trivial as it might sound) -> often this is the best for data analysis
+
+## Inputs
+* Better support for handling sensor data: potentially high volume streams of honeypots or other sensors shall be easily connectable.
+
+## n6 Interoperability
+
+  * Seamless interoperability with CERT Polska's n6 system
+  
+## A new DHO version
+
+  * A vastly improved and extended internal format (DHO): we will support multiple values per key (think: key -> list or key -> dict). This is probably the change with the most impact. This task is highly dependant and basically the core of the n6<-> intelmq interoperability.
+  
+A new DHO version implies that some old installations of IntelMQ might still expect the old format. There are multiple ways to address this. The easiest solution looks like to have dedicated hand over points:
+
+  * Support for handing over data via to other tools and/or CERTs via dedicated exchange points: these shall serve as the glue between different DHO format versions or between different data exchange formats (for example : n6 <-> DHO)
+  
+ This goes together with:
+   * transcoders and transformers
+   * a version field in a DHO event (for the new DHO version): if it is missing, it's an old DHO event. Example:
+  
+  
+```json
+{ "meta-data": { "version": 2.0, "created-at": '2020/5/1 12:00:00+0', "producer": "cert.at" }, "data": { ... } }
+```
+  * machine readable specs of the DHO 2.0
+  * mapping of DHS 2.0 to other formats
+
+
+
+## Verifiers
+  
+  * Adding the concept of verifies: think of these as expert bots which can verify a claim made in the DHO event. Example: the event talks about a webserver having an outdated SSL setting (Poodle vuln for example): the verified (if enabled!) should be able to reach out to the server and confirm the claim. This may be the basis for some kind of confidence score for the claim made in the event.
+  
+  * and of course: more data feeds supported. See for example https://github.com/gethvi/intelmq/blob/develop/docs/Feeds-whishlist.md
+  
+  
 ## Transcoders
 
+A new class of bots.
+
 Convert one code page to another
+Should input arrive in a certain code page, a transcoder can trivially convert it to for example utf-8
+
 
 ## Transformers
 
@@ -214,16 +264,12 @@ It should be possible to run an n6 bot within an intelMQ botnet setup and vice v
 
 ## domain based workflow
 
+Currently, most of the workflows for IntelMQ address number based processing (e.g. IP addresses).
+However, name based workflows (domain names) often have slightly different requirements. For example: URL of a hacked web page -> it would be good to create a screenshot of the hacked web page in order to show it to the web page operator, so that he understands what happened to his/her web page. This task will address these requirements.
+
 ## portal-integration?
 
-  * TBD
-
-## DHO 2.0
-
-  * we need to support structs / lists of fields (or structs). One step towards IDEA and/or n6. This task is highly dependant and basically the core of the n6<-> intelmq interoperability.
-  * machine readable specs of the DHO 2.0
-  * mapping of DHS 2.0 to other formats
-
+Minimal: re-inspect the contactdb expert.
 
 
 
