@@ -36,7 +36,7 @@ It will still keep the focus on:
   * being open source
  
  New architecture features will be:
-  * Docker support
+  * Docker support (note: docker will be **optional**. If you run on bare metal/VM on Debian, Ubuntu, etc.: we will still provide regular packages)
   * Better integration into existing best practice monitoring & alerting tools (prometheus, check_mk, etc.) via new intelmq_statusd
   * Kafka support
   * Better support for multiple data outputs:
