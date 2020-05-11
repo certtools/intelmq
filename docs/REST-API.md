@@ -1,6 +1,16 @@
 # REST API Documentation
 Currently this more of an examples doc than a full scope documentation. The API is JSON based.
 
+The API is loosely inspired by Elasticsearch API.
+
+**GET** - receive data
+
+**PUT** - insert/update data
+
+**POST** - run a method
+
+**DELETE** - delete data
+
 ## Bots Management
 
 ### `GET /bots`
@@ -118,7 +128,7 @@ Example response:
 ```
 
 ### `POST /bots/start`
-Starts all enabled bots. Returns bot starting status (`starting`, `running` ,`disabled`, `failed`).
+Starts all enabled bots. Returns bot status with additional values (`starting`, `failed`).
 
 Optional parameters:
 * `/bots/start/{bots-group}` - starts only a group of bots
@@ -136,7 +146,7 @@ Example response:
 ```
 
 ### `POST /bots/stop`
-Stops all running bots. Returns bot stopping status (`stopping`, `failed`).
+Stops all running bots. Returns bot status with additional values (`stopping`, `failed`).
 
 Optional parameters:
 * `/bots/stop/{bots-group}` - reloads only a group of bots
@@ -168,7 +178,7 @@ Example response:
 ```
 
 ### `POST /bots/restart`
-Restarts all running bots. Bots are not restarted if they failed to stop. Returns bot starting status  (`starting`, `failed`) for successfully stopped bots.
+Restarts all running bots. Bots are not restarted if they failed to stop. Returns bot status with additional values (`starting`, `failed`) for successfully stopped bots.
 
 Optional parameters:
 * `/bots/restart/{bots-group}` - only a group of bots
@@ -360,5 +370,10 @@ Returns logs of the ProcessManager (intelmqctl-like backend).
 Optional parameters:
 * `level` - starting level of log entries to retrieve (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`)
 * `lines` - number of log entries to retrieve
+
+Example request:
+```
+GET /logs?level=INFO&lines=5
+```
 
 **Not yet implemented**
