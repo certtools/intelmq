@@ -162,7 +162,7 @@ Example response:
 ```
 
 ### `POST /bots/reload`
-Reloads the configuration of all running bots. Returns bot reloading status (`reloading`, `failed`).
+Reloads the configuration of all running bots. Returns bot status with additional values (`reloading`, `failed`).
 
 Optional parameters:
 * `/bots/reload/{bots-group}` - only a group of bots
