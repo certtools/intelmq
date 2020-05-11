@@ -26,7 +26,8 @@ Parameters:
   - misp_url: str, URL of the MISP server
   - significant_fields: list of intelmq field names
 
-The significant field values will be searched for in all MISP attribute values
+The `significant_fields` values
+will be searched for in all MISP attribute values
 and if all values are found in the same MISP event, no new MISP event
 will be created.
 (The reason that all values are matched without considering the
