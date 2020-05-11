@@ -118,7 +118,7 @@ Example response:
 ```
 
 ### `POST /bots/start`
-Starts all enabled bots. Returns bot starting status (`starting`, `disabled`, `failed`).
+Starts all enabled bots. Returns bot starting status (`starting`, `running` ,`disabled`, `failed`).
 
 Optional parameters:
 * `/bots/start/{bots-group}` - starts only a group of bots
@@ -352,3 +352,13 @@ Example response:
 ]
 ```
 
+## IntelMQ Management
+
+### `GET /logs`
+Returns logs of the ProcessManager (intelmqctl-like backend).
+
+Optional parameters:
+* `level` - starting level of log entries to retrieve (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`)
+* `lines` - number of log entries to retrieve
+
+**Not yet implemented**
