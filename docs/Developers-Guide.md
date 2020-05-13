@@ -141,10 +141,13 @@ sudo -s
 
 cd /opt/dev_intelmq
 pip3 install -e .
-cp /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/BOTS
+cp -s /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/BOTS
 
-chmod -R 0770 /opt/intelmq
+find /opt/intelmq/ -type d -exec chmod 0770 {} \+
+find /opt/intelmq/ -type f -exec chmod 0660 {} \+
 chown -R intelmq.intelmq /opt/intelmq
+# if you use the intelmq manager (adapt the webservers' group if needed):
+chown intelmq.www-data /opt/intelmq/etc/*.conf
 ```
 
 Now you can test run your new bot following this procedure:
