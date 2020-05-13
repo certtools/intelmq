@@ -1486,6 +1486,10 @@ accessible_rdp = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'tlsv13_support', validate_to_none),  # always empty so far
+        ('extra.', 'tlsv13_cipher', validate_to_none),  # always empty so far
+        ('extra.', 'cve20190708_vulnerable', convert_bool),
+        ('extra.', 'bluekeep_vulnerable', convert_bool),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',

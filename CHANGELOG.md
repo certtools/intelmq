@@ -2,6 +2,68 @@ CHANGELOG
 ==========
 
 
+2.1.2 (2020-01-28)
+------------------
+
+### Core
+- `__init__`: Resolve absolute path for `STATE_FILE_PATH` variable (resolves `..`).
+- `intelmq.lib.utils`:
+  - log: Do not raise an exception if logging to neither file nor syslog is requested.
+  - logging StreamHandler: Colorize all warning and error messages red.
+  - logging FileHandler: Strip all shell colorizations from the messages (#1436).
+- `intelmq.lib.message`:
+  - `Message.to_json`: Set `sort_keys=True` to get reproducible results.
+  - `drop_privileges`: Handle situations where the user or group `intelmq` does not exist.
+- `intelmq.lib.pipeline`:
+  - `Amqp._send` and `Amqp._acknowledge`: Log traceback in debug mode in case of errors and necessary re-connections.
+  - `Amqp._acknowledge`: Reset delivery tag if acknowledge was successful.
+
+### Bots
+#### Collectors
+- `intelmq.bots.collectors.misp.collector`:
+  - Add compatibility with current pymisp versions and versions released after January 2020 (PR #1468).
+
+#### Parsers
+- `intelmq.bots.parsers.shadowserver.config`: Add some missing fields for the feed `accessible-rdp` (#1463).
+- `intelmq.bots.parsers.shadowserver.parser`:
+  - Feed-detection based on file names: The prefixed date is optional now.
+  - Feed-detection based on file names: Re-detect feed for every report received (#1493).
+
+#### Experts
+- `intelmq.bots.experts.national_cert_contact_certat`: Handle empty responses by server (#1467).
+- `intelmq.bots.experts.maxmind_geoip`: The script `update-geoip-data` now requires a license key as second parameter because of upstream changes (#1484)).
+
+#### Outputs
+- `intelmq.bots.outputs.restapi.output`: Fix logging of response body if response status code was not ok.
+
+### Documentation
+- Remove some hardcoded `/opt/intelmq/` paths from code comments and program outputs.
+
+### Packaging
+- debian/rules: Only replace `/opt/intelmq/` with LSB-paths in some certain files, not the whole tree, avoiding wrong replacements.
+- debian/rules and debian/intelmq.install: Do install the examples configuration directly instead of working around the abandoned examples directory.
+
+### Tests
+- `lib/test_utils`: Skip some tests on Python 3.4 because `contextlib.redirect_stdout` and `contextlib.redirect_sterr` are not supported on this version.
+- Travis: Stop running tests with all optional dependencies on Python 3.4, as more and more libraries are dropping support for it. Tests on the core and code without non-optional requirements are not affected.
+- `tests.bots.parsers.html_table`: Make tests independent of current year.
+
+### Tools
+- `intelmqctl upgrade-config`: Fix missing substitution in error message "State file %r is not writable.".
+
+### Known issues
+- bots trapped in endless loop if decoding of raw message fails (#1494)
+- intelmqctl status of processes: need to check bot id too (#1492)
+- MongoDB authentication: compatibility on different MongoDB and pymongo versions (#1439)
+- ctl: shell colorizations are logged (#1436)
+- http stream collector: retry on regular connection problems? (#1435)
+- tests: capture logging with context manager (#1342)
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952)
+- n6 parser: mapping is modified within each run (#905)
+- reverse DNS: Only first record is used (#877)
+- Corrupt dump files when interrupted during writing (#870)
+
+
 2.1.1 (2019-11-11)
 ------------------
 
@@ -78,14 +140,14 @@ CHANGELOG
   - Require the bot instance as parameter for all pipeline classes.
   - New internal variable `_has_message` to keep the state of the pipeline.
   - Split receive and acknowledge into public-facing and private methods.
-  - Add `reject_message` method to the Pipeline class for explicit requeue of messages.
+  - Add `reject_message` method to the Pipeline class for explicit re-queue of messages.
   - AMQP:
     - Make exchange configurable.
     - If exchange is set, the queues are not declared, the queue name is for routing used by exchanges.
 - `intelmq.lib.bot`:
   - Log message after successful bot initialization, no log message anymore for ready pipeline.
   - Use existing current message if receive is called and the current message still exists.
-  - Fix handling of received messaged after a sighup that happend during a blocking receving connection using explicit rejection (#1438).
+  - Fix handling of received messaged after a SIGHUP that happened during a blocking receiving connection using explicit rejection (#1438).
   - New method `_parse_common_parameters` called before `init` to parse commonly used argument. Currently supported: `extract_files`.
 - `intelmq.lib.test`:
   - Fix the tests broker by providing the testing pipeline.
@@ -115,13 +177,13 @@ CHANGELOG
   - Use the lib's `unzip` function for uncompressing attachments and use the .
   - `intelmq.bots.collectors.mail.collector_mail_url`: Save the file name of the downloaded file as `extra.file_name`.
 - `intelmq.bots.collectors.amqp.collector_amqp`: New collector to collect data from (remote) AMQP servers, for bot IntelMQ as well as external data.
-  - use default SSL context for client purposes, fixes compatibility with python < 3.6 if TLS is used.
+  - use default SSL context for client purposes, fixes compatibility with python `<` 3.6 if TLS is used.
 
 #### Parsers
 - `intelmq.bot.parsers.html_table.parser`:
   * New parameter "html_parser".
   * Use time conversion functions directly from `intelmq.lib.harmonization.DateTime.convert`.
-  - Limit lxml dependency on 3.4 to < 4.4.0 (incompatibility).
+  - Limit lxml dependency on 3.4 to `<` 4.4.0 (incompatibility).
 - `intelmq.bots.parsers.netlab_360.parser`: Add support for hajime scanners.
 - `intelmq.bots.parsers.hibp.parser_callback`: A new parser to parse data retrieved from a HIBP Enterprise Subscription.
 - `intelmq.bots.parsers.shadowserver.parser`:
@@ -152,7 +214,7 @@ CHANGELOG
 - Travis:
   - Use UTC timezone.
 - Tests for `utils.unzip`.
-- Add a new asset: Zip archive with two files, same as with tar.gz archive.
+- Add a new asset: Zip archive with two files, same as with `.tar.gz` archive.
 - Added tests for the Mail Attachment & Mail URL collectors.
 - Ignore logging-tests on Python 3.7 temporarily (#1342).
 
@@ -193,9 +255,9 @@ CHANGELOG
 - `intelmq.lib.upgrades.v110_deprecations`: Fix upgrade of ripe expert configuration.
 - `intelmq.lib.bot_debugger`:
   - Fix handling of empty messages generated by parser when user wanted to show the result by "--show-sent" flag.
-  - Fix handling of sent messages for bots using the `path_permissive` paramter (#1453).
+  - Fix handling of sent messages for bots using the `path_permissive` parameter (#1453).
 - `intelmq.lib.pipeline.Amqp`:
-  - use default SSL context for client purposes, fixes compatibility with python < 3.6 if TLS is used.
+  - use default SSL context for client purposes, fixes compatibility with python `<` 3.6 if TLS is used.
   - Reconnect once on sending messages if disconnect detected.
 
 ### Bots
@@ -225,7 +287,7 @@ CHANGELOG
 - `intelmq.bots.experts.reverse_dns.expert`: Add optional parameter `overwrite`, current behavior was `True`, default if not given is `True` now, will change to `False` in 3.0.0 (#1452, #1455).
 
 #### Outputs
-- `intelmq.bots.outputs.amqptopic.output`: use default SSL context for client purposes, fixes compatibility with python < 3.6 if TLS is used.
+- `intelmq.bots.outputs.amqptopic.output`: use default SSL context for client purposes, fixes compatibility with python `<` 3.6 if TLS is used.
 
 ### Packaging
 - Rules:
@@ -357,7 +419,7 @@ CHANGELOG
   - Clarify on Uninstallation
 
 ### Packaging
-- Do not execute the tcp collector tests during debian and ubuntu builds as they fail there.
+- Do not execute the tcp collector tests during Debian and Ubuntu builds as they fail there.
 
 ### Tests
 - `intelmq.lib.test`: Disable statistics for test runs of bots.
@@ -366,8 +428,8 @@ CHANGELOG
 
 ### Tools
 - `intelmqsetup`: Only change directory ownerships if necessary.
-- `intelmqctl`:
-  - Provide new command `upgrade-conf` to uprade configuration to a newer version.
+- `intelmqctl`:/**---
+  - Provide new command `upgrade-conf` to upgrade configuration to a newer version.
     - Makes backups of configurations files on its own.
     - Also checks for previously skipped or new functions of older versions and catches up.
   - Provides logging level on class layer.
@@ -481,13 +543,13 @@ There are some features considered as beta and marked as such in the documentati
   - Allow setting the broker of source and destination independently.
   - Support for a new AMQP broker. See User Guide for configuration. (#1179)
 - `lib/bot`:
-  - Dump messages locks the dump file using unix file locks (#574).
+  - Dump messages locks the dump file using Unix file locks (#574).
   - Print idle/rate limit time also in human readable format (#1332).
   - `set_request_parameters`: Use `{}` as default proxy value instead of `None`. Allows updating of existing proxy dictionaries.
   - Bots drop privileges if they run as root.
   - Save statistics on successfully and failed processed messages in the redis database 3.
 - `lib/utils`
-  - Function `unzip` to extract files from gzipped and/or tar-archives.
+  - Function `unzip` to extract files from gz-zipped and/or tar-archives.
   - New class `ListHandler`: new handler for logging purpose which saves the messages in a list.
   - Add function `seconds_to_human`.
   - Add function `drop_privileges`.
@@ -510,7 +572,7 @@ There are some features considered as beta and marked as such in the documentati
 - added `intelmq.bots.collectors.api`: collecting data using an HTTP API (#123, #1187).
 - added `intelmq.bots.collectors.rsync` (#1286).
 - `intelmq.bots.collectors.http.collector_http`:
-  - Add support for uncompressing of gzipped-files (#1270).
+  - Add support for uncompressing of gz-zipped-files (#1270).
   - Add time-delta support for time formatted URLs (#1366).
 - `intelmq.collectors.blueliv.collector_crimeserver`: Allow setting the API URL by parameter (#1336).
 - `intelmq.collectors.mail`:
@@ -574,7 +636,7 @@ There are some features considered as beta and marked as such in the documentati
 
 ### Tools
 - `intelmqctl check`: Now uses the new `ListHandler` from utils to handle the logging in JSON output mode.
-- `intelmqctl run`: The message that a running bot has been stopped, is not longer a warning, but an informational message. No need to inform sysadmins about this intended behaviour.
+- `intelmqctl run`: The message that a running bot has been stopped, is not longer a warning, but an informational message. No need to inform sysadmins about this intended behavior.
 - `intelmqdump`: Inspecting dumps locks the dump file using unix file locks (#574).
 - `intelmqctl`:
   - After the check if the program runs as root, it tries to drop privileges. Only if this does not work, a warning is shown.
@@ -582,7 +644,7 @@ There are some features considered as beta and marked as such in the documentati
 
 ### Contrib
 - `malware_name_mapping`:
-  - Added the script `apply_mapping_eventdb.py` to apply the mapping to an eventdb.
+  - Added the script `apply_mapping_eventdb.py` to apply the mapping to an EventDB.
   - Possibility to add local rules using the download tool.
 - `check_mk`:
   - Added scripts for monitoring queues and statistics.
@@ -834,7 +896,7 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
   A tool to convert from yaml to md has been added.
 
 ### Tools
-- `intelmq_gen_feeds_docs` addded to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
+- `intelmq_gen_feeds_docs` added to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
 - `intelmq_gen_docs` merges both `intelmq_gen_feeds_docs` and `intelmq_gen_harm_docs` in one file and automatically updates the documentation files.
 
 #### intelmqctl
@@ -849,7 +911,7 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 - `intelmqctl run` if message is sent to a non-default path, it is printed out.
 - `intelmqctl restart` bug fix; returned some half-nonsense, now returns return state of start and stop operation in a list (#1226).
 - `intelmqctl check`: New parameter `--no-connections` to prevent the command from making connections e.g. to the redis pipeline.s
-- `intelmqctl list queues`: don't display named paths amongst standard queues.
+- `intelmqctl list queues`: don't display named paths among standard queues.
 - The process status test failed if the PATH did not include the bot executables and the `which` command failed. Then the proccess's command line could not be compared correctly. The fix warns of this and adds a new status 'unknown' (#1297).
 
 
@@ -899,7 +961,7 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 
 ### Bots
 - Removed print statements from various bots.
-- Replaced various occurences of `self.logger.error()` + `self.stop()` with `raise ValueError`.
+- Replaced various occurrences of `self.logger.error()` + `self.stop()` with `raise ValueError`.
 
 #### Collectors
 - `bots.collectors.mail`:
@@ -1263,7 +1325,7 @@ no known issues
 1.0.0 Stable release (2017-08-04)
 ---------------------------------
 ### Core
-- Fixes a thrown FileNotFound exception when stopping bots started with `intelmqctl run ...`
+- Fixes a thrown `FileNotFound` exception when stopping bots started with `intelmqctl run ...`
 
 ### Harmonization
 - leading dots in FQDNs are rejected and removed in sanitation (#1022, #1030)
@@ -1293,7 +1355,7 @@ no known issues
 
 ### Bots
 #### Collectors
-- HTTP collectors: If http_username and http_password are both given and empty or null, 'None:None' has been used to authenticate. It is now checked that the username evaluates to non-false/null before adding the authentication. (fixes #1017)
+- HTTP collectors: If `http_username` and `http_password` are both given and empty or null, 'None:None' has been used to authenticate. It is now checked that the username evaluates to non-false/null before adding the authentication. (fixes #1017)
 - Dropped unmaintained and undocumented FTP(S) collectors `bots.collectors.ftp`. Also, the FTPS collector had a license conflict (#842).
 - `bots.collectors.http.collector_http_stream`: drop deprecated parameter `url` in favor of `http_url`
 
@@ -1320,7 +1382,7 @@ v1.0.0.dev8 Beta release (2017-06-14)
 ### Configuration
 - Added `log_processed_messages_count` (500) and `log_processed_messages_seconds` (900) to defaults.conf.
 - `http_timeout` has been renamed to `http_timeout_sec` and `http_timeout_max_tries` has been added.
-   This setting is honored by bots.collectors.http.* and bots.collectors.mail.collector_mail_url, bots.collectors.rt (only `http_timeout_sec`), bots.outputs.restapi.output and bots.experts.ripencc_abuse_contact
+   This setting is honored by `bots.collectors.http.*` and `bots.collectors.mail.collector_mail_url`, `bots.collectors.rt` (only `http_timeout_sec`), `bots.outputs.restapi.output` and `bots.experts.ripencc_abuse_contact`.
 
 ### Documentation
 - Minor fixes
@@ -1329,25 +1391,25 @@ v1.0.0.dev8 Beta release (2017-06-14)
 - Better documentation of packages
 
 ### Tools
-- added a bot debugger (https://github.com/certtools/intelmq/pull/975)
-- missing bot executable is detected and handled by intelmqctl (https://github.com/certtools/intelmq/pull/979)
+- added a bot debugger (#975)
+- missing bot executable is detected and handled by intelmqctl (#979)
 
 ### Core
-- fix bug which prevented dumps to be written if the file did not exist (https://github.com/certtools/intelmq/pull/986)
+- fix bug which prevented dumps to be written if the file did not exist (#986)
 - Fix reload of bots regarding logging
 - type annotations for all core libraries
 
 ### Bots
-- added bots.experts.idea, bots.outputs.files
+- added `bots.experts.idea`, bots.outputs.files
 - possibility to split large csv Reports into Chunks, currently possible for mail url and file collector
 - elasticsearch output supports HTTP Basic Auth
-- bots.collectors.mail.collector_mail_url and bots collectors.file.collector can split large reports (https://github.com/certtools/intelmq/pull/680)
-- bots.parsers.shadowserver support the VNC feed
-- handling of HTTP timeouts, see above https://github.com/certtools/intelmq/pull/859
-- bots.parsers.bambenek saves the malware name
-- bots.parsers.fraunhofer.parser_dga saves the malware name
-- bots.parsers.shadowserver handles NULL bytes
-- bots.parsers.abusech.parser_ransomware handles the IP 0.0.0.0 specially
+- `bots.collectors.mail.collector_mail_url` and bots collectors.file.collector can split large reports (#680)
+- `bots.parsers.shadowserver` support the VNC feed
+- handling of HTTP timeouts, see above #859
+- `bots.parsers.bambenek` saves the malware name
+- `bots.parsers.fraunhofer.parser_dga` saves the malware name
+- `bots.parsers.shadowserver` handles NULL bytes
+- `bots.parsers.abusech.parser_ransomware` handles the IP 0.0.0.0 specially
 
 ### Harmonization
 - New field named `output` to support export to foreign formats
@@ -1360,7 +1422,7 @@ v1.0.0.dev7 Beta release (2017-05-09)
 
 ### Bots
 #### Collectors
-- bots.collectors.alienvault_otx: OTX library has been removed, install it as package instead
+- `bots.collectors.alienvault_otx`: OTX library has been removed, install it as package instead
 
 #### Parsers
 - API keys will be removed from feed.url if possible
@@ -1368,14 +1430,14 @@ v1.0.0.dev7 Beta release (2017-05-09)
   - Added support for Compromised-Website, Open-Netis, NTP-Version, Sandbox-URL, Spam-URL, Vulnerable-ISAKMP, Botnet-CCIP, Accessible-RDP, Open-LDAP, Blacklisted-IP, Accessible-Telnet, Accessible-CWMP (#748).
 
 #### Experts
-- added bots.experts.field_reducer, bots.outputs.smtp
-- bots.experts.deduplicator: `ignore_keys` has been renamed to `filter_keys` and `filter_type` has been removed.
-- bots.experts.modify: The configration is now list-based for a consistent ordering
-- bots.experts.tor_node as an optional parameter `overwrite`
+- added `bots.experts.field_reducer`, `bots.outputs.smtp`.
+- `bots.experts.deduplicator`: `ignore_keys` has been renamed to `filter_keys` and `filter_type` has been removed.
+- `bots.experts.modify`: The configuration is now list-based for a consistent ordering.
+- `bots.experts.tor_node` as an optional parameter `overwrite`.
 
 ### Harmonization
 - New parameter and field named feed.documentation to link to documentation of the feed
-- classification.taxonomy is lower case only
+- `classification.taxonomy` is lower case only
 
 v1.0.0.dev6 Beta release (2017-01-11)
 -------------------------------------
@@ -1396,11 +1458,11 @@ Changes between 0.9 and 1.0.0.dev6
 - bots/BOTS now contains only generic and specific collectors. For a list of feeds, see docs/Feeds.md
 
 ### Tools
-- DEV: intelmq_gen_harm_docs: added to generate Harmonization documentation
-- intelmq_psql_initdb: creates a table for a postgresql database using the harmonization fields
+- DEV: `intelmq_gen_harm_docs`: added to generate Harmonization documentation
+- `intelmq_psql_initdb`: creates a table for a postgresql database using the harmonization fields
 - intelmqctl: reworked argument parsing, many bugfixes
 - intelmqdump: added to inspect dumped messages and reinsert them into the queues
-- DEV: rewrite_config_files: added to rewrite configuration files with consistent style
+- DEV: `rewrite_config_files`: added to rewrite configuration files with consistent style
 
 
 ### Bots
@@ -1415,24 +1477,24 @@ Changes between 0.9 and 1.0.0.dev6
 - source specific parsers added: abusech, alienvault, alienvault otx, anubisnetworks, autoshun, bambenek, bitcash, bitsight, blocklistde, blueliv, ci army, cleanmx, cymru_full_bogons, danger_rulez, dataplane, dshield (asn, block and domain), dyn, fraunhofer_dga, hphosts, malc0de, malwaredomains, misp, n6, netlab_360, nothink, openphish, proxyspy, spamhaus cert, taichung, turris, urlvir
 - generic parsers added: csv, json
 - specific parsers dropped: abusehelper (broken), arbor (source unavailable), bruteforceblocker, certeu, dragonresearchgroup parser (discontinued), hpfeeds, microsoft_dcu (broken), taichungcitynetflow, torexitnode parser
-- renamed intelmq.bots.parsers.spamhaus.parser to intelmq.bots.parsers.spamhaus.parser_drop
-  renamed intelmq.bots.parsers.malwarepatrol.parser-dansguardian to intelmq.bots.parsers.malwarepatrol.parser_dansguardian
-- renamed intelmq.bots.parsers.taichungcitynetflow.parser to intelmq.bots.parsers.taichung.parser
+- renamed `intelmq.bots.parsers.spamhaus.parser` to `intelmq.bots.parsers.spamhaus.parser_drop`.
+  renamed `intelmq.bots.parsers.malwarepatrol.parser-dansguardian to `intelmq.bots.parsers.malwarepatrol.parser_dansguardian`
+- renamed `intelmq.bots.parsers.taichungcitynetflow.parser to `intelmq.bots.parsers.taichung.parser`
 - major rework of shadowserver parsers
 - enhanced all parsers
 
 #### Experts
 - Added experts: asnlookup, cert.at contact lookup, filter, generic db lookup, gethostbyname, modify, reverse dns, rfc1918, tor_nodes, url2fqdn
 - removed experts: contactdb, countrycodefilter (obsolete), sanitizer (obsolete)
-- renamed intelmq.bots.expers.abusix.abusix to bots.expers.abusix.expert
-  intelmq.bots.experts.asnlookup.asnlookup to intelmq.bots.experts.asn_lookup.expert
-  intelmq.bots.experts.cymru.expert to intelmq.bots.experts.cymru_whois.expert
-  intelmq.bots.experts.deduplicator.deduplicator to intelmq.bots.experts.deduplicator.expert
-  intelmq.bots.experts.geoip.geopip to intelmq.bots.experts.maxmind_geoip.expert
-  intelmq.bots.experts.ripencc.ripencc to intelmq.bots.experts.ripencc_abuse_contact.expert
-  intelmq.bots.experts.taxonomy.taxonomy to intelmq.bots.experts.taxonomy.expert
+- renamed `intelmq.bots.expers.abusix.abusix` to `intelmq.bots.expers.abusix.expert`
+  `intelmq.bots.experts.asnlookup.asnlookup` to `intelmq.bots.experts.asn_lookup.expert`
+  `intelmq.bots.experts.cymru.expert` to `intelmq.bots.experts.cymru_whois.expert`
+  `intelmq.bots.experts.deduplicator.deduplicator` to `intelmq.bots.experts.deduplicator.expert`
+  `intelmq.bots.experts.geoip.geopip` to `intelmq.bots.experts.maxmind_geoip.expert`
+  `intelmq.bots.experts.ripencc.ripencc` to `intelmq.bots.experts.ripencc_abuse_contact.expert`
+  `intelmq.bots.experts.taxonomy.taxonomy` to `intelmq.bots.experts.taxonomy.expert`
 - enhanced all experts
-- changed configuration syntax for bots.experts.modify to a more simple variant
+- changed configuration syntax for `intelmq.bots.experts.modify` to a more simple variant
 
 #### Outputs
 - added: amqp, elasticsearch, redis, restapi, smtp, stomp, tcp, udp, xmpp

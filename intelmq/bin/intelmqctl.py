@@ -23,12 +23,12 @@ from collections import OrderedDict
 
 import pkg_resources
 import psutil
-from termstyle import red, green
+from termstyle import green
 
 from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
-                     __version_info__)
+                     DEFAULT_LOGGING_PATH, __version_info__)
 from intelmq.lib import utils
 from intelmq.lib.bot_debugger import BotDebugger
 from intelmq.lib.pipeline import PipelineFactory
@@ -61,13 +61,14 @@ MESSAGES = {
 }
 
 ERROR_MESSAGES = {
-    'starting': red('Bot %s failed to START.'),
-    'running': red('Bot %s is still running.'),
+    'starting': 'Bot %s failed to START.',
+    'running': 'Bot %s is still running.',
     'stopped': 'Bot %s was NOT RUNNING.',
-    'stopping': red('Bot %s failed to STOP.'),
-    'not found': red('Bot %s failed to START because the file cannot be found.'),
-    'access denied': red('Bot %s failed to %s because of missing permissions.'),
-    'unknown': red('Status of Bot %s is unknown: %r.'),
+    'stopping': 'Bot %s failed to STOP.',
+    'not found': ('Bot %s FAILED to start because the executable cannot be found. '
+                  'Check your PATH variable and your the installation.'),
+    'access denied': 'Bot %s failed to %s because of missing permissions.',
+    'unknown': 'Status of Bot %s is unknown: %r.',
 }
 
 LOG_LEVEL = OrderedDict([
@@ -689,7 +690,7 @@ class IntelMQController():
         DESCRIPTION = """
         description: intelmqctl is the tool to control intelmq system.
 
-        Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
+        Outputs are logged to %s/intelmqctl.log""" % DEFAULT_LOGGING_PATH
         EPILOG = '''
         intelmqctl [start|stop|restart|status|reload] --group [collectors|parsers|experts|outputs]
         intelmqctl [start|stop|restart|status|reload] bot-id
@@ -754,9 +755,7 @@ can be longer due to our logging format!
 
 Upgrade from a previous version:
     intelmqctl upgrade-config
-Make a backup of your configuration first, also including bot's configuration files.
-
-Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
+Make a backup of your configuration first, also including bot's configuration files.'''
 
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
@@ -1522,8 +1521,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         """
         if os.path.isfile(STATE_FILE_PATH):
             if not os.access(STATE_FILE_PATH, os.W_OK) and not dry_run:
-                self.logger.error("State file %r is not writable.")
-                return 1, "State file %r is not writable."
+                self.logger.error("State file %r is not writable.",
+                                  STATE_FILE_PATH)
+                return 1, "State file %r is not writable." % STATE_FILE_PATH
             state = utils.load_configuration(STATE_FILE_PATH)
         else:
             """
