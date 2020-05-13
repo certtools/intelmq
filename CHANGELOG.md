@@ -67,6 +67,7 @@ CHANGELOG
   - Adding documentation URLs to nearly all feeds.
   - Remove unavailable Bitcash.cz feed.
   - Remove unavailable Fraunhofer DDos Attack feeds.
+- Developers Guide: Fix the instructions for `/opt/intelmq` file permissions.
 
 ### Packaging
 - patches: `fix-logrotate-path.patch`: also include path to rotated file in patch
