@@ -98,7 +98,7 @@ class MISPAPIOutputBot(OutputBot):
         # search for existing events that have all values that are significant
         values_to_search_for = []
         for sig_field in self.parameters.significant_fields:
-            if sig_field in intelmq_event:
+            if sig_field in intelmq_event and intelmq_event[sig_field]:
                 values_to_search_for.append(intelmq_event[sig_field])
 
         vquery = self.misp.build_complex_query(
