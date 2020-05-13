@@ -51,6 +51,7 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver.parser`: More verbose error message for missing report specification (#1507).
 - `intelmq.bots.parsers.n6.parser_n6stomp`: Always add n6 field `name` as `malware.name` independent of `category`.
 - `intelmq.bots.parsers.anubisnetworks`: Update parser with new data format.
+- `intelmq.bots.parsers.bambenek`: Add new feed URLs with Host `faf.bambenekconsulting.com` (#1525, PR#1526).
 
 #### Experts
 - `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with unicode characters.
