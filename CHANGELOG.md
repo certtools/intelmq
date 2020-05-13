@@ -31,6 +31,7 @@ CHANGELOG
 #### Collectors
 - `intelmq.bots.collectors.mail.collector_mail_attach`: fix handling of deprecated parameter name `attach_unzip`.
 - `intelmq.bots.collectors.stomp.collector`: Fix compatibility with stomp.py versions `> 4.1.20` and catch errors on shutdown.
+- `intelmq.bots.collectors.microsoft.collector_interflow`: Add method for printing the file list.
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`).
