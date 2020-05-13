@@ -74,10 +74,12 @@ class MISPAPIOutputBot(OutputBot):
 
     def init(self):
         if pymisp is None and import_fail_reason == 'syntax':
-            raise MissingDependencyError("pymisp",
-                                         version='>=2.4.120',
-                                         additional_text="Python versions >= 3.6 are "
-                                                         "required for this 'pymisp' version.")
+            raise MissingDependencyError(
+                "pymisp",
+                version='>=2.4.120',
+                additional_text="Python versions >= 3.6 are "
+                                "required for this 'pymisp' version."
+            )
         elif pymisp is None:
             raise MissingDependencyError('pymisp', version='>=2.4.120')
 
