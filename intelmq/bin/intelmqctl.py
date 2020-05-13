@@ -1505,9 +1505,9 @@ Make a backup of your configuration first, also including bot's configuration fi
 
         if RETURN_TYPE == 'json':
             if retval:
-                return 0, {'status': 'error', 'lines': list_handler.buffer}
+                return 1, {'status': 'error', 'lines': list_handler.buffer}
             else:
-                return 1, {'status': 'success', 'lines': list_handler.buffer}
+                return 0, {'status': 'success', 'lines': list_handler.buffer}
         else:
             if retval:
                 self.logger.error('Some issues have been found, please check the above output.')
