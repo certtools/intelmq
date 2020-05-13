@@ -2664,6 +2664,7 @@ The PyMISP library >= 2.4.120 is required, see
 
 * **Feed parameters** (see above)
 * `add_feed_provider_as_tag`: bool (use `true` when in doubt)
+* `add_feed_name_as_tag`: bool (use `true` when in doubt)
 * `misp_additional_correlation_fields`: list of fields for which
       the correlation flags will be enabled (in addition to those which are
       in significant_fields)
@@ -2678,7 +2679,8 @@ The PyMISP library >= 2.4.120 is required, see
 * `misp_url`: str, URL of the MISP server
 * `significant_fields`: list of intelmq field names
 
-The significant field values will be searched for in all MISP attribute values
+The `significant_fields` values
+will be searched for in all MISP attribute values
 and if all values are found in the same MISP event, no new MISP event
 will be created.
 

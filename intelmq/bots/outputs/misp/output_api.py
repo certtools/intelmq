@@ -12,6 +12,7 @@ TODO: A shortened copy of this documentation is kept at `docs/Bots.md`, please
 
 Parameters:
   - add_feed_provider_as_tag: bool (use true when in doubt)
+  - add_feed_name_as_as_tag: bool (use true when in doubt)
   - misp_additional_correlation_fields: list of fields for which
         the correlation flags will be enabled (in addition to those which are
         in significant_fields)
@@ -47,6 +48,7 @@ that you do not want to be inserted into MISP.
 Example (of some parameters in JSON)::
 
     "add_feed_provider_as_tag": true,
+    "add_feed_name_as_tag": true,
     "misp_additional_correlation_fields": ["source.asn"],
     "misp_additional_tags": ["OSINT", "osint:certainty==\"90\""],
     "misp_publish": false,
@@ -136,6 +138,12 @@ class MISPAPIOutputBot(OutputBot):
                 intelmq_event['feed.provider'])
             new_misp_event.add_tag(new_tag)
 
+        if (self.parameters.add_feed_name_as_tag and
+                'feed.name' in intelmq_event):
+            new_tag = 'IntelMQ:feed.name="{}"'.format(
+                intelmq_event['feed.name'])
+            new_misp_event.add_tag(new_tag)
+
         for new_tag in self.parameters.misp_additional_tags:
             new_misp_event.add_tag(new_tag)
 
@@ -171,6 +179,7 @@ class MISPAPIOutputBot(OutputBot):
     def check(parameters):
         required_parameters = [
             'add_feed_provider_as_tag',
+            'add_feed_name_as_tag',
             'misp_additional_correlation_fields',
             'misp_additional_tags',
             'misp_key',
