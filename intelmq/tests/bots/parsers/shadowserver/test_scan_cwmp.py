@@ -39,7 +39,6 @@ EVENTS = [{
     "protocol.transport": "tcp",
     'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
                                      EXAMPLE_LINES[1]])),
-    "source.asn": 6057,
     "source.asn": 5678,
     "source.geolocation.cc": "AA",
     "source.geolocation.city": "LOCATION",

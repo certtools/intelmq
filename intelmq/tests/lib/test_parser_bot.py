@@ -81,7 +81,7 @@ class DummyParserBot(bot.ParserBot):
             self.tempdata.append(line)
         else:
             event = self.new_event(report)
-            self.logger.debug('test')
+            self.logger.debug('test!')
             line = line.split(',')
             event['time.source'] = line[0]
             event['source.fqdn'] = line[1]

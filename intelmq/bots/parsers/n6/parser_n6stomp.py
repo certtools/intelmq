@@ -112,12 +112,9 @@ class N6StompParserBot(Bot):
             event.add("extra.expires", DateTime.sanitize(dict_report["expires"]))
         if "source" in dict_report:
             event.add("extra.feed_source", dict_report["source"])
-        if ("category" in dict_report and "name" in dict_report and
-                dict_report["category"] == 'bots'):
-            event.add("malware.name", dict_report["name"])
-
-        if ("name" in dict_report):
+        if "name" in dict_report:
             mapping['bots']['identifier'] = dict_report["name"]
+            event.add("malware.name", dict_report["name"])
         else:
             mapping['bots']['identifier'] = "malware-generic"
 

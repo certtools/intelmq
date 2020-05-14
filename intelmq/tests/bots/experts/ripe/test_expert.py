@@ -123,30 +123,41 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EMPTY_INPUT)
 
     @test.skip_local_web()
-    def test_ripe_stat_errors(self):
+    def test_ripe_stat_error_json(self):
         """ Test RIPE stat for errors. """
-        self.sysconfig = {'query_ripe_db_asn': False,
-                          'query_ripe_db_ip': False,
-                          'query_ripe_stat_asn': True,
-                          'query_ripe_stat_ip': True,
-                          'query_ripe_stat_geolocation': False,
-                          }
+        parameters = {'query_ripe_db_asn': False,
+                      'query_ripe_db_ip': False,
+                      'query_ripe_stat_asn': True,
+                      'query_ripe_stat_ip': True,
+                      'query_ripe_stat_geolocation': False,
+                      }
         self.input_message = EMPTY_INPUT
-        self.allowed_error_count = 1
-        self.prepare_bot()
+        self.prepare_bot(parameters=parameters)
         old = self.bot.QUERY['stat']
         self.bot.QUERY['stat'] = 'http://localhost/{}'
-        self.run_bot(prepare=False)
+        self.run_bot(prepare=False, allowed_error_count=1)
         # internal json in < and >= 3.5 and simplejson
+        self.bot.QUERY['stat'] = old
         self.assertLogMatches(pattern='.*(JSONDecodeError|ValueError|Expecting value|No JSON object could be decoded).*',
                               levelname='ERROR')
 
-        self.bot.URL_STAT_CONTACT = 'http://localhost/{}'
-        self.run_bot(prepare=False)
-        self.bot.URL_STAT_CONTACT = old
+    @test.skip_local_web()
+    def test_ripe_stat_error_404(self):
+        """ Test RIPE stat for errors. """
+        parameters = {'query_ripe_db_asn': False,
+                      'query_ripe_db_ip': False,
+                      'query_ripe_stat_asn': True,
+                      'query_ripe_stat_ip': True,
+                      'query_ripe_stat_geolocation': False,
+                      }
+        self.input_message = EMPTY_INPUT
+        self.prepare_bot(parameters=parameters)
+        old = self.bot.QUERY['stat']
+        self.bot.QUERY['stat'] = 'http://localhost/{}'
+        self.run_bot(prepare=False, allowed_error_count=1)
+        self.bot.QUERY['stat'] = old
         self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
-        self.cache.flushdb()  # collides with test_replace
 
     @test.skip_local_web()
     def test_ripe_db_as_errors(self):

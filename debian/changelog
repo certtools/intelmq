@@ -10,6 +10,12 @@ intelmq (2.2.0~alpha2-1) unstable; urgency=medium
 
  -- Sebastian Wagner <wagner@cert.at>  Mon, 16 Mar 2020 18:28:33 +0100
 
+intelmq (2.1.2-2) stable; urgency=medium
+
+  * Add "debianutils" as new dependency, because IntelMQ needs `which`.
+
+ -- Sebastian Wagner <sebastianw@localhost>  Wed, 01 Apr 2020 09:28:23 +0200
+
 intelmq (2.1.2-1) stable; urgency=medium
 
   * Update to 2.1.2.

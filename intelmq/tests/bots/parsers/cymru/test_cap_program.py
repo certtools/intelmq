@@ -17,7 +17,6 @@ REPORT = {'__type': 'Report',
           'time.observation': '2015-11-01T00:01:45+00:05',
           }
 EVENT0 = {'__type': 'Event',
-          'time.source': '2017-10-31 10:00:00',
           'time.observation': '2015-11-01T00:01:45+00:05',
           'classification.identifier': 'ssh',
           'classification.type': 'brute-force',

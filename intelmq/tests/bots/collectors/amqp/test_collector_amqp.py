@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
-import os
 import unittest
 
-import intelmq.lib.message as message
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.collectors.amqp.collector_amqp import AMQPCollectorBot
 from intelmq.tests.bots.outputs.redis.test_output import EXAMPLE_EVENT
 from intelmq.tests.bots.outputs.amqptopic.test_output import TestAMQPTopicOutputBot
-
-if os.environ.get('INTELMQ_TEST_EXOTIC'):
-    import pika
 
 
 BODY_PLAIN = b'foobar This is a test'

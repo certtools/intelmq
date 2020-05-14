@@ -99,6 +99,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - `intelmq.bots.parsers.cymru.parser_full_bogons`:
   - Migrate to `ParserBot`.
   - Add last updated information in raw.
+- `intelmq.bots.parsers.anubisnetworks.parser`: add new parameter `use_malware_familiy_as_classification_identifier`.
 
 #### Experts
 - `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
@@ -174,6 +175,12 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
   - Check for discontinued Abuse.CH Zeus Tracker feed.
 - `intelmq.lib.bot`:
   - `ParserBot.recover_line`: Parameter `line` needs to be optional, fix usage of fallback value `self.current_line`.
+- `intelmq.lib.test`:
+  - `BotTestCase.run_bot`: Add parameters `allowed_error_count` and `allowed_warning_count` to allow set the number per run, not per test class.
+  - Set `source_pipeline_broker` and `destination_pipeline_broker` to `pythonlist` instead of the old `broker`, fixes `intelmq.tests.lib.test_bot.TestBot.test_pipeline_raising`.
+  - Fix test for (allowed) errors and warnings.
+- `intelmq.lib.exceptions`:
+  - `InvalidKey`: Add `KeyError` as parent class.
 
 ### Development
 
@@ -184,6 +191,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 #### Collectors
 - `intelmq.bots.collectors.mail.collector_mail_attach`: fix handling of deprecated parameter name `attach_unzip`.
 - `intelmq.bots.collectors.stomp.collector`: Fix compatibility with stomp.py versions `> 4.1.20` and catch errors on shutdown.
+- `intelmq.bots.collectors.microsoft.collector_interflow`: Add method for printing the file list.
+- `intelmq.bots.collectors.microsoft`: Update `REQUIREMENTS.txt` temporarily fixing deprecated Azure library (#1530, PR#1532).
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`).
@@ -200,10 +209,17 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - `intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc` and `intelmq.bots.parsers.fraunhofer.parser_ddosattack_target`: Removed as feed is discontinued.
 - `intelmq.bots.parsers.malwaredomains.parser`: Correctly classify `C&C` and `phishing` events.
 - `intelmq.bots.parsers.shadowserver.parser`: More verbose error message for missing report specification (#1507).
+- `intelmq.bots.parsers.n6.parser_n6stomp`: Always add n6 field `name` as `malware.name` independent of `category`.
+- `intelmq.bots.parsers.anubisnetworks`: Update parser with new data format.
+- `intelmq.bots.parsers.bambenek`: Add new feed URLs with Host `faf.bambenekconsulting.com` (#1525, PR#1526).
 
 #### Experts
+- `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with unicode characters.
 
 #### Outputs
+- `intelmq.bots.outputs.mongodb`:
+  - Set default port 27017.
+  - Use different authentication mechanisms per MongoDB server version to fix compatibility with server version >= 3.4 (#1439)
 
 ### Documentation
 - Feeds:
@@ -213,9 +229,12 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
   - Adding documentation URLs to nearly all feeds.
   - Remove unavailable Bitcash.cz feed.
   - Remove unavailable Fraunhofer DDos Attack feeds.
+- Developers Guide: Fix the instructions for `/opt/intelmq` file permissions.
 
 ### Packaging
 - patches: `fix-logrotate-path.patch`: also include path to rotated file in patch
+- fix paths from `/opt` to LSB for `setup.py` and `contrib/logrotate/intelmq` in build process (#1500).
+- Add runtime dependency `debianutils` for the program `which`, which is required for `intelmqctl`.
 
 ### Tests
 - Dropping Travis tests for 3.4 as required libraries dropped 3.4 support.
@@ -224,12 +243,18 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
   - IPv6 to IPv4 test: Test for two possible results.
 - `intelmq.lib.test`: Fix compatibility of logging capture with Python >= 3.7 by reworking the whole process (#1342).
 - `intelmq.bots.collectors.tcp.test_collector`: Removing custom mocking and bot starting, not necessary anymore.
+- Added tests for `intelmq.bin.intelmqctl.IntelMQProcessManager._interpret_commandline`
+- Fix and split `tests.bots.experts.ripe.test_expert.test_ripe_stat_error_json`.
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
 - `intelmq_gen_docs`: Feed documentation generation: Handle missing/empty parameters.
+- `intelmqctl`:
+  - `IntelMQProcessManager`: For the status of running bots also check the bot ID of the commandline and ignore the path of the executable (#1492).
+  - `IntelMQController`: Fix exit codes of `check` command for JSON output (now 0 on success and 1 on error, was swapped, #1520).
 
 ### Contrib
+- `intelmq/bots/experts/asn_lookup/update-asn-data`: Use `pyasn_util_download.py` to download the data instead from RIPE, which cannot be parsed currently (#1517, PR#1518, https://github.com/hadiasghari/pyasn/issues/62).
 
 ### Known issues
 

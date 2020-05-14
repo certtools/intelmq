@@ -12,8 +12,7 @@ with open(os.path.join(os.path.dirname(__file__),
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {'feed.name': 'DNS Open Resolvers',
-                  "raw": utils.base64_encode(EXAMPLE_FILE),
+EXAMPLE_REPORT = {"raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2018-07-30T00:00:00+00:00",
                   "extra.file_name": "2019-01-01-scan_dns-test-test.csv",
