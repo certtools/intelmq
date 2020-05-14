@@ -2683,6 +2683,8 @@ The `significant_fields` values
 will be searched for in all MISP attribute values
 and if all values are found in the same MISP event, no new MISP event
 will be created.
+Instead if the existing MISP events have the same feed.provider
+and match closely, their timestamp will be updated.
 
 If a new MISP event is inserted the `significant_fields` and the
 `misp_additional_correlation_fields` will be the attributes

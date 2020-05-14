@@ -29,11 +29,13 @@ Parameters:
 
 The `significant_fields` values
 will be searched for in all MISP attribute values
-and if all values are found in the same MISP event, no new MISP event
+and if all values are found in the one MISP event, no new MISP event
 will be created.
 (The reason that all values are matched without considering the
 attribute type is a technical limitation of the
 search functionality exposed by the MISP/pymisp 2.4.120 API.)
+Instead if the existing MISP events have the same feed.provider
+and match closely, their timestamp will be updated.
 
 If a new MISP event is inserted the `significant_fields` and the
 `misp_additional_correlation_fields` will be the attributes
@@ -58,6 +60,8 @@ Example (of some parameters in JSON)::
 
 Originally developed with pymisp v2.4.120 (which needs python v>=3.6).
 """
+import datetime
+
 from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
 
@@ -69,6 +73,8 @@ except ImportError:
 except SyntaxError:
     pymisp = None
     import_fail_reason = 'syntax'
+
+MISPOBJECT_NAME = 'intelmq_event'
 
 
 class MISPAPIOutputBot(OutputBot):
@@ -118,12 +124,34 @@ class MISPAPIOutputBot(OutputBot):
             r = self.misp.search(tags=self.parameters.misp_tag_for_bot,
                                  value=vquery, limit=20)
             if len(r) > 0:
-                msg = 'Found MISP events matching {}: {} not inserting.'
+                msg = 'Found MISP events matching {}: {} -> not inserting.'
                 self.logger.info(msg.format(vquery, [event.id for event in r]))
+
+                for misp_event in r:
+                    self._update_misp_event(misp_event, intelmq_event)
             else:
                 self._insert_misp_event(intelmq_event)
 
         self.acknowledge_message()
+
+    def _update_misp_event(self, misp_event, intelmq_event):
+        """Update timestamp on a found MISPEvent if it matches closely."""
+        # As we insert only one MISPObject, we only examine the first one
+        misp_o = misp_event.get_objects_by_name(MISPOBJECT_NAME)[0]
+
+        all_found = True
+        for field in ['feed.provider'] + self.parameters.significant_fields:
+            attributes = misp_o.get_attributes_by_relation(field)
+            value = attributes[0].value if len(attributes) > 0 else None
+            if not (value == intelmq_event.get(field)):
+                all_found = False
+                break
+
+        if all_found:
+            misp_event.timestamp = datetime.datetime.now()
+            self.misp.update_event(misp_event)
+            msg = 'Updated timestamp of MISP event with id: {}'
+            self.logger.info(msg.format(misp_event.id))
 
     def _insert_misp_event(self, intelmq_event):
         """Insert a new MISPEvent."""
@@ -154,7 +182,7 @@ class MISPAPIOutputBot(OutputBot):
             new_misp_event.add_tag(new_tag)
 
         # build the MISPObject and its attributes
-        obj = new_misp_event.add_object(name='intelmq_event')
+        obj = new_misp_event.add_object(name=MISPOBJECT_NAME)
 
         fields_to_correlate = (
             self.parameters.significant_fields +
