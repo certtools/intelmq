@@ -80,20 +80,26 @@ class TorExpertBot(Bot):
             print("Connection Error: {0}".format(e))
             sys.exit(1)
 
-        pattern = re.compile("ExitAddress ([^\s]+)")
-        tor_exits = "\n".join(pattern.findall(response.text))
+        if response.status_code == 200:
 
-        for database_path in set(bots.values()):
-            database_dir = pathlib.Path(database_path).parent
-            database_dir.mkdir(parents=True, exist_ok=True)
-            with open(database_path, "w") as database:
-                database.write(tor_exits)
+            pattern = re.compile("ExitAddress ([^\s]+)")
+            tor_exits = "\n".join(pattern.findall(response.text))
 
-        print("Database updated. Reloading affected bots.")
+            for database_path in set(bots.values()):
+                database_dir = pathlib.Path(database_path).parent
+                database_dir.mkdir(parents=True, exist_ok=True)
+                with open(database_path, "w") as database:
+                    database.write(tor_exits)
 
-        ctl = IntelMQController()
-        for bot in bots.keys():
-            ctl.bot_reload(bot)
+            print("Database updated. Reloading affected bots.")
+
+            ctl = IntelMQController()
+            for bot in bots.keys():
+                ctl.bot_reload(bot)
+
+        else:
+            print("Database update failed. Server responded: {0}.".format(response.status_code))
+            sys.exit(1)
 
 
 BOT = TorExpertBot

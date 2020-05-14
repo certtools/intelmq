@@ -4,8 +4,18 @@ This product includes GeoLite2 data created by MaxMind, available from
 <a href="http://www.maxmind.com">http://www.maxmind.com</a>.
 """
 
+import io
+import re
+import sys
+import pathlib
+import requests
+import tarfile
+
 from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import MissingDependencyError
+from intelmq import RUNTIME_CONF_FILE
+from intelmq.lib.utils import load_configuration
+from intelmq.bin.intelmqctl import IntelMQController
 
 try:
     import geoip2.database
@@ -71,6 +81,74 @@ class GeoIPExpertBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
+
+    @classmethod
+    def run(cls):
+        if len(sys.argv) > 1 and sys.argv[1] == "--update-database":
+            cls.update_database()
+        else:
+            super().run()
+
+    @classmethod
+    def update_database(cls):
+        bots = {}
+        license_key = {}
+        runtime_conf = load_configuration(RUNTIME_CONF_FILE)
+        try:
+            for bot in runtime_conf:
+                if runtime_conf[bot]["module"] == __name__:
+                    license_key = runtime_conf[bot]["parameters"]["license_key"]
+                    bots[bot] = runtime_conf[bot]["parameters"]["database"]
+
+        except KeyError as e:
+            print("Your configuration of {0} is missing key {1}.".format(bot, e))
+            if str(e) == "'licanse_key'":
+                print("Since December 30, 2019 you need to register for a free license key to download GeoLite2 database.")
+                print("https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/")
+            sys.exit(1)
+
+        if not bots:
+            print("No bots of type {0} present in runtime.conf.".format(__name__))
+            sys.exit(0)
+
+        try:
+            response = requests.get("https://download.maxmind.com/app/geoip_download",
+                                    params={"license_key": license_key,
+                                            "edition_id": "GeoLite2-City",
+                                            "suffix": "tar.gz"})
+        except requests.exceptions.RequestException as e:
+            print("Connection Error: {0}".format(e))
+            sys.exit(1)
+
+        if response.status_code == 200:
+
+            database_data = None
+
+            with tarfile.open(fileobj=io.BytesIO(response.content), mode='r:gz') as archive:
+                for member in archive.getmembers():
+                    if "GeoLite2-City.mmdb" in member.name:
+                        database_data = archive.extractfile(member).read()
+                        break
+
+            if not database_data:
+                print("Could not locate file 'GeoLite2-City.mmbd' in the downloaded archive.")
+                sys.exit(1)
+
+            for database_path in set(bots.values()):
+                database_dir = pathlib.Path(database_path).parent
+                database_dir.mkdir(parents=True, exist_ok=True)
+                with open(database_path, "wb") as database:
+                    database.write(database_data)
+
+            print("Database updated. Reloading affected bots.")
+
+            ctl = IntelMQController()
+            for bot in bots.keys():
+                ctl.bot_reload(bot)
+
+        else:
+            print("Database update failed. Server responded: {0}.".format(response.status_code))
+            sys.exit(1)
 
 
 BOT = GeoIPExpertBot
