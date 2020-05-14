@@ -105,17 +105,23 @@ class MISPAPIOutputBot(OutputBot):
             if sig_field in intelmq_event and intelmq_event[sig_field]:
                 values_to_search_for.append(intelmq_event[sig_field])
 
-        vquery = self.misp.build_complex_query(
-            and_parameters=values_to_search_for
-        )
-        r = self.misp.search(tags=self.parameters.misp_tag_for_bot,
-                             value=vquery)
-
-        if len(r) > 0:
-            msg = 'Found MISP events matching {}: {} not inserting.'
-            self.logger.info(msg.format(vquery, [event.id for event in r]))
+        if values_to_search_for == []:
+            msg = 'All significant_fields empty -> skipping event (raw={}).'
+            self.logger.warning(msg.format(intelmq_event.get('raw')))
         else:
-            self._insert_misp_event(intelmq_event)
+            vquery = self.misp.build_complex_query(
+                and_parameters=values_to_search_for
+            )
+            # limit=20 is a safeguard against searches that'll find too much,
+            # as the returning python objects can take up much time and memory
+            # and because there should only be one matching MISPEvent
+            r = self.misp.search(tags=self.parameters.misp_tag_for_bot,
+                                 value=vquery, limit=20)
+            if len(r) > 0:
+                msg = 'Found MISP events matching {}: {} not inserting.'
+                self.logger.info(msg.format(vquery, [event.id for event in r]))
+            else:
+                self._insert_misp_event(intelmq_event)
 
         self.acknowledge_message()
 
