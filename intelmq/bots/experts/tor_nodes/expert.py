@@ -11,10 +11,10 @@ import subprocess
 from intelmq.lib.bot import Bot
 from intelmq import RUNTIME_CONF_FILE
 from intelmq.lib.utils import load_configuration
+from intelmq.bin.intelmqctl import IntelMQController
 
 
 class TorExpertBot(Bot):
-
     database = set()
 
     def init(self):
@@ -55,7 +55,7 @@ class TorExpertBot(Bot):
         if len(sys.argv) > 1 and sys.argv[1] == "--update-database":
             cls.update_database()
         else:
-            super(TorExpertBot, TorExpertBot).run()
+            super().run()
 
     @classmethod
     def update_database(cls):
@@ -67,21 +67,21 @@ class TorExpertBot(Bot):
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
         except KeyError as e:
-            print(f"Your configuration of {bot} is missing key {e}.")
-            exit(1)
+            print("Your configuration of {0} is missing key {1}.".format(bot, e))
+            sys.exit(1)
 
         if not bots:
-            print(f"No bots of type {__name__} present in runtime.conf.")
-            exit(0)
+            print("No bots of type {0} present in runtime.conf.".format(__name__))
+            sys.exit(0)
 
         try:
             response = requests.get("https://check.torproject.org/exit-addresses")
         except requests.exceptions.RequestException as e:
-            print(f"Connection Error: {e}")
-            exit(1)
+            print("Connection Error: {0}".format(e))
+            sys.exit(1)
 
-        ipv4_re = re.compile("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)")
-        tor_exits = "\n".join(ipv4_re.findall(response.text))
+        pattern = re.compile("ExitAddress ([^\s]+)")
+        tor_exits = "\n".join(pattern.findall(response.text))
 
         for database_path in set(bots.values()):
             database_dir = pathlib.Path(database_path).parent
@@ -89,9 +89,11 @@ class TorExpertBot(Bot):
             with open(database_path, "w") as database:
                 database.write(tor_exits)
 
-        command = ["intelmqctl", "reload"] + list(bots.keys())
+        print("Database updated. Reloading affected bots.")
 
-        subprocess.run(command)
+        ctl = IntelMQController()
+        for bot in bots.keys():
+            ctl.bot_reload(bot)
 
 
 BOT = TorExpertBot
