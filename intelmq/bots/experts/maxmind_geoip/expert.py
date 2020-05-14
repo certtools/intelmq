@@ -92,7 +92,7 @@ class GeoIPExpertBot(Bot):
     @classmethod
     def update_database(cls):
         bots = {}
-        license_key = {}
+        license_key = None
         runtime_conf = load_configuration(RUNTIME_CONF_FILE)
         try:
             for bot in runtime_conf:
@@ -145,6 +145,10 @@ class GeoIPExpertBot(Bot):
             ctl = IntelMQController()
             for bot in bots.keys():
                 ctl.bot_reload(bot)
+
+        elif response.status_code == 401:
+            print("Your license key is invalid.")
+            sys.exit(1)
 
         else:
             print("Database update failed. Server responded: {0}.".format(response.status_code))
