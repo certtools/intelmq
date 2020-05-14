@@ -140,8 +140,10 @@ In case you developed a new bot, you need to update your current development ins
 sudo -s
 
 cd /opt/dev_intelmq
+# necessary for pip metadata update and new executables:
 pip3 install -e .
-cp -s /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/BOTS
+# only necessary if it's not a link yet
+cp -fs /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/BOTS
 
 find /opt/intelmq/ -type d -exec chmod 0770 {} \+
 find /opt/intelmq/ -type f -exec chmod 0660 {} \+
