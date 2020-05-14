@@ -6,7 +6,6 @@ import re
 import sys
 import pathlib
 import requests
-import subprocess
 
 from intelmq.lib.bot import Bot
 from intelmq import RUNTIME_CONF_FILE
@@ -15,6 +14,7 @@ from intelmq.bin.intelmqctl import IntelMQController
 
 
 class TorExpertBot(Bot):
+
     database = set()
 
     def init(self):

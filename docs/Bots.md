@@ -2384,7 +2384,9 @@ FIXME
 * `database`: Path to the database
 
 #### Database
-Use the included script `update-tor-nodes` to download the database.
+Use this command to update the database and reload the bot:
+
+`intelmq.bots.experts.tor_nodes.expert --update-database`
 
 ### Url2FQDN
 
