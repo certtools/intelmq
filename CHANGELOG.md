@@ -94,6 +94,7 @@ CHANGELOG
   - `IntelMQController`: Fix exit codes of `check` command for JSON output (now 0 on success and 1 on error, was swapped, #1520).
 
 ### Contrib
+- `intelmq/bots/experts/asn_lookup/update-asn-data`: Use `pyasn_util_download.py` to download the data instead from RIPE, which cannot be parsed currently (#1517, PR#1518, https://github.com/hadiasghari/pyasn/issues/62).
 
 ### Known issues
 
