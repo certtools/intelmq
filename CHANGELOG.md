@@ -139,6 +139,8 @@ CHANGELOG
 #### Collectors
 - `intelmq.bots.collectors.mail.collector_mail_attach`: fix handling of deprecated parameter name `attach_unzip`.
 - `intelmq.bots.collectors.stomp.collector`: Fix compatibility with stomp.py versions `> 4.1.20` and catch errors on shutdown.
+- `intelmq.bots.collectors.microsoft.collector_interflow`: Add method for printing the file list.
+- `intelmq.bots.collectors.microsoft`: Update `REQUIREMENTS.txt` temporarily fixing deprecated Azure library (#1530, PR#1532).
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`).
@@ -157,6 +159,7 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver.parser`: More verbose error message for missing report specification (#1507).
 - `intelmq.bots.parsers.n6.parser_n6stomp`: Always add n6 field `name` as `malware.name` independent of `category`.
 - `intelmq.bots.parsers.anubisnetworks`: Update parser with new data format.
+- `intelmq.bots.parsers.bambenek`: Add new feed URLs with Host `faf.bambenekconsulting.com` (#1525, PR#1526).
 
 #### Experts
 - `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with unicode characters.
@@ -174,6 +177,7 @@ CHANGELOG
   - Adding documentation URLs to nearly all feeds.
   - Remove unavailable Bitcash.cz feed.
   - Remove unavailable Fraunhofer DDos Attack feeds.
+- Developers Guide: Fix the instructions for `/opt/intelmq` file permissions.
 
 ### Packaging
 - patches: `fix-logrotate-path.patch`: also include path to rotated file in patch
@@ -193,9 +197,12 @@ CHANGELOG
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
 - `intelmq_gen_docs`: Feed documentation generation: Handle missing/empty parameters.
-- `intelmqctl`: `IntelMQProcessManager`: For the status of running bots also check the bot ID of the commandline and ignore the path of the executable (#1492).
+- `intelmqctl`:
+  - `IntelMQProcessManager`: For the status of running bots also check the bot ID of the commandline and ignore the path of the executable (#1492).
+  - `IntelMQController`: Fix exit codes of `check` command for JSON output (now 0 on success and 1 on error, was swapped, #1520).
 
 ### Contrib
+- `intelmq/bots/experts/asn_lookup/update-asn-data`: Use `pyasn_util_download.py` to download the data instead from RIPE, which cannot be parsed currently (#1517, PR#1518, https://github.com/hadiasghari/pyasn/issues/62).
 
 ### Known issues
 
