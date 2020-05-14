@@ -102,7 +102,7 @@ class GeoIPExpertBot(Bot):
 
         except KeyError as e:
             print("Your configuration of {0} is missing key {1}.".format(bot, e))
-            if str(e) == "'licanse_key'":
+            if str(e) == "'license_key'":
                 print("Since December 30, 2019 you need to register for a free license key to download GeoLite2 database.")
                 print("https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/")
             sys.exit(1)
