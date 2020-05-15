@@ -35,6 +35,9 @@ The Bitcash.cz Banned IPs / Blocklist feed previously available under `https://b
 #### Fraunhofer DDoS Attack Feed
 The Fraunhofer DDoS Attack feed previously available under `https://feed.caad.fkie.fraunhofer.de/ddosattackfeed/` is no longer available. The `intelmqctl upgrade-config` command warns if you have this feed in use.
 
+#### Bambenek Feeds
+Many Bambenek feeds require a license now and URLs have changed. See https://osint.bambenekconsulting.com/feeds/ for more information. The `intelmqctl upgrade-config` command also warns if you have previously documents feeds in use and migrates the URL for the DGA domain feed.
+
 ### Libraries
 
 ### Postgres databases

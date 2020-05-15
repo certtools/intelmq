@@ -1254,13 +1254,15 @@ providers:
   Bambenek:
     C2 Domains:
       description: 'Master Feed of known, active and non-sinkholed C&Cs domain
-        names.'
+        names. Requires access credentials.'
       additional_information: 'License: https://osint.bambenekconsulting.com/license.txt'
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
+            http_url: https://faf.bambenekconsulting.com/feeds/c2-dommasterlist.txt
+            http_username: __USERNAME__
+            http_password: __PASSWORD__
             rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
@@ -1269,15 +1271,18 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://osint.bambenekconsulting.com/feeds/
-      public: yes
+      public: no
     C2 IPs:
-      description: 'Master Feed of known, active and non-sinkholed C&Cs IP addresses'
+      description: 'Master Feed of known, active and non-sinkholed C&Cs IP addresses.
+        Requires access credentials.'
       additional_information: 'License: https://osint.bambenekconsulting.com/license.txt'
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
+            http_url: https://faf.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
+            http_username: __USERNAME__
+                        http_password: __PASSWORD__
             rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
@@ -1286,7 +1291,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://osint.bambenekconsulting.com/feeds/
-      public: yes
+      public: no
     DGA Domains:
       description: Domain feed of known DGA domains from -2 to +3 days
       additional_information: 'License: https://osint.bambenekconsulting.com/license.txt'
@@ -1294,7 +1299,7 @@ providers:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://osint.bambenekconsulting.com/feeds/dga-feed.txt
+            http_url: https://faf.bambenekconsulting.com/feeds/dga-feed.txt
             rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__

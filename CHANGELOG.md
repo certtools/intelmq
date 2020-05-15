@@ -74,6 +74,7 @@ CHANGELOG
   - Remove unavailable Bitcash.cz feed.
   - Remove unavailable Fraunhofer DDos Attack feeds.
   - Remove unavailable feed Abuse.CH Ransomware Tracker (#1537).
+  - Update information on Bambenek Feeds, many require a license now (#1525).
 - Developers Guide: Fix the instructions for `/opt/intelmq` file permissions.
 
 ### Packaging

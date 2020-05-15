@@ -339,6 +339,7 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
     found_bitcash = []
     found_ddos_attack = []
     found_ransomware = []
+    found_bambenek = []
     changed = None
     messages = []
     for bot_id, bot in runtime.items():
@@ -352,6 +353,14 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
                 found_bitcash.append(bot_id)
             elif bot["parameters"].get("http_url").startswith("https://ransomwaretracker.abuse.ch/feeds/csv/"):
                 found_ransomware.append(bot_id)
+            elif bot["parameters"].get("http_url") == "https://osint.bambenekconsulting.com/feeds/dga-feed.txt":
+                bot["parameters"]["http_url"] = "https://faf.bambenekconsulting.com/feeds/dga-feed.txt"
+                changed = True
+            elif bot["parameters"]["http_url"] in ("http://osing.bambenekconsulting.com/feeds/dga/c2-ipmasterlist.txt",
+                                                   "https://osing.bambenekconsulting.com/feeds/dga/c2-ipmasterlist.txt",
+                                                   "http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt",
+                                                   "https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt"):
+                found_bambenek.append(bot_id)
         if bot["module"] == "intelmq.bots.collectors.http.collector_http_stream":
             if bot["parameters"].get("http_url").startswith("https://feed.caad.fkie.fraunhofer.de/ddosattackfeed"):
                 found_ddos_attack.append(bot_id)
@@ -367,6 +376,9 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
     if found_ransomware:
         messages.append('The discontinued feed "Abuse.ch Ransomware Tracker" has been found '
                         'as bot %s. Remove it yourself please.' % ', '.join(sorted(found_ransomware)))
+    if found_bambenek:
+        messages.append('Many Bambenek feeds now require a license, see https://osint.bambenekconsulting.com/feeds/'
+                        ' Potentially affected bots are %s.' % ', '.join(sorted(found_bambenek)))
     messages = ' '.join(messages)
     return messages if messages else changed, defaults, runtime, harmonization
 

@@ -278,6 +278,20 @@ V213_FEED = {"zeus-collector": {
         "http_url": "https://ransomwaretracker.abuse.ch/feeds/csv/",
     },
 },
+"bambenek-dga-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "https://osint.bambenekconsulting.com/feeds/dga-feed.txt",
+    },
+},
+"bambenek-c2dommasterlist-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt",
+    },
+},
 }
 V213_FEED_EXP = {"zeus-collector": {
     "group": "Collector",
@@ -319,6 +333,20 @@ V213_FEED_EXP = {"zeus-collector": {
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
         "http_url": "https://ransomwaretracker.abuse.ch/feeds/csv/",
+    },
+},
+"bambenek-dga-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "https://faf.bambenekconsulting.com/feeds/dga-feed.txt",
+    },
+},
+"bambenek-c2dommasterlist-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt",
     },
 },
 }
@@ -413,7 +441,11 @@ class TestUpgradeLib(unittest.TestCase):
                          'ddos-attack-targets-collector. Remove it yourself please. '
                          'The discontinued feed "Abuse.ch Ransomware Tracker" '
                          'has been found as bot ransomware-collector. '
-                         'Remove it yourself please.',
+                         'Remove it yourself please. '
+                         'Many Bambenek feeds now require a license, see '
+                         'https://osint.bambenekconsulting.com/feeds/'
+                        ' Potentially affected bots are '
+                        'bambenek-c2dommasterlist-collector.',
                          result[0])
         self.assertEqual(V213_FEED_EXP, result[2])
 
