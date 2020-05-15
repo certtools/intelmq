@@ -50,7 +50,7 @@ apt install python3-sleekxmpp python3-pymongo python3-psycopg2
 
 ```bash
 yum install epel-release
-yum install python34 python34-devel
+yum install python34 python34-devel python34-requests
 yum install gcc gcc-c++
 yum install redis
 ```

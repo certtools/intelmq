@@ -115,6 +115,9 @@ CHANGELOG
 
 ### Configuration
 
+### Requirements
+- The python library `requests` is (again) listed as dependency of the core.
+
 ### Core
 - `intelmq.lib.upgrades`:
   - Harmonization upgrade: Also check and update regular expressions
@@ -1259,7 +1262,7 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 - New allowed value for `classification.type`: `infected system` for taxonomy `malicious code` (#1197).
 
 ### Requirements
-- Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file.
+- Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their `REQUIREMENTS.txt` file.
 
 ### Documentation
 - Use Markdown for README again, as pypi now supports it.
