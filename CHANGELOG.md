@@ -4,6 +4,7 @@ CHANGELOG
 
 2.2.0 (unreleased)
 ------------------
+Dropped support for Python 3.4.
 
 ### Configuration
 - Update default runtime configuration with `upgrade-conf`.
