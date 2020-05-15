@@ -270,7 +270,14 @@ V213_FEED = {"zeus-collector": {
     "parameters": {
         "http_url": "https://www.tc.edu.tw/net/netflow/lkout/recent/30",
     },
-}
+},
+"ransomware-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "https://ransomwaretracker.abuse.ch/feeds/csv/",
+    },
+},
 }
 V213_FEED_EXP = {"zeus-collector": {
     "group": "Collector",
@@ -306,7 +313,14 @@ V213_FEED_EXP = {"zeus-collector": {
     "parameters": {
         "http_url": "https://www.tc.edu.tw/net/netflow/lkout/recent/",
     },
-}
+},
+"ransomware-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "https://ransomwaretracker.abuse.ch/feeds/csv/",
+    },
+},
 }
 
 
@@ -390,25 +404,17 @@ class TestUpgradeLib(unittest.TestCase):
     def test_v213_feed_changes(self):
         """ Test v213_feed_changes """
         result = upgrades.v213_feed_changes({}, V213_FEED, {}, False)
-        try:
-            self.assertEqual('A discontinued feed "Zeus Tracker" has been found '
-                             'as bot zeus-collector. Remove it yourself please. '
-                             'The discontinued feed "Bitcash.cz" has been found '
-                             'as bot bitcash-collector. Remove it yourself please. '
-                             'The discontinued feed "Fraunhofer DDos Attack" has '
-                             'been found as bot ddos-attack-c2-collector, '
-                             'ddos-attack-targets-collector. Remove it yourself please.',
-                             result[0])
-        except AssertionError:
-            # don't care about the ordering of the bot ids. behaviour differs per python version
-            self.assertEqual('A discontinued feed "Zeus Tracker" has been found '
-                             'as bot zeus-collector. Remove it yourself please. '
-                             'The discontinued feed "Bitcash.cz" has been found '
-                             'as bot bitcash-collector. Remove it yourself please. '
-                             'The discontinued feed "Fraunhofer DDos Attack" has '
-                             'been found as bot ddos-attack-targets-collector, '
-                             'ddos-attack-c2-collector. Remove it yourself please.',
-                             result[0])
+        self.assertEqual('A discontinued feed "Zeus Tracker" has been found '
+                         'as bot zeus-collector. Remove it yourself please. '
+                         'The discontinued feed "Bitcash.cz" has been found '
+                         'as bot bitcash-collector. Remove it yourself please. '
+                         'The discontinued feed "Fraunhofer DDos Attack" has '
+                         'been found as bot ddos-attack-c2-collector, '
+                         'ddos-attack-targets-collector. Remove it yourself please. '
+                         'The discontinued feed "Abuse.ch Ransomware Tracker" '
+                         'has been found as bot ransomware-collector. '
+                         'Remove it yourself please.',
+                         result[0])
         self.assertEqual(V213_FEED_EXP, result[2])
 
 

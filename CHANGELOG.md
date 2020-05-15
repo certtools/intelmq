@@ -52,6 +52,7 @@ CHANGELOG
 - `intelmq.bots.parsers.n6.parser_n6stomp`: Always add n6 field `name` as `malware.name` independent of `category`.
 - `intelmq.bots.parsers.anubisnetworks`: Update parser with new data format.
 - `intelmq.bots.parsers.bambenek`: Add new feed URLs with Host `faf.bambenekconsulting.com` (#1525, PR#1526).
+- `intelmq.bots.parsers.abusech.parser_ransomware`: Removed, as the feed is discontinued (#1537).
 
 #### Experts
 - `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with unicode characters.
@@ -69,6 +70,7 @@ CHANGELOG
   - Adding documentation URLs to nearly all feeds.
   - Remove unavailable Bitcash.cz feed.
   - Remove unavailable Fraunhofer DDos Attack feeds.
+  - Remove unavailable feed Abuse.CH Ransomware Tracker (#1537).
 - Developers Guide: Fix the instructions for `/opt/intelmq` file permissions.
 
 ### Packaging

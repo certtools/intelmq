@@ -331,11 +331,6 @@
             "module": "intelmq.bots.parsers.abusech.parser_ip",
             "parameters": {}
         },
-        "Abuse.ch Ransomware": {
-            "description": "Abuse.ch Ransomware Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.abusech.parser_ransomware",
-            "parameters": {}
-        },
         "AlienVault": {
             "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.alienvault.parser",
