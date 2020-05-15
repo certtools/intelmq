@@ -370,24 +370,6 @@ providers:
       documentation: https://data.netlab.360.com/hajime/
       public: yes
   Abuse.ch:
-    Ransomware Tracker:
-      description: Ransomware Tracker feed includes FQDN's, URL's, and known IP addresses
-        that were used for said FQDN's and URL's for various ransomware families.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://ransomwaretracker.abuse.ch/feeds/csv/
-            rate_limit: 129600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.abusech.parser_ransomware
-          parameters:
-      revision: 2018-01-20
-      documentation: https://ransomwaretracker.abuse.ch/
-      public: yes
     Feodo Tracker IPs:
       description: 'List of botnet Command&Control servers (C&Cs) tracked by Feodo Tracker,
         associated with Dridex and Emotet (aka Heodo).'

@@ -108,28 +108,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
-## Ransomware Tracker
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** https://ransomwaretracker.abuse.ch/
-* **Description:** Ransomware Tracker feed includes FQDN's, URL's, and known IP addresses that were used for said FQDN's and URL's for various ransomware families.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `https://ransomwaretracker.abuse.ch/feeds/csv/`
-*  * `name`: `Ransomware Tracker`
-*  * `provider`: `Abuse.ch`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.abusech.parser_ransomware
-* **Configuration Parameters:**
-
-
 ## URLhaus
 
 * **Public:** yes
