@@ -8,6 +8,7 @@ See the changelog for a full list of changes.
 ---------------------------------
 
 ### Requirements
+The python library `requests` is required by the core.
 
 ### Tools
 
