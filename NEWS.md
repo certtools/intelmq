@@ -16,6 +16,9 @@ See the changelog for a full list of changes.
 
 ### Configuration
 
+#### ElasticSearch Output Bot
+The ElasticSearch Output bot does no longer support (only) ElasticSearch version 5, but only version 7 (#1513).
+
 ### Libraries
 
 ### Postgres databases

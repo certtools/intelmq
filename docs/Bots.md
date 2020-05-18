@@ -2513,6 +2513,8 @@ This output bot discards all incoming messages.
 * `cache`: no
 * `description`: Output Bot that sends events to Elasticsearch
 
+Only ElasticSearch version 7 supported.
+
 #### Configuration parameters:
 
 * `elastic_host`: Name/IP for the Elasticsearch server, defaults to 127.0.0.1
