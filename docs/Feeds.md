@@ -34,7 +34,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [McAfee Advanced Threat Defense](#mcafee-advanced-threat-defense)
 - [Microsoft](#microsoft)
 - [Netlab 360](#netlab-360)
-- [Nothink](#nothink)
 - [OpenPhish](#openphish)
 - [PhishTank](#phishtank)
 - [PrecisionSec](#precisionsec)
@@ -230,17 +229,19 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## C2 Domains
 
-* **Public:** yes
+* **Public:** unknown
 * **Revision:** 2018-01-20
 * **Documentation:** https://osint.bambenekconsulting.com/feeds/
-* **Description:** Master Feed of known, active and non-sinkholed C&Cs domain names.
+* **Description:** Master Feed of known, active and non-sinkholed C&Cs domain names. Requires access credentials.
 * **Additional Information:** License: https://osint.bambenekconsulting.com/license.txt
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt`
+*  * `http_password`: `__PASSWORD__`
+*  * `http_url`: `https://faf.bambenekconsulting.com/feeds/c2-dommasterlist.txt`
+*  * `http_username`: `__USERNAME__`
 *  * `name`: `C2 Domains`
 *  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
@@ -253,17 +254,19 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## C2 IPs
 
-* **Public:** yes
+* **Public:** unknown
 * **Revision:** 2018-01-20
 * **Documentation:** https://osint.bambenekconsulting.com/feeds/
-* **Description:** Master Feed of known, active and non-sinkholed C&Cs IP addresses
+* **Description:** Master Feed of known, active and non-sinkholed C&Cs IP addresses. Requires access credentials.
 * **Additional Information:** License: https://osint.bambenekconsulting.com/license.txt
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt`
+*  * `http_password`: `__PASSWORD__`
+*  * `http_url`: `https://faf.bambenekconsulting.com/feeds/c2-ipmasterlist.txt`
+*  * `http_username`: `__USERNAME__`
 *  * `name`: `C2 IPs`
 *  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
@@ -286,7 +289,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/dga-feed.txt`
+*  * `http_url`: `https://faf.bambenekconsulting.com/feeds/dga-feed.txt`
 *  * `name`: `DGA Domains`
 *  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
@@ -1330,96 +1333,6 @@ server {
 * **Configuration Parameters:**
 
 
-# Nothink
-
-## DNS Attack
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.nothink.org/honeypot_dns.php
-* **Description:** This feed provides attack information for attack information against DNS honeypots.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.nothink.org/honeypot_dns_attacks.txt`
-*  * `name`: `DNS Attack`
-*  * `provider`: `Nothink`
-*  * `rate_limit`: `3600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.nothink.parser
-* **Configuration Parameters:**
-
-
-## SNMP
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.nothink.org/honeypot_snmp.php
-* **Description:** There are a number of feeds you can use to depend on how far back you would like to go. The time.source will still be the date and time the feed was generated at nothink. This feed provides IP addresses of systems that have connected to a honeypot via SNMP in the last 24 hours.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.nothink.org/blacklist/blacklist_snmp_day.txt`
-*  * `name`: `SNMP`
-*  * `provider`: `Nothink`
-*  * `rate_limit`: `86400`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.nothink.parser
-* **Configuration Parameters:**
-
-
-## SSH
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.nothink.org/honeypots.php
-* **Description:** There are a number of feeds you can use to depend on how far back you would like to go. The time.source will still be the date and time the feed was generated at nothink. This feed provides IP addresses of systems that have connected to a honeypot via SSH in the last 24 hours.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.nothink.org/blacklist/blacklist_ssh_day.txt`
-*  * `name`: `SSH`
-*  * `provider`: `Nothink`
-*  * `rate_limit`: `86400`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.nothink.parser
-* **Configuration Parameters:**
-
-
-## Telnet
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.nothink.org/honeypots.php
-* **Description:** There are a number of feeds you can use to depend on how far back you would like to go. The time.source will still be the date and time the feed was generated at nothink. This feed provides IP addresses of systems that have connected to a honeypot via Telnet in the last 24 hours.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.nothink.org/blacklist/blacklist_telnet_day.txt`
-*  * `name`: `Telnet`
-*  * `provider`: `Nothink`
-*  * `rate_limit`: `86400`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.nothink.parser
-* **Configuration Parameters:**
-
-
 # OpenPhish
 
 ## Premium Feed
@@ -1536,7 +1449,7 @@ server {
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv.zip`
-*  * `attach_unzip`: `True`
+*  * `extract_files`: `True`
 *  * `folder`: `INBOX`
 *  * `mail_host`: `__HOST__`
 *  * `mail_password`: `__PASSWORD__`
@@ -2061,7 +1974,7 @@ server {
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv`
-*  * `attach_unzip`: `False`
+*  * `extract_files`: `False`
 *  * `folder`: `INBOX`
 *  * `mail_host`: `__HOST__`
 *  * `mail_password`: `__PASSWORD__`

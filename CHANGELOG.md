@@ -165,6 +165,7 @@ Dropped support for Python 3.4.
 - `intelmq.bots.parsers.anubisnetworks`: Update parser with new data format.
 - `intelmq.bots.parsers.bambenek`: Add new feed URLs with Host `faf.bambenekconsulting.com` (#1525, PR#1526).
 - `intelmq.bots.parsers.abusech.parser_ransomware`: Removed, as the feed is discontinued (#1537).
+- `intelmq.bots.parsers.nothink.parser`: Removed, as the feed is discontinued (#1537).
 
 #### Experts
 - `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with unicode characters.
@@ -183,6 +184,8 @@ Dropped support for Python 3.4.
   - Remove unavailable Bitcash.cz feed.
   - Remove unavailable Fraunhofer DDos Attack feeds.
   - Remove unavailable feed Abuse.CH Ransomware Tracker (#1537).
+  - Update information on Bambenek Feeds, many require a license now (#1525).
+  - Remove discontinued Nothink Honeypot Feeds (#1537).
 - Developers Guide: Fix the instructions for `/opt/intelmq` file permissions.
 
 ### Packaging
