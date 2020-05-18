@@ -74,7 +74,7 @@ class AnubisNetworksParserBot(Bot):
             elif key == 'qtype':
                 event['extra.dns_query_type'] = value
             elif key == 'app_proto':
-                event.add('protocol.application', value)
+                event.add('protocol.application', value, overwrite=True)
             elif key == 'malw':
                 for subkey, subvalue in value.items():
                     if subkey == "severity":
