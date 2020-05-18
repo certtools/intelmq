@@ -71,7 +71,7 @@ class MongoDBOutputBot(Bot):
 
         if self.parameters.hierarchical_output:
             tmp_dict = event.to_dict(hierarchical=True)
-            if "time"in tmp_dict:
+            if "time" in tmp_dict:
                 if "observation" in tmp_dict["time"]:
                     tmp_dict["time"]["observation"] = dateutil.parser.parse(tmp_dict["time"]["observation"])
                 if "source" in tmp_dict["time"]:
