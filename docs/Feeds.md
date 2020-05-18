@@ -229,17 +229,19 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## C2 Domains
 
-* **Public:** yes
+* **Public:** unknown
 * **Revision:** 2018-01-20
 * **Documentation:** https://osint.bambenekconsulting.com/feeds/
-* **Description:** Master Feed of known, active and non-sinkholed C&Cs domain names.
+* **Description:** Master Feed of known, active and non-sinkholed C&Cs domain names. Requires access credentials.
 * **Additional Information:** License: https://osint.bambenekconsulting.com/license.txt
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt`
+*  * `http_password`: `__PASSWORD__`
+*  * `http_url`: `https://faf.bambenekconsulting.com/feeds/c2-dommasterlist.txt`
+*  * `http_username`: `__USERNAME__`
 *  * `name`: `C2 Domains`
 *  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
@@ -252,17 +254,19 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## C2 IPs
 
-* **Public:** yes
+* **Public:** unknown
 * **Revision:** 2018-01-20
 * **Documentation:** https://osint.bambenekconsulting.com/feeds/
-* **Description:** Master Feed of known, active and non-sinkholed C&Cs IP addresses
+* **Description:** Master Feed of known, active and non-sinkholed C&Cs IP addresses. Requires access credentials.
 * **Additional Information:** License: https://osint.bambenekconsulting.com/license.txt
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt`
+*  * `http_password`: `__PASSWORD__`
+*  * `http_url`: `https://faf.bambenekconsulting.com/feeds/c2-ipmasterlist.txt`
+*  * `http_username`: `__USERNAME__`
 *  * `name`: `C2 IPs`
 *  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
@@ -285,7 +289,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/dga-feed.txt`
+*  * `http_url`: `https://faf.bambenekconsulting.com/feeds/dga-feed.txt`
 *  * `name`: `DGA Domains`
 *  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
@@ -1445,7 +1449,7 @@ server {
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv.zip`
-*  * `attach_unzip`: `True`
+*  * `extract_files`: `True`
 *  * `folder`: `INBOX`
 *  * `mail_host`: `__HOST__`
 *  * `mail_password`: `__PASSWORD__`
@@ -1948,7 +1952,7 @@ server {
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv`
-*  * `attach_unzip`: `False`
+*  * `extract_files`: `False`
 *  * `folder`: `INBOX`
 *  * `mail_host`: `__HOST__`
 *  * `mail_password`: `__PASSWORD__`

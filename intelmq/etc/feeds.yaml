@@ -127,7 +127,7 @@ providers:
             sent_from: datazh@zone-h.org
             folder: INBOX
             subject_regex: Report
-            attach_unzip: false
+            extract_files: false
             attach_regex: csv
             rate_limit: 3600
             name: __FEED__
@@ -1203,7 +1203,7 @@ providers:
           parameters:
             http_url: https://faf.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
             http_username: __USERNAME__
-                        http_password: __PASSWORD__
+            http_password: __PASSWORD__
             rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
@@ -1336,8 +1336,8 @@ providers:
             mail_password: __PASSWORD__
             mail_ssl: true
             mail_user: __USERNAME__
-            attach_unzip: true
             attach_regex: csv.zip
+            extract_files: true
             rate_limit: 86400
             subject_regex: __REGEX__
             folder: INBOX

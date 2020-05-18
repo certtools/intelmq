@@ -54,7 +54,7 @@
             "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
-                "attach_unzip": true,
+                "extract_files": true,
                 "folder": "INBOX",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
