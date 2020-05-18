@@ -340,6 +340,8 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
     found_ddos_attack = []
     found_ransomware = []
     found_bambenek = []
+    found_nothink = []
+    found_nothink_parser = []
     changed = None
     messages = []
     for bot_id, bot in runtime.items():
@@ -361,9 +363,14 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
                                                    "http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt",
                                                    "https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt"):
                 found_bambenek.append(bot_id)
+            elif (bot["parameters"]["http_url"].startswith("http://www.nothink.org/") or
+                  bot["parameters"]["http_url"].startswith("https://www.nothink.org/")):
+                found_nothink.append(bot_id)
         if bot["module"] == "intelmq.bots.collectors.http.collector_http_stream":
             if bot["parameters"].get("http_url").startswith("https://feed.caad.fkie.fraunhofer.de/ddosattackfeed"):
                 found_ddos_attack.append(bot_id)
+        elif bot['module'] == "intelmq.bots.parsers.nothink.parser":
+            found_nothink_parser.append(bot_id)
     if found_zeus:
         messages.append('A discontinued feed "Zeus Tracker" has been found '
                         'as bot %s. Remove it yourself please.' % ', '.join(sorted(found_zeus)))
@@ -379,6 +386,12 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
     if found_bambenek:
         messages.append('Many Bambenek feeds now require a license, see https://osint.bambenekconsulting.com/feeds/'
                         ' Potentially affected bots are %s.' % ', '.join(sorted(found_bambenek)))
+    if found_nothink:
+        messages.append('All Nothink Honeypot feeds are discontinued, '
+                        'potentially affected bots are %s.' % ', '.join(sorted(found_nothink)))
+    if found_nothink_parser:
+        messages.append('The Nothink Parser has been removed, '
+                        'affected bots are %s.' % ', '.join(sorted(found_nothink_parser)))
     messages = ' '.join(messages)
     return messages if messages else changed, defaults, runtime, harmonization
 

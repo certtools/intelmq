@@ -292,6 +292,24 @@ V213_FEED = {"zeus-collector": {
         "http_url": "http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt",
     },
 },
+"nothink-dns-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "http://www.nothink.org/honeypot_dns_attacks.txt",
+    },
+},
+"nothink-ssh-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "http://www.nothink.org/blacklist/blacklist_ssh_day.txt",
+    },
+},
+"nothink-parser": {
+    "group": "Parser",
+    "module": "intelmq.bots.parsers.nothink.parser",
+},
 }
 V213_FEED_EXP = {"zeus-collector": {
     "group": "Collector",
@@ -348,6 +366,24 @@ V213_FEED_EXP = {"zeus-collector": {
     "parameters": {
         "http_url": "http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt",
     },
+},
+"nothink-dns-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": " http://www.nothink.org/honeypot_dns_attacks.txt",
+    },
+},
+"nothink-ssh-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "  http://www.nothink.org/blacklist/blacklist_ssh_day.txt",
+    },
+},
+"nothink-parser": {
+    "group": "Parser",
+    "module": "intelmq.bots.parsers.nothink.parser",
 },
 }
 
@@ -446,6 +482,12 @@ class TestUpgradeLib(unittest.TestCase):
                          'https://osint.bambenekconsulting.com/feeds/'
                         ' Potentially affected bots are '
                         'bambenek-c2dommasterlist-collector.',
+                         'All Nothink Honeypot feeds are discontinued, '
+                         'potentially affected bots are nothink-dns-collector, '
+                         'nothink-ssh-collector. '
+                         'The Nothink Parser has been removed, '
+                         'affected bots are nothink-parser. '
+                         'Remove affected bots yourself.',
                          result[0])
         self.assertEqual(V213_FEED_EXP, result[2])
 
