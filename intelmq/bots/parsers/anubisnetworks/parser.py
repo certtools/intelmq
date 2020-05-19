@@ -172,9 +172,6 @@ class AnubisNetworksParserBot(Bot):
             elif key == '_geo_src_ip':
                 event  = self.parse_geo(event, value, 'source', raw_report, key)
             elif key == '_geo_tracking_last_ip':
-                if value['ip'] == event['source.ip']:
-                    continue
-                    # and ignore
                 event = self.parse_geo(event, value, 'tracking.last', raw_report, key)
                 if value["path"] != 'tracking.last_ip':
                     raise ValueError('_geo_tracking_last_ip.path is not \'tracking.last_ip\' (%r).'
