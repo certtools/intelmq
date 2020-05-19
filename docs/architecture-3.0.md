@@ -11,9 +11,17 @@ In the mean time, IntelMQ became a de-facto standard for automatic incident hand
 However, the success also resulted in IntelMQ being used in contexts which were not anticipated. Also, running a production instance of IntelMQ gave us new requirements - mainly from the side of running it within a corporation or larger team where operations of systems is separated from the development side.
 On the other hand, as more teams started to use IntelMQ, weaknesses with respect to user-friendliness became apparent.
 
-In short, IntelMQ needs to support more standard processes which can be found in regular IT operations: monitoring & alerting, central logging & control, scalability sizing , containerisation etc. It also needs to behave more as expected "turn-key" out of the box. This means, less configurations should be needed. This can be achieved by integrating it better with the existing most commonly used operations tools that teams use (e.g. centralized monitoring and alerting, etc). The main point however is: **It needs to be more user-friendly!**.
+IntelMQ 3.0 will provide improvements in the following areas:
 
-In addition, there seems to be the trend to connect different CERTs / IT security teams with each other (also on a data flow basis). IntelMQ is an ideal tool for that, however, most installations are currently set up as silos. Cross connecting them, adds extra requirements. 
+* Better integration in modern IT operation processes: monitoring & alerting, account management, central logging & control, scalability sizing, containerisation etc. This will be achieved by integrating it better with the existing most commonly used operations tools that teams use (e.g. centralized monitoring and alerting, etc).
+* The default installation of IntelMQ needs to provide value without much manual configuration. While IntelMQ will always remain to be more of a toolbox than a ready-made tool, the software needs to supply a default configuration that only needs minor configuration tweaks to be useful. This applies to both the ingress side of IntelMQ, als well as the output side. This implies that various integrations that teams have developed will be pulled in the main IntelMQ distribution. Examples are 
+  * Interfacing to ticketing systems: RTIR / OTRS
+  * Manual input via a web-interface
+  * Output to ELK
+  * Output to Database + scripting to generate statistics / diagrams
+* In addition, there seems to be the trend to connect different CERTs / IT security teams with each other (also on a data flow basis). IntelMQ is an ideal tool for that, however, most installations are currently set up as silos. Cross connecting them, adds extra requirements. If IntelMQ 3.0 is run in the context of a national CSIRT, the passing of information between teams will be almost automatic.
+
+Overall: It also needs to be easy to deploy and bring into operational use. It will behave more as expected "turn-key" out of the box. This means, less configurations should be needed. The main point however is: **It needs to be more user-friendly!**.
 
 The following proposal shall address these issues and is meant as a basis for discussion with the IntelMQ users.
 
@@ -24,8 +32,6 @@ We are happy to receive your feedback.
 Aaron Kaplan  - IntelMQ 3.0 Architecture.
 kaplan@cert.at
 
-
-
 # Overall architecture
 
 The overall architecture of IntelMQ 3.0 will remain rather similar.
@@ -35,10 +41,11 @@ It will still keep the focus on:
   * being a framework and thus adaptable and extensible by teams
   * being open source
  
- New architecture features will be:
+New features will be:
+  * A vastly improved and extended internal format (DHO): we will support multiple values per key (think: key -> list or key -> dict). This is probably the change with the most impact.
+  * A revamped central runtime management tool for all the bots (think systemd, dockerd, xend, ...) that will provide a standardized interface for CLI tools, the Manager Web application and existing best practice monitoring & alerting tools (prometheus, check_mk, etc.)
   * Docker support (note: docker will be **optional**. If you run on bare metal/VM on Debian, Ubuntu, etc.: we will still provide regular packages)
-  * Better integration into existing best practice monitoring & alerting tools (prometheus, check_mk, etc.) via new intelmq_statusd
-  * Kafka support
+  * Support for Kafka as message bus between the bots (in addition to RabbitMQ and Redis)
   * Better support for multiple data outputs:
     * Better support for ELK (Elastic Search, Logstash, Kibana) out of the box
     * Better support for Splunk out of the box
@@ -46,27 +53,28 @@ It will still keep the focus on:
     * Output to IDS / IPS systems out of the box
     * CSV output (as trivial as it might sound) -> often this is the best for data analysis
   * Better support for handling sensor data: potentially high volume streams of honeypots or other sensors shall be easily connectable.
-  * Seamless interoperability with CERT Polska's n6 system
-  * A vastly improved and extended internal format (DHO): we will support multiple values per key (think: key -> list or key -> dict). This is probably the change with the most impact.
-  * Support for handing over data via to other tools and/or CERTs via dedicated exchange points: these shall serve as the glue between different DHO format versions or between different data exchange formats (for example : n6 <-> DHO)
-  * Adding the concept of verifies: think of these as expert bots which can verify a claim made in the DHO event. Example: the event talks about a webserver having an outdated SSL setting (Poodle vuln for example): the verified (if enabled!) should be able to reach out to the server and confirm the claim. This may be the basis for some kind of confidence score for the claim made in the event.
+  * Support for handing over data via to other tools and/or CERTs via dedicated exchange points: these shall serve as the glue between different DHO format versions or between different data exchange formats, thus
+     * Seamless interoperability with CERT Polska's n6 system
+* Adding the concept of verifiers: think of these as expert bots which can verify a claim made in the DHO event. Example: the event talks about a webserver having an outdated SSL setting (Poodle vuln for example): the verified (if enabled!) should be able to reach out to the server and confirm the claim. This may be the basis for some kind of confidence score for the claim made in the event.
   * the concept of transcoders: should input arrive in a certain code page, a transcoder can trivially convert it to for example utf-8
   * the concept of transformers: convert one data format (f.ex. STIX) to the internal format and vice-versa
   * and of course: more data feeds supported. See for example https://github.com/gethvi/intelmq/blob/develop/docs/Feeds-whishlist.md
   
-  
+
+(Ich glaub der Focus auf "microservice" pro Bot passt hier nicht. Ich würde Docker supoort herauslösen und sonst das Kapitel komplett streichen. --otmar)
+
+## Docker support
  
-## Microservice architecture / Docker support
- 
- Due to the request (and the current practice ) of many teams, we will add Docker support. Many teams already implemented this in one way or the other. However, there is no uniform standard way in IntelMQ yet to run it in a container stack (possibly as microservice).
+ Due to the request (and the current practice ) of many teams, we will add Docker support. Many teams already implemented this in one way or the other. However, there is no uniform standard way in IntelMQ yet to run it in a container stack.
  We will try to address this in Version 3.0 in a standardised way which fits to multiple teams.
  
  The most important finding while doing interviews with multiple IntelMQ users was, that intelmqctl is used as a control channel, however, it would make more sense to have a type of "intelmq_statusd" (daemon) process which does not need to be invoked for every query (as is the case with the command line intelmqctl script). The intelmq_statusd would povide a short and lean RESTful API to the outside world, which will manage signaling of the bot / botnet and be able to query a bot's or botnets' status. See the architecture diagram below.
  
-
 ![architecture of a bot in IntelMQ 3.0](images/intelmq3.0-architecture.png)
 
+The communication between the "statusd" and the individual bots will be via queues in the Message bus. The Bot class will be enhanced to cover this for all bot instances.
 
+## Microservices
 
 The high level goals of using a micro service architecture for IntelMQ 3.0 are:
 
@@ -100,7 +108,7 @@ Using the docker template bot, a bot needs to connect to the provided software l
 
 
 
-### RESTful API requirements
+### RESTful API of the statusd requirements
 
   
   * It must be well documented (OpenAPI specs)
