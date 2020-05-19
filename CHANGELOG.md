@@ -57,6 +57,7 @@ CHANGELOG
 - `intelmq.bots.parsers.bambenek`: Add new feed URLs with Host `faf.bambenekconsulting.com` (#1525, PR#1526).
 - `intelmq.bots.parsers.abusech.parser_ransomware`: Removed, as the feed is discontinued (#1537).
 - `intelmq.bots.parsers.nothink.parser`: Removed, as the feed is discontinued (#1537).
+- `intelmq.bots.parsers.n6.parser`: Remove not allowed characters in the name field for `malware.name` and write original value to `event_description.text` instead.
 
 #### Experts
 - `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with unicode characters.
