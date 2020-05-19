@@ -38,7 +38,7 @@ CHANGELOG
 - `intelmq.bots.collectors.microsoft`: Update `REQUIREMENTS.txt` temporarily fixing deprecated Azure library (#1530, PR#1532).
 
 #### Parsers
-- `intelmq.bots.parsers.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`).
+- `intelmq.bots.parsers.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`) and `conficker` type.
 - `intelmq.bots.parsers.taichung.parser`: Support more types/classifications:
   - Application Compromise: Apache vulnerability & SQL injections
   - Brute-force: MSSQL & SSH password guess attacks; Office 365, SSH & SIP attacks
