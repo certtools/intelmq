@@ -43,7 +43,7 @@ It will still keep the focus on:
  
 New features will be:
   * A vastly improved and extended internal format (DHO): we will support multiple values per key (think: key -> list or key -> dict). This is probably the change with the most impact.
-  * A revamped central runtime management tool for all the bots (think systemd, dockerd, xend, ...) that will provide a standardized interface for CLI tools, the Manager Web application and existing best practice monitoring & alerting tools (prometheus, check_mk, etc.)
+  * A revamped central runtime management tool for all the bots (think systemd, dockerd, xend, ...) that will provide a standardized interface (REST) for CLI tools, the Manager Web application and existing best practice monitoring & alerting tools (prometheus, check_mk, etc.)
   * Docker support (note: docker will be **optional**. If you run on bare metal/VM on Debian, Ubuntu, etc.: we will still provide regular packages)
   * Support for Kafka as message bus between the bots (in addition to RabbitMQ and Redis)
   * Better support for multiple data outputs:
@@ -55,24 +55,25 @@ New features will be:
   * Better support for handling sensor data: potentially high volume streams of honeypots or other sensors shall be easily connectable.
   * Support for handing over data via to other tools and/or CERTs via dedicated exchange points: these shall serve as the glue between different DHO format versions or between different data exchange formats, thus
      * Seamless interoperability with CERT Polska's n6 system
-* Adding the concept of verifiers: think of these as expert bots which can verify a claim made in the DHO event. Example: the event talks about a webserver having an outdated SSL setting (Poodle vuln for example): the verified (if enabled!) should be able to reach out to the server and confirm the claim. This may be the basis for some kind of confidence score for the claim made in the event.
+  * Adding the concept of verifiers: think of these as expert bots which can verify a claim made in the DHO event. Example: the event talks about a webserver having an outdated SSL setting (Poodle vuln for example): the verified (if enabled!) should be able to reach out to the server and confirm the claim. This may be the basis for some kind of confidence score for the claim made in the event.
   * the concept of transcoders: should input arrive in a certain code page, a transcoder can trivially convert it to for example utf-8
   * the concept of transformers: convert one data format (f.ex. STIX) to the internal format and vice-versa
   * and of course: more data feeds supported. See for example https://github.com/gethvi/intelmq/blob/develop/docs/Feeds-whishlist.md
   
-
-(Ich glaub der Focus auf "microservice" pro Bot passt hier nicht. Ich würde Docker supoort herauslösen und sonst das Kapitel komplett streichen. --otmar)
+(Ich glaub der Focus auf "microservice" pro Bot passt hier nicht. Ich würde Docker support herauslösen und sonst das Kapitel komplett streichen. --otmar)
 
 ## Docker support
  
  Due to the request (and the current practice ) of many teams, we will add Docker support. Many teams already implemented this in one way or the other. However, there is no uniform standard way in IntelMQ yet to run it in a container stack.
  We will try to address this in Version 3.0 in a standardised way which fits to multiple teams.
  
- The most important finding while doing interviews with multiple IntelMQ users was, that intelmqctl is used as a control channel, however, it would make more sense to have a type of "intelmq_statusd" (daemon) process which does not need to be invoked for every query (as is the case with the command line intelmqctl script). The intelmq_statusd would povide a short and lean RESTful API to the outside world, which will manage signaling of the bot / botnet and be able to query a bot's or botnets' status. See the architecture diagram below.
+ The most important finding while doing interviews with multiple IntelMQ users was, that intelmqctl is used as a control channel, however, it would make more sense to have a type of "intelmq_statusd" (daemon) process which does not need to be invoked for every query (as is the case with the command line intelmqctl script). The intelmq_statusd would povide a short and lean RESTful API to the outside world, which will manage signaling of the bot / botnet and be able to query a bot's or botnets' status. See the architecture diagram below. 
+ 
+ (this diagram needs to either show more than one bot or remove the Container bubble. we need to avoid the impression that every bot runs in its own container) 
  
 ![architecture of a bot in IntelMQ 3.0](images/intelmq3.0-architecture.png)
 
-The communication between the "statusd" and the individual bots will be via queues in the Message bus. The Bot class will be enhanced to cover this for all bot instances.
+The communication between the "statusd" and the individual bots will be via queues in the message bus. The Bot class will be enhanced to cover this for all bot instances. 
 
 ## Microservices
 
@@ -91,7 +92,6 @@ The high level goals of using a micro service architecture for IntelMQ 3.0 are:
   * a microservice MAY support Identity mgmt tools via OpenID Connect on its' API
   * a microservice MUST be very easily integratable in other frameworks and work-flows. Think: IntelMQ 3.0 micro service components may run (as micro services) within a bigger data processing tool.
   
-
 All of these requirements point towards a container architecture with standardised RESTful API endpoints.
 The RESETful API SHOULD be implemented on the basis of the OpenAPI specs.
 (Note: look at JSON API specs)
