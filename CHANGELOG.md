@@ -18,12 +18,19 @@ CHANGELOG
   - Check for discontinued Abuse.CH Zeus Tracker feed.
 - `intelmq.lib.bot`:
   - `ParserBot.recover_line`: Parameter `line` needs to be optional, fix usage of fallback value `self.current_line`.
+  - `start`: Handle decoding errors in the pipeline different so that the bot is not stuck in an endless loop (#1494).
+  - `_dump_message`: Dump messages with encoding errors base64 encoded, not in JSON format as it's not possible to decode them (#1494).
 - `intelmq.lib.test`:
   - `BotTestCase.run_bot`: Add parameters `allowed_error_count` and `allowed_warning_count` to allow set the number per run, not per test class.
   - Set `source_pipeline_broker` and `destination_pipeline_broker` to `pythonlist` instead of the old `broker`, fixes `intelmq.tests.lib.test_bot.TestBot.test_pipeline_raising`.
   - Fix test for (allowed) errors and warnings.
 - `intelmq.lib.exceptions`:
   - `InvalidKey`: Add `KeyError` as parent class.
+  - `DecodingError`: Added, string representation has all relevant information on the decoding error, including encoding, reason and the affected string (#1494).
+- `intelmq.lib.pipeline`:
+  - Decode messages in `Pipeline.receive` not in the implementation's `_receive` so that the internal counter is correct in case of decoding errors (#1494).
+- `intelmq.lib.utils`:
+  - `decode`: Raise new `DecodingError` if decoding fails.
 
 ### Development
 
@@ -94,6 +101,7 @@ CHANGELOG
 - `intelmq.bots.collectors.tcp.test_collector`: Removing custom mocking and bot starting, not necessary anymore.
 - Added tests for `intelmq.bin.intelmqctl.IntelMQProcessManager._interpret_commandline`
 - Fix and split `tests.bots.experts.ripe.test_expert.test_ripe_stat_error_json`.
+- Added tests for invalid encodings in input messages in `intelmq.tests.lib.test_bot` and `intelmq.tests.lib.test_pipeline` (#1494).
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
@@ -101,6 +109,8 @@ CHANGELOG
 - `intelmqctl`:
   - `IntelMQProcessManager`: For the status of running bots also check the bot ID of the commandline and ignore the path of the executable (#1492).
   - `IntelMQController`: Fix exit codes of `check` command for JSON output (now 0 on success and 1 on error, was swapped, #1520).
+- `intelmqdump`:
+  - Handle base64-type messages for show, editor and recovery actions.
 
 ### Contrib
 - `intelmq/bots/experts/asn_lookup/update-asn-data`: Use `pyasn_util_download.py` to download the data instead from RIPE, which cannot be parsed currently (#1517, PR#1518, https://github.com/hadiasghari/pyasn/issues/62).

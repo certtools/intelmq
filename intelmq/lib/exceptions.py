@@ -38,7 +38,7 @@ class InvalidArgument(IntelMQException):
 
 class PipelineError(IntelMQException):
 
-    def __init__(self, argument):
+    def __init__(self, argument: Exception):
         if type(argument) is type and issubclass(argument, Exception):
             message = "pipeline failed - %s" % traceback.format_exc(argument)
         else:
@@ -101,3 +101,23 @@ class KeyNotExists(IntelMQHarmonizationException):
     def __init__(self, key):
         message = "key %s not exists" % repr(key)
         super().__init__(message)
+
+
+class DecodingError(IntelMQException, ValueError):
+    """
+    This is a separate Error to distinguish it from other exceptions as it is
+    unrecoverable.
+    """
+    def __init__(self, encodings=None, exception: UnicodeDecodeError = None,
+                 object = None):
+        self.object = object
+        suffix = []
+        if encodings:
+            suffix.append("with given encodings %r" % encodings)
+        if exception:
+            suffix.append('at position %s with length %d (%r)'
+                          '' % (exception.start, exception.end,
+                                exception.object[exception.start:exception.end]))
+            suffix.append('with reason %r' % exception.reason)
+        suffix = (' ' + ' '.join(suffix)) if suffix else ''
+        super().__init__("Could not decode string%s." % suffix)
