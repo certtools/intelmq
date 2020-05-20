@@ -1026,6 +1026,7 @@
                 "add_feed_provider_as_tag": true,
                 "misp_additional_correlation_fields": [],
                 "misp_additional_tags": [],
+                "add_feed_name_as_tag": true,
                 "misp_key": "<insert MISP Authkey>",
                 "misp_publish": false,
                 "misp_tag_for_bot": "<insert MISP tag to mark inserted events>",

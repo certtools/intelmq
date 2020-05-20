@@ -61,7 +61,7 @@ Dropped support for Python 3.4.
 - `intelmq.bots.outputs.file`: Use `OutputBot` and `export_event`.
 - `intelmq.bots.outputs.files`: Use `OutputBot` and `export_event`.
 - `intelmq.bots.outputs.misp.output_feed`: Added, creates a MISP Feed (PR#1473).
-- `intelmq.bots.outputs.misp.output_api`: Added, pushes to MISP via the API (PR#1506).
+- `intelmq.bots.outputs.misp.output_api`: Added, pushes to MISP via the API (PR#1506, PR#1536).
 - `intelmq.bots.outputs.elasticsearch.output`: Dropped ElasticSearch version 5 compatibility, added version 7 compatibility (#1513).
 
 ### Documentation
