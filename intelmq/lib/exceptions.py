@@ -109,7 +109,7 @@ class DecodingError(IntelMQException, ValueError):
     unrecoverable.
     """
     def __init__(self, encodings=None, exception: UnicodeDecodeError = None,
-                 object = None):
+                 object: bytes = None):
         self.object = object
         suffix = []
         if encodings:
