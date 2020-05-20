@@ -505,5 +505,7 @@ class BotTestCase(object):
     def tearDown(self):
         """
         Check if the bot did consume all messages.
+
+        Execued after every test run.
         """
         self.assertEqual(len(self.input_queue), 0)

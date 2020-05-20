@@ -66,6 +66,26 @@ NO_ADDRESS_EVENT = {"__type": "Event",
                     'extra.feed_source': 'hidden.64534',
                     'source.fqdn': 'secao.org',
                     "raw": NO_ADDRESS_REPORT['raw']}
+FURTHER_IOCS_REPORT = {"__type": "Report",
+                       "time.observation": "2015-11-17T12:17:27.043452Z",
+                       "raw": utils.base64_encode("""
+{"category": "cnc", "confidence": "medium", "name": "further iocs: text with invalid ’ char", "url": "http://example.net", "fqdn": "example.net", "source": "hidden", "time": "2020-05-04T10:54:15Z", "type": "event", "id": "2f3db54a45039180d452b73d780e5bed"}
+""")}
+FURTHER_IOCS_EVENT = {"__type": "Event",
+                      "time.observation": "2015-11-17T12:17:27.043452Z",
+                      "extra.confidence": "medium",
+                      "extra.feed_id": "2f3db54a45039180d452b73d780e5bed",
+                      "time.source": "2020-05-04T10:54:15+00:00",
+                      "malware.name": "further iocs: text with invalid  char",
+                      "event_description.text": "further iocs: text with invalid ’ char",
+                      'classification.identifier': 'c&c server',
+                      'classification.taxonomy': 'malicious code',
+                      'classification.type': 'c2server',
+                      'extra.feed_source': 'hidden',
+                      'source.fqdn': 'example.net',
+                      'source.url': 'http://example.net',
+                      "raw": FURTHER_IOCS_REPORT['raw']}
+
 
 
 class TestN6StompParserBot(test.BotTestCase, unittest.TestCase):
@@ -94,6 +114,12 @@ class TestN6StompParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = NO_ADDRESS_REPORT
         self.run_bot()
         self.assertMessageEqual(0, NO_ADDRESS_EVENT)
+
+    def test_futher_ios(self):
+        """ Test an event with "further iocs"""
+        self.input_message = FURTHER_IOCS_REPORT
+        self.run_bot()
+        self.assertMessageEqual(0, FURTHER_IOCS_EVENT)
 
 
 if __name__ == '__main__':  # pragma: no cover

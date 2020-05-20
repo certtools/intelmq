@@ -129,12 +129,19 @@ Dropped support for Python 3.4.
   - Check for discontinued Abuse.CH Zeus Tracker feed.
 - `intelmq.lib.bot`:
   - `ParserBot.recover_line`: Parameter `line` needs to be optional, fix usage of fallback value `self.current_line`.
+  - `start`: Handle decoding errors in the pipeline different so that the bot is not stuck in an endless loop (#1494).
+  - `_dump_message`: Dump messages with encoding errors base64 encoded, not in JSON format as it's not possible to decode them (#1494).
 - `intelmq.lib.test`:
   - `BotTestCase.run_bot`: Add parameters `allowed_error_count` and `allowed_warning_count` to allow set the number per run, not per test class.
   - Set `source_pipeline_broker` and `destination_pipeline_broker` to `pythonlist` instead of the old `broker`, fixes `intelmq.tests.lib.test_bot.TestBot.test_pipeline_raising`.
   - Fix test for (allowed) errors and warnings.
 - `intelmq.lib.exceptions`:
   - `InvalidKey`: Add `KeyError` as parent class.
+  - `DecodingError`: Added, string representation has all relevant information on the decoding error, including encoding, reason and the affected string (#1494).
+- `intelmq.lib.pipeline`:
+  - Decode messages in `Pipeline.receive` not in the implementation's `_receive` so that the internal counter is correct in case of decoding errors (#1494).
+- `intelmq.lib.utils`:
+  - `decode`: Raise new `DecodingError` if decoding fails.
 
 ### Development
 
@@ -149,7 +156,7 @@ Dropped support for Python 3.4.
 - `intelmq.bots.collectors.microsoft`: Update `REQUIREMENTS.txt` temporarily fixing deprecated Azure library (#1530, PR#1532).
 
 #### Parsers
-- `intelmq.bots.parsers.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`).
+- `intelmq.bots.parsers.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`) and `conficker` type.
 - `intelmq.bots.parsers.taichung.parser`: Support more types/classifications:
   - Application Compromise: Apache vulnerability & SQL injections
   - Brute-force: MSSQL & SSH password guess attacks; Office 365, SSH & SIP attacks
@@ -168,6 +175,7 @@ Dropped support for Python 3.4.
 - `intelmq.bots.parsers.bambenek`: Add new feed URLs with Host `faf.bambenekconsulting.com` (#1525, PR#1526).
 - `intelmq.bots.parsers.abusech.parser_ransomware`: Removed, as the feed is discontinued (#1537).
 - `intelmq.bots.parsers.nothink.parser`: Removed, as the feed is discontinued (#1537).
+- `intelmq.bots.parsers.n6.parser`: Remove not allowed characters in the name field for `malware.name` and write original value to `event_description.text` instead.
 
 #### Experts
 - `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with unicode characters.
@@ -204,6 +212,7 @@ Dropped support for Python 3.4.
 - `intelmq.bots.collectors.tcp.test_collector`: Removing custom mocking and bot starting, not necessary anymore.
 - Added tests for `intelmq.bin.intelmqctl.IntelMQProcessManager._interpret_commandline`
 - Fix and split `tests.bots.experts.ripe.test_expert.test_ripe_stat_error_json`.
+- Added tests for invalid encodings in input messages in `intelmq.tests.lib.test_bot` and `intelmq.tests.lib.test_pipeline` (#1494).
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
@@ -211,6 +220,8 @@ Dropped support for Python 3.4.
 - `intelmqctl`:
   - `IntelMQProcessManager`: For the status of running bots also check the bot ID of the commandline and ignore the path of the executable (#1492).
   - `IntelMQController`: Fix exit codes of `check` command for JSON output (now 0 on success and 1 on error, was swapped, #1520).
+- `intelmqdump`:
+  - Handle base64-type messages for show, editor and recovery actions.
 
 ### Contrib
 - `intelmq/bots/experts/asn_lookup/update-asn-data`: Use `pyasn_util_download.py` to download the data instead from RIPE, which cannot be parsed currently (#1517, PR#1518, https://github.com/hadiasghari/pyasn/issues/62).
