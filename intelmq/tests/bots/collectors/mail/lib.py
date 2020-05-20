@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Sep 10 17:10:54 2019
@@ -6,13 +5,14 @@ Created on Tue Sep 10 17:10:54 2019
 @author: sebastian
 """
 import os
+from copy import deepcopy
 
-
-from imbox.parser import parse_email
-with open(os.path.join(os.path.dirname(__file__), 'foobarzip.eml')) as handle:
-    EMAIL_ZIP_FOOBAR = parse_email(handle.read())
-with open(os.path.join(os.path.dirname(__file__), 'foobartxt.eml')) as handle:
-    EMAIL_TXT_FOOBAR = parse_email(handle.read())
+if os.getenv('INTELMQ_TEST_EXOTIC'):
+    from imbox.parser import parse_email
+    with open(os.path.join(os.path.dirname(__file__), 'foobarzip.eml')) as handle:
+        EMAIL_ZIP_FOOBAR = parse_email(handle.read())
+    with open(os.path.join(os.path.dirname(__file__), 'foobartxt.eml')) as handle:
+        EMAIL_TXT_FOOBAR = parse_email(handle.read())
 
 
 class MockedImbox():
@@ -32,9 +32,10 @@ class MockedImbox():
 
 class MockedZipImbox(MockedImbox):
     def messages(self, *args, **kwargs):
-        yield 0, EMAIL_ZIP_FOOBAR
+        # without deepcopy only the first read() in the attachment works
+        yield 0, deepcopy(EMAIL_ZIP_FOOBAR)
 
 
 class MockedTxtImbox(MockedImbox):
     def messages(self, *args, **kwargs):
-        yield 0, EMAIL_TXT_FOOBAR
+        yield 0, deepcopy(EMAIL_TXT_FOOBAR)

@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-TODO: Test this with a real stomp server
-"""
 import os.path
 
-from intelmq.lib.bot import Bot
-from intelmq.lib.message import MessageFactory
+from intelmq.lib.bot import OutputBot
+from intelmq.lib.utils import base64_decode
+from intelmq.lib.exceptions import MissingDependencyError
+
 
 try:
     import stomp
@@ -13,12 +12,14 @@ except ImportError:
     stomp = None
 
 
-class StompOutputBot(Bot):
+class StompOutputBot(OutputBot):
     """ main class for the STOMP protocol output bot """
+
+    conn = None
 
     def init(self):
         if stomp is None:
-            raise ValueError('Could not import stomp. Please install it.')
+            raise MissingDependencyError("stomp")
 
         self.server = getattr(self.parameters, 'server', '127.0.0.1')
         self.port = getattr(self.parameters, 'port', 61614)
@@ -44,22 +45,29 @@ class StompOutputBot(Bot):
                                      ssl_key_file=self.ssl_cl_cert_key,
                                      ssl_cert_file=self.ssl_cl_cert,
                                      ssl_ca_certs=self.ssl_ca_cert,
-                                     wait_on_receipt=True,
                                      heartbeats=(self.heartbeat,
                                                  self.heartbeat))
+        self.connect()
 
+    def connect(self):
+        self.logger.debug('Connecting.')
         # based on the documentation at:
         # https://github.com/jasonrbriggs/stomp.py/wiki/Simple-Example
         self.conn.start()
-        self.conn.connect(wait=False)
+        self.conn.connect(wait=True)
+        self.logger.debug('Connected.')
 
     def shutdown(self):
-        self.conn.disconnect()
+        if self.conn:
+            self.conn.disconnect()
 
     def process(self):
-        message = self.receive_message()
-        message = MessageFactory.serialize(message)
-        self.conn.send(body=message, destination=self.exchange)
+        event = self.receive_message()
+
+        body = self.export_event(event)
+
+        self.conn.send(body=body,
+                       destination=self.exchange)
         self.acknowledge_message()
 
 

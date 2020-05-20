@@ -5,7 +5,6 @@ Testing the pipeline functions of intelmq.
 We are testing sending and receiving on the same queue for Redis and
 Pythonlist.
 TODO: clear_queues
-TODO: acknowledge
 TODO: check internal representation of data in redis (like with Pythonlist)
 """
 import logging
@@ -15,11 +14,14 @@ import unittest
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.test as test
+import intelmq.lib.exceptions as exceptions
 
 SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
                       'Lorem ipsum dolor sit amet'],
            'unicode': [b'\xc2\xa9\xc2\xab\xc2\xbb \xc2\xa4\xc2\xbc',
-                       '©«» ¤¼']}
+                       '©«» ¤¼'],
+           'badencoding': b'foo\xc9bar',
+           }
 
 
 class Parameters(object):
@@ -110,12 +112,32 @@ class TestPythonlist(unittest.TestCase):
         self.pipe.reject_message()
         self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
 
+    def test_acknowledge(self):
+        self.pipe.state['test-bot-input'] = [SAMPLES['normal'][0]]
+        self.pipe.receive()
+        self.pipe.acknowledge()
+        self.assertEqual(self.pipe.count_queued_messages('test-bot-input')['test-bot-input'], 0)
+        self.assertEqual(self.pipe.count_queued_messages('test-bot-input-internal')['test-bot-input-internal'], 0)
+
+    def test_bad_encoding_and_pop(self):
+        self.pipe.state['test-bot-input'] = [SAMPLES['badencoding']]
+        try:
+            self.pipe.receive()
+        except exceptions.DecodingError:
+            pass
+        self.pipe.acknowledge()
+        self.assertEqual(self.pipe.count_queued_messages('test-bot-input')['test-bot-input'], 0)
+        self.assertEqual(self.pipe.count_queued_messages('test-bot-input-internal')['test-bot-input-internal'], 0)
+
     def tearDown(self):
         self.pipe.state = {}
 
 
 @test.skip_redis()
 class TestRedis(unittest.TestCase):
+    """
+    We use the queue 'test' for both source and destination
+    """
 
     def setUp(self):
         params = Parameters()
@@ -165,6 +187,23 @@ class TestRedis(unittest.TestCase):
         self.pipe.receive()
         self.pipe.reject_message()
         self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
+
+    def test_acknowledge(self):
+        self.pipe.send(SAMPLES['normal'][0])
+        self.pipe.receive()
+        self.pipe.acknowledge()
+        self.assertEqual(self.pipe.count_queued_messages('test')['test'], 0)
+        self.assertEqual(self.pipe.count_queued_messages('test-internal')['test-internal'], 0)
+
+    def test_bad_encoding_and_pop(self):
+        self.pipe.send(SAMPLES['badencoding'])
+        try:
+            self.pipe.receive()
+        except exceptions.DecodingError:
+            pass
+        self.pipe.acknowledge()
+        self.assertEqual(self.pipe.count_queued_messages('test-bot-input')['test-bot-input'], 0)
+        self.assertEqual(self.pipe.count_queued_messages('test-bot-input-internal')['test-bot-input-internal'], 0)
 
     def tearDown(self):
         self.pipe.disconnect()
@@ -225,6 +264,23 @@ class TestAmqp(unittest.TestCase):
         self.pipe.receive()
         self.pipe.reject_message()
         self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
+
+    def test_acknowledge(self):
+        self.pipe.send(SAMPLES['normal'][0])
+        self.pipe.receive()
+        self.pipe.acknowledge()
+        self.assertEqual(self.pipe.count_queued_messages('test')['test'], 0)
+        self.assertEqual(self.pipe.count_queued_messages('test-internal')['test-internal'], 0)
+
+    def test_bad_encoding_and_pop(self):
+        self.pipe.send(SAMPLES['badencoding'])
+        try:
+            self.pipe.receive()
+        except exceptions.DecodingError:
+            pass
+        self.pipe.acknowledge()
+        self.assertEqual(self.pipe.count_queued_messages('test-bot-input')['test-bot-input'], 0)
+        self.assertEqual(self.pipe.count_queued_messages('test-bot-input-internal')['test-bot-input-internal'], 0)
 
     def tearDown(self):
         self.clear()

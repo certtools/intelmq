@@ -8,7 +8,7 @@ import intelmq.lib.utils as utils
 from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 
 with open(os.path.join(os.path.dirname(__file__),
-                       'Darknet.csv')) as handle:
+                       'testdata/darknet.csv')) as handle:
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
@@ -16,6 +16,7 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer Darknet",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
+                  "extra.file_name": "2019-01-01-darknet-test-geo.csv",
                   }
 EVENTS = [{'__type': 'Event',
            'classification.identifier': 'mirai-like',
@@ -87,7 +88,6 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = ShadowserverParserBot
         cls.default_input_message = EXAMPLE_REPORT
-        cls.sysconfig = {'feedname': 'Darknet'}
 
     def test_event(self):
         """ Test if correct Event has been produced. """

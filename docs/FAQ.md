@@ -3,7 +3,6 @@
 **Table of Contents:**
 
 - [Send IntelMQ events to Splunk](#send-intelmq-events-to-splunk)
-- [Git information](#git-information)
 - [Permission denied when using redis unix socket](#permission-denied-when-using-redis-unix-socket)
 - [Why is the time invalid?](#why-is-the-time-invalid)
 - [How can I improve the speed?](#how-can-i-improve-the-speed)

@@ -13,23 +13,7 @@ REQUIRES = [
     'python-termstyle>=0.1.10',
     'pytz>=2012c',
     'redis>=2.10',
-]
-if sys.version_info < (3, 5):
-    REQUIRES.append('typing')
-
-
-DATA = [
-    ('/opt/intelmq/etc/',
-     ['intelmq/bots/BOTS',
-      ],
-     ),
-    ('/opt/intelmq/etc/examples',
-     ['intelmq/etc/defaults.conf',
-      'intelmq/etc/harmonization.conf',
-      'intelmq/etc/pipeline.conf',
-      'intelmq/etc/runtime.conf',
-      ],
-     ),
+    'requests>=2.2.0',
 ]
 
 exec(open(os.path.join(os.path.dirname(__file__),
@@ -50,7 +34,7 @@ setup(
     version=__version__,
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
-    python_requires='>=3.4',
+    python_requires='>=3.5',
     install_requires=REQUIRES,
     tests_require=[
         'Cerberus!=1.3',
@@ -85,16 +69,15 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Security',
     ],
     keywords='incident handling cert csirt',
-    data_files=DATA,
     entry_points={
         'console_scripts': [
             'intelmqctl = intelmq.bin.intelmqctl:main',

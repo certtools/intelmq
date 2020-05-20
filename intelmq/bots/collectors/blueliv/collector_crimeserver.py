@@ -3,6 +3,7 @@ import json
 import logging
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     from sdk.blueliv_api import BluelivAPI
@@ -13,7 +14,7 @@ except ImportError:
 class BluelivCrimeserverCollectorBot(CollectorBot):
     def init(self):
         if BluelivAPI is None:
-            raise ValueError('Could not import sdk.blueliv_api.BluelivAPI. Please install it.')
+            raise MissingDependencyError("sdk.blueliv_api.BluelivAPI")
 
         if not hasattr(self.parameters, 'api_url'):
             setattr(self.parameters, 'api_url', 'https://freeapi.blueliv.com')

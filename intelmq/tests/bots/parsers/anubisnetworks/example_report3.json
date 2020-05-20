@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "flowbits": [
+      "_mt_s",
+      "_mt_sa",
+      "_mt_a",
+      "_mt_p"
+    ]
+  },
+  "app_proto": "http",
+  "_ts": 1586252714,
+  "src": {
+    "ip": "203.0.113.2",
+    "port": 59645
+  },
+  "dst": {
+    "ip": "203.0.113.1",
+    "port": 80
+  },
+  "malw": {
+    "severity": 2,
+    "family": "MalwName",
+    "variant": "MalwName",
+    "categories": [
+      "Adware"
+    ]
+  },
+  "comm": {
+    "proto": "http",
+    "http": {
+      "method": "GET",
+      "host": "example.com",
+      "path": "/path",
+      "user_agent": "Agent",
+      "more_headers": [
+        "Connection: Keep-Alive"
+      ],
+      "cookies": "dummy=cookie|foo=bar",
+      "unverified_domain": "true",
+      "x_forwarded_for": [
+        "10.26.116.22"
+      ]
+    },
+    "method": "sinkhole"
+  },
+  "tracking": {
+    "id": "6b49906822f2431894f295921b3c1647",
+    "tr": "bd592af93f1a4deca63ee18e87170374",
+    "last_ip": "203.0.113.3",
+    "first": 1572960032,
+    "seen": 1586318132,
+    "checkins": 2158,
+    "changes": 5,
+    "days": 154,
+    "same_ip": "true"
+  },
+  "_origin": "infections",
+  "_geo_src_ip": {
+    "ip": "203.0.113.2",
+    "netmask": 24,
+    "country_code": "AT",
+    "country_name": "Austria",
+    "region": "Wien",
+    "region_code": "09",
+    "city": "Vienna",
+    "postal_code": "1210",
+    "latitude": 48.2993,
+    "longitude": 16.3479,
+    "asn": 1,
+    "asn_name": "Example AS Name",
+    "path": "src.ip"
+  },
+  "_geo_tracking_last_ip": {
+    "ip": "203.0.113.3",
+    "netmask": 24,
+    "country_code": "AT",
+    "country_name": "Austria",
+    "region": "Wien",
+    "region_code": "09",
+    "city": "Vienna",
+    "postal_code": "1210",
+    "latitude": 48.2993,
+    "longitude": 16.3479,
+    "asn": 1,
+    "asn_name": "Example AS Name",
+    "path": "tracking.last_ip",
+    "dma_code": 528,
+    "area_code": 305,
+    "metro_code": 528
+  },
+  "_geo_comm_http_host": {
+    "ip": "203.0.113.4",
+    "netmask": 21,
+    "country_code": "US",
+    "country_name": "United States",
+    "latitude": 37.751,
+    "longitude": -97.822,
+    "asn": 29791,
+    "asn_name": "Example AS Name",
+    "path": "comm.http.host"
+  },
+  "_geo_comm_http_x_forwarded_for_#1": {
+    "ip": "10.26.116.22",
+    "netmask": 24,
+    "country_code": "AT",
+    "country_name": "Austria",
+    "region": "Salzburg",
+    "region_code": "05",
+    "city": "Salzburg",
+    "postal_code": "5020",
+    "latitude": 47.8007,
+    "longitude": 13.0442,
+    "asn": 1901,
+    "asn_name": "Example AS",
+    "path": "comm.http.x_forwarded_for.#1"
+  }
+}

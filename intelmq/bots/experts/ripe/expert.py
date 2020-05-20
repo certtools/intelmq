@@ -7,10 +7,12 @@ https://github.com/RIPE-NCC/whois/wiki/WHOIS-REST-API-abuse-contact
 
 import json
 from contextlib import contextmanager
+import warnings
 
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import requests
@@ -60,7 +62,7 @@ class RIPEExpertBot(Bot):
 
     def init(self):
         if requests is None:
-            raise ValueError("Could not import 'requests'. Please install the package.")
+            raise MissingDependencyError("requests")
 
         self.__mode = getattr(self.parameters, 'mode', 'append')
         self.__query = {
@@ -148,7 +150,17 @@ class RIPEExpertBot(Bot):
                         pass
                 raise ValueError(STATUS_CODE_ERROR.format(response.status_code))
             try:
-                data = self.REPLY_TO_DATA[type](response.json())
+                response_data = response.json()
+
+                # geolocation was marked as under maintenance by this, see
+                # https://lists.cert.at/pipermail/intelmq-users/2020-March/000140.html
+                status = response_data.get('data_call_status', '')
+                if status.startswith('maintenance'):
+                    warnings.warn('The API call %s is currently under maintenance. '
+                                  'Response: %r. This warning is only given once per bot run.'
+                                  '' % (type, status))
+
+                data = self.REPLY_TO_DATA[type](response_data)
                 self.__cache.set('{}:{}'.format(type, resource),
                                  (json.dumps(list(data) if isinstance(data, set) else data) if data else CACHE_NO_VALUE))
                 return data

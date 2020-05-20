@@ -3,6 +3,7 @@
 """
 """
 import argparse
+import base64
 import copy
 import fcntl
 import glob
@@ -59,6 +60,11 @@ Interactive actions after a file has been selected:
   > s 0,4,5
   Show the selected IP in a readable format. It's still a raw format from
   repr, but with newlines for message and traceback.
+- v, Edit by ID
+  > v id
+  > v 0
+  > v 1,2
+  Opens an editor (by calling `sensible-editor`) on the message. The modified message is then saved in the dump.
 - q, Quit
   > q
 """
@@ -72,7 +78,7 @@ ACTIONS = {'r': ('(r)ecover by ids', True, False),
            'd': ('(d)elete file', False, True),
            's': ('(s)how by ids', True, False),
            'q': ('(q)uit', False, True),
-           'v': ('edit id', True, False),
+           'v': ('edit id (v)', True, False),
            }
 AVAILABLE_IDS = [key for key, value in ACTIONS.items() if value[1]]
 
@@ -368,12 +374,16 @@ def main():
                         continue
                     print('=' * 100, '\nShowing id {} {}\n'.format(count, key),
                           '-' * 50)
-                    if isinstance(value['message'], (bytes, str)):
-                        value['message'] = json.loads(value['message'])
-                        if ('raw' in value['message'] and
-                                len(value['message']['raw']) > 1000):
-                            value['message']['raw'] = value['message'][
-                                'raw'][:1000] + '...[truncated]'
+                    if value.get('message_type') == 'base64':
+                        if len(value['message']) > 1000:
+                            value['message'] = value['message'][:1000] + '...[truncated]'
+                    else:
+                        if isinstance(value['message'], (bytes, str)):
+                            value['message'] = json.loads(value['message'])
+                            if ('raw' in value['message'] and
+                                    len(value['message']['raw']) > 1000):
+                                value['message']['raw'] = value['message'][
+                                    'raw'][:1000] + '...[truncated]'
                     if type(value['traceback']) is not list:
                         value['traceback'] = value['traceback'].splitlines()
                     pprint.pprint(value)
@@ -383,19 +393,40 @@ def main():
                     print(red('Edit mode needs an id'))
                     continue
                 for entry in ids:
-                    with tempfile.NamedTemporaryFile(mode='w+t', suffix='.json') as tmphandle:
-                        filename = tmphandle.name
-                        utils.write_configuration(configuration_filepath=filename,
-                                                  content=json.loads(content[meta[entry][0]]['message']),
-                                                  new=True,
-                                                  backup=False)
-                        proc = subprocess.call(['sensible-editor', filename])
-                        if proc != 0:
-                            print(red('Calling editor failed.'))
-                        else:
-                            tmphandle.seek(0)
-                            content[meta[entry][0]]['message'] = tmphandle.read()
-                            save_file(handle, content)
+                    if content[meta[entry][0]].get('message_type') == 'base64':
+                        with tempfile.NamedTemporaryFile(mode='w+b', suffix='.txt') as tmphandle:
+                            filename = tmphandle.name
+                            tmphandle.write(base64.b64decode(content[meta[entry][0]]['message']))
+                            tmphandle.flush()
+                            proc = subprocess.run(['sensible-editor', filename])
+                            if proc.returncode != 0:
+                                print(red('Calling editor failed with exitcode %r.' % proc.returncode))
+                            else:
+                                tmphandle.seek(0)
+                                new_content = tmphandle.read()
+                                try:
+                                    new_content = new_content.decode()
+                                except UnicodeDecodeError as exc:
+                                    print(red("Could not write the new message because of the following error:"))
+                                    print(red(exceptions.DecodingError(exception=exc)))
+                                else:
+                                    del content[meta[entry][0]]['message_type']
+                                    content[meta[entry][0]]['message'] = new_content
+                                    save_file(handle, content)
+                    else:
+                        with tempfile.NamedTemporaryFile(mode='w+t', suffix='.json') as tmphandle:
+                            filename = tmphandle.name
+                            utils.write_configuration(configuration_filepath=filename,
+                                                      content=json.loads(content[meta[entry][0]]['message']),
+                                                      new=True,
+                                                      backup=False)
+                            proc = subprocess.run(['sensible-editor', filename])
+                            if proc.returncode != 0:
+                                print(red('Calling editor failed with exitcode %r.' % proc.returncode))
+                            else:
+                                tmphandle.seek(0)
+                                content[meta[entry][0]]['message'] = tmphandle.read()
+                                save_file(handle, content)
 
     if delete_file:
         os.remove(fname)

@@ -1,83 +1,20 @@
 # -*- coding: utf-8 -*-
 """
-PostgreSQL output bot.
-
-See Readme.md for installation and configuration.
-
-In case of errors, the bot tries to reconnect if the error is of operational
-and thus temporary. We don't want to catch too much, like programming errors
-(missing fields etc).
+Compatibility shim
 """
 
-from intelmq.lib.bot import Bot
-
-try:
-    import psycopg2
-except ImportError:
-    psycopg2 = None
+from intelmq.bots.outputs.sql.output import SQLOutputBot
 
 
-class PostgreSQLOutputBot(Bot):
-
+class PostgreSQLOutputBot(SQLOutputBot):
     def init(self):
-        self.logger.debug("Connecting to PostgreSQL.")
-        if psycopg2 is None:
-            raise ValueError("Could not import 'psycopg2'. Please install it.")
-
-        try:
-            if hasattr(self.parameters, 'connect_timeout'):
-                connect_timeout = self.parameters.connect_timeout
-            else:
-                connect_timeout = 5
-
-            self.con = psycopg2.connect(database=self.parameters.database,
-                                        user=self.parameters.user,
-                                        password=self.parameters.password,
-                                        host=self.parameters.host,
-                                        port=self.parameters.port,
-                                        sslmode=self.parameters.sslmode,
-                                        connect_timeout=connect_timeout,
-                                        )
-            self.cur = self.con.cursor()
-            self.con.autocommit = getattr(self.parameters, 'autocommit', True)
-
-            self.table = self.parameters.table
-            self.jsondict_as_string = getattr(self.parameters, 'jsondict_as_string', True)
-        except Exception:
-            self.logger.exception('Failed to connect to database.')
-            raise
-        self.logger.info("Connected to PostgreSQL.")
-
-    def process(self):
-        event = self.receive_message().to_dict(jsondict_as_string=self.jsondict_as_string)
-
-        keys = '", "'.join(event.keys())
-        values = list(event.values())
-        fvalues = len(values) * '%s, '
-        query = ('INSERT INTO {table} ("{keys}") VALUES ({values})'
-                 ''.format(table=self.table, keys=keys, values=fvalues[:-2]))
-
-        self.logger.debug('Query: %r with values %r.', query, values)
-        try:
-            # note: this assumes, the DB was created with UTF-8 support!
-            self.cur.execute(query, values)
-        except (psycopg2.InterfaceError, psycopg2.InternalError,
-                psycopg2.OperationalError, AttributeError):
-            try:
-                self.con.rollback()
-                self.logger.exception('Executed rollback command '
-                                      'after failed query execution.')
-            except psycopg2.OperationalError:
-                self.logger.exception('Executed rollback command '
-                                      'after failed query execution.')
-                self.init()
-            except Exception:
-                self.logger.exception('Cursor has been closed, connecting '
-                                      'again.')
-                self.init()
-        else:
-            self.con.commit()
-            self.acknowledge_message()
+        self.logger.warning("The output bot 'intelmq.bots.outputs.postgresql.output' "
+                            "is deprecated and replaced by "
+                            "'intelmq.bots.outputs.sql.output' with the parameter "
+                            "'engine' = 'postgresql'. "
+                            "The fallback compatibility will be removed in vresion 3.0.")
+        self.parameters.engine = 'postgresql'
+        super().init()
 
 
 BOT = PostgreSQLOutputBot

@@ -60,7 +60,7 @@ class TestRTCollectorBot(test.BotTestCase, unittest.TestCase):
                          'url_regex': None,
                          'unzip_attachment': True,
                          'name': 'Example feed',
-                         'extract_files': True,
+                         'extract_attachment': True,
                          }
 
     @unittest.skipIf(not rt_attachment_ticket,
@@ -92,7 +92,8 @@ class TestRTCollectorBot(test.BotTestCase, unittest.TestCase):
         """
         self.allowed_warning_count = 2
         self.prepare_bot(parameters={'attachment_regex': None,
-                                     'url_regex': r'http://localhost/.*\.zip'})
+                                     'url_regex': r'http://localhost/.*\.zip',
+                                     'extract_download': True})
         self.run_bot(iterations=1, prepare=False)
         self.assertMessageEqual(0, REPORT_URL1)
         self.assertMessageEqual(1, REPORT_URL2)

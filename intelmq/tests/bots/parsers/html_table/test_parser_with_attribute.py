@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import os
 import unittest
 
@@ -10,6 +11,7 @@ from intelmq.bots.parsers.html_table.parser import HTMLTableParserBot
 with open(os.path.join(os.path.dirname(__file__), 'html_table_with_attribute.data')) as handle:
     SAMPLE_FILE = handle.read()
 
+THIS_YEAR = datetime.date.today().year
 EXAMPLE_REPORT = {"feed.name": "HTML Table Feed",
                   "raw": utils.base64_encode(SAMPLE_FILE),
                   "__type": "Report",
@@ -28,7 +30,7 @@ EXAMPLE_EVENT = {"__type": "Event",
                         "jE3MsKgPC90ZD4KPC90cj4=",
                  "source.ip": "81.177.135.172",
                  "source.url": "http://lingvaworld.ru/media/system/css/messg.jpg",
-                 "time.source": "2019-02-15T00:00:00+00:00"}
+                 "time.source": "%d-02-15T00:00:00+00:00" % THIS_YEAR}
 
 EXAMPLE_EVENT1 = {"feed.name": "HTML Table Feed",
                   "__type": "Event",

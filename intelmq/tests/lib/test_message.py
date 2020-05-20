@@ -55,10 +55,10 @@ class TestMessageFactory(unittest.TestCase):
 
         https://docs.python.org/3/whatsnew/3.2.html?highlight=assertdictcontainssubset
 
-        http://stackoverflow.com/a/21058312/2851664
+        https://stackoverflow.com/a/57386339/2851664
         cc by-sa 3.0 John1024
         """
-        self.assertTrue(set(expected.items()).issubset(set(actual.items())))
+        self.assertGreaterEqual(expected.items(), actual.items())
 
     def new_report(self, auto=False, examples=False):
         report = message.Report(harmonization=HARM, auto=auto)

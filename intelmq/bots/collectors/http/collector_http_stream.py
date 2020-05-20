@@ -21,6 +21,7 @@ except ImportError:
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import decode, create_request_session_from_bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 
 class HTTPStreamCollectorBot(CollectorBot):
@@ -29,7 +30,7 @@ class HTTPStreamCollectorBot(CollectorBot):
 
     def init(self):
         if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
+            raise MissingDependencyError("requests")
 
         self.set_request_parameters()
         self.session = create_request_session_from_bot(self)

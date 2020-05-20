@@ -5,8 +5,9 @@
 SPDX-License-Identifier: AGPL-3.0
 """
 from collections import OrderedDict
+from pkg_resources import resource_filename
 
-import intelmq.lib.utils as utils
+from intelmq.lib.utils import load_configuration, write_configuration
 
 __all__ = ['v100_dev7_modify_syntax',
            'v110_shadowserver_feednames',
@@ -19,10 +20,13 @@ __all__ = ['v100_dev7_modify_syntax',
            'v111_defaults_process_manager',
            'v202_fixes',
            'v210_deprecations',
+           'v213_deprecations',
+           'v213_feed_changes',
+           'v220_configuration_1',
            ]
 
 
-def v200_defaults_statistics(defaults, runtime, dry_run):
+def v200_defaults_statistics(defaults, runtime, harmonization, dry_run):
     """
     Inserting `statistics_*` parameters into defaults configuration file
     """
@@ -36,10 +40,10 @@ def v200_defaults_statistics(defaults, runtime, dry_run):
         if key not in defaults:
             defaults[key] = value
             changed = True
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v200_defaults_broker(defaults, runtime, dry_run):
+def v200_defaults_broker(defaults, runtime, harmonization, dry_run):
     """
     Inserting `*_pipeline_broker` and deleting broker into/from defaults configuration
     """
@@ -55,10 +59,10 @@ def v200_defaults_broker(defaults, runtime, dry_run):
         del defaults["broker"]
         changed = True
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v112_feodo_tracker_ips(defaults, runtime, dry_run):
+def v112_feodo_tracker_ips(defaults, runtime, harmonization, dry_run):
     """
     Fix URL of feodotracker IPs feed in runtime configuration
     """
@@ -68,10 +72,10 @@ def v112_feodo_tracker_ips(defaults, runtime, dry_run):
             bot["parameters"]["http_url"] = "https://feodotracker.abuse.ch/downloads/ipblocklist.csv"
             changed = True
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v112_feodo_tracker_domains(defaults, runtime, dry_run):
+def v112_feodo_tracker_domains(defaults, runtime, harmonization, dry_run):
     """
     Search for discontinued feodotracker domains feed
     """
@@ -81,14 +85,14 @@ def v112_feodo_tracker_domains(defaults, runtime, dry_run):
             found = bot_id
 
     if not found:
-        return None, defaults, runtime
+        return None, defaults, runtime, harmonization
     else:
         return ('The discontinued feed "Feodo Tracker Domains" has been found '
                 'as bot %r. Remove it yourself please.' % found,
-                defaults, runtime)
+                defaults, runtime, harmonization)
 
 
-def v110_shadowserver_feednames(defaults, runtime, dry_run):
+def v110_shadowserver_feednames(defaults, runtime, harmonization, dry_run):
     """
     Replace deprecated Shadowserver feednames
     """
@@ -106,10 +110,10 @@ def v110_shadowserver_feednames(defaults, runtime, dry_run):
                 changed = True
                 bot["parameters"]["feedname"] = mapping[bot["parameters"]["feedname"]]
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v110_deprecations(defaults, runtime, dry_run):
+def v110_deprecations(defaults, runtime, harmonization, dry_run):
     """
     Checking for deprecated runtime configurations (stomp collector, cymru parser, ripe expert)
     """
@@ -142,7 +146,7 @@ def v110_deprecations(defaults, runtime, dry_run):
             else:
                 changed = True
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
 def modify_expert_convert_config(old):
@@ -158,7 +162,7 @@ def modify_expert_convert_config(old):
     return config
 
 
-def v100_dev7_modify_syntax(defaults, runtime, dry_run):
+def v100_dev7_modify_syntax(defaults, runtime, harmonization, dry_run):
     """
     Migrate modify bot configuration format
     """
@@ -166,7 +170,7 @@ def v100_dev7_modify_syntax(defaults, runtime, dry_run):
     for bot_id, bot in runtime.items():
         if bot["module"] == "intelmq.bots.experts.modify.expert":
             if "configuration_path" in bot["parameters"]:
-                config = utils.load_configuration(bot["parameters"]["configuration_path"])
+                config = load_configuration(bot["parameters"]["configuration_path"])
                 if type(config) is dict:
                     new_config = modify_expert_convert_config(config)
                     if len(config) != len(new_config):
@@ -177,27 +181,27 @@ def v100_dev7_modify_syntax(defaults, runtime, dry_run):
                               bot["parameters"]["configuration_path"])
                         continue
                     try:
-                        utils.write_configuration(bot["parameters"]["configuration_path"],
-                                                  new_config)
+                        write_configuration(bot["parameters"]["configuration_path"],
+                                            new_config)
                     except PermissionError:
                         return ('Can\'t update %s\'s configuration: Permission denied.' % bot_id,
-                                defaults, runtime)
+                                defaults, runtime, harmonization)
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v200_defaults_ssl_ca_certificate(defaults, runtime, dry_run):
+def v200_defaults_ssl_ca_certificate(defaults, runtime, harmonization, dry_run):
     """
     Add ssl_ca_certificate to defaults
     """
     if "ssl_ca_certificate" not in defaults:
         defaults["ssl_ca_certificate"] = None
-        return True, defaults, runtime
+        return True, defaults, runtime, harmonization
     else:
-        return None, defaults, runtime
+        return None, defaults, runtime, harmonization
 
 
-def v111_defaults_process_manager(defaults, runtime, dry_run):
+def v111_defaults_process_manager(defaults, runtime, harmonization, dry_run):
     """
     Fix typo in proccess_manager parameter
     """
@@ -214,12 +218,13 @@ def v111_defaults_process_manager(defaults, runtime, dry_run):
             defaults["process_manager"] = "intelmq"
             changed = True
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v202_fixes(defaults, runtime, dry_run):
+def v202_fixes(defaults, runtime, harmonization, dry_run):
     """
-    Migrating collector parameter `feed` to `name`. RIPE expert set: `query_ripe_stat_ip` with `query_ripe_stat_asn` as default
+    Migrate Collector parameter `feed` to `name`. RIPE expert set `query_ripe_stat_ip` with `query_ripe_stat_asn` as default.
+    Set cymru whois expert `overwrite` to true.
     """
     changed = None
     for bot_id, bot in runtime.items():
@@ -236,24 +241,182 @@ def v202_fixes(defaults, runtime, dry_run):
                 if "query_ripe_stat_ip" not in bot["parameters"]:
                     bot["parameters"]["query_ripe_stat_ip"] = bot["parameters"]["query_ripe_stat_asn"]
                     changed = True
+        if bot["module"] in ("intelmq.bots.experts.cymru_whois.expert",
+                             "intelmq.bots.experts.reverse_dns.expert",
+                             "intelmq.bots.experts.modify.expert"):
+            if "overwrite" not in bot["parameters"]:
+                bot["parameters"]["overwrite"] = True
+                changed = True
 
-    return changed, defaults, runtime
+    return changed, defaults, runtime, harmonization
 
 
-def v210_deprecations(defaults, runtime, dry_run):
+def v210_deprecations(defaults, runtime, harmonization, dry_run):
     """
-    Migrating RT collector's `unzip_attachment` to `extract_files`.
+    Migrating configuration
     """
     changed = None
     for bot_id, bot in runtime.items():
         if bot["module"] == "intelmq.bots.collectors.rt.collector_rt":
+            # from 29c4b2c42b126ef51ac7287edc1a9fee28ab27fd to ce96e6d995d420e117a49a22d3bfdea762d899ec
+            if "extract_files" in bot["parameters"]:
+                bot["parameters"]["extract_attachment"] = bot["parameters"]["extract_files"]
+                del bot["parameters"]["extract_files"]
+                changed = True
             if "unzip_attachment" not in bot["parameters"]:
                 continue
             if "extract_files" not in bot["parameters"]:
-                bot["parameters"]["extract_files"] = bot["parameters"]["unzip_attachment"]
+                bot["parameters"]["extract_attachment"] = bot["parameters"]["unzip_attachment"]
             del bot["parameters"]["unzip_attachment"]
             changed = True
-    return changed, defaults, runtime
+        if bot["module"] in ("intelmq.bots.experts.generic_db_lookup.expert",
+                             "intelmq.bots.outputs.postgresql.output"):
+            if "engine" not in bot["parameters"]:
+                bot["parameters"]["engine"] = "postgresql"
+                changed = True
+            if bot["module"] == "intelmq.bots.outputs.postgresql.output":
+                bot["module"] = "intelmq.bots.outputs.sql.output"
+                changed = True
+    return changed, defaults, runtime, harmonization
+
+
+def v213_deprecations(defaults, runtime, harmonization, dry_run):
+    """
+    migrate attach_unzip to extract_files for mail attachment collector
+
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.mail.collector_mail_attach":
+            if "attach_unzip" not in bot["parameters"]:
+                continue
+            if "extract_files" in bot["parameters"] and "attach_unzip" in bot["parameters"]:
+                del bot["parameters"]["attach_unzip"]
+                changed = True
+            elif "extract_files" not in bot["parameters"] and "attach_unzip" in bot["parameters"]:
+                bot["parameters"]["extract_files"] = bot["parameters"]["attach_unzip"]
+                del bot["parameters"]["attach_unzip"]
+                changed = True
+    return changed, defaults, runtime, harmonization
+
+
+def v220_configuration_1(defaults, runtime, harmonization, dry_run):
+    """
+    Migrating configuration
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.misp.collector":
+            if "misp_verify" not in bot["parameters"]:
+                continue
+            if bot["parameters"]["misp_verify"] != defaults["http_verify_cert"]:
+                bot["parameters"]["http_verify_cert"] = bot["parameters"]["misp_verify"]
+            del bot["parameters"]["misp_verify"]
+            changed = True
+        elif bot["module"] == "intelmq.bots.outputs.elasticsearch.output":
+            if "elastic_doctype" in bot["parameters"]:
+                del bot["parameters"]["elastic_doctype"]
+    return changed, defaults, runtime, harmonization
+
+
+def harmonization(defaults, runtime, harmonization, dry_run):
+    """
+    Checks if all harmonization fields and types are correct
+    """
+    changed = None
+    original = load_configuration(resource_filename('intelmq',
+                                                    'etc/harmonization.conf'))
+    for msg_type, msg in original.items():
+        if msg_type not in harmonization:
+            harmonization[msg_type] = msg
+            changed = True
+            continue
+        for fieldname, field in msg.items():
+            if fieldname not in harmonization[msg_type]:
+                harmonization[msg_type][fieldname] = field
+                changed = True
+                continue
+            if harmonization[msg_type][fieldname]['type'] != original[msg_type][fieldname]['type']:
+                harmonization[msg_type][fieldname]['type'] = original[msg_type][fieldname]['type']
+                changed = True
+            installed_regex = harmonization[msg_type][fieldname].get('regex')
+            original_regex = original[msg_type][fieldname].get('regex')
+            if original_regex and original_regex != installed_regex:
+                harmonization[msg_type][fieldname]['regex'] = original[msg_type][fieldname]['regex']
+                changed = True
+            installed_regex = harmonization[msg_type][fieldname].get('iregex')
+            original_regex = original[msg_type][fieldname].get('iregex')
+            if original_regex and original_regex != installed_regex:
+                harmonization[msg_type][fieldname]['iregex'] = original[msg_type][fieldname]['iregex']
+                changed = True
+    return changed, defaults, runtime, harmonization
+
+
+def v213_feed_changes(defaults, runtime, harmonization, dry_run):
+    """
+    Migrates feed configuration for changed feed parameters.
+    """
+    found_zeus = []
+    found_bitcash = []
+    found_ddos_attack = []
+    found_ransomware = []
+    found_bambenek = []
+    found_nothink = []
+    found_nothink_parser = []
+    changed = None
+    messages = []
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.http.collector_http":
+            if "http_url" not in bot["parameters"]:
+                continue
+            if bot["parameters"]["http_url"] == 'https://www.tc.edu.tw/net/netflow/lkout/recent/30':
+                bot["parameters"]["http_url"] = "https://www.tc.edu.tw/net/netflow/lkout/recent/"
+                changed = True
+            if bot["parameters"]["http_url"].startswith("https://zeustracker.abuse.ch/"):
+                found_zeus.append(bot_id)
+            elif bot["parameters"]["http_url"].startswith("https://bitcash.cz/misc/log/blacklist"):
+                found_bitcash.append(bot_id)
+            elif bot["parameters"]["http_url"].startswith("https://ransomwaretracker.abuse.ch/feeds/csv/"):
+                found_ransomware.append(bot_id)
+            elif bot["parameters"]["http_url"] == "https://osint.bambenekconsulting.com/feeds/dga-feed.txt":
+                bot["parameters"]["http_url"] = "https://faf.bambenekconsulting.com/feeds/dga-feed.txt"
+                changed = True
+            elif bot["parameters"]["http_url"] in ("http://osing.bambenekconsulting.com/feeds/dga/c2-ipmasterlist.txt",
+                                                   "https://osing.bambenekconsulting.com/feeds/dga/c2-ipmasterlist.txt",
+                                                   "http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt",
+                                                   "https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt"):
+                found_bambenek.append(bot_id)
+            elif (bot["parameters"]["http_url"].startswith("http://www.nothink.org/") or
+                  bot["parameters"]["http_url"].startswith("https://www.nothink.org/")):
+                found_nothink.append(bot_id)
+        elif bot["module"] == "intelmq.bots.collectors.http.collector_http_stream":
+            if bot["parameters"].get("http_url", "").startswith("https://feed.caad.fkie.fraunhofer.de/ddosattackfeed"):
+                found_ddos_attack.append(bot_id)
+        elif bot['module'] == "intelmq.bots.parsers.nothink.parser":
+            found_nothink_parser.append(bot_id)
+    if found_zeus:
+        messages.append('A discontinued feed "Zeus Tracker" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_zeus)))
+    if found_bitcash:
+        messages.append('The discontinued feed "Bitcash.cz" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_bitcash)))
+    if found_ddos_attack:
+        messages.append('The discontinued feed "Fraunhofer DDos Attack" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_ddos_attack)))
+    if found_ransomware:
+        messages.append('The discontinued feed "Abuse.ch Ransomware Tracker" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_ransomware)))
+    if found_bambenek:
+        messages.append('Many Bambenek feeds now require a license, see https://osint.bambenekconsulting.com/feeds/'
+                        ' potentially affected bots are %s.' % ', '.join(sorted(found_bambenek)))
+    if found_nothink:
+        messages.append('All Nothink Honeypot feeds are discontinued, '
+                        'potentially affected bots are %s.' % ', '.join(sorted(found_nothink)))
+    if found_nothink_parser:
+        messages.append('The Nothink Parser has been removed, '
+                        'affected bots are %s.' % ', '.join(sorted(found_nothink_parser)))
+    messages = ' '.join(messages)
+    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
 
 
 UPGRADES = OrderedDict([
@@ -266,4 +429,10 @@ UPGRADES = OrderedDict([
     ((2, 0, 1), ()),
     ((2, 0, 2), (v202_fixes, )),
     ((2, 1, 0), (v210_deprecations, )),
+    ((2, 1, 1), ()),
+    ((2, 1, 2), ()),
+    ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
+    ((2, 2, 0), (v220_configuration_1, )),
 ])
+
+ALWAYS = (harmonization, )

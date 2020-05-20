@@ -21,6 +21,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
                   "source.ip": "2001:500:88:200::8",  # iana.org
+                  "source.reverse_dns": "example.com",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_OUTPUT6 = {"__type": "Event",
@@ -45,6 +46,13 @@ INVALID_PTR_OUT2 = {"__type": "Event",
                     "source.reverse_dns": "aliancys.peopleinc.nl",
                     "time.observation": "2015-01-01T00:00:00+00:00",
                     }
+OVERWRITE_OUT = {"__type": "Event",
+                    "source.ip": "192.0.43.7",
+                    "source.reverse_dns": "icann.org",
+                    "destination.ip": "192.0.43.8",
+                    "destination.reverse_dns": "example.net",
+                    "time.observation": "2015-01-01T00:00:00+00:00",
+                    }
 
 
 @test.skip_redis()
@@ -58,6 +66,7 @@ class TestReverseDnsExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = ReverseDnsExpertBot
         cls.use_cache = True
+        cls.sysconfig = {'overwrite': True}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
@@ -78,6 +87,12 @@ class TestReverseDnsExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = INVALID_PTR_INP2
         self.run_bot()
         self.assertMessageEqual(0, INVALID_PTR_OUT2)
+
+    def test_overwrite(self):
+        self.input_message = EXAMPLE_INPUT.copy()
+        self.input_message['destination.reverse_dns'] = 'example.net'
+        self.run_bot(parameters={'overwrite' : False})
+        self.assertMessageEqual(0, OVERWRITE_OUT)
 
 
 if __name__ == '__main__':  # pragma: no cover

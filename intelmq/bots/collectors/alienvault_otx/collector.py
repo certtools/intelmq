@@ -3,6 +3,7 @@ import datetime
 import json
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     from OTXv2 import OTXv2
@@ -14,7 +15,7 @@ class AlienVaultOTXCollectorBot(CollectorBot):
 
     def init(self):
         if OTXv2 is None:
-            raise ValueError('Could not import OTXv2. Please install it.')
+            raise MissingDependencyError("OTXv2")
 
         self.modified_pulses_only = False
         if hasattr(self.parameters, 'modified_pulses_only'):

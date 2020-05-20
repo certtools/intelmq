@@ -3,7 +3,6 @@ Testing TCP collector
 """
 import socket
 import struct
-import unittest.mock as mock
 import sys
 import threading
 import unittest
@@ -80,11 +79,6 @@ class TestTCPOutputBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(iterations=len(self.input_message))
 
 
-major, minor, micro, *_ = sys.version_info
-
-
-@unittest.skipIf((major, minor) == (3, 4) and micro < 8, "Travis CI failed with Python3.4.6. "
-                                                         "However, the developer managed to successfully test it on 3.4.8.")
 class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for TCPCollectorBot.
@@ -103,7 +97,6 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
         """ Check how we handle a random input, coming from an unknown source. We should put all the data to report['raw']. """
         thread = threading.Thread(target=Client().random_client)
         thread.start()
-        self.input_message = None
         self.run_bot()
         self.assertOutputQueueLen(2)
         generated_report = MessageFactory.unserialize(self.get_output_queue()[1], harmonization=self.harmonization,
@@ -172,21 +165,8 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
 
         thread = threading.Thread(target=Client().random_client)
         thread.start()
-        self.input_message = None
 
-        # can't use standard .bot_run(iteration) or .start() because shutdown() would be called
-        # and we need to handle multiple connections
-        self.prepare_bot()
-        self.bot._Bot__source_pipeline = self.pipe
-        self.bot._Bot__destination_pipeline = self.pipe
-        for _ in range(client_count + 1):
-            # every single calling of process() method will serve to a single connection
-            with mock.patch('intelmq.lib.utils.load_configuration',
-                        new=self.mocked_config):
-                with mock.patch('intelmq.lib.utils.log', self.mocked_log):
-                    self.bot.process()
-        self.bot.stop()  # let's call shutdown() and free up bound address
-
+        self.run_bot(iterations=client_count + 1)
         self.assertOutputQueueLen(client_count * msg_count + 2)
 
 

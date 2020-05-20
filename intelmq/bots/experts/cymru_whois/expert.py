@@ -21,6 +21,12 @@ class CymruExpertBot(Bot):
                                    None)
                            )
 
+        if not hasattr(self.parameters, 'overwrite'):
+            self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
+                                "Please set it explicitly, default will change to "
+                                "'False' in version 3.0.0'.")
+        self.overwrite = getattr(self.parameters, 'overwrite', True)
+
     def process(self):
         event = self.receive_message()
 
@@ -61,7 +67,7 @@ class CymruExpertBot(Bot):
             for result_key, result_value in result.items():
                 if result_key == 'registry' and result_value == 'other':
                     continue
-                event.add(key % result_key, result_value, overwrite=True)
+                event.add(key % result_key, result_value, overwrite=self.overwrite)
 
         self.send_message(event)
         self.acknowledge_message()

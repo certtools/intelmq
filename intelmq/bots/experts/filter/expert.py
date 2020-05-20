@@ -7,22 +7,27 @@ import pytz
 from dateutil import parser
 
 from intelmq.lib.bot import Bot
-from intelmq.lib.utils import parse_relative
+from intelmq.lib.utils import parse_relative, TIMESPANS
 
 
 class FilterExpertBot(Bot):
 
     _message_processed_verb = 'Forwarded'
 
-    # decide format of timefilter value and parse it
     def parse_timeattr(self, time_attr):
-        try:
-            absolute = parser.parse(time_attr)
-        except ValueError:
+        """
+        Parses relative or absoute time specification, decides how to parse by
+        checking if the string contains any timespan identifier.
+
+        See also https://github.com/certtools/intelmq/issues/1523
+        dateutil.parser.parse detects strings like `10 hours` as absolute time.
+        """
+        if any([timespan in time_attr for timespan in TIMESPANS.keys()]):
             relative = timedelta(minutes=parse_relative(time_attr))
             self.logger.info("Filtering out events to (relative time) %r.", relative)
             return relative
         else:
+            absolute = parser.parse(time_attr)
             self.logger.info("Filtering out events to (absolute time) %r.", absolute)
             return absolute
 

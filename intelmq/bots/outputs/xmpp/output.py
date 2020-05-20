@@ -26,6 +26,7 @@ use_muc: boolean
 
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import sleekxmpp
@@ -81,7 +82,7 @@ class XMPPOutputBot(Bot):
 
     def init(self):
         if sleekxmpp is None:
-            raise ValueError('Could not import sleekxmpp. Please install it.')
+            raise MissingDependencyError("sleekxmpp")
 
         # Retrieve Parameters from configuration
         xmpp_user = getattr(self.parameters, "xmpp_user", None)

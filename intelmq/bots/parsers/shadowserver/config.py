@@ -6,6 +6,37 @@ Software engineering by BSI & Intevation GmbH
 
 This is a configuration File for the shadowserver parser
 
+In the following, *intelmqkey* are arbitrary keys from intelmq's harmonization
+and *shadowkey* is a column name from shadowserver's data.
+
+Every bot-type is defined by a dictionary with three values:
+- `required_fields`: A list of tuples containing intelmq's field name, field
+  name from data and an optional conversion function. Errors are raised, if the
+  field does not exists in data.
+- `optional_fields`: Same format as above, but does not raise errors if the
+  field does not exist. If there's no mapping to an intelmq field, you can set
+  the intelmqkey to `extra.` and the field will be added to the extra field
+  using the original field name. See section below for possible tuple-values.
+- `constant_fields`: A dictionary with a static mapping of field name to data,
+  e.g. to set classifications or protocols.
+
+The tuples can be of following format:
+
+- `('intelmqkey', 'shadowkey')`, the data from the column *shadowkey* will be
+  saved in the event's field *intelmqkey*. Logically equivalent to:
+  `event[`*intelmqkey*`] = row[`*shadowkey*`]`.
+- `('intelmqkey', 'shadowkey', conversion_function)`, the given function will be
+  used to convert and/or validate the data. Logically equivalent to:
+  `event[`*intelmqkey*`] = conversion_function(row[`*shadowkey*`)]`.
+- `('intelmqkey', 'shadowkey', conversion_function, True)`, the function gets
+  two parameters here, the second one is the full row (as dictionary). Logically
+  equivalent to:
+  `event[`*intelmqkey*`] = conversion_function(row[`*shadowkey*`, row)]`.
+- `('extra.', 'shadowkey', conversion_function)`, the data will be added to
+  extra in this case, the resulting name is `extra.[shadowkey]`. The
+  `conversion_function` is optional. Logically equivalent to:
+  `event[extra.`*intelmqkey*`] = conversion_function(row[`*shadowkey*`)]`.
+
 Mappings are "straight forward" each mapping is a dict
 of at least three keys:
 
@@ -23,7 +54,6 @@ of at least three keys:
 The first value is the IntelMQ key,
 the second value is the row in the shadowserver csv.
 
-
 Reference material:
     * when setting the classification.* fields, please use the taxonomy from
       [eCSIRT II](https://www.trusted-introducer.org/Incident-Classification-Taxonomy.pdf)
@@ -40,83 +70,28 @@ TODOs:
     dmth thinks it's not sufficient. Some CERT-Expertise is needed to
     check if the mappings are correct.
 
+    feed_idx is not complete.
+
 """
 import re
 
 import intelmq.lib.harmonization as harmonization
 
 
-def get_feed(feedname, logger):
-    # TODO should this be case insensitive?
-    feed_idx = {
-        "Open-DB2-Discovery-Service": open_db2_discovery_service,
-        "Accessible-HTTP": accessible_http,
-        "Accessible-ADB": accessible_adb,
-        "Accessible-AFP": accessible_afp,
-        "Accessible-Cisco-Smart-Install": accessible_cisco_smart_install,
-        "Accessible-CWMP": accessible_cwmp,
-        "Accessible-FTP": accessible_ftp,
-        "Accessible-Hadoop": accessible_hadoop,
-        "Accessible-RDP": accessible_rdp,
-        "Accessible-Rsync": accessible_rsync,
-        "Accessible-SMB": accessible_smb,
-        "Accessible-Telnet": accessible_telnet,
-        "Accessible-Ubiquiti-Discovery-Service": accessible_ubiquiti_discovery_service,
-        "Accessible-VNC": accessible_vnc,
-        "Amplification-DDoS-Victim": amplification_ddos_victim,
-        "Blacklisted-IP": blacklisted_ip,
-        "Compromised-Website": compromised_website,
-        "DNS-Open-Resolvers": dns_open_resolvers,
-        "Darknet": darknet,
-        "Drone-Brute-Force": drone_brute_force,
-        "Drone": drone,
-        "HTTP-Scanners": http_scanners,
-        "ICS-Scanners": ics_scanners,
-        "IPv6-Sinkhole-HTTP-Drone": ipv6_sinkhole_http_drone,
-        "Microsoft-Sinkhole": microsoft_sinkhole,
-        "NTP-Monitor": ntp_monitor,
-        "NTP-Version": ntp_version,
-        "Open-Chargen": open_chargen,
-        "Open-Elasticsearch": open_elasticsearch,
-        "Open-IPMI": open_ipmi,
-        "Open-LDAP": open_ldap,
-        "Open-mDNS": open_mdns,
-        "Open-Memcached": open_memcached,
-        "Open-MongoDB": open_mongodb,
-        "Open-MSSQL": open_mssql,
-        "Open-NATPMP": open_natpmp,
-        "Open-NetBIOS-Nameservice": open_netbios_nameservice,
-        "Open-Netis": open_netis,
-        "Open-Portmapper": open_portmapper,
-        "Open-QOTD": open_qotd,
-        "Open-Redis": open_redis,
-        "Open-SNMP": open_snmp,
-        "Open-SSDP": open_ssdp,
-        "Open-TFTP": open_tftp,
-        "Open-XDMCP": open_xdmcp,
-        "Outdated-DNSSEC-Key": outdated_dnssec_key,
-        "Outdated-DNSSEC-Key-IPv6": outdated_dnssec_key,  # same format as IPv4 report
-        "Sandbox-URL": sandbox_url,
-        "Sinkhole-HTTP-Drone": sinkhole_http_drone,
-        "Spam-URL": spam_url,
-        "SSL-FREAK-Vulnerable-Servers": ssl_freak_vulnerable_servers,
-        "SSL-POODLE-Vulnerable-Servers": ssl_poodle_vulnerable_servers,
-        "Vulnerable-ISAKMP": vulnerable_isakmp,
-    }
-    old_feed_idx = {
-        "Botnet-Drone-Hadoop": drone,
-        "DNS-open-resolvers": dns_open_resolvers,
-        "Open-NetBIOS": open_netbios_nameservice,
-        "Ssl-Freak-Scan": ssl_freak_vulnerable_servers,
-        "Ssl-Scan": ssl_poodle_vulnerable_servers,
-    }
+def get_feed_by_feedname(given_feedname):
+    for feedname, filename, function in mapping:
+        if given_feedname == feedname:
+            return function
+    else:
+        return None
 
-    if feedname in old_feed_idx:
-        logger.warning('Deprecated feedname use. Refer to the documentation for the new name. '
-                       'Backwards compatibility will be removed in version 2.0.')
-        return old_feed_idx[feedname]
 
-    return feed_idx.get(feedname)
+def get_feed_by_filename(given_filename):
+    for feedname, filename, function in mapping:
+        if given_filename == filename:
+            return feedname, function
+    else:
+        return None
 
 
 def add_UTC_to_timestamp(value):
@@ -485,13 +460,13 @@ microsoft_sinkhole = {
         ('source.geolocation.cc', 'geo'),
         ('destination.url', 'url', convert_http_host_and_url, True),
         ('malware.name', 'type'),
-        ('user_agent', 'http_agent'),
         ('source.tor_node', 'tor', set_tor_node),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
         ('source.reverse_dns', 'hostname'),
         ('destination.port', 'dst_port'),
         ('destination.fqdn', 'http_host', validate_fqdn),
+        ('extra.', 'http_agent', validate_to_none),
         ('extra.', 'http_referer', validate_to_none),
         ('extra.', 'http_referer_ip', validate_ip),
         ('extra.', 'http_referer_asn', convert_int),
@@ -1081,6 +1056,8 @@ ssl_poodle_vulnerable_servers = {
         ('extra.', 'browser_trusted', convert_bool),
         ('extra.', 'validation_level', validate_to_none),
         ('extra.', 'browser_error', validate_to_none),
+        ('extra.', 'tlsv13_support', validate_to_none),
+        ('extra.', 'tlsv13_cipher', validate_to_none),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -1124,7 +1101,7 @@ open_memcached = {
     },
 }
 
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-Drone-Hadoop
+# https://www.shadowserver.org/what-we-do/network-reporting/drone-botnet-drone-report/
 drone = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1509,6 +1486,10 @@ accessible_rdp = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'tlsv13_support', validate_to_none),  # always empty so far
+        ('extra.', 'tlsv13_cipher', validate_to_none),  # always empty so far
+        ('extra.', 'cve20190708_vulnerable', convert_bool),
+        ('extra.', 'bluekeep_vulnerable', convert_bool),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -2192,3 +2173,92 @@ accessible_ftp = {
         'protocol.application': 'ftp',
     }
 }
+
+# https://www.shadowserver.org/what-we-do/network-reporting/open-mqtt-report/
+open_mqtt = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-mqtt' in constant_fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'anonymous_access', convert_bool),
+        ('extra.', 'raw_response', validate_to_none),
+        ('extra.', 'hex_code', validate_to_none),
+        ('extra.', 'code', validate_to_none)
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'open-mqtt',
+        'protocol.application': 'mqtt',
+    }
+}
+
+mapping = (
+    # feed name, file name, function
+    ('Accessible-ADB', 'scan_adb', accessible_adb),
+    ('Accessible-AFP', 'scan_afp', accessible_afp),
+    ('Accessible-CWMP', 'scan_cwmp', accessible_cwmp),
+    ('Accessible-Cisco-Smart-Install', 'cisco_smart_install', accessible_cisco_smart_install),
+    ('Accessible-FTP', 'scan_ftp', accessible_ftp),
+    ('Accessible-HTTP', 'scan_http', accessible_http),
+    ('Accessible-Hadoop', 'scan_hadoop', accessible_hadoop),
+    ('Accessible-RDP', 'scan_rdp', accessible_rdp),
+    ('Accessible-Rsync', 'scan_rsync', accessible_rsync),
+    ('Accessible-SMB', 'scan_smb', accessible_smb),
+    ('Accessible-Telnet', 'scan_telnet', accessible_telnet),
+    ('Accessible-Ubiquiti-Discovery-Service', 'scan_ubiquiti', accessible_ubiquiti_discovery_service),
+    ('Accessible-VNC', 'scan_vnc', accessible_vnc),
+    ('Amplification-DDoS-Victim', 'ddos_amplification', amplification_ddos_victim),
+    ('Blacklisted-IP', 'blacklist', blacklisted_ip),
+    ('Compromised-Website', 'compromised_website', compromised_website),
+    ('DNS-Open-Resolvers', 'scan_dns', dns_open_resolvers),
+    ('Darknet', 'darknet', darknet),
+    ('Drone', 'botnet_drone', drone),
+    ('Drone-Brute-Force', 'drone_brute_force', drone_brute_force),
+    ('HTTP-Scanners', 'hp_http_scan', http_scanners),
+    ('ICS-Scanners', 'hp_ics_scan', ics_scanners),
+    ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),
+    ('Microsoft-Sinkhole', 'microsoft_sinkhole', microsoft_sinkhole),
+    ('NTP-Monitor', 'scan_ntpmonitor', ntp_monitor),
+    ('NTP-Version', 'scan_ntp', ntp_version),
+    ('Open-Chargen', 'scan_chargen', open_chargen),
+    ('Open-DB2-Discovery-Service', 'scan_db2', open_db2_discovery_service),
+    ('Open-Elasticsearch', 'scan_elasticsearch', open_elasticsearch),
+    ('Open-IPMI', 'scan_ipmi', open_ipmi),
+    ('Open-LDAP', 'scan_ldap', open_ldap),
+    ('Open-LDAP-TCP', 'scan_ldap_tcp', open_ldap),
+    ('Open-MQTT', 'scan_mqtt', open_mqtt),
+    ('Open-MSSQL', 'scan_mssql', open_mssql),
+    ('Open-Memcached', 'scan_memcached', open_memcached),
+    ('Open-MongoDB', 'scan_mongodb', open_mongodb),
+    ('Open-NATPMP', 'scan_nat_pmp', open_natpmp),
+    ('Open-NetBIOS-Nameservice', 'scan_netbios', open_netbios_nameservice),
+    ('Open-Netis', 'netis_router', open_netis),
+    ('Open-Portmapper', 'scan_portmapper', open_portmapper),
+    ('Open-QOTD', 'scan_qotd', open_qotd),
+    ('Open-Redis', 'scan_redis', open_redis),
+    ('Open-SNMP', 'scan_snmp', open_snmp),
+    ('Open-SSDP', 'scan_ssdp', open_ssdp),
+    ('Open-TFTP', 'scan_tftp', open_tftp),
+    ('Open-XDMCP', 'scan_xdmcp', open_xdmcp),
+    ('Open-mDNS', 'scan_mdns', open_mdns),
+    ('Outdated-DNSSEC-Key', 'outdated_dnssec_key', outdated_dnssec_key),
+    ('Outdated-DNSSEC-Key-IPv6', 'outdated_dnssec_key_v6', outdated_dnssec_key),
+    ('SSL-FREAK-Vulnerable-Servers', 'scan_ssl_freak', ssl_freak_vulnerable_servers),
+    ('SSL-POODLE-Vulnerable-Servers', 'scan_ssl_poodle', ssl_poodle_vulnerable_servers),
+    ('Sandbox-URL', 'cwsandbox_url', sandbox_url),
+    ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),
+    ('Spam-URL', 'spam_url', spam_url),
+    ('Vulnerable-ISAKMP', 'scan_isakmp', vulnerable_isakmp),
+)

@@ -1,0 +1,20 @@
+{
+    "Email": "test@example.com",
+    "Domain": "example.com",
+    "DomainEmails": ["test@example.com", "test2@example.com"],
+    "Paste": [
+        {
+            "Source": "Pastebin",
+            "Id": "8Q0BvKD8",
+            "Title": "syslog",
+            "Date": "2014-03-04T19:14:54Z",
+            "EmailCount": 139
+        },
+        {
+            "Source": "Pastie",
+            "Id": "7152479",
+            "Date": "2013-03-28T16:51:10Z",
+            "EmailCount": 30
+        }
+    ]
+}

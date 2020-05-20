@@ -7,13 +7,14 @@ except ImportError:
 
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 
 class RestAPIOutputBot(Bot):
 
     def init(self):
         if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
+            raise MissingDependencyError("requests")
 
         self.set_request_parameters()
 
@@ -51,7 +52,8 @@ class RestAPIOutputBot(Bot):
                              "" % timeoutretries)
 
         if not req.ok:
-            self.logger.debug("Error during message sending with response body: %r.", r.text)
+            self.logger.debug("Error during message sending, response body: %r.",
+                              req.text)
         req.raise_for_status()
         self.logger.debug('Sent message.')
         self.acknowledge_message()

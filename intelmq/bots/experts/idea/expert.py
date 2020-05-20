@@ -3,7 +3,7 @@
 IDEA classification: https://idea.cesnet.cz/en/classifications
 """
 from base64 import b64decode
-from collections import Mapping, Sequence
+from collections.abc import Mapping, Sequence
 from urllib.parse import quote_plus
 from uuid import uuid4
 
