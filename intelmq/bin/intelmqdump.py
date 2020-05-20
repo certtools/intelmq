@@ -376,7 +376,7 @@ def main():
                           '-' * 50)
                     if value.get('message_type') == 'base64':
                         if len(value['message']) > 1000:
-                                value['message'] = value['message'][:1000] + '...[truncated]'
+                            value['message'] = value['message'][:1000] + '...[truncated]'
                     else:
                         if isinstance(value['message'], (bytes, str)):
                             value['message'] = json.loads(value['message'])
