@@ -104,6 +104,7 @@ CHANGELOG
 - Fix and split `tests.bots.experts.ripe.test_expert.test_ripe_stat_error_json`.
 - Added tests for invalid encodings in input messages in `intelmq.tests.lib.test_bot` and `intelmq.tests.lib.test_pipeline` (#1494).
 - Travis: Explicitly enable RabbitMQ management plugin.
+- `intelmq.tests.lib.test_message`: Fix usage of the parameter `blacklist` for Message hash tests (#1539).
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
