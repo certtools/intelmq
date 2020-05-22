@@ -342,7 +342,8 @@ class Bot(object):
                             if self.__destination_queues and '_on_error' in self.__destination_queues:
                                 self.send_message(self.__current_message, path='_on_error')
 
-                            self.acknowledge_message()
+                            if message_to_dump or self.__current_message:
+                                self.acknowledge_message()
 
                             # when bot acknowledge the message,
                             # don't need to wait again
