@@ -130,6 +130,7 @@ Dropped support for Python 3.4.
 - `intelmq.lib.bot`:
   - `ParserBot.recover_line`: Parameter `line` needs to be optional, fix usage of fallback value `self.current_line`.
   - `start`: Handle decoding errors in the pipeline different so that the bot is not stuck in an endless loop (#1494).
+  - `start`: Only acknowledge a message in case of errors, if we actually had a message to dump, which is not the case for collectors.
   - `_dump_message`: Dump messages with encoding errors base64 encoded, not in JSON format as it's not possible to decode them (#1494).
 - `intelmq.lib.test`:
   - `BotTestCase.run_bot`: Add parameters `allowed_error_count` and `allowed_warning_count` to allow set the number per run, not per test class.
