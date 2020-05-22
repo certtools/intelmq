@@ -398,7 +398,6 @@ class Message(dict):
                 continue
 
             if filter_type == "whitelist" and key not in filter_keys:
-                print('not in whitelist')
                 continue
 
             if filter_type == "blacklist" and key in filter_keys:
@@ -408,9 +407,6 @@ class Message(dict):
             event_hash.update(b"\xc0")
             event_hash.update(utils.encode(repr(value)))
             event_hash.update(b"\xc0")
-            print('use', key, value, '->', event_hash.hexdigest())
-
-        print('result', event_hash.hexdigest())
 
         return event_hash.hexdigest()
 

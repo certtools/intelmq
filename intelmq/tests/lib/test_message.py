@@ -471,25 +471,6 @@ class TestMessageFactory(unittest.TestCase):
                          event2.hash(filter_type="whitelist",
                                      filter_keys={"feed.url", "raw"}))
 
-    def test_event_hash_method_whitelist(self):
-        """
-        https://github.com/certtools/intelmq/issues/1539
-        """
-        event = self.new_event()
-        event1 = self.add_event_examples(event)
-        event2 = event1.deep_copy()
-
-        event2.add('feed.name', 'Some Other Feed', overwrite=True)
-        print('event1', event1)
-        print('event2', event2)
-
-        # self.assertNotEqual(event1.hash(), event2.hash())
-
-        self.assertNotEqual(event1.hash(filter_type="whitelist",
-                                        filter_keys={"feed.name", "raw"}),
-                            event2.hash(filter_type="whitelist",
-                                        filter_keys={"feed.name", "raw"}))
-
     def test_event_dict(self):
         """ Test Event to_dict. """
         event = self.new_event()
