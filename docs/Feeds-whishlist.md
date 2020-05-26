@@ -13,6 +13,7 @@ This list evolved from the issue [Contribute: Feeds List (#384)](https://github.
 - [Abuse.ch SSL Blacklists](https://sslbl.abuse.ch/blacklist/)
 - [Adblock Plus Malwaredomains](https://easylist-msie.adblockplus.org/malwaredomains_full.tpl)
 - [APWG's ecrimex](https://www.ecrimex.net)
+- [apivoid IP Reputation API](https://www.apivoid.com/api/ip-reputation/)
 - [Bad IPs](https://www.badips.com)
 - [Berkeley](https://security.berkeley.edu/aggressive_ips/ips)
 - [Binary Defense](https://www.binarydefense.com/)
