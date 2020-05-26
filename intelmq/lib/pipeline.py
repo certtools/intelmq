@@ -274,7 +274,7 @@ class Redis(Pipeline):
             raise exceptions.PipelineError(e)
         else:
             if not retval:
-                raise exceptions.PipelineError("Could not pop message from internal queue"
+                raise exceptions.PipelineError("Could not pop message from internal queue "
                                                "for acknowledgement. Return value was %r."
                                                "" % retval)
 
