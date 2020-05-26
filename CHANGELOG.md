@@ -40,7 +40,9 @@ CHANGELOG
 
 ### Bots
 #### Collectors
-- `intelmq.bots.collectors.mail.collector_mail_attach`: fix handling of deprecated parameter name `attach_unzip`.
+- `intelmq.bots.collectors.mail.collector_mail_attach`:
+  - Fix handling of deprecated parameter name `attach_unzip`.
+  - Fix handling of attachments without filenames (#1538).
 - `intelmq.bots.collectors.stomp.collector`: Fix compatibility with stomp.py versions `> 4.1.20` and catch errors on shutdown.
 - `intelmq.bots.collectors.microsoft.collector_interflow`: Add method for printing the file list.
 - `intelmq.bots.collectors.microsoft`: Update `REQUIREMENTS.txt` temporarily fixing deprecated Azure library (#1530, PR#1532).
