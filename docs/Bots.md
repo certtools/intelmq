@@ -299,6 +299,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
+* `mail_port`: IMAP server port, optional (default: 143 without SSL, 993 for SSL)
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
@@ -347,6 +348,7 @@ limitation set `chunk_size` to something like `384000000`, i.e., ~384 MB.
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
+* `mail_port`: IMAP server port, optional (default: 143 without SSL, 993 for SSL)
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
@@ -379,6 +381,7 @@ The resulting reports contains the following special fields:
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
+* `mail_port`: IMAP server port, optional (default: 143 without SSL, 993 for SSL)
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
