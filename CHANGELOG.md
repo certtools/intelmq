@@ -151,7 +151,9 @@ Dropped support for Python 3.4.
 
 ### Bots
 #### Collectors
-- `intelmq.bots.collectors.mail.collector_mail_attach`: fix handling of deprecated parameter name `attach_unzip`.
+- `intelmq.bots.collectors.mail.collector_mail_attach`:
+  - Fix handling of deprecated parameter name `attach_unzip`.
+  - Fix handling of attachments without filenames (#1538).
 - `intelmq.bots.collectors.stomp.collector`: Fix compatibility with stomp.py versions `> 4.1.20` and catch errors on shutdown.
 - `intelmq.bots.collectors.microsoft.collector_interflow`: Add method for printing the file list.
 - `intelmq.bots.collectors.microsoft`: Update `REQUIREMENTS.txt` temporarily fixing deprecated Azure library (#1530, PR#1532).
@@ -215,6 +217,7 @@ Dropped support for Python 3.4.
 - Fix and split `tests.bots.experts.ripe.test_expert.test_ripe_stat_error_json`.
 - Added tests for invalid encodings in input messages in `intelmq.tests.lib.test_bot` and `intelmq.tests.lib.test_pipeline` (#1494).
 - Travis: Explicitly enable RabbitMQ management plugin.
+- `intelmq.tests.lib.test_message`: Fix usage of the parameter `blacklist` for Message hash tests (#1539).
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).

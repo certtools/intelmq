@@ -446,9 +446,9 @@ class TestMessageFactory(unittest.TestCase):
                                      filter_keys={"feed.name"}))
 
         self.assertNotEqual(event1.hash(filter_type="blacklist",
-                                        filter_keys={"feed.url, raw"}),
+                                        filter_keys={"feed.url", "raw"}),
                             event2.hash(filter_type="blacklist",
-                                        filter_keys={"feed.url, raw"}))
+                                        filter_keys={"feed.url", "raw"}))
 
     def test_event_hash_method_whitelist(self):
         """ Test Event hash(blacklist) """
@@ -467,9 +467,9 @@ class TestMessageFactory(unittest.TestCase):
                                         filter_keys={"feed.name"}))
 
         self.assertEqual(event1.hash(filter_type="whitelist",
-                                     filter_keys={"feed.url, raw"}),
+                                     filter_keys={"feed.url", "raw"}),
                          event2.hash(filter_type="whitelist",
-                                     filter_keys={"feed.url, raw"}))
+                                     filter_keys={"feed.url", "raw"}))
 
     def test_event_dict(self):
         """ Test Event to_dict. """

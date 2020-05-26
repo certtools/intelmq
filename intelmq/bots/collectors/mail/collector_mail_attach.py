@@ -27,7 +27,12 @@ class MailAttachCollectorBot(MailCollectorBot):
             if not attach:
                 continue
 
-            attach_filename = attach['filename']
+            try:
+                attach_filename = attach['filename']
+            except KeyError:
+                # https://github.com/certtools/intelmq/issues/1538
+                self.logger.debug('Skipping attachment because of missing filename.')
+                continue
             if attach_filename.startswith('"'):  # for imbox versions older than 0.9.5, see also above
                 attach_filename = attach_filename[1:-1]
 
