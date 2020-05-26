@@ -24,19 +24,31 @@ The ElasticSearch Output bot does no longer support (only) ElasticSearch version
 ### Postgres databases
 
 
-2.1.3 Bugfix release (unreleased)
+2.1.4 Bugfix release (unreleased)
+---------------------------------
+
+### Requirements
+
+### Tools
+
+### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
+2.1.3 Bugfix release (2020-05-26)
 ---------------------------------
 
 ### Requirements
 The python library `requests` is required by the core.
 
-### Tools
-
 ### Harmonization
 The regular expression of the field `protocol.transport` has been updated to accommodate the value `nvp-ii`.
 `intelmqctl upgrade-config` handles the change to automatically upgrade your configuration.
-
-### Configuration
 
 #### Taichung feed
 The Taichung feed "Netflow (Recent 30)" with URL `https://www.tc.edu.tw/net/netflow/lkout/recent/30` is no longer available and gives an error 500.
@@ -61,10 +73,6 @@ Many Bambenek feeds require a license now and URLs have changed. See https://osi
 #### Nothink Feeds and Parser
 All Nothink Honeypot feeds have been discontinued and current the data available covers the time until 2019. The Nothink Parser has been removed.
 The `intelmqctl upgrade-config` command warns if you have these feed and the bot in use.
-
-### Libraries
-
-### Postgres databases
 
 
 2.1.2 Bugfix release (2020-01-28)

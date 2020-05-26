@@ -113,17 +113,49 @@ Dropped support for Python 3.4.
 ### Known issues
 
 
-2.1.3 (unreleased)
+2.1.4 (unreleased)
 ------------------
 
 ### Configuration
 
+### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+- `intelmq.tests.test_conf`: Set encoding to UTF-8 for reading the `feeds.yaml` file.
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
+2.1.3 (2020-05-26)
+------------------
+
 ### Requirements
-- The python library `requests` is (again) listed as dependency of the core.
+- The python library `requests` is (again) listed as dependency of the core (#1519).
 
 ### Core
 - `intelmq.lib.upgrades`:
-  - Harmonization upgrade: Also check and update regular expressions
+  - Harmonization upgrade: Also check and update regular expressions.
   - Add function to migrate the deprecated parameter `attach_unzip` to `extract_files` for the mail attachment collector.
   - Add function to migrate changed Taichung URL feed.
   - Check for discontinued Abuse.CH Zeus Tracker feed.
@@ -144,8 +176,6 @@ Dropped support for Python 3.4.
 - `intelmq.lib.utils`:
   - `decode`: Raise new `DecodingError` if decoding fails.
 
-### Development
-
 ### Harmonization
 - `protocol.transport`: Adapt regular expression to allow the value `nvp-ii` (protocol 11).
 
@@ -155,8 +185,9 @@ Dropped support for Python 3.4.
   - Fix handling of deprecated parameter name `attach_unzip`.
   - Fix handling of attachments without filenames (#1538).
 - `intelmq.bots.collectors.stomp.collector`: Fix compatibility with stomp.py versions `> 4.1.20` and catch errors on shutdown.
-- `intelmq.bots.collectors.microsoft.collector_interflow`: Add method for printing the file list.
-- `intelmq.bots.collectors.microsoft`: Update `REQUIREMENTS.txt` temporarily fixing deprecated Azure library (#1530, PR#1532).
+- `intelmq.bots.collectors.microsoft`:
+  - Update `REQUIREMENTS.txt` temporarily fixing deprecated Azure library (#1530, PR#1532).
+  - `intelmq.bots.collectors.microsoft.collector_interflow`: Add method for printing the file list.
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`) and `conficker` type.
@@ -181,12 +212,12 @@ Dropped support for Python 3.4.
 - `intelmq.bots.parsers.n6.parser`: Remove not allowed characters in the name field for `malware.name` and write original value to `event_description.text` instead.
 
 #### Experts
-- `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with unicode characters.
+- `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with Unicode characters.
 
 #### Outputs
 - `intelmq.bots.outputs.mongodb`:
   - Set default port 27017.
-  - Use different authentication mechanisms per MongoDB server version to fix compatibility with server version >= 3.4 (#1439)
+  - Use different authentication mechanisms per MongoDB server version to fix compatibility with server version >= 3.4 (#1439).
 
 ### Documentation
 - Feeds:
@@ -202,8 +233,8 @@ Dropped support for Python 3.4.
 - Developers Guide: Fix the instructions for `/opt/intelmq` file permissions.
 
 ### Packaging
-- patches: `fix-logrotate-path.patch`: also include path to rotated file in patch
-- fix paths from `/opt` to LSB for `setup.py` and `contrib/logrotate/intelmq` in build process (#1500).
+- Patches: `fix-logrotate-path.patch`: also include path to rotated file in patch.
+- Fix paths from `/opt` to LSB for `setup.py` and `contrib/logrotate/intelmq` in build process (#1500).
 - Add runtime dependency `debianutils` for the program `which`, which is required for `intelmqctl`.
 
 ### Tests
@@ -213,7 +244,7 @@ Dropped support for Python 3.4.
   - IPv6 to IPv4 test: Test for two possible results.
 - `intelmq.lib.test`: Fix compatibility of logging capture with Python >= 3.7 by reworking the whole process (#1342).
 - `intelmq.bots.collectors.tcp.test_collector`: Removing custom mocking and bot starting, not necessary anymore.
-- Added tests for `intelmq.bin.intelmqctl.IntelMQProcessManager._interpret_commandline`
+- Added tests for `intelmq.bin.intelmqctl.IntelMQProcessManager._interpret_commandline`.
 - Fix and split `tests.bots.experts.ripe.test_expert.test_ripe_stat_error_json`.
 - Added tests for invalid encodings in input messages in `intelmq.tests.lib.test_bot` and `intelmq.tests.lib.test_pipeline` (#1494).
 - Travis: Explicitly enable RabbitMQ management plugin.
@@ -232,6 +263,10 @@ Dropped support for Python 3.4.
 - `intelmq/bots/experts/asn_lookup/update-asn-data`: Use `pyasn_util_download.py` to download the data instead from RIPE, which cannot be parsed currently (#1517, PR#1518, https://github.com/hadiasghari/pyasn/issues/62).
 
 ### Known issues
+- HTTP stream collector: retry on regular connection problems? (#1435).
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952).
+- Reverse DNS: Only first record is used (#877).
+- Corrupt dump files when interrupted during writing (#870).
 
 
 2.1.2 (2020-01-28)

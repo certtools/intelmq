@@ -432,6 +432,7 @@ UPGRADES = OrderedDict([
     ((2, 1, 1), ()),
     ((2, 1, 2), ()),
     ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
+    ((2, 1, 4), ()),
     ((2, 2, 0), (v220_configuration_1, )),
 ])
 
