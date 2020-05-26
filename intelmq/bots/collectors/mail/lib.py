@@ -32,7 +32,7 @@ class MailCollectorBot(CollectorBot):
                               self.parameters.mail_password,
                               self.parameters.mail_ssl,
                               # imbox itself uses ports 143/993 as default depending on SSL setting
-                              port=getattr((self.parameters, 'mail_port', None)),
+                              port=getattr(self.parameters, 'mail_port', None),
                               ssl_context=ssl_custom_context)
         return mailbox
 
