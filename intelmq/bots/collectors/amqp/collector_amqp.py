@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Collecting from a (remote) AMQP Server and fetching either intelmq or any other messages.

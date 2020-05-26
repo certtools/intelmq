@@ -54,15 +54,13 @@ Table of Contents
 -----------------
 
 1. `How to Install <#how-to-install>`__
-2. `Developers Guide <#developers-guide>`__
-3. `User Guide <#user-guide>`__
-4. `IntelMQ Manager <#intelmq-manager>`__
+2. `User Guide <#user-guide>`__
+3. `IntelMQ Manager and more tools <#intelmq-manager-and-more-tools>`__
+4. `How to Participate <#how-to-participate>`__
 5. `Incident Handling Automation
    Project <#incident-handling-automation-project>`__
-6. `Data Harmonization <#data-harmonization>`__
-7. `How to Participate <#how-to-participate>`__
-8. `Licence <#licence>`__
-9. `Funded by <#funded-by>`__
+6. `Licence <#licence>`__
+7. `Funded by <#funded-by>`__
 
 How to Install
 --------------

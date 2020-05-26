@@ -100,10 +100,10 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
             output += "## %s\n\n" % feed
 
-            if feed_info['status']:
-                output += info("status", "on")
+            if feed_info['public']:
+                output += info("public", "yes" if feed_info['public'] else "no")
             else:
-                output += info("status", "off")
+                output += info("public", "unknown")
 
             output += info("revision", feed_info['revision'])
 
@@ -124,7 +124,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
                 output += info("Module", bot_info['module'])
                 output += info("Configuration Parameters")
 
-                if bot_info['parameters']:
+                if bot_info.get('parameters'):
                     for key, value in sorted(bot_info['parameters'].items(), key=lambda x: x[0]):
 
                         if value == "__FEED__":

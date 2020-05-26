@@ -2,7 +2,9 @@
 
 from datetime import datetime
 
-import dns
+import dns.exception
+import dns.resolver
+import dns.reversename
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache

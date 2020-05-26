@@ -141,5 +141,13 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
             self.send_message(report)
             self.cache.set(file['Name'], True)
 
+    def print_filelist(self):
+        """ Can be called from the debugger for example. """
+        self.logger.debug('Downloading file list.')
+        files = self.session.get(URL_LIST)
+        files.raise_for_status()
+        self.logger.debug('Downloaded file list, %s entries.', len(files.json()))
+        print(files.text)
+
 
 BOT = MicrosoftInterflowCollectorBot

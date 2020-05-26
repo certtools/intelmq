@@ -10,7 +10,6 @@ import json
 import logging
 import os
 import re
-import shutil
 import signal
 import socket
 import subprocess
@@ -33,6 +32,7 @@ from intelmq.lib import utils
 from intelmq.lib.bot_debugger import BotDebugger
 from intelmq.lib.pipeline import PipelineFactory
 import intelmq.lib.upgrades as upgrades
+from typing import Union, Iterable
 
 
 class Parameters(object):
@@ -344,19 +344,49 @@ class IntelMQProcessManager:
         filename = self.PIDFILE.format(bot_id)
         os.remove(filename)
 
+    @staticmethod
+    def _interpret_commandline(pid: int, cmdline: Iterable[str],
+                               module: str, bot_id: str) -> Union[bool, str]:
+        """
+        Separate function to allow easy testing
+
+        Parameters
+        ----------
+        pid : int
+            Process ID, used for return values (error messages) only.
+        cmdline : Iterable[str]
+            The command line of the process.
+        module : str
+            The module of the bot.
+        bot_id : str
+            The ID of the bot.
+
+        Returns
+        -------
+        Union[bool, str]
+            DESCRIPTION.
+        """
+        if len(cmdline) > 2 and cmdline[1].endswith('/%s' % module):
+            if cmdline[2] == bot_id:
+                return True
+            else:
+                return False
+        elif (len(cmdline) > 3 and cmdline[1].endswith('/intelmqctl') and
+              cmdline[2] == 'run'):
+            if cmdline[3] == bot_id:
+                return True
+            else:
+                return False
+        elif len(cmdline) > 1:
+            return 'Commandline of the process %d with commandline %r could not be interpreted.' % (pid, cmdline)
+        else:
+            return 'Unhandled error checking the process %d with commandline %r.' % (pid, cmdline)
+
     def __status_process(self, pid, module, bot_id):
-        which = shutil.which(module)
-        if not which:
-            return 'Could not get path to the excutable (%r). Check your PATH variable (%r).' % (module, os.environ.get('PATH'))
         try:
             proc = psutil.Process(int(pid))
-            if len(proc.cmdline()) > 1 and proc.cmdline()[1] == shutil.which(module):
-                return True
-            elif (len(proc.cmdline()) > 3 and proc.cmdline()[1] == shutil.which('intelmqctl') and
-                  proc.cmdline()[2] == 'run' and proc.cmdline()[3] == bot_id):
-                return True
-            elif len(proc.cmdline()) > 1:
-                return 'Commandline of the program %r does not match expected value %r.' % (proc.cmdline()[1], shutil.which(module))
+            cmdline = proc.cmdline()
+            return IntelMQProcessManager._interpret_commandline(pid, cmdline, module, bot_id)
         except psutil.NoSuchProcess:
             return False
         except psutil.AccessDenied:
@@ -1334,7 +1364,7 @@ Make a backup of your configuration first, also including bot's configuration fi
                 with open(filename) as file_handle:
                     files[filename] = json.load(file_handle)
             except (IOError, ValueError) as exc:  # pragma: no cover
-                check_logger.error('Coud not load %r: %s.', filename, exc)
+                check_logger.error('Could not load %r: %s.', filename, exc)
                 retval = 1
         if retval:
             if RETURN_TYPE == 'json':
@@ -1475,9 +1505,9 @@ Make a backup of your configuration first, also including bot's configuration fi
 
         if RETURN_TYPE == 'json':
             if retval:
-                return 0, {'status': 'error', 'lines': list_handler.buffer}
+                return 1, {'status': 'error', 'lines': list_handler.buffer}
             else:
-                return 1, {'status': 'success', 'lines': list_handler.buffer}
+                return 0, {'status': 'success', 'lines': list_handler.buffer}
         else:
             if retval:
                 self.logger.error('Some issues have been found, please check the above output.')

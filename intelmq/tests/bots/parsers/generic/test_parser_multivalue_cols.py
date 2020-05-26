@@ -5,7 +5,6 @@ import os
 
 import intelmq.lib.utils as utils
 import intelmq.lib.test as test
-import intelmq.lib.exceptions as exceptions
 from intelmq.bots.parsers.generic.parser_csv import GenericCsvParserBot
 
 with open(os.path.join(os.path.dirname(__file__), 'multivalue_columns.csv')) as handle:

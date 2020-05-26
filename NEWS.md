@@ -4,6 +4,41 @@ NEWS
 See the changelog for a full list of changes.
 
 
+2.1.3 Bugfix release (2020-05-26)
+---------------------------------
+
+### Requirements
+The python library `requests` is required by the core.
+
+### Harmonization
+The regular expression of the field `protocol.transport` has been updated to accommodate the value `nvp-ii`.
+`intelmqctl upgrade-config` handles the change to automatically upgrade your configuration.
+
+#### Taichung feed
+The Taichung feed "Netflow (Recent 30)" with URL `https://www.tc.edu.tw/net/netflow/lkout/recent/30` is no longer available and gives an error 500.
+As a drop-in replacement the Parser as well as the Feed documentation are now adapted to the full feed available at `https://www.tc.edu.tw/net/netflow/lkout/recent/`.
+The `intelmqctl upgrade-config` command takes care of this change.
+
+#### Abuse.ch Zeus Tracker Feed
+The Abuse.ch Zeus Tracker has been discontinued on 2019-07-08. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
+#### Abuse.ch Ransomware Tracker Feed
+The Abuse.ch Ransomware Tracker has been discontinued on 2019-12-08. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
+#### Bitcash.cz Feed
+The Bitcash.cz Banned IPs / Blocklist feed previously available under `https://bitcash.cz/misc/log/blacklist` is no longer available. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
+#### Fraunhofer DDoS Attack Feed
+The Fraunhofer DDoS Attack feed previously available under `https://feed.caad.fkie.fraunhofer.de/ddosattackfeed/` is no longer available. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
+#### Bambenek Feeds
+Many Bambenek feeds require a license now and URLs have changed. See https://osint.bambenekconsulting.com/feeds/ for more information. The `intelmqctl upgrade-config` command also warns if you have previously documents feeds in use and migrates the URL for the DGA domain feed.
+
+#### Nothink Feeds and Parser
+All Nothink Honeypot feeds have been discontinued and current the data available covers the time until 2019. The Nothink Parser has been removed.
+The `intelmqctl upgrade-config` command warns if you have these feed and the bot in use.
+
+
 2.1.2 Bugfix release (2020-01-28)
 ---------------------------------
 

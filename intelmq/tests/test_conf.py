@@ -19,6 +19,9 @@ import intelmq.bots
 import intelmq.lib.harmonization as harmonization
 
 
+from intelmq.lib.utils import lazy_int
+
+
 def to_json(obj):
     """
     Transforms object into JSON with intelmq-style.
@@ -68,7 +71,7 @@ class TestConf(unittest.TestCase):
         event_copy = interpreted['event'].copy()
         del event_copy['raw']['description']
         del event_copy['extra']['description']
-        self.assertDictContainsSubset(interpreted['report'], event_copy)
+        self.assertGreaterEqual(event_copy.items(), interpreted['report'].items())
 
         # check for valid regex, length and type
         for value in interpreted['event'].values():
@@ -142,9 +145,26 @@ class TestConf(unittest.TestCase):
 
 
 class CerberusTests(unittest.TestCase):
+
+    cerberus_version = tuple(lazy_int(x) for x in cerberus.__version__.split('.'))
+
+    def convert_cerberus_schema(self, schema: str) -> str:
+        """
+        > [...] code using prior versions of cerberus would not break, but bring up wrong results!
+        > Rename keyschema to valueschema in your schemas. (0.9)
+        > Rename propertyschema to keyschema in your schemas. (1.0)
+
+        https://docs.python-cerberus.org/en/stable/upgrading.html
+        """
+        if self.cerberus_version >= (0, 9):
+            schema = schema.replace('"keyschema"', '"valueschema"')
+        if self.cerberus_version >= (1, 0):
+            schema = schema.replace('"propertyschema"', '"keyschema"')
+        return schema
+
     def test_bots(self):
         with open(os.path.join(os.path.dirname(__file__), 'assets/bots.schema.json')) as handle:
-            schema = json.load(handle)
+            schema = json.loads(self.convert_cerberus_schema(handle.read()))
         with open(pkg_resources.resource_filename('intelmq',
                                                   'bots/BOTS')) as handle:
             bots = json.load(handle)
@@ -156,7 +176,7 @@ class CerberusTests(unittest.TestCase):
 
     def test_feeds(self):
         with open(os.path.join(os.path.dirname(__file__), 'assets/feeds.schema.json')) as handle:
-            schema = json.load(handle)
+            schema = json.loads(self.convert_cerberus_schema(handle.read()))
         with open(pkg_resources.resource_filename('intelmq',
                                                   'etc/feeds.yaml')) as handle:
             feeds = yaml.safe_load(handle)

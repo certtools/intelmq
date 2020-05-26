@@ -9,8 +9,9 @@ import unittest.mock as mock
 import intelmq.lib.test as test
 
 from intelmq.bots.collectors.mail.collector_mail_attach import MailAttachCollectorBot
+from intelmq.lib.utils import base64_encode
 if os.getenv('INTELMQ_TEST_EXOTIC'):
-    from .lib import MockedZipImbox
+    from .lib import MockedZipImbox, MockedBadAttachmentImbox
 
 REPORT_FOOBARZIP = {
                     '__type': 'Report',
@@ -19,7 +20,8 @@ REPORT_FOOBARZIP = {
                     'extra.email_subject': 'foobar zip',
                     'feed.accuracy': 100.0,
                     'feed.name': 'IMAP Feed',
-                    'raw': 'UEsDBAoAAAAAAG93AU+n9EgFCQAAAAkAAAAGABwAZm9vYmFyVVQJAAMx4kJdMeJCXXV4CwABBOgDAAAEZAAAAGJhciB0ZXh0ClBLAQIeAwoAAAAAAG93AU+n9EgFCQAAAAkAAAAGABgAAAAAAAEAAACkgQAAAABmb29iYXJVVAUAAzHiQl11eAsAAQToAwAABGQAAABQSwUGAAAAAAEAAQBMAAAASQAAAAAA',
+                    'raw': base64_encode('bar text\n'),
+                    'extra.file_name': 'foobar',
                     }
 
 
@@ -41,10 +43,24 @@ class TestMailAttachCollectorBot(test.BotTestCase, unittest.TestCase):
                          'name': 'IMAP Feed',
                          }
 
-    def test_one(self):
+    def test_extract_files(self):
         with mock.patch('imbox.Imbox', new=MockedZipImbox):
-            self.run_bot()
+            self.run_bot(parameters={'extract_files': True})
         self.assertMessageEqual(0, REPORT_FOOBARZIP)
+
+    def test_attach_unzip(self):
+        self.allowed_warning_count = 1
+        with mock.patch('imbox.Imbox', new=MockedZipImbox):
+            self.run_bot(parameters={'attach_unzip': True})
+        self.assertMessageEqual(0, REPORT_FOOBARZIP)
+
+    def test_attach_no_filename(self):
+        """
+        https://github.com/certtools/intelmq/issues/1538
+        """
+        with mock.patch('imbox.Imbox', new=MockedBadAttachmentImbox):
+            self.run_bot()
+        self.assertOutputQueueLen(0)
 
 
 if __name__ == '__main__':  # pragma: no cover

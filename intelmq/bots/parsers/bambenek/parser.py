@@ -10,14 +10,17 @@ class BambenekParserBot(ParserBot):
     IPMASTERLIST = {
         'http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt',
         'https://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt',
+        'https://faf.bambenekconsulting.com/feeds/dga/c2-ipmasterlist.txt',
     }
     DOMMASTERLIST = {
         'http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt',
         'https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt',
+        'https://faf.bambenekconsulting.com/feeds/dga/c2-dommasterlist.txt',
     }
     DGA_FEED = {
         'http://osint.bambenekconsulting.com/feeds/dga-feed.txt',
         'https://osint.bambenekconsulting.com/feeds/dga-feed.txt',
+        'https://faf.bambenekconsulting.com/feeds/dga-feed.txt',
     }
 
     MALWARE_NAME_MAP = {

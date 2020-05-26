@@ -12,7 +12,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [AnubisNetworks](#anubisnetworks)
 - [Autoshun](#autoshun)
 - [Bambenek](#bambenek)
-- [Bitcash](#bitcash)
 - [Blocklist.de](#blocklistde)
 - [Blueliv](#blueliv)
 - [CERT.PL](#certpl)
@@ -35,9 +34,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [McAfee Advanced Threat Defense](#mcafee-advanced-threat-defense)
 - [Microsoft](#microsoft)
 - [Netlab 360](#netlab-360)
-- [Nothink](#nothink)
 - [OpenPhish](#openphish)
-- [OpenPhish Commercial](#openphish-commercial)
 - [PhishTank](#phishtank)
 - [PrecisionSec](#precisionsec)
 - [ShadowServer](#shadowserver)
@@ -63,8 +60,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Feodo Tracker Browse
 
-* **Status:** on
-* **Revision:** 19-03-2019
+* **Public:** yes
+* **Revision:** 2019-03-19
+* **Documentation:** https://feodotracker.abuse.ch/browse
 * **Description:**
 
 ### Collector
@@ -88,8 +86,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Feodo Tracker IPs
 
-* **Status:** on
-* **Revision:** 25-03-2019
+* **Public:** yes
+* **Revision:** 2019-03-25
+* **Documentation:** https://feodotracker.abuse.ch/
 * **Description:** List of botnet Command&Control servers (C&Cs) tracked by Feodo Tracker, associated with Dridex and Emotet (aka Heodo).
 * **Additional Information:** https://feodotracker.abuse.ch/ The data in the column Last Online is used for `time.source` if available, with 00:00 as time. Otherwise first seen is used as `time.source`.
 
@@ -108,31 +107,11 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
-## Ransomware Tracker
-
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** Ransomware Tracker feed includes FQDN's, URL's, and known IP addresses that were used for said FQDN's and URL's for various ransomware families.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `https://ransomwaretracker.abuse.ch/feeds/csv/`
-*  * `name`: `Ransomware Tracker`
-*  * `provider`: `Abuse.ch`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.abusech.parser_ransomware
-* **Configuration Parameters:**
-
-
 ## URLhaus
 
-* **Status:** on
-* **Revision:** 14-02-2019
+* **Public:** yes
+* **Revision:** 2019-02-14
+* **Documentation:** https://urlhaus.abuse.ch/
 * **Description:** URLhaus is a project from abuse.ch with the goal of sharing malicious URLs that are being used for malware distribution. URLhaus offers a country, ASN (AS number) and Top Level Domain (TLD) feed for network operators / Internet Service Providers (ISPs), Computer Emergency Response Teams (CERTs) and domain registries.
 
 ### Collector
@@ -154,54 +133,13 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `type_translation`: `{"malware_download": "malware-distribution"}`
 
 
-## Zeus Tracker Domains
-
-* **Status:** off
-* **Revision:** 20-01-2018
-* **Description:** The ZeuS domain blocklist (BadDomains) is the recommended blocklist if you want to block only ZeuS domain names. It has domain names that ZeuS Tracker believes to be hijacked (level 2). Hence the false positive rate should be much lower compared to the standard ZeuS domain blocklist.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `https://zeustracker.abuse.ch/blocklist.php?download=baddomains`
-*  * `name`: `Zeus Tracker Domains`
-*  * `provider`: `Abuse.ch`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.abusech.parser_domain
-* **Configuration Parameters:**
-
-
-## Zeus Tracker IPs
-
-* **Status:** off
-* **Revision:** 20-01-2018
-* **Description:** This list only includes IPv4 addresses that are used by the ZeuS Trojan. It is the recommended list if you want to block only ZeuS IPs. It excludes IP addresses that ZeuS Tracker believes to be hijacked (level 2) or belong to a free web hosting provider (level 3). Hence the false positive rate should be much lower compared to the standard ZeuS IP blocklist.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `https://zeustracker.abuse.ch/blocklist.php?download=badips`
-*  * `name`: `Zeus Tracker IPs`
-*  * `provider`: `Abuse.ch`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.abusech.parser_ip
-* **Configuration Parameters:**
-
-
 # AlienVault
 
 ## OTX
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://otx.alienvault.com/
 * **Description:** AlienVault OTX Collector is the bot responsible to get the report through the API. Report could vary according to subscriptions.
 
 ### Collector
@@ -220,8 +158,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Reputation List
 
-* **Status:** off
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
 * **Description:** List of malicious IPs.
 
 ### Collector
@@ -243,8 +181,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Cyberfeed Stream
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.anubisnetworks.com/
 * **Description:** AnubisNetworks Collector is the bot responsible to get AnubisNetworks Cyberfeed Stream.
 
 ### Collector
@@ -266,8 +205,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Shunlist
 
-* **Status:** off
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.autoshun.org/
 * **Description:** You need to register in order to use the list.
 
 ### Collector
@@ -289,15 +229,19 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## C2 Domains
 
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** Master Feed of known, active and non-sinkholed C&Cs domain names. License: https://osint.bambenekconsulting.com/license.txt
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://osint.bambenekconsulting.com/feeds/
+* **Description:** Master Feed of known, active and non-sinkholed C&Cs domain names. Requires access credentials.
+* **Additional Information:** License: https://osint.bambenekconsulting.com/license.txt
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt`
+*  * `http_password`: `__PASSWORD__`
+*  * `http_url`: `https://faf.bambenekconsulting.com/feeds/c2-dommasterlist.txt`
+*  * `http_username`: `__USERNAME__`
 *  * `name`: `C2 Domains`
 *  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
@@ -310,15 +254,19 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## C2 IPs
 
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** Master Feed of known, active and non-sinkholed C&Cs IP addresses License: https://osint.bambenekconsulting.com/license.txt
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://osint.bambenekconsulting.com/feeds/
+* **Description:** Master Feed of known, active and non-sinkholed C&Cs IP addresses. Requires access credentials.
+* **Additional Information:** License: https://osint.bambenekconsulting.com/license.txt
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt`
+*  * `http_password`: `__PASSWORD__`
+*  * `http_url`: `https://faf.bambenekconsulting.com/feeds/c2-ipmasterlist.txt`
+*  * `http_username`: `__USERNAME__`
 *  * `name`: `C2 IPs`
 *  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
@@ -331,15 +279,17 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## DGA Domains
 
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** Domain feed of known DGA domains from -2 to +3 days License: https://osint.bambenekconsulting.com/license.txt
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://osint.bambenekconsulting.com/feeds/
+* **Description:** Domain feed of known DGA domains from -2 to +3 days
+* **Additional Information:** License: https://osint.bambenekconsulting.com/license.txt
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/dga-feed.txt`
+*  * `http_url`: `https://faf.bambenekconsulting.com/feeds/dga-feed.txt`
 *  * `name`: `DGA Domains`
 *  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
@@ -350,35 +300,13 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
-# Bitcash
-
-## Banned IPs
-
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** IPs banned for serious abusing of our services (scanning, sniffing, harvesting, dos attacks).
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `https://bitcash.cz/misc/log/blacklist`
-*  * `name`: `Banned IPs`
-*  * `provider`: `Bitcash`
-*  * `rate_limit`: `3600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.bitcash.parser
-* **Configuration Parameters:**
-
-
 # Blocklist.de
 
 ## Apache
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.blocklist.de/en/export.html
 * **Description:** Blocklist.DE Apache Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.
 
 ### Collector
@@ -398,8 +326,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Bots
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.blocklist.de/en/export.html
 * **Description:** Blocklist.DE Bots Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks attacks on the RFI-Attacks, REG-Bots, IRC-Bots or BadBots (BadBots = he has posted a Spam-Comment on a open Forum or Wiki).
 
 ### Collector
@@ -419,8 +348,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Brute-force Logins
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.blocklist.de/en/export.html
 * **Description:** Blocklist.DE Brute-force Login Collector is the bot responsible to get the report from source of information. All IPs which attacks Joomlas, Wordpress and other Web-Logins with Brute-Force Logins.
 
 ### Collector
@@ -440,8 +370,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## FTP
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.blocklist.de/en/export.html
 * **Description:** Blocklist.DE FTP Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours for attacks on the Service FTP.
 
 ### Collector
@@ -461,8 +392,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## IMAP
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.blocklist.de/en/export.html
 * **Description:** Blocklist.DE IMAP Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours for attacks on the service like IMAP, SASL, POP3, etc.
 
 ### Collector
@@ -482,8 +414,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## IRC Bots
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.blocklist.de/en/export.html
 * **Description:** No description provided by feed provider.
 
 ### Collector
@@ -503,8 +436,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Mail
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.blocklist.de/en/export.html
 * **Description:** Blocklist.DE Mail Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks on the service Mail, Postfix.
 
 ### Collector
@@ -524,8 +458,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## SIP
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.blocklist.de/en/export.html
 * **Description:** Blocklist.DE SIP Collector is the bot responsible to get the report from source of information. All IP addresses that tried to login in a SIP-, VOIP- or Asterisk-Server and are included in the IPs-List from http://www.infiltrated.net/ (Twitter).
 
 ### Collector
@@ -545,8 +480,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## SSH
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.blocklist.de/en/export.html
 * **Description:** Blocklist.DE SSH Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks on the service SSH.
 
 ### Collector
@@ -566,8 +502,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Strong IPs
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.blocklist.de/en/export.html
 * **Description:** Blocklist.DE Strong IPs Collector is the bot responsible to get the report from source of information. All IPs which are older then 2 month and have more then 5.000 attacks.
 
 ### Collector
@@ -589,8 +526,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## CrimeServer
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.blueliv.com/
 * **Description:** Blueliv Crimeserver Collector is the bot responsible to get the report through the API.
 * **Additional Information:** The service uses a different API for free users and paying subscribers. In 'CrimeServer' feed the difference lies in the data points present in the feed. The non-free API available from Blueliv contains, for this specific feed, following extra fields not present in the free API; "_id" - Internal unique ID "subType" - Subtype of the Crime Server "countryName" - Country name where the Crime Server is located, in English "city" - City where the Crime Server is located "domain" - Domain of the Crime Server "host" - Host of the Crime Server "createdAt" - Date when the Crime Server was added to Blueliv CrimeServer database "asnCidr" - Range of IPs that belong to an ISP (registered via Autonomous System Number (ASN)) "asnId" - Identifier of an ISP registered via ASN "asnDesc" Description of the ISP registered via ASN
 
@@ -613,9 +551,11 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## N6 Stomp Stream
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://n6.cert.pl/en/
 * **Description:** N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.
+* **Additional Information:** Contact cert.pl to get access to the feed.
 
 ### Collector
 
@@ -640,8 +580,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Army List
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://cinsscore.com/#list
 * **Description:** The CINS Army list is a subset of the CINS Active Threat Intelligence ruleset, and consists of IP addresses that meet one of two basic criteria: 1) The IP's recent Rogue Packet score factor is very poor, or 2) The IP has tripped a designated number of 'trusted' alerts across a given number of our Sentinels deployed around the world.
 
 ### Collector
@@ -663,8 +604,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## CertStream
 
-* **Status:** on
-* **Revision:** 15-06-2018
+* **Public:** yes
+* **Revision:** 2018-06-15
+* **Documentation:** https://medium.com/cali-dog-security/introducing-certstream-3fc13bb98067
 * **Description:** HTTP Websocket Stream from certstream.calidog.io providing data from Certificate Transparency Logs.
 * **Additional Information:** Be aware that this feed provides a lot of data and may overload your system quickly.
 
@@ -685,8 +627,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Phishing
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** http://clean-mx.de/
 * **Description:** In order to download the CleanMX feed you need to use a custom user agent and register that user agent.
 
 ### Collector
@@ -708,8 +651,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Virus
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** http://clean-mx.de/
 * **Description:** In order to download the CleanMX feed you need to use a custom user agent and register that user agent.
 
 ### Collector
@@ -733,8 +677,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Latest
 
-* **Status:** on
-* **Revision:** 19-03-2019
+* **Public:** yes
+* **Revision:** 2019-03-19
+* **Documentation:** https://cybercrime-tracker.net/index.php
 * **Description:** C2 servers
 
 ### Collector
@@ -760,8 +705,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## AS Details
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.dshield.org/reports.html
 * **Description:** No description provided by feed provider.
 
 ### Collector
@@ -781,8 +727,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Block
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.dshield.org/reports.html
 * **Description:** This list summarizes the top 20 attacking class C (/24) subnets over the last three days. The number of 'attacks' indicates the number of targets reporting scans from this subnet.
 
 ### Collector
@@ -802,8 +749,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Suspicious Domains
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.dshield.org/reports.html
 * **Description:** There are many suspicious domains on the internet. In an effort to identify them, as well as false positives, we have assembled weighted lists based on tracking and malware lists from different sources. ISC is collecting and categorizing various lists associated with a certain level of sensitivity.
 
 ### Collector
@@ -825,8 +773,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Bruteforce Blocker
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://danger.rulez.sk/index.php/bruteforceblocker/
 * **Description:** Its main purpose is to block SSH bruteforce attacks via firewall.
 
 ### Collector
@@ -844,33 +793,13 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
-## SIP Invitation
-
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** Entries consist of fields with identifying characteristics of a source IP address that has been seen initiating a SIP INVITE operation to a remote host. The report lists hosts that are suspicious of more than just port scanning. These hosts may be SIP client cataloging or conducting various forms of telephony abuse. Report is updated hourly.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://dataplane.org/sipinvitation.txt`
-*  * `name`: `SIP Invitation`
-*  * `provider`: `Danger Rulez`
-*  * `rate_limit`: `3600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.dataplane.parser
-* **Configuration Parameters:**
-
-
 # Dataplane
 
 ## SIP Query
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://dataplane.org/
 * **Description:** Entries consist of fields with identifying characteristics of a source IP address that has been seen initiating a SIP OPTIONS query to a remote host. This report lists hosts that are suspicious of more than just port scanning. The hosts may be SIP server cataloging or conducting various forms of telephony abuse. Report is updated hourly.
 
 ### Collector
@@ -890,8 +819,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## SIP Registration
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://dataplane.org/
 * **Description:** Entries consist of fields with identifying characteristics of a source IP address that has been seen initiating a SIP REGISTER operation to a remote host. This report lists hosts that are suspicious of more than just port scanning. The hosts may be SIP client cataloging or conducting various forms of telephony abuse. Report is updated hourly.
 
 ### Collector
@@ -911,8 +841,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## SSH Client Connection
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://dataplane.org/
 * **Description:** Entries below consist of fields with identifying characteristics of a source IP address that has been seen initiating an SSH connection to a remote host. This report lists hosts that are suspicious of more than just port scanning. The hosts may be SSH server cataloging or conducting authentication attack attempts. Report is updated hourly.
 
 ### Collector
@@ -932,8 +863,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## SSH Password Authentication
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://dataplane.org/
 * **Description:** Entries below consist of fields with identifying characteristics of a source IP address that has been seen attempting to remotely login to a host using SSH password authentication. The report lists hosts that are highly suspicious and are likely conducting malicious SSH password authentication attacks. Report is updated hourly.
 
 ### Collector
@@ -955,8 +887,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Infected Domains
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://security-research.dyndns.org/pub/malware-feeds/
 * **Description:** DynDNS ponmocup. List of ponmocup malware redirection domains and infected web-servers. See also http://security-research.dyndns.org/pub/botnet-links.html
 
 ### Collector
@@ -976,61 +909,11 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 # Fraunhofer
 
-## DDoS Attack Feed (C&C)
-
-* **Status:** on
-* **Revision:** 01-07-2018
-* **Description:** The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs. You may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
-* **Additional Information:** The source feed provides a stream of newline separated JSON objects. Each line represents a single event observed by DDoS C&C trackers, e.g. attack commands. The feed can be retrieved with either the generic HTTP Stream Collector Bot for a streaming live feed or with the generic HTTP Collector Bot for a polled feed.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http_stream
-* **Configuration Parameters:**
-*  * `http_password`: `{{ your password }}`
-*  * `http_url`: `https://feed.caad.fkie.fraunhofer.de/ddosattackfeed`
-*  * `http_username`: `{{ your username }}`
-*  * `name`: `DDoS Attack Feed (C&C)`
-*  * `provider`: `Fraunhofer`
-*  * `rate_limit`: `10`
-*  * `strip_lines`: `True`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc
-* **Configuration Parameters:**
-*  * `unknown_messagetype_accuracy`: `80`
-
-
-## DDoS Attack Feed (Targets)
-
-* **Status:** on
-* **Revision:** 01-07-2018
-* **Description:** The Fraunhofer DDoS attack feed provides information about tracked C&C servers and detected attack commands from these C&Cs. You may request access to the feed via email to infection-reporter@fkie.fraunhofer.de
-* **Additional Information:** The source feed provides a stream of newline separated JSON objects. Each line represents a single event observed by DDoS C&C trackers, e.g. attack commands. The feed can be retrieved with either the generic HTTP Stream Collector Bot for a streaming live feed or with the generic HTTP Collector Bot for a polled feed.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http_stream
-* **Configuration Parameters:**
-*  * `http_password`: `{{ your password }}`
-*  * `http_url`: `https://feed.caad.fkie.fraunhofer.de/ddosattackfeed`
-*  * `http_username`: `{{ your username }}`
-*  * `name`: `DDoS Attack Feed (Targets)`
-*  * `provider`: `Fraunhofer`
-*  * `rate_limit`: `10`
-*  * `strip_lines`: `True`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.fraunhofer.parser_ddosattack_target
-* **Configuration Parameters:**
-
-
 ## DGA Archive
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://dgarchive.caad.fkie.fraunhofer.de/welcome/
 * **Description:** Fraunhofer DGA collector fetches data from Fraunhofer's domain generation archive.
 
 ### Collector
@@ -1054,8 +937,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Hosts
 
-* **Status:** off
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://hosts-file.net/
 * **Description:** hpHosts is a community managed and maintained hosts file that allows an additional layer of protection against access to ad, tracking and malicious websites.
 
 ### Collector
@@ -1078,8 +962,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## Enterprise Callback
 
-* **Status:** on
-* **Revision:** 11-09-2019
+* **Public:** unknown
+* **Revision:** 2019-09-11
 * **Documentation:** https://haveibeenpwned.com/EnterpriseSubscriber/
 * **Description:** With the Enterprise Subscription of 'Have I Been Pwned' you are able to provide a callback URL and any new leak data is submitted to it. It is recommended to put a webserver with Authorization check, TLS etc. in front of the API collector.
 * **Additional Information:** "A minimal nginx configuration could look like:
@@ -1122,8 +1006,9 @@ server {
 
 ## Bind Format
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://malc0de.com/dashboard/
 * **Description:** This feed includes FQDN's of malicious hosts, the file format is in Bind file format.
 
 ### Collector
@@ -1143,8 +1028,9 @@ server {
 
 ## IP Blacklist
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://malc0de.com/dashboard/
 * **Description:** This feed includes IP Addresses of malicious hosts.
 
 ### Collector
@@ -1164,8 +1050,9 @@ server {
 
 ## Windows Format
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://malc0de.com/dashboard/
 * **Description:** This feed includes FQDN's of malicious hosts, the file format is in Windows Hosts file format.
 
 ### Collector
@@ -1187,8 +1074,9 @@ server {
 
 ## Blacklist
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.malwaredomainlist.com/
 * **Description:** No description provided by feed provider.
 
 ### Collector
@@ -1210,8 +1098,9 @@ server {
 
 ## Malicious
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.malwaredomains.com/
 * **Description:** Malware Prevention through Domain Blocking (Black Hole DNS Sinkhole)
 
 ### Collector
@@ -1233,8 +1122,9 @@ server {
 
 ## DansGuardian
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.malwarepatrol.net/
 * **Description:** Malware block list with URLs
 
 ### Collector
@@ -1256,8 +1146,9 @@ server {
 
 ## Latest malicious activity
 
-* **Status:** on
-* **Revision:** 05-02-2018
+* **Public:** yes
+* **Revision:** 2018-02-05
+* **Documentation:** https://www.malwareurl.com/
 * **Description:** Latest malicious domains/IPs.
 
 ### Collector
@@ -1279,8 +1170,9 @@ server {
 
 ## Sandbox Reports
 
-* **Status:** on
-* **Revision:** 05-07-2018
+* **Public:** unknown
+* **Revision:** 2018-07-05
+* **Documentation:** https://www.mcafee.com/enterprise/en-us/products/advanced-threat-defense.html
 * **Description:** Processes reports from McAfee's sandboxing solution via the openDXL API.
 
 ### Collector
@@ -1299,11 +1191,12 @@ server {
 
 # Microsoft
 
-## BingMURLs
+## BingMURLs via Interflow
 
-* **Status:** on
-* **Revision:** 29-05-2018
-* **Description:** Collects Malicious URLs detected by Bing from the Interflow API.
+* **Public:** unknown
+* **Revision:** 2018-05-29
+* **Documentation:** https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
+* **Description:** Collects Malicious URLs detected by Bing from the Interflow API. The feed is available via Microsoft’s Government Security Program (GSP).
 * **Additional Information:** Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector.
 
 ### Collector
@@ -1313,7 +1206,7 @@ server {
 *  * `api_key`: `{{your API key}}`
 *  * `file_match`: `^bingmurls_`
 *  * `http_timeout_sec`: `300`
-*  * `name`: `BingMURLs`
+*  * `name`: `BingMURLs via Interflow`
 *  * `not_older_than`: `2 days`
 *  * `provider`: `Microsoft`
 *  * `rate_limit`: `3600`
@@ -1324,11 +1217,12 @@ server {
 * **Configuration Parameters:**
 
 
-## CTIP
+## CTIP via Interflow
 
-* **Status:** on
-* **Revision:** 06-03-2018
-* **Description:** Collects CTIP files from the Interflow API.
+* **Public:** unknown
+* **Revision:** 2018-03-06
+* **Documentation:** https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
+* **Description:** Collects CTIP (Sinkhole data) files from the Interflow API.The feed is available via Microsoft’s Government Security Program (GSP).
 * **Additional Information:** Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector. As many IPs occur very often in the data, you may want to use a deduplicator specifically for the feed.
 
 ### Collector
@@ -1338,7 +1232,7 @@ server {
 *  * `api_key`: `{{your API key}}`
 *  * `file_match`: `^ctip_`
 *  * `http_timeout_sec`: `300`
-*  * `name`: `CTIP`
+*  * `name`: `CTIP via Interflow`
 *  * `not_older_than`: `2 days`
 *  * `provider`: `Microsoft`
 *  * `rate_limit`: `3600`
@@ -1353,9 +1247,10 @@ server {
 
 ## DGA
 
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** This feed lists DGA family, Domain, Start and end of valid time(UTC) of a number of DGA families. reference: http://data.netlab.360.com/dga
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://data.netlab.360.com/dga
+* **Description:** This feed lists DGA family, Domain, Start and end of valid time(UTC) of a number of DGA families.
 
 ### Collector
 
@@ -1374,8 +1269,9 @@ server {
 
 ## Hajime Scanner
 
-* **Status:** on
-* **Revision:** 01-08-2019
+* **Public:** yes
+* **Revision:** 2019-08-01
+* **Documentation:** https://data.netlab.360.com/hajime/
 * **Description:** This feed lists IP address for know Hajime bots network. These IPs data are obtained by joining the DHT network and interacting with the Hajime node
 
 ### Collector
@@ -1395,9 +1291,10 @@ server {
 
 ## Magnitude EK
 
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit. Information also includes the IP address used for the domain and last time seen. reference: http://data.netlab.360.com/ek
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://data.netlab.360.com/ek
+* **Description:** This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit. Information also includes the IP address used for the domain and last time seen.
 
 ### Collector
 
@@ -1416,9 +1313,10 @@ server {
 
 ## Mirai Scanner
 
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** This feed provides IP addresses which actively scan for vulnerable IoT devices and install Mirai Botnet. reference: http://data.netlab.360.com/mirai-scanner/
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://data.netlab.360.com/mirai-scanner/
+* **Description:** This feed provides IP addresses which actively scan for vulnerable IoT devices and install Mirai Botnet.
 
 ### Collector
 
@@ -1435,98 +1333,38 @@ server {
 * **Configuration Parameters:**
 
 
-# Nothink
-
-## DNS Attack
-
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** This feed provides attack information for attack information against DNS honeypots. reference: http://www.nothink.org/honeypot_dns.php .
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.nothink.org/honeypot_dns_attacks.txt`
-*  * `name`: `DNS Attack`
-*  * `provider`: `Nothink`
-*  * `rate_limit`: `3600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.nothink.parser
-* **Configuration Parameters:**
-
-
-## SNMP
-
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** There are a number of feeds you can use to depend on how far back you would like to go. The time.source will still be the date and time the feed was generated at nothink. This feed provides IP addresses of systems that have connected to a honeypot via SNMP in the last 24 hours. reference: http://www.nothink.org/honeypot_snmp.php
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.nothink.org/blacklist/blacklist_snmp_day.txt`
-*  * `name`: `SNMP`
-*  * `provider`: `Nothink`
-*  * `rate_limit`: `86400`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.nothink.parser
-* **Configuration Parameters:**
-
-
-## SSH
-
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** There are a number of feeds you can use to depend on how far back you would like to go. The time.source will still be the date and time the feed was generated at nothink. This feed provides IP addresses of systems that have connected to a honeypot via SSH in the last 24 hours. Reference: http://www.nothink.org/honeypots.php
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.nothink.org/blacklist/blacklist_ssh_day.txt`
-*  * `name`: `SSH`
-*  * `provider`: `Nothink`
-*  * `rate_limit`: `86400`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.nothink.parser
-* **Configuration Parameters:**
-
-
-## Telnet
-
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** There are a number of feeds you can use to depend on how far back you would like to go. The time.source will still be the date and time the feed was generated at nothink. This feed provides IP addresses of systems that have connected to a honeypot via Telnet in the last 24 hours. reference: http://www.nothink.org/honeypots.php
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.nothink.org/blacklist/blacklist_telnet_day.txt`
-*  * `name`: `Telnet`
-*  * `provider`: `Nothink`
-*  * `rate_limit`: `86400`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.nothink.parser
-* **Configuration Parameters:**
-
-
 # OpenPhish
 
-## Phishing
+## Premium Feed
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-02-06
+* **Documentation:** https://www.openphish.com/phishing_feeds.html
+* **Description:** OpenPhish is a fully automated self-contained platform for phishing intelligence. It identifies phishing sites and performs intelligence analysis in real time without human intervention and without using any external resources, such as blacklists.
+* **Additional Information:** Discounts available for Government and National CERTs a well as for Nonprofit and Not-for-Profit organizations.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_password`: `{{ your password}}`
+*  * `http_url`: `https://openphish.com/prvt-intell/`
+*  * `http_username`: `{{ your username}}`
+*  * `name`: `Premium Feed`
+*  * `provider`: `OpenPhish`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.openphish.parser_commercial
+* **Configuration Parameters:**
+
+
+## Public feed
+
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.openphish.com/
 * **Description:** OpenPhish is a fully automated self-contained platform for phishing intelligence. It identifies phishing sites and performs intelligence analysis in real time without human intervention and without using any external resources, such as blacklists.
 
 ### Collector
@@ -1534,7 +1372,7 @@ server {
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.openphish.com/feed.txt`
-*  * `name`: `Phishing`
+*  * `name`: `Public feed`
 *  * `provider`: `OpenPhish`
 *  * `rate_limit`: `86400`
 
@@ -1544,37 +1382,13 @@ server {
 * **Configuration Parameters:**
 
 
-# OpenPhish Commercial
-
-## Phishing
-
-* **Status:** on
-* **Revision:** 06-02-2018
-* **Description:** OpenPhish is a fully automated self-contained platform for phishing intelligence. It identifies phishing sites and performs intelligence analysis in real time without human intervention and without using any external resources, such as blacklists.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_password`: `{{ your password}}`
-*  * `http_url`: `https://openphish.com/prvt-intell/`
-*  * `http_username`: `{{ your username}}`
-*  * `name`: `Phishing`
-*  * `provider`: `OpenPhish Commercial`
-*  * `rate_limit`: `86400`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.openphish.parser_commercial
-* **Configuration Parameters:**
-
-
 # PhishTank
 
 ## Online
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://data.phishtank.com/
 * **Description:** PhishTank is a collaborative clearing house for data and information about phishing on the Internet.
 
 ### Collector
@@ -1596,8 +1410,8 @@ server {
 
 ## Agent Tesla
 
-* **Status:** on
-* **Revision:** 02-04-2019
+* **Public:** yes
+* **Revision:** 2019-04-02
 * **Documentation:** https://precisionsec.com/threat-intelligence-feeds/agent-tesla/
 * **Description:** Agent Tesla IoCs, URLs where the malware is hosted.
 
@@ -1624,8 +1438,9 @@ server {
 
 ## Via IMAP
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.shadowserver.org/what-we-do/network-reporting/
 * **Description:** Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
 * **Additional Information:** The configuration retrieves the data from a e-mails via IMAP from the attachments.
 
@@ -1634,7 +1449,7 @@ server {
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv.zip`
-*  * `attach_unzip`: `True`
+*  * `extract_files`: `True`
 *  * `folder`: `INBOX`
 *  * `mail_host`: `__HOST__`
 *  * `mail_password`: `__PASSWORD__`
@@ -1653,8 +1468,9 @@ server {
 
 ## Via Request Tracker
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.shadowserver.org/what-we-do/network-reporting/
 * **Description:** Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
 * **Additional Information:** The configuration retrieves the data from a RT/RTIR ticketing instance via the attachment or an download.
 
@@ -1692,8 +1508,9 @@ server {
 
 ## ASN Drop
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.spamhaus.org/drop/
 * **Description:** ASN-DROP contains a list of Autonomous System Numbers controlled by spammers or cyber criminals, as well as "hijacked" ASNs. ASN-DROP can be used to filter BGP routes which are being used for malicious purposes.
 
 ### Collector
@@ -1713,9 +1530,10 @@ server {
 
 ## CERT
 
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** Spamhaus CERT Insight Portal. Access limited to CERTs and CSIRTs with national or regional responsibility. https://www.spamhaus.org/news/article/705/spamhaus-launches-cert-insight-portal .
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.spamhaus.org/news/article/705/spamhaus-launches-cert-insight-portal
+* **Description:** Spamhaus CERT Insight Portal. Access limited to CERTs and CSIRTs with national or regional responsibility. .
 
 ### Collector
 
@@ -1734,8 +1552,9 @@ server {
 
 ## Drop
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.spamhaus.org/drop/
 * **Description:** The DROP list will not include any IP address space under the control of any legitimate network - even if being used by "the spammers from hell". DROP will only include netblocks allocated directly by an established Regional Internet Registry (RIR) or National Internet Registry (NIR) such as ARIN, RIPE, AFRINIC, APNIC, LACNIC or KRNIC or direct RIR allocations.
 
 ### Collector
@@ -1755,8 +1574,9 @@ server {
 
 ## Dropv6
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.spamhaus.org/drop/
 * **Description:** The DROPv6 list includes IPv6 ranges allocated to spammers or cyber criminals. DROPv6 will only include IPv6 netblocks allocated directly by an established Regional Internet Registry (RIR) or National Internet Registry (NIR) such as ARIN, RIPE, AFRINIC, APNIC, LACNIC or KRNIC or direct RIR allocations.
 
 ### Collector
@@ -1776,8 +1596,9 @@ server {
 
 ## EDrop
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.spamhaus.org/drop/
 * **Description:** EDROP is an extension of the DROP list that includes sub-allocated netblocks controlled by spammers or cyber criminals. EDROP is meant to be used in addition to the direct allocations on the DROP list.
 
 ### Collector
@@ -1799,8 +1620,9 @@ server {
 
 ## Hidden IFrames
 
-* **Status:** on
-* **Revision:** 28-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-28
+* **Documentation:** http://labs.sucuri.net/?malware
 * **Description:** Latest hidden iframes identified on compromised web sites.
 * **Additional Information:** Please note that the parser only extracts the hidden iframes  and the conditional redirects, not the encoded javascript.
 
@@ -1823,8 +1645,8 @@ server {
 
 ## Malicious Domains
 
-* **Status:** on
-* **Revision:** 04-09-2018
+* **Public:** unknown
+* **Revision:** 2018-09-04
 * **Description:** Detected malicious domains. Note that you have to opened up Sponsored Datafeed Service (SDS) access to the SURBL data via rsync for your IP address.
 
 ### Collector
@@ -1842,18 +1664,19 @@ server {
 
 # Taichung
 
-## Netflow
+## Netflow Recent
 
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** Abnormal flows detected.
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.tc.edu.tw/net/netflow/lkout/recent/
+* **Description:** Abnormal flows detected: Attacking (DoS, Brute-Force, Scanners) and malicious hosts (C&C servers, hosting malware)
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://www.tc.edu.tw/net/netflow/lkout/recent/30`
-*  * `name`: `Netflow`
+*  * `http_url`: `https://www.tc.edu.tw/net/netflow/lkout/recent/`
+*  * `name`: `Netflow Recent`
 *  * `provider`: `Taichung`
 *  * `rate_limit`: `3600`
 
@@ -1861,15 +1684,15 @@ server {
 
 * **Module:** intelmq.bots.parsers.taichung.parser
 * **Configuration Parameters:**
-*  * `error_log_message`: `false`
 
 
 # Team Cymru
 
 ## CAP
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.team-cymru.com/CSIRT-AP.html https://www.cymru.com/$certname/report_info.txt
 * **Description:** Team Cymru provides daily lists of compromised or abused devices for the ASNs and/or netblocks with a CSIRT's jurisdiction. This includes such information as bot infected hosts, command and control systems, open resolvers, malware urls, phishing urls, and brute force attacks
 * **Additional Information:** "Two feeds types are offered:
  * The new https://www.cymru.com/$certname/$certname_{time[%Y%m%d]}.txt
@@ -1897,8 +1720,9 @@ server {
 
 ## Full Bogons
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.team-cymru.com/bogon-reference-http.html
 * **Description:** Fullbogons are a larger set which also includes IP space that has been allocated to an RIR, but not assigned by that RIR to an actual ISP or other end-user. IANA maintains a convenient IPv4 summary page listing allocated and reserved netblocks, and each RIR maintains a list of all prefixes that they have assigned to end-users. Our bogon reference pages include additional links and resources to assist those who wish to properly filter bogon prefixes within their networks.
 
 ### Collector
@@ -1920,8 +1744,8 @@ server {
 
 ## Recent domains
 
-* **Status:** on
-* **Revision:** 06-02-2018
+* **Public:** yes
+* **Revision:** 2018-02-06
 * **Documentation:** https://www.threatminer.org/
 * **Description:** Latest malicious domains.
 
@@ -1944,8 +1768,9 @@ server {
 
 ## Greylist
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://project.turris.cz/greylist-data/legend.txt
 * **Description:** The data are processed and clasified every week and behaviour of IP addresses that accessed a larger number of Turris routers is evaluated. The result is a list of addresses that have tried to obtain information about services on the router or tried to gain access to them. We publish this so called "greylist" that also contains a list of tags for each address which indicate what behaviour of the address was observed.
 
 ### Collector
@@ -1967,8 +1792,9 @@ server {
 
 ## Hosts
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.urlvir.com/
 * **Description:** This feed provides FQDN's or IP addresses for Active Malicious Hosts.
 
 ### Collector
@@ -1988,8 +1814,9 @@ server {
 
 ## IPs
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://www.urlvir.com/
 * **Description:** This feed provides IP addresses hosting Malware.
 
 ### Collector
@@ -2011,9 +1838,10 @@ server {
 
 ## Blacklist
 
-* **Status:** on
-* **Revision:** 20-01-2018
-* **Description:** The collections and feed description can be found on: https://dsi.ut-capitole.fr/blacklists/.
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://dsi.ut-capitole.fr/blacklists/
+* **Description:** Various blacklist feeds
 
 ### Collector
 
@@ -2038,8 +1866,9 @@ server {
 
 ## URLs
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://vxvault.net/ViriList.php
 * **Description:** This feed provides IP addresses hosting Malware.
 
 ### Collector
@@ -2061,8 +1890,9 @@ server {
 
 ## Unsafe sites
 
-* **Status:** on
-* **Revision:** 27-06-2018
+* **Public:** yes
+* **Revision:** 2018-06-27
+* **Documentation:** https://viriback.com/
 * **Description:** Latest detected unsafe sites.
 * **Additional Information:** You need to install the lxml library in order to parse this feed.
 
@@ -2089,8 +1919,8 @@ server {
 
 ## Unsafe sites
 
-* **Status:** on
-* **Revision:** 09-03-2018
+* **Public:** yes
+* **Revision:** 2018-03-09
 * **Description:** Latest detected unsafe sites.
 
 ### Collector
@@ -2112,8 +1942,9 @@ server {
 
 ## Defacements
 
-* **Status:** on
-* **Revision:** 20-01-2018
+* **Public:** unknown
+* **Revision:** 2018-01-20
+* **Documentation:** https://zone-h.org/
 * **Description:** all the information contained in Zone-H's cybercrime archive were either collected online from public sources or directly notified anonymously to us.
 
 ### Collector
@@ -2121,7 +1952,7 @@ server {
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv`
-*  * `attach_unzip`: `False`
+*  * `extract_files`: `False`
 *  * `folder`: `INBOX`
 *  * `mail_host`: `__HOST__`
 *  * `mail_password`: `__PASSWORD__`

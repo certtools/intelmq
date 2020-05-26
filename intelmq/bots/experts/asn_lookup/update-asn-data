@@ -34,11 +34,8 @@ cleanup()
 fetch_and_install()
 {
   cd "$TMP_DIR"
-  # FIXME: we have to use http as the data is not available via https,
-  # so this is not a secure connection... :-(
-  curl -s -S -O http://data.ris.ripe.net/rrc12/latest-bview.gz
-  pyasn_util_convert.py --single latest-bview.gz ipasn.dat \
-                        --no-progress
+  pyasn_util_download.py --latestv46
+  pyasn_util_convert.py --single rib.*.*.bz2 ipasn.dat
   mv -f ipasn.dat "$DEST_FILE"
 }
 

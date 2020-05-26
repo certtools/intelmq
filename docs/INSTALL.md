@@ -37,7 +37,7 @@ If you are using native packages, you can simply skip this section as all depend
 ## Debian 8
 
 ```bash
-apt-get install python3 python3-pip
+apt-get install python3 python3-pip python3-requests
 apt-get install build-essential libffi-dev
 apt-get install python3-dev
 apt-get install redis-server
@@ -68,7 +68,7 @@ apt install python3-sleekxmpp python3-pymongo python3-psycopg2
 
 ```bash
 yum install epel-release
-yum install python34 python34-devel
+yum install python34 python34-devel python34-requests
 yum install gcc gcc-c++
 yum install redis
 ```

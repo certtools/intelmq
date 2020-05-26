@@ -54,7 +54,7 @@
             "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
-                "attach_unzip": true,
+                "extract_files": true,
                 "folder": "INBOX",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
@@ -331,11 +331,6 @@
             "module": "intelmq.bots.parsers.abusech.parser_ip",
             "parameters": {}
         },
-        "Abuse.ch Ransomware": {
-            "description": "Abuse.ch Ransomware Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.abusech.parser_ransomware",
-            "parameters": {}
-        },
         "AlienVault": {
             "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.alienvault.parser",
@@ -359,11 +354,6 @@
         "Bambenek": {
             "description": "Bambenek parser is the bot responsible to parse and and sanitize the information from the feeds available from Bambenek.",
             "module": "intelmq.bots.parsers.bambenek.parser",
-            "parameters": {}
-        },
-        "Bitcash Blocklist Feed": {
-            "description": "Bitcash Blocklist parser is the bot responsible to parse and sanitize the information.",
-            "module": "intelmq.bots.parsers.bitcash.parser",
             "parameters": {}
         },
         "Blocklist.de": {
@@ -434,18 +424,6 @@
         "DynDNS ponmocup Domains": {
             "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.dyn.parser",
-            "parameters": {}
-        },
-        "Fraunhofer DDoS Attack C&C": {
-            "description": "Fraunhofer DDoS Attack C&C Feed Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc",
-            "parameters": {
-                "unknown_messagetype_accuracy": 10.0
-            }
-        },
-        "Fraunhofer DDoS Attack Target": {
-            "description": "Fraunhofer DDoS Attack Target Feed Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.fraunhofer.parser_ddosattack_target",
             "parameters": {}
         },
         "Fraunhofer DGA": {
@@ -572,11 +550,6 @@
             "module": "intelmq.bots.parsers.netlab_360.parser",
             "parameters": {}
         },
-        "Nothink": {
-            "description": "Nothink Feed Parser is the bot responsible to parse the SNMP, SSH, Telnet, and DNS Attack reports and sanitize the information.",
-            "module": "intelmq.bots.parsers.nothink.parser",
-            "parameters": {}
-        },
         "OpenPhish": {
             "description": "OpenPhish Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.openphish.parser",
@@ -631,9 +604,7 @@
         "Taichung": {
             "description": "Taichung Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.taichung.parser",
-            "parameters": {
-                "error_log_message": false
-            }
+            "parameters": {}
         },
         "Threatminer": {
             "description": "Threatminer Parser is the bot responsible to parse the report and sanitize the information.",

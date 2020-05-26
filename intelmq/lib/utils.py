@@ -35,6 +35,7 @@ from dateutil.relativedelta import relativedelta
 from termstyle import red
 
 import intelmq
+from intelmq.lib.exceptions import DecodingError
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
@@ -84,22 +85,22 @@ def decode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8",),
     """
     if isinstance(text, str):
         return text
+    exception = None
 
     for encoding in encodings:
         try:
             return str(text.decode(encoding))
-        except ValueError:
-            pass
+        except ValueError as exc:
+            exception = exc
 
     if force:
         for encoding in encodings:
             try:
                 return str(text.decode(encoding, 'ignore'))
-            except ValueError:
-                pass
+            except ValueError as exc:
+                exception = exc
 
-    raise ValueError("Could not decode string with given encodings{!r}"
-                     ".".format(encodings))
+    raise DecodingError(encodings=encodings, exception=exception, object=text)
 
 
 def encode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8",),

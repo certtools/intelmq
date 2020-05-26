@@ -10,10 +10,8 @@ python:
   - 3.7
 matrix:
   include:
-  - python: 3.4
+  - python: 3.5
     env: mode=debian
-  - python: 3.4
-    env: requirements=false
   - python: 3.6
     env: mode=codestyle
 install:
@@ -21,7 +19,6 @@ install:
   - if [[ -v requirements ]]; then sudo apt-get install polipo lighttpd; fi
   - if [[ $mode == debian ]]; then sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt fakeroot dh-systemd safe-rm; fi
   - if [[ $requirements == true ]]; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
-  - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then sudo pip install typing; fi
   - if [[ -v requirements ]]; then pip install Cerberus!=1.3 codecov pyyaml; fi
   - if [[ $mode == codestyle ]]; then pip install pycodestyle; fi
   - if [[ -v requirements ]]; then sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers; fi
@@ -45,6 +42,7 @@ before_script:
   - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$debversion.debian.tar.gz; fi
   - if [[ $mode == debian ]]; then popd; fi
   - if [[ -v requirements ]]; then sudo cp intelmq/tests/assets/* /var/www/html/ && sudo touch /var/www/html/$(date +%Y).txt; fi
+  - if [[ $requirements == true ]]; then sudo bash -c 'echo "[rabbitmq_management]." > /etc/rabbitmq/enabled_plugins' && sudo systemctl restart rabbitmq-server; fi
 script:
   - if [[ $requirements == true ]]; then TZ=utc INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; find contrib/ -name "test*.py" -exec nosetests {} \+; elif [[ $requirements == false ]]; then INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
   - if [[ $mode == codestyle ]]; then pycodestyle intelmq/{bots,lib,bin}; fi

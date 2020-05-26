@@ -1,0 +1,27 @@
+{
+  "_geo_env_remote_addr": {
+    "path": "env.remote_addr",
+    "asn_name": "ExampleAS",
+    "asn": 65536,
+    "longitude": 13,
+    "latitude": 37,
+    "ip": "203.0.113.2",
+    "netmask": 24,
+    "country_code": "AT",
+    "country_name": "Austria",
+    "region": "Vienna",
+    "region_code": "01",
+    "city": "Vienna",
+    "postal_code": "1010"
+  },
+  "_ts": 1484041530,
+  "qtype": "A",
+  "_origin": "dnsmalware",
+  "_provider": "spikens",
+  "trojanfamily": "Nivdort",
+  "env": {
+    "server_port": 80,
+    "remote_addr": "203.0.113.2",
+    "request_method": "POST"
+  }
+}

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import json
-import unittest
 
 from intelmq.lib import test, utils
 
