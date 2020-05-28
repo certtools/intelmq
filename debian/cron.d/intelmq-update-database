@@ -1,0 +1,10 @@
+# /etc/cron.d/intelmq-update-database: crontab fragment for intelmq
+#  This updates the data files used by some expert bots.
+#
+# m h  dom mon dow      command
+# Update database for tor_nodes bot:
+11  0 * * *     intelmq   intelmq.bots.experts.tor_nodes.expert --update-database
+# Update database for maxmind_geoip bot:
+30 23 * * 2     intelmq   intelmq.bots.experts.maxmind_geoip.expert --update-database
+# Update database for asn_lookup bot:
+5 */2 * * *     intelmq   intelmq.bots.experts.asn_lookup.expert --update-database
