@@ -796,7 +796,8 @@
             "parameters": {
                 "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb",
                 "overwrite": false,
-                "use_registered": false
+                "use_registered": false,
+                "license_key": "<insert Maxmind license key>"
             }
         },
         "McAfee Active Response Lookup": {
