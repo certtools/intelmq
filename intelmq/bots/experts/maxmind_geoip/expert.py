@@ -101,58 +101,59 @@ class GeoIPExpertBot(Bot):
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
         except KeyError as e:
-            print("Your configuration of {0} is missing key {1}.".format(bot, e))
+            print("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
             if str(e) == "'license_key'":
-                print("Since December 30, 2019 you need to register for a free license key to download GeoLite2 database.")
-                print("https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/")
+                print(
+                    "Since December 30, 2019 you need to register for a free license key to download GeoLite2 database.")
+                print(
+                    "https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/")
             sys.exit(1)
 
         if not bots:
-            print("No bots of type {0} present in runtime.conf.".format(__name__))
+            print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
             sys.exit(0)
 
         try:
+            print("Downloading the latest database update...")
             response = requests.get("https://download.maxmind.com/app/geoip_download",
                                     params={"license_key": license_key,
                                             "edition_id": "GeoLite2-City",
                                             "suffix": "tar.gz"})
         except requests.exceptions.RequestException as e:
-            print("Connection Error: {0}".format(e))
+            print("Database update failed. Connection Error: {0}".format(e))
             sys.exit(1)
 
-        if response.status_code == 200:
-
-            database_data = None
-
-            with tarfile.open(fileobj=io.BytesIO(response.content), mode='r:gz') as archive:
-                for member in archive.getmembers():
-                    if "GeoLite2-City.mmdb" in member.name:
-                        database_data = archive.extractfile(member).read()
-                        break
-
-            if not database_data:
-                print("Could not locate file 'GeoLite2-City.mmbd' in the downloaded archive.")
-                sys.exit(1)
-
-            for database_path in set(bots.values()):
-                database_dir = pathlib.Path(database_path).parent
-                database_dir.mkdir(parents=True, exist_ok=True)
-                with open(database_path, "wb") as database:
-                    database.write(database_data)
-
-            print("Database updated. Reloading affected bots.")
-
-            ctl = IntelMQController()
-            for bot in bots.keys():
-                ctl.bot_reload(bot)
-
-        elif response.status_code == 401:
-            print("Your license key is invalid.")
+        if response.status_code == 401:
+            print("Database update failed. Your license key is invalid.")
             sys.exit(1)
 
-        else:
+        if response.status_code != 200:
             print("Database update failed. Server responded: {0}.".format(response.status_code))
             sys.exit(1)
+
+        database_data = None
+
+        with tarfile.open(fileobj=io.BytesIO(response.content), mode='r:gz') as archive:
+            for member in archive.getmembers():
+                if "GeoLite2-City.mmdb" in member.name:
+                    database_data = archive.extractfile(member).read()
+                    break
+
+        if not database_data:
+            print("Database update failed. Could not locate file 'GeoLite2-City.mmbd' in the downloaded archive.")
+            sys.exit(1)
+
+        for database_path in set(bots.values()):
+            database_dir = pathlib.Path(database_path).parent
+            database_dir.mkdir(parents=True, exist_ok=True)
+            with open(database_path, "wb") as database:
+                database.write(database_data)
+
+        print("Database updated. Reloading affected bots.")
+
+        ctl = IntelMQController()
+        for bot in bots.keys():
+            ctl.bot_reload(bot)
 
 
 BOT = GeoIPExpertBot

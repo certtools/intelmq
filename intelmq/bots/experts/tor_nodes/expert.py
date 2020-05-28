@@ -67,39 +67,40 @@ class TorExpertBot(Bot):
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
         except KeyError as e:
-            print("Your configuration of {0} is missing key {1}.".format(bot, e))
+            print("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
             sys.exit(1)
 
         if not bots:
-            print("No bots of type {0} present in runtime.conf.".format(__name__))
+            print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
             sys.exit(0)
 
         try:
+            print("Downloading the latest database update...")
             response = requests.get("https://check.torproject.org/exit-addresses")
         except requests.exceptions.RequestException as e:
-            print("Connection Error: {0}".format(e))
+            print("Database update failed. Connection Error: {0}".format(e))
             sys.exit(1)
 
-        if response.status_code == 200:
-
-            pattern = re.compile("ExitAddress ([^\s]+)")
-            tor_exits = "\n".join(pattern.findall(response.text))
-
-            for database_path in set(bots.values()):
-                database_dir = pathlib.Path(database_path).parent
-                database_dir.mkdir(parents=True, exist_ok=True)
-                with open(database_path, "w") as database:
-                    database.write(tor_exits)
-
-            print("Database updated. Reloading affected bots.")
-
-            ctl = IntelMQController()
-            for bot in bots.keys():
-                ctl.bot_reload(bot)
-
-        else:
+        if response.status_code != 200:
             print("Database update failed. Server responded: {0}.".format(response.status_code))
             sys.exit(1)
+
+        pattern = re.compile("ExitAddress ([^\s]+)")
+        tor_exits = "\n".join(pattern.findall(response.text))
+
+        for database_path in set(bots.values()):
+            database_dir = pathlib.Path(database_path).parent
+            database_dir.mkdir(parents=True, exist_ok=True)
+            with open(database_path, "w") as database:
+                database.write(tor_exits)
+
+        print("Database updated. Reloading affected bots.")
+
+        ctl = IntelMQController()
+        for bot in bots.keys():
+            ctl.bot_reload(bot)
+
+
 
 
 BOT = TorExpertBot
