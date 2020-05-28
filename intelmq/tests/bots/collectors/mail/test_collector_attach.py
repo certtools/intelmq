@@ -11,7 +11,7 @@ import intelmq.lib.test as test
 from intelmq.bots.collectors.mail.collector_mail_attach import MailAttachCollectorBot
 from intelmq.lib.utils import base64_encode
 if os.getenv('INTELMQ_TEST_EXOTIC'):
-    from .lib import MockedZipImbox
+    from .lib import MockedZipImbox, MockedBadAttachmentImbox
 
 REPORT_FOOBARZIP = {
                     '__type': 'Report',
@@ -53,6 +53,14 @@ class TestMailAttachCollectorBot(test.BotTestCase, unittest.TestCase):
         with mock.patch('imbox.Imbox', new=MockedZipImbox):
             self.run_bot(parameters={'attach_unzip': True})
         self.assertMessageEqual(0, REPORT_FOOBARZIP)
+
+    def test_attach_no_filename(self):
+        """
+        https://github.com/certtools/intelmq/issues/1538
+        """
+        with mock.patch('imbox.Imbox', new=MockedBadAttachmentImbox):
+            self.run_bot()
+        self.assertOutputQueueLen(0)
 
 
 if __name__ == '__main__':  # pragma: no cover

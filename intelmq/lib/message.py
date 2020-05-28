@@ -9,7 +9,7 @@ import json
 import re
 import warnings
 from collections import defaultdict
-from typing import Any, Optional, Sequence, Union
+from typing import Any, Dict, Iterable, Optional, Sequence, Union
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
@@ -374,7 +374,7 @@ class Message(dict):
     def __hash__(self):
         return int(self.hash(), 16)
 
-    def hash(self, *, filter_keys=frozenset(), filter_type="blacklist"):
+    def hash(self, *, filter_keys: Iterable = frozenset(), filter_type: str = "blacklist"):
         """Return a SHA256 hash of the message as a hexadecimal string.
         The hash is computed over almost all key/value pairs. Depending on
         filter_type parameter (blacklist or whitelist), the keys defined in

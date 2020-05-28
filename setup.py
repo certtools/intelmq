@@ -13,6 +13,7 @@ REQUIRES = [
     'python-termstyle>=0.1.10',
     'pytz>=2012c',
     'redis>=2.10',
+    'requests>=2.2.0',
 ]
 
 exec(open(os.path.join(os.path.dirname(__file__),

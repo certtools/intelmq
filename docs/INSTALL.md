@@ -1,9 +1,9 @@
 **Table of Contents:**
 - [Requirements](#requirements)
 - [Install Dependencies](#install-dependencies)
-  - [Ubuntu 16.04 / Ubuntu 18.04 / Debian 9](#ubuntu-1604--ubuntu-1804--debian-9)
+  - [Ubuntu / Debian](#ubuntu--debian)
   - [CentOS 7 / RHEL 7](#centos-7--rhel-7)
-  - [openSUSE Leap 15.0 / 15.1](#opensuse-leap-150--151)
+  - [openSUSE Leap 15.1](#opensuse-leap-151)
 - [Installation](#installation)
   - [Native Packages](#native-packages)
   - [PyPi](#pypi)
@@ -19,21 +19,21 @@ For testing pre-releases see also the [Developer's Guide](Developers-Guide.md#te
 
 # Requirements
 
-The following instructions assume the following requirements:
+The following instructions assume the following requirements. Python versions >= 3.5 are supported.
 
 Supported and recommended operating systems are:
 * CentOS 7
-* Debian 8, 9 and 10
-* OpenSUSE Leap 15.0 and 15.1
-* Ubuntu: 16.04, 18.04 and 19.04
+* Debian 9 and 10
+* OpenSUSE Leap 15.1
+* Ubuntu: 16.04, 18.04, 19.10, 20.04
 
-Other distributions which are (most probably) supported include RHEL, Fedora and openSUSE Tumbleweed.
+Other distributions which are (most probably) supported include CentOS 8, RHEL, Fedora and openSUSE Tumbleweed.
 
 # Install Dependencies
 
 If you are using native packages, you can simply skip this section as all dependencies are installed automatically.
 
-## Ubuntu 16.04 / Ubuntu 18.04 / Debian 9
+## Ubuntu / Debian
 
 ```bash
 apt install python3-pip python3-dnspython python3-psutil python3-redis python3-requests python3-termstyle python3-tz python3-dateutil
@@ -50,12 +50,12 @@ apt install python3-sleekxmpp python3-pymongo python3-psycopg2
 
 ```bash
 yum install epel-release
-yum install python34 python34-devel
+yum install python36 python36-devel python36-requests
 yum install gcc gcc-c++
 yum install redis
 ```
 
-## openSUSE 15.0 / 15.1
+## openSUSE 15.1
 
 ```bash
 zypper install python3-dateutil python3-dnspython python3-psutil python3-pytz python3-redis python3-requests python3-python-termstyle
@@ -93,7 +93,8 @@ Supported Operating Systems:
 * **openSUSE Tumbleweed**
 * **Ubuntu 16.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ xenial main`)
 * **Ubuntu 18.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ bionic main`)
-* **Ubuntu 19.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ disco main`)
+* **Ubuntu 19.10** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ eoan main`)
+* **Ubuntu 20.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ focal main`)
 
 Get the installation instructions for your operating system here: [Installation Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq).
 

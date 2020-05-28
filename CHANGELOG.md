@@ -4,6 +4,7 @@ CHANGELOG
 
 2.2.0 (unreleased)
 ------------------
+Dropped support for Python 3.4.
 
 ### Configuration
 - Update default runtime configuration with `upgrade-conf`.
@@ -60,7 +61,8 @@ CHANGELOG
 - `intelmq.bots.outputs.file`: Use `OutputBot` and `export_event`.
 - `intelmq.bots.outputs.files`: Use `OutputBot` and `export_event`.
 - `intelmq.bots.outputs.misp.output_feed`: Added, creates a MISP Feed (PR#1473).
-- `intelmq.bots.outputs.misp.output_api`: Added, pushes to MISP via the API (PR#1506).
+- `intelmq.bots.outputs.misp.output_api`: Added, pushes to MISP via the API (PR#1506, PR#1536).
+- `intelmq.bots.outputs.elasticsearch.output`: Dropped ElasticSearch version 5 compatibility, added version 7 compatibility (#1513).
 
 ### Documentation
 - Document usage of the `INTELMQ_ROOT_DIR` environment variable.
@@ -106,42 +108,89 @@ CHANGELOG
 
 ### Contrib
 * Added `development-tools`.
+- ElasticSearch: Dropped version 5 compatibility, added version 7 compatibility (#1513).
 
 ### Known issues
 
 
-2.1.3 (unreleased)
+2.1.4 (unreleased)
 ------------------
 
 ### Configuration
 
 ### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+- `intelmq.tests.test_conf`: Set encoding to UTF-8 for reading the `feeds.yaml` file.
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
+2.1.3 (2020-05-26)
+------------------
+
+### Requirements
+- The python library `requests` is (again) listed as dependency of the core (#1519).
+
+### Core
 - `intelmq.lib.upgrades`:
-  - Harmonization upgrade: Also check and update regular expressions
+  - Harmonization upgrade: Also check and update regular expressions.
   - Add function to migrate the deprecated parameter `attach_unzip` to `extract_files` for the mail attachment collector.
   - Add function to migrate changed Taichung URL feed.
   - Check for discontinued Abuse.CH Zeus Tracker feed.
 - `intelmq.lib.bot`:
   - `ParserBot.recover_line`: Parameter `line` needs to be optional, fix usage of fallback value `self.current_line`.
+  - `start`: Handle decoding errors in the pipeline different so that the bot is not stuck in an endless loop (#1494).
+  - `start`: Only acknowledge a message in case of errors, if we actually had a message to dump, which is not the case for collectors.
+  - `_dump_message`: Dump messages with encoding errors base64 encoded, not in JSON format as it's not possible to decode them (#1494).
 - `intelmq.lib.test`:
   - `BotTestCase.run_bot`: Add parameters `allowed_error_count` and `allowed_warning_count` to allow set the number per run, not per test class.
   - Set `source_pipeline_broker` and `destination_pipeline_broker` to `pythonlist` instead of the old `broker`, fixes `intelmq.tests.lib.test_bot.TestBot.test_pipeline_raising`.
   - Fix test for (allowed) errors and warnings.
 - `intelmq.lib.exceptions`:
   - `InvalidKey`: Add `KeyError` as parent class.
-
-### Development
+  - `DecodingError`: Added, string representation has all relevant information on the decoding error, including encoding, reason and the affected string (#1494).
+- `intelmq.lib.pipeline`:
+  - Decode messages in `Pipeline.receive` not in the implementation's `_receive` so that the internal counter is correct in case of decoding errors (#1494).
+- `intelmq.lib.utils`:
+  - `decode`: Raise new `DecodingError` if decoding fails.
 
 ### Harmonization
 - `protocol.transport`: Adapt regular expression to allow the value `nvp-ii` (protocol 11).
 
 ### Bots
 #### Collectors
-- `intelmq.bots.collectors.mail.collector_mail_attach`: fix handling of deprecated parameter name `attach_unzip`.
+- `intelmq.bots.collectors.mail.collector_mail_attach`:
+  - Fix handling of deprecated parameter name `attach_unzip`.
+  - Fix handling of attachments without filenames (#1538).
 - `intelmq.bots.collectors.stomp.collector`: Fix compatibility with stomp.py versions `> 4.1.20` and catch errors on shutdown.
+- `intelmq.bots.collectors.microsoft`:
+  - Update `REQUIREMENTS.txt` temporarily fixing deprecated Azure library (#1530, PR#1532).
+  - `intelmq.bots.collectors.microsoft.collector_interflow`: Add method for printing the file list.
 
 #### Parsers
-- `intelmq.bots.parsers.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`).
+- `intelmq.bots.parsers.cymru.parser_cap_program`: Support for protocol 11 (`nvp-ii`) and `conficker` type.
 - `intelmq.bots.parsers.taichung.parser`: Support more types/classifications:
   - Application Compromise: Apache vulnerability & SQL injections
   - Brute-force: MSSQL & SSH password guess attacks; Office 365, SSH & SIP attacks
@@ -157,14 +206,18 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver.parser`: More verbose error message for missing report specification (#1507).
 - `intelmq.bots.parsers.n6.parser_n6stomp`: Always add n6 field `name` as `malware.name` independent of `category`.
 - `intelmq.bots.parsers.anubisnetworks`: Update parser with new data format.
+- `intelmq.bots.parsers.bambenek`: Add new feed URLs with Host `faf.bambenekconsulting.com` (#1525, PR#1526).
+- `intelmq.bots.parsers.abusech.parser_ransomware`: Removed, as the feed is discontinued (#1537).
+- `intelmq.bots.parsers.nothink.parser`: Removed, as the feed is discontinued (#1537).
+- `intelmq.bots.parsers.n6.parser`: Remove not allowed characters in the name field for `malware.name` and write original value to `event_description.text` instead.
 
 #### Experts
-- `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with unicode characters.
+- `intelmq.bots.experts.cymru_whois.lib`: Fix parsing of AS names with Unicode characters.
 
 #### Outputs
 - `intelmq.bots.outputs.mongodb`:
   - Set default port 27017.
-  - Use different authentication mechanisms per MongoDB server version to fix compatibility with server version >= 3.4 (#1439)
+  - Use different authentication mechanisms per MongoDB server version to fix compatibility with server version >= 3.4 (#1439).
 
 ### Documentation
 - Feeds:
@@ -174,10 +227,14 @@ CHANGELOG
   - Adding documentation URLs to nearly all feeds.
   - Remove unavailable Bitcash.cz feed.
   - Remove unavailable Fraunhofer DDos Attack feeds.
+  - Remove unavailable feed Abuse.CH Ransomware Tracker (#1537).
+  - Update information on Bambenek Feeds, many require a license now (#1525).
+  - Remove discontinued Nothink Honeypot Feeds (#1537).
+- Developers Guide: Fix the instructions for `/opt/intelmq` file permissions.
 
 ### Packaging
-- patches: `fix-logrotate-path.patch`: also include path to rotated file in patch
-- fix paths from `/opt` to LSB for `setup.py` and `contrib/logrotate/intelmq` in build process (#1500).
+- Patches: `fix-logrotate-path.patch`: also include path to rotated file in patch.
+- Fix paths from `/opt` to LSB for `setup.py` and `contrib/logrotate/intelmq` in build process (#1500).
 - Add runtime dependency `debianutils` for the program `which`, which is required for `intelmqctl`.
 
 ### Tests
@@ -187,17 +244,29 @@ CHANGELOG
   - IPv6 to IPv4 test: Test for two possible results.
 - `intelmq.lib.test`: Fix compatibility of logging capture with Python >= 3.7 by reworking the whole process (#1342).
 - `intelmq.bots.collectors.tcp.test_collector`: Removing custom mocking and bot starting, not necessary anymore.
-- Added tests for `intelmq.bin.intelmqctl.IntelMQProcessManager._interpret_commandline`
+- Added tests for `intelmq.bin.intelmqctl.IntelMQProcessManager._interpret_commandline`.
 - Fix and split `tests.bots.experts.ripe.test_expert.test_ripe_stat_error_json`.
+- Added tests for invalid encodings in input messages in `intelmq.tests.lib.test_bot` and `intelmq.tests.lib.test_pipeline` (#1494).
+- Travis: Explicitly enable RabbitMQ management plugin.
+- `intelmq.tests.lib.test_message`: Fix usage of the parameter `blacklist` for Message hash tests (#1539).
 
 ### Tools
 - `intelmqsetup`: Copy missing BOTS file to IntelMQ's root directory (#1498).
 - `intelmq_gen_docs`: Feed documentation generation: Handle missing/empty parameters.
-- `intelmqctl`: `IntelMQProcessManager`: For the status of running bots also check the bot ID of the commandline and ignore the path of the executable (#1492).
+- `intelmqctl`:
+  - `IntelMQProcessManager`: For the status of running bots also check the bot ID of the commandline and ignore the path of the executable (#1492).
+  - `IntelMQController`: Fix exit codes of `check` command for JSON output (now 0 on success and 1 on error, was swapped, #1520).
+- `intelmqdump`:
+  - Handle base64-type messages for show, editor and recovery actions.
 
 ### Contrib
+- `intelmq/bots/experts/asn_lookup/update-asn-data`: Use `pyasn_util_download.py` to download the data instead from RIPE, which cannot be parsed currently (#1517, PR#1518, https://github.com/hadiasghari/pyasn/issues/62).
 
 ### Known issues
+- HTTP stream collector: retry on regular connection problems? (#1435).
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952).
+- Reverse DNS: Only first record is used (#877).
+- Corrupt dump files when interrupted during writing (#870).
 
 
 2.1.2 (2020-01-28)
@@ -1250,7 +1319,7 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 - New allowed value for `classification.type`: `infected system` for taxonomy `malicious code` (#1197).
 
 ### Requirements
-- Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file.
+- Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their `REQUIREMENTS.txt` file.
 
 ### Documentation
 - Use Markdown for README again, as pypi now supports it.

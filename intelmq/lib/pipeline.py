@@ -124,12 +124,28 @@ class Pipeline(object):
 
         retval = self._receive()
         self._has_message = True
-        return retval
+        return utils.decode(retval)
 
-    def _receive(self) -> str:
+    def _receive(self) -> bytes:
         raise NotImplementedError
 
     def acknowledge(self):
+        """
+        Acknowledge/delete the current message from the source queue
+
+        Parameters
+        ----------
+
+        Raises
+        ------
+        exceptions
+            exceptions.PipelineError: If no message is held
+
+        Returns
+        -------
+        None.
+
+        """
         if not self._has_message:
             raise exceptions.PipelineError("No message to acknowledge.")
         self._acknowledge()
@@ -234,7 +250,7 @@ class Redis(Pipeline):
                                       'Look at redis\'s logs.')
                 raise exceptions.PipelineError(exc)
 
-    def _receive(self) -> str:
+    def _receive(self) -> bytes:
         if self.source_queue is None:
             raise exceptions.ConfigurationError('pipeline', 'No source queue given.')
         try:
@@ -248,9 +264,10 @@ class Redis(Pipeline):
             if not retval:
                 retval = self.pipe.brpoplpush(self.source_queue,
                                               self.internal_queue, 0)
-            return utils.decode(retval)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
+        else:
+            return retval
 
     def _acknowledge(self):
         try:
@@ -259,7 +276,7 @@ class Redis(Pipeline):
             raise exceptions.PipelineError(e)
         else:
             if not retval:
-                raise exceptions.PipelineError("Could not pop message from internal queue"
+                raise exceptions.PipelineError("Could not pop message from internal queue "
                                                "for acknowledgement. Return value was %r."
                                                "" % retval)
 
@@ -340,23 +357,22 @@ class Pythonlist(Pipeline):
             else:
                 self.state[destination_queue] = [utils.encode(message)]
 
-    def _receive(self) -> str:
+    def _receive(self) -> bytes:
         """
         Receives the last not yet acknowledged message.
 
         Does not block unlike the other pipelines.
         """
-        if len(self.state.get(self.internal_queue, [])) > 0:
-            return utils.decode(self.state[self.internal_queue].pop(0))
+        if len(self.state[self.internal_queue]) > 0:
+            return utils.decode(self.state[self.internal_queue][0])
 
-        first_msg = self.state[self.source_queue].pop(0)
+        try:
+            first_msg = self.state[self.source_queue].pop(0)
+        except IndexError as exc:
+            raise exceptions.PipelineError(exc)
+        self.state[self.internal_queue].append(first_msg)
 
-        if self.internal_queue in self.state:
-            self.state[self.internal_queue].append(first_msg)
-        else:
-            self.state[self.internal_queue] = [first_msg]
-
-        return utils.decode(first_msg)
+        return first_msg
 
     def _acknowledge(self):
         """Removes a message from the internal queue and returns it"""
@@ -535,16 +551,17 @@ class Amqp(Pipeline):
         for destination_queue in queues:
             self._send(destination_queue, message)
 
-    def _receive(self) -> str:
+    def _receive(self) -> bytes:
         if self.source_queue is None:
             raise exceptions.ConfigurationError('pipeline', 'No source queue given.')
         try:
             method, header, body = next(self.channel.consume(self.source_queue))
             if method:
                 self.delivery_tag = method.delivery_tag
-                return utils.decode(body)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
+        else:
+            return body
 
     def _acknowledge(self):
         try:

@@ -1,0 +1,42 @@
+List-Post: <mailto:austria@mail.shadowserver.org>
+X-Spam-Status: No, score=-24.3 required=4 tests=[BAYES_00=-1.9, DCC_CHECK=1.1, DKIMWL_WL_HIGH=0.001, DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, MAILING_LIST_MULTI=-1, RCVD_IN_DNSWL_MED=-2.3, RCVD_IN_MSPIKE_H2=-0.001, SHADOW1=-20] autolearn=ham autolearn_force=no
+Errors-To: austria-bounces@mail.shadowserver.org
+List-Help: <mailto:austria-request@mail.shadowserver.org?subject=help>
+X-Spam-Flag: NO
+X-Mailman-Version: 2.1.12
+Content-Type: multipart/mixed; boundary="=-=U9qbhb6ctjJtRANyLAes3HswHs8H9QZAnQoA=-="
+Message-ID: <20200515063210.3Zjc-9Qor%autoreports@shadowserver.org>
+X-Virus-Scanned: amavisd-new at cert.at
+X-RT-Incoming-Encryption: Not encrypted
+X-Spam-Score: -24.3
+Received: from cleophus.intern.cert.at (cleophus.intern.cert.at [172.21.47.118]) by buhmann.intern.cert.at (Postfix) with ESMTP id 3D2C220280 for <reports@rtir.cert.at>; Fri, 15 May 2020 08:32:32 +0200 (CEST)
+Received: from trinli.cert.at (trinli.cert.at [83.136.38.186]) by cleophus.intern.cert.at (Postfix) with ESMTPS id 2B463220B70 for <reports@cert.at>; Fri, 15 May 2020 08:32:32 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1]) by trinli.cert.at (Postfix) with ESMTP id 0871EABCE4 for <reports@cert.at>; Fri, 15 May 2020 08:32:32 +0200 (CEST)
+Received: from trinli.cert.at ([127.0.0.1]) by localhost (trinli.cert.at [127.0.0.1]) (amavisd-new, port 10024) with ESMTP id 42AGlVHWYUj1 for <reports@cert.at>; Fri, 15 May 2020 08:32:28 +0200 (CEST)
+Received: from mail.shadowserver.org (mail.shadowserver.org [65.49.51.53]) by trinli.cert.at (Postfix) with ESMTP for <reports@cert.at>; Fri, 15 May 2020 08:32:12 +0200 (CEST)
+Received: from [127.0.0.1] (ssmail-00 [127.0.0.1]) by mail.shadowserver.org (Postfix) with ESMTP id 0244B26C77CDF9 for <reports@cert.at>; Thu, 14 May 2020 23:32:12 -0700 (PDT)
+Received: by report-02.shadowserver.org (Postfix, from userid 0) id 902F1106A0B4B; Fri, 15 May 2020 06:32:10 +0000 (UTC)
+Delivered-To: reports@rtir.cert.at
+Delivered-To: austria@shadowserver.org
+Subject: [Austria] Shadowserver Austria Open MQTT Report: 2020-05-14
+User-Agent: s-nail v14.8.6
+Return-Path: <austria-bounces@mail.shadowserver.org>
+X-Original-To: reports@rtir.cert.at
+X-Original-To: austria@shadowserver.org
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=shadowserver.org; s=mail; t=1589524332; bh=yPOndIndHnKoIgocwHI1FZjupJFBKjGItWcdPxjrKLY=; h=Date:From:To:Subject:List-Id:List-Unsubscribe:List-Post:List-Help: List-Subscribe:From; b=aOtH9D5tmu/oQPT8hSUH2het0dQgkQH1kwHZ/AowQpndGQoQ+D19qoLix0zNQ0XHe oZ5reJTC0skmax3CyXlLIhMy8NQerEyOfzVUDJIUUDrCJsaNirM5swLGrTQrpGXkUM aKK1A3lsjPx9CJvEyBP0CEmtPZnMpXSp/ULqu3FA=
+List-Subscribe: <https://mail.shadowserver.org/mailman/listinfo/austria [Open URL]>, <mailto:austria-request@mail.shadowserver.org?subject=subscribe>
+Sender: austria-bounces@mail.shadowserver.org
+Date: Fri, 15 May 2020 06:32:10 +0000
+X-Spam-Level:
+Precedence: list
+X-Beenthere: austria@mail.shadowserver.org
+List-ID: <austria.mail.shadowserver.org>
+To: austria@shadowserver.org
+List-Unsubscribe: <https://mail.shadowserver.org/mailman/options/austria [Open URL]>, <mailto:austria-request@mail.shadowserver.org?subject=unsubscribe>
+From: autoreports@shadowserver.org
+content-type: text/plain; charset="utf-8"
+Content-Disposition: inline
+X-RT-Original-Encoding: US-ASCII
+content-transfer-encoding: 8bit
+
+

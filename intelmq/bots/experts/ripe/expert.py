@@ -90,43 +90,36 @@ class RIPEExpertBot(Bot):
                                  getattr(self.parameters, "redis_cache_password", None))
 
     def process(self):
-        with self.event_context() as event:
-            for target in {'source.', 'destination.'}:
-                abuse_key = target + "abuse_contact"
-                abuse = set(event.get(abuse_key).split(',')) if self.__mode == 'append' and abuse_key in event else set()
-
-                asn = event.get(target + "asn", None)
-                if asn:
-                    if self.__query['stat_asn']:
-                        abuse.update(self.__perform_cached_query('stat', asn))
-                    if self.__query['db_asn']:
-                        abuse.update(self.__perform_cached_query('db_asn', asn))
-
-                ip = event.get(target + "ip", None)
-                if ip:
-                    if self.__query['stat_ip']:
-                        abuse.update(self.__perform_cached_query('stat', ip))
-                    if self.__query['db_ip']:
-                        abuse.update(self.__perform_cached_query('db_ip', ip))
-                    if self.__query['stat_geo']:
-                        info = self.__perform_cached_query('stat_geolocation', ip)
-
-                        should_overwrite = self.__mode == 'replace'
-
-                        for local_key, ripe_key in self.GEOLOCATION_REPLY_TO_INTERNAL:
-                            if ripe_key in info:
-                                event.add(target + "geolocation." + local_key, info[ripe_key], overwrite=should_overwrite)
-
-                event.add(abuse_key, ','.join(abuse), overwrite=True)
-
-    @contextmanager
-    def event_context(self):
         event = self.receive_message()
-        try:
-            yield event
-        finally:
-            self.send_message(event)
-            self.acknowledge_message()
+        for target in {'source.', 'destination.'}:
+            abuse_key = target + "abuse_contact"
+            abuse = set(event.get(abuse_key).split(',')) if self.__mode == 'append' and abuse_key in event else set()
+
+            asn = event.get(target + "asn", None)
+            if asn:
+                if self.__query['stat_asn']:
+                    abuse.update(self.__perform_cached_query('stat', asn))
+                if self.__query['db_asn']:
+                    abuse.update(self.__perform_cached_query('db_asn', asn))
+
+            ip = event.get(target + "ip", None)
+            if ip:
+                if self.__query['stat_ip']:
+                    abuse.update(self.__perform_cached_query('stat', ip))
+                if self.__query['db_ip']:
+                    abuse.update(self.__perform_cached_query('db_ip', ip))
+                if self.__query['stat_geo']:
+                    info = self.__perform_cached_query('stat_geolocation', ip)
+
+                    should_overwrite = self.__mode == 'replace'
+
+                    for local_key, ripe_key in self.GEOLOCATION_REPLY_TO_INTERNAL:
+                        if ripe_key in info:
+                            event.add(target + "geolocation." + local_key, info[ripe_key], overwrite=should_overwrite)
+
+            event.add(abuse_key, ','.join(abuse), overwrite=True)
+        self.send_message(event)
+        self.acknowledge_message()
 
     def __perform_cached_query(self, type, resource):
         cached_value = self.__cache.get('{}:{}'.format(type, resource))

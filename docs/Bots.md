@@ -299,6 +299,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
+* `mail_port`: IMAP server port, optional (default: 143 without SSL, 993 for SSL)
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
@@ -347,6 +348,7 @@ limitation set `chunk_size` to something like `384000000`, i.e., ~384 MB.
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
+* `mail_port`: IMAP server port, optional (default: 143 without SSL, 993 for SSL)
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
@@ -379,6 +381,7 @@ The resulting reports contains the following special fields:
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
+* `mail_port`: IMAP server port, optional (default: 143 without SSL, 993 for SSL)
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
@@ -2520,6 +2523,8 @@ This output bot discards all incoming messages.
 * `cache`: no
 * `description`: Output Bot that sends events to Elasticsearch
 
+Only ElasticSearch version 7 supported.
+
 #### Configuration parameters:
 
 * `elastic_host`: Name/IP for the Elasticsearch server, defaults to 127.0.0.1
@@ -2533,7 +2538,6 @@ This output bot discards all incoming messages.
                        'weekly' --> intelmq-2018-42
                        'monthly' --> intelmq-2018-02
                        'yearly' --> intelmq-2018
-* `elastic_doctype`: Elasticsearch document type for the event. Default: events
 * `http_username`: HTTP basic authentication username
 * `http_password`: HTTP basic authentication password
 * `use_ssl`: Whether to use SSL/TLS when connecting to Elasticsearch. Default: False
@@ -2671,6 +2675,7 @@ The PyMISP library >= 2.4.120 is required, see
 
 * **Feed parameters** (see above)
 * `add_feed_provider_as_tag`: bool (use `true` when in doubt)
+* `add_feed_name_as_tag`: bool (use `true` when in doubt)
 * `misp_additional_correlation_fields`: list of fields for which
       the correlation flags will be enabled (in addition to those which are
       in significant_fields)
@@ -2685,9 +2690,12 @@ The PyMISP library >= 2.4.120 is required, see
 * `misp_url`: str, URL of the MISP server
 * `significant_fields`: list of intelmq field names
 
-The significant field values will be searched for in all MISP attribute values
+The `significant_fields` values
+will be searched for in all MISP attribute values
 and if all values are found in the same MISP event, no new MISP event
 will be created.
+Instead if the existing MISP events have the same feed.provider
+and match closely, their timestamp will be updated.
 
 If a new MISP event is inserted the `significant_fields` and the
 `misp_additional_correlation_fields` will be the attributes

@@ -9,15 +9,12 @@ import intelmq.lib.test as test
 from intelmq.tests.lib import test_parser_bot
 
 
-class TestBot(test.BotTestCase, unittest.TestCase):
+class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
     """ Testing generic functionalities of Bot base class. """
 
     @classmethod
     def set_bot(cls):
         cls.bot_reference = test_parser_bot.DummyParserBot
-
-    def test_bot_name(self):
-        pass
 
     def test_pipeline_raising(self):
         self.default_input_message = None
@@ -29,7 +26,7 @@ class TestBot(test.BotTestCase, unittest.TestCase):
     def test_pipeline_empty(self):
         self.default_input_message = None
         self.run_bot(allowed_error_count=1)
-        self.assertLogMatches(levelname='ERROR', pattern='Bot has found a problem')
+        self.assertLogMatches(levelname='ERROR', pattern='.*pipeline failed.*')
 
     def test_logging_level_other(self):
         self.input_message = test_parser_bot.EXAMPLE_SHORT
@@ -52,6 +49,22 @@ class TestBot(test.BotTestCase, unittest.TestCase):
         self.input_message = []
         self.prepare_bot()
         self.assertEqual(self.bot.group, 'Parser')
+
+    def test_invalid_input_message(self):
+        """
+        Test if the bot is dumping / not retrying a message which is impossible to parse.
+        https://github.com/certtools/intelmq/issues/1494
+        """
+        self.input_message = b'foo\xc9bar'
+        self.run_bot(iterations=1, allowed_error_count=1)
+        self.assertLogMatches('.*intelmq\.lib\.exceptions\.DecodingError:.*')
+        self.assertLogMatches(pattern='Dumping message to dump file.',
+                              levelname='INFO')
+        # raise ValueError(self.loglines)
+        # raise ValueError(self.input_queue)
+        self.assertEqual(self.pipe.state['test-bot-input-internal'], [])
+        self.assertEqual(self.pipe.state['test-bot-input'], [])
+        self.assertEqual(self.pipe.state['test-bot-output'], [])
 
 
 if __name__ == '__main__':  # pragma: no cover

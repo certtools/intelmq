@@ -54,7 +54,7 @@
             "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
-                "attach_unzip": true,
+                "extract_files": true,
                 "folder": "INBOX",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
@@ -330,11 +330,6 @@
             "module": "intelmq.bots.parsers.abusech.parser_ip",
             "parameters": {}
         },
-        "Abuse.ch Ransomware": {
-            "description": "Abuse.ch Ransomware Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.abusech.parser_ransomware",
-            "parameters": {}
-        },
         "AlienVault": {
             "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.alienvault.parser",
@@ -554,11 +549,6 @@
         "Netlab 360": {
             "description": "Netlab 360 Parser is the bot responsible to parse the DGA and Magnitude reports and sanitize the information.",
             "module": "intelmq.bots.parsers.netlab_360.parser",
-            "parameters": {}
-        },
-        "Nothink": {
-            "description": "Nothink Feed Parser is the bot responsible to parse the SNMP, SSH, Telnet, and DNS Attack reports and sanitize the information.",
-            "module": "intelmq.bots.parsers.nothink.parser",
             "parameters": {}
         },
         "OpenPhish": {
@@ -966,7 +956,6 @@
             "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
             "module": "intelmq.bots.outputs.elasticsearch.output",
             "parameters": {
-                "elastic_doctype": "events",
                 "elastic_host": "127.0.0.1",
                 "elastic_index": "intelmq",
                 "elastic_port": 9200,
@@ -1037,6 +1026,7 @@
                 "add_feed_provider_as_tag": true,
                 "misp_additional_correlation_fields": [],
                 "misp_additional_tags": [],
+                "add_feed_name_as_tag": true,
                 "misp_key": "<insert MISP Authkey>",
                 "misp_publish": false,
                 "misp_tag_for_bot": "<insert MISP tag to mark inserted events>",
