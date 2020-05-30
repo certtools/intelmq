@@ -107,6 +107,7 @@ Dropped support for Python 3.4.
   - Add argument parsing and an option to skip setting file ownership, possibly not requiring root permissions.
   - Call `intelmqctl upgrade-config` and add argument for the state file path (#1491).
 - `intelmq_generate_misp_objects_templates.py`: Tool to create a MISP object template (#1470).
+- `intelmqdump`: New parameter `-t` or `--truncate` to optionally give the maximum length of `raw` data to show, 0 for no truncating.
 
 ### Contrib
 * Added `development-tools`.
