@@ -1208,6 +1208,20 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
 
 * * *
 
+### Microsoft CTIP Parser
+
+* `name`: `intelmq.bots.parsers.microsoft.parser_ctip`
+* `public`: no
+* `cache (redis db)`: none
+* `description`: Parses data from the Microsoft CTIP Feed
+
+#### Description
+
+Can parse the JSON format provided by the Interflow interface (lists of dictionaries) as well as the format provided by the Azure interface (one dictionary per line).
+The provided data differs between the two formats/providers.
+
+* * *
+
 ### MISP
 
 * `name:` intelmq.bots.parsers.misp.parser
