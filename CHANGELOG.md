@@ -24,6 +24,7 @@ Dropped support for Python 3.4.
   - New class `OutputBot`:
     - Method `export_event` to format/export events according to the parameters given by the user.
   - `ParserBot`: New methods `parse_json_stream` and `recover_line_json_stream`.
+  - `ParserBot.recover_line_json`: Fix format by adding a list around the line data.
 
 ### Development
 

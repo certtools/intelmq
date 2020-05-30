@@ -907,7 +907,7 @@ class ParserBot(Bot):
 
     def parse_json(self, report: libmessage.Report):
         """
-        A basic JSON parser
+        A basic JSON parser. Assumes a *list* of objects to be yielded
         """
         raw_report = utils.base64_decode(report.get("raw"))
         for line in json.loads(raw_report):
@@ -1059,7 +1059,7 @@ class ParserBot(Bot):
 
         Recovers a fully functional report with only the problematic pulse.
         """
-        return json.dumps(line)
+        return json.dumps([line])
 
     def recover_line_json_stream(self, line: dict) -> str:
         """
