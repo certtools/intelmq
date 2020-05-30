@@ -93,6 +93,7 @@ Dropped support for Python 3.4.
 - Added tests for `intelmq.lib.bot.OutputBot` and `intelmq.lib.bot.OutputBot.export_event`.
 - Added IPv6 tests for `intelmq.bots.parsers.cymru.parser_full_bogons`.
 - Added tests for `intelmq.lib.bot.ParserBot`'s new methods `parse_json_stream` and `recover_line_json_stream`.
+- `intelmq.tests.test_conf`: Set encoding to UTF-8 for reading the `feeds.yaml` file.
 
 ### Tools
 - `intelmqctl`:
@@ -115,40 +116,6 @@ Dropped support for Python 3.4.
 ### Contrib
 * Added `development-tools`.
 - ElasticSearch: Dropped version 5 compatibility, added version 7 compatibility (#1513).
-
-### Known issues
-
-
-2.1.4 (unreleased)
-------------------
-
-### Configuration
-
-### Core
-
-### Development
-
-### Harmonization
-
-### Bots
-#### Collectors
-
-#### Parsers
-
-#### Experts
-
-#### Outputs
-
-### Documentation
-
-### Packaging
-
-### Tests
-- `intelmq.tests.test_conf`: Set encoding to UTF-8 for reading the `feeds.yaml` file.
-
-### Tools
-
-### Contrib
 
 ### Known issues
 
