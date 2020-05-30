@@ -913,6 +913,16 @@ class ParserBot(Bot):
         for line in json.loads(raw_report):
             yield line
 
+    def parse_json_stream(self, report: libmessage.Report):
+        """
+        A JSON Stream parses (one JSON data structure per line)
+        """
+        raw_report = utils.base64_decode(report.get("raw"))
+        for line in raw_report.splitlines():
+            self.current_line = line
+            yield json.loads(line)
+
+
     def parse(self, report: libmessage.Report):
         """
         A generator yielding the single elements of the data.
@@ -1050,6 +1060,21 @@ class ParserBot(Bot):
         Recovers a fully functional report with only the problematic pulse.
         """
         return json.dumps(line)
+
+    def recover_line_json_stream(self, line: dict) -> str:
+        """
+        recover_line for json streams, just returns the current line, unparsed.
+
+        Parameters
+        ----------
+        line : dict
+
+        Returns
+        -------
+        str
+            unparsed JSON line.
+        """
+        return self.current_line
 
 
 class CollectorBot(Bot):

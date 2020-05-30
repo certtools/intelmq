@@ -23,6 +23,7 @@ Dropped support for Python 3.4.
 - `intelmq.lib.bot`:
   - New class `OutputBot`:
     - Method `export_event` to format/export events according to the parameters given by the user.
+  - `ParserBot`: New methods `parse_json_stream` and `recover_line_json_stream`.
 
 ### Development
 
@@ -88,6 +89,7 @@ Dropped support for Python 3.4.
 - Added tests for `intelmq.lib.exceptions`.
 - Added tests for `intelmq.lib.bot.OutputBot` and `intelmq.lib.bot.OutputBot.export_event`.
 - Added IPv6 tests for `intelmq.bots.parsers.cymru.parser_full_bogons`.
+- Added tests for `intelmq.lib.bot.ParserBot`'s new methods `parse_json_stream` and `recover_line_json_stream`.
 
 ### Tools
 - `intelmqctl`:
