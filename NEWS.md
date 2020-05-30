@@ -19,6 +19,20 @@ See the changelog for a full list of changes.
 #### ElasticSearch Output Bot
 The ElasticSearch Output bot does no longer support (only) ElasticSearch version 5, but only version 7 (#1513).
 
+#### Microsoft Azure Collector Bot
+The Bot has been majorly changed to support the current Azure Python library `azure-storage-blob>=12.0.0`.
+This also changes the required configuration parameters. The new required parameters are:
+
+* `redis_cache_db`: 5
+* `redis_cache_host`: `"127.0.0.1"`
+* `redis_cache_password`: null, depending on your Redis server configuration
+* `redis_cache_port`: 6379, depending on your Redis server configuration
+* `redis_cache_ttl`: 864000 (10 days), depending on how old fast the data you are fetching is removed from the storage
+* `connection_string`: connection string as given by Microsoft, includes endpoint and authentication information
+* `container_name`: name of the container to connect to
+
+The previous parameters `account_name`, `account_key` and `delete` are not supported anymore.
+
 ### Libraries
 
 ### Postgres databases

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-© 2019 Sebastian Wagner <wagner@cert.at>
+© 2020 Sebastian Wagner <wagner@cert.at>
 
 SPDX-License-Identifier: AGPL-3.0
 """
@@ -23,6 +23,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v213_deprecations',
            'v213_feed_changes',
            'v220_configuration_1',
+           'v220_azure_collector',
            ]
 
 
@@ -319,6 +320,21 @@ def v220_configuration_1(defaults, runtime, harmonization, dry_run):
     return changed, defaults, runtime, harmonization
 
 
+def v220_azure_collector(defaults, runtime, harmonization, dry_run):
+    """
+    Checking for the Microsoft Azure collector
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.microsoft.collector_azure":
+            if "connection_string" not in bot["parameters"]:
+                changed = ("The Microsoft Azure collector changed backwards-"
+                           "incompatible in IntelMQ 2.2.0. Look at the bot's "
+                           "documentation and NEWS file to adapt the "
+                           "configuration.")
+    return changed, defaults, runtime, harmonization
+
+
 def harmonization(defaults, runtime, harmonization, dry_run):
     """
     Checks if all harmonization fields and types are correct
@@ -433,7 +449,7 @@ UPGRADES = OrderedDict([
     ((2, 1, 2), ()),
     ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
     ((2, 1, 4), ()),
-    ((2, 2, 0), (v220_configuration_1, )),
+    ((2, 2, 0), (v220_configuration_1, v220_azure_collector)),
 ])
 
 ALWAYS = (harmonization, )
