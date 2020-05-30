@@ -172,7 +172,6 @@ class MicrosoftCTIPParserBot(ParserBot):
             yield from self.parse_interflow(line, report)
         else:
             yield from self.parse_azure(line, report)
-            #raise ValueError('Data is in unknown format %r, only version 1.5 is supported.' % line['version'])
 
     def parse_interflow(self, line, report):
         raw = self.recover_line(line)

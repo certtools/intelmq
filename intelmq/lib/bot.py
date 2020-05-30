@@ -922,7 +922,6 @@ class ParserBot(Bot):
             self.current_line = line
             yield json.loads(line)
 
-
     def parse(self, report: libmessage.Report):
         """
         A generator yielding the single elements of the data.

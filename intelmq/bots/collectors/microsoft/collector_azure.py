@@ -33,12 +33,12 @@ class MicrosoftAzureCollectorBot(CollectorBot):
             }
 
         self.cache = Cache(self.parameters.redis_cache_host,
-                   self.parameters.redis_cache_port,
-                   self.parameters.redis_cache_db,
-                   getattr(self.parameters, 'redis_cache_ttl', 864000),  # 10 days
-                   getattr(self.parameters, "redis_cache_password",
-                           None)
-                   )
+                           self.parameters.redis_cache_port,
+                           self.parameters.redis_cache_db,
+                           getattr(self.parameters, 'redis_cache_ttl', 864000),  # 10 days
+                           getattr(self.parameters, "redis_cache_password",
+                                   None)
+                           )
 
     def process(self):
         container_client = ContainerClient.from_connection_string(conn_str=self.parameters.connection_string,
@@ -56,5 +56,6 @@ class MicrosoftAzureCollectorBot(CollectorBot):
             report.add('raw', gzip.GzipFile(fileobj=blob_obj).read().decode())
             self.send_message(report)
             self.cache.set(blob.name, 1)  # Redis-py >= 3.0.0 does not allow True
+
 
 BOT = MicrosoftAzureCollectorBot
