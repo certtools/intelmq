@@ -116,7 +116,9 @@ Dropped support for Python 3.4.
 ### Contrib
 * Added `development-tools`.
 - ElasticSearch: Dropped version 5 compatibility, added version 7 compatibility (#1513).
-- Malware Name Mapping Downloader: New parameter `--mwnmp-ignore-adware`.
+- Malware Name Mapping Downloader:
+  - New parameter `--mwnmp-ignore-adware`.
+  - The parameter `--add-default` supports an optional parameter to define the default value.
 
 ### Known issues
 
