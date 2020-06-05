@@ -39,6 +39,7 @@ setup(
     tests_require=[
         'Cerberus!=1.3',
         'pyyaml',
+        'requests_mock',
     ],
     test_suite='intelmq.tests',
     extras_require={
