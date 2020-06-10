@@ -59,8 +59,6 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
 
         self.connect_server()
 
-        # TODO: message or report
-
     def process(self):
         ''' Stop the Bot if cannot connect to AMQP Server after the defined connection attempts '''
 
