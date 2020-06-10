@@ -39,6 +39,7 @@ class AnubisNetworksParserBot(Bot):
         event.change("feed.url", event["feed.url"].split("?key=")[0])
         event.add("raw", report.get('raw'), sanitize=False)
         event.add('classification.type', 'malware')
+        event.add('classification.taxonomy', 'malicious code')
         event.add('event_description.text', 'Sinkhole attempted connection')
 
         for key, value in raw_report.items():
