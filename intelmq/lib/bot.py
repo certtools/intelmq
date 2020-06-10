@@ -554,7 +554,7 @@ class Bot(object):
                 raise exceptions.ConfigurationError('pipeline', 'No destination pipeline given, '
                                                                 'but needed')
 
-            self.logger.debug("Sending message.")
+            self.logger.debug("Sending message to path %r.", path)
             self.__message_counter["since"] += 1
             self.__message_counter["path"][path] += 1
             if not self.__message_counter["start"]:

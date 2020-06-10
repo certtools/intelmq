@@ -1734,6 +1734,8 @@ Examples of time filter definition:
 | drop   | ✓     | ✗           | ✓              | ✓              | ✗                 |
 | drop   | ✗     | ✓           | ✗              | ✗              | ✓                 |
 
+In `DEBUG` logging level, one can see that the message is sent to both matching paths, also if one of the paths is not configured. Of course the message is only delivered to the configured paths.
+
 * * *
 
 ### Format Field

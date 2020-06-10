@@ -22,7 +22,8 @@ EXAMPLE_REPORT = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a4
                   "raw": utils.base64_encode(EXAMPLE_RAW),
                   "time.observation": "2016-04-19T23:16:08+00:00"
                   }
-EXAMPLE_EVENT  = {"classification.type": "malware",
+EXAMPLE_EVENT  = {"classification.taxonomy": "malicious code",
+                  "classification.type": "malware",
                   "destination.port": 80,
                   "feed.accuracy": 100.0,
                   "malware.name": "nivdort",
@@ -57,7 +58,8 @@ EXAMPLE_REPORT2 = {"feed.name": "AnubisNetworks",
                    "time.observation":
                    "2016-04-19T23:16:10+00:00"
                    }
-EXAMPLE_EVENT2  = {"feed.name": "AnubisNetworks",
+EXAMPLE_EVENT2  = {"classification.taxonomy": "malicious code",
+                   "feed.name": "AnubisNetworks",
                    "malware.name": "spyapp",
                    "destination.fqdn": "example.net",
                    "source.ip": "190.124.67.211",
@@ -81,7 +83,8 @@ EXAMPLE_REPORT3 = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a
                    "__type": "Report",
                    "time.observation": "2016-04-19T23:16:10+00:00"
                    }
-EXAMPLE_EVENT3  = {"malware.name": "malwname",
+EXAMPLE_EVENT3  = {"classification.taxonomy": "malicious code",
+                   "malware.name": "malwname",
                    "source.ip": "203.0.113.2",
                    "source.port": 59645,
                    "__type": "Event",
@@ -180,7 +183,8 @@ EXAMPLE_REPORT_DNS = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29
                       "__type": "Report",
                       "time.observation": "2016-04-19T23:16:10+00:00"
                       }
-EXAMPLE_EVENT_DNS  = {"malware.name": "malware name dns",
+EXAMPLE_EVENT_DNS  = {"classification.taxonomy": "malicious code",
+                      "malware.name": "malware name dns",
                       "source.ip": "203.0.113.2",
                       "source.port": 11138,
                       "__type": "Event",

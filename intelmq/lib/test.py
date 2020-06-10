@@ -268,6 +268,10 @@ class BotTestCase(object):
         """
         if prepare:
             self.prepare_bot(parameters=parameters)
+        elif parameters:
+            raise ValueError("Parameter 'parameters' is given, but parameter "
+                             "'prepare' is false. Parameters must be passed on "
+                             "to 'prepare_bot' to be effective.")
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.get_mocked_logger(self.logger)):
