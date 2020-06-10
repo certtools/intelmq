@@ -817,6 +817,7 @@
             "parameters": {
                 "case_sensitive": true,
                 "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf",
+                "maximum_matches": null,
                 "overwrite": false
             }
         },

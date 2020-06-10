@@ -1963,6 +1963,7 @@ Generic parameters used in this bot:
 
 * `configuration_path`: filename
 * `case_sensitive`: boolean, default: true
+* `maximum_matches`: Maximum number of matches. Processing stops after the limit is reached. Default: no limit (`null`, `0`).
 
 #### Configuration File
 

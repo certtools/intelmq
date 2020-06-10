@@ -63,6 +63,8 @@ class ModifyExpertBot(Bot):
                 if isinstance(expression, str) and expression != '':
                     self.config[-1]["if"][field] = re.compile(expression, **self.re_kwargs)
 
+        self.maximum_matches = getattr(self.parameters, 'maximum_matches', None)
+
     def matches(self, identifier, event, condition):
         matches = {}
 
@@ -107,13 +109,18 @@ class ModifyExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
+        num_matches = 0
 
         for rule in self.config:
             rule_id, rule_selection, rule_action = rule['rulename'], rule['if'], rule['then']
             matches = self.matches(rule_id, event, rule_selection)
             if matches is not None:
+                num_matches += 1
                 self.logger.debug('Apply rule %s.', rule_id)
                 self.apply_action(event, rule_action, matches)
+                if self.maximum_matches and num_matches >= self.maximum_matches:
+                    self.logger.debug('Reached maximum number of matches, breaking.')
+                    break
 
         self.send_message(event)
         self.acknowledge_message()

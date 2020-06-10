@@ -58,6 +58,7 @@ Dropped support for Python 3.4.
 #### Experts
 - `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
 - `intelmq.bots.experts.misp`: Added (PR#1475).
+- `intelmq.bots.experts.modify`: New parameter `maximum_matches`.
 
 #### Outputs
 - `intelmq.bots.outputs.amqptopic`:
