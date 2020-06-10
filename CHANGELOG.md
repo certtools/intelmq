@@ -40,6 +40,7 @@ Dropped support for Python 3.4.
   - Check the stomp.py version and show an error message if it did not match.
   - For stomp.py versions `>= 5.0.0` redirect the `stomp.PrintingListener` output to debug logging.
 - `intelmq.bots.collectors.microsoft.collector_azure`: Support current Python library `azure-storage-blob>= 12.0.0`, configuration is incompatible and needs manual change. See NEWS file and bot's documentation for more details.
+- `intelmq.bots.collectors.amqp.collector_amqp`: Require `pika` minimum version 1.0.
 
 #### Parsers
 - `intelmq.bots.parsers.autoshun.parser`: Drop compatibility with Python 3.4.

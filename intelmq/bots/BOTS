@@ -1,7 +1,7 @@
 {
     "Collector": {
         "AMQP": {
-            "description": "Collecting from a (remote) AMQP Server and fetching either intelmq or any other messages.",
+            "description": "Collecting from a (remote) AMQP Server and fetching either intelmq or any other messages. Requires the pika python library.",
             "module": "intelmq.bots.collectors.amqp.collector_amqp",
             "parameters": {
                 "connection_attempts": 3,
@@ -926,7 +926,7 @@
     },
     "Output": {
         "AMQP Topic": {
-            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange. Requires the pika python library.",
             "module": "intelmq.bots.outputs.amqptopic.output",
             "parameters": {
                 "connection_attempts": 3,

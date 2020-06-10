@@ -9,6 +9,7 @@ See the changelog for a full list of changes.
 ### Requirements
 - IntelMQ no longer supports Python 3.4, Python `>=` 3.5 is required.
   CentOS 7 (with EPEL) provides both Python 3.4 and Python 3.6. If IntelMQ was installed with Python 3.4, the code needs to be re-installed with Python 3.6 and removed for Python 3.4. Application data is compatible. To install needed packages: `yum install python36 python36-devel python36-requests`.
+- The *AMQP collector* requires the `pika` library minimum version 1.0.
 
 ### Tools
 
