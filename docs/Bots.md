@@ -1964,6 +1964,7 @@ Generic parameters used in this bot:
 * `configuration_path`: filename
 * `case_sensitive`: boolean, default: true
 * `maximum_matches`: Maximum number of matches. Processing stops after the limit is reached. Default: no limit (`null`, `0`).
+* `overwrite`: Overwrite any existing fields by matching rules. Default if the parameter is given: `true`, for backwards compatibility. Default will change to `false` in version 3.0.0.
 
 #### Configuration File
 
