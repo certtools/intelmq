@@ -953,7 +953,7 @@
             }
         },
         "Blackhole": {
-            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "description": "Discards messages.",
             "module": "intelmq.bots.outputs.blackhole.output",
             "parameters": {}
         },
