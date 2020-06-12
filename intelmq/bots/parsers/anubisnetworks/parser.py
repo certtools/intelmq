@@ -186,8 +186,11 @@ class AnubisNetworksParserBot(Bot):
                 event = self.parse_geo(event, value,
                                        'extra.communication.http.%s' % key[15:],
                                        raw_report, '_geo_comm_http_x_forwarded_for_')
-            elif key in ["_origin", "_provider", "pattern_verified", "metadata"]:
+            elif key in ["_origin", "_provider", "pattern_verified"]:
                 event['extra.%s' % key] = value
+            elif key == "metadata":
+                for subkey, subvalue in value.items():
+                    event['extra.metadata.%s' % subkey] = subvalue
             else:
                 raise ValueError("Unable to parse data field %r. Please report this as bug." % key)
         self.send_message(event)

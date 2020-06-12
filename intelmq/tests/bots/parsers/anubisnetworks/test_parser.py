@@ -96,13 +96,12 @@ EXAMPLE_EVENT3  = {"classification.taxonomy": "malicious code",
                    "raw": EXAMPLE_REPORT3['raw'],
                    "classification.type": "malware",
                    "event_description.text": "Sinkhole attempted connection",
-                   "extra.metadata": {
-                       "flowbits": [
+                   "extra.metadata.flowbits": [
                            "_mt_s",
                            "_mt_sa",
                            "_mt_a",
                            "_mt_p"
-                       ], },
+                   ],
                    "protocol.application": "http",
                    "extra.malware.severity": 2,
                    "extra.malware.categories": [
