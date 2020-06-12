@@ -2,40 +2,6 @@ CHANGELOG
 ==========
 
 
-2.1.4 (unreleased)
-------------------
-
-### Configuration
-
-### Core
-
-### Development
-
-### Harmonization
-
-### Bots
-#### Collectors
-
-#### Parsers
-
-#### Experts
-
-#### Outputs
-
-### Documentation
-
-### Packaging
-
-### Tests
-- `intelmq.tests.test_conf`: Set encoding to UTF-8 for reading the `feeds.yaml` file.
-
-### Tools
-
-### Contrib
-
-### Known issues
-
-
 2.1.3 (2020-05-26)
 ------------------
 
