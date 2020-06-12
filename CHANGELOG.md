@@ -55,6 +55,7 @@ Dropped support for Python 3.4.
   - Add last updated information in raw.
 - `intelmq.bots.parsers.anubisnetworks.parser`: add new parameter `use_malware_familiy_as_classification_identifier`.
 - `intelmq.bots.parsers.microsoft.parser_ctip`: Compatibility for new CTIP data format used provided by the Azure interface.
+- `intelmq.bots.parsers.cymru.parser_cap_program`: Support for `openresolver` type.
 
 #### Experts
 - `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
