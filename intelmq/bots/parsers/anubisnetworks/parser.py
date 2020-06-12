@@ -34,7 +34,12 @@ class AnubisNetworksParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-        raw_report = json.loads(utils.base64_decode(report.get('raw')))
+        raw = utils.base64_decode(report.get('raw')).strip()
+        if not raw:
+            self.acknowledge_message()
+            return
+        raw_report = json.loads(raw)
+        del raw
         event = self.new_event(report)
         event.change("feed.url", event["feed.url"].split("?key=")[0])
         event.add("raw", report.get('raw'), sanitize=False)
