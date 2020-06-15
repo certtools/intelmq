@@ -46,7 +46,7 @@ Dropped support for Python 3.4.
 #### Parsers
 - `intelmq.bots.parsers.autoshun.parser`: Drop compatibility with Python 3.4.
 - `intelmq.bots.parsers.html_table.parser`: Drop compatibility with Python 3.4.
-- `intelmq.bots.parsers.shadowserver.parser`: Add suppor for MQTT feed (PR#1512).
+- `intelmq.bots.parsers.shadowserver.parser`: Add support for MQTT and Open-IPP feeds (PR#1512, PR#1544).
 - `intelmq.bots.parsers.taichung.parser`:
   - Migrate to `ParserBot`.
   - Also parse geolocation information if available.

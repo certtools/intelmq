@@ -1333,6 +1333,7 @@ These are the supported feed name and their corresponding file name for automati
 | Open-DB2-Discovery-Service | `scan_db2` |
 | Open-Elasticsearch | `scan_elasticsearch` |
 | Open-IPMI | `scan_ipmi` |
+| Open-IPP | `scan_ipp` |
 | Open-LDAP | `scan_ldap ` |
 | Open-LDAP-TCP | `scan_ldap_tcp` |
 | Open-mDNS | `scan_mdns` |
