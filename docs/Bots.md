@@ -903,6 +903,7 @@ TODO
 
 #### Description
 
+The feed format changes over time. The parser supports at least data from 2016 and 2020.
 
 #### Configuration parameters
 
