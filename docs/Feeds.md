@@ -182,9 +182,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ## Cyberfeed Stream
 
 * **Public:** unknown
-* **Revision:** 2018-01-20
-* **Documentation:** https://www.anubisnetworks.com/
-* **Description:** AnubisNetworks Collector is the bot responsible to get AnubisNetworks Cyberfeed Stream.
+* **Revision:** 2020-06-15
+* **Documentation:** https://www.anubisnetworks.com/ https://www.bitsight.com/
+* **Description:** Fetches and parsers the Cyberfeed data stream.
 
 ### Collector
 
