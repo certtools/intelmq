@@ -321,6 +321,18 @@
                 "timelimit": "",
                 "tweet_count": ""
             }
+        },
+        "Github API": {
+            "description": "Collects files from github repository via the Github API. Optionally with github credentials.",
+            "module": "intelmq.bots.collectors.github_api.collector_github_contents_api",
+            "parameters": {
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
+                "basic_auth_username": "__USERNAME__",
+                "basic_auth_password": "__PASSWORD__",
+                "repository": "StrangerealIntel/DailyIOC",
+                "regex": ".*.json"
+            }
         }
     },
     "Parser": {
@@ -454,6 +466,11 @@
                 "type": "c2server",
                 "type_translation": null
             }
+        },
+        "Github feed": {
+            "description": "Github feed parser dependent of the feed URL. Parses only known github feeds.",
+            "module": "intelmq.bots.parsers.github_feed.parser",
+            "parameters": {}
         },
         "HTML Table": {
             "description": "HTML Table Parser is a bot configurable to parse different html table data.",
