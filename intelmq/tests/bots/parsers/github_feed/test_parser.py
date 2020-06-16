@@ -8,7 +8,7 @@ import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.parsers.github_feed.parser import GithubFeedParserBot
 
-with open(os.path.join(os.path.dirname(__file__), 'exmaple_ioc_strangereal_intel.json')) as handle:
+with open(os.path.join(os.path.dirname(__file__), 'example_ioc_strangereal_intel.json')) as handle:
     EXAMPLE_STRANGERINTEL_FILE_CONTENTS = handle.read()
     EXAMPLE_STRANGERINTEL_FILE_JSON = json.loads(EXAMPLE_STRANGERINTEL_FILE_CONTENTS)
 
@@ -30,6 +30,7 @@ EXAMPLE_STRANGEREALINTEL_EVENT = {
 }
 
 
+@test.skip_exotic()
 class TestGithubFeedParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for GithubFeedParserBot.

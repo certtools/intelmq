@@ -1102,7 +1102,7 @@ http://www.team-cymru.com/bogon-reference.html
 #### Information
 
 * `name:` intelmq.bots.parsers.github_feed.parser
-* `description:` Parses Feeds available publiclyon github (should receive from github_api collector)
+* `description:` Parses Feeds available publicly on github (should receive from github_api collector)
 
 * * *
 

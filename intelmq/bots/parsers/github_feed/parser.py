@@ -9,12 +9,12 @@ try:
     from validators.hashes import md5 as valid_md5, sha1 as valid_sha1, sha256 as valid_sha256
     from validators.domain import domain as valid_domain
     from validators.url import url as valid_url
-    from validators.utils import ValidationFailure
 except ImportError:
     validators = None
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.utils import base64_decode
+from intelmq.lib.exceptions import MissingDependencyError
 
 HASH_VALIDATORS = {
     'sha1': lambda x: valid_sha1(x),
@@ -27,7 +27,7 @@ class GithubFeedParserBot(Bot):
 
     def init(self):
         if validators is None:
-            raise ValueError('Could not import validators. Please install it.')
+            raise MissingDependencyError('validators')
         self.__supported_feeds = {
             'StrangerealIntel/DailyIOC': lambda logger: self.StrangerealIntelDailyIOC(logger)
         }

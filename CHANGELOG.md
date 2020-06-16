@@ -42,6 +42,7 @@ Dropped support for Python 3.4.
   - For stomp.py versions `>= 5.0.0` redirect the `stomp.PrintingListener` output to debug logging.
 - `intelmq.bots.collectors.microsoft.collector_azure`: Support current Python library `azure-storage-blob>= 12.0.0`, configuration is incompatible and needs manual change. See NEWS file and bot's documentation for more details.
 - `intelmq.bots.collectors.amqp.collector_amqp`: Require `pika` minimum version 1.0.
+- `intelmq.bots.collectors.github_api.collector_github_contents_api`: Added (PR#1481).
 
 #### Parsers
 - `intelmq.bots.parsers.autoshun.parser`: Drop compatibility with Python 3.4.
@@ -56,6 +57,7 @@ Dropped support for Python 3.4.
 - `intelmq.bots.parsers.anubisnetworks.parser`: add new parameter `use_malware_familiy_as_classification_identifier`.
 - `intelmq.bots.parsers.microsoft.parser_ctip`: Compatibility for new CTIP data format used provided by the Azure interface.
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Support for `openresolver` type.
+- `intelmq.bots.parsers.github_feed.parser`: Added (PR#1481).
 
 #### Experts
 - `intelmq.bots.experts.csv_converter`: Added as converter to CSV.

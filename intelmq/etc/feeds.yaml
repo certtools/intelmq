@@ -1655,6 +1655,6 @@ providers:
         parser:
           module: intelmq.bots.parsers.github_feed
           parameters:
-      revision: 05-12-2019
-      status: on
+      revision: 2019-12-05
       documentation: https://github.com/StrangerealIntel/DailyIOC
+      public: yes

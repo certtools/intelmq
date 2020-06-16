@@ -1650,7 +1650,8 @@ server {
 
 ## DailyIOC
 
-* **Revision:** 05-12-2019
+* **Public:** yes
+* **Revision:** 2019-12-05
 * **Documentation:** https://github.com/StrangerealIntel/DailyIOC
 * **Description:** Daily IOC from tweets and articles
 * **Additional Information:** collector's `extra_fields` parameter may be any of fields from the github [content API response](https://developer.github.com/v3/repos/contents/)
