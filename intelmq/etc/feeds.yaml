@@ -1191,6 +1191,7 @@ providers:
         parser:
           module: intelmq.bots.parsers.anubisnetworks.parser
           parameters:
+            use_malware_familiy_as_classification_identifier: true
       revision: 2020-06-15
       documentation: https://www.anubisnetworks.com/ https://www.bitsight.com/
       public: no

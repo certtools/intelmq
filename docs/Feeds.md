@@ -199,6 +199,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.anubisnetworks.parser
 * **Configuration Parameters:**
+*  * `use_malware_familiy_as_classification_identifier`: `True`
 
 
 # Autoshun
