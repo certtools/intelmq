@@ -24,6 +24,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v213_feed_changes',
            'v220_configuration_1',
            'v220_azure_collector',
+           'v220_feed_changes',
            ]
 
 
@@ -435,6 +436,32 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
     return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
 
 
+def v220_feed_changes(defaults, runtime, harmonization, dry_run):
+    """
+    Migrates feed configuration for changed feed parameters.
+    """
+    found_urlvir_feed = []
+    found_urlvir_parser = []
+    changed = None
+    messages = []
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.http.collector_http":
+            if "http_url" not in bot["parameters"]:
+                continue
+            if bot["parameters"]["http_url"].startswith("http://www.urlvir.com/export-"):
+                found_urlvir_feed.append(bot_id)
+        elif bot['module'] == "intelmq.bots.parsers.urlvir.parser":
+            found_urlvir_parser.append(bot_id)
+    if found_urlvir_feed:
+        messages.append('A discontinued feed "URLVir" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_urlvir_feed)))
+    if found_urlvir_parser:
+        messages.append('The removed parser "URLVir" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_urlvir_parser)))
+    messages = ' '.join(messages)
+    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -449,7 +476,7 @@ UPGRADES = OrderedDict([
     ((2, 1, 2), ()),
     ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
     ((2, 1, 4), ()),
-    ((2, 2, 0), (v220_configuration_1, v220_azure_collector)),
+    ((2, 2, 0), (v220_configuration_1, v220_azure_collector, v220_feed_changes)),
 ])
 
 ALWAYS = (harmonization, )

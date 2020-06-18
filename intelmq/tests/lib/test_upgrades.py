@@ -332,6 +332,19 @@ V213_FEED = {"zeus-collector": {
     "module": "intelmq.bots.parsers.nothink.parser",
 },
 }
+V220_FEED = {
+"urlvir-hosts-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "http://www.urlvir.com/export-hosts/",
+    },
+},
+"urlvir-parser": {
+    "group": "Parser",
+    "module": "intelmq.bots.parsers.urlvir.parser",
+},
+}
 
 
 def generate_function(function):
@@ -446,6 +459,17 @@ class TestUpgradeLib(unittest.TestCase):
                          'Remove affected bots yourself.',
                          result[0])
         self.assertEqual(V213_FEED, result[2])
+
+    def test_v220_feed_changes(self):
+        """ Test v213_feed_changes """
+        result = upgrades.v220_feed_changes({}, V220_FEED, {}, False)
+        self.assertEqual('A discontinued feed "URLVir" has been found '
+                         'as bot urlvir-hosts-collector. '
+                         'The removed parser "URLVir" has been found '
+                         'as bot urlvir-parser. '
+                         'Remove affected bots yourself.',
+                         result[0])
+        self.assertEqual(V220_FEED, result[2])
 
 
 for name in upgrades.__all__:

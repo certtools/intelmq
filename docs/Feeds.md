@@ -46,7 +46,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Team Cymru](#team-cymru)
 - [Threatminer](#threatminer)
 - [Turris](#turris)
-- [URLVir](#urlvir)
 - [University of Toulouse](#university-of-toulouse)
 - [VXVault](#vxvault)
 - [ViriBack](#viriback)
@@ -1862,52 +1861,6 @@ server {
 ### Parser
 
 * **Module:** intelmq.bots.parsers.turris.parser
-* **Configuration Parameters:**
-
-
-# URLVir
-
-## Hosts
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.urlvir.com/
-* **Description:** This feed provides FQDN's or IP addresses for Active Malicious Hosts.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.urlvir.com/export-hosts/`
-*  * `name`: `Hosts`
-*  * `provider`: `URLVir`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.urlvir.parser
-* **Configuration Parameters:**
-
-
-## IPs
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.urlvir.com/
-* **Description:** This feed provides IP addresses hosting Malware.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.urlvir.com/export-ip-addresses/`
-*  * `name`: `IPs`
-*  * `provider`: `URLVir`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.urlvir.parser
 * **Configuration Parameters:**
 
 

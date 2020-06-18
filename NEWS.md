@@ -34,6 +34,10 @@ This also changes the required configuration parameters. The new required parame
 
 The previous parameters `account_name`, `account_key` and `delete` are not supported anymore.
 
+#### URLVir Feeds and Parser
+All URLVir feeds have been discontinued. The URLVir Parser has been removed.
+The `intelmqctl upgrade-config` command warns if you have these feed and the bot in use.
+
 ### Libraries
 
 ### Postgres databases

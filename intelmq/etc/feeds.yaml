@@ -181,42 +181,6 @@ providers:
       revision: 2018-02-06
       documentation: https://www.openphish.com/phishing_feeds.html
       public: no
-  URLVir:
-    Hosts:
-      description: This feed provides FQDN's or IP addresses for Active Malicious
-        Hosts.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://www.urlvir.com/export-hosts/
-            rate_limit: 129600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.urlvir.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://www.urlvir.com/
-      public: yes
-    IPs:
-      description: This feed provides IP addresses hosting Malware.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://www.urlvir.com/export-ip-addresses/
-            rate_limit: 129600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.urlvir.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://www.urlvir.com/
-      public: yes
   Netlab 360:
     Mirai Scanner:
       description: 'This feed provides IP addresses which actively scan for vulnerable

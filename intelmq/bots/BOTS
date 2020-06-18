@@ -647,11 +647,6 @@
                 "substitutions": " .net;[.]net"
             }
         },
-        "URLVir": {
-            "description": "URLVir Parser is the bot responsible to parse the Export Hosts and Export IP Addresses reports and sanitize the information.",
-            "module": "intelmq.bots.parsers.urlvir.parser",
-            "parameters": {}
-        },
         "VXVault": {
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.vxvault.parser",

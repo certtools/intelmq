@@ -58,6 +58,7 @@ Dropped support for Python 3.4.
 - `intelmq.bots.parsers.microsoft.parser_ctip`: Compatibility for new CTIP data format used provided by the Azure interface.
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Support for `openresolver` type.
 - `intelmq.bots.parsers.github_feed.parser`: Added (PR#1481).
+- `intelmq.bots.parsers.urlvir.parser`: Removed, as the feed is discontinued (#1537).
 
 #### Experts
 - `intelmq.bots.experts.csv_converter`: Added as converter to CSV.
@@ -79,6 +80,7 @@ Dropped support for Python 3.4.
 - Added document on MISP integration possibilities.
 - Feeds:
   - Added "Full Bogons IPv6" feed.
+  - Remove discontinued URLVir Feeds (#1537).
 
 ### Packaging
 - `setup.py` do not try to install any data to `/opt/intelmq/` as the behavior is inconsistent on various systems and with `intelmqsetup` we have a tool to create the structure and files anyway.
