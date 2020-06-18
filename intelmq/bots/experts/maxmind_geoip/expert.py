@@ -5,7 +5,6 @@ This product includes GeoLite2 data created by MaxMind, available from
 """
 
 import io
-import re
 import sys
 import pathlib
 import requests
@@ -113,6 +112,12 @@ class GeoIPExpertBot(Bot):
             print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
             sys.exit(0)
 
+        # we only need to import now, if there are no maxmind_geoip bots, this dependency does not need to be installed
+        try:
+            import maxminddb
+        except ImportError:
+            raise MissingDependencyError('geoip2') # geoip2 depends on maxminddb
+
         try:
             print("Downloading the latest database update...")
             response = requests.get("https://download.maxmind.com/app/geoip_download",
@@ -133,11 +138,16 @@ class GeoIPExpertBot(Bot):
 
         database_data = None
 
-        with tarfile.open(fileobj=io.BytesIO(response.content), mode='r:gz') as archive:
-            for member in archive.getmembers():
-                if "GeoLite2-City.mmdb" in member.name:
-                    database_data = archive.extractfile(member).read()
-                    break
+        try:
+            with tarfile.open(fileobj=io.BytesIO(response.content), mode='r:gz') as archive:
+                for member in archive.getmembers():
+                    if "GeoLite2-City.mmdb" in member.name:
+                        database_data = maxminddb.open_database(database=archive.extractfile(member), mode=maxminddb.MODE_FD)
+                        break
+
+        except maxminddb.InvalidDatabaseError:
+            print("Database update failed. Database file invalid.")
+            sys.exit(1)
 
         if not database_data:
             print("Database update failed. Could not locate file 'GeoLite2-City.mmbd' in the downloaded archive.")
@@ -147,7 +157,7 @@ class GeoIPExpertBot(Bot):
             database_dir = pathlib.Path(database_path).parent
             database_dir.mkdir(parents=True, exist_ok=True)
             with open(database_path, "wb") as database:
-                database.write(database_data)
+                database.write(database_data._buffer)
 
         print("Database updated. Reloading affected bots.")
 

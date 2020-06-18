@@ -75,11 +75,6 @@ class ASNLookupExpertBot(Bot):
 
     @classmethod
     def update_database(cls):
-        if pyasn is None:
-            raise MissingDependencyError("pyasn")
-
-        from pyasn import mrtx
-
         bots = {}
         runtime_conf = load_configuration(RUNTIME_CONF_FILE)
         try:
@@ -94,6 +89,12 @@ class ASNLookupExpertBot(Bot):
         if not bots:
             print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
             sys.exit(0)
+
+        # we only need to import now, if there are no asn_lookup bots, this dependency does not need to be installed
+        if pyasn is None:
+            raise MissingDependencyError("pyasn")
+
+        from pyasn import mrtx
 
         try:
             print("Searching for the latest database update...")
