@@ -11,6 +11,7 @@ from datetime import datetime
 from json import loads
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     from elasticsearch import Elasticsearch
@@ -54,7 +55,7 @@ class ElasticsearchOutputBot(Bot):
 
     def init(self):
         if Elasticsearch is None:
-            raise ValueError('Missing elasticsearch module.')
+            raise MissingDependencyError('elasticsearch', version='>=5.0.0,<6.0.0')
 
         self.elastic_host = getattr(self.parameters,
                                     'elastic_host', '127.0.0.1')
@@ -70,8 +71,6 @@ class ElasticsearchOutputBot(Bot):
                                           'ssl_ca_certificate', None)
         self.ssl_show_warnings = getattr(self.parameters,
                                          'ssl_show_warnings', True)
-        self.elastic_doctype = getattr(self.parameters,
-                                       'elastic_doctype', 'events')
         self.replacement_char = getattr(self.parameters,
                                         'replacement_char', None)
         self.flatten_fields = getattr(self.parameters,
@@ -125,7 +124,6 @@ class ElasticsearchOutputBot(Bot):
                                       replacement=self.replacement_char)
 
         self.es.index(index=self.get_index(event_dict, default_date=datetime.today().date()),
-                      doc_type=self.elastic_doctype,
                       body=event_dict)
         self.acknowledge_message()
 

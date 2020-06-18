@@ -14,6 +14,7 @@ import intelmq.lib.exceptions as exceptions
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import textx.model
@@ -45,7 +46,7 @@ class SieveExpertBot(Bot):
     @staticmethod
     def init_metamodel():
         if metamodel_from_file is None:
-            raise ValueError('Could not import textx. Please install it')
+            raise MissingDependencyError("textx")
 
         try:
             grammarfile = os.path.join(os.path.dirname(__file__), 'sieve.tx')

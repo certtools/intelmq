@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-© 2019 Sebastian Wagner <wagner@cert.at>
+© 2020 Sebastian Wagner <wagner@cert.at>
 
 SPDX-License-Identifier: AGPL-3.0
 """
@@ -22,6 +22,9 @@ __all__ = ['v100_dev7_modify_syntax',
            'v210_deprecations',
            'v213_deprecations',
            'v213_feed_changes',
+           'v220_configuration',
+           'v220_azure_collector',
+           'v220_feed_changes',
            ]
 
 
@@ -222,7 +225,8 @@ def v111_defaults_process_manager(defaults, runtime, harmonization, dry_run):
 
 def v202_fixes(defaults, runtime, harmonization, dry_run):
     """
-    Migrating collector parameter `feed` to `name`. RIPE expert set: `query_ripe_stat_ip` with `query_ripe_stat_asn` as default
+    Migrate Collector parameter `feed` to `name`. RIPE expert set `query_ripe_stat_ip` with `query_ripe_stat_asn` as default.
+    Set cymru whois expert `overwrite` to true.
     """
     changed = None
     for bot_id, bot in runtime.items():
@@ -295,6 +299,40 @@ def v213_deprecations(defaults, runtime, harmonization, dry_run):
                 bot["parameters"]["extract_files"] = bot["parameters"]["attach_unzip"]
                 del bot["parameters"]["attach_unzip"]
                 changed = True
+    return changed, defaults, runtime, harmonization
+
+
+def v220_configuration(defaults, runtime, harmonization, dry_run):
+    """
+    Migrating configuration
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.misp.collector":
+            if "misp_verify" not in bot["parameters"]:
+                continue
+            if bot["parameters"]["misp_verify"] != defaults["http_verify_cert"]:
+                bot["parameters"]["http_verify_cert"] = bot["parameters"]["misp_verify"]
+            del bot["parameters"]["misp_verify"]
+            changed = True
+        elif bot["module"] == "intelmq.bots.outputs.elasticsearch.output":
+            if "elastic_doctype" in bot["parameters"]:
+                del bot["parameters"]["elastic_doctype"]
+    return changed, defaults, runtime, harmonization
+
+
+def v220_azure_collector(defaults, runtime, harmonization, dry_run):
+    """
+    Checking for the Microsoft Azure collector
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.microsoft.collector_azure":
+            if "connection_string" not in bot["parameters"]:
+                changed = ("The Microsoft Azure collector changed backwards-"
+                           "incompatible in IntelMQ 2.2.0. Look at the bot's "
+                           "documentation and NEWS file to adapt the "
+                           "configuration.")
     return changed, defaults, runtime, harmonization
 
 
@@ -398,6 +436,32 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
     return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
 
 
+def v220_feed_changes(defaults, runtime, harmonization, dry_run):
+    """
+    Migrates feed configuration for changed feed parameters.
+    """
+    found_urlvir_feed = []
+    found_urlvir_parser = []
+    changed = None
+    messages = []
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.http.collector_http":
+            if "http_url" not in bot["parameters"]:
+                continue
+            if bot["parameters"]["http_url"].startswith("http://www.urlvir.com/export-"):
+                found_urlvir_feed.append(bot_id)
+        elif bot['module'] == "intelmq.bots.parsers.urlvir.parser":
+            found_urlvir_parser.append(bot_id)
+    if found_urlvir_feed:
+        messages.append('A discontinued feed "URLVir" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_urlvir_feed)))
+    if found_urlvir_parser:
+        messages.append('The removed parser "URLVir" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_urlvir_parser)))
+    messages = ' '.join(messages)
+    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -411,6 +475,7 @@ UPGRADES = OrderedDict([
     ((2, 1, 1), ()),
     ((2, 1, 2), ()),
     ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
+    ((2, 2, 0), (v220_configuration, v220_azure_collector, v220_feed_changes)),
 ])
 
 ALWAYS = (harmonization, )

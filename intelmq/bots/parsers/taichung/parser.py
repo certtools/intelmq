@@ -7,7 +7,7 @@ import re
 import warnings
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 CLASSIFICATION = {
     "brute-force": ["brute-force", "brute force", "mysql",
@@ -29,7 +29,7 @@ CLASSIFICATION = {
 }
 
 
-class TaichungCityNetflowParserBot(Bot):
+class TaichungNetflowRecentParserBot(ParserBot):
 
     def get_type(self, value):
         value = value.lower()
@@ -41,39 +41,41 @@ class TaichungCityNetflowParserBot(Bot):
                       "" % value)
         return "unknown"
 
-    def process(self):
-        report = self.receive_message()
-
+    def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
         for row in raw_report.split('<tr>'):
+            yield row
 
-            # Get IP Address and Type
-            info1 = re.search(
-                r">[\ ]*(\d+\.\d+\.\d+\.\d+)[\ ]*<.*</td><td>([^<]+)</td>", row)
+    def parse_line(self, row, report):
+        # Get IP Address and Type
+        info1 = re.search(
+            r">[\ ]*(\d+\.\d+\.\d+\.\d+)[\ ]*<.*</td><td>([^<]+)</td>", row)
 
-            if not info1:
-                continue
+        if not info1:
+            return  # abort if no IP address found
 
-            # Get Timestamp
-            info2 = re.search(
-                r"<td>[\ ]*(\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2})[\ ]*</td>",
-                row)
+        # Get Timestamp
+        info2 = re.search(
+            r"<td>[\ ]*(\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2})[\ ]*</td>",
+            row)
+        cc_search = re.search(r'([a-z]+).gif"', row)
 
-            event = self.new_event(report)
+        event = self.new_event(report)
 
-            description = info1.group(2)
-            event_type = self.get_type(description)  # without decoding here, b/c of the unicode signs
-            description = utils.decode(description)
-            time_source = info2.group(1) + " UTC-8"
+        description = info1.group(2)
+        event_type = self.get_type(description)  # without decoding here, b/c of the unicode signs
+        description = utils.decode(description)
+        time_source = info2.group(1) + " UTC-8"
 
-            event.add("time.source", time_source)
-            event.add("source.ip", info1.group(1))
-            event.add('classification.type', event_type)
-            event.add('event_description.text', description)
-            event.add("raw", row)
+        event.add("time.source", time_source)
+        event.add("source.ip", info1.group(1))
+        event.add('classification.type', event_type)
+        event.add('event_description.text', description)
+        if cc_search:
+            event.add('source.geolocation.cc', cc_search.group(1))
+        event.add("raw", row)
 
-            self.send_message(event)
-        self.acknowledge_message()
+        yield event
 
 
-BOT = TaichungCityNetflowParserBot
+BOT = TaichungNetflowRecentParserBot

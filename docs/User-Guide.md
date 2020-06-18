@@ -51,11 +51,13 @@ systemctl start redis.service
 ## /opt and LSB paths
 
 If you installed the packages, standard Linux paths (LSB paths) are used: `/var/log/intelmq/`, `/etc/intelmq/`, `/var/lib/intelmq/`, `/var/run/intelmq/`.
-Otherwise, the configuration directory is `/opt/intelmq/etc/`.
+Otherwise, the configuration directory is `/opt/intelmq/etc/`. Using the environment variable `INTELMQ_ROOT_DIR` allows setting any arbitrary root directory.
 
 You can switch this by setting the environment variables `INTELMQ_PATHS_NO_OPT` and `INTELMQ_PATHS_OPT`, respectively.
 * When installing the Python packages, you can set `INTELMQ_PATHS_NO_OPT` to something non-empty to use LSB-paths.
-* When installing the deb/rpm packages, you can set `INTELMQ_PATHS_OPT` to something non-empty to use `/opt/` paths.
+* When installing the deb/rpm packages, you can set `INTELMQ_PATHS_OPT` to something non-empty to use `/opt/intelmq/` paths, or a path set with `INTELMQ_ROOT_DIR`.
+
+The environment variable `ROOT_DIR` is meant to set an alternative root directory instead of `/`. This is primarily meant for package build environments an analogous to setuptools' `--root` parameter. Thus it is only used in LSB-mode.
 
 ## Overview
 
@@ -561,6 +563,8 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+  --truncate TRUNCATE, -t TRUNCATE
+                        Truncate raw-data with more characters than given. 0 for no truncating. Default: 1000.
 
 Interactive actions after a file has been selected:
 - r, Recover by IDs
@@ -614,6 +618,8 @@ Deleted file /opt/intelmq/var/log/dragon-research-group-ssh-parser.dump
 ```
 
 Bots and the intelmqdump tool use file locks to prevent writing to already opened files. Bots are trying to lock the file for up to 60 seconds if the dump file is locked already by another process (intelmqdump) and then give up. Intelmqdump does not wait and instead only shows an error message.
+
+By default, the `show` command truncates the `raw` field of messages at 1000 characters to change this limit or disable truncating at all (value 0), use the `--truncate` parameter.
 
 ## Monitoring Logs
 

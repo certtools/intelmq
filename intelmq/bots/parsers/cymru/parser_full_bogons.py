@@ -2,40 +2,39 @@
 import dateutil
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class CymruFullBogonsParserBot(Bot):
+class CymruFullBogonsParserBot(ParserBot):
 
-    def process(self):
-        report = self.receive_message()
-
+    def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw")).strip()
 
         if not len(raw_report):  # We depend on first line = date
-            self.acknowledge_message()
             return
 
-        row = raw_report.splitlines()[0]
-        time_str = row[row.find('(') + 1:row.find(')')]
-        time = dateutil.parser.parse(time_str).isoformat()
+        first_row = raw_report[:raw_report.find('\n')]
+        time_str = first_row[first_row.find('(') + 1:first_row.find(')')]
+        self.last_updated = dateutil.parser.parse(time_str).isoformat()
+        self.tempdata.append(first_row)
 
         for row in raw_report.splitlines():
-            val = row.strip()
-            if not len(val) or val.startswith('#') or val.startswith('//'):
-                continue
+            yield row.strip()
 
-            event = self.new_event(report)
+    def parse_line(self, val, report):
+        if not len(val) or val.startswith('#') or val.startswith('//'):
+            return
 
-            if not event.add('source.ip', val, raise_failure=False):
-                event.add('source.network', val)
+        event = self.new_event(report)
 
-            event.add('time.source', time)
-            event.add('classification.type', 'blacklist')
-            event.add('raw', row)
+        if not event.add('source.ip', val, raise_failure=False):
+            event.add('source.network', val)
 
-            self.send_message(event)
-        self.acknowledge_message()
+        event.add('time.source', self.last_updated)
+        event.add('classification.type', 'blacklist')
+        event.add('raw', self.recover_line(val))
+
+        yield event
 
 
 BOT = CymruFullBogonsParserBot

@@ -38,6 +38,7 @@ from dateutil import parser
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.cache import Cache
 from intelmq.lib.utils import parse_relative, create_request_session_from_bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import requests
@@ -65,7 +66,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
 
     def init(self):
         if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
+            raise MissingDependencyError("requests")
 
         self.set_request_parameters()
 
@@ -139,7 +140,8 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
             report.add('feed.url', download_url)
             report.add('raw', raw)
             self.send_message(report)
-            self.cache.set(file['Name'], True)
+            # redis-py >= 3.0.0 does no longer support boolean values, cast to string explicitly, also for backwards compatibility
+            self.cache.set(file['Name'], "True")
 
     def print_filelist(self):
         """ Can be called from the debugger for example. """

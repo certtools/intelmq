@@ -119,6 +119,10 @@ class BotTestCase(object):
         """
         Set default values and save original functions.
         """
+        if not utils.drop_privileges():
+            raise ValueError('IntelMQ and IntelMQ tests must not run as root for security reasons. '
+                             'Dropping privileges did not work.')
+
         cls.bot_id = 'test-bot'
         cls.bot_name = None
         cls.bot = None
@@ -264,6 +268,10 @@ class BotTestCase(object):
         """
         if prepare:
             self.prepare_bot(parameters=parameters)
+        elif parameters:
+            raise ValueError("Parameter 'parameters' is given, but parameter "
+                             "'prepare' is false. Parameters must be passed on "
+                             "to 'prepare_bot' to be effective.")
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.get_mocked_logger(self.logger)):

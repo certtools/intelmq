@@ -5,6 +5,7 @@ API Collector bot
 from threading import Thread
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import tornado.web
@@ -29,7 +30,7 @@ class APICollectorBot(CollectorBot):
 
     def init(self):
         if IOLoop is None:
-            raise ValueError("Could not import 'tornado'. Please install it.")
+            raise MissingDependencyError("tornado")
 
         app = Application(self.request_handler, [
             ("/intelmq/push", MainHandler),

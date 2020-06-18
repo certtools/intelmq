@@ -4,6 +4,7 @@ import re
 import ssl
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import imbox
@@ -15,7 +16,7 @@ class MailCollectorBot(CollectorBot):
 
     def init(self):
         if imbox is None:
-            raise ValueError('Could not import imbox. Please install it.')
+            raise MissingDependencyError("imbox")
 
         if getattr(self.parameters, 'attach_unzip', None) and not self.extract_files:
             self.extract_files = True
@@ -30,6 +31,8 @@ class MailCollectorBot(CollectorBot):
                               self.parameters.mail_user,
                               self.parameters.mail_password,
                               self.parameters.mail_ssl,
+                              # imbox itself uses ports 143/993 as default depending on SSL setting
+                              port=getattr(self.parameters, 'mail_port', None),
                               ssl_context=ssl_custom_context)
         return mailbox
 

@@ -79,11 +79,6 @@ class TestTCPOutputBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(iterations=len(self.input_message))
 
 
-major, minor, micro, *_ = sys.version_info
-
-
-@unittest.skipIf((major, minor) == (3, 4) and micro < 8, "Travis CI failed with Python3.4.6. "
-                                                         "However, the developer managed to successfully test it on 3.4.8.")
 class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for TCPCollectorBot.
