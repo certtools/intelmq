@@ -22,7 +22,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v210_deprecations',
            'v213_deprecations',
            'v213_feed_changes',
-           'v220_configuration_1',
+           'v220_configuration',
            'v220_azure_collector',
            'v220_feed_changes',
            ]
@@ -302,7 +302,7 @@ def v213_deprecations(defaults, runtime, harmonization, dry_run):
     return changed, defaults, runtime, harmonization
 
 
-def v220_configuration_1(defaults, runtime, harmonization, dry_run):
+def v220_configuration(defaults, runtime, harmonization, dry_run):
     """
     Migrating configuration
     """
@@ -476,7 +476,7 @@ UPGRADES = OrderedDict([
     ((2, 1, 2), ()),
     ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
     ((2, 1, 4), ()),
-    ((2, 2, 0), (v220_configuration_1, v220_azure_collector, v220_feed_changes)),
+    ((2, 2, 0), (v220_configuration, v220_azure_collector, v220_feed_changes)),
 ])
 
 ALWAYS = (harmonization, )

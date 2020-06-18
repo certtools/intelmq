@@ -402,11 +402,11 @@ class TestUpgradeLib(unittest.TestCase):
 
     def test_v220_configuration(self):
         """ Test v220_configuration. """
-        result = upgrades.v220_configuration_1(DEFAULTS_HTTP_VERIFY_TRUE,
+        result = upgrades.v220_configuration(DEFAULTS_HTTP_VERIFY_TRUE,
                                                V220_MISP_VERIFY_TRUE, {}, False)
         self.assertTrue(result[0])
         self.assertEqual(V220_MISP_VERIFY_NULL, result[2])
-        result = upgrades.v220_configuration_1(DEFAULTS_HTTP_VERIFY_TRUE,
+        result = upgrades.v220_configuration(DEFAULTS_HTTP_VERIFY_TRUE,
                                                V220_MISP_VERIFY_FALSE, {}, False)
         self.assertTrue(result[0])
         self.assertEqual(V220_HTTP_VERIFY_FALSE, result[2])
