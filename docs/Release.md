@@ -10,14 +10,14 @@
 - [Prepare new version](#prepare-new-version)
 
 
-General assumption: You are working on branch maintenance, the next version is a bug fix release. For feature releaeses it is slightly different.
+General assumption: You are working on branch maintenance, the next version is a bug fix release. For feature releases it is slightly different.
 
 ## Check before
 
  * Make sure the current state is really final ;)
    You can test most of the steps described here locally before doing it real.
  * Check the upgrade functions in `intelmq/lib/upgrades.py`.
- * Close the milestone on github and move any open issues to the next one.
+ * Close the milestone on GitHub and move any open issues to the next one.
 
 ## Documentation
 
@@ -37,7 +37,7 @@ Why a separate branch? Because if problems show up, you can still force-push to 
 
 Tag the commit with `git tag -s version HEAD`, merge it into master, push the branches *and* the tag. The tag is just `a.b.c`, not prefixed with `v` (that was necessary only with SVN a long time ago...).
 
-Go to https://github.com/certtools/intelmq/tags and enter the release notes (changelog) for the new tag, then it's considered a release by github.
+Go to https://github.com/certtools/intelmq/tags and enter the release notes (from the CHANGELOG) for the new tag, then it's considered a *release* by GitHub.
 
 ## Tarballs and PyPI
 
@@ -66,7 +66,7 @@ Increase the version in `intelmq/version.py` and declare it as alpha version.
 Add the new version in `intelmq/lib/upgrades.py`.
 Add a new entry in `debian/changelog` with `dch -v [version] -c debian/changelog`.
 
-Add a new empty changelog and news section. For the changelog:
+Add new entries to `CHANGELOG.md` and `NEWS.md`. For `CHANGELOG.md`:
 
 ```
 ### Configuration
@@ -98,7 +98,7 @@ Add a new empty changelog and news section. For the changelog:
 
 ### Known issues
 ```
-And for the news:
+And for `NEWS.md`:
 
 ```
 ### Requirements

@@ -23,7 +23,8 @@ EXAMPLE_REPORT = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a4
                   "time.observation": "2016-04-19T23:16:08+00:00"
                   }
 
-EXAMPLE_EVENT  = {"classification.type": "infected-system",
+EXAMPLE_EVENT  = {"classification.taxonomy": "malicious code",
+                  "classification.type": "infected-system",
                   "destination.port": 80,
                   "feed.accuracy": 100.0,
                   "malware.name": "nivdort",
@@ -58,7 +59,8 @@ EXAMPLE_REPORT2 = {"feed.name": "AnubisNetworks",
                    "time.observation":
                    "2016-04-19T23:16:10+00:00"
                    }
-EXAMPLE_EVENT2  = {"feed.name": "AnubisNetworks",
+EXAMPLE_EVENT2  = {"classification.taxonomy": "malicious code",
+                   "feed.name": "AnubisNetworks",
                    "malware.name": "spyapp",
                    "destination.fqdn": "example.net",
                    "source.ip": "190.124.67.211",
@@ -82,7 +84,8 @@ EXAMPLE_REPORT3 = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a
                    "__type": "Report",
                    "time.observation": "2016-04-19T23:16:10+00:00"
                    }
-EXAMPLE_EVENT3  = {"malware.name": "malwname",
+EXAMPLE_EVENT3  = {"classification.taxonomy": "malicious code",
+                   "malware.name": "malwname",
                    "source.ip": "203.0.113.2",
                    "source.port": 59645,
                    "__type": "Event",
@@ -94,13 +97,12 @@ EXAMPLE_EVENT3  = {"malware.name": "malwname",
                    "raw": EXAMPLE_REPORT3['raw'],
                    "classification.type": "infected-system",
                    "event_description.text": "Sinkhole attempted connection",
-                   "extra.metadata": {
-                       "flowbits": [
+                   "extra.metadata.flowbits": [
                            "_mt_s",
                            "_mt_sa",
                            "_mt_a",
                            "_mt_p"
-                       ], },
+                   ],
                    "protocol.application": "http",
                    "extra.malware.severity": 2,
                    "extra.malware.categories": [
@@ -181,7 +183,8 @@ EXAMPLE_REPORT_DNS = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29
                       "__type": "Report",
                       "time.observation": "2016-04-19T23:16:10+00:00"
                       }
-EXAMPLE_EVENT_DNS  = {"malware.name": "malware name dns",
+EXAMPLE_EVENT_DNS  = {"classification.taxonomy": "malicious code",
+                      "malware.name": "malware name dns",
                       "source.ip": "203.0.113.2",
                       "source.port": 11138,
                       "__type": "Event",
@@ -216,6 +219,8 @@ EXAMPLE_EVENT_DNS  = {"malware.name": "malware name dns",
                       "source.as_name": "Example AS Name",
                       'extra.dns_query_type': 'A',
                       }
+EMPTY_REPORT = EXAMPLE_REPORT.copy()
+EMPTY_REPORT['raw'] = 'Cg=='
 
 
 class TestAnubisNetworksParserBot(test.BotTestCase, unittest.TestCase):
@@ -247,6 +252,12 @@ class TestAnubisNetworksParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EXAMPLE_REPORT_DNS
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT_DNS)
+
+    def test_empty(self):
+        """ Test empty line as input """
+        self.input_message = EMPTY_REPORT
+        self.run_bot()
+        self.assertOutputQueueLen(0)
 
 
 if __name__ == '__main__':  # pragma: no cover

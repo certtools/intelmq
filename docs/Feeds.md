@@ -34,19 +34,18 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [McAfee Advanced Threat Defense](#mcafee-advanced-threat-defense)
 - [Microsoft](#microsoft)
 - [Netlab 360](#netlab-360)
-- [Nothink](#nothink)
 - [OpenPhish](#openphish)
 - [PhishTank](#phishtank)
 - [PrecisionSec](#precisionsec)
 - [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
+- [Strangereal Intel](#strangereal-intel)
 - [Sucuri](#sucuri)
 - [Surbl](#surbl)
 - [Taichung](#taichung)
 - [Team Cymru](#team-cymru)
 - [Threatminer](#threatminer)
 - [Turris](#turris)
-- [URLVir](#urlvir)
 - [University of Toulouse](#university-of-toulouse)
 - [VXVault](#vxvault)
 - [ViriBack](#viriback)
@@ -105,28 +104,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ### Parser
 
 * **Module:** intelmq.bots.parsers.abusech.parser_ip
-* **Configuration Parameters:**
-
-
-## Ransomware Tracker
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** https://ransomwaretracker.abuse.ch/
-* **Description:** Ransomware Tracker feed includes FQDN's, URL's, and known IP addresses that were used for said FQDN's and URL's for various ransomware families.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `https://ransomwaretracker.abuse.ch/feeds/csv/`
-*  * `name`: `Ransomware Tracker`
-*  * `provider`: `Abuse.ch`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.abusech.parser_ransomware
 * **Configuration Parameters:**
 
 
@@ -205,9 +182,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ## Cyberfeed Stream
 
 * **Public:** unknown
-* **Revision:** 2018-01-20
-* **Documentation:** https://www.anubisnetworks.com/
-* **Description:** AnubisNetworks Collector is the bot responsible to get AnubisNetworks Cyberfeed Stream.
+* **Revision:** 2020-06-15
+* **Documentation:** https://www.anubisnetworks.com/ https://www.bitsight.com/
+* **Description:** Fetches and parsers the Cyberfeed data stream.
 
 ### Collector
 
@@ -222,6 +199,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.anubisnetworks.parser
 * **Configuration Parameters:**
+*  * `use_malware_familiy_as_classification_identifier`: `True`
 
 
 # Autoshun
@@ -252,17 +230,19 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## C2 Domains
 
-* **Public:** yes
+* **Public:** unknown
 * **Revision:** 2018-01-20
 * **Documentation:** https://osint.bambenekconsulting.com/feeds/
-* **Description:** Master Feed of known, active and non-sinkholed C&Cs domain names.
+* **Description:** Master Feed of known, active and non-sinkholed C&Cs domain names. Requires access credentials.
 * **Additional Information:** License: https://osint.bambenekconsulting.com/license.txt
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt`
+*  * `http_password`: `__PASSWORD__`
+*  * `http_url`: `https://faf.bambenekconsulting.com/feeds/c2-dommasterlist.txt`
+*  * `http_username`: `__USERNAME__`
 *  * `name`: `C2 Domains`
 *  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
@@ -275,17 +255,19 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ## C2 IPs
 
-* **Public:** yes
+* **Public:** unknown
 * **Revision:** 2018-01-20
 * **Documentation:** https://osint.bambenekconsulting.com/feeds/
-* **Description:** Master Feed of known, active and non-sinkholed C&Cs IP addresses
+* **Description:** Master Feed of known, active and non-sinkholed C&Cs IP addresses. Requires access credentials.
 * **Additional Information:** License: https://osint.bambenekconsulting.com/license.txt
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt`
+*  * `http_password`: `__PASSWORD__`
+*  * `http_url`: `https://faf.bambenekconsulting.com/feeds/c2-ipmasterlist.txt`
+*  * `http_username`: `__USERNAME__`
 *  * `name`: `C2 IPs`
 *  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
@@ -308,7 +290,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/dga-feed.txt`
+*  * `http_url`: `https://faf.bambenekconsulting.com/feeds/dga-feed.txt`
 *  * `name`: `DGA Domains`
 *  * `provider`: `Bambenek`
 *  * `rate_limit`: `3600`
@@ -1236,6 +1218,34 @@ server {
 * **Configuration Parameters:**
 
 
+## CTIP via Azure
+
+* **Public:** unknown
+* **Revision:** 2020-05-29
+* **Documentation:** https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
+* **Description:** Collects CTIP (Sinkhole data) files from a shared Azure Storage. The feed is available via Microsoft’s Government Security Program (GSP).
+* **Additional Information:** The cache is needed for memorizing which files have already been processed, the TTL should be higher than the oldest file available in the storage (currently the last three days are available). The connection string contains endpoint as well as authentication information.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.microsoft.collector_azure
+* **Configuration Parameters:**
+*  * `connection_string`: `{{your connection string}}`
+*  * `container_name`: `ctip-infected-summary`
+*  * `name`: `CTIP via Azure`
+*  * `provider`: `Microsoft`
+*  * `rate_limit`: `3600`
+*  * `redis_cache_db`: `5`
+*  * `redis_cache_host`: `127.0.0.1`
+*  * `redis_cache_port`: `6379`
+*  * `redis_cache_ttl`: `864000`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.microsoft.parser_ctip
+* **Configuration Parameters:**
+
+
 ## CTIP via Interflow
 
 * **Public:** unknown
@@ -1349,96 +1359,6 @@ server {
 ### Parser
 
 * **Module:** intelmq.bots.parsers.netlab_360.parser
-* **Configuration Parameters:**
-
-
-# Nothink
-
-## DNS Attack
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.nothink.org/honeypot_dns.php
-* **Description:** This feed provides attack information for attack information against DNS honeypots.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.nothink.org/honeypot_dns_attacks.txt`
-*  * `name`: `DNS Attack`
-*  * `provider`: `Nothink`
-*  * `rate_limit`: `3600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.nothink.parser
-* **Configuration Parameters:**
-
-
-## SNMP
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.nothink.org/honeypot_snmp.php
-* **Description:** There are a number of feeds you can use to depend on how far back you would like to go. The time.source will still be the date and time the feed was generated at nothink. This feed provides IP addresses of systems that have connected to a honeypot via SNMP in the last 24 hours.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.nothink.org/blacklist/blacklist_snmp_day.txt`
-*  * `name`: `SNMP`
-*  * `provider`: `Nothink`
-*  * `rate_limit`: `86400`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.nothink.parser
-* **Configuration Parameters:**
-
-
-## SSH
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.nothink.org/honeypots.php
-* **Description:** There are a number of feeds you can use to depend on how far back you would like to go. The time.source will still be the date and time the feed was generated at nothink. This feed provides IP addresses of systems that have connected to a honeypot via SSH in the last 24 hours.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.nothink.org/blacklist/blacklist_ssh_day.txt`
-*  * `name`: `SSH`
-*  * `provider`: `Nothink`
-*  * `rate_limit`: `86400`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.nothink.parser
-* **Configuration Parameters:**
-
-
-## Telnet
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.nothink.org/honeypots.php
-* **Description:** There are a number of feeds you can use to depend on how far back you would like to go. The time.source will still be the date and time the feed was generated at nothink. This feed provides IP addresses of systems that have connected to a honeypot via Telnet in the last 24 hours.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.nothink.org/blacklist/blacklist_telnet_day.txt`
-*  * `name`: `Telnet`
-*  * `provider`: `Nothink`
-*  * `rate_limit`: `86400`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.nothink.parser
 * **Configuration Parameters:**
 
 
@@ -1558,7 +1478,7 @@ server {
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv.zip`
-*  * `attach_unzip`: `True`
+*  * `extract_files`: `True`
 *  * `folder`: `INBOX`
 *  * `mail_host`: `__HOST__`
 *  * `mail_password`: `__PASSWORD__`
@@ -1722,6 +1642,31 @@ server {
 ### Parser
 
 * **Module:** intelmq.bots.parsers.spamhaus.parser_drop
+* **Configuration Parameters:**
+
+
+# Strangereal Intel
+
+## DailyIOC
+
+* **Public:** yes
+* **Revision:** 2019-12-05
+* **Documentation:** https://github.com/StrangerealIntel/DailyIOC
+* **Description:** Daily IOC from tweets and articles
+* **Additional Information:** collector's `extra_fields` parameter may be any of fields from the github [content API response](https://developer.github.com/v3/repos/contents/)
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.github_api.collector_github_contents_api
+* **Configuration Parameters:**
+*  * `basic_auth_password`: `PASSWORD`
+*  * `basic_auth_username`: `USERNAME`
+*  * `regex`: `.*.json`
+*  * `repository`: `StrangerealIntel/DailyIOC`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.github_feed
 * **Configuration Parameters:**
 
 
@@ -1919,52 +1864,6 @@ server {
 * **Configuration Parameters:**
 
 
-# URLVir
-
-## Hosts
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.urlvir.com/
-* **Description:** This feed provides FQDN's or IP addresses for Active Malicious Hosts.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.urlvir.com/export-hosts/`
-*  * `name`: `Hosts`
-*  * `provider`: `URLVir`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.urlvir.parser
-* **Configuration Parameters:**
-
-
-## IPs
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.urlvir.com/
-* **Description:** This feed provides IP addresses hosting Malware.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.urlvir.com/export-ip-addresses/`
-*  * `name`: `IPs`
-*  * `provider`: `URLVir`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.urlvir.parser
-* **Configuration Parameters:**
-
-
 # University of Toulouse
 
 ## Blacklist
@@ -2083,7 +1982,7 @@ server {
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv`
-*  * `attach_unzip`: `False`
+*  * `extract_files`: `False`
 *  * `folder`: `INBOX`
 *  * `mail_host`: `__HOST__`
 *  * `mail_password`: `__PASSWORD__`

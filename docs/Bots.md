@@ -190,6 +190,8 @@ Multihreading is disabled for all Collectors, as this would lead to duplicated d
 
 ### AMQP
 
+Requires the [`pika` python library](https://pypi.org/project/pika/), minimum version 1.0.0.
+
 #### Information:
 * `name`: intelmq.bots.collectors.amqp.collector_amqp
 * `lookup`: yes
@@ -299,6 +301,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
+* `mail_port`: IMAP server port, optional (default: 143 without SSL, 993 for SSL)
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
@@ -347,6 +350,7 @@ limitation set `chunk_size` to something like `384000000`, i.e., ~384 MB.
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
+* `mail_port`: IMAP server port, optional (default: 143 without SSL, 993 for SSL)
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
@@ -379,6 +383,7 @@ The resulting reports contains the following special fields:
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
+* `mail_port`: IMAP server port, optional (default: 143 without SSL, 993 for SSL)
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
@@ -394,6 +399,38 @@ The resulting reports contains the following special fields:
  * `extra.email_subject`: The subject of the email
  * `extra.email_from`: The email's from address
  * `extra.email_message_id`: The email's message ID
+
+* * *
+
+### GithubAPI
+
+
+#### Information:
+* `name:` intelmq.bots.collectors.github_api.collector_github_contents_api
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Collects files matched by regex from github repository via the Github API.
+  Optionally with github credentials, which are used as the Basic HTTP authetication.
+  
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `basic_auth_username:` Github account username (optional)
+* `basic_auth_password:` Github account password (optional)
+* `repository:` Github target repository (`<USER>/<REPOSITORY>`)
+* `regex:` Valid regex of target files within the repository (defaults to `.*.json`)
+* `extra_fields:` Comma-separated list of extra fields from [github contents API](https://developer.github.com/v3/repos/contents/)
+
+#### Workflow
+
+The optional authentication parameters provide a high limit of the github API requests.
+With the github user authentication, the requests are rate limited to 5000 per hour, otherwise to 60 requests per hour. 
+
+The collector recursively searches for `regex`-defined files in the provided `repository`.
+Additionally it adds extra file metadata defined by the `extra_fields`.
+
+The bot always sets the url, from which downloaded the file, as `feed.url`.
 
 * * *
 
@@ -762,20 +799,23 @@ This bot works based on certstream library (https://github.com/CaliDog/certstrea
 ### Microsoft Azure
 
 Iterates over all blobs in all containers in an Azure storage.
+The Cache is required to memorize which files have already been processed (TTL needs to be high enough to cover the oldest files available!).
+
+This bot significantly changed in a backwards-incompatible way in IntelMQ Version 2.2.0 to support current versions of the Microsoft Azure Python libraries.
 
 #### Information:
-* `name:` intelmq.bots.collectors.microsoft.collector_azure
-* `lookup:` yes
-* `public:` no
-* `cache (redis db):` none
-* `description:` collect blobs from microsoft azure using their library
+* `name`: intelmq.bots.collectors.microsoft.collector_azure
+* `lookup`: yes
+* `public`: no
+* `cache (redis db)`: 5
+* `description`: collect blobs from Microsoft Azure using their library
 
 #### Configuration Parameters:
 
+* **Cache parameters** (see above)
 * **Feed parameters** (see above)
-* `account_name`: account name as give by Microsoft
-* `account_key`: account key as give by Microsoft
-* `delete`: boolean, delete containers and blobs after fetching
+* `connection_string`: connection string as given by Microsoft
+* `container_name`: name of the container to connect to
 
 * * *
 
@@ -895,6 +935,7 @@ TODO
 
 #### Description
 
+The feed format changes over time. The parser supports at least data from 2016 and 2020.
 
 #### Configuration parameters
 
@@ -1056,6 +1097,15 @@ http://www.team-cymru.com/bogon-reference.html
 
 * * *
 
+### Github Feed
+
+#### Information
+
+* `name:` intelmq.bots.parsers.github_feed.parser
+* `description:` Parses Feeds available publicly on github (should receive from github_api collector)
+
+* * *
+
 ### Have I Been Pwned Callback Parser
 
 #### Information:
@@ -1202,6 +1252,20 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
 
 * * *
 
+### Microsoft CTIP Parser
+
+* `name`: `intelmq.bots.parsers.microsoft.parser_ctip`
+* `public`: no
+* `cache (redis db)`: none
+* `description`: Parses data from the Microsoft CTIP Feed
+
+#### Description
+
+Can parse the JSON format provided by the Interflow interface (lists of dictionaries) as well as the format provided by the Azure interface (one dictionary per line).
+The provided data differs between the two formats/providers.
+
+* * *
+
 ### MISP
 
 * `name:` intelmq.bots.parsers.misp.parser
@@ -1310,6 +1374,7 @@ These are the supported feed name and their corresponding file name for automati
 | Open-DB2-Discovery-Service | `scan_db2` |
 | Open-Elasticsearch | `scan_elasticsearch` |
 | Open-IPMI | `scan_ipmi` |
+| Open-IPP | `scan_ipp` |
 | Open-LDAP | `scan_ldap ` |
 | Open-LDAP-TCP | `scan_ldap_tcp` |
 | Open-mDNS | `scan_mdns` |
@@ -1712,6 +1777,8 @@ Examples of time filter definition:
 | drop   | ✓     | ✗           | ✓              | ✓              | ✗                 |
 | drop   | ✗     | ✓           | ✗              | ✗              | ✓                 |
 
+In `DEBUG` logging level, one can see that the message is sent to both matching paths, also if one of the paths is not configured. Of course the message is only delivered to the configured paths.
+
 * * *
 
 ### Format Field
@@ -1941,6 +2008,8 @@ Generic parameters used in this bot:
 
 * `configuration_path`: filename
 * `case_sensitive`: boolean, default: true
+* `maximum_matches`: Maximum number of matches. Processing stops after the limit is reached. Default: no limit (`null`, `0`).
+* `overwrite`: Overwrite any existing fields by matching rules. Default if the parameter is given: `true`, for backwards compatibility. Default will change to `false` in version 3.0.0.
 
 #### Configuration File
 
@@ -2438,6 +2507,8 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 Sends data to an AMQP Server
 See https://www.rabbitmq.com/tutorials/amqp-concepts.html for more details on amqp topic exchange.
 
+Requires the [`pika` python library](https://pypi.org/project/pika/).
+
 #### Information
 * `name`: `intelmq.bots.outputs.amqptopic.output`
 * `lookup`: to the amqp server
@@ -2513,6 +2584,8 @@ This output bot discards all incoming messages.
 * `cache`: no
 * `description`: Output Bot that sends events to Elasticsearch
 
+Only ElasticSearch version 7 supported.
+
 #### Configuration parameters:
 
 * `elastic_host`: Name/IP for the Elasticsearch server, defaults to 127.0.0.1
@@ -2526,7 +2599,6 @@ This output bot discards all incoming messages.
                        'weekly' --> intelmq-2018-42
                        'monthly' --> intelmq-2018-02
                        'yearly' --> intelmq-2018
-* `elastic_doctype`: Elasticsearch document type for the event. Default: events
 * `http_username`: HTTP basic authentication username
 * `http_password`: HTTP basic authentication password
 * `use_ssl`: Whether to use SSL/TLS when connecting to Elasticsearch. Default: False
@@ -2664,6 +2736,7 @@ The PyMISP library >= 2.4.120 is required, see
 
 * **Feed parameters** (see above)
 * `add_feed_provider_as_tag`: bool (use `true` when in doubt)
+* `add_feed_name_as_tag`: bool (use `true` when in doubt)
 * `misp_additional_correlation_fields`: list of fields for which
       the correlation flags will be enabled (in addition to those which are
       in significant_fields)
@@ -2678,9 +2751,12 @@ The PyMISP library >= 2.4.120 is required, see
 * `misp_url`: str, URL of the MISP server
 * `significant_fields`: list of intelmq field names
 
-The significant field values will be searched for in all MISP attribute values
+The `significant_fields` values
+will be searched for in all MISP attribute values
 and if all values are found in the same MISP event, no new MISP event
 will be created.
+Instead if the existing MISP events have the same feed.provider
+and match closely, their timestamp will be updated.
 
 If a new MISP event is inserted the `significant_fields` and the
 `misp_additional_correlation_fields` will be the attributes

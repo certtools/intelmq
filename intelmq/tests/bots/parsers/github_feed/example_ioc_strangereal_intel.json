@@ -1,0 +1,22 @@
+[
+  {
+    "Indicator": "A7A849895CFB3C24A599ABA4CA4BE666D149E60765F7801C47C18D9D8035E826",
+    "Description": "Document"
+  },
+  {
+    "Indicator": "35dc4564216d51e64e40bc0eef932d2e",
+    "Description": "payroll-123456.xls"
+  },
+  {
+    "Indicator": "hack.mds.dom",
+    "Description": ""
+  },
+  {
+    "Indicator": "10.0.0.1",
+    "Description": "IP C2"
+  },
+  {
+    "Indicator": "https://10.2.2.1/malicious.docm",
+    "Description": "URL"
+  }
+]

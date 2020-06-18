@@ -563,6 +563,8 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+  --truncate TRUNCATE, -t TRUNCATE
+                        Truncate raw-data with more characters than given. 0 for no truncating. Default: 1000.
 
 Interactive actions after a file has been selected:
 - r, Recover by IDs
@@ -616,6 +618,8 @@ Deleted file /opt/intelmq/var/log/dragon-research-group-ssh-parser.dump
 ```
 
 Bots and the intelmqdump tool use file locks to prevent writing to already opened files. Bots are trying to lock the file for up to 60 seconds if the dump file is locked already by another process (intelmqdump) and then give up. Intelmqdump does not wait and instead only shows an error message.
+
+By default, the `show` command truncates the `raw` field of messages at 1000 characters to change this limit or disable truncating at all (value 0), use the `--truncate` parameter.
 
 ## Monitoring Logs
 

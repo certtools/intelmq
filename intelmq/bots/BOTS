@@ -1,7 +1,7 @@
 {
     "Collector": {
         "AMQP": {
-            "description": "Collecting from a (remote) AMQP Server and fetching either intelmq or any other messages.",
+            "description": "Collecting from a (remote) AMQP Server and fetching either intelmq or any other messages. Requires the pika python library.",
             "module": "intelmq.bots.collectors.amqp.collector_amqp",
             "parameters": {
                 "connection_attempts": 3,
@@ -54,7 +54,7 @@
             "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
-                "attach_unzip": true,
+                "extract_files": true,
                 "folder": "INBOX",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
@@ -249,12 +249,16 @@
             "description": "",
             "module": "intelmq.bots.collectors.microsoft.collector_azure",
             "parameters": {
-                "account_key": "",
-                "account_name": "",
-                "delete": true,
+                "connection_string": "<insert your connection string here>",
+                "container_name": "<insert the container name>",
                 "name": "Azure",
                 "provider": "Microsoft",
-                "rate_limit": 3600
+                "rate_limit": 3600,
+                "redis_cache_db": "5",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_password": null,
+                "redis_cache_port": 6379,
+                "redis_cache_ttl": 864000
             }
         },
         "Microsoft Interflow": {
@@ -317,6 +321,18 @@
                 "timelimit": "",
                 "tweet_count": ""
             }
+        },
+        "Github API": {
+            "description": "Collects files from github repository via the Github API. Optionally with github credentials.",
+            "module": "intelmq.bots.collectors.github_api.collector_github_contents_api",
+            "parameters": {
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
+                "basic_auth_username": "__USERNAME__",
+                "basic_auth_password": "__PASSWORD__",
+                "repository": "StrangerealIntel/DailyIOC",
+                "regex": ".*.json"
+            }
         }
     },
     "Parser": {
@@ -328,11 +344,6 @@
         "Abuse.ch IP": {
             "description": "Abuse.ch IP Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.abusech.parser_ip",
-            "parameters": {}
-        },
-        "Abuse.ch Ransomware": {
-            "description": "Abuse.ch Ransomware Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.abusech.parser_ransomware",
             "parameters": {}
         },
         "AlienVault": {
@@ -456,6 +467,11 @@
                 "type_translation": null
             }
         },
+        "Github feed": {
+            "description": "Github feed parser dependent of the feed URL. Parses only known github feeds.",
+            "module": "intelmq.bots.parsers.github_feed.parser",
+            "parameters": {}
+        },
         "HTML Table": {
             "description": "HTML Table Parser is a bot configurable to parse different html table data.",
             "module": "intelmq.bots.parsers.html_table.parser",
@@ -556,11 +572,6 @@
             "module": "intelmq.bots.parsers.netlab_360.parser",
             "parameters": {}
         },
-        "Nothink": {
-            "description": "Nothink Feed Parser is the bot responsible to parse the SNMP, SSH, Telnet, and DNS Attack reports and sanitize the information.",
-            "module": "intelmq.bots.parsers.nothink.parser",
-            "parameters": {}
-        },
         "OpenPhish": {
             "description": "OpenPhish Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.openphish.parser",
@@ -635,11 +646,6 @@
                 "domain_whitelist": "t.co",
                 "substitutions": " .net;[.]net"
             }
-        },
-        "URLVir": {
-            "description": "URLVir Parser is the bot responsible to parse the Export Hosts and Export IP Addresses reports and sanitize the information.",
-            "module": "intelmq.bots.parsers.urlvir.parser",
-            "parameters": {}
         },
         "VXVault": {
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
@@ -823,6 +829,7 @@
             "parameters": {
                 "case_sensitive": true,
                 "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf",
+                "maximum_matches": null,
                 "overwrite": false
             }
         },
@@ -932,7 +939,7 @@
     },
     "Output": {
         "AMQP Topic": {
-            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange. Requires the pika python library.",
             "module": "intelmq.bots.outputs.amqptopic.output",
             "parameters": {
                 "connection_attempts": 3,
@@ -958,7 +965,7 @@
             }
         },
         "Blackhole": {
-            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "description": "Discards messages.",
             "module": "intelmq.bots.outputs.blackhole.output",
             "parameters": {}
         },
@@ -966,7 +973,6 @@
             "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
             "module": "intelmq.bots.outputs.elasticsearch.output",
             "parameters": {
-                "elastic_doctype": "events",
                 "elastic_host": "127.0.0.1",
                 "elastic_index": "intelmq",
                 "elastic_port": 9200,
@@ -1037,6 +1043,7 @@
                 "add_feed_provider_as_tag": true,
                 "misp_additional_correlation_fields": [],
                 "misp_additional_tags": [],
+                "add_feed_name_as_tag": true,
                 "misp_key": "<insert MISP Authkey>",
                 "misp_publish": false,
                 "misp_tag_for_bot": "<insert MISP tag to mark inserted events>",

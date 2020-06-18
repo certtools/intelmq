@@ -98,6 +98,11 @@ EVENTS = [{'time.source': '2019-03-22T11:18:52+00:00',
            'classification.identifier': 'dns-open-resolver',
            'protocol.application': 'dns',
            },
+          {'time.source': '2020-06-08T18:28:35+00:00',
+           'classification.type': 'vulnerable service',
+           'classification.identifier': 'dns-open-resolver',
+           'protocol.application': 'dns',
+           },
           {'time.source': '2019-09-11T08:05:00+00:00',
            'classification.type': 'proxy',
            'classification.identifier': 'openproxy',
@@ -186,10 +191,18 @@ EVENTS = [{'time.source': '2019-03-22T11:18:52+00:00',
            'destination.port': 0,
            'time.source': '2020-01-10T09:17:17+00:00',
            },
+          {'classification.type': 'infected-system',
+           'classification.identifier': 'conficker',
+           'malware.name': 'conficker',
+           'source.port': 1997,
+           'destination.ip': '172.16.0.22',
+           'time.source': '2020-05-08T09:13:34+00:00',
+           },
           ]
+
 # The number of events a single line in the raw data produces
 NUM_EVENTS = [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              1, 10, 1, 1, 1]
+              1, 1, 10, 1, 1, 1, 1]
 RAWS = []
 for i, line in enumerate(RAW_LINES[3:]):
     for count in range(NUM_EVENTS[i]):

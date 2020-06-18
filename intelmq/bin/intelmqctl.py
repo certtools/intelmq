@@ -1710,7 +1710,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
                         if funcs:
                             todo.append((version, funcs, False))
             else:
-                self.logger.info("Found no previous version, doing all upgrades.")
+                self.logger.info("Found no previous version or forced, doing all upgrades.")
                 todo = [(version, bunch, True) for version, bunch in upgrades.UPGRADES.items()]
 
             todo.extend([(None, (function, ), False)

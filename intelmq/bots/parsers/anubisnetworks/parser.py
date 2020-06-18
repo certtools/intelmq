@@ -34,11 +34,17 @@ class AnubisNetworksParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-        raw_report = json.loads(utils.base64_decode(report.get('raw')))
+        raw = utils.base64_decode(report.get('raw')).strip()
+        if not raw:
+            self.acknowledge_message()
+            return
+        raw_report = json.loads(raw)
+        del raw
         event = self.new_event(report)
         event.change("feed.url", event["feed.url"].split("?key=")[0])
         event.add("raw", report.get('raw'), sanitize=False)
         event.add('classification.type', 'infected-system')
+        event.add('classification.taxonomy', 'malicious code')
         event.add('event_description.text', 'Sinkhole attempted connection')
 
         for key, value in raw_report.items():
@@ -81,7 +87,7 @@ class AnubisNetworksParserBot(Bot):
             elif key == 'qtype':
                 event['extra.dns_query_type'] = value
             elif key == 'app_proto':
-                event.add('protocol.application', value)
+                event.add('protocol.application', value, overwrite=True)
             elif key == 'malw':
                 for subkey, subvalue in value.items():
                     if subkey == "severity":
@@ -172,9 +178,6 @@ class AnubisNetworksParserBot(Bot):
             elif key == '_geo_src_ip':
                 event  = self.parse_geo(event, value, 'source', raw_report, key)
             elif key == '_geo_tracking_last_ip':
-                if value['ip'] == event['source.ip']:
-                    continue
-                    # and ignore
                 event = self.parse_geo(event, value, 'tracking.last', raw_report, key)
                 if value["path"] != 'tracking.last_ip':
                     raise ValueError('_geo_tracking_last_ip.path is not \'tracking.last_ip\' (%r).'
@@ -188,8 +191,11 @@ class AnubisNetworksParserBot(Bot):
                 event = self.parse_geo(event, value,
                                        'extra.communication.http.%s' % key[15:],
                                        raw_report, '_geo_comm_http_x_forwarded_for_')
-            elif key in ["_origin", "_provider", "pattern_verified", "metadata"]:
+            elif key in ["_origin", "_provider", "pattern_verified"]:
                 event['extra.%s' % key] = value
+            elif key == "metadata":
+                for subkey, subvalue in value.items():
+                    event['extra.metadata.%s' % subkey] = subvalue
             else:
                 raise ValueError("Unable to parse data field %r. Please report this as bug." % key)
         self.send_message(event)
