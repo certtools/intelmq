@@ -21,18 +21,24 @@ import xmlrpc.client
 from collections import OrderedDict
 
 import pkg_resources
-import psutil
 from termstyle import green
 
 from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
-                     DEFAULT_LOGGING_PATH, __version_info__)
+                     DEFAULT_LOGGING_PATH, __version_info__,
+                     CONFIG_DIR, ROOT_DIR)
 from intelmq.lib import utils
 from intelmq.lib.bot_debugger import BotDebugger
+from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.pipeline import PipelineFactory
 import intelmq.lib.upgrades as upgrades
 from typing import Union, Iterable
+
+try:
+    import psutil
+except ImportError:
+    psutil = None
 
 
 class Parameters(object):
@@ -132,6 +138,9 @@ class IntelMQProcessManager:
         self.__runtime_configuration = runtime_configuration
         self.logger = logger
         self.controller = controller
+
+        if psutil is None:
+            raise MissingDependencyError('psutil')
 
         if not os.path.exists(self.PIDDIR):
             try:
@@ -659,7 +668,8 @@ PROCESS_MANAGER = {'intelmq': IntelMQProcessManager, 'supervisor': SupervisorPro
 
 class IntelMQController():
 
-    def __init__(self, interactive: bool = False, return_type: str = "python", quiet: bool = False) -> None:
+    def __init__(self, interactive: bool = False, return_type: str = "python", quiet: bool = False,
+                 no_file_logging: bool = False, drop_privileges: bool = True) -> None:
         """
         Initializes intelmqctl.
 
@@ -670,6 +680,8 @@ class IntelMQController():
                 'text': user-friendly output for cli, default for interactive use
                 'json': machine-readable output for managers
             quiet: False by default, can be activated for cron jobs etc.
+            no_file_logging: do not log to the log file
+            drop_privileges: Drop privileges and fail if it did not work.
         """
         self.interactive = interactive
         global RETURN_TYPE
@@ -694,6 +706,8 @@ class IntelMQController():
         logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
 
         try:
+            if no_file_logging:
+                raise FileNotFoundError
             logger = utils.log('intelmqctl', log_level=log_level,
                                log_format_stream=utils.LOG_FORMAT_SIMPLE,
                                logging_level_stream=logging_level_stream)
@@ -707,8 +721,8 @@ class IntelMQController():
             self.logger.exception('Loading the defaults configuration failed!',
                                   exc_info=defaults_loading_exc)
 
-        if not utils.drop_privileges():
-            logger.warning('Running intelmqctl as root is highly discouraged!')
+        if drop_privileges and not utils.drop_privileges():
+            self.abort('IntelMQ must not run as root. Dropping privileges did not work.')
 
         APPNAME = "intelmqctl"
         try:
@@ -733,6 +747,7 @@ class IntelMQController():
         intelmqctl clear queue-id
         intelmqctl check
         intelmqctl upgrade-config
+        intelmqctl debug
 
 Starting a bot:
     intelmqctl start bot-id
@@ -785,7 +800,12 @@ can be longer due to our logging format!
 
 Upgrade from a previous version:
     intelmqctl upgrade-config
-Make a backup of your configuration first, also including bot's configuration files.'''
+Make a backup of your configuration first, also including bot's configuration files.
+
+Get some debugging output on the settings and the enviroment (to be extended):
+    intelmqctl debug --get-paths
+    intelmqctl debug --get-environment-variables
+'''
 
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
@@ -957,7 +977,23 @@ Make a backup of your configuration first, also including bot's configuration fi
             parser_upgrade_conf.add_argument('-f', '--force',
                                              action='store_true',
                                              help='Force running the upgrade procedure.')
+            parser_upgrade_conf.add_argument('--state-file',
+                                             help='The state file location to use.',
+                                             default=STATE_FILE_PATH)
+            parser_upgrade_conf.add_argument('--no-backup',
+                                             help='Do not create backups of state and configuration files.',
+                                             action='store_true')
             parser_upgrade_conf.set_defaults(func=self.upgrade_conf)
+
+            parser_debug = subparsers.add_parser('debug', help='Get debugging output.')
+            parser_debug.add_argument('--get-paths', help='Give all paths',
+                                      action='append_const', dest='sections',
+                                      const='paths')
+            parser_debug.add_argument('--get-environment-variables',
+                                      help='Give environment variables',
+                                      action='append_const', dest='sections',
+                                      const='environment_variables')
+            parser_debug.set_defaults(func=self.debug)
 
             self.parser = parser
 
@@ -1516,7 +1552,9 @@ Make a backup of your configuration first, also including bot's configuration fi
                 self.logger.info('No issues found.')
                 return retval, 'success'
 
-    def upgrade_conf(self, previous=None, dry_run=None, function=None, force=None):
+    def upgrade_conf(self, previous=None, dry_run=None, function=None,
+                     force=None, state_file: str = STATE_FILE_PATH,
+                     no_backup=False):
         """
         Upgrade the IntelMQ configuration after a version upgrade.
 
@@ -1524,6 +1562,8 @@ Make a backup of your configuration first, also including bot's configuration fi
             previous: Assume the given version as the previous version
             function: Only execute this upgrade function
             force: Also upgrade if not necessary
+            state_file: location of the state file
+            no_backup: Do not create backups of state and configuration files
 
         state file:
 
@@ -1549,12 +1589,11 @@ Make a backup of your configuration first, also including bot's configuration fi
                  "time": "..."}
                 ]
         """
-        if os.path.isfile(STATE_FILE_PATH):
-            if not os.access(STATE_FILE_PATH, os.W_OK) and not dry_run:
-                self.logger.error("State file %r is not writable.",
-                                  STATE_FILE_PATH)
-                return 1, "State file %r is not writable." % STATE_FILE_PATH
-            state = utils.load_configuration(STATE_FILE_PATH)
+        if os.path.isfile(state_file):
+            if not os.access(state_file, os.W_OK) and not dry_run:
+                self.logger.error("State file %r is not writable.", state_file)
+                return 1, "State file %r is not writable." % state_file
+            state = utils.load_configuration(state_file)
         else:
             """
             We create the state file directly before any upgrade function.
@@ -1566,15 +1605,14 @@ Make a backup of your configuration first, also including bot's configuration fi
                      "results": []}
             if dry_run:
                 self.logger.info('Would create state file now at %r.',
-                                 STATE_FILE_PATH)
+                                 state_file)
                 return 0, 'success'
             try:
-                utils.write_configuration(STATE_FILE_PATH, state, new=True)
+                utils.write_configuration(state_file, state, new=True)
             except Exception as exc:
-                self.logger.error('Error writing state file %r: %s.', STATE_FILE_PATH, exc)
-                return 1, 'Error writing state file %r: %s.' % (STATE_FILE_PATH, exc)
-            self.logger.error('Successfully wrote initial state file. Please re-run this program.')
-            return 0, 'success'
+                self.logger.error('Error writing state file %r: %s.', state_file, exc)
+                return 1, 'Error writing state file %r: %s.' % (state_file, exc)
+            self.logger.info('Successfully wrote initial state file.')
 
         defaults = utils.load_configuration(DEFAULTS_CONF_FILE)
         runtime = utils.load_configuration(RUNTIME_CONF_FILE)
@@ -1601,9 +1639,12 @@ Make a backup of your configuration first, also including bot's configuration fi
                     upgrades, function)(defaults, runtime, harmonization, dry_run)
                 # Handle changed configurations
                 if retval is True and not dry_run:
-                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new)
-                    utils.write_configuration(RUNTIME_CONF_FILE, runtime_new)
-                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization_new)
+                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new,
+                                              backup=not no_backup)
+                    utils.write_configuration(RUNTIME_CONF_FILE, runtime_new,
+                                              backup=not no_backup)
+                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization_new,
+                                              backup=not no_backup)
             except Exception:
                 self.logger.exception('Upgrade %r failed, please report this bug '
                                       'with the shown traceback.',
@@ -1633,7 +1674,8 @@ Make a backup of your configuration first, also including bot's configuration fi
             state['results'].append(result)
             state['upgrades'][function] = result['success']
             if not dry_run:
-                utils.write_configuration(STATE_FILE_PATH, state)
+                utils.write_configuration(state_file, state,
+                                          backup=not no_backup)
 
             if result['success']:
                 return 0, 'success'
@@ -1668,7 +1710,7 @@ Make a backup of your configuration first, also including bot's configuration fi
                         if funcs:
                             todo.append((version, funcs, False))
             else:
-                self.logger.info("Found no previous version, doing all upgrades.")
+                self.logger.info("Found no previous version or forced, doing all upgrades.")
                 todo = [(version, bunch, True) for version, bunch in upgrades.UPGRADES.items()]
 
             todo.extend([(None, (function, ), False)
@@ -1696,7 +1738,8 @@ Make a backup of your configuration first, also including bot's configuration fi
                         # already performed
                         continue
 
-                    docstring = textwrap.dedent(function.__doc__).strip()
+                    # shown text should have only one line
+                    docstring = textwrap.dedent(function.__doc__).strip().replace('\n', ' ')
                     result = {"function": function.__name__,
                               "time": datetime.datetime.now().isoformat()
                               }
@@ -1747,7 +1790,8 @@ Make a backup of your configuration first, also including bot's configuration fi
             if error:
                 # some upgrade function had a problem
                 if not dry_run:
-                    utils.write_configuration(STATE_FILE_PATH, state)
+                    utils.write_configuration(state_file, state,
+                                              backup=not no_backup)
                 self.logger.error('Some migration did not succeed or '
                                   'manual intervention is needed. Look at '
                                   'the output above. Afterwards, re-run '
@@ -1755,9 +1799,12 @@ Make a backup of your configuration first, also including bot's configuration fi
 
             try:
                 if not dry_run:
-                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults)
-                    utils.write_configuration(RUNTIME_CONF_FILE, runtime)
-                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization)
+                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults,
+                                              backup=not no_backup)
+                    utils.write_configuration(RUNTIME_CONF_FILE, runtime,
+                                              backup=not no_backup)
+                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization,
+                                              backup=not no_backup)
             except Exception as exc:
                 self.logger.error('Writing defaults or runtime configuration '
                                   'did not succeed: %s\nFix the problem and '
@@ -1772,12 +1819,45 @@ Make a backup of your configuration first, also including bot's configuration fi
                     self.logger.info('Nothing to do!')
 
             if not dry_run:
-                utils.write_configuration(STATE_FILE_PATH, state)
+                utils.write_configuration(state_file, state,
+                                          backup=not no_backup)
 
         if error:
             return 1, 'error'
         else:
             return 0, 'success'
+
+    def debug(self, sections=None):
+        """
+        Give debugging output
+        get_paths:
+            print path information
+        """
+
+        output = {}
+        if sections is None or 'paths' in sections:
+            output['paths'] = []
+            variables = globals()
+            if RETURN_TYPE == 'text':
+                print('Paths:')
+            for path in ('BOTS_FILE', 'DEFAULTS_CONF_FILE',
+                         'HARMONIZATION_CONF_FILE', 'PIPELINE_CONF_FILE',
+                         'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
+                         'DEFAULT_LOGGING_PATH', '__file__',
+                         'CONFIG_DIR', 'ROOT_DIR'):
+                output['paths'].append((path, variables[path]))
+                if RETURN_TYPE == 'text':
+                    print('%s: %r' % output['paths'][-1])
+        if sections is None or 'environment_variables' in sections:
+            output['environment_variables'] = []
+            if RETURN_TYPE == 'text':
+                print('Environment variables:')
+            for variable in ('INTELMQ_ROOT_DIR', 'INTELMQ_PATHS_NO_OPT',
+                             'INTELMQ_PATHS_OPT', 'INTELMQ_MANAGER_CONTROLLER_CMD'):
+                output['environment_variables'].append((variable, os.getenv(variable)))
+                if RETURN_TYPE == 'text':
+                    print('%s: %r' % output['environment_variables'][-1])
+        return 0, output
 
 
 def main():  # pragma: no cover

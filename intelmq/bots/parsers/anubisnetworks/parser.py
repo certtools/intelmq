@@ -5,6 +5,8 @@ AnubisNetworks Cyberfeed Stream parser
 TODO: Refactor with JSON mapping
 
 There is an old format and a new one - distinguishable by the test cases
+
+Migration to ParserBot does not make sense, as there's only one event per report anyway
 """
 import json
 
@@ -25,13 +27,24 @@ MAP_geo_env_remote_addr = {"country_code": 'source.geolocation.cc',
 
 class AnubisNetworksParserBot(Bot):
 
+    def init(self):
+        self.malware_as_identifier = getattr(self.parameters,
+                                             'use_malware_familiy_as_classification_identifier',
+                                             True)
+
     def process(self):
         report = self.receive_message()
-        raw_report = json.loads(utils.base64_decode(report.get('raw')))
+        raw = utils.base64_decode(report.get('raw')).strip()
+        if not raw:
+            self.acknowledge_message()
+            return
+        raw_report = json.loads(raw)
+        del raw
         event = self.new_event(report)
         event.change("feed.url", event["feed.url"].split("?key=")[0])
         event.add("raw", report.get('raw'), sanitize=False)
         event.add('classification.type', 'malware')
+        event.add('classification.taxonomy', 'malicious code')
         event.add('event_description.text', 'Sinkhole attempted connection')
 
         for key, value in raw_report.items():
@@ -80,7 +93,13 @@ class AnubisNetworksParserBot(Bot):
                     if subkey == "severity":
                         event.add('extra.malware.severity', subvalue)
                     elif subkey == "family":
-                        event.add('classification.identifier', subvalue)
+                        if self.malware_as_identifier:
+                            event.add('classification.identifier', subvalue)
+                        else:
+                            if subvalue == value['variant']:
+                                pass
+                            else:
+                                event.add('extra.malware.family', subvalue)
                     elif subkey == "variant":
                         event.add('malware.name', subvalue)
                     elif subkey == "categories":
@@ -172,8 +191,11 @@ class AnubisNetworksParserBot(Bot):
                 event = self.parse_geo(event, value,
                                        'extra.communication.http.%s' % key[15:],
                                        raw_report, '_geo_comm_http_x_forwarded_for_')
-            elif key in ["_origin", "_provider", "pattern_verified", "metadata"]:
+            elif key in ["_origin", "_provider", "pattern_verified"]:
                 event['extra.%s' % key] = value
+            elif key == "metadata":
+                for subkey, subvalue in value.items():
+                    event['extra.metadata.%s' % subkey] = subvalue
             else:
                 raise ValueError("Unable to parse data field %r. Please report this as bug." % key)
         self.send_message(event)

@@ -178,7 +178,7 @@ class CerberusTests(unittest.TestCase):
         with open(os.path.join(os.path.dirname(__file__), 'assets/feeds.schema.json')) as handle:
             schema = json.loads(self.convert_cerberus_schema(handle.read()))
         with open(pkg_resources.resource_filename('intelmq',
-                                                  'etc/feeds.yaml')) as handle:
+                                                  'etc/feeds.yaml'), encoding='UTF-8') as handle:
             feeds = yaml.safe_load(handle)
 
         v = cerberus.Validator(schema)

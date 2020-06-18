@@ -40,6 +40,7 @@
 - [Experts](#experts)
   - [Abusix](#abusix)
   - [ASN Lookup](#asn-lookup)
+  - [CSV Converter](#csv-converter)
   - [Copy Extra](#copy-extra)
   - [Cymru Whois](#cymru-whois)
   - [Deduplicator](#deduplicator)
@@ -55,6 +56,7 @@
   - [Gethostbyname](#gethostbyname)
   - [IDEA](#idea)
   - [MaxMind GeoIP](#maxmind-geoip)
+  - [MISP](#misp)
   - [Modify](#modify)
     - [Configuration File](#configuration-file)
       - [Actions](#actions)
@@ -81,6 +83,8 @@
       - [Filename formatting](#filename-formatting)
   - [Files](#files)
   - [McAfee Enterprise Security Manager](#mcafee-enterprise-security-manager)
+  - [MISP Feed](#misp-feed)
+  - [MISP API](#misp-api)
   - [MongoDB](#mongodb)
     - [Installation Requirements](#installation-requirements)
   - [Redis](#redis)
@@ -185,6 +189,8 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 Multihreading is disabled for all Collectors, as this would lead to duplicated data.
 
 ### AMQP
+
+Requires the [`pika` python library](https://pypi.org/project/pika/), minimum version 1.0.0.
 
 #### Information:
 * `name`: intelmq.bots.collectors.amqp.collector_amqp
@@ -295,6 +301,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
+* `mail_port`: IMAP server port, optional (default: 143 without SSL, 993 for SSL)
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
@@ -343,6 +350,7 @@ limitation set `chunk_size` to something like `384000000`, i.e., ~384 MB.
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
+* `mail_port`: IMAP server port, optional (default: 143 without SSL, 993 for SSL)
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
@@ -375,6 +383,7 @@ The resulting reports contains the following special fields:
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated with the user account
+* `mail_port`: IMAP server port, optional (default: 143 without SSL, 993 for SSL)
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
@@ -390,6 +399,38 @@ The resulting reports contains the following special fields:
  * `extra.email_subject`: The subject of the email
  * `extra.email_from`: The email's from address
  * `extra.email_message_id`: The email's message ID
+
+* * *
+
+### GithubAPI
+
+
+#### Information:
+* `name:` intelmq.bots.collectors.github_api.collector_github_contents_api
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Collects files matched by regex from github repository via the Github API.
+  Optionally with github credentials, which are used as the Basic HTTP authetication.
+  
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `basic_auth_username:` Github account username (optional)
+* `basic_auth_password:` Github account password (optional)
+* `repository:` Github target repository (`<USER>/<REPOSITORY>`)
+* `regex:` Valid regex of target files within the repository (defaults to `.*.json`)
+* `extra_fields:` Comma-separated list of extra fields from [github contents API](https://developer.github.com/v3/repos/contents/)
+
+#### Workflow
+
+The optional authentication parameters provide a high limit of the github API requests.
+With the github user authentication, the requests are rate limited to 5000 per hour, otherwise to 60 requests per hour. 
+
+The collector recursively searches for `regex`-defined files in the provided `repository`.
+Additionally it adds extra file metadata defined by the `extra_fields`.
+
+The bot always sets the url, from which downloaded the file, as `feed.url`.
 
 * * *
 
@@ -481,9 +522,11 @@ Requires the rsync executable
 * **Feed parameters** (see above)
 * `misp_url`: URL of MISP server (with trailing '/')
 * `misp_key`: MISP Authkey
-* `misp_verify`: Verify the SSL certicate of the server, boolean (default: `true`)
 * `misp_tag_to_process`: MISP tag for events to be processed
 * `misp_tag_processed`: MISP tag for processed events, optional
+
+Generic parameters used in this bot:
+* `http_verify_cert`: Verify the TLS certicate of the server, boolean (default: `true`)
 
 #### Workflow
 This collector will search for events on a MISP server that have a
@@ -756,20 +799,23 @@ This bot works based on certstream library (https://github.com/CaliDog/certstrea
 ### Microsoft Azure
 
 Iterates over all blobs in all containers in an Azure storage.
+The Cache is required to memorize which files have already been processed (TTL needs to be high enough to cover the oldest files available!).
+
+This bot significantly changed in a backwards-incompatible way in IntelMQ Version 2.2.0 to support current versions of the Microsoft Azure Python libraries.
 
 #### Information:
-* `name:` intelmq.bots.collectors.microsoft.collector_azure
-* `lookup:` yes
-* `public:` no
-* `cache (redis db):` none
-* `description:` collect blobs from microsoft azure using their library
+* `name`: intelmq.bots.collectors.microsoft.collector_azure
+* `lookup`: yes
+* `public`: no
+* `cache (redis db)`: 5
+* `description`: collect blobs from Microsoft Azure using their library
 
 #### Configuration Parameters:
 
+* **Cache parameters** (see above)
 * **Feed parameters** (see above)
-* `account_name`: account name as give by Microsoft
-* `account_key`: account key as give by Microsoft
-* `delete`: boolean, delete containers and blobs after fetching
+* `connection_string`: connection string as given by Microsoft
+* `container_name`: name of the container to connect to
 
 * * *
 
@@ -877,6 +923,23 @@ curl -X POST http://localhost:5000/intelmq/push -H 'Content-Type: application/js
 This list is not complete. Look at `intelmq/bots/BOTS` or the list of parsers shown in the manager. But most parsers do not need configuration parameters.
 
 TODO
+
+### AnubisNetworks Cyberfeed Stream
+
+#### Information
+* `name`: `intelmq.bots.parsers.anubisnetworks.parser`
+* `lookup`: no
+* `public`: yes
+* `cache (redis db)`: none
+* `description`: parsers data from AnubisNetworks Cyberfeed Stream
+
+#### Description
+
+The feed format changes over time. The parser supports at least data from 2016 and 2020.
+
+#### Configuration parameters
+
+* `use_malware_familiy_as_classification_identifier`: default: `true`. Use the `malw.family` field as `classification.type`. If `false`, check if the same as `malw.variant`. If it is the same, it is ignored. Otherwise saved as `extra.malware.family`.
 
 ### Generic CSV Parser
 
@@ -1034,6 +1097,15 @@ http://www.team-cymru.com/bogon-reference.html
 
 * * *
 
+### Github Feed
+
+#### Information
+
+* `name:` intelmq.bots.parsers.github_feed.parser
+* `description:` Parses Feeds available publicly on github (should receive from github_api collector)
+
+* * *
+
 ### Have I Been Pwned Callback Parser
 
 #### Information:
@@ -1180,6 +1252,20 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
 
 * * *
 
+### Microsoft CTIP Parser
+
+* `name`: `intelmq.bots.parsers.microsoft.parser_ctip`
+* `public`: no
+* `cache (redis db)`: none
+* `description`: Parses data from the Microsoft CTIP Feed
+
+#### Description
+
+Can parse the JSON format provided by the Interflow interface (lists of dictionaries) as well as the format provided by the Azure interface (one dictionary per line).
+The provided data differs between the two formats/providers.
+
+* * *
+
 ### MISP
 
 * `name:` intelmq.bots.parsers.misp.parser
@@ -1288,11 +1374,13 @@ These are the supported feed name and their corresponding file name for automati
 | Open-DB2-Discovery-Service | `scan_db2` |
 | Open-Elasticsearch | `scan_elasticsearch` |
 | Open-IPMI | `scan_ipmi` |
+| Open-IPP | `scan_ipp` |
 | Open-LDAP | `scan_ldap ` |
 | Open-LDAP-TCP | `scan_ldap_tcp` |
 | Open-mDNS | `scan_mdns` |
 | Open-Memcached | `scan_memcached` |
 | Open-MongoDB | `scan_mongodb` |
+| Open-MQTT | `scan_mqtt` |
 | Open-MSSQL | `scan_mssql` |
 | Open-NATPMP | `scan_nat_pmp` |
 | Open-NetBIOS-Nameservice | `scan_netbios` |
@@ -1425,6 +1513,28 @@ Note: the '<' '>' characters only are syntactic markings, no shell redirection i
 # mv /tmp/ipasn.dat /opt/intelmq/var/lib/bots/asn_lookup/
 # chown -R intelmq.intelmq /opt/intelmq/var/lib/bots/asn_lookup
 ```
+
+* * *
+
+### CSV Converter
+
+
+#### Information:
+* `name`: `intelmq.bots.experts.csv_converter.expert
+* `lookup`: no
+* `public`: yes
+* `cache (redis db)`: none
+* `description`: Converts an event to CSV format, saved in the `output` field.
+
+#### Configuration Parameters:
+
+ * `delimiter`: String, default `","`
+ * `fieldnames`: Comma-separated list of field names, e.g. `"time.source,classification.type,source.ip"`
+
+#### Usage
+
+To use the CSV-converted data in an output bot - for example in a file output,
+use the configuration parameter `single_key` of the output bot and set it to `output`.
 
 * * *
 
@@ -1667,6 +1777,8 @@ Examples of time filter definition:
 | drop   | ✓     | ✗           | ✓              | ✓              | ✗                 |
 | drop   | ✗     | ✓           | ✗              | ✗              | ✓                 |
 
+In `DEBUG` logging level, one can see that the message is sent to both matching paths, also if one of the paths is not configured. Of course the message is only delivered to the configured paths.
+
 * * *
 
 ### Format Field
@@ -1774,7 +1886,7 @@ Converts the event to IDEA format and saves it as JSON in the field `output`. Al
 Documentation about IDEA: https://idea.cesnet.cz/en/index
 
 #### Information:
-* `name:` idea
+* `name:` intelmq.bots.experts.idea.expert
 * `lookup:` local config
 * `public:` yes
 * `cache (redis db):` none
@@ -1789,7 +1901,7 @@ Documentation about IDEA: https://idea.cesnet.cz/en/index
 ### MaxMind GeoIP
 
 #### Information:
-* `name:` maxmind-geoip
+* `name:` intelmq.bots.experts.maxmind_geoip.expert
 * `lookup:` local database
 * `public:` yes
 * `cache (redis db):` none
@@ -1808,6 +1920,25 @@ You may want to use a shell script provided in the contrib directory to keep the
 * `database`: Path to the local database, e.g. `"/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"`
 * `overwrite`: boolean
 * `use_registered`: boolean. MaxMind has two country ISO codes: One for the physical location of the address and one for the registered location. Default is `false` (backwards-compatibility). See also https://github.com/certtools/intelmq/pull/1344 for a short explanation.
+
+### MISP
+
+Queries a MISP instance for the `source.ip` and adds the MISP Attribute UUID and MISP Event ID of the newest attribute found.
+
+#### Information:
+* `name:` intelmq.bots.experts.misp.expert
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` IP address to MISP attribute and event
+
+#### Configuration Parameters:
+
+* `misp_key`: MISP Authkey
+* `misp_url`: URL of MISP server (with trailing '/')
+
+Generic parameters used in this bot:
+* `http_verify_cert`: Verify the TLS certicate of the server, boolean (default: `true`)
 
 * * *
 
@@ -1877,6 +2008,8 @@ You may want to use a shell script provided in the contrib directory to keep the
 
 * `configuration_path`: filename
 * `case_sensitive`: boolean, default: true
+* `maximum_matches`: Maximum number of matches. Processing stops after the limit is reached. Default: no limit (`null`, `0`).
+* `overwrite`: Overwrite any existing fields by matching rules. Default if the parameter is given: `true`, for backwards compatibility. Default will change to `false` in version 3.0.0.
 
 #### Configuration File
 
@@ -2374,6 +2507,8 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 Sends data to an AMQP Server
 See https://www.rabbitmq.com/tutorials/amqp-concepts.html for more details on amqp topic exchange.
 
+Requires the [`pika` python library](https://pypi.org/project/pika/).
+
 #### Information
 * `name`: `intelmq.bots.outputs.amqptopic.output`
 * `lookup`: to the amqp server
@@ -2449,6 +2584,8 @@ This output bot discards all incoming messages.
 * `cache`: no
 * `description`: Output Bot that sends events to Elasticsearch
 
+Only ElasticSearch version 7 supported.
+
 #### Configuration parameters:
 
 * `elastic_host`: Name/IP for the Elasticsearch server, defaults to 127.0.0.1
@@ -2462,7 +2599,6 @@ This output bot discards all incoming messages.
                        'weekly' --> intelmq-2018-42
                        'monthly' --> intelmq-2018-02
                        'yearly' --> intelmq-2018
-* `elastic_doctype`: Elasticsearch document type for the event. Default: events
 * `http_username`: HTTP basic authentication username
 * `http_password`: HTTP basic authentication password
 * `use_ssl`: Whether to use SSL/TLS when connecting to Elasticsearch. Default: False
@@ -2555,6 +2691,85 @@ If the field used in the format string is not defined, `None` will be used as fa
 * `esm_pw`: password of user
 * `esm_watchlist`: name of the watchlist to write to
 * `field`: name of the IntelMQ field to be written to ESM
+
+* * *
+
+### MISP Feed
+
+#### Information:
+* `name:` `intelmq.bots.outputs.misp.output_feed`
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Create a directory layout in the MISP Feed format
+
+The PyMISP library >= 2.4.119.1 is required, see
+[REQUIREMENTS.txt](../intelmq/bots/outputs/misp/REQUIREMENTS.txt).
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `misp_org_name`: Org name which creates the event, string
+* `misp_org_uuid`: Org UUID which creates the event, string
+* `output_dir`: Output directory path, e.g. `/opt/intelmq/var/lib/bots/mispfeed-output`. Will be created if it does not exist and possible.
+* `interval_event`: The output bot creates one event per each interval, all data in this time frame is part of this event. Default "1 hour", string.
+
+#### Usage in MISP
+
+Configure the destination directory of this feed as feed in MISP, either as local location, or served via a web server. See [the MISP documentation on Feeds](https://www.circl.lu/doc/misp/managing-feeds/) for more information
+
+* * *
+
+### MISP API
+
+#### Information:
+* `name:` `intelmq.bots.outputs.misp.output_api`
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Connect to a MISP instance and add event as MISPObject if not there already.
+
+The PyMISP library >= 2.4.120 is required, see
+[REQUIREMENTS.txt](../intelmq/bots/outputs/misp/REQUIREMENTS.txt).
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `add_feed_provider_as_tag`: bool (use `true` when in doubt)
+* `add_feed_name_as_tag`: bool (use `true` when in doubt)
+* `misp_additional_correlation_fields`: list of fields for which
+      the correlation flags will be enabled (in addition to those which are
+      in significant_fields)
+* `misp_additional_tags`: list of tags to set not be searched for
+      when looking for duplicates
+* `misp_key`: str, API key for accessing MISP
+* `misp_publish`: bool, if a new MISP event should be set to "publish".
+      Expert setting as MISP may really make it "public"!
+      (Use `false` when in doubt.)
+* `misp_tag_for_bot`: str, used to mark MISP events
+* `misp_to_ids_fields`: list of fields for which the `to_ids` flags will be set
+* `misp_url`: str, URL of the MISP server
+* `significant_fields`: list of intelmq field names
+
+The `significant_fields` values
+will be searched for in all MISP attribute values
+and if all values are found in the same MISP event, no new MISP event
+will be created.
+Instead if the existing MISP events have the same feed.provider
+and match closely, their timestamp will be updated.
+
+If a new MISP event is inserted the `significant_fields` and the
+`misp_additional_correlation_fields` will be the attributes
+where correlation is enabled.
+
+Make sure to build the IntelMQ Botnet in a way the rate of incoming
+events is what MISP can handle, as IntelMQ can process many more events faster
+than MISP (which is by design as MISP is for manual handling).
+Also remove the fields of the IntelMQ events with an expert bot
+that you do not want to be inserted into MISP.
+
+(More details can be found in the docstring of
+[`output_api.py`](../intelmq/bots/outputs/misp/output_api.py)).
 
 * * *
 

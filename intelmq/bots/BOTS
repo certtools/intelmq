@@ -1,7 +1,7 @@
 {
     "Collector": {
         "AMQP": {
-            "description": "Collecting from a (remote) AMQP Server and fetching either intelmq or any other messages.",
+            "description": "Collecting from a (remote) AMQP Server and fetching either intelmq or any other messages. Requires the pika python library.",
             "module": "intelmq.bots.collectors.amqp.collector_amqp",
             "parameters": {
                 "connection_attempts": 3,
@@ -140,7 +140,6 @@
                 "misp_tag_processed": "<insert MISP tag for processed events, optional>",
                 "misp_tag_to_process": "<insert MISP tag for events to be processed>",
                 "misp_url": "<insert url of MISP server (with trailing '/')>",
-                "misp_verify": true,
                 "name": "__FEED__",
                 "provider": "__PROVIDER__",
                 "rate_limit": 3600
@@ -184,7 +183,7 @@
             }
         },
         "TCP": {
-            "description": "TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance). Might not be working on Python3.4.6.",
+            "description": "TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance).",
             "module": "intelmq.bots.collectors.tcp.collector",
             "parameters": {
                 "ip": "<ip>",
@@ -250,12 +249,16 @@
             "description": "",
             "module": "intelmq.bots.collectors.microsoft.collector_azure",
             "parameters": {
-                "account_key": "",
-                "account_name": "",
-                "delete": true,
+                "connection_string": "<insert your connection string here>",
+                "container_name": "<insert the container name>",
                 "name": "Azure",
                 "provider": "Microsoft",
-                "rate_limit": 3600
+                "rate_limit": 3600,
+                "redis_cache_db": "5",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_password": null,
+                "redis_cache_port": 6379,
+                "redis_cache_ttl": 864000
             }
         },
         "Microsoft Interflow": {
@@ -318,6 +321,18 @@
                 "timelimit": "",
                 "tweet_count": ""
             }
+        },
+        "Github API": {
+            "description": "Collects files from github repository via the Github API. Optionally with github credentials.",
+            "module": "intelmq.bots.collectors.github_api.collector_github_contents_api",
+            "parameters": {
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
+                "basic_auth_username": "__USERNAME__",
+                "basic_auth_password": "__PASSWORD__",
+                "repository": "StrangerealIntel/DailyIOC",
+                "regex": ".*.json"
+            }
         }
     },
     "Parser": {
@@ -344,7 +359,9 @@
         "AnubisNetworks Cyberfeed Stream": {
             "description": "Parses single JSON-events from AnubisNetworks Cyberfeed stream.",
             "module": "intelmq.bots.parsers.anubisnetworks.parser",
-            "parameters": {}
+            "parameters": {
+                "use_malware_familiy_as_classification_identifier": true
+            }
         },
         "Autoshun": {
             "description": "Autoshun Parser is the bot responsible to parse the report and sanitize the information.",
@@ -449,6 +466,11 @@
                 "type": "c2server",
                 "type_translation": null
             }
+        },
+        "Github feed": {
+            "description": "Github feed parser dependent of the feed URL. Parses only known github feeds.",
+            "module": "intelmq.bots.parsers.github_feed.parser",
+            "parameters": {}
         },
         "HTML Table": {
             "description": "HTML Table Parser is a bot configurable to parse different html table data.",
@@ -625,11 +647,6 @@
                 "substitutions": " .net;[.]net"
             }
         },
-        "URLVir": {
-            "description": "URLVir Parser is the bot responsible to parse the Export Hosts and Export IP Addresses reports and sanitize the information.",
-            "module": "intelmq.bots.parsers.urlvir.parser",
-            "parameters": {}
-        },
         "VXVault": {
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.vxvault.parser",
@@ -652,6 +669,14 @@
             "module": "intelmq.bots.experts.asn_lookup.expert",
             "parameters": {
                 "database": "/opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat"
+            }
+        },
+        "CSV Converter": {
+            "description": "Converts data to CSV.",
+            "module": "intelmq.bots.experts.csv_converter.expert",
+            "parameters": {
+                "delimiter": ",",
+                "fieldnames": "time.source,classification.type,source.ip"
             }
         },
         "Abusix": {
@@ -804,6 +829,7 @@
             "parameters": {
                 "case_sensitive": true,
                 "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf",
+                "maximum_matches": null,
                 "overwrite": false
             }
         },
@@ -901,11 +927,19 @@
             "parameters": {
                 "overwrite": false
             }
+        },
+        "MISP": {
+            "description": "An expert to for looking up values in MISP.",
+            "module": "intelmq.bots.experts.misp.expert",
+            "parameters": {
+                "misp_key": "<insert MISP Authkey>",
+                "misp_url": "<insert url of MISP server (with trailing '/')>"
+            }
         }
     },
     "Output": {
         "AMQP Topic": {
-            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange. Requires the pika python library.",
             "module": "intelmq.bots.outputs.amqptopic.output",
             "parameters": {
                 "connection_attempts": 3,
@@ -931,7 +965,7 @@
             }
         },
         "Blackhole": {
-            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "description": "Discards messages.",
             "module": "intelmq.bots.outputs.blackhole.output",
             "parameters": {}
         },
@@ -939,7 +973,6 @@
             "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
             "module": "intelmq.bots.outputs.elasticsearch.output",
             "parameters": {
-                "elastic_doctype": "events",
                 "elastic_host": "127.0.0.1",
                 "elastic_index": "intelmq",
                 "elastic_port": 9200,
@@ -962,7 +995,10 @@
                 "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
                 "format_filename": false,
                 "hierarchical_output": false,
-                "single_key": null
+                "keep_raw_field": false,
+                "message_jsondict_as_string": false,
+                "message_with_type": false,
+                "single_key": false
             }
         },
         "Files": {
@@ -971,7 +1007,10 @@
             "parameters": {
                 "dir": "/opt/intelmq/var/lib/bots/files-output/incoming",
                 "hierarchical_output": false,
-                "single_key": null,
+                "keep_raw_field": false,
+                "message_jsondict_as_string": false,
+                "message_with_type": false,
+                "single_key": false,
                 "suffix": ".json",
                 "tmp": "/opt/intelmq/var/lib/bots/files-output/tmp"
             }
@@ -985,6 +1024,32 @@
                 "esm_user": "NGCP",
                 "esm_watchlist": "<watchlist name>",
                 "field": "source.ip"
+            }
+        },
+        "MISP Feed": {
+            "description": "Generate an output in MISP Feed format.",
+            "module": "intelmq.bots.outputs.misp.output_feed",
+            "parameters": {
+                "misp_org_name": "<org name creating the events>",
+                "misp_org_uuid": "<org uuid creating the events>",
+                "output_dir": "/opt/intelmq/var/lib/bots/mispfeed-output",
+                "interval_event": "1 hour"
+            }
+        },
+        "MISP API": {
+            "description": "Insert events into a MISP instance.",
+            "module": "intelmq.bots.outputs.misp.output_api",
+            "parameters": {
+                "add_feed_provider_as_tag": true,
+                "misp_additional_correlation_fields": [],
+                "misp_additional_tags": [],
+                "add_feed_name_as_tag": true,
+                "misp_key": "<insert MISP Authkey>",
+                "misp_publish": false,
+                "misp_tag_for_bot": "<insert MISP tag to mark inserted events>",
+                "misp_to_ids_fields": [],
+                "misp_url": "<insert url of MISP server (with trailing '/')>",
+                "significant_fields": "<insert list of significant fields>"
             }
         },
         "MongoDB": {
@@ -1067,6 +1132,7 @@
             "parameters": {
                 "exchange": "/exchange/_push",
                 "heartbeat": 60000,
+                "keep_raw_field": false,
                 "message_hierarchical_output": false,
                 "message_jsondict_as_string": false,
                 "message_with_type": false,

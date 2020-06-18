@@ -226,6 +226,27 @@ V213_EXP = {"mail-collector": {
     },
 }
 }
+V220_MISP_VERIFY_FALSE = {
+"misp-collector": {
+        "module": "intelmq.bots.collectors.misp.collector",
+        "parameters": {
+                "misp_verify": False}}}
+V220_MISP_VERIFY_NULL = {
+"misp-collector": {
+        "module": "intelmq.bots.collectors.misp.collector",
+        "parameters": {}}}
+V220_MISP_VERIFY_TRUE = {
+"misp-collector": {
+        "module": "intelmq.bots.collectors.misp.collector",
+        "parameters": {
+                "misp_verify": True}}}
+V220_HTTP_VERIFY_FALSE = {
+"misp-collector": {
+        "module": "intelmq.bots.collectors.misp.collector",
+        "parameters": {
+                "http_verify_cert": False}}}
+DEFAULTS_HTTP_VERIFY_TRUE = {
+        "http_verify_cert": True}
 HARM = load_configuration(pkg_resources.resource_filename('intelmq',
                                                           'etc/harmonization.conf'))
 V210_HARM = deepcopy(HARM)
@@ -311,6 +332,19 @@ V213_FEED = {"zeus-collector": {
     "module": "intelmq.bots.parsers.nothink.parser",
 },
 }
+V220_FEED = {
+"urlvir-hosts-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "http://www.urlvir.com/export-hosts/",
+    },
+},
+"urlvir-parser": {
+    "group": "Parser",
+    "module": "intelmq.bots.parsers.urlvir.parser",
+},
+}
 
 
 def generate_function(function):
@@ -366,6 +400,17 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertTrue(result[0])
         self.assertEqual(HARM, result[3])
 
+    def test_v220_configuration(self):
+        """ Test v220_configuration. """
+        result = upgrades.v220_configuration(DEFAULTS_HTTP_VERIFY_TRUE,
+                                               V220_MISP_VERIFY_TRUE, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual(V220_MISP_VERIFY_NULL, result[2])
+        result = upgrades.v220_configuration(DEFAULTS_HTTP_VERIFY_TRUE,
+                                               V220_MISP_VERIFY_FALSE, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual(V220_HTTP_VERIFY_FALSE, result[2])
+
     def test_missing_report_harmonization(self):
         """ Test missing report in harmonization """
         result = upgrades.harmonization({}, {}, MISSING_REPORT, False)
@@ -414,6 +459,17 @@ class TestUpgradeLib(unittest.TestCase):
                          'Remove affected bots yourself.',
                          result[0])
         self.assertEqual(V213_FEED, result[2])
+
+    def test_v220_feed_changes(self):
+        """ Test v213_feed_changes """
+        result = upgrades.v220_feed_changes({}, V220_FEED, {}, False)
+        self.assertEqual('A discontinued feed "URLVir" has been found '
+                         'as bot urlvir-hosts-collector. '
+                         'The removed parser "URLVir" has been found '
+                         'as bot urlvir-parser. '
+                         'Remove affected bots yourself.',
+                         result[0])
+        self.assertEqual(V220_FEED, result[2])
 
 
 for name in upgrades.__all__:

@@ -7,6 +7,7 @@ from dateutil import parser
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import (parse_relative, create_request_session_from_bot,
                                file_name_from_response, unzip)
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import rt
@@ -29,9 +30,9 @@ class RTCollectorBot(CollectorBot):
 
     def init(self):
         if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
+            raise MissingDependencyError("requests")
         if rt is None:
-            raise ValueError('Could not import rt. Please install it.')
+            raise MissingDependencyError("rt")
 
         if getattr(self.parameters, 'search_not_older_than', None):
             try:

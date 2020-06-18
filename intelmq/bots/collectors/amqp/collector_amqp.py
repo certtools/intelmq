@@ -7,6 +7,7 @@ import ssl
 from intelmq.bots.outputs.amqptopic.output import AMQPTopicOutputBot
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import MessageFactory
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import pika
@@ -22,17 +23,18 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
 
     def init(self):
         if pika is None:
-            raise ValueError("Could not import library 'pika'. Please install it.")
+            raise MissingDependencyError("pika", version=">=1.0")
 
         self.connection = None
         self.channel = None
 
         pika_version = tuple(int(x) for x in pika.__version__.split('.'))
+        if pika_version < (1, ):
+            raise MissingDependencyError("pika", version=">=1.0",
+                                         installed=pika.__version__)
+
         self.kwargs = {}
-        if pika_version < (0, 11):
-            self.kwargs['heartbeat_interval'] = self.parameters.connection_heartbeat
-        else:
-            self.kwargs['heartbeat'] = self.parameters.connection_heartbeat
+        self.kwargs['heartbeat'] = self.parameters.connection_heartbeat
 
         self.connection_host = self.parameters.connection_host
         self.connection_port = self.parameters.connection_port
@@ -56,8 +58,6 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
                                               False)
 
         self.connect_server()
-
-        # TODO: message or report
 
     def process(self):
         ''' Stop the Bot if cannot connect to AMQP Server after the defined connection attempts '''

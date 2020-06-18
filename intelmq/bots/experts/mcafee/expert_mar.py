@@ -12,12 +12,16 @@ lookup_type: string
 try:
     from dxlclient.client_config import DxlClientConfig
     from dxlclient.client import DxlClient
-    from dxlmarclient import MarClient, ResultConstants
 except ImportError:
     DxlClient = None
+try:
+    from dxlmarclient import MarClient, ResultConstants
+except ImportError:
+    MarClient = None
 
 # imports for additional libraries and intelmq
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 
 class MARExpertBot(Bot):
@@ -81,8 +85,10 @@ class MARExpertBot(Bot):
 
     def init(self):
         if DxlClient is None:
-            raise ValueError('Could not import dxlclient or dxlmarclient. '
-                             'Please install them.')
+            raise MissingDependencyError('dxlclient')
+        if MarClient is None:
+            raise MissingDependencyError('dxlmarclient')
+
         self.config = DxlClientConfig.create_dxl_config_from_file(self.parameters.dxl_config_file)
 
     def process(self):

@@ -36,6 +36,7 @@ import time
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import create_request_session_from_bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import requests
@@ -52,9 +53,9 @@ class TwitterCollectorBot(CollectorBot):
 
     def init(self):
         if requests is None:
-            raise ValueError("Could not import 'requests'. Please install it.")
+            raise MissingDependencyError("requests")
         if twitter is None:
-            raise ValueError("Could not import 'twitter'. Please install it.")
+            raise MissingDependencyError("twitter")
         self.current_time_in_seconds = int(time.time())
         self.target_timelines = []
         if getattr(self.parameters, "target_timelines", '') != '':

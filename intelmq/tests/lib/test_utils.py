@@ -114,8 +114,6 @@ class TestUtils(unittest.TestCase):
             line_format = [line.format(name) for line in LINES['short']]
             self.assertSequenceEqual(line_format, stream_lines)
 
-    @unittest.skipIf(sys.version_info < (3, 5),
-                     "contextlib.redirect_* is not supported in Python 3.4.")
     def test_stream_logger(self):
         stdout = io.StringIO()
         stderr = io.StringIO()

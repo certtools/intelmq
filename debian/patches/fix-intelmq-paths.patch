@@ -1,16 +1,22 @@
 Description: Set all paths to LSB
 Author: Sebastian Wagner <wagner@cert.at>
-Last-Update: 2019-05-17
+Last-Update: 2019-11-19
 ---
 This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
---- a/intelmq/__init__.py
-+++ b/intelmq/__init__.py
-@@ -1,7 +1,7 @@
- from .version import __version__, __version_info__
+--- a/intelmq/__init__.py	2019-11-19 15:48:35.654629757 +0100
++++ b/intelmq/__init__.py	2019-11-19 15:49:44.970512504 +0100
+@@ -2,11 +2,11 @@
  import os
  
--if os.getenv('INTELMQ_PATHS_NO_OPT', False):
-+if not os.getenv('INTELMQ_PATHS_OPT', False):
-     ROOT_DIR = ""
-     CONFIG_DIR = "/etc/intelmq/"
-     DEFAULT_LOGGING_LEVEL = "INFO"
+ 
+-path = "opt"
++path = "lsb"
+ if os.getenv("INTELMQ_ROOT_DIR", False):
+     path = "opt"
+-elif os.getenv('INTELMQ_PATHS_NO_OPT', False):
+-    path = "lsb"
++elif os.getenv('INTELMQ_PATHS_OPT', False):
++    path = "opt"
+ 
+ 
+ if path == "lsb":

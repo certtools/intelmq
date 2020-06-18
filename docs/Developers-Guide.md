@@ -174,14 +174,17 @@ or the package management of your operating system.
 
 ### Run the tests
 
-All changes have to be tested and new contributions should be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
+All changes have to be tested and new contributions should be accompanied by according unit tests.
+Please do not run the tests as root just like any other IntelMQ component for security reasons. Any other unprivileged user is possible.
+
+You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
 
     cd /opt/dev_intelmq
-    python3 -m unittest {discover|filename}  # or
-    nosetests3 [filename]  # alternatively nosetests or nosetests-3.5 depending on your installation, or
-    python3 setup.py test  # uses a build environment (no external dependencies)
+    sudo -u intelmq python3 -m unittest {discover|filename}  # or
+    sudo -u intelmq nosetests3 [filename]  # alternatively nosetests or nosetests-3.5 depending on your installation, or
+    sudo -u intelmq python3 setup.py test  # uses a build environment (no external dependencies)
 
-It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, give the file path as argument.
+Some bots need local databases to succeed. If you only want to test one explicit test file, give the file path as argument.
 
 There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing, which triggers on pull requests. You can also easily activate it for your forks.
 
@@ -453,13 +456,10 @@ You will get all logging outputs directly on stderr as well as in the log file.
 ## Template
 Please adjust the doc strings accordingly and remove the in-line comments (`#`).
 ```python
-# -*- coding: utf-8 -*-
-"""
-ExampleParserBot parses data from example.com.
+"""Parse data from example.com, be a nice ExampleParserBot.
 
 Document possible necessary configurations.
 """
-from __future__ import unicode_literals
 import sys
 
 # imports for additional libraries and intelmq
@@ -611,8 +611,7 @@ You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e
 class MyParserBot(ParserBot):
 
     def parse(self, report):
-        """
-        A generator yielding the single elements of the data.
+        """A generator yielding the single elements of the data.
 
         Comments, headers etc. can be processed here. Data needed by
         `self.parse_line` can be saved in `self.tempdata` (list).
@@ -625,8 +624,7 @@ class MyParserBot(ParserBot):
             yield line.strip()
 
     def parse_line(self, line, report):
-        """
-        A generator which can yield one or more messages contained in line.
+        """A generator which can yield one or more messages contained in line.
 
         Report has the full message, thus you can access some metadata.
         Override for your use.
@@ -656,8 +654,7 @@ class MyParserBot(ParserBot):
         self.acknowledge_message()
 
     def recover_line(self, line):
-        """
-        Reverse of parse for single lines.
+        """Reverse of parse for single lines.
 
         Recovers a fully functional report with only the problematic line.
         """
@@ -682,9 +679,6 @@ Ideally an example contains not only the ideal case which should succeed, but al
 Most existing bots are only tested with one message. For newly written test it is appreciable to have tests including more then one message, e.g. a parser fed with an report consisting of multiple events.
 
 ```python
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import unittest
 
 import intelmq.lib.test as test
@@ -692,9 +686,7 @@ from intelmq.bots.parsers.exampleparser.parser import ExampleParserBot  # adjust
 
 
 class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test class name
-    """
-    A TestCase for ExampleParserBot.
-    """
+    """A TestCase for ExampleParserBot."""
 
     @classmethod
     def set_bot(cls):
@@ -703,13 +695,13 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
 
     # This is an example how to test the log output
     def test_log_test_line(self):
-        """ Test if bot does log example message. """
+        """Test if bot does log example message."""
         self.run_bot()
         self.assertRegexpMatches(self.loglines_buffer,
                                  "INFO - Lorem ipsum dolor sit amet")
 
     def test_event(self):
-        """ Test if correct Event has been produced. """
+        """Test if correct Event has been produced."""
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_REPORT)
 

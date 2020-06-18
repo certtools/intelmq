@@ -6,6 +6,7 @@ pymongo library automatically tries to reconnect if connection has been lost.
 import dateutil.parser
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import pymongo
@@ -18,7 +19,7 @@ class MongoDBOutputBot(Bot):
 
     def init(self):
         if pymongo is None:
-            raise ValueError('Could not import pymongo. Please install it.')
+            raise MissingDependencyError("pymongo")
 
         self.pymongo_3 = pymongo.version_tuple >= (3, )
         self.pymongo_35 = pymongo.version_tuple >= (3, 5)

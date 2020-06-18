@@ -28,7 +28,7 @@ import sys
 import tarfile
 import traceback
 import zipfile
-from typing import Any, Generator, Iterator, Optional, Sequence, Union
+from typing import Any, Dict, Generator, Iterator, Optional, Sequence, Union
 
 import dateutil.parser
 from dateutil.relativedelta import relativedelta
@@ -167,7 +167,7 @@ def base64_encode(value: Union[bytes, str]) -> str:
     return decode(base64.b64encode(encode(value, force=True)), force=True)
 
 
-def flatten_queues(queues) -> Iterator[str]:
+def flatten_queues(queues: Union[list, Dict]) -> Iterator[str]:
     """
     Assure that output value will be a flattened.
 
@@ -234,6 +234,7 @@ def write_configuration(configuration_filepath: str,
         json.dump(content, fp=handle, indent=4,
                   sort_keys=True,
                   separators=(',', ': '))
+        handle.write('\n')
 
 
 def load_parameters(*configs: dict) -> Parameters:
@@ -599,7 +600,7 @@ class RewindableFileHandle(object):
         return self.current_line
 
 
-def object_pair_hook_bots(*args, **kwargs):
+def object_pair_hook_bots(*args, **kwargs) -> Dict:
     """
     A object_pair_hook function for the BOTS file to be used in the json's dump functions.
 
@@ -653,7 +654,7 @@ def drop_privileges() -> bool:
     return False
 
 
-def setup_list_logging(name='intelmq', logging_level='INFO'):
+def setup_list_logging(name: str = 'intelmq', logging_level: str = 'INFO'):
     check_logger = logging.getLogger('check')  # name does not matter
     list_handler = ListHandler()
     list_handler.setLevel('INFO')
@@ -690,7 +691,7 @@ def version_smaller(version1: tuple, version2: tuple) -> Optional[bool]:
     return None
 
 
-def lazy_int(value: Any) -> Any:
+def lazy_int(value: Any) -> Optional[Any]:
     """
     Tries to conver the value to int if possible. Original value otherwise
     """

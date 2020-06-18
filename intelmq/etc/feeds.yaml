@@ -181,42 +181,6 @@ providers:
       revision: 2018-02-06
       documentation: https://www.openphish.com/phishing_feeds.html
       public: no
-  URLVir:
-    Hosts:
-      description: This feed provides FQDN's or IP addresses for Active Malicious
-        Hosts.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://www.urlvir.com/export-hosts/
-            rate_limit: 129600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.urlvir.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://www.urlvir.com/
-      public: yes
-    IPs:
-      description: This feed provides IP addresses hosting Malware.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://www.urlvir.com/export-ip-addresses/
-            rate_limit: 129600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.urlvir.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://www.urlvir.com/
-      public: yes
   Netlab 360:
     Mirai Scanner:
       description: 'This feed provides IP addresses which actively scan for vulnerable
@@ -419,7 +383,7 @@ providers:
       revision: 2018-01-20
       documentation: https://www.team-cymru.com/CSIRT-AP.html https://www.cymru.com/$certname/report_info.txt
       public: no
-    Full Bogons:
+    Full Bogons IPv4:
       description: Fullbogons are a larger set which also includes IP space that has
         been allocated to an RIR, but not assigned by that RIR to an actual ISP or
         other end-user. IANA maintains a convenient IPv4 summary page listing allocated
@@ -433,6 +397,29 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt
+            rate_limit: 129600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.cymru.parser_full_bogons
+          parameters:
+      revision: 2018-01-20
+      documentation: https://www.team-cymru.com/bogon-reference-http.html
+      public: yes
+    Full Bogons IPv6:
+      description: Fullbogons are a larger set which also includes IP space that has
+        been allocated to an RIR, but not assigned by that RIR to an actual ISP or
+        other end-user. IANA maintains a convenient IPv4 summary page listing allocated
+        and reserved netblocks, and each RIR maintains a list of all prefixes that
+        they have assigned to end-users. Our bogon reference pages include additional
+        links and resources to assist those who wish to properly filter bogon prefixes
+        within their networks.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
             rate_limit: 129600
             name: __FEED__
             provider: __PROVIDER__
@@ -1155,8 +1142,7 @@ providers:
       public: yes
   AnubisNetworks:
     Cyberfeed Stream:
-      description: AnubisNetworks Collector is the bot responsible to get AnubisNetworks
-        Cyberfeed Stream.
+      description: Fetches and parsers the Cyberfeed data stream.
       additional_information:
       bots:
         collector:
@@ -1169,8 +1155,9 @@ providers:
         parser:
           module: intelmq.bots.parsers.anubisnetworks.parser
           parameters:
-      revision: 2018-01-20
-      documentation: https://www.anubisnetworks.com/
+            use_malware_familiy_as_classification_identifier: true
+      revision: 2020-06-15
+      documentation: https://www.anubisnetworks.com/ https://www.bitsight.com/
       public: no
   Bambenek:
     C2 Domains:
@@ -1461,6 +1448,28 @@ providers:
       revision: 2018-03-06
       documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
       public: no
+    CTIP via Azure:
+      description: Collects CTIP (Sinkhole data) files from a shared Azure Storage. The feed is available via Microsoft’s Government Security Program (GSP).
+      additional_information: The cache is needed for memorizing which files have already been processed, the TTL should be higher than the oldest file available in the storage (currently the last three days are available). The connection string contains endpoint as well as authentication information.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.microsoft.collector_azure
+          parameters:
+            connection_string: "{{your connection string}}"
+            container_name: "ctip-infected-summary"
+            name: __FEED__
+            provider: __PROVIDER__
+            rate_limit: 3600
+            redis_cache_db: 5
+            redis_cache_host: 127.0.0.1
+            redis_cache_port: 6379
+            redis_cache_ttl: 864000
+        parser:
+          module: intelmq.bots.parsers.microsoft.parser_ctip
+          parameters:
+      revision: 2020-05-29
+      documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
+      public: no
   Threatminer:
     Recent domains:
       description: Latest malicious domains.
@@ -1594,3 +1603,22 @@ providers:
       revision: 2019-09-11
       documentation: https://haveibeenpwned.com/EnterpriseSubscriber/
       public: no
+  Strangereal Intel:
+    DailyIOC:
+      description: Daily IOC from tweets and articles
+      additional_information: |
+        collector's `extra_fields` parameter may be any of fields from the github [content API response](https://developer.github.com/v3/repos/contents/)
+      bots:
+        collector:
+          module: intelmq.bots.collectors.github_api.collector_github_contents_api
+          parameters:
+            basic_auth_username: USERNAME
+            basic_auth_password: PASSWORD
+            repository: StrangerealIntel/DailyIOC
+            regex: .*.json
+        parser:
+          module: intelmq.bots.parsers.github_feed
+          parameters:
+      revision: 2019-12-05
+      documentation: https://github.com/StrangerealIntel/DailyIOC
+      public: yes

@@ -39,13 +39,13 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [PrecisionSec](#precisionsec)
 - [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
+- [Strangereal Intel](#strangereal-intel)
 - [Sucuri](#sucuri)
 - [Surbl](#surbl)
 - [Taichung](#taichung)
 - [Team Cymru](#team-cymru)
 - [Threatminer](#threatminer)
 - [Turris](#turris)
-- [URLVir](#urlvir)
 - [University of Toulouse](#university-of-toulouse)
 - [VXVault](#vxvault)
 - [ViriBack](#viriback)
@@ -182,9 +182,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ## Cyberfeed Stream
 
 * **Public:** unknown
-* **Revision:** 2018-01-20
-* **Documentation:** https://www.anubisnetworks.com/
-* **Description:** AnubisNetworks Collector is the bot responsible to get AnubisNetworks Cyberfeed Stream.
+* **Revision:** 2020-06-15
+* **Documentation:** https://www.anubisnetworks.com/ https://www.bitsight.com/
+* **Description:** Fetches and parsers the Cyberfeed data stream.
 
 ### Collector
 
@@ -199,6 +199,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.anubisnetworks.parser
 * **Configuration Parameters:**
+*  * `use_malware_familiy_as_classification_identifier`: `True`
 
 
 # Autoshun
@@ -1217,6 +1218,34 @@ server {
 * **Configuration Parameters:**
 
 
+## CTIP via Azure
+
+* **Public:** unknown
+* **Revision:** 2020-05-29
+* **Documentation:** https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
+* **Description:** Collects CTIP (Sinkhole data) files from a shared Azure Storage. The feed is available via Microsoft’s Government Security Program (GSP).
+* **Additional Information:** The cache is needed for memorizing which files have already been processed, the TTL should be higher than the oldest file available in the storage (currently the last three days are available). The connection string contains endpoint as well as authentication information.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.microsoft.collector_azure
+* **Configuration Parameters:**
+*  * `connection_string`: `{{your connection string}}`
+*  * `container_name`: `ctip-infected-summary`
+*  * `name`: `CTIP via Azure`
+*  * `provider`: `Microsoft`
+*  * `rate_limit`: `3600`
+*  * `redis_cache_db`: `5`
+*  * `redis_cache_host`: `127.0.0.1`
+*  * `redis_cache_port`: `6379`
+*  * `redis_cache_ttl`: `864000`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.microsoft.parser_ctip
+* **Configuration Parameters:**
+
+
 ## CTIP via Interflow
 
 * **Public:** unknown
@@ -1616,6 +1645,31 @@ server {
 * **Configuration Parameters:**
 
 
+# Strangereal Intel
+
+## DailyIOC
+
+* **Public:** yes
+* **Revision:** 2019-12-05
+* **Documentation:** https://github.com/StrangerealIntel/DailyIOC
+* **Description:** Daily IOC from tweets and articles
+* **Additional Information:** collector's `extra_fields` parameter may be any of fields from the github [content API response](https://developer.github.com/v3/repos/contents/)
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.github_api.collector_github_contents_api
+* **Configuration Parameters:**
+*  * `basic_auth_password`: `PASSWORD`
+*  * `basic_auth_username`: `USERNAME`
+*  * `regex`: `.*.json`
+*  * `repository`: `StrangerealIntel/DailyIOC`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.github_feed
+* **Configuration Parameters:**
+
+
 # Sucuri
 
 ## Hidden IFrames
@@ -1718,7 +1772,7 @@ server {
 * **Configuration Parameters:**
 
 
-## Full Bogons
+## Full Bogons IPv4
 
 * **Public:** yes
 * **Revision:** 2018-01-20
@@ -1730,7 +1784,29 @@ server {
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt`
-*  * `name`: `Full Bogons`
+*  * `name`: `Full Bogons IPv4`
+*  * `provider`: `Team Cymru`
+*  * `rate_limit`: `129600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.cymru.parser_full_bogons
+* **Configuration Parameters:**
+
+
+## Full Bogons IPv6
+
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://www.team-cymru.com/bogon-reference-http.html
+* **Description:** Fullbogons are a larger set which also includes IP space that has been allocated to an RIR, but not assigned by that RIR to an actual ISP or other end-user. IANA maintains a convenient IPv4 summary page listing allocated and reserved netblocks, and each RIR maintains a list of all prefixes that they have assigned to end-users. Our bogon reference pages include additional links and resources to assist those who wish to properly filter bogon prefixes within their networks.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt`
+*  * `name`: `Full Bogons IPv6`
 *  * `provider`: `Team Cymru`
 *  * `rate_limit`: `129600`
 
@@ -1785,52 +1861,6 @@ server {
 ### Parser
 
 * **Module:** intelmq.bots.parsers.turris.parser
-* **Configuration Parameters:**
-
-
-# URLVir
-
-## Hosts
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.urlvir.com/
-* **Description:** This feed provides FQDN's or IP addresses for Active Malicious Hosts.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.urlvir.com/export-hosts/`
-*  * `name`: `Hosts`
-*  * `provider`: `URLVir`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.urlvir.parser
-* **Configuration Parameters:**
-
-
-## IPs
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.urlvir.com/
-* **Description:** This feed provides IP addresses hosting Malware.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.urlvir.com/export-ip-addresses/`
-*  * `name`: `IPs`
-*  * `provider`: `URLVir`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.urlvir.parser
 * **Configuration Parameters:**
 
 

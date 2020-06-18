@@ -137,12 +137,12 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
             super().run_bot(*args, **kwargs)
 
     def test_event(self):
-        """ Test if correct Event has been produced. """
+        """ Test DummyParserBot """
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
     def test_missing_raw(self):
-        """ Test if correct Event has been produced. """
+        """ Test DummyParserBot with missing raw. """
         self.input_message = EXAMPLE_EMPTY_REPORT
         self.allowed_warning_count = 1
         self.run_bot()
@@ -177,9 +177,49 @@ class TestDummyCSVParserBot(test.BotTestCase, unittest.TestCase):
         cls.default_input_message = EXAMPLE_REPO_1
 
     def test_event(self):
-        """ Test if correct Event has been produced. """
+        """ Test DummyCSVParserBot. """
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVE_1)
+
+
+EXAMPLE_JSON_STREAM_REPORT = {'__type': 'Report',
+                              'raw': utils.base64_encode('''{"a": 1}
+{"a": 2}''')}
+EXAMPLE_JSON_STREAM_EVENTS = [{'__type': 'Event',
+                               'raw': utils.base64_encode('{"a": 1}'),
+                               'event_description.text': '1',
+                               'classification.type': 'other',
+                               },
+                              {'__type': 'Event',
+                               'raw': utils.base64_encode('{"a": 2}'),
+                               'event_description.text': '2',
+                               'classification.type': 'other',
+                               },
+                              ]
+
+
+class DummyJSONStreamParserBot(bot.ParserBot):
+    parse = bot.ParserBot.parse_json_stream
+    recover_line = bot.ParserBot.recover_line_json_stream
+
+    def parse_line(self, line, report):
+        event = self.new_event(report)
+        event['event_description.text'] = line['a']
+        event['classification.type'] = 'other'
+        event['raw'] = self.recover_line(line)
+        yield event
+
+
+class TestJSONStreamParserBot(test.BotTestCase, unittest.TestCase):
+    @classmethod
+    def set_bot(cls):
+        cls.bot_reference = DummyJSONStreamParserBot
+        cls.default_input_message = EXAMPLE_JSON_STREAM_REPORT
+
+    def test_event(self):
+        self.run_bot()
+        self.assertMessageEqual(0, EXAMPLE_JSON_STREAM_EVENTS[0])
+        self.assertMessageEqual(1, EXAMPLE_JSON_STREAM_EVENTS[1])
 
 
 if __name__ == '__main__':  # pragma: no cover
