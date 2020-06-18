@@ -3,7 +3,23 @@ NEWS
 
 See the changelog for a full list of changes.
 
-2.2.0 Feature release (2020-06-17)
+2.2.1 Bugfix release (unreleased)
+----------------------------------
+
+### Requirements
+
+### Tools
+
+### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
+2.2.0 Feature release (2020-06-18)
 ----------------------------------
 
 ### Requirements

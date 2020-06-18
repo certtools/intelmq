@@ -1,6 +1,38 @@
 CHANGELOG
 ==========
 
+2.2.1 (unreleased)
+------------------
+
+### Configuration
+
+### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
 
 2.2.0 (2020-06-18)
 ------------------
