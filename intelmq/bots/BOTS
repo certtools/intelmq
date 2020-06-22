@@ -236,6 +236,18 @@
                 "rate_limit": 3600
             }
         },
+        "Github API": {
+            "description": "Collects files from github repository via the Github API. Optionally with github credentials.",
+            "module": "intelmq.bots.collectors.github_api.collector_github_contents_api",
+            "parameters": {
+                "basic_auth_password": "__PASSWORD__",
+                "basic_auth_username": "__USERNAME__",
+                "name": "__FEED__",
+                "provider": "__PROVIDER__",
+                "regex": ".*.json",
+                "repository": "StrangerealIntel/DailyIOC"
+            }
+        },
         "McAfee openDXL": {
             "description": "Listens to McAfee openDXL fabric",
             "module": "intelmq.bots.collectors.opendxl.collector",
@@ -320,18 +332,6 @@
                 "target_timelines": "",
                 "timelimit": "",
                 "tweet_count": ""
-            }
-        },
-        "Github API": {
-            "description": "Collects files from github repository via the Github API. Optionally with github credentials.",
-            "module": "intelmq.bots.collectors.github_api.collector_github_contents_api",
-            "parameters": {
-                "name": "__FEED__",
-                "provider": "__PROVIDER__",
-                "basic_auth_username": "__USERNAME__",
-                "basic_auth_password": "__PASSWORD__",
-                "repository": "StrangerealIntel/DailyIOC",
-                "regex": ".*.json"
             }
         }
     },
@@ -671,14 +671,6 @@
                 "database": "/opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat"
             }
         },
-        "CSV Converter": {
-            "description": "Converts data to CSV.",
-            "module": "intelmq.bots.experts.csv_converter.expert",
-            "parameters": {
-                "delimiter": ",",
-                "fieldnames": "time.source,classification.type,source.ip"
-            }
-        },
         "Abusix": {
             "description": "Abusix is the bot responsible to get the correspondent abuse contact from source IP and destination IP of the events.",
             "module": "intelmq.bots.experts.abusix.expert",
@@ -688,6 +680,14 @@
                 "redis_cache_password": null,
                 "redis_cache_port": "6379",
                 "redis_cache_ttl": "86400"
+            }
+        },
+        "CSV Converter": {
+            "description": "Converts data to CSV.",
+            "module": "intelmq.bots.experts.csv_converter.expert",
+            "parameters": {
+                "delimiter": ",",
+                "fieldnames": "time.source,classification.type,source.ip"
             }
         },
         "Cymru Whois": {
@@ -804,6 +804,14 @@
             "module": "intelmq.bots.experts.idea.expert",
             "parameters": {
                 "test_mode": false
+            }
+        },
+        "MISP": {
+            "description": "An expert to for looking up values in MISP.",
+            "module": "intelmq.bots.experts.misp.expert",
+            "parameters": {
+                "misp_key": "<insert MISP Authkey>",
+                "misp_url": "<insert url of MISP server (with trailing '/')>"
             }
         },
         "MaxMind GeoIP": {
@@ -927,14 +935,6 @@
             "parameters": {
                 "overwrite": false
             }
-        },
-        "MISP": {
-            "description": "An expert to for looking up values in MISP.",
-            "module": "intelmq.bots.experts.misp.expert",
-            "parameters": {
-                "misp_key": "<insert MISP Authkey>",
-                "misp_url": "<insert url of MISP server (with trailing '/')>"
-            }
         }
     },
     "Output": {
@@ -1015,6 +1015,32 @@
                 "tmp": "/opt/intelmq/var/lib/bots/files-output/tmp"
             }
         },
+        "MISP API": {
+            "description": "Insert events into a MISP instance.",
+            "module": "intelmq.bots.outputs.misp.output_api",
+            "parameters": {
+                "add_feed_name_as_tag": true,
+                "add_feed_provider_as_tag": true,
+                "misp_additional_correlation_fields": [],
+                "misp_additional_tags": [],
+                "misp_key": "<insert MISP Authkey>",
+                "misp_publish": false,
+                "misp_tag_for_bot": "<insert MISP tag to mark inserted events>",
+                "misp_to_ids_fields": [],
+                "misp_url": "<insert url of MISP server (with trailing '/')>",
+                "significant_fields": "<insert list of significant fields>"
+            }
+        },
+        "MISP Feed": {
+            "description": "Generate an output in MISP Feed format.",
+            "module": "intelmq.bots.outputs.misp.output_feed",
+            "parameters": {
+                "interval_event": "1 hour",
+                "misp_org_name": "<org name creating the events>",
+                "misp_org_uuid": "<org uuid creating the events>",
+                "output_dir": "/opt/intelmq/var/lib/bots/mispfeed-output"
+            }
+        },
         "McAfee ESM": {
             "description": "Writes information out to the McAfee Enterprise Security Manager (ESM).",
             "module": "intelmq.bots.outputs.mcafee.output_esm_ip",
@@ -1024,32 +1050,6 @@
                 "esm_user": "NGCP",
                 "esm_watchlist": "<watchlist name>",
                 "field": "source.ip"
-            }
-        },
-        "MISP Feed": {
-            "description": "Generate an output in MISP Feed format.",
-            "module": "intelmq.bots.outputs.misp.output_feed",
-            "parameters": {
-                "misp_org_name": "<org name creating the events>",
-                "misp_org_uuid": "<org uuid creating the events>",
-                "output_dir": "/opt/intelmq/var/lib/bots/mispfeed-output",
-                "interval_event": "1 hour"
-            }
-        },
-        "MISP API": {
-            "description": "Insert events into a MISP instance.",
-            "module": "intelmq.bots.outputs.misp.output_api",
-            "parameters": {
-                "add_feed_provider_as_tag": true,
-                "misp_additional_correlation_fields": [],
-                "misp_additional_tags": [],
-                "add_feed_name_as_tag": true,
-                "misp_key": "<insert MISP Authkey>",
-                "misp_publish": false,
-                "misp_tag_for_bot": "<insert MISP tag to mark inserted events>",
-                "misp_to_ids_fields": [],
-                "misp_url": "<insert url of MISP server (with trailing '/')>",
-                "significant_fields": "<insert list of significant fields>"
             }
         },
         "MongoDB": {
