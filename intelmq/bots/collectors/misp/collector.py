@@ -83,7 +83,8 @@ class MISPCollectorBot(CollectorBot):
 
         # Finally, update the tags on the MISP events.
 
-        for misp_event in misp_result:
+        for e in misp_result:
+            misp_event = e['Event']
             if hasattr(self.parameters, 'misp_tag_processed'):
                 # Add a 'processed' tag to the event
                 self.misp.tag(misp_event['uuid'],
