@@ -47,6 +47,7 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.misp`: Fix access to actual MISP object (PR#1548 by Tomas Bellus @tomas321)
 
 #### Parsers
 
