@@ -38,6 +38,9 @@ class ESETCollectorBot(CollectorBot):
       data = json.loads(item.content)
       self.logger.debug('data: ' + str(data))
       self.logger.debug('domains: ' + str(domains))
+      for domain in data:
+        domain['_eset_feed'] = self.parameters.collection
+
       domains += data
 
     self.logger.info('Submitting data')
