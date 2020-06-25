@@ -28,7 +28,11 @@ class ESETParserBot(ParserBot):
     feed_name = line['_eset_feed']
 
     self.common_parse(event, line)
-    self.f_map[feed_name](event, line)
+    f = self.f_map.get(feed_name, None)
+    if not f:
+      raise ValueError('Unsupported feed')
+
+    f(event, line)
 
     yield event
 
