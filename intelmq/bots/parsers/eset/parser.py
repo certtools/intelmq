@@ -1,4 +1,4 @@
-import json
+import json, re
 from intelmq.lib.utils import base64_encode, base64_decode
 
 message_taxonomy_map = {
@@ -17,14 +17,16 @@ class ESETParserBot(ParserBot):
       'ei.urls (json)': self.urls_parse,
       'ei.domains v2 (json)': self.domains_parse
     }
+    self.pattern = re.compile('\.'.join(['(25[0-5]|2[0-4][0-9]|1?[0-9]?[0-9])']*4)) # IPv4
 
   def parse(self, report): # yield single sections for parse_line to parse
     data = json.loads(base64_decode(report['raw']))
     for section in data:
-      yield section
+      yield json.dumps(section)
 
   def parse_line(self, line, report): # parse a section of the received report
     event = self.new_event(report)
+    line = json.loads(line)
     feed_name = line['_eset_feed']
 
     self.common_parse(event, line)
@@ -58,15 +60,14 @@ class ESETParserBot(ParserBot):
     event.add('source.url', line['url'])
 
 
-  @staticmethod
-  def common_parse(event, line):
+  def common_parse(self, event, line):
     type = self._get_taxonomy(line['reason'])
     feed_name = line['_eset_feed']
 
     event.add('raw', base64_encode(json.dumps(line)))
     event.add('event_description.text', line['reason'])
     event.add('classification.type', type)
-    if not line['ip'] in [line['domain'], None]:
+    if not self.is_ipv4(line['domain']):
       event.add('source.fqdn', line['domain']) # IP addresses are not permitted in FQDN, only domain names
 
     event.add('source.ip', line['ip'])
@@ -74,6 +75,9 @@ class ESETParserBot(ParserBot):
     event.add('feed.provider', 'ESET')
     event.add('feed.url', 'https://eti.eset.com/taxiiservice/discovery')
     event.add('feed.documentation', 'https://www.eset.com/int/business/services/threat-intelligence/')
+
+  def is_ipv4(self, address):
+    return bool(self.pattern.fullmatch(address))
 
 
 BOT = ESETParserBot
