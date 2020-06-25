@@ -1,5 +1,7 @@
-import json, re
+import json
+import re
 from intelmq.lib.utils import base64_encode, base64_decode
+from intelmq.lib.bot import ParserBot
 
 message_taxonomy_map = {
     'Host actively distributes high-severity threat in the form of executable code.': 'malware',
@@ -9,7 +11,6 @@ message_taxonomy_map = {
     'Host is known source of active fraudulent content.': 'other'
 }
 
-from intelmq.lib.bot import ParserBot
 
 class ESETParserBot(ParserBot):
     def init(self):
@@ -17,14 +18,14 @@ class ESETParserBot(ParserBot):
             'ei.urls (json)': self.urls_parse,
             'ei.domains v2 (json)': self.domains_parse
         }
-        self.pattern = re.compile('\.'.join(['(25[0-5]|2[0-4][0-9]|1?[0-9]?[0-9])']*4)) # IPv4
+        self.pattern = re.compile('\\.'.join(['(25[0-5]|2[0-4][0-9]|1?[0-9]?[0-9])'] * 4))  # IPv4
 
-    def parse(self, report): # yield single sections for parse_line to parse
+    def parse(self, report):  # yield single sections for parse_line to parse
         data = json.loads(base64_decode(report['raw']))
         for section in data:
             yield json.dumps(section)
 
-    def parse_line(self, line, report): # parse a section of the received report
+    def parse_line(self, line, report):  # parse a section of the received report
         event = self.new_event(report)
         line = json.loads(line)
         feed_name = line['_eset_feed']
@@ -38,13 +39,12 @@ class ESETParserBot(ParserBot):
 
         yield event
 
-
     @staticmethod
     def _get_taxonomy(reason):
         tax = message_taxonomy_map.get(reason, None)
-        if tax: # was found in dictionary
+        if tax:  # was found in dictionary
             return tax
-        elif reason.startswith('Host is used as command and control server'): # dynamic section after that
+        elif reason.startswith('Host is used as command and control server'):  # dynamic section after that
             return 'c2server'
         else:
             return 'other'
@@ -53,12 +53,10 @@ class ESETParserBot(ParserBot):
     def domains_parse(event, line):
         event.add('time.source', line['last_seen'])
 
-
     @staticmethod
     def urls_parse(event, line):
         event.add('time.source', line['domain_last_seen'])
         event.add('source.url', line['url'])
-
 
     def common_parse(self, event, line):
         type = self._get_taxonomy(line['reason'])
@@ -68,7 +66,7 @@ class ESETParserBot(ParserBot):
         event.add('event_description.text', line['reason'])
         event.add('classification.type', type)
         if not self.is_ipv4(line['domain']):
-            event.add('source.fqdn', line['domain']) # IP addresses are not permitted in FQDN, only domain names
+            event.add('source.fqdn', line['domain'])  # IP addresses are not permitted in FQDN, only domain names
 
         event.add('source.ip', line['ip'])
         event.add('feed.name', 'ESET Threat Intelligence Service ({})'.format(feed_name))

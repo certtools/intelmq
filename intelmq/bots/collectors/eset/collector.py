@@ -1,4 +1,5 @@
-import datetime, json
+import datetime
+import json
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import base64_encode
 
@@ -10,7 +11,7 @@ except ImportError:
 
 class ESETCollectorBot(CollectorBot):
     def init(self):
-        if cabby == None:
+        if cabby is None:
             raise ValueError('Library "cabby" not installed')
 
     def process(self):
@@ -22,7 +23,7 @@ class ESETCollectorBot(CollectorBot):
 
         domains = []
         end = datetime.datetime.now(datetime.timezone.utc)
-        start = end - datetime.timedelta(seconds=time_delta) # only fetch from up to time_delta seconds ago
+        start = end - datetime.timedelta(seconds=time_delta)  # only fetch from up to time_delta seconds ago
 
         self.logger.info('Authenticating')
 
@@ -33,7 +34,7 @@ class ESETCollectorBot(CollectorBot):
 
         for item in client.poll(collection, begin_date=start, end_date=end):
             if not item.content:
-                continue # skip empty items
+                continue  # skip empty items
 
             data = json.loads(item.content)
             self.logger.debug('data: ' + str(data))
@@ -48,5 +49,6 @@ class ESETCollectorBot(CollectorBot):
         report = self.new_report()
         report.add('raw', json.dumps(domains))
         self.send_message(report)
+
 
 BOT = ESETCollectorBot
