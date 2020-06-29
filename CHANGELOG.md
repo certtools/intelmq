@@ -50,6 +50,7 @@ CHANGELOG
 - `intelmq.bots.collectors.misp`: Fix access to actual MISP object (PR#1548 by Tomas Bellus @tomas321)
 
 #### Parsers
+- `intelmq.bots.parsers.shadowserver.config`: Add support for Accessible-CoAP feed (PR #1555 by Thomas Hungenberg).
 
 #### Experts
 
