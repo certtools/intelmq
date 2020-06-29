@@ -117,7 +117,7 @@ def v110_shadowserver_feednames(defaults, runtime, harmonization, dry_run):
 
 def v110_deprecations(defaults, runtime, harmonization, dry_run):
     """
-    Checking for deprecated runtime configurations (stomp collector, cymru parser, ripe expert)
+    Checking for deprecated runtime configurations (stomp collector, cymru parser, ripe expert, collector feed parameter)
     """
     mapping = {
         "intelmq.bots.collectors.n6.collector_stomp": "intelmq.bots.collectors.stomp.collector",
