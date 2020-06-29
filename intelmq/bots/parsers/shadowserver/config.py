@@ -2244,10 +2244,38 @@ open_ipp = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-coap-report/
+accessible_coap = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-coap' in constant_fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'response', validate_to_none)
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-coap',
+        'protocol.application': 'coap',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
     ('Accessible-AFP', 'scan_afp', accessible_afp),
+    ('Accessible-CoAP', 'scan_coap', accessible_coap),
     ('Accessible-CWMP', 'scan_cwmp', accessible_cwmp),
     ('Accessible-Cisco-Smart-Install', 'cisco_smart_install', accessible_cisco_smart_install),
     ('Accessible-FTP', 'scan_ftp', accessible_ftp),
