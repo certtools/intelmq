@@ -27,17 +27,6 @@
                 "provider": "APICollector"
             }
         },
-        "ESET": {
-            "description": "Collect data from ESET's TAXII API",
-            "module": "intelmq.bots.collectors.eset.collector",
-            "parameters": {
-                "username": "<username>",
-                "password": "<password>",
-                "endpoint": "eti.eset.com",
-                "time_delta": 3600,
-                "collection": "<collection>"
-            }
-        },
         "File": {
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
@@ -245,6 +234,17 @@
             "parameters": {
                 "name": "CertStream",
                 "provider": "Calidog"
+            }
+        },
+        "ESET ETI TAXII": {
+            "description": "Collect data from ESET's TAXII API",
+            "module": "intelmq.bots.collectors.eset.collector",
+            "parameters": {
+                "username": "<username>",
+                "password": "<password>",
+                "endpoint": "eti.eset.com",
+                "time_delta": 3600,
+                "collection": "<collection>"
             }
         },
         "Github API": {

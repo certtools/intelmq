@@ -1622,3 +1622,40 @@ providers:
       revision: 2019-12-05
       documentation: https://github.com/StrangerealIntel/DailyIOC
       public: yes
+  ESET:
+    ETI Domains:
+      description: Domain data from ESET's TAXII API.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.eset.collector
+          parameters:
+            username: <username>
+            password: <password>
+            endpoint: eti.eset.com
+            time_delta: 3600
+            collection: ei.domains v2 (json)
+        parser:
+          module: intelmq.bots.parsers.eset.parser
+          parameters:
+      revision: 2020-06-30
+      documentation: https://www.eset.com/int/business/services/threat-intelligence/
+      public: no
+    ETI URLs:
+      description: URL data from ESET's TAXII API.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.eset.collector
+          parameters:
+            username: <username>
+            password: <password>
+            endpoint: eti.eset.com
+            time_delta: 3600
+            collection: ei.urls (json)
+        parser:
+          module: intelmq.bots.parsers.eset.parser
+          parameters:
+      revision: 2020-06-30
+      documentation: https://www.eset.com/int/business/services/threat-intelligence/
+      public: no

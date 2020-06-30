@@ -14,14 +14,18 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.eset.collector`: Added (PR#1554 by Mikk Margus Möll).
 
 #### Parsers
+- `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
 
 #### Experts
 
 #### Outputs
 
 ### Documentation
+* Feeds:
+  * Add ESET URL and Domain feeds
 
 ### Packaging
 

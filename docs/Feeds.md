@@ -23,6 +23,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Danger Rulez](#danger-rulez)
 - [Dataplane](#dataplane)
 - [DynDNS](#dyndns)
+- [ESET](#eset)
 - [Fraunhofer](#fraunhofer)
 - [HPHosts](#hphosts)
 - [Have I Been Pwned](#have-i-been-pwned)
@@ -905,6 +906,54 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ### Parser
 
 * **Module:** intelmq.bots.parsers.dyn.parser
+* **Configuration Parameters:**
+
+
+# ESET
+
+## ETI Domains
+
+* **Public:** unknown
+* **Revision:** 2020-06-30
+* **Documentation:** https://www.eset.com/int/business/services/threat-intelligence/
+* **Description:** Domain data from ESET's TAXII API.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.eset.collector
+* **Configuration Parameters:**
+*  * `collection`: `ei.domains v2 (json)`
+*  * `endpoint`: `eti.eset.com`
+*  * `password`: `<password>`
+*  * `time_delta`: `3600`
+*  * `username`: `<username>`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.eset.parser
+* **Configuration Parameters:**
+
+
+## ETI URLs
+
+* **Public:** unknown
+* **Revision:** 2020-06-30
+* **Documentation:** https://www.eset.com/int/business/services/threat-intelligence/
+* **Description:** URL data from ESET's TAXII API.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.eset.collector
+* **Configuration Parameters:**
+*  * `collection`: `ei.urls (json)`
+*  * `endpoint`: `eti.eset.com`
+*  * `password`: `<password>`
+*  * `time_delta`: `3600`
+*  * `username`: `<username>`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.eset.parser
 * **Configuration Parameters:**
 
 
