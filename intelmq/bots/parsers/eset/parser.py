@@ -1,11 +1,9 @@
 import json
-import re
-from intelmq.lib.utils import base64_encode, base64_decode
 from intelmq.lib.bot import ParserBot
 
 message_taxonomy_map = {
-    'Host actively distributes high-severity threat in the form of executable code.': 'malware',
-    'Host is known to be distributing low-risk and potentially unwanted content.': 'malware',
+    'Host actively distributes high-severity threat in the form of executable code.': 'malware-distribution',
+    'Host is known to be distributing low-risk and potentially unwanted content.': 'malware-distribution',
     'Host is known source of phishing or other fraudulent content.': 'phishing',
     'Host is known to be actively distributing adware or other medium-risk software.': 'other',
     'Host is known source of active fraudulent content.': 'other'
@@ -18,16 +16,11 @@ class ESETParserBot(ParserBot):
             'ei.urls (json)': self.urls_parse,
             'ei.domains v2 (json)': self.domains_parse
         }
-        self.pattern = re.compile('\\.'.join(['(25[0-5]|2[0-4][0-9]|1?[0-9]?[0-9])'] * 4))  # IPv4
 
-    def parse(self, report):  # yield single sections for parse_line to parse
-        data = json.loads(base64_decode(report['raw']))
-        for section in data:
-            yield json.dumps(section)
+    parse = ParserBot.parse_json
 
     def parse_line(self, line, report):  # parse a section of the received report
         event = self.new_event(report)
-        line = json.loads(line)
         feed_name = line['_eset_feed']
 
         self.common_parse(event, line)
@@ -62,20 +55,12 @@ class ESETParserBot(ParserBot):
         type = self._get_taxonomy(line['reason'])
         feed_name = line['_eset_feed']
 
-        event.add('raw', base64_encode(json.dumps(line)))
+        event.add('raw', json.dumps(line))
         event.add('event_description.text', line['reason'])
         event.add('classification.type', type)
-        if not self.is_ipv4(line['domain']):
-            event.add('source.fqdn', line['domain'])  # IP addresses are not permitted in FQDN, only domain names
+        event.add('source.fqdn', line['domain'], raise_failure=False)  # IP addresses may be passed in line['domain']
 
         event.add('source.ip', line['ip'])
-        event.add('feed.name', 'ESET Threat Intelligence Service ({})'.format(feed_name))
-        event.add('feed.provider', 'ESET')
-        event.add('feed.url', 'https://eti.eset.com/taxiiservice/discovery')
-        event.add('feed.documentation', 'https://www.eset.com/int/business/services/threat-intelligence/')
-
-    def is_ipv4(self, address):
-        return bool(self.pattern.fullmatch(address))
 
 
 BOT = ESETParserBot

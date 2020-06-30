@@ -1,7 +1,6 @@
 import datetime
 import json
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import base64_encode
 
 try:
     import cabby
@@ -25,12 +24,12 @@ class ESETCollectorBot(CollectorBot):
         end = datetime.datetime.now(datetime.timezone.utc)
         start = end - datetime.timedelta(seconds=time_delta)  # only fetch from up to time_delta seconds ago
 
-        self.logger.info('Authenticating')
+        self.logger.debug('Authenticating.')
 
         client = cabby.create_client(endpoint, discovery_path="/taxiiservice/discovery", use_https=True)
         client.set_auth(username=user, password=passwd)
 
-        self.logger.info('Fetching data from ESET TAXII endpoint')
+        self.logger.debug('Fetching data from ESET TAXII endpoint.')
 
         for item in client.poll(collection, begin_date=start, end_date=end):
             if not item.content:
@@ -44,7 +43,7 @@ class ESETCollectorBot(CollectorBot):
 
             domains += data
 
-        self.logger.info('Submitting data')
+        self.logger.debug('Submitting data.')
 
         report = self.new_report()
         report.add('raw', json.dumps(domains))
