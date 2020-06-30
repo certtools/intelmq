@@ -27,14 +27,6 @@
                 "provider": "APICollector"
             }
         },
-        "CertStream": {
-            "description": "A bot to collect information from CertStream",
-            "module": "intelmq.bots.collectors.calidog.collector_certstream",
-            "parameters": {
-                "name": "CertStream",
-                "provider": "Calidog"
-            }
-        },
         "File": {
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
@@ -234,6 +226,14 @@
                 "name": "Crimeserver",
                 "provider": "Blueliv",
                 "rate_limit": 3600
+            }
+        },
+        "CertStream": {
+            "description": "A bot to collect information from CertStream",
+            "module": "intelmq.bots.collectors.calidog.collector_certstream",
+            "parameters": {
+                "name": "CertStream",
+                "provider": "Calidog"
             }
         },
         "Github API": {

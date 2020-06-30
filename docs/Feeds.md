@@ -1125,7 +1125,7 @@ server {
 
 * **Public:** unknown
 * **Revision:** 2018-01-20
-* **Documentation:** https://www.malwarepatrol.net/
+* **Documentation:** https://www.malwarepatrol.net/non-commercial/
 * **Description:** Malware block list with URLs
 
 ### Collector
@@ -1417,7 +1417,7 @@ server {
 
 * **Public:** unknown
 * **Revision:** 2018-01-20
-* **Documentation:** https://data.phishtank.com/
+* **Documentation:** https://www.phishtank.com/developer_info.php
 * **Description:** PhishTank is a collaborative clearing house for data and information about phishing on the Internet.
 
 ### Collector

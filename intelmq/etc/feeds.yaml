@@ -90,7 +90,7 @@ providers:
           module: intelmq.bots.parsers.malwarepatrol.parser_dansguardian
           parameters:
       revision: 2018-01-20
-      documentation: https://www.malwarepatrol.net/
+      documentation: https://www.malwarepatrol.net/non-commercial/
       public: no
   Malware Domains:
     Malicious:
@@ -803,7 +803,7 @@ providers:
           module: intelmq.bots.parsers.phishtank.parser
           parameters:
       revision: 2018-01-20
-      documentation: https://data.phishtank.com/
+      documentation: https://www.phishtank.com/developer_info.php
       public: no
   CINSscore:
     Army List:
