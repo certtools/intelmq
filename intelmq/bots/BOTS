@@ -27,6 +27,17 @@
                 "provider": "APICollector"
             }
         },
+        "ESET": {
+            "description": "Collect data from ESET's TAXII API",
+            "module": "intelmq.bots.collectors.eset.collector",
+            "parameters": {
+                "username": "<username>",
+                "password": "<password>",
+                "endpoint": "eti.eset.com",
+                "time_delta": 3600,
+                "collection": "<collection>"
+            }
+        },
         "File": {
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
@@ -441,6 +452,11 @@
         "DynDNS ponmocup Domains": {
             "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.dyn.parser",
+            "parameters": {}
+        },
+        "ESET": {
+            "description": "Parse data collected from ESET's TAXII API",
+            "module": "intelmq.bots.parsers.eset.parser",
             "parameters": {}
         },
         "Fraunhofer DGA": {
