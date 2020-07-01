@@ -4,6 +4,7 @@ RFC 1918 Will Drop Local IP from a given record and a bit more.
   It checks for RFC1918 IPv4 Hosts
   It checks for localhost, multicast and test LANs
   It checks for Link Local and Documentation LAN in IPv6
+  It checks for RFC538 ASN
 
 Need only to feed the parameter "fields" to set the name of the field
 parameter designed to be filtered out.
@@ -17,6 +18,7 @@ https://tools.ietf.org/html/rfc3849
 https://tools.ietf.org/html/rfc4291
 https://tools.ietf.org/html/rfc5737
 https://en.wikipedia.org/wiki/IPv4
+https://en.wikipedia.org/wiki/Autonomous_system_(Internet)
 """
 
 import ipaddress
@@ -31,7 +33,11 @@ NETWORKS = ("10.0.0.0/8", "100.64.0.0/10", "127.0.0.0/8",
             "255.255.255.255/32", "fe80::/64", "2001:0db8::/32")
 DOMAINS = ('.test', '.example', '.invalid', '.localhost', 'example.com',
            'example.net', 'example.org')
-
+ASNS = (64496, 64497, 64498, 64499, 64500, 64501, 64502, 64503, 64504, 64505,
+        64506, 64507, 64508, 64509, 64510, 64511, 65536, 65537, 65538, 65539,
+        65540, 65541, 65542, 65543, 65544, 65545, 65546, 65547, 65548, 65549,
+        65550, 65551)
+  
 
 class RFC1918ExpertBot(Bot):
 
@@ -56,6 +62,8 @@ class RFC1918ExpertBot(Bot):
             elif field.endswith('.url'):
                 check = any(urlparse(value).netloc.endswith(domain)
                             for domain in DOMAINS)
+            elif field.endswith('.asn'):
+                check = value in ASNS
             if check:
                 if policy == 'del':
                     self.logger.debug("Value removed from %s.", field)

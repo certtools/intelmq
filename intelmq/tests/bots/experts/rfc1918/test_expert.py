@@ -36,6 +36,10 @@ INPUT_URL = {"__type": "Event",
              "source.url": "http://sub.example.com/foo/bar",
              "time.observation": "2015-01-01T00:00:00+00:00",
              }
+INPUT_ASN = {"__type": "Event",
+             "source.asn": 64496,
+             "time.observation": "2015-01-01T00:00:00+00:00",
+             }
 
 
 class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
@@ -47,8 +51,8 @@ class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = RFC1918ExpertBot
         cls.sysconfig = {'fields': 'destination.ip,source.ip,source.fqdn,'
-                                   'destination.fqdn,source.url',
-                         'policy': 'del,drop,drop,del,drop',
+                                   'destination.fqdn,source.url,source.asn',
+                         'policy': 'del,drop,drop,del,drop,drop',
                          }
 
     def test_del(self):
@@ -73,6 +77,11 @@ class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_drop_url(self):
         self.input_message = INPUT_URL
+        self.run_bot()
+        self.assertOutputQueueLen(0)
+
+    def test_drop_asn(self):
+        self.input_message = INPUT_ASN
         self.run_bot()
         self.assertOutputQueueLen(0)
 
