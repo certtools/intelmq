@@ -20,7 +20,6 @@ class ESETCollectorBot(CollectorBot):
         self.collection = self.parameters.collection
 
     def process(self):
-        domains = []
         end = datetime.datetime.now(datetime.timezone.utc)
         start = end - datetime.timedelta(seconds=self.time_delta)
 
@@ -38,19 +37,14 @@ class ESETCollectorBot(CollectorBot):
                 continue  # skip empty items
 
             data = json.loads(item.content)
-            self.logger.debug('data: ' + str(data))
-            self.logger.debug('domains: ' + str(domains))
             for domain in data:
                 domain['_eset_feed'] = self.parameters.collection
 
-            domains += data
+            report = self.new_report()
+            report.add("feed.url", "https://%s/taxiiservice/discovery" % self.endpoint)
 
-        self.logger.debug('Submitting data.')
-
-        report = self.new_report()
-        report.add("feed.url", "https://%s/taxiiservice/discovery" % self.endpoint)
-        report.add('raw', json.dumps(domains))
-        self.send_message(report)
+            report.add('raw', json.dumps(data))
+            self.send_message(report)
 
 
 BOT = ESETCollectorBot
