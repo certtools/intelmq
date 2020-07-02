@@ -21,6 +21,9 @@ except ImportError:
 
 class ASNLookupExpertBot(Bot):
 
+    argparser = Bot.argparser
+    argparser.add_argument("--update-database", action='store_true', help='downloads latest database data')
+
     def init(self):
         if pyasn is None:
             raise MissingDependencyError("pyasn")
@@ -67,11 +70,15 @@ class ASNLookupExpertBot(Bot):
             return [["error", "Error reading database: %r." % exc]]
 
     @classmethod
-    def run(cls):
-        if len(sys.argv) > 1 and sys.argv[1] == "--update-database":
+    def run(cls, parsed_args=None):
+        if not parsed_args:
+            parsed_args = cls.argparser.parse_args()
+
+        if parsed_args.update_database:
             cls.update_database()
+
         else:
-            super().run()
+            super().run(parsed_args=parsed_args)
 
     @classmethod
     def update_database(cls):
