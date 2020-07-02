@@ -1,4 +1,5 @@
 import json
+
 from intelmq.lib.bot import ParserBot
 
 message_taxonomy_map = {
@@ -21,12 +22,12 @@ class ESETParserBot(ParserBot):
 
     def parse_line(self, line, report):  # parse a section of the received report
         event = self.new_event(report)
-        feed_name = line['_eset_feed']
 
         self.common_parse(event, line)
-        f = self.f_map.get(feed_name, None)
+        event['extra.eset_feed'] = report['extra.eset_feed']
+        f = self.f_map.get(report['extra.eset_feed'], None)
         if not f:
-            raise ValueError('Unsupported feed')
+            raise ValueError('Unsupported feed %r' % report['extra.eset_feed'])
 
         f(event, line)
 
@@ -53,7 +54,6 @@ class ESETParserBot(ParserBot):
 
     def common_parse(self, event, line):
         type = self._get_taxonomy(line['reason'])
-        feed_name = line['_eset_feed']
 
         event.add('raw', json.dumps(line))
         event.add('event_description.text', line['reason'])

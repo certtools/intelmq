@@ -1,5 +1,5 @@
 import datetime
-import json
+
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.exceptions import MissingDependencyError
 
@@ -36,14 +36,10 @@ class ESETCollectorBot(CollectorBot):
             if not item.content:
                 continue  # skip empty items
 
-            data = json.loads(item.content)
-            for domain in data:
-                domain['_eset_feed'] = self.parameters.collection
-
             report = self.new_report()
             report.add("feed.url", "https://%s/taxiiservice/discovery" % self.endpoint)
-
-            report.add('raw', json.dumps(data))
+            report.add('extra.eset_feed', self.parameters.collection)
+            report.add('raw', item.content)
             self.send_message(report)
 
 
