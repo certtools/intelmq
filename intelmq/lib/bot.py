@@ -1060,13 +1060,13 @@ class ParserBot(Bot):
         """
         return json.dumps([line])
 
-    def recover_line_json_stream(self, line: dict) -> str:
+    def recover_line_json_stream(self, line=None) -> str:
         """
         recover_line for json streams, just returns the current line, unparsed.
 
         Parameters
         ----------
-        line : dict
+        line : None, not required, only for compatibility with other recover_line methods
 
         Returns
         -------

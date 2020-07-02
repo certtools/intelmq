@@ -7,6 +7,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.bot`:
+  - `ParserBot.recover_line_json_stream`: Make `line` parameter optional, as it is not needed for this method.
 
 ### Development
 
