@@ -345,6 +345,19 @@ V220_FEED = {
     "module": "intelmq.bots.parsers.urlvir.parser",
 },
 }
+V221_FEED = {
+"hphosts-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "http://hosts-file.net/download/hosts.txt",
+    },
+},
+"hphosts-parser": {
+    "group": "Parser",
+    "module": "intelmq.bots.parsers.hphosts.parser",
+},
+}
 
 
 def generate_function(function):
@@ -470,6 +483,17 @@ class TestUpgradeLib(unittest.TestCase):
                          'Remove affected bots yourself.',
                          result[0])
         self.assertEqual(V220_FEED, result[2])
+
+    def test_v221_feed_changes(self):
+        """ Test v213_feed_changes """
+        result = upgrades.v221_feed_changes_1({}, V221_FEED, {}, False)
+        self.assertEqual('A discontinued feed "HP Hosts File" has been found '
+                         'as bot hphosts-collector. '
+                         'The removed parser "HP Hosts" has been found '
+                         'as bot hphosts-parser. '
+                         'Remove affected bots yourself.',
+                         result[0])
+        self.assertEqual(V221_FEED, result[2])
 
 
 for name in upgrades.__all__:

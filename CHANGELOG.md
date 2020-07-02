@@ -9,6 +9,8 @@ CHANGELOG
 ### Core
 - `intelmq.lib.bot`:
   - `ParserBot.recover_line_json_stream`: Make `line` parameter optional, as it is not needed for this method.
+- `intelmq.lib.upgrades`:
+  - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559).
 
 ### Development
 
@@ -20,6 +22,7 @@ CHANGELOG
 
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
+- `intelmq.bots.parsers.hphosts`: Removed, feed is unavailable (#1559).
 
 #### Experts
 
@@ -28,6 +31,7 @@ CHANGELOG
 ### Documentation
 * Feeds:
   * Add ESET URL and Domain feeds
+  * Remove unavailable *HPHosts Hosts file* feed (#1559).
 
 ### Packaging
 
