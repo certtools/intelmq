@@ -55,7 +55,7 @@ class ESETParserBot(ParserBot):
     def common_parse(self, event, line):
         type = self._get_taxonomy(line['reason'])
 
-        event.add('raw', json.dumps(line))
+        event.add('raw', json.dumps(line, sort_keys=True))
         event.add('event_description.text', line['reason'])
         event.add('classification.type', type)
         event.add('source.fqdn', line['domain'], raise_failure=False)  # IP addresses may be passed in line['domain']
