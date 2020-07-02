@@ -90,7 +90,7 @@ providers:
           module: intelmq.bots.parsers.malwarepatrol.parser_dansguardian
           parameters:
       revision: 2018-01-20
-      documentation: https://www.malwarepatrol.net/
+      documentation: https://www.malwarepatrol.net/non-commercial/
       public: no
   Malware Domains:
     Malicious:
@@ -446,27 +446,6 @@ providers:
       revision: 2018-01-20
       documentation: https://www.tc.edu.tw/net/netflow/lkout/recent/
       public: yes
-  HPHosts:
-    Hosts:
-      description: hpHosts is a community managed and maintained hosts file that allows
-        an additional layer of protection against access to ad, tracking and malicious
-        websites.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://hosts-file.net/download/hosts.txt
-            rate_limit: 3600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.hphosts.parser
-          parameters:
-            error_log_message: 'false'
-      revision: 2018-01-20
-      documentation: http://hosts-file.net/
-      public: yes
   Dataplane:
     SSH Client Connection:
       description: Entries below consist of fields with identifying characteristics
@@ -803,7 +782,7 @@ providers:
           module: intelmq.bots.parsers.phishtank.parser
           parameters:
       revision: 2018-01-20
-      documentation: https://data.phishtank.com/
+      documentation: https://www.phishtank.com/developer_info.php
       public: no
   CINSscore:
     Army List:
@@ -1640,3 +1619,40 @@ providers:
       revision: 2020-07-22
       documentation: https://haas.nic.cz/
       public: yes
+  ESET:
+    ETI Domains:
+      description: Domain data from ESET's TAXII API.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.eset.collector
+          parameters:
+            username: <username>
+            password: <password>
+            endpoint: eti.eset.com
+            time_delta: 3600
+            collection: ei.domains v2 (json)
+        parser:
+          module: intelmq.bots.parsers.eset.parser
+          parameters:
+      revision: 2020-06-30
+      documentation: https://www.eset.com/int/business/services/threat-intelligence/
+      public: no
+    ETI URLs:
+      description: URL data from ESET's TAXII API.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.eset.collector
+          parameters:
+            username: <username>
+            password: <password>
+            endpoint: eti.eset.com
+            time_delta: 3600
+            collection: ei.urls (json)
+        parser:
+          module: intelmq.bots.parsers.eset.parser
+          parameters:
+      revision: 2020-06-30
+      documentation: https://www.eset.com/int/business/services/threat-intelligence/
+      public: no

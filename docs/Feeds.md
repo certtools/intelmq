@@ -23,8 +23,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Danger Rulez](#danger-rulez)
 - [Dataplane](#dataplane)
 - [DynDNS](#dyndns)
+- [ESET](#eset)
 - [Fraunhofer](#fraunhofer)
-- [HPHosts](#hphosts)
 - [Have I Been Pwned](#have-i-been-pwned)
 - [Malc0de](#malc0de)
 - [Malware Domain List](#malware-domain-list)
@@ -908,6 +908,54 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
+# ESET
+
+## ETI Domains
+
+* **Public:** unknown
+* **Revision:** 2020-06-30
+* **Documentation:** https://www.eset.com/int/business/services/threat-intelligence/
+* **Description:** Domain data from ESET's TAXII API.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.eset.collector
+* **Configuration Parameters:**
+*  * `collection`: `ei.domains v2 (json)`
+*  * `endpoint`: `eti.eset.com`
+*  * `password`: `<password>`
+*  * `time_delta`: `3600`
+*  * `username`: `<username>`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.eset.parser
+* **Configuration Parameters:**
+
+
+## ETI URLs
+
+* **Public:** unknown
+* **Revision:** 2020-06-30
+* **Documentation:** https://www.eset.com/int/business/services/threat-intelligence/
+* **Description:** URL data from ESET's TAXII API.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.eset.collector
+* **Configuration Parameters:**
+*  * `collection`: `ei.urls (json)`
+*  * `endpoint`: `eti.eset.com`
+*  * `password`: `<password>`
+*  * `time_delta`: `3600`
+*  * `username`: `<username>`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.eset.parser
+* **Configuration Parameters:**
+
+
 # Fraunhofer
 
 ## DGA Archive
@@ -932,31 +980,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.fraunhofer.parser_dga
 * **Configuration Parameters:**
-
-
-# HPHosts
-
-## Hosts
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://hosts-file.net/
-* **Description:** hpHosts is a community managed and maintained hosts file that allows an additional layer of protection against access to ad, tracking and malicious websites.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://hosts-file.net/download/hosts.txt`
-*  * `name`: `Hosts`
-*  * `provider`: `HPHosts`
-*  * `rate_limit`: `3600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.hphosts.parser
-* **Configuration Parameters:**
-*  * `error_log_message`: `false`
 
 
 # Have I Been Pwned
@@ -1125,7 +1148,7 @@ server {
 
 * **Public:** unknown
 * **Revision:** 2018-01-20
-* **Documentation:** https://www.malwarepatrol.net/
+* **Documentation:** https://www.malwarepatrol.net/non-commercial/
 * **Description:** Malware block list with URLs
 
 ### Collector
@@ -1417,7 +1440,7 @@ server {
 
 * **Public:** unknown
 * **Revision:** 2018-01-20
-* **Documentation:** https://data.phishtank.com/
+* **Documentation:** https://www.phishtank.com/developer_info.php
 * **Description:** PhishTank is a collaborative clearing house for data and information about phishing on the Internet.
 
 ### Collector

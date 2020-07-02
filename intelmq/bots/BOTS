@@ -27,14 +27,6 @@
                 "provider": "APICollector"
             }
         },
-        "CertStream": {
-            "description": "A bot to collect information from CertStream",
-            "module": "intelmq.bots.collectors.calidog.collector_certstream",
-            "parameters": {
-                "name": "CertStream",
-                "provider": "Calidog"
-            }
-        },
         "File": {
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
@@ -234,6 +226,25 @@
                 "name": "Crimeserver",
                 "provider": "Blueliv",
                 "rate_limit": 3600
+            }
+        },
+        "CertStream": {
+            "description": "A bot to collect information from CertStream",
+            "module": "intelmq.bots.collectors.calidog.collector_certstream",
+            "parameters": {
+                "name": "CertStream",
+                "provider": "Calidog"
+            }
+        },
+        "ESET ETI TAXII": {
+            "description": "Collect data from ESET's TAXII API",
+            "module": "intelmq.bots.collectors.eset.collector",
+            "parameters": {
+                "username": "<username>",
+                "password": "<password>",
+                "endpoint": "eti.eset.com",
+                "time_delta": 3600,
+                "collection": "<collection>"
             }
         },
         "Github API": {
@@ -448,6 +459,11 @@
             "module": "intelmq.bots.parsers.dyn.parser",
             "parameters": {}
         },
+        "ESET": {
+            "description": "Parse data collected from ESET's TAXII API",
+            "module": "intelmq.bots.parsers.eset.parser",
+            "parameters": {}
+        },
         "Fraunhofer DGA": {
             "description": "Fraunhofer DGA Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.fraunhofer.parser_dga",
@@ -505,13 +521,6 @@
             "description": "Parses the data sent by the 'Have I Been Pwned' Callback for Enterprise Subscribers",
             "module": "intelmq.bots.parsers.hibp.parser_callback",
             "parameters": {}
-        },
-        "HpHosts": {
-            "description": "HpHosts Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.hphosts.parser",
-            "parameters": {
-                "error_log_message": false
-            }
         },
         "JSON": {
             "description": "JSON Parser converts from a JSON-String into an Event",

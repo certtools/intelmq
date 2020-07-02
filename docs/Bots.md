@@ -779,6 +779,35 @@ This bot works based on certstream library (https://github.com/CaliDog/certstrea
 
 * * *
 
+### ESET ETI
+
+#### Information:
+* `name:` intelmq.bots.collectors.eset.collector
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` collect data from ESET ETI TAXII server
+
+For more information visit https://www.eset.com/int/business/services/threat-intelligence/
+
+#### Requirements
+
+Install the required `cabby` library:
+```bash
+pip3 install -r intelmq/bots/collectors/eset/REQUIREMENTS.txt
+```
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `username`: Your username
+* `password`: Your password
+* `endpoint`: `eti.eset.com`
+* `time_delta`: The time span to look back, in seconds. Default `3600`.
+* `collection`: The collection to fetch.
+
+* * *
+
 ### McAfee openDXL
 
 #### Information:
@@ -1019,6 +1048,25 @@ For each domain in the `leaf_cert.all_domains` object one event with the domain 
 The seen-date is saved in `time.source` and the classification type is `other`.
 
 * **Feed parameters** (see above)
+
+* * *
+
+### ESET
+
+
+#### Information:
+* `name:` intelmq.bots.parsers.eset.parser
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Parses data from ESET ETI TAXII server
+
+#### Description
+
+Supported collections:
+* "ei.urls (json)"
+* "ei.domains v2 (json)"
+
 
 * * *
 
@@ -1347,6 +1395,7 @@ These are the supported feed name and their corresponding file name for automati
 | Accessible-ADB | `scan_adb` |
 | Accessible-AFP | `scan_afp` |
 | Accessible-Cisco-Smart-Install | `cisco_smart_install` |
+| Accessible-CoAP | `scan_coap` |
 | Accessible-CWMP | `scan_cwmp` |
 | Accessible-FTP | `scan_ftp` |
 | Accessible-Hadoop | `scan_hadoop` |
