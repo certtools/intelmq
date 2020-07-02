@@ -2236,7 +2236,7 @@ For both `source.ip` and `destination.ip` the PTR record is fetched and the firs
 
 ### RFC1918
 
-Several RFCs define IP addresses and Hostnames (and TLDs) reserved for documentation:
+Several RFCs define ASNs, IP addresses and Hostnames (and TLDs) reserved for documentation:
 
 Sources:
 * https://tools.ietf.org/html/rfc1918
@@ -2245,6 +2245,7 @@ Sources:
 * https://tools.ietf.org/html/rfc4291
 * https://tools.ietf.org/html/rfc5737
 * https://en.wikipedia.org/wiki/IPv4
+* https://en.wikipedia.org/wiki/Autonomous\_system\_(Internet)
 
 #### Information:
 * `name:` rfc1918

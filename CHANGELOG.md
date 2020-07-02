@@ -20,6 +20,7 @@ CHANGELOG
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
 
 #### Experts
+- `intelmq.bots.experts.rfc1918.expert`: Added support for ASN
 
 #### Outputs
 
