@@ -25,7 +25,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v220_configuration',
            'v220_azure_collector',
            'v220_feed_changes',
-           'v221_feeds_1',
+           'v221_feed_changes_1',
            ]
 
 
@@ -463,14 +463,22 @@ def v220_feed_changes(defaults, runtime, harmonization, dry_run):
     return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
 
 
-def v221_feeds_1(defaults, runtime, harmonization, dry_run):
+def v221_feed_changes_1(defaults, runtime, harmonization, dry_run):
     """
-    Migrates feeds' configuration for changed/fixed parameters.
+    Migrates feeds' configuration for changed/fixed parameters. Deprecation of HP Hosts file feed & parser.
     """
-    changed = False
+    found_hphosts_collector = []
+    found_hphosts_parser = []
+    messages = []
     ULRHAUS_OLD = ['time.source', 'source.url', 'status', 'extra.urlhaus.threat_type', 'source.fqdn', 'source.ip', 'source.asn', 'source.geolocation.cc']
     URLHAUS_NEW = ['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc']
+    changed = None
     for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.http.collector_http":
+            if bot["parameters"].get("http_url", None) == "http://hosts-file.net/download/hosts.txt":
+                found_hphosts_collector.append(bot_id)
+        elif bot['module'] == "intelmq.bots.parsers.hphosts.parser":
+            found_hphosts_parser.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.generic.parser_csv":
             if not "columns" in bot["parameters"]:
                 continue
@@ -482,7 +490,14 @@ def v221_feeds_1(defaults, runtime, harmonization, dry_run):
                 changed = True
                 bot["parameters"]["columns"] = URLHAUS_NEW
 
-    return changed, defaults, runtime, harmonization
+    if found_hphosts_collector:
+        messages.append('A discontinued feed "HP Hosts File" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_hphosts_collector)))
+    if found_hphosts_parser:
+        messages.append('The removed parser "HP Hosts" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_hphosts_parser)))
+    messages = ' '.join(messages)
+    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
 
 
 UPGRADES = OrderedDict([
@@ -499,7 +514,8 @@ UPGRADES = OrderedDict([
     ((2, 1, 2), ()),
     ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
     ((2, 2, 0), (v220_configuration, v220_azure_collector, v220_feed_changes)),
-    ((2, 2, 1), (v221_feeds_1, )),
+    ((2, 2, 1), (v221_feed_changes_1, )),
+    ((2, 3, 0), ()),
 ])
 
 ALWAYS = (harmonization, )

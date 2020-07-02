@@ -24,7 +24,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Dataplane](#dataplane)
 - [DynDNS](#dyndns)
 - [Fraunhofer](#fraunhofer)
-- [HPHosts](#hphosts)
 - [Have I Been Pwned](#have-i-been-pwned)
 - [Malc0de](#malc0de)
 - [Malware Domain List](#malware-domain-list)
@@ -933,31 +932,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.fraunhofer.parser_dga
 * **Configuration Parameters:**
-
-
-# HPHosts
-
-## Hosts
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://hosts-file.net/
-* **Description:** hpHosts is a community managed and maintained hosts file that allows an additional layer of protection against access to ad, tracking and malicious websites.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://hosts-file.net/download/hosts.txt`
-*  * `name`: `Hosts`
-*  * `provider`: `HPHosts`
-*  * `rate_limit`: `3600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.hphosts.parser
-* **Configuration Parameters:**
-*  * `error_log_message`: `false`
 
 
 # Have I Been Pwned

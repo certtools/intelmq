@@ -501,13 +501,6 @@
             "module": "intelmq.bots.parsers.hibp.parser_callback",
             "parameters": {}
         },
-        "HpHosts": {
-            "description": "HpHosts Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.hphosts.parser",
-            "parameters": {
-                "error_log_message": false
-            }
-        },
         "JSON": {
             "description": "JSON Parser converts from a JSON-String into an Event",
             "module": "intelmq.bots.parsers.json.parser",

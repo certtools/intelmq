@@ -401,6 +401,19 @@ V221_FEED_OUT = {
 }
 }
 V221_FEED_OUT['abusech-urlhaus-columns-dict-parser'] = V221_FEED_OUT['abusech-urlhaus-columns-string-parser']
+V221_FEED_2 = {
+"hphosts-collector": {
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "http://hosts-file.net/download/hosts.txt",
+    },
+},
+"hphosts-parser": {
+    "group": "Parser",
+    "module": "intelmq.bots.parsers.hphosts.parser",
+},
+}
 
 
 def generate_function(function):
@@ -527,12 +540,22 @@ class TestUpgradeLib(unittest.TestCase):
                          result[0])
         self.assertEqual(V220_FEED, result[2])
 
-    def test_v221_feeds(self):
+    def test_v221_feed_changes(self):
         """ Test v221_feeds_1 """
-        result = upgrades.v221_feeds_1({}, V221_FEED, {}, False)
+        result = upgrades.v221_feed_changes_1({}, V221_FEED, {}, False)
         self.assertTrue(result[0])
         self.assertEqual(V221_FEED_OUT, result[2])
 
+    def test_v221_feed_changes_2(self):
+        """ Test v213_feed_changes """
+        result = upgrades.v221_feed_changes_1({}, V221_FEED_2, {}, False)
+        self.assertEqual('A discontinued feed "HP Hosts File" has been found '
+                         'as bot hphosts-collector. '
+                         'The removed parser "HP Hosts" has been found '
+                         'as bot hphosts-parser. '
+                         'Remove affected bots yourself.',
+                         result[0])
+        self.assertEqual(V221_FEED_2, result[2])
 
 
 for name in upgrades.__all__:
