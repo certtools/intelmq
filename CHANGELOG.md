@@ -75,6 +75,7 @@ CHANGELOG
 ### Tools
 
 ### Contrib
+- `malware_name_mapping`: Change MISP Threat Actors URL to new URL (branch master -> main) in download script.
 
 ### Known issues
 
