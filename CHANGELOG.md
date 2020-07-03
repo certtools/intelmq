@@ -22,6 +22,7 @@ CHANGELOG
 #### Experts
 
 #### Outputs
+- `intelmq.bot.outputs.udp`: Fix error handling on sending, had a bug itself.
 
 ### Documentation
 
