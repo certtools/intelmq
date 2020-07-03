@@ -272,8 +272,8 @@ class Redis(Pipeline):
     def _acknowledge(self):
         try:
             retval = self.pipe.rpop(self.internal_queue)
-        except Exception as e:
-            raise exceptions.PipelineError(e)
+        except Exception as exc:
+            raise exceptions.PipelineError(exc)
         else:
             if not retval:
                 raise exceptions.PipelineError("Could not pop message from internal queue "

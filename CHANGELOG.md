@@ -11,6 +11,8 @@ CHANGELOG
   - `ParserBot.recover_line_json_stream`: Make `line` parameter optional, as it is not needed for this method.
 - `intelmq.lib.upgrades`:
   - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559).
+- `intelmq.lib.exceptions`:
+  - `PipelineError`: Remove unused code to format exceptions.
 
 ### Development
 
@@ -36,6 +38,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Added tests for `intelmq.lib.exceptions.PipelineError`.
 
 ### Tools
 
