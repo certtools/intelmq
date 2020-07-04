@@ -13,7 +13,7 @@ import tarfile
 from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq import RUNTIME_CONF_FILE
-from intelmq.lib.utils import load_configuration
+from intelmq.lib.utils import load_configuration, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
 
 try:
@@ -23,7 +23,6 @@ except ImportError:
 
 
 class GeoIPExpertBot(Bot):
-
     argparser = Bot.argparser
     argparser.add_argument("--update-database", action='store_true', help='downloads latest database data')
 
@@ -123,14 +122,17 @@ class GeoIPExpertBot(Bot):
         try:
             import maxminddb
         except ImportError:
-            raise MissingDependencyError('geoip2') # geoip2 depends on maxminddb
+            raise MissingDependencyError('geoip2')  # geoip2 depends on maxminddb
 
         try:
             print("Downloading the latest database update...")
-            response = requests.get("https://download.maxmind.com/app/geoip_download",
-                                    params={"license_key": license_key,
-                                            "edition_id": "GeoLite2-City",
-                                            "suffix": "tar.gz"})
+            session = create_request_session()
+            response = session.get("https://download.maxmind.com/app/geoip_download",
+                                   params={
+                                       "license_key": license_key,
+                                       "edition_id": "GeoLite2-City",
+                                       "suffix": "tar.gz"
+                                   })
         except requests.exceptions.RequestException as e:
             print("Database update failed. Connection Error: {0}".format(e))
             sys.exit(1)
@@ -149,7 +151,8 @@ class GeoIPExpertBot(Bot):
             with tarfile.open(fileobj=io.BytesIO(response.content), mode='r:gz') as archive:
                 for member in archive.getmembers():
                     if "GeoLite2-City.mmdb" in member.name:
-                        database_data = maxminddb.open_database(database=archive.extractfile(member), mode=maxminddb.MODE_FD)
+                        database_data = maxminddb.open_database(database=archive.extractfile(member),
+                                                                mode=maxminddb.MODE_FD)
                         break
 
         except maxminddb.InvalidDatabaseError:
@@ -171,8 +174,6 @@ class GeoIPExpertBot(Bot):
         ctl = IntelMQController()
         for bot in bots.keys():
             ctl.bot_reload(bot)
-
-        sys.exit(0)
 
 
 BOT = GeoIPExpertBot

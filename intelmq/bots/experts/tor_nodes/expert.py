@@ -9,8 +9,10 @@ import requests
 
 from intelmq.lib.bot import Bot
 from intelmq import RUNTIME_CONF_FILE
-from intelmq.lib.utils import load_configuration
+from intelmq.lib.utils import load_configuration, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
+
+from intelmq.lib.utils import create_request_session_from_bot
 
 
 class TorExpertBot(Bot):
@@ -83,7 +85,8 @@ class TorExpertBot(Bot):
 
         try:
             print("Downloading the latest database update...")
-            response = requests.get("https://check.torproject.org/exit-addresses")
+            session = create_request_session()
+            response = session.get("https://check.torproject.org/exit-addresses")
         except requests.exceptions.RequestException as e:
             print("Database update failed. Connection Error: {0}".format(e))
             sys.exit(1)

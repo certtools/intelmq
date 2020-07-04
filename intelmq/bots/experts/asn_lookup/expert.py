@@ -10,7 +10,7 @@ import requests
 from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq import RUNTIME_CONF_FILE
-from intelmq.lib.utils import load_configuration
+from intelmq.lib.utils import load_configuration, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
 
 try:
@@ -105,8 +105,9 @@ class ASNLookupExpertBot(Bot):
 
         try:
             print("Searching for the latest database update...")
+            session = create_request_session()
             url = "http://archive.routeviews.org/route-views4/bgpdata/"
-            response = requests.get(url)
+            response = session.get(url, )
             pattern = re.compile(r"href=\"(\d{4}\.\d{2})/\"")
             months = pattern.findall(response.text)
             months.sort(reverse=True)
@@ -116,7 +117,7 @@ class ASNLookupExpertBot(Bot):
                 sys.exit(1)
 
             url += str(months[0]) + "/RIBS/"
-            response = requests.get(url)
+            response = session.get(url)
             pattern = re.compile(r"href=\"(rib\.\d{8}\.\d{4}\.bz2)\"")
             days = pattern.findall(response.text)
             days.sort(reverse=True)
@@ -127,7 +128,7 @@ class ASNLookupExpertBot(Bot):
 
             print("Downloading the latest database update...")
             url += days[0]
-            response = requests.get(url)
+            response = session.get(url)
 
             if response.status_code != 200:
                 print("Database update failed. Server responded: {0}.".format(response.status_code))
