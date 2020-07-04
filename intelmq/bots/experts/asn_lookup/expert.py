@@ -107,7 +107,7 @@ class ASNLookupExpertBot(Bot):
             print("Searching for the latest database update...")
             session = create_request_session()
             url = "http://archive.routeviews.org/route-views4/bgpdata/"
-            response = session.get(url, )
+            response = session.get(url)
             pattern = re.compile(r"href=\"(\d{4}\.\d{2})/\"")
             months = pattern.findall(response.text)
             months.sort(reverse=True)

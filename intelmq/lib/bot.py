@@ -62,7 +62,7 @@ class Bot(object):
     # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
     collector_empty_process = False
     argparser = argparse.ArgumentParser(usage='%(prog)s [OPTIONS] BOT-ID')
-    argparser.add_argument('bot_id', nargs='?', metavar='BOT-ID', help='uniqe bot id of your choosing')
+    argparser.add_argument('bot_id', nargs='?', metavar='BOT-ID', help='unique bot-id of your choosing')
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
