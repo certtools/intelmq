@@ -16,6 +16,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Blueliv](#blueliv)
 - [CERT.PL](#certpl)
 - [CINSscore](#cinsscore)
+- [CZ.NIC](#cznic)
 - [Calidog](#calidog)
 - [CleanMX](#cleanmx)
 - [CyberCrime Tracker](#cybercrime-tracker)
@@ -598,6 +599,30 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ### Parser
 
 * **Module:** intelmq.bots.parsers.ci_army.parser
+* **Configuration Parameters:**
+
+
+# CZ.NIC
+
+## HaaS
+
+* **Public:** yes
+* **Revision:** 2020-07-22
+* **Documentation:** https://haas.nic.cz/
+* **Description:** SSH attackers against HaaS (Honeypot as a Sevice) provided by CZ.NIC, z.s.p.o. The dump is published once a day.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `extract_files`: `True`
+*  * `http_url`: `https://haas.nic.cz/stats/export/{time[%Y/%m/%Y-%m-%d]}.json.gz`
+*  * `http_url_formatting`: `{'days': -1}`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.cznic.parser_haas
 * **Configuration Parameters:**
 
 
