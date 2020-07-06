@@ -937,6 +937,8 @@ TODO
 
 The feed format changes over time. The parser supports at least data from 2016 and 2020.
 
+Events with the Malware "TestSinkholingLoss" are ignored, as they are for the feed provider's internal purpose only and should not be processed at all.
+
 #### Configuration parameters
 
 * `use_malware_familiy_as_classification_identifier`: default: `true`. Use the `malw.family` field as `classification.type`. If `false`, check if the same as `malw.variant`. If it is the same, it is ignored. Otherwise saved as `extra.malware.family`.

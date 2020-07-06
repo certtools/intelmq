@@ -14,6 +14,9 @@ with open(os.path.join(os.path.dirname(__file__), 'example_report3.json')) as ha
     EXAMPLE3_RAW = handle.read()
 with open(os.path.join(os.path.dirname(__file__), 'example_report_dns.json')) as handle:
     EXAMPLE_DNS_RAW = handle.read()
+with open(os.path.join(os.path.dirname(__file__), 'example_report_ignore.json')) as handle:
+    EXAMPLE_IGNORE_RAW = handle.read()
+
 
 EXAMPLE_REPORT = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a424b2980ca",
                   "feed.accuracy": 100.0,
@@ -221,6 +224,12 @@ EXAMPLE_EVENT_DNS  = {"classification.taxonomy": "malicious code",
 EMPTY_REPORT = EXAMPLE_REPORT.copy()
 EMPTY_REPORT['raw'] = 'Cg=='
 
+EXAMPLE_REPORT_IGNORE = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a424b2980ca",
+                         "raw": utils.base64_encode(EXAMPLE_IGNORE_RAW),
+                         "__type": "Report",
+                         "time.observation": "2016-04-19T23:16:10+00:00"
+                         }
+
 
 class TestAnubisNetworksParserBot(test.BotTestCase, unittest.TestCase):
 
@@ -256,6 +265,13 @@ class TestAnubisNetworksParserBot(test.BotTestCase, unittest.TestCase):
         """ Test empty line as input """
         self.input_message = EMPTY_REPORT
         self.run_bot()
+        self.assertOutputQueueLen(0)
+
+    def test_ignore(self):
+        """ Test empty line as input """
+        self.input_message = EXAMPLE_REPORT_IGNORE
+        self.run_bot()
+        print(self.get_output_queue())
         self.assertOutputQueueLen(0)
 
 
