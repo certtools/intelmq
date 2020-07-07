@@ -64,10 +64,12 @@ CHANGELOG
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.config`: Add support for Accessible-CoAP feed (PR #1555 by Thomas Hungenberg).
+- `intelmq.bots.parser.anubisnetworks.parser`: Ignore "TestSinkholingLoss" events, these are not intended to be sent out at all.
 
 #### Experts
 
 #### Outputs
+- `intelmq.bot.outputs.udp`: Fix error handling on sending, had a bug itself.
 
 ### Documentation
 

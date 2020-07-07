@@ -1,0 +1,39 @@
+{
+  "_ts": 1593164021,
+  "_origin": "infections",
+  "malw": {
+    "family": "TestSinkholingLoss",
+    "variant": "TestSinkholingLoss",
+    "severity": 0,
+    "categories": [
+      "Unknown"
+    ]
+  },
+  "src": {
+    "ip": "10.0.0.1",
+    "port": 1
+  },
+  "dst": {
+    "ip": "10.0.0.2",
+    "port": 53
+  },
+  "comm": {
+    "dns": {
+      "name": "example.com",
+      "qtype": "A"
+    },
+    "method": "sinkhole",
+    "proto": "dns"
+  },
+  "_geo_src_ip": {
+    "ip": "10.0.0.1",
+    "netmask": 8,
+    "country_code": "AT",
+    "country_name": "Austria",
+    "latitude": 48.0,
+    "longitude": 16.0,
+    "asn": 1,
+    "asn_name": "Example AS",
+    "path": "src.ip"
+  }
+}
