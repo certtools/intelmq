@@ -111,8 +111,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ## URLhaus
 
 * **Public:** yes
-* **Revision:** 2019-02-14
-* **Documentation:** https://urlhaus.abuse.ch/
+* **Revision:** 2020-07-07
+* **Documentation:** https://urlhaus.abuse.ch/feeds/
 * **Description:** URLhaus is a project from abuse.ch with the goal of sharing malicious URLs that are being used for malware distribution. URLhaus offers a country, ASN (AS number) and Top Level Domain (TLD) feed for network operators / Internet Service Providers (ISPs), Computer Emergency Response Teams (CERTs) and domain registries.
 
 ### Collector
@@ -128,8 +128,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.generic.parser_csv
 * **Configuration Parameters:**
-*  * `columns`: `time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc`
+*  * `columns`: `['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc']`
 *  * `default_url_protocol`: `http://`
+*  * `delimeter`: `,`
 *  * `skip_header`: `False`
 *  * `type_translation`: `{"malware_download": "malware-distribution"}`
 
