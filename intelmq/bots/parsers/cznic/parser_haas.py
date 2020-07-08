@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
 import dateutil.parser
 
 from intelmq.lib.bot import ParserBot

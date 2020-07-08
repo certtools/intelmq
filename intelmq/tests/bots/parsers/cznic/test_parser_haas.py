@@ -1,4 +1,5 @@
 import unittest
+import sys
 
 from intelmq.lib import test
 from intelmq.lib import utils
@@ -86,6 +87,9 @@ class TestCZNICHaasParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = CZNICHaasParserBot
         cls.default_input_message = {'__type': 'Report', 'raw': utils.base64_encode(INPUT)}
 
+    @unittest.skipIf(sys.version_info < (3, 6), 'Dict ordering in Python 3.5 '
+                                                'is not consistent, skipping '
+                                                'this test.')
     def test_event(self):
         self.run_bot()
         self.assertMessageEqual(0, OUTPUT_0)
