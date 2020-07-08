@@ -22,7 +22,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [DShield](#dshield)
 - [Danger Rulez](#danger-rulez)
 - [Dataplane](#dataplane)
-- [DynDNS](#dyndns)
 - [Fraunhofer](#fraunhofer)
 - [HPHosts](#hphosts)
 - [Have I Been Pwned](#have-i-been-pwned)
@@ -51,6 +50,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [ViriBack](#viriback)
 - [WebInspektor](#webinspektor)
 - [ZoneH](#zoneh)
+- [cAPTure](#capture)
 
 
 <!-- /TOC -->
@@ -881,30 +881,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ### Parser
 
 * **Module:** intelmq.bots.parsers.dataplane.parser
-* **Configuration Parameters:**
-
-
-# DynDNS
-
-## Infected Domains
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://security-research.dyndns.org/pub/malware-feeds/
-* **Description:** DynDNS ponmocup. List of ponmocup malware redirection domains and infected web-servers. See also http://security-research.dyndns.org/pub/botnet-links.html
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt`
-*  * `name`: `Infected Domains`
-*  * `provider`: `DynDNS`
-*  * `rate_limit`: `10800`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.dyn.parser
 * **Configuration Parameters:**
 
 
@@ -1998,5 +1974,33 @@ server {
 
 * **Module:** intelmq.bots.parsers.zoneh.parser
 * **Configuration Parameters:**
+
+
+# cAPTure
+
+## Ponmocup Domains
+
+* **Public:** yes
+* **Revision:** 2020-07-08
+* **Documentation:** http://security-research.dyndns.org/pub/malware-feeds/
+* **Description:** List of ponmocup malware redirection domains and infected web-servers from cAPTure. See also http://security-research.dyndns.org/pub/botnet-links.htm and http://c-apt-ure.blogspot.com/search/label/ponmocup
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-shadowserver.csv`
+*  * `name`: `Ponmocup Domains`
+*  * `provider`: `cAPTure`
+*  * `rate_limit`: `10800`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.generic.parser_csv
+* **Configuration Parameters:**
+*  * `columns`: `['time.source', 'source.ip', 'source.fqdn', 'source.urlpath', 'source.port', 'protocol.application', 'extra.tag', 'extra.redirect_target', 'extra.category']`
+*  * `delimiter`: `,`
+*  * `skip_header`: `True`
+*  * `type`: `malware-distribution`
 
 
