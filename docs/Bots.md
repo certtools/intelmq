@@ -1000,7 +1000,11 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
         }
      ```
  * `"type_translation"`: If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
-you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
+you can map them to the correct ones. The `type_translation` field can hold a dictionary, or a string with a JSON dictionary which maps the feed's values to intelmq's.
+    Example:
+    ```json
+    {"malware_download": "malware-distribution"}
+    ```
  * `"columns_required"`: A list of true/false for each column. By default, it is true for every column.
 
 * * *

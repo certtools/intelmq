@@ -19,6 +19,7 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.config`: Add support for Accessible-CoAP feed (PR #1555 by Thomas Hungenberg).
 - `intelmq.bots.parser.anubisnetworks.parser`: Ignore "TestSinkholingLoss" events, these are not intended to be sent out at all.
+- `intelmq.bots.parsers.generic.parser_csv`: Allow values of type dictionary for parameter `type_translation`.
 
 #### Experts
 
