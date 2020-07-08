@@ -25,6 +25,7 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
 - `intelmq.bots.parsers.hphosts`: Removed, feed is unavailable (#1559).
+- `intelmq.bots.parsers.cznic.parser_haas`: Added (PR#1560 by Filip Pokorný and Edvard Rejthar)
 
 #### Experts
 
@@ -34,6 +35,7 @@ CHANGELOG
 * Feeds:
   * Add ESET URL and Domain feeds
   * Remove unavailable *HPHosts Hosts file* feed (#1559).
+  * Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
 
 ### Packaging
 
