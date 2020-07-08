@@ -11,6 +11,8 @@
   - [Generic URL Stream Fetcher](#generic-url-stream-fetcher)
   - [Generic Mail URL Fetcher](#generic-mail-url-fetcher)
   - [Generic Mail Attachment Fetcher](#generic-mail-attachment-fetcher)
+  - [Generic Mail Body Fetcher](#generic-mail-body-fetcher)
+  - [GitHub API](#github-api)
   - [Fileinput](#fileinput)
   - [MISP Generic](#misp-generic)
   - [Request Tracker](#request-tracker)
@@ -141,7 +143,7 @@ For example:
 }
 ```
 
-This configuration resides in the file `runtime.conf` in your intelmq's configuration directory for each configured bot.
+This configuration resides in the file `runtime.conf` in your IntelMQ's configuration directory for each configured bot.
 
 ## Initialization parameters
 
@@ -164,25 +166,25 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 
 **HTTP parameters**: Common URL fetching parameters used in multiple bots.
 
-* `http_timeout_sec`: A tuple of floats or only one float describing the timeout of the http connection. Can be a tuple of two floats (read and connect timeout) or just one float (applies for both timeouts). The default is 30 seconds in default.conf, if not given no timeout is used. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
-* `http_timeout_max_tries`: An integer depciting how often a connection is retried, when a timeout occured. Defaults to 3 in default.conf.
+* `http_timeout_sec`: A tuple of floats or only one float describing the timeout of the HTTP connection. Can be a tuple of two floats (read and connect timeout) or just one float (applies for both timeouts). The default is 30 seconds in default.conf, if not given no timeout is used. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
+* `http_timeout_max_tries`: An integer depicting how often a connection is retried, when a timeout occurred. Defaults to 3 in default.conf.
 * `http_username`: username for basic authentication.
 * `http_password`: password for basic authentication.
-* `http_proxy`: proxy to use for http
-* `https_proxy`: proxy to use for https
+* `http_proxy`: proxy to use for HTTP
+* `https_proxy`: proxy to use for HTTPS
 * `http_user_agent`: user agent to use for the request.
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
 * `ssl_ca_certificate`: Optional string of path to trusted CA certificate. Only used by some bots.
 * `http_header`: HTTP request headers
 
-**Cache parameters**: Common redis cache parameters used in multiple bots (mainly lookup experts):
+**Cache parameters**: Common Redis cache parameters used in multiple bots (mainly lookup experts):
 
-* `redis_cache_host`: Hostname of the redis database.
-* `redis_cache_port`: Port of the redis database.
+* `redis_cache_host`: Hostname of the Redis database.
+* `redis_cache_port`: Port of the Redis database.
 * `redis_cache_db`: Database number.
 * `redis_cache_ttl`: TTL used for caching.
-* `redis_cache_password`: Optional password for the redis database (default: none).
+* `redis_cache_password`: Optional password for the Redis database (default: none).
 
 ## Collectors
 
@@ -206,7 +208,7 @@ Requires the [`pika` python library](https://pypi.org/project/pika/), minimum ve
 * `connection_heartbeat`: Heartbeat to server, in seconds, defaults to 3600
 * `connection_host`: Name/IP for the AMQP server, defaults to 127.0.0.1
 * `connection_port`: Port for the AMQP server, defaults to 5672
-* `connection_vhost`: Virtual host to connect, on an http(s) connection would be http:/IP/<your virtual host>
+* `connection_vhost`: Virtual host to connect, on an HTTP(S) connection would be http:/IP/<your virtual host>
 * `expect_intelmq_message`: Boolean, if the data is from IntelMQ or not. Default: `false`. If true, then the data can be any Report or Event and will be passed to the next bot as is. Otherwise a new report is created with the raw data.
 * `password`: Password for authentication on your AMQP server
 * `queue_name`: The name of the queue to fetch data from
@@ -245,7 +247,7 @@ The `tornado` library is required.
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` collect report messages from remote hosts using http protocol
+* `description:` collect report messages from remote hosts using HTTP protocol
 
 #### Configuration Parameters:
 
@@ -402,7 +404,7 @@ The resulting reports contains the following special fields:
 
 * * *
 
-### GithubAPI
+### Github API
 
 
 #### Information:
@@ -410,22 +412,22 @@ The resulting reports contains the following special fields:
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` Collects files matched by regex from github repository via the Github API.
-  Optionally with github credentials, which are used as the Basic HTTP authetication.
+* `description:` Collects files matched by regex from GitHub repository via the GitHub API.
+  Optionally with GitHub credentials, which are used as the Basic HTTP authentication.
   
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* `basic_auth_username:` Github account username (optional)
-* `basic_auth_password:` Github account password (optional)
-* `repository:` Github target repository (`<USER>/<REPOSITORY>`)
+* `basic_auth_username:` GitHub account username (optional)
+* `basic_auth_password:` GitHub account password (optional)
+* `repository:` GitHub target repository (`<USER>/<REPOSITORY>`)
 * `regex:` Valid regex of target files within the repository (defaults to `.*.json`)
-* `extra_fields:` Comma-separated list of extra fields from [github contents API](https://developer.github.com/v3/repos/contents/)
+* `extra_fields:` Comma-separated list of extra fields from [GitHub contents API](https://developer.github.com/v3/repos/contents/)
 
 #### Workflow
 
-The optional authentication parameters provide a high limit of the github API requests.
-With the github user authentication, the requests are rate limited to 5000 per hour, otherwise to 60 requests per hour. 
+The optional authentication parameters provide a high limit of the GitHub API requests.
+With the git hub user authentication, the requests are rate limited to 5000 per hour, otherwise to 60 requests per hour. 
 
 The collector recursively searches for `regex`-defined files in the provided `repository`.
 Additionally it adds extra file metadata defined by the `extra_fields`.
@@ -496,7 +498,7 @@ Requires the rsync executable
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` Bot download file by rsync and then load data from downloaded file. Downloaded file is located in var/lib/bots/rsync_collector.
+* `description:` Bot download file by rsync and then load data from downloaded file. Downloaded file is located in `var/lib/bots/rsync_collector.`
 
 #### Configuration Parameters:
 
@@ -526,7 +528,7 @@ Requires the rsync executable
 * `misp_tag_processed`: MISP tag for processed events, optional
 
 Generic parameters used in this bot:
-* `http_verify_cert`: Verify the TLS certicate of the server, boolean (default: `true`)
+* `http_verify_cert`: Verify the TLS certificate of the server, boolean (default: `true`)
 
 #### Workflow
 This collector will search for events on a MISP server that have a
@@ -562,7 +564,7 @@ If none of the filename matches apply, the contents of the first (RT-) "history"
 * **HTTP parameters** (see above)
 * `extract_attachment`: Optional, boolean or list of strings. See documentation of the Generic URL Fetcher parameter `extract_files` for more details.
 * `extract_download`: Optional, boolean or list of strings. See documentation of the Generic URL Fetcher parameter `extract_files` for more details.
-* `uri`: url of the REST interface of the RT
+* `uri`: URL of the REST interface of the RT
 * `user`: RT username
 * `password`: RT password
 * `search_not_older_than`: Absolute time (use ISO format) or relative time, e.g. `3 days`.
@@ -611,7 +613,7 @@ For temporary failures the status is not modified, instead the ticket will be sk
 
 To find only tickets newer than a given absolute or relative time, you can use the `search_not_older_than` parameter. Absolute time specification can be anything parseable by dateutil, best use a ISO format.
 
-Relative must be in this format: `[number] [timespan]s`, e.g. `3 days`. Timespan can be hour, day, week, month, year. Trailing 's' is supported for all timespans. Relative times are subtracted from the current time directly before the search is performed.
+Relative must be in this format: `[number] [timespan]s`, e.g. `3 days`. `timespan` can be hour, day, week, month, year. Trailing 's' is supported for all timespans. Relative times are subtracted from the current time directly before the search is performed.
 
 * * *
 
@@ -650,7 +652,7 @@ Requires the shodan library to be installed:
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* **HTTP parameters** (see above). Only the proxy is used (requires shodan-python > 1.8.1). Certificate is always verified.
+* **HTTP parameters** (see above). Only the proxy is used (requires `shodan-python > 1.8.1`). Certificate is always verified.
 * `countries`: A list of countries to query for. If it is a string, it will be spit by `,`.
 
 * * *
@@ -820,7 +822,7 @@ pip3 install -r intelmq/bots/collectors/eset/REQUIREMENTS.txt
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* `dxl_config_file`: location of the config file containing required information to connect $
+* `dxl_config_file`: location of the configuration file containing required information to connect $
 * `dxl_topic`: the name of the DXL topic to subscribe
 
 * * *
@@ -858,7 +860,7 @@ The cache is used to remember which files have already been downloaded. Make sur
 * `lookup:` yes
 * `public:` no
 * `cache (redis db):` 5
-* `description:` collect files from microsoft interflow using their API
+* `description:` collect files from Microsoft Interflow using their API
 
 #### Configuration Parameters:
 
@@ -885,7 +887,7 @@ The cache is used to remember which files have already been downloaded. Make sur
 
 #### Requirements
 
-Install the stomp.py library from pypi:
+Install the `stomp.py` library from PyPI:
 ```bash
 pip3 install -r intelmq/bots/collectors/stomp/REQUIREMENTS.txt
 ```
@@ -918,13 +920,13 @@ Collects tweets from target_timelines. Up to tweet_count tweets from each user a
 * `target_timelines`: screen_names of twitter accounts to be followed
 * `tweet_count`: number of tweets to be taken from each account
 * `timelimit`: maximum age of the tweets collected in seconds
-* `follow_urls`: list of screen_names for which urls will be followed
+* `follow_urls`: list of screen_names for which URLs will be followed
 * `exclude_replies`: exclude replies of the followed screen_names
 * `include_rts`: whether to include retweets by given screen_name
-* `consumer_key`: Twitter api login data
-* `consumer_secret`: Twitter api login data
-* `access_token_key`: Twitter api login data
-* `access_token_secret`: Twitter api login data
+* `consumer_key`: Twitter API login data
+* `consumer_secret`: Twitter API login data
+* `access_token_key`: Twitter API login data
+* `access_token_secret`: Twitter API login data
 
 ### API collector bot
 
@@ -996,7 +998,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
     ```
         "columns": "source.url|source.fqdn|source.ip"
     ```
-    First, bot will try to parse the value as url, if it fails, it will try to parse it as FQDN, if that fails, it will try to parse it as IP, if that fails, an error wil be raised.
+    First, bot will try to parse the value as URL, if it fails, it will try to parse it as FQDN, if that fails, it will try to parse it as IP, if that fails, an error will be raised.
     Some use cases -
 
         - mixed data set, e.g. URL/FQDN/IP/NETMASK  `"columns": "source.url|source.fqdn|source.ip|source.network"`
@@ -1017,7 +1019,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
         }```
 
         It will ensure `extra.tags` is treated as `json`.
- * `"filter_text"`: only process the lines containing or not containing specified text, to be used in conjection with `filter_type`
+ * `"filter_text"`: only process the lines containing or not containing specified text, to be used in conjunction with `filter_type`
  * `"filter_type"`: value can be whitelist or blacklist. If `whitelist`, only lines containing the text in `filter_text` will be processed, if `blacklist`, only lines NOT containing the text will be processed.
 
      To process ipset format files use
@@ -1028,8 +1030,12 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
             "columns": [ "__IGNORE__", "__IGNORE__", "__IGNORE__", "source.ip"]
         }
      ```
- * `"type_translation"`: If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
-you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
+ * `"type_translation"`: If the source does have a field with information for `classification.type`, but it does not correspond to IntelMQ's types,
+you can map them to the correct ones. The `type_translation` field can hold a dictionary, or a string with a JSON dictionary which maps the feed's values to IntelMQ's.
+    Example:
+    ```json
+    {"malware_download": "malware-distribution"}
+    ```
  * `"columns_required"`: A list of true/false for each column. By default, it is true for every column.
 
 * * *
@@ -1072,59 +1078,19 @@ Supported collections:
 
 * * *
 
-### Fraunhofer DDos Attack Parser
-
-#### Information:
-* `name:` `intelmq.bots.parsers.fraunhofer.parser_ddosattack_cnc` and `intelmq.bots.parsers.fraunhofer.parser_ddosattack_target`
-* `public:` no
-* `cache (redis db):` none
-* `description:` Parses data from Fraunhofer's DDoS Attack feed.
-
-#### Description
-
-The parser bots generate c&c events and ddos events, depending on the
-information retrieved from the feed. The feed delivers reports with different
-message types and different C&C types based on the type of tracked C&C servers
-and the type of commands received. If the c&c parser bot receives a report with
-a known C&C type but with an unknown message type, it generates a C&C event
-with an adjusted feed.accuracy given by the parameter
-unknown_messagetype_accuracy, if set. This feature can be used to lower the
-accuracy of events in case of unknown behavior of the tracked C&Cs, while
-keeping a high accuracy otherwise. For this feature to work, set the default
-feed.accuracy of the collector bot feeding this parser bot to a high value,
-while setting the value of the c&c parser bot's unknown_messagetype_accuracy
-to a lower value. The c&c parser bot will not change the feed.accuracy value
-if the tracker was able to interpret the C&C communication, giving a high
-chance, that the tracked server is actually a real live C&C server.
-If the tracker was not able to completely interpret the C&C communication, the
-feed.accuracy will be set to the lower value of the
-unknown_messagetype_accuracy parameter. There is still a certain probability
-that the tracked server is a real C&C, but it could not be confirmed.
-The target parser bot generates one ddos event for every target found in the
-attack commands of the tracked C&C server, which could be more than one for a
-single event from the tracker feed. 
-
-#### Configuration
-
-* `unknown_messagetype_accuracy`: A float between 0 an 100 representing the
-  accuracy of a c&c event for reports with unknown message types. Replaces the
-  feed.accuracy with the given value for these events.
-
-* * *
-
 ### Cymru CAP Program
 
 #### Information:
 * `name:` intelmq.bots.parsers.cymru.parser_cap_program
 * `public:` no
 * `cache (redis db):` none
-* `description:` Parses data from cymru's cap program feed.
+* `description:` Parses data from Cymru's CAP program feed.
 
 #### Description
 
 There are two different feeds available:
- * infected_$date.txt ("old")
- * $certname_$date.txt ("new")
+ * `infected_$date.txt` ("old")
+ * `$certname_$date.txt` ("new")
 
 The new will replace the old at some point in time, currently you need to fetch both. The parser handles both formats.
 
@@ -1152,7 +1118,7 @@ http://www.team-cymru.com/bogon-reference.html
 #### Information
 
 * `name:` intelmq.bots.parsers.github_feed.parser
-* `description:` Parses Feeds available publicly on github (should receive from github_api collector)
+* `description:` Parses Feeds available publicly on GitHub (should receive from `github_api` collector)
 
 * * *
 
@@ -1195,7 +1161,7 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
     ```
         "columns": "source.url|source.fqdn|source.ip"
     ```
-    First, bot will try to parse the value as url, if it fails, it will try to parse it as FQDN, if that fails, it will try to parse it as IP, if that fails, an error wil be raised.
+    First, bot will try to parse the value as URL, if it fails, it will try to parse it as FQDN, if that fails, it will try to parse it as IP, if that fails, an error will be raised.
     Some use cases -
 
         - mixed data set, e.g. URL/FQDN/IP/NETMASK  `"columns": "source.url|source.fqdn|source.ip|source.network"`
@@ -1250,7 +1216,7 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
  * `"default_url_protocol"`: For URLs you can give a default protocol which will be pretended to the data. Default: `"http://"`.
  * `"time_format"`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
- * `"html_parser"`: The html parser to use, by default "html.parser", can also be e.g. "lxml", have a look at https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+ * `"html_parser"`: The HTML parser to use, by default "html.parser", can also be e.g. "lxml", have a look at https://www.crummy.com/software/BeautifulSoup/bs4/doc/
 
 * * *
 
@@ -1338,7 +1304,7 @@ constants.
 * `name:` intelmq.bots.parsers.twitter.parser
 * `public:` no
 * `cache (redis db):` none
-* `description:` Extracts urls from text, fuzzy, aimed at parsing tweets
+* `description:` Extracts URLs from text, fuzzy, aimed at parsing tweets
 
 #### Configuration Parameters:
 
@@ -1360,7 +1326,7 @@ This does not affect URLs which already include the scheme.
 #### Information
 * `name:` intelmq.bots.parsers.shadowserver.parser
 * `public:` yes
-* `description:` Parses different reports from shadowserver.
+* `description:` Parses different reports from Shadowserver.
 
 #### Configuration Parameters
 
@@ -1375,7 +1341,7 @@ There are two possibilities for the bot to determine which feed the data belongs
 Since IntelMQ version 2.1 the parser can detect the feed based on metadata provided by the collector.
 
 When processing a report, this bot takes `extra.file_name` from the report and
-looks in config.py how the report should be parsed.
+looks in `config.py` how the report should be parsed.
 
 If this lookup is not possible, and the feed name is not given as parameter, the feed cannot be parsed.
 
@@ -1456,13 +1422,13 @@ These are the supported feed name and their corresponding file name for automati
 
 ##### Structure of this Parser Bot:
 The parser consists of two files:
- * config.py
- * parser.py
+ * `config.py`
+ * `parser.py`
 
 Both files are required for the parser to work properly.
 
 ##### Add new Feedformats:
-Add a new feedformat and conversions if required to the file
+Add a new feed format and conversions if required to the file
 `config.py`. Don't forget to update the `feed_idx` dict.
 It is required to look up the correct configuration.
 
@@ -1476,7 +1442,7 @@ Look at the documentation in the bots's `config.py` file for more information.
 #### Information
 * `name:` intelmq.bots.parsers.shodan.parser
 * `public:` yes
-* `description:` Parses data from shodan (search, stream etc).
+* `description:` Parses data from Shodan (search, stream etc).
 
 The parser is by far not complete as there are a lot of fields in a big nested structure. There is a minimal mode available which only parses the important/most useful fields and also saves everything in `extra.shodan` keeping the original structure. When not using the minimal mode if may be useful to ignore errors as many parsing errors can happen with the incomplete mapping.
 
@@ -1492,7 +1458,7 @@ The parser is by far not complete as there are a lot of fields in a big nested s
 #### Information
 * `name:` intelmq.bots.parsers.zoneh.parser
 * `public:` yes
-* `description:` Parses data from zoneh.
+* `description:` Parses data from ZoneH.
 
 #### Description
 This bot is designed to consume defacement reports from zone-h.org. It expects
@@ -1517,7 +1483,7 @@ fields normally present in CSV files distributed by email.
 * **Cache parameters** (see in section [common parameters](#common-parameters))
 
 #### Requirements
-This bot can optionally use the python module *querycontacts* by abusix itself:
+This bot can optionally use the python module *querycontacts* by Abusix itself:
 https://pypi.org/project/querycontacts/
 
 ```bash
@@ -1543,7 +1509,7 @@ If the package is not installed, our own routines are used.
 
 #### Requirements
 
-Install pyasn module
+Install `pyasn` module
 ```bash
 pip3 install pyasn 
 ```
@@ -1609,7 +1575,7 @@ FIXME
 
 #### Information:
 * `name:` cymru-whois
-* `lookup:` cymru dns
+* `lookup:` Cymru DNS
 * `public:` yes
 * `cache (redis db):` 5
 * `description:` IP to geolocation, ASN, BGP prefix
@@ -1632,7 +1598,7 @@ Unicode data, punycode conversion is done during reading.
 
 Note that the public suffix is not the same as the top level domain (TLD). E.g.
 `co.uk` is a public suffix, but the TLD is `uk`.
-Privatly registered suffixes (such as `blogspot.co.at`) which are part of the
+Privately registered suffixes (such as `blogspot.co.at`) which are part of the
 public suffix list too, are ignored.
 
 #### Information:
@@ -1889,7 +1855,7 @@ If more than one result is returned, a ValueError is raised.
 ##### Connection
 
 * `engine`: `postgresql` or `sqlite`
-* `database`: string, defaults to "intelmq", database name or the SQLLite filename
+* `database`: string, defaults to "intelmq", database name or the SQLite filename
 * `table`: defaults to "contacts"
 
 ##### PostgreSQL specific
@@ -1919,7 +1885,7 @@ The values are compared with `=` only.
 
 #### Information:
 * `name:` gethostbyname
-* `lookup:` dns
+* `lookup:` DNS
 * `public:` yes
 * `cache (redis db):` none
 * `description:` DNS name (FQDN) to IP
@@ -1938,7 +1904,7 @@ Documentation about IDEA: https://idea.cesnet.cz/en/index
 
 #### Information:
 * `name:` intelmq.bots.experts.idea.expert
-* `lookup:` local config
+* `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
 * `description:` The bot does a best effort translation of events into the IDEA format.
@@ -1960,7 +1926,7 @@ Documentation about IDEA: https://idea.cesnet.cz/en/index
 
 #### Setup
 
-The bot requires the maxmind's `geoip2` Python library, version 2.2.0 has been tested.
+The bot requires the MaxMind's `geoip2` Python library, version 2.2.0 has been tested.
 
 To download the database a free license key is required. More information can be found at https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/
 
@@ -1989,7 +1955,7 @@ Queries a MISP instance for the `source.ip` and adds the MISP Attribute UUID and
 * `misp_url`: URL of MISP server (with trailing '/')
 
 Generic parameters used in this bot:
-* `http_verify_cert`: Verify the TLS certicate of the server, boolean (default: `true`)
+* `http_verify_cert`: Verify the TLS certificate of the server, boolean (default: `true`)
 
 * * *
 
@@ -2223,7 +2189,7 @@ For both `source.ip` and `destination.ip` the PTR record is fetched and the firs
 
 #### Information:
 * `name:` reverse-dns
-* `lookup:` dns
+* `lookup:` DNS
 * `public:` yes
 * `cache (redis db):` 8
 * `description:` IP to domain
@@ -2268,7 +2234,7 @@ Online RIPE Abuse Contact and Geolocation Finder for IP addresses and Autonomous
 
 #### Information:
 * `name:` ripencc-abuse-contact
-* `lookup:` https api
+* `lookup:` HTTPS API
 * `public:` yes
 * `cache (redis db):` 10
 * `description:` IP to abuse contact
@@ -2479,7 +2445,7 @@ optional arguments:
 
 #### Information:
 * `name:` taxonomy
-* `lookup:` local config
+* `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
 * `description:` use eCSIRT taxonomy to classify events (classification type to classification taxonomy)
@@ -2661,7 +2627,7 @@ Only ElasticSearch version 7 supported.
                        Can be a list of strings (fieldnames) or a string with field names separated by a comma (,). eg `extra,field2` or `['extra', 'field2']`
                        Default: ['extra']
 
-See contrib/elasticsearch/elasticmapper for a utility for creating Elasticsearch mappings and templates.
+See `contrib/elasticsearch/elasticmapper` for a utility for creating Elasticsearch mappings and templates.
 
 If using `rotate_index`, the resulting index name will be of the form [elastic_index]-[event date].
 To query all intelmq indices at once, use an alias (https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-aliases.html), or a multi-index query.
@@ -2786,20 +2752,20 @@ The PyMISP library >= 2.4.120 is required, see
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* `add_feed_provider_as_tag`: bool (use `true` when in doubt)
-* `add_feed_name_as_tag`: bool (use `true` when in doubt)
+* `add_feed_provider_as_tag`: boolean (use `true` when in doubt)
+* `add_feed_name_as_tag`: boolean (use `true` when in doubt)
 * `misp_additional_correlation_fields`: list of fields for which
       the correlation flags will be enabled (in addition to those which are
       in significant_fields)
 * `misp_additional_tags`: list of tags to set not be searched for
       when looking for duplicates
-* `misp_key`: str, API key for accessing MISP
-* `misp_publish`: bool, if a new MISP event should be set to "publish".
+* `misp_key`: string, API key for accessing MISP
+* `misp_publish`: boolean, if a new MISP event should be set to "publish".
       Expert setting as MISP may really make it "public"!
       (Use `false` when in doubt.)
-* `misp_tag_for_bot`: str, used to mark MISP events
+* `misp_tag_for_bot`: string, used to mark MISP events
 * `misp_to_ids_fields`: list of fields for which the `to_ids` flags will be set
-* `misp_url`: str, URL of the MISP server
+* `misp_url`: string, URL of the MISP server
 * `significant_fields`: list of intelmq field names
 
 The `significant_fields` values
@@ -2843,7 +2809,7 @@ Saves events in a MongoDB either as hierarchical structure or flat with full key
 * `db_pass` : Password associated to `db_user`
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port, default: 27017
-* `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionary in sub-dictionaries.
+* `hierarchical_output`: Boolean (default true) as MongoDB does not allow saving keys with dots, we split the dictionary in sub-dictionaries.
 * `replacement_char`: String (default `'_'`) used as replacement character for the dots in key names if hierarchical output is not used.
 
 #### Installation Requirements
@@ -2860,7 +2826,7 @@ The bot has been tested with pymongo versions 2.7.1, 3.4 and 3.10.1 (server vers
 
 #### Information:
 * `name:` `intelmq.bots.outputs.redis.output`
-* `lookup:` to the redis server
+* `lookup:` to the Redis server
 * `public:` yes
 * `cache (redis db):` none
 * `description:` Output Bot that sends events to a remote Redis server/queue.
@@ -2872,8 +2838,8 @@ The bot has been tested with pymongo versions 2.7.1, 3.4 and 3.10.1 (server vers
 * `redis_queue`: remote server list (queue), e.g.: "remote-server-queue"
 * `redis_server_ip`: remote server IP address, e.g.: 127.0.0.1
 * `redis_server_port`: remote server Port, e.g.: 6379
-* `redis_timeout`: Connection timeout, in msecs, e.g.: 50000
-* `hierarchical_output`: whether output should be sent in hierarchical json format (default: false)
+* `redis_timeout`: Connection timeout, in milliseconds, e.g.: 50000
+* `hierarchical_output`: whether output should be sent in hierarchical JSON format (default: false)
 * `with_type`: Send the `__type` field (default: true)
 
 #### Examples of usage:
@@ -2895,8 +2861,8 @@ The bot has been tested with pymongo versions 2.7.1, 3.4 and 3.10.1 (server vers
 
 #### Configuration Parameters:
 
-* `auth_token`: the user name / http header key
-* `auth_token_name`: the password / http header value
+* `auth_token`: the user name / HTTP header key
+* `auth_token_name`: the password / HTTP header value
 * `auth_type`: one of: `"http_basic_auth"`, `"http_header"`
 * `hierarchical_output`: boolean
 * `host`: destination URL
@@ -2970,9 +2936,9 @@ for the versions you are using.
 * `table`: name of the database table into which events are to be inserted
 
 #### SQL
-Similarly to PostgreSQL, you can use `intelmq_psql_initdb` to create initial sql-statements
-from Harmonization.conf. The script will create the required table layout
-and save it as /tmp/initdb.sql
+Similarly to PostgreSQL, you can use `intelmq_psql_initdb` to create initial SQL statements
+from `harmonization.conf`. The script will create the required table layout
+and save it as `/tmp/initdb.sql`.
 
 Create the new database (you can ignore all errors since SQLite doesn't know all SQL features generated for PostgreSQL):
 
@@ -2984,7 +2950,7 @@ sqlite> .read /tmp/initdb.sql
 #### PostgreSQL
 
 You have two basic choices to run PostgreSQL:
-1. on the same machine as intelmq, then you could use unix-sockets if available on your platform
+1. on the same machine as intelmq, then you could use Unix sockets if available on your platform
 2. on a different machine. In which case you would need to use a TCP connection and make sure you give the right connection parameters to each psql or client call.
 
 Make sure to consult your PostgreSQL documentation 
@@ -2996,18 +2962,18 @@ Any supported version of PostgreSQL should work
 
 If you use PostgreSQL server v >= 9.4, it gives you the possibility 
 to use the time-zone [formatting string](https://www.postgresql.org/docs/9.4/static/functions-formatting.html) "OF" for date-times 
-and the [GiST index for the cidr type](https://www.postgresql.org/docs/9.4/static/release-9-4.html#AEN120769). This may be useful depending on how 
+and the [GiST index for the CIDR type](https://www.postgresql.org/docs/9.4/static/release-9-4.html#AEN120769). This may be useful depending on how 
 you plan to use the events that this bot writes into the database.
 
 ##### How to install:
 
-Use `intelmq_psql_initdb` to create initial sql-statements
-from Harmonization.conf. The script will create the required table layout
-and save it as /tmp/initdb.sql
+Use `intelmq_psql_initdb` to create initial SQL statements
+from `harmonization.conf`. The script will create the required table layout
+and save it as `/tmp/initdb.sql`
 
-You need a postgresql database-user to own the result database.
+You need a PostgreSQL database-user to own the result database.
 The recommendation is to use the name `intelmq`.
-There may already be such a user for the postgresql database-cluster
+There may already be such a user for the PostgreSQL database-cluster
 to be used by other bots. (For example from setting up
 the expert/certbund_contact bot.)
 
@@ -3083,8 +3049,8 @@ Multihreading is disabled for this bot.
 * `ip`: IP of destination server
 * `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server
-* `separator`: separator of messages, eg. "\n", optional. When sending to a TCP collector, parameter shouldn't be present.
-    In that case, the output waits every message is acknowledged by "Ok" message the tcp.collector bot implements.
+* `separator`: separator of messages, e.g. "\n", optional. When sending to a TCP collector, parameter shouldn't be present.
+    In that case, the output waits every message is acknowledged by "Ok" message the TCP collector bot implements.
 
 * * *
 
@@ -3117,8 +3083,8 @@ Multihreading is disabled for this bot.
 #### Configuration Parameters:
 
 * `field_delimiter`: If the format is 'delimited' this will be added between fields. String, default: `"|"`
-* `format`: Can be `'json'` or `'delimited'`. The Json format outputs the event 'as-is'. Delimited will deconstruct the event and print each field:value separated by the field delimit. See examples bellow.
-* `header`: Header text to be sent in the udp datagram, string.
+* `format`: Can be `'json'` or `'delimited'`. The JSON format outputs the event 'as-is'. Delimited will deconstruct the event and print each field:value separated by the field delimit. See examples bellow.
+* `header`: Header text to be sent in the UDP datagram, string.
 * `keep_raw_field`: boolean, default: false
 * `udp_host`: Destination's server's Host name or IP address
 * `udp_port`: Destination port

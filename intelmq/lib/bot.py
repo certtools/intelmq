@@ -907,7 +907,7 @@ class ParserBot(Bot):
 
     def parse_json(self, report: libmessage.Report):
         """
-        A basic JSON parser. Assumes a *list* of objects to be yielded
+        A basic JSON parser. Assumes a *list* of objects as input to be yield.
         """
         raw_report = utils.base64_decode(report.get("raw"))
         for line in json.loads(raw_report):

@@ -133,6 +133,11 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
                         if value == "__PROVIDER__":
                             value = provider
 
+                        # format non-empty lists with double-quotes
+                        # single quotes are not conform JSON and not correctly detected/transformed by the manager
+                        if isinstance(value, (list, tuple)) and value:
+                            value = '["%s"]' % '", "'.join(value)
+
                         output += "*  * `%s`: `%s`\n" % (key, value)
 
                 output += '\n'

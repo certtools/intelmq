@@ -465,11 +465,13 @@ def v220_feed_changes(defaults, runtime, harmonization, dry_run):
 
 def v221_feed_changes_1(defaults, runtime, harmonization, dry_run):
     """
-    Deprection of HP Hosts file feed & parser.
+    Migrates feeds' configuration for changed/fixed parameters. Deprecation of HP Hosts file feed & parser.
     """
     found_hphosts_collector = []
     found_hphosts_parser = []
     messages = []
+    ULRHAUS_OLD = ['time.source', 'source.url', 'status', 'extra.urlhaus.threat_type', 'source.fqdn', 'source.ip', 'source.asn', 'source.geolocation.cc']
+    URLHAUS_NEW = ['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc']
     changed = None
     for bot_id, bot in runtime.items():
         if bot["module"] == "intelmq.bots.collectors.http.collector_http":
@@ -477,6 +479,17 @@ def v221_feed_changes_1(defaults, runtime, harmonization, dry_run):
                 found_hphosts_collector.append(bot_id)
         elif bot['module'] == "intelmq.bots.parsers.hphosts.parser":
             found_hphosts_parser.append(bot_id)
+        if bot["module"] == "intelmq.bots.parsers.generic.parser_csv":
+            if not "columns" in bot["parameters"]:
+                continue
+            columns = bot["parameters"]["columns"]
+            # convert columns to an array
+            if type(columns) is str:
+                columns = [column.strip() for column in columns.split(",")]
+            if columns == ULRHAUS_OLD:
+                changed = True
+                bot["parameters"]["columns"] = URLHAUS_NEW
+
     if found_hphosts_collector:
         messages.append('A discontinued feed "HP Hosts File" has been found '
                         'as bot %s.' % ', '.join(sorted(found_hphosts_collector)))

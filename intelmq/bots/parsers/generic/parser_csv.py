@@ -40,7 +40,11 @@ class GenericCsvParserBot(ParserBot):
         if type(self.columns) is str:
             self.columns = [column.strip() for column in self.columns.split(",")]
 
-        self.type_translation = json.loads(getattr(self.parameters, 'type_translation', None) or '{}')
+        self.type_translation = getattr(self.parameters, 'type_translation', {})
+        if self.type_translation and isinstance(self.type_translation, str):  # not-empty string
+            self.type_translation = json.loads(self.type_translation)
+        elif not self.type_translation:  # empty string
+            self.type_translation = {}
         self.data_type = json.loads(getattr(self.parameters, 'data_type', None) or '{}')
 
         # prevents empty strings:
