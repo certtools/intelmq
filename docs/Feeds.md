@@ -127,7 +127,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.generic.parser_csv
 * **Configuration Parameters:**
-*  * `columns`: `['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc']`
+*  * `columns`: `["time.source", "source.url", "status", "classification.type|__IGNORE__", "source.fqdn|__IGNORE__", "source.ip", "source.asn", "source.geolocation.cc"]`
 *  * `default_url_protocol`: `http://`
 *  * `delimeter`: `,`
 *  * `skip_header`: `False`
@@ -697,7 +697,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['time.source', 'source.url', 'source.ip', 'malware.name', '__IGNORE__']`
+*  * `columns`: `["time.source", "source.url", "source.ip", "malware.name", "__IGNORE__"]`
 *  * `default_url_protocol`: `http://`
 *  * `skip_table_head`: `True`
 *  * `type`: `c2server`
@@ -1458,7 +1458,7 @@ server {
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['source.ip|source.url', 'time.source']`
+*  * `columns`: `["source.ip|source.url", "time.source"]`
 *  * `default_url_protocol`: `http://`
 *  * `skip_table_head`: `True`
 *  * `type`: `malware`
@@ -1940,7 +1940,7 @@ server {
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['malware.name', 'source.url', 'source.ip', 'time.source']`
+*  * `columns`: `["malware.name", "source.url", "source.ip", "time.source"]`
 *  * `html_parser`: `lxml`
 *  * `time_format`: `from_format_midnight|%d-%m-%Y`
 *  * `type`: `malware`
