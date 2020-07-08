@@ -14,6 +14,16 @@ See the changelog for a full list of changes.
 
 ### Configuration
 
+#### Abuse.ch URLHaus
+
+The current documented value for the `column` parameter was:
+```json
+['time.source', 'source.url', 'status', 'extra.urlhaus.threat_type', 'source.fqdn', 'source.ip', 'source.asn', 'source.geolocation.cc']
+```
+Better is:
+```json
+['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc']
+```
 ### Libraries
 
 ### Postgres databases

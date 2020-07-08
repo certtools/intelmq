@@ -7,6 +7,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.upgrades`:
+  - Add upgrade function for changed configuration of the feed "Abuse.ch URLHaus" (#1571, PR#1572 by Filip Pokorný).
 
 ### Development
 
@@ -27,6 +29,8 @@ CHANGELOG
 - `intelmq.bot.outputs.udp`: Fix error handling on sending, had a bug itself.
 
 ### Documentation
+- Feeds:
+  - Update documentation of feed "Abuse.ch URLHaus" (#1571, PR#1572 by Filip Pokorný).
 
 ### Packaging
 

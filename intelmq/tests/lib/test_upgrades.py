@@ -345,6 +345,62 @@ V220_FEED = {
     "module": "intelmq.bots.parsers.urlvir.parser",
 },
 }
+V221_FEED = {
+"abusech-urlhaus-columns-string-parser": {
+    "parameters": {
+        "column_regex_search": {},
+        "columns": "time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc",
+        "default_url_protocol": "http://",
+        "delimiter": ",",
+        "filter_text": None,
+        "filter_type": None,
+        "skip_header": False,
+        "time_format": None,
+        "type": "c2server",
+        "type_translation": {
+            "malware_download": "malware-distribution"
+        }
+    },
+    "module": "intelmq.bots.parsers.generic.parser_csv",
+},
+"abusech-urlhaus-columns-dict-parser": {
+    "parameters": {
+        "column_regex_search": {},
+        "columns": ["time.source", "source.url","status","extra.urlhaus.threat_type","source.fqdn","source.ip","source.asn","source.geolocation.cc"],
+        "default_url_protocol": "http://",
+        "delimiter": ",",
+        "filter_text": None,
+        "filter_type": None,
+        "skip_header": False,
+        "time_format": None,
+        "type": "c2server",
+        "type_translation": {
+            "malware_download": "malware-distribution"
+        }
+    },
+    "module": "intelmq.bots.parsers.generic.parser_csv",
+}
+}
+V221_FEED_OUT = {
+"abusech-urlhaus-columns-string-parser": {
+    "parameters": {
+        "column_regex_search": {},
+        "columns": ['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc'],
+        "default_url_protocol": "http://",
+        "delimiter": ",",
+        "filter_text": None,
+        "filter_type": None,
+        "skip_header": False,
+        "time_format": None,
+        "type": "c2server",
+        "type_translation": {
+            "malware_download": "malware-distribution"
+        }
+    },
+    "module": "intelmq.bots.parsers.generic.parser_csv",
+}
+}
+V221_FEED_OUT['abusech-urlhaus-columns-dict-parser'] = V221_FEED_OUT['abusech-urlhaus-columns-string-parser']
 
 
 def generate_function(function):
@@ -471,10 +527,18 @@ class TestUpgradeLib(unittest.TestCase):
                          result[0])
         self.assertEqual(V220_FEED, result[2])
 
+    def test_v221_feeds(self):
+        """ Test v221_feeds_1 """
+        result = upgrades.v221_feeds_1({}, V221_FEED, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual(V221_FEED_OUT, result[2])
+
+
 
 for name in upgrades.__all__:
     setattr(TestUpgradeLib, 'test_function_%s' % name,
             generate_function(getattr(upgrades, name)))
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

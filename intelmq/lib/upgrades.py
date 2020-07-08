@@ -25,6 +25,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v220_configuration',
            'v220_azure_collector',
            'v220_feed_changes',
+           'v221_feeds_1',
            ]
 
 
@@ -462,6 +463,28 @@ def v220_feed_changes(defaults, runtime, harmonization, dry_run):
     return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
 
 
+def v221_feeds_1(defaults, runtime, harmonization, dry_run):
+    """
+    Migrates feeds' configuration for changed/fixed parameters.
+    """
+    changed = False
+    ULRHAUS_OLD = ['time.source', 'source.url', 'status', 'extra.urlhaus.threat_type', 'source.fqdn', 'source.ip', 'source.asn', 'source.geolocation.cc']
+    URLHAUS_NEW = ['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc']
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.parsers.generic.parser_csv":
+            if not "columns" in bot["parameters"]:
+                continue
+            columns = bot["parameters"]["columns"]
+            # convert columns to an array
+            if type(columns) is str:
+                columns = [column.strip() for column in columns.split(",")]
+            if columns == ULRHAUS_OLD:
+                changed = True
+                bot["parameters"]["columns"] = URLHAUS_NEW
+
+    return changed, defaults, runtime, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -476,7 +499,7 @@ UPGRADES = OrderedDict([
     ((2, 1, 2), ()),
     ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
     ((2, 2, 0), (v220_configuration, v220_azure_collector, v220_feed_changes)),
-    ((2, 2, 1), ()),
+    ((2, 2, 1), (v221_feeds_1, )),
 ])
 
 ALWAYS = (harmonization, )
