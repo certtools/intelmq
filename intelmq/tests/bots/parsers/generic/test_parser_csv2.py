@@ -58,6 +58,11 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
+    def test_type_translation_dict(self):
+        """ Test with type_translation as native dictionary. """
+        self.run_bot(parameters={"type_translation": {"Testing": "malware"}})
+        self.assertMessageEqual(0, EXAMPLE_EVENT)
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

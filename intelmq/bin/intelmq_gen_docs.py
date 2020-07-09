@@ -100,19 +100,19 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
             output += "## %s\n\n" % feed
 
-            if feed_info['public']:
+            if feed_info.get('public'):
                 output += info("public", "yes" if feed_info['public'] else "no")
             else:
                 output += info("public", "unknown")
 
             output += info("revision", feed_info['revision'])
 
-            if feed_info['documentation'] is not None:
+            if feed_info.get('documentation') is not None:
                 output += info("documentation", feed_info['documentation'])
 
             output += info("description", feed_info['description'])
 
-            if feed_info['additional_information'] is not None:
+            if feed_info.get('additional_information') is not None:
                 output += info("additional information", feed_info['additional_information'])
 
             output += '\n'
@@ -132,6 +132,11 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
                         if value == "__PROVIDER__":
                             value = provider
+
+                        # format non-empty lists with double-quotes
+                        # single quotes are not conform JSON and not correctly detected/transformed by the manager
+                        if isinstance(value, (list, tuple)) and value:
+                            value = '["%s"]' % '", "'.join(value)
 
                         output += "*  * `%s`: `%s`\n" % (key, value)
 

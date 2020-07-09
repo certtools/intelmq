@@ -296,9 +296,18 @@ providers:
             skip_header: false
             default_url_protocol: http://
             type_translation: '{"malware_download": "malware-distribution"}'
-            columns: time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc
-      revision: 2019-02-14
-      documentation: https://urlhaus.abuse.ch/
+            delimeter: ","
+            columns:
+              - time.source
+              - source.url
+              - status
+              - classification.type|__IGNORE__
+              - source.fqdn|__IGNORE__
+              - source.ip
+              - source.asn
+              - source.geolocation.cc
+      revision: 2020-07-07
+      documentation: https://urlhaus.abuse.ch/feeds/
       public: yes
     Feodo Tracker Browse:
       description: ''
@@ -1600,6 +1609,24 @@ providers:
           parameters:
       revision: 2019-12-05
       documentation: https://github.com/StrangerealIntel/DailyIOC
+      public: yes
+  CZ.NIC:
+    HaaS:
+      description: SSH attackers against HaaS (Honeypot as a Sevice) provided by CZ.NIC, z.s.p.o. The dump is published once a day.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            extract_files: true
+            http_url: https://haas.nic.cz/stats/export/{time[%Y/%m/%Y-%m-%d]}.json.gz
+            http_url_formatting:
+              days: -1
+            rate_limit: 86400
+        parser:
+          module: intelmq.bots.parsers.cznic.parser_haas
+          parameters:
+      revision: 2020-07-22
+      documentation: https://haas.nic.cz/
       public: yes
   ESET:
     ETI Domains:

@@ -25,6 +25,7 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
 - `intelmq.bots.parsers.hphosts`: Removed, feed is unavailable (#1559).
+- `intelmq.bots.parsers.cznic.parser_haas`: Added (PR#1560 by Filip Pokorný and Edvard Rejthar)
 
 #### Experts
 
@@ -34,6 +35,7 @@ CHANGELOG
 * Feeds:
   * Add ESET URL and Domain feeds
   * Remove unavailable *HPHosts Hosts file* feed (#1559).
+  * Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
 
 ### Packaging
 
@@ -53,6 +55,9 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.upgrades`:
+  - Add upgrade function for changed configuration of the feed "Abuse.ch URLHaus" (#1571, PR#1572 by Filip Pokorný).
+  - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559).
 
 ### Development
 
@@ -65,6 +70,8 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.config`: Add support for Accessible-CoAP feed (PR #1555 by Thomas Hungenberg).
 - `intelmq.bots.parser.anubisnetworks.parser`: Ignore "TestSinkholingLoss" events, these are not intended to be sent out at all.
+- `intelmq.bots.parsers.generic.parser_csv`: Allow values of type dictionary for parameter `type_translation`.
+- `intelmq.bots.parsers.hphosts`: Removed, feed is unavailable (#1559).
 
 #### Experts
 
@@ -72,12 +79,15 @@ CHANGELOG
 - `intelmq.bot.outputs.udp`: Fix error handling on sending, had a bug itself.
 
 ### Documentation
+- Feeds:
+  - Update documentation of feed "Abuse.ch URLHaus" (#1571, PR#1572 by Filip Pokorný).
 
 ### Packaging
 
 ### Tests
 
 ### Tools
+- `intelmq.bin.intelmq_gen_docs`: Format parameters of types lists with double quotes around values to produce conform JSON, ready to copy and paste the value into the IntelMQ Manager's bot parameter form.
 
 ### Contrib
 - `malware_name_mapping`: Change MISP Threat Actors URL to new URL (branch master -> main) in download script.

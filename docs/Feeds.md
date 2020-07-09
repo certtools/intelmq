@@ -16,6 +16,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Blueliv](#blueliv)
 - [CERT.PL](#certpl)
 - [CINSscore](#cinsscore)
+- [CZ.NIC](#cznic)
 - [Calidog](#calidog)
 - [CleanMX](#cleanmx)
 - [CyberCrime Tracker](#cybercrime-tracker)
@@ -110,8 +111,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ## URLhaus
 
 * **Public:** yes
-* **Revision:** 2019-02-14
-* **Documentation:** https://urlhaus.abuse.ch/
+* **Revision:** 2020-07-07
+* **Documentation:** https://urlhaus.abuse.ch/feeds/
 * **Description:** URLhaus is a project from abuse.ch with the goal of sharing malicious URLs that are being used for malware distribution. URLhaus offers a country, ASN (AS number) and Top Level Domain (TLD) feed for network operators / Internet Service Providers (ISPs), Computer Emergency Response Teams (CERTs) and domain registries.
 
 ### Collector
@@ -127,8 +128,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.generic.parser_csv
 * **Configuration Parameters:**
-*  * `columns`: `time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc`
+*  * `columns`: `["time.source", "source.url", "status", "classification.type|__IGNORE__", "source.fqdn|__IGNORE__", "source.ip", "source.asn", "source.geolocation.cc"]`
 *  * `default_url_protocol`: `http://`
+*  * `delimeter`: `,`
 *  * `skip_header`: `False`
 *  * `type_translation`: `{"malware_download": "malware-distribution"}`
 
@@ -601,6 +603,30 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
+# CZ.NIC
+
+## HaaS
+
+* **Public:** yes
+* **Revision:** 2020-07-22
+* **Documentation:** https://haas.nic.cz/
+* **Description:** SSH attackers against HaaS (Honeypot as a Sevice) provided by CZ.NIC, z.s.p.o. The dump is published once a day.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `extract_files`: `True`
+*  * `http_url`: `https://haas.nic.cz/stats/export/{time[%Y/%m/%Y-%m-%d]}.json.gz`
+*  * `http_url_formatting`: `{'days': -1}`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.cznic.parser_haas
+* **Configuration Parameters:**
+
+
 # Calidog
 
 ## CertStream
@@ -696,7 +722,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['time.source', 'source.url', 'source.ip', 'malware.name', '__IGNORE__']`
+*  * `columns`: `["time.source", "source.url", "source.ip", "malware.name", "__IGNORE__"]`
 *  * `default_url_protocol`: `http://`
 *  * `skip_table_head`: `True`
 *  * `type`: `c2server`
@@ -1480,7 +1506,7 @@ server {
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['source.ip|source.url', 'time.source']`
+*  * `columns`: `["source.ip|source.url", "time.source"]`
 *  * `default_url_protocol`: `http://`
 *  * `skip_table_head`: `True`
 *  * `type`: `malware`
@@ -1962,7 +1988,7 @@ server {
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['malware.name', 'source.url', 'source.ip', 'time.source']`
+*  * `columns`: `["malware.name", "source.url", "source.ip", "time.source"]`
 *  * `html_parser`: `lxml`
 *  * `time_format`: `from_format_midnight|%d-%m-%Y`
 *  * `type`: `malware`
