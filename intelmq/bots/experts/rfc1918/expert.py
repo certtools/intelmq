@@ -31,11 +31,11 @@ NETWORKS = ("10.0.0.0/8", "100.64.0.0/10", "127.0.0.0/8",
             "192.88.99.0/24", "192.168.0.0/16", "198.18.0.0/15",
             "198.51.100.0/24", "203.0.113.0/24", "224.0.0.0/4", "240.0.0.0/4",
             "255.255.255.255/32", "fe80::/64", "2001:0db8::/32")
-DOMAINS = ('.test', '.example', '.invalid', '.localhost', 'example.com',
-           'example.net', 'example.org')
+DOMAINS = (".test", ".example", ".invalid", ".localhost", ".example.com", ".example.net",
+           ".example.org", "example.com", "example.net", "example.org")
 ASN16 = tuple(range(64496, 64512))
 ASN32 = tuple(range(65536, 65552))
-ASNS = ASN16+ASN32
+ASNS = ASN16 + ASN32
 
 
 class RFC1918ExpertBot(Bot):
@@ -44,30 +44,61 @@ class RFC1918ExpertBot(Bot):
         self.fields = self.parameters.fields.lower().strip().split(",")
         self.policy = self.parameters.policy.lower().strip().split(",")
 
-    def is_in_net(self, ip, iprange):
-        return ipaddress.ip_address(ip) in ipaddress.ip_network(iprange)
+        if len(self.fields) != len(self.policy) or \
+           len(self.fields) + len(self.policy) == 0:
+            raise ValueError("fields and policy unequal or both empty")
+
+        self.ip_networks = [ipaddress.ip_network(iprange) for iprange in NETWORKS]
+
+    @staticmethod
+    def check(parameters):
+        fields = parameters.get("fields").split(",")
+        policy = parameters.get("policy").split(",")
+        if len(fields) != len(policy) or \
+           len(fields) + len(policy) == 0:
+            return [["error", "the amount of fields and policy is not equal or both are empty"]]
+
+    def is_in_net(self, ip):
+        return any(ip in iprange for iprange in self.ip_networks)
+
+    def is_in_domains(self, value):
+        for domain in DOMAINS:
+            if domain.startswith('.'):
+                if value.endswith(domain):
+                    return True
+            else:
+                if value == domain:
+                    return True
+        return False
 
     def process(self):
         event = self.receive_message()
 
         for field, policy in zip(self.fields, self.policy):
+            netcheck = False
             if field not in event:
                 continue
             value = event.get(field)
-            if field.endswith('.ip'):
-                check = any(self.is_in_net(value, iprange) for iprange in NETWORKS)
-            elif field.endswith('.fqdn'):
-                check = any(value.endswith(domain) for domain in DOMAINS)
-            elif field.endswith('.url'):
-                check = any(urlparse(value).netloc.endswith(domain)
-                            for domain in DOMAINS)
-            elif field.endswith('.asn'):
-                check = value in ASNS
-            if check:
-                if policy == 'del':
+            if field.endswith(".ip"):
+                ip = ipaddress.ip_address(value)
+                netcheck = self.is_in_net(ip)
+            elif field.endswith(".fqdn"):
+                netcheck = self.is_in_domains(value)
+            elif field.endswith(".url"):
+                netloc = urlparse(value).netloc
+                try:
+                    ip = ipaddress.ip_address(netloc)
+                except ValueError:
+                    netcheck = self.is_in_domains(netloc)
+                else:
+                    netcheck = self.is_in_net(ip)
+            elif field.endswith(".asn"):
+                netcheck = value in ASNS
+            if netcheck:
+                if policy == "del":
                     self.logger.debug("Value removed from %s.", field)
                     del event[field]
-                elif policy == 'drop':
+                elif policy == "drop":
                     self.acknowledge_message()
                     return
                 break

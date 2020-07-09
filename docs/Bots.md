@@ -2236,7 +2236,9 @@ For both `source.ip` and `destination.ip` the PTR record is fetched and the firs
 
 ### RFC1918
 
-Several RFCs define ASNs, IP addresses and Hostnames (and TLDs) reserved for documentation:
+Several RFCs define ASNs, IP Addresses and Hostnames (and TLDs) reserved for documentation.
+Events will be dropped if they match the criteria of either being reserved for documentation (e.g. `ASN64496`)
+or belonging to a local area network (e.g. `192.168.0.0/24`). These checks are applied on URLs, IP Addresses and ASNs.
 
 Sources:
 * https://tools.ietf.org/html/rfc1918
