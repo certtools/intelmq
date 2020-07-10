@@ -62,5 +62,7 @@ class ESETParserBot(ParserBot):
 
         event.add('source.ip', line['ip'], raise_failure=False)
 
+    recover_line = ParserBot.recover_line_json
+
 
 BOT = ESETParserBot
