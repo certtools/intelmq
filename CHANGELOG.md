@@ -67,6 +67,7 @@ CHANGELOG
   - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559).
 
 ### Development
+- Ignore line length (E501) in code-style checks altogether.
 
 ### Harmonization
 
