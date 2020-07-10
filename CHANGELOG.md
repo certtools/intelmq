@@ -28,7 +28,11 @@ CHANGELOG
 - `intelmq.bots.parsers.cznic.parser_haas`: Added (PR#1560 by Filip Pokorný and Edvard Rejthar)
 
 #### Experts
-- `intelmq.bots.experts.rfc1918.expert`: Add support for ASN (PR#1557 by Mladen Markovic).
+- `intelmq.bots.experts.rfc1918.expert`:
+  - Add support for ASN (PR#1557 by Mladen Markovic).
+  - Speed improvements.
+  - More output in debug logging mode.
+  - Checks parameter length on initialization and in check method.
 
 #### Outputs
 
@@ -37,6 +41,8 @@ CHANGELOG
   * Add ESET URL and Domain feeds
   * Remove unavailable *HPHosts Hosts file* feed (#1559).
   * Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
+- Bots:
+  - Enhanced documentation of RFC1918 Expert.
 
 ### Packaging
 

@@ -2204,9 +2204,11 @@ For both `source.ip` and `destination.ip` the PTR record is fetched and the firs
 
 ### RFC1918
 
-Several RFCs define ASNs, IP Addresses and Hostnames (and TLDs) reserved for documentation.
-Events will be dropped if they match the criteria of either being reserved for documentation (e.g. `ASN64496`)
-or belonging to a local area network (e.g. `192.168.0.0/24`). These checks are applied on URLs, IP Addresses and ASNs.
+Several RFCs define ASNs, IP Addresses and Hostnames (and TLDs) reserved for *documentation*.
+Events or fields of events can be dropped if they match the criteria of either being reserved for documentation (e.g. AS 64496, Domain `example.com`)
+or belonging to a local area network (e.g. `192.168.0.0/24`). These checks can applied to URLs, IP Addresses, FQDNs and ASNs.
+
+It is configurable if the whole event should be dropped ("policies") or just the field removed, as well as which fields should be checked.
 
 Sources:
 * https://tools.ietf.org/html/rfc1918
@@ -2226,8 +2228,17 @@ Sources:
 
 #### Configuration Parameters:
 
-* `fields`: list of fields to look at. e.g. "destination.ip,source.ip,source.url"
-* `policy`: list of policies, e.g. "del,drop,drop". `drop` drops the entire event, `del` removes the field.
+* `fields`: string, comma-separated list of fields e.g. `destination.ip,source.asn,source.url`. Supported fields are:
+  * `destination.asn` & `source.asn`
+  * `destination.fqdn` & `source.fqdn`
+  * `destination.ip` & `source.ip`
+  * `destination.url` & `source.url`
+* `policy`: string, comma-separated list of policies, e.g. `del,drop,drop`. `drop` will cause that the the entire event to be removed if the field is , `del` causes the field to be removed.
+
+With the example parameter values given above, this means that:
+* If a `destination.ip` value is part of a reserved network block, the field will be removed (policy "del").
+* If a `source.asn` value is in the range of reserved AS numbers, the event will be removed altogether (policy "drop).
+* If a `source.url` value contains a host with either an IP address part of a reserved network block, or a reserved domain name (or with a reserved TLD), the event will be dropped (policy "drop")
 
 * * *
 
