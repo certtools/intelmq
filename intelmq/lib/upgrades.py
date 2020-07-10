@@ -480,7 +480,7 @@ def v221_feed_changes_1(defaults, runtime, harmonization, dry_run):
         elif bot['module'] == "intelmq.bots.parsers.hphosts.parser":
             found_hphosts_parser.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.generic.parser_csv":
-            if not "columns" in bot["parameters"]:
+            if "columns" not in bot["parameters"]:
                 continue
             columns = bot["parameters"]["columns"]
             # convert columns to an array
