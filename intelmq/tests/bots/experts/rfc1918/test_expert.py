@@ -44,6 +44,10 @@ INPUT_ASN = {"__type": "Event",
              "source.asn": 64496,
              "time.observation": "2015-01-01T00:00:00+00:00",
              }
+INPUT_DIFFERENT_DOMAIN = {"__type": "Event",
+                          "destination.fqdn": "fooexample.com",
+                              "time.observation": "2015-01-01T00:00:00+00:00",
+                }
 
 
 class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
@@ -58,9 +62,9 @@ class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
                                    'destination.fqdn,source.url,source.url,source.asn',
                          'policy': 'del,drop,drop,del,drop,drop,drop',
                          }
+        cls.default_input_message = INPUT1
 
     def test_del(self):
-        self.input_message = INPUT1
         self.run_bot()
         self.assertMessageEqual(0, OUTPUT1)
 
@@ -93,6 +97,16 @@ class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = INPUT_ASN
         self.run_bot()
         self.assertOutputQueueLen(0)
+
+    def test_empty_parameters(self):
+        self.run_bot(parameters={"fields": "",
+                                 "policy": ""})
+
+    def test_different_domain(self):
+        """ Check that fooexample.com is not falsely recognized """
+        self.input_message = INPUT_DIFFERENT_DOMAIN
+        self.run_bot()
+        self.assertMessageEqual(0, INPUT_DIFFERENT_DOMAIN)
 
 
 if __name__ == '__main__':  # pragma: no cover
