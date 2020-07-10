@@ -28,6 +28,7 @@ CHANGELOG
 - `intelmq.bots.parsers.cznic.parser_haas`: Added (PR#1560 by Filip Pokorný and Edvard Rejthar)
 
 #### Experts
+- `intelmq.bots.experts.rfc1918.expert`: Add support for ASN (PR#1557 by Mladen Markovic).
 
 #### Outputs
 
