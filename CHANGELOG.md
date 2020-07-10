@@ -37,10 +37,10 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
-* Feeds:
-  * Add ESET URL and Domain feeds
-  * Remove unavailable *HPHosts Hosts file* feed (#1559).
-  * Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
+- Feeds:
+  - Add ESET URL and Domain feeds
+  - Remove unavailable *HPHosts Hosts file* feed (#1559).
+  - Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
 - Bots:
   - Enhanced documentation of RFC1918 Expert.
 
