@@ -60,7 +60,9 @@ class ESETParserBot(ParserBot):
         event.add('classification.type', type)
         event.add('source.fqdn', line['domain'], raise_failure=False)  # IP addresses may be passed in line['domain']
 
-        event.add('source.ip', line['ip'], raise_failure=False)
+        ip = line['ip']
+        if not ip.endswith('_NXDOMAIN'):
+            event.add('source.ip', ip, raise_failure=False)
 
     recover_line = ParserBot.recover_line_json
 

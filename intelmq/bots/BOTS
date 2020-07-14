@@ -244,6 +244,7 @@
                 "password": "<password>",
                 "endpoint": "eti.eset.com",
                 "time_delta": 3600,
+                "rate_limit": 3600,
                 "collection": "<collection>"
             }
         },
