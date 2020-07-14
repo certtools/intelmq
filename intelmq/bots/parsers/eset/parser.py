@@ -62,7 +62,7 @@ class ESETParserBot(ParserBot):
 
         ip = line['ip']
         if not ip.endswith('_NXDOMAIN'):
-            event.add('source.ip', ip, raise_failure=False)
+            event.add('source.ip', ip)
 
     recover_line = ParserBot.recover_line_json
 
