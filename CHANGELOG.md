@@ -24,6 +24,7 @@ CHANGELOG
 
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
+  - Ignore invalid "NXDOMAIN" IP addresses (PR#1573 by Mikk Margus Möll).
 - `intelmq.bots.parsers.hphosts`: Removed, feed is unavailable (#1559).
 - `intelmq.bots.parsers.cznic.parser_haas`: Added (PR#1560 by Filip Pokorný and Edvard Rejthar)
 
