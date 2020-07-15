@@ -10,6 +10,9 @@ from intelmq.lib import utils
 RAW_REPORT = """
 [{"confidence": "Low", "count": 1337, "domain": "example.com", "downloaded_detection": null, "first_seen": "2018-12-31 23:00:00 UTC", "ip": null, "last_seen": "2020-06-20 09:00:00 UTC", "location": null, "opener_detection": null, "reason": "Host actively distributes high-severity threat in the form of executable code.", "state": "BlockedObject", "valid_to": "2020-07-01 00:00:00 UTC"}]
 """.strip()
+NXDOMAIN_RAW = """
+[{"confidence": "Low", "count": 1337, "domain": "example.com", "downloaded_detection": null, "first_seen": "2018-12-31 23:00:00 UTC", "ip": "@ipv4_NXDOMAIN", "last_seen": "2020-06-20 09:00:00 UTC", "location": null, "opener_detection": null, "reason": "Host actively distributes high-severity threat in the form of executable code.", "state": "BlockedObject", "valid_to": "2020-07-01 00:00:00 UTC"}]
+""".strip()
 
 EXAMPLE_REPORT = {"feed.url": "https://eti.eset.com/taxiiservice/discovery",
                   "feed.name": "ESET ETI",
@@ -18,6 +21,13 @@ EXAMPLE_REPORT = {"feed.url": "https://eti.eset.com/taxiiservice/discovery",
                   "time.observation": "2020-06-30T14:37:00+00:00",
                   "extra.eset_feed": "ei.domains v2 (json)",
                   }
+NXDOMAIN_REPORT = {"feed.url": "https://eti.eset.com/taxiiservice/discovery",
+                   "feed.name": "ESET ETI",
+                   "__type": "Report",
+                   "raw": utils.base64_encode(NXDOMAIN_RAW),
+                   "time.observation": "2020-06-30T14:37:00+00:00",
+                   "extra.eset_feed": "ei.domains v2 (json)",
+                   }
 
 EXAMPLE_EVENT = {
     'classification.type': 'malware-distribution',
@@ -31,6 +41,8 @@ EXAMPLE_EVENT = {
     "extra.eset_feed": "ei.domains v2 (json)",
     "__type": "Event",
     }
+NXDOMAIN_EVENT = EXAMPLE_EVENT.copy()
+NXDOMAIN_EVENT['raw'] = utils.base64_encode(json.dumps(json.loads(NXDOMAIN_RAW)[0], sort_keys=True))
 
 
 class TestESETParserBot(test.BotTestCase, unittest.TestCase):
@@ -47,6 +59,12 @@ class TestESETParserBot(test.BotTestCase, unittest.TestCase):
         """ Test if correct Event has been produced. """
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
+
+    def test_nxdomain(self):
+        """ Test if correct Event has been produced. """
+        self.input_message = NXDOMAIN_REPORT
+        self.run_bot()
+        self.assertMessageEqual(0, NXDOMAIN_EVENT)
 
 
 if __name__ == '__main__':  # pragma: no cover
