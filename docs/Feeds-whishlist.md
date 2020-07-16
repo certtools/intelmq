@@ -20,6 +20,7 @@ This list evolved from the issue [Contribute: Feeds List (#384)](https://github.
 - [Bot Invaders Realtime tracker](http://www.marc-blanchard.com/BotInvaders/index.php)
 - [Botscout Last Caught](http://botscout.com/last_caught_cache.htm)
 - [Carbon Black Feeds](https://github.com/carbonblack/cbfeeds)
+- [CERT.pl Phishing Warning List](http://hole.cert.pl/domains/)
 - [Chaos Reigns](http://www.chaosreigns.com/spam/)
 - [Critical Stack](https://intel.criticalstack.com)
 - [Cruzit](http://www.cruzit.com/xwbl2txt.php)
