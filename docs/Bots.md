@@ -1362,6 +1362,7 @@ These are the supported feed name and their corresponding file name for automati
 |----------------------| ----------|
 | Accessible-ADB | `scan_adb` |
 | Accessible-AFP | `scan_afp` |
+| Accessible-ARD | `scan_ard` |
 | Accessible-Cisco-Smart-Install | `cisco_smart_install` |
 | Accessible-CoAP | `scan_coap` |
 | Accessible-CWMP | `scan_cwmp` |
