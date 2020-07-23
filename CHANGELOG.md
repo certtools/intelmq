@@ -26,6 +26,7 @@ CHANGELOG
 - `intelmq.bots.parsers.generic.parser_csv`: Allow values of type dictionary for parameter `type_translation`.
 - `intelmq.bots.parsers.hphosts`: Removed, feed is unavailable (#1559).
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Add support for comment "username" for "scanner" category.
+- `intelmq.bots.parsers.malwareurl.parser`: Check for valid FQDN and IP address in URL and IP address columns (PR#1585 by Marius Urkis).
 
 #### Experts
 
