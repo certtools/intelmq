@@ -1853,7 +1853,8 @@ Get some debugging output on the settings and the enviroment (to be extended):
             if RETURN_TYPE == 'text':
                 print('Environment variables:')
             for variable in ('INTELMQ_ROOT_DIR', 'INTELMQ_PATHS_NO_OPT',
-                             'INTELMQ_PATHS_OPT', 'INTELMQ_MANAGER_CONTROLLER_CMD'):
+                             'INTELMQ_PATHS_OPT', 'INTELMQ_MANAGER_CONTROLLER_CMD',
+                             'PATH'):
                 output['environment_variables'][variable] = os.getenv(variable)
                 if RETURN_TYPE == 'text':
                     print('%s: %r' % (variable, os.getenv(variable)))
