@@ -42,6 +42,8 @@ CHANGELOG
 
 ### Tools
 - `intelmq.bin.intelmq_gen_docs`: Format parameters of types lists with double quotes around values to produce conform JSON, ready to copy and paste the value into the IntelMQ Manager's bot parameter form.
+- `intelmq.bin.intelmqctl`:
+  - `debug`: In JSON mode, use dictionaries instead of lists.
 
 ### Contrib
 - `malware_name_mapping`: Change MISP Threat Actors URL to new URL (branch master -> main) in download script.
