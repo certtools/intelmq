@@ -1525,8 +1525,8 @@ Get some debugging output on the settings and the enviroment (to be extended):
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
                                    stderr=subprocess.DEVNULL):
-                    check_logger.error('Incomplete installation: Executable %r for %r not found.',
-                                       bot['module'], bot_id)
+                    check_logger.error('Incomplete installation: Executable %r for %r not found in $PATH (%r).',
+                                       bot['module'], bot_id, os.getenv('PATH'))
                     retval = 1
 
         if os.path.isfile(STATE_FILE_PATH):

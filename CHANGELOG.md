@@ -45,6 +45,7 @@ CHANGELOG
 - `intelmq.bin.intelmqctl`:
   - `debug`: In JSON mode, use dictionaries instead of lists.
   - `debug`: Add `PATH` to the paths shown.
+  - `check`: Show `$PATH` environment variable if executable cannot be found.
 
 ### Contrib
 - `malware_name_mapping`: Change MISP Threat Actors URL to new URL (branch master -> main) in download script.
