@@ -51,7 +51,10 @@ CHANGELOG
 - Added tests for `intelmq.lib.exceptions.PipelineError`.
 
 ### Tools
-
+- `intelmqctl`
+  - Add `intelmq list queues`: `--sum`, `--count`, `-s` flag for showing total count of messages (PR#1581 by Mladen Markovic)
+  
+  
 ### Contrib
 
 ### Known issues
