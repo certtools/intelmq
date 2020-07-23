@@ -79,11 +79,14 @@ CHANGELOG
 - `intelmq.bots.collectors.misp`: Fix access to actual MISP object (PR#1548 by Tomas Bellus @tomas321)
 
 #### Parsers
-- `intelmq.bots.parsers.shadowserver.config`: Add support for Accessible-CoAP feed (PR #1555 by Thomas Hungenberg).
+- `intelmq.bots.parsers.shadowserver.config`:
+  - Add support for Accessible-CoAP feed (PR #1555 by Thomas Hungenberg).
+  - Add support for Accessible-ARD feed (PR #1584 by Tomas Bellus @tomas321).
 - `intelmq.bots.parser.anubisnetworks.parser`: Ignore "TestSinkholingLoss" events, these are not intended to be sent out at all.
 - `intelmq.bots.parsers.generic.parser_csv`: Allow values of type dictionary for parameter `type_translation`.
 - `intelmq.bots.parsers.hphosts`: Removed, feed is unavailable (#1559).
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Add support for comment "username" for "scanner" category.
+- `intelmq.bots.parsers.malwareurl.parser`: Check for valid FQDN and IP address in URL and IP address columns (PR#1585 by Marius Urkis).
 
 #### Experts
 
@@ -100,6 +103,10 @@ CHANGELOG
 
 ### Tools
 - `intelmq.bin.intelmq_gen_docs`: Format parameters of types lists with double quotes around values to produce conform JSON, ready to copy and paste the value into the IntelMQ Manager's bot parameter form.
+- `intelmq.bin.intelmqctl`:
+  - `debug`: In JSON mode, use dictionaries instead of lists.
+  - `debug`: Add `PATH` to the paths shown.
+  - `check`: Show `$PATH` environment variable if executable cannot be found.
 
 ### Contrib
 - `malware_name_mapping`: Change MISP Threat Actors URL to new URL (branch master -> main) in download script.

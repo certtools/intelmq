@@ -1533,8 +1533,8 @@ Get some debugging output on the settings and the enviroment (to be extended):
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
                                    stderr=subprocess.DEVNULL):
-                    check_logger.error('Incomplete installation: Executable %r for %r not found.',
-                                       bot['module'], bot_id)
+                    check_logger.error('Incomplete installation: Executable %r for %r not found in $PATH (%r).',
+                                       bot['module'], bot_id, os.getenv('PATH'))
                     retval = 1
 
         if os.path.isfile(STATE_FILE_PATH):
@@ -1844,7 +1844,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
 
         output = {}
         if sections is None or 'paths' in sections:
-            output['paths'] = []
+            output['paths'] = {}
             variables = globals()
             if RETURN_TYPE == 'text':
                 print('Paths:')
@@ -1853,18 +1853,19 @@ Get some debugging output on the settings and the enviroment (to be extended):
                          'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
                          'DEFAULT_LOGGING_PATH', '__file__',
                          'CONFIG_DIR', 'ROOT_DIR'):
-                output['paths'].append((path, variables[path]))
+                output['paths'][path] = variables[path]
                 if RETURN_TYPE == 'text':
-                    print('%s: %r' % output['paths'][-1])
+                    print('%s: %r' % (path, variables[path]))
         if sections is None or 'environment_variables' in sections:
-            output['environment_variables'] = []
+            output['environment_variables'] = {}
             if RETURN_TYPE == 'text':
                 print('Environment variables:')
             for variable in ('INTELMQ_ROOT_DIR', 'INTELMQ_PATHS_NO_OPT',
-                             'INTELMQ_PATHS_OPT', 'INTELMQ_MANAGER_CONTROLLER_CMD'):
-                output['environment_variables'].append((variable, os.getenv(variable)))
+                             'INTELMQ_PATHS_OPT', 'INTELMQ_MANAGER_CONTROLLER_CMD',
+                             'PATH'):
+                output['environment_variables'][variable] = os.getenv(variable)
                 if RETURN_TYPE == 'text':
-                    print('%s: %r' % output['environment_variables'][-1])
+                    print('%s: %r' % (variable, os.getenv(variable)))
         return 0, output
 
 
