@@ -34,6 +34,8 @@ CHANGELOG
   - Speed improvements.
   - More output in debug logging mode.
   - Checks parameter length on initialization and in check method.
+- `intelmq.bots.experts.gethostbyname.expert`:
+  - Added parameter `fallback_to_url` and set to True. (PR#1586 by Edvard Rejthar)
 
 #### Outputs
 

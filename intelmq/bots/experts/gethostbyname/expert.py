@@ -21,29 +21,36 @@ permanent failure (default).
 import socket
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.harmonization import URL
 
 
 class GethostbynameExpertBot(Bot):
 
+    def init(self):
+        # although True is the default value, we leave False here for backwards compatibility
+        self.fallback_to_url = getattr(self.parameters, 'fallback_to_url', False)
+
     def process(self):
         event = self.receive_message()
 
-        for key in ["source.", "destination."]:
-            key_fqdn = key + "fqdn"
-            key_ip = key + "ip"
-            if key_fqdn not in event:
+        for target in ("source.", "destination."):
+            fqdn, url, ip = (event.get(target + k) for k in ("fqdn", "url", "ip"))
+
+            if ip:
                 continue
-            if key_ip in event:
+            if not fqdn and self.fallback_to_url and url:
+                fqdn = URL.to_domain_name(url)
+            if not fqdn:
                 continue
             try:
-                ip = socket.gethostbyname(event.get(key_fqdn))
+                ip = socket.gethostbyname(fqdn)
             except socket.gaierror as exc:
                 if exc.args[0] in [-2, -4, -5, -8, -11]:
                     pass
                 else:
                     raise
             else:
-                event.add(key_ip, ip, raise_failure=False)
+                event.add(target + "ip", ip, raise_failure=False)
 
         self.send_message(event)
         self.acknowledge_message()

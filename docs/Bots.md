@@ -1890,6 +1890,7 @@ The values are compared with `=` only.
 * `public:` yes
 * `cache (redis db):` none
 * `description:` DNS name (FQDN) to IP
+* `fallback_to_url` If True and no `source.fqdn` present, use `source.url` instead while producing `source.ip`
 
 #### Configuration Parameters:
 

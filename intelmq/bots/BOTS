@@ -812,7 +812,9 @@
         "Gethostbyname": {
             "description": "fqdn2ip is the bot responsible to parsing the ip from the fqdn.",
             "module": "intelmq.bots.experts.gethostbyname.expert",
-            "parameters": {}
+            "parameters": {
+                "fallback_to_url": true
+            }
         },
         "IDEA Converter": {
             "description": "Converts events into the IDEA format.",
