@@ -38,6 +38,8 @@ CHANGELOG
 ### Documentation
 - Feeds:
   - Update documentation of feed "Abuse.ch URLHaus" (#1571, PR#1572 by Filip Pokorný).
+- Bots:
+  - Overhaul of all bots' description fields (#1570).
 
 ### Packaging
 
