@@ -51,6 +51,8 @@ CHANGELOG
 - Added tests for `intelmq.lib.exceptions.PipelineError`.
 
 ### Tools
+- `intelmqdump`
+    - Check if given queue is configured upon recovery.
 
 ### Contrib
 
