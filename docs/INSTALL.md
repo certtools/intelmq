@@ -97,6 +97,10 @@ Supported Operating Systems:
 * **Ubuntu 20.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ focal main`)
 
 Get the installation instructions for your operating system here: [Installation Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq).
+To import the key on Debian and Ubuntu, use:
+```bash
+curl https://build.opensuse.org/projects/home:sebix:intelmq/public_key | sudo apt-key add -
+```
 
 Please report any errors or improvements at [IntelMQ Issues](https://github.com/certtools/intelmq/issues). Thanks!
 

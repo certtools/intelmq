@@ -3,7 +3,6 @@ Testing TCP collector
 """
 import socket
 import struct
-import sys
 import threading
 import unittest
 from multiprocessing import Process
