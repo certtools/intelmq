@@ -18,7 +18,7 @@ Take extra caution not to overflood your ticketing system with enormous amount o
 Parameters:
 - rt_uri, rt_user, rt_password, verify_cert -  RT API endpoint,
 - queue - ticket destination queue. If set to 'Incidents', 'Investigations' ticket will be created if create_investigation is set to true,
-- CF_mapping - mapping attributes-ticket CFs, e.g. 
+- CF_mapping - mapping attributes to ticket CFs, e.g. 
 {"event_description.text":"Description","source.ip":"IP","extra.classification.type":"Incident Type","classification.taxonomy":"Classification"}
 - final_status - what is final status for the created ticket, e.g. 'resolve' if you want to resolve created ticket. Investigation ticket will be resolved automatically by RTIR scrip,
 - create_investigation - should we create Investigation ticket (in case of RTIR workflow). true or false,
