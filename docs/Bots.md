@@ -2315,7 +2315,8 @@ if :notexists source.abuse_contact || source.abuse_contact =~ '.*@example.com' {
 }
 
 if source.ip << '192.0.0.0/24' {
-    add! comment = 'bogon'
+    add! comment = 'bogon' // sets the field comment to this value and overwrites existing values
+    path 'other-path' // the message is sent to the given path
 }
 
 if classification.type == ['phishing', 'malware'] && source.fqdn =~ '.*\.(ch|li)$' {
