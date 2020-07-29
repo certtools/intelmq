@@ -10,6 +10,8 @@ CHANGELOG
 - `intelmq.lib.upgrades`:
   - Add upgrade function for changed configuration of the feed "Abuse.ch URLHaus" (#1571, PR#1572 by Filip Pokorný).
   - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559).
+  - `intelmq.lib.harmonization`:
+    - For IP Addresses, explicitly reject IPv6 addresses with scope ID (due to changed behavior in Python 3.9, #1550).
 
 ### Development
 - Ignore line length (E501) in code-style checks altogether.

@@ -682,6 +682,11 @@ class IPAddress(String):
         if address == ipaddress.ip_address('0.0.0.0'):
             return False
 
+        if '%' in address:
+            # IPv6 address with scope ID
+            # https://github.com/certtools/intelmq/issues/1550
+            return False
+
         return True
 
     @staticmethod
