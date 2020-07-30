@@ -3,7 +3,7 @@ NEWS
 
 See the changelog for a full list of changes.
 
-2.2.1 Bugfix release (unreleased)
+2.2.1 Bugfix release (2020-07-30)
 ----------------------------------
 
 ### Requirements
@@ -11,7 +11,6 @@ See the changelog for a full list of changes.
 The current python library versions of geoip (version 4) and maxminddb (version 2) no longer support Python 3.5. Keep older versions of these libraries if you are using this Python version.
 
 ### Configuration
-
 #### Abuse.ch URLHaus
 
 The current documented value for the `column` parameter was:
@@ -22,10 +21,6 @@ Better is:
 ```json
 ['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc']
 ```
-### Libraries
-
-### Postgres databases
-
 
 2.2.0 Feature release (2020-06-18)
 ----------------------------------

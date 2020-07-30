@@ -25,7 +25,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v220_configuration',
            'v220_azure_collector',
            'v220_feed_changes',
-           'v221_feed_changes_1',
+           'v221_feed_changes',
            ]
 
 
@@ -463,7 +463,7 @@ def v220_feed_changes(defaults, runtime, harmonization, dry_run):
     return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
 
 
-def v221_feed_changes_1(defaults, runtime, harmonization, dry_run):
+def v221_feed_changes(defaults, runtime, harmonization, dry_run):
     """
     Migrates feeds' configuration for changed/fixed parameters. Deprecation of HP Hosts file feed & parser.
     """
@@ -514,8 +514,7 @@ UPGRADES = OrderedDict([
     ((2, 1, 2), ()),
     ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
     ((2, 2, 0), (v220_configuration, v220_azure_collector, v220_feed_changes)),
-    ((2, 2, 1), (v221_feed_changes_1, )),
-    ((2, 3, 0), ()),
+    ((2, 2, 1), (v221_feed_changes, )),
 ])
 
 ALWAYS = (harmonization, )

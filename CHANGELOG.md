@@ -1,10 +1,8 @@
 CHANGELOG
 ==========
 
-2.2.1 (unreleased)
+2.2.1 (2020-07-30)
 ------------------
-
-### Configuration
 
 ### Core
 - `intelmq.lib.upgrades`:
@@ -15,8 +13,6 @@ CHANGELOG
 
 ### Development
 - Ignore line length (E501) in code-style checks altogether.
-
-### Harmonization
 
 ### Bots
 #### Collectors
@@ -47,8 +43,6 @@ CHANGELOG
 - User-Guide:
   - Overhaul pipeline configuration section and explain named queues better (#1577).
 
-### Packaging
-
 ### Tests
 - `intelmq.tests.bots.experts.cymru`: Adapt `test_empty_result`, remove `test_unicode_as_name` and `test_country_question_mark` (#1576).
 
@@ -63,6 +57,10 @@ CHANGELOG
 - `malware_name_mapping`: Change MISP Threat Actors URL to new URL (branch master -> main) in download script.
 
 ### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952).
+- Corrupt dump files when interrupted during writing (#870).
+- Bash completion scripts search in wrong directory in packages (#1561).
+- Cymru Expert: Wrong Cache-Key Calculation (#1592).
 
 
 2.2.0 (2020-06-18)
