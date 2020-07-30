@@ -59,10 +59,8 @@ CHANGELOG
 ### Known issues
 
 
-2.2.1 (unreleased)
+2.2.1 (2020-07-30)
 ------------------
-
-### Configuration
 
 ### Core
 - `intelmq.lib.upgrades`:
@@ -74,11 +72,10 @@ CHANGELOG
 ### Development
 - Ignore line length (E501) in code-style checks altogether.
 
-### Harmonization
-
 ### Bots
 #### Collectors
 - `intelmq.bots.collectors.misp`: Fix access to actual MISP object (PR#1548 by Tomas Bellus @tomas321)
+- `intelmq.bots.collectors.stomp`: Remove empty `client.pem` file.
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.config`:
@@ -91,6 +88,7 @@ CHANGELOG
 - `intelmq.bots.parsers.malwareurl.parser`: Check for valid FQDN and IP address in URL and IP address columns (PR#1585 by Marius Urkis).
 
 #### Experts
+- `intelmq.bots.experts.maxmind_geoip`: On Python < 3.6, require maxminddb < 2, as that version does no longer support Python 3.5.
 
 #### Outputs
 - `intelmq.bot.outputs.udp`: Fix error handling on sending, had a bug itself.
@@ -103,10 +101,8 @@ CHANGELOG
 - User-Guide:
   - Overhaul pipeline configuration section and explain named queues better (#1577).
 
-### Packaging
-
 ### Tests
-- `intelmq.tests.bots.experts.cymru`: Adapt `test_empty_result` and remove `test_unicode_as_name` (#1576).
+- `intelmq.tests.bots.experts.cymru`: Adapt `test_empty_result`, remove `test_unicode_as_name` and `test_country_question_mark` (#1576).
 
 ### Tools
 - `intelmq.bin.intelmq_gen_docs`: Format parameters of types lists with double quotes around values to produce conform JSON, ready to copy and paste the value into the IntelMQ Manager's bot parameter form.
@@ -119,6 +115,10 @@ CHANGELOG
 - `malware_name_mapping`: Change MISP Threat Actors URL to new URL (branch master -> main) in download script.
 
 ### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952).
+- Corrupt dump files when interrupted during writing (#870).
+- Bash completion scripts search in wrong directory in packages (#1561).
+- Cymru Expert: Wrong Cache-Key Calculation (#1592).
 
 
 2.2.0 (2020-06-18)

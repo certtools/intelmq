@@ -542,13 +542,13 @@ class TestUpgradeLib(unittest.TestCase):
 
     def test_v221_feed_changes(self):
         """ Test v221_feeds_1 """
-        result = upgrades.v221_feed_changes_1({}, V221_FEED, {}, False)
+        result = upgrades.v221_feed_changes({}, V221_FEED, {}, False)
         self.assertTrue(result[0])
         self.assertEqual(V221_FEED_OUT, result[2])
 
     def test_v221_feed_changes_2(self):
         """ Test v213_feed_changes """
-        result = upgrades.v221_feed_changes_1({}, V221_FEED_2, {}, False)
+        result = upgrades.v221_feed_changes({}, V221_FEED_2, {}, False)
         self.assertEqual('A discontinued feed "HP Hosts File" has been found '
                          'as bot hphosts-collector. '
                          'The removed parser "HP Hosts" has been found '

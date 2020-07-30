@@ -68,14 +68,6 @@ GEOLOCA_OUTPUT3 = {"__type": "Event",
 INDEX_ERROR = {"__type": "Event",
                "source.ip": "228.66.141.189",
                }
-QUESTION_MARK = {"__type": "Event",
-               "source.ip": "35.197.157.0",
-               }
-QUESTION_MARK_OUTPUT = {"__type": "Event",
-                        "source.ip": "35.197.157.0",
-                        'source.geolocation.latitude': 35.0,
-                        'source.geolocation.longitude': 105.0,
-                        }
 
 @test.skip_internet()
 class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
@@ -256,21 +248,6 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = INDEX_ERROR
         self.run_bot()
         self.assertMessageEqual(0, INDEX_ERROR)
-
-    def test_country_question_mark(self):
-        """
-        Response has '?' as country
-        https://stat.ripe.net/data/maxmind-geo-lite/data.json?resource=35.197.157.0
-        """
-        self.input_message = QUESTION_MARK
-        self.run_bot(parameters={'query_ripe_db_asn': False,
-                                  'query_ripe_db_ip': False,
-                                  'query_ripe_stat_asn': False,
-                                  'query_ripe_stat_ip': False,
-                                  'query_ripe_stat_geolocation': True,
-                                  })
-        self.assertMessageEqual(0, QUESTION_MARK_OUTPUT)
-
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
