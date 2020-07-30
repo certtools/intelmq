@@ -48,7 +48,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
-- `intelmq.tests.bots.experts.cymru`: Adapt `test_empty_result` and remove `test_unicode_as_name` (#1576).
+- `intelmq.tests.bots.experts.cymru`: Adapt `test_empty_result`, remove `test_unicode_as_name` and `test_country_question_mark` (#1576).
 
 ### Tools
 - `intelmq.bin.intelmq_gen_docs`: Format parameters of types lists with double quotes around values to produce conform JSON, ready to copy and paste the value into the IntelMQ Manager's bot parameter form.
