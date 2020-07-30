@@ -37,9 +37,24 @@ IntelMQ requires time zone information for all timestamps. Without a time zone, 
 
 ## How can I improve the speed?
 
-In most cases the bottlenecks are look-up experts. In these cases you can easily use the integrated load balancing features. Create multiple instances of the same bot and connect them all to the same source and destination bots. Then set the parameter `load_balance` to `true` for the bot which sends the messages to the duplicated bot. Then, the bot sends messages to only one of the destination queues and not to all of them.
+In most cases the bottlenecks are look-up experts. In these cases you can easily use the integrated load balancing features.
 
-See also this discussion on a possible enhanced load balancing: https://github.com/certtools/intelmq/issues/186
+### Multithreading
+
+When using the AMQP broker, you can make use of Multi-threading. See the [Uer-Guide, section Multithreading](User-Guide.md#multithreading-beta).
+
+### "Classic" load-balancing (Multiprocessing)
+
+Before Multithreading was available in IntelMQ, and in case you use Redis as broker, the only way to do load balancing involves more work.
+Create multiple instances of the same bot and connect them all to the same source and destination bots. Then set the parameter `load_balance` to `true` for the bot which sends the messages to the duplicated bot. Then, the bot sends messages to only one of the destination queues and not to all of them.
+
+True Multi*processing* is not available in IntelMQ. See also this discussion on a possible enhanced load balancing: https://github.com/certtools/intelmq/issues/186
+
+### Other options
+
+For any bottleneck based on (online) lookups, optimize the lookup itself and if possible use local databases.
+
+It is also possible to use multiple servers to spread the workload. To get the messages from one system to the other you can either directly connect to the other's pipeline or use a fast exchange mechanism such as the TCP Collector/Output (make sure to secure the network by other means).
 
 ### Removing raw data for higher performance and less space usage
 
@@ -90,10 +105,10 @@ del [queue-name] # remove the queue [queue-name]
 ```
 ## Multithreading is not available for this bot
 
-Multithreading is not available for some bots and AMQP broker is necessary.
+Multithreading is not available for some bots and AMQP broker is necessary. Possible reasons why a certain bot or a setup does not support Multithreading include:
 
  * Multithreading is only available when using the AMQP broker.
- * For all collectors, Multithreading is disabled. Otherwise this would lead to duplicated data, as the data retrieval is not atomic.
+ * For most collectors, Multithreading is disabled. Otherwise this would lead to duplicated data, as the data retrieval is not atomic.
  * Some bots use libraries which are not thread safe. Look a the bot's documentation for more information.
  * Some bots' operations are not thread safe. Look a the bot's documentation for more information.
 

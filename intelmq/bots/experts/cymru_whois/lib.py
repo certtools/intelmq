@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
+Reference: https://team-cymru.com/community-services/ip-asn-mapping/#dns
 
 If the query returns more than one network, we select the more specific one.
 See https://github.com/certtools/intelmq/issues/543
@@ -152,7 +152,6 @@ class Cymru():
         Inc.,US"
         Exception: "1930  | EU | ripencc |            | RCCN Rede Ciencia
         Tecnologia e Sociedade (RCTS),PT"
-        Unicode: "10417 | BR | lacnic | 2000-02-15 | Funda\195\131\194\167\195\131\194\163o de Desenvolvimento da Pesquisa, BR"
         """
 
         result = {}

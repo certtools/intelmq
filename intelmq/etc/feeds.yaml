@@ -90,7 +90,7 @@ providers:
           module: intelmq.bots.parsers.malwarepatrol.parser_dansguardian
           parameters:
       revision: 2018-01-20
-      documentation: https://www.malwarepatrol.net/
+      documentation: https://www.malwarepatrol.net/non-commercial/
       public: no
   Malware Domains:
     Malicious:
@@ -296,9 +296,18 @@ providers:
             skip_header: false
             default_url_protocol: http://
             type_translation: '{"malware_download": "malware-distribution"}'
-            columns: time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc
-      revision: 2019-02-14
-      documentation: https://urlhaus.abuse.ch/
+            delimeter: ","
+            columns:
+              - time.source
+              - source.url
+              - status
+              - classification.type|__IGNORE__
+              - source.fqdn|__IGNORE__
+              - source.ip
+              - source.asn
+              - source.geolocation.cc
+      revision: 2020-07-07
+      documentation: https://urlhaus.abuse.ch/feeds/
       public: yes
     Feodo Tracker Browse:
       description: ''
@@ -445,27 +454,6 @@ providers:
           module: intelmq.bots.parsers.taichung.parser
       revision: 2018-01-20
       documentation: https://www.tc.edu.tw/net/netflow/lkout/recent/
-      public: yes
-  HPHosts:
-    Hosts:
-      description: hpHosts is a community managed and maintained hosts file that allows
-        an additional layer of protection against access to ad, tracking and malicious
-        websites.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://hosts-file.net/download/hosts.txt
-            rate_limit: 3600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.hphosts.parser
-          parameters:
-            error_log_message: 'false'
-      revision: 2018-01-20
-      documentation: http://hosts-file.net/
       public: yes
   Dataplane:
     SSH Client Connection:
@@ -803,7 +791,7 @@ providers:
           module: intelmq.bots.parsers.phishtank.parser
           parameters:
       revision: 2018-01-20
-      documentation: https://data.phishtank.com/
+      documentation: https://www.phishtank.com/developer_info.php
       public: no
   CINSscore:
     Army List:

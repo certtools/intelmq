@@ -198,7 +198,11 @@ class AnubisNetworksParserBot(Bot):
                     event['extra.metadata.%s' % subkey] = subvalue
             else:
                 raise ValueError("Unable to parse data field %r. Please report this as bug." % key)
-        self.send_message(event)
+
+        if event.get("malware.name", None) != 'testsinkholingloss':
+            # used for internal tests, should actually not be part of the feed
+            self.logger.debug("Ignoring 'TestSinkholingLoss' event.")
+            self.send_message(event)
         self.acknowledge_message()
 
     def parse_geo(self, event, value, namespace, raw_report, orig_name):

@@ -316,6 +316,8 @@ class CymruCAPProgramParserBot(ParserBot):
                     event['protocol.application'] = value
             elif key in ('port', 'srcport'):
                 event['source.port'] = value
+            elif key == 'username':
+                event['source.account'] = value
             else:
                 raise ValueError('Unknown key %r in comment of category %r. Please report this.' % (key, category))
         for destination_port in destination_ports:

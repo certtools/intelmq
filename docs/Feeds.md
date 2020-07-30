@@ -24,7 +24,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Dataplane](#dataplane)
 - [DynDNS](#dyndns)
 - [Fraunhofer](#fraunhofer)
-- [HPHosts](#hphosts)
 - [Have I Been Pwned](#have-i-been-pwned)
 - [Malc0de](#malc0de)
 - [Malware Domain List](#malware-domain-list)
@@ -110,8 +109,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ## URLhaus
 
 * **Public:** yes
-* **Revision:** 2019-02-14
-* **Documentation:** https://urlhaus.abuse.ch/
+* **Revision:** 2020-07-07
+* **Documentation:** https://urlhaus.abuse.ch/feeds/
 * **Description:** URLhaus is a project from abuse.ch with the goal of sharing malicious URLs that are being used for malware distribution. URLhaus offers a country, ASN (AS number) and Top Level Domain (TLD) feed for network operators / Internet Service Providers (ISPs), Computer Emergency Response Teams (CERTs) and domain registries.
 
 ### Collector
@@ -127,8 +126,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.generic.parser_csv
 * **Configuration Parameters:**
-*  * `columns`: `time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc`
+*  * `columns`: `["time.source", "source.url", "status", "classification.type|__IGNORE__", "source.fqdn|__IGNORE__", "source.ip", "source.asn", "source.geolocation.cc"]`
 *  * `default_url_protocol`: `http://`
+*  * `delimeter`: `,`
 *  * `skip_header`: `False`
 *  * `type_translation`: `{"malware_download": "malware-distribution"}`
 
@@ -696,7 +696,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['time.source', 'source.url', 'source.ip', 'malware.name', '__IGNORE__']`
+*  * `columns`: `["time.source", "source.url", "source.ip", "malware.name", "__IGNORE__"]`
 *  * `default_url_protocol`: `http://`
 *  * `skip_table_head`: `True`
 *  * `type`: `c2server`
@@ -934,31 +934,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
-# HPHosts
-
-## Hosts
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://hosts-file.net/
-* **Description:** hpHosts is a community managed and maintained hosts file that allows an additional layer of protection against access to ad, tracking and malicious websites.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://hosts-file.net/download/hosts.txt`
-*  * `name`: `Hosts`
-*  * `provider`: `HPHosts`
-*  * `rate_limit`: `3600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.hphosts.parser
-* **Configuration Parameters:**
-*  * `error_log_message`: `false`
-
-
 # Have I Been Pwned
 
 ## Enterprise Callback
@@ -1125,7 +1100,7 @@ server {
 
 * **Public:** unknown
 * **Revision:** 2018-01-20
-* **Documentation:** https://www.malwarepatrol.net/
+* **Documentation:** https://www.malwarepatrol.net/non-commercial/
 * **Description:** Malware block list with URLs
 
 ### Collector
@@ -1417,7 +1392,7 @@ server {
 
 * **Public:** unknown
 * **Revision:** 2018-01-20
-* **Documentation:** https://data.phishtank.com/
+* **Documentation:** https://www.phishtank.com/developer_info.php
 * **Description:** PhishTank is a collaborative clearing house for data and information about phishing on the Internet.
 
 ### Collector
@@ -1457,7 +1432,7 @@ server {
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['source.ip|source.url', 'time.source']`
+*  * `columns`: `["source.ip|source.url", "time.source"]`
 *  * `default_url_protocol`: `http://`
 *  * `skip_table_head`: `True`
 *  * `type`: `malware`
@@ -1939,7 +1914,7 @@ server {
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['malware.name', 'source.url', 'source.ip', 'time.source']`
+*  * `columns`: `["malware.name", "source.url", "source.ip", "time.source"]`
 *  * `html_parser`: `lxml`
 *  * `time_format`: `from_format_midnight|%d-%m-%Y`
 *  * `type`: `malware`

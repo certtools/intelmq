@@ -6,7 +6,6 @@ https://github.com/RIPE-NCC/whois/wiki/WHOIS-REST-API-abuse-contact
 '''
 
 import json
-from contextlib import contextmanager
 import warnings
 
 import intelmq.lib.utils as utils

@@ -1,6 +1,67 @@
 CHANGELOG
 ==========
 
+2.2.1 (2020-07-30)
+------------------
+
+### Core
+- `intelmq.lib.upgrades`:
+  - Add upgrade function for changed configuration of the feed "Abuse.ch URLHaus" (#1571, PR#1572 by Filip Pokorný).
+  - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559).
+  - `intelmq.lib.harmonization`:
+    - For IP Addresses, explicitly reject IPv6 addresses with scope ID (due to changed behavior in Python 3.9, #1550).
+
+### Development
+- Ignore line length (E501) in code-style checks altogether.
+
+### Bots
+#### Collectors
+- `intelmq.bots.collectors.misp`: Fix access to actual MISP object (PR#1548 by Tomas Bellus @tomas321)
+- `intelmq.bots.collectors.stomp`: Remove empty `client.pem` file.
+
+#### Parsers
+- `intelmq.bots.parsers.shadowserver.config`:
+  - Add support for Accessible-CoAP feed (PR #1555 by Thomas Hungenberg).
+  - Add support for Accessible-ARD feed (PR #1584 by Tomas Bellus @tomas321).
+- `intelmq.bots.parser.anubisnetworks.parser`: Ignore "TestSinkholingLoss" events, these are not intended to be sent out at all.
+- `intelmq.bots.parsers.generic.parser_csv`: Allow values of type dictionary for parameter `type_translation`.
+- `intelmq.bots.parsers.hphosts`: Removed, feed is unavailable (#1559).
+- `intelmq.bots.parsers.cymru.parser_cap_program`: Add support for comment "username" for "scanner" category.
+- `intelmq.bots.parsers.malwareurl.parser`: Check for valid FQDN and IP address in URL and IP address columns (PR#1585 by Marius Urkis).
+
+#### Experts
+- `intelmq.bots.experts.maxmind_geoip`: On Python < 3.6, require maxminddb < 2, as that version does no longer support Python 3.5.
+
+#### Outputs
+- `intelmq.bot.outputs.udp`: Fix error handling on sending, had a bug itself.
+
+### Documentation
+- Feeds:
+  - Update documentation of feed "Abuse.ch URLHaus" (#1571, PR#1572 by Filip Pokorný).
+- Bots:
+  - Overhaul of all bots' description fields (#1570).
+- User-Guide:
+  - Overhaul pipeline configuration section and explain named queues better (#1577).
+
+### Tests
+- `intelmq.tests.bots.experts.cymru`: Adapt `test_empty_result`, remove `test_unicode_as_name` and `test_country_question_mark` (#1576).
+
+### Tools
+- `intelmq.bin.intelmq_gen_docs`: Format parameters of types lists with double quotes around values to produce conform JSON, ready to copy and paste the value into the IntelMQ Manager's bot parameter form.
+- `intelmq.bin.intelmqctl`:
+  - `debug`: In JSON mode, use dictionaries instead of lists.
+  - `debug`: Add `PATH` to the paths shown.
+  - `check`: Show `$PATH` environment variable if executable cannot be found.
+
+### Contrib
+- `malware_name_mapping`: Change MISP Threat Actors URL to new URL (branch master -> main) in download script.
+
+### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952).
+- Corrupt dump files when interrupted during writing (#870).
+- Bash completion scripts search in wrong directory in packages (#1561).
+- Cymru Expert: Wrong Cache-Key Calculation (#1592).
+
 
 2.2.0 (2020-06-18)
 ------------------
