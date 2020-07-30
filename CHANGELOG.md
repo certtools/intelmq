@@ -33,6 +33,7 @@ CHANGELOG
 - `intelmq.bots.parsers.malwareurl.parser`: Check for valid FQDN and IP address in URL and IP address columns (PR#1585 by Marius Urkis).
 
 #### Experts
+- `intelmq.bots.experts.maxmind_geoip`: On Python < 3.6, require maxminddb < 2, as that version does no longer support Python 3.5.
 
 #### Outputs
 - `intelmq.bot.outputs.udp`: Fix error handling on sending, had a bug itself.

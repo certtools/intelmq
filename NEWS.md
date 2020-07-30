@@ -7,10 +7,8 @@ See the changelog for a full list of changes.
 ----------------------------------
 
 ### Requirements
-
-### Tools
-
-### Harmonization
+#### MaxMind GeoIP Expert Bot
+The current python library versions of geoip (version 4) and maxminddb (version 2) no longer support Python 3.5. Keep older versions of these libraries if you are using this Python version.
 
 ### Configuration
 
