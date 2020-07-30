@@ -855,6 +855,9 @@ Get some debugging output on the settings and the enviroment (to be extended):
             parser_list.add_argument('--non-zero', '--quiet', '-q', action='store_true',
                                      help='Only list non-empty queues '
                                           'or the IDs of enabled bots.')
+            parser_list.add_argument('--count', '--sum', '-s', action='store_true', help='Only show the total '
+                                                                                   'number of messages in queues. '
+                                                                                   'Only valid for listing queues.')
             parser_list.set_defaults(func=self.list)
 
             parser_clear = subparsers.add_parser('clear', help='Clear a queue')
@@ -1196,9 +1199,9 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 retval = 1
         return retval, botnet_status
 
-    def list(self, kind=None, non_zero=False):
+    def list(self, kind=None, non_zero=False, count=False):
         if kind == 'queues':
-            return self.list_queues(non_zero=non_zero)
+            return self.list_queues(non_zero=non_zero, count=count)
         elif kind == 'bots':
             return self.list_bots(non_zero=non_zero)
         elif kind == 'queues-and-status':
@@ -1263,7 +1266,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
 
         return source_queues, destination_queues, internal_queues, all_queues
 
-    def list_queues(self, non_zero=False):
+    def list_queues(self, non_zero=False, count=False):
         pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
         pipeline.set_queues(None, "source")
         pipeline.connect()
@@ -1274,23 +1277,28 @@ Get some debugging output on the settings and the enviroment (to be extended):
         pipeline.disconnect()
         if RETURN_TYPE == 'text':
             for queue, counter in sorted(counters.items(), key=lambda x: str.lower(x[0])):
-                if counter or not non_zero:
+                if (counter or not non_zero) and not count:
                     logger.info("%s - %s", queue, counter)
+            if count:
+                logger.info("%s", sum(counters.values()))
 
         return_dict = {}
-        for bot_id, info in self.pipeline_configuration.items():
-            return_dict[bot_id] = {}
+        if count:
+            return_dict = {'total-messages': sum(counters.values())}
+        else:
+            for bot_id, info in self.pipeline_configuration.items():
+                return_dict[bot_id] = {}
 
-            if 'source-queue' in info:
-                return_dict[bot_id]['source_queue'] = (
-                    info['source-queue'], counters[info['source-queue']])
-                if pipeline.has_internal_queues:
-                    return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
+                if 'source-queue' in info:
+                    return_dict[bot_id]['source_queue'] = (
+                        info['source-queue'], counters[info['source-queue']])
+                    if pipeline.has_internal_queues:
+                        return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
 
-            if 'destination-queues' in info:
-                return_dict[bot_id]['destination_queues'] = []
-                for dest_queue in utils.flatten_queues(info['destination-queues']):
-                    return_dict[bot_id]['destination_queues'].append((dest_queue, counters[dest_queue]))
+                if 'destination-queues' in info:
+                    return_dict[bot_id]['destination_queues'] = []
+                    for dest_queue in utils.flatten_queues(info['destination-queues']):
+                        return_dict[bot_id]['destination_queues'].append((dest_queue, counters[dest_queue]))
 
         return 0, return_dict
 
@@ -1525,8 +1533,8 @@ Get some debugging output on the settings and the enviroment (to be extended):
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
                                    stderr=subprocess.DEVNULL):
-                    check_logger.error('Incomplete installation: Executable %r for %r not found.',
-                                       bot['module'], bot_id)
+                    check_logger.error('Incomplete installation: Executable %r for %r not found in $PATH (%r).',
+                                       bot['module'], bot_id, os.getenv('PATH'))
                     retval = 1
 
         if os.path.isfile(STATE_FILE_PATH):
@@ -1836,7 +1844,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
 
         output = {}
         if sections is None or 'paths' in sections:
-            output['paths'] = []
+            output['paths'] = {}
             variables = globals()
             if RETURN_TYPE == 'text':
                 print('Paths:')
@@ -1845,18 +1853,19 @@ Get some debugging output on the settings and the enviroment (to be extended):
                          'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
                          'DEFAULT_LOGGING_PATH', '__file__',
                          'CONFIG_DIR', 'ROOT_DIR'):
-                output['paths'].append((path, variables[path]))
+                output['paths'][path] = variables[path]
                 if RETURN_TYPE == 'text':
-                    print('%s: %r' % output['paths'][-1])
+                    print('%s: %r' % (path, variables[path]))
         if sections is None or 'environment_variables' in sections:
-            output['environment_variables'] = []
+            output['environment_variables'] = {}
             if RETURN_TYPE == 'text':
                 print('Environment variables:')
             for variable in ('INTELMQ_ROOT_DIR', 'INTELMQ_PATHS_NO_OPT',
-                             'INTELMQ_PATHS_OPT', 'INTELMQ_MANAGER_CONTROLLER_CMD'):
-                output['environment_variables'].append((variable, os.getenv(variable)))
+                             'INTELMQ_PATHS_OPT', 'INTELMQ_MANAGER_CONTROLLER_CMD',
+                             'PATH'):
+                output['environment_variables'][variable] = os.getenv(variable)
                 if RETURN_TYPE == 'text':
-                    print('%s: %r' % output['environment_variables'][-1])
+                    print('%s: %r' % (variable, os.getenv(variable)))
         return 0, output
 
 

@@ -2,7 +2,6 @@
 
 import socket
 import struct
-import sys
 
 from intelmq.lib.bot import CollectorBot
 

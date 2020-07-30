@@ -1,0 +1,11 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","machine_name","response_size"
+"2019-10-02 09:18:05","169.236.55.189","udp",3283,"lpg2.ucmerced.edu","ard",22323,"US","CALIFORNIA","MERCED",611310,822101,"LPG2.ucmerced.edu",1006
+"2019-10-02 09:18:06","74.111.20.19","udp",3283,"static-74-111-20-19.syrcny.fios.verizon.net","ard",701,"US","NEW YORK","SYRACUSE",517312,737415,"Surveillance System - Greenlea",1006
+"2019-10-02 09:18:06","177.68.23.169","udp",3283,"177-68-23-169.dsl.telesp.net.br","ard",27699,"BR","SAO PAULO","SAO PAULO",517312,737415,"Host - Marcelo Soledade",1006
+"2019-10-02 09:18:06","124.194.114.132","udp",3283,,"ard",3786,"KR","GYEONGSANGBUGDO","SEONSAN-EUP",517311,0,,360
+"2019-10-02 09:18:06","129.174.55.244","udp",3283,"gmutantt.gmu.edu","ard",11279,"US","VIRGINIA","FAIRFAX",611310,822101,"gmutant",360
+"2019-10-02 09:18:06","71.61.193.69","udp",3283,"c-71-61-193-69.hsd1.pa.comcast.net","ard",7922,"US","PENNSYLVANIA","MONACA",517311,737401,"minihomesvr",1006
+"2019-10-02 09:18:06","207.254.60.30","udp",3283,,"ard",395337,"US","NEVADA","LAS VEGAS",0,0,8034,1006
+"2019-10-02 09:18:06","140.116.183.179","udp",3283,,"ard",1659,"TW","TAIPEI CITY","TAIPEI",923110,0,"CCKs Black Mac Pro",1006
+"2019-10-02 09:18:06","172.90.125.237","udp",3283,"cpe-172-90-125-237.socal.res.rr.com","ard",20001,"US","CALIFORNIA","ORANGE",517311,737401,"chadski_s computer",1006
+"2019-10-02 09:18:06","208.78.107.204","udp",3283,,"ard",395336,"US","NEVADA","LAS VEGAS",0,0,"Atlanta6",1006
