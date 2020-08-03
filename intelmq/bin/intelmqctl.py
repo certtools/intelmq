@@ -855,9 +855,10 @@ Get some debugging output on the settings and the enviroment (to be extended):
             parser_list.add_argument('--non-zero', '--quiet', '-q', action='store_true',
                                      help='Only list non-empty queues '
                                           'or the IDs of enabled bots.')
-            parser_list.add_argument('--count', '--sum', '-s', action='store_true', help='Only show the total '
-                                                                                   'number of messages in queues. '
-                                                                                   'Only valid for listing queues.')
+            parser_list.add_argument('--count', '--sum', '-s', action='store_true',
+                                     help='Only show the total '
+                                          'number of messages in queues. '
+                                          'Only valid for listing queues.')
             parser_list.set_defaults(func=self.list)
 
             parser_clear = subparsers.add_parser('clear', help='Clear a queue')
