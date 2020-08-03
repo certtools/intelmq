@@ -1441,7 +1441,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
         all_queues = set()
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # pipeline keys
-            for field in ['description', 'group', 'module', 'name']:
+            for field in ['description', 'group', 'module', 'name', 'enabled']:
                 if field not in bot_config:
                     check_logger.warning('Bot %r has no %r.', bot_id, field)
                     retval = 1
@@ -1449,10 +1449,12 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 message = "Bot %r has invalid `run_mode` %r. Must be 'continuous' or 'scheduled'."
                 check_logger.warning(message, bot_id, bot_config['run_mode'])
                 retval = 1
-            if bot_id not in files[PIPELINE_CONF_FILE]:
+            if bot_id not in files[PIPELINE_CONF_FILE] and bot_config.get('enabled', True):
                 check_logger.error('Misconfiguration: No pipeline configuration found for %r.', bot_id)
                 retval = 1
-            else:
+            elif bot_id not in files[PIPELINE_CONF_FILE] and not bot_config.get('enabled', True):
+                check_logger.warning('Misconfiguration: No pipeline configuration found for %r.', bot_id)
+            elif bot_id not in files[PIPELINE_CONF_FILE]:
                 if ('group' in bot_config and
                         bot_config['group'] in ['Collector', 'Parser', 'Expert']):
                     if ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
