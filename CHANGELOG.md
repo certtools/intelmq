@@ -83,7 +83,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
-- `intelmq.tests.lib.test_pipeline`: Add short sleep in `TestAmqp.test_acknowledge`.
+- `intelmq.tests.lib.test_pipeline`: Skip `TestAmqp.test_acknowledge` on Travis with Python 3.8.
 
 ### Tools
 
