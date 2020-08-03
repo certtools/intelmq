@@ -26,6 +26,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- `intelmq.tests.lib.test_pipeline`: Add short sleep in `TestAmqp.test_acknowledge`.
 
 ### Tools
 
