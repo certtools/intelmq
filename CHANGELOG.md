@@ -29,6 +29,8 @@ CHANGELOG
 - `intelmq.tests.lib.test_pipeline`: Skip `TestAmqp.test_acknowledge` on Travis with Python 3.8.
 
 ### Tools
+- `intelmqctl check`:
+  - For disabled bots which do not have any pipeline connections, do not raise an error, but only warning.
 
 ### Contrib
 
