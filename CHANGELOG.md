@@ -58,6 +58,39 @@ CHANGELOG
 
 ### Known issues
 
+2.2.2 (unreleased)
+------------------
+
+### Configuration
+
+### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+- `intelmq.tests.lib.test_pipeline`: Add short sleep in `TestAmqp.test_acknowledge`.
+
+### Tools
+
+### Contrib
+
+### Known issues
+
 
 2.2.1 (2020-07-30)
 ------------------

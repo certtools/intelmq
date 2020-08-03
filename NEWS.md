@@ -19,6 +19,22 @@ See the changelog for a full list of changes.
 ### Postgres databases
 
 
+2.2.2 Bugfix release (unreleased)
+---------------------------------
+
+### Requirements
+
+### Tools
+
+### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
 2.2.1 Bugfix release (2020-07-30)
 ----------------------------------
 

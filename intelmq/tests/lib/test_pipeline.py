@@ -269,6 +269,7 @@ class TestAmqp(unittest.TestCase):
         self.pipe.send(SAMPLES['normal'][0])
         self.pipe.receive()
         self.pipe.acknowledge()
+        time.sleep(0.1)  # sleep for some time to get rid of test fail for next line
         self.assertEqual(self.pipe.count_queued_messages('test')['test'], 0)
         self.assertEqual(self.pipe.count_queued_messages('test-internal')['test-internal'], 0)
 
