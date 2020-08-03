@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import time
-import warnings
 from itertools import chain
 from typing import Dict, Optional, Union
 import ssl
