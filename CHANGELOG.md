@@ -55,6 +55,8 @@ CHANGELOG
   - `intelmq list queues`: `--sum`, `--count`, `-s` flag for showing total count of messages (PR#1581 by Mladen Markovic).
 
 ### Contrib
+- eventdb:
+  - Add SQL script for keeping track of the oldest inserted/update "time.source" information.
 
 ### Known issues
 
