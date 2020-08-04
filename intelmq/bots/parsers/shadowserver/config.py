@@ -2316,6 +2316,7 @@ mapping = (
     ('Accessible-Ubiquiti-Discovery-Service', 'scan_ubiquiti', accessible_ubiquiti_discovery_service),
     ('Accessible-VNC', 'scan_vnc', accessible_vnc),
     ('Amplification-DDoS-Victim', 'ddos_amplification', amplification_ddos_victim),
+    ('Blacklisted-IP', 'blacklist', blocklist),
     ('Blocklist', 'blocklist', blocklist),
     ('Compromised-Website', 'compromised_website', compromised_website),
     ('DNS-Open-Resolvers', 'scan_dns', dns_open_resolvers),

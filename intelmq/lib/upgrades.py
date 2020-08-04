@@ -26,6 +26,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v220_azure_collector',
            'v220_feed_changes',
            'v221_feed_changes',
+           'v222_feed_changes_1',
            ]
 
 
@@ -500,6 +501,19 @@ def v221_feed_changes(defaults, runtime, harmonization, dry_run):
     return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
 
 
+def v222_feed_changes_1(defaults, runtime, harmonization, dry_run):
+    """
+    Migrate Shadowserver feed name
+    """
+    changed = None
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.parsers.shadowserver.parser":
+            if bot["parameters"].get("feedname", None) == "Blacklisted-IP":
+                bot["parameters"]["feedname"] = "Blocklist"
+                changed = True
+    return changed, defaults, runtime, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -515,7 +529,7 @@ UPGRADES = OrderedDict([
     ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
     ((2, 2, 0), (v220_configuration, v220_azure_collector, v220_feed_changes)),
     ((2, 2, 1), (v221_feed_changes, )),
-    ((2, 2, 2), ()),
+    ((2, 2, 2), (v222_feed_changes_1, )),
 ])
 
 ALWAYS = (harmonization, )

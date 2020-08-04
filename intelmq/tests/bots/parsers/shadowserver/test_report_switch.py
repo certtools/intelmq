@@ -17,15 +17,15 @@ FIRST_REPORT = {'feed.name': 'Accessible FTP',
                   "time.observation": "2019-03-25T00:00:00+00:00",
                   "extra.file_name": "2019-03-25-scan_ftp-test-test.csv",
                   }
-with open(os.path.join(os.path.dirname(__file__), 'testdata/blacklist.csv')) as handle:
+with open(os.path.join(os.path.dirname(__file__), 'testdata/blocklist.csv')) as handle:
     EXAMPLE_LINES = handle.read().splitlines()[:2]
 
 SECOND_REPORT = {
-    'feed.name': 'Blacklist',
+    'feed.name': 'Blocklist',
     "raw": utils.base64_encode('\n'.join(EXAMPLE_LINES)),
     "__type": "Report",
     "time.observation": "2015-01-01T00:00:00+00:00",
-    "extra.file_name": "2019-01-01-blacklist-test-geo.csv",
+    "extra.file_name": "2019-01-01-blocklist-test-geo.csv",
 }
 
 
@@ -41,12 +41,12 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         cls.sysconfig = {'logging_level': 'DEBUG'}
 
     def test_event(self):
-        """ Test if the parser . """
+        """ Test if the parser correctly detects and handles different report types. """
         self.input_message = [FIRST_REPORT, SECOND_REPORT]
         self.run_bot(iterations=2)
         self.assertLogMatches("Detected report's file name: 'scan_ftp'",
                               levelname='DEBUG')
-        self.assertLogMatches("Detected report's file name: 'blacklist'",
+        self.assertLogMatches("Detected report's file name: 'blocklist'",
                               levelname='DEBUG')
 
 

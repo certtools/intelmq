@@ -1328,7 +1328,8 @@ These are the supported feed name and their corresponding file name for automati
 | Accessible-Ubiquiti-Discovery-Service | `scan_ubiquiti` |
 | Accessible-VNC | `scan_vnc` |
 | Amplification-DDoS-Victim | `ddos_amplification` |
-| Blacklisted-IP | `blacklist` |
+| Blacklisted-IP (deprecated) | `blacklist` |
+| Blocklist | `blocklist` |
 | Compromised-Website | `compromised_website` |
 | Darknet | `darknet` |
 | DNS-Open-Resolvers | `scan_dns` |
