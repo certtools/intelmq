@@ -22,6 +22,8 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
+- README:
+  - Add Core Infrastructure Initiative Best Practices Badge.
 
 ### Packaging
 

@@ -4,7 +4,7 @@ Welcome to IntelMQ!
 .. figure:: https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Logo_Intel_MQ.png
    :alt: IntelMQ
 
-|Build Status| |codecov.io|
+|Build Status| |codecov.io| |CII Badge|
 
 **IntelMQ** is a solution for IT security teams (CERTs & CSIRTs, SOCs, abuse
 departments, etc.) for collecting and processing security feeds (such as
@@ -127,3 +127,5 @@ This project was partially funded by the CEF framework
    :target: https://travis-ci.org/certtools/intelmq
 .. |codecov.io| image:: https://codecov.io/github/certtools/intelmq/coverage.svg?branch=master
    :target: https://codecov.io/github/certtools/intelmq?branch=master
+.. |CII Badge| image:: https://bestpractices.coreinfrastructure.org/projects/4186/badge
+   :target: https://bestpractices.coreinfrastructure.org/projects/4186/
