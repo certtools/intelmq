@@ -2386,11 +2386,23 @@ optional arguments:
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` use eCSIRT taxonomy to classify events (classification type to classification taxonomy)
+* `description:` Adds the `classification.taxonomy` field according to the RSIT taxonomy.
+
+Please note that there is a [slight mismatch of IntelMQ's taxonomy to the upstream taxonomy](https://github.com/certtools/intelmq/issues/1409), but it should not matter here much.
 
 #### Configuration Parameters:
 
-FIXME
+None.
+
+#### Description
+
+Information on the "Reference Security Incident Taxonomy" can be found here: https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force
+
+For brevity, "type" means `classification.type` and "taxonomy" means `classification.taxonomy`.
+
+- If taxonomy is missing, and type is given, the according taxonomy is set.
+- If neither taxonomy, not type is given, taxonomy is set to "other" and type to "unknown".
+- If taxonomy is given, but type is not, type is set to "unknown".
 
 * * *
 

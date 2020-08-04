@@ -27,6 +27,7 @@ CHANGELOG
 - Bots:
   - Generic CSV Parser: Add note on escaping backslashes (#1579).
   - Remove section of non-existing "Copy Extra" Bot.
+  - Explain taxonomy expert.
 
 ### Packaging
 
