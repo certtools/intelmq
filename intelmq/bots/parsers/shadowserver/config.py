@@ -1577,8 +1577,8 @@ open_ldap = {
     }
 }
 
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Blacklist
-blacklisted_ip = {
+# https://www.shadowserver.org/what-we-do/network-reporting/blocklist-report/
+blocklist = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -2316,7 +2316,7 @@ mapping = (
     ('Accessible-Ubiquiti-Discovery-Service', 'scan_ubiquiti', accessible_ubiquiti_discovery_service),
     ('Accessible-VNC', 'scan_vnc', accessible_vnc),
     ('Amplification-DDoS-Victim', 'ddos_amplification', amplification_ddos_victim),
-    ('Blacklisted-IP', 'blacklist', blacklisted_ip),
+    ('Blocklist', 'blocklist', blocklist),
     ('Compromised-Website', 'compromised_website', compromised_website),
     ('DNS-Open-Resolvers', 'scan_dns', dns_open_resolvers),
     ('Darknet', 'darknet', darknet),
