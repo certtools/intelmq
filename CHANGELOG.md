@@ -24,6 +24,8 @@ CHANGELOG
 ### Documentation
 - README:
   - Add Core Infrastructure Initiative Best Practices Badge.
+- Bots:
+  - Generic CSV Parser: Add note on escaping backslashes (#1579).
 
 ### Packaging
 
