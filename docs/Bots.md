@@ -1508,22 +1508,6 @@ use the configuration parameter `single_key` of the output bot and set it to `ou
 
 * * *
 
-### Copy Extra
-
-#### Information:
-* `name:` `intelmq.bots.experts.national_cert_contact_certat.expert
-* `lookup:` to https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl
-* `public:` yes
-* `cache (redis db):` none
-* `description:` Queries abuse contact based on the country.
-
-#### Configuration Parameters:
-
-* **Cache parameters** (see in section [common parameters](#common-parameters))
-FIXME
-
-* * *
-
 ### Cymru Whois
 
 #### Information:
