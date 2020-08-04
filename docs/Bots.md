@@ -451,7 +451,7 @@ The bot always sets the url, from which downloaded the file, as `feed.url`.
 
 * **Feed parameters** (see above)
 * `path`: path to file
-* `postfix`: FIXME
+* `postfix`: The postfix (file ending) of the files to look for. For example `.csv`.
 * `delete_file`: whether to delete the file after reading (default: `false`)
 
 The resulting reports contains the following special fields:
