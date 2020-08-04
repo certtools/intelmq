@@ -66,6 +66,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.upgrades`:
+  - Add upgrade function for renamed Shadowserver feed name "Blacklisted-IP"/"Blocklist".
 
 ### Development
 
@@ -75,12 +77,20 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.shadowserver`:
+  - Rename "Blacklisted-IP" feed to "Blocklist", old name is still valid until IntelMQ version 3.0 (PR#1588 by Thomas Hungenberg).
 
 #### Experts
 
 #### Outputs
 
 ### Documentation
+- README:
+  - Add Core Infrastructure Initiative Best Practices Badge.
+- Bots:
+  - Generic CSV Parser: Add note on escaping backslashes (#1579).
+  - Remove section of non-existing "Copy Extra" Bot.
+  - Explain taxonomy expert.
 
 ### Packaging
 

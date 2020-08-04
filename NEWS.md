@@ -27,6 +27,8 @@ See the changelog for a full list of changes.
 ### Tools
 
 ### Harmonization
+#### Shadowserver Feed/Parser
+The feed "Blacklisted-IP" has been renamed by ShadowServer to "Blocklist". In IntelMQ, the old name can still be used in IntelMQ until version 3.0.
 
 ### Configuration
 

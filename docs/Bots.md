@@ -451,7 +451,7 @@ The bot always sets the url, from which downloaded the file, as `feed.url`.
 
 * **Feed parameters** (see above)
 * `path`: path to file
-* `postfix`: FIXME
+* `postfix`: The postfix (file ending) of the files to look for. For example `.csv`.
 * `delete_file`: whether to delete the file after reading (default: `false`)
 
 The resulting reports contains the following special fields:
@@ -1005,7 +1005,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
         - parse a value and ignore if it fails  `"columns": "source.url|__IGNORE__"`
 
- * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaluated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`.
+ * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaluated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`. Make sure to properly escape any backslashes in your regular expression (See also [#1579](https://github.com/certtools/intelmq/issues/1579).
  * `"default_url_protocol"`: For URLs you can give a default protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
  * `"skip_header"`: Boolean, skip the first line of the file, optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
@@ -1376,7 +1376,8 @@ These are the supported feed name and their corresponding file name for automati
 | Accessible-Ubiquiti-Discovery-Service | `scan_ubiquiti` |
 | Accessible-VNC | `scan_vnc` |
 | Amplification-DDoS-Victim | `ddos_amplification` |
-| Blacklisted-IP | `blacklist` |
+| Blacklisted-IP (deprecated) | `blacklist` |
+| Blocklist | `blocklist` |
 | Compromised-Website | `compromised_website` |
 | Darknet | `darknet` |
 | DNS-Open-Resolvers | `scan_dns` |
@@ -1553,22 +1554,6 @@ Note: the '<' '>' characters only are syntactic markings, no shell redirection i
 
 To use the CSV-converted data in an output bot - for example in a file output,
 use the configuration parameter `single_key` of the output bot and set it to `output`.
-
-* * *
-
-### Copy Extra
-
-#### Information:
-* `name:` `intelmq.bots.experts.national_cert_contact_certat.expert
-* `lookup:` to https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl
-* `public:` yes
-* `cache (redis db):` none
-* `description:` Queries abuse contact based on the country.
-
-#### Configuration Parameters:
-
-* **Cache parameters** (see in section [common parameters](#common-parameters))
-FIXME
 
 * * *
 
@@ -2464,11 +2449,23 @@ optional arguments:
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` use eCSIRT taxonomy to classify events (classification type to classification taxonomy)
+* `description:` Adds the `classification.taxonomy` field according to the RSIT taxonomy.
+
+Please note that there is a [slight mismatch of IntelMQ's taxonomy to the upstream taxonomy](https://github.com/certtools/intelmq/issues/1409), but it should not matter here much.
 
 #### Configuration Parameters:
 
-FIXME
+None.
+
+#### Description
+
+Information on the "Reference Security Incident Taxonomy" can be found here: https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force
+
+For brevity, "type" means `classification.type` and "taxonomy" means `classification.taxonomy`.
+
+- If taxonomy is missing, and type is given, the according taxonomy is set.
+- If neither taxonomy, not type is given, taxonomy is set to "other" and type to "unknown".
+- If taxonomy is given, but type is not, type is set to "unknown".
 
 * * *
 

@@ -414,6 +414,16 @@ V221_FEED_2 = {
     "module": "intelmq.bots.parsers.hphosts.parser",
 },
 }
+V222 = {
+"shadowserver-parser": {
+    "module": "intelmq.bots.parsers.shadowserver.parser",
+    "parameters": {
+        "feedname": "Blacklisted-IP"}}}
+V222_OUT = {
+"shadowserver-parser": {
+    "module": "intelmq.bots.parsers.shadowserver.parser",
+    "parameters": {
+        "feedname": "Blocklist"}}}
 
 
 def generate_function(function):
@@ -556,6 +566,12 @@ class TestUpgradeLib(unittest.TestCase):
                          'Remove affected bots yourself.',
                          result[0])
         self.assertEqual(V221_FEED_2, result[2])
+
+    def test_v222_feed_changes(self):
+        """ Test v222_feed_changes """
+        result = upgrades.v222_feed_changes_1({}, V222, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual(V222_OUT, result[2])
 
 
 for name in upgrades.__all__:
