@@ -32,6 +32,7 @@ CHANGELOG
   - Generic CSV Parser: Add note on escaping backslashes (#1579).
   - Remove section of non-existing "Copy Extra" Bot.
   - Explain taxonomy expert.
+  - Add documentation on n6 parser.
 
 ### Packaging
 

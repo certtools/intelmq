@@ -1250,6 +1250,27 @@ constants.
 
 * * *
 
+### n6
+
+#### Information:
+* `name`: `intelmq.bots.parsers.n6.parser_n6stomp`
+* `public`: no
+* `cache (redis db)`: none
+* `description`: Convert n6 data into IntelMQ format.
+
+#### Configuration Parameters:
+None
+
+#### Description
+
+Test messages are ignored, this is logged with debug logging level.
+Also contains a mapping for the classification (results in taxonomy, type and identifier).
+The `name` field is normally used as `malware.name`, if that fails due to disallowed characters, these characters are removed and the original value is saved as `event_description.text`. This can happen for names like `"further iocs: text with invalid ’ char"`.
+
+If an n6 message contains multiple IP addresses, multiple events are generated, resulting in events only differing in the address information.
+
+* * *
+
 ### Twitter
 
 #### Information:
