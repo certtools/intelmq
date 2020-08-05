@@ -44,6 +44,7 @@ CHANGELOG
   - Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
 - Bots:
   - Enhanced documentation of RFC1918 Expert.
+- Add n6 Integration documentation.
 
 ### Packaging
 
