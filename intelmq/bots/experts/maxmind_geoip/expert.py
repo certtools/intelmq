@@ -108,11 +108,10 @@ class GeoIPExpertBot(Bot):
         except KeyError as e:
             print("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
             if str(e) == "'license_key'":
-                print(
-                    "Since December 30, 2019 you need to register for a free license key to download GeoLite2 database.")
-                print(
-                    "https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/")
-            sys.exit(1)
+                sys.exit(
+                    "Since December 30, 2019 you need to register for a free license key to access GeoLite2 database.\n"
+                    "https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/"
+                )
 
         if not bots:
             print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
@@ -122,7 +121,9 @@ class GeoIPExpertBot(Bot):
         try:
             import maxminddb
         except ImportError:
-            raise MissingDependencyError('geoip2')  # geoip2 depends on maxminddb
+            raise MissingDependencyError('maxminddb',
+                                         additional_text="Package maxminddb should be present because it "
+                                                         "is a dependecy for the required geoip2 package.")
 
         try:
             print("Downloading the latest database update...")
@@ -134,16 +135,14 @@ class GeoIPExpertBot(Bot):
                                        "suffix": "tar.gz"
                                    })
         except requests.exceptions.RequestException as e:
-            print("Database update failed. Connection Error: {0}".format(e))
-            sys.exit(1)
+            sys.exit("Database update failed. Connection Error: {0}".format(e))
 
         if response.status_code == 401:
-            print("Database update failed. Your license key is invalid.")
-            sys.exit(1)
+            sys.exit("Database update failed. Your license key is invalid.")
 
         if response.status_code != 200:
-            print("Database update failed. Server responded: {0}.".format(response.status_code))
-            sys.exit(1)
+            sys.exit("Database update failed. Server responded: {0}.\n"
+                     "URL: {1}".format(response.status_code, response.url))
 
         database_data = None
 
@@ -156,12 +155,10 @@ class GeoIPExpertBot(Bot):
                         break
 
         except maxminddb.InvalidDatabaseError:
-            print("Database update failed. Database file invalid.")
-            sys.exit(1)
+            sys.exit("Database update failed. Database file invalid.")
 
         if not database_data:
-            print("Database update failed. Could not locate file 'GeoLite2-City.mmbd' in the downloaded archive.")
-            sys.exit(1)
+            sys.exit("Database update failed. Could not locate file 'GeoLite2-City.mmbd' in the downloaded archive.")
 
         for database_path in set(bots.values()):
             database_dir = pathlib.Path(database_path).parent

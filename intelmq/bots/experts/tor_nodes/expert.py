@@ -76,8 +76,7 @@ class TorExpertBot(Bot):
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
         except KeyError as e:
-            print("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
-            sys.exit(1)
+            sys.exit("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
 
         if not bots:
             print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
@@ -88,12 +87,11 @@ class TorExpertBot(Bot):
             session = create_request_session()
             response = session.get("https://check.torproject.org/exit-addresses")
         except requests.exceptions.RequestException as e:
-            print("Database update failed. Connection Error: {0}".format(e))
-            sys.exit(1)
+            sys.exit("Database update failed. Connection Error: {0}".format(e))
 
         if response.status_code != 200:
-            print("Database update failed. Server responded: {0}.".format(response.status_code))
-            sys.exit(1)
+            sys.exit("Database update failed. Server responded: {0}.\n"
+                     "URL: {1}".format(response.status_code, response.url))
 
         pattern = re.compile("ExitAddress ([^\s]+)")
         tor_exits = "\n".join(pattern.findall(response.text))

@@ -90,8 +90,7 @@ class ASNLookupExpertBot(Bot):
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
         except KeyError as e:
-            print("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
-            sys.exit(1)
+            sys.exit("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
 
         if not bots:
             print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
@@ -113,8 +112,7 @@ class ASNLookupExpertBot(Bot):
             months.sort(reverse=True)
 
             if not months:
-                print("Database update failed. Couldn't find the latest database update.")
-                sys.exit(1)
+                sys.exit("Database update failed. Couldn't find the latest database update.")
 
             url += str(months[0]) + "/RIBS/"
             response = session.get(url)
@@ -123,20 +121,18 @@ class ASNLookupExpertBot(Bot):
             days.sort(reverse=True)
 
             if not days:
-                print("Database update failed. Couldn't find the latest database update.")
-                sys.exit(1)
+                sys.exit("Database update failed. Couldn't find the latest database update.")
 
             print("Downloading the latest database update...")
             url += days[0]
             response = session.get(url)
 
             if response.status_code != 200:
-                print("Database update failed. Server responded: {0}.".format(response.status_code))
-                sys.exit(1)
+                sys.exit("Database update failed. Server responded: {0}.\n"
+                         "URL: {1}".format(response.status_code, response.url))
 
         except requests.exceptions.RequestException as e:
-            print("Database update failed. Connection Error: {0}".format(e))
-            sys.exit(1)
+            sys.exit("Database update failed. Connection Error: {0}".format(e))
 
         with bz2.open(io.BytesIO(response.content)) as archive:
             print("Parsing the latest database update...")
