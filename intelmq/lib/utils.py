@@ -718,40 +718,12 @@ class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
         return super().send(*args, **kwargs)
 
 
-def create_request_session() -> requests.Session:
-    """
-    Returns requests.Session object preconfigured with the parameters from defaults.conf.
-    """
-    defaults = load_configuration(DEFAULTS_CONF_FILE)
-    session = requests.Session()
-    session.verify = defaults.get('http_verify_cert', True)
-
-    if defaults.get('http_proxy') and defaults.get('https_proxy'):
-        session.proxies = {
-            'http': defaults.get('http_proxy'),
-            'https': defaults.get('https_proxy')
-        }
-
-    if defaults.get('http_user_agent'):
-        session.headers = {
-            'User-Agent': defaults.get('http_user_agent')
-        }
-
-    adapter = TimeoutHTTPAdapter(
-        max_retries=defaults.get('http_timeout_max_tries', 3),
-        timeout=defaults.get('http_timeout_sec', 30)
-    )
-
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
-
-    return session
-
-
-def create_request_session_from_bot(bot: type) -> requests.Session:
+def create_request_session(bot: type = None) -> requests.Session:
     """
     Creates a requests.Session object preconfigured with the parameters
     set by the Bot.set_request_parameters and given by the bot instance.
+    If no bot is specified then the Session is preconfigured only with
+    parameters from defaults.conf.
 
     Parameters:
         bot_instance: An instance of a Bot
@@ -759,16 +731,53 @@ def create_request_session_from_bot(bot: type) -> requests.Session:
     Returns:
         session: A preconfigured instance of requests.Session
     """
+    defaults = load_configuration(DEFAULTS_CONF_FILE)
     session = requests.Session()
-    session.headers.update(bot.http_header)
-    session.auth = bot.auth
-    session.proxies = bot.proxy
-    session.cert = bot.ssl_client_cert
-    session.verify = bot.http_verify_cert
-    adapter = TimeoutHTTPAdapter(max_retries=bot.http_timeout_max_tries - 1,
-                                 timeout=bot.http_timeout_sec)
+
+    # tls settings
+    if bot and hasattr(bot, 'http_verify_cert'):
+        session.verify = bot.http_verify_cert
+    else:
+        defaults.get('http_verify_cert', True)
+
+    # tls certificate settings
+    if bot and hasattr(bot, 'ssl_client_cert'):
+        session.cert = bot.ssl_client_cert
+
+    # auth settings
+    if bot and hasattr(bot, 'auth'):
+        session.auth = bot.auth
+
+    # headers settings
+    if bot and hasattr(bot, 'http_header'):
+        session.headers.update(bot.http_header)
+    elif defaults.get('http_user_agent'):
+        session.headers.update({"User-Agent": defaults.get('http_user_agent')})
+
+    # proxy settings
+    if bot and hasattr(bot, 'proxy'):
+        session.proxies = bot.proxy
+    elif defaults.get('http_proxy') and defaults.get('https_proxy'):
+        session.proxies = {
+            'http': defaults.get('http_proxy'),
+            'https': defaults.get('https_proxy')
+        }
+
+    # timeout settings
+    if bot and hasattr(bot, 'http_timeout_max_tries'):
+        max_retries = bot.http_timeout_max_tries - 1
+    else:
+        max_retries = defaults.get('http_timeout_max_tries', 3)
+
+    if bot and hasattr(bot, 'http_timeout_sec'):
+        timeout = bot.http_timeout_sec
+    else:
+        timeout = defaults.get('http_timeout_sec', 30)
+
+    adapter = TimeoutHTTPAdapter(max_retries=max_retries, timeout=timeout)
     session.mount('http://', adapter)
     session.mount('https://', adapter)
+
     return session
 
 

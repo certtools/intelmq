@@ -20,7 +20,7 @@ http_timeout_max_tries: an integer depicting how often a connection attempt is r
 from datetime import datetime, timedelta
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import unzip, create_request_session_from_bot
+from intelmq.lib.utils import unzip, create_request_session
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -48,7 +48,7 @@ class HTTPCollectorBot(CollectorBot):
 
         self.set_request_parameters()
 
-        self.session = create_request_session_from_bot(self)
+        self.session = create_request_session(self)
 
     def process(self):
         formatting = getattr(self.parameters, 'http_url_formatting', False)

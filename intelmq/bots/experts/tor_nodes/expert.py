@@ -12,7 +12,7 @@ from intelmq import RUNTIME_CONF_FILE
 from intelmq.lib.utils import load_configuration, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
 
-from intelmq.lib.utils import create_request_session_from_bot
+from intelmq.lib.utils import create_request_session
 
 
 class TorExpertBot(Bot):

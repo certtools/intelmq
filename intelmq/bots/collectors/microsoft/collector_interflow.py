@@ -37,7 +37,7 @@ from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.cache import Cache
-from intelmq.lib.utils import parse_relative, create_request_session_from_bot
+from intelmq.lib.utils import parse_relative, create_request_session
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -95,7 +95,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
                                      "otherwise the bot is processing the same data over and over again.")
         else:
             self.time_match = None
-        self.session = create_request_session_from_bot(self)
+        self.session = create_request_session(self)
 
         self.cache = Cache(self.parameters.redis_cache_host,
                            self.parameters.redis_cache_port,

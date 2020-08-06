@@ -20,7 +20,7 @@ except ImportError:
     requests = None
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import decode, create_request_session_from_bot
+from intelmq.lib.utils import decode, create_request_session
 from intelmq.lib.exceptions import MissingDependencyError
 
 
@@ -33,7 +33,7 @@ class HTTPStreamCollectorBot(CollectorBot):
             raise MissingDependencyError("requests")
 
         self.set_request_parameters()
-        self.session = create_request_session_from_bot(self)
+        self.session = create_request_session(self)
 
     def process(self):
         self.logger.info("Connecting to stream at %r.", self.parameters.http_url)

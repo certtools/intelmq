@@ -78,7 +78,7 @@ class RIPEExpertBot(Bot):
 
     def __initialize_http_session(self):
         self.set_request_parameters()
-        self.http_session = utils.create_request_session_from_bot(self)
+        self.http_session = utils.create_request_session(self)
 
     def __initialize_cache(self):
         cache_host = getattr(self.parameters, 'redis_cache_host')
