@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import time
 import unittest
 import unittest.mock as mock
 from datetime import datetime
@@ -130,10 +129,9 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
 
     def test_event(self):
         self.run_bot()
-        time.sleep(1)  # ES needs some time between inserting and searching
+        self.con.indices.refresh(index="intelmq")  # Make Elasticsearch propagate the new document
         result = self.con.search(index='intelmq', body=ES_SEARCH)['hits']['hits'][0]
         self.con.delete(index='intelmq',
-                        # doc_type='events',
                         id=result['_id'])
         self.assertDictEqual(OUTPUT1, result['_source'])
 
@@ -155,7 +153,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
                           "replacement_char": "_",
                           "rotate_index": "never"}
         self.run_bot()
-        time.sleep(1)  # ES needs some time between inserting and searching
+        self.con.indices.refresh(index="intelmq")  # Make Elasticsearch propagate the new document
         result = self.con.search(index=self.sysconfig.get('elastic_index'),
                                  body=ES_SEARCH_REPLACEMENT_CHARS)['hits']['hits'][0]
 
@@ -236,7 +234,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.con.indices.put_template(name=self.sysconfig.get('elastic_index'), body=SAMPLE_TEMPLATE)
 
         self.run_bot()
-        time.sleep(1)  # Let ES store the event. Can also force this with ES API
+        self.con.indices.refresh(index=expected_index_name)  # Make Elasticsearch propagate the new document
 
         self.assertTrue(self.con.indices.exists(expected_index_name))
 
