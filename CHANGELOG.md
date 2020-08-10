@@ -44,6 +44,10 @@ CHANGELOG
   - Added `license_key` parameter. (PR#1524 by Filip Pokorný)
 - `intelmq.bots.experts.tor_nodes.expert`
   - Added `--update-database` option. (PR#1524 by Filip Pokorný)
+- `intelmq.bots.experts.recordedfuture_iprisk.expert`
+  - Added `--update-database` option. (PR#1524 by Filip Pokorný)
+  - Added `api_token` parameter. (PR#1524 by Filip Pokorný)
+
 
 #### Outputs
 

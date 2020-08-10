@@ -2158,6 +2158,7 @@ This Bot tags events with score found in recorded futures large IP risklist.
 
 * `database`: Location of csv file obtained from recorded future API (a script is provided to download the large IP set)
 * `overwrite`: set to true if you want to overwrite any potentially existing risk score fields in the event.
+* `api_token`: This needs to contain valid API token to download the latest database data.
 
 #### Description
 
@@ -2171,18 +2172,11 @@ The large list contains all IP's with a risk score of 25 or more.
 If IP's are not present in the database a risk score of 0 is given
 
 A script is supplied that may be run as intelmq to update the database.
-The script needs to be edited to use a valid API token.
 
-Download database:
+#### Database
+Use this command to create/update the database and reload the bot:
 
-```bash
-mkdir /opt/intelmq/var/lib/bots/recordedfuture_iprisk
-cd /tmp/
-curl -H "X-RFToken: [API Token]" --output rfiprisk.dat.gz "https://api.recordedfuture.com/v2/ip/risklist?format=csv%2Fsplunk&gzip=true&list=large"
-bunzip rfiprisk.dat.gz
-mv rfiprisk.dat /opt/intelmq/var/lib/bots/recordedfuture_iprisk/rfiprisk.dat
-chown intelmq.intelmq -R /opt/intelmq/var/lib/bots/recordedfuture_iprisk
-```
+`intelmq.bots.experts.asn_lookup.expert --update-database`
 
 * * *
 

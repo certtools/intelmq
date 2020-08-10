@@ -895,7 +895,8 @@
             "module": "intelmq.bots.experts.recordedfuture_iprisk.expert",
             "parameters": {
                 "database": "/opt/intelmq/var/lib/bots/recordedfuture_iprisk/rfiprisk.dat",
-                "overwrite": false
+                "overwrite": false,
+                "api_token": "<insert Recorded Future IPRisk API token>"
             }
         },
         "Reverse DNS": {
