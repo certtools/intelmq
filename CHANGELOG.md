@@ -9,10 +9,13 @@ CHANGELOG
 ### Core
 - `intelmq.lib.bot`:
   - `ParserBot.recover_line_json_stream`: Make `line` parameter optional, as it is not needed for this method.
+  - `Bot.argparser`: Added class variable `argparser` (of type `argparse.ArgumentParser`) for easy command line arguments parsing.
 - `intelmq.lib.upgrades`:
   - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559).
 - `intelmq.lib.exceptions`:
   - `PipelineError`: Remove unused code to format exceptions.
+- `intelmq.lib.utils`:
+  - `create_request_session_from_bot`: Changed bot argument to optional, uses defaults.conf as fallback, renamed to `create_request_session`
 
 ### Development
 
@@ -34,6 +37,13 @@ CHANGELOG
   - Speed improvements.
   - More output in debug logging mode.
   - Checks parameter length on initialization and in check method.
+- `intelmq.bots.experts.asn_lookup.expert`
+  - Added `--update-database` option. (PR#1524 by Filip Pokorný)
+- `intelmq.bots.experts.maxmind_geoip.expert`
+  - Added `--update-database` option. (PR#1524 by Filip Pokorný)
+  - Added `license_key` parameter. (PR#1524 by Filip Pokorný)
+- `intelmq.bots.experts.tor_nodes.expert`
+  - Added `--update-database` option. (PR#1524 by Filip Pokorný)
 
 #### Outputs
 
@@ -44,6 +54,8 @@ CHANGELOG
   - Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
 - Bots:
   - Enhanced documentation of RFC1918 Expert.
+  - Updated documentation for Maxmind GeoIP, ASN Lookup and
+    TOR Nodes experts to reflect new `--update-database` option.  (PR#1524 by Filip Pokorný)
 - Add n6 Integration documentation.
 
 ### Packaging
