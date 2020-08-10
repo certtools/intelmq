@@ -16,6 +16,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Blueliv](#blueliv)
 - [CERT.PL](#certpl)
 - [CINSscore](#cinsscore)
+- [CZ.NIC](#cznic)
 - [Calidog](#calidog)
 - [CleanMX](#cleanmx)
 - [CyberCrime Tracker](#cybercrime-tracker)
@@ -23,8 +24,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Danger Rulez](#danger-rulez)
 - [Dataplane](#dataplane)
 - [DynDNS](#dyndns)
+- [ESET](#eset)
 - [Fraunhofer](#fraunhofer)
-- [HPHosts](#hphosts)
 - [Have I Been Pwned](#have-i-been-pwned)
 - [Malc0de](#malc0de)
 - [Malware Domain List](#malware-domain-list)
@@ -39,13 +40,13 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [PrecisionSec](#precisionsec)
 - [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
+- [Strangereal Intel](#strangereal-intel)
 - [Sucuri](#sucuri)
 - [Surbl](#surbl)
 - [Taichung](#taichung)
 - [Team Cymru](#team-cymru)
 - [Threatminer](#threatminer)
 - [Turris](#turris)
-- [URLVir](#urlvir)
 - [University of Toulouse](#university-of-toulouse)
 - [VXVault](#vxvault)
 - [ViriBack](#viriback)
@@ -110,8 +111,8 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ## URLhaus
 
 * **Public:** yes
-* **Revision:** 2019-02-14
-* **Documentation:** https://urlhaus.abuse.ch/
+* **Revision:** 2020-07-07
+* **Documentation:** https://urlhaus.abuse.ch/feeds/
 * **Description:** URLhaus is a project from abuse.ch with the goal of sharing malicious URLs that are being used for malware distribution. URLhaus offers a country, ASN (AS number) and Top Level Domain (TLD) feed for network operators / Internet Service Providers (ISPs), Computer Emergency Response Teams (CERTs) and domain registries.
 
 ### Collector
@@ -127,8 +128,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.generic.parser_csv
 * **Configuration Parameters:**
-*  * `columns`: `time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc`
+*  * `columns`: `["time.source", "source.url", "status", "classification.type|__IGNORE__", "source.fqdn|__IGNORE__", "source.ip", "source.asn", "source.geolocation.cc"]`
 *  * `default_url_protocol`: `http://`
+*  * `delimeter`: `,`
 *  * `skip_header`: `False`
 *  * `type_translation`: `{"malware_download": "malware-distribution"}`
 
@@ -182,9 +184,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ## Cyberfeed Stream
 
 * **Public:** unknown
-* **Revision:** 2018-01-20
-* **Documentation:** https://www.anubisnetworks.com/
-* **Description:** AnubisNetworks Collector is the bot responsible to get AnubisNetworks Cyberfeed Stream.
+* **Revision:** 2020-06-15
+* **Documentation:** https://www.anubisnetworks.com/ https://www.bitsight.com/
+* **Description:** Fetches and parsers the Cyberfeed data stream.
 
 ### Collector
 
@@ -199,6 +201,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.anubisnetworks.parser
 * **Configuration Parameters:**
+*  * `use_malware_familiy_as_classification_identifier`: `True`
 
 
 # Autoshun
@@ -600,6 +603,30 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
+# CZ.NIC
+
+## HaaS
+
+* **Public:** yes
+* **Revision:** 2020-07-22
+* **Documentation:** https://haas.nic.cz/
+* **Description:** SSH attackers against HaaS (Honeypot as a Sevice) provided by CZ.NIC, z.s.p.o. The dump is published once a day.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `extract_files`: `True`
+*  * `http_url`: `https://haas.nic.cz/stats/export/{time[%Y/%m/%Y-%m-%d]}.json.gz`
+*  * `http_url_formatting`: `{'days': -1}`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.cznic.parser_haas
+* **Configuration Parameters:**
+
+
 # Calidog
 
 ## CertStream
@@ -695,7 +722,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['time.source', 'source.url', 'source.ip', 'malware.name', '__IGNORE__']`
+*  * `columns`: `["time.source", "source.url", "source.ip", "malware.name", "__IGNORE__"]`
 *  * `default_url_protocol`: `http://`
 *  * `skip_table_head`: `True`
 *  * `type`: `c2server`
@@ -907,6 +934,54 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
+# ESET
+
+## ETI Domains
+
+* **Public:** unknown
+* **Revision:** 2020-06-30
+* **Documentation:** https://www.eset.com/int/business/services/threat-intelligence/
+* **Description:** Domain data from ESET's TAXII API.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.eset.collector
+* **Configuration Parameters:**
+*  * `collection`: `ei.domains v2 (json)`
+*  * `endpoint`: `eti.eset.com`
+*  * `password`: `<password>`
+*  * `time_delta`: `3600`
+*  * `username`: `<username>`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.eset.parser
+* **Configuration Parameters:**
+
+
+## ETI URLs
+
+* **Public:** unknown
+* **Revision:** 2020-06-30
+* **Documentation:** https://www.eset.com/int/business/services/threat-intelligence/
+* **Description:** URL data from ESET's TAXII API.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.eset.collector
+* **Configuration Parameters:**
+*  * `collection`: `ei.urls (json)`
+*  * `endpoint`: `eti.eset.com`
+*  * `password`: `<password>`
+*  * `time_delta`: `3600`
+*  * `username`: `<username>`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.eset.parser
+* **Configuration Parameters:**
+
+
 # Fraunhofer
 
 ## DGA Archive
@@ -931,31 +1006,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Module:** intelmq.bots.parsers.fraunhofer.parser_dga
 * **Configuration Parameters:**
-
-
-# HPHosts
-
-## Hosts
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://hosts-file.net/
-* **Description:** hpHosts is a community managed and maintained hosts file that allows an additional layer of protection against access to ad, tracking and malicious websites.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://hosts-file.net/download/hosts.txt`
-*  * `name`: `Hosts`
-*  * `provider`: `HPHosts`
-*  * `rate_limit`: `3600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.hphosts.parser
-* **Configuration Parameters:**
-*  * `error_log_message`: `false`
 
 
 # Have I Been Pwned
@@ -1124,7 +1174,7 @@ server {
 
 * **Public:** unknown
 * **Revision:** 2018-01-20
-* **Documentation:** https://www.malwarepatrol.net/
+* **Documentation:** https://www.malwarepatrol.net/non-commercial/
 * **Description:** Malware block list with URLs
 
 ### Collector
@@ -1214,6 +1264,34 @@ server {
 ### Parser
 
 * **Module:** intelmq.bots.parsers.microsoft.parser_bingmurls
+* **Configuration Parameters:**
+
+
+## CTIP via Azure
+
+* **Public:** unknown
+* **Revision:** 2020-05-29
+* **Documentation:** https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
+* **Description:** Collects CTIP (Sinkhole data) files from a shared Azure Storage. The feed is available via Microsoft’s Government Security Program (GSP).
+* **Additional Information:** The cache is needed for memorizing which files have already been processed, the TTL should be higher than the oldest file available in the storage (currently the last three days are available). The connection string contains endpoint as well as authentication information.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.microsoft.collector_azure
+* **Configuration Parameters:**
+*  * `connection_string`: `{{your connection string}}`
+*  * `container_name`: `ctip-infected-summary`
+*  * `name`: `CTIP via Azure`
+*  * `provider`: `Microsoft`
+*  * `rate_limit`: `3600`
+*  * `redis_cache_db`: `5`
+*  * `redis_cache_host`: `127.0.0.1`
+*  * `redis_cache_port`: `6379`
+*  * `redis_cache_ttl`: `864000`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.microsoft.parser_ctip
 * **Configuration Parameters:**
 
 
@@ -1388,7 +1466,7 @@ server {
 
 * **Public:** unknown
 * **Revision:** 2018-01-20
-* **Documentation:** https://data.phishtank.com/
+* **Documentation:** https://www.phishtank.com/developer_info.php
 * **Description:** PhishTank is a collaborative clearing house for data and information about phishing on the Internet.
 
 ### Collector
@@ -1428,7 +1506,7 @@ server {
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['source.ip|source.url', 'time.source']`
+*  * `columns`: `["source.ip|source.url", "time.source"]`
 *  * `default_url_protocol`: `http://`
 *  * `skip_table_head`: `True`
 *  * `type`: `malware`
@@ -1613,6 +1691,31 @@ server {
 ### Parser
 
 * **Module:** intelmq.bots.parsers.spamhaus.parser_drop
+* **Configuration Parameters:**
+
+
+# Strangereal Intel
+
+## DailyIOC
+
+* **Public:** yes
+* **Revision:** 2019-12-05
+* **Documentation:** https://github.com/StrangerealIntel/DailyIOC
+* **Description:** Daily IOC from tweets and articles
+* **Additional Information:** collector's `extra_fields` parameter may be any of fields from the github [content API response](https://developer.github.com/v3/repos/contents/)
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.github_api.collector_github_contents_api
+* **Configuration Parameters:**
+*  * `basic_auth_password`: `PASSWORD`
+*  * `basic_auth_username`: `USERNAME`
+*  * `regex`: `.*.json`
+*  * `repository`: `StrangerealIntel/DailyIOC`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.github_feed
 * **Configuration Parameters:**
 
 
@@ -1810,52 +1913,6 @@ server {
 * **Configuration Parameters:**
 
 
-# URLVir
-
-## Hosts
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.urlvir.com/
-* **Description:** This feed provides FQDN's or IP addresses for Active Malicious Hosts.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.urlvir.com/export-hosts/`
-*  * `name`: `Hosts`
-*  * `provider`: `URLVir`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.urlvir.parser
-* **Configuration Parameters:**
-
-
-## IPs
-
-* **Public:** yes
-* **Revision:** 2018-01-20
-* **Documentation:** http://www.urlvir.com/
-* **Description:** This feed provides IP addresses hosting Malware.
-
-### Collector
-
-* **Module:** intelmq.bots.collectors.http.collector_http
-* **Configuration Parameters:**
-*  * `http_url`: `http://www.urlvir.com/export-ip-addresses/`
-*  * `name`: `IPs`
-*  * `provider`: `URLVir`
-*  * `rate_limit`: `129600`
-
-### Parser
-
-* **Module:** intelmq.bots.parsers.urlvir.parser
-* **Configuration Parameters:**
-
-
 # University of Toulouse
 
 ## Blacklist
@@ -1931,7 +1988,7 @@ server {
 
 * **Module:** intelmq.bots.parsers.html_table.parser
 * **Configuration Parameters:**
-*  * `columns`: `['malware.name', 'source.url', 'source.ip', 'time.source']`
+*  * `columns`: `["malware.name", "source.url", "source.ip", "time.source"]`
 *  * `html_parser`: `lxml`
 *  * `time_format`: `from_format_midnight|%d-%m-%Y`
 *  * `type`: `malware`

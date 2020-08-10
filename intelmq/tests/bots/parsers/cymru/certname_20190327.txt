@@ -13,6 +13,7 @@ phishing|172.16.0.21|64496|2019-03-20 13:03:18|http://www.example.com/;|Example 
 proxy|172.16.0.21|64496|2019-03-25 16:00:00|proxy_type: http-34320;|Example AS Name, AT
 proxy|172.16.0.21|64496|2019-03-25 10:38:00|socks4-61039;|Example AS Name, AT
 openresolvers|172.16.0.21|64496|2019-03-25 06:29:38||Example AS Name, AT
+openresolver|172.16.0.21|64496|2020-06-08 18:28:35||Example AS Name, AT
 proxy|172.16.0.21|64496|2019-09-11 08:05:00|proxy_type: httppost;|Example AS Name, AT
 bot|172.16.0.21|64496|2019-09-11 16:39:57|srcport 61458 mwtype Conficker dstaddr 172.16.0.22|Example AS Name, AT
 bot|172.16.0.21|64496|2019-09-11 00:31:30|family: azorult;dest_addr: 172.16.0.22; dest_port: 80;port: 15390;protocol: 6;|Example AS Name, AT
@@ -28,3 +29,4 @@ spam|172.16.0.21|64496|2019-10-02 23:00:17||Example AS Name, AT
 phishing|172.16.0.21|64496|2019-10-23 12:46:18||Example AS Name, AT
 darknet|172.16.0.21|64496|2020-01-10 09:17:17|destination_port_numbers: 0;protocol: 11;|Example AS Name, AT
 conficker|172.16.0.21|64496|2020-05-08 09:13:34|srcport: 1997; destaddr: 172.16.0.22;|Example AS Name, AT
+scanner|172.16.0.21|64496|2020-07-09 03:40:15|username: pm;|Example AS Name, AT

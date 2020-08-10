@@ -14,6 +14,9 @@ with open(os.path.join(os.path.dirname(__file__), 'example_report3.json')) as ha
     EXAMPLE3_RAW = handle.read()
 with open(os.path.join(os.path.dirname(__file__), 'example_report_dns.json')) as handle:
     EXAMPLE_DNS_RAW = handle.read()
+with open(os.path.join(os.path.dirname(__file__), 'example_report_ignore.json')) as handle:
+    EXAMPLE_IGNORE_RAW = handle.read()
+
 
 EXAMPLE_REPORT = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a424b2980ca",
                   "feed.accuracy": 100.0,
@@ -22,7 +25,8 @@ EXAMPLE_REPORT = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a4
                   "raw": utils.base64_encode(EXAMPLE_RAW),
                   "time.observation": "2016-04-19T23:16:08+00:00"
                   }
-EXAMPLE_EVENT  = {"classification.type": "malware",
+EXAMPLE_EVENT  = {"classification.taxonomy": "malicious code",
+                  "classification.type": "malware",
                   "destination.port": 80,
                   "feed.accuracy": 100.0,
                   "malware.name": "nivdort",
@@ -57,7 +61,8 @@ EXAMPLE_REPORT2 = {"feed.name": "AnubisNetworks",
                    "time.observation":
                    "2016-04-19T23:16:10+00:00"
                    }
-EXAMPLE_EVENT2  = {"feed.name": "AnubisNetworks",
+EXAMPLE_EVENT2  = {"classification.taxonomy": "malicious code",
+                   "feed.name": "AnubisNetworks",
                    "malware.name": "spyapp",
                    "destination.fqdn": "example.net",
                    "source.ip": "190.124.67.211",
@@ -81,7 +86,8 @@ EXAMPLE_REPORT3 = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a
                    "__type": "Report",
                    "time.observation": "2016-04-19T23:16:10+00:00"
                    }
-EXAMPLE_EVENT3  = {"malware.name": "malwname",
+EXAMPLE_EVENT3  = {"classification.taxonomy": "malicious code",
+                   "malware.name": "malwname",
                    "source.ip": "203.0.113.2",
                    "source.port": 59645,
                    "__type": "Event",
@@ -93,13 +99,12 @@ EXAMPLE_EVENT3  = {"malware.name": "malwname",
                    "raw": EXAMPLE_REPORT3['raw'],
                    "classification.type": "malware",
                    "event_description.text": "Sinkhole attempted connection",
-                   "extra.metadata": {
-                       "flowbits": [
+                   "extra.metadata.flowbits": [
                            "_mt_s",
                            "_mt_sa",
                            "_mt_a",
                            "_mt_p"
-                       ], },
+                   ],
                    "protocol.application": "http",
                    "extra.malware.severity": 2,
                    "extra.malware.categories": [
@@ -180,7 +185,8 @@ EXAMPLE_REPORT_DNS = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29
                       "__type": "Report",
                       "time.observation": "2016-04-19T23:16:10+00:00"
                       }
-EXAMPLE_EVENT_DNS  = {"malware.name": "malware name dns",
+EXAMPLE_EVENT_DNS  = {"classification.taxonomy": "malicious code",
+                      "malware.name": "malware name dns",
                       "source.ip": "203.0.113.2",
                       "source.port": 11138,
                       "__type": "Event",
@@ -215,6 +221,14 @@ EXAMPLE_EVENT_DNS  = {"malware.name": "malware name dns",
                       "source.as_name": "Example AS Name",
                       'extra.dns_query_type': 'A',
                       }
+EMPTY_REPORT = EXAMPLE_REPORT.copy()
+EMPTY_REPORT['raw'] = 'Cg=='
+
+EXAMPLE_REPORT_IGNORE = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a424b2980ca",
+                         "raw": utils.base64_encode(EXAMPLE_IGNORE_RAW),
+                         "__type": "Report",
+                         "time.observation": "2016-04-19T23:16:10+00:00"
+                         }
 
 
 class TestAnubisNetworksParserBot(test.BotTestCase, unittest.TestCase):
@@ -246,6 +260,19 @@ class TestAnubisNetworksParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EXAMPLE_REPORT_DNS
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT_DNS)
+
+    def test_empty(self):
+        """ Test empty line as input """
+        self.input_message = EMPTY_REPORT
+        self.run_bot()
+        self.assertOutputQueueLen(0)
+
+    def test_ignore(self):
+        """ Test empty line as input """
+        self.input_message = EXAMPLE_REPORT_IGNORE
+        self.run_bot()
+        print(self.get_output_queue())
+        self.assertOutputQueueLen(0)
 
 
 if __name__ == '__main__':  # pragma: no cover

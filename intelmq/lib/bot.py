@@ -557,7 +557,7 @@ class Bot(object):
                 raise exceptions.ConfigurationError('pipeline', 'No destination pipeline given, '
                                                                 'but needed')
 
-            self.logger.debug("Sending message.")
+            self.logger.debug("Sending message to path %r.", path)
             self.__message_counter["since"] += 1
             self.__message_counter["path"][path] += 1
             if not self.__message_counter["start"]:
@@ -914,11 +914,20 @@ class ParserBot(Bot):
 
     def parse_json(self, report: libmessage.Report):
         """
-        A basic JSON parser
+        A basic JSON parser. Assumes a *list* of objects as input to be yield.
         """
         raw_report = utils.base64_decode(report.get("raw"))
         for line in json.loads(raw_report):
             yield line
+
+    def parse_json_stream(self, report: libmessage.Report):
+        """
+        A JSON Stream parses (one JSON data structure per line)
+        """
+        raw_report = utils.base64_decode(report.get("raw"))
+        for line in raw_report.splitlines():
+            self.current_line = line
+            yield json.loads(line)
 
     def parse(self, report: libmessage.Report):
         """
@@ -1056,7 +1065,22 @@ class ParserBot(Bot):
 
         Recovers a fully functional report with only the problematic pulse.
         """
-        return json.dumps(line)
+        return json.dumps([line])
+
+    def recover_line_json_stream(self, line=None) -> str:
+        """
+        recover_line for json streams, just returns the current line, unparsed.
+
+        Parameters
+        ----------
+        line : None, not required, only for compatibility with other recover_line methods
+
+        Returns
+        -------
+        str
+            unparsed JSON line.
+        """
+        return self.current_line
 
 
 class CollectorBot(Bot):
@@ -1087,12 +1111,6 @@ class CollectorBot(Bot):
     def __add_report_fields(self, report: libmessage.Report):
         if hasattr(self.parameters, 'name'):
             report.add("feed.name", self.parameters.name)
-        if hasattr(self.parameters, 'feed'):
-            warnings.warn("The parameter 'feed' is deprecated and will be "
-                          "removed in version 2.2. Use 'name' instead.",
-                          DeprecationWarning)
-            if "feed.name" not in report:
-                report.add("feed.name", self.parameters.feed)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
         if hasattr(self.parameters, 'documentation'):

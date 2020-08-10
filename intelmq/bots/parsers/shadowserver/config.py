@@ -1577,8 +1577,8 @@ open_ldap = {
     }
 }
 
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Blacklist
-blacklisted_ip = {
+# https://www.shadowserver.org/what-we-do/network-reporting/blocklist-report/
+blocklist = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -2204,10 +2204,106 @@ open_mqtt = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-ipp-report/
+open_ipp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-ipp' in constant_fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'ipp_version', validate_to_none),
+        ('extra.', 'cups_version', validate_to_none),
+        ('extra.', 'printer_uris', validate_to_none),
+        ('extra.', 'printer_name', validate_to_none),
+        ('extra.', 'printer_info', validate_to_none),
+        ('extra.', 'printer_more_info', validate_to_none),
+        ('extra.', 'printer_make_and_model', validate_to_none),
+        ('extra.', 'printer_firmware_name', validate_to_none),
+        ('extra.', 'printer_firmware_string_version', validate_to_none),
+        ('extra.', 'printer_firmware_version', validate_to_none),
+        ('extra.', 'printer_organization', validate_to_none),
+        ('extra.', 'printer_organization_unit', validate_to_none),
+        ('extra.', 'printer_uuid', validate_to_none),
+        ('extra.', 'printer_wifi_ssid', validate_to_none)
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'open-ipp',
+        'protocol.application': 'ipp',
+    }
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-coap-report/
+accessible_coap = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-coap' in constant_fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'response', validate_to_none)
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-coap',
+        'protocol.application': 'coap',
+    }
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-apple-remote-desktop-ard-report/
+accessible_ard = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        # ('classification.identifier', 'tag'),  # always 'ard' - set in constant fields
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('protocol.transport', 'protocol'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'machine_name', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-ard',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
     ('Accessible-AFP', 'scan_afp', accessible_afp),
+    ('Accessible-ARD', 'scan_ard', accessible_ard),
+    ('Accessible-CoAP', 'scan_coap', accessible_coap),
     ('Accessible-CWMP', 'scan_cwmp', accessible_cwmp),
     ('Accessible-Cisco-Smart-Install', 'cisco_smart_install', accessible_cisco_smart_install),
     ('Accessible-FTP', 'scan_ftp', accessible_ftp),
@@ -2220,7 +2316,8 @@ mapping = (
     ('Accessible-Ubiquiti-Discovery-Service', 'scan_ubiquiti', accessible_ubiquiti_discovery_service),
     ('Accessible-VNC', 'scan_vnc', accessible_vnc),
     ('Amplification-DDoS-Victim', 'ddos_amplification', amplification_ddos_victim),
-    ('Blacklisted-IP', 'blacklist', blacklisted_ip),
+    ('Blacklisted-IP', 'blacklist', blocklist),
+    ('Blocklist', 'blocklist', blocklist),
     ('Compromised-Website', 'compromised_website', compromised_website),
     ('DNS-Open-Resolvers', 'scan_dns', dns_open_resolvers),
     ('Darknet', 'darknet', darknet),
@@ -2236,6 +2333,7 @@ mapping = (
     ('Open-DB2-Discovery-Service', 'scan_db2', open_db2_discovery_service),
     ('Open-Elasticsearch', 'scan_elasticsearch', open_elasticsearch),
     ('Open-IPMI', 'scan_ipmi', open_ipmi),
+    ('Open-IPP', 'scan_ipp', open_ipp),
     ('Open-LDAP', 'scan_ldap', open_ldap),
     ('Open-LDAP-TCP', 'scan_ldap_tcp', open_ldap),
     ('Open-MQTT', 'scan_mqtt', open_mqtt),

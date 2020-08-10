@@ -32,10 +32,22 @@ INPUT_DOMAIN = {"__type": "Event",
 OUTPUT_DOMAIN = {"__type": "Event",
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
-INPUT_URL = {"__type": "Event",
+INPUT_URL1 = {"__type": "Event",
              "source.url": "http://sub.example.com/foo/bar",
              "time.observation": "2015-01-01T00:00:00+00:00",
              }
+INPUT_URL2 = {"__type": "Event",
+             "source.url": "http://192.168.0.1/foo/bar",
+             "time.observation": "2015-01-01T00:00:00+00:00",
+             }
+INPUT_ASN = {"__type": "Event",
+             "source.asn": 64496,
+             "time.observation": "2015-01-01T00:00:00+00:00",
+             }
+INPUT_DIFFERENT_DOMAIN = {"__type": "Event",
+                          "destination.fqdn": "fooexample.com",
+                              "time.observation": "2015-01-01T00:00:00+00:00",
+                }
 
 
 class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
@@ -47,12 +59,12 @@ class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = RFC1918ExpertBot
         cls.sysconfig = {'fields': 'destination.ip,source.ip,source.fqdn,'
-                                   'destination.fqdn,source.url',
-                         'policy': 'del,drop,drop,del,drop',
+                                   'destination.fqdn,source.url,source.url,source.asn',
+                         'policy': 'del,drop,drop,del,drop,drop,drop',
                          }
+        cls.default_input_message = INPUT1
 
     def test_del(self):
-        self.input_message = INPUT1
         self.run_bot()
         self.assertMessageEqual(0, OUTPUT1)
 
@@ -71,10 +83,30 @@ class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, OUTPUT_DOMAIN)
 
-    def test_drop_url(self):
-        self.input_message = INPUT_URL
+    def test_drop_url1(self):
+        self.input_message = INPUT_URL1
         self.run_bot()
         self.assertOutputQueueLen(0)
+
+    def test_drop_url2(self):
+        self.input_message = INPUT_URL2
+        self.run_bot()
+        self.assertOutputQueueLen(0)
+
+    def test_drop_asn(self):
+        self.input_message = INPUT_ASN
+        self.run_bot()
+        self.assertOutputQueueLen(0)
+
+    def test_empty_parameters(self):
+        self.run_bot(parameters={"fields": "",
+                                 "policy": ""})
+
+    def test_different_domain(self):
+        """ Check that fooexample.com is not falsely recognized """
+        self.input_message = INPUT_DIFFERENT_DOMAIN
+        self.run_bot()
+        self.assertMessageEqual(0, INPUT_DIFFERENT_DOMAIN)
 
 
 if __name__ == '__main__':  # pragma: no cover

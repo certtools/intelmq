@@ -21,6 +21,10 @@ MAPPING_STATIC = {'bot': {
                       'classification.identifier': 'dns-open-resolver',
                       'protocol.application': 'dns',
                       },
+    'openresolver': {'classification.type': 'vulnerable service',
+                     'classification.identifier': 'dns-open-resolver',
+                     'protocol.application': 'dns',
+                     },
     'scanner': {'classification.type': 'scanner',
                 'classification.identifier': 'scanner'},
     'spam': {'classification.type': 'spam',
@@ -312,6 +316,8 @@ class CymruCAPProgramParserBot(ParserBot):
                     event['protocol.application'] = value
             elif key in ('port', 'srcport'):
                 event['source.port'] = value
+            elif key == 'username':
+                event['source.account'] = value
             else:
                 raise ValueError('Unknown key %r in comment of category %r. Please report this.' % (key, category))
         for destination_port in destination_ports:

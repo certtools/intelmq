@@ -179,7 +179,13 @@ def main():
 
     parser.add_argument('botid', metavar='botid', nargs='?',
                         default=None, help='botid to inspect dumps of')
+    parser.add_argument('--truncate', '-t', type=int,
+                        default=1000,
+                        help='Truncate raw-data with more characters than given. '
+                        '0 for no truncating. Default: 1000.')
     args = parser.parse_args()
+    if args.truncate < 1:
+        args.truncate = None
 
     # Try to get log_level from defaults_configuration, else use default
     try:
@@ -375,15 +381,15 @@ def main():
                     print('=' * 100, '\nShowing id {} {}\n'.format(count, key),
                           '-' * 50)
                     if value.get('message_type') == 'base64':
-                        if len(value['message']) > 1000:
-                            value['message'] = value['message'][:1000] + '...[truncated]'
+                        if args.truncate and len(value['message']) > args.truncate:
+                            value['message'] = value['message'][:args.truncate] + '...[truncated]'
                     else:
                         if isinstance(value['message'], (bytes, str)):
                             value['message'] = json.loads(value['message'])
-                            if ('raw' in value['message'] and
-                                    len(value['message']['raw']) > 1000):
+                            if (args.truncate and 'raw' in value['message'] and
+                                    len(value['message']['raw']) > args.truncate):
                                 value['message']['raw'] = value['message'][
-                                    'raw'][:1000] + '...[truncated]'
+                                    'raw'][:args.truncate] + '...[truncated]'
                     if type(value['traceback']) is not list:
                         value['traceback'] = value['traceback'].splitlines()
                     pprint.pprint(value)
