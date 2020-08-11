@@ -1107,6 +1107,30 @@
                 "with_type": true
             }
         },
+        "Request Tracker": {
+            "description": "Request Tracker ticket creation bot. Create linked Investigation queue ticket if needed, according to the RTIR flow",
+            "module": "intelmq.bots.outputs.rt.output",
+            "parameters": {
+                "rt_uri": "http://localhost/REST/1.0",
+                "verify_cert": true,
+                "rt_user": "apiuser",
+                "rt_password": "<password>",
+                "queue": "Incidents",
+                "description_attr": "event_description.text",
+                "CF_mapping": {
+                    "event_description.text": "Description",
+                    "source.ip": "IP",
+                    "classification.type": "Incident Type",
+                    "classification.taxonomy": "Classification",
+                    "extra.incident.severity": "Incident Severity",
+                    "extra.incident.importance": "Importance",
+                    "extra.organization.name": "Customer"
+                },
+                "create_investigation": false,
+                "investigation_fields": "time.source,time.observation,source.ip,source.port,source.fqdn,source.url,classification.taxonomy,classification.type,classification.identifier,event_description.url,event_description.text,malware.name,protocol.application,protocol.transport",
+                "final_status": "resolved"
+            }
+        },
         "SMTP": {
             "description": "Send single events as CSV attachment in dynamically formatted e-mails via SMTP.",
             "module": "intelmq.bots.outputs.smtp.output",
