@@ -22,13 +22,28 @@ If something is missing from the list, if something is not important at all or v
 We are happy to receive your feedback.
 
 Aaron Kaplan  - IntelMQ 3.0 Architecture.
-kaplan@cert.at
+kaplan-atsign-cert.at (work) / aaron-atsign-lo-res.org (priv)
 
 
 
-# Overall architecture
+# Overall architecture & the soul of IntelMQ 
 
-The overall architecture of IntelMQ 3.0 will remain rather similar.
+The overall architecture of IntelMQ 3.0 will remain rather similar to version 2.0. But we plan to have a few important changes, which will underline the "soul" of IntelMQ.
+
+## The soul of IntelMQ
+
+IntelMQ is good for a specific purpose. It is:
+
+ * An **[ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) (Extract Transform Load) tool** for
+ * **[IoCs](https://en.wikipedia.org/wiki/Indicator_of_compromise)** and **IT security relevant events** (i.e. IT security log lines which contain a timestamp, IPs or domain names and context information)
+ * a set of tools which are composable and follow the **[Unix Philosophy](https://en.wikipedia.org/wiki/Unix_philosophy)**
+ 
+ ## Scope
+ XXX
+ 
+ ## Non-Scope
+ 
+ XXX
 
 It will still keep the focus on:
   * keeping things simple (KISS) and pluggable: our most important principle
