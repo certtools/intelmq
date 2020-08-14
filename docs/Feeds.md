@@ -627,6 +627,29 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 
 
+## Proki
+
+* **Public:** unknown
+* **Revision:** 2020-08-17
+* **Documentation:** https://csirt.cz/en/proki/
+* **Description:** Aggregation of various sources on malicious IP addresses (malware spreaders or C&C servers).
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://proki.csirt.cz/api/1/__APIKEY__/{time[%Y/%m/%d]}`
+*  * `http_url_formatting`: `{'days': -1}`
+*  * `name`: `Proki`
+*  * `provider`: `CZ.NIC`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intlmq.bots.parsers.cznic.parser_proki
+* **Configuration Parameters:**
+
+
 # Calidog
 
 ## CertStream
