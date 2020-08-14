@@ -351,6 +351,9 @@ def main():
                             if runtime[pipeline_pipes[queue_name]]['group'] == 'Parser' and json.loads(msg)['__type'] == 'Event':
                                 print('Event converted to Report automatically.')
                                 msg = message.Report(message.MessageFactory.unserialize(msg)).serialize()
+                        else:
+                            print(red("The given queue '{}' is not configured. Please retry with a valid queue.".format(queue_name)))
+                            break
                         try:
                             pipe.set_queues(queue_name, 'destination')
                             pipe.connect()
