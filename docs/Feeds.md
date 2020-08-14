@@ -14,6 +14,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Bambenek](#bambenek)
 - [Blocklist.de](#blocklistde)
 - [Blueliv](#blueliv)
+- [CERT-Bund](#cert-bund)
 - [CERT.PL](#certpl)
 - [CINSscore](#cinsscore)
 - [CZ.NIC](#cznic)
@@ -547,6 +548,37 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ### Parser
 
 * **Module:** intelmq.bots.parsers.blueliv.parser_crimeserver
+* **Configuration Parameters:**
+
+
+# CERT-Bund
+
+## Via IMAP
+
+* **Public:** unknown
+* **Revision:** 2020-08-17
+* **Description:** CERT-Bund sends reports for the Avalanche botnet via e-mail.
+* **Additional Information:** Attachments are CSV files.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.mail.collector_mail_attach
+* **Configuration Parameters:**
+*  * `attach_regex`: `events.csv`
+*  * `extract_files`: `True`
+*  * `folder`: `INBOX`
+*  * `mail_host`: `__HOST__`
+*  * `mail_password`: `__PASSWORD__`
+*  * `mail_ssl`: `True`
+*  * `mail_user`: `__USERNAME__`
+*  * `name`: `Via IMAP`
+*  * `provider`: `CERT-Bund`
+*  * `rate_limit`: `86400`
+*  * `subject_regex`: `^\[CB-Report`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.cert_bund.parser_avalanche
 * **Configuration Parameters:**
 
 

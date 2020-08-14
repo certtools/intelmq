@@ -1008,6 +1008,31 @@ providers:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
       public: yes
+  CERT-Bund:
+    Via IMAP:
+      description: CERT-Bund sends reports for the Avalanche botnet via e-mail.
+      additional_information: Attachments are CSV files.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.mail.collector_mail_attach
+          parameters:
+            mail_host: __HOST__
+            mail_password: __PASSWORD__
+            mail_ssl: true
+            mail_user: __USERNAME__
+            attach_regex: events.csv
+            extract_files: true
+            rate_limit: 86400
+            subject_regex: "^\\[CB-Report"
+            folder: INBOX
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.cert_bund.parser_avalanche
+          parameters:
+      revision: 2020-08-17
+      documentation:
+      public: no
   CERT.PL:
     N6 Stomp Stream:
       description: N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface.

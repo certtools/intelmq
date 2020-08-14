@@ -394,6 +394,11 @@
             "module": "intelmq.bots.parsers.blueliv.parser_crimeserver",
             "parameters": {}
         },
+        "CERT-Bund Avalanche": {
+            "description": "Parse CSV data of the CERT-Bund feed for Avalanche botnet.",
+            "module": "intelmq.bots.parsers.cert_bund.parser_avalanche",
+            "parameters": {}
+        },
         "CERT-EU CSV": {
             "description": "Parse CSV data of the CERT-EU feed.",
             "module": "intelmq.bots.parsers.cert_eu.parser_csv",
