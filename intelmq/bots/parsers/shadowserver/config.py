@@ -2298,6 +2298,31 @@ accessible_ard = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-radmin-report/
+accessible_radmin = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn', convert_int),
+        # ('classification.identifier', 'tag'),  # always 'accessible-radmin' - set in constant_fields
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname', validate_to_none),
+        ('protocol.transport', 'protocol'),
+        ('extra.', 'naics', convert_int),
+        ('extra.', 'version', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-radmin',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2309,6 +2334,7 @@ mapping = (
     ('Accessible-FTP', 'scan_ftp', accessible_ftp),
     ('Accessible-HTTP', 'scan_http', accessible_http),
     ('Accessible-Hadoop', 'scan_hadoop', accessible_hadoop),
+    ('Accessible-Radmin', 'scan_radmin', accessible_radmin),
     ('Accessible-RDP', 'scan_rdp', accessible_rdp),
     ('Accessible-Rsync', 'scan_rsync', accessible_rsync),
     ('Accessible-SMB', 'scan_smb', accessible_smb),
