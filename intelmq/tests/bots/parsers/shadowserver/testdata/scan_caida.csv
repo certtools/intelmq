@@ -1,0 +1,6 @@
+"timestamp","ip","asn","geo","region","city","hostname","type","infection","naics","sic","sector","family","tag","public_source","network","version","type","routedspoof","session","nat"
+"2019-08-27 00:06:24","137.97.71.0",55836,"IN","KERALA","THRISSUR",,"Session","ip-spoofer",517312,0,"Information Technology",,,"caida","137.97.71.0/24","ipv4","Session","received",739969,"True"
+"2019-08-27 01:19:47","103.95.33.0",136749,"MY","SELANGOR","SHAH ALAM",,"Session","ip-spoofer",541990,0,"Communications",,,"caida","103.95.33.0/24","ipv4","Session","received",739992,"True"
+"2019-08-27 02:32:12","115.78.9.0",7552,"VN","HO CHI MINH","THANH PHO HO CHI MINH",,"Session","ip-spoofer",517312,0,"Communications",,,"caida","115.78.9.0/24","ipv4","Session","rewritten",740024,"True"
+"2019-08-27 03:16:08","24.237.163.0",8047,"US","ALASKA","BETHEL","0-163-237-24.gci.net","Session","ip-spoofer",517919,737415,,,,"caida","24.237.163.0/24","ipv4","Session","received",740037,"False"
+"2019-08-27 04:29:49","122.255.35.0",18001,,,,,"Session","ip-spoofer",,,,,,"caida","122.255.35.0/24","ipv4","Session","received",740057,"False"
