@@ -22,15 +22,19 @@ class BruteForceBlockerParserBot(Bot):
             event = self.new_event(report)
 
             match = re.search(REGEX_IP, row)
+            ip = None
             if match:
                 ip = match.group()
 
             match = re.search(REGEX_TIMESTAMP, row)
+            timestamp = None
             if match:
                 timestamp = match.group(1) + " UTC"
 
             if not timestamp:
                 raise ValueError('No timestamp found.')
+            elif not ip:
+                raise ValueError('No ip found.')
 
             event.add('time.source', timestamp)
             event.add('source.ip', ip)
