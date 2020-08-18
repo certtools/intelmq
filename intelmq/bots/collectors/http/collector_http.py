@@ -16,6 +16,11 @@ http_username, http_password: string
 http_proxy, https_proxy: string
 http_timeout_sec: tuple of two floats or float
 http_timeout_max_tries: an integer depicting how often a connection attempt is retried
+use_gpg: whether to check file signatures
+    default: False
+gpg_suffix: string added after constructed http_url
+    default: false
+gpg_keyring: none (default, user keyring) or string (path to keyring file)
 """
 from datetime import datetime, timedelta
 
@@ -27,6 +32,12 @@ try:
     import requests
 except ImportError:
     requests = None
+
+try:
+    import gnupg
+    import tempfile
+except ImportError:
+    gnupg = None
 
 
 class Time(object):
@@ -75,6 +86,30 @@ class HTTPCollectorBot(CollectorBot):
 
         self.logger.info("Report downloaded.")
 
+        # GPG verification
+        use_gpg = getattr(self.parameters, 'use_gpg', False)
+        if use_gpg:
+            if gnupg is None:
+                raise MissingDependencyError("gnupg")
+
+            result = self.verify_signature(data=resp._content)
+
+            if not result:
+                # Errors have been logged by the function.
+                return
+
+            if not result.valid:
+                self.logger.error(f"Signature for key {result.key_id} is not valid: {result.status}.")
+                raise ValueError(f"Signature for key {result.key_id} is not valid: {result.status}.")
+
+            if result.trust_level < 1:
+                self.logger.debug(f"Trust level not defined for key {result.key_id}.")
+            elif result.trust_level < 3:
+                self.logger.debug(f"Low trust level for key {result.key_id}: {result.trust_level}.")
+
+            self.logger.info(f"GPG check for {result.key_id}: {result.status}.")
+
+        # process reports
         raw_reports = []
         if not self.extract_files:
             try:
@@ -99,6 +134,40 @@ class HTTPCollectorBot(CollectorBot):
             if file_name:
                 report.add("extra.file_name", file_name)
             self.send_message(report)
+
+    def verify_signature(self, data: bytes):
+        """
+        Download signature file and verify the report data.
+        """
+
+        # get GPG parameters
+        suffix = getattr(self.parameters, "gpg_suffix", ".asc")
+        keyring = getattr(self.parameters, "gpg_keyring", None)
+
+        http_url = self.parameters.http_url + suffix
+
+        # download signature file
+        self.logger.info(f"Downloading report signature from {http_url}.")
+
+        resp = self.session.get(url=http_url)
+        if resp.status_code // 100 != 2:
+            raise ValueError(f"HTTP response status code for signature was {resp.status_code}.")
+
+        self.logger.info("Signature downloaded.")
+
+        # save signature to temporary file
+        sign = tempfile.NamedTemporaryFile()
+        sign.write(resp._content)
+        sign.seek(0)
+
+        # check signature
+        gpg = gnupg.GPG(keyring=keyring)
+        verified = gpg.verify_data(sign.name, data)
+
+        # close signature tempfile
+        sign.close()
+
+        return verified
 
 
 BOT = HTTPCollectorBot
