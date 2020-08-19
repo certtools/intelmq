@@ -99,15 +99,15 @@ class HTTPCollectorBot(CollectorBot):
                 return
 
             if not result.valid:
-                self.logger.error(f"Signature for key {result.key_id} is not valid: {result.status}.")
-                raise ValueError(f"Signature for key {result.key_id} is not valid: {result.status}.")
+                self.logger.error("Signature for key {0.key_id} is not valid: {0.status}.".format(result))
+                raise ValueError("Signature for key {0.key_id} is not valid: {0.status}.".format(result))
 
             if result.trust_level < 1:
-                self.logger.debug(f"Trust level not defined for key {result.key_id}.")
+                self.logger.debug("Trust level not defined for key {}.".format(result.key_id))
             elif result.trust_level < 3:
-                self.logger.debug(f"Low trust level for key {result.key_id}: {result.trust_level}.")
+                self.logger.debug("Low trust level for key {0.key_id}: {0.trust_level}.".format(result))
 
-            self.logger.info(f"GPG check for {result.key_id}: {result.status}.")
+            self.logger.info("GPG check for {0.key_id}: {0.status}.".format(result))
 
         # process reports
         raw_reports = []
@@ -147,11 +147,11 @@ class HTTPCollectorBot(CollectorBot):
         http_url = self.parameters.http_url + suffix
 
         # download signature file
-        self.logger.info(f"Downloading report signature from {http_url}.")
+        self.logger.info("Downloading report signature from {}.".format(http_url))
 
         resp = self.session.get(url=http_url)
         if resp.status_code // 100 != 2:
-            raise ValueError(f"HTTP response status code for signature was {resp.status_code}.")
+            raise ValueError("HTTP response status code for signature was {}.".format(resp.status_code))
 
         self.logger.info("Signature downloaded.")
 
