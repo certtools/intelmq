@@ -811,7 +811,9 @@
         "Gethostbyname": {
             "description": "Resolve the IP address for the FQDN.",
             "module": "intelmq.bots.experts.gethostbyname.expert",
-            "parameters": {}
+            "parameters": {
+                "fallback_to_url": true
+            }
         },
         "IDEA Converter": {
             "description": "Convert events into the IDEA format.",
