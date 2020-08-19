@@ -38,6 +38,7 @@ CHANGELOG
 
 ### Tests
 - `intelmq.tests.lib.test_pipeline`: Skip `TestAmqp.test_acknowledge` on Travis with Python 3.8.
+- `intelmq.tests.bots.outputs.elasticsearch.test_output`: Refresh index `intelmq` manually to fix random test failures (#1593, PR#1595 by Zach Stone).
 
 ### Tools
 - `intelmqctl check`:
