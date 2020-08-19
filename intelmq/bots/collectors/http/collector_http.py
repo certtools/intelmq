@@ -16,9 +16,9 @@ http_username, http_password: string
 http_proxy, https_proxy: string
 http_timeout_sec: tuple of two floats or float
 http_timeout_max_tries: an integer depicting how often a connection attempt is retried
-use_gpg: whether to check file signatures
+verify_gpg_signatures: whether to download and check file signatures
     default: False
-gpg_suffix: string added after constructed http_url
+gpg_signature_suffix: string added after constructed http_url
     default: false
 gpg_keyring: none (default, user keyring) or string (path to keyring file)
 """
@@ -87,7 +87,7 @@ class HTTPCollectorBot(CollectorBot):
         self.logger.info("Report downloaded.")
 
         # GPG verification
-        use_gpg = getattr(self.parameters, 'use_gpg', False)
+        use_gpg = getattr(self.parameters, 'verify_gpg_signatures', False)
         if use_gpg:
             if gnupg is None:
                 raise MissingDependencyError("gnupg")
@@ -99,15 +99,15 @@ class HTTPCollectorBot(CollectorBot):
                 return
 
             if not result.valid:
-                self.logger.error("Signature for key {0.key_id} is not valid: {0.status}.".format(result))
-                raise ValueError("Signature for key {0.key_id} is not valid: {0.status}.".format(result))
+                self.logger.error("Signature for key {0.key_id} is not valid: {0.status}. Report rejected.".format(result))
+                return
 
             if result.trust_level < 1:
                 self.logger.debug("Trust level not defined for key {}.".format(result.key_id))
             elif result.trust_level < 3:
                 self.logger.debug("Low trust level for key {0.key_id}: {0.trust_level}.".format(result))
 
-            self.logger.info("GPG check for {0.key_id}: {0.status}.".format(result))
+            self.logger.info("GPG signature checked with key {0.key_id}: {0.status}.".format(result))
 
         # process reports
         raw_reports = []
@@ -141,24 +141,24 @@ class HTTPCollectorBot(CollectorBot):
         """
 
         # get GPG parameters
-        suffix = getattr(self.parameters, "gpg_suffix", ".asc")
+        suffix = getattr(self.parameters, "gpg_signature_suffix", ".asc")
         keyring = getattr(self.parameters, "gpg_keyring", None)
 
         http_url = self.parameters.http_url + suffix
 
         # download signature file
-        self.logger.info("Downloading report signature from {}.".format(http_url))
+        self.logger.info("Downloading GPG signature from {}.".format(http_url))
 
         resp = self.session.get(url=http_url)
         if resp.status_code // 100 != 2:
-            raise ValueError("HTTP response status code for signature was {}.".format(resp.status_code))
+            raise ValueError("Could not download GPG signature for report: {}.".format(resp.status_code))
 
-        self.logger.info("Signature downloaded.")
+        self.logger.info("GPG signature downloaded.")
 
         # save signature to temporary file
         sign = tempfile.NamedTemporaryFile()
         sign.write(resp._content)
-        sign.seek(0)
+        sign.flush()
 
         # check signature
         gpg = gnupg.GPG(keyring=keyring)

@@ -27,11 +27,11 @@ install:
   - set -e
   - if [[ -v requirements ]]; then sudo apt-get install polipo lighttpd; fi
   - if [[ $mode == debian ]]; then sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt fakeroot dh-systemd safe-rm; pip3 install requests; pip3 install redis; pip3 install dnspython; pip3 install psutil; pip3 install python-dateutil; pip3 install termstyle; pip3 install pytz; pip3 install typing; fi
-  - if [[ $requirements == true ]]; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
-  - if [[ -v requirements ]]; then pip install Cerberus!=1.3 codecov pyyaml requests_mock; fi
-  - if [[ $mode == codestyle ]]; then pip install pycodestyle; fi
+  - if [[ $requirements == true ]]; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip3 install -r $file; done; fi
+  - if [[ -v requirements ]]; then pip3 install Cerberus!=1.3 codecov pyyaml requests_mock; fi
+  - if [[ $mode == codestyle ]]; then pip3 install pycodestyle; fi
   - if [[ -v requirements ]]; then sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers; fi
-  - if [[ -v requirements ]]; then sudo pip install .; fi
+  - if [[ -v requirements ]]; then sudo pip3 install .; fi
   - if [[ -v requirements ]]; then sudo intelmqsetup --skip-ownership; fi
 before_script:
   - if [[ $requirements == true ]] ; then psql -c "CREATE USER intelmq WITH SUPERUSER" -U postgres; fi
@@ -50,6 +50,7 @@ before_script:
   - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$debversion.debian.tar.gz; fi
   - if [[ $mode == debian ]]; then popd; fi
   - if [[ -v requirements ]]; then sudo cp intelmq/tests/assets/* /var/www/html/ && sudo touch /var/www/html/$(date +%Y).txt; fi
+  - if [[ -v requirements ]]; then gpg --import intelmq/tests/assets/key-public.pgp; fi
   - if [[ $requirements == true ]]; then sudo bash -c 'echo "[rabbitmq_management]." > /etc/rabbitmq/enabled_plugins' && sudo systemctl restart rabbitmq-server; fi
 script:
   - if [[ $requirements == true ]]; then TZ=utc INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; find contrib/ -name "test*.py" -exec nosetests {} \+; elif [[ $requirements == false ]]; then INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
