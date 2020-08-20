@@ -553,12 +553,12 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 # CERT-Bund
 
-## Via IMAP
+## Malware feeds
 
 * **Public:** unknown
-* **Revision:** 2020-08-17
-* **Description:** CERT-Bund sends reports for the Avalanche botnet via e-mail.
-* **Additional Information:** Attachments are CSV files.
+* **Revision:** 2020-08-20
+* **Description:** CERT-Bund sends reports for the malware-infected hosts.
+* **Additional Information:** Traffic from malware related hosts contacting command-and-control servers is caught and sent to national CERT teams. There are two e-mail feeds with identical CSV structure -- one reports on general malware infections, the other on the Avalanche botnet.
 
 ### Collector
 
@@ -571,15 +571,21 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 *  * `mail_password`: `__PASSWORD__`
 *  * `mail_ssl`: `True`
 *  * `mail_user`: `__USERNAME__`
-*  * `name`: `Via IMAP`
+*  * `name`: `Malware feeds`
 *  * `provider`: `CERT-Bund`
 *  * `rate_limit`: `86400`
 *  * `subject_regex`: `^\[CB-Report`
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.cert_bund.parser_avalanche
+* **Module:** intelmq.bots.parsers.generic.parser_csv
 * **Configuration Parameters:**
+*  * `columns`: `["source.asn", "source.ip", "time.source", "classification.type", "malware.name", "source.port|__IGNORE__", "destination.ip|__IGNORE__", "destination.port|__IGNORE__", "destination.fqdn|__IGNORE__", "protocol.transport"]`
+*  * `default_url_protocol`: `http://`
+*  * `delimeter`: `,`
+*  * `skip_header`: `True`
+*  * `time_format`: `from_format|%Y-%m-%d %H:%M:%S`
+*  * `type`: `malware`
 
 
 # CERT.PL

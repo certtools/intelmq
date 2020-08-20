@@ -1009,9 +1009,12 @@ providers:
       documentation: http://www.blocklist.de/en/export.html
       public: yes
   CERT-Bund:
-    Via IMAP:
-      description: CERT-Bund sends reports for the Avalanche botnet via e-mail.
-      additional_information: Attachments are CSV files.
+    Malware feeds:
+      description: CERT-Bund sends reports for the malware-infected hosts.
+      additional_information: Traffic from malware related hosts contacting
+        command-and-control servers is caught and sent to national CERT teams.
+        There are two e-mail feeds with identical CSV structure -- one reports on
+        general malware infections, the other on the Avalanche botnet.
       bots:
         collector:
           module: intelmq.bots.collectors.mail.collector_mail_attach
@@ -1028,9 +1031,25 @@ providers:
             name: __FEED__
             provider: __PROVIDER__
         parser:
-          module: intelmq.bots.parsers.cert_bund.parser_avalanche
+          module: intelmq.bots.parsers.generic.parser_csv
           parameters:
-      revision: 2020-08-17
+            skip_header: true
+            default_url_protocol: http://
+            time_format: from_format|%Y-%m-%d %H:%M:%S
+            delimeter: ","
+            columns:
+              - source.asn
+              - source.ip
+              - time.source
+              - classification.type
+              - malware.name
+              - source.port|__IGNORE__
+              - destination.ip|__IGNORE__
+              - destination.port|__IGNORE__
+              - destination.fqdn|__IGNORE__
+              - protocol.transport
+            type: malware
+      revision: 2020-08-20
       documentation:
       public: no
   CERT.PL:
