@@ -23,7 +23,7 @@ EXAMPLE_EVENT = {
     "destination.port": 80,
     "source.asn": 64501,
     "destination.geolocation.cc": "ZZ",
-    "feed.name": "spamhaus-cert",
+    "extra.original_feed_name": "spamhaus-cert",
     "destination.abuse_contact": "contact@example.com",
     "destination.geolocation.latitude": 0.000,
     "classification.type": "infected-system",
