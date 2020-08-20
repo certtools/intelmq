@@ -1042,31 +1042,16 @@ class ParserBot(Bot):
         tempdata = '\r\n'.join(self.tempdata) + '\r\n' if self.tempdata else ''
         return tempdata + out.getvalue()
 
-    def recover_line_csv_dict(self, line: str, strip: bool = True) -> str:
+    def recover_line_csv_dict(self, line: str):
         """
         Converts dictionaries to csv. self.csv_fieldnames must be list of fields.
-
-        Parameters
-        ----------
-        line: The currently processed line which should be transformed
-            back into it's original appearance.
-        strip: Whether to strip the result from whitespace (most likely
-            trailing newlines).
-
-        Returns
-        -------
-        str
-            unparsed CSV header and currently processed line
         """
         out = io.StringIO()
         writer = csv.DictWriter(out, self.csv_fieldnames, **self.csv_params)
         writer.writeheader()
         out.write(self.current_line)
 
-        if strip:
-            return out.getvalue().strip()
-        else:
-            return out.getvalue()
+        return out.getvalue().strip()
 
     def recover_line_json(self, line: dict):
         """
