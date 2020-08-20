@@ -20,7 +20,10 @@ class CZNICProkiParserBot(ParserBot):
 
         # json keys map 1:1 to harmonization fields
         for field in line:
-            event.add(field, line.get(field))
+            if field == "feed.name":
+                event.add("extra.original_feed_name", line.get(field))
+            else:
+                event.add(field, line.get(field))
         event.add("raw", self.recover_line(line))
 
         yield event

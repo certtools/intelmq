@@ -1634,14 +1634,14 @@ providers:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://proki.csirt.cz/api/1/__APIKEY__/{time[%Y/%m/%d]}
+            http_url: https://proki.csirt.cz/api/1/__APIKEY__/data/day/{time[%Y/%m/%d]}
             http_url_formatting:
               days: -1
             rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
         parser:
-          module: intlmq.bots.parsers.cznic.parser_proki
+          module: intelmq.bots.parsers.cznic.parser_proki
           parameters:
       revision: 2020-08-17
       documentation: https://csirt.cz/en/proki/
