@@ -13,10 +13,11 @@ class CZNICProkiParserBot(ParserBot):
         raw_report = utils.base64_decode(report.get("raw"))
         report = json.loads(raw_report)
 
-        if "data" not in report or not len(report.get("data")):
-            return
+        if isinstance(report, dict) and "data" in report:
+            # extract event list from recieved JSON
+            report = report.get("data")
 
-        for line in report.get("data"):
+        for line in report:
             yield line
 
     def parse_line(self, line, report):
