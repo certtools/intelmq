@@ -32,7 +32,7 @@ EXAMPLE_EVENT = {
     "source.ip": "192.0.3.1",
     "source.geolocation.latitude": 0.000,
     "protocol.transport": "tcp",
-    "time.observation": "2020-08-12T14:42:42+00:00",
+    "extra.original_time_observation": "2020-08-12T14:42:42+00:00",
     "extra.source.local_port": 18392,
     "source.network": "192.0.3.0/24",
     "destination.ip": "192.0.2.1",
