@@ -36,6 +36,7 @@ The tuples can be of following format:
   extra in this case, the resulting name is `extra.[shadowkey]`. The
   `conversion_function` is optional. Logically equivalent to:
   `event[extra.`*intelmqkey*`] = conversion_function(row[`*shadowkey*`)]`.
+- `(False, 'shadowkey')`, the column will be ignored.
 
 Mappings are "straight forward" each mapping is a dict
 of at least three keys:
@@ -2345,7 +2346,7 @@ caida = {
         # FIXME Is is mappable to some classification.* field? Not included in example data.
         ('extra.', 'family', validate_to_none),
         ('source.network', 'network', validate_to_none),
-        ('extra.', 'version', validate_to_none),
+        (False, 'version', validate_to_none),  # we can ignore the IP version, it's obvious fron the address
         ('extra.', 'routedspoof', validate_to_none),
         ('extra.', 'session', convert_int),
         ('extra.', 'nat', convert_bool),
@@ -2353,6 +2354,7 @@ caida = {
     ],
     'constant_fields': {
         # FIXME Check if the classification is correct
+        'classification.identifier': 'ip-spoofer',
         'classification.taxonomy': 'fraud',
         'classification.type': 'masquerade',
     }
@@ -2379,7 +2381,7 @@ mapping = (
     ('Amplification-DDoS-Victim', 'ddos_amplification', amplification_ddos_victim),
     ('Blacklisted-IP', 'blacklist', blocklist),
     ('Blocklist', 'blocklist', blocklist),
-    ('CAIDA', 'scan_caida', caida),
+    ('CAIDA-IP-Spoofer', 'caida_ip_spoofer', caida),
     ('Compromised-Website', 'compromised_website', compromised_website),
     ('DNS-Open-Resolvers', 'scan_dns', dns_open_resolvers),
     ('Darknet', 'darknet', darknet),
