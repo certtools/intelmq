@@ -12,6 +12,7 @@ from intelmq import RUNTIME_CONF_FILE
 from intelmq.lib.utils import load_configuration, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
 
+
 class TorExpertBot(Bot):
 
     database = set()
@@ -93,7 +94,7 @@ class TorExpertBot(Bot):
             sys.exit("Database update failed. Server responded: {0}.\n"
                      "URL: {1}".format(response.status_code, response.url))
 
-        pattern = re.compile("ExitAddress ([^\s]+)")
+        pattern = re.compile(r"ExitAddress ([^\s]+)")
         tor_exits = "\n".join(pattern.findall(response.text))
 
         for database_path in set(bots.values()):
