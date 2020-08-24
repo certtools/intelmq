@@ -1342,6 +1342,7 @@ These are the supported feed name and their corresponding file name for automati
 | Accessible-FTP | `scan_ftp` |
 | Accessible-Hadoop | `scan_hadoop` |
 | Accessible-HTTP | `scan_http` |
+| Accessible-Radmin | `scan_radmin` |
 | Accessible-RDP | `scan_rdp` |
 | Accessible-Rsync | `scan_rsync` |
 | Accessible-SMB | `scan_smb` |
@@ -1351,6 +1352,7 @@ These are the supported feed name and their corresponding file name for automati
 | Amplification-DDoS-Victim | `ddos_amplification` |
 | Blacklisted-IP (deprecated) | `blacklist` |
 | Blocklist | `blocklist` |
+| CAIDA-IP-Spoofer | `caida_ip_spoofer` |
 | Compromised-Website | `compromised_website` |
 | Darknet | `darknet` |
 | DNS-Open-Resolvers | `scan_dns` |
