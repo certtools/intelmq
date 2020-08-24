@@ -120,7 +120,7 @@ class AnubisNetworksParserBot(Bot):
                                 event.add('extra.request_method', subsubvalue)
                             elif subsubkey == 'host':
                                 if (not event.add('destination.fqdn', subsubvalue, raise_failure=False) and
-                                    subsubvalue != raw_report['dst']['ip']):
+                                        subsubvalue != raw_report['dst']['ip']):
                                     # try to add it as FQDN, it that fails it's an IP address
                                     # then check if it is the same as the destination IP address
                                     # if not add it to extra
