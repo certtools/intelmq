@@ -20,6 +20,7 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.shadowserver`:
   - Rename "Blacklisted-IP" feed to "Blocklist", old name is still valid until IntelMQ version 3.0 (PR#1588 by Thomas Hungenberg).
+- `intelmq.bots.parsers.anubisnetworks.parser`: Fix parsing error where `dst.ip` was not equal to `comm.http.host`.
 
 #### Experts
 
