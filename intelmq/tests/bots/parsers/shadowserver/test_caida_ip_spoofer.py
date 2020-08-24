@@ -5,7 +5,7 @@ import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 
-with open(os.path.join(os.path.dirname(__file__), "testdata/scan_caida.csv")) as handle:
+with open(os.path.join(os.path.dirname(__file__), "testdata/caida_ip_spoofer.csv")) as handle:
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
@@ -14,7 +14,7 @@ EXAMPLE_REPORT = {
     "raw": utils.base64_encode(EXAMPLE_FILE),
     "__type": "Report",
     "time.observation": "2020-08-19T00:00:00+00:00",
-    "extra.file_name": "2020-08-19-scan_caida-test.csv",
+    "extra.file_name": "2020-08-19-caida_ip_spoofer-test.csv",
 }
 
 EVENTS = [
@@ -34,7 +34,6 @@ EVENTS = [
         "extra.sic": 0,
         "extra.sector": "Information Technology",
         "source.network": "137.97.71.0/24",
-        "extra.version": "ipv4",
         "extra.routedspoof": "received",
         "extra.session": 739969,
         "extra.nat": True,
@@ -63,7 +62,6 @@ EVENTS = [
         "extra.sic": 0,
         "extra.sector": "Communications",
         "source.network": "103.95.33.0/24",
-        "extra.version": "ipv4",
         "extra.routedspoof": "received",
         "extra.session": 739992,
         "extra.nat": True,
@@ -92,7 +90,6 @@ EVENTS = [
         "extra.sic": 0,
         "extra.sector": "Communications",
         "source.network": "115.78.9.0/24",
-        "extra.version": "ipv4",
         "extra.routedspoof": "rewritten",
         "extra.session": 740024,
         "extra.nat": True,
@@ -121,7 +118,6 @@ EVENTS = [
         "extra.naics": 517919,
         "extra.sic": 737415,
         "source.network": "24.237.163.0/24",
-        "extra.version": "ipv4",
         "extra.routedspoof": "received",
         "extra.session": 740037,
         "extra.nat": False,
@@ -144,7 +140,6 @@ EVENTS = [
 
         "extra.type": "Session",
         "source.network": "122.255.35.0/24",
-        "extra.version": "ipv4",
         "extra.routedspoof": "received",
         "extra.session": 740057,
         "extra.nat": False,
