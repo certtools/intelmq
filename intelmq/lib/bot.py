@@ -21,6 +21,7 @@ import time
 import traceback
 import types
 import warnings
+import argparse
 from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Any, List, Optional
@@ -771,11 +772,15 @@ class Bot(object):
         return libmessage.Event(*args, harmonization=self.harmonization, **kwargs)
 
     @classmethod
-    def run(cls):
-        if len(sys.argv) < 2:
+    def run(cls, parsed_args=None):
+
+        if not parsed_args:
+            parsed_args = cls._create_argparser().parse_args()
+
+        if not parsed_args.bot_id:
             sys.exit('No bot ID given.')
 
-        instance = cls(sys.argv[1])
+        instance = cls(parsed_args.bot_id)
         if not instance.is_multithreaded:
             instance.start()
 
@@ -852,6 +857,12 @@ class Bot(object):
                               "'%s'.", "', '".join(parameter_value))
         elif parameter_value:
             self.logger.debug('Extracting all files from archives.')
+
+    @classmethod
+    def _create_argparser(cls):
+        argparser = argparse.ArgumentParser(usage='%(prog)s [OPTIONS] BOT-ID')
+        argparser.add_argument('bot_id', nargs='?', metavar='BOT-ID', help='unique bot-id of your choosing')
+        return argparser
 
 
 class ParserBot(Bot):

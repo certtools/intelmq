@@ -1539,21 +1539,9 @@ pip3 install pyasn
 ```
 
 #### Database
-* Download database and convert:
-```
-# cd /tmp/
-# pyasn_util_download.py --latest
-# pyasn_util_convert.py --single <downloaded_filename.bz2>  ipasn.dat
-```
+Use this command to create/update the database and reload the bot:
 
-Note: the '<' '>' characters only are syntactic markings, no shell redirection is necessary.
-
-* Copy database to IntelMQ:
-```
-# mkdir /opt/intelmq/var/lib/bots/asn_lookup
-# mv /tmp/ipasn.dat /opt/intelmq/var/lib/bots/asn_lookup/
-# chown -R intelmq.intelmq /opt/intelmq/var/lib/bots/asn_lookup
-```
+`intelmq.bots.experts.asn_lookup.expert --update-database`
 
 * * *
 
@@ -1946,6 +1934,14 @@ You may want to use a shell script provided in the contrib directory to keep the
 * `database`: Path to the local database, e.g. `"/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"`
 * `overwrite`: boolean
 * `use_registered`: boolean. MaxMind has two country ISO codes: One for the physical location of the address and one for the registered location. Default is `false` (backwards-compatibility). See also https://github.com/certtools/intelmq/pull/1344 for a short explanation.
+* `license_key`: License key is necessary for downloading the GeoLite2 database.
+
+#### Database
+Use this command to create/update the database and reload the bot:
+
+`intelmq.bots.experts.maxmind_geoip.expert --update-database`
+
+* * *
 
 ### MISP
 
@@ -2164,6 +2160,7 @@ This Bot tags events with score found in recorded futures large IP risklist.
 
 * `database`: Location of csv file obtained from recorded future API (a script is provided to download the large IP set)
 * `overwrite`: set to true if you want to overwrite any potentially existing risk score fields in the event.
+* `api_token`: This needs to contain valid API token to download the latest database data.
 
 #### Description
 
@@ -2177,18 +2174,11 @@ The large list contains all IP's with a risk score of 25 or more.
 If IP's are not present in the database a risk score of 0 is given
 
 A script is supplied that may be run as intelmq to update the database.
-The script needs to be edited to use a valid API token.
 
-Download database:
+#### Database
+Use this command to create/update the database and reload the bot:
 
-```bash
-mkdir /opt/intelmq/var/lib/bots/recordedfuture_iprisk
-cd /tmp/
-curl -H "X-RFToken: [API Token]" --output rfiprisk.dat.gz "https://api.recordedfuture.com/v2/ip/risklist?format=csv%2Fsplunk&gzip=true&list=large"
-bunzip rfiprisk.dat.gz
-mv rfiprisk.dat /opt/intelmq/var/lib/bots/recordedfuture_iprisk/rfiprisk.dat
-chown intelmq.intelmq -R /opt/intelmq/var/lib/bots/recordedfuture_iprisk
-```
+`intelmq.bots.experts.asn_lookup.expert --update-database`
 
 * * *
 
@@ -2506,7 +2496,11 @@ For brevity, "type" means `classification.type` and "taxonomy" means `classifica
 * `database`: Path to the database
 
 #### Database
-Use the included script `update-tor-nodes` to download the database.
+Use this command to create/update the database and reload the bot:
+
+`intelmq.bots.experts.tor_nodes.expert --update-database`
+
+* * *
 
 ### Url2FQDN
 

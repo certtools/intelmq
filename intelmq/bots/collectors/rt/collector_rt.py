@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import (parse_relative, create_request_session_from_bot,
+from intelmq.lib.utils import (parse_relative, create_request_session,
                                file_name_from_response, unzip)
 from intelmq.lib.exceptions import MissingDependencyError
 
@@ -50,7 +50,7 @@ class RTCollectorBot(CollectorBot):
             self.not_older_than_type = False
 
         self.set_request_parameters()
-        self.session = create_request_session_from_bot(self)
+        self.session = create_request_session(self)
         self._parse_extract_file_parameter('extract_attachment')
         self._parse_extract_file_parameter('extract_download')
 

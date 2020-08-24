@@ -6,7 +6,7 @@ import io
 import re
 
 from intelmq.lib.splitreports import generate_reports
-from intelmq.lib.utils import create_request_session_from_bot, file_name_from_response
+from intelmq.lib.utils import create_request_session, file_name_from_response
 
 from .lib import MailCollectorBot
 from intelmq.lib.exceptions import MissingDependencyError
@@ -26,7 +26,7 @@ class MailURLCollectorBot(MailCollectorBot):
 
         # Build request
         self.set_request_parameters()
-        self.session = create_request_session_from_bot(self)
+        self.session = create_request_session(self)
 
         self.chunk_size = getattr(self.parameters, 'chunk_size', None)
         self.chunk_replicate_header = getattr(self.parameters,

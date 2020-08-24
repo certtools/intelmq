@@ -36,6 +36,7 @@ from termstyle import red
 
 import intelmq
 from intelmq.lib.exceptions import DecodingError
+from intelmq import DEFAULTS_CONF_FILE
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
@@ -301,7 +302,8 @@ class ListHandler(logging.StreamHandler):
         self.buffer.append((record.levelname.lower(), record.getMessage()))
 
 
-def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH, log_level: str = intelmq.DEFAULT_LOGGING_LEVEL,
+def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH,
+        log_level: str = intelmq.DEFAULT_LOGGING_LEVEL,
         stream: Optional[object] = None, syslog: Union[bool, str, list, tuple] = None,
         log_format_stream: str = LOG_FORMAT_STREAM,
         logging_level_stream: Optional[str] = None):
@@ -492,6 +494,7 @@ def extract_tar(file):
 
     def extract(filename):
         return tar.extractfile(filename).read()
+
     return tuple(file.name for file in tar.getmembers()), tar, extract
 
 
@@ -557,9 +560,9 @@ def unzip(file: bytes, extract_files: Union[bool, list], logger=None,
 
     if files is None:
         if return_names:
-            return ((None, archive), )
+            return ((None, archive),)
         else:
-            return (archive, )
+            return (archive,)
 
     if logger:
         logger.debug("Found files %r in archive.", files)
@@ -608,7 +611,7 @@ def object_pair_hook_bots(*args, **kwargs) -> Dict:
 
     """
     # Do not sort collector bots
-    if len(args[0]) and len(args[0][0]) == 2 and isinstance(args[0][0][1], dict) and\
+    if len(args[0]) and len(args[0][0]) == 2 and isinstance(args[0][0][1], dict) and \
             'module' in args[0][0][1] and '.collectors' in args[0][0][1]['module']:
         return collections.OrderedDict(*args, **kwargs)
     # Do not sort bot groups
@@ -678,11 +681,11 @@ def version_smaller(version1: tuple, version2: tuple) -> Optional[bool]:
     if len(version1) == 3:
         version1 = version1 + ('stable', 0)
     if len(version1) == 4:
-        version1 = version1 + (0, )
+        version1 = version1 + (0,)
     if len(version2) == 3:
         version2 = version2 + ('stable', 0)
     if len(version2) == 4:
-        version2 = version2 + (0, )
+        version2 = version2 + (0,)
     for level1, level2 in zip(version1, version2):
         if level1 > level2:
             return False
@@ -705,6 +708,7 @@ class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
     """
     A requests-HTTP Adapter which can set the timeout generally.
     """
+
     def __init__(self, *args, timeout=None, **kwargs):
         self.timeout = timeout
         return super().__init__(*args, **kwargs)
@@ -714,10 +718,12 @@ class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
         return super().send(*args, **kwargs)
 
 
-def create_request_session_from_bot(bot: type) -> requests.Session:
+def create_request_session(bot: type = None) -> requests.Session:
     """
     Creates a requests.Session object preconfigured with the parameters
     set by the Bot.set_request_parameters and given by the bot instance.
+    If no bot is specified then the Session is preconfigured only with
+    parameters from defaults.conf.
 
     Parameters:
         bot_instance: An instance of a Bot
@@ -725,16 +731,53 @@ def create_request_session_from_bot(bot: type) -> requests.Session:
     Returns:
         session: A preconfigured instance of requests.Session
     """
+    defaults = load_configuration(DEFAULTS_CONF_FILE)
     session = requests.Session()
-    session.headers.update(bot.http_header)
-    session.auth = bot.auth
-    session.proxies = bot.proxy
-    session.cert = bot.ssl_client_cert
-    session.verify = bot.http_verify_cert
-    adapter = TimeoutHTTPAdapter(max_retries=bot.http_timeout_max_tries - 1,
-                                 timeout=bot.http_timeout_sec)
+
+    # tls settings
+    if bot and hasattr(bot, 'http_verify_cert'):
+        session.verify = bot.http_verify_cert
+    else:
+        defaults.get('http_verify_cert', True)
+
+    # tls certificate settings
+    if bot and hasattr(bot, 'ssl_client_cert'):
+        session.cert = bot.ssl_client_cert
+
+    # auth settings
+    if bot and hasattr(bot, 'auth'):
+        session.auth = bot.auth
+
+    # headers settings
+    if bot and hasattr(bot, 'http_header'):
+        session.headers.update(bot.http_header)
+    elif defaults.get('http_user_agent'):
+        session.headers.update({"User-Agent": defaults.get('http_user_agent')})
+
+    # proxy settings
+    if bot and hasattr(bot, 'proxy'):
+        session.proxies = bot.proxy
+    elif defaults.get('http_proxy') and defaults.get('https_proxy'):
+        session.proxies = {
+            'http': defaults.get('http_proxy'),
+            'https': defaults.get('https_proxy')
+        }
+
+    # timeout settings
+    if bot and hasattr(bot, 'http_timeout_max_tries'):
+        max_retries = bot.http_timeout_max_tries - 1
+    else:
+        max_retries = defaults.get('http_timeout_max_tries', 3)
+
+    if bot and hasattr(bot, 'http_timeout_sec'):
+        timeout = bot.http_timeout_sec
+    else:
+        timeout = defaults.get('http_timeout_sec', 30)
+
+    adapter = TimeoutHTTPAdapter(max_retries=max_retries, timeout=timeout)
     session.mount('http://', adapter)
     session.mount('https://', adapter)
+
     return session
 
 
