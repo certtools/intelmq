@@ -14,9 +14,6 @@ from intelmq.bin.intelmqctl import IntelMQController
 
 class TorExpertBot(Bot):
 
-    argparser = Bot.argparser
-    argparser.add_argument("--update-database", action='store_true', help='downloads latest database data')
-
     database = set()
 
     def init(self):
@@ -55,13 +52,19 @@ class TorExpertBot(Bot):
     @classmethod
     def run(cls, parsed_args=None):
         if not parsed_args:
-            parsed_args = cls.argparser.parse_args()
+            parsed_args = cls._create_argparser().parse_args()
 
         if parsed_args.update_database:
             cls.update_database()
 
         else:
             super().run(parsed_args=parsed_args)
+
+    @classmethod
+    def _create_argparser(cls):
+        argparser = super()._create_argparser()
+        argparser.add_argument("--update-database", action='store_true', help='downloads latest database data')
+        return argparser
 
     @classmethod
     def update_database(cls):

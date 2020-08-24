@@ -61,8 +61,6 @@ class Bot(object):
     is_multithreadable = True
     # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
     collector_empty_process = False
-    argparser = argparse.ArgumentParser(usage='%(prog)s [OPTIONS] BOT-ID')
-    argparser.add_argument('bot_id', nargs='?', metavar='BOT-ID', help='unique bot-id of your choosing')
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
@@ -777,7 +775,7 @@ class Bot(object):
     def run(cls, parsed_args=None):
 
         if not parsed_args:
-            parsed_args = cls.argparser.parse_args()
+            parsed_args = cls._create_argparser().parse_args()
 
         if not parsed_args.bot_id:
             sys.exit('No bot ID given.')
@@ -859,6 +857,12 @@ class Bot(object):
                               "'%s'.", "', '".join(parameter_value))
         elif parameter_value:
             self.logger.debug('Extracting all files from archives.')
+
+    @classmethod
+    def _create_argparser(cls):
+        argparser = argparse.ArgumentParser(usage='%(prog)s [OPTIONS] BOT-ID')
+        argparser.add_argument('bot_id', nargs='?', metavar='BOT-ID', help='unique bot-id of your choosing')
+        return argparser
 
 
 class ParserBot(Bot):
