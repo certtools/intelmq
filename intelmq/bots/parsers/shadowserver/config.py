@@ -2298,6 +2298,66 @@ accessible_ard = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-radmin-report/
+accessible_radmin = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn', convert_int),
+        # ('classification.identifier', 'tag'),  # always 'accessible-radmin' - set in constant_fields
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname', validate_to_none),
+        ('protocol.transport', 'protocol'),
+        ('extra.', 'naics', convert_int),
+        ('extra.', 'version', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'accessible-radmin',
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+    }
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/caida-ip-spoofer-report/
+# NOTE: The "type" field is included twice with the same values
+caida = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn', convert_int),
+        # ('classification.identifier', 'tag'),  # always 'ip-spoofer' - set in constant_fields
+        ('classification.identifier', 'infection'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname', validate_to_none),
+        ('extra.', 'type', validate_to_none),
+        ('extra.', 'naics', convert_int),
+        ('extra.', 'sic', convert_int),
+        ('extra.', 'sector', validate_to_none),
+        # FIXME Is is mappable to some classification.* field? Not included in example data.
+        ('extra.', 'family', validate_to_none),
+        ('source.network', 'network', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'routedspoof', validate_to_none),
+        ('extra.', 'session', convert_int),
+        ('extra.', 'nat', convert_bool),
+        ('extra.', 'public_source', validate_to_none),
+    ],
+    'constant_fields': {
+        # FIXME Check if the classification is correct
+        'classification.taxonomy': 'fraud',
+        'classification.type': 'masquerade',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2309,6 +2369,7 @@ mapping = (
     ('Accessible-FTP', 'scan_ftp', accessible_ftp),
     ('Accessible-HTTP', 'scan_http', accessible_http),
     ('Accessible-Hadoop', 'scan_hadoop', accessible_hadoop),
+    ('Accessible-Radmin', 'scan_radmin', accessible_radmin),
     ('Accessible-RDP', 'scan_rdp', accessible_rdp),
     ('Accessible-Rsync', 'scan_rsync', accessible_rsync),
     ('Accessible-SMB', 'scan_smb', accessible_smb),
@@ -2318,6 +2379,7 @@ mapping = (
     ('Amplification-DDoS-Victim', 'ddos_amplification', amplification_ddos_victim),
     ('Blacklisted-IP', 'blacklist', blocklist),
     ('Blocklist', 'blocklist', blocklist),
+    ('CAIDA', 'scan_caida', caida),
     ('Compromised-Website', 'compromised_website', compromised_website),
     ('DNS-Open-Resolvers', 'scan_dns', dns_open_resolvers),
     ('Darknet', 'darknet', darknet),
