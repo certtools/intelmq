@@ -116,6 +116,8 @@ class GeoIPExpertBot(Bot):
                     "Since December 30, 2019 you need to register for a free license key to access GeoLite2 database.\n"
                     "https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/"
                 )
+            else:
+                sys.exit(1)
 
         if not bots:
             print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
