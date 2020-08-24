@@ -2178,7 +2178,7 @@ A script is supplied that may be run as intelmq to update the database.
 #### Database
 Use this command to create/update the database and reload the bot:
 
-`intelmq.bots.experts.asn_lookup.expert --update-database`
+`intelmq.bots.experts.recordedfuture_iprisk.expert --update-database`
 
 * * *
 

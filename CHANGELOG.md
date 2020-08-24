@@ -59,8 +59,7 @@ CHANGELOG
   - Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
 - Bots:
   - Enhanced documentation of RFC1918 Expert.
-  - Updated documentation for Maxmind GeoIP, ASN Lookup and
-    TOR Nodes experts to reflect new `--update-database` option.  (PR#1524 by Filip Pokorný)
+  - Updated documentation for Maxmind GeoIP, ASN Lookup, TOR Nodes and Recorded Future experts to reflect new `--update-database` option.  (PR#1524 by Filip Pokorný)
 - Add n6 Integration documentation.
 
 ### Packaging
@@ -77,6 +76,7 @@ CHANGELOG
 ### Contrib
 - eventdb:
   - Add SQL script for keeping track of the oldest inserted/update "time.source" information.
+- Cron Jobs: The script `intelmq-update-data` has been renamed to `intelmq-update-database`
 
 ### Known issues
 

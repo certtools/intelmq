@@ -860,6 +860,10 @@ class Bot(object):
 
     @classmethod
     def _create_argparser(cls):
+        """
+        see https://github.com/certtools/intelmq/pull/1524/files#r464606370
+        why this code is not in the constructor
+        """
         argparser = argparse.ArgumentParser(usage='%(prog)s [OPTIONS] BOT-ID')
         argparser.add_argument('bot_id', nargs='?', metavar='BOT-ID', help='unique bot-id of your choosing')
         return argparser

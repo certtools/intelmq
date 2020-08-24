@@ -19,7 +19,13 @@ See the changelog for a full list of changes.
   and `update-geoip-data`.
   
   Usage:
-  ``intelmq.bots.experts.tor_nodes.expert --update-database``
+  ```
+  intelmq.bots.experts.asn_lookup.expert --update-database
+  intelmq.bots.experts.maxmind_geoip.expert --update-database
+  intelmq.bots.experts.recordedfuture_iprisk.expert --update-database
+  intelmq.bots.experts.tor_nodes.expert --update-database
+  ```
+  The provided shell scripts use these new commands.
 
 ### Harmonization
 
