@@ -19,9 +19,6 @@ from intelmq.bin.intelmqctl import IntelMQController
 
 class RecordedFutureIPRiskExpertBot(Bot):
 
-    # argparser = copy.deepcopy(Bot.argparser)
-    # argparser.add_argument("--update-database", action='store_true', help='downloads latest database data')
-
     database = dict()
 
     def init(self):

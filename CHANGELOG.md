@@ -9,7 +9,7 @@ CHANGELOG
 ### Core
 - `intelmq.lib.bot`:
   - `ParserBot.recover_line_json_stream`: Make `line` parameter optional, as it is not needed for this method.
-  - `Bot.argparser`: Added class variable `argparser` (of type `argparse.ArgumentParser`) for easy command line arguments parsing.
+  - `Bot.argparser`: Added class method `_create_argparser` (returns `argparse.ArgumentParser`) for easy command line arguments parsing.
 - `intelmq.lib.upgrades`:
   - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559).
 - `intelmq.lib.exceptions`:

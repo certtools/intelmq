@@ -110,14 +110,14 @@ class GeoIPExpertBot(Bot):
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
         except KeyError as e:
-            print("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
+            error = "Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e)
             if str(e) == "'license_key'":
-                sys.exit(
-                    "Since December 30, 2019 you need to register for a free license key to access GeoLite2 database.\n"
-                    "https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/"
-                )
+                error += "\n"
+                error += "Since December 30, 2019 you need to register for a free license key to access GeoLite2 database.\n"
+                error += "https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/"
+                sys.exit(error)
             else:
-                sys.exit(1)
+                sys.exit(error)
 
         if not bots:
             print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
