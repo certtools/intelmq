@@ -27,6 +27,7 @@ import shutil
 import sys
 import tarfile
 import traceback
+import warnings
 import zipfile
 from typing import Any, Dict, Generator, Iterator, Optional, Sequence, Union
 
@@ -716,6 +717,13 @@ class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
     def send(self, *args, **kwargs):
         kwargs['timeout'] = self.timeout
         return super().send(*args, **kwargs)
+
+
+def create_request_session_from_bot(bot: type) -> requests.Session:
+    warnings.warn("This function is deprecated in favor of create_request_session"
+                  " and will be removed in version 3.0.0.",
+                  DeprecationWarning)
+    return create_request_session(bot)
 
 
 def create_request_session(bot: type = None) -> requests.Session:

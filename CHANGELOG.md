@@ -15,7 +15,7 @@ CHANGELOG
 - `intelmq.lib.exceptions`:
   - `PipelineError`: Remove unused code to format exceptions.
 - `intelmq.lib.utils`:
-  - `create_request_session_from_bot`: Changed bot argument to optional, uses defaults.conf as fallback, renamed to `create_request_session`
+  - `create_request_session_from_bot`: Changed bot argument to optional, uses defaults.conf as fallback, renamed to `create_request_session`. Name `create_request_session_from_bot` will be removed in version 3.0.0.
 
 ### Development
 
