@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-import sys
 
 from setuptools import find_packages, setup
 
