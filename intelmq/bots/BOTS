@@ -107,7 +107,10 @@
                 "name": "__FEED__",
                 "provider": "__PROVIDER__",
                 "rate_limit": 3600,
-                "ssl_client_certificate": null
+                "ssl_client_certificate": null,
+                "verify_gpg_signatures": false,
+                "gpg_signature_suffix": ".asc",
+                "gpg_keyring": null
             }
         },
         "URL Stream Fetcher": {
