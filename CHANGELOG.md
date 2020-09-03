@@ -22,6 +22,7 @@ CHANGELOG
   - Rename "Blacklisted-IP" feed to "Blocklist", old name is still valid until IntelMQ version 3.0 (PR#1588 by Thomas Hungenberg).
   - Added support for the feeds `Accessible Radmin` and `CAIDA IP Spoofer` (PR#1600 by sinus-x).
 - `intelmq.bots.parsers.anubisnetworks.parser`: Fix parsing error where `dst.ip` was not equal to `comm.http.host`.
+- `intelmq/bots/parsers/danger_rulez/parser`: correctly skip malformed rows by defining variables before referencing (PR#1601 by Tomas Bellus).
 
 #### Experts
 
