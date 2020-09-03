@@ -24,6 +24,7 @@ CHANGELOG
 ### Bots
 #### Collectors
 - `intelmq.bots.collectors.eset.collector`: Added (PR#1554 by Mikk Margus Möll).
+- `intelmq.bots.collectors.http.collector_http`: Added PGP signature check functionality (PR#1602 by sinus-x).
 
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
