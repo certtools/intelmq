@@ -258,9 +258,10 @@ The `tornado` library is required.
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
 * `http_url_formatting`: (`bool|JSON`, default: `false`) If `true`, `{time[format]}` will be replaced by the current time in local timezone formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2019` for the year 2019. (Python's [Format Specification Mini-Language](https://docs.python.org/3/library/string.html#formatspec) is used for this.)
 You may use a `JSON` specifying [time-delta](https://docs.python.org/3/library/datetime.html#datetime.timedelta) parameters to shift the current time accordingly. For example use `{"days": -1}` for the yesterday's date; the URL `http://localhost/{time[%Y-%m-%d]}` will get translated to "http://localhost/2018-12-31" for the 1st Jan of 2019.
-* `verify_gpg_signatures`: `bool`, defaults to `false`. If `true`, signature file is downloaded and report file is checked. On error (missing signature, mismatch, ...), the error is logged and the report is not processed. Public key has to be imported in local keyring.
-* `gpg_suffix`: `string`, default `.asc`. This string is appended to the constructed `http_url` (after applying parameters). For example, resource URL `http://localhost/2020/2020-08-18.csv` will be used to create `http://localhost/2020/2020-08-18.csv.asc`.
-* `gpg_keyring`: `string` or `none` (default). If specified, the string represents path to keyring file, otherwise the keyring file for current `intelmq` user is used.
+* `verify_pgp_signatures`: `bool`, defaults to `false`. If `true`, signature file is downloaded and report file is checked. On error (missing signature, mismatch, ...), the error is logged and the report is not processed. Public key has to be imported in local keyring. This requires the `python-gnupg` library.
+* `signature_url`: Location of signature file for downloaded content. For path `http://localhost/data/latest.json` this may be for example `http://localhost/data/latest.asc`.
+* `signature_url_formatting`: (`bool|JSON`, default: `false`) The same as `http_url_formatting`, only for the signature file.
+* `gpg_keyring`: `string` or `none` (default). If specified, the string represents path to keyring file, otherwise the PGP keyring file for current `intelmq` user is used.
 
 Zipped files are automatically extracted if detected.
 

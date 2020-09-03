@@ -119,16 +119,17 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(1, output1)
 
     @test.skip_exotic()
-    def test_gpg(self):
+    def test_pgp(self):
         """
-        Test with GPG signature
+        Test with PGP signature
         """
         self.run_bot(
             parameters={
                 "http_url": "http://localhost/foobar.txt",
                 "name": "Example feed",
                 "extract_files": False,
-                "verify_gpg_signatures": True
+                "verify_gpg_signatures": True,
+                "signature_url": "http://localhost/foobar.txt.asc"
             },
             iterations=1
         )
