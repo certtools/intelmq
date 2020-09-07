@@ -26,6 +26,7 @@
 - [List queues](#list-queues)
 - [Log](#log)
 - [Check](#check)
+  - [Orphaned queues](#orphaned-queues)
 - [Configuration upgrade](#configuration-upgrade)
 - [Exit code](#exit-code)
 - [Known issues](#known-issues)
@@ -418,6 +419,18 @@ See the help page for more information.
 
 ## Check
 This command will do various sanity checks on the installation and especially the configuration.
+
+### Orphaned Queues
+
+The `intelmqctl check` tool can search for orphaned queues. "Orphaned queues" are queues that have been used in the past and are no longer in use. For example you had a bot which you removed or renamed afterwards, but there were still messages in it's source queue. The source queue won't be renamed automatically and is now disconnected. As this queue is no longer configured, it won't show up in the list of IntelMQ's queues too. In case you are using redis as message broker, you can use the `redis-cli` tool to examine or remove these queues:
+
+```bash
+redis-cli -n 2
+keys * # lists all existing non-empty queues
+llen [queue-name] # shows the length of the queue [queue-name]
+lindex [queue-name] [index] # show the [index]'s message of the queue [queue-name]
+del [queue-name] # remove the queue [queue-name]
+```
 
 ## Configuration upgrade
 The `intelmqctl upgrade-config` function upgrade, upgrade the configuration from previous versions to the current one.
