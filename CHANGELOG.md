@@ -75,6 +75,7 @@ CHANGELOG
     - Check if given queue is configured upon recovery (PR#1587 by Mladen Markovic).
 - `intelmqctl`:
   - `intelmq list queues`: `--sum`, `--count`, `-s` flag for showing total count of messages (PR#1581 by Mladen Markovic).
+  - `intelmq check`: Added a possibility to ignore queues from the orphaned queues check.
 
 ### Contrib
 - eventdb:

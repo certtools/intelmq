@@ -432,6 +432,12 @@ lindex [queue-name] [index] # show the [index]'s message of the queue [queue-nam
 del [queue-name] # remove the queue [queue-name]
 ```
 
+To ignore certain queues in this check, you can set the parameter `intelmqctl_check_orphaned_queues_ignore` in the *defaults* configuration file. For example:
+
+```json
+    "intelmqctl_check_orphaned_queues_ignore": ["Taichung-Parser"],
+```
+
 ## Configuration upgrade
 The `intelmqctl upgrade-config` function upgrade, upgrade the configuration from previous versions to the current one.
 It keeps track of previously installed versions and the result of all "upgrade functions" in the "state file", locate in the `$var_state_path/state.json` (`/opt/intelmq/var/lib/state.json` or `/var/lib/intelmq/state.json`).

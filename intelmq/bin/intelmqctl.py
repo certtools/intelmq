@@ -1475,12 +1475,14 @@ Get some debugging output on the settings and the enviroment (to be extended):
                     else:
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'])
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'] + '-internal')
+        # ignore allowed orphaned queues
+        allowed_orphan_queues = set(getattr(self.parameters, 'intelmqctl_check_orphaned_queues_ignore', ()))
         if not no_connections:
             try:
                 pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
                 pipeline.set_queues(None, "source")
                 pipeline.connect()
-                orphan_queues = "', '".join(pipeline.nonempty_queues() - all_queues)
+                orphan_queues = "', '".join(pipeline.nonempty_queues() - all_queues - allowed_orphan_queues)
             except Exception as exc:
                 error = utils.error_message_from_exc(exc)
                 check_logger.error('Could not connect to pipeline: %s', error)
