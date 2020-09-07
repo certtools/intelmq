@@ -40,8 +40,9 @@ class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = GethostbynameExpertBot
+    def set_bot(cls):
+        cls.bot_reference = GethostbynameExpertBot
+        cls.sysconfig = {'gaierrors_to_ignore': '-8,-9'}
 
     def test_existing(self):
         self.input_message = EXAMPLE_INPUT

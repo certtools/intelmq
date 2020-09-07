@@ -815,7 +815,8 @@
             "description": "Resolve the IP address for the FQDN.",
             "module": "intelmq.bots.experts.gethostbyname.expert",
             "parameters": {
-                "fallback_to_url": true
+                "fallback_to_url": true,
+                "gaierrors_to_ignore": null
             }
         },
         "IDEA Converter": {

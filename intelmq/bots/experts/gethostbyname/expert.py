@@ -22,13 +22,31 @@ import socket
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import URL
-
+from intelmq.lib.exceptions import InvalidArgument
 
 class GethostbynameExpertBot(Bot):
 
     def init(self):
         # although True is the default value, we leave False here for backwards compatibility
         self.fallback_to_url = getattr(self.parameters, 'fallback_to_url', False)
+
+        ignore = getattr(self.parameters, 'gaierrors_to_ignore', ())
+        if not isinstance(ignore, (list, tuple)):
+            ignore = ignore.split(',')
+        elif not ignore:  # for null/None
+            ignore = ()
+        # otherwise a string
+        ignore = tuple(x.strip() for x in ignore)
+        # check if every element is an integer:
+        for x in ignore:
+            try:
+                int(x)
+            except TypeError:
+                raise InvalidArgument(argument='gaierrors_to_ignore', got=x,
+                                      expected='int', docs='the bot documentation.')
+        ignore = tuple(int(x) for x in ignore)  # convert to integers
+
+        self.ignore = (-2, -4, -5, -8, -11) + ignore
 
     def process(self):
         event = self.receive_message()
@@ -45,7 +63,9 @@ class GethostbynameExpertBot(Bot):
             try:
                 ip = socket.gethostbyname(fqdn)
             except socket.gaierror as exc:
-                if exc.args[0] in [-2, -4, -5, -8, -11]:
+                if exc.args[0] in self.ignore:
+                    self.logger.debug('Ignored error %r for hostname %r.',
+                                      exc.args[0], fqdn)
                     pass
                 else:
                     raise

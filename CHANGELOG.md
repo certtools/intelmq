@@ -41,6 +41,7 @@ CHANGELOG
   - Checks parameter length on initialization and in check method.
 - `intelmq.bots.experts.gethostbyname.expert`:
   - Added parameter `fallback_to_url` and set to True. (PR#1586 by Edvard Rejthar)
+  - Added parameter `gaierrors_to_ignore` to optionally ignore other `gethostbyname` errors (#1553).
 - `intelmq.bots.experts.asn_lookup.expert`
   - Added `--update-database` option. (PR#1524 by Filip Pokorný)
 - `intelmq.bots.experts.maxmind_geoip.expert`

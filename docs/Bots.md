@@ -1891,11 +1891,11 @@ The values are compared with `=` only.
 * `public:` yes
 * `cache (redis db):` none
 * `description:` DNS name (FQDN) to IP
-* `fallback_to_url` If True and no `source.fqdn` present, use `source.url` instead while producing `source.ip`
 
 #### Configuration Parameters:
 
-none
+- `fallback_to_url` If True and no `source.fqdn` present, use `source.url` instead while producing `source.ip`
+- `gaierrors_to_ignore`: Optional, list (comma-separated) of gaierror codes to ignore, e.g. `-3` for EAI_AGAIN (Temporary failure in name resolution). Only accepts the integer values, not the names.
 
 #### Description
 
@@ -1906,7 +1906,7 @@ The following gaierror resolution errors are ignored and treated as if the hostn
 - `-5`/`EAI_NODATA`: No address associated with NAME.
 - `-8`/`EAI_SERVICE`: SERVICE not supported for `ai_socktype'.
 - `-11`/`EAI_SYSTEM`: System error returned in `errno'.
-Other errors result in an exception.
+Other errors result in an exception if not ignored by the parameter `gaierrors_to_ignore` (see above).
 All gaierrors can be found here: http://www.castaglia.org/proftpd/doc/devel-guide/src/lib/glibc-gai_strerror.c.html
 
 * * *
