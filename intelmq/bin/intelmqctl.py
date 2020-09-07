@@ -1445,7 +1445,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 retval = 1
             elif bot_id not in files[PIPELINE_CONF_FILE] and not bot_config.get('enabled', True):
                 check_logger.warning('Misconfiguration: No pipeline configuration found for %r.', bot_id)
-            elif bot_id not in files[PIPELINE_CONF_FILE]:
+            elif bot_id in files[PIPELINE_CONF_FILE]:
                 if ('group' in bot_config and
                         bot_config['group'] in ['Collector', 'Parser', 'Expert']):
                     if ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or

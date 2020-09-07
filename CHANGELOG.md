@@ -46,6 +46,7 @@ CHANGELOG
 ### Tools
 - `intelmqctl check`:
   - For disabled bots which do not have any pipeline connections, do not raise an error, but only warning.
+  - Fix check on source/destination queues for bots as well the orphaned queues.
 
 ### Contrib
 
