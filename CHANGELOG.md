@@ -120,6 +120,7 @@ CHANGELOG
   - Remove section of non-existing "Copy Extra" Bot.
   - Explain taxonomy expert.
   - Add documentation on n6 parser.
+  - Gethostbyname expert: Add documentation how errors are treated.
 
 ### Packaging
 

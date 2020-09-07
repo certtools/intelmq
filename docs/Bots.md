@@ -1897,6 +1897,18 @@ The values are compared with `=` only.
 
 none
 
+#### Description
+
+Resolves the `source/destination.fqdn` hostname using the `gethostbyname` syscall and saves the resulting IP address as `source/destination.ip`.
+The following gaierror resolution errors are ignored and treated as if the hostname cannot be resolved:
+- `-2`/`EAI_NONAME`: NAME or SERVICE is unknown
+- `-4`/`EAI_FAIL`: Non-recoverable failure in name res.
+- `-5`/`EAI_NODATA`: No address associated with NAME.
+- `-8`/`EAI_SERVICE`: SERVICE not supported for `ai_socktype'.
+- `-11`/`EAI_SYSTEM`: System error returned in `errno'.
+Other errors result in an exception.
+All gaierrors can be found here: http://www.castaglia.org/proftpd/doc/devel-guide/src/lib/glibc-gai_strerror.c.html
+
 * * *
 
 ### IDEA Converter
