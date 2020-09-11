@@ -25,7 +25,7 @@ See the changelog for a full list of changes.
   intelmq.bots.experts.recordedfuture_iprisk.expert --update-database
   intelmq.bots.experts.tor_nodes.expert --update-database
   ```
-  The provided shell scripts use these new commands.
+  The provided shell scripts use these new commands, however they are now deprecated and will be removed in version 3.0.
 
 ### Harmonization
 

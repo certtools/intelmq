@@ -1,3 +1,6 @@
 #!/bin/bash
 
+echo 'This script is deprecated and will be removed in version 3.0.
+Please use the command "intelmq.bots.experts.asn_lookup.expert --update-database" instead.'
+
 intelmq.bots.experts.asn_lookup.expert --update-database

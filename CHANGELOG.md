@@ -44,14 +44,18 @@ CHANGELOG
   - Added parameter `gaierrors_to_ignore` to optionally ignore other `gethostbyname` errors (#1553).
 - `intelmq.bots.experts.asn_lookup.expert`
   - Added `--update-database` option. (PR#1524 by Filip Pokorný)
+  - The script `update-asn-data` is now deprecated and will be removed in version 3.0.
 - `intelmq.bots.experts.maxmind_geoip.expert`
   - Added `--update-database` option. (PR#1524 by Filip Pokorný)
   - Added `license_key` parameter. (PR#1524 by Filip Pokorný)
+  - The script `update-geoip-data` is now deprecated and will be removed in version 3.0.
 - `intelmq.bots.experts.tor_nodes.expert`
   - Added `--update-database` option. (PR#1524 by Filip Pokorný)
+  - The script `update-tor-nodes` is now deprecated and will be removed in version 3.0.
 - `intelmq.bots.experts.recordedfuture_iprisk.expert`
   - Added `--update-database` option. (PR#1524 by Filip Pokorný)
   - Added `api_token` parameter. (PR#1524 by Filip Pokorný)
+  - The script `update-rfiprisk-data` is now deprecated and will be removed in version 3.0.
 
 #### Outputs
 
