@@ -922,6 +922,23 @@
             "module": "intelmq.bots.experts.taxonomy.expert",
             "parameters": {}
         },
+        "Threshold": {
+            "description": "Check if the number of similar messages during a specified time interval exceeds a set value.",
+            "module": "intelmq.bots.experts.threshold.expert",
+            "parameters": {
+                "filter_keys": "raw,time.observation",
+                "filter_type": "blacklist",
+                "redis_cache_db": "11",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_password": null,
+                "redis_cache_port": "6379",
+                "timeout": 3600,
+                "threshold": 100,
+                "add_keys": {
+                    "comment": "Threshold reached"
+                }
+            }
+        },
         "Tor Nodes": {
             "description": "Check if the IP address is a Tor Exit Node based on a local database of TOR nodes.",
             "module": "intelmq.bots.experts.tor_nodes.expert",
