@@ -529,6 +529,17 @@
                 "splitlines": false
             }
         },
+        "Key-Value": {
+            "description": "Parse key=value strings.",
+            "module": "intelmq.bots.parsers.key_value.parser",
+            "parameters": {
+                "pair_separator": " ",
+                "kv_separator": "=",
+                "keys": { },
+                "strip_quotes": true,
+                "timestamp_key": null
+            }
+        },
         "MISP": {
             "description": "Parse MISP events.",
             "module": "intelmq.bots.parsers.misp.parser",
