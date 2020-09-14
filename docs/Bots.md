@@ -74,6 +74,7 @@
   - [RipeNCC Abuse Contact](#ripencc-abuse-contact)
   - [Sieve](#sieve)
   - [Taxonomy](#taxonomy)
+  - [Threshold](#threshold)
   - [Tor Nodes](#tor-nodes)
   - [Url2FQDN](#url2fqdn)
   - [Wait](#wait)
@@ -2488,6 +2489,33 @@ For brevity, "type" means `classification.type` and "taxonomy" means `classifica
 - If taxonomy is missing, and type is given, the according taxonomy is set.
 - If neither taxonomy, not type is given, taxonomy is set to "other" and type to "unknown".
 - If taxonomy is given, but type is not, type is set to "unknown".
+
+* * *
+
+### Threshold
+
+#### Information:
+
+* **Cache parameters** (see in section [common parameters](#common-parameters))
+* `name`: threshold
+* `lookup`: redis cache
+* `public`: no
+* `cache (redis db)`: 11
+* `description`: Check if the number of similar messages during a specified time interval exceeds a set value.
+
+#### Configuration Parameters:
+
+* `filter_keys`: String, comma-separated list of field names to consider or ignore when determining which messages are similar.
+* `filter_type`: String, `whitelist` (consider only the fields in `filter_keys`) or `blacklist` (consider everything but the fields in `filter_keys`).
+* `timeout`: Integer, number of seconds before threshold counter is reset.
+* `threshold`: Integer, number of messages required before propagating one.
+* `add_keys`: Array of string->string, optional, fields and values to add to propagated messages. Example:
+   ```json
+   "add_keys": {
+       "classification.type": "spam",
+       "comment": "Number of SMTP connections exceeded"
+   }
+   ```
 
 * * *
 
