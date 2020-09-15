@@ -159,6 +159,7 @@ AZURE = {
     "Payload.Custom3": "extra.payload.custom_field3",
     "Payload.Custom4": "extra.payload.custom_field4",
     "Payload.Custom5": "extra.payload.custom_field5",
+    "Payload.Text": "extra.payload.text",
 }
 CONFIDENCE = {
     "High": 100,
@@ -233,7 +234,8 @@ class MicrosoftCTIPParserBot(ParserBot):
                     value = json.loads(utils.base64_decode(value))
                     # continue unpacking in next loop
                 except json.decoder.JSONDecodeError:
-                    line[key] = utils.base64_decode(value)
+                    line['%s.%s' % (key, "Text")] = utils.base64_decode(value)
+                    del line[key]
             if isinstance(value, dict):
                 for subkey, subvalue in value.items():
                     line['%s.%s' % (key, subkey)] = subvalue

@@ -79,7 +79,7 @@ EXAMPLE_EVENTS = [{
 "source.geolocation.city": "Vienna",
     "extra.custom_field1": "matsnu5",
     "raw": base64_encode(EXAMPLE_LINES[1]),
-    "extra.payload": 'this is just some text',
+    "extra.payload.text": 'this is just some text',
     'extra.malware': 'Avalanche',
     },
     ]
