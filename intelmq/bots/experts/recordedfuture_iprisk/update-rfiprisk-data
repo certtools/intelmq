@@ -1,6 +1,6 @@
 #!/bin/bash
 
 echo 'This script is deprecated and will be removed in version 3.0.
-Please use the command "intelmq.bots.experts.recordedfuture_iprisk.expert --update-database" instead.'
+Please use the command "intelmq.bots.experts.recordedfuture_iprisk.expert --update-database" instead.' > /dev/stderr
 
 intelmq.bots.experts.recordedfuture_iprisk.expert --update-database
