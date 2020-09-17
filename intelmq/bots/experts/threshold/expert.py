@@ -5,7 +5,7 @@ SPDX-FileCopyrightText: 2020 Linköping University <https://liu.se/>
 SPDX-License-Identifier: AGPL-3.0-or-later
 
 Given a stream of messages, this bot will let through only the single
-one that makes the cound of similar messages go above a threshold
+one that makes the count of similar messages go above a threshold
 value.
 
 This bot is not multiprocessing safe. Do not run more than one
