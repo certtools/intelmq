@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Parse a string of key=value pairs.
+"""Parse a string of key=value pairs.
 
 SPDX-FileCopyrightText: 2020 Linköping University <https://liu.se/>
 SPDX-License-Identifier: AGPL-3.0-or-later
@@ -20,7 +19,9 @@ Parameters:
           fields to propagate
 
     strip_quotes: boolean, default true, remove opening and closing
-                  quotes
+                  double quotes. Note that quotes do not protect pair
+                  separation, so e.g. key="long value" will still be
+                  split into 'key: "long' and 'value"'.
 
     timestamp_key: string, optional, key containing event timestamp.
                    Numerical values are interpreted as UNIX seconds,
