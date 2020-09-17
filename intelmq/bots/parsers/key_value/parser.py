@@ -71,7 +71,7 @@ class KeyValueParserBot(ParserBot):
                         value = DateTime.from_timestamp(int(value))
                     else:
                         value = parse(value, fuzzy=True).isoformat() + " UTC"
-                except:
+                except ValueError:
                     value = None  # Will be ignored by event.add()
             if key in self.keys:
                 event.add(self.keys[key], value, raise_failure=False)
