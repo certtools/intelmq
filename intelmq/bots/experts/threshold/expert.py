@@ -42,7 +42,9 @@ Parameters:
              result in a new message being sent.
 
     add_keys: optional, array of strings to strings, keys to add to
-              forwarded messages.
+              forwarded messages. Regardless of this setting, the
+              field "extra.count" will be set to the number of
+              messages seen (which will be the threshold value).
 
 """
 
@@ -93,6 +95,7 @@ class ThresholdExpertBot(Bot):
             if old_count + 1 == self.threshold:
                 self.logger.debug('Threshold reached, forwarding message.')
                 message.update(self.add_keys)
+                message.update({'extra.count': old_count + 1})
                 self.send_message(message)
             else:
                 self.logger.debug('Dropped message.')
