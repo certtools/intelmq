@@ -55,6 +55,8 @@ class ThresholdExpertBot(Bot):
 
     _message_processed_verb = 'Forwarded'
 
+    is_multithreadable = False
+
     def init(self):
         self.cache = Cache(self.parameters.redis_cache_host,
                            self.parameters.redis_cache_port,
