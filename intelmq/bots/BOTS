@@ -535,7 +535,7 @@
             "parameters": {
                 "pair_separator": " ",
                 "kv_separator": "=",
-                "keys": { },
+                "keys": {},
                 "strip_quotes": true,
                 "timestamp_key": null
             }
