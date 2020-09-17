@@ -52,11 +52,6 @@ class KeyValueParserBot(ParserBot):
         if self.timestamp_key:
             self.keys[self.timestamp_key] = "time.source"
 
-    def parse(self, report):
-        raw_report = utils.base64_decode(report.get('raw'))
-        for row in raw_report.splitlines():
-            yield row
-
     def parse_line(self, row, report):
         event = self.new_event(report)
         for kv_pair in row.split(self.pair_separator):
