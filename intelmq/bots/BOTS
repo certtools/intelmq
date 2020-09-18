@@ -178,6 +178,17 @@
                 "rsync_path": "<path>"
             }
         },
+        "Syslog": {
+            "description": "Receive Syslog messages.",
+            "module": "intelmq.bots.collectors.syslog.collector",
+            "parameters": {
+                "ip": "0.0.0.0",
+                "name": "Syslog",
+                "port": 514,
+                "protocol": "udp",
+                "provider": "Syslog"
+            }
+        },
         "TCP": {
             "description": "Receive events by opening a TCP port (ex: from TCP Output of another IntelMQ instance).",
             "module": "intelmq.bots.collectors.tcp.collector",
