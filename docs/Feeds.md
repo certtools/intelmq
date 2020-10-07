@@ -68,7 +68,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://feodotracker.abuse.ch/browse`
 *  * `name`: `Feodo Tracker Browse`
@@ -77,7 +77,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.html_table.parser
+* **Bot:** HTML Table (Module `intelmq.bots.parsers.html_table.parser`)
 * **Configuration Parameters:**
 *  * `columns`: `time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc`
 *  * `ignore_values`: `,,,,Not listed,,`
@@ -95,7 +95,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://feodotracker.abuse.ch/downloads/ipblocklist.csv`
 *  * `name`: `Feodo Tracker IPs`
@@ -104,7 +104,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.abusech.parser_ip
+* **Bot:** Abuse.ch IP (Module `intelmq.bots.parsers.abusech.parser_ip`)
 * **Configuration Parameters:**
 
 
@@ -117,7 +117,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://urlhaus.abuse.ch/feeds/tld/<TLD>/, https://urlhaus.abuse.ch/feeds/country/<CC>/, or https://urlhaus.abuse.ch/feeds/asn/<ASN>/`
 *  * `name`: `URLhaus`
@@ -126,7 +126,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.generic.parser_csv
+* **Bot:** Generic CSV (Module `intelmq.bots.parsers.generic.parser_csv`)
 * **Configuration Parameters:**
 *  * `columns`: `["time.source", "source.url", "status", "classification.type|__IGNORE__", "source.fqdn|__IGNORE__", "source.ip", "source.asn", "source.geolocation.cc"]`
 *  * `default_url_protocol`: `http://`
@@ -146,7 +146,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.alienvault_otx.collector
+* **Bot:** AlienVault OTX (Module `intelmq.bots.collectors.alienvault_otx.collector`)
 * **Configuration Parameters:**
 *  * `api_key`: `{{ your API key }}`
 *  * `name`: `OTX`
@@ -154,7 +154,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.alienvault.parser_otx
+* **Bot:** AlienVault OTX (Module `intelmq.bots.parsers.alienvault.parser_otx`)
 * **Configuration Parameters:**
 
 
@@ -166,7 +166,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://reputation.alienvault.com/reputation.data`
 *  * `name`: `Reputation List`
@@ -175,7 +175,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.alienvault.parser
+* **Bot:** AlienVault (Module `intelmq.bots.parsers.alienvault.parser`)
 * **Configuration Parameters:**
 
 
@@ -190,7 +190,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http_stream
+* **Bot:** URL Stream Fetcher (Module `intelmq.bots.collectors.http.collector_http_stream`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://prod.cyberfeed.net/stream?key={{ your API key }}`
 *  * `name`: `Cyberfeed Stream`
@@ -199,7 +199,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.anubisnetworks.parser
+* **Bot:** AnubisNetworks Cyberfeed Stream (Module `intelmq.bots.parsers.anubisnetworks.parser`)
 * **Configuration Parameters:**
 *  * `use_malware_familiy_as_classification_identifier`: `True`
 
@@ -215,7 +215,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.autoshun.org/download/?api_key=__APIKEY__&format=html`
 *  * `name`: `Shunlist`
@@ -224,7 +224,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.autoshun.parser
+* **Bot:** Autoshun (Module `intelmq.bots.parsers.autoshun.parser`)
 * **Configuration Parameters:**
 
 
@@ -240,7 +240,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_password`: `__PASSWORD__`
 *  * `http_url`: `https://faf.bambenekconsulting.com/feeds/c2-dommasterlist.txt`
@@ -251,7 +251,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.bambenek.parser
+* **Bot:** Bambenek (Module `intelmq.bots.parsers.bambenek.parser`)
 * **Configuration Parameters:**
 
 
@@ -265,7 +265,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_password`: `__PASSWORD__`
 *  * `http_url`: `https://faf.bambenekconsulting.com/feeds/c2-ipmasterlist.txt`
@@ -276,7 +276,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.bambenek.parser
+* **Bot:** Bambenek (Module `intelmq.bots.parsers.bambenek.parser`)
 * **Configuration Parameters:**
 
 
@@ -290,7 +290,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://faf.bambenekconsulting.com/feeds/dga-feed.txt`
 *  * `name`: `DGA Domains`
@@ -299,7 +299,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.bambenek.parser
+* **Bot:** Bambenek (Module `intelmq.bots.parsers.bambenek.parser`)
 * **Configuration Parameters:**
 
 
@@ -314,7 +314,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/apache.txt`
 *  * `name`: `Apache`
@@ -323,7 +323,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.blocklistde.parser
+* **Bot:** Blocklist.de (Module `intelmq.bots.parsers.blocklistde.parser`)
 * **Configuration Parameters:**
 
 
@@ -336,7 +336,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/bots.txt`
 *  * `name`: `Bots`
@@ -345,7 +345,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.blocklistde.parser
+* **Bot:** Blocklist.de (Module `intelmq.bots.parsers.blocklistde.parser`)
 * **Configuration Parameters:**
 
 
@@ -358,7 +358,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/bruteforcelogin.txt`
 *  * `name`: `Brute-force Logins`
@@ -367,7 +367,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.blocklistde.parser
+* **Bot:** Blocklist.de (Module `intelmq.bots.parsers.blocklistde.parser`)
 * **Configuration Parameters:**
 
 
@@ -380,7 +380,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/ftp.txt`
 *  * `name`: `FTP`
@@ -389,7 +389,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.blocklistde.parser
+* **Bot:** Blocklist.de (Module `intelmq.bots.parsers.blocklistde.parser`)
 * **Configuration Parameters:**
 
 
@@ -402,7 +402,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/imap.txt`
 *  * `name`: `IMAP`
@@ -411,7 +411,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.blocklistde.parser
+* **Bot:** Blocklist.de (Module `intelmq.bots.parsers.blocklistde.parser`)
 * **Configuration Parameters:**
 
 
@@ -424,7 +424,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/ircbot.txt`
 *  * `name`: `IRC Bots`
@@ -433,7 +433,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.blocklistde.parser
+* **Bot:** Blocklist.de (Module `intelmq.bots.parsers.blocklistde.parser`)
 * **Configuration Parameters:**
 
 
@@ -446,7 +446,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/mail.txt`
 *  * `name`: `Mail`
@@ -455,7 +455,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.blocklistde.parser
+* **Bot:** Blocklist.de (Module `intelmq.bots.parsers.blocklistde.parser`)
 * **Configuration Parameters:**
 
 
@@ -468,7 +468,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/sip.txt`
 *  * `name`: `SIP`
@@ -477,7 +477,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.blocklistde.parser
+* **Bot:** Blocklist.de (Module `intelmq.bots.parsers.blocklistde.parser`)
 * **Configuration Parameters:**
 
 
@@ -490,7 +490,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/ssh.txt`
 *  * `name`: `SSH`
@@ -499,7 +499,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.blocklistde.parser
+* **Bot:** Blocklist.de (Module `intelmq.bots.parsers.blocklistde.parser`)
 * **Configuration Parameters:**
 
 
@@ -512,7 +512,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.blocklist.de/lists/strongips.txt`
 *  * `name`: `Strong IPs`
@@ -521,7 +521,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.blocklistde.parser
+* **Bot:** Blocklist.de (Module `intelmq.bots.parsers.blocklistde.parser`)
 * **Configuration Parameters:**
 
 
@@ -537,7 +537,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.blueliv.collector_crimeserver
+* **Bot:** Blueliv Crimeserver (Module `intelmq.bots.collectors.blueliv.collector_crimeserver`)
 * **Configuration Parameters:**
 *  * `api_key`: `__APIKEY__`
 *  * `name`: `CrimeServer`
@@ -546,7 +546,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.blueliv.parser_crimeserver
+* **Bot:** Blueliv Crimeserver (Module `intelmq.bots.parsers.blueliv.parser_crimeserver`)
 * **Configuration Parameters:**
 
 
@@ -562,7 +562,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.stomp.collector
+* **Bot:** STOMP (Module `intelmq.bots.collectors.stomp.collector`)
 * **Configuration Parameters:**
 *  * `exchange`: `{insert your exchange point as given by CERT.pl}`
 *  * `name`: `N6 Stomp Stream`
@@ -575,7 +575,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.n6.parser_n6stomp
+* **Bot:** N6Stomp (Module `intelmq.bots.parsers.n6.parser_n6stomp`)
 * **Configuration Parameters:**
 
 
@@ -590,7 +590,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://cinsscore.com/list/ci-badguys.txt`
 *  * `name`: `Army List`
@@ -599,7 +599,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.ci_army.parser
+* **Bot:** CI Army (Module `intelmq.bots.parsers.ci_army.parser`)
 * **Configuration Parameters:**
 
 
@@ -614,7 +614,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `extract_files`: `True`
 *  * `http_url`: `https://haas.nic.cz/stats/export/{time[%Y/%m/%Y-%m-%d]}.json.gz`
@@ -623,7 +623,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.cznic.parser_haas
+* **Bot:** CZ.NIC HaaS (Module `intelmq.bots.parsers.cznic.parser_haas`)
 * **Configuration Parameters:**
 
 
@@ -639,14 +639,14 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.certstream.collector_certstream
+* **Bot:** Undefined Bot (Module `intelmq.bots.collectors.certstream.collector_certstream`)
 * **Configuration Parameters:**
 *  * `name`: `CertStream`
 *  * `provider`: `Calidog`
 
 ### Parser
 
-* **Module:** intelmq.bots.parses.certstream.parser_certstream
+* **Bot:** Undefined Bot (Module `intelmq.bots.parses.certstream.parser_certstream`)
 * **Configuration Parameters:**
 
 
@@ -661,7 +661,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_timeout_sec`: `120`
 *  * `http_url`: `http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&domain=`
@@ -672,7 +672,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.cleanmx.parser
+* **Bot:** CleanMX (Module `intelmq.bots.parsers.cleanmx.parser`)
 * **Configuration Parameters:**
 
 
@@ -685,7 +685,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_timeout_sec`: `120`
 *  * `http_url`: `http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=`
@@ -696,7 +696,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.cleanmx.parser
+* **Bot:** CleanMX (Module `intelmq.bots.parsers.cleanmx.parser`)
 * **Configuration Parameters:**
 
 
@@ -711,7 +711,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://cybercrime-tracker.net/index.php`
 *  * `name`: `Latest`
@@ -720,7 +720,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.html_table.parser
+* **Bot:** HTML Table (Module `intelmq.bots.parsers.html_table.parser`)
 * **Configuration Parameters:**
 *  * `columns`: `["time.source", "source.url", "source.ip", "malware.name", "__IGNORE__"]`
 *  * `default_url_protocol`: `http://`
@@ -739,7 +739,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://dshield.org/asdetailsascii.html?as={{ AS Number }}`
 *  * `name`: `AS Details`
@@ -748,7 +748,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.dshield.parser_asn
+* **Bot:** DShield AS (Module `intelmq.bots.parsers.dshield.parser_asn`)
 * **Configuration Parameters:**
 
 
@@ -761,7 +761,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.dshield.org/block.txt`
 *  * `name`: `Block`
@@ -770,7 +770,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.dshield.parser_block
+* **Bot:** DShield Block (Module `intelmq.bots.parsers.dshield.parser_block`)
 * **Configuration Parameters:**
 
 
@@ -783,7 +783,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.dshield.org/feeds/suspiciousdomains_High.txt`
 *  * `name`: `Suspicious Domains`
@@ -792,7 +792,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.dshield.parser_domain
+* **Bot:** DShield Suspicious Domains (Module `intelmq.bots.parsers.dshield.parser_domain`)
 * **Configuration Parameters:**
 
 
@@ -807,7 +807,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://danger.rulez.sk/projects/bruteforceblocker/blist.php`
 *  * `name`: `Bruteforce Blocker`
@@ -816,7 +816,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.danger_rulez.parser
+* **Bot:** Danger Rulez (Module `intelmq.bots.parsers.danger_rulez.parser`)
 * **Configuration Parameters:**
 
 
@@ -831,7 +831,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://dataplane.org/sipquery.txt`
 *  * `name`: `SIP Query`
@@ -840,7 +840,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.dataplane.parser
+* **Bot:** Dataplane (Module `intelmq.bots.parsers.dataplane.parser`)
 * **Configuration Parameters:**
 
 
@@ -853,7 +853,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://dataplane.org/sipregistration.txt`
 *  * `name`: `SIP Registration`
@@ -862,7 +862,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.dataplane.parser
+* **Bot:** Dataplane (Module `intelmq.bots.parsers.dataplane.parser`)
 * **Configuration Parameters:**
 
 
@@ -875,7 +875,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://dataplane.org/sshclient.txt`
 *  * `name`: `SSH Client Connection`
@@ -884,7 +884,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.dataplane.parser
+* **Bot:** Dataplane (Module `intelmq.bots.parsers.dataplane.parser`)
 * **Configuration Parameters:**
 
 
@@ -897,7 +897,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://dataplane.org/sshpwauth.txt`
 *  * `name`: `SSH Password Authentication`
@@ -906,7 +906,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.dataplane.parser
+* **Bot:** Dataplane (Module `intelmq.bots.parsers.dataplane.parser`)
 * **Configuration Parameters:**
 
 
@@ -921,7 +921,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt`
 *  * `name`: `Infected Domains`
@@ -930,7 +930,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.dyn.parser
+* **Bot:** DynDNS ponmocup Domains (Module `intelmq.bots.parsers.dyn.parser`)
 * **Configuration Parameters:**
 
 
@@ -945,7 +945,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.eset.collector
+* **Bot:** ESET ETI TAXII (Module `intelmq.bots.collectors.eset.collector`)
 * **Configuration Parameters:**
 *  * `collection`: `ei.domains v2 (json)`
 *  * `endpoint`: `eti.eset.com`
@@ -955,7 +955,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.eset.parser
+* **Bot:** ESET (Module `intelmq.bots.parsers.eset.parser`)
 * **Configuration Parameters:**
 
 
@@ -968,7 +968,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.eset.collector
+* **Bot:** ESET ETI TAXII (Module `intelmq.bots.collectors.eset.collector`)
 * **Configuration Parameters:**
 *  * `collection`: `ei.urls (json)`
 *  * `endpoint`: `eti.eset.com`
@@ -978,7 +978,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.eset.parser
+* **Bot:** ESET (Module `intelmq.bots.parsers.eset.parser`)
 * **Configuration Parameters:**
 
 
@@ -993,7 +993,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_password`: `{{ your password}}`
 *  * `http_url`: `https://dgarchive.caad.fkie.fraunhofer.de/today`
@@ -1004,7 +1004,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.fraunhofer.parser_dga
+* **Bot:** Fraunhofer DGA (Module `intelmq.bots.parsers.fraunhofer.parser_dga`)
 * **Configuration Parameters:**
 
 
@@ -1040,7 +1040,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.api.collector_api
+* **Bot:** API (Module `intelmq.bots.collectors.api.collector_api`)
 * **Configuration Parameters:**
 *  * `name`: `Enterprise Callback`
 *  * `port`: `5001`
@@ -1048,7 +1048,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.hibp.parser_callback
+* **Bot:** Have I been Pwned Enterprise Callback (Module `intelmq.bots.parsers.hibp.parser_callback`)
 * **Configuration Parameters:**
 
 
@@ -1063,7 +1063,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://malc0de.com/bl/ZONES`
 *  * `name`: `Bind Format`
@@ -1072,7 +1072,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.malc0de.parser
+* **Bot:** Malc0de (Module `intelmq.bots.parsers.malc0de.parser`)
 * **Configuration Parameters:**
 
 
@@ -1085,7 +1085,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://malc0de.com/bl/IP_Blacklist.txt`
 *  * `name`: `IP Blacklist`
@@ -1094,7 +1094,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.malc0de.parser
+* **Bot:** Malc0de (Module `intelmq.bots.parsers.malc0de.parser`)
 * **Configuration Parameters:**
 
 
@@ -1107,7 +1107,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://malc0de.com/bl/BOOT`
 *  * `name`: `Windows Format`
@@ -1116,7 +1116,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.malc0de.parser
+* **Bot:** Malc0de (Module `intelmq.bots.parsers.malc0de.parser`)
 * **Configuration Parameters:**
 
 
@@ -1131,7 +1131,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://www.malwaredomainlist.com/updatescsv.php`
 *  * `name`: `Blacklist`
@@ -1140,7 +1140,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.malwaredomainlist.parser
+* **Bot:** Malware Domain List (Module `intelmq.bots.parsers.malwaredomainlist.parser`)
 * **Configuration Parameters:**
 
 
@@ -1155,7 +1155,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://mirror1.malwaredomains.com/files/domains.txt`
 *  * `name`: `Malicious`
@@ -1164,7 +1164,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.malwaredomains.parser
+* **Bot:** Malware Domains (Module `intelmq.bots.parsers.malwaredomains.parser`)
 * **Configuration Parameters:**
 
 
@@ -1179,7 +1179,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://lists.malwarepatrol.net/cgi/getfile?receipt={{ your API key }}&product=8&list=dansguardian`
 *  * `name`: `DansGuardian`
@@ -1188,7 +1188,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.malwarepatrol.parser_dansguardian
+* **Bot:** MalwarePatrol Dans Guardian (Module `intelmq.bots.parsers.malwarepatrol.parser_dansguardian`)
 * **Configuration Parameters:**
 
 
@@ -1203,7 +1203,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.malwareurl.com/`
 *  * `name`: `Latest malicious activity`
@@ -1212,7 +1212,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.malwareurl.parser
+* **Bot:** Malwareurl (Module `intelmq.bots.parsers.malwareurl.parser`)
 * **Configuration Parameters:**
 
 
@@ -1227,14 +1227,14 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.opendxl.collector
+* **Bot:** McAfee openDXL (Module `intelmq.bots.collectors.opendxl.collector`)
 * **Configuration Parameters:**
 *  * `dxl_config_file`: `{{location of dxl configuration file}}`
 *  * `dxl_topic`: `/mcafee/event/atd/file/report`
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.mcafee.parser_atd
+* **Bot:** McAfee Advanced Threat Defense (Module `intelmq.bots.parsers.mcafee.parser_atd`)
 * **Configuration Parameters:**
 *  * `verdict_severity`: `4`
 
@@ -1251,7 +1251,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.microsoft.collector_interflow
+* **Bot:** Microsoft Interflow (Module `intelmq.bots.collectors.microsoft.collector_interflow`)
 * **Configuration Parameters:**
 *  * `api_key`: `{{your API key}}`
 *  * `file_match`: `^bingmurls_`
@@ -1263,7 +1263,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.microsoft.parser_bingmurls
+* **Bot:** Microsoft BingMURLs (Module `intelmq.bots.parsers.microsoft.parser_bingmurls`)
 * **Configuration Parameters:**
 
 
@@ -1277,7 +1277,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.microsoft.collector_azure
+* **Bot:** Microsoft Azure (Module `intelmq.bots.collectors.microsoft.collector_azure`)
 * **Configuration Parameters:**
 *  * `connection_string`: `{{your connection string}}`
 *  * `container_name`: `ctip-infected-summary`
@@ -1291,7 +1291,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.microsoft.parser_ctip
+* **Bot:** Microsoft CTIP (Module `intelmq.bots.parsers.microsoft.parser_ctip`)
 * **Configuration Parameters:**
 
 
@@ -1305,7 +1305,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.microsoft.collector_interflow
+* **Bot:** Microsoft Interflow (Module `intelmq.bots.collectors.microsoft.collector_interflow`)
 * **Configuration Parameters:**
 *  * `api_key`: `{{your API key}}`
 *  * `file_match`: `^ctip_`
@@ -1317,7 +1317,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.microsoft.parser_ctip
+* **Bot:** Microsoft CTIP (Module `intelmq.bots.parsers.microsoft.parser_ctip`)
 * **Configuration Parameters:**
 
 
@@ -1332,7 +1332,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://data.netlab.360.com/feeds/dga/dga.txt`
 *  * `name`: `DGA`
@@ -1341,7 +1341,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.netlab_360.parser
+* **Bot:** Netlab 360 (Module `intelmq.bots.parsers.netlab_360.parser`)
 * **Configuration Parameters:**
 
 
@@ -1354,7 +1354,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://data.netlab.360.com/feeds/hajime-scanner/bot.list`
 *  * `name`: `Hajime Scanner`
@@ -1363,7 +1363,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.netlab_360.parser
+* **Bot:** Netlab 360 (Module `intelmq.bots.parsers.netlab_360.parser`)
 * **Configuration Parameters:**
 
 
@@ -1376,7 +1376,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://data.netlab.360.com/feeds/ek/magnitude.txt`
 *  * `name`: `Magnitude EK`
@@ -1385,7 +1385,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.netlab_360.parser
+* **Bot:** Netlab 360 (Module `intelmq.bots.parsers.netlab_360.parser`)
 * **Configuration Parameters:**
 
 
@@ -1398,7 +1398,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://data.netlab.360.com/feeds/mirai-scanner/scanner.list`
 *  * `name`: `Mirai Scanner`
@@ -1407,7 +1407,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.netlab_360.parser
+* **Bot:** Netlab 360 (Module `intelmq.bots.parsers.netlab_360.parser`)
 * **Configuration Parameters:**
 
 
@@ -1423,7 +1423,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_password`: `{{ your password}}`
 *  * `http_url`: `https://openphish.com/prvt-intell/`
@@ -1434,7 +1434,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.openphish.parser_commercial
+* **Bot:** OpenPhish Commercial (Module `intelmq.bots.parsers.openphish.parser_commercial`)
 * **Configuration Parameters:**
 
 
@@ -1447,7 +1447,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.openphish.com/feed.txt`
 *  * `name`: `Public feed`
@@ -1456,7 +1456,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.openphish.parser
+* **Bot:** OpenPhish (Module `intelmq.bots.parsers.openphish.parser`)
 * **Configuration Parameters:**
 
 
@@ -1471,7 +1471,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://data.phishtank.com/data/{{ your API key }}/online-valid.csv`
 *  * `name`: `Online`
@@ -1480,7 +1480,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.phishtank.parser
+* **Bot:** PhishTank (Module `intelmq.bots.parsers.phishtank.parser`)
 * **Configuration Parameters:**
 
 
@@ -1495,7 +1495,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://precisionsec.com/threat-intelligence-feeds/agent-tesla/`
 *  * `name`: `Agent Tesla`
@@ -1504,7 +1504,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.html_table.parser
+* **Bot:** HTML Table (Module `intelmq.bots.parsers.html_table.parser`)
 * **Configuration Parameters:**
 *  * `columns`: `["source.ip|source.url", "time.source"]`
 *  * `default_url_protocol`: `http://`
@@ -1524,7 +1524,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.mail.collector_mail_attach
+* **Bot:** Mail Attachment Fetcher (Module `intelmq.bots.collectors.mail.collector_mail_attach`)
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv.zip`
 *  * `extract_files`: `True`
@@ -1540,7 +1540,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.shadowserver.parser
+* **Bot:** ShadowServer (Module `intelmq.bots.parsers.shadowserver.parser`)
 * **Configuration Parameters:**
 
 
@@ -1554,7 +1554,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.rt.collector_rt
+* **Bot:** Request Tracker (Module `intelmq.bots.collectors.rt.collector_rt`)
 * **Configuration Parameters:**
 *  * `attachment_regex`: `\\.csv\\.zip$`
 *  * `extract_attachment`: `True`
@@ -1578,7 +1578,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.shadowserver.parser
+* **Bot:** ShadowServer (Module `intelmq.bots.parsers.shadowserver.parser`)
 * **Configuration Parameters:**
 
 
@@ -1593,7 +1593,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.spamhaus.org/drop/asndrop.txt`
 *  * `name`: `ASN Drop`
@@ -1602,7 +1602,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.spamhaus.parser_drop
+* **Bot:** Spamhaus Drop (Module `intelmq.bots.parsers.spamhaus.parser_drop`)
 * **Configuration Parameters:**
 
 
@@ -1615,7 +1615,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `{{ your CERT portal URL }}`
 *  * `name`: `CERT`
@@ -1624,7 +1624,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.spamhaus.parser_cert
+* **Bot:** Spamhaus CERT (Module `intelmq.bots.parsers.spamhaus.parser_cert`)
 * **Configuration Parameters:**
 
 
@@ -1637,7 +1637,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.spamhaus.org/drop/drop.txt`
 *  * `name`: `Drop`
@@ -1646,7 +1646,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.spamhaus.parser_drop
+* **Bot:** Spamhaus Drop (Module `intelmq.bots.parsers.spamhaus.parser_drop`)
 * **Configuration Parameters:**
 
 
@@ -1659,7 +1659,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.spamhaus.org/drop/dropv6.txt`
 *  * `name`: `Dropv6`
@@ -1668,7 +1668,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.spamhaus.parser_drop
+* **Bot:** Spamhaus Drop (Module `intelmq.bots.parsers.spamhaus.parser_drop`)
 * **Configuration Parameters:**
 
 
@@ -1681,7 +1681,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.spamhaus.org/drop/edrop.txt`
 *  * `name`: `EDrop`
@@ -1690,7 +1690,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.spamhaus.parser_drop
+* **Bot:** Spamhaus Drop (Module `intelmq.bots.parsers.spamhaus.parser_drop`)
 * **Configuration Parameters:**
 
 
@@ -1706,7 +1706,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.github_api.collector_github_contents_api
+* **Bot:** Github API (Module `intelmq.bots.collectors.github_api.collector_github_contents_api`)
 * **Configuration Parameters:**
 *  * `basic_auth_password`: `PASSWORD`
 *  * `basic_auth_username`: `USERNAME`
@@ -1715,7 +1715,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.github_feed
+* **Bot:** Undefined Bot (Module `intelmq.bots.parsers.github_feed`)
 * **Configuration Parameters:**
 
 
@@ -1731,7 +1731,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://labs.sucuri.net/?malware`
 *  * `name`: `Hidden IFrames`
@@ -1740,7 +1740,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.sucuri.parser
+* **Bot:** Sucuri Malware (Module `intelmq.bots.parsers.sucuri.parser`)
 * **Configuration Parameters:**
 
 
@@ -1754,14 +1754,14 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.rsync.collector_rsync
+* **Bot:** Rsync (Module `intelmq.bots.collectors.rsync.collector_rsync`)
 * **Configuration Parameters:**
 *  * `file`: `wild.surbl.org.rbldnsd`
 *  * `rsync_path`: `blacksync.prolocation.net::surbl-wild/`
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.surbl.parser
+* **Bot:** Surbl (Module `intelmq.bots.parsers.surbl.parser`)
 * **Configuration Parameters:**
 
 
@@ -1776,7 +1776,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.tc.edu.tw/net/netflow/lkout/recent/`
 *  * `name`: `Netflow Recent`
@@ -1785,7 +1785,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.taichung.parser
+* **Bot:** Taichung (Module `intelmq.bots.parsers.taichung.parser`)
 * **Configuration Parameters:**
 
 
@@ -1805,7 +1805,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_password`: `{{your password}}`
 *  * `http_url`: `https://www.cymru.com/$certname/$certname_{time[%Y%m%d]}.txt`
@@ -1817,7 +1817,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.cymru.parser_cap_program
+* **Bot:** Cymru CAP Program (Module `intelmq.bots.parsers.cymru.parser_cap_program`)
 * **Configuration Parameters:**
 
 
@@ -1830,7 +1830,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt`
 *  * `name`: `Full Bogons IPv4`
@@ -1839,7 +1839,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.cymru.parser_full_bogons
+* **Bot:** Cymru Full Bogons (Module `intelmq.bots.parsers.cymru.parser_full_bogons`)
 * **Configuration Parameters:**
 
 
@@ -1852,7 +1852,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt`
 *  * `name`: `Full Bogons IPv6`
@@ -1861,7 +1861,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.cymru.parser_full_bogons
+* **Bot:** Cymru Full Bogons (Module `intelmq.bots.parsers.cymru.parser_full_bogons`)
 * **Configuration Parameters:**
 
 
@@ -1876,7 +1876,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.threatminer.org/`
 *  * `name`: `Recent domains`
@@ -1885,7 +1885,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.threatminer.parser
+* **Bot:** Threatminer (Module `intelmq.bots.parsers.threatminer.parser`)
 * **Configuration Parameters:**
 
 
@@ -1900,7 +1900,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://www.turris.cz/greylist-data/greylist-latest.csv`
 *  * `name`: `Greylist`
@@ -1909,7 +1909,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.turris.parser
+* **Bot:** Turris Greylist (Module `intelmq.bots.parsers.turris.parser`)
 * **Configuration Parameters:**
 
 
@@ -1924,7 +1924,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `extract_files`: `true`
 *  * `http_url`: `https://dsi.ut-capitole.fr/blacklists/download/{collection name}.tar.gz`
@@ -1934,7 +1934,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.generic.parser_csv
+* **Bot:** Generic CSV (Module `intelmq.bots.parsers.generic.parser_csv`)
 * **Configuration Parameters:**
 *  * `columns`: `{depends on a collection}`
 *  * `delimiter`: `false`
@@ -1952,7 +1952,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://vxvault.net/URL_List.php`
 *  * `name`: `URLs`
@@ -1961,7 +1961,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.vxvault.parser
+* **Bot:** VXVault (Module `intelmq.bots.parsers.vxvault.parser`)
 * **Configuration Parameters:**
 
 
@@ -1977,7 +1977,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://tracker.viriback.com/`
 *  * `name`: `Unsafe sites`
@@ -1986,7 +1986,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.html_table.parser
+* **Bot:** HTML Table (Module `intelmq.bots.parsers.html_table.parser`)
 * **Configuration Parameters:**
 *  * `columns`: `["malware.name", "source.url", "source.ip", "time.source"]`
 *  * `html_parser`: `lxml`
@@ -2004,7 +2004,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `https://app.webinspector.com/public/recent_detections/`
 *  * `name`: `Unsafe sites`
@@ -2013,7 +2013,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.webinspektor.parser
+* **Bot:** Web Inspektor (Module `intelmq.bots.parsers.webinspektor.parser`)
 * **Configuration Parameters:**
 
 
@@ -2028,7 +2028,7 @@ server {
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.mail.collector_mail_attach
+* **Bot:** Mail Attachment Fetcher (Module `intelmq.bots.collectors.mail.collector_mail_attach`)
 * **Configuration Parameters:**
 *  * `attach_regex`: `csv`
 *  * `extract_files`: `False`
@@ -2045,7 +2045,7 @@ server {
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.zoneh.parser
+* **Bot:** ZoneH (Module `intelmq.bots.parsers.zoneh.parser`)
 * **Configuration Parameters:**
 
 
