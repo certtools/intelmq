@@ -24,6 +24,7 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import URL
 from intelmq.lib.exceptions import InvalidArgument
 
+
 class GethostbynameExpertBot(Bot):
 
     def init(self):
