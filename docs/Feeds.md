@@ -639,14 +639,14 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.certstream.collector_certstream
+* **Module:** intelmq.bots.collectors.calidog.collector_certstream
 * **Configuration Parameters:**
 *  * `name`: `CertStream`
 *  * `provider`: `Calidog`
 
 ### Parser
 
-* **Module:** intelmq.bots.parses.certstream.parser_certstream
+* **Module:** intelmq.bots.parsers.calidog.parser_certstream
 * **Configuration Parameters:**
 
 

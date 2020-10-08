@@ -126,6 +126,8 @@ CHANGELOG
   - Explain taxonomy expert.
   - Add documentation on n6 parser.
   - Gethostbyname expert: Add documentation how errors are treated.
+- Feeds:
+  - Fixed bot modules of Calidog CertStream feed.
 
 ### Packaging
 
