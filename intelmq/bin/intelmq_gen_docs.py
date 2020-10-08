@@ -71,6 +71,9 @@ def feeds_docs():
     with open(os.path.join(BASEDIR, 'intelmq/etc/feeds.yaml')) as fhandle:
         config = yaml.safe_load(fhandle.read())
 
+    with open(os.path.join(BASEDIR, 'intelmq/bots/BOTS')) as fhandle:
+        bots = json.load(fhandle)
+
     toc = ""
     for provider in sorted(config['providers'].keys()):
         provider_link = provider.replace('.', '')
@@ -121,7 +124,13 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
                 output += "### %s\n\n" % bot.title()
 
-                output += info("Module", bot_info['module'])
+                botname = "Undefined Bot"
+                for bottype, botlist in bots.items():
+                    for bot, botdata in botlist.items():
+                        if botdata['module'] == bot_info['module']:
+                            botname = bot
+
+                output += info("Bot", f"{botname} (Module `{bot_info['module']}`)")
                 output += info("Configuration Parameters")
 
                 if bot_info.get('parameters'):
