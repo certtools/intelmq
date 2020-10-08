@@ -1482,12 +1482,12 @@ providers:
       additional_information: Be aware that this feed provides a lot of data and may overload your system quickly.
       bots:
         collector:
-          module: intelmq.bots.collectors.certstream.collector_certstream
+          module: intelmq.bots.collectors.calidog.collector_certstream
           parameters:
             name: __FEED__
             provider: __PROVIDER__
         parser:
-          module: intelmq.bots.parses.certstream.parser_certstream
+          module: intelmq.bots.parsers.calidog.parser_certstream
           parameters:
       revision: 2018-06-15
       documentation: https://medium.com/cali-dog-security/introducing-certstream-3fc13bb98067
