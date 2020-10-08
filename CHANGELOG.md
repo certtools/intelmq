@@ -19,6 +19,7 @@ CHANGELOG
   - `create_request_session_from_bot`: Changed bot argument to optional, uses defaults.conf as fallback, renamed to `create_request_session`. Name `create_request_session_from_bot` will be removed in version 3.0.0.
 
 ### Development
+- `intelmq.bin.intelmq_gen_docs`: Add bot name to the `Feeds.md` documentation (PR#1617 by Birger Schacht).
 
 ### Harmonization
 
