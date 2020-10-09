@@ -25,6 +25,9 @@ CHANGELOG
 - `intelmq/bots/parsers/danger_rulez/parser`: correctly skip malformed rows by defining variables before referencing (PR#1601 by Tomas Bellus).
 
 #### Experts
+- `intelmq.bots.experts.cymru_whois`:
+  - Fix cache key calculation which previously led to duplicate keys and therefore wrong results in rare cases. The cache key calculation is intentionally not backwards-compatible (#1592, PR#1606).
+  - The bot now caches and logs (as level INFO) empty responses from Cymru (PR#1606).
 
 #### Outputs
 
