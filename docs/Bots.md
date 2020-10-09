@@ -1233,7 +1233,7 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
 * `lookup:` no
 * `public:` no
 * `cache (redis db):` none
-* `description:` Parses text lines in key=value format.
+* `description:` Parses text lines in key=value format, for example FortiGate firewall logs.
 
 #### Configuration Parameters:
 
@@ -1246,8 +1246,23 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
        "dstip": "destination.ip"
    }
    ```
+   The value mapped to `time.source` is parsed. If the value is numeric, it is interpreted. Otherwise, or if it fails, it is parsed fuzzy with dateutil.
+   If the value cannot be parsed, a warning is logged per line.
 * `strip_quotes`: Boolean, remove opening and closing quotes from values, default true.
 * `timestamp_key`: String, optional, key containing event timestamp.
+
+#### Parsing limitations
+
+The input must not have (quoted) occurrences of the separator in the values. For example, this is not parsable (with space as separator):
+
+```
+key="long value" key2="other value"
+```
+
+In firewall logs like FortiGate, this does not occur. These logs usually look like:
+```
+srcip=192.0.2.1 srcmac="00:00:5e:00:17:17"
+```
 
 * * *
 
