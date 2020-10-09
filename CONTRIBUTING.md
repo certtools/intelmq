@@ -1,1 +1,1 @@
-docs/Developers-Guide.md
+docs/guides/Developers-Guide.md

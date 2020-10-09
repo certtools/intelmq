@@ -20,6 +20,12 @@ htmlcov/
 src/
 .eggs
 
+# sphinx
+docs/source
+docs/_build
+docs/guides/Feeds.md
+docs/guides/Harmonization-fields.md
+
 # Debian build filed
 debian/files
 debian/intelmq.postinst.debhelper
