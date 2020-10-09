@@ -1314,23 +1314,37 @@ providers:
       revision: 2018-01-20
       documentation: https://osint.bambenekconsulting.com/feeds/
       public: yes
-  DynDNS:
-    Infected Domains:
-      description: DynDNS ponmocup. List of ponmocup malware redirection domains and
-        infected web-servers. See also http://security-research.dyndns.org/pub/botnet-links.html
+  cAPTure:
+    Ponmocup Domains:
+      description: List of ponmocup malware redirection domains and infected web-servers from cAPTure.
+        See also http://security-research.dyndns.org/pub/botnet-links.htm
+        and http://c-apt-ure.blogspot.com/search/label/ponmocup
       additional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt
+            http_url: http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-shadowserver.csv
             rate_limit: 10800
             name: __FEED__
             provider: __PROVIDER__
         parser:
-          module: intelmq.bots.parsers.dyn.parser
+          module: intelmq.bots.parsers.generic.parser_csv
           parameters:
-      revision: 2018-01-20
+            columns:
+              - time.source
+              - source.ip
+              - source.fqdn
+              - source.urlpath
+              - source.port
+              - protocol.application
+              - extra.tag
+              - extra.redirect_target
+              - extra.category
+            skip_header: true
+            delimiter: ","
+            type: malware-distribution
+      revision: 2020-07-08
       documentation: http://security-research.dyndns.org/pub/malware-feeds/
       public: yes
   DShield:
