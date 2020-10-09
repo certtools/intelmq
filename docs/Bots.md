@@ -36,6 +36,7 @@
   - [Cymru CAP Program](#cymru-cap-program)
   - [Cymru Full Bogons](#cymru-full-bogons)
   - [HTML Table Parser](#html-table-parser)
+  - [Key-Value Parser](#key-value-parser)
   - [Twitter](#twitter)
   - [Shadowserver](#shadowserver)
   - [Shodan](#shodan)
@@ -1222,6 +1223,31 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
  * `"time_format"`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
  * `"html_parser"`: The HTML parser to use, by default "html.parser", can also be e.g. "lxml", have a look at https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+
+* * *
+
+### Key-Value Parser
+
+#### Information:
+* `name:` intelmq.bots.parsers.key_value.parser
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses text lines in key=value format.
+
+#### Configuration Parameters:
+
+* `pair_separator`: String separating key=value pairs, default "` `" (space).
+* `kv_separator`: String separating key and value, default `=`.
+* `keys`: Array of string->string, names of keys to propagate mapped to IntelMQ event fields. Example:
+   ```json
+   "keys": {
+       "srcip": "source.ip",
+       "dstip": "destination.ip"
+   }
+   ```
+* `strip_quotes`: Boolean, remove opening and closing quotes from values, default true.
+* `timestamp_key`: String, optional, key containing event timestamp.
 
 * * *
 
