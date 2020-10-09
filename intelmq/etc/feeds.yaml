@@ -1009,7 +1009,7 @@ providers:
       documentation: http://www.blocklist.de/en/export.html
       public: yes
   CERT-Bund:
-    Malware feeds:
+    CB-Report Malware infections via IMAP:
       description: CERT-Bund sends reports for the malware-infected hosts.
       additional_information: Traffic from malware related hosts contacting
         command-and-control servers is caught and sent to national CERT teams.
@@ -1024,9 +1024,9 @@ providers:
             mail_ssl: true
             mail_user: __USERNAME__
             attach_regex: events.csv
-            extract_files: true
+            extract_files: false
             rate_limit: 86400
-            subject_regex: "^\\[CB-Report"
+            subject_regex: ^\\[CB-Report#.* Malware infections (\\(Avalanche\\) )?in country
             folder: INBOX
             name: __FEED__
             provider: __PROVIDER__
@@ -1036,19 +1036,19 @@ providers:
             skip_header: true
             default_url_protocol: http://
             time_format: from_format|%Y-%m-%d %H:%M:%S
-            delimeter: ","
+            delimiter: ","
             columns:
               - source.asn
               - source.ip
               - time.source
               - classification.type
               - malware.name
-              - source.port|__IGNORE__
-              - destination.ip|__IGNORE__
-              - destination.port|__IGNORE__
-              - destination.fqdn|__IGNORE__
+              - source.port
+              - destination.ip
+              - destination.port
+              - destination.fqdn
               - protocol.transport
-            type: malware
+            type: infected-system
       revision: 2020-08-20
       documentation:
       public: no

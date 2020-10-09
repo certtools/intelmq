@@ -553,7 +553,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 # CERT-Bund
 
-## Malware feeds
+## CB-Report Malware infections via IMAP
 
 * **Public:** unknown
 * **Revision:** 2020-08-20
@@ -562,30 +562,30 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.mail.collector_mail_attach
+* **Bot:** Mail Attachment Fetcher (Module `intelmq.bots.collectors.mail.collector_mail_attach`)
 * **Configuration Parameters:**
 *  * `attach_regex`: `events.csv`
-*  * `extract_files`: `True`
+*  * `extract_files`: `False`
 *  * `folder`: `INBOX`
 *  * `mail_host`: `__HOST__`
 *  * `mail_password`: `__PASSWORD__`
 *  * `mail_ssl`: `True`
 *  * `mail_user`: `__USERNAME__`
-*  * `name`: `Malware feeds`
+*  * `name`: `CB-Report Malware infections via IMAP`
 *  * `provider`: `CERT-Bund`
 *  * `rate_limit`: `86400`
-*  * `subject_regex`: `^\[CB-Report`
+*  * `subject_regex`: `^\\[CB-Report#.* Malware infections (\\(Avalanche\\) )?in country`
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.generic.parser_csv
+* **Bot:** Generic CSV (Module `intelmq.bots.parsers.generic.parser_csv`)
 * **Configuration Parameters:**
-*  * `columns`: `["source.asn", "source.ip", "time.source", "classification.type", "malware.name", "source.port|__IGNORE__", "destination.ip|__IGNORE__", "destination.port|__IGNORE__", "destination.fqdn|__IGNORE__", "protocol.transport"]`
+*  * `columns`: `["source.asn", "source.ip", "time.source", "classification.type", "malware.name", "source.port", "destination.ip", "destination.port", "destination.fqdn", "protocol.transport"]`
 *  * `default_url_protocol`: `http://`
-*  * `delimeter`: `,`
+*  * `delimiter`: `,`
 *  * `skip_header`: `True`
 *  * `time_format`: `from_format|%Y-%m-%d %H:%M:%S`
-*  * `type`: `malware`
+*  * `type`: `infected-system`
 
 
 # CERT.PL

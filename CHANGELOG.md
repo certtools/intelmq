@@ -67,6 +67,7 @@ CHANGELOG
   - Remove unavailable *HPHosts Hosts file* feed (#1559).
   - Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
   - Added CZ.NIC Proki feed (PR#1599 by sinus-x).
+  - Added CERT-BUND CB-Report Malware infections feed (PR#1598 by sinus-x).
 - Bots:
   - Enhanced documentation of RFC1918 Expert.
   - Updated documentation for Maxmind GeoIP, ASN Lookup, TOR Nodes and Recorded Future experts to reflect new `--update-database` option.  (PR#1524 by Filip Pokorný)
