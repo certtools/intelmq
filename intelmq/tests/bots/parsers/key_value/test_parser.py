@@ -66,12 +66,12 @@ PARAMETERS = [
         'pair_separator': '|'
     },
     {
-        'keys': KEYS,
-        'timestamp_key': 'timestamp'
+        'keys': {**KEYS,
+                 **{'timestamp': 'time.source'}}
     },
     {
-        'keys': KEYS,
-        'timestamp_key': 'timestamp'
+        'keys': {**KEYS,
+                 **{'timestamp': 'time.source'}}
     }
 ]
 

@@ -1249,7 +1249,6 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
    The value mapped to `time.source` is parsed. If the value is numeric, it is interpreted. Otherwise, or if it fails, it is parsed fuzzy with dateutil.
    If the value cannot be parsed, a warning is logged per line.
 * `strip_quotes`: Boolean, remove opening and closing quotes from values, default true.
-* `timestamp_key`: String, optional, key containing event timestamp.
 
 #### Parsing limitations
 
