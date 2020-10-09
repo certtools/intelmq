@@ -1315,10 +1315,31 @@ providers:
       documentation: https://osint.bambenekconsulting.com/feeds/
       public: yes
   cAPTure:
-    Ponmocup Domains:
+    Ponmocup Domains CIF Format:
       description: List of ponmocup malware redirection domains and infected web-servers from cAPTure.
         See also http://security-research.dyndns.org/pub/botnet-links.htm
         and http://c-apt-ure.blogspot.com/search/label/ponmocup
+        The data in the CIF format is not equal to the Shadowserver CSV format. Reasons are unknown.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt
+            rate_limit: 10800
+            name: Infected Domains
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.dyn.parser
+          parameters:
+      revision: 2018-01-20
+      documentation: http://security-research.dyndns.org/pub/malware-feeds/
+      public: yes
+    Ponmocup Domains Shadowserver Format:
+      description: List of ponmocup malware redirection domains and infected web-servers from cAPTure.
+        See also http://security-research.dyndns.org/pub/botnet-links.htm
+        and http://c-apt-ure.blogspot.com/search/label/ponmocup
+        The data in the Shadowserver CSV is not equal to the CIF format format. Reasons are unknown.
       additional_information:
       bots:
         collector:
@@ -1326,7 +1347,7 @@ providers:
           parameters:
             http_url: http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-shadowserver.csv
             rate_limit: 10800
-            name: __FEED__
+            name: Infected Domains
             provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.generic.parser_csv
@@ -1341,6 +1362,7 @@ providers:
               - extra.tag
               - extra.redirect_target
               - extra.category
+            compose_fields: {"source.url": "http://{0}{1}"}
             skip_header: true
             delimiter: ","
             type: malware-distribution

@@ -2157,7 +2157,29 @@ sPejfg+ndpe5u0zX+GvQCFBFu03muANA0Y/OOeGIQwU93d/akN0P1SRfq+bDXnkRIJQOD6XV
 
 # cAPTure
 
-## Ponmocup Domains
+## Ponmocup Domains CIF Format
+
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** http://security-research.dyndns.org/pub/malware-feeds/
+* **Description:** List of ponmocup malware redirection domains and infected web-servers from cAPTure. See also http://security-research.dyndns.org/pub/botnet-links.htm and http://c-apt-ure.blogspot.com/search/label/ponmocup
+
+### Collector
+
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
+* **Configuration Parameters:**
+*  * `http_url`: `http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt`
+*  * `name`: `Infected Domains`
+*  * `provider`: `cAPTure`
+*  * `rate_limit`: `10800`
+
+### Parser
+
+* **Bot:** DynDNS ponmocup Domains (Module `intelmq.bots.parsers.dyn.parser`)
+* **Configuration Parameters:**
+
+
+## Ponmocup Domains Shadowserver Format
 
 * **Public:** yes
 * **Revision:** 2020-07-08
@@ -2166,18 +2188,19 @@ sPejfg+ndpe5u0zX+GvQCFBFu03muANA0Y/OOeGIQwU93d/akN0P1SRfq+bDXnkRIJQOD6XV
 
 ### Collector
 
-* **Module:** intelmq.bots.collectors.http.collector_http
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
 * **Configuration Parameters:**
 *  * `http_url`: `http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-shadowserver.csv`
-*  * `name`: `Ponmocup Domains`
+*  * `name`: `Infected Domains`
 *  * `provider`: `cAPTure`
 *  * `rate_limit`: `10800`
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.generic.parser_csv
+* **Bot:** Generic CSV (Module `intelmq.bots.parsers.generic.parser_csv`)
 * **Configuration Parameters:**
-*  * `columns`: `['time.source', 'source.ip', 'source.fqdn', 'source.urlpath', 'source.port', 'protocol.application', 'extra.tag', 'extra.redirect_target', 'extra.category']`
+*  * `columns`: `["time.source", "source.ip", "source.fqdn", "source.urlpath", "source.port", "protocol.application", "extra.tag", "extra.redirect_target", "extra.category"]`
+*  * `compose_fields`: `{'source.url': 'http://{0}{1}'}`
 *  * `delimiter`: `,`
 *  * `skip_header`: `True`
 *  * `type`: `malware-distribution`
