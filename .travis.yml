@@ -31,6 +31,7 @@ install:
   - if [[ -v requirements ]]; then pip install Cerberus!=1.3 codecov pyyaml requests_mock; fi
   - if [[ $mode == codestyle ]]; then pip install pycodestyle; fi
   - if [[ -v requirements ]]; then sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers; fi
+  - if [[ $TRAVIS_PYTHON_VERSION < '3.6' ]]; then rm intelmq/bin/intelmq_gen_docs.py intelmq/tests/bin/test_gen_docs.py; fi  # file requires Python 3.6
   - if [[ -v requirements ]]; then sudo pip install .; fi
   - if [[ -v requirements ]]; then sudo intelmqsetup --skip-ownership; fi
 before_script:
