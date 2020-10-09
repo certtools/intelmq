@@ -100,17 +100,18 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "extract_files": false,
+                "gpg_keyring": null,
                 "http_password": null,
-                "http_url": "<insert url of feed>",
                 "http_url_formatting": false,
+                "http_url": "<insert url of feed>",
                 "http_username": null,
                 "name": "__FEED__",
                 "provider": "__PROVIDER__",
                 "rate_limit": 3600,
+                "signature_url_formatting": false,
+                "signature_url": null,
                 "ssl_client_certificate": null,
-                "verify_gpg_signatures": false,
-                "gpg_signature_suffix": ".asc",
-                "gpg_keyring": null
+                "verify_pgp_signatures": false
             }
         },
         "URL Stream Fetcher": {
