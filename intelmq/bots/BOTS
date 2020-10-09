@@ -487,6 +487,7 @@
                     "",
                     "source.fqdn"
                 ],
+                "compose_fields": null,
                 "default_url_protocol": "http://",
                 "delimiter": ",",
                 "filter_text": null,

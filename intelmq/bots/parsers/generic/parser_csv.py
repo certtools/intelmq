@@ -67,6 +67,8 @@ class GenericCsvParserBot(ParserBot):
             raise ValueError("Length of parameters 'columns' (%d) and 'columns_required' (%d) "
                              "needs to be equal." % (len(self.columns), len(self.columns_required)))
 
+        self.compose = getattr(self.parameters, 'compose_fields', {}) or {}
+
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
         raw_report = raw_report.translate({0: None})
@@ -132,6 +134,10 @@ class GenericCsvParserBot(ParserBot):
                 # if the value sill remains unadded we need to inform if the key is needed
                 if required:
                     raise InvalidValue(key, value)
+
+        # Field composing
+        for key, value in self.compose.items():
+            event[key] = value.format(*row)
 
         if hasattr(self.parameters, 'type')\
                 and "classification.type" not in event:

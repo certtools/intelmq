@@ -35,6 +35,7 @@ CHANGELOG
 - `intelmq.bots.parsers.cznic.parser_haas`: Added (PR#1560 by Filip Pokorný and Edvard Rejthar).
 - `intelmq.bots.parsers.cznic.parser_proki`: Added (PR#1599 by sinus-x).
 - `intelmq.bots.parsers.key_value.parser`: Added (PR#1607 by Karl-Johan Karlsson).
+- `intelmq.bots.parsers.generic.parser_csv`: Added new parameter `compose_fields`.
 
 #### Experts
 - `intelmq.bots.experts.rfc1918.expert`:

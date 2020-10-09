@@ -1012,6 +1012,22 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
         - parse a value and ignore if it fails  `"columns": "source.url|__IGNORE__"`
 
  * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaluated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`. Make sure to properly escape any backslashes in your regular expression (See also [#1579](https://github.com/certtools/intelmq/issues/1579).
+ * `"compose_fields"`: Optional, dictionary. Create fields from columns, e.g. with data like this:
+   ```csv
+   # Host,Path
+   example.com,/foo/
+   example.net,/bar/
+   ```
+   using this compose_fields parameter:
+   ```json
+   {"source.url": "http://{0}{1}"}
+   ```
+   You get:
+   ```
+   http://example.com/foo/
+   http://example.net/bar/
+   ```
+   in the respective `source.url` fields. The value in the dictionary mapping is formatted whereas the columns are available with their index.
  * `"default_url_protocol"`: For URLs you can give a default protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
  * `"skip_header"`: Boolean, skip the first line of the file, optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
