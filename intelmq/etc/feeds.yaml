@@ -1008,6 +1008,50 @@ providers:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
       public: yes
+  CERT-Bund:
+    Malware feeds:
+      description: CERT-Bund sends reports for the malware-infected hosts.
+      additional_information: Traffic from malware related hosts contacting
+        command-and-control servers is caught and sent to national CERT teams.
+        There are two e-mail feeds with identical CSV structure -- one reports on
+        general malware infections, the other on the Avalanche botnet.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.mail.collector_mail_attach
+          parameters:
+            mail_host: __HOST__
+            mail_password: __PASSWORD__
+            mail_ssl: true
+            mail_user: __USERNAME__
+            attach_regex: events.csv
+            extract_files: true
+            rate_limit: 86400
+            subject_regex: "^\\[CB-Report"
+            folder: INBOX
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.generic.parser_csv
+          parameters:
+            skip_header: true
+            default_url_protocol: http://
+            time_format: from_format|%Y-%m-%d %H:%M:%S
+            delimeter: ","
+            columns:
+              - source.asn
+              - source.ip
+              - time.source
+              - classification.type
+              - malware.name
+              - source.port|__IGNORE__
+              - destination.ip|__IGNORE__
+              - destination.port|__IGNORE__
+              - destination.fqdn|__IGNORE__
+              - protocol.transport
+            type: malware
+      revision: 2020-08-20
+      documentation:
+      public: no
   CERT.PL:
     N6 Stomp Stream:
       description: N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface.

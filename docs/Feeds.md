@@ -14,6 +14,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Bambenek](#bambenek)
 - [Blocklist.de](#blocklistde)
 - [Blueliv](#blueliv)
+- [CERT-Bund](#cert-bund)
 - [CERT.PL](#certpl)
 - [CINSscore](#cinsscore)
 - [CZ.NIC](#cznic)
@@ -548,6 +549,43 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 * **Bot:** Blueliv Crimeserver (Module `intelmq.bots.parsers.blueliv.parser_crimeserver`)
 * **Configuration Parameters:**
+
+
+# CERT-Bund
+
+## Malware feeds
+
+* **Public:** unknown
+* **Revision:** 2020-08-20
+* **Description:** CERT-Bund sends reports for the malware-infected hosts.
+* **Additional Information:** Traffic from malware related hosts contacting command-and-control servers is caught and sent to national CERT teams. There are two e-mail feeds with identical CSV structure -- one reports on general malware infections, the other on the Avalanche botnet.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.mail.collector_mail_attach
+* **Configuration Parameters:**
+*  * `attach_regex`: `events.csv`
+*  * `extract_files`: `True`
+*  * `folder`: `INBOX`
+*  * `mail_host`: `__HOST__`
+*  * `mail_password`: `__PASSWORD__`
+*  * `mail_ssl`: `True`
+*  * `mail_user`: `__USERNAME__`
+*  * `name`: `Malware feeds`
+*  * `provider`: `CERT-Bund`
+*  * `rate_limit`: `86400`
+*  * `subject_regex`: `^\[CB-Report`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.generic.parser_csv
+* **Configuration Parameters:**
+*  * `columns`: `["source.asn", "source.ip", "time.source", "classification.type", "malware.name", "source.port|__IGNORE__", "destination.ip|__IGNORE__", "destination.port|__IGNORE__", "destination.fqdn|__IGNORE__", "protocol.transport"]`
+*  * `default_url_protocol`: `http://`
+*  * `delimeter`: `,`
+*  * `skip_header`: `True`
+*  * `time_format`: `from_format|%Y-%m-%d %H:%M:%S`
+*  * `type`: `malware`
 
 
 # CERT.PL
