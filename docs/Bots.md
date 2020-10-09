@@ -980,6 +980,8 @@ Events with the Malware "TestSinkholingLoss" are ignored, as they are for the fe
 
 * `use_malware_familiy_as_classification_identifier`: default: `true`. Use the `malw.family` field as `classification.type`. If `false`, check if the same as `malw.variant`. If it is the same, it is ignored. Otherwise saved as `extra.malware.family`.
 
+* * *
+
 ### Generic CSV Parser
 
 Lines starting with `'#'` will be ignored. Headers won't be interpreted.

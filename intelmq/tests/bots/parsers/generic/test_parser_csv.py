@@ -77,16 +77,15 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(1, EXAMPLE_EVENT2)
 
     def test_strcol(self):
-        self.sysconfig = {"columns": "time.source, __IGNORE__,"
-                                     "event_description.text, __IGNORE__,"
-                                     "__IGNORE__, source.url, source.ip,"
-                                     "source.fqdn, __IGNORE__",
-                          "delimiter": "\t",
-                          "type": "malware",
-                          "column_regex_search": "",
-                          "type_translation": "",
-                          "default_url_protocol": "http://"}
-        self.run_bot()
+        self.run_bot(parameters={"columns": "time.source, __IGNORE__,"
+                                            "event_description.text, __IGNORE__,"
+                                            "__IGNORE__, source.url, source.ip,"
+                                            "source.fqdn, __IGNORE__",
+                                 "delimiter": "\t",
+                                 "type": "malware",
+                                 "column_regex_search": "",
+                                 "type_translation": "",
+                                 "default_url_protocol": "http://"})
         self.assertMessageEqual(0, EXAMPLE_EVENT)
         self.assertMessageEqual(1, EXAMPLE_EVENT2)
 

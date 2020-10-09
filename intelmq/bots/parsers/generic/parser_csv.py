@@ -110,13 +110,13 @@ class GenericCsvParserBot(ParserBot):
                     else:
                         value = None
 
-                if key in ["__IGNORE__", ""]:
+                if key in ("__IGNORE__", ""):
                     break
 
                 if key in self.data_type:
                     value = DATA_CONVERSIONS[self.data_type[key]](value)
 
-                if key in ["time.source", "time.destination"]:
+                if key in ("time.source", "time.destination"):
                     value = TIME_CONVERSIONS[self.time_format](value)
                 elif key.endswith('.url'):
                     if not value:
@@ -139,8 +139,7 @@ class GenericCsvParserBot(ParserBot):
         for key, value in self.compose.items():
             event[key] = value.format(*row)
 
-        if hasattr(self.parameters, 'type')\
-                and "classification.type" not in event:
+        if hasattr(self.parameters, 'type') and "classification.type" not in event:
             event.add('classification.type', self.parameters.type)
         event.add("raw", self.recover_line(row))
         yield event
