@@ -32,7 +32,8 @@ CHANGELOG
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
   - Ignore invalid "NXDOMAIN" IP addresses (PR#1573 by Mikk Margus Möll).
 - `intelmq.bots.parsers.hphosts`: Removed, feed is unavailable (#1559).
-- `intelmq.bots.parsers.cznic.parser_haas`: Added (PR#1560 by Filip Pokorný and Edvard Rejthar)
+- `intelmq.bots.parsers.cznic.parser_haas`: Added (PR#1560 by Filip Pokorný and Edvard Rejthar).
+- `intelmq.bots.parsers.cznic.parser_proki`: Added (PR#1599 by sinus-x).
 
 #### Experts
 - `intelmq.bots.experts.rfc1918.expert`:
@@ -65,6 +66,7 @@ CHANGELOG
   - Add ESET URL and Domain feeds
   - Remove unavailable *HPHosts Hosts file* feed (#1559).
   - Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
+  - Added CZ.NIC Proki feed (PR#1599 by sinus-x).
 - Bots:
   - Enhanced documentation of RFC1918 Expert.
   - Updated documentation for Maxmind GeoIP, ASN Lookup, TOR Nodes and Recorded Future experts to reflect new `--update-database` option.  (PR#1524 by Filip Pokorný)
