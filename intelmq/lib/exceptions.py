@@ -4,7 +4,7 @@
 '''
 import traceback
 
-from typing import Any
+from typing import Any, Optional, Union
 
 __all__ = ['InvalidArgument', 'ConfigurationError', 'IntelMQException',
            'IntelMQHarmonizationException', 'InvalidKey', 'InvalidValue',
@@ -42,11 +42,8 @@ class InvalidArgument(IntelMQException):
 
 class PipelineError(IntelMQException):
 
-    def __init__(self, argument):
-        if type(argument) is type and issubclass(argument, Exception):
-            message = "pipeline failed - %s" % traceback.format_exc(argument)
-        else:
-            message = "pipeline failed - %s" % repr(argument)
+    def __init__(self, argument: Union[str, Exception]):
+        message = "pipeline failed - %s" % repr(argument)
         super().__init__(message)
 
 
@@ -86,7 +83,7 @@ class InvalidValue(IntelMQHarmonizationException):
         super().__init__(message)
 
 
-class InvalidKey(IntelMQHarmonizationException):
+class InvalidKey(IntelMQHarmonizationException, KeyError):
 
     def __init__(self, key: str):
         message = "invalid key %s" % repr(key)
@@ -111,21 +108,64 @@ class MissingDependencyError(IntelMQException):
     """
     A missing dependency was detected. Log instructions on installation.
     """
-    def __init__(self, dependency: str, version: str = None, installed: str = None):
+    def __init__(self, dependency: str, version: Optional[str] = None,
+                 installed: Optional[str] = None,
+                 additional_text: Optional[str] = None):
+        """
+        Parameters
+        ----------
+        dependency : str
+            The dependency name.
+        version : Optional[str], optional
+            The required version. The default is None.
+        installed : Optional[str], optional
+            The currently installed version. Requires 'version' to be given The default is None.
+        additional_text : Optional[str], optional
+            Arbitrary additional text to show. The default is None.
+
+        Returns
+        -------
+        IntelMQException: with prepared text
+
+        """
         appendix = ""
         if version:
+            higher = " or higher" if not any(x in version for x in '<>=') else ""
             appendix = (" Please note that this bot requires "
-                        "{dependency} version {version} or higher!"
+                        "{dependency} version {version}{higher}!"
                         "".format(dependency=dependency,
-                                  version=version))
+                                  version=version,
+                                  higher=higher))
             if installed:
                 if isinstance(installed, tuple):
                     installed = ".".join(map(str, installed))
                 appendix = appendix + (" Installed is version {installed!r}."
                                        "".format(installed=installed))
+        if additional_text:
+            appendix = "%s %s" % (appendix, additional_text)
         message = ("Could not load dependency {dependency!r}, please install it "
                    "with apt/yum/dnf/zypper (possibly named "
                    "python3-{dependency}) or pip3.{appendix}"
                    "".format(dependency=dependency,
                              appendix=appendix))
         super().__init__(message)
+
+
+class DecodingError(IntelMQException, ValueError):
+    """
+    This is a separate Error to distinguish it from other exceptions as it is
+    unrecoverable.
+    """
+    def __init__(self, encodings=None, exception: UnicodeDecodeError = None,
+                 object: bytes = None):
+        self.object = object
+        suffixes = []
+        if encodings:
+            suffixes.append("with given encodings %r" % encodings)
+        if exception:
+            suffixes.append('at position %s with length %d (%r)'
+                            '' % (exception.start, exception.end,
+                                  exception.object[exception.start:exception.end]))
+            suffixes.append('with reason %r' % exception.reason)
+        suffix = (' ' + ' '.join(suffixes)) if suffixes else ''
+        super().__init__("Could not decode string%s." % suffix)

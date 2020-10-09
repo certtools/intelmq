@@ -12,9 +12,14 @@ from intelmq.lib.utils import parse_relative
 try:
     from pymisp import MISPEvent, MISPOrganisation, NewAttributeError
     from pymisp.tools import feed_meta_generator
-except (ImportError, SyntaxError):
+except ImportError:
     # catching SyntaxError because of https://github.com/MISP/PyMISP/issues/501
     MISPEvent = None
+    import_fail_reason = 'import'
+except SyntaxError:
+    # catching SyntaxError because of https://github.com/MISP/PyMISP/issues/501
+    MISPEvent = None
+    import_fail_reason = 'syntax'
 
 
 # NOTE: This module is compatible with Python 3.6+
@@ -31,7 +36,12 @@ class MISPFeedOutputBot(OutputBot):
             return True
 
     def init(self):
-        if MISPEvent is None:
+        if MISPEvent is None and import_fail_reason == 'syntax':
+            raise MissingDependencyError("pymisp",
+                                         version='>=2.4.117.3',
+                                         additional_text="Python versions below 3.6 are "
+                                                         "only supported by pymisp <= 2.4.119.1.")
+        elif MISPEvent is None:
             raise MissingDependencyError('pymisp', version='>=2.4.117.3')
 
         self.current_event = None

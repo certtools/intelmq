@@ -10,21 +10,31 @@ import intelmq.lib.utils as utils
 from intelmq.bots.collectors.http.collector_http import HTTPCollectorBot
 
 
-OUTPUT = [{"__type": "Report",
-           "feed.name": "Example feed",
-           "feed.accuracy": 100.,
-           "feed.url": "http://localhost/two_files.tar.gz",
-           "raw": utils.base64_encode('bar text\n'),
-           "extra.file_name": "bar",
-           },
-          {"__type": "Report",
-           "feed.name": "Example feed",
-           "feed.accuracy": 100.,
-           "feed.url": "http://localhost/two_files.tar.gz",
-           "raw": utils.base64_encode('foo text\n'),
-           "extra.file_name": "foo",
-           },
-          ]
+OUTPUT = [
+    {
+        "__type": "Report",
+        "feed.name": "Example feed",
+        "feed.accuracy": 100.,
+        "feed.url": "http://localhost/two_files.tar.gz",
+        "raw": utils.base64_encode('bar text\n'),
+        "extra.file_name": "bar",
+    },
+    {
+        "__type": "Report",
+        "feed.name": "Example feed",
+        "feed.accuracy": 100.,
+        "feed.url": "http://localhost/two_files.tar.gz",
+        "raw": utils.base64_encode('foo text\n'),
+        "extra.file_name": "foo",
+    },
+    {
+        "__type": "Report",
+        "feed.name": "Example feed",
+        "feed.accuracy": 100.,
+        "feed.url": "http://localhost/foobar.txt",
+        "raw": utils.base64_encode("bar text\n"),
+    }
+]
 
 
 @test.skip_local_web()
@@ -107,6 +117,23 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
         output1['feed.url'] = 'http://localhost/two_files.zip'
         self.assertMessageEqual(0, output0)
         self.assertMessageEqual(1, output1)
+
+    @test.skip_exotic()
+    def test_pgp(self):
+        """
+        Test with PGP signature
+        """
+        self.run_bot(
+            parameters={
+                "http_url": "http://localhost/foobar.txt",
+                "name": "Example feed",
+                "extract_files": False,
+                "verify_gpg_signatures": True,
+                "signature_url": "http://localhost/foobar.txt.asc"
+            },
+            iterations=1
+        )
+        self.assertMessageEqual(0, OUTPUT[2])
 
 
 if __name__ == '__main__':  # pragma: no cover

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
+Reference: https://team-cymru.com/community-services/ip-asn-mapping/#dns
 
 If the query returns more than one network, we select the more specific one.
 See https://github.com/certtools/intelmq/issues/543
@@ -162,6 +162,8 @@ class Cymru():
         items = Cymru.__query_parse(text)
 
         if items[4]:
-            result['as_name'] = items[4]
+            # unicode characters need to be decoded explicitly
+            # with the help of https://stackoverflow.com/questions/60890590/
+            result['as_name'] = items[4].encode('latin1').decode('utf8')
 
         return result

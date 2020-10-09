@@ -25,7 +25,13 @@ NONEXISTING_INPUT = {"__type": "Event",
                      "destination.fqdn": "example.invalid",
                      "time.observation": "2015-01-01T00:00:00+00:00"
                      }
-
+EXAMPLE_URL_INPUT = {"__type": "Event",
+                     "source.url": "http://example.com",
+                     }
+EXAMPLE_URL_OUTPUT = {"__type": "Event",
+                      "source.url": "http://example.com",
+                      "source.ip": "93.184.216.34",
+                      }
 
 @test.skip_internet()
 class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
@@ -34,8 +40,9 @@ class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = GethostbynameExpertBot
+    def set_bot(cls):
+        cls.bot_reference = GethostbynameExpertBot
+        cls.sysconfig = {'gaierrors_to_ignore': '-8,-9'}
 
     def test_existing(self):
         self.input_message = EXAMPLE_INPUT
@@ -46,6 +53,16 @@ class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = NONEXISTING_INPUT
         self.run_bot()
         self.assertMessageEqual(0, NONEXISTING_INPUT)
+
+    def test_no_fqdn(self):
+        self.input_message = EXAMPLE_URL_INPUT
+        self.run_bot(parameters={"fallback_to_url": False})
+        self.assertMessageEqual(0, EXAMPLE_URL_INPUT)
+
+    def test_url(self):
+        self.input_message = EXAMPLE_URL_INPUT
+        self.run_bot(parameters={"fallback_to_url": True})
+        self.assertMessageEqual(0, EXAMPLE_URL_OUTPUT)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

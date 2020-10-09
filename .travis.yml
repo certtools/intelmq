@@ -15,13 +15,20 @@ matrix:
     env: mode=debian
   - python: 3.8
     env: mode=codestyle
+before_install:
+  - if [[ -v requirements ]]; then curl -s -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.1-amd64.deb; fi
+  - if [[ -v requirements ]]; then sudo dpkg -i --force-confnew elasticsearch-7.6.1-amd64.deb; fi
+  - if [[ -v requirements ]]; then sudo sed -i.old 's/-Xms1g/-Xms128m/' /etc/elasticsearch/jvm.options; fi
+  - if [[ -v requirements ]]; then sudo sed -i.old 's/-Xmx1g/-Xmx128m/' /etc/elasticsearch/jvm.options; fi
+  - if [[ -v requirements ]]; then echo -e '-XX:+DisableExplicitGC\n-Djdk.io.permissionsUseCanonicalPath=true\n-Dlog4j.skipJansi=true\n-server\n' | sudo tee -a /etc/elasticsearch/jvm.options; fi
+  - if [[ -v requirements ]]; then sudo chown -R elasticsearch:elasticsearch /etc/default/elasticsearch; fi
+  - if [[ -v requirements ]]; then sudo systemctl start elasticsearch; fi
 install:
   - set -e
   - if [[ -v requirements ]]; then sudo apt-get install polipo lighttpd; fi
   - if [[ $mode == debian ]]; then sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt fakeroot dh-systemd safe-rm; pip3 install requests; pip3 install redis; pip3 install dnspython; pip3 install psutil; pip3 install python-dateutil; pip3 install termstyle; pip3 install pytz; pip3 install typing; fi
   - if [[ $requirements == true ]]; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
-  - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then sudo pip install typing; fi
-  - if [[ -v requirements ]]; then pip install Cerberus!=1.3 codecov pyyaml; fi
+  - if [[ -v requirements ]]; then pip install Cerberus!=1.3 codecov pyyaml requests_mock; fi
   - if [[ $mode == codestyle ]]; then pip install pycodestyle; fi
   - if [[ -v requirements ]]; then sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers; fi
   - if [[ -v requirements ]]; then sudo pip install .; fi
@@ -43,6 +50,8 @@ before_script:
   - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$debversion.debian.tar.gz; fi
   - if [[ $mode == debian ]]; then popd; fi
   - if [[ -v requirements ]]; then sudo cp intelmq/tests/assets/* /var/www/html/ && sudo touch /var/www/html/$(date +%Y).txt; fi
+  - if [[ -v requirements ]]; then gpg --import intelmq/tests/assets/key-public.pgp; fi
+  - if [[ $requirements == true ]]; then sudo bash -c 'echo "[rabbitmq_management]." > /etc/rabbitmq/enabled_plugins' && sudo systemctl restart rabbitmq-server; fi
 script:
   - if [[ $requirements == true ]]; then TZ=utc INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; find contrib/ -name "test*.py" -exec nosetests {} \+; elif [[ $requirements == false ]]; then INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
   - if [[ $mode == codestyle ]]; then pycodestyle intelmq/{bots,lib,bin}; fi
@@ -52,7 +61,6 @@ script:
 services:
   - redis-server
   - postgresql
-  - elasticsearch
   - mongodb
   - rabbitmq
 after_success:

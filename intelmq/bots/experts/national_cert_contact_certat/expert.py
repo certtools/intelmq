@@ -16,7 +16,7 @@ Options:
 """
 
 from intelmq.lib.bot import Bot
-from intelmq.lib.utils import create_request_session_from_bot
+from intelmq.lib.utils import create_request_session
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -34,7 +34,7 @@ class NationalCERTContactCertATExpertBot(Bot):
             raise MissingDependencyError("requests")
 
         self.set_request_parameters()
-        self.session = create_request_session_from_bot(self)
+        self.session = create_request_session(self)
 
     def process(self):
         event = self.receive_message()

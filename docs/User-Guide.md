@@ -57,6 +57,8 @@ You can switch this by setting the environment variables `INTELMQ_PATHS_NO_OPT` 
 * When installing the Python packages, you can set `INTELMQ_PATHS_NO_OPT` to something non-empty to use LSB-paths.
 * When installing the deb/rpm packages, you can set `INTELMQ_PATHS_OPT` to something non-empty to use `/opt/intelmq/` paths, or a path set with `INTELMQ_ROOT_DIR`.
 
+The environment variable `ROOT_DIR` is meant to set an alternative root directory instead of `/`. This is primarily meant for package build environments an analogous to setuptools' `--root` parameter. Thus it is only used in LSB-mode.
+
 ## Overview
 
 All configuration files are in the JSON format.
@@ -188,30 +190,62 @@ After this it is possible to manage bots like before with `intelmqctl` command.
 
 ## Pipeline Configuration
 
-This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them. IntelMQ Manager generates this configuration.
+The pipeline configuration defines how the data is exchanges between the bots. For each bot, it defines the source queue (there is always only one) and one or multiple destination queues. This section shows the possibilities and definition as well as examples. The configuration of the pipeline can be done by the [IntelMQ Manager](https://github.com/certtools/intelmq-manager) with no need to intervene manually. It is recommended to use this tool as it guarantees that the configuration is correct. The location of the file is `etc/pipeline.conf` in your IntelMQ directory, for example `/opt/intelmq/etc/pipeline.conf` or `/etc/intelmq/pipeline.conf`.
 
-**Template:**
-```
+### Structure
+The pipeline configuration has the same structure on the first level as the runtime configuration, i.e. it's a dictionary with the bot IDs' as keys. Each item holds again a dictionary with one entry for each the source and destination queue. A full example can be found later in this section.
+
+```json
 {
-	...
-    "<bot ID>": {
-        "source-queue": "<source pipeline name>",
-        "destination-queues": [
-            "<first destination pipeline name>",
-            "<second destination pipeline name>",
-            ...
-        ]
-    },
-	...
+    "example-bot": {
+        "source-queue": <source queue data>,
+        "destination-queues": <destination queue data>
+    }
 }
 ```
+### Source queue
+The source queue is only a string, by convention the bot ID plus "-queue" appended. For example, if the bot ID is `example-bot`, the source queue name is `example-bot-queue`.
+```json
+"source-queue": "example-bot-queue"
+```
+For collectors, this field does not exist, as the fetch the data from outside the IntelMQ system by definition.
 
-Note that `destination-queues` contains one of the following values:
-* None
-* string
-* list of strings (as in the template above)
-* dict of either strings or lists for complex expert bots:
+### Destination queues
 
+There are multiple possibilities for the destination queues:
+- no value, i.e. the field does not exist. This is the case for outputs, as they push the data outside the IntelMQ system by default.
+- A single string (deprecated) with the name of the source queue of the next bot.
+- A list of strings, each with the name of the source queue of the next bot.
+- *Named queues*: a dictionary of either strings or lists.
+
+Before going into the details of named paths, first dive into some simpler cases. A typical configuration may look like this:
+```json
+    "deduplicator-expert": {
+        "source-queue": "deduplicator-expert-queue",
+        "destination-queues": [
+            "taxonomy-expert-queue"
+        ]
+    }
+```
+And a bot with two destination queues:
+```json
+    "cymru-whois-expert": {
+        "source-queue": "cymru-whois-expert-queue",
+        "destination-queues": [
+            "file-output-queue",
+            "misp-output-queue"
+        ]
+    },
+```
+These are the usual configurations you mostly see.
+
+#### Named queues / paths
+Beginning with version 1.1.0, queues can be "named", these are the so-called *paths*. The following two configurations are equivalent:
+```json
+"destination-queues": ["taxonomy-expert-queue"]
+"destination-queues": {"_default": ["taxonomy-expert-queue"]}
+```
+As we can see the *default* path name is obviously `_default`. Let's have a look at a more complex and complete example:
 ```
 "destination-queues": {
     "_default": "<first destination pipeline name>",
@@ -227,24 +261,8 @@ Note that `destination-queues` contains one of the following values:
 ```
 In that case, bot will be able to send the message to one of defined paths. The path `"_default"` is used if none is not specified.
 In case of errors during processing, and the optional path `"_on_error"` is specified, the message will be sent to the pipelines given given as on-error.
-Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities.
-
-**Example:**
-```
-{
-	...
-    "malware-domain-list-parser": {
-        "source-queue": "malware-domain-list-parser-queue",
-        "destination-queues": [
-            "file-output-queue"
-        ]
-    },
-	...
-}
-```
-Note that a bot must only have one (input) source queue but may have multiple destination queues.
-
-More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ repository.
+Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the [filter expert](Bots.md#filter) and the [sieve expert](Bots.md#sieve).
+The named queues need to be explicitly addressed by the bot (e.g. fitering) or the core (`_on_error`) to be used. Setting arbitrary paths has no effect.
 
 ### AMQP (Beta)
 
@@ -561,6 +579,8 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+  --truncate TRUNCATE, -t TRUNCATE
+                        Truncate raw-data with more characters than given. 0 for no truncating. Default: 1000.
 
 Interactive actions after a file has been selected:
 - r, Recover by IDs
@@ -614,6 +634,8 @@ Deleted file /opt/intelmq/var/log/dragon-research-group-ssh-parser.dump
 ```
 
 Bots and the intelmqdump tool use file locks to prevent writing to already opened files. Bots are trying to lock the file for up to 60 seconds if the dump file is locked already by another process (intelmqdump) and then give up. Intelmqdump does not wait and instead only shows an error message.
+
+By default, the `show` command truncates the `raw` field of messages at 1000 characters to change this limit or disable truncating at all (value 0), use the `--truncate` parameter.
 
 ## Monitoring Logs
 

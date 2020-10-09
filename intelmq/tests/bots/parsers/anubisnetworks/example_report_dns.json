@@ -1,0 +1,44 @@
+{
+  "_ts": 1586319917,
+  "_origin": "infections",
+  "malw": {
+    "family": "Malware name DNS",
+    "variant": "Malware name DNS",
+    "severity": 2,
+    "categories": [
+      "Adware",
+      "Trojan"
+    ]
+  },
+  "src": {
+    "ip": "203.0.113.2",
+    "port": 11138
+  },
+  "dst": {
+    "ip": "203.0.113.1",
+    "port": 53
+  },
+  "comm": {
+    "dns": {
+      "name": "example.com",
+      "qtype": "A"
+    },
+    "method": "sinkhole",
+    "proto": "dns"
+  },
+  "_geo_src_ip": {
+    "ip": "203.0.113.2",
+    "netmask": 23,
+    "country_code": "AT",
+    "country_name": "Austria",
+    "region": "Steiermark",
+    "region_code": "06",
+    "city": "Graz",
+    "postal_code": "8000",
+    "latitude": 47.0832,
+    "longitude": 15.5666,
+    "asn": 1,
+    "asn_name": "Example AS Name",
+    "path": "src.ip"
+  }
+}

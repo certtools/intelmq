@@ -1,4 +1,4 @@
-debian/cron.d/intelmq-update-data etc/cron.d/
+debian/cron.d/intelmq-update-database etc/cron.d/
 contrib/logrotate/intelmq etc/logrotate.d/
 contrib/bash-completion/intelmqctl usr/share/bash-completion/completions/
 contrib/bash-completion/intelmqdump usr/share/bash-completion/completions/

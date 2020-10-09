@@ -71,6 +71,9 @@ def feeds_docs():
     with open(os.path.join(BASEDIR, 'intelmq/etc/feeds.yaml')) as fhandle:
         config = yaml.safe_load(fhandle.read())
 
+    with open(os.path.join(BASEDIR, 'intelmq/bots/BOTS')) as fhandle:
+        bots = json.load(fhandle)
+
     toc = ""
     for provider in sorted(config['providers'].keys()):
         provider_link = provider.replace('.', '')
@@ -100,19 +103,19 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
             output += "## %s\n\n" % feed
 
-            if feed_info['status']:
-                output += info("status", "on")
+            if feed_info.get('public'):
+                output += info("public", "yes" if feed_info['public'] else "no")
             else:
-                output += info("status", "off")
+                output += info("public", "unknown")
 
             output += info("revision", feed_info['revision'])
 
-            if feed_info['documentation'] is not None:
+            if feed_info.get('documentation') is not None:
                 output += info("documentation", feed_info['documentation'])
 
             output += info("description", feed_info['description'])
 
-            if feed_info['additional_information'] is not None:
+            if feed_info.get('additional_information') is not None:
                 output += info("additional information", feed_info['additional_information'])
 
             output += '\n'
@@ -121,10 +124,16 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
                 output += "### %s\n\n" % bot.title()
 
-                output += info("Module", bot_info['module'])
+                botname = "Undefined Bot"
+                for bottype, botlist in bots.items():
+                    for bot, botdata in botlist.items():
+                        if botdata['module'] == bot_info['module']:
+                            botname = bot
+
+                output += info("Bot", f"{botname} (Module `{bot_info['module']}`)")
                 output += info("Configuration Parameters")
 
-                if bot_info['parameters']:
+                if bot_info.get('parameters'):
                     for key, value in sorted(bot_info['parameters'].items(), key=lambda x: x[0]):
 
                         if value == "__FEED__":
@@ -132,6 +141,11 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
                         if value == "__PROVIDER__":
                             value = provider
+
+                        # format non-empty lists with double-quotes
+                        # single quotes are not conform JSON and not correctly detected/transformed by the manager
+                        if isinstance(value, (list, tuple)) and value:
+                            value = '["%s"]' % '", "'.join(value)
 
                         output += "*  * `%s`: `%s`\n" % (key, value)
 

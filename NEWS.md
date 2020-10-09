@@ -3,13 +3,29 @@ NEWS
 
 See the changelog for a full list of changes.
 
-2.2.0 Feature release (unreleased)
+2.3.0 Bugfix release (unreleased)
 ----------------------------------
 
 ### Requirements
-- IntelMQ no longer supports Python 3.4, Python `>=` 3.5 is required.
 
 ### Tools
+
+#### Bot option `--updata-database`
+- Bots that require a database file (such as `maxmind_geoip`, `asn_lookup`, `tor_nodes` and `recordedfuture_iprisk`)
+  have new command line option `--update-database`. It is not necessary to specify a
+  bot ID, the function automatically updates the database for all the bots of the same
+  type and reloads them afterwards. Removes any external dependencies (such as curl or wget).
+  This is a replacement for shell scripts such as `update-tor-nodes`, `update-asn-data`,
+  `update-geoip-data`, `update-rfiprisk-data`.
+  
+  Usage:
+  ```
+  intelmq.bots.experts.asn_lookup.expert --update-database
+  intelmq.bots.experts.maxmind_geoip.expert --update-database
+  intelmq.bots.experts.recordedfuture_iprisk.expert --update-database
+  intelmq.bots.experts.tor_nodes.expert --update-database
+  ```
+  The provided shell scripts use these new commands, however they are now deprecated and will be removed in version 3.0.
 
 ### Harmonization
 
@@ -20,7 +36,7 @@ See the changelog for a full list of changes.
 ### Postgres databases
 
 
-2.1.3 Bugfix release (unreleased)
+2.2.2 Bugfix release (unreleased)
 ---------------------------------
 
 ### Requirements
@@ -28,14 +44,100 @@ See the changelog for a full list of changes.
 ### Tools
 
 ### Harmonization
-The regular expression of the field `protocol.transport` has been updated to accommodate the value `nvp-ii`.
-`intelmqctl upgrade-config` handles the change to automatically upgrade your configuration.
+#### Shadowserver Feed/Parser
+The feed "Blacklisted-IP" has been renamed by ShadowServer to "Blocklist". In IntelMQ, the old name can still be used in IntelMQ until version 3.0.
 
 ### Configuration
 
 ### Libraries
 
 ### Postgres databases
+
+
+2.2.1 Bugfix release (2020-07-30)
+----------------------------------
+
+### Requirements
+#### MaxMind GeoIP Expert Bot
+The current python library versions of geoip (version 4) and maxminddb (version 2) no longer support Python 3.5. Keep older versions of these libraries if you are using this Python version.
+
+### Configuration
+#### Abuse.ch URLHaus
+
+The current documented value for the `column` parameter was:
+```json
+['time.source', 'source.url', 'status', 'extra.urlhaus.threat_type', 'source.fqdn', 'source.ip', 'source.asn', 'source.geolocation.cc']
+```
+Better is:
+```json
+['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc']
+```
+
+2.2.0 Feature release (2020-06-18)
+----------------------------------
+
+### Requirements
+- IntelMQ no longer supports Python 3.4, Python `>=` 3.5 is required.
+  CentOS 7 (with EPEL) provides both Python 3.4 and Python 3.6. If IntelMQ was installed with Python 3.4, the code needs to be re-installed with Python 3.6 and removed for Python 3.4. Application data is compatible. To install needed packages: `yum install python36 python36-devel python36-requests`.
+- The *AMQP collector* requires the `pika` library minimum version 1.0.
+
+### Configuration
+
+#### ElasticSearch Output Bot
+The ElasticSearch Output bot does no longer support (only) ElasticSearch version 5, but only version 7 (#1513).
+
+#### Microsoft Azure Collector Bot
+The Bot has been majorly changed to support the current Azure Python library `azure-storage-blob>=12.0.0`.
+This also changes the required configuration parameters. The new required parameters are:
+
+* `redis_cache_db`: 5
+* `redis_cache_host`: `"127.0.0.1"`
+* `redis_cache_password`: null, depending on your Redis server configuration
+* `redis_cache_port`: 6379, depending on your Redis server configuration
+* `redis_cache_ttl`: 864000 (10 days), depending on how old fast the data you are fetching is removed from the storage
+* `connection_string`: connection string as given by Microsoft, includes endpoint and authentication information
+* `container_name`: name of the container to connect to
+
+The previous parameters `account_name`, `account_key` and `delete` are not supported anymore.
+
+#### URLVir Feeds and Parser
+All URLVir feeds have been discontinued. The URLVir Parser has been removed.
+The `intelmqctl upgrade-config` command warns if you have these feed and the bot in use.
+
+
+2.1.3 Bugfix release (2020-05-26)
+---------------------------------
+
+### Requirements
+The python library `requests` is required by the core.
+
+### Harmonization
+The regular expression of the field `protocol.transport` has been updated to accommodate the value `nvp-ii`.
+`intelmqctl upgrade-config` handles the change to automatically upgrade your configuration.
+
+#### Taichung feed
+The Taichung feed "Netflow (Recent 30)" with URL `https://www.tc.edu.tw/net/netflow/lkout/recent/30` is no longer available and gives an error 500.
+As a drop-in replacement the Parser as well as the Feed documentation are now adapted to the full feed available at `https://www.tc.edu.tw/net/netflow/lkout/recent/`.
+The `intelmqctl upgrade-config` command takes care of this change.
+
+#### Abuse.ch Zeus Tracker Feed
+The Abuse.ch Zeus Tracker has been discontinued on 2019-07-08. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
+#### Abuse.ch Ransomware Tracker Feed
+The Abuse.ch Ransomware Tracker has been discontinued on 2019-12-08. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
+#### Bitcash.cz Feed
+The Bitcash.cz Banned IPs / Blocklist feed previously available under `https://bitcash.cz/misc/log/blacklist` is no longer available. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
+#### Fraunhofer DDoS Attack Feed
+The Fraunhofer DDoS Attack feed previously available under `https://feed.caad.fkie.fraunhofer.de/ddosattackfeed/` is no longer available. The `intelmqctl upgrade-config` command warns if you have this feed in use.
+
+#### Bambenek Feeds
+Many Bambenek feeds require a license now and URLs have changed. See https://osint.bambenekconsulting.com/feeds/ for more information. The `intelmqctl upgrade-config` command also warns if you have previously documents feeds in use and migrates the URL for the DGA domain feed.
+
+#### Nothink Feeds and Parser
+All Nothink Honeypot feeds have been discontinued and current the data available covers the time until 2019. The Nothink Parser has been removed.
+The `intelmqctl upgrade-config` command warns if you have these feed and the bot in use.
 
 
 2.1.2 Bugfix release (2020-01-28)

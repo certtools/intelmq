@@ -1,0 +1,2 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","response"
+"2020-06-28 03:45:24","123.45.67.89","udp",5683,"some.host.com","coap",12345,"AA","REGION","CITY",518210,0,"</api>,</api/v1>,</.well-known/core>"

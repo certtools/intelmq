@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Sep 10 17:10:54 2019
@@ -14,6 +13,8 @@ if os.getenv('INTELMQ_TEST_EXOTIC'):
         EMAIL_ZIP_FOOBAR = parse_email(handle.read())
     with open(os.path.join(os.path.dirname(__file__), 'foobartxt.eml')) as handle:
         EMAIL_TXT_FOOBAR = parse_email(handle.read())
+    with open(os.path.join(os.path.dirname(__file__), 'fake_attachment.eml')) as handle:
+        EMAIL_FAKE_ATTACHMENT = parse_email(handle.read())
 
 
 class MockedImbox():
@@ -40,3 +41,8 @@ class MockedZipImbox(MockedImbox):
 class MockedTxtImbox(MockedImbox):
     def messages(self, *args, **kwargs):
         yield 0, deepcopy(EMAIL_TXT_FOOBAR)
+
+
+class MockedBadAttachmentImbox(MockedImbox):
+    def messages(self, *args, **kwargs):
+        yield 0, deepcopy(EMAIL_FAKE_ATTACHMENT)

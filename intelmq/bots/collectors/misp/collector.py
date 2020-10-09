@@ -32,12 +32,21 @@ try:
 
 except ImportError:
     PyMISP = None
+    import_fail_reason = 'import'
+except SyntaxError:
+    PyMISP = None
+    import_fail_reason = 'syntax'
 
 
 class MISPCollectorBot(CollectorBot):
 
     def init(self):
-        if PyMISP is None:
+        if PyMISP is None and import_fail_reason == 'syntax':
+            raise MissingDependencyError("pymisp",
+                                         version='>=2.4.36,<=2.4.119.1',
+                                         additional_text="Python versions below 3.6 are "
+                                                         "only supported by pymisp <= 2.4.119.1.")
+        elif PyMISP is None:
             raise MissingDependencyError("pymisp")
 
         if hasattr(self.parameters, 'misp_verify'):
@@ -74,7 +83,8 @@ class MISPCollectorBot(CollectorBot):
 
         # Finally, update the tags on the MISP events.
 
-        for misp_event in misp_result:
+        for e in misp_result:
+            misp_event = e['Event']
             if hasattr(self.parameters, 'misp_tag_processed'):
                 # Add a 'processed' tag to the event
                 self.misp.tag(misp_event['uuid'],

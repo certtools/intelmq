@@ -10,7 +10,6 @@ import json
 import logging
 import os
 import re
-import shutil
 import signal
 import socket
 import subprocess
@@ -27,12 +26,14 @@ from termstyle import green
 from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
-                     DEFAULT_LOGGING_PATH, __version_info__)
+                     DEFAULT_LOGGING_PATH, __version_info__,
+                     CONFIG_DIR, ROOT_DIR)
 from intelmq.lib import utils
 from intelmq.lib.bot_debugger import BotDebugger
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.pipeline import PipelineFactory
 import intelmq.lib.upgrades as upgrades
+from typing import Union, Iterable
 
 try:
     import psutil
@@ -352,19 +353,49 @@ class IntelMQProcessManager:
         filename = self.PIDFILE.format(bot_id)
         os.remove(filename)
 
+    @staticmethod
+    def _interpret_commandline(pid: int, cmdline: Iterable[str],
+                               module: str, bot_id: str) -> Union[bool, str]:
+        """
+        Separate function to allow easy testing
+
+        Parameters
+        ----------
+        pid : int
+            Process ID, used for return values (error messages) only.
+        cmdline : Iterable[str]
+            The command line of the process.
+        module : str
+            The module of the bot.
+        bot_id : str
+            The ID of the bot.
+
+        Returns
+        -------
+        Union[bool, str]
+            DESCRIPTION.
+        """
+        if len(cmdline) > 2 and cmdline[1].endswith('/%s' % module):
+            if cmdline[2] == bot_id:
+                return True
+            else:
+                return False
+        elif (len(cmdline) > 3 and cmdline[1].endswith('/intelmqctl') and
+              cmdline[2] == 'run'):
+            if cmdline[3] == bot_id:
+                return True
+            else:
+                return False
+        elif len(cmdline) > 1:
+            return 'Commandline of the process %d with commandline %r could not be interpreted.' % (pid, cmdline)
+        else:
+            return 'Unhandled error checking the process %d with commandline %r.' % (pid, cmdline)
+
     def __status_process(self, pid, module, bot_id):
-        which = shutil.which(module)
-        if not which:
-            return 'Could not get path to the excutable (%r). Check your PATH variable (%r).' % (module, os.environ.get('PATH'))
         try:
             proc = psutil.Process(int(pid))
-            if len(proc.cmdline()) > 1 and proc.cmdline()[1] == shutil.which(module):
-                return True
-            elif (len(proc.cmdline()) > 3 and proc.cmdline()[1] == shutil.which('intelmqctl') and
-                  proc.cmdline()[2] == 'run' and proc.cmdline()[3] == bot_id):
-                return True
-            elif len(proc.cmdline()) > 1:
-                return 'Commandline of the program %r does not match expected value %r.' % (proc.cmdline()[1], shutil.which(module))
+            cmdline = proc.cmdline()
+            return IntelMQProcessManager._interpret_commandline(pid, cmdline, module, bot_id)
         except psutil.NoSuchProcess:
             return False
         except psutil.AccessDenied:
@@ -637,7 +668,8 @@ PROCESS_MANAGER = {'intelmq': IntelMQProcessManager, 'supervisor': SupervisorPro
 
 class IntelMQController():
 
-    def __init__(self, interactive: bool = False, return_type: str = "python", quiet: bool = False) -> None:
+    def __init__(self, interactive: bool = False, return_type: str = "python", quiet: bool = False,
+                 no_file_logging: bool = False, drop_privileges: bool = True) -> None:
         """
         Initializes intelmqctl.
 
@@ -648,6 +680,8 @@ class IntelMQController():
                 'text': user-friendly output for cli, default for interactive use
                 'json': machine-readable output for managers
             quiet: False by default, can be activated for cron jobs etc.
+            no_file_logging: do not log to the log file
+            drop_privileges: Drop privileges and fail if it did not work.
         """
         self.interactive = interactive
         global RETURN_TYPE
@@ -672,6 +706,8 @@ class IntelMQController():
         logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
 
         try:
+            if no_file_logging:
+                raise FileNotFoundError
             logger = utils.log('intelmqctl', log_level=log_level,
                                log_format_stream=utils.LOG_FORMAT_SIMPLE,
                                logging_level_stream=logging_level_stream)
@@ -685,8 +721,8 @@ class IntelMQController():
             self.logger.exception('Loading the defaults configuration failed!',
                                   exc_info=defaults_loading_exc)
 
-        if not utils.drop_privileges():
-            logger.warning('Running intelmqctl as root is highly discouraged!')
+        if drop_privileges and not utils.drop_privileges():
+            self.abort('IntelMQ must not run as root. Dropping privileges did not work.')
 
         APPNAME = "intelmqctl"
         try:
@@ -711,6 +747,7 @@ class IntelMQController():
         intelmqctl clear queue-id
         intelmqctl check
         intelmqctl upgrade-config
+        intelmqctl debug
 
 Starting a bot:
     intelmqctl start bot-id
@@ -763,7 +800,12 @@ can be longer due to our logging format!
 
 Upgrade from a previous version:
     intelmqctl upgrade-config
-Make a backup of your configuration first, also including bot's configuration files.'''
+Make a backup of your configuration first, also including bot's configuration files.
+
+Get some debugging output on the settings and the enviroment (to be extended):
+    intelmqctl debug --get-paths
+    intelmqctl debug --get-environment-variables
+'''
 
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
@@ -813,6 +855,10 @@ Make a backup of your configuration first, also including bot's configuration fi
             parser_list.add_argument('--non-zero', '--quiet', '-q', action='store_true',
                                      help='Only list non-empty queues '
                                           'or the IDs of enabled bots.')
+            parser_list.add_argument('--count', '--sum', '-s', action='store_true',
+                                     help='Only show the total '
+                                          'number of messages in queues. '
+                                          'Only valid for listing queues.')
             parser_list.set_defaults(func=self.list)
 
             parser_clear = subparsers.add_parser('clear', help='Clear a queue')
@@ -938,7 +984,20 @@ Make a backup of your configuration first, also including bot's configuration fi
             parser_upgrade_conf.add_argument('--state-file',
                                              help='The state file location to use.',
                                              default=STATE_FILE_PATH)
+            parser_upgrade_conf.add_argument('--no-backup',
+                                             help='Do not create backups of state and configuration files.',
+                                             action='store_true')
             parser_upgrade_conf.set_defaults(func=self.upgrade_conf)
+
+            parser_debug = subparsers.add_parser('debug', help='Get debugging output.')
+            parser_debug.add_argument('--get-paths', help='Give all paths',
+                                      action='append_const', dest='sections',
+                                      const='paths')
+            parser_debug.add_argument('--get-environment-variables',
+                                      help='Give environment variables',
+                                      action='append_const', dest='sections',
+                                      const='environment_variables')
+            parser_debug.set_defaults(func=self.debug)
 
             self.parser = parser
 
@@ -1141,9 +1200,9 @@ Make a backup of your configuration first, also including bot's configuration fi
                 retval = 1
         return retval, botnet_status
 
-    def list(self, kind=None, non_zero=False):
+    def list(self, kind=None, non_zero=False, count=False):
         if kind == 'queues':
-            return self.list_queues(non_zero=non_zero)
+            return self.list_queues(non_zero=non_zero, count=count)
         elif kind == 'bots':
             return self.list_bots(non_zero=non_zero)
         elif kind == 'queues-and-status':
@@ -1208,7 +1267,7 @@ Make a backup of your configuration first, also including bot's configuration fi
 
         return source_queues, destination_queues, internal_queues, all_queues
 
-    def list_queues(self, non_zero=False):
+    def list_queues(self, non_zero=False, count=False):
         pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
         pipeline.set_queues(None, "source")
         pipeline.connect()
@@ -1219,23 +1278,28 @@ Make a backup of your configuration first, also including bot's configuration fi
         pipeline.disconnect()
         if RETURN_TYPE == 'text':
             for queue, counter in sorted(counters.items(), key=lambda x: str.lower(x[0])):
-                if counter or not non_zero:
+                if (counter or not non_zero) and not count:
                     logger.info("%s - %s", queue, counter)
+            if count:
+                logger.info("%s", sum(counters.values()))
 
         return_dict = {}
-        for bot_id, info in self.pipeline_configuration.items():
-            return_dict[bot_id] = {}
+        if count:
+            return_dict = {'total-messages': sum(counters.values())}
+        else:
+            for bot_id, info in self.pipeline_configuration.items():
+                return_dict[bot_id] = {}
 
-            if 'source-queue' in info:
-                return_dict[bot_id]['source_queue'] = (
-                    info['source-queue'], counters[info['source-queue']])
-                if pipeline.has_internal_queues:
-                    return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
+                if 'source-queue' in info:
+                    return_dict[bot_id]['source_queue'] = (
+                        info['source-queue'], counters[info['source-queue']])
+                    if pipeline.has_internal_queues:
+                        return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
 
-            if 'destination-queues' in info:
-                return_dict[bot_id]['destination_queues'] = []
-                for dest_queue in utils.flatten_queues(info['destination-queues']):
-                    return_dict[bot_id]['destination_queues'].append((dest_queue, counters[dest_queue]))
+                if 'destination-queues' in info:
+                    return_dict[bot_id]['destination_queues'] = []
+                    for dest_queue in utils.flatten_queues(info['destination-queues']):
+                        return_dict[bot_id]['destination_queues'].append((dest_queue, counters[dest_queue]))
 
         return 0, return_dict
 
@@ -1377,7 +1441,7 @@ Make a backup of your configuration first, also including bot's configuration fi
         all_queues = set()
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # pipeline keys
-            for field in ['description', 'group', 'module', 'name']:
+            for field in ['description', 'group', 'module', 'name', 'enabled']:
                 if field not in bot_config:
                     check_logger.warning('Bot %r has no %r.', bot_id, field)
                     retval = 1
@@ -1385,10 +1449,12 @@ Make a backup of your configuration first, also including bot's configuration fi
                 message = "Bot %r has invalid `run_mode` %r. Must be 'continuous' or 'scheduled'."
                 check_logger.warning(message, bot_id, bot_config['run_mode'])
                 retval = 1
-            if bot_id not in files[PIPELINE_CONF_FILE]:
+            if bot_id not in files[PIPELINE_CONF_FILE] and bot_config.get('enabled', True):
                 check_logger.error('Misconfiguration: No pipeline configuration found for %r.', bot_id)
                 retval = 1
-            else:
+            elif bot_id not in files[PIPELINE_CONF_FILE] and not bot_config.get('enabled', True):
+                check_logger.warning('Misconfiguration: No pipeline configuration found for %r.', bot_id)
+            elif bot_id in files[PIPELINE_CONF_FILE]:
                 if ('group' in bot_config and
                         bot_config['group'] in ['Collector', 'Parser', 'Expert']):
                     if ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
@@ -1409,12 +1475,14 @@ Make a backup of your configuration first, also including bot's configuration fi
                     else:
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'])
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'] + '-internal')
+        # ignore allowed orphaned queues
+        allowed_orphan_queues = set(getattr(self.parameters, 'intelmqctl_check_orphaned_queues_ignore', ()))
         if not no_connections:
             try:
                 pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
                 pipeline.set_queues(None, "source")
                 pipeline.connect()
-                orphan_queues = "', '".join(pipeline.nonempty_queues() - all_queues)
+                orphan_queues = "', '".join(pipeline.nonempty_queues() - all_queues - allowed_orphan_queues)
             except Exception as exc:
                 error = utils.error_message_from_exc(exc)
                 check_logger.error('Could not connect to pipeline: %s', error)
@@ -1423,7 +1491,8 @@ Make a backup of your configuration first, also including bot's configuration fi
                 if orphan_queues:
                     check_logger.warning("Orphaned queues found: '%s'. Possible leftover from past reconfigurations "
                                          "without cleanup. Have a look at the FAQ at "
-                                         "https://github.com/certtools/intelmq/blob/master/docs/FAQ.md", orphan_queues)
+                                         "https://github.com/certtools/intelmq/blob/master/docs/intelmqctl.md"
+                                         "#orphaned-queues", orphan_queues)
 
         check_logger.info('Checking harmonization configuration.')
         for event_type, event_type_conf in files[HARMONIZATION_CONF_FILE].items():
@@ -1470,8 +1539,8 @@ Make a backup of your configuration first, also including bot's configuration fi
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
                                    stderr=subprocess.DEVNULL):
-                    check_logger.error('Incomplete installation: Executable %r for %r not found.',
-                                       bot['module'], bot_id)
+                    check_logger.error('Incomplete installation: Executable %r for %r not found in $PATH (%r).',
+                                       bot['module'], bot_id, os.getenv('PATH'))
                     retval = 1
 
         if os.path.isfile(STATE_FILE_PATH):
@@ -1486,9 +1555,9 @@ Make a backup of your configuration first, also including bot's configuration fi
 
         if RETURN_TYPE == 'json':
             if retval:
-                return 0, {'status': 'error', 'lines': list_handler.buffer}
+                return 1, {'status': 'error', 'lines': list_handler.buffer}
             else:
-                return 1, {'status': 'success', 'lines': list_handler.buffer}
+                return 0, {'status': 'success', 'lines': list_handler.buffer}
         else:
             if retval:
                 self.logger.error('Some issues have been found, please check the above output.')
@@ -1498,7 +1567,8 @@ Make a backup of your configuration first, also including bot's configuration fi
                 return retval, 'success'
 
     def upgrade_conf(self, previous=None, dry_run=None, function=None,
-                     force=None, state_file: str = STATE_FILE_PATH):
+                     force=None, state_file: str = STATE_FILE_PATH,
+                     no_backup=False):
         """
         Upgrade the IntelMQ configuration after a version upgrade.
 
@@ -1507,6 +1577,7 @@ Make a backup of your configuration first, also including bot's configuration fi
             function: Only execute this upgrade function
             force: Also upgrade if not necessary
             state_file: location of the state file
+            no_backup: Do not create backups of state and configuration files
 
         state file:
 
@@ -1555,8 +1626,7 @@ Make a backup of your configuration first, also including bot's configuration fi
             except Exception as exc:
                 self.logger.error('Error writing state file %r: %s.', state_file, exc)
                 return 1, 'Error writing state file %r: %s.' % (state_file, exc)
-            self.logger.error('Successfully wrote initial state file. Please re-run this program.')
-            return 0, 'success'
+            self.logger.info('Successfully wrote initial state file.')
 
         defaults = utils.load_configuration(DEFAULTS_CONF_FILE)
         runtime = utils.load_configuration(RUNTIME_CONF_FILE)
@@ -1583,9 +1653,12 @@ Make a backup of your configuration first, also including bot's configuration fi
                     upgrades, function)(defaults, runtime, harmonization, dry_run)
                 # Handle changed configurations
                 if retval is True and not dry_run:
-                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new)
-                    utils.write_configuration(RUNTIME_CONF_FILE, runtime_new)
-                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization_new)
+                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new,
+                                              backup=not no_backup)
+                    utils.write_configuration(RUNTIME_CONF_FILE, runtime_new,
+                                              backup=not no_backup)
+                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization_new,
+                                              backup=not no_backup)
             except Exception:
                 self.logger.exception('Upgrade %r failed, please report this bug '
                                       'with the shown traceback.',
@@ -1615,7 +1688,8 @@ Make a backup of your configuration first, also including bot's configuration fi
             state['results'].append(result)
             state['upgrades'][function] = result['success']
             if not dry_run:
-                utils.write_configuration(state_file, state)
+                utils.write_configuration(state_file, state,
+                                          backup=not no_backup)
 
             if result['success']:
                 return 0, 'success'
@@ -1650,7 +1724,7 @@ Make a backup of your configuration first, also including bot's configuration fi
                         if funcs:
                             todo.append((version, funcs, False))
             else:
-                self.logger.info("Found no previous version, doing all upgrades.")
+                self.logger.info("Found no previous version or forced, doing all upgrades.")
                 todo = [(version, bunch, True) for version, bunch in upgrades.UPGRADES.items()]
 
             todo.extend([(None, (function, ), False)
@@ -1678,7 +1752,8 @@ Make a backup of your configuration first, also including bot's configuration fi
                         # already performed
                         continue
 
-                    docstring = textwrap.dedent(function.__doc__).strip()
+                    # shown text should have only one line
+                    docstring = textwrap.dedent(function.__doc__).strip().replace('\n', ' ')
                     result = {"function": function.__name__,
                               "time": datetime.datetime.now().isoformat()
                               }
@@ -1729,7 +1804,8 @@ Make a backup of your configuration first, also including bot's configuration fi
             if error:
                 # some upgrade function had a problem
                 if not dry_run:
-                    utils.write_configuration(state_file, state)
+                    utils.write_configuration(state_file, state,
+                                              backup=not no_backup)
                 self.logger.error('Some migration did not succeed or '
                                   'manual intervention is needed. Look at '
                                   'the output above. Afterwards, re-run '
@@ -1737,9 +1813,12 @@ Make a backup of your configuration first, also including bot's configuration fi
 
             try:
                 if not dry_run:
-                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults)
-                    utils.write_configuration(RUNTIME_CONF_FILE, runtime)
-                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization)
+                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults,
+                                              backup=not no_backup)
+                    utils.write_configuration(RUNTIME_CONF_FILE, runtime,
+                                              backup=not no_backup)
+                    utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization,
+                                              backup=not no_backup)
             except Exception as exc:
                 self.logger.error('Writing defaults or runtime configuration '
                                   'did not succeed: %s\nFix the problem and '
@@ -1754,12 +1833,46 @@ Make a backup of your configuration first, also including bot's configuration fi
                     self.logger.info('Nothing to do!')
 
             if not dry_run:
-                utils.write_configuration(state_file, state)
+                utils.write_configuration(state_file, state,
+                                          backup=not no_backup)
 
         if error:
             return 1, 'error'
         else:
             return 0, 'success'
+
+    def debug(self, sections=None):
+        """
+        Give debugging output
+        get_paths:
+            print path information
+        """
+
+        output = {}
+        if sections is None or 'paths' in sections:
+            output['paths'] = {}
+            variables = globals()
+            if RETURN_TYPE == 'text':
+                print('Paths:')
+            for path in ('BOTS_FILE', 'DEFAULTS_CONF_FILE',
+                         'HARMONIZATION_CONF_FILE', 'PIPELINE_CONF_FILE',
+                         'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
+                         'DEFAULT_LOGGING_PATH', '__file__',
+                         'CONFIG_DIR', 'ROOT_DIR'):
+                output['paths'][path] = variables[path]
+                if RETURN_TYPE == 'text':
+                    print('%s: %r' % (path, variables[path]))
+        if sections is None or 'environment_variables' in sections:
+            output['environment_variables'] = {}
+            if RETURN_TYPE == 'text':
+                print('Environment variables:')
+            for variable in ('INTELMQ_ROOT_DIR', 'INTELMQ_PATHS_NO_OPT',
+                             'INTELMQ_PATHS_OPT', 'INTELMQ_MANAGER_CONTROLLER_CMD',
+                             'PATH'):
+                output['environment_variables'][variable] = os.getenv(variable)
+                if RETURN_TYPE == 'text':
+                    print('%s: %r' % (variable, os.getenv(variable)))
+        return 0, output
 
 
 def main():  # pragma: no cover

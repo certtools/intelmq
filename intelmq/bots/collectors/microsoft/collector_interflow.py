@@ -37,7 +37,7 @@ from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.cache import Cache
-from intelmq.lib.utils import parse_relative, create_request_session_from_bot
+from intelmq.lib.utils import parse_relative, create_request_session
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -95,7 +95,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
                                      "otherwise the bot is processing the same data over and over again.")
         else:
             self.time_match = None
-        self.session = create_request_session_from_bot(self)
+        self.session = create_request_session(self)
 
         self.cache = Cache(self.parameters.redis_cache_host,
                            self.parameters.redis_cache_port,
@@ -140,7 +140,16 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
             report.add('feed.url', download_url)
             report.add('raw', raw)
             self.send_message(report)
-            self.cache.set(file['Name'], True)
+            # redis-py >= 3.0.0 does no longer support boolean values, cast to string explicitly, also for backwards compatibility
+            self.cache.set(file['Name'], "True")
+
+    def print_filelist(self):
+        """ Can be called from the debugger for example. """
+        self.logger.debug('Downloading file list.')
+        files = self.session.get(URL_LIST)
+        files.raise_for_status()
+        self.logger.debug('Downloaded file list, %s entries.', len(files.json()))
+        print(files.text)
 
 
 BOT = MicrosoftInterflowCollectorBot

@@ -3,6 +3,7 @@
 """
 """
 import argparse
+import base64
 import copy
 import fcntl
 import glob
@@ -178,7 +179,13 @@ def main():
 
     parser.add_argument('botid', metavar='botid', nargs='?',
                         default=None, help='botid to inspect dumps of')
+    parser.add_argument('--truncate', '-t', type=int,
+                        default=1000,
+                        help='Truncate raw-data with more characters than given. '
+                        '0 for no truncating. Default: 1000.')
     args = parser.parse_args()
+    if args.truncate < 1:
+        args.truncate = None
 
     # Try to get log_level from defaults_configuration, else use default
     try:
@@ -344,6 +351,9 @@ def main():
                             if runtime[pipeline_pipes[queue_name]]['group'] == 'Parser' and json.loads(msg)['__type'] == 'Event':
                                 print('Event converted to Report automatically.')
                                 msg = message.Report(message.MessageFactory.unserialize(msg)).serialize()
+                        else:
+                            print(red("The given queue '{}' is not configured. Please retry with a valid queue.".format(queue_name)))
+                            break
                         try:
                             pipe.set_queues(queue_name, 'destination')
                             pipe.connect()
@@ -373,12 +383,16 @@ def main():
                         continue
                     print('=' * 100, '\nShowing id {} {}\n'.format(count, key),
                           '-' * 50)
-                    if isinstance(value['message'], (bytes, str)):
-                        value['message'] = json.loads(value['message'])
-                        if ('raw' in value['message'] and
-                                len(value['message']['raw']) > 1000):
-                            value['message']['raw'] = value['message'][
-                                'raw'][:1000] + '...[truncated]'
+                    if value.get('message_type') == 'base64':
+                        if args.truncate and len(value['message']) > args.truncate:
+                            value['message'] = value['message'][:args.truncate] + '...[truncated]'
+                    else:
+                        if isinstance(value['message'], (bytes, str)):
+                            value['message'] = json.loads(value['message'])
+                            if (args.truncate and 'raw' in value['message'] and
+                                    len(value['message']['raw']) > args.truncate):
+                                value['message']['raw'] = value['message'][
+                                    'raw'][:args.truncate] + '...[truncated]'
                     if type(value['traceback']) is not list:
                         value['traceback'] = value['traceback'].splitlines()
                     pprint.pprint(value)
@@ -388,19 +402,40 @@ def main():
                     print(red('Edit mode needs an id'))
                     continue
                 for entry in ids:
-                    with tempfile.NamedTemporaryFile(mode='w+t', suffix='.json') as tmphandle:
-                        filename = tmphandle.name
-                        utils.write_configuration(configuration_filepath=filename,
-                                                  content=json.loads(content[meta[entry][0]]['message']),
-                                                  new=True,
-                                                  backup=False)
-                        proc = subprocess.run(['sensible-editor', filename])
-                        if proc.returncode != 0:
-                            print(red('Calling editor failed with exitcode %r.' % proc.returncode))
-                        else:
-                            tmphandle.seek(0)
-                            content[meta[entry][0]]['message'] = tmphandle.read()
-                            save_file(handle, content)
+                    if content[meta[entry][0]].get('message_type') == 'base64':
+                        with tempfile.NamedTemporaryFile(mode='w+b', suffix='.txt') as tmphandle:
+                            filename = tmphandle.name
+                            tmphandle.write(base64.b64decode(content[meta[entry][0]]['message']))
+                            tmphandle.flush()
+                            proc = subprocess.run(['sensible-editor', filename])
+                            if proc.returncode != 0:
+                                print(red('Calling editor failed with exitcode %r.' % proc.returncode))
+                            else:
+                                tmphandle.seek(0)
+                                new_content = tmphandle.read()
+                                try:
+                                    new_content = new_content.decode()
+                                except UnicodeDecodeError as exc:
+                                    print(red("Could not write the new message because of the following error:"))
+                                    print(red(exceptions.DecodingError(exception=exc)))
+                                else:
+                                    del content[meta[entry][0]]['message_type']
+                                    content[meta[entry][0]]['message'] = new_content
+                                    save_file(handle, content)
+                    else:
+                        with tempfile.NamedTemporaryFile(mode='w+t', suffix='.json') as tmphandle:
+                            filename = tmphandle.name
+                            utils.write_configuration(configuration_filepath=filename,
+                                                      content=json.loads(content[meta[entry][0]]['message']),
+                                                      new=True,
+                                                      backup=False)
+                            proc = subprocess.run(['sensible-editor', filename])
+                            if proc.returncode != 0:
+                                print(red('Calling editor failed with exitcode %r.' % proc.returncode))
+                            else:
+                                tmphandle.seek(0)
+                                content[meta[entry][0]]['message'] = tmphandle.read()
+                                save_file(handle, content)
 
     if delete_file:
         os.remove(fname)

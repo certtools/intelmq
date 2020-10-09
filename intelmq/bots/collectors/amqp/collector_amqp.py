@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Collecting from a (remote) AMQP Server and fetching either intelmq or any other messages.
@@ -24,17 +23,18 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
 
     def init(self):
         if pika is None:
-            raise MissingDependencyError("pika")
+            raise MissingDependencyError("pika", version=">=1.0")
 
         self.connection = None
         self.channel = None
 
         pika_version = tuple(int(x) for x in pika.__version__.split('.'))
+        if pika_version < (1, ):
+            raise MissingDependencyError("pika", version=">=1.0",
+                                         installed=pika.__version__)
+
         self.kwargs = {}
-        if pika_version < (0, 11):
-            self.kwargs['heartbeat_interval'] = self.parameters.connection_heartbeat
-        else:
-            self.kwargs['heartbeat'] = self.parameters.connection_heartbeat
+        self.kwargs['heartbeat'] = self.parameters.connection_heartbeat
 
         self.connection_host = self.parameters.connection_host
         self.connection_port = self.parameters.connection_port
@@ -58,8 +58,6 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
                                               False)
 
         self.connect_server()
-
-        # TODO: message or report
 
     def process(self):
         ''' Stop the Bot if cannot connect to AMQP Server after the defined connection attempts '''

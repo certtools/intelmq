@@ -35,7 +35,7 @@ To get api login data see: https://python-twitter.readthedocs.io/en/latest/getti
 import time
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import create_request_session_from_bot
+from intelmq.lib.utils import create_request_session
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -77,7 +77,7 @@ class TwitterCollectorBot(CollectorBot):
             tweet_mode="extended")
 
         self.set_request_parameters()
-        self.session = create_request_session_from_bot(self)
+        self.session = create_request_session(self)
 
     def get_text_from_url(self, url: str) -> str:
         if "pastebin.com" in url:

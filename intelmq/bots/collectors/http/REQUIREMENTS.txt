@@ -1,1 +1,1 @@
-requests>=2.2.0
+python-gnupg

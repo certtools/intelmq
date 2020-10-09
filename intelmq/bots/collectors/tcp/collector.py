@@ -2,7 +2,6 @@
 
 import socket
 import struct
-import sys
 
 from intelmq.lib.bot import CollectorBot
 
@@ -48,7 +47,7 @@ class TCPCollectorBot(CollectorBot):
                 if msg:  # if the partner connection ended, our message are already sent
                     conn.sendall(b"Ok")
                     pass
-        except socket.error as e:
+        except socket.error:
             self.logger.exception("Socket error.")
         finally:
             if conn:

@@ -6,7 +6,7 @@ https://github.com/RIPE-NCC/whois/wiki/WHOIS-REST-API-abuse-contact
 '''
 
 import json
-from contextlib import contextmanager
+import warnings
 
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
@@ -77,7 +77,7 @@ class RIPEExpertBot(Bot):
 
     def __initialize_http_session(self):
         self.set_request_parameters()
-        self.http_session = utils.create_request_session_from_bot(self)
+        self.http_session = utils.create_request_session(self)
 
     def __initialize_cache(self):
         cache_host = getattr(self.parameters, 'redis_cache_host')
@@ -89,43 +89,36 @@ class RIPEExpertBot(Bot):
                                  getattr(self.parameters, "redis_cache_password", None))
 
     def process(self):
-        with self.event_context() as event:
-            for target in {'source.', 'destination.'}:
-                abuse_key = target + "abuse_contact"
-                abuse = set(event.get(abuse_key).split(',')) if self.__mode == 'append' and abuse_key in event else set()
-
-                asn = event.get(target + "asn", None)
-                if asn:
-                    if self.__query['stat_asn']:
-                        abuse.update(self.__perform_cached_query('stat', asn))
-                    if self.__query['db_asn']:
-                        abuse.update(self.__perform_cached_query('db_asn', asn))
-
-                ip = event.get(target + "ip", None)
-                if ip:
-                    if self.__query['stat_ip']:
-                        abuse.update(self.__perform_cached_query('stat', ip))
-                    if self.__query['db_ip']:
-                        abuse.update(self.__perform_cached_query('db_ip', ip))
-                    if self.__query['stat_geo']:
-                        info = self.__perform_cached_query('stat_geolocation', ip)
-
-                        should_overwrite = self.__mode == 'replace'
-
-                        for local_key, ripe_key in self.GEOLOCATION_REPLY_TO_INTERNAL:
-                            if ripe_key in info:
-                                event.add(target + "geolocation." + local_key, info[ripe_key], overwrite=should_overwrite)
-
-                event.add(abuse_key, ','.join(abuse), overwrite=True)
-
-    @contextmanager
-    def event_context(self):
         event = self.receive_message()
-        try:
-            yield event
-        finally:
-            self.send_message(event)
-            self.acknowledge_message()
+        for target in {'source.', 'destination.'}:
+            abuse_key = target + "abuse_contact"
+            abuse = set(event.get(abuse_key).split(',')) if self.__mode == 'append' and abuse_key in event else set()
+
+            asn = event.get(target + "asn", None)
+            if asn:
+                if self.__query['stat_asn']:
+                    abuse.update(self.__perform_cached_query('stat', asn))
+                if self.__query['db_asn']:
+                    abuse.update(self.__perform_cached_query('db_asn', asn))
+
+            ip = event.get(target + "ip", None)
+            if ip:
+                if self.__query['stat_ip']:
+                    abuse.update(self.__perform_cached_query('stat', ip))
+                if self.__query['db_ip']:
+                    abuse.update(self.__perform_cached_query('db_ip', ip))
+                if self.__query['stat_geo']:
+                    info = self.__perform_cached_query('stat_geolocation', ip)
+
+                    should_overwrite = self.__mode == 'replace'
+
+                    for local_key, ripe_key in self.GEOLOCATION_REPLY_TO_INTERNAL:
+                        if ripe_key in info:
+                            event.add(target + "geolocation." + local_key, info[ripe_key], overwrite=should_overwrite)
+
+            event.add(abuse_key, ','.join(abuse), overwrite=True)
+        self.send_message(event)
+        self.acknowledge_message()
 
     def __perform_cached_query(self, type, resource):
         cached_value = self.__cache.get('{}:{}'.format(type, resource))
@@ -149,7 +142,17 @@ class RIPEExpertBot(Bot):
                         pass
                 raise ValueError(STATUS_CODE_ERROR.format(response.status_code))
             try:
-                data = self.REPLY_TO_DATA[type](response.json())
+                response_data = response.json()
+
+                # geolocation was marked as under maintenance by this, see
+                # https://lists.cert.at/pipermail/intelmq-users/2020-March/000140.html
+                status = response_data.get('data_call_status', '')
+                if status.startswith('maintenance'):
+                    warnings.warn('The API call %s is currently under maintenance. '
+                                  'Response: %r. This warning is only given once per bot run.'
+                                  '' % (type, status))
+
+                data = self.REPLY_TO_DATA[type](response_data)
                 self.__cache.set('{}:{}'.format(type, resource),
                                  (json.dumps(list(data) if isinstance(data, set) else data) if data else CACHE_NO_VALUE))
                 return data

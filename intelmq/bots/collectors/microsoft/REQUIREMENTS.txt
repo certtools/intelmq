@@ -1,1 +1,1 @@
-azure-storage>=0.33
+azure-storage-blob>=12.0.0

@@ -28,9 +28,9 @@
                     },
                     "revision": {
                         "required": true,
-                        "type": "string"
+                        "type": "date"
                     },
-                    "status": {
+                    "public": {
                         "required": true,
                         "type": "boolean"
                     },

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import html
-import html.parser
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
@@ -34,7 +33,7 @@ class AutoshunParserBot(ParserBot):
 
         ip = info[1].split('</td>')[0].strip()
         last_seen = info[2].split('</td>')[0].strip() + '-05:00'
-        description = html.parser.HTMLParser().unescape(info[3].split('</td>')[0].strip())
+        description = html.unescape(info[3].split('</td>')[0].strip())
 
         for key in ClassificationType.allowed_values:
             if description.lower().find(key.lower()) > -1:

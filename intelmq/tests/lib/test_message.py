@@ -55,10 +55,10 @@ class TestMessageFactory(unittest.TestCase):
 
         https://docs.python.org/3/whatsnew/3.2.html?highlight=assertdictcontainssubset
 
-        http://stackoverflow.com/a/21058312/2851664
+        https://stackoverflow.com/a/57386339/2851664
         cc by-sa 3.0 John1024
         """
-        self.assertTrue(set(expected.items()).issubset(set(actual.items())))
+        self.assertGreaterEqual(expected.items(), actual.items())
 
     def new_report(self, auto=False, examples=False):
         report = message.Report(harmonization=HARM, auto=auto)
@@ -446,9 +446,9 @@ class TestMessageFactory(unittest.TestCase):
                                      filter_keys={"feed.name"}))
 
         self.assertNotEqual(event1.hash(filter_type="blacklist",
-                                        filter_keys={"feed.url, raw"}),
+                                        filter_keys={"feed.url", "raw"}),
                             event2.hash(filter_type="blacklist",
-                                        filter_keys={"feed.url, raw"}))
+                                        filter_keys={"feed.url", "raw"}))
 
     def test_event_hash_method_whitelist(self):
         """ Test Event hash(blacklist) """
@@ -467,9 +467,9 @@ class TestMessageFactory(unittest.TestCase):
                                         filter_keys={"feed.name"}))
 
         self.assertEqual(event1.hash(filter_type="whitelist",
-                                     filter_keys={"feed.url, raw"}),
+                                     filter_keys={"feed.url", "raw"}),
                          event2.hash(filter_type="whitelist",
-                                     filter_keys={"feed.url, raw"}))
+                                     filter_keys={"feed.url", "raw"}))
 
     def test_event_dict(self):
         """ Test Event to_dict. """

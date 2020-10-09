@@ -1,0 +1,15 @@
+{
+  "trojanfamily": "SpyApp",
+  "env": {
+    "remote_port": "52888",
+    "server_name": "example.net",
+    "server_addr": "190.124.67.212",
+    "request_method": "POST",
+    "remote_addr": "190.124.67.211",
+    "server_port": "80"
+  },
+  "_ts": 1461107754,
+  "_geo_env_remote_addr": {
+    "country_name": "Dominican Republic"
+  }
+}

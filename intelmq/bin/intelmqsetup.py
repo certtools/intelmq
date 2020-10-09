@@ -24,10 +24,11 @@ import pkg_resources
 from pwd import getpwuid
 
 from intelmq import (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
-                     VAR_STATE_PATH, BOTS_FILE)
+                     VAR_STATE_PATH, BOTS_FILE, STATE_FILE_PATH)
+from intelmq.bin.intelmqctl import IntelMQController
 
 
-def intelmqsetup(ownership=True):
+def intelmqsetup(ownership=True, state_file=STATE_FILE_PATH):
     if os.geteuid() != 0 and ownership:
         sys.exit('You need to run this program as root (for setting file ownership)')
 
@@ -64,14 +65,23 @@ def intelmqsetup(ownership=True):
             if getpwuid(os.stat(obj).st_uid).pw_name != 'intelmq':
                 shutil.chown(obj, user='intelmq')
 
+    print('Calling `intelmqctl upgrade-config to update/create state file')
+    controller = IntelMQController(interactive=False, no_file_logging=True,
+                                   drop_privileges=False)
+    controller.upgrade_conf(state_file=state_file, no_backup=True)
+
 
 def main():
     parser = argparse.ArgumentParser("Set's up directories and example "
                                      "configurations for IntelMQ.")
     parser.add_argument('--skip-ownership', action='store_true',
                         help='Skip setting file ownership')
+    parser.add_argument('--state-file',
+                        help='The state file location to use.',
+                        default=STATE_FILE_PATH)
     args = parser.parse_args()
-    intelmqsetup(ownership=not args.skip_ownership)
+    intelmqsetup(ownership=not args.skip_ownership,
+                 state_file=args.state_file)
 
 
 if __name__ == '__main__':

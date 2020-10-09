@@ -13,7 +13,6 @@ import os
 import tempfile
 import unittest
 import requests
-import sys
 
 import termstyle
 

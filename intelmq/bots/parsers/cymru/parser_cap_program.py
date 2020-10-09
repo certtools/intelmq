@@ -21,19 +21,26 @@ MAPPING_STATIC = {'bot': {
                       'classification.identifier': 'dns-open-resolver',
                       'protocol.application': 'dns',
                       },
+    'openresolver': {'classification.type': 'vulnerable service',
+                     'classification.identifier': 'dns-open-resolver',
+                     'protocol.application': 'dns',
+                     },
     'scanner': {'classification.type': 'scanner',
                 'classification.identifier': 'scanner'},
     'spam': {'classification.type': 'spam',
              'classification.identifier': 'spam'},
+    'conficker': {'classification.type': 'infected-system',
+                  'classification.identifier': 'conficker',
+                  'malware.name': 'conficker'},
 }
 MAPPING_COMMENT = {'bruteforce': ('classification.identifier', 'protocol.application'),
                    'phishing': ('source.url', )}
 PROTOCOL_MAPPING = {  # TODO: use getent in harmonization
-                    '1': 'icmp',
-                    '6': 'tcp',
-                    '11': 'nvp-ii',
-                    '17': 'udp',
-                    }
+    '1': 'icmp',
+    '6': 'tcp',
+    '11': 'nvp-ii',
+    '17': 'udp',
+}
 BOGUS_HOSTNAME_PORT = re.compile('hostname: ([^:]+)port: ([0-9]+)')
 DESTINATION_PORT_NUMBERS_TOTAL = re.compile(r' \(total_count:\d+\)$')
 
@@ -281,7 +288,7 @@ class CymruCAPProgramParserBot(ParserBot):
             value = value.strip()
             if key == 'family':
                 event['classification.identifier'] = event['malware.name'] = value.lower()
-            elif key == 'dest_addr':
+            elif key in ('dest_addr', 'destaddr'):
                 event['destination.ip'] = value
             elif key in ('dest_port', 'ports_scanned', 'honeypot_port',
                          'darknet_port', 'destination_port_numbers'):
@@ -307,8 +314,10 @@ class CymruCAPProgramParserBot(ParserBot):
                     event['source.port'] = port
                 else:
                     event['protocol.application'] = value
-            elif key == 'port':
+            elif key in ('port', 'srcport'):
                 event['source.port'] = value
+            elif key == 'username':
+                event['source.account'] = value
             else:
                 raise ValueError('Unknown key %r in comment of category %r. Please report this.' % (key, category))
         for destination_port in destination_ports:

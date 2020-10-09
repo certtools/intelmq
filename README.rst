@@ -4,7 +4,7 @@ Welcome to IntelMQ!
 .. figure:: https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Logo_Intel_MQ.png
    :alt: IntelMQ
 
-|Build Status| |codecov.io|
+|Build Status| |codecov.io| |CII Badge|
 
 **IntelMQ** is a solution for IT security teams (CERTs & CSIRTs, SOCs, abuse
 departments, etc.) for collecting and processing security feeds (such as
@@ -54,25 +54,18 @@ Table of Contents
 -----------------
 
 1. `How to Install <#how-to-install>`__
-2. `Developers Guide <#developers-guide>`__
-3. `User Guide <#user-guide>`__
-4. `IntelMQ Manager <#intelmq-manager>`__
+2. `User Guide <#user-guide>`__
+3. `IntelMQ Manager and more tools <#intelmq-manager-and-more-tools>`__
+4. `How to Participate <#how-to-participate>`__
 5. `Incident Handling Automation
    Project <#incident-handling-automation-project>`__
-6. `Data Harmonization <#data-harmonization>`__
-7. `How to Participate <#how-to-participate>`__
-8. `Licence <#licence>`__
-9. `Funded by <#funded-by>`__
+6. `Licence <#licence>`__
+7. `Funded by <#funded-by>`__
 
 How to Install
 --------------
 
 See `INSTALL <docs/INSTALL.md>`__.
-
-Developers Guide
-----------------
-
-See `Developers Guide <docs/Developers-Guide.md>`__.
 
 User Guide
 ----------
@@ -84,12 +77,30 @@ If you know additional feeds and how to parse them, please contribute your code 
 For support questions please use the intelmq-users mailing list:
 https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users
 
-IntelMQ Manager
----------------
+IntelMQ use the Data Harmonization. Please read `this
+document <docs/Data-Harmonization.md>`__ for more details.
+
+IntelMQ Manager and more tools
+------------------------------
 
 Check out this graphical
 `tool <https://github.com/certtools/intelmq-manager>`__ and easily
 manage an IntelMQ system.
+
+More tools can be found in the `ecosystem documentation <docs/Ecosystem.md>`__.
+
+How to participate
+------------------
+
+IntelMQ is a community project depending on your contributions. Please consider sharing your work.
+
+- Have a look at our `Developers Guide <docs/Developers-Guide.md>`__ for documentation.
+- Subscribe to the Intelmq-dev Mailing list to get answers to your development questions:
+  https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev
+- The `Github issues <github.com/certtools/intelmq/issues/>`__ lists all the open feature requests, bug reports and ideas.
+- Looking for ideas which additional feeds you could add support for? The `Feeds whishlist <docs/Feeds-wishlist.md>`__ is the list you are looking for.
+- Contribute code with pull requests (The `Github help <https://help.github.com/>`__ can be useful if you are not familiar with the system yet).
+- Some developers are also on IRC: `channel #intelmq on irc.freenode.net <ircs://chat.freenode.net:6697/intelmq>`__.
 
 Incident Handling Automation Project
 ------------------------------------
@@ -97,23 +108,6 @@ Incident Handling Automation Project
 - **URL:**
   http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation
 - **Mailing-list:** ihap@lists.trusted-introducer.org
-
-Data Harmonization
-------------------
-
-IntelMQ use the Data Harmonization. Please read `this
-document <docs/Data-Harmonization.md>`__ for more details.
-
-How to participate
-------------------
-
-- Subscribe to the Intelmq-dev Mailing list:
-  https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev (for
-  developers)
-- Watch out for our regular developers conf call
-- IRC: server: irc.freenode.net, channel: #intelmq
-- Via github issues
-- Via Pull requests (please do read help.github.com first)
 
 Licence
 -------
@@ -133,3 +127,5 @@ This project was partially funded by the CEF framework
    :target: https://travis-ci.org/certtools/intelmq
 .. |codecov.io| image:: https://codecov.io/github/certtools/intelmq/coverage.svg?branch=master
    :target: https://codecov.io/github/certtools/intelmq?branch=master
+.. |CII Badge| image:: https://bestpractices.coreinfrastructure.org/projects/4186/badge
+   :target: https://bestpractices.coreinfrastructure.org/projects/4186/

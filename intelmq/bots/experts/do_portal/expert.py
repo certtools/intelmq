@@ -28,7 +28,7 @@ class DoPortalExpertBot(Bot):
         })
         self.mode = self.parameters.mode
 
-        self.session = utils.create_request_session_from_bot(self)
+        self.session = utils.create_request_session(self)
         retries = requests.urllib3.Retry.from_int(self.http_timeout_max_tries)
         retries.status_forcelist = [502]
         adapter = requests.adapters.HTTPAdapter(max_retries=retries)
