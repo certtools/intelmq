@@ -432,6 +432,11 @@
             "module": "intelmq.bots.parsers.cznic.parser_haas",
             "parameters": {}
         },
+        "CZ.NIC Proki": {
+            "description": "Parse the feed from malicious IP addresses on Czech networks.",
+            "module": "intelmq.bots.parsers.cznic.parser_proki",
+            "parameters": {}
+        },
         "DShield AS": {
             "description": "Parse the DShield AS.",
             "module": "intelmq.bots.parsers.dshield.parser_asn",
