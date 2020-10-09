@@ -1956,8 +1956,8 @@ server {
 
 * **Public:** yes
 * **Revision:** 2018-01-20
-* **Documentation:** https://project.turris.cz/greylist-data/legend.txt
-* **Description:** The data are processed and clasified every week and behaviour of IP addresses that accessed a larger number of Turris routers is evaluated. The result is a list of addresses that have tried to obtain information about services on the router or tried to gain access to them. We publish this so called "greylist" that also contains a list of tags for each address which indicate what behaviour of the address was observed.
+* **Documentation:** https://project.turris.cz/en/greylist
+* **Description:** The data are processed and clasified every week and behaviour of IP addresses that accessed a larger number of Turris routers is evaluated. The result is a list of addresses that have tried to obtain information about services on the router or tried to gain access to them. The list also contains a list of tags for each address which indicate what behaviour of the address was observed.
 
 ### Collector
 
@@ -1967,6 +1967,75 @@ server {
 *  * `name`: `Greylist`
 *  * `provider`: `Turris`
 *  * `rate_limit`: `43200`
+
+### Parser
+
+* **Bot:** Turris Greylist (Module `intelmq.bots.parsers.turris.parser`)
+* **Configuration Parameters:**
+
+
+## Greylist with PGP signature verification
+
+* **Public:** yes
+* **Revision:** 2018-01-20
+* **Documentation:** https://project.turris.cz/en/greylist
+* **Description:** The data are processed and clasified every week and behaviour of
+IP addresses that accessed a larger number of Turris routers is evaluated.
+The result is a list of addresses that have tried to obtain information about
+services on the router or tried to gain access to them. The list also
+contains a list of tags for each address which
+indicate what behaviour of the address was observed.
+
+The Turris Greylist feed provides PGP signatures for the provided files.
+You will need to import the public PGP key from the linked documentation
+page, currently available at
+https://pgp.mit.edu/pks/lookup?op=vindex&search=0x10876666
+or from below.
+See the URL Fetcher Collector documentation for more information on
+PGP signature verification.
+
+PGP Public key:
+```
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: SKS 1.1.6
+Comment: Hostname: pgp.mit.edu
+
+mQINBFRl7D8BEADaRFoDa/+r27Gtqrdn8sZL4aSYTU4Q3gDr3TfigK8H26Un/Y79a/DUL1o0
+o8SRae3uwVcjJDHZ6KDnxThbqF7URfpuCcCYxOs8p/eu3dSueqEGTODHWF4ChIh2japJDc4t
+3FQHbIh2e3GHotVqJGhvxMmWqBFoZ/mlWvhjs99FFBZ87qbUNk7l1UAGEXeWeECgz9nGox40
+3YpCgEsnJJsKC53y5LD/wBf4z+z0GsLg2GMRejmPRgrkSE/d9VjF/+niifAj2ZVFoINSVjjI
+8wQFc8qLiExdzwLdgc+ggdzk5scY3ugI5IBt1zflxMIOG4BxKj/5IWsnhKMG2NLVGUYOODoG
+pKhcY0gCHypw1bmkp2m+BDVyg4KM2fFPgQ554DAX3xdukMCzzZyBxR3UdT4dN7xRVhpph3Y2
+Amh1E/dpde9uwKFk1oRHkRZ3UT1XtpbXtFNY0wCiGXPt6KznJAJcomYFkeLHjJo3nMK0hISV
+GSNetVLfNWlTkeo93E1innbSaDEN70H4jPivjdVjSrLtIGfr2IudUJI84dGmvMxssWuM2qdg
+FSzoTHw9UE9KT3SltKPS+F7u9x3h1J492YaVDncATRjPZUBDhbvo6Pcezhup7XTnI3gbRQc2
+oEUDb933nwuobHm3VsUcf9686v6j8TYehsbjk+zdA4BoS/IdCwARAQABtC5UdXJyaXMgR3Jl
+eWxpc3QgR2VuZXJhdG9yIDxncmV5bGlzdEB0dXJyaXMuY3o+iQI4BBMBAgAiBQJUZew/AhsD
+BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDAQrU3EIdmZoH4D/9Jo6j9RZxCAPTaQ9WZ
+WOdb1Eqd/206bObEX+xJAago+8vuy+waatHYBM9/+yxh0SIg2g5whd6J7A++7ePpt5XzX6hq
+bzdG8qGtsCRu+CpDJ40UwHep79Ck6O/A9KbZcZW1z/DhbYT3z/ZVWALy4RtgmyC67Vr+j/C7
+KNQ529bs3kP9AzvEIeBC4wdKl8dUSuZIPFbgf565zRNKLtHVgVhiuDPcxKmBEl4/PLYF30a9
+5Tgp8/PNa2qp1DV/EZjcsxvSRIZB3InGBvdKdSzvs4N/wLnKWedj1GGm7tJhSkJa4MLBSOIx
+yamhTS/3A5Cd1qoDhLkp7DGVXSdgEtpoZDC0jR7nTS6pXojcgQaF7SfJ3cjZaLI5rjsx0YLk
+G4PzonQKCAAQG1G9haCDniD8NrrkZ3eFiafoKEECRFETIG0BJHjPdSWcK9jtNCupBYb7JCiz
+Q0hwLh2wrw/wCutQezD8XfsBFFIQC18TsJAVgdHLZnGYkd5dIbV/1scOcm52w6EGIeMBBYlB
+J2+JNukH5sJDA6zAXNl2I1H1eZsP4+FSNIfB6LdovHVPAjn7qXCw3+IonnQK8+g8YJkbbhKJ
+sPejfg+ndpe5u0zX+GvQCFBFu03muANA0Y/OOeGIQwU93d/akN0P1SRfq+bDXnkRIJQOD6XV
+0ZPKVXlNOjy/z2iN2A==
+=wjkM
+-----END PGP PUBLIC KEY BLOCK-----
+```
+
+### Collector
+
+* **Bot:** URL Fetcher (Module `intelmq.bots.collectors.http.collector_http`)
+* **Configuration Parameters:**
+*  * `http_url`: `https://www.turris.cz/greylist-data/greylist-latest.csv`
+*  * `name`: `Greylist`
+*  * `provider`: `Turris`
+*  * `rate_limit`: `43200`
+*  * `signature_url`: `https://www.turris.cz/greylist-data/greylist-latest.csv.asc`
+*  * `verify_pgp_signatures`: `False`
 
 ### Parser
 
