@@ -2162,7 +2162,7 @@ sPejfg+ndpe5u0zX+GvQCFBFu03muANA0Y/OOeGIQwU93d/akN0P1SRfq+bDXnkRIJQOD6XV
 * **Public:** yes
 * **Revision:** 2018-01-20
 * **Documentation:** http://security-research.dyndns.org/pub/malware-feeds/
-* **Description:** List of ponmocup malware redirection domains and infected web-servers from cAPTure. See also http://security-research.dyndns.org/pub/botnet-links.htm and http://c-apt-ure.blogspot.com/search/label/ponmocup
+* **Description:** List of ponmocup malware redirection domains and infected web-servers from cAPTure. See also http://security-research.dyndns.org/pub/botnet-links.htm and http://c-apt-ure.blogspot.com/search/label/ponmocup The data in the CIF format is not equal to the Shadowserver CSV format. Reasons are unknown.
 
 ### Collector
 
@@ -2184,7 +2184,7 @@ sPejfg+ndpe5u0zX+GvQCFBFu03muANA0Y/OOeGIQwU93d/akN0P1SRfq+bDXnkRIJQOD6XV
 * **Public:** yes
 * **Revision:** 2020-07-08
 * **Documentation:** http://security-research.dyndns.org/pub/malware-feeds/
-* **Description:** List of ponmocup malware redirection domains and infected web-servers from cAPTure. See also http://security-research.dyndns.org/pub/botnet-links.htm and http://c-apt-ure.blogspot.com/search/label/ponmocup
+* **Description:** List of ponmocup malware redirection domains and infected web-servers from cAPTure. See also http://security-research.dyndns.org/pub/botnet-links.htm and http://c-apt-ure.blogspot.com/search/label/ponmocup The data in the Shadowserver CSV is not equal to the CIF format format. Reasons are unknown.
 
 ### Collector
 
