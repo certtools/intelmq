@@ -95,7 +95,7 @@ class ThresholdExpertBot(Bot):
             if old_count + 1 == self.threshold:
                 self.logger.debug('Threshold reached, forwarding message.')
                 message.update(self.add_keys)
-                message.update({'extra.count': old_count + 1})
+                message.add('extra.count', old_count + 1, overwrite=True)
                 self.send_message(message)
             else:
                 self.logger.debug('Dropped message.')

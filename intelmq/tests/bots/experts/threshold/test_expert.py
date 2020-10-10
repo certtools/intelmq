@@ -21,6 +21,10 @@ EVENTS_IN = []
 for i in range(30):
     EVENTS_IN += [{**EVENT_PATTERN,
                    **{'destination.ip': '192.0.2.%d' % i}}]
+EVENTS_OUT = [msg.copy() for msg in EVENTS_IN]
+for msg in EVENTS_OUT:
+    msg['extra.count'] = 10
+
 
 PARAMETERS = {
     'filter_keys': ['source.ip'],
@@ -64,7 +68,7 @@ class TestThresholdExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(parameters=PARAMETERS,
                      iterations=len(self.input_message))
         self.assertOutputQueueLen(1)
-        self.assertMessageEqual(0, EVENTS_IN[PARAMETERS['threshold'] - 1])
+        self.assertMessageEqual(0, EVENTS_OUT[PARAMETERS['threshold'] - 1])
 
     def test_differing_messages(self):
         """
@@ -87,7 +91,7 @@ class TestThresholdExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(parameters=PARAMETERS,
                      iterations=len(self.input_message))
         self.assertOutputQueueLen(1)
-        self.assertMessageEqual(0, EVENTS_IN[PARAMETERS['threshold'] - 1])
+        self.assertMessageEqual(0, EVENTS_OUT[PARAMETERS['threshold'] - 1])
 
     def test_add_field(self):
         """
@@ -101,7 +105,7 @@ class TestThresholdExpertBot(test.BotTestCase, unittest.TestCase):
                                      'Threshold reached'}}},
                      iterations=len(self.input_message))
         self.assertOutputQueueLen(1)
-        self.assertMessageEqual(0, {**EVENTS_IN[PARAMETERS['threshold'] - 1],
+        self.assertMessageEqual(0, {**EVENTS_OUT[PARAMETERS['threshold'] - 1],
                                     **{'comment': 'Threshold reached'}})
 
 
