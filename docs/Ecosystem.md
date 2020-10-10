@@ -45,7 +45,9 @@ The certbund-contact expert fetches the information from this contact database a
 → https://github.com/Intevation/intelmq-fody-backend/
 → https://github.com/Intevation/intelmq-certbund-contact/
 
-## do-portal
+## "Constituency Portal" do-portal (not developed any further)
+
+*Note:* A new version is being developed from scratch, see [do-portal#133](https://github.com/certat/do-portal/issues/133) for more information.
 
 A contact portal with organizational hierarchies, role functionality and network objects based on RIPE, allows self-administration by the contacts.
 Can be queried from IntelMQ and integrates the stats-portal.
