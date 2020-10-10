@@ -2575,14 +2575,23 @@ For brevity, "type" means `classification.type` and "taxonomy" means `classifica
 * `filter_keys`: String, comma-separated list of field names to consider or ignore when determining which messages are similar.
 * `filter_type`: String, `whitelist` (consider only the fields in `filter_keys`) or `blacklist` (consider everything but the fields in `filter_keys`).
 * `timeout`: Integer, number of seconds before threshold counter is reset.
-* `threshold`: Integer, number of messages required before propagating one.
-* `add_keys`: Array of string->string, optional, fields and values to add to propagated messages. Example:
+* `threshold`: Integer, number of messages required before propagating one. In forwarded messages, the threshold is saved in the message as `extra.count`.
+* `add_keys`: Array of string->string, optional, fields and values to add (or update) to propagated messages. Example:
    ```json
    "add_keys": {
        "classification.type": "spam",
-       "comment": "Number of SMTP connections exceeded"
+       "comment": "Started more than 10 SMTP connections"
    }
    ```
+
+#### Limitations
+
+This bot has certain limitations and is not a true threshold filter (yet). It works like this:
+1. Every incoming message is hashed according to the `filter_*` parameters.
+2. The hash is looked up in the cache and the count is incremented by 1, and the TTL of the key is (re-)set to the timeout.
+3. If the new count matches the threshold exactly, the message is forwarded. Otherwise it is dropped.
+
+Please note: Even if a message is sent, any further identical messages are dropped, if the time difference to the last message is less than the timeout! The counter is not reset if the threshold is reached.
 
 * * *
 

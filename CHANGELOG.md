@@ -60,6 +60,7 @@ CHANGELOG
   - Added `--update-database` option. (PR#1524 by Filip Pokorný)
   - Added `api_token` parameter. (PR#1524 by Filip Pokorný)
   - The script `update-rfiprisk-data` is now deprecated and will be removed in version 3.0.
+- Added `intelmq.bots.experts.threshold` (PR#1608 by Karl-Johan Karlsson).
 
 #### Outputs
 
