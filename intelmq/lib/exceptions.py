@@ -2,8 +2,6 @@
 '''
     IntelMQ Exception Class
 '''
-import traceback
-
 from typing import Any, Optional, Union
 
 __all__ = ['InvalidArgument', 'ConfigurationError', 'IntelMQException',
