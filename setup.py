@@ -30,7 +30,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as handle:
 
 setup(
     name='intelmq',
-    version=__version__,
+    version=__version__,  # noqa: F821
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
     python_requires='>=3.5',

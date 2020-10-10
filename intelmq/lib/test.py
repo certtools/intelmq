@@ -415,7 +415,7 @@ class BotTestCase(object):
         fields = utils.parse_logline(logline)
 
         self.assertEqual(self.bot_id, fields["bot_id"],
-                         "bot_id %s didn't match %s"
+                         "bot_id {!r} didn't match {!r}."
                          "".format(self.bot_id, fields["bot_id"]))
 
         self.assertEqual(levelname, fields["log_level"])
@@ -436,7 +436,7 @@ class BotTestCase(object):
         fields = utils.parse_logline(logline)
 
         self.assertEqual(self.bot_id, fields["bot_id"],
-                         "bot_id %s didn't match %s"
+                         "bot_id {!r} didn't match {!r}."
                          "".format(self.bot_id, fields["bot_id"]))
 
         self.assertEqual(levelname, fields["log_level"])
