@@ -1,4 +1,4 @@
-sudo: required
+os: linux
 dist: xenial
 language: python
 env:
@@ -9,7 +9,7 @@ python:
   - 3.6
   - 3.7
   - 3.8
-matrix:
+jobs:
   include:
   - python: 3.5
     env: mode=debian
@@ -60,7 +60,7 @@ script:
   - if [[ $mode == debian ]]; then DEB_BUILD_OPTIONS='nocheck' dpkg-buildpackage -us -uc -d; fi
   - if [[ $mode == debian ]]; then popd; fi
 services:
-  - redis-server
+  - redis
   - postgresql
   - mongodb
   - rabbitmq
