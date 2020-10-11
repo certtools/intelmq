@@ -269,6 +269,12 @@ Zipped files are automatically extracted if detected.
 
 For extracted files, every extracted file is sent in its own report. Every report has a field named `extra.file_name` with the file name in the archive the content was extracted from.
 
+#### HTTP Response status code checks
+
+If the HTTP response' status code is not 2xx, this is treated as error.
+
+In Debug logging level, the reponse's header and body are logged for further inspection.
+
 * * *
 
 ### Generic URL Stream Fetcher

@@ -156,6 +156,18 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
         )
         self.assertMessageEqual(0, OUTPUT[2])
 
+    def test_debug_response_log(self, mocker):
+        """
+        Test if the reponse is logged in case of errors as DEBUG
+        """
+        mocker.get(self.sysconfig['http_url'], status_code=400,
+                   headers={'some': 'header'},
+                   text='Should be in logs')
+        self.run_bot(allowed_error_count=1,
+                     parameters={'logging_level': 'DEBUG'})
+        self.assertLogMatches("Response headers: {'some': 'header'}.", 'DEBUG')
+        self.assertLogMatches("Response body: 'Should be in logs'.", 'DEBUG')
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
