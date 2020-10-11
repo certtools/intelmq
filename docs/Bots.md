@@ -273,7 +273,7 @@ For extracted files, every extracted file is sent in its own report. Every repor
 
 If the HTTP response' status code is not 2xx, this is treated as error.
 
-In Debug logging level, the reponse's header and body are logged for further inspection.
+In Debug logging level, the request's and response's headers and body are logged for further inspection.
 
 * * *
 
