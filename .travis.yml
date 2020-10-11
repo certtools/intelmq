@@ -50,7 +50,6 @@ before_script:
   - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$version.orig.tar.gz; fi
   - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$debversion.debian.tar.gz; fi
   - if [[ $mode == debian ]]; then popd; fi
-  - if [[ -v requirements ]]; then sudo cp intelmq/tests/assets/* /var/www/html/ && sudo touch /var/www/html/$(date +%Y).txt; fi
   - if [[ -v requirements ]]; then gpg --import intelmq/tests/assets/key-public.pgp; fi
   - if [[ $requirements == true ]]; then sudo bash -c 'echo "[rabbitmq_management]." > /etc/rabbitmq/enabled_plugins' && sudo systemctl restart rabbitmq-server; fi
 script:

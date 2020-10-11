@@ -363,10 +363,13 @@ class BotTestCase(object):
         return [utils.decode(text) for text in chain(*[self.pipe.state[x] for x in self.pipe.destination_queues[path]])]
         # return [utils.decode(text) for text in self.pipe.state["%s-output" % self.bot_id]]
 
-    def test_bot_name(self):
+    def test_bot_name(self, *args, **kwargs):
         """
         Test if Bot has a valid name.
         Must be CamelCase and end with CollectorBot etc.
+
+        Accept arbitrary arguments in case the test methods get mocked
+        and get some additional arguments. All arguments are ignored.
         """
         counter = 0
         for type_name, type_match in self.bot_types.items():

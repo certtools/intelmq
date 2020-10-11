@@ -81,6 +81,9 @@ CHANGELOG
 
 ### Tests
 - Added tests for `intelmq.lib.exceptions.PipelineError`.
+- `intelmq.tests.bots.collectors.test_collector`: Use requests_mock to mock all requests and do not require a local web-server.
+- Travis:
+  - Do not copy the test assets to the web-server document root, not necessary anymore due to the above change.
 
 ### Tools
 - `intelmqdump`:
