@@ -61,7 +61,7 @@ class MailURLCollectorBot(MailCollectorBot):
                     continue
 
                 if not resp.content:
-                    self.logger.warning('Got empty reponse from server.')
+                    self.logger.warning('Got empty response from server.')
                 else:
                     self.logger.info("Report downloaded.")
 
