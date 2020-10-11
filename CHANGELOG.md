@@ -85,6 +85,7 @@ CHANGELOG
 - `intelmq.tests.bots.outputs.restapi.test_output`:
   - Use requests_mock to mock all requests and do not require a local webserver.
   - Add a test for checking the response status code.
+- `intelmq.tests.bots.collectors.mail.test_collector_url`: Use requests_mock to mock all requests and do not require a local webserver.
 - Travis:
   - Do not copy the test assets to the web-server document root, not necessary anymore due to the above change.
 
