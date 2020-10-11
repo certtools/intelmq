@@ -100,17 +100,18 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "extract_files": false,
+                "gpg_keyring": null,
                 "http_password": null,
-                "http_url": "<insert url of feed>",
                 "http_url_formatting": false,
+                "http_url": "<insert url of feed>",
                 "http_username": null,
                 "name": "__FEED__",
                 "provider": "__PROVIDER__",
                 "rate_limit": 3600,
+                "signature_url_formatting": false,
+                "signature_url": null,
                 "ssl_client_certificate": null,
-                "verify_gpg_signatures": false,
-                "gpg_signature_suffix": ".asc",
-                "gpg_keyring": null
+                "verify_pgp_signatures": false
             }
         },
         "URL Stream Fetcher": {
@@ -432,6 +433,11 @@
             "module": "intelmq.bots.parsers.cznic.parser_haas",
             "parameters": {}
         },
+        "CZ.NIC Proki": {
+            "description": "Parse the feed from malicious IP addresses on Czech networks.",
+            "module": "intelmq.bots.parsers.cznic.parser_proki",
+            "parameters": {}
+        },
         "DShield AS": {
             "description": "Parse the DShield AS.",
             "module": "intelmq.bots.parsers.dshield.parser_asn",
@@ -481,6 +487,7 @@
                     "",
                     "source.fqdn"
                 ],
+                "compose_fields": null,
                 "default_url_protocol": "http://",
                 "delimiter": ",",
                 "filter_text": null,
@@ -530,6 +537,17 @@
             "module": "intelmq.bots.parsers.json.parser",
             "parameters": {
                 "splitlines": false
+            }
+        },
+        "Key-Value": {
+            "description": "Parse key=value strings.",
+            "module": "intelmq.bots.parsers.key_value.parser",
+            "parameters": {
+                "pair_separator": " ",
+                "kv_separator": "=",
+                "keys": {},
+                "strip_quotes": true,
+                "timestamp_key": null
             }
         },
         "MISP": {
@@ -929,6 +947,23 @@
             "description": "Apply the eCSIRT Taxonomy to all events.",
             "module": "intelmq.bots.experts.taxonomy.expert",
             "parameters": {}
+        },
+        "Threshold": {
+            "description": "Check if the number of similar messages during a specified time interval exceeds a set value.",
+            "module": "intelmq.bots.experts.threshold.expert",
+            "parameters": {
+                "filter_keys": "raw,time.observation",
+                "filter_type": "blacklist",
+                "redis_cache_db": "11",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_password": null,
+                "redis_cache_port": "6379",
+                "timeout": 3600,
+                "threshold": 100,
+                "add_keys": {
+                    "comment": "Threshold reached"
+                }
+            }
         },
         "Tor Nodes": {
             "description": "Check if the IP address is a Tor Exit Node based on a local database of TOR nodes.",

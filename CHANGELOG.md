@@ -19,19 +19,25 @@ CHANGELOG
   - `create_request_session_from_bot`: Changed bot argument to optional, uses defaults.conf as fallback, renamed to `create_request_session`. Name `create_request_session_from_bot` will be removed in version 3.0.0.
 
 ### Development
+- `intelmq.bin.intelmq_gen_docs`: Add bot name to the `Feeds.md` documentation (PR#1617 by Birger Schacht).
 
 ### Harmonization
 
 ### Bots
 #### Collectors
 - `intelmq.bots.collectors.eset.collector`: Added (PR#1554 by Mikk Margus Möll).
-- `intelmq.bots.collectors.http.collector_http`: Added PGP signature check functionality (PR#1602 by sinus-x).
+- `intelmq.bots.collectors.http.collector_http`:
+  - Added PGP signature check functionality (PR#1602 by sinus-x).
+  - If status code is not 2xx, the request's and response's headers and body are logged in debug logging level (#1615).
 
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
   - Ignore invalid "NXDOMAIN" IP addresses (PR#1573 by Mikk Margus Möll).
 - `intelmq.bots.parsers.hphosts`: Removed, feed is unavailable (#1559).
-- `intelmq.bots.parsers.cznic.parser_haas`: Added (PR#1560 by Filip Pokorný and Edvard Rejthar)
+- `intelmq.bots.parsers.cznic.parser_haas`: Added (PR#1560 by Filip Pokorný and Edvard Rejthar).
+- `intelmq.bots.parsers.cznic.parser_proki`: Added (PR#1599 by sinus-x).
+- `intelmq.bots.parsers.key_value.parser`: Added (PR#1607 by Karl-Johan Karlsson).
+- `intelmq.bots.parsers.generic.parser_csv`: Added new parameter `compose_fields`.
 
 #### Experts
 - `intelmq.bots.experts.rfc1918.expert`:
@@ -56,6 +62,7 @@ CHANGELOG
   - Added `--update-database` option. (PR#1524 by Filip Pokorný)
   - Added `api_token` parameter. (PR#1524 by Filip Pokorný)
   - The script `update-rfiprisk-data` is now deprecated and will be removed in version 3.0.
+- Added `intelmq.bots.experts.threshold` (PR#1608 by Karl-Johan Karlsson).
 
 #### Outputs
 
@@ -64,6 +71,8 @@ CHANGELOG
   - Add ESET URL and Domain feeds
   - Remove unavailable *HPHosts Hosts file* feed (#1559).
   - Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
+  - Added CZ.NIC Proki feed (PR#1599 by sinus-x).
+  - Added CERT-BUND CB-Report Malware infections feed (PR#1598 by sinus-x).
 - Bots:
   - Enhanced documentation of RFC1918 Expert.
   - Updated documentation for Maxmind GeoIP, ASN Lookup, TOR Nodes and Recorded Future experts to reflect new `--update-database` option.  (PR#1524 by Filip Pokorný)
@@ -74,6 +83,15 @@ CHANGELOG
 
 ### Tests
 - Added tests for `intelmq.lib.exceptions.PipelineError`.
+- `intelmq.tests.bots.collectors.http_collector.test_collector`: Use requests_mock to mock all requests and do not require a local webserver.
+- `intelmq.tests.bots.outputs.restapi.test_output`:
+  - Use requests_mock to mock all requests and do not require a local webserver.
+  - Add a test for checking the response status code.
+- `intelmq.tests.bots.collectors.mail.test_collector_url`: Use requests_mock to mock all requests and do not require a local webserver.
+- `intelmq.tests.bots.experts.ripe.test_expert`: Use requests_mock to mock all requests and do not require a local webserver.
+- The test flag (environment variable) `INTELMQ_TEST_EXOTIC` is no longer used.
+- Travis:
+  - Remove installation of local web-server (not necessary anymore) and HTTP proxy (no tests anymore).
 
 ### Tools
 - `intelmqdump`:
@@ -113,6 +131,9 @@ CHANGELOG
 - `intelmq/bots/parsers/danger_rulez/parser`: correctly skip malformed rows by defining variables before referencing (PR#1601 by Tomas Bellus).
 
 #### Experts
+- `intelmq.bots.experts.cymru_whois`:
+  - Fix cache key calculation which previously led to duplicate keys and therefore wrong results in rare cases. The cache key calculation is intentionally not backwards-compatible (#1592, PR#1606).
+  - The bot now caches and logs (as level INFO) empty responses from Cymru (PR#1606).
 
 #### Outputs
 - `intelmq.bots.outputs.rt`: Added Request Tracker output bot (PR#1589 by Marius Urkis).

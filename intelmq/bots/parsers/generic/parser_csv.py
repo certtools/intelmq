@@ -67,6 +67,8 @@ class GenericCsvParserBot(ParserBot):
             raise ValueError("Length of parameters 'columns' (%d) and 'columns_required' (%d) "
                              "needs to be equal." % (len(self.columns), len(self.columns_required)))
 
+        self.compose = getattr(self.parameters, 'compose_fields', {}) or {}
+
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
         raw_report = raw_report.translate({0: None})
@@ -108,13 +110,13 @@ class GenericCsvParserBot(ParserBot):
                     else:
                         value = None
 
-                if key in ["__IGNORE__", ""]:
+                if key in ("__IGNORE__", ""):
                     break
 
                 if key in self.data_type:
                     value = DATA_CONVERSIONS[self.data_type[key]](value)
 
-                if key in ["time.source", "time.destination"]:
+                if key in ("time.source", "time.destination"):
                     value = TIME_CONVERSIONS[self.time_format](value)
                 elif key.endswith('.url'):
                     if not value:
@@ -133,8 +135,11 @@ class GenericCsvParserBot(ParserBot):
                 if required:
                     raise InvalidValue(key, value)
 
-        if hasattr(self.parameters, 'type')\
-                and "classification.type" not in event:
+        # Field composing
+        for key, value in self.compose.items():
+            event[key] = value.format(*row)
+
+        if hasattr(self.parameters, 'type') and "classification.type" not in event:
             event.add('classification.type', self.parameters.type)
         event.add("raw", self.recover_line(row))
         yield event

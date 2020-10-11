@@ -30,7 +30,7 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
         if hasattr(self.parameters, 'regex'):
             try:
                 re.compile(getattr(self.parameters, 'regex'))
-            except Exception as e:
+            except Exception:
                 raise InvalidArgument('regex', expected='string', got=getattr(self.parameters, 'regex'))
         else:
             raise InvalidArgument('regex', expected='string', got=None)

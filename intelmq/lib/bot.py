@@ -1065,6 +1065,7 @@ class ParserBot(Bot):
         writer = csv.DictWriter(out, self.csv_fieldnames, **self.csv_params)
         writer.writeheader()
         out.write(self.current_line)
+
         return out.getvalue().strip()
 
     def recover_line_json(self, line: dict):

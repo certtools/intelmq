@@ -55,9 +55,9 @@ def eventdb_apply(malware_name_column, malware_family_column, host, port,
 
     cur.execute('SELECT DISTINCT "classification.identifier", "malware.name" FROM {table} '
                 'WHERE "classification.taxonomy" = \'malicious code\' {where}'
-            ''.format(table=table, where=where))
+                ''.format(table=table, where=where))
     if dry_run:
-        execute = lambda x, y: print(cur.mogrify(x, y).decode())
+        execute = lambda x, y: print(cur.mogrify(x, y).decode())  # noqa: E731
     else:
         execute = cur.execute
     for (identifier, malware_name) in cur.fetchall():
@@ -76,7 +76,7 @@ def eventdb_apply(malware_name_column, malware_family_column, host, port,
                         'AND "classification.identifier" IS DISTINCT FROM %s AND '
                         '"classification.taxonomy" = \'malicious code\' {where}'
                         ''.format(table=table, where=where),
-                        (rule[1],  malware_name, rule[1]))
+                        (rule[1], malware_name, rule[1]))
                 break
         else:
             print('missing mapping for', repr(malware_name))

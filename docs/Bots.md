@@ -36,6 +36,7 @@
   - [Cymru CAP Program](#cymru-cap-program)
   - [Cymru Full Bogons](#cymru-full-bogons)
   - [HTML Table Parser](#html-table-parser)
+  - [Key-Value Parser](#key-value-parser)
   - [Twitter](#twitter)
   - [Shadowserver](#shadowserver)
   - [Shodan](#shodan)
@@ -74,6 +75,7 @@
   - [RipeNCC Abuse Contact](#ripencc-abuse-contact)
   - [Sieve](#sieve)
   - [Taxonomy](#taxonomy)
+  - [Threshold](#threshold)
   - [Tor Nodes](#tor-nodes)
   - [Url2FQDN](#url2fqdn)
   - [Wait](#wait)
@@ -266,6 +268,12 @@ You may use a `JSON` specifying [time-delta](https://docs.python.org/3/library/d
 Zipped files are automatically extracted if detected.
 
 For extracted files, every extracted file is sent in its own report. Every report has a field named `extra.file_name` with the file name in the archive the content was extracted from.
+
+#### HTTP Response status code checks
+
+If the HTTP response' status code is not 2xx, this is treated as error.
+
+In Debug logging level, the request's and response's headers and body are logged for further inspection.
 
 * * *
 
@@ -979,6 +987,8 @@ Events with the Malware "TestSinkholingLoss" are ignored, as they are for the fe
 
 * `use_malware_familiy_as_classification_identifier`: default: `true`. Use the `malw.family` field as `classification.type`. If `false`, check if the same as `malw.variant`. If it is the same, it is ignored. Otherwise saved as `extra.malware.family`.
 
+* * *
+
 ### Generic CSV Parser
 
 Lines starting with `'#'` will be ignored. Headers won't be interpreted.
@@ -1011,6 +1021,22 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
         - parse a value and ignore if it fails  `"columns": "source.url|__IGNORE__"`
 
  * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaluated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`. Make sure to properly escape any backslashes in your regular expression (See also [#1579](https://github.com/certtools/intelmq/issues/1579).
+ * `"compose_fields"`: Optional, dictionary. Create fields from columns, e.g. with data like this:
+   ```csv
+   # Host,Path
+   example.com,/foo/
+   example.net,/bar/
+   ```
+   using this compose_fields parameter:
+   ```json
+   {"source.url": "http://{0}{1}"}
+   ```
+   You get:
+   ```
+   http://example.com/foo/
+   http://example.net/bar/
+   ```
+   in the respective `source.url` fields. The value in the dictionary mapping is formatted whereas the columns are available with their index.
  * `"default_url_protocol"`: For URLs you can give a default protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
  * `"skip_header"`: Boolean, skip the first line of the file, optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
@@ -1222,6 +1248,45 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
  * `"time_format"`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
  * `"html_parser"`: The HTML parser to use, by default "html.parser", can also be e.g. "lxml", have a look at https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+
+* * *
+
+### Key-Value Parser
+
+#### Information:
+* `name:` intelmq.bots.parsers.key_value.parser
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses text lines in key=value format, for example FortiGate firewall logs.
+
+#### Configuration Parameters:
+
+* `pair_separator`: String separating key=value pairs, default "` `" (space).
+* `kv_separator`: String separating key and value, default `=`.
+* `keys`: Array of string->string, names of keys to propagate mapped to IntelMQ event fields. Example:
+   ```json
+   "keys": {
+       "srcip": "source.ip",
+       "dstip": "destination.ip"
+   }
+   ```
+   The value mapped to `time.source` is parsed. If the value is numeric, it is interpreted. Otherwise, or if it fails, it is parsed fuzzy with dateutil.
+   If the value cannot be parsed, a warning is logged per line.
+* `strip_quotes`: Boolean, remove opening and closing quotes from values, default true.
+
+#### Parsing limitations
+
+The input must not have (quoted) occurrences of the separator in the values. For example, this is not parsable (with space as separator):
+
+```
+key="long value" key2="other value"
+```
+
+In firewall logs like FortiGate, this does not occur. These logs usually look like:
+```
+srcip=192.0.2.1 srcmac="00:00:5e:00:17:17"
+```
 
 * * *
 
@@ -2497,6 +2562,42 @@ For brevity, "type" means `classification.type` and "taxonomy" means `classifica
 - If taxonomy is missing, and type is given, the according taxonomy is set.
 - If neither taxonomy, not type is given, taxonomy is set to "other" and type to "unknown".
 - If taxonomy is given, but type is not, type is set to "unknown".
+
+* * *
+
+### Threshold
+
+#### Information:
+
+* **Cache parameters** (see in section [common parameters](#common-parameters))
+* `name`: threshold
+* `lookup`: redis cache
+* `public`: no
+* `cache (redis db)`: 11
+* `description`: Check if the number of similar messages during a specified time interval exceeds a set value.
+
+#### Configuration Parameters:
+
+* `filter_keys`: String, comma-separated list of field names to consider or ignore when determining which messages are similar.
+* `filter_type`: String, `whitelist` (consider only the fields in `filter_keys`) or `blacklist` (consider everything but the fields in `filter_keys`).
+* `timeout`: Integer, number of seconds before threshold counter is reset.
+* `threshold`: Integer, number of messages required before propagating one. In forwarded messages, the threshold is saved in the message as `extra.count`.
+* `add_keys`: Array of string->string, optional, fields and values to add (or update) to propagated messages. Example:
+   ```json
+   "add_keys": {
+       "classification.type": "spam",
+       "comment": "Started more than 10 SMTP connections"
+   }
+   ```
+
+#### Limitations
+
+This bot has certain limitations and is not a true threshold filter (yet). It works like this:
+1. Every incoming message is hashed according to the `filter_*` parameters.
+2. The hash is looked up in the cache and the count is incremented by 1, and the TTL of the key is (re-)set to the timeout.
+3. If the new count matches the threshold exactly, the message is forwarded. Otherwise it is dropped.
+
+Please note: Even if a message is sent, any further identical messages are dropped, if the time difference to the last message is less than the timeout! The counter is not reset if the threshold is reached.
 
 * * *
 
