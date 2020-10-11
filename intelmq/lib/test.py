@@ -88,11 +88,6 @@ def skip_redis():
                            'Skipping without running redis.')
 
 
-def skip_local_web():
-    return unittest.skipUnless(os.environ.get('INTELMQ_TEST_LOCAL_WEB'),
-                               'Skipping local web tests.')
-
-
 def skip_exotic():
     return unittest.skipUnless(os.environ.get('INTELMQ_TEST_EXOTIC'),
                                'Skipping tests requiring exotic libs.')

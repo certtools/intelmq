@@ -81,14 +81,15 @@ CHANGELOG
 
 ### Tests
 - Added tests for `intelmq.lib.exceptions.PipelineError`.
-- `intelmq.tests.bots.collectors.test_collector`: Use requests_mock to mock all requests and do not require a local webserver.
+- `intelmq.tests.bots.collectors.http_collector.test_collector`: Use requests_mock to mock all requests and do not require a local webserver.
 - `intelmq.tests.bots.outputs.restapi.test_output`:
   - Use requests_mock to mock all requests and do not require a local webserver.
   - Add a test for checking the response status code.
 - `intelmq.tests.bots.collectors.mail.test_collector_url`: Use requests_mock to mock all requests and do not require a local webserver.
 - `intelmq.tests.bots.experts.ripe.test_expert`: Use requests_mock to mock all requests and do not require a local webserver.
+- The test flag (environment variable) `INTELMQ_TEST_EXOTIC` is no longer used.
 - Travis:
-  - Do not copy the test assets to the web-server document root, not necessary anymore due to the above change.
+  - Remove installation of local web-server (not necessary anymore) and HTTP proxy (no tests anymore).
 
 ### Tools
 - `intelmqdump`:
