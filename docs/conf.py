@@ -33,8 +33,23 @@ release = '2.3.0'
 extensions = [
         'sphinx.ext.autodoc',
         'recommonmark',
-        'sphinx_markdown_tables'
+        'sphinx_markdown_tables',
+        'sphinx.ext.napoleon'
 ]
+
+# Napoleon settings
+# based on https://github.com/certtools/intelmq/issues/910
+#napoleon_google_docstring = True
+napoleon_numpy_docstring = False
+napoleon_include_init_with_doc = True
+napoleon_include_private_with_doc = True
+#napoleon_include_special_with_doc = True
+#napoleon_use_admonition_for_examples = False
+#napoleon_use_admonition_for_notes = False
+#napoleon_use_admonition_for_references = False
+#napoleon_use_ivar = False
+#napoleon_use_param = True
+#napoleon_use_rtype = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
