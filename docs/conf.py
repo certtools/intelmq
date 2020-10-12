@@ -32,7 +32,8 @@ release = '2.3.0'
 # ones.
 extensions = [
         'sphinx.ext.autodoc',
-        'recommonmark'
+        'recommonmark',
+        'sphinx_markdown_tables'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
