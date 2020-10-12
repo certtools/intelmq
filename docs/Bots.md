@@ -96,8 +96,8 @@
   - [REST API](#rest-api)
   - [SMTP Output Bot](#smtp-output-bot)
   - [SQL](#sql)
-    - [Installation Requirements](#installation-requirements)
-    - [PostgreSQL Installation](#postgresql-installation)
+    - [PostgreSQL](#postgresql)
+    - [SQLite](#sqlite)
   - [TCP](#tcp)
   - [Touch](#touch)
   - [UDP](#tcp)
@@ -3122,18 +3122,6 @@ for the versions you are using.
 * `sslmode`: PostgreSQL sslmode, can be `'disable'`, `'allow'`, `'prefer'` (default), `'require'`, `'verify-ca'` or `'verify-full'`. See postgresql docs: https://www.postgresql.org/docs/current/static/libpq-connect.html#libpq-connect-sslmode
 * `table`: name of the database table into which events are to be inserted
 
-#### SQL
-Similarly to PostgreSQL, you can use `intelmq_psql_initdb` to create initial SQL statements
-from `harmonization.conf`. The script will create the required table layout
-and save it as `/tmp/initdb.sql`.
-
-Create the new database (you can ignore all errors since SQLite doesn't know all SQL features generated for PostgreSQL):
-
-```bash
-sqlite3 your-db.db
-sqlite> .read /tmp/initdb.sql
-```
-
 #### PostgreSQL
 
 You have two basic choices to run PostgreSQL:
@@ -3184,6 +3172,20 @@ if the user `intelmq` can authenticate):
 ```
 psql -h localhost intelmq-events intelmq </tmp/initdb.sql
 ```
+
+#### SQLite
+Similarly to PostgreSQL, you can use `intelmq_psql_initdb` to create initial SQL statements
+from `harmonization.conf`. The script will create the required table layout
+and save it as `/tmp/initdb.sql`.
+
+Create the new database (you can ignore all errors since SQLite doesn't know all SQL features generated for PostgreSQL):
+
+```bash
+sqlite3 your-db.db
+sqlite> .read /tmp/initdb.sql
+```
+
+Then, set the `database` parameter to the `your-db.db` file path. 
 
 * * *
 
