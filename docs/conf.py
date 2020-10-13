@@ -11,6 +11,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
+import subprocess
 import sys
 sys.path.insert(0, os.path.abspath('../'))
 
@@ -77,3 +78,10 @@ html_theme_options = {
         'github_user': 'certtools',
         'github_repo': 'intelmq',
         }
+
+def run_apidoc(_):
+    subprocess.check_call("sphinx-apidoc -o source ../intelmq", shell=True)
+
+
+def setup(app):
+    app.connect("builder-inited", run_apidoc)

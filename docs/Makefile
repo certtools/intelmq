@@ -8,7 +8,6 @@ SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = .
 BUILDDIR      = _build
 PYTHON        ?= $(shell which python3)
-SPHINXAPIDOC  ?= sphinx-apidoc
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -19,6 +18,5 @@ help:
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
-	$(SPHINXAPIDOC) -o source ../intelmq
 	$(PYTHON) intelmq_gen_docs.py
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
