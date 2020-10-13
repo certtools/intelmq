@@ -13,11 +13,37 @@
 import os
 import subprocess
 import sys
+from sphinx.domains import Domain
 
 sys.path.insert(0, os.path.abspath('../'))
 sys.path.insert(0, os.path.abspath('./'))
 
 import autogen
+
+# This class translates tries to work around a bug in commonmark:
+# commonmark removes the extension from all links ending in .md, even if
+# they are not pointing to a local file built by sphinx
+# See also this TODO in recommonmark.
+# https://github.com/readthedocs/recommonmark/blob/ddd56e7717e9745f11300059e4268e204138a6b1/recommonmark/parser.py#L152-L155
+# This class checks if a link is relative and then replaces the target
+# with an URL built from the github URL and the link text
+# That means we have to use the file extension in the link text for
+# now
+
+class GithubURLDomain(Domain):
+    """
+    Resolve certain links in markdown files to github source.
+    """
+
+    ROOT = "https://github.com/certtools/intelmq/blob/master/"
+
+    def resolve_any_xref(self, env, fromdocname, builder, target, node, contnode):
+        if contnode["refuri"].startswith("../"):
+            print(f"Replacing {contnode['refuri']} with {self.ROOT}{contnode.rawsource}")
+            contnode["refuri"] = self.ROOT + contnode.rawsource
+            return [("githuburl:any", contnode)]
+        else:
+            return []
 
 # -- Project information -----------------------------------------------------
 
@@ -96,5 +122,6 @@ def run_autogen(_):
 
 
 def setup(app):
+    app.add_domain(GithubURLDomain)
     app.connect("builder-inited", run_apidoc)
     app.connect("builder-inited", run_autogen)
