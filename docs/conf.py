@@ -13,8 +13,11 @@
 import os
 import subprocess
 import sys
-sys.path.insert(0, os.path.abspath('../'))
 
+sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('./'))
+
+import autogen
 
 # -- Project information -----------------------------------------------------
 
@@ -83,5 +86,13 @@ def run_apidoc(_):
     subprocess.check_call("sphinx-apidoc -o source ../intelmq", shell=True)
 
 
+def run_autogen(_):
+    with open('guides/Harmonization-fields.md', 'w') as handle:
+        handle.write(autogen.harm_docs())
+    with open('guides/Feeds.md', 'w') as handle:
+        handle.write(autogen.feeds_docs())
+
+
 def setup(app):
     app.connect("builder-inited", run_apidoc)
+    app.connect("builder-inited", run_autogen)
