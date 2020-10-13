@@ -34,6 +34,7 @@ Getting involved
 
    guides/Developers-Guide.md
    guides/Data-Harmonization.md
+   guides/Harmonization-fields.md
    guides/Release.md
    guides/IntelMQ-3.0-Architecture.md
    guides/Feeds.md
