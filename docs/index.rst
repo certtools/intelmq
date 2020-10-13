@@ -21,7 +21,6 @@ User guide
    guides/Bots.md
    guides/ELK-Stack.md
    guides/FAQ.md
-   guides/Feeds.md
    guides/Feeds-whishlist.md
    guides/MISP-Integrations.md
    guides/n6-integrations.md
@@ -37,6 +36,7 @@ Getting involved
    guides/Data-Harmonization.md
    guides/Release.md
    guides/IntelMQ-3.0-Architecture.md
+   guides/Feeds.md
 
 
 
