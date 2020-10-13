@@ -80,6 +80,7 @@ html_theme_options = {
         'logo': 'Logo_Intel_MQ.svg',
         'github_user': 'certtools',
         'github_repo': 'intelmq',
+        'font_family': "'Open Sans', sans-serif",
         }
 
 def run_apidoc(_):
