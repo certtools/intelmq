@@ -23,7 +23,7 @@ import autogen
 
 project = 'intelmq'
 copyright = '2020, cert.at'
-author = 'cert.at'
+author = 'IntelMQ Community'
 
 # The full version, including alpha/beta/rc tags
 release = '2.3.0'
@@ -81,6 +81,7 @@ html_theme_options = {
         'github_user': 'certtools',
         'github_repo': 'intelmq',
         'font_family': "'Open Sans', sans-serif",
+        'description': 'IntelMQ is a solution for IT security teams for collecting and processing security feeds using a message queuing protocol.'
         }
 
 def run_apidoc(_):
