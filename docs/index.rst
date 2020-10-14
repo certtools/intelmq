@@ -19,9 +19,9 @@ User guide
    guides/User-Guide.md
    guides/intelmqctl.md
    guides/Bots.md
+   guides/Feeds.md
    guides/ELK-Stack.md
    guides/FAQ.md
-   guides/Feeds-whishlist.md
    guides/MISP-Integrations.md
    guides/n6-integrations.md
 
@@ -37,7 +37,7 @@ Getting involved
    guides/Harmonization-fields.md
    guides/Release.md
    guides/IntelMQ-3.0-Architecture.md
-   guides/Feeds.md
+   guides/Feeds-whishlist.md
 
 
 
