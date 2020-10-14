@@ -74,7 +74,7 @@ CHANGELOG
   - Added CZ.NIC Proki feed (PR#1599 by sinus-x).
   - Added CERT-BUND CB-Report Malware infections feed (PR#1598 by sinus-x).
 - Bots:
-  - Enhanced documentation of RFC1918 Expert.
+  - Enhanced documentation of RFC1918 Expert, SQLite.
   - Updated documentation for Maxmind GeoIP, ASN Lookup, TOR Nodes and Recorded Future experts to reflect new `--update-database` option.  (PR#1524 by Filip Pokorný)
 - Add n6 Integration documentation.
 - Moved 'Orphaned Queues' section from the FAQ to the intelmqctl documentation.
