@@ -198,5 +198,5 @@ Below, we have enumerated the minimum recommended requirements for an actionable
 
 This list of required fields is *not* enforced by IntelMQ.
 
-**NOTE:** This document was copied from [AbuseHelper repository](https://github.com/abusesa/abusehelper/blob/master/docs/Harmonization.md) and improved.
+**NOTE:** This document was copied from [AbuseHelper repository](https://github.com/abusesa/abusehelper/) and improved.
 

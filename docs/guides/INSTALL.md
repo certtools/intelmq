@@ -15,9 +15,9 @@
 
 Please report any errors you encounter at https://github.com/certtools/intelmq/issues
 
-For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
-For setting up a development environment see the [Developer's Guide](Developers-Guide.md#development-environment) section *Development Environment*.
-For testing pre-releases see also the [Developer's Guide](Developers-Guide.md#testing-pre-releases) section *Testing Pre-releases*.
+For upgrade instructions, see [UPGRADING](UPGRADING.md).
+For setting up a development environment see the [Developer's Guide](Developers-Guide.html#development-environment) section *Development Environment*.
+For testing pre-releases see also the [Developer's Guide](Developers-Guide.html#testing-pre-releases) section *Testing Pre-releases*.
 
 ## Requirements
 
@@ -77,7 +77,7 @@ Installation methods available:
 * native packages (`.deb`, `.rpm`)
 * PyPi (latest releases as python package)
 
-**Note:** installation for development purposes must follow the instructions available on [Developers Guide](https://github.com/certtools/intelmq/blob/develop/docs/Developers-Guide.md#development-environment).
+**Note:** installation for development purposes must follow the instructions available on [Developers Guide](Developers-Guide.html#development-environment).
 
 ### Native Packages
 
@@ -116,11 +116,11 @@ pip3 install intelmq
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 sudo intelmqsetup
 ```
-`intelmqsetup` will create all necessary directories, provides a default configuration for new setups. See [the user-guide section on paths](User-Guide.md#opt-and-lsb-paths) for more information on them and how to influence them.
+`intelmqsetup` will create all necessary directories, provides a default configuration for new setups. See [the user-guide section on paths](User-Guide.html#opt-and-lsb-paths) for more information on them and how to influence them.
 
 ### Additional Information
 
-Following any one of the installation methods mentioned before, will setup the IntelMQ base. However, some bots may have additional dependencies which are mentioned in their own documentation available on in the [Bots documentation](https://github.com/certtools/intelmq/tree/develop/docs/Bots.md).
+Following any one of the installation methods mentioned before, will setup the IntelMQ base. However, some bots may have additional dependencies which are mentioned in their own documentation available on in the [Bots documentation](Bots.md).
 
 
 ## Afterwards

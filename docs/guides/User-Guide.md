@@ -261,7 +261,7 @@ As we can see the *default* path name is obviously `_default`. Let's have a look
 ```
 In that case, bot will be able to send the message to one of defined paths. The path `"_default"` is used if none is not specified.
 In case of errors during processing, and the optional path `"_on_error"` is specified, the message will be sent to the pipelines given given as on-error.
-Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the [filter expert](Bots.md#filter) and the [sieve expert](Bots.md#sieve).
+Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the [filter expert](Bots.html#filter) and the [sieve expert](Bots.html#sieve).
 The named queues need to be explicitly addressed by the bot (e.g. fitering) or the core (`_on_error`) to be used. Setting arbitrary paths has no effect.
 
 #### AMQP (Beta)
@@ -424,12 +424,12 @@ More examples can be found in the `intelmq/etc/harmonization.conf` directory.
 
 IntelMQ has a modular structure consisting of bots. There are four types of bots:
 
-* [CollectorBots](Bots.md#collectors) retrieve data from internal or external sources, the output
+* [CollectorBots](Bots.html#collectors) retrieve data from internal or external sources, the output
 are *reports* consisting of many individual data sets / log lines.
-* [ParserBots](Bots.md#parsers) parse the (report) data by splitting it into individual *events* (log lines) and
+* [ParserBots](Bots.html#parsers) parse the (report) data by splitting it into individual *events* (log lines) and
 giving them a defined structure, see also [Data Harmonization](Data-Harmonization.md) for the list of fields an event may be split up into.
-* [ExpertBots](Bots.md#experts) enrich the existing events by e.g. lookup up information such as DNS reverse records, geographic location information (country code) or abuse contacts for an IP address or domain name.
-* [OutputBots](Bots.md#outputs) write events to files, databases, (REST)-APIs or any other data sink that you might want to write to.
+* [ExpertBots](Bots.html#experts) enrich the existing events by e.g. lookup up information such as DNS reverse records, geographic location information (country code) or abuse contacts for an IP address or domain name.
+* [OutputBots](Bots.html#outputs) write events to files, databases, (REST)-APIs or any other data sink that you might want to write to.
 
 Each bot has one source queue (except collectors) and can have multiple
 destination queues (except outputs). But multiple bots can write to the same pipeline (queue), resulting in multiple inputs for the next bot.

@@ -5,7 +5,7 @@ This document provides an overview of the ecosystem and all related tools. If yo
 
 ## IntelMQ "Core"
 
-This is IntelMQ itself, as it is available at https://github.com/certtools/intelmq.
+This is IntelMQ itself, as it is available on [github](https://github.com/certtools/intelmq).
 
 It includes all the bots, the harmonization, etc.
 
@@ -14,7 +14,7 @@ It includes all the bots, the harmonization, etc.
 The Manager is the most known software and can be seen as the face of IntelMQ.
 This software provides a graphical user interface to the management tool `intelmqctl`.
 
-→ https://github.com/certtools/intelmq-manager/
+→ [Github repo of the manager](https://github.com/certtools/intelmq-manager/)
 
 ## EventDB
 
@@ -22,28 +22,28 @@ This is not a software itself but listed here because the term it is often menti
 
 The EventDB is a (usually PostgreSQL) database with data from intelmq.
 
-For some related scripts see the [contrib/eventdb](../contrib/eventdb) directory and the [eventdb-stats](https://github.com/wagner-certat/eventdb-stats) repository for simple statistics generation.
+For some related scripts see the [contrib/eventdb](https://github.com/certtools/intelmq/tree/develop/contrib/eventdb) directory and the [eventdb-stats](https://github.com/wagner-certat/eventdb-stats) repository for simple statistics generation.
 
 ## intelmq-webinput-csv
 
 A web-based interface to inject CSV data into IntelMQ with on-line validation and live feedback.
 
-→ http://github.com/certat/intelmq-webinput-csv/
+→ [Repository: intelmq-webinput-csv](http://github.com/certat/intelmq-webinput-csv/)
 
 ## intelmq-mailgen
 
 A solution to send grouped notifications to network owners using SMTP/OTRS.
 
-→ https://github.com/Intevation/intelmq-mailgen
+→ [Repository: intelmq-mailgen](https://github.com/Intevation/intelmq-mailgen)
 
 ## IntelMQ Fody + Backend
 
 Fody is an interface for intelmq-mailgen's contact database, it's OTRS and the EventDB.
 The certbund-contact expert fetches the information from this contact database and provides scripts to import RIPE data into the contact database.
 
-→ https://github.com/Intevation/intelmq-fody/
-→ https://github.com/Intevation/intelmq-fody-backend/
-→ https://github.com/Intevation/intelmq-certbund-contact/
+* →[Repository: intelmq-fody](https://github.com/Intevation/intelmq-fody/)
+* →[Repository: intelmq-fody-backend](https://github.com/Intevation/intelmq-fody-backend/)
+* →[Repository: intelmq-certbund-contact](https://github.com/Intevation/intelmq-certbund-contact/)
 
 ## "Constituency Portal" do-portal (not developed any further)
 
@@ -52,16 +52,16 @@ The certbund-contact expert fetches the information from this contact database a
 A contact portal with organizational hierarchies, role functionality and network objects based on RIPE, allows self-administration by the contacts.
 Can be queried from IntelMQ and integrates the stats-portal.
 
-→ https://github.com/certat/do-portal/
+→ [Repository: do-portal](https://github.com/certat/do-portal/)
 
 ## stats-portal
 
 A Grafana-based statistics portal for the EventDB. Integrated in do-portal.
 
-→ https://github.com/certtools/stats-portal/
+→ [Repository: stats-portal](https://github.com/certtools/stats-portal/)
 
 ## Malware Name Mapping
 
 A mapping for malware names of different feeds with different names to a common family name.
 
-→ https://github.com/certtools/malware_name_mapping
+→ [Repository: malware_name_mapping](https://github.com/certtools/malware_name_mapping)

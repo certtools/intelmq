@@ -15,7 +15,7 @@ For installation instructions, see [INSTALL.md](INSTALL.md).
 
 ## Read NEWS.md
 
-Read the NEWS.md file to look for things you need to have a look at.
+Read the [NEWS.md](https://github.com/certtools/intelmq/blob/develop/NEWS.md) file to look for things you need to have a look at.
 
 ## Stop IntelMQ and Backup
 
@@ -51,7 +51,7 @@ Remove this option to also upgrade dependencies.
 
 ### Local repository
 
-If you have an editable installation, refer to the instructions in the [Developers Guide](Developers-Guide.md#development-environment).
+If you have an editable installation, refer to the instructions in the [Developers Guide](Developers-Guide.html#development-environment).
 
 Update the repository depending on your setup (e.g. `git pull origin master`).
 

@@ -592,8 +592,8 @@ For example the check function of the ASNLookupExpert:
 
 ### Examples
 
-* Check [Expert Bots](../intelmq/bots/experts/)
-* Check [Parser Bots](../intelmq/bots/parsers/)
+* Check [Expert Bots](https://github.com/certtools/intelmq/tree/develop/intelmq/bots/experts)
+* Check [Parser Bots](https://github.com/certtools/intelmq/tree/develop/intelmq/bots/parsers)
 
 ### Parsers
 
@@ -741,7 +741,7 @@ So to add a new feeds, change the `feeds.yaml` and then call the `intelmq_gen_do
 
 ### Installation
 
-The [installation procedures](Install.md) needs to be adapted only a little bit.
+The [installation procedures](INSTALL.md) needs to be adapted only a little bit.
 
 For native packages, you can find the unstable packages of the next version here: [Installation Unstable Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq%3Aunstable&package=intelmq).
 
