@@ -29,7 +29,7 @@ EXAMPLE_EVENT = {
     "feed.url": "http://192.168.56.102/",
     "time.observation": "2016-06-15T09:25:26+00:00",
     "time.source": "2016-06-11T21:41:44+00:00",
-    "source.url": "http://fake.website.com/malware/is/here",
+    "source.url": "http://fake.example.com/malware/is/here",
     "event_description.text": "Payload delivery",
     "event_description.url": "http://192.168.56.102/events/view/2",
     "classification.type": "ransomware",
