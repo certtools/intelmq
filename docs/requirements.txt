@@ -1,7 +1,7 @@
-recommonmark==0.6.0
-Sphinx==3.2.1
-sphinx-markdown-tables==0.0.15
-PyYAML==5.3.1
+recommonmark>=0.6.0
+Sphinx>=3.2.1
+sphinx-markdown-tables>=0.0.15
+PyYAML>=5.3.1
 dnspython>=1.11.1
 psutil>=1.2.1
 python-dateutil>=2.5
