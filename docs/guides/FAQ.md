@@ -41,7 +41,7 @@ In most cases the bottlenecks are look-up experts. In these cases you can easily
 
 ### Multithreading
 
-When using the AMQP broker, you can make use of Multi-threading. See the [Uer-Guide, section Multithreading](User-Guide.md#multithreading-beta).
+When using the AMQP broker, you can make use of Multi-threading. See the [Uer-Guide, section Multithreading](User-Guide.html#multithreading-beta).
 
 ### "Classic" load-balancing (Multiprocessing)
 
@@ -94,7 +94,7 @@ Rather than starting your bot(s) with `intelmqctl start`, try `intelmqctl run [b
 
 ## Orphaned Queues
 
-This section has been moved to the [intelmqctl documentation](intelmctl.md#orphaned-queues)
+This section has been moved to the [intelmqctl documentation](intelmctl.html#orphaned-queues)
 
 ## Multithreading is not available for this bot
 

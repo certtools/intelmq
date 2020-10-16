@@ -1,4 +1,6 @@
+# Installation
 **Table of Contents:**
+
 - [Requirements](#requirements)
 - [Install Dependencies](#install-dependencies)
   - [Ubuntu / Debian](#ubuntu--debian)
@@ -13,11 +15,11 @@
 
 Please report any errors you encounter at https://github.com/certtools/intelmq/issues
 
-For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
-For setting up a development environment see the [Developer's Guide](Developers-Guide.md#development-environment) section *Development Environment*.
-For testing pre-releases see also the [Developer's Guide](Developers-Guide.md#testing-pre-releases) section *Testing Pre-releases*.
+For upgrade instructions, see [UPGRADING](UPGRADING.md).
+For setting up a development environment see the [Developer's Guide](Developers-Guide.html#development-environment) section *Development Environment*.
+For testing pre-releases see also the [Developer's Guide](Developers-Guide.html#testing-pre-releases) section *Testing Pre-releases*.
 
-# Requirements
+## Requirements
 
 The following instructions assume the following requirements. Python versions >= 3.5 are supported.
 
@@ -29,11 +31,11 @@ Supported and recommended operating systems are:
 
 Other distributions which are (most probably) supported include CentOS 8, RHEL, Fedora and openSUSE Tumbleweed.
 
-# Install Dependencies
+## Install Dependencies
 
 If you are using native packages, you can simply skip this section as all dependencies are installed automatically.
 
-## Ubuntu / Debian
+### Ubuntu / Debian
 
 ```bash
 apt install python3-pip python3-dnspython python3-psutil python3-redis python3-requests python3-termstyle python3-tz python3-dateutil
@@ -46,7 +48,7 @@ apt install bash-completion jq
 apt install python3-sleekxmpp python3-pymongo python3-psycopg2
 ```
 
-## CentOS 7 / RHEL 7
+### CentOS 7 / RHEL 7
 
 ```bash
 yum install epel-release
@@ -55,7 +57,7 @@ yum install gcc gcc-c++
 yum install redis
 ```
 
-## openSUSE 15.1
+### openSUSE 15.1
 
 ```bash
 zypper install python3-dateutil python3-dnspython python3-psutil python3-pytz python3-redis python3-requests python3-python-termstyle
@@ -68,16 +70,16 @@ zypper in bash-completion jq
 zypper in python3-psycopg2 python3-pymongo python3-sleekxmpp
 ```
 
-# Installation
+## Installation
 
 Installation methods available:
 
 * native packages (`.deb`, `.rpm`)
 * PyPi (latest releases as python package)
 
-**Note:** installation for development purposes must follow the instructions available on [Developers Guide](https://github.com/certtools/intelmq/blob/develop/docs/Developers-Guide.md#development-environment).
+**Note:** installation for development purposes must follow the instructions available on [Developers Guide](Developers-Guide.html#development-environment).
 
-## Native Packages
+### Native Packages
 
 Supported Operating Systems:
 
@@ -104,7 +106,7 @@ curl https://build.opensuse.org/projects/home:sebix:intelmq/public_key | sudo ap
 
 Please report any errors or improvements at [IntelMQ Issues](https://github.com/certtools/intelmq/issues). Thanks!
 
-## PyPi
+### PyPi
 
 ```bash
 sudo -i
@@ -114,13 +116,13 @@ pip3 install intelmq
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 sudo intelmqsetup
 ```
-`intelmqsetup` will create all necessary directories, provides a default configuration for new setups. See [the user-guide section on paths](User-Guide.md#opt-and-lsb-paths) for more information on them and how to influence them.
+`intelmqsetup` will create all necessary directories, provides a default configuration for new setups. See [the user-guide section on paths](User-Guide.html#opt-and-lsb-paths) for more information on them and how to influence them.
 
-## Additional Information
+### Additional Information
 
-Following any one of the installation methods mentioned before, will setup the IntelMQ base. However, some bots may have additional dependencies which are mentioned in their own documentation available on in the [Bots documentation](https://github.com/certtools/intelmq/tree/develop/docs/Bots.md).
+Following any one of the installation methods mentioned before, will setup the IntelMQ base. However, some bots may have additional dependencies which are mentioned in their own documentation available on in the [Bots documentation](Bots.md).
 
 
-# Afterwards
+## Afterwards
 
 Now continue with the [User Guide](User-Guide.md).

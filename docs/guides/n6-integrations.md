@@ -20,15 +20,15 @@ Thus and because of some other reasons, the conversion is *not* bidirectional.
 n6 offers a STOMP interface via the RabbitMQ broker, which can be used for both sending and receiving data.
 IntelMQ has both a STOMP collector bot as well as a STOMP output bot.
 
-- [IntelMQ's Stomp collector bot](Bots.md#stomp)
-- [IntelMQ's n6 parser bot](Bots.md#n6)
-- [IntelMQ's Stomp output bot](Bots.md#stomp-1)
+- [IntelMQ's Stomp collector bot](Bots.html#stomp)
+- [IntelMQ's n6 parser bot](Bots.html#n6)
+- [IntelMQ's Stomp output bot](Bots.html#stomp-1)
 
 ## Data conversion
 
 IntelMQ can parse n6 data using the n6 parser and n6 can parse IntelMQ data using the Intelmq2n6 parser.
 
-- [IntelMQ's n6 parser bot](Bots.md#n6)
+- [IntelMQ's n6 parser bot](Bots.html#n6)
 
 ## Webinput CSV
 

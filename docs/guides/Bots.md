@@ -2870,7 +2870,7 @@ If the field used in the format string is not defined, `None` will be used as fa
 * `description:` Create a directory layout in the MISP Feed format
 
 The PyMISP library >= 2.4.119.1 is required, see
-[REQUIREMENTS.txt](../intelmq/bots/outputs/misp/REQUIREMENTS.txt).
+[REQUIREMENTS.txt](https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/misp/REQUIREMENTS.txt).
 
 #### Configuration Parameters:
 
@@ -2896,7 +2896,7 @@ Configure the destination directory of this feed as feed in MISP, either as loca
 * `description:` Connect to a MISP instance and add event as MISPObject if not there already.
 
 The PyMISP library >= 2.4.120 is required, see
-[REQUIREMENTS.txt](../intelmq/bots/outputs/misp/REQUIREMENTS.txt).
+[REQUIREMENTS.txt](https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/misp/REQUIREMENTS.txt).
 
 #### Configuration Parameters:
 

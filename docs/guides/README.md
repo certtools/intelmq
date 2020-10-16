@@ -1,10 +1,9 @@
 Welcome to IntelMQ!
 ===================
 
-![IntelMQ](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Logo_Intel_MQ.png)
+![IntelMQ](/_static/Logo_Intel_MQ.png)
 
-[![Build
-Status](https://travis-ci.org/certtools/intelmq.svg?branch=master)](https://travis-ci.org/certtools/intelmq)
+[![Build Status](https://travis-ci.org/certtools/intelmq.svg?branch=master)](https://travis-ci.org/certtools/intelmq)
 [![codecov.io](https://codecov.io/github/certtools/intelmq/coverage.svg?branch=master)](https://codecov.io/github/certtools/intelmq?branch=master)
 
 **IntelMQ** is a solution for IT security teams (CERTs & CSIRTs, SOCs abuse
