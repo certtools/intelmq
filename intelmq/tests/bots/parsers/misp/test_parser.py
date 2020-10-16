@@ -31,7 +31,7 @@ EXAMPLE_EVENT = {
     "time.source": "2016-06-11T21:41:44+00:00",
     "source.url": "http://fake.website.com/malware/is/here",
     "event_description.text": "Payload delivery",
-    "event_description.url": "http://192.168.56.102/event/view/2",
+    "event_description.url": "http://192.168.56.102/events/view/2",
     "classification.type": "ransomware",
     "malware.name": "locky",
     'misp.attribute_uuid': '575c8598-f1f0-4c16-a94a-0612c0a83866',
