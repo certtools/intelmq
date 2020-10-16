@@ -130,6 +130,7 @@ CHANGELOG
   - Added support for the feeds `Accessible Radmin` and `CAIDA IP Spoofer` (PR#1600 by sinus-x).
 - `intelmq.bots.parsers.anubisnetworks.parser`: Fix parsing error where `dst.ip` was not equal to `comm.http.host`.
 - `intelmq/bots/parsers/danger_rulez/parser`: correctly skip malformed rows by defining variables before referencing (PR#1601 by Tomas Bellus).
+- `intelmq.bots.parsers.misp.parser: Fix MISP Event URL (#1619, PR#1618 by Nedfire23).
 
 #### Experts
 - `intelmq.bots.experts.cymru_whois`:
