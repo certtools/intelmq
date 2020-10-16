@@ -18,6 +18,7 @@ OUTPUT = {"__type": "Report",
           }
 
 
+@unittest.skipIf(not os.path.exists('/usr/bin/rsync'), "rsync executable does not exist")
 class TestRsyncCollectorBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
