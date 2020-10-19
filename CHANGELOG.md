@@ -79,6 +79,7 @@ CHANGELOG
   - Updated documentation for Maxmind GeoIP, ASN Lookup, TOR Nodes and Recorded Future experts to reflect new `--update-database` option.  (PR#1524 by Filip Pokorný)
 - Add n6 Integration documentation.
 - Moved 'Orphaned Queues' section from the FAQ to the intelmqctl documentation.
+- Generate documentation using Sphinx (PR#1622 by Birger Schacht).
 
 ### Packaging
 
