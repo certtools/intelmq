@@ -52,7 +52,8 @@
   - [Tests](#tests)
   - [Configuration](#configuration)
   - [Cache](#cache)
-- [Feeds documentation](#feeds-documentation)
+- [Documentation](#documentation)
+  - [Feeds documentation](#feeds-documentation)
 - [Testing Pre-releases](#testing-pre-releases)
   - [Installation](#installation)
 
@@ -731,11 +732,27 @@ The databases `<` 10 are reserved for the IntelMQ core:
  * 3: statistics
  * 4: tests
 
-## Feeds documentation
+## Documentation
 
-The feeds which are known to be working with IntelMQ are documented in the machine-readable file `intelmq/etc/feeds.yaml`. The human-readable documentation is in `docs/Feeds.md`. In order to keep these files in sync, call `intelmq/bin/intelmq_gen_docs.py` which generates the Markdown file from the YAML file.
+To build the documentation you need three packages:
+- Sphinx
+- ReCommonMark
+- `sphinx-markdown-tables`
 
-So to add a new feeds, change the `feeds.yaml` and then call the `intelmq_gen_docs.py` file.
+To install them, you can use pip:
+```bash
+pip3 install -r docs/requirements.txt
+```
+
+Then use the Makefile to build the documentation using Sphinx:
+```bash
+cd docs
+make html
+```
+
+### Feeds documentation
+
+The feeds which are known to be working with IntelMQ are documented in the machine-readable file `intelmq/etc/feeds.yaml`. The human-readable documentation is in generated with the Sphinx build as described in the previous section.
 
 ## Testing Pre-releases
 
