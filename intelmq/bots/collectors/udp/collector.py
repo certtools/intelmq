@@ -1,24 +1,20 @@
 # -*- coding: utf-8 -*-
-"""Import Syslog messages
+"""Receive UDP messages
 
 SPDX-FileCopyrightText: 2020 Linköping University <https://liu.se/>
 SPDX-License-Identifier: AGPL-3.0-or-later
 
-One IntelMQ event per Syslog line. Multi-line Syslog messages are not
-supported.
+Creates one IntelMQ event per UDP packet.
 
 Parameters:
 
     ip: string, optional, bind IP (or wildcard, if not set)
 
-    name: string, optional, feed name, default "Syslog"
+    name: string, optional, feed name, default "UDP"
 
-    port: integer, optional, listen port, default 514
+    port: integer, listen port
 
-    protocol: string, optional, default "udp". Only UDP is implemented
-              currently.
-
-    provider: string, optional, feed provider name, default "Syslog"
+    provider: string, optional, feed provider name, default "UDP"
 
 """
 
@@ -28,20 +24,18 @@ from intelmq.lib.exceptions import ConfigurationError
 import socketserver
 
 
-class SyslogCollectorBot(CollectorBot):
+class UDPCollectorBot(CollectorBot):
 
     def init(self):
         self.ip = getattr(self.parameters, 'ip', '0.0.0.0')
-        self.name = getattr(self.parameters, 'name', 'Syslog')
-        self.port = int(getattr(self.parameters, 'port', 514))
-        self.protocol = getattr(self.parameters, 'protocol', 'udp').lower()
-        if self.protocol not in ['udp']:
+        self.name = getattr(self.parameters, 'name', 'UDP')
+        self.port = int(getattr(self.parameters, 'port', 0))
+        if self.port == 0:
             raise ConfigurationError('Listen port',
-                                     'Invalid protocol %s' % self.protocol)
-        self.provider = getattr(self.parameters, 'provider', 'Syslog')
+                                     'No port specified')
+        self.provider = getattr(self.parameters, 'provider', 'UDP')
 
-        if self.protocol == 'udp':
-            self.server = socketserver.UDPServer((self.ip, self.port), SyslogUDP)
+        self.server = socketserver.UDPServer((self.ip, self.port), UDPServer)
         self.server.logger = self.logger
         self.server.send_message = self.send_message
         self.server.new_report = self.new_report
@@ -52,7 +46,7 @@ class SyslogCollectorBot(CollectorBot):
         self.server.serve_forever()
 
 
-class SyslogUDP(socketserver.BaseRequestHandler):
+class UDPServer(socketserver.BaseRequestHandler):
     def handle(self):
         line = self.request[0].strip()
         self.server.logger.debug("Received event from %s", self.client_address)
@@ -62,4 +56,4 @@ class SyslogUDP(socketserver.BaseRequestHandler):
         self.finish()
 
 
-BOT = SyslogCollectorBot
+BOT = UDPServer

@@ -178,15 +178,14 @@
                 "rsync_path": "<path>"
             }
         },
-        "Syslog": {
-            "description": "Receive Syslog messages.",
-            "module": "intelmq.bots.collectors.syslog.collector",
+        "UDP": {
+            "description": "Receive UDP messages.",
+            "module": "intelmq.bots.collectors.udp.collector",
             "parameters": {
                 "ip": "0.0.0.0",
-                "name": "Syslog",
+                "name": "UDP",
                 "port": 514,
-                "protocol": "udp",
-                "provider": "Syslog"
+                "provider": "UDP"
             }
         },
         "TCP": {
