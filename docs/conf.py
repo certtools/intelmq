@@ -107,7 +107,8 @@ html_theme_options = {
         'github_user': 'certtools',
         'github_repo': 'intelmq',
         'font_family': "'Open Sans', sans-serif",
-        'description': 'IntelMQ is a solution for IT security teams for collecting and processing security feeds using a message queuing protocol.'
+        'description': 'IntelMQ is a solution for IT security teams for collecting and processing security feeds using a message queuing protocol.',
+        'show_powered_by': False,
         }
 
 def run_apidoc(_):
