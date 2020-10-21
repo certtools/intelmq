@@ -397,8 +397,6 @@ Or using merging. This doesn't break the history. It's considered more , but als
 > git merge develop
 ```
 
-Also see the [development workflow of Scipy](https://docs.scipy.org/doc/numpy/dev/gitwash/development_workflow.html) which has more examples.
-
 You can then create a PR with your branch `bugfix` to our upstream repository, using GitHub's web interface.
 
 ### Commit Messages
