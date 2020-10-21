@@ -16,7 +16,7 @@ way to collect & process threat intelligence thus improving the incident
 handling processes of CERTs.
 
 Several pieces of software are evolved around IntelMQ. For an overview,
-look at the `Ecosystem document  <docs/Ecosystem.md>`__.
+look at the `Ecosystem document  <https://intelmq.readthedocs.io/en/latest/guides/Ecosystem.html>`__.
 
 IntelMQ can be used for
 - automated incident handling
@@ -65,20 +65,21 @@ Table of Contents
 How to Install
 --------------
 
-See `INSTALL <docs/INSTALL.md>`__.
+See `INSTALL <https://intelmq.readthedocs.io/en/latest/guides/INSTALL.html>`__.
 
 User Guide
 ----------
 
-See `User Guide <docs/User-Guide.md>`__.
-Which Feeds are supported? Have a look at the `Feeds documentation <docs/Feeds.md>`__ and the `Bots documentation <docs/Bots.md>`__.
+See `User Guide <https://intelmq.readthedocs.io/en/latest/guides/User-Guide.html>`__.
+Which Feeds are supported? Have a look at the `Feeds documentation <https://intelmq.readthedocs.io/en/latest/guides/Feeds.html>`__
+and the `Bots documentation <https://intelmq.readthedocs.io/en/latest/guides/Bots.html>`__.
 If you know additional feeds and how to parse them, please contribute your code or your configuration (by issues or the mailing lists).
 
 For support questions please use the intelmq-users mailing list:
 https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users
 
 IntelMQ use the Data Harmonization. Please read `this
-document <docs/Data-Harmonization.md>`__ for more details.
+document <https://intelmq.readthedocs.io/en/latest/guides/Data-Harmonization.html>`__ for more details.
 
 IntelMQ Manager and more tools
 ------------------------------
@@ -87,18 +88,19 @@ Check out this graphical
 `tool <https://github.com/certtools/intelmq-manager>`__ and easily
 manage an IntelMQ system.
 
-More tools can be found in the `ecosystem documentation <docs/Ecosystem.md>`__.
+More tools can be found in the `ecosystem documentation <https://intelmq.readthedocs.io/en/latest/guides/Ecosystem.html>`__.
 
 How to participate
 ------------------
 
 IntelMQ is a community project depending on your contributions. Please consider sharing your work.
 
-- Have a look at our `Developers Guide <docs/Developers-Guide.md>`__ for documentation.
+- Have a look at our `Developers Guide <https://intelmq.readthedocs.io/en/latest/guides/Developers-Guide.html>`__ for documentation.
 - Subscribe to the Intelmq-dev Mailing list to get answers to your development questions:
   https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev
 - The `Github issues <github.com/certtools/intelmq/issues/>`__ lists all the open feature requests, bug reports and ideas.
-- Looking for ideas which additional feeds you could add support for? The `Feeds whishlist <docs/Feeds-wishlist.md>`__ is the list you are looking for.
+- Looking for ideas which additional feeds you could add support for? The
+  `Feeds whishlist <https://intelmq.readthedocs.io/en/latest/guides/Feeds-whishlist.html>`__ is the list you are looking for.
 - Contribute code with pull requests (The `Github help <https://help.github.com/>`__ can be useful if you are not familiar with the system yet).
 - Some developers are also on IRC: `channel #intelmq on irc.freenode.net <ircs://chat.freenode.net:6697/intelmq>`__.
 
@@ -120,7 +122,7 @@ Funded by
 
 This project was partially funded by the CEF framework
 
-.. figure:: docs/images/cef_logo.png
+.. figure:: https://raw.githubusercontent.com/certtools/intelmq/develop/docs/guides/images/cef_logo.png
    :alt: Co-financed by the Connecting Europe Facility of the European Union
 
 .. |Build Status| image:: https://travis-ci.org/certtools/intelmq.svg?branch=master

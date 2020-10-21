@@ -25,8 +25,7 @@ for bot_type, bots in bots.items():
         BOTS.append('{0} = {0}:BOT.run'.format(module))
 
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as handle:
-    README = handle.read().replace('<docs/',
-                                   '<https://github.com/certtools/intelmq/blob/master/docs/')
+    README = handle.read()
 
 setup(
     name='intelmq',
