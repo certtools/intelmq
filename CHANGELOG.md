@@ -45,6 +45,7 @@ CHANGELOG
   - Fixed bot modules of Calidog CertStream feed.
 
 ### Packaging
+- In Debian packages, `intelmqctl check` and `intelmqctl upgrade-config` are executed in the postinst step (#1551, PR#1624 by Birger Schacht).
 
 ### Tests
 - `intelmq.tests.lib.test_pipeline`: Skip `TestAmqp.test_acknowledge` on Travis with Python 3.8.
