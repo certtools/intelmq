@@ -734,6 +734,8 @@ The databases `<` 10 are reserved for the IntelMQ core:
 
 ## Documentation
 
+The documentation is automatically published to https://intelmq.readthedocs.io/ at every push to the repository.
+
 To build the documentation you need three packages:
 - Sphinx
 - ReCommonMark

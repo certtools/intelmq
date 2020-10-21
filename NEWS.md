@@ -6,6 +6,8 @@ See the changelog for a full list of changes.
 2.3.0 Bugfix release (unreleased)
 ----------------------------------
 
+The documentation is now available at [intelmq.readthedocs.io](https://intelmq.readthedocs.io/) (FIXME: Link to stable version?).
+
 ### Requirements
 
 ### Tools

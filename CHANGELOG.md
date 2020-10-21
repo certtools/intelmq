@@ -80,6 +80,7 @@ CHANGELOG
 - Add n6 Integration documentation.
 - Moved 'Orphaned Queues' section from the FAQ to the intelmqctl documentation.
 - Generate documentation using Sphinx (PR#1622 by Birger Schacht).
+  - The documentation is now available at https://intelmq.readthedocs.io/en/latest/
 
 ### Packaging
 
