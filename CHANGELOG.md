@@ -91,7 +91,7 @@ CHANGELOG
   - Add a test for checking the response status code.
 - `intelmq.tests.bots.collectors.mail.test_collector_url`: Use requests_mock to mock all requests and do not require a local webserver.
 - `intelmq.tests.bots.experts.ripe.test_expert`: Use requests_mock to mock all requests and do not require a local webserver.
-- The test flag (environment variable) `INTELMQ_TEST_EXOTIC` is no longer used.
+- The test flag (environment variable) `INTELMQ_TEST_LOCAL_WEB` is no longer used.
 - Travis:
   - Remove installation of local web-server (not necessary anymore) and HTTP proxy (no tests anymore).
 
