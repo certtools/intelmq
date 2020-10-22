@@ -24,9 +24,11 @@ _intelmqctl ()
         ;;
         2)
             pipeline='/opt/intelmq/etc/pipeline.conf';
+            [ -f ${pipeline} ] || pipeline='/etc/intelmq/pipeline.conf';
             case "${COMP_WORDS[1]}" in
                 start | stop | restart | status | reload | log | run | enable | disable)
                     runtime='/opt/intelmq/etc/runtime.conf';
+		    [ -f ${runtime} ] || runtime='/etc/intelmq/runtime.conf';
                     local bots=$(jq 'keys[]' $runtime);
                     COMPREPLY=($(compgen -W "${bots}" -- ${cur}));
                     return 0
