@@ -167,6 +167,7 @@ CHANGELOG
   - Fix check on source/destination queues for bots as well the orphaned queues.
 
 ### Contrib
+- Bash completion scripts: Check both `/opt/intelmq/` as well as LSB-paths (`/etc/intelmq/` and `/var/log/intelmq/`) for loading bot information (#1561, PR#1628 by Birger Schacht).
 
 ### Known issues
 
