@@ -671,6 +671,11 @@ Requires the shodan library to be installed:
 * `ip`: IP of destination server
 * `port`: port of destination server
 
+#### Response
+
+TCP collector just sends an "Ok" message after every recevied message, this should not pose a problem for an arbitrary input.
+If you intend to link two IntelMQ instance via TCP, have a look at the TCP output bot documentation.
+
 * * *
 
 
@@ -3037,6 +3042,11 @@ Multihreading is disabled for this bot.
 * `port`: port of destination server
 * `separator`: separator of messages, e.g. "\n", optional. When sending to a TCP collector, parameter shouldn't be present.
     In that case, the output waits every message is acknowledged by "Ok" message the TCP collector bot implements.
+
+#### Sending to an IntelMQ TCP collector
+
+If you intend to link two IntelMQ instance via TCP, set the parameter `counterpart_is_intelmq` to true. The bot then awaits an "Ok" message to be received after each message is sent.
+The TCP collector just sends "Ok" after every message it gets.
 
 * * *
 
