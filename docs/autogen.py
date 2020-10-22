@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 # This script generates the files
@@ -149,10 +148,3 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
             output += '\n'
 
     return output
-
-
-if __name__ == '__main__':  # pragma: no cover
-    with open('guides/Harmonization-fields.md', 'w') as handle:
-        handle.write(harm_docs())
-    with open('guides/Feeds.md', 'w') as handle:
-        handle.write(feeds_docs())
