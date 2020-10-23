@@ -702,6 +702,8 @@ If you intend to link two IntelMQ instance via TCP, have a look at the TCP outpu
 * `cache (redis db):` none
 * `description:` This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.
 
+**Warning:** This bot is currently *unmaintained* and needs to be adapted. The used XMPP library *sleekxmpp* is deprecated, therefore the bots needs to be adapted to the successor library *slixmpp*. For more information see [Issue #1614](https://github.com/certtools/intelmq/issues/1614).
+
 #### Requirements
 The Sleekxmpp - Library needs to be installed on your System
 ```bash
@@ -3333,6 +3335,8 @@ Apr 29 11:17:47 localhost IntelMQ-event|source.ip: 85.25.160.114|time.source:201
 * `public:` yes
 * `cache (redis db):` none
 * `description:` The XMPP Output is capable of sending Messages to XMPP Rooms and as direct messages.
+
+**Warning:** This bot is currently *unmaintained* and needs to be adapted. The used XMPP library *sleekxmpp* is deprecated, therefore the bots needs to be adapted to the successor library *slixmpp*. For more information see [Issue #1614](https://github.com/certtools/intelmq/issues/1614).
 
 #### Requirements
 The Sleekxmpp - Library needs to be installed on your System
