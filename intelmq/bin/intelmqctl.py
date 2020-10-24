@@ -399,8 +399,7 @@ class IntelMQProcessManager:
             return False
         except psutil.AccessDenied:
             return 'Could not get status of process: Access denied.'
-        except:
-            raise
+        # let every other exception pass
 
 
 class SupervisorProcessManager:
