@@ -24,10 +24,10 @@
 
 All messages (reports and events) are Python/JSON dictionaries. The key names and according types are defined by the so called *harmonization*.
 
-The purpose of this document is to list and clearly define known **fields** in Abusehelper as well as IntelMQ or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a  structured log record in the form ```key=value, key=value, key=value, …```. In the [List of known fields](#fields), each field is grouped by a **section**. We describe these sections briefly below.
+The purpose of this document is to list and clearly define known **fields** in Abusehelper as well as IntelMQ or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a  structured log record in the form ```key=value, key=value, key=value, …```. In the [List of known fields](Harmonization-fields.md), each field is grouped by a **section**. We describe these sections briefly below.
 Every event **MUST** contain a timestamp field.
 
-[IOC](https://en.wikipedia.org/wiki/Indicator_of_compromise) (Indicator of compromise) is a single observation like a log line.
+An [IOC](https://en.wikipedia.org/wiki/Indicator_of_compromise) (Indicator of compromise) is a single observation like a log line.
 
 ## Rules for keys
 
@@ -80,7 +80,7 @@ Data which does not fit in the harmonization can be saved in the 'extra' namespa
 
 ## Fields List and data types
 
-A list of allowed fields and data types can be found in [Harmonization-fields.md](Harmonization-fields.md)
+A list of allowed fields and data types can be found in [Harmonization-fields](Harmonization-fields.md) page.
 
 ## Classification
 

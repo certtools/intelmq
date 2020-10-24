@@ -1,6 +1,6 @@
 # Upgrade instructions
 
-For installation instructions, see [INSTALL.md](INSTALL.md).
+For installation instructions, see [INSTALL](INSTALL.md).
 
 **Table of Contents:**
 - [Stop IntelMQ and Backup](#stop-intelmq-and-backup)
@@ -13,9 +13,9 @@ For installation instructions, see [INSTALL.md](INSTALL.md).
 - [Start IntelMQ](#start-intelmq)
 
 
-## Read NEWS.md
+## Read NEWS
 
-Read the [NEWS.md](https://github.com/certtools/intelmq/blob/develop/NEWS.md) file to look for things you need to have a look at.
+Read the [NEWS](https://github.com/certtools/intelmq/blob/develop/NEWS.md) file to look for things you need to have a look at.
 
 ## Stop IntelMQ and Backup
 
@@ -64,8 +64,8 @@ For editable installations (development only), run `pip install -e .` instead.
 
 ## Upgrade configuration and check the installation
 
-Go through [NEWS.md](../NEWS.md) and apply necessary adaptions to your setup.
-If you have adapted IntelMQ's code, also read the [CHANGELOG.md](../CHANGELOG.md).
+Go through [NEWS](../NEWS.md) and apply necessary adaptions to your setup.
+If you have adapted IntelMQ's code, also read the [CHANGELOG](../CHANGELOG.md).
 
 Check your installation and configuration to detect any problems:
 ```bash

@@ -273,7 +273,7 @@ file-output is stopped.
 In IntelMQ, the botnet is the set of all currently configured and enabled bots.
 All configured bots have their configuration in runtime.conf and their queues in pipeline.conf.
 By default, all bots are enabled. To disable a bot set `enabled` to `false`.
-Also see [Bots.md](Bots) and [User-Guide.md#runtime-configuration](User Guide: Runtime Configuration).
+Also see [Bots](Bots) and [User-Guide.html#runtime-configuration](User Guide: Runtime Configuration).
 
 If not bot id is given, the command applies to all bots / the botnet.
 All commands except the start action are applied to all bots.

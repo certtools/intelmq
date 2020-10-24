@@ -1,7 +1,7 @@
 # User Guide
 
-For installation instructions, see [INSTALL.md](INSTALL.md).
-For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
+For installation instructions, see [INSTALL](INSTALL.md).
+For upgrade instructions, see [UPGRADING](UPGRADING.md).
 
 **Table of Contents:**
 - [Where to get help?](#where-to-get-help)
@@ -373,7 +373,7 @@ Set it to a non-zero integer, then this number of worker threads will be spawn.
 This is useful if bots often wait for system resources or if network-based lookups are a bottleneck.
 
 However, there are currently a few cavecats:
-  * This is not possible for all bots, there are some exceptions (collectors and some outputs), see the [FAQ](FAQ.md#multithreading-is-not-available-for-this-bot) for some reasons.
+  * This is not possible for all bots, there are some exceptions (collectors and some outputs), see the [FAQ](FAQ.html#multithreading-is-not-available-for-this-bot) for some reasons.
   * Only use it with the AMQP pipeline, as with Redis, messages may get duplicated because there's only one internal queue
   * In the logs, you can see the main thread initializing first, then all of the threads which log with the name `[bot-id].[thread-id]`.
 
