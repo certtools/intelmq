@@ -729,7 +729,9 @@ class Bot(object):
             syslog = False
         self.logger = utils.log(self.__bot_id_full, syslog=syslog,
                                 log_path=self.parameters.logging_path,
-                                log_level=self.parameters.logging_level)
+                                log_level=self.parameters.logging_level,
+                                log_max_size=getattr(self.parameters, "logging_max_size", None),
+                                log_max_copies=getattr(self.parameters, "logging_max_copies", None))
 
     def __load_pipeline_configuration(self):
         self.logger.debug("Loading pipeline configuration from %r.", PIPELINE_CONF_FILE)
