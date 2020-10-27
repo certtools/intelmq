@@ -133,6 +133,7 @@ CHANGELOG
 - `intelmq.bots.parsers.anubisnetworks.parser`: Fix parsing error where `dst.ip` was not equal to `comm.http.host`.
 - `intelmq/bots/parsers/danger_rulez/parser`: correctly skip malformed rows by defining variables before referencing (PR#1601 by Tomas Bellus).
 - `intelmq.bots.parsers.misp.parser: Fix MISP Event URL (#1619, PR#1618 by Nedfire23).
+- `intelmq.bots.parsers.microsoft.parser_ctip`: Add support for `DestinationIpInfo.*` and `Signatures.Sha256` fields, used by the `ctip-c2` feed (PR#1623 by Mikk Margus Möll).
 
 #### Experts
 - `intelmq.bots.experts.cymru_whois`:
@@ -153,6 +154,7 @@ CHANGELOG
   - Gethostbyname expert: Add documentation how errors are treated.
 - Feeds:
   - Fixed bot modules of Calidog CertStream feed.
+  - Add information on Microsoft CTIP C2 feed.
 
 ### Packaging
 - In Debian packages, `intelmqctl check` and `intelmqctl upgrade-config` are executed in the postinst step (#1551, PR#1624 by Birger Schacht).

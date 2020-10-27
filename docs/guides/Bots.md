@@ -1357,6 +1357,11 @@ srcip=192.0.2.1 srcmac="00:00:5e:00:17:17"
 Can parse the JSON format provided by the Interflow interface (lists of dictionaries) as well as the format provided by the Azure interface (one dictionary per line).
 The provided data differs between the two formats/providers.
 
+The parser is capable of parsing both feeds:
+- `ctip-c2`
+- `ctip-infected-summary`
+The feeds only differ by a few fields, not in the format.
+
 * * *
 
 ### MISP
