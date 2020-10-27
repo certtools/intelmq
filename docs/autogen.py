@@ -74,34 +74,26 @@ def feeds_docs():
     with open(os.path.join(BASEDIR, 'intelmq/etc/feeds.yaml')) as fhandle:
         config = yaml.safe_load(fhandle.read())
 
-    toc = ""
-    for provider in sorted(config['providers'].keys()):
-        provider_link = provider.replace('.', '')
-        provider_link = provider_link.replace(' ', '-')
-        toc += "- [%s](#%s)\n" % (provider, provider_link.lower())
-
-    output = """# Available Feeds
+    output = """Feeds
+======
 
 The available feeds are grouped by the provider of the feeds.
 For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.
-To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
-`intelmq/bin/intelmq_gen_feeds_docs.py` to generate the new content of this file.
+To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild the documentation.
 
-<!-- TOC depthFrom:2 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
+.. contents ::
 
-%s
-
-<!-- /TOC -->\n
-
-""" % toc
+"""
 
     for provider, feeds in sorted(config['providers'].items(), key=lambda x: x[0]):
 
-        output += "## %s\n\n" % provider
+        output += f"{provider}\n"
+        output += "-"*len(provider) + "\n"
 
         for feed, feed_info in sorted(feeds.items(), key=lambda x: x[0]):
 
-            output += "### %s\n\n" % feed
+            output += f"{feed}\n"
+            output += "^"*len(feed) + "\n"
 
             if feed_info.get('public'):
                 output += info("public", "yes" if feed_info['public'] else "no")
@@ -122,7 +114,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
             for bot, bot_info in sorted(feed_info['bots'].items(), key=lambda x: x[0]):
 
-                output += "#### %s\n\n" % bot.title()
+                output += "**%s**\n\n" % bot.title()
 
                 output += info("Module", bot_info['module'])
                 output += info("Configuration Parameters")
@@ -141,10 +133,17 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
                         if isinstance(value, (list, tuple)) and value:
                             value = '["%s"]' % '", "'.join(value)
 
-                        output += "*  * `%s`: `%s`\n" % (key, value)
+                        output += "   * `%s`: `%s`\n" % (key, value)
 
                 output += '\n'
 
             output += '\n'
 
     return output
+
+
+if __name__ == '__main__':  # pragma: no cover
+    with open('guides/Harmonization-fields.md', 'w') as handle:
+        handle.write(harm_docs())
+    with open('user/feeds.rst', 'w') as handle:
+        handle.write(feeds_docs())

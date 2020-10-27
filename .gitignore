@@ -23,8 +23,8 @@ src/
 # sphinx
 docs/source
 docs/_build
-docs/guides/Feeds.md
-docs/guides/Harmonization-fields.md
+docs/user/feeds.rst
+docs/dev/harmonization-fields.md
 
 # Debian build filed
 debian/files

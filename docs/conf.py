@@ -54,7 +54,11 @@ author = 'IntelMQ Community'
 # The full version, including alpha/beta/rc tags
 release = '2.3.0'
 
-
+rst_prolog = """
+.. |intelmq-users-list-link| replace:: `IntelMQ Users Mailinglist <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users>`__
+.. |intelmq-developers-list-link| replace:: `IntelMQ Developers Mailinglist <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev>`__
+.. |intelmq-manager-github-link| replace:: `IntelMQ Manager <https://github.com/certtools/intelmq-manager>`__
+"""
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -116,9 +120,9 @@ def run_apidoc(_):
 
 
 def run_autogen(_):
-    with open('guides/Harmonization-fields.md', 'w') as handle:
+    with open('dev/harmonization-fields.md', 'w') as handle:
         handle.write(autogen.harm_docs())
-    with open('guides/Feeds.md', 'w') as handle:
+    with open('user/feeds.rst', 'w') as handle:
         handle.write(autogen.feeds_docs())
 
 
