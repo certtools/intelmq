@@ -1237,6 +1237,11 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
 Can parse the JSON format provided by the Interflow interface (lists of dictionaries) as well as the format provided by the Azure interface (one dictionary per line).
 The provided data differs between the two formats/providers.
 
+The parser is capable of parsing both feeds:
+- `ctip-c2`
+- `ctip-infected-summary`
+The feeds only differ by a few fields, not in the format.
+
 * * *
 
 ### MISP

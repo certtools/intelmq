@@ -44,6 +44,7 @@ CHANGELOG
   - Gethostbyname expert: Add documentation how errors are treated.
 - Feeds:
   - Fixed bot modules of Calidog CertStream feed.
+  - Add information on Microsoft CTIP C2 feed.
 
 ### Packaging
 - In Debian packages, `intelmqctl check` and `intelmqctl upgrade-config` are executed in the postinst step (#1551, PR#1624 by Birger Schacht).
