@@ -1242,6 +1242,9 @@ The parser is capable of parsing both feeds:
 - `ctip-infected-summary`
 The feeds only differ by a few fields, not in the format.
 
+The feeds contain a field called `Payload` which is nearly always a base64 encoded JSON structure.
+If decoding works, the contained fields are saved as `extra.payload.*`, otherwise the field is saved as `extra.payload.text`.
+
 * * *
 
 ### MISP
