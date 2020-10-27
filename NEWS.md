@@ -11,19 +11,9 @@ See the changelog for a full list of changes.
 The cache key calculation has been fixed. It previously led to duplicate keys for different IP addresses and therefore wrong results in rare cases. The cache key calculation is intentionally not backwards-compatible. Therefore, this bot may take longer processing events than usual after applying this update.
 More details can be found in [issue #1592](https://github.com/certtools/intelmq/issues/1592).
 
-### Requirements
-
-### Tools
-
 ### Harmonization
 #### Shadowserver Feed/Parser
 The feed "Blacklisted-IP" has been renamed by ShadowServer to "Blocklist". In IntelMQ, the old name can still be used in IntelMQ until version 3.0.
-
-### Configuration
-
-### Libraries
-
-### Postgres databases
 
 
 2.2.1 Bugfix release (2020-07-30)

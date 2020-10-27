@@ -1193,12 +1193,40 @@ server {
 * **Configuration Parameters:**
 
 
-## CTIP via Azure
+## CTIP C2 via Azure
 
 * **Public:** unknown
 * **Revision:** 2020-05-29
 * **Documentation:** https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
-* **Description:** Collects CTIP (Sinkhole data) files from a shared Azure Storage. The feed is available via Microsoft’s Government Security Program (GSP).
+* **Description:** Collects the CTIP C2 feed from a shared Azure Storage. The feed is available via Microsoft’s Government Security Program (GSP).
+* **Additional Information:** The cache is needed for memorizing which files have already been processed, the TTL should be higher than the oldest file available in the storage (currently the last three days are available). The connection string contains endpoint as well as authentication information.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.microsoft.collector_azure
+* **Configuration Parameters:**
+*  * `connection_string`: `{{your connection string}}`
+*  * `container_name`: `ctip-c2`
+*  * `name`: `CTIP C2 via Azure`
+*  * `provider`: `Microsoft`
+*  * `rate_limit`: `3600`
+*  * `redis_cache_db`: `5`
+*  * `redis_cache_host`: `127.0.0.1`
+*  * `redis_cache_port`: `6379`
+*  * `redis_cache_ttl`: `864000`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.microsoft.parser_ctip
+* **Configuration Parameters:**
+
+
+## CTIP Infected via Azure
+
+* **Public:** unknown
+* **Revision:** 2020-05-29
+* **Documentation:** https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
+* **Description:** Collects the CTIP (Sinkhole data) from a shared Azure Storage. The feed is available via Microsoft’s Government Security Program (GSP).
 * **Additional Information:** The cache is needed for memorizing which files have already been processed, the TTL should be higher than the oldest file available in the storage (currently the last three days are available). The connection string contains endpoint as well as authentication information.
 
 ### Collector
@@ -1207,7 +1235,7 @@ server {
 * **Configuration Parameters:**
 *  * `connection_string`: `{{your connection string}}`
 *  * `container_name`: `ctip-infected-summary`
-*  * `name`: `CTIP via Azure`
+*  * `name`: `CTIP Infected via Azure`
 *  * `provider`: `Microsoft`
 *  * `rate_limit`: `3600`
 *  * `redis_cache_db`: `5`
@@ -1226,7 +1254,7 @@ server {
 * **Public:** unknown
 * **Revision:** 2018-03-06
 * **Documentation:** https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
-* **Description:** Collects CTIP (Sinkhole data) files from the Interflow API.The feed is available via Microsoft’s Government Security Program (GSP).
+* **Description:** Collects the CTIP Infected feed (Sinkhole data for your country) files from the Interflow API.The feed is available via Microsoft’s Government Security Program (GSP).
 * **Additional Information:** Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector. As many IPs occur very often in the data, you may want to use a deduplicator specifically for the feed.
 
 ### Collector

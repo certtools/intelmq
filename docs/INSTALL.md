@@ -24,8 +24,8 @@ The following instructions assume the following requirements. Python versions >=
 Supported and recommended operating systems are:
 * CentOS 7
 * Debian 9 and 10
-* OpenSUSE Leap 15.1
-* Ubuntu: 16.04, 18.04, 19.10, 20.04
+* OpenSUSE Leap 15.1, 15.2
+* Ubuntu: 16.04, 18.04, 20.04
 
 Other distributions which are (most probably) supported include CentOS 8, RHEL, Fedora and openSUSE Tumbleweed.
 

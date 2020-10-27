@@ -1,22 +1,14 @@
 CHANGELOG
 ==========
 
-2.2.2 (unreleased)
+2.2.2 (2020-10-27)
 ------------------
-
-### Configuration
 
 ### Core
 - `intelmq.lib.upgrades`:
   - Add upgrade function for renamed Shadowserver feed name "Blacklisted-IP"/"Blocklist".
 
-### Development
-
-### Harmonization
-
 ### Bots
-#### Collectors
-
 #### Parsers
 - `intelmq.bots.parsers.shadowserver`:
   - Rename "Blacklisted-IP" feed to "Blocklist", old name is still valid until IntelMQ version 3.0 (PR#1588 by Thomas Hungenberg).
@@ -32,8 +24,6 @@ CHANGELOG
 - `intelmq.bots.experts.cymru_whois`:
   - Fix cache key calculation which previously led to duplicate keys and therefore wrong results in rare cases. The cache key calculation is intentionally not backwards-compatible (#1592, PR#1606).
   - The bot now caches and logs (as level INFO) empty responses from Cymru (PR#1606).
-
-#### Outputs
 
 ### Documentation
 - README:
@@ -64,6 +54,8 @@ CHANGELOG
 - Bash completion scripts: Check both `/opt/intelmq/` as well as LSB-paths (`/etc/intelmq/` and `/var/log/intelmq/`) for loading bot information (#1561, PR#1628 by Birger Schacht).
 
 ### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952).
+- Corrupt dump files when interrupted during writing (#870).
 
 
 2.2.1 (2020-07-30)
