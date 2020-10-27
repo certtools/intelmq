@@ -6,8 +6,7 @@ Key indicatorexpirationdatetime is ignored, meaning is unknown.
 
 There are two different variants of data
 1. Interflow format: JSON format, MAPPING
-2. Azure format: JSON stream format, TODO
-
+2. Azure format: JSON stream format, a short example structure:
   "DataFeed": "CTIP-Infected",
   "SourcedFrom": "SinkHoleMessage|SensorMessage"",
   "DateTimeReceivedUtc": nt time
@@ -91,6 +90,7 @@ AZURE = {
     "SourceIp": "source.ip",
     "SourcePort": "source.port",
     "DestinationIp": "destination.ip",
+    # DestinationIpInfo.* fields are used in the ctip-c2 feed
     "DestinationIpInfo.DestinationIpAsnNumber": "destination.asn",
     "DestinationIpInfo.DestinationIpAsnOrgName": "destination.as_name",
     "DestinationIpInfo.DestinationIpCountryCode": "destination.geolocation.cc",
