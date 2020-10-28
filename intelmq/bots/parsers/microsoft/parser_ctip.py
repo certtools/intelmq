@@ -139,7 +139,7 @@ AZURE = {
     "Payload.response": "extra.payload.response",
     "Payload.handler": "extra.payload.handler",
     "Payload.type": "protocol.application",
-    "Payload": "extra.payload",
+    "Payload": "extra.payload.text",
     "Payload.Time": "extra.payload.time",
     "Payload.SourceIP": "extra.payload.source.ip",
     "Payload.DestIP": "extra.payload.destination.ip",

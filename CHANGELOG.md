@@ -65,6 +65,7 @@ CHANGELOG
 - Added `intelmq.bots.experts.threshold` (PR#1608 by Karl-Johan Karlsson).
 
 #### Outputs
+- `intelmq.bots.outputs.rt`: Added Request Tracker output bot (PR#1589 by Marius Urkis).
 
 ### Documentation
 - Feeds:
@@ -110,14 +111,13 @@ CHANGELOG
 
 ### Known issues
 
-2.2.2 (unreleased)
+
+2.2.3 (unreleased)
 ------------------
 
 ### Configuration
 
 ### Core
-- `intelmq.lib.upgrades`:
-  - Add upgrade function for renamed Shadowserver feed name "Blacklisted-IP"/"Blocklist".
 
 ### Development
 
@@ -127,21 +127,47 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
+2.2.2 (2020-10-28)
+------------------
+
+### Core
+- `intelmq.lib.upgrades`:
+  - Add upgrade function for renamed Shadowserver feed name "Blacklisted-IP"/"Blocklist".
+
+### Bots
+#### Parsers
 - `intelmq.bots.parsers.shadowserver`:
   - Rename "Blacklisted-IP" feed to "Blocklist", old name is still valid until IntelMQ version 3.0 (PR#1588 by Thomas Hungenberg).
   - Added support for the feeds `Accessible Radmin` and `CAIDA IP Spoofer` (PR#1600 by sinus-x).
 - `intelmq.bots.parsers.anubisnetworks.parser`: Fix parsing error where `dst.ip` was not equal to `comm.http.host`.
 - `intelmq/bots/parsers/danger_rulez/parser`: correctly skip malformed rows by defining variables before referencing (PR#1601 by Tomas Bellus).
 - `intelmq.bots.parsers.misp.parser: Fix MISP Event URL (#1619, PR#1618 by Nedfire23).
-- `intelmq.bots.parsers.microsoft.parser_ctip`: Add support for `DestinationIpInfo.*` and `Signatures.Sha256` fields, used by the `ctip-c2` feed (PR#1623 by Mikk Margus Möll).
+- `intelmq.bots.parsers.microsoft.parser_ctip`:
+  - Add support for `DestinationIpInfo.*` and `Signatures.Sha256` fields, used by the `ctip-c2` feed (PR#1623 by Mikk Margus Möll).
+  - Use `extra.payload.text` for the feed's field `Payload` if the content cannot be decoded (PR#1610 by Giedrius Ramas).
 
 #### Experts
 - `intelmq.bots.experts.cymru_whois`:
   - Fix cache key calculation which previously led to duplicate keys and therefore wrong results in rare cases. The cache key calculation is intentionally not backwards-compatible (#1592, PR#1606).
   - The bot now caches and logs (as level INFO) empty responses from Cymru (PR#1606).
-
-#### Outputs
-- `intelmq.bots.outputs.rt`: Added Request Tracker output bot (PR#1589 by Marius Urkis).
 
 ### Documentation
 - README:
@@ -172,6 +198,8 @@ CHANGELOG
 - Bash completion scripts: Check both `/opt/intelmq/` as well as LSB-paths (`/etc/intelmq/` and `/var/log/intelmq/`) for loading bot information (#1561, PR#1628 by Birger Schacht).
 
 ### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952).
+- Corrupt dump files when interrupted during writing (#870).
 
 
 2.2.1 (2020-07-30)

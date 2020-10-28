@@ -569,7 +569,7 @@ class TestUpgradeLib(unittest.TestCase):
 
     def test_v222_feed_changes(self):
         """ Test v222_feed_changes """
-        result = upgrades.v222_feed_changes_1({}, V222, {}, False)
+        result = upgrades.v222_feed_changes({}, V222, {}, False)
         self.assertTrue(result[0])
         self.assertEqual(V222_OUT, result[2])
 
