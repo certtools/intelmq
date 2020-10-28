@@ -1,7 +1,40 @@
 CHANGELOG
 ==========
 
-2.2.2 (2020-10-27)
+2.2.3 (unreleased)
+------------------
+
+### Configuration
+
+### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
+2.2.2 (2020-10-28)
 ------------------
 
 ### Core

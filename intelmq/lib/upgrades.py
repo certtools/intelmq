@@ -530,6 +530,7 @@ UPGRADES = OrderedDict([
     ((2, 2, 0), (v220_configuration, v220_azure_collector, v220_feed_changes)),
     ((2, 2, 1), (v221_feed_changes, )),
     ((2, 2, 2), (v222_feed_changes, )),
+    ((2, 2, 3), ()),
 ])
 
 ALWAYS = (harmonization, )

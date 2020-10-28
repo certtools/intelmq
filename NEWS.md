@@ -3,7 +3,22 @@ NEWS
 
 See the changelog for a full list of changes.
 
-2.2.2 Bugfix release (unreleased)
+2.2.3 Bugfix release (unreleased)
+---------------------------------
+
+### Requirements
+
+### Tools
+
+### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+2.2.2 Bugfix release (2020-10-28)
 ---------------------------------
 
 ### Bots
