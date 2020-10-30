@@ -3145,6 +3145,7 @@ mechanism are tried: CRAM-MD5, PLAIN, and LOGIN.
 Client certificates are not supported. If `http_verify_cert` is true, TLS certificates are checked.
 
 
+.. _bot sql:
 
 SQL
 ^^^

@@ -5,7 +5,7 @@ Feeds whishlist
 This is a list with various feeds, which are either currently not supported or the usage is not clearly documented in IntelMQ.
 
 If you want to **contribute** documenting how to configure existing bots in order to collect new feeds or by creating new parsers, here is a list of potentially interesting feeds.
-See `Feeds documentation <Developers-Guide.md#feeds-documentation>`_ for more information on this.
+See :ref:`feeds documentation` for more information on this.
 
 This list evolved from the issue `Contribute: Feeds List (#384) <https://github.com/certtools/intelmq/issues/384>`_.
 
@@ -16,6 +16,7 @@ This list evolved from the issue `Contribute: Feeds List (#384) <https://github.
 - Some third party intelmq bots: `NRDCS' IntelMQ fork <https://github.com/NRDCS/intelmq/tree/certlt/intelmq/bots>`_
 
 - List of potentially interesting data sources:
+
   - `Abuse.ch SSL Blacklists <https://sslbl.abuse.ch/blacklist/>`_
   - `Adblock Plus Malwaredomains <https://easylist-msie.adblockplus.org/malwaredomains_full.tpl>`_
   - `apivoid IP Reputation API <https://www.apivoid.com/api/ip-reputation/>`_

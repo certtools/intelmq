@@ -79,6 +79,8 @@ Fields List and data types
 
 A list of allowed fields and data types can be found in [Harmonization-fields.md](Harmonization-fields.md)
 
+.. _data harmonization classification:
+
 Classification
 ==============
 
