@@ -47,8 +47,7 @@ All configuration files are in the JSON format.
 For new installations a default setup with some examples is provided by the `intelmqsetup` tool. If this is not the case, make sure the program was run (see installation instructions).
 
 
-* `defaults.conf`: default values for all bots and their behavior, e.g.
-error handling, log options and pipeline configuration. Will be removed in the `future <https://github.com/certtools/intelmq/issues/267>`_.
+* `defaults.conf`: default values for all bots and their behavior, e.g. error handling, log options and pipeline configuration. Will be removed in the `future <https://github.com/certtools/intelmq/issues/267>`_.
 * `runtime.conf`: Configuration for the individual bots. See [Bots](Bots.md) for more details.
 * `pipeline.conf`: Defines source and destination queues per bot (i.e. where does a bot get its data from, where does it send it to?).
 * `BOTS`: Includes configuration hints for all bots. E.g. feed URLs or database connection parameters. Use this as a template for `runtime.conf`. This is also read by the intelmq-manager.
