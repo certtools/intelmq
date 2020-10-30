@@ -708,7 +708,9 @@ class IntelMQController():
                 raise FileNotFoundError
             logger = utils.log('intelmqctl', log_level=log_level,
                                log_format_stream=utils.LOG_FORMAT_SIMPLE,
-                               logging_level_stream=logging_level_stream)
+                               logging_level_stream=logging_level_stream,
+                               log_max_size=getattr(self.parameters, "logging_max_size", 0),
+                               log_max_copies=getattr(self.parameters, "logging_max_copies", None))
         except (FileNotFoundError, PermissionError) as exc:
             logger = utils.log('intelmqctl', log_level=log_level, log_path=False,
                                log_format_stream=utils.LOG_FORMAT_SIMPLE,

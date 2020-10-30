@@ -62,18 +62,32 @@ In the shipped examples 4 collectors and parsers, 6 common experts and one outpu
 System Configuration (defaults)
 -------------------------------
 
-All bots inherit this configuration parameters and they can overwrite them using the same parameters in their respective configuration in the ''runtime.conf'' file.
+All bots inherit the default configuration parameters and they can overwrite them using the same parameters in their respective configuration in the ''runtime.conf'' file.
+You can set the parameters from `defaults.conf` per bot as well. The settings will take effect for running bots after the bot re-reads the configuration (restart or reload).
 
-Example:
+Logging
+^^^^^^^
+
+The logging can be configured with the following parameters:
 
 * `logging_handler`: Can be one of `"file"` or `"syslog"`.
 * `logging_level`: Defines the system-wide log level that will be use by all bots and the intelmqctl tool. Possible values are: `"CRITICAL"`, `"ERROR"`, `"WARNING"`, `"INFO"` and `"DEBUG"`.
 * `logging_path`: If `logging_handler` is `file`. Defines the system-wide log-folder that will be use by all bots and the intelmqctl tool. Default value: `/opt/intelmq/var/log/`/`/opt/var/log/intelmq/`.
 * `logging_syslog`: If `logging_handler` is `syslog`. Either a list with hostname and UDP port of syslog service, e.g. `["localhost", 514]` or a device name/path, e.g. the default `"/var/log"`.
 
-We recommend `logging_level` `WARNING` for production environments and `INFO` if you want more details. In any case, watch your free disk space.
+We recommend `logging_level` `WARNING` for production environments and `INFO` if you want more details. In any case, watch your free disk space:
 
-You can set these parameters per bot as well. The settings will take effect after the runtime configuration has been (re-)read (which is after loading the defaults configuration. See the intelmqctl documentation).
+Log rotation
+""""""""""""
+
+To rotate the logs, you can use the standard Linux-tool logrotate.
+An example logrotate configuration is given in `contrib/logrotate/` and delivered with all deb/rpm-packages.
+When not using logrotate, IntelMQ can rotate the logs itself, which is not enabled by default! You need to set both values.
+
+* `logging_max_size`: Maximum number of bytes to be stored in one logfile before the file is rotated (default: 0, equivalent to unset).
+* `logging_max_copies`: Maximum number of logfiles to keep (default: unset). Compression is not supported.
+
+Some information can as well be found in Python's documentation on the used `RotatingFileHandler <https://docs.python.org/3/library/logging.handlers.html#logging.handlers.RotatingFileHandler>`_.
 
 Error Handling
 ^^^^^^^^^^^^^^
