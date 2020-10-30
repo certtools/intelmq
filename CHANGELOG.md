@@ -17,6 +17,7 @@ CHANGELOG
   - `PipelineError`: Remove unused code to format exceptions.
 - `intelmq.lib.utils`:
   - `create_request_session_from_bot`: Changed bot argument to optional, uses defaults.conf as fallback, renamed to `create_request_session`. Name `create_request_session_from_bot` will be removed in version 3.0.0.
+  - `log`: Use RotatingFileHandler for allow log file rotation without external tools (PR#1637 by Vasek Bruzek).
 
 ### Development
 - `intelmq.bin.intelmq_gen_docs`: Add bot name to the `Feeds.md` documentation (PR#1617 by Birger Schacht).
@@ -74,6 +75,7 @@ CHANGELOG
   - Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
   - Added CZ.NIC Proki feed (PR#1599 by sinus-x).
   - Added CERT-BUND CB-Report Malware infections feed (PR#1598 by sinus-x).
+  - Fixed parsing of the `public` field in the generated feeds documentation (PR#1641 by Birger Schacht).
 - Bots:
   - Enhanced documentation of RFC1918 Expert.
   - Enhanced documentation of SQL Output (PR #1620 by Edvard Rejthar).
@@ -82,6 +84,7 @@ CHANGELOG
 - Moved 'Orphaned Queues' section from the FAQ to the intelmqctl documentation.
 - Generate documentation using Sphinx (PR#1622 by Birger Schacht).
   - The documentation is now available at https://intelmq.readthedocs.io/en/latest/
+  - Refactor documentation and fix broken syntax (#1639, PRs #1638 #1640 #1642 by Birger Schacht).
 
 ### Packaging
 
