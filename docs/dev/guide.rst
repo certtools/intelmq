@@ -782,6 +782,8 @@ Then use the Makefile to build the documentation using Sphinx:
    cd docs
    make html
 
+.. _feeds documentation:
+
 Feeds documentation
 ===================
 
