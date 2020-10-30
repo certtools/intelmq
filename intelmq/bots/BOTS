@@ -871,7 +871,7 @@
             }
         },
         "Modify": {
-            "description": "Perform arbitrary changes to event's fields based on regular-expression-based rules on different values. See docs/Bots.md for some examples.",
+            "description": "Perform arbitrary changes to event's fields based on regular-expression-based rules on different values. See the bot's documentation for some examples.",
             "module": "intelmq.bots.experts.modify.expert",
             "parameters": {
                 "case_sensitive": true,

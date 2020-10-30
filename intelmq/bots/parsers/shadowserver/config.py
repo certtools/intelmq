@@ -57,10 +57,9 @@ the second value is the row in the shadowserver csv.
 
 Reference material:
     * when setting the classification.* fields, please use the taxonomy from
-      [eCSIRT II](https://www.trusted-introducer.org/Incident-Classification-Taxonomy.pdf)
-      Also to be found on the
-      [ENISA page](https://www.enisa.europa.eu/topics/csirt-cert-services/community-projects/existing-taxonomies)
-    * please respect the Data harmonization ontology: https://github.com/certtools/intelmq/blob/master/docs/Data-Harmonization.md
+      https://intelmq.readthedocs.io/en/latest/guides/Data-Harmonization.html#classification
+      or upstream from https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
+    * please respect the Data harmonization ontology: https://intelmq.readthedocs.io/en/latest/guides/Data-Harmonization.html
 
 
 TODOs:

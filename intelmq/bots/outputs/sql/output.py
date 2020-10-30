@@ -2,7 +2,7 @@
 """
 SQL output bot.
 
-See Readme.md for installation and configuration.
+See https://intelmq.readthedocs.io/en/latest/guides/Bots.html#sql for installation and configuration.
 
 In case of errors, the bot tries to reconnect if the error is of operational
 and thus temporary. We don't want to catch too much, like programming errors

@@ -30,6 +30,7 @@ TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
                     None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
 
 DATA_CONVERSIONS = {'json': lambda data: json.loads(data)}
+DOCS = "https://intelmq.readthedocs.io/en/latest/guides/Bots.html#generic-csv-parser"
 
 
 class GenericCsvParserBot(ParserBot):
@@ -54,13 +55,13 @@ class GenericCsvParserBot(ParserBot):
         if self.time_format not in TIME_CONVERSIONS.keys():
             raise InvalidArgument('time_format', got=self.time_format,
                                   expected=list(TIME_CONVERSIONS.keys()),
-                                  docs='docs/Bots.md')
+                                  docs=DOCS)
         self.filter_text = getattr(self.parameters, 'filter_text', None)
         self.filter_type = getattr(self.parameters, 'filter_type', None)
         if self.filter_type and self.filter_type not in ('blacklist', 'whitelist'):
             raise InvalidArgument('filter_type', got=self.filter_type,
                                   expected=("blacklist", "whitelist"),
-                                  docs='docs/Bots.md')
+                                  docs=DOCS)
         self.columns_required = getattr(self.parameters, 'columns_required',
                                         [True for _ in self.columns])
         if len(self.columns) != len(self.columns_required):
