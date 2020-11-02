@@ -27,3 +27,6 @@ debian/intelmq.prerm.debhelper
 debian/intelmq.substvars
 debian/intelmq/
 /.pc/*
+
+docs/architecture-3.0.pdf
+docs/architecture-3.0.docx
