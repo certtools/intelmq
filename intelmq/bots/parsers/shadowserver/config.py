@@ -56,7 +56,8 @@ The first value is the IntelMQ key,
 the second value is the row in the shadowserver csv.
 
 Reference material:
-    * when setting the classification.* fields, please use the taxonomy from the Data Harmonization 
+    * when setting the classification.* fields,
+      please use the taxonomy from the Data Harmonization
       :ref:`data harmonization classification`
       or upstream from https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
     * please respect the Data harmonization ontology: :doc:`/dev/data-harmonization`
