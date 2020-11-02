@@ -47,7 +47,7 @@ All configuration files are in the JSON format.
 For new installations a default setup with some examples is provided by the `intelmqsetup` tool. If this is not the case, make sure the program was run (see installation instructions).
 
 
-* `defaults.conf`: default values for all bots and their behavior, e.g. error handling, log options and pipeline configuration. Will be removed in the `future <https://github.com/certtools/intelmq/issues/267>`_.
+* `defaults.conf`: default values for all bots and their behavior, e.g. error handling, log options and pipeline configuration. Will be :issue:`removed in the future <267>`.
 * `runtime.conf`: Configuration for the individual bots. See [Bots](Bots.md) for more details.
 * `pipeline.conf`: Defines source and destination queues per bot (i.e. where does a bot get its data from, where does it send it to?).
 * `BOTS`: Includes configuration hints for all bots. E.g. feed URLs or database connection parameters. Use this as a template for `runtime.conf`. This is also read by the intelmq-manager.
@@ -465,7 +465,7 @@ destination queues (except outputs). But multiple bots can write to the same pip
 
 Every bot runs in a separate process. A bot is identifiable by a *bot id*.
 
-Currently only one instance (i.e. *with the same bot id*) of a bot can run at the same time. Concepts for multiprocessing are being discussed, see this issue: [Multiprocessing per queue is not supported #186](https://github.com/certtools/intelmq/issues/186).
+Currently only one instance (i.e. *with the same bot id*) of a bot can run at the same time. Concepts for multiprocessing are being discussed, see this issue: :issue:`Multiprocessing per queue is not supported #186 <186>`.
 Currently you can run multiple processes of the same bot (with *different bot ids*) in parallel.
 
 Example: multiple gethostbyname bots (with different bot ids) may run in parallel, with the same input queue and sending to the same output queue. Note that the bot providing the input queue **must** have the ``load_balance`` option set to ``true``.

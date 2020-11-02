@@ -49,7 +49,7 @@ When using the AMQP broker, you can make use of Multi-threading. See the [Uer-Gu
 Before Multithreading was available in IntelMQ, and in case you use Redis as broker, the only way to do load balancing involves more work.
 Create multiple instances of the same bot and connect them all to the same source and destination bots. Then set the parameter `load_balance` to `true` for the bot which sends the messages to the duplicated bot. Then, the bot sends messages to only one of the destination queues and not to all of them.
 
-True Multi*processing* is not available in IntelMQ. See also this discussion on a possible enhanced load balancing: https://github.com/certtools/intelmq/issues/186
+True Multi*processing* is not available in IntelMQ. See also this :issue:`discussion on a possible enhanced load balancing <186>`.
 
 Other options
 ^^^^^^^^^^^^^

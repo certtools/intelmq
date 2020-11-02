@@ -66,6 +66,7 @@ rst_prolog = """
 # ones.
 extensions = [
         'sphinx.ext.autodoc',
+        'sphinx.ext.extlinks',
         'recommonmark',
         'sphinx_markdown_tables',
         'sphinx.ext.napoleon'
@@ -84,6 +85,9 @@ napoleon_include_private_with_doc = True
 #napoleon_use_ivar = False
 #napoleon_use_param = True
 #napoleon_use_rtype = True
+
+
+extlinks = {'issue': ('https://github.com/certtools/intelmq/issues/%s', 'issue ')}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
