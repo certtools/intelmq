@@ -408,6 +408,7 @@ License and Author files
 ========================
 
 License and Authors files can be found at the root of repository.
+
 * License file **MUST NOT** be modified except by the explicit written permission by CNCS/CERT.PT or CERT.at
 * Credit to the authors file must be always retained. When a new contributor (person and/or organization) improves in some way the repository content (code or documentation), he or she might add his name to the list of contributors.
 
@@ -419,13 +420,14 @@ System Overview
 ***************
 
 In the `intelmq/lib/` directory you can find some libraries:
- * Bots: Defines base structure for bots and handling of startup, stop, messages etc.
- * Cache: For some expert bots it does make sense to cache external lookup results. Redis is used here.
- * Harmonization: For defined types, checks and sanitation methods are implemented.
- * Message: Defines Events and Reports classes, uses harmonization to check validity of keys and values according to config.
- * Pipeline: Writes messages to message queues. Implemented for productions use is only Redis, AMQP is beta.
- * Test: Base class for bot tests with predefined test and assert methods.
- * Utils: Utility functions used by system components.
+
+* Bots: Defines base structure for bots and handling of startup, stop, messages etc.
+* Cache: For some expert bots it does make sense to cache external lookup results. Redis is used here.
+* Harmonization: For defined types, checks and sanitation methods are implemented.
+* Message: Defines Events and Reports classes, uses harmonization to check validity of keys and values according to config.
+* Pipeline: Writes messages to message queues. Implemented for productions use is only Redis, AMQP is beta.
+* Test: Base class for bot tests with predefined test and assert methods.
+* Utils: Utility functions used by system components.
 
 Code Architecture
 =================
@@ -437,7 +439,7 @@ Pipeline
 ========
 
   * collector bot
-  **TBD**
+  * **TBD**
 
 
 *******************
@@ -463,7 +465,7 @@ Template
 
 Please adjust the doc strings accordingly and remove the in-line comments (`#`).
 
-.. code-block::python
+.. code-block:: python
 
    """Parse data from example.com, be a nice ExampleParserBot.
    
@@ -490,13 +492,16 @@ Please adjust the doc strings accordingly and remove the in-line comments (`#`).
    
    BOT = ExampleParserBot
 
+
 There are some names with special meaning. These can be used i.e. called:
+
 * `stop`: Shuts the bot down.
 * `receive_message`, `send_message`, `acknowledge_message`: see next section
 * `parameters`: the bots configuration as object
 * `start`: internal method to run the bot
 
 These can be defined:
+
 * `init`: called at startup, use it to set up the bot (initializing classes, loading files etc)
 * `process`: processes the messages
 * `shutdown`: To Gracefully stop the bot, e.g. terminate connections
