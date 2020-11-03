@@ -41,6 +41,14 @@
                 "rate_limit": 300
             }
         },
+        "Kafka": {
+            "description": "Fetch data from the Apache Kafka distributed stream processing system.",
+            "module": "intelmq.bots.collectors.kafka.collector",
+            "parameters": {
+                "topic": "<topic>",
+                "bootstrap_servers": "localhost:9092"
+            }
+        },
         "Mail Attachment Fetcher": {
             "description": "Monitor IMAP mailboxes and retrieve mail attachments.",
             "module": "intelmq.bots.collectors.mail.collector_mail_attach",
