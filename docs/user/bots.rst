@@ -1341,6 +1341,10 @@ for processing. Supported MISP event categories and attribute types are
 defined in the `SUPPORTED_MISP_CATEGORIES` and `MISP_TYPE_MAPPING` class
 constants.
 
+**Configuration Parameters**
+
+* `only_ids`: If set to true, MISP events will be discardrd if their to_ids attribute is set to false
+
 n6
 ^^
 

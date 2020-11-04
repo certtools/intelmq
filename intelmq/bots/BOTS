@@ -553,7 +553,9 @@
         "MISP": {
             "description": "Parse MISP events.",
             "module": "intelmq.bots.parsers.misp.parser",
-            "parameters": {}
+            "parameters": {
+                "ids_only": false
+            }
         },
         "Malc0de": {
             "description": "Parse the Malc0de IP feed in either IP Blacklist, Windows Format or Bind format.",
