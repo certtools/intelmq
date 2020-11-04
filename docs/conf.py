@@ -120,7 +120,7 @@ html_theme_options = {
         }
 
 def run_apidoc(_):
-    subprocess.check_call("sphinx-apidoc -o source ../intelmq", shell=True)
+    subprocess.check_call("sphinx-apidoc --implicit-namespaces -o source ../intelmq", shell=True)
 
 
 def run_autogen(_):
