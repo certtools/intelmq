@@ -76,6 +76,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`_.
   - `TotalHash <http://totalhash.com>`_
   - `UCE Protect <http://wget-mirrors.uceprotect.net/>`_
   - `URI BL <http://rss.uribl.com/index.shtml>`_
+  - `urlscan.io <https://urlscan.io/products/phishingfeed/>`_
   - `Virustotal <https://www.virustotal.com/gui/home/search>`_
   - `virustream <https://github.com/ntddk/virustream>`_
   - `VoIP Blacklist <http://www.voipbl.org/update/>`_
