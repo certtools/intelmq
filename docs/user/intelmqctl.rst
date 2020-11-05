@@ -105,6 +105,7 @@ Sends a SIGHUP to the bot, which will then reload the configuration.
    file-output is running.
 
 If the bot is not running, we can't reload it:
+
 .. code-block:: bash
 
    > intelmqctl reload file-output
@@ -262,7 +263,7 @@ Manage the botnet
 In IntelMQ, the botnet is the set of all currently configured and enabled bots.
 All configured bots have their configuration in runtime.conf and their queues in pipeline.conf.
 By default, all bots are enabled. To disable a bot set `enabled` to `false`.
-Also see [Bots.md](Bots) and [User-Guide.md#runtime-configuration](User Guide: Runtime Configuration).
+Also see :doc:`bots` and :ref:`runtime-configuration`.
 
 If not bot id is given, the command applies to all bots / the botnet.
 All commands except the start action are applied to all bots.

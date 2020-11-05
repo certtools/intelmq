@@ -61,7 +61,8 @@ Filter (optional)
 ^^^^^^^^^^^^^^^^^
 
 Before passing the data to the database you can apply certain changes. This is done with filters. See an example: 
-.. code-block::
+
+.. code-block:: json
 
    filter {
      mutate {
@@ -84,7 +85,7 @@ Output
 
 The pipeline also needs output, where we define our database (Elasticsearch). The simplest way of doing so is defining an output like this:
 
-.. code-block::
+.. code-block:: json
 
    output {
      elasticsearch {
