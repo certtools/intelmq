@@ -13,11 +13,14 @@ The following architecture document addresses
   principles which got lost over the last years due to feature creep
   * making IntelMQ 3.x interoperable with CERT.pl's n6 system
 
+## Implementation evaluation
+The mayor changes listed in this document should be evaluated based on use-cases and technical feasibility before the final implementation and integration into IntelMQ. The exact details of this process will be defined later."
+
 # Non-Scope
 
 This document will not list the individual, detailed steps which need to be taken to achieve these goals. 
 This is a high-level overview document. The detailed, individual steps will be specified as individual 
-issues on github and tagged ``intelmq3.0``.
+issues on github and assigned to the milestone `3.0`: https://github.com/certtools/intelmq/milestone/16
 
 
 # Motivation & Introduction
@@ -444,9 +447,7 @@ Each IntelMQ program (or -daemon) shall:
 ## Collectors
 
 Here we are already quite strong: we have lots of collectors (data importers). STIX 2.x is still missing.
-Should we get bored, here is a wish list of inputs: https://github.com/certtools/intelmq/blob/develop/docs/Feeds-whishlist.md.
-
-XXX @sebix: please also add the issues & milestone more bots feeds XXX
+Should we get bored, here is a wish list of inputs: https://github.com/certtools/intelmq/blob/develop/docs/Feeds-whishlist.md and a wishlist for bots: https://github.com/certtools/intelmq/milestone/7
 
 ## (New) Transcoders
 
