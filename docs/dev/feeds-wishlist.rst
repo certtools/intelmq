@@ -44,6 +44,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`_.
   - `IBM X-Force Exchange <https://exchange.xforce.ibmcloud.com/>`_
   - `ISC SANS <https://isc.sans.edu/ipsascii.html>`_
   - `ISightPartners <http://www.isightpartners.com/>`_
+  - `James Brine <https://jamesbrine.com.au/>`_
   - `Joewein <http://www.joewein.net>`_
   - `Malshare <https://malshare.com/>`_
   - `Malware Config <http://malwareconfig.com>`_
