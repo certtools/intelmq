@@ -324,6 +324,8 @@ Setting the statistics (and cache) parameters is necessary when the local redis 
 * `statistics_password`: `null`
 * `statistics_port`: `6379`
 
+.. _runtime-configuration:
+
 Runtime Configuration
 ---------------------
 
