@@ -681,6 +681,7 @@ class IntelMQController():
             no_file_logging: do not log to the log file
             drop_privileges: Drop privileges and fail if it did not work.
         """
+        self.logging_level = DEFAULT_LOGGING_LEVEL
         self.interactive = interactive
         global RETURN_TYPE
         RETURN_TYPE = return_type
