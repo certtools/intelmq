@@ -1,5 +1,3 @@
 #!/bin/bash
 echo "Starting IntelMQ"
-
-#/bin/bash &&
-tail -f /dev/null
+python3 /opt/intelmq/contrib/http-api/main.py

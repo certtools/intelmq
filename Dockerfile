@@ -3,6 +3,8 @@ FROM debian:buster
 ENV LANG C.UTF-8
 WORKDIR /opt/intelmq
 
+EXPOSE 1080
+
 COPY . /opt/intelmq
 
 RUN apt-get update \
@@ -22,7 +24,7 @@ RUN useradd -d /opt/intelmq -U -s /bin/bash intelmq
 RUN intelmqsetup
 RUN chown -R intelmq:intelmq /opt/intelmq
 
-RUN chmod +x entrypoint.sh
+RUN chmod +x .docker/entrypoint.sh
 
 USER intelmq
 
