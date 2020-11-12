@@ -256,7 +256,7 @@ def load_parameters(*configs: dict) -> Parameters:
     return parameters
 
 
-class FileHandler(logging.FileHandler):
+class RotatingFileHandler(logging.handlers.RotatingFileHandler):
     shell_color_pattern = re.compile(r'\x1b\[\d+m')
 
     def emit_print(self, record):
@@ -307,7 +307,8 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH,
         log_level: str = intelmq.DEFAULT_LOGGING_LEVEL,
         stream: Optional[object] = None, syslog: Union[bool, str, list, tuple] = None,
         log_format_stream: str = LOG_FORMAT_STREAM,
-        logging_level_stream: Optional[str] = None):
+        logging_level_stream: Optional[str] = None,
+        log_max_size: Optional[int] = 0, log_max_copies: Optional[int] = None):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
     The warnings module will log to the same handlers.
@@ -350,7 +351,9 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH,
         logging_level_stream = log_level
 
     if log_path and not syslog:
-        handler = FileHandler("%s/%s.log" % (log_path, name))
+        handler = RotatingFileHandler("%s/%s.log" % (log_path, name),
+                                      maxBytes=log_max_size,
+                                      backupCount=log_max_copies)
         handler.setLevel(log_level)
         handler.setFormatter(logging.Formatter(LOG_FORMAT))
     elif syslog:

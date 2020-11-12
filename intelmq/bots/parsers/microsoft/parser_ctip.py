@@ -6,8 +6,7 @@ Key indicatorexpirationdatetime is ignored, meaning is unknown.
 
 There are two different variants of data
 1. Interflow format: JSON format, MAPPING
-2. Azure format: JSON stream format, TODO
-
+2. Azure format: JSON stream format, a short example structure:
   "DataFeed": "CTIP-Infected",
   "SourcedFrom": "SinkHoleMessage|SensorMessage"",
   "DateTimeReceivedUtc": nt time
@@ -91,9 +90,22 @@ AZURE = {
     "SourceIp": "source.ip",
     "SourcePort": "source.port",
     "DestinationIp": "destination.ip",
+    # DestinationIpInfo.* fields are used in the ctip-c2 feed
+    "DestinationIpInfo.DestinationIpAsnNumber": "destination.asn",
+    "DestinationIpInfo.DestinationIpAsnOrgName": "destination.as_name",
+    "DestinationIpInfo.DestinationIpCountryCode": "destination.geolocation.cc",
+    "DestinationIpInfo.DestinationIpRegion": "destination.geolocation.region",
+    "DestinationIpInfo.DestinationIpCity": "destination.geolocation.city",
+    "DestinationIpInfo.DestinationIpPostalCode": "extra.destination.geolocation.postal_code",
+    "DestinationIpInfo.DestinationIpLatitude": "destination.geolocation.latitude",
+    "DestinationIpInfo.DestinationIpLongitude": "destination.geolocation.longitude",
+    "DestinationIpInfo.DestinationIpMetroCode": "extra.destination.geolocation.metro_code",
+    "DestinationIpInfo.DestinationIpAreaCode": "extra.destination.geolocation.area_code",
+    "DestinationIpInfo.DestnationIpConnectionType": "protocol.application",
     "DestinationPort": "destination.port",
     "TargetIp": "__IGNORE__",
     "TargetPort": "__IGNORE__",
+    "Signatures.Sha256": "extra.signatures.sha256",
     "SourceIpInfo.SourceIpAsnNumber": "source.asn",
     "SourceIpInfo.SourceIpAsnOrgName": "source.as_name",
     "SourceIpInfo.SourceIpCountryCode": "source.geolocation.cc",
@@ -127,7 +139,7 @@ AZURE = {
     "Payload.response": "extra.payload.response",
     "Payload.handler": "extra.payload.handler",
     "Payload.type": "protocol.application",
-    "Payload": "extra.payload",
+    "Payload": "extra.payload.text",
     "Payload.Time": "extra.payload.time",
     "Payload.SourceIP": "extra.payload.source.ip",
     "Payload.DestIP": "extra.payload.destination.ip",

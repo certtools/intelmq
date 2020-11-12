@@ -17,21 +17,28 @@ CHANGELOG
   - `PipelineError`: Remove unused code to format exceptions.
 - `intelmq.lib.utils`:
   - `create_request_session_from_bot`: Changed bot argument to optional, uses defaults.conf as fallback, renamed to `create_request_session`. Name `create_request_session_from_bot` will be removed in version 3.0.0.
+  - `log`: Use RotatingFileHandler for allow log file rotation without external tools (PR#1637 by Vasek Bruzek).
 
 ### Development
+- `intelmq.bin.intelmq_gen_docs`: Add bot name to the `Feeds.md` documentation (PR#1617 by Birger Schacht).
 
 ### Harmonization
 
 ### Bots
 #### Collectors
 - `intelmq.bots.collectors.eset.collector`: Added (PR#1554 by Mikk Margus Möll).
-- `intelmq.bots.collectors.http.collector_http`: Added PGP signature check functionality (PR#1602 by sinus-x).
+- `intelmq.bots.collectors.http.collector_http`:
+  - Added PGP signature check functionality (PR#1602 by sinus-x).
+  - If status code is not 2xx, the request's and response's headers and body are logged in debug logging level (#1615).
 
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
   - Ignore invalid "NXDOMAIN" IP addresses (PR#1573 by Mikk Margus Möll).
 - `intelmq.bots.parsers.hphosts`: Removed, feed is unavailable (#1559).
-- `intelmq.bots.parsers.cznic.parser_haas`: Added (PR#1560 by Filip Pokorný and Edvard Rejthar)
+- `intelmq.bots.parsers.cznic.parser_haas`: Added (PR#1560 by Filip Pokorný and Edvard Rejthar).
+- `intelmq.bots.parsers.cznic.parser_proki`: Added (PR#1599 by sinus-x).
+- `intelmq.bots.parsers.key_value.parser`: Added (PR#1607 by Karl-Johan Karlsson).
+- `intelmq.bots.parsers.generic.parser_csv`: Added new parameter `compose_fields`.
 
 #### Experts
 - `intelmq.bots.experts.rfc1918.expert`:
@@ -56,24 +63,42 @@ CHANGELOG
   - Added `--update-database` option. (PR#1524 by Filip Pokorný)
   - Added `api_token` parameter. (PR#1524 by Filip Pokorný)
   - The script `update-rfiprisk-data` is now deprecated and will be removed in version 3.0.
+- Added `intelmq.bots.experts.threshold` (PR#1608 by Karl-Johan Karlsson).
 
 #### Outputs
+- `intelmq.bots.outputs.rt`: Added Request Tracker output bot (PR#1589 by Marius Urkis).
 
 ### Documentation
 - Feeds:
   - Add ESET URL and Domain feeds
   - Remove unavailable *HPHosts Hosts file* feed (#1559).
   - Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
+  - Added CZ.NIC Proki feed (PR#1599 by sinus-x).
+  - Added CERT-BUND CB-Report Malware infections feed (PR#1598 by sinus-x).
+  - Fixed parsing of the `public` field in the generated feeds documentation (PR#1641 by Birger Schacht).
 - Bots:
   - Enhanced documentation of RFC1918 Expert.
+  - Enhanced documentation of SQL Output (PR #1620 by Edvard Rejthar).
   - Updated documentation for Maxmind GeoIP, ASN Lookup, TOR Nodes and Recorded Future experts to reflect new `--update-database` option.  (PR#1524 by Filip Pokorný)
 - Add n6 Integration documentation.
 - Moved 'Orphaned Queues' section from the FAQ to the intelmqctl documentation.
+- Generate documentation using Sphinx (PR#1622 by Birger Schacht).
+  - The documentation is now available at https://intelmq.readthedocs.io/en/latest/
+  - Refactor documentation and fix broken syntax (#1639, PRs #1638 #1640 #1642 by Birger Schacht).
 
 ### Packaging
 
 ### Tests
 - Added tests for `intelmq.lib.exceptions.PipelineError`.
+- `intelmq.tests.bots.collectors.http_collector.test_collector`: Use requests_mock to mock all requests and do not require a local webserver.
+- `intelmq.tests.bots.outputs.restapi.test_output`:
+  - Use requests_mock to mock all requests and do not require a local webserver.
+  - Add a test for checking the response status code.
+- `intelmq.tests.bots.collectors.mail.test_collector_url`: Use requests_mock to mock all requests and do not require a local webserver.
+- `intelmq.tests.bots.experts.ripe.test_expert`: Use requests_mock to mock all requests and do not require a local webserver.
+- The test flag (environment variable) `INTELMQ_TEST_LOCAL_WEB` is no longer used.
+- Travis:
+  - Remove installation of local web-server (not necessary anymore) and HTTP proxy (no tests anymore).
 
 ### Tools
 - `intelmqdump`:
@@ -89,14 +114,13 @@ CHANGELOG
 
 ### Known issues
 
-2.2.2 (unreleased)
+
+2.2.3 (unreleased)
 ------------------
 
 ### Configuration
 
 ### Core
-- `intelmq.lib.upgrades`:
-  - Add upgrade function for renamed Shadowserver feed name "Blacklisted-IP"/"Blocklist".
 
 ### Development
 
@@ -106,16 +130,47 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
+2.2.2 (2020-10-28)
+------------------
+
+### Core
+- `intelmq.lib.upgrades`:
+  - Add upgrade function for renamed Shadowserver feed name "Blacklisted-IP"/"Blocklist".
+
+### Bots
+#### Parsers
 - `intelmq.bots.parsers.shadowserver`:
   - Rename "Blacklisted-IP" feed to "Blocklist", old name is still valid until IntelMQ version 3.0 (PR#1588 by Thomas Hungenberg).
   - Added support for the feeds `Accessible Radmin` and `CAIDA IP Spoofer` (PR#1600 by sinus-x).
 - `intelmq.bots.parsers.anubisnetworks.parser`: Fix parsing error where `dst.ip` was not equal to `comm.http.host`.
 - `intelmq/bots/parsers/danger_rulez/parser`: correctly skip malformed rows by defining variables before referencing (PR#1601 by Tomas Bellus).
+- `intelmq.bots.parsers.misp.parser: Fix MISP Event URL (#1619, PR#1618 by Nedfire23).
+- `intelmq.bots.parsers.microsoft.parser_ctip`:
+  - Add support for `DestinationIpInfo.*` and `Signatures.Sha256` fields, used by the `ctip-c2` feed (PR#1623 by Mikk Margus Möll).
+  - Use `extra.payload.text` for the feed's field `Payload` if the content cannot be decoded (PR#1610 by Giedrius Ramas).
 
 #### Experts
-
-#### Outputs
-- `intelmq.bots.outputs.rt`: Added Request Tracker output bot (PR#1589 by Marius Urkis).
+- `intelmq.bots.experts.cymru_whois`:
+  - Fix cache key calculation which previously led to duplicate keys and therefore wrong results in rare cases. The cache key calculation is intentionally not backwards-compatible (#1592, PR#1606).
+  - The bot now caches and logs (as level INFO) empty responses from Cymru (PR#1606).
 
 ### Documentation
 - README:
@@ -128,8 +183,11 @@ CHANGELOG
   - Gethostbyname expert: Add documentation how errors are treated.
 - Feeds:
   - Fixed bot modules of Calidog CertStream feed.
+  - Add information on Microsoft CTIP C2 feed.
 
 ### Packaging
+- In Debian packages, `intelmqctl check` and `intelmqctl upgrade-config` are executed in the postinst step (#1551, PR#1624 by Birger Schacht).
+- Require `requests<2.26` for Python 3.5, as 2.25.x will be the last release series of the requests library with support for Python 3.5.
 
 ### Tests
 - `intelmq.tests.lib.test_pipeline`: Skip `TestAmqp.test_acknowledge` on Travis with Python 3.8.
@@ -141,8 +199,11 @@ CHANGELOG
   - Fix check on source/destination queues for bots as well the orphaned queues.
 
 ### Contrib
+- Bash completion scripts: Check both `/opt/intelmq/` as well as LSB-paths (`/etc/intelmq/` and `/var/log/intelmq/`) for loading bot information (#1561, PR#1628 by Birger Schacht).
 
 ### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952).
+- Corrupt dump files when interrupted during writing (#870).
 
 
 2.2.1 (2020-07-30)

@@ -7,8 +7,8 @@ Funding: of initial version by SUNET
 Author(s):
   * Bernhard Reiter <bernhard@intevation.de>
 
-TODO: A shortened copy of this documentation is kept at `docs/Bots.md`, please
-      keep it current, when changing something.
+A shortened copy of this documentation is kept at `docs/user/bots.rst`, please
+keep it current, when changing something.
 
 Parameters:
   - add_feed_provider_as_tag: bool (use true when in doubt)

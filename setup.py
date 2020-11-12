@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+import sys
 
 from setuptools import find_packages, setup
 
@@ -12,8 +13,11 @@ REQUIRES = [
     'python-termstyle>=0.1.10',
     'pytz>=2012c',
     'redis>=2.10',
-    'requests>=2.2.0',
 ]
+if sys.version_info[:2] == (3, 5):
+    REQUIRES.append('requests<2.26')
+else:
+    REQUIRES.append('requests>=2.2.0')
 
 exec(open(os.path.join(os.path.dirname(__file__),
                        'intelmq/version.py')).read())  # defines __version__
@@ -25,12 +29,11 @@ for bot_type, bots in bots.items():
         BOTS.append('{0} = {0}:BOT.run'.format(module))
 
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as handle:
-    README = handle.read().replace('<docs/',
-                                   '<https://github.com/certtools/intelmq/blob/master/docs/')
+    README = handle.read()
 
 setup(
     name='intelmq',
-    version=__version__,
+    version=__version__,  # noqa: F821
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
     python_requires='>=3.5',

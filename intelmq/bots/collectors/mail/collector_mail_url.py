@@ -48,7 +48,7 @@ class MailURLCollectorBot(MailCollectorBot):
                 try:
                     resp = self.session.get(url=url)
                 except requests.exceptions.Timeout:
-                    self.logger.error("Request timed out %i times in a row. " %
+                    self.logger.error("Request timed out %i times in a row." %
                                       self.http_timeout_max_tries)
                     erroneous = True
                     # The download timed out too often, leave the Loop.
@@ -61,7 +61,7 @@ class MailURLCollectorBot(MailCollectorBot):
                     continue
 
                 if not resp.content:
-                    self.logger.warning('Got empty reponse from server.')
+                    self.logger.warning('Got empty response from server.')
                 else:
                     self.logger.info("Report downloaded.")
 

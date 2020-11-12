@@ -20,7 +20,7 @@ verify_pgp_signatures: whether to download and check file signatures
     default: False
 signature_url: string
 signature_url_formatting: the same as http_url_formatting
-pgp_keyring: none (defaults to user's GPG keyring) or string (path to keyring file)
+gpg_keyring: none (defaults to user's GPG keyring) or string (path to keyring file)
 """
 from datetime import datetime, timedelta
 
@@ -60,9 +60,11 @@ class HTTPCollectorBot(CollectorBot):
 
         self.session = create_request_session(self)
 
-        self.use_gpg = getattr(self.parameters, "verify_gpg_signatures", False)
+        self.use_gpg = getattr(self.parameters, "verify_pgp_signatures", False)
         if self.use_gpg and gnupg is None:
             raise MissingDependencyError("gnupg")
+        else:
+            self.logger.info('PGP signature verification is active.')
 
     def process(self):
         formatting = getattr(self.parameters, 'http_url_formatting', False)
@@ -76,6 +78,10 @@ class HTTPCollectorBot(CollectorBot):
         resp = self.session.get(url=http_url)
 
         if resp.status_code // 100 != 2:
+            self.logger.debug('Request headers: %r.', resp.request.headers)
+            self.logger.debug('Request body: %r.', resp.request.body)
+            self.logger.debug('Response headers: %r.', resp.headers)
+            self.logger.debug('Response body: %r.', resp.text)
             raise ValueError('HTTP response status code was %i.' % resp.status_code)
 
         self.logger.info("Report downloaded.")

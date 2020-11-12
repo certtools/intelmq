@@ -11,6 +11,9 @@ if [ "$1" = "configure" ] ; then
     chmod -R g+w /var/lib/intelmq/*
     chown -R intelmq:intelmq /etc/intelmq/ /var/lib/intelmq/ /var/log/intelmq/
     systemd-tmpfiles --create /usr/lib/tmpfiles.d/intelmq.conf
+
+    runuser -u intelmq -- /usr/bin/intelmqctl upgrade-config
+    runuser -u intelmq -- /usr/bin/intelmqctl -q check --no-connections
 fi
 
 #DEBHELPER#

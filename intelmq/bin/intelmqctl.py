@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import argparse
 import datetime
@@ -23,7 +22,7 @@ from collections import OrderedDict
 import pkg_resources
 from termstyle import green
 
-from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,
+from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,  # noqa: F401
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
                      DEFAULT_LOGGING_PATH, __version_info__,
@@ -400,8 +399,7 @@ class IntelMQProcessManager:
             return False
         except psutil.AccessDenied:
             return 'Could not get status of process: Access denied.'
-        except:
-            raise
+        # let every other exception pass
 
 
 class SupervisorProcessManager:
@@ -683,6 +681,7 @@ class IntelMQController():
             no_file_logging: do not log to the log file
             drop_privileges: Drop privileges and fail if it did not work.
         """
+        self.logging_level = DEFAULT_LOGGING_LEVEL
         self.interactive = interactive
         global RETURN_TYPE
         RETURN_TYPE = return_type
@@ -691,28 +690,29 @@ class IntelMQController():
         QUIET = quiet
         self.parameters = Parameters()
 
-        # Try to get log_level from defaults_configuration, else use default
+        # Try to get logging_level from defaults configuration, else use default (defined above)
         defaults_loading_exc = None
         try:
             self.load_defaults_configuration()
         except Exception as exc:
             defaults_loading_exc = exc
-            log_level = DEFAULT_LOGGING_LEVEL
             logging_level_stream = 'DEBUG'
         else:
-            log_level = self.parameters.logging_level.upper()
+            self.logging_level = self.parameters.logging_level.upper()
         # make sure that logging_level_stream is always at least INFO or more verbose
         # otherwise the output on stdout/stderr is less than the user expects
-        logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
+        logging_level_stream = self.logging_level if self.logging_level == 'DEBUG' else 'INFO'
 
         try:
             if no_file_logging:
                 raise FileNotFoundError
-            logger = utils.log('intelmqctl', log_level=log_level,
+            logger = utils.log('intelmqctl', log_level=self.logging_level,
                                log_format_stream=utils.LOG_FORMAT_SIMPLE,
-                               logging_level_stream=logging_level_stream)
+                               logging_level_stream=logging_level_stream,
+                               log_max_size=getattr(self.parameters, "logging_max_size", 0),
+                               log_max_copies=getattr(self.parameters, "logging_max_copies", None))
         except (FileNotFoundError, PermissionError) as exc:
-            logger = utils.log('intelmqctl', log_level=log_level, log_path=False,
+            logger = utils.log('intelmqctl', log_level=self.logging_level, log_path=False,
                                log_format_stream=utils.LOG_FORMAT_SIMPLE,
                                logging_level_stream=logging_level_stream)
             logger.error('Not logging to file: %s', exc)
@@ -1498,7 +1498,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 if orphan_queues:
                     check_logger.warning("Orphaned queues found: '%s'. Possible leftover from past reconfigurations "
                                          "without cleanup. Have a look at the FAQ at "
-                                         "https://github.com/certtools/intelmq/blob/master/docs/intelmqctl.md"
+                                         "https://intelmq.readthedocs.io/en/latest/guides/intelmqctl.html"
                                          "#orphaned-queues", orphan_queues)
 
         check_logger.info('Checking harmonization configuration.')

@@ -103,8 +103,6 @@ class ASNLookupExpertBot(Bot):
         if pyasn is None:
             raise MissingDependencyError("pyasn")
 
-        from pyasn import mrtx
-
         try:
             print("Searching for the latest database update...")
             session = create_request_session()

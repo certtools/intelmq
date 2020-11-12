@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """
 """
@@ -189,12 +188,14 @@ def main():
 
     # Try to get log_level from defaults_configuration, else use default
     try:
-        log_level = utils.load_configuration(DEFAULTS_CONF_FILE)['logging_level']
+        defaults = utils.load_configuration(DEFAULTS_CONF_FILE)
     except Exception:
         log_level = DEFAULT_LOGGING_LEVEL
 
     try:
-        logger = utils.log('intelmqdump', log_level=log_level)
+        logger = utils.log('intelmqdump', log_level=defaults['logging_level'],
+                           log_max_size=defaults.get("logging_max_size", 0),
+                           log_max_copies=defaults.get("logging_max_copies", None))
     except (FileNotFoundError, PermissionError) as exc:
         logger = utils.log('intelmqdump', log_level=log_level, log_path=False)
         logger.error('Not logging to file: %s', exc)

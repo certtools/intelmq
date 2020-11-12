@@ -14,7 +14,7 @@
             "to_ids": false,
             "type": "url",
             "uuid": "575c8598-f1f0-4c16-a94a-0612c0a83866",
-            "value": "http://fake.website.com/malware/is/here"
+            "value": "http://fake.example.com/malware/is/here"
         },
         {
             "ShadowAttribute": [],

@@ -9,7 +9,6 @@ import sys
 import tarfile
 import pathlib
 import requests
-import copy
 
 from intelmq.lib.bot import Bot
 from intelmq import RUNTIME_CONF_FILE

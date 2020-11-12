@@ -1,5 +1,8 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
+
+# This script generates the files
+# `guides/Harmonization-fields.md`
+# and `guides/Feeds.md`
 
 import json
 import os.path
@@ -27,7 +30,7 @@ TYPE_SECTION = """### {}
 {}
 
 """
-BASEDIR = os.path.join(os.path.dirname(__file__), '../../')
+BASEDIR = os.path.join(os.path.dirname(__file__), '../')
 
 
 def harm_docs():
@@ -71,42 +74,28 @@ def feeds_docs():
     with open(os.path.join(BASEDIR, 'intelmq/etc/feeds.yaml')) as fhandle:
         config = yaml.safe_load(fhandle.read())
 
-    with open(os.path.join(BASEDIR, 'intelmq/bots/BOTS')) as fhandle:
-        bots = json.load(fhandle)
-
-    toc = ""
-    for provider in sorted(config['providers'].keys()):
-        provider_link = provider.replace('.', '')
-        provider_link = provider_link.replace(' ', '-')
-        toc += "- [%s](#%s)\n" % (provider, provider_link.lower())
-
-    output = """# Available Feeds
+    output = """Feeds
+======
 
 The available feeds are grouped by the provider of the feeds.
 For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.
-To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
-`intelmq/bin/intelmq_gen_feeds_docs.py` to generate the new content of this file.
+To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild the documentation.
 
-<!-- TOC depthFrom:2 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
+.. contents ::
 
-%s
-
-<!-- /TOC -->\n
-
-""" % toc
+"""
 
     for provider, feeds in sorted(config['providers'].items(), key=lambda x: x[0]):
 
-        output += "# %s\n\n" % provider
+        output += f"{provider}\n"
+        output += "-"*len(provider) + "\n"
 
         for feed, feed_info in sorted(feeds.items(), key=lambda x: x[0]):
 
-            output += "## %s\n\n" % feed
+            output += f"{feed}\n"
+            output += "^"*len(feed) + "\n"
 
-            if feed_info.get('public'):
-                output += info("public", "yes" if feed_info['public'] else "no")
-            else:
-                output += info("public", "unknown")
+            output += info("public", "yes") if feed_info.get('public') else info("public", "no")
 
             output += info("revision", feed_info['revision'])
 
@@ -122,15 +111,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
             for bot, bot_info in sorted(feed_info['bots'].items(), key=lambda x: x[0]):
 
-                output += "### %s\n\n" % bot.title()
+                output += "**%s**\n\n" % bot.title()
 
-                botname = "Undefined Bot"
-                for bottype, botlist in bots.items():
-                    for bot, botdata in botlist.items():
-                        if botdata['module'] == bot_info['module']:
-                            botname = bot
-
-                output += info("Bot", f"{botname} (Module `{bot_info['module']}`)")
+                output += info("Module", bot_info['module'])
                 output += info("Configuration Parameters")
 
                 if bot_info.get('parameters'):
@@ -147,7 +130,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
                         if isinstance(value, (list, tuple)) and value:
                             value = '["%s"]' % '", "'.join(value)
 
-                        output += "*  * `%s`: `%s`\n" % (key, value)
+                        output += "   * `%s`: `%s`\n" % (key, value)
 
                 output += '\n'
 
@@ -157,7 +140,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
 
 if __name__ == '__main__':  # pragma: no cover
-    with open(os.path.join(BASEDIR, 'docs/Harmonization-fields.md'), 'w') as handle:
+    with open('guides/Harmonization-fields.md', 'w') as handle:
         handle.write(harm_docs())
-    with open(os.path.join(BASEDIR, 'docs/Feeds.md'), 'w') as handle:
+    with open('user/feeds.rst', 'w') as handle:
         handle.write(feeds_docs())

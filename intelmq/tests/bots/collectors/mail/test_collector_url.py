@@ -6,8 +6,11 @@ import unittest.mock as mock
 import unittest
 import os
 
+import requests_mock
+
 import intelmq.lib.test as test
 from intelmq.bots.collectors.mail.collector_mail_url import MailURLCollectorBot
+from intelmq.tests.bots.collectors.http.test_collector import prepare_mocker
 if os.getenv('INTELMQ_TEST_EXOTIC'):
     from .lib import MockedTxtImbox
 
@@ -43,7 +46,9 @@ class TestMailURLCollectorBot(test.BotTestCase, unittest.TestCase):
                          'name': 'IMAP Feed',
                          }
 
-    def test_localhost(self):
+    @requests_mock.Mocker()
+    def test_fetch(self, mocker):
+        prepare_mocker(mocker)
         with mock.patch('imbox.Imbox', new=MockedTxtImbox):
             self.run_bot()
         self.assertMessageEqual(0, REPORT_FOOBARTXT)

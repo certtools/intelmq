@@ -30,6 +30,7 @@ TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
                     None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
 
 DATA_CONVERSIONS = {'json': lambda data: json.loads(data)}
+DOCS = "https://intelmq.readthedocs.io/en/latest/guides/Bots.html#generic-csv-parser"
 
 
 class GenericCsvParserBot(ParserBot):
@@ -54,18 +55,20 @@ class GenericCsvParserBot(ParserBot):
         if self.time_format not in TIME_CONVERSIONS.keys():
             raise InvalidArgument('time_format', got=self.time_format,
                                   expected=list(TIME_CONVERSIONS.keys()),
-                                  docs='docs/Bots.md')
+                                  docs=DOCS)
         self.filter_text = getattr(self.parameters, 'filter_text', None)
         self.filter_type = getattr(self.parameters, 'filter_type', None)
         if self.filter_type and self.filter_type not in ('blacklist', 'whitelist'):
             raise InvalidArgument('filter_type', got=self.filter_type,
                                   expected=("blacklist", "whitelist"),
-                                  docs='docs/Bots.md')
+                                  docs=DOCS)
         self.columns_required = getattr(self.parameters, 'columns_required',
                                         [True for _ in self.columns])
         if len(self.columns) != len(self.columns_required):
             raise ValueError("Length of parameters 'columns' (%d) and 'columns_required' (%d) "
                              "needs to be equal." % (len(self.columns), len(self.columns_required)))
+
+        self.compose = getattr(self.parameters, 'compose_fields', {}) or {}
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
@@ -108,13 +111,13 @@ class GenericCsvParserBot(ParserBot):
                     else:
                         value = None
 
-                if key in ["__IGNORE__", ""]:
+                if key in ("__IGNORE__", ""):
                     break
 
                 if key in self.data_type:
                     value = DATA_CONVERSIONS[self.data_type[key]](value)
 
-                if key in ["time.source", "time.destination"]:
+                if key in ("time.source", "time.destination"):
                     value = TIME_CONVERSIONS[self.time_format](value)
                 elif key.endswith('.url'):
                     if not value:
@@ -133,8 +136,11 @@ class GenericCsvParserBot(ParserBot):
                 if required:
                     raise InvalidValue(key, value)
 
-        if hasattr(self.parameters, 'type')\
-                and "classification.type" not in event:
+        # Field composing
+        for key, value in self.compose.items():
+            event[key] = value.format(*row)
+
+        if hasattr(self.parameters, 'type') and "classification.type" not in event:
             event.add('classification.type', self.parameters.type)
         event.add("raw", self.recover_line(row))
         yield event

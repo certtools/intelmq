@@ -26,7 +26,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v220_azure_collector',
            'v220_feed_changes',
            'v221_feed_changes',
-           'v222_feed_changes_1',
+           'v222_feed_changes',
            ]
 
 
@@ -501,7 +501,7 @@ def v221_feed_changes(defaults, runtime, harmonization, dry_run):
     return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
 
 
-def v222_feed_changes_1(defaults, runtime, harmonization, dry_run):
+def v222_feed_changes(defaults, runtime, harmonization, dry_run):
     """
     Migrate Shadowserver feed name
     """
@@ -529,7 +529,8 @@ UPGRADES = OrderedDict([
     ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
     ((2, 2, 0), (v220_configuration, v220_azure_collector, v220_feed_changes)),
     ((2, 2, 1), (v221_feed_changes, )),
-    ((2, 2, 2), (v222_feed_changes_1, )),
+    ((2, 2, 2), (v222_feed_changes, )),
+    ((2, 2, 3), ()),
 ])
 
 ALWAYS = (harmonization, )

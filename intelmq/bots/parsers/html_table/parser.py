@@ -60,7 +60,7 @@ class HTMLTableParserBot(Bot):
         if self.time_format and self.time_format.split('|')[0] not in DateTime.TIME_CONVERSIONS.keys():
             raise InvalidArgument('time_format', got=self.time_format,
                                   expected=list(DateTime.TIME_CONVERSIONS.keys()),
-                                  docs='docs/Bots.md')
+                                  docs='https://intelmq.readthedocs.io/en/latest/guides/Bots.html#html-table-parser')
         self.default_url_protocol = getattr(self.parameters, 'default_url_protocol', 'http://')
 
         self.parser = getattr(self.parameters, 'html_parser', 'html.parser')
