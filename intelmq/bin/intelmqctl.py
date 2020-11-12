@@ -171,10 +171,12 @@ class IntelMQProcessManager:
         with open(filename, 'w') as fp:
             fp.write(str(os.getpid()))
 
+        output = ""
         try:
-            BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
+            bd = BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
                         console_type, message_action_kind, dryrun, msg, show_sent,
                         loglevel=loglevel)
+            output = bd.run()
             retval = 0
         except KeyboardInterrupt:
             print('Keyboard interrupt.')
@@ -186,7 +188,8 @@ class IntelMQProcessManager:
         self.__remove_pidfile(bot_id)
         if paused:
             self.bot_start(bot_id)
-        return retval
+
+        return retval, output
 
     def bot_start(self, bot_id, getstatus=True):
         pid = self.__check_pid(bot_id)
@@ -463,10 +466,12 @@ class SupervisorProcessManager:
 
         log_bot_message("starting", bot_id)
 
+        output = ""
         try:
             BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
                         console_type, message_action_kind, dryrun, msg, show_sent,
                         loglevel=loglevel)
+            output = bd.run()
             retval = 0
         except KeyboardInterrupt:
             print("Keyboard interrupt.")
@@ -478,7 +483,7 @@ class SupervisorProcessManager:
         if paused:
             self.bot_start(bot_id)
 
-        return retval
+        return retval, output
 
     def bot_start(self, bot_id: str, getstatus: bool = True):
         state = self._get_process_state(bot_id)
@@ -1031,7 +1036,12 @@ Get some debugging output on the settings and the enviroment (to be extended):
         return retval
 
     def bot_run(self, **kwargs):
-        return self.bot_process_manager.bot_run(**kwargs), None
+        # the bot_run method is special in that it mixes plain text
+        # and json in its output, therefore it is printed here
+        # and not in the calling `run` method.
+        retval, results = self.bot_process_manager.bot_run(**kwargs)
+        print(results)
+        return retval, None
 
     def bot_start(self, bot_id, getstatus=True, group=None):
         if bot_id is None:

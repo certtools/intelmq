@@ -31,10 +31,18 @@ class BotDebugger:
 
     load_configuration = utils.load_configuration
     logging_level = None
+    output = []
 
     def __init__(self, runtime_configuration, bot_id, run_subcommand=None, console_type=None,
                  message_kind=None, dryrun=None, msg=None, show=None, loglevel=None):
         self.runtime_configuration = runtime_configuration
+        self.bot_id = bot_id
+        self.run_subcommand = run_subcommand
+        self.console_type = console_type
+        self.message_kind = message_kind
+        self.dryrun = dryrun
+        self.msg = msg
+        self.show = show
         module = import_module(self.runtime_configuration['module'])
 
         if loglevel:
@@ -47,19 +55,23 @@ class BotDebugger:
             bot.init = lambda *args, **kwargs: None
         self.instance = bot(bot_id, disable_multithreading=True)
 
-        if not run_subcommand:
+
+    def run(self) -> str:
+        if not self.run_subcommand:
             self.instance.start()
         else:
             self.instance._Bot__connect_pipelines()
-            if run_subcommand == "console":
-                self._console(console_type)
-            elif run_subcommand == "message":
-                self._message(message_kind, msg)
+            if self.run_subcommand == "console":
+                self._console(self.console_type)
+            elif self.run_subcommand == "message":
+                self._message(self.message_kind, self.msg)
                 return
-            elif run_subcommand == "process":
-                self._process(dryrun, msg, show)
+            elif self.run_subcommand == "process":
+                self._process(self.dryrun, self.msg, self.show)
             else:
-                print("Subcommand {} not known.".format(run_subcommand))
+                self.outputappend("Subcommand {} not known.".format(run_subcommand))
+
+        return '\n'.join(self.output) or ""
 
     def _console(self, console_type):
         consoles = [console_type, "ipdb", "pudb", "pdb"]
@@ -85,24 +97,23 @@ class BotDebugger:
     def _message(self, message_action_kind, msg):
         if message_action_kind == "send":
             if self.instance.group == "Output":
-                self.instance.logger.warning("Output bots can't send messages.")
+                self.outputappend("Output bots can't send message.")
                 return
-
             if not bool(self.instance._Bot__destination_queues):
-                self.instance.logger.warning("Bot has no destination queues.")
+                self.outputappend("Bot has no destination queues.")
                 return
             if msg:
                 msg = self.arg2msg(msg)
                 self.instance.send_message(msg)
-                self.instance.logger.info("Message sent to output pipelines.")
+                self.outputappend("Message sent to output pipelines.")
             else:
                 self.messageWizzard("Message missing!")
         elif self.instance.group == "Collector":
-            self.instance.logger.warning("Collector bots have no input queue.")
+            self.outputappend("Collector bots have no input queue.")
         elif message_action_kind == "get":
-            self.instance.logger.info("Waiting for a message to get...")
+            self.outputappend("Waiting for a message to get...")
             if not bool(self.instance._Bot__source_queues):
-                self.instance.logger.warning("Bot has no source queue.")
+                self.outputappend("Bot has no source queue.")
                 return
 
             # Never pops from source to internal queue, thx to disabling brpoplpush operation.
@@ -111,10 +122,10 @@ class BotDebugger:
             pl.pipe.brpoplpush = lambda source_q, inter_q, i: pl.pipe.lindex(source_q, -1)
             while not (pl.pipe.llen(pl.source_queue) or pl.pipe.llen(pl.internal_queue)):
                 time.sleep(1)
-            self.pprint(self.instance.receive_message())
+            self.outputappend(self.pprint(self.instance.receive_message()))
         elif message_action_kind == "pop":
             self.instance.logger.info("Waiting for a message to pop...")
-            self.pprint(self.instance.receive_message())
+            self.outputappend(self.pprint(self.instance.receive_message()))
             self.instance.acknowledge_message()
 
     def _process(self, dryrun, msg, show):
@@ -125,23 +136,26 @@ class BotDebugger:
                 self.instance._Bot__source_pipeline = Pipeline(None)
             self.instance._Bot__source_pipeline.receive = lambda *args, **kwargs: msg
             self.instance._Bot__source_pipeline.acknowledge = lambda *args, **kwargs: None
-            self.instance.logger.info(" * Message from cli will be used when processing.")
+            self.outputappend(" * Message from cli will be used when processing.")
 
         if dryrun:
-            self.instance.send_message = lambda *args, **kwargs: self.instance.logger.info(
+            self.instance.send_message = lambda *args, **kwargs: self.outputappend(
                 "DRYRUN: Message would be sent now to %r!",
                 kwargs.get('path', "_default"))
-            self.instance.acknowledge_message = lambda *args, **kwargs: self.instance.logger.info(
+            self.instance.acknowledge_message = lambda *args, **kwargs: self.outputappend(
                 "DRYRUN: Message would be acknowledged now!")
-            self.instance.logger.info(" * Dryrun only, no message will be really sent through.")
+            self.outputappend(" * Dryrun only, no message will be really sent through.")
 
         if show:
             fn = self.instance.send_message
-            self.instance.send_message = lambda *args, **kwargs: [self.pprint(args or "No message generated"),
+            self.instance.send_message = lambda *args, **kwargs: [self.outputappend(self.pprint(args or "No message generated")),
                                                                   fn(*args, **kwargs)]
 
-        self.instance.logger.info("Processing...")
+        self.outputappend("Processing...")
         self.instance.process()
+
+    def outputappend(self, msg):
+        self.output.append(msg)
 
     def arg2msg(self, msg):
         try:
@@ -175,9 +189,9 @@ class BotDebugger:
         self.instance.logger.error(msg)
         print(self.EXAMPLE)
         if input("Do you want to display current harmonization (available fields)? y/[n]: ") == "y":
-            self.pprint(self.instance.harmonization)
+            print(self.pprint(self.instance.harmonization))
 
     @staticmethod
-    def pprint(msg):
+    def pprint(msg) -> str:
         """ We can't use standard pprint as JSON standard asks for double quotes. """
-        print(json.dumps(msg, indent=4, sort_keys=True))
+        return json.dumps(msg, indent=4, sort_keys=True)
