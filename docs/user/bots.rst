@@ -413,6 +413,23 @@ To prevent data loss, the bot also stops when no `postfix` is set and
 
 The bot always sets the file name as feed.url
 
+Kafka
+^^^^^
+
+Requires the `kafka python library <https://pypi.org/project/kafka/>`_.
+
+**Information**
+
+* `name:` intelmq.bots.collectors.kafka.collector
+
+**Configuration parameters**
+
+* `topic:` the kafka topic the collector should get messages from
+* `bootstrap_servers:` the kafka server(s) the collector should connect to. Defaults to `localhost:9092`
+* `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
+* `ssl_client_certificate`: SSL client certificate to use.
+* `ssl_ca_certificate`: Optional string of path to trusted CA certificate. Only used by some bots.
+
 Rsync
 ^^^^^
 

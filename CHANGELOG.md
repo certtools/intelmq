@@ -30,6 +30,7 @@ CHANGELOG
 - `intelmq.bots.collectors.http.collector_http`:
   - Added PGP signature check functionality (PR#1602 by sinus-x).
   - If status code is not 2xx, the request's and response's headers and body are logged in debug logging level (#1615).
+- `intelmq.bots.collectors.kafka.collector`: Added (PR#1654, closes #1634)
 
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
