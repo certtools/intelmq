@@ -7,7 +7,7 @@ This is a list with various feeds, which are either currently not supported or t
 If you want to **contribute** documenting how to configure existing bots in order to collect new feeds or by creating new parsers, here is a list of potentially interesting feeds.
 See :ref:`feeds documentation` for more information on this.
 
-This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`_.
+This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
 
 - A list of feeds
   - `threatfeeds.io <https://threatfeeds.io>`_
