@@ -31,14 +31,14 @@ Configuration
 /opt and LSB paths
 ^^^^^^^^^^^^^^^^^^
 
-If you installed the packages, standard Linux paths (LSB paths) are used: `/var/log/intelmq/`, `/etc/intelmq/`, `/var/lib/intelmq/`, `/var/run/intelmq/`.
-Otherwise, the configuration directory is `/opt/intelmq/etc/`. Using the environment variable `INTELMQ_ROOT_DIR` allows setting any arbitrary root directory.
+If you installed the packages, standard Linux paths (LSB paths) are used: ``/var/log/intelmq/``, ``/etc/intelmq/``, ``/var/lib/intelmq/``, ``/var/run/intelmq/``.
+Otherwise, the configuration directory is ``/opt/intelmq/etc/``. Using the environment variable ``INTELMQ_ROOT_DIR`` allows setting any arbitrary root directory.
 
-You can switch this by setting the environment variables `INTELMQ_PATHS_NO_OPT` and `INTELMQ_PATHS_OPT`, respectively.
-* When installing the Python packages, you can set `INTELMQ_PATHS_NO_OPT` to something non-empty to use LSB-paths.
-* When installing the deb/rpm packages, you can set `INTELMQ_PATHS_OPT` to something non-empty to use `/opt/intelmq/` paths, or a path set with `INTELMQ_ROOT_DIR`.
+You can switch this by setting the environment variables ``INTELMQ_PATHS_NO_OPT`` and ``INTELMQ_PATHS_OPT``, respectively.
+* When installing the Python packages, you can set ``INTELMQ_PATHS_NO_OPT`` to something non-empty to use LSB-paths.
+* When installing the deb/rpm packages, you can set ``INTELMQ_PATHS_OPT`` to something non-empty to use ``/opt/intelmq/`` paths, or a path set with ``INTELMQ_ROOT_DIR``.
 
-The environment variable `ROOT_DIR` is meant to set an alternative root directory instead of `/`. This is primarily meant for package build environments an analogous to setuptools' `--root` parameter. Thus it is only used in LSB-mode.
+The environment variable ``ROOT_DIR`` is meant to set an alternative root directory instead of `/`. This is primarily meant for package build environments an analogous to setuptools' ``--root`` parameter. Thus it is only used in LSB-mode.
 
 Overview
 ^^^^^^^^
@@ -47,70 +47,70 @@ All configuration files are in the JSON format.
 For new installations a default setup with some examples is provided by the `intelmqsetup` tool. If this is not the case, make sure the program was run (see installation instructions).
 
 
-* `defaults.conf`: default values for all bots and their behavior, e.g. error handling, log options and pipeline configuration. Will be :issue:`removed in the future <267>`.
-* `runtime.conf`: Configuration for the individual bots. See [Bots](Bots.md) for more details.
-* `pipeline.conf`: Defines source and destination queues per bot (i.e. where does a bot get its data from, where does it send it to?).
-* `BOTS`: Includes configuration hints for all bots. E.g. feed URLs or database connection parameters. Use this as a template for `runtime.conf`. This is also read by the intelmq-manager.
+* ``defaults.conf``: default values for all bots and their behavior, e.g. error handling, log options and pipeline configuration. Will be :issue:`removed in the future <267>`.
+* ``runtime.conf``: Configuration for the individual bots. See :doc:`bots` for more details.
+* ``pipeline.conf``: Defines source and destination queues per bot (i.e. where does a bot get its data from, where does it send it to?).
+* ``BOTS``: Includes configuration hints for all bots. E.g. feed URLs or database connection parameters. Use this as a template for ``runtime.conf``. This is also read by the intelmq-manager.
 
-To configure a new bot, you need to define and configure it in `runtime.conf` using the template from BOTS.
-Configure source and destination queues in `pipeline.conf`.
+To configure a new bot, you need to define and configure it in ``runtime.conf`` using the template from BOTS.
+Configure source and destination queues in ``pipeline.conf``.
 Use the IntelMQ Manager mentioned above to generate the configuration files if unsure.
 
-In the shipped examples 4 collectors and parsers, 6 common experts and one output are configured. The default collector and the parser handle data from malware domain list, the file output bot writes all data to `/opt/intelmq/var/lib/bots/file-output/events.txt`/`/var/lib/intelmq/bots/file-output/events.txt`.
+In the shipped examples 4 collectors and parsers, 6 common experts and one output are configured. The default collector and the parser handle data from malware domain list, the file output bot writes all data to ``/opt/intelmq/var/lib/bots/file-output/events.txt``/``/var/lib/intelmq/bots/file-output/events.txt``.
 
 System Configuration (defaults)
 -------------------------------
 
-All bots inherit the default configuration parameters and they can overwrite them using the same parameters in their respective configuration in the ''runtime.conf'' file.
-You can set the parameters from `defaults.conf` per bot as well. The settings will take effect for running bots after the bot re-reads the configuration (restart or reload).
+All bots inherit the default configuration parameters and they can overwrite them using the same parameters in their respective configuration in the ``runtime.conf`` file.
+You can set the parameters from ``defaults.conf`` per bot as well. The settings will take effect for running bots after the bot re-reads the configuration (restart or reload).
 
 Logging
 ^^^^^^^
 
 The logging can be configured with the following parameters:
 
-* `logging_handler`: Can be one of `"file"` or `"syslog"`.
-* `logging_level`: Defines the system-wide log level that will be use by all bots and the intelmqctl tool. Possible values are: `"CRITICAL"`, `"ERROR"`, `"WARNING"`, `"INFO"` and `"DEBUG"`.
-* `logging_path`: If `logging_handler` is `file`. Defines the system-wide log-folder that will be use by all bots and the intelmqctl tool. Default value: `/opt/intelmq/var/log/`/`/opt/var/log/intelmq/`.
-* `logging_syslog`: If `logging_handler` is `syslog`. Either a list with hostname and UDP port of syslog service, e.g. `["localhost", 514]` or a device name/path, e.g. the default `"/var/log"`.
+* ``logging_handler``: Can be one of ``"file"`` or ``"syslog"``.
+* ``logging_level``: Defines the system-wide log level that will be use by all bots and the intelmqctl tool. Possible values are: ``"CRITICAL"``, ``"ERROR"``, ``"WARNING"``, ``"INFO"`` and ``"DEBUG"``.
+* ``logging_path``: If ``logging_handler`` is ``file``. Defines the system-wide log-folder that will be use by all bots and the intelmqctl tool. Default value: ``/opt/intelmq/var/log/``/``/opt/var/log/intelmq/``.
+* ``logging_syslog``: If ``logging_handler`` is ``syslog``. Either a list with hostname and UDP port of syslog service, e.g. ``["localhost", 514]`` or a device name/path, e.g. the default ``"/var/log"``.
 
-We recommend `logging_level` `WARNING` for production environments and `INFO` if you want more details. In any case, watch your free disk space:
+We recommend ``logging_level`` ``WARNING`` for production environments and ``INFO`` if you want more details. In any case, watch your free disk space!
 
 Log rotation
 """"""""""""
 
 To rotate the logs, you can use the standard Linux-tool logrotate.
-An example logrotate configuration is given in `contrib/logrotate/` and delivered with all deb/rpm-packages.
+An example logrotate configuration is given in ``contrib/logrotate/`` and delivered with all deb/rpm-packages.
 When not using logrotate, IntelMQ can rotate the logs itself, which is not enabled by default! You need to set both values.
 
-* `logging_max_size`: Maximum number of bytes to be stored in one logfile before the file is rotated (default: 0, equivalent to unset).
-* `logging_max_copies`: Maximum number of logfiles to keep (default: unset). Compression is not supported.
+* ``logging_max_size``: Maximum number of bytes to be stored in one logfile before the file is rotated (default: 0, equivalent to unset).
+* ``logging_max_copies``: Maximum number of logfiles to keep (default: unset). Compression is not supported.
 
 Some information can as well be found in Python's documentation on the used `RotatingFileHandler <https://docs.python.org/3/library/logging.handlers.html#logging.handlers.RotatingFileHandler>`_.
 
 Error Handling
 ^^^^^^^^^^^^^^
 
-* **`error_log_message`** - in case of an error, this option will allow the bot to write the message (report or event) to the log file. Use the following values:
-    * **`true/false`** - write or not write message to the log file
+* **error_log_message** - in case of an error, this option will allow the bot to write the message (report or event) to the log file. Use the following values:
+    * **true/false** - write or not write message to the log file
 
-* **`error_log_exception`** - in case of an error, this option will allow the bot to write the error exception to the log file. Use the following values:
-    * **`true/false`** - write or not write exception to the log file
+* **error_log_exception** - in case of an error, this option will allow the bot to write the error exception to the log file. Use the following values:
+    * **true/false** - write or not write exception to the log file
 
-* **`error_procedure`** - in case of an error, this option defines the procedure that the bot will adopt. Use the following values:
+* **error_procedure** - in case of an error, this option defines the procedure that the bot will adopt. Use the following values:
 
-    * **`stop`** - stop bot after retrying X times (as defined in `error_max_retries`)  with a delay between retries (as defined in `error_retry_delay`). If the bot reaches the `error_max_retries` value, it will remove the message from the pipeline and stop. If the option `error_dump_message` is also enable, the bot will dump the removed message to its dump file (to be found in var/log).
+    * **stop** - stop bot after retrying X times (as defined in ``error_max_retries``)  with a delay between retries (as defined in ``error_retry_delay``). If the bot reaches the ``error_max_retries`` value, it will remove the message from the pipeline and stop. If the option ``error_dump_message`` is also enable, the bot will dump the removed message to its dump file (to be found in var/log).
     
-    * **`pass`** - will skip this message and will process the next message after retrying X times, removing the current message from pipeline. If the option `error_dump_message` is also enable, then the bot will dump the removed message to its dump file. After max retries are reached, the rate limit is applied (e.g. a collector bot fetch an unavailable resource does not try forever).
+    * **pass** - will skip this message and will process the next message after retrying X times, removing the current message from pipeline. If the option ``error_dump_message`` is also enable, then the bot will dump the removed message to its dump file. After max retries are reached, the rate limit is applied (e.g. a collector bot fetch an unavailable resource does not try forever).
 
-* **`error_max_retries`** - in case of an error, the bot will try to re-start processing the current message X times as defined by this option. int value.
+* **error_max_retries** - in case of an error, the bot will try to re-start processing the current message X times as defined by this option. int value.
 
-* **`error_retry_delay`** - defines the number of seconds to wait between subsequent re-tries in case of an error. int value.
+* **error_retry_delay** - defines the number of seconds to wait between subsequent re-tries in case of an error. int value.
 
-* **`error_dump_message`** - specifies if the bot will write queued up messages to its dump file (use intelmqdump to re-insert the message).
-    * **`true/false`** - write or not write message to the dump file
+* **error_dump_message** - specifies if the bot will write queued up messages to its dump file (use intelmqdump to re-insert the message).
+    * **true/false** - write or not write message to the dump file
 
-If the path `_on_error` exists for a bot, the message is also sent to this queue, instead of (only) dumping the file if configured to do so.
+If the path ``_on_error`` exists for a bot, the message is also sent to this queue, instead of (only) dumping the file if configured to do so.
 
 Miscellaneous
 ^^^^^^^^^^^^^
@@ -278,7 +278,7 @@ As we can see the *default* path name is obviously `_default`. Let's have a look
 
 In that case, bot will be able to send the message to one of defined paths. The path `"_default"` is used if none is not specified.
 In case of errors during processing, and the optional path `"_on_error"` is specified, the message will be sent to the pipelines given given as on-error.
-Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the [filter expert](Bots.html#filter) and the [sieve expert](Bots.html#sieve).
+Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the :ref:`filter expert` and the :ref:`sieve expert`.
 The named queues need to be explicitly addressed by the bot (e.g. fitering) or the core (`_on_error`) to be used. Setting arbitrary paths has no effect.
 
 AMQP (Beta)
@@ -329,7 +329,7 @@ Setting the statistics (and cache) parameters is necessary when the local redis 
 Runtime Configuration
 ---------------------
 
-This configuration is used by each bot to load its specific (runtime) parameters. Usually, the `BOTS` file is used to generate `runtime.conf`. Also, the IntelMQ Manager generates this configuration. You may edit it manually as well. Be sure to re-load the bot (see the intelmqctl documentation).
+This configuration is used by each bot to load its specific (runtime) parameters. Usually, the `BOTS` file is used to generate `runtime.conf`. Also, the IntelMQ Manager generates this configuration. You may edit it manually as well. Be sure to re-load the bot (see the :doc:`intelmqctl`).
 
 **Template:**
 
@@ -367,7 +367,7 @@ This configuration is used by each bot to load its specific (runtime) parameters
        }
    }
 
-More examples can be found in the `intelmq/etc/runtime.conf` directory. See [Bots](Bots.md) for more details.
+More examples can be found in the `intelmq/etc/runtime.conf` directory. See :doc:`bots` for more details.
 
 By default, all of the bots are started when you start the whole botnet, however there is a possibility to *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your runtime.conf: `"enabled": false`. For example: 
 
@@ -402,9 +402,9 @@ This is useful if bots often wait for system resources or if network-based looku
 
 However, there are currently a few cavecats:
 
-* This is not possible for all bots, there are some exceptions (collectors and some outputs), see the [FAQ](FAQ.md#multithreading-is-not-available-for-this-bot) for some reasons.
+* This is not possible for all bots, there are some exceptions (collectors and some outputs), see the :doc:`FAQ` for some reasons.
 * Only use it with the AMQP pipeline, as with Redis, messages may get duplicated because there's only one internal queue
-* In the logs, you can see the main thread initializing first, then all of the threads which log with the name `[bot-id].[thread-id]`.
+* In the logs, you can see the main thread initializing first, then all of the threads which log with the name ``[bot-id].[thread-id]``.
 
 Harmonization Configuration
 ---------------------------
@@ -457,10 +457,10 @@ Management
 
 IntelMQ has a modular structure consisting of bots. There are four types of bots:
 
-* [CollectorBots](Bots.html#collectors) retrieve data from internal or external sources, the output are *reports* consisting of many individual data sets / log lines.
-* [ParserBots](Bots.html#parsers) parse the (report) data by splitting it into individual *events* (log lines) and giving them a defined structure, see also [Data Harmonization](Data-Harmonization.md) for the list of fields an event may be split up into.
-* [ExpertBots](Bots.html#experts) enrich the existing events by e.g. lookup up information such as DNS reverse records, geographic location information (country code) or abuse contacts for an IP address or domain name.
-* [OutputBots](Bots.html#outputs) write events to files, databases, (REST)-APIs or any other data sink that you might want to write to.
+* :ref:`collector bots` retrieve data from internal or external sources, the output are *reports* consisting of many individual data sets / log lines.
+* :ref:`parser bots` parse the (report) data by splitting it into individual *events* (log lines) and giving them a defined structure, see also :doc:`/dev/data-harmonization` for the list of fields an event may be split up into.
+* :ref:`expert bots` enrich the existing events by e.g. lookup up information such as DNS reverse records, geographic location information (country code) or abuse contacts for an IP address or domain name.
+* :ref:`output bots` write events to files, databases, (REST)-APIs or any other data sink that you might want to write to.
 
 Each bot has one source queue (except collectors) and can have multiple
 destination queues (except outputs). But multiple bots can write to the same pipeline (queue), resulting in multiple inputs for the next bot.
@@ -472,7 +472,8 @@ Currently you can run multiple processes of the same bot (with *different bot id
 
 Example: multiple gethostbyname bots (with different bot ids) may run in parallel, with the same input queue and sending to the same output queue. Note that the bot providing the input queue **must** have the ``load_balance`` option set to ``true``.
 
-#### Web interface: IntelMQ Manager
+Web interface: IntelMQ Manager
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 IntelMQ has a tool called IntelMQ Manager that gives users an easy way to configure all pipelines with bots that your team needs. For beginners, it's recommended to use the IntelMQ Manager to become acquainted with the functionalities and concepts. The IntelMQ Manager offers some of the possibilities of the intelmqctl tool and has a graphical interface for runtime and pipeline configurations.
 

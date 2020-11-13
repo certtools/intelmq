@@ -51,7 +51,7 @@ Remove this option to also upgrade dependencies.
 Local repository
 ^^^^^^^^^^^^^^^^
 
-If you have an editable installation, refer to the instructions in the [Developers Guide](Developers-Guide.html#development-environment).
+If you have an editable installation, refer to the instructions in the :doc:`/dev/guide`.
 
 Update the repository depending on your setup (e.g. `git pull origin master`).
 

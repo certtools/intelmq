@@ -101,6 +101,7 @@ Orphaned Queues
 
 This section has been moved to the [intelmqctl documentation](intelmctl.html#orphaned-queues)
 
+.. _faq multithreading not avail:
 Multithreading is not available for this bot
 -------------------------------------------------------------------
 

@@ -1,10 +1,12 @@
+####
 Bots
-====
+####
 
 .. contents::
 
+***************
 General remarks
----------------
+***************
 
 By default all of the bots are started when you start the whole botnet, however there is a possibility to
 *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start
@@ -50,8 +52,9 @@ For example:
 
 This configuration resides in the file `runtime.conf` in your IntelMQ's configuration directory for each configured bot.
 
+*************************
 Initialization parameters
--------------------------
+*************************
 
 * `name` and `description`: The name and description of the bot as can be found in BOTS-file, not used by the bot itself.
 * `group`: Can be `"Collector"`, `"Parser"`, `"Expert"` or `"Output"`. Only used for visualization by other tools.
@@ -61,8 +64,9 @@ Initialization parameters
 
 .. _common-parameters:
 
+*************************
 Common parameters
------------------
+*************************
 
 **Feed parameters**: Common configuration options for all collectors.
 
@@ -95,8 +99,11 @@ Common parameters
 * `redis_cache_ttl`: TTL used for caching.
 * `redis_cache_password`: Optional password for the Redis database (default: none).
 
-Collectors
-----------
+.. _collector bots:
+
+**************
+Collector Bots
+**************
 
 Multihreading is disabled for all Collectors, as this would lead to duplicated data.
 
@@ -908,8 +915,11 @@ example usage:
 * **Feed parameters** (see above)
 * `port`: 5000
 
-Parsers
--------
+.. _parser bots:
+
+***********
+Parser Bots
+***********
 
 Not complete
 ^^^^^^^^^^^^
@@ -1557,9 +1567,11 @@ This bot is designed to consume defacement reports from zone-h.org. It expects
 fields normally present in CSV files distributed by email.
 
 
+.. _expert bots:
 
-Experts
--------
+***********
+Expert Bots
+***********
 
 Abusix
 ^^^^^^
@@ -1827,6 +1839,8 @@ Only the fields in `keys` will passed along.
 **Blacklist**
 
 The fields in `keys` will be removed from events.
+
+.. _filter bot:
 
 Filter
 ^^^^^^
@@ -2409,6 +2423,7 @@ Online RIPE Abuse Contact and Geolocation Finder for IP addresses and Autonomous
 * `query_ripe_stat_geolocation`: Query for IPs at `https://stat.ripe.net/data/maxmind-geo-lite/data.json?resource=%s`, default `true`
 
 
+.. _sieve expert:
 
 Sieve
 ^^^^^
@@ -2725,8 +2740,11 @@ Otherwise the dummy mode is active, the events are just passed without an additi
 
 Note that SIGHUPs and reloads interrupt the sleeping.
 
-Outputs
--------
+.. _output bots:
+
+***********
+Output Bots
+***********
 
 AMQP Topic
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
