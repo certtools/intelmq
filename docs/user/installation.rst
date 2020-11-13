@@ -20,6 +20,7 @@ Supported and recommended operating systems are:
 * Debian 9 and 10
 * OpenSUSE Leap 15.1, 15.2
 * Ubuntu: 16.04, 18.04, 20.04
+* Docker Engine: 18.09.1
 
 Other distributions which are (most probably) supported include CentOS 8, RHEL, Fedora and openSUSE Tumbleweed.
 
@@ -67,6 +68,12 @@ Optional dependencies:
 
    zypper in bash-completion jq
    zypper in python3-psycopg2 python3-pymongo python3-sleekxmpp
+
+Docker
+^^^^^^
+
+Follow `Docker Install <https://docs.docker.com/engine/install/>`_ and 
+`Docker-Compose Install <https://docs.docker.com/compose/install/>`_ instructions.
 
 Installation
 ------------
@@ -120,6 +127,28 @@ PyPi
    sudo intelmqsetup
 
 `intelmqsetup` will create all necessary directories, provides a default configuration for new setups. See the :ref:`configuration` for more information on them and how to influence them.
+
+Docker
+^^^^^^
+
+Navigate to your preferred installation directory, i. e. use ``mkdir ~/intelmq && cd ~/intelmq``
+
+.. code-block:: bash
+
+   git clone https://github.com/certat/intelmq-docker.git
+
+   sudo docker pull certat/intelmq-full:1.0
+
+   mkdir intelmq_logs
+
+   cd intelmq-docker
+
+   chown -R $USER:$USER example_config
+
+   sudo docker-compose up
+
+Your installation should be successful now. You're now able to visit ``http://127.0.0.1:1337/`` to access the intelmq-manager.
+
 
 Additional Information
 ^^^^^^^^^^^^^^^^^^^^^^
