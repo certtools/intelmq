@@ -69,7 +69,7 @@ class BotDebugger:
             elif self.run_subcommand == "process":
                 self._process(self.dryrun, self.msg, self.show)
             else:
-                self.outputappend("Subcommand {} not known.".format(run_subcommand))
+                self.outputappend("Subcommand {} not known.".format(self.run_subcommand))
 
         return '\n'.join(self.output) or ""
 
