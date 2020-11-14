@@ -14,7 +14,7 @@ The following architecture document addresses
   * making IntelMQ 3.x interoperable with CERT.pl's n6 system
 
 ## Implementation evaluation
-The mayor changes listed in this document should be evaluated based on use-cases and technical feasibility before the final implementation and integration into IntelMQ. The exact details of this process will be defined later."
+The mayor changes listed in this document may be evaluated based on use-cases and technical feasibility before the final implementation and integration into IntelMQ. The exact details of this process will be defined later."
 
 # Non-Scope
 
