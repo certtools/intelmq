@@ -65,7 +65,6 @@ class BotDebugger:
                 self._console(self.console_type)
             elif self.run_subcommand == "message":
                 self._message(self.message_kind, self.msg)
-                return
             elif self.run_subcommand == "process":
                 self._process(self.dryrun, self.msg, self.show)
             else:
