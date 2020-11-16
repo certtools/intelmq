@@ -42,7 +42,7 @@ except ImportError:
 
 class Time(object):
     def __init__(self, delta=None):
-        """ Delta is a datetime.timedelta JSON string, ex: '{days=-1}'. """
+        """ Delta is a datetime.timedelta JSON string, ex: '{"days"=-1}'. """
         self.time = datetime.now()
         if not isinstance(delta, bool):
             self.time += timedelta(**delta)
