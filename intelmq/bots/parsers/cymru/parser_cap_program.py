@@ -35,11 +35,13 @@ MAPPING_STATIC = {'bot': {
 }
 MAPPING_COMMENT = {'bruteforce': ('classification.identifier', 'protocol.application'),
                    'phishing': ('source.url', )}
-PROTOCOL_MAPPING = {  # TODO: use getent in harmonization
+PROTOCOL_MAPPING = {  # TODO: use `getent protocols <number>`, maybe in harmonization
     '1': 'icmp',
     '6': 'tcp',
     '11': 'nvp-ii',
     '17': 'udp',
+    '47': 'gre',
+    '59': 'ipv6-nonxt',
 }
 BOGUS_HOSTNAME_PORT = re.compile('hostname: ([^:]+)port: ([0-9]+)')
 DESTINATION_PORT_NUMBERS_TOTAL = re.compile(r' \(total_count:\d+\)$')

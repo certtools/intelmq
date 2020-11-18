@@ -16,6 +16,7 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.cymru.parser_cap_program`: Add support for protocols 47 (GRE) and 59 (IPv6-NoNxt).
 
 #### Experts
 
