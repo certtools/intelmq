@@ -75,6 +75,8 @@ Docker
 Follow `Docker Install <https://docs.docker.com/engine/install/>`_ and 
 `Docker-Compose Install <https://docs.docker.com/compose/install/>`_ instructions.
 
+**ATTENTION** If you use Docker you cant access intelmqctl via cli. You need to use intelmq-manager currently!
+
 Installation
 ------------
 
