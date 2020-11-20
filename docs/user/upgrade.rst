@@ -37,6 +37,25 @@ Packages
 
 Use your systems package management.
 
+Docker
+^^^^^^
+
+**ATTENTION** Currently docker version can differ from intelmq version namings.
+
+.. code-block:: bash
+
+   docker pull cerat/intelmq-full:1.0
+
+You can check the current versions from intelmq & intelmq-manager via git commit ref.
+
+The first one is the intelmq commit ref, and the second one is for intelmq-manager
+
+.. code-block:: bash
+
+   docker inspect --format '{{ index .Config.Labels "org.label-schema.vcs-ref"}}' certat/intelmq-full:1.0
+
+Now restart your container
+
 PyPi
 ^^^^
 
