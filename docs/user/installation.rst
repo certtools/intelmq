@@ -158,6 +158,8 @@ Navigate to your preffered installation directory, i. e. use ``mkdir ~/intelmq &
 
 You need to prepare some volumes & configs. Edit the left-side after -v, to change paths.
 
+Change ``redis_host`` to a running redis-instance. Docker will resolve it automatically.
+
 .. code-block:: bash
 
    sudo docker pull certat/intelmq-full:1.0
