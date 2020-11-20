@@ -128,8 +128,8 @@ PyPi
 
 `intelmqsetup` will create all necessary directories, provides a default configuration for new setups. See the :ref:`configuration` for more information on them and how to influence them.
 
-Docker
-^^^^^^
+Docker **with** docker-compose (recommended)
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Navigate to your preferred installation directory, i. e. use ``mkdir ~/intelmq && cd ~/intelmq``
 
@@ -149,6 +149,29 @@ Navigate to your preferred installation directory, i. e. use ``mkdir ~/intelmq &
 
 Your installation should be successful now. You're now able to visit ``http://127.0.0.1:1337/`` to access the intelmq-manager.
 
+Docker without docker-compose
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Navigate to your preffered installation directory, i. e. use ``mkdir ~/intelmq && cd ~/intelmq``
+
+You need to prepare some volumes & configs. Edit the left-side after -v, to change paths.
+
+.. code-block:: bash
+
+   sudo docker pull certat/intelmq-full:1.0
+
+   sudo docker run -e INTELMQ_IS_DOCKER="true" \
+                   -e INTELMQ_PIPELINE_DRIVER="redis" \
+                   -e INTELMQ_PIPELINE_HOST=redis_host \
+                   -e INTELMQ_REDIS_CACHE_HOST=redis_host \
+                   -e INTELMQ_MANAGER_CONFIG="/opt/intelmq-manager/config/config.json" \
+                   -v ~/intelmq/config/etc:/opt/intelmq/etc \
+                   -v ~/intelmq/config/intelmq-manager:/opt/intelmq-manager/config \
+                   -v /var/log/intelmq:/opt/intelmq/var/log \
+                   -v ~/intelmq/lib:/opt/intelmq/var/lib \
+                   certat/intelmq-full:1.0
+
+In order to work with your current infrastructure, you need to specify some enviroments variables
 
 Additional Information
 ^^^^^^^^^^^^^^^^^^^^^^
