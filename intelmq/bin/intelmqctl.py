@@ -174,8 +174,8 @@ class IntelMQProcessManager:
         output = ""
         try:
             bd = BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
-                        console_type, message_action_kind, dryrun, msg, show_sent,
-                        loglevel=loglevel)
+                             console_type, message_action_kind, dryrun, msg, show_sent,
+                             loglevel=loglevel)
             output = bd.run()
             retval = 0
         except KeyboardInterrupt:

@@ -55,7 +55,6 @@ class BotDebugger:
             bot.init = lambda *args, **kwargs: None
         self.instance = bot(bot_id, disable_multithreading=True)
 
-
     def run(self) -> str:
         if not self.run_subcommand:
             self.instance.start()
