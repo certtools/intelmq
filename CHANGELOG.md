@@ -17,6 +17,9 @@ CHANGELOG
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Add support for protocols 47 (GRE) and 59 (IPv6-NoNxt).
+- `intelmq.bots.parsers.microsoft.parser_ctip`:
+  - Fix mapping of `DestinationIpInfo.DestinationIpConnectionType` field (contained a typo).
+  - Explicitly ignore field `DestinationIpInfo.DestinationIpv4Int` as the data is already in another field.
 
 #### Experts
 
