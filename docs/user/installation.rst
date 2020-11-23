@@ -70,7 +70,7 @@ Optional dependencies:
    zypper in python3-psycopg2 python3-pymongo python3-sleekxmpp
 
 Docker (beta)
-^^^^^^
+^^^^^^^^^^^^^
 
 **ATTENTION** Currently docker version can differ from intelmq version namings.
 **ATTENTION** If you use Docker you cant access :doc:`intelmqctl` via cli. You need to use `IntelMQ-Manager <https://github.com/certtools/intelmq-manager>`_ currently!
