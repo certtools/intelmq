@@ -38,7 +38,7 @@ import pytz
 
 import intelmq.lib.utils as utils
 
-from typing import Optional
+from typing import Optional, Union
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
@@ -661,7 +661,7 @@ class IPAddress(String):
     """
     Type for IP addresses, all families. Uses the ipaddress module.
 
-    Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv6Address.
+    Sanitation accepts integers, strings and objects of ipaddress.IPv4Address and ipaddress.IPv6Address.
 
     Valid values are only strings. 0.0.0.0 is explicitly not allowed.
     """
@@ -690,12 +690,28 @@ class IPAddress(String):
         return True
 
     @staticmethod
-    def sanitize(value: str) -> Optional[str]:
+    def sanitize(value: Union[int, str]) -> Optional[str]:
+        if not isinstance(value, int):  # can be str/bytes or ipaddress.ip_address object
+            try:
+                value = GenericType().sanitize(value)
+            except ValueError:
+                return None
 
+        # support for integer IP-address which are given as string
         try:
-            value = GenericType().sanitize(value)
-        except ValueError:
-            return None
+            if (str(value) == str(int(value))):
+                value = int(value)
+        except (ValueError, TypeError):
+            pass
+        # Convert integers to strings
+        # either from the conversion above, or the value is already given as int
+        if isinstance(value, int):
+            try:
+                value = ipaddress.ip_address(value)
+            except ValueError:
+                return None
+            # we don't need the specialized checks below, return early
+            return GenericType().sanitize(value)
 
         try:
             # Remove the scope ID if it's detected.
