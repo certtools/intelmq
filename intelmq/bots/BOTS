@@ -842,7 +842,8 @@
             "module": "intelmq.bots.experts.gethostbyname.expert",
             "parameters": {
                 "fallback_to_url": true,
-                "gaierrors_to_ignore": null
+                "gaierrors_to_ignore": null,
+                "overwrite": false
             }
         },
         "IDEA Converter": {

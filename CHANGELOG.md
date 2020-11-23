@@ -52,6 +52,7 @@ CHANGELOG
 - `intelmq.bots.experts.gethostbyname.expert`:
   - Added parameter `fallback_to_url` and set to True. (PR#1586 by Edvard Rejthar)
   - Added parameter `gaierrors_to_ignore` to optionally ignore other `gethostbyname` errors (#1553).
+  - Added parameter `overwrite` to optionally overwrite existing IP addresses.
 - `intelmq.bots.experts.asn_lookup.expert`
   - Added `--update-database` option. (PR#1524 by Filip Pokorný)
   - The script `update-asn-data` is now deprecated and will be removed in version 3.0.

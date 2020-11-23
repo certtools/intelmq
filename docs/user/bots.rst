@@ -2011,6 +2011,7 @@ Gethostbyname
 
 - `fallback_to_url` If True and no `source.fqdn` present, use `source.url` instead while producing `source.ip`
 - `gaierrors_to_ignore`: Optional, list (comma-separated) of gaierror codes to ignore, e.g. `-3` for EAI_AGAIN (Temporary failure in name resolution). Only accepts the integer values, not the names.
+- `overwrite`: Boolean. If true, overwrite existing IP addresses. Default: False.
 
 **Description**
 

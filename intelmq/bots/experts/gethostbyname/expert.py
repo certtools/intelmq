@@ -48,6 +48,7 @@ class GethostbynameExpertBot(Bot):
         ignore = tuple(int(x) for x in ignore)  # convert to integers
 
         self.ignore = (-2, -4, -5, -8, -11) + ignore
+        self.overwrite = getattr(self.parameters, 'overwrite', False)
 
     def process(self):
         event = self.receive_message()
@@ -55,7 +56,7 @@ class GethostbynameExpertBot(Bot):
         for target in ("source.", "destination."):
             fqdn, url, ip = (event.get(target + k) for k in ("fqdn", "url", "ip"))
 
-            if ip:
+            if ip and not self.overwrite:
                 continue
             if not fqdn and self.fallback_to_url and url:
                 fqdn = URL.to_domain_name(url)
@@ -71,7 +72,7 @@ class GethostbynameExpertBot(Bot):
                 else:
                     raise
             else:
-                event.add(target + "ip", ip, raise_failure=False)
+                event.add(target + "ip", ip, raise_failure=False, overwrite=self.overwrite)
 
         self.send_message(event)
         self.acknowledge_message()
