@@ -20,6 +20,7 @@ Supported and recommended operating systems are:
 * Debian 9 and 10
 * OpenSUSE Leap 15.1, 15.2
 * Ubuntu: 16.04, 18.04, 20.04
+* Docker Engine: 18.x and higher
 
 Other distributions which are (most probably) supported include CentOS 8, RHEL, Fedora and openSUSE Tumbleweed.
 
@@ -67,6 +68,17 @@ Optional dependencies:
 
    zypper in bash-completion jq
    zypper in python3-psycopg2 python3-pymongo python3-sleekxmpp
+
+Docker (beta)
+^^^^^^
+
+**ATTENTION** Currently docker version can differ from intelmq version namings.
+**ATTENTION** If you use Docker you cant access :doc:`intelmqctl` via cli. You need to use `IntelMQ-Manager <https://github.com/certtools/intelmq-manager>`_ currently!
+
+Follow `Docker Install <https://docs.docker.com/engine/install/>`_ and 
+`Docker-Compose Install <https://docs.docker.com/compose/install/>`_ instructions.
+
+The latest image is hosted on `Docker Hub <https://hub.docker.com/r/certat/intelmq-full>`_
 
 Installation
 ------------
@@ -120,6 +132,53 @@ PyPi
    sudo intelmqsetup
 
 `intelmqsetup` will create all necessary directories, provides a default configuration for new setups. See the :ref:`configuration` for more information on them and how to influence them.
+
+Docker **with** docker-compose (recommended)
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Navigate to your preferred installation directory, i. e. use ``mkdir ~/intelmq && cd ~/intelmq``
+
+.. code-block:: bash
+
+   git clone https://github.com/certat/intelmq-docker.git
+
+   sudo docker pull certat/intelmq-full:1.0
+
+   mkdir intelmq_logs
+
+   cd intelmq-docker
+
+   chown -R $USER:$USER example_config
+
+   sudo docker-compose up
+
+Your installation should be successful now. You're now able to visit ``http://127.0.0.1:1337/`` to access the intelmq-manager.
+
+Docker without docker-compose
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Navigate to your preferred installation directory, i. e. use ``mkdir ~/intelmq && cd ~/intelmq``
+
+You need to prepare some volumes & configs. Edit the left-side after -v, to change paths.
+
+Change ``redis_host`` to a running redis-instance. Docker will resolve it automatically.
+
+In order to work with your current infrastructure, you need to specify some enviroments variables
+
+.. code-block:: bash
+
+   sudo docker pull certat/intelmq-full:1.0
+
+   sudo docker run -e INTELMQ_IS_DOCKER="true" \
+                   -e INTELMQ_PIPELINE_DRIVER="redis" \
+                   -e INTELMQ_PIPELINE_HOST=redis_host \
+                   -e INTELMQ_REDIS_CACHE_HOST=redis_host \
+                   -e INTELMQ_MANAGER_CONFIG="/opt/intelmq-manager/config/config.json" \
+                   -v ~/intelmq/config/etc:/opt/intelmq/etc \
+                   -v ~/intelmq/config/intelmq-manager:/opt/intelmq-manager/config \
+                   -v /var/log/intelmq:/opt/intelmq/var/log \
+                   -v ~/intelmq/lib:/opt/intelmq/var/lib \
+                   certat/intelmq-full:1.0
 
 Additional Information
 ^^^^^^^^^^^^^^^^^^^^^^
