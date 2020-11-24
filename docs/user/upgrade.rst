@@ -37,6 +37,43 @@ Packages
 
 Use your systems package management.
 
+Docker (beta)
+^^^^^^^^^^^^^
+
+**ATTENTION** Currently the version published on docker hub is not tagged with the same IntelMQ version. During beta, each version is published with tag `1.0`.
+
+.. code-block:: bash
+
+   docker pull certat/intelmq-full:1.0
+
+Alternativly you can use `docker-compose`:
+
+.. code-block:: bash
+
+   docker-compose pull
+
+You can check the current versions from intelmq & intelmq-manager via git commit ref.
+
+The first one is the intelmq commit ref, and the second one is for intelmq-manager
+
+.. code-block:: bash
+
+   docker inspect --format '{{ index .Config.Labels "org.label-schema.vcs-ref"}}' certat/intelmq-full:1.0
+
+Now restart your container, if you're using docker-compose you simply write:
+
+.. code-block:: bash
+   
+   docker-compose down
+
+If you dont use docker-compose, you can restart a single container using:
+
+.. code-block:: bash
+
+   docker ps | grep certat
+
+   docker stop CONTAINER_ID
+
 PyPi
 ^^^^
 
