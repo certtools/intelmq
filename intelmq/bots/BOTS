@@ -952,6 +952,24 @@
                 "file": "/opt/intelmq/var/lib/bots/sieve/filter.sieve"
             }
         },
+        "Splunk saved search": {
+            "description": "Enrich an event from Splunk search results.",
+            "module": "intelmq.bots.experts.splunk_saved_search.expert",
+            "parameters": {
+                "url": "https://splunk:8089/",
+                "auth_token": "VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wIG92ZXIgdGhlIGxhenkgZG9nLgo=",
+                "retry_interval": 5,
+                "saved_search": "search_name",
+                "search_parameters": {
+                    "event field": "search parameter"
+                },
+                "result_fields": {
+                    "result field": "event field"
+                },
+                "not_found": [ "warn", "send" ],
+                "duplicates": [ "warn", "use_first", "send" ]
+            }
+        },
         "Taxonomy": {
             "description": "Apply the eCSIRT Taxonomy to all events.",
             "module": "intelmq.bots.experts.taxonomy.expert",
