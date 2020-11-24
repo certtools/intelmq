@@ -2611,6 +2611,73 @@ Use the following command to validate your sieve files:
    optional arguments:
      -h, --help  show this help message and exit
 
+Splunk saved search
+^^^^^^^^^^^^^^^^^^^
+
+**Information**
+
+* `name`: splunk_saved_search
+* `lookup`: splunk database
+* `public`: no
+* `cache (redis db)`: none
+* `description`: Enrich an event from Splunk search results.
+
+**Configuration Parameters**
+
+* **HTTP parameters** (see above)
+* `auth_token`: String, Splunk API authentication token
+* `url`: String, base URL of the Splunk REST API
+* `retry_interval`: Integer, optional, default 5, number of seconds to wait between attempts to retrieve search results
+* `saved_search`: String, name of Splunk saved search to run
+* `search_parameters`: Array of string->string, optional, default ``{}``, IntelMQ event fields containing the data to search for, mapped to parameters of the Splunk saved search. Example:
+
+  .. code-block:: json
+
+     "search_parameters": {
+         "source.ip": "ip"
+     }
+
+* `result_fields`: Array of string->string, optional, default ``{}``, Splunk search result fields mapped to IntelMQ event fields to store the results in. Example:
+
+  .. code-block:: json
+
+     "result_fields": {
+         "username": "source.account"
+     }
+
+* `not_found`: List of strings, default ``[ "warn", "send" ]``, what to do if the search returns zero results. Valid values are:
+
+  * `warn`: log a warning message
+  * `send`: send the event on unmodified
+  * `drop`: drop the message
+
+    * `send` and `drop` are mutually exclusive
+
+* `duplicates`: List of strings, default ``[ "warn", "use_first", "send" ]``, what to do if the search returns more than one result. Valid values are:
+
+  * `warn`: log a warning message
+  * `use_first`: use the first search result
+  * `ignore`: do not modify the event
+  * `send`: send the event on
+  * `drop`: drop the message
+
+    * `send` and `drop` are mutually exclusive
+    * `ignore` and `use_first` are mutually exclusive
+
+**Description**
+
+Runs a saved search in Splunk using fields in an event, adding fields from the search result into the event.
+
+The saved search should take parameters according to the `search_parameters` configuration and deliver results according to `result_fields`. The examples above match a saved search of this format:
+
+::
+
+   index="dhcp" ipv4address="$ip$" | ... | fields _time username ether
+
+The time window used is the one saved with the search.
+
+Waits for Splunk to return an answer for each message, so slow searches will delay the entire botnet.
+
 Taxonomy
 ^^^^^^^^
 
