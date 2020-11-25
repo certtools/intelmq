@@ -2664,6 +2664,8 @@ Splunk saved search
     * `send` and `drop` are mutually exclusive
     * `ignore` and `use_first` are mutually exclusive
 
+* `overwrite`: Boolean or absent, whether search results overwrite values already in the message or not. If not specified, attempting to add a field that already exists throws an exception.
+
 **Description**
 
 Runs a saved search in Splunk using fields in an event, adding fields from the search result into the event.

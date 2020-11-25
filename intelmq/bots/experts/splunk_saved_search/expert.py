@@ -47,6 +47,10 @@ Parameters:
                 send: send the event on
                 drop: drop the message
 
+    overwrite: bool, optional, whether search results replace existing
+               values in the event. If not specified, trying to set an
+               existing field raises intelmq.exceptions.KeyExists.
+
 """
 
 try:
@@ -92,6 +96,8 @@ class SplunkSavedSearchBot(Bot):
         if "ignore" in self.duplicates and "use_first" in self.duplicates:
             raise ConfigurationError("Processing", "Cannot both ignore and use duplicate search results")
 
+        self.overwrite = getattr(self.parameters, "overwrite", None)
+
         self.set_request_parameters()
 
         self.http_header.update({"Authorization": f"Bearer {self.auth_token}"})
@@ -103,7 +109,7 @@ class SplunkSavedSearchBot(Bot):
         self.logger.info("Updating event: %s",
                          dict([(field, search_result[field]) for field in self.result_fields]))
         for result, field in self.result_fields.items():
-            event.add(field, search_result[result])
+            event.add(field, search_result[result], overwrite=self.overwrite)
 
     def process(self):
         event = self.receive_message()

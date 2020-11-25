@@ -967,7 +967,8 @@
                     "result field": "event field"
                 },
                 "not_found": [ "warn", "send" ],
-                "duplicates": [ "warn", "use_first", "send" ]
+                "duplicates": [ "warn", "use_first", "send" ],
+                "overwrite": true
             }
         },
         "Taxonomy": {
