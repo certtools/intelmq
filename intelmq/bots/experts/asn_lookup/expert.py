@@ -15,6 +15,7 @@ from intelmq.bin.intelmqctl import IntelMQController
 
 try:
     import pyasn
+    import pyasn.mrtx
 except ImportError:
     pyasn = None
 
@@ -99,7 +100,7 @@ class ASNLookupExpertBot(Bot):
             print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
             sys.exit(0)
 
-        # we only need to import now, if there are no asn_lookup bots, this dependency does not need to be installed
+        # we only need to import now. If there are no asn_lookup bots, this dependency does not need to be installed
         if pyasn is None:
             raise MissingDependencyError("pyasn")
 
