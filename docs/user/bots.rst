@@ -2670,6 +2670,8 @@ Splunk saved search
 
 Runs a saved search in Splunk using fields in an event, adding fields from the search result into the event.
 
+Splunk documentation on saved searches: https://docs.splunk.com/Documentation/Splunk/latest/Report/Createandeditreports
+
 The saved search should take parameters according to the `search_parameters` configuration and deliver results according to `result_fields`. The examples above match a saved search of this format:
 
 ::
