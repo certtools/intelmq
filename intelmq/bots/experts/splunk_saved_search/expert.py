@@ -116,8 +116,8 @@ class SplunkSavedSearchBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        self.logger.info("Received event, searching for %s",
-                         dict([(parameter, event[field]) for field, parameter in self.search_parameters.items()]))
+        self.logger.debug("Received event, searching for %s",
+                          dict([(parameter, event[field]) for field, parameter in self.search_parameters.items()]))
 
         query = f'|savedsearch "{self.saved_search}"'
         for field, parameter in self.search_parameters.items():
