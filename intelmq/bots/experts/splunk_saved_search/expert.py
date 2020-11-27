@@ -49,9 +49,10 @@ Parameters:
                 send: send the event on
                 drop: drop the message
 
-    overwrite: bool, optional, whether search results replace existing
-               values in the event. If not specified, trying to set an
-               existing field raises intelmq.exceptions.KeyExists.
+    overwrite: bool or null, optional, default null, whether search
+               results replace existing values in the event. If null,
+               trying to set an existing field raises
+               intelmq.exceptions.KeyExists.
 
 """
 

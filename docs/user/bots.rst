@@ -2664,7 +2664,7 @@ Splunk saved search
     * `send` and `drop` are mutually exclusive
     * `ignore` and `use_first` are mutually exclusive
 
-* `overwrite`: Boolean or absent, whether search results overwrite values already in the message or not. If not specified, attempting to add a field that already exists throws an exception.
+* `overwrite`: Boolean or null, optional, default null, whether search results overwrite values already in the message or not. If null, attempting to add a field that already exists throws an exception.
 
 **Description**
 
