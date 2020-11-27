@@ -2627,7 +2627,7 @@ Splunk saved search
 * **HTTP parameters** (see above)
 * `auth_token`: String, Splunk API authentication token
 * `url`: String, base URL of the Splunk REST API
-* `retry_interval`: Integer, optional, default 5, number of seconds to wait between attempts to retrieve search results
+* `retry_interval`: Integer, optional, default 5, number of seconds to wait between polling for search results to be available
 * `saved_search`: String, name of Splunk saved search to run
 * `search_parameters`: Array of string->string, optional, default ``{}``, IntelMQ event fields containing the data to search for, mapped to parameters of the Splunk saved search. Example:
 

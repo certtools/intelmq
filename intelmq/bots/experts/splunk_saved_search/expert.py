@@ -20,7 +20,8 @@ Parameters:
     url: string, base URL of the Splunk REST API
 
     retry_interval: integer, optional, default 5, number of seconds to
-                    wait between attempts to retrieve search results
+                    wait between polling for search results to be
+                    available
 
     saved_search: string, name of Splunk saved search to run
 
