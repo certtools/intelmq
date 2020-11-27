@@ -33,15 +33,16 @@ Parameters:
                    search result fields to IntelMQ event fields
 
     not_found: list of strings, default [ "warn", "send" ], what to do
-               if the search returns zero results. Any reasonable
-               combination of:
+               if the search returns zero results. All specified
+               actions are performed. Any reasonable combination of:
                warn: log a warning message
                send: send the event on unmodified
                drop: drop the message
 
     duplicates: list of strings, default [ "warn", "use_first",
                 "send" ], what to do if the search returns more than
-                one result. Any reasonable combination of:
+                one result. All specified actions are performed. Any
+                reasonable combination of:
                 warn: log a warning message
                 use_first: use the first search result
                 ignore: do not modify the event

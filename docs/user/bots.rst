@@ -2645,7 +2645,7 @@ Splunk saved search
          "username": "source.account"
      }
 
-* `not_found`: List of strings, default ``[ "warn", "send" ]``, what to do if the search returns zero results. Valid values are:
+* `not_found`: List of strings, default ``[ "warn", "send" ]``, what to do if the search returns zero results. All specified actions are performed. Valid values are:
 
   * `warn`: log a warning message
   * `send`: send the event on unmodified
@@ -2653,7 +2653,7 @@ Splunk saved search
 
     * `send` and `drop` are mutually exclusive
 
-* `duplicates`: List of strings, default ``[ "warn", "use_first", "send" ]``, what to do if the search returns more than one result. Valid values are:
+* `duplicates`: List of strings, default ``[ "warn", "use_first", "send" ]``, what to do if the search returns more than one result. All specified actions are performed. Valid values are:
 
   * `warn`: log a warning message
   * `use_first`: use the first search result
