@@ -102,7 +102,7 @@ class SplunkSavedSearchBot(Bot):
 
         self.set_request_parameters()
 
-        self.http_header.update({"Authorization": f"Bearer {self.auth_token}"})
+        self.http_header.update({"Authorization": "Bearer {}".format(self.auth_token)})
 
         self.session = utils.create_request_session(self)
         self.session.keep_alive = False
@@ -155,7 +155,7 @@ class SplunkSavedSearchBot(Bot):
                 results_ready = True
             elif req.status_code == 204:
                 results_ready = False
-                self.logger.debug(f"Results not ready, sleeping for {self.retry_interval} seconds before retrying")
+                self.logger.debug("Results not ready, sleeping for %s seconds before retrying", self.retry_interval)
                 time.sleep(self.retry_interval)
             else:
                 self.logger.error("Error getting search results: %s", req.text)
