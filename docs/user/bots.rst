@@ -2680,7 +2680,7 @@ The saved search should take parameters according to the `search_parameters` con
 
 The time window used is the one saved with the search.
 
-Waits for Splunk to return an answer for each message, so slow searches will delay the entire botnet.
+Waits for Splunk to return an answer for each message, so slow searches will delay the entire botnet. If you anticipate a load of more than one search every few seconds, consider running multiple load-balanced copies of this bot.
 
 Taxonomy
 ^^^^^^^^
