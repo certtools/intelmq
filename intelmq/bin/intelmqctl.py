@@ -1540,7 +1540,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 continue
             bot = getattr(bot_module, 'BOT')
             bot_parameters = files[DEFAULTS_CONF_FILE].copy()
-            bot_parameters.update(bot_config['parameters'])
+            bot_parameters.update(bot_config.get('parameters', {}))  # the parameters field may not exist
             bot_check = bot.check(bot_parameters)
             if bot_check:
                 for log_line in bot_check:
