@@ -117,6 +117,13 @@ class SplunkSavedSearchBot(Bot):
     def process(self):
         event = self.receive_message()
 
+        for field, parameter in self.search_parameters.items():
+            if field not in event:
+                self.logger.warning("Event %s does not contain search parameter %s", event, field)
+                self.send_message(event)
+                self.acknowledge_message()
+                return
+
         self.logger.debug("Received event, searching for %s",
                           dict([(parameter, event[field]) for field, parameter in self.search_parameters.items()]))
 
