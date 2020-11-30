@@ -1016,6 +1016,14 @@ Get some debugging output on the settings and the enviroment (to be extended):
         for option, value in config.items():
             setattr(self.parameters, option, value)
 
+        # TODO: Rewrite variables with env. variables ( CURRENT IMPLEMENTATION NOT FINAL )
+        # "destination_pipeline_host": "127.0.0.1",
+        # "source_pipeline_host": "127.0.0.1",
+        if os.getenv('INTELMQ_IS_DOCKER', None):
+            pipeline_host = os.getenv('INTELMQ_PIPELINE_HOST')
+            setattr(self.parameters, 'destination_pipeline_host', pipeline_host)
+            setattr(self.parameters, 'source_pipeline_host', pipeline_host)
+
     def run(self):
         results = None
         args = self.parser.parse_args()

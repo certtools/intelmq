@@ -697,6 +697,18 @@ class Bot(object):
 
         self.parameters.log_processed_messages_seconds = timedelta(seconds=self.parameters.log_processed_messages_seconds)
 
+        # TODO: Rewrite variables with env. variables ( CURRENT IMPLEMENTATION NOT FINAL )
+        if os.getenv('INTELMQ_IS_DOCKER', None):
+            pipeline_driver = os.getenv('INTELMQ_PIPELINE_DRIVER', None)
+            if pipeline_driver:
+                setattr(self.parameters, 'destination_pipeline_broker', pipeline_driver)
+                setattr(self.parameters, 'source_pipeline_broker', pipeline_driver)
+
+            pipeline_host = os.getenv('INTELMQ_PIPELINE_HOST', None)
+            if pipeline_host:
+                setattr(self.parameters, 'destination_pipeline_host', pipeline_host)
+                setattr(self.parameters, 'source_pipeline_host', pipeline_host)
+
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
         config = utils.load_configuration(RUNTIME_CONF_FILE)
@@ -718,6 +730,12 @@ class Bot(object):
         if reinitialize_logging:
             self.logger.handlers = []  # remove all existing handlers
             self.__init_logger()
+
+        # TODO: Rework
+        if os.getenv('INTELMQ_IS_DOCKER', None):
+            redis_cache_host = os.getenv('INTELMQ_REDIS_CACHE_HOST', None)
+            if redis_cache_host:
+                setattr(self.parameters, 'redis_cache_host', redis_cache_host)
 
     def __init_logger(self):
         """

@@ -143,8 +143,10 @@ class TestRedis(unittest.TestCase):
     def setUp(self):
         params = Parameters()
         params.broker = 'Redis'
+        setattr(params, 'source_pipeline_host', os.getenv('INTELMQ_PIPELINE_HOST', 'localhost'))
         setattr(params, 'source_pipeline_password', os.getenv('INTELMQ_TEST_REDIS_PASSWORD'))
         setattr(params, 'source_pipeline_db', 4)
+        setattr(params, 'destination_pipeline_host', os.getenv('INTELMQ_PIPELINE_HOST', 'localhost'))
         setattr(params, 'destination_pipeline_password', os.getenv('INTELMQ_TEST_REDIS_PASSWORD'))
         setattr(params, 'destination_pipeline_db', 4)
         logger = logging.getLogger('foo')
