@@ -968,7 +968,7 @@
                 },
                 "not_found": [ "warn", "send" ],
                 "duplicates": [ "warn", "use_first", "send" ],
-                "overwrite": true
+                "overwrite": null
             }
         },
         "Taxonomy": {
