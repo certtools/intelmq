@@ -44,8 +44,9 @@ ASSET_PATH = os.path.join(os.path.dirname(__file__), '../../../assets/')
 
 def prepare_mocker(mocker):
     for filename in os.listdir(ASSET_PATH):
-        mocker.get('http://localhost/%s' % filename,
-                   body=open(os.path.join(ASSET_PATH, filename), 'rb'))
+        with open(os.path.join(ASSET_PATH, filename), 'rb') as f:
+            mocker.get('http://localhost/%s' % filename, content=f.read())
+
 
 
 @requests_mock.Mocker()
