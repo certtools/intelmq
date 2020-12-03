@@ -43,6 +43,7 @@ Parameters:
                 "send" ], what to do if the search returns more than
                 one result. All specified actions are performed. Any
                 reasonable combination of:
+                limit: limit the search so that duplicates are impossible
                 warn: log a warning message
                 use_first: use the first search result
                 ignore: do not modify the event
@@ -94,6 +95,8 @@ class SplunkSavedSearchBot(Bot):
             raise ConfigurationError("Processing", "Cannot both drop and send messages without search results")
 
         self.duplicates = getattr(self.parameters, "duplicates", ["warn", "use_first", "send"])
+        if "limit" in self.duplicates and len(self.duplicates) != 1:
+            raise ConfigurationError("Processing", "Search results limited to one, no processing of duplicates possible")
         if "send" in self.duplicates and "drop" in self.duplicates:
             raise ConfigurationError("Processing", "Cannot both drop and send messages with duplicate search results")
         if "ignore" in self.duplicates and "use_first" in self.duplicates:
@@ -130,6 +133,8 @@ class SplunkSavedSearchBot(Bot):
         query = f'|savedsearch "{self.saved_search}"'
         for field, parameter in self.search_parameters.items():
             query += f' "{parameter}"="{event[field]}"'
+        if "limit" in self.duplicates:
+            query += " | head 1"
 
         self.logger.debug("Query: %s", query)
 

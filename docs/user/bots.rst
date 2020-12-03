@@ -2655,12 +2655,14 @@ Splunk saved search
 
 * `duplicates`: List of strings, default ``[ "warn", "use_first", "send" ]``, what to do if the search returns more than one result. All specified actions are performed. Valid values are:
 
+  * `limit`: limit the search so that duplicates are impossible
   * `warn`: log a warning message
   * `use_first`: use the first search result
   * `ignore`: do not modify the event
   * `send`: send the event on
   * `drop`: drop the message
 
+    * `limit` cannot be combined with any other value
     * `send` and `drop` are mutually exclusive
     * `ignore` and `use_first` are mutually exclusive
 
