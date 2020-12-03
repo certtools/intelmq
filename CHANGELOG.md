@@ -11,6 +11,7 @@ CHANGELOG
   - `ParserBot.recover_line_json_stream`: Make `line` parameter optional, as it is not needed for this method.
   - `Bot.argparser`: Added class method `_create_argparser` (returns `argparse.ArgumentParser`) for easy command line arguments parsing.
   - Runtime configuration does not necessarily need a parameter entry for each block. Previously and at least empty block was required (PR#1604 by Filip Pokorný).
+  - Allow setting the pipeline host and the redis cache host by environment variables for docker usage (PR#1669 by Sebastian Waldbauer).
 - `intelmq.lib.upgrades`:
   - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559).
 - `intelmq.lib.exceptions`:
@@ -110,6 +111,7 @@ CHANGELOG
 - `intelmqctl`:
   - `intelmq list queues`: `--sum`, `--count`, `-s` flag for showing total count of messages (PR#1581 by Mladen Markovic).
   - `intelmq check`: Added a possibility to ignore queues from the orphaned queues check.
+  - Allow setting the pipeline host by environment variables for docker usage (PR#1669 by Sebastian Waldbauer).
 
 ### Contrib
 - eventdb:
