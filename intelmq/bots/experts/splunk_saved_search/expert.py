@@ -93,7 +93,7 @@ class SplunkSavedSearchBot(Bot):
         if "send" in self.not_found and "drop" in self.not_found:
             raise ConfigurationError("Processing", "Cannot both drop and send messages without search results")
 
-        self.duplicates = getattr(self.parameters, "not_found", ["warn", "use_first", "send"])
+        self.duplicates = getattr(self.parameters, "duplicates", ["warn", "use_first", "send"])
         if "send" in self.duplicates and "drop" in self.duplicates:
             raise ConfigurationError("Processing", "Cannot both drop and send messages with duplicate search results")
         if "ignore" in self.duplicates and "use_first" in self.duplicates:
