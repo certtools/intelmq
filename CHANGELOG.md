@@ -20,6 +20,7 @@ CHANGELOG
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - Fix mapping of `DestinationIpInfo.DestinationIpConnectionType` field (contained a typo).
   - Explicitly ignore field `DestinationIpInfo.DestinationIpv4Int` as the data is already in another field.
+- `intelmq.bots.parsers.generic.parser_csv`: Ignore line having spaces or tabs only or comment having leading tabs or spaces (PR#1669 by Brajneesh).
 
 #### Experts
 
