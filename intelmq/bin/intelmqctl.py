@@ -468,7 +468,7 @@ class SupervisorProcessManager:
 
         output = ""
         try:
-            BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
+            bd = BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
                         console_type, message_action_kind, dryrun, msg, show_sent,
                         loglevel=loglevel)
             output = bd.run()
