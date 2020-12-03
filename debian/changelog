@@ -122,7 +122,7 @@ intelmq (1.2.0~alpha2-1) unstable; urgency=low
 
   * Update to version 1.2.0 alpha 2
 
- -- sebastianw <sebastianw@localhost>  Sat, 24 Nov 2018 22:40:21 +0100
+ -- sebastianw <wagner@cert.at>  Sat, 24 Nov 2018 22:40:21 +0100
 
 intelmq (1.2.0~alpha1-1) unstable; urgency=low
 
@@ -230,11 +230,13 @@ intelmq (1.0.0.rc1-2) UNRELEASED; urgency=medium
 
   * remove python3-requests from dependencies and add it to recommended packages
 
- -- Sebastian Wagner <sebastian@linux-7nbu.substi>  Tue, 18 Jul 2017 16:23:43 +0200
+ -- Sebastian Wagner <wagner@cert.at>  Tue, 18 Jul 2017 16:23:43 +0200
 
 intelmq (1.0.0.rc1-1) experimental; urgency=medium
 
   * update to version 1.0.0.rc1
+
+ -- Sebastian Wagner <wagner@cert.at>  Wed, 20 Jun 2017 16:05:00 +0200
 
 intelmq (1.0.0.dev8-2) experimental; urgency=medium
 
