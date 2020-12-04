@@ -51,6 +51,7 @@ class NationalCERTContactCertATExpertBot(Bot):
                     'sep': 'semicolon',
                 }
                 req = self.session.get(URL, params=parameters)
+                self.session.close()
                 if not req.text:
                     # empty response
                     continue
