@@ -2653,7 +2653,7 @@ Splunk saved search
 
     * `send` and `drop` are mutually exclusive
 
-* `duplicates`: List of strings, default ``[ "warn", "use_first", "send" ]``, what to do if the search returns more than one result. All specified actions are performed. Valid values are:
+* `multiple_result_handling`: List of strings, default ``[ "warn", "use_first", "send" ]``, what to do if the search returns more than one result. All specified actions are performed. Valid values are:
 
   * `limit`: limit the search so that duplicates are impossible
   * `warn`: log a warning message

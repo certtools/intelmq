@@ -39,16 +39,18 @@ Parameters:
                send: send the event on unmodified
                drop: drop the message
 
-    duplicates: list of strings, default [ "warn", "use_first",
-                "send" ], what to do if the search returns more than
-                one result. All specified actions are performed. Any
-                reasonable combination of:
-                limit: limit the search so that duplicates are impossible
-                warn: log a warning message
-                use_first: use the first search result
-                ignore: do not modify the event
-                send: send the event on
-                drop: drop the message
+    multiple_result_handling: list of strings, default [ "warn",
+                              "use_first", "send" ], what to do if the
+                              search returns more than one result. All
+                              specified actions are performed. Any
+                              reasonable combination of:
+                              limit: limit the search so that duplicates
+                                     are impossible
+                              warn: log a warning message
+                              use_first: use the first search result
+                              ignore: do not modify the event
+                              send: send the event on
+                              drop: drop the message
 
     overwrite: bool or null, optional, default null, whether search
                results replace existing values in the event. If null,
@@ -94,13 +96,13 @@ class SplunkSavedSearchBot(Bot):
         if "send" in self.not_found and "drop" in self.not_found:
             raise ConfigurationError("Processing", "Cannot both drop and send messages without search results")
 
-        self.duplicates = getattr(self.parameters, "duplicates", ["warn", "use_first", "send"])
-        if "limit" in self.duplicates and len(self.duplicates) != 1:
-            raise ConfigurationError("Processing", "Search results limited to one, no processing of duplicates possible")
-        if "send" in self.duplicates and "drop" in self.duplicates:
-            raise ConfigurationError("Processing", "Cannot both drop and send messages with duplicate search results")
-        if "ignore" in self.duplicates and "use_first" in self.duplicates:
-            raise ConfigurationError("Processing", "Cannot both ignore and use duplicate search results")
+        self.multiple_result_handling = getattr(self.parameters, "multiple_result_handling", ["warn", "use_first", "send"])
+        if "limit" in self.multiple_result_handling and len(self.multiple_result_handling) != 1:
+            raise ConfigurationError("Processing", "Search results limited to one, no processing of multiple results possible")
+        if "send" in self.multiple_result_handling and "drop" in self.multiple_result_handling:
+            raise ConfigurationError("Processing", "Cannot both drop and send messages with multiple search results")
+        if "ignore" in self.multiple_result_handling and "use_first" in self.multiple_result_handling:
+            raise ConfigurationError("Processing", "Cannot both ignore and use multiple search results")
 
         self.overwrite = getattr(self.parameters, "overwrite", None)
 
@@ -133,7 +135,7 @@ class SplunkSavedSearchBot(Bot):
         query = f'|savedsearch "{self.saved_search}"'
         for field, parameter in self.search_parameters.items():
             query += f' "{parameter}"="{event[field]}"'
-        if "limit" in self.duplicates:
+        if "limit" in self.multiple_result_handling:
             query += " | head 1"
 
         self.logger.debug("Query: %s", query)
@@ -185,17 +187,17 @@ class SplunkSavedSearchBot(Bot):
                 self.send_message(event)
                 self.acknowledge_message()
         elif len(hits) > 1:
-            if "warn" in self.duplicates:
+            if "warn" in self.multiple_result_handling:
                 self.logger.warning("Multiple results returned: %s", hits)
-            if "use_first" in self.duplicates:
+            if "use_first" in self.multiple_result_handling:
                 self.logger.debug("Using first search result")
                 self.update_event(event, hits[0])
-            if "ignore" in self.duplicates:
+            if "ignore" in self.multiple_result_handling:
                 self.logger.debug("Ignoring search results")
-            if "drop" in self.duplicates:
+            if "drop" in self.multiple_result_handling:
                 self.logger.debug("Dropping message")
                 self.acknowledge_message()
-            if "send" in self.duplicates:
+            if "send" in self.multiple_result_handling:
                 self.send_message(event)
                 self.acknowledge_message()
         else:

@@ -967,7 +967,7 @@
                     "result field": "event field"
                 },
                 "not_found": [ "warn", "send" ],
-                "duplicates": [ "warn", "use_first", "send" ],
+                "multiple_result_handling": [ "warn", "use_first", "send" ],
                 "overwrite": null
             }
         },
