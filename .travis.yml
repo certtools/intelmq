@@ -17,6 +17,9 @@ jobs:
     env: mode=codestyle
   - python: 3.8
     env: mode=documentation
+  exclude:
+  - python: 3.5
+    env: requirements=true
 before_install:
   - if [[ -v requirements ]]; then curl -s -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.1-amd64.deb; fi
   - if [[ -v requirements ]]; then sudo dpkg -i --force-confnew elasticsearch-7.6.1-amd64.deb; fi
