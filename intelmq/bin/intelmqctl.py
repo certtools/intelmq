@@ -1021,8 +1021,9 @@ Get some debugging output on the settings and the enviroment (to be extended):
         # "source_pipeline_host": "127.0.0.1",
         if os.getenv('INTELMQ_IS_DOCKER', None):
             pipeline_host = os.getenv('INTELMQ_PIPELINE_HOST')
-            setattr(self.parameters, 'destination_pipeline_host', pipeline_host)
-            setattr(self.parameters, 'source_pipeline_host', pipeline_host)
+            if pipeline_host:
+                setattr(self.parameters, 'destination_pipeline_host', pipeline_host)
+                setattr(self.parameters, 'source_pipeline_host', pipeline_host)
 
     def run(self):
         results = None
