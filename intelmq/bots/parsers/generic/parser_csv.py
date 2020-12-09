@@ -131,7 +131,7 @@ class GenericCsvParserBot(ParserBot):
                         value = self.type_translation[value]
                     elif not hasattr(self.parameters, 'type'):
                         continue
-                if event.add(key, value, raise_failure=False):
+                if event.add(key, value, raise_failure=False) is not False:
                     break
             else:
                 # if the value sill remains unadded we need to inform if the key is needed
