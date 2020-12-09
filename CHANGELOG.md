@@ -33,6 +33,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Travis: Deactivate tests with optional requirements on Python 3.5, as the build fails because of abusix/querycontacts version conflicts on dnspython.
 
 ### Tools
 
