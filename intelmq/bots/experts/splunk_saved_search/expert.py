@@ -132,9 +132,9 @@ class SplunkSavedSearchBot(Bot):
         self.logger.debug("Received event, searching for %s",
                           dict([(parameter, event[field]) for field, parameter in self.search_parameters.items()]))
 
-        query = f'|savedsearch "{self.saved_search}"'
+        query = '|savedsearch "{saved_search}"'.format(saved_search=self.saved_search)
         for field, parameter in self.search_parameters.items():
-            query += f' "{parameter}"="{event[field]}"'
+            query += ' "{parameter}"="{event[field]}"'.format(parameter=parameter, event=event)
         if "limit" in self.multiple_result_handling:
             query += " | head 1"
 
