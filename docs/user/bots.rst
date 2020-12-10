@@ -651,49 +651,6 @@ TCP
 TCP collector just sends an "Ok" message after every received message, this should not pose a problem for an arbitrary input.
 If you intend to link two IntelMQ instance via TCP, have a look at the TCP output bot documentation.
 
-XMPP collector
-^^^^^^^^^^^^^^
-
-**Warning:** This bot is deprecated and will be removed in the version 3.0 of IntelMQ.
-**Warning:** This bot is currently *unmaintained*. The used XMPP library *sleekxmpp* is deprecated. For more information see :issue:`Issue #1614 <1614>`.
-
-**Information**
-
-* `name:` intelmq.bots.collectors.xmpp.collector
-* `lookup:` yes
-* `public:` yes
-* `cache (redis db):` none
-* `description:` This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.
-
-**Requirements**
-
-The Sleekxmpp - Library needs to be installed on your System
-
-.. code-block:: bash
-   
-   pip3 install -r intelmq/bots/collectors/xmpp/REQUIREMENTS.txt
-
-**Configuration Parameters**
-
-* **Feed parameters** (see above)
-* `xmpp_server`: The domain name of the server of the XMPP-Account (part after the @ sign)
-* `xmpp_user`: The username of the XMPP-Account the collector shall use (part before the @ sign)
-* `xmpp_password`: The password of the XMPP-Account
-* `xmpp_room`: The room which has to be joined by the XMPP-Collector (full address room@conference.server.tld)
-* `xmpp_room_nick`: The username / nickname the collector shall use within the room
-* `xmpp_room_password`: The password which might be required to join a room
-
- - `use_muc` : If this parameter is `true`, the bot will join the room `xmpp_room`.
- - `xmpp_userlist`: An array of usernames whose messages will (not) be processed.
- - `xmpp_whitelist_mode`: If `true` the list provided in `xmpp_userlist` is a whitelist. Else it is a blacklist.
-    In case of a whitelist, only messages from the configured users will be processed, else their messages are not
-    processed. Default is `false` / blacklist.
-
-* `ca_certs`: A path to a file containing the CA's which should be used (default: `/etc/ssl/certs/ca-certificates.crt`)
-* `strip_message`: If `true` trailing white space will be removed from the message. Does not happen if `pass_full_xml` is set to `true` (default: `true`)
-* `pass_full_xml`: If this parameter is set to `true` the collector will read the full-xmpp-xml message and add it to the pipeline.
-   this is useful if other systems like AbuseHelper should be processed. (default: `false`)
-
 Alien Vault OTX
 ^^^^^^^^^^^^^^^
 
@@ -3586,38 +3543,3 @@ Resulting line in syslog:
 .. code-block::
 
    Apr 29 11:17:47 localhost IntelMQ-event|source.ip: 85.25.160.114|time.source:2016-04-25T11:39:00+00:00|feed.url:http://www.malwaredomainlist.com/updatescsv.php|time.observation:2016-04-29T11:17:44+00:00|source.reverse_dns:static-ip-85-25-160-114.inaddr.ip-pool.com|feed.name:Malware Domain List|event_description.text:Angler EK|source.url:http://schizzino.omarathon.com/gkCCJuTHM/DPeCZEk/WtVNHDKl-mXYeFNHj/|source.asn:8972|classification.type:malware-distribution|feed.accuracy:100.0
-
-XMPP
-^^^^
-**Warning:** This bot is deprecated and will be removed in the version 3.0 of IntelMQ.
-**Warning:** This bot is currently *unmaintained*. The used XMPP library *sleekxmpp* is deprecated. For more information see :issue:`Issue #1614 <1614>`.
-
-**Information**
-
-* `name:` intelmq.bots.outputs.xmpp.collector
-* `lookup:` yes
-* `public:` yes
-* `cache (redis db):` none
-* `description:` The XMPP Output is capable of sending Messages to XMPP Rooms and as direct messages.
-
-
-**Requirements**
-
-The Sleekxmpp - Library needs to be installed on your System
-
-.. code-block:: bash
-   
-   pip3 install -r intelmq/bots/collectors/xmpp/REQUIREMENTS.txt
-
-**Configuration Parameters**
-
-- `xmpp_user` : The username of the XMPP-Account the output shall use (part before the @ sign)
-- `xmpp_server` : The domain name of the server of the XMPP-Account (part after the @ sign)
-- `xmpp_password` : The password of the XMPP-Account
-- `xmpp_to_user` : The username of the receiver
-- `xmpp_to_server` : The domain name of the receiver
-- `xmpp_room` : The room which has to be joined by the output (full address a@conference.b.com)
-- `xmpp_room_nick` : The username / nickname the output shall use within the room.
-- `xmpp_room_password` : The password which might be required to join a room
-- `use_muc` : If this parameter is `true`, the bot will join the room `xmpp_room`.
-- `ca_certs` : A path to a file containing the CA's which should be used
