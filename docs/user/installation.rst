@@ -41,7 +41,7 @@ Optional dependencies:
 .. code-block:: bash
 
    apt install bash-completion jq
-   apt install python3-sleekxmpp python3-pymongo python3-psycopg2
+   apt install python3-pymongo python3-psycopg2
 
 CentOS 7 / RHEL 7
 ^^^^^^^^^^^^^^^^^
@@ -81,7 +81,7 @@ Optional dependencies:
 .. code-block:: bash
 
    zypper in bash-completion jq
-   zypper in python3-psycopg2 python3-pymongo python3-sleekxmpp
+   zypper in python3-psycopg2 python3-pymongo
 
 Installation
 ------------
