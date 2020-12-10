@@ -16,7 +16,7 @@ The following instructions assume the following requirements. Python versions >=
 
 Supported and recommended operating systems are:
 
-* CentOS 7
+* CentOS 7 and 8
 * Debian 9 and 10
 * OpenSUSE Leap 15.1, 15.2
 * Ubuntu: 16.04, 18.04, 20.04
@@ -26,7 +26,7 @@ Other distributions which are (most probably) supported include CentOS 8, RHEL, 
 Install Dependencies
 --------------------
 
-If you are using native packages, you can simply skip this section as all dependencies are installed automatically.
+**If you are using native packages, you skip this section as all dependencies are installed automatically.**
 
 Ubuntu / Debian
 ^^^^^^^^^^^^^^^
@@ -53,8 +53,23 @@ CentOS 7 / RHEL 7
    yum install gcc gcc-c++
    yum install redis
 
-openSUSE 15.1
-^^^^^^^^^^^^^
+CentOS 8
+^^^^^^^^
+
+.. code-block:: bash
+
+    dnf install epel-release
+    dnf install python3-dateutil python3-dns python3-pip python3-psutil python3-pytz python3-redis python3-requests redis
+
+Optional dependencies:
+
+.. code-block:: bash
+
+    dnf install bash-completion jq
+    dnf install python3-psycopg2 python3-pymongo
+
+openSUSE 15.1 / 15.2
+^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash
 
@@ -81,29 +96,24 @@ Installation methods available:
 Native Packages
 ^^^^^^^^^^^^^^^
 
-Supported Operating Systems:
+These are the operating systems which are currently supported by packages:
 
-* **CentOS 7** (requires `epel-release`)
-* **Debian 8** (requires `python3-typing`)
+* **CentOS 7** (run `yum install epel-release` first)
+* **CentOS 8** (run `dnf install epel-release` first)
 * **Debian 9**
 * **Debian 10**
-* **Fedora 29**
 * **Fedora 30**
-* **RHEL 7**  (requires `epel-release`)
-* **openSUSE Leap 15.0**
+* **Fedora 31**
+* **Fedora 32**
 * **openSUSE Leap 15.1**
+* **openSUSE Leap 15.2**
 * **openSUSE Tumbleweed**
-* **Ubuntu 16.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ xenial main`)
-* **Ubuntu 18.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ bionic main`)
-* **Ubuntu 19.10** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ eoan main`)
-* **Ubuntu 20.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ focal main`)
+* **Ubuntu 16.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ xenial main` first)
+* **Ubuntu 18.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ bionic main` first)
+* **Ubuntu 20.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ focal main` first)
 
-Get the installation instructions for your operating system here: `Installation Native Packages <https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq>`_.
-To import the key on Debian and Ubuntu, use:
-
-.. code-block:: bash
-
-   curl https://build.opensuse.org/projects/home:sebix:intelmq/public_key | sudo apt-key add -
+Get the installation instructions for your operating system here: `Installation Native Packages <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq>`_.
+The instructions show how to add the repository and install the `intelmq` package. You can also install the `intelmq-manager` package to get the [Web-Frontend IntelMQ Manager](https://github.com/certtools/intelmq-manager/).
 
 Please report any errors or improvements at `IntelMQ Issues <https://github.com/certtools/intelmq/issues>`_. Thanks!
 
