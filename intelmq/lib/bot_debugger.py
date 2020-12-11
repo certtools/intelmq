@@ -138,8 +138,7 @@ class BotDebugger:
 
         if dryrun:
             self.instance.send_message = lambda *args, **kwargs: self.outputappend(
-                "DRYRUN: Message would be sent now to %r!",
-                kwargs.get('path', "_default"))
+                "DRYRUN: Message would be sent now to %r!" % kwargs.get('path', "_default"))
             self.instance.acknowledge_message = lambda *args, **kwargs: self.outputappend(
                 "DRYRUN: Message would be acknowledged now!")
             self.outputappend(" * Dryrun only, no message will be really sent through.")
