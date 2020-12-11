@@ -2447,7 +2447,7 @@ Sieve
 **Description**
 
 The sieve bot is used to filter and/or modify events based on a set of rules. The
-rules are specified in an external configuration file and with a syntax similar
+rules are specified in an external configuration file and with a syntax *similar*
 to the `Sieve language <http://sieve.info>`_ used for mail filtering.
 
 Each rule defines a set of matching conditions on received events. Events can be
@@ -2513,13 +2513,17 @@ The sieve file contains an arbitrary number of rules of the form:
    }
 
 
+*Please note* that nesting if-statements is currently not possible. `ACTIONS`
+must contain one or more actions of the actions listed below.
+
 *Expressions*
 
 Each rule specifies on or more expressions to match an event based on its keys
 and values. Event keys are specified as strings without quotes. String values
 must be enclosed in single quotes. Numeric values can be specified as integers
 or floats and are unquoted. IP addresses and network ranges (IPv4 and IPv6) are
-specified with quotes. Following operators may be used to match events:
+specified with quotes. Parentheses in expression statements are not possible.
+The following operators may be used to match events:
 
  * `:exists` and `:notexists` match if a given key exists, for example:
 
