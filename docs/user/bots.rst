@@ -2523,11 +2523,11 @@ specified with quotes. Following operators may be used to match events:
 
  * `:exists` and `:notexists` match if a given key exists, for example:
 
-    ```if :exists source.fqdn { ... }```
+    ``if :exists source.fqdn { ... }``
 
  * `==` and `!=` match for equality of strings and numbers, for example:
 
-   ```if feed.name != 'acme-security' || feed.accuracy == 100 { ... }```
+   ``if feed.name != 'acme-security' || feed.accuracy == 100 { ... }``
 
  * `:contains` matches on substrings.
 
@@ -2537,18 +2537,18 @@ specified with quotes. Following operators may be used to match events:
 
  * `<<` matches if an IP address is contained in the specified network range:
 
-   ```if source.ip << '10.0.0.0/8' { ... }```
+   ``if source.ip << '10.0.0.0/8' { ... }``
 
  * Values to match against can also be specified as list, in which case any one of the values will result in a match:
 
-   ```if source.ip == ['8.8.8.8', '8.8.4.4'] { ... }```
+   ``if source.ip == ['8.8.8.8', '8.8.4.4'] { ... }``
 
   In this case, the event will match if it contains a key `source.ip` with
   either value `8.8.8.8` or `8.8.4.4`.
 
   With inequality operators, the behavior is the same, so it matches if any expression does not match:
 
-  ```if source.ip != ['8.8.8.8', '8.8.4.4'] { ... }```
+  ``if source.ip != ['8.8.8.8', '8.8.4.4'] { ... }``
 
   Events with values like `8.8.8.8` or `8.8.4.4` will match, as they are always unequal to the other value.
   The result is *not* that the field must be unequal to all given values.
@@ -2563,27 +2563,27 @@ in the sieve file will be forwarded to the next bot in the pipeline, unless the
 
  * `add` adds a key value pair to the event. This action only applies if the key is not yet defined in the event. If the key is already defined, the action is ignored. Example:
 
-   ```add comment = 'hello, world'```
+   ``add comment = 'hello, world'``
 
  * `add!` same as above, but will force overwrite the key in the event.
 
  * `update` modifies an existing value for a key. Only applies if the key is already defined. If the key is not defined in the event, this action is ignored.  Example:
 
-   ```update feed.accuracy = 50```
+   ``update feed.accuracy = 50``
 
  * `remove` removes a key/value from the event. Action is ignored if the key is not defined in the event. Example:
 
-    ```remove extra.comments```
+    ``remove extra.comments``
 
  * `keep` sends the message to the next bot in the pipeline (same as the default behaviour), and stops sieve file processing.
 
-   ```keep```
+   ``keep``
 
  * `path` sets the path (named queue) the message should be sent to (implicitly
    or with the command `keep`. The named queue needs to configured in the
    pipeline, see the User Guide for more information.
 
-   ```path 'named-queue'```
+   ``path 'named-queue'``
 
  * `drop` marks the event to be dropped. The event will not be forwarded to the next bot in the pipeline. The sieve file processing is interrupted upon
    reaching this action. No other actions may be specified besides the `drop` action within `{` and `}`.
