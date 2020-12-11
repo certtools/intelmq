@@ -11,6 +11,7 @@ CHANGELOG
 ### Development
 
 ### Harmonization
+- See NEWS.md for information on a fixed bug in the taxonomy expert.
 
 ### Bots
 #### Collectors
@@ -25,6 +26,7 @@ CHANGELOG
   - Data fields containing `-` are now ignored and do not raise an exeception anymore (#1651, PR#74 by Sebastian Waldbauer).
 
 #### Experts
+- `intelmq.bots.experts.taxonomy.expert`: Map type `scanner` to `information-gathering` instead of `information gathering` See NEWS file for more information.
 
 #### Outputs
 

@@ -29,7 +29,7 @@ TAXONOMY = {
     "data-loss": "information content security",
     "dropzone": "information content security",  # not in ENISA eCSIRT-II taxonomy
     "leak": "information content security",  # not in ENISA eCSIRT-II taxonomy
-    "scanner": "information gathering",
+    "scanner": "information-gathering",
     "sniffing": "information-gathering",
     "social-engineering": "information-gathering",
     "brute-force": "intrusion attempts",
