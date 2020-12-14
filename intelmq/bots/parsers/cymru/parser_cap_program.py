@@ -21,7 +21,7 @@ MAPPING_STATIC = {'bot': {
                       'classification.identifier': 'dns-open-resolver',
                       'protocol.application': 'dns',
                       },
-    'openresolver': {'classification.type': 'vulnerable service',
+    'openresolver': {'classification.type': 'vulnerable-system',
                      'classification.identifier': 'dns-open-resolver',
                      'protocol.application': 'dns',
                      },

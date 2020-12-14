@@ -38,7 +38,7 @@ EXAMPLE_EVENT = {
     "destination.ip": "192.0.2.1",
     "time.source": "2020-08-12T13:32:31+00:00",
     "source.geolocation.longitude": 0.000,
-    "classification.taxonomy": "malicious code",
+    "classification.taxonomy": "malicious-code",
     "source.geolocation.cc": "ZZ",
     "feed.accuracy": 100.00,
     "source.abuse_contact": "contact@example.com",

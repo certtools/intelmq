@@ -47,7 +47,6 @@ OUTPUT = [{'classification.identifier': 'feodo'},
           {'classification.identifier': 'xcodeghost'},
           {'classification.identifier': 'someexample-value'},
           {'classification.identifier': 'anyvalue'},  # 5
-=======
           {'protocol.application': 'http', 'protocol.transport': 'tcp', 'classification.identifier': 'dga'},
           {'classification.type': 'vulnerable-system'},
           {'event_description.text': 'This is a TOR node.'},

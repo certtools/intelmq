@@ -47,7 +47,7 @@ COMPOSE_EVENT = {"feed.name": "Sample CSV Feed",
                  "source.urlpath": "/foo/",
                  "source.url": "http://example.com/foo/",
                  "source.fqdn": "example.com",
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "raw": utils.base64_encode(COMPOSE_SPLIT[1]+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }

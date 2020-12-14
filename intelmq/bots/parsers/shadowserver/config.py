@@ -2239,7 +2239,7 @@ open_ipp = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-ipp',
         'protocol.application': 'ipp',
     }
@@ -2266,7 +2266,7 @@ accessible_coap = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'accessible-coap',
         'protocol.application': 'coap',
     }
@@ -2294,7 +2294,7 @@ accessible_ard = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'accessible-ard',
     }
 }
@@ -2320,7 +2320,7 @@ accessible_radmin = {
     'constant_fields': {
         'classification.identifier': 'accessible-radmin',
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
     }
 }
 
