@@ -547,6 +547,19 @@
                 "splitlines": false
             }
         },
+        "JSON Custom": {
+            "description": "JSON Custom Parser converts from a custom JSON-String into an Event",
+            "module": "intelmq.bots.parsers.json_custom.parser",
+            "parameters": {
+                "splitlines": false,
+                "multiple_msg_field": null,
+                "json_data_format": false,
+                "json_data_key": null,
+                "time_format": null,
+                "translate_fields": {},
+                "type": "c2server"
+            }
+        },
         "Key-Value": {
             "description": "Parse key=value strings.",
             "module": "intelmq.bots.parsers.key_value.parser",
