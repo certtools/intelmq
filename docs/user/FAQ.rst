@@ -14,13 +14,11 @@ Permission denied when using redis unix socket
 
 If you get an error like this:
 
-```
-intelmq.lib.exceptions.PipelineError: pipeline failed - ConnectionError('Error 13 connecting to unix socket: /var/run/redis/redis.sock. Permission denied.',)
-```
+``intelmq.lib.exceptions.PipelineError: pipeline failed - ConnectionError('Error 13 connecting to unix socket: /var/run/redis/redis.sock. Permission denied.',)``
 
-make sure the permissions for the socket are set accordingly in `/etc/redis/redis.conf` (or wherever your config is), e.g.:
+make sure the permissions for the socket are set accordingly in ``/etc/redis/redis.conf`` (or wherever your config is), e.g.:
 
-    unixsocketperm 777
+``unixsocketperm 777``
 
 Why is the time invalid?
 -------------------------------------------------------------------
@@ -41,13 +39,13 @@ In most cases the bottlenecks are look-up experts. In these cases you can easily
 Multithreading
 ^^^^^^^^^^^^^^
 
-When using the AMQP broker, you can make use of Multi-threading. See the [Uer-Guide, section Multithreading](User-Guide.html#multithreading-beta).
+When using the AMQP broker, you can make use of Multi-threading. See the :ref:`multithreading` section.
 
 "Classic" load-balancing (Multiprocessing)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Before Multithreading was available in IntelMQ, and in case you use Redis as broker, the only way to do load balancing involves more work.
-Create multiple instances of the same bot and connect them all to the same source and destination bots. Then set the parameter `load_balance` to `true` for the bot which sends the messages to the duplicated bot. Then, the bot sends messages to only one of the destination queues and not to all of them.
+Create multiple instances of the same bot and connect them all to the same source and destination bots. Then set the parameter ``load_balance`` to ``true`` for the bot which sends the messages to the duplicated bot. Then, the bot sends messages to only one of the destination queues and not to all of them.
 
 True Multi*processing* is not available in IntelMQ. See also this :issue:`discussion on a possible enhanced load balancing <186>`.
 
@@ -70,14 +68,12 @@ The raw data consumes about 50% - 30% of the messages' size. The size of course 
 
 You can do this for example by using the *Field Reducer Expert*. The configuration could be:
 
- * `type`: `blacklist`
- * `keys`: `raw`
+ * ``type``: ``blacklist``
+ * ``keys``: ``raw``
 
 Other solutions are the *Modify* bot and the *Sieve* bot. The last one is a good choice if you already use it and you only need to add the command:
 
-```
-remove raw
-```
+``remove raw``
 
 **In the database**
 
@@ -85,21 +81,21 @@ In case you store data in the database and you want to keep its size small, you 
 
 To remove the raw data for a events table of a PostgreSQL database, you can use something like:
 
-```
-UPDATE events SET raw = NULL WHERE "time.source" < '2018-07-01';
-```
+.. code-block:: sql
 
-If the database is big, make sure only update small parts of the database by using an appropriate `WHERE` clause. If you do not see any negative performance impact, you can increase the size of the chunks, otherwise the events in the output bot may queue up. The `id` column can also be used instead of the source's time.
+   UPDATE events SET raw = NULL WHERE "time.source" < '2018-07-01';
+
+If the database is big, make sure only update small parts of the database by using an appropriate ``WHERE`` clause. If you do not see any negative performance impact, you can increase the size of the chunks, otherwise the events in the output bot may queue up. The ``id`` column can also be used instead of the source's time.
 
 My bot(s) died on startup with no errors logged
 -------------------------------------------------------------------
 
-Rather than starting your bot(s) with `intelmqctl start`, try `intelmqctl run [bot]`. This will provide valuable debug output you might not otherwise see, pointing to issues like system configuration errors.
+Rather than starting your bot(s) with ``intelmqctl start``, try ``intelmqctl run [bot]``. This will provide valuable debug output you might not otherwise see, pointing to issues like system configuration errors.
 
 Orphaned Queues
 -------------------------------------------------------------------
 
-This section has been moved to the [intelmqctl documentation](intelmctl.html#orphaned-queues)
+This section has been moved to the section :ref:`orphan-queues`.
 
 .. _faq multithreading not avail:
 Multithreading is not available for this bot

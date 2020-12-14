@@ -413,6 +413,9 @@ Check
 ---------------
 This command will do various sanity checks on the installation and especially the configuration.
 
+
+.. _orphan-queues:
+
 Orphaned Queues
 ^^^^^^^^^^^^^^^
 
