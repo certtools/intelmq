@@ -27,7 +27,7 @@ class RestAPIOutputBot(Bot):
         self.http_header.update({"Content-Type":
                                  "application/json; charset=utf-8"})
 
-        self.session = utils.create_request_session_from_bot(self)
+        self.session = utils.create_request_session(self)
         self.session.keep_alive = False
 
     def process(self):

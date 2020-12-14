@@ -48,7 +48,7 @@ class GithubAPICollectorBot(CollectorBot):
                 raise ValueError(response.json()['message'])
             else:
                 return response.json()
-        except requests.RequestException as e:
+        except requests.RequestException:
             raise ValueError("Unknown repository {!r}.".format(api_path))
 
     @staticmethod

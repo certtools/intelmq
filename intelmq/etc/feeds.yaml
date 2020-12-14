@@ -90,7 +90,7 @@ providers:
           module: intelmq.bots.parsers.malwarepatrol.parser_dansguardian
           parameters:
       revision: 2018-01-20
-      documentation: https://www.malwarepatrol.net/
+      documentation: https://www.malwarepatrol.net/non-commercial/
       public: no
   Malware Domains:
     Malicious:
@@ -296,9 +296,18 @@ providers:
             skip_header: false
             default_url_protocol: http://
             type_translation: '{"malware_download": "malware-distribution"}'
-            columns: time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc
-      revision: 2019-02-14
-      documentation: https://urlhaus.abuse.ch/
+            delimeter: ","
+            columns:
+              - time.source
+              - source.url
+              - status
+              - classification.type|__IGNORE__
+              - source.fqdn|__IGNORE__
+              - source.ip
+              - source.asn
+              - source.geolocation.cc
+      revision: 2020-07-07
+      documentation: https://urlhaus.abuse.ch/feeds/
       public: yes
     Feodo Tracker Browse:
       description: ''
@@ -446,27 +455,6 @@ providers:
       revision: 2018-01-20
       documentation: https://www.tc.edu.tw/net/netflow/lkout/recent/
       public: yes
-  HPHosts:
-    Hosts:
-      description: hpHosts is a community managed and maintained hosts file that allows
-        an additional layer of protection against access to ad, tracking and malicious
-        websites.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://hosts-file.net/download/hosts.txt
-            rate_limit: 3600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.hphosts.parser
-          parameters:
-            error_log_message: 'false'
-      revision: 2018-01-20
-      documentation: http://hosts-file.net/
-      public: yes
   Dataplane:
     SSH Client Connection:
       description: Entries below consist of fields with identifying characteristics
@@ -557,8 +545,8 @@ providers:
       description: The data are processed and clasified every week and behaviour of
         IP addresses that accessed a larger number of Turris routers is evaluated.
         The result is a list of addresses that have tried to obtain information about
-        services on the router or tried to gain access to them. We publish this so
-        called "greylist" that also contains a list of tags for each address which
+        services on the router or tried to gain access to them. The list also
+        contains a list of tags for each address which
         indicate what behaviour of the address was observed.
       additional_information:
       bots:
@@ -573,7 +561,72 @@ providers:
           module: intelmq.bots.parsers.turris.parser
           parameters:
       revision: 2018-01-20
-      documentation: https://project.turris.cz/greylist-data/legend.txt
+      documentation: https://project.turris.cz/en/greylist
+      public: yes
+    Greylist with PGP signature verification:
+      description: |
+        The data are processed and clasified every week and behaviour of
+        IP addresses that accessed a larger number of Turris routers is evaluated.
+        The result is a list of addresses that have tried to obtain information about
+        services on the router or tried to gain access to them. The list also
+        contains a list of tags for each address which
+        indicate what behaviour of the address was observed.
+        
+        The Turris Greylist feed provides PGP signatures for the provided files.
+        You will need to import the public PGP key from the linked documentation
+        page, currently available at
+        https://pgp.mit.edu/pks/lookup?op=vindex&search=0x10876666
+        or from below.
+        See the URL Fetcher Collector documentation for more information on
+        PGP signature verification.
+        
+        PGP Public key:
+        ```
+        -----BEGIN PGP PUBLIC KEY BLOCK-----
+        Version: SKS 1.1.6
+        Comment: Hostname: pgp.mit.edu
+        
+        mQINBFRl7D8BEADaRFoDa/+r27Gtqrdn8sZL4aSYTU4Q3gDr3TfigK8H26Un/Y79a/DUL1o0
+        o8SRae3uwVcjJDHZ6KDnxThbqF7URfpuCcCYxOs8p/eu3dSueqEGTODHWF4ChIh2japJDc4t
+        3FQHbIh2e3GHotVqJGhvxMmWqBFoZ/mlWvhjs99FFBZ87qbUNk7l1UAGEXeWeECgz9nGox40
+        3YpCgEsnJJsKC53y5LD/wBf4z+z0GsLg2GMRejmPRgrkSE/d9VjF/+niifAj2ZVFoINSVjjI
+        8wQFc8qLiExdzwLdgc+ggdzk5scY3ugI5IBt1zflxMIOG4BxKj/5IWsnhKMG2NLVGUYOODoG
+        pKhcY0gCHypw1bmkp2m+BDVyg4KM2fFPgQ554DAX3xdukMCzzZyBxR3UdT4dN7xRVhpph3Y2
+        Amh1E/dpde9uwKFk1oRHkRZ3UT1XtpbXtFNY0wCiGXPt6KznJAJcomYFkeLHjJo3nMK0hISV
+        GSNetVLfNWlTkeo93E1innbSaDEN70H4jPivjdVjSrLtIGfr2IudUJI84dGmvMxssWuM2qdg
+        FSzoTHw9UE9KT3SltKPS+F7u9x3h1J492YaVDncATRjPZUBDhbvo6Pcezhup7XTnI3gbRQc2
+        oEUDb933nwuobHm3VsUcf9686v6j8TYehsbjk+zdA4BoS/IdCwARAQABtC5UdXJyaXMgR3Jl
+        eWxpc3QgR2VuZXJhdG9yIDxncmV5bGlzdEB0dXJyaXMuY3o+iQI4BBMBAgAiBQJUZew/AhsD
+        BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDAQrU3EIdmZoH4D/9Jo6j9RZxCAPTaQ9WZ
+        WOdb1Eqd/206bObEX+xJAago+8vuy+waatHYBM9/+yxh0SIg2g5whd6J7A++7ePpt5XzX6hq
+        bzdG8qGtsCRu+CpDJ40UwHep79Ck6O/A9KbZcZW1z/DhbYT3z/ZVWALy4RtgmyC67Vr+j/C7
+        KNQ529bs3kP9AzvEIeBC4wdKl8dUSuZIPFbgf565zRNKLtHVgVhiuDPcxKmBEl4/PLYF30a9
+        5Tgp8/PNa2qp1DV/EZjcsxvSRIZB3InGBvdKdSzvs4N/wLnKWedj1GGm7tJhSkJa4MLBSOIx
+        yamhTS/3A5Cd1qoDhLkp7DGVXSdgEtpoZDC0jR7nTS6pXojcgQaF7SfJ3cjZaLI5rjsx0YLk
+        G4PzonQKCAAQG1G9haCDniD8NrrkZ3eFiafoKEECRFETIG0BJHjPdSWcK9jtNCupBYb7JCiz
+        Q0hwLh2wrw/wCutQezD8XfsBFFIQC18TsJAVgdHLZnGYkd5dIbV/1scOcm52w6EGIeMBBYlB
+        J2+JNukH5sJDA6zAXNl2I1H1eZsP4+FSNIfB6LdovHVPAjn7qXCw3+IonnQK8+g8YJkbbhKJ
+        sPejfg+ndpe5u0zX+GvQCFBFu03muANA0Y/OOeGIQwU93d/akN0P1SRfq+bDXnkRIJQOD6XV
+        0ZPKVXlNOjy/z2iN2A==
+        =wjkM
+        -----END PGP PUBLIC KEY BLOCK-----
+        ```
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://www.turris.cz/greylist-data/greylist-latest.csv
+            name: Greylist
+            provider: __PROVIDER__
+            rate_limit: 43200
+            signature_url: https://www.turris.cz/greylist-data/greylist-latest.csv.asc
+            verify_pgp_signatures: false
+        parser:
+          module: intelmq.bots.parsers.turris.parser
+          parameters:
+      revision: 2018-01-20
+      documentation: https://project.turris.cz/en/greylist
       public: yes
   Malc0de:
     Bind Format:
@@ -803,7 +856,7 @@ providers:
           module: intelmq.bots.parsers.phishtank.parser
           parameters:
       revision: 2018-01-20
-      documentation: https://data.phishtank.com/
+      documentation: https://www.phishtank.com/developer_info.php
       public: no
   CINSscore:
     Army List:
@@ -1020,6 +1073,50 @@ providers:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
       public: yes
+  CERT-Bund:
+    CB-Report Malware infections via IMAP:
+      description: CERT-Bund sends reports for the malware-infected hosts.
+      additional_information: Traffic from malware related hosts contacting
+        command-and-control servers is caught and sent to national CERT teams.
+        There are two e-mail feeds with identical CSV structure -- one reports on
+        general malware infections, the other on the Avalanche botnet.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.mail.collector_mail_attach
+          parameters:
+            mail_host: __HOST__
+            mail_password: __PASSWORD__
+            mail_ssl: true
+            mail_user: __USERNAME__
+            attach_regex: events.csv
+            extract_files: false
+            rate_limit: 86400
+            subject_regex: ^\\[CB-Report#.* Malware infections (\\(Avalanche\\) )?in country
+            folder: INBOX
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.generic.parser_csv
+          parameters:
+            skip_header: true
+            default_url_protocol: http://
+            time_format: from_format|%Y-%m-%d %H:%M:%S
+            delimiter: ","
+            columns:
+              - source.asn
+              - source.ip
+              - time.source
+              - classification.type
+              - malware.name
+              - source.port
+              - destination.ip
+              - destination.port
+              - destination.fqdn
+              - protocol.transport
+            type: infected-system
+      revision: 2020-08-20
+      documentation:
+      public: no
   CERT.PL:
     N6 Stomp Stream:
       description: N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface.
@@ -1217,10 +1314,12 @@ providers:
       revision: 2018-01-20
       documentation: https://osint.bambenekconsulting.com/feeds/
       public: yes
-  DynDNS:
-    Infected Domains:
-      description: DynDNS ponmocup. List of ponmocup malware redirection domains and
-        infected web-servers. See also http://security-research.dyndns.org/pub/botnet-links.html
+  cAPTure:
+    Ponmocup Domains CIF Format:
+      description: List of ponmocup malware redirection domains and infected web-servers from cAPTure.
+        See also http://security-research.dyndns.org/pub/botnet-links.htm
+        and http://c-apt-ure.blogspot.com/search/label/ponmocup
+        The data in the CIF format is not equal to the Shadowserver CSV format. Reasons are unknown.
       additional_information:
       bots:
         collector:
@@ -1228,12 +1327,46 @@ providers:
           parameters:
             http_url: http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt
             rate_limit: 10800
-            name: __FEED__
+            name: Infected Domains
             provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.dyn.parser
           parameters:
       revision: 2018-01-20
+      documentation: http://security-research.dyndns.org/pub/malware-feeds/
+      public: yes
+    Ponmocup Domains Shadowserver Format:
+      description: List of ponmocup malware redirection domains and infected web-servers from cAPTure.
+        See also http://security-research.dyndns.org/pub/botnet-links.htm
+        and http://c-apt-ure.blogspot.com/search/label/ponmocup
+        The data in the Shadowserver CSV is not equal to the CIF format format. Reasons are unknown.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-shadowserver.csv
+            rate_limit: 10800
+            name: Infected Domains
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.generic.parser_csv
+          parameters:
+            columns:
+              - time.source
+              - source.ip
+              - source.fqdn
+              - source.urlpath
+              - source.port
+              - protocol.application
+              - extra.tag
+              - extra.redirect_target
+              - extra.category
+            compose_fields: {"source.url": "http://{0}{1}"}
+            skip_header: true
+            delimiter: ","
+            type: malware-distribution
+      revision: 2020-07-08
       documentation: http://security-research.dyndns.org/pub/malware-feeds/
       public: yes
   DShield:
@@ -1429,7 +1562,7 @@ providers:
       documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
       public: no
     CTIP via Interflow:
-      description: Collects CTIP (Sinkhole data) files from the Interflow API.The feed is available via Microsoft’s Government Security Program (GSP).
+      description: Collects the CTIP Infected feed (Sinkhole data for your country) files from the Interflow API.The feed is available via Microsoft’s Government Security Program (GSP).
       additional_information: Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector. As many IPs occur very often in the data, you may want to use a deduplicator specifically for the feed.
       bots:
         collector:
@@ -1448,8 +1581,8 @@ providers:
       revision: 2018-03-06
       documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
       public: no
-    CTIP via Azure:
-      description: Collects CTIP (Sinkhole data) files from a shared Azure Storage. The feed is available via Microsoft’s Government Security Program (GSP).
+    CTIP Infected via Azure:
+      description: Collects the CTIP (Sinkhole data) from a shared Azure Storage. The feed is available via Microsoft’s Government Security Program (GSP).
       additional_information: The cache is needed for memorizing which files have already been processed, the TTL should be higher than the oldest file available in the storage (currently the last three days are available). The connection string contains endpoint as well as authentication information.
       bots:
         collector:
@@ -1457,6 +1590,28 @@ providers:
           parameters:
             connection_string: "{{your connection string}}"
             container_name: "ctip-infected-summary"
+            name: __FEED__
+            provider: __PROVIDER__
+            rate_limit: 3600
+            redis_cache_db: 5
+            redis_cache_host: 127.0.0.1
+            redis_cache_port: 6379
+            redis_cache_ttl: 864000
+        parser:
+          module: intelmq.bots.parsers.microsoft.parser_ctip
+          parameters:
+      revision: 2020-05-29
+      documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
+      public: no
+    CTIP C2 via Azure:
+      description: Collects the CTIP C2 feed from a shared Azure Storage. The feed is available via Microsoft’s Government Security Program (GSP).
+      additional_information: The cache is needed for memorizing which files have already been processed, the TTL should be higher than the oldest file available in the storage (currently the last three days are available). The connection string contains endpoint as well as authentication information.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.microsoft.collector_azure
+          parameters:
+            connection_string: "{{your connection string}}"
+            container_name: "ctip-c2"
             name: __FEED__
             provider: __PROVIDER__
             rate_limit: 3600
@@ -1494,12 +1649,12 @@ providers:
       additional_information: Be aware that this feed provides a lot of data and may overload your system quickly.
       bots:
         collector:
-          module: intelmq.bots.collectors.certstream.collector_certstream
+          module: intelmq.bots.collectors.calidog.collector_certstream
           parameters:
             name: __FEED__
             provider: __PROVIDER__
         parser:
-          module: intelmq.bots.parses.certstream.parser_certstream
+          module: intelmq.bots.parsers.calidog.parser_certstream
           parameters:
       revision: 2018-06-15
       documentation: https://medium.com/cali-dog-security/introducing-certstream-3fc13bb98067
@@ -1623,3 +1778,76 @@ providers:
       revision: 2019-12-05
       documentation: https://github.com/StrangerealIntel/DailyIOC
       public: yes
+  CZ.NIC:
+    HaaS:
+      description: SSH attackers against HaaS (Honeypot as a Sevice) provided by CZ.NIC, z.s.p.o. The dump is published once a day.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            extract_files: true
+            http_url: https://haas.nic.cz/stats/export/{time[%Y/%m/%Y-%m-%d]}.json.gz
+            http_url_formatting:
+              days: -1
+            rate_limit: 86400
+        parser:
+          module: intelmq.bots.parsers.cznic.parser_haas
+          parameters:
+      revision: 2020-07-22
+      documentation: https://haas.nic.cz/
+      public: yes
+    Proki:
+      description: Aggregation of various sources on malicious IP addresses (malware spreaders or C&C servers).
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://proki.csirt.cz/api/1/__APIKEY__/data/day/{time[%Y/%m/%d]}
+            http_url_formatting:
+              days: -1
+            rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.cznic.parser_proki
+          parameters:
+      revision: 2020-08-17
+      documentation: https://csirt.cz/en/proki/
+      public: no
+  ESET:
+    ETI Domains:
+      description: Domain data from ESET's TAXII API.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.eset.collector
+          parameters:
+            username: <username>
+            password: <password>
+            endpoint: eti.eset.com
+            time_delta: 3600
+            collection: ei.domains v2 (json)
+        parser:
+          module: intelmq.bots.parsers.eset.parser
+          parameters:
+      revision: 2020-06-30
+      documentation: https://www.eset.com/int/business/services/threat-intelligence/
+      public: no
+    ETI URLs:
+      description: URL data from ESET's TAXII API.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.eset.collector
+          parameters:
+            username: <username>
+            password: <password>
+            endpoint: eti.eset.com
+            time_delta: 3600
+            collection: ei.urls (json)
+        parser:
+          module: intelmq.bots.parsers.eset.parser
+          parameters:
+      revision: 2020-06-30
+      documentation: https://www.eset.com/int/business/services/threat-intelligence/
+      public: no

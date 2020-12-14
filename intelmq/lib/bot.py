@@ -6,6 +6,7 @@ The bot library has the base classes for all bots.
   * ParserBot: base class for parsers
   * SQLBot: base classs for any bots using SQL
 """
+import argparse
 import atexit
 import csv
 import fcntl
@@ -696,6 +697,18 @@ class Bot(object):
 
         self.parameters.log_processed_messages_seconds = timedelta(seconds=self.parameters.log_processed_messages_seconds)
 
+        # TODO: Rewrite variables with env. variables ( CURRENT IMPLEMENTATION NOT FINAL )
+        if os.getenv('INTELMQ_IS_DOCKER', None):
+            pipeline_driver = os.getenv('INTELMQ_PIPELINE_DRIVER', None)
+            if pipeline_driver:
+                setattr(self.parameters, 'destination_pipeline_broker', pipeline_driver)
+                setattr(self.parameters, 'source_pipeline_broker', pipeline_driver)
+
+            pipeline_host = os.getenv('INTELMQ_PIPELINE_HOST', None)
+            if pipeline_host:
+                setattr(self.parameters, 'destination_pipeline_host', pipeline_host)
+                setattr(self.parameters, 'source_pipeline_host', pipeline_host)
+
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
         config = utils.load_configuration(RUNTIME_CONF_FILE)
@@ -704,7 +717,7 @@ class Bot(object):
         if self.__bot_id in config:
             params = config[self.__bot_id]
             self.run_mode = params.get('run_mode', 'continuous')
-            for option, value in params['parameters'].items():
+            for option, value in params.get('parameters', {}).items():
                 setattr(self.parameters, option, value)
                 self.__log_configuration_parameter("runtime", option, value)
                 if option.startswith('logging_'):
@@ -718,6 +731,12 @@ class Bot(object):
             self.logger.handlers = []  # remove all existing handlers
             self.__init_logger()
 
+        # TODO: Rework
+        if os.getenv('INTELMQ_IS_DOCKER', None):
+            redis_cache_host = os.getenv('INTELMQ_REDIS_CACHE_HOST', None)
+            if redis_cache_host:
+                setattr(self.parameters, 'redis_cache_host', redis_cache_host)
+
     def __init_logger(self):
         """
         Initialize the logger.
@@ -728,7 +747,9 @@ class Bot(object):
             syslog = False
         self.logger = utils.log(self.__bot_id_full, syslog=syslog,
                                 log_path=self.parameters.logging_path,
-                                log_level=self.parameters.logging_level)
+                                log_level=self.parameters.logging_level,
+                                log_max_size=getattr(self.parameters, "logging_max_size", 0),
+                                log_max_copies=getattr(self.parameters, "logging_max_copies", None))
 
     def __load_pipeline_configuration(self):
         self.logger.debug("Loading pipeline configuration from %r.", PIPELINE_CONF_FILE)
@@ -771,11 +792,15 @@ class Bot(object):
         return libmessage.Event(*args, harmonization=self.harmonization, **kwargs)
 
     @classmethod
-    def run(cls):
-        if len(sys.argv) < 2:
+    def run(cls, parsed_args=None):
+
+        if not parsed_args:
+            parsed_args = cls._create_argparser().parse_args()
+
+        if not parsed_args.bot_id:
             sys.exit('No bot ID given.')
 
-        instance = cls(sys.argv[1])
+        instance = cls(parsed_args.bot_id)
         if not instance.is_multithreaded:
             instance.start()
 
@@ -853,6 +878,16 @@ class Bot(object):
         elif parameter_value:
             self.logger.debug('Extracting all files from archives.')
 
+    @classmethod
+    def _create_argparser(cls):
+        """
+        see https://github.com/certtools/intelmq/pull/1524/files#r464606370
+        why this code is not in the constructor
+        """
+        argparser = argparse.ArgumentParser(usage='%(prog)s [OPTIONS] BOT-ID')
+        argparser.add_argument('bot_id', nargs='?', metavar='BOT-ID', help='unique bot-id of your choosing')
+        return argparser
+
 
 class ParserBot(Bot):
     csv_params = {}
@@ -907,7 +942,7 @@ class ParserBot(Bot):
 
     def parse_json(self, report: libmessage.Report):
         """
-        A basic JSON parser. Assumes a *list* of objects to be yielded
+        A basic JSON parser. Assumes a *list* of objects as input to be yield.
         """
         raw_report = utils.base64_decode(report.get("raw"))
         for line in json.loads(raw_report):
@@ -1050,6 +1085,7 @@ class ParserBot(Bot):
         writer = csv.DictWriter(out, self.csv_fieldnames, **self.csv_params)
         writer.writeheader()
         out.write(self.current_line)
+
         return out.getvalue().strip()
 
     def recover_line_json(self, line: dict):
@@ -1060,13 +1096,13 @@ class ParserBot(Bot):
         """
         return json.dumps([line])
 
-    def recover_line_json_stream(self, line: dict) -> str:
+    def recover_line_json_stream(self, line=None) -> str:
         """
         recover_line for json streams, just returns the current line, unparsed.
 
         Parameters
         ----------
-        line : dict
+        line : None, not required, only for compatibility with other recover_line methods
 
         Returns
         -------

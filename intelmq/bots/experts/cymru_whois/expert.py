@@ -6,8 +6,7 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
 from intelmq.lib.harmonization import IPAddress
 
-MINIMUM_BGP_PREFIX_IPV4 = 24
-MINIMUM_BGP_PREFIX_IPV6 = 128
+CACHE_KEY = "%d_%s"
 
 
 class CymruExpertBot(Bot):
@@ -38,31 +37,22 @@ class CymruExpertBot(Bot):
             if ip_key not in event:
                 continue
 
-            ip = event.get(ip_key)
-            ip_version = IPAddress.version(ip)
-            ip_integer = IPAddress.to_int(ip)
-
-            if ip_version == 4:
-                minimum = MINIMUM_BGP_PREFIX_IPV4
-
-            elif ip_version == 6:
-                minimum = MINIMUM_BGP_PREFIX_IPV6
-
-            else:
-                raise ValueError('Unexpected IP version '
-                                 '{!r}.'.format(ip_version))
-
-            cache_key = bin(ip_integer)[2: minimum + 2]
+            address = event.get(ip_key)
+            cache_key = CACHE_KEY % (IPAddress.version(address), address)
             result_json = self.cache.get(cache_key)
 
             if result_json:
                 result = json.loads(result_json)
             else:
-                result = Cymru.query(ip)
+                result = Cymru.query(address)
                 if not result:
-                    continue
+                    self.logger.info('Got no result from Cymru for IP address %r.',
+                                     address)
                 result_json = json.dumps(result)
                 self.cache.set(cache_key, result_json)
+
+            if not result:
+                continue
 
             for result_key, result_value in result.items():
                 if result_key == 'registry' and result_value == 'other':

@@ -5,6 +5,8 @@ Testing RIPE Expert
 
 import unittest
 
+import requests_mock
+
 import intelmq.lib.test as test
 from intelmq.bots.experts.ripencc_abuse_contact.expert import RIPEExpertBot
 
@@ -68,14 +70,6 @@ GEOLOCA_OUTPUT3 = {"__type": "Event",
 INDEX_ERROR = {"__type": "Event",
                "source.ip": "228.66.141.189",
                }
-QUESTION_MARK = {"__type": "Event",
-               "source.ip": "35.197.157.0",
-               }
-QUESTION_MARK_OUTPUT = {"__type": "Event",
-                        "source.ip": "35.197.157.0",
-                        'source.geolocation.latitude': 35.0,
-                        'source.geolocation.longitude': 105.0,
-                        }
 
 @test.skip_internet()
 class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
@@ -122,8 +116,8 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EMPTY_INPUT)
 
-    @test.skip_local_web()
-    def test_ripe_stat_error_json(self):
+    @requests_mock.Mocker()
+    def test_ripe_stat_error_json(self, mocker):
         """ Test RIPE stat for errors. """
         parameters = {'query_ripe_db_asn': False,
                       'query_ripe_db_ip': False,
@@ -135,14 +129,16 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.prepare_bot(parameters=parameters)
         old = self.bot.QUERY['stat']
         self.bot.QUERY['stat'] = 'http://localhost/{}'
+        mocker.get('/127.0.0.1', text='not valid JSON')
+
         self.run_bot(prepare=False, allowed_error_count=1)
         # internal json in < and >= 3.5 and simplejson
         self.bot.QUERY['stat'] = old
         self.assertLogMatches(pattern='.*(JSONDecodeError|ValueError|Expecting value|No JSON object could be decoded).*',
                               levelname='ERROR')
 
-    @test.skip_local_web()
-    def test_ripe_stat_error_404(self):
+    @requests_mock.Mocker()
+    def test_ripe_stat_error_404(self, mocker):
         """ Test RIPE stat for errors. """
         parameters = {'query_ripe_db_asn': False,
                       'query_ripe_db_ip': False,
@@ -154,16 +150,17 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.prepare_bot(parameters=parameters)
         old = self.bot.QUERY['stat']
         self.bot.QUERY['stat'] = 'http://localhost/{}'
+        mocker.get('/127.0.0.1', status_code=404)
+
         self.run_bot(prepare=False, allowed_error_count=1)
         self.bot.QUERY['stat'] = old
         self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
 
-    @test.skip_local_web()
-    def test_ripe_db_as_errors(self):
+    @requests_mock.Mocker()
+    def test_ripe_db_as_errors(self, mocker):
         """ Test RIPE DB AS for errors. """
         self.input_message = EXAMPLE_INPUT
-        self.allowed_error_count = 1
         self.allowed_warning_count = 1
         self.prepare_bot(parameters={'query_ripe_db_asn': True,
                                      'query_ripe_db_ip': False,
@@ -173,17 +170,17 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
                                      })
         old = self.bot.QUERY['db_asn']
         self.bot.QUERY['db_asn'] = 'http://localhost/{}'
-        self.run_bot(prepare=False)
+        mocker.get('/35492', status_code=404)
+
+        self.run_bot(prepare=False, allowed_error_count=1)
         self.bot.QUERY['db_asn'] = old
         self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
 
-    @test.skip_local_web()
-    def test_ripe_db_ip_errors(self):
+    @requests_mock.Mocker()
+    def test_ripe_db_ip_errors(self, mocker):
         """ Test RIPE DB IP for errors. """
         self.input_message = EXAMPLE_INPUT
-        self.allowed_error_count = 1
-        self.allowed_warning_count = 1
         self.prepare_bot(parameters={'query_ripe_db_asn': False,
                                       'query_ripe_db_ip': True,
                                       'query_ripe_stat_ip': False,
@@ -192,7 +189,12 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
                                       })
         old = self.bot.QUERY['db_ip']
         self.bot.QUERY['db_ip'] = 'http://localhost/{}'
-        self.run_bot(prepare=False)
+        mocker.get('/93.184.216.34', status_code=404)
+        mocker.get('/193.238.157.5', status_code=404)
+
+        self.run_bot(prepare=False,
+                     allowed_error_count=1,
+                     allowed_warning_count=1)
         self.bot.QUERY['db_ip'] = old
         self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
@@ -256,21 +258,6 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = INDEX_ERROR
         self.run_bot()
         self.assertMessageEqual(0, INDEX_ERROR)
-
-    def test_country_question_mark(self):
-        """
-        Response has '?' as country
-        https://stat.ripe.net/data/maxmind-geo-lite/data.json?resource=35.197.157.0
-        """
-        self.input_message = QUESTION_MARK
-        self.run_bot(parameters={'query_ripe_db_asn': False,
-                                  'query_ripe_db_ip': False,
-                                  'query_ripe_stat_asn': False,
-                                  'query_ripe_stat_ip': False,
-                                  'query_ripe_stat_geolocation': True,
-                                  })
-        self.assertMessageEqual(0, QUESTION_MARK_OUTPUT)
-
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

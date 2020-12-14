@@ -1,10 +1,11 @@
+===================
 Welcome to IntelMQ!
 ===================
 
-.. figure:: https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Logo_Intel_MQ.png
+.. image:: docs/_static/Logo_Intel_MQ.svg
    :alt: IntelMQ
 
-|Build Status| |codecov.io|
+|Build Status| |codecov.io| |CII Badge|
 
 **IntelMQ** is a solution for IT security teams (CERTs & CSIRTs, SOCs, abuse
 departments, etc.) for collecting and processing security feeds (such as
@@ -15,9 +16,6 @@ InfoSec events. Its main goal is to give to incident responders an easy
 way to collect & process threat intelligence thus improving the incident
 handling processes of CERTs.
 
-Several pieces of software are evolved around IntelMQ. For an overview,
-look at the `Ecosystem document  <docs/Ecosystem.md>`__.
-
 IntelMQ can be used for
 - automated incident handling
 - situational awareness
@@ -25,9 +23,8 @@ IntelMQ can be used for
 - as data collector for other tools
 - etc.
 
-IntelMQ's design was influenced by
-`AbuseHelper <https://github.com/abusesa/abusehelper>`__ however it was
-re-written from scratch and aims at:
+IntelMQ's design was influenced by `AbuseHelper <https://github.com/abusesa/abusehelper>`__,
+however it was re-written from scratch and aims at:
 
 -  Reducing the complexity of system administration
 -  Reducing the complexity of writing new bots for new data feeds
@@ -50,80 +47,53 @@ It follows the following basic meta-guidelines:
 -  Code readability: test with unexperienced programmers
 -  Communicate clearly
 
-Table of Contents
------------------
 
-1. `How to Install <#how-to-install>`__
-2. `User Guide <#user-guide>`__
-3. `IntelMQ Manager and more tools <#intelmq-manager-and-more-tools>`__
-4. `How to Participate <#how-to-participate>`__
-5. `Incident Handling Automation
-   Project <#incident-handling-automation-project>`__
-6. `Licence <#licence>`__
-7. `Funded by <#funded-by>`__
+For support questions please reach out on the `the intelmq-users mailing list <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users>`_
 
-How to Install
---------------
-
-See `INSTALL <docs/INSTALL.md>`__.
-
-User Guide
-----------
-
-See `User Guide <docs/User-Guide.md>`__.
-Which Feeds are supported? Have a look at the `Feeds documentation <docs/Feeds.md>`__ and the `Bots documentation <docs/Bots.md>`__.
-If you know additional feeds and how to parse them, please contribute your code or your configuration (by issues or the mailing lists).
-
-For support questions please use the intelmq-users mailing list:
-https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users
-
-IntelMQ use the Data Harmonization. Please read `this
-document <docs/Data-Harmonization.md>`__ for more details.
-
+==============================
 IntelMQ Manager and more tools
-------------------------------
+==============================
 
-Check out this graphical
-`tool <https://github.com/certtools/intelmq-manager>`__ and easily
-manage an IntelMQ system.
+Several pieces of software evolved around IntelMQ. For example, check out `IntelMQ Manager <https://github.com/certtools/intelmq-manager>`_ which is a web based interface to easily manage an IntelMQ system.
 
-More tools can be found in the `ecosystem documentation <docs/Ecosystem.md>`__.
+More tools can be found in the `Ecosystem chapter in the documentation <https://intelmq.readthedocs.io/en/latest/user/ecosystem.html>`_.
 
+==================
 How to participate
-------------------
+==================
 
 IntelMQ is a community project depending on your contributions. Please consider sharing your work.
 
-- Have a look at our `Developers Guide <docs/Developers-Guide.md>`__ for documentation.
-- Subscribe to the Intelmq-dev Mailing list to get answers to your development questions:
-  https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev
-- The `Github issues <github.com/certtools/intelmq/issues/>`__ lists all the open feature requests, bug reports and ideas.
-- Looking for ideas which additional feeds you could add support for? The `Feeds whishlist <docs/Feeds-wishlist.md>`__ is the list you are looking for.
-- Contribute code with pull requests (The `Github help <https://help.github.com/>`__ can be useful if you are not familiar with the system yet).
+- Have a look at our `Developers Guide <https://intelmq.readthedocs.io/en/latest/dev/guide.html>`_ for documentation.
+- Subscribe to the `Intelmq-dev Mailing list <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev>`_ to get answers to your development questions:
+- The `Github issues <https://github.com/certtools/intelmq/issues/>`_ lists all the open feature requests, bug reports and ideas.
 - Some developers are also on IRC: `channel #intelmq on irc.freenode.net <ircs://chat.freenode.net:6697/intelmq>`__.
 
+====================================
 Incident Handling Automation Project
-------------------------------------
+====================================
 
-- **URL:**
-  http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation
+- **URL:** http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation
 - **Mailing-list:** ihap@lists.trusted-introducer.org
 
+=======
 Licence
--------
+=======
 
-This software is licensed under GNU Affero General Public License
-version 3
+This software is licensed under GNU Affero General Public License version 3
 
-Funded by
----------
+=======
+Funding
+=======
 
 This project was partially funded by the CEF framework
 
-.. figure:: docs/images/cef_logo.png
+.. figure:: docs/_static/cef_logo.png
    :alt: Co-financed by the Connecting Europe Facility of the European Union
 
-.. |Build Status| image:: https://travis-ci.org/certtools/intelmq.svg?branch=master
+.. |Build Status| image:: https://travis-ci.org/certtools/intelmq.svg?branch=develop
    :target: https://travis-ci.org/certtools/intelmq
-.. |codecov.io| image:: https://codecov.io/github/certtools/intelmq/coverage.svg?branch=master
+.. |codecov.io| image:: https://codecov.io/github/certtools/intelmq/coverage.svg?branch=develop
    :target: https://codecov.io/github/certtools/intelmq?branch=master
+.. |CII Badge| image:: https://bestpractices.coreinfrastructure.org/projects/4186/badge
+   :target: https://bestpractices.coreinfrastructure.org/projects/4186/

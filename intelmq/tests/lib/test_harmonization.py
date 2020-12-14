@@ -113,7 +113,7 @@ class TestHarmonization(unittest.TestCase):
                                                          sanitize=False))
 
     def test_ipaddress_valid_invalid(self):
-        """ Test IPAddress.is_valid with invalid arguments. """
+        """ Test IPAddress.is_valid with invEqual arguments. """
         self.assertFalse(harmonization.IPAddress.is_valid('192.0.2.1/24',
                                                           sanitize=False))
         self.assertFalse(harmonization.IPAddress.is_valid('2001:DB8::/32',
@@ -125,7 +125,8 @@ class TestHarmonization(unittest.TestCase):
 
     def test_ipaddress_sanitize(self):
         """ Test IPAddress.is_valid and sanitize with valid arguments. """
-        self.assertTrue(harmonization.IPAddress.sanitize(' 192.0.2.1\r\n'))
+        self.assertEqual(harmonization.IPAddress.sanitize(' 192.0.2.1\r\n'),
+                         '192.0.2.1')
         self.assertTrue(harmonization.IPAddress.is_valid(' 192.0.2.1\r\n',
                                                          sanitize=True))
         self.assertTrue(harmonization.IPAddress.is_valid(b'2001:DB8::1',
@@ -134,6 +135,10 @@ class TestHarmonization(unittest.TestCase):
                                                          sanitize=True))
         self.assertTrue(harmonization.IPAddress.is_valid('fe80::1c41:b16d:ff5e:689d%bnep0',
                                                           sanitize=True))
+        self.assertEqual(harmonization.IPAddress.sanitize('2130706433'),
+                         '127.0.0.1')
+        self.assertEqual(harmonization.IPAddress.sanitize(2130706433),
+                         '127.0.0.1')
 
     def test_ipaddress_sanitize_invalid(self):
         """ Test IPAddress.is_valid ans sanitize with invalid arguments. """

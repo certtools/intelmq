@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import argparse
 import datetime
@@ -23,7 +22,7 @@ from collections import OrderedDict
 import pkg_resources
 from termstyle import green
 
-from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,
+from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,  # noqa: F401
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
                      DEFAULT_LOGGING_PATH, __version_info__,
@@ -172,10 +171,12 @@ class IntelMQProcessManager:
         with open(filename, 'w') as fp:
             fp.write(str(os.getpid()))
 
+        output = ""
         try:
-            BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
-                        console_type, message_action_kind, dryrun, msg, show_sent,
-                        loglevel=loglevel)
+            bd = BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
+                             console_type, message_action_kind, dryrun, msg, show_sent,
+                             loglevel=loglevel)
+            output = bd.run()
             retval = 0
         except KeyboardInterrupt:
             print('Keyboard interrupt.')
@@ -187,7 +188,8 @@ class IntelMQProcessManager:
         self.__remove_pidfile(bot_id)
         if paused:
             self.bot_start(bot_id)
-        return retval
+
+        return retval, output
 
     def bot_start(self, bot_id, getstatus=True):
         pid = self.__check_pid(bot_id)
@@ -400,8 +402,7 @@ class IntelMQProcessManager:
             return False
         except psutil.AccessDenied:
             return 'Could not get status of process: Access denied.'
-        except:
-            raise
+        # let every other exception pass
 
 
 class SupervisorProcessManager:
@@ -465,10 +466,12 @@ class SupervisorProcessManager:
 
         log_bot_message("starting", bot_id)
 
+        output = ""
         try:
-            BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
-                        console_type, message_action_kind, dryrun, msg, show_sent,
-                        loglevel=loglevel)
+            bd = BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
+                             console_type, message_action_kind, dryrun, msg, show_sent,
+                             loglevel=loglevel)
+            output = bd.run()
             retval = 0
         except KeyboardInterrupt:
             print("Keyboard interrupt.")
@@ -480,7 +483,7 @@ class SupervisorProcessManager:
         if paused:
             self.bot_start(bot_id)
 
-        return retval
+        return retval, output
 
     def bot_start(self, bot_id: str, getstatus: bool = True):
         state = self._get_process_state(bot_id)
@@ -683,6 +686,7 @@ class IntelMQController():
             no_file_logging: do not log to the log file
             drop_privileges: Drop privileges and fail if it did not work.
         """
+        self.logging_level = DEFAULT_LOGGING_LEVEL
         self.interactive = interactive
         global RETURN_TYPE
         RETURN_TYPE = return_type
@@ -691,28 +695,29 @@ class IntelMQController():
         QUIET = quiet
         self.parameters = Parameters()
 
-        # Try to get log_level from defaults_configuration, else use default
+        # Try to get logging_level from defaults configuration, else use default (defined above)
         defaults_loading_exc = None
         try:
             self.load_defaults_configuration()
         except Exception as exc:
             defaults_loading_exc = exc
-            log_level = DEFAULT_LOGGING_LEVEL
             logging_level_stream = 'DEBUG'
         else:
-            log_level = self.parameters.logging_level.upper()
+            self.logging_level = self.parameters.logging_level.upper()
         # make sure that logging_level_stream is always at least INFO or more verbose
         # otherwise the output on stdout/stderr is less than the user expects
-        logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
+        logging_level_stream = self.logging_level if self.logging_level == 'DEBUG' else 'INFO'
 
         try:
             if no_file_logging:
                 raise FileNotFoundError
-            logger = utils.log('intelmqctl', log_level=log_level,
+            logger = utils.log('intelmqctl', log_level=self.logging_level,
                                log_format_stream=utils.LOG_FORMAT_SIMPLE,
-                               logging_level_stream=logging_level_stream)
+                               logging_level_stream=logging_level_stream,
+                               log_max_size=getattr(self.parameters, "logging_max_size", 0),
+                               log_max_copies=getattr(self.parameters, "logging_max_copies", None))
         except (FileNotFoundError, PermissionError) as exc:
-            logger = utils.log('intelmqctl', log_level=log_level, log_path=False,
+            logger = utils.log('intelmqctl', log_level=self.logging_level, log_path=False,
                                log_format_stream=utils.LOG_FORMAT_SIMPLE,
                                logging_level_stream=logging_level_stream)
             logger.error('Not logging to file: %s', exc)
@@ -855,6 +860,10 @@ Get some debugging output on the settings and the enviroment (to be extended):
             parser_list.add_argument('--non-zero', '--quiet', '-q', action='store_true',
                                      help='Only list non-empty queues '
                                           'or the IDs of enabled bots.')
+            parser_list.add_argument('--count', '--sum', '-s', action='store_true',
+                                     help='Only show the total '
+                                          'number of messages in queues. '
+                                          'Only valid for listing queues.')
             parser_list.set_defaults(func=self.list)
 
             parser_clear = subparsers.add_parser('clear', help='Clear a queue')
@@ -1007,6 +1016,15 @@ Get some debugging output on the settings and the enviroment (to be extended):
         for option, value in config.items():
             setattr(self.parameters, option, value)
 
+        # TODO: Rewrite variables with env. variables ( CURRENT IMPLEMENTATION NOT FINAL )
+        # "destination_pipeline_host": "127.0.0.1",
+        # "source_pipeline_host": "127.0.0.1",
+        if os.getenv('INTELMQ_IS_DOCKER', None):
+            pipeline_host = os.getenv('INTELMQ_PIPELINE_HOST')
+            if pipeline_host:
+                setattr(self.parameters, 'destination_pipeline_host', pipeline_host)
+                setattr(self.parameters, 'source_pipeline_host', pipeline_host)
+
     def run(self):
         results = None
         args = self.parser.parse_args()
@@ -1027,7 +1045,12 @@ Get some debugging output on the settings and the enviroment (to be extended):
         return retval
 
     def bot_run(self, **kwargs):
-        return self.bot_process_manager.bot_run(**kwargs), None
+        # the bot_run method is special in that it mixes plain text
+        # and json in its output, therefore it is printed here
+        # and not in the calling `run` method.
+        retval, results = self.bot_process_manager.bot_run(**kwargs)
+        print(results)
+        return retval, None
 
     def bot_start(self, bot_id, getstatus=True, group=None):
         if bot_id is None:
@@ -1196,9 +1219,9 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 retval = 1
         return retval, botnet_status
 
-    def list(self, kind=None, non_zero=False):
+    def list(self, kind=None, non_zero=False, count=False):
         if kind == 'queues':
-            return self.list_queues(non_zero=non_zero)
+            return self.list_queues(non_zero=non_zero, count=count)
         elif kind == 'bots':
             return self.list_bots(non_zero=non_zero)
         elif kind == 'queues-and-status':
@@ -1263,7 +1286,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
 
         return source_queues, destination_queues, internal_queues, all_queues
 
-    def list_queues(self, non_zero=False):
+    def list_queues(self, non_zero=False, count=False):
         pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
         pipeline.set_queues(None, "source")
         pipeline.connect()
@@ -1274,23 +1297,28 @@ Get some debugging output on the settings and the enviroment (to be extended):
         pipeline.disconnect()
         if RETURN_TYPE == 'text':
             for queue, counter in sorted(counters.items(), key=lambda x: str.lower(x[0])):
-                if counter or not non_zero:
+                if (counter or not non_zero) and not count:
                     logger.info("%s - %s", queue, counter)
+            if count:
+                logger.info("%s", sum(counters.values()))
 
         return_dict = {}
-        for bot_id, info in self.pipeline_configuration.items():
-            return_dict[bot_id] = {}
+        if count:
+            return_dict = {'total-messages': sum(counters.values())}
+        else:
+            for bot_id, info in self.pipeline_configuration.items():
+                return_dict[bot_id] = {}
 
-            if 'source-queue' in info:
-                return_dict[bot_id]['source_queue'] = (
-                    info['source-queue'], counters[info['source-queue']])
-                if pipeline.has_internal_queues:
-                    return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
+                if 'source-queue' in info:
+                    return_dict[bot_id]['source_queue'] = (
+                        info['source-queue'], counters[info['source-queue']])
+                    if pipeline.has_internal_queues:
+                        return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
 
-            if 'destination-queues' in info:
-                return_dict[bot_id]['destination_queues'] = []
-                for dest_queue in utils.flatten_queues(info['destination-queues']):
-                    return_dict[bot_id]['destination_queues'].append((dest_queue, counters[dest_queue]))
+                if 'destination-queues' in info:
+                    return_dict[bot_id]['destination_queues'] = []
+                    for dest_queue in utils.flatten_queues(info['destination-queues']):
+                        return_dict[bot_id]['destination_queues'].append((dest_queue, counters[dest_queue]))
 
         return 0, return_dict
 
@@ -1432,7 +1460,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
         all_queues = set()
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # pipeline keys
-            for field in ['description', 'group', 'module', 'name']:
+            for field in ['description', 'group', 'module', 'name', 'enabled']:
                 if field not in bot_config:
                     check_logger.warning('Bot %r has no %r.', bot_id, field)
                     retval = 1
@@ -1440,10 +1468,12 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 message = "Bot %r has invalid `run_mode` %r. Must be 'continuous' or 'scheduled'."
                 check_logger.warning(message, bot_id, bot_config['run_mode'])
                 retval = 1
-            if bot_id not in files[PIPELINE_CONF_FILE]:
+            if bot_id not in files[PIPELINE_CONF_FILE] and bot_config.get('enabled', True):
                 check_logger.error('Misconfiguration: No pipeline configuration found for %r.', bot_id)
                 retval = 1
-            else:
+            elif bot_id not in files[PIPELINE_CONF_FILE] and not bot_config.get('enabled', True):
+                check_logger.warning('Misconfiguration: No pipeline configuration found for %r.', bot_id)
+            elif bot_id in files[PIPELINE_CONF_FILE]:
                 if ('group' in bot_config and
                         bot_config['group'] in ['Collector', 'Parser', 'Expert']):
                     if ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
@@ -1464,12 +1494,14 @@ Get some debugging output on the settings and the enviroment (to be extended):
                     else:
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'])
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'] + '-internal')
+        # ignore allowed orphaned queues
+        allowed_orphan_queues = set(getattr(self.parameters, 'intelmqctl_check_orphaned_queues_ignore', ()))
         if not no_connections:
             try:
                 pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
                 pipeline.set_queues(None, "source")
                 pipeline.connect()
-                orphan_queues = "', '".join(pipeline.nonempty_queues() - all_queues)
+                orphan_queues = "', '".join(pipeline.nonempty_queues() - all_queues - allowed_orphan_queues)
             except Exception as exc:
                 error = utils.error_message_from_exc(exc)
                 check_logger.error('Could not connect to pipeline: %s', error)
@@ -1478,7 +1510,8 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 if orphan_queues:
                     check_logger.warning("Orphaned queues found: '%s'. Possible leftover from past reconfigurations "
                                          "without cleanup. Have a look at the FAQ at "
-                                         "https://github.com/certtools/intelmq/blob/master/docs/FAQ.md", orphan_queues)
+                                         "https://intelmq.readthedocs.io/en/latest/guides/intelmqctl.html"
+                                         "#orphaned-queues", orphan_queues)
 
         check_logger.info('Checking harmonization configuration.')
         for event_type, event_type_conf in files[HARMONIZATION_CONF_FILE].items():
@@ -1516,7 +1549,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 continue
             bot = getattr(bot_module, 'BOT')
             bot_parameters = files[DEFAULTS_CONF_FILE].copy()
-            bot_parameters.update(bot_config['parameters'])
+            bot_parameters.update(bot_config.get('parameters', {}))  # the parameters field may not exist
             bot_check = bot.check(bot_parameters)
             if bot_check:
                 for log_line in bot_check:
@@ -1525,8 +1558,8 @@ Get some debugging output on the settings and the enviroment (to be extended):
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
                                    stderr=subprocess.DEVNULL):
-                    check_logger.error('Incomplete installation: Executable %r for %r not found.',
-                                       bot['module'], bot_id)
+                    check_logger.error('Incomplete installation: Executable %r for %r not found in $PATH (%r).',
+                                       bot['module'], bot_id, os.getenv('PATH'))
                     retval = 1
 
         if os.path.isfile(STATE_FILE_PATH):
@@ -1836,7 +1869,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
 
         output = {}
         if sections is None or 'paths' in sections:
-            output['paths'] = []
+            output['paths'] = {}
             variables = globals()
             if RETURN_TYPE == 'text':
                 print('Paths:')
@@ -1845,18 +1878,19 @@ Get some debugging output on the settings and the enviroment (to be extended):
                          'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
                          'DEFAULT_LOGGING_PATH', '__file__',
                          'CONFIG_DIR', 'ROOT_DIR'):
-                output['paths'].append((path, variables[path]))
+                output['paths'][path] = variables[path]
                 if RETURN_TYPE == 'text':
-                    print('%s: %r' % output['paths'][-1])
+                    print('%s: %r' % (path, variables[path]))
         if sections is None or 'environment_variables' in sections:
-            output['environment_variables'] = []
+            output['environment_variables'] = {}
             if RETURN_TYPE == 'text':
                 print('Environment variables:')
             for variable in ('INTELMQ_ROOT_DIR', 'INTELMQ_PATHS_NO_OPT',
-                             'INTELMQ_PATHS_OPT', 'INTELMQ_MANAGER_CONTROLLER_CMD'):
-                output['environment_variables'].append((variable, os.getenv(variable)))
+                             'INTELMQ_PATHS_OPT', 'INTELMQ_MANAGER_CONTROLLER_CMD',
+                             'PATH'):
+                output['environment_variables'][variable] = os.getenv(variable)
                 if RETURN_TYPE == 'text':
-                    print('%s: %r' % output['environment_variables'][-1])
+                    print('%s: %r' % (variable, os.getenv(variable)))
         return 0, output
 
 

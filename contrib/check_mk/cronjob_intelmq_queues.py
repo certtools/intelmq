@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import intelmq.bin.intelmqctl as ctl
 import intelmq.lib.utils as utils

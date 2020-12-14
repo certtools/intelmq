@@ -85,6 +85,41 @@ UPDATE events
 2.3.0 Bugfix release (unreleased)
 ----------------------------------
 
+The documentation is now available at [intelmq.readthedocs.io](https://intelmq.readthedocs.io/) (FIXME: Link to stable version?).
+
+### Requirements
+
+### Tools
+
+#### Bot option `--updata-database`
+- Bots that require a database file (such as `maxmind_geoip`, `asn_lookup`, `tor_nodes` and `recordedfuture_iprisk`)
+  have new command line option `--update-database`. It is not necessary to specify a
+  bot ID, the function automatically updates the database for all the bots of the same
+  type and reloads them afterwards. Removes any external dependencies (such as curl or wget).
+  This is a replacement for shell scripts such as `update-tor-nodes`, `update-asn-data`,
+  `update-geoip-data`, `update-rfiprisk-data`.
+  
+  Usage:
+  ```
+  intelmq.bots.experts.asn_lookup.expert --update-database
+  intelmq.bots.experts.maxmind_geoip.expert --update-database
+  intelmq.bots.experts.recordedfuture_iprisk.expert --update-database
+  intelmq.bots.experts.tor_nodes.expert --update-database
+  ```
+  The provided shell scripts use these new commands, however they are now deprecated and will be removed in version 3.0.
+
+### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
+2.2.3 Bugfix release (unreleased)
+---------------------------------
+
 ### Requirements
 
 ### Tools
@@ -97,22 +132,37 @@ UPDATE events
 
 ### Postgres databases
 
+2.2.2 Bugfix release (2020-10-28)
+---------------------------------
 
-2.2.1 Bugfix release (unreleased)
+### Bots
+#### Cymru Whois Lookup
+The cache key calculation has been fixed. It previously led to duplicate keys for different IP addresses and therefore wrong results in rare cases. The cache key calculation is intentionally not backwards-compatible. Therefore, this bot may take longer processing events than usual after applying this update.
+More details can be found in [issue #1592](https://github.com/certtools/intelmq/issues/1592).
+
+### Harmonization
+#### Shadowserver Feed/Parser
+The feed "Blacklisted-IP" has been renamed by ShadowServer to "Blocklist". In IntelMQ, the old name can still be used in IntelMQ until version 3.0.
+
+
+2.2.1 Bugfix release (2020-07-30)
 ----------------------------------
 
 ### Requirements
-
-### Tools
-
-### Harmonization
+#### MaxMind GeoIP Expert Bot
+The current python library versions of geoip (version 4) and maxminddb (version 2) no longer support Python 3.5. Keep older versions of these libraries if you are using this Python version.
 
 ### Configuration
+#### Abuse.ch URLHaus
 
-### Libraries
-
-### Postgres databases
-
+The current documented value for the `column` parameter was:
+```json
+['time.source', 'source.url', 'status', 'extra.urlhaus.threat_type', 'source.fqdn', 'source.ip', 'source.asn', 'source.geolocation.cc']
+```
+Better is:
+```json
+['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc']
+```
 
 2.2.0 Feature release (2020-06-18)
 ----------------------------------

@@ -36,6 +36,7 @@ The tuples can be of following format:
   extra in this case, the resulting name is `extra.[shadowkey]`. The
   `conversion_function` is optional. Logically equivalent to:
   `event[extra.`*intelmqkey*`] = conversion_function(row[`*shadowkey*`)]`.
+- `(False, 'shadowkey')`, the column will be ignored.
 
 Mappings are "straight forward" each mapping is a dict
 of at least three keys:
@@ -55,11 +56,11 @@ The first value is the IntelMQ key,
 the second value is the row in the shadowserver csv.
 
 Reference material:
-    * when setting the classification.* fields, please use the taxonomy from
-      [eCSIRT II](https://www.trusted-introducer.org/Incident-Classification-Taxonomy.pdf)
-      Also to be found on the
-      [ENISA page](https://www.enisa.europa.eu/topics/csirt-cert-services/community-projects/existing-taxonomies)
-    * please respect the Data harmonization ontology: https://github.com/certtools/intelmq/blob/master/docs/Data-Harmonization.md
+    * when setting the classification.* fields,
+      please use the taxonomy from the Data Harmonization
+      :ref:`data harmonization classification`
+      or upstream from https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
+    * please respect the Data harmonization ontology: :doc:`/dev/data-harmonization`
 
 
 TODOs:
@@ -1577,8 +1578,8 @@ open_ldap = {
     }
 }
 
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Blacklist
-blacklisted_ip = {
+# https://www.shadowserver.org/what-we-do/network-reporting/blocklist-report/
+blocklist = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -2244,15 +2245,133 @@ open_ipp = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-coap-report/
+accessible_coap = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-coap' in constant_fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'response', validate_to_none)
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-coap',
+        'protocol.application': 'coap',
+    }
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-apple-remote-desktop-ard-report/
+accessible_ard = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        # ('classification.identifier', 'tag'),  # always 'ard' - set in constant fields
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('protocol.transport', 'protocol'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'machine_name', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-ard',
+    }
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-radmin-report/
+accessible_radmin = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn', convert_int),
+        # ('classification.identifier', 'tag'),  # always 'accessible-radmin' - set in constant_fields
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname', validate_to_none),
+        ('protocol.transport', 'protocol'),
+        ('extra.', 'naics', convert_int),
+        ('extra.', 'version', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'accessible-radmin',
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+    }
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/caida-ip-spoofer-report/
+# NOTE: The "type" field is included twice with the same values
+caida = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn', convert_int),
+        # ('classification.identifier', 'tag'),  # always 'ip-spoofer' - set in constant_fields
+        ('classification.identifier', 'infection'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname', validate_to_none),
+        ('extra.', 'type', validate_to_none),
+        ('extra.', 'naics', convert_int),
+        ('extra.', 'sic', convert_int),
+        ('extra.', 'sector', validate_to_none),
+        # FIXME Is is mappable to some classification.* field? Not included in example data.
+        ('extra.', 'family', validate_to_none),
+        ('source.network', 'network', validate_to_none),
+        (False, 'version', validate_to_none),  # we can ignore the IP version, it's obvious fron the address
+        ('extra.', 'routedspoof', validate_to_none),
+        ('extra.', 'session', convert_int),
+        ('extra.', 'nat', convert_bool),
+        ('extra.', 'public_source', validate_to_none),
+    ],
+    'constant_fields': {
+        # FIXME Check if the classification is correct
+        'classification.identifier': 'ip-spoofer',
+        'classification.taxonomy': 'fraud',
+        'classification.type': 'masquerade',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
     ('Accessible-AFP', 'scan_afp', accessible_afp),
+    ('Accessible-ARD', 'scan_ard', accessible_ard),
+    ('Accessible-CoAP', 'scan_coap', accessible_coap),
     ('Accessible-CWMP', 'scan_cwmp', accessible_cwmp),
     ('Accessible-Cisco-Smart-Install', 'cisco_smart_install', accessible_cisco_smart_install),
     ('Accessible-FTP', 'scan_ftp', accessible_ftp),
     ('Accessible-HTTP', 'scan_http', accessible_http),
     ('Accessible-Hadoop', 'scan_hadoop', accessible_hadoop),
+    ('Accessible-Radmin', 'scan_radmin', accessible_radmin),
     ('Accessible-RDP', 'scan_rdp', accessible_rdp),
     ('Accessible-Rsync', 'scan_rsync', accessible_rsync),
     ('Accessible-SMB', 'scan_smb', accessible_smb),
@@ -2260,7 +2379,9 @@ mapping = (
     ('Accessible-Ubiquiti-Discovery-Service', 'scan_ubiquiti', accessible_ubiquiti_discovery_service),
     ('Accessible-VNC', 'scan_vnc', accessible_vnc),
     ('Amplification-DDoS-Victim', 'ddos_amplification', amplification_ddos_victim),
-    ('Blacklisted-IP', 'blacklist', blacklisted_ip),
+    ('Blacklisted-IP', 'blacklist', blocklist),
+    ('Blocklist', 'blocklist', blocklist),
+    ('CAIDA-IP-Spoofer', 'caida_ip_spoofer', caida),
     ('Compromised-Website', 'compromised_website', compromised_website),
     ('DNS-Open-Resolvers', 'scan_dns', dns_open_resolvers),
     ('Darknet', 'darknet', darknet),

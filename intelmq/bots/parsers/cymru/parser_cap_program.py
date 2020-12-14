@@ -35,11 +35,13 @@ MAPPING_STATIC = {'bot': {
 }
 MAPPING_COMMENT = {'bruteforce': ('classification.identifier', 'protocol.application'),
                    'phishing': ('source.url', )}
-PROTOCOL_MAPPING = {  # TODO: use getent in harmonization
+PROTOCOL_MAPPING = {  # TODO: use `getent protocols <number>`, maybe in harmonization
     '1': 'icmp',
     '6': 'tcp',
     '11': 'nvp-ii',
     '17': 'udp',
+    '47': 'gre',
+    '59': 'ipv6-nonxt',
 }
 BOGUS_HOSTNAME_PORT = re.compile('hostname: ([^:]+)port: ([0-9]+)')
 DESTINATION_PORT_NUMBERS_TOTAL = re.compile(r' \(total_count:\d+\)$')
@@ -316,6 +318,8 @@ class CymruCAPProgramParserBot(ParserBot):
                     event['protocol.application'] = value
             elif key in ('port', 'srcport'):
                 event['source.port'] = value
+            elif key == 'username':
+                event['source.account'] = value
             else:
                 raise ValueError('Unknown key %r in comment of category %r. Please report this.' % (key, category))
         for destination_port in destination_ports:

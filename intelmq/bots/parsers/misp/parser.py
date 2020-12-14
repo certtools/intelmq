@@ -82,7 +82,7 @@ class MISPParserBot(Bot):
                 malware_variant = attribute['value'].lower()
 
         # MISP event URL
-        url_path = 'event/view/{}'.format(misp_event['id'])
+        url_path = 'events/view/{}'.format(misp_event['id'])
         misp_event_url = urljoin(report['feed.url'], url_path)
 
         # Process MISP event attributes as separate IntelMQ events

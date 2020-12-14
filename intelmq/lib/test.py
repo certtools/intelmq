@@ -32,7 +32,7 @@ BOT_CONFIG.update({"destination_pipeline_broker": "pythonlist",
                    "retry_delay": 0,
                    "error_retry_delay": 0,
                    "error_max_retries": 0,
-                   "redis_cache_host": "localhost",
+                   "redis_cache_host": os.getenv('INTELMQ_PIPELINE_HOST', 'localhost'),
                    "redis_cache_port": 6379,
                    "redis_cache_db": 4,
                    "redis_cache_ttl": 10,
@@ -86,11 +86,6 @@ def skip_internet():
 def skip_redis():
     return unittest.skipIf(os.environ.get('INTELMQ_SKIP_REDIS'),
                            'Skipping without running redis.')
-
-
-def skip_local_web():
-    return unittest.skipUnless(os.environ.get('INTELMQ_TEST_LOCAL_WEB'),
-                               'Skipping local web tests.')
 
 
 def skip_exotic():
@@ -363,10 +358,13 @@ class BotTestCase(object):
         return [utils.decode(text) for text in chain(*[self.pipe.state[x] for x in self.pipe.destination_queues[path]])]
         # return [utils.decode(text) for text in self.pipe.state["%s-output" % self.bot_id]]
 
-    def test_bot_name(self):
+    def test_bot_name(self, *args, **kwargs):
         """
         Test if Bot has a valid name.
         Must be CamelCase and end with CollectorBot etc.
+
+        Accept arbitrary arguments in case the test methods get mocked
+        and get some additional arguments. All arguments are ignored.
         """
         counter = 0
         for type_name, type_match in self.bot_types.items():
@@ -415,7 +413,7 @@ class BotTestCase(object):
         fields = utils.parse_logline(logline)
 
         self.assertEqual(self.bot_id, fields["bot_id"],
-                         "bot_id %s didn't match %s"
+                         "bot_id {!r} didn't match {!r}."
                          "".format(self.bot_id, fields["bot_id"]))
 
         self.assertEqual(levelname, fields["log_level"])
@@ -436,7 +434,7 @@ class BotTestCase(object):
         fields = utils.parse_logline(logline)
 
         self.assertEqual(self.bot_id, fields["bot_id"],
-                         "bot_id %s didn't match %s"
+                         "bot_id {!r} didn't match {!r}."
                          "".format(self.bot_id, fields["bot_id"]))
 
         self.assertEqual(levelname, fields["log_level"])

@@ -2,9 +2,7 @@
 '''
     IntelMQ Exception Class
 '''
-import traceback
-
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 __all__ = ['InvalidArgument', 'ConfigurationError', 'IntelMQException',
            'IntelMQHarmonizationException', 'InvalidKey', 'InvalidValue',
@@ -42,11 +40,8 @@ class InvalidArgument(IntelMQException):
 
 class PipelineError(IntelMQException):
 
-    def __init__(self, argument: Exception):
-        if type(argument) is type and issubclass(argument, Exception):
-            message = "pipeline failed - %s" % traceback.format_exc(argument)
-        else:
-            message = "pipeline failed - %s" % repr(argument)
+    def __init__(self, argument: Union[str, Exception]):
+        message = "pipeline failed - %s" % repr(argument)
         super().__init__(message)
 
 
@@ -162,13 +157,13 @@ class DecodingError(IntelMQException, ValueError):
     def __init__(self, encodings=None, exception: UnicodeDecodeError = None,
                  object: bytes = None):
         self.object = object
-        suffix = []
+        suffixes = []
         if encodings:
-            suffix.append("with given encodings %r" % encodings)
+            suffixes.append("with given encodings %r" % encodings)
         if exception:
-            suffix.append('at position %s with length %d (%r)'
-                          '' % (exception.start, exception.end,
-                                exception.object[exception.start:exception.end]))
-            suffix.append('with reason %r' % exception.reason)
-        suffix = (' ' + ' '.join(suffix)) if suffix else ''
+            suffixes.append('at position %s with length %d (%r)'
+                            '' % (exception.start, exception.end,
+                                  exception.object[exception.start:exception.end]))
+            suffixes.append('with reason %r' % exception.reason)
+        suffix = (' ' + ' '.join(suffixes)) if suffixes else ''
         super().__init__("Could not decode string%s." % suffix)

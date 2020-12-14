@@ -14,6 +14,11 @@ with open(os.path.join(os.path.dirname(__file__), 'example_report3.json')) as ha
     EXAMPLE3_RAW = handle.read()
 with open(os.path.join(os.path.dirname(__file__), 'example_report_dns.json')) as handle:
     EXAMPLE_DNS_RAW = handle.read()
+with open(os.path.join(os.path.dirname(__file__), 'example_report_ignore.json')) as handle:
+    EXAMPLE_IGNORE_RAW = handle.read()
+with open(os.path.join(os.path.dirname(__file__), 'example_comm_http_host_not_dst_ip.json')) as handle:
+    EXAMPLE_COMM_HTTP_HOST_NOT_DST_IP_RAW = handle.read()
+
 
 EXAMPLE_REPORT = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a424b2980ca",
                   "feed.accuracy": 100.0,
@@ -222,6 +227,63 @@ EXAMPLE_EVENT_DNS  = {"classification.taxonomy": "malicious code",
 EMPTY_REPORT = EXAMPLE_REPORT.copy()
 EMPTY_REPORT['raw'] = 'Cg=='
 
+EXAMPLE_REPORT_IGNORE = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a424b2980ca",
+                         "raw": utils.base64_encode(EXAMPLE_IGNORE_RAW),
+                         "__type": "Report",
+                         "time.observation": "2016-04-19T23:16:10+00:00"
+                         }
+
+EXAMPLE_REPORT_COMM_HTTP_HOST_NOT_DST_IP_RAW = {
+    "feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a424b2980ca",
+    "raw": utils.base64_encode(EXAMPLE_COMM_HTTP_HOST_NOT_DST_IP_RAW),
+    "__type": "Report",
+    "time.observation": "2016-04-19T23:16:10+00:00"
+    }
+EXAMPLE_EVENT_COMM_HTTP_HOST_NOT_DST_IP = {
+    "__type": "Event",
+    'classification.identifier': 'BHProxies',
+    'classification.taxonomy': 'malicious code',
+    'classification.type': 'malware',
+    'destination.ip': '198.18.0.1',
+    'destination.port': 2532,
+    'destination.url': 'http://192.168.0.1/',
+    'destination.urlpath': '/',
+    'event_description.text': 'Sinkhole attempted connection',
+    'extra._origin': 'infections',
+    'extra.communication.http.host.as_name': 'Example AS',
+    'extra.communication.http.host.asn': 50245,
+    'extra.communication.http.host.geolocation.cc': 'NL',
+    'extra.communication.http.host.geolocation.country': 'Netherlands',
+    'extra.communication.http.host.geolocation.latitude': 52.0,
+    'extra.communication.http.host.geolocation.longitude': 4.0,
+    'extra.communication.http.host.network': '192.168.0.1/20',
+    'extra.communication.http_host': '192.168.0.1',
+    'extra.communication.type': 'sinkhole',
+    'extra.communication.unverified_domain': 'true',
+    'extra.malware.categories': ['Proxy'],
+    'extra.malware.severity': 2,
+    'extra.request_method': 'GET',
+    'extra.source.geolocation.postal_code': '1060',
+    'extra.source.geolocation.region_code': '09',
+    'extra.user_agent': 'Long UA string',
+    'feed.url': 'https://prod.cyberfeed.net/stream',
+    'malware.name': 'bhproxies',
+    'protocol.application': 'http',
+    'raw': utils.base64_encode(EXAMPLE_COMM_HTTP_HOST_NOT_DST_IP_RAW),
+    'source.as_name': 'Example AS',
+    'source.asn': 6830,
+    'source.geolocation.cc': 'AT',
+    'source.geolocation.city': 'Vienna',
+    'source.geolocation.country': 'Austria',
+    'source.geolocation.latitude': 48.0,
+    'source.geolocation.longitude': 16.0,
+    'source.geolocation.region': 'Wien',
+    'source.ip': '10.0.0.1',
+    'source.network': '10.0.0.0/23',
+    'source.port': 58077,
+    'time.source': '2020-08-21T04:33:10+00:00',
+    }
+
 
 class TestAnubisNetworksParserBot(test.BotTestCase, unittest.TestCase):
 
@@ -258,6 +320,18 @@ class TestAnubisNetworksParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EMPTY_REPORT
         self.run_bot()
         self.assertOutputQueueLen(0)
+
+    def test_ignore(self):
+        """ Test empty line as input """
+        self.input_message = EXAMPLE_REPORT_IGNORE
+        self.run_bot()
+        self.assertOutputQueueLen(0)
+
+    def test_example_comm_http_host_not_dst_ip(self):
+        """ Test with an example where comm.http.host is not equal to dst.ip """
+        self.input_message = EXAMPLE_REPORT_COMM_HTTP_HOST_NOT_DST_IP_RAW
+        self.run_bot()
+        self.assertMessageEqual(0, EXAMPLE_EVENT_COMM_HTTP_HOST_NOT_DST_IP)
 
 
 if __name__ == '__main__':  # pragma: no cover

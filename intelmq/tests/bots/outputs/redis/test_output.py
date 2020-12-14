@@ -41,7 +41,7 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = RedisOutputBot
         cls.default_input_message = EXAMPLE_EVENT
-        cls.sysconfig = {"redis_server_ip": "127.0.0.1",
+        cls.sysconfig = {"redis_server_ip": os.getenv('INTELMQ_PIPELINE_HOST', 'localhost'),
                          "redis_server_port": 6379,
                          "redis_db": 4,
                          "redis_queue": "test-redis-output-queue",

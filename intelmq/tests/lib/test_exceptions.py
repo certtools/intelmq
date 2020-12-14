@@ -3,11 +3,31 @@
 Testing the IntelMQ-specific exceptions
 """
 import unittest
+import sys
 
 import intelmq.lib.exceptions as excs
 
 
 class TestUtils(unittest.TestCase):
+
+    def test_PipelineError(self):
+        message = 'some error'
+        source = ValueError(message)
+        try:
+            try:
+                raise source
+            except ValueError as exc:
+                raise excs.PipelineError(exc)
+        except excs.PipelineError as exc:
+            exception = exc
+        if sys.version_info < (3, 7):
+            self.assertEqual(exception.args, ('pipeline failed - ValueError(%r,)' % message, ))
+        else:
+            self.assertEqual(exception.args, ('pipeline failed - ValueError(%r)' % message, ))
+
+        message = 'some error'
+        notanexception = excs.PipelineError(message)
+        self.assertEqual(notanexception.args, ('pipeline failed - %r' % message, ))
 
     def test_MissingDependencyError(self):
         depname = 'libname'

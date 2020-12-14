@@ -1,0 +1,58 @@
+{
+  "app_proto": "http",
+  "_ts": 1597984390,
+  "src": {
+    "ip": "10.0.0.1",
+    "port": 58077
+  },
+  "dst": {
+    "ip": "198.18.0.1",
+    "port": 2532
+  },
+  "malw": {
+    "severity": 2,
+    "family": "BHProxies",
+    "variant": "BHProxies",
+    "categories": [
+      "Proxy"
+    ]
+  },
+  "comm": {
+    "proto": "http",
+    "http": {
+      "method": "GET",
+      "host": "192.168.0.1",
+      "path": "/",
+      "user_agent": "Long UA string",
+      "unverified_domain": "true"
+    },
+    "method": "sinkhole"
+  },
+  "_origin": "infections",
+  "_geo_src_ip": {
+    "ip": "10.0.0.1",
+    "netmask": 23,
+    "country_code": "AT",
+    "country_name": "Austria",
+    "region": "Wien",
+    "region_code": "09",
+    "city": "Vienna",
+    "postal_code": "1060",
+    "latitude": 48.0,
+    "longitude": 16.0,
+    "asn": 6830,
+    "asn_name": "Example AS",
+    "path": "src.ip"
+  },
+  "_geo_comm_http_host": {
+    "ip": "192.168.0.1",
+    "netmask": 20,
+    "country_code": "NL",
+    "country_name": "Netherlands",
+    "latitude": 52.0,
+    "longitude": 4.0,
+    "asn": 50245,
+    "asn_name": "Example AS",
+    "path": "comm.http.host"
+  }
+}

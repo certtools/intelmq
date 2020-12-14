@@ -29,3 +29,6 @@ spam|172.16.0.21|64496|2019-10-02 23:00:17||Example AS Name, AT
 phishing|172.16.0.21|64496|2019-10-23 12:46:18||Example AS Name, AT
 darknet|172.16.0.21|64496|2020-01-10 09:17:17|destination_port_numbers: 0;protocol: 11;|Example AS Name, AT
 conficker|172.16.0.21|64496|2020-05-08 09:13:34|srcport: 1997; destaddr: 172.16.0.22;|Example AS Name, AT
+scanner|172.16.0.21|64496|2020-07-09 03:40:15|username: pm;|Example AS Name, AT
+darknet|172.16.0.21|64496|2020-10-08 02:21:26|protocol: 47;|Example AS Name, AT
+darknet|172.16.0.21|64496|2020-10-15 09:22:10|protocol: 59;|Example AS Name, AT

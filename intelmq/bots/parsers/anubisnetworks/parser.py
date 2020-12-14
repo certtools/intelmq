@@ -119,9 +119,12 @@ class AnubisNetworksParserBot(Bot):
                             if subsubkey == 'method':
                                 event.add('extra.request_method', subsubvalue)
                             elif subsubkey == 'host':
-                                if not event.add('destination.fqdn', subsubvalue, raise_failure=False):
-                                    # event.add('destination.ip', subsubvalue)
-                                    assert raw_report['dst']['ip'] == subsubvalue
+                                if (not event.add('destination.fqdn', subsubvalue, raise_failure=False) and
+                                        subsubvalue != raw_report['dst']['ip']):
+                                    # try to add it as FQDN, it that fails it's an IP address
+                                    # then check if it is the same as the destination IP address
+                                    # if not add it to extra
+                                    event.add('extra.communication.http_host', subvalue['host'])
                             elif subsubkey == 'path':
                                 event.add('destination.urlpath', subsubvalue)
                             elif subsubkey == 'user_agent':
@@ -198,7 +201,11 @@ class AnubisNetworksParserBot(Bot):
                     event['extra.metadata.%s' % subkey] = subvalue
             else:
                 raise ValueError("Unable to parse data field %r. Please report this as bug." % key)
-        self.send_message(event)
+
+        if event.get("malware.name", None) != 'testsinkholingloss':
+            # used for internal tests, should actually not be part of the feed
+            self.logger.debug("Ignoring 'TestSinkholingLoss' event.")
+            self.send_message(event)
         self.acknowledge_message()
 
     def parse_geo(self, event, value, namespace, raw_report, orig_name):

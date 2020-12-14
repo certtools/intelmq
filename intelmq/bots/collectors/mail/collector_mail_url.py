@@ -6,7 +6,7 @@ import io
 import re
 
 from intelmq.lib.splitreports import generate_reports
-from intelmq.lib.utils import create_request_session_from_bot, file_name_from_response
+from intelmq.lib.utils import create_request_session, file_name_from_response
 
 from .lib import MailCollectorBot
 from intelmq.lib.exceptions import MissingDependencyError
@@ -26,7 +26,7 @@ class MailURLCollectorBot(MailCollectorBot):
 
         # Build request
         self.set_request_parameters()
-        self.session = create_request_session_from_bot(self)
+        self.session = create_request_session(self)
 
         self.chunk_size = getattr(self.parameters, 'chunk_size', None)
         self.chunk_replicate_header = getattr(self.parameters,
@@ -48,7 +48,7 @@ class MailURLCollectorBot(MailCollectorBot):
                 try:
                     resp = self.session.get(url=url)
                 except requests.exceptions.Timeout:
-                    self.logger.error("Request timed out %i times in a row. " %
+                    self.logger.error("Request timed out %i times in a row." %
                                       self.http_timeout_max_tries)
                     erroneous = True
                     # The download timed out too often, leave the Loop.
@@ -61,7 +61,7 @@ class MailURLCollectorBot(MailCollectorBot):
                     continue
 
                 if not resp.content:
-                    self.logger.warning('Got empty reponse from server.')
+                    self.logger.warning('Got empty response from server.')
                 else:
                     self.logger.info("Report downloaded.")
 
