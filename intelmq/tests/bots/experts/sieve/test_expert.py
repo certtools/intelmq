@@ -975,6 +975,32 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, numeric_match_true)
 
+    def test_parentheses(self):
+        """ Test if parenthesis work"""
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_parentheses.sieve')
+
+        # If doesn't match, nothing should have changed
+        event1 = EXAMPLE_INPUT.copy()
+        self.input_message = event1
+        self.run_bot()
+        self.assertMessageEqual(0, event1)
+
+        # If expression matches, destination.ip field is added
+        event1['comment'] = 'add field'
+        result = event1.copy()
+        result['destination.ip'] = '150.50.50.10'
+        self.input_message = event1
+        self.run_bot()
+        self.assertMessageEqual(0, result)
+
+        # If expression matches, destination.ip field is added
+        event2 = EXAMPLE_INPUT.copy()
+        event2['classification.taxonomy'] = 'vulnerable'
+        result = event2.copy()
+        result['destination.ip'] = '150.50.50.10'
+        self.input_message = event2
+        self.run_bot()
+        self.assertMessageEqual(0, result)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
