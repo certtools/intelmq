@@ -627,6 +627,10 @@ If you intend to link two IntelMQ instance via TCP, have a look at the TCP outpu
 
 XMPP collector
 ^^^^^^^^^^^^^^
+
+**Warning:** This bot is deprecated and will be removed in the version 3.0 of IntelMQ.
+**Warning:** This bot is currently *unmaintained*. The used XMPP library *sleekxmpp* is deprecated. For more information see :issue:`Issue #1614 <1614>`.
+
 **Information**
 
 * `name:` intelmq.bots.collectors.xmpp.collector
@@ -634,8 +638,6 @@ XMPP collector
 * `public:` yes
 * `cache (redis db):` none
 * `description:` This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.
-
-**Warning:** This bot is currently *unmaintained* and needs to be adapted. The used XMPP library *sleekxmpp* is deprecated, therefore the bots needs to be adapted to the successor library *slixmpp*. For more information see :issue:`Issue #1614 <1614>`.
 
 **Requirements**
 
@@ -3496,6 +3498,8 @@ Resulting line in syslog:
 
 XMPP
 ^^^^
+**Warning:** This bot is deprecated and will be removed in the version 3.0 of IntelMQ.
+**Warning:** This bot is currently *unmaintained*. The used XMPP library *sleekxmpp* is deprecated. For more information see :issue:`Issue #1614 <1614>`.
 
 **Information**
 
@@ -3505,7 +3509,6 @@ XMPP
 * `cache (redis db):` none
 * `description:` The XMPP Output is capable of sending Messages to XMPP Rooms and as direct messages.
 
-**Warning:** This bot is currently *unmaintained* and needs to be adapted. The used XMPP library *sleekxmpp* is deprecated, therefore the bots needs to be adapted to the successor library *slixmpp*. For more information see :issue:`Issue #1614 <1614>`.
 
 **Requirements**
 

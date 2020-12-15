@@ -34,6 +34,7 @@ CHANGELOG
   - Added PGP signature check functionality (PR#1602 by sinus-x).
   - If status code is not 2xx, the request's and response's headers and body are logged in debug logging level (#1615).
 - `intelmq.bots.collectors.kafka.collector`: Added (PR#1654, closes #1634)
+- `intelmq.bots.collectors.xmpp.collector`: marked as deprecated (see https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html)
 
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
@@ -73,6 +74,7 @@ CHANGELOG
 
 #### Outputs
 - `intelmq.bots.outputs.rt`: Added Request Tracker output bot (PR#1589 by Marius Urkis).
+- `intelmq.bots.outputs.xmpp.output`: marked as deprecated (see https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html)
 
 ### Documentation
 - Feeds:

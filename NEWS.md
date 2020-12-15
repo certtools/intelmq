@@ -12,6 +12,8 @@ The documentation is now available at [intelmq.readthedocs.io](https://intelmq.r
 
 ### Tools
 
+### Bots
+
 #### Bot option `--updata-database`
 - Bots that require a database file (such as `maxmind_geoip`, `asn_lookup`, `tor_nodes` and `recordedfuture_iprisk`)
   have new command line option `--update-database`. It is not necessary to specify a
@@ -28,6 +30,9 @@ The documentation is now available at [intelmq.readthedocs.io](https://intelmq.r
   intelmq.bots.experts.tor_nodes.expert --update-database
   ```
   The provided shell scripts use these new commands, however they are now deprecated and will be removed in version 3.0.
+
+#### XMPP Bots
+Both the XMPP output bot and the XMPP collector bot log a deprecation warning now. The plan is to remove them in version 3.0.
 
 ### Harmonization
 

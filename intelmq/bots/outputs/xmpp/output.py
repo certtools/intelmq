@@ -81,6 +81,8 @@ class XMPPOutputBot(Bot):
     xmpp = None
 
     def init(self):
+        self.logger.warning("The output bot 'intelmq.bots.outputs.xmpp.output' "
+                            "is deprecated. It will be removed in version 3.0.")
         if sleekxmpp is None:
             raise MissingDependencyError("sleekxmpp")
 
