@@ -144,6 +144,7 @@ class RTCollectorBot(CollectorBot):
                         self.logger.info('Skipping now.')
                         continue
                 self.logger.info("Report #%d downloaded.", ticket_id)
+                self.logger.debug("Downloaded content has %d bytes.", len(resp.content))
                 if self.extract_download:
                     raw = resp.content
                 else:

@@ -134,9 +134,11 @@ CHANGELOG
 ### Development
 
 ### Harmonization
+- See NEWS.md for information on a fixed bug in the taxonomy expert.
 
 ### Bots
 #### Collectors
+- `intelmq.bots.rt.collector_rt`: Log the size of the downloaded file in bytes on debug logging level.
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Add support for protocols 47 (GRE) and 59 (IPv6-NoNxt).
@@ -145,9 +147,10 @@ CHANGELOG
   - Explicitly ignore field `DestinationIpInfo.DestinationIpv4Int` as the data is already in another field.
 - `intelmq.bots.parsers.generic.parser_csv`:
   - Ignore line having spaces or tabs only or comment having leading tabs or spaces (PR#1669 by Brajneesh).
-  - Data fields containing `-` are now ignored and do not raise an exeception anymore (#1651, PR#74 by Sebastian Waldbauer).
+  - Data fields containing `-` are now ignored and do not raise an exception anymore (#1651, PR#74 by Sebastian Waldbauer).
 
 #### Experts
+- `intelmq.bots.experts.taxonomy.expert`: Map type `scanner` to `information-gathering` instead of `information gathering` See NEWS file for more information.
 
 #### Outputs
 
@@ -203,7 +206,7 @@ CHANGELOG
   - Add information on Microsoft CTIP C2 feed.
 
 ### Packaging
-- In Debian packages, `intelmqctl check` and `intelmqctl upgrade-config` are executed in the postinst step (#1551, PR#1624 by Birger Schacht).
+- In Debian packages, `intelmqctl check` and `intelmqctl upgrade-config` are executed in the "postinst" step (#1551, PR#1624 by Birger Schacht).
 - Require `requests<2.26` for Python 3.5, as 2.25.x will be the last release series of the requests library with support for Python 3.5.
 
 ### Tests
@@ -228,7 +231,7 @@ CHANGELOG
 
 ### Core
 - `intelmq.lib.upgrades`:
-  - Add upgrade function for changed configuration of the feed "Abuse.ch URLHaus" (#1571, PR#1572 by Filip Pokorný).
+  - Add upgrade function for changed configuration of the feed "Abuse.ch URLhaus" (#1571, PR#1572 by Filip Pokorný).
   - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559).
   - `intelmq.lib.harmonization`:
     - For IP Addresses, explicitly reject IPv6 addresses with scope ID (due to changed behavior in Python 3.9, #1550).
@@ -259,7 +262,7 @@ CHANGELOG
 
 ### Documentation
 - Feeds:
-  - Update documentation of feed "Abuse.ch URLHaus" (#1571, PR#1572 by Filip Pokorný).
+  - Update documentation of feed "Abuse.ch URLhaus" (#1571, PR#1572 by Filip Pokorný).
 - Bots:
   - Overhaul of all bots' description fields (#1570).
 - User-Guide:
