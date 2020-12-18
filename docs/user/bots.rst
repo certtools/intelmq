@@ -2453,10 +2453,12 @@ rules are specified in an external configuration file and with a syntax *similar
 to the `Sieve language <http://sieve.info>`_ used for mail filtering.
 
 Each rule defines a set of matching conditions on received events. Events can be
-matched based on keys and values in the event. If the processed event matches a
-rule's conditions, the corresponding actions are performed. Actions can specify
-whether the event should be kept or dropped in the pipeline (filtering actions)
-or if keys and values should be changed (modification actions).
+matched based on keys and values in the event. Conditions can be combined using
+parenthesis and the boolean operators ``&&`` and ``||``. If the processed event
+matches a rule's conditions, the corresponding actions are performed. Actions
+can specify whether the event should be kept or dropped in the pipeline
+(filtering actions) or if keys and values should be changed (modification
+actions).
 
 **Requirements**
 
@@ -2524,7 +2526,8 @@ Each rule specifies on or more expressions to match an event based on its keys
 and values. Event keys are specified as strings without quotes. String values
 must be enclosed in single quotes. Numeric values can be specified as integers
 or floats and are unquoted. IP addresses and network ranges (IPv4 and IPv6) are
-specified with quotes. Parentheses in expression statements are not possible.
+specified with quotes. Expression statements can be combined and chained using
+parenthesis and the boolean operators ``&&`` and ``||``.
 The following operators may be used to match events:
 
  * `:exists` and `:notexists` match if a given key exists, for example:
@@ -2558,6 +2561,10 @@ The following operators may be used to match events:
 
   Events with values like `8.8.8.8` or `8.8.4.4` will match, as they are always unequal to the other value.
   The result is *not* that the field must be unequal to all given values.
+
+ * The combination of multiple expressions can be done using parenthesis and boolean operators:
+
+  ``if (source.ip == '127.0.0.1') && (comment == 'add field' || classification.taxonomy == 'vulnerable') { ... }``
 
 
 *Actions*
