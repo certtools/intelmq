@@ -83,8 +83,10 @@ class XMPPCollectorBot(CollectorBot):
     collector_empty_process = True
 
     def init(self):
-        self.logger.warning("The output bot 'intelmq.bots.outputs.xmpp.output' "
-                            "is deprecated. It will be removed in version 3.0.")
+        self.logger.warning("The output bot 'intelmq.bots.collectors.xmpp.output' "
+                            "is deprecated. It will be removed in version 3.0."
+                            "Please see https://github.com/certtools/intelmq/blob/"
+                            "develop/NEWS.md#xmpp-bots for more details.")
         if sleekxmpp is None:
             raise MissingDependencyError("sleekxmpp")
 

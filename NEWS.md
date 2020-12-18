@@ -32,7 +32,10 @@ The documentation is now available at [intelmq.readthedocs.io](https://intelmq.r
   The provided shell scripts use these new commands, however they are now deprecated and will be removed in version 3.0.
 
 #### XMPP Bots
-Both the XMPP output bot and the XMPP collector bot log a deprecation warning now. The plan is to remove them in version 3.0.
+Both the XMPP output bot and the XMPP collector bot are deprecated.
+The bots need to be migrate to another XMPP library (see [#1614](https://github.com/certtools/intelmq/issues/1614) for details) and a survey on the mailing listed revealed no users.
+If you depend on this bot, please reach out to us via the mailing list or GitHub.
+The bots are logging a deprecation warning now and the current plan is to remove them in IntelMQ version 3.0.
 
 ### Harmonization
 

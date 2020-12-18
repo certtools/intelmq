@@ -11,7 +11,7 @@ CHANGELOG
   - `ParserBot.recover_line_json_stream`: Make `line` parameter optional, as it is not needed for this method.
   - `Bot.argparser`: Added class method `_create_argparser` (returns `argparse.ArgumentParser`) for easy command line arguments parsing.
   - Runtime configuration does not necessarily need a parameter entry for each block. Previously and at least empty block was required (PR#1604 by Filip Pokorný).
-  - Allow setting the pipeline host and the redis cache host by environment variables for docker usage (PR#1669 by Sebastian Waldbauer).
+  - Allow setting the pipeline host and the Redis cache host by environment variables for docker usage (PR#1669 by Sebastian Waldbauer).
 - `intelmq.lib.upgrades`:
   - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559).
 - `intelmq.lib.exceptions`:
@@ -20,7 +20,7 @@ CHANGELOG
   - `create_request_session_from_bot`: Changed bot argument to optional, uses defaults.conf as fallback, renamed to `create_request_session`. Name `create_request_session_from_bot` will be removed in version 3.0.0.
   - `log`: Use RotatingFileHandler for allow log file rotation without external tools (PR#1637 by Vasek Bruzek).
 - `intelmq.lib.harmonization`:
-  - The `IPAddress` type sanitiation now accepts integer IP addresses and converts them to the string representation.
+  - The `IPAddress` type sanitation now accepts integer IP addresses and converts them to the string representation.
 
 ### Development
 - `intelmq.bin.intelmq_gen_docs`: Add bot name to the `Feeds.md` documentation (PR#1617 by Birger Schacht).
@@ -33,8 +33,8 @@ CHANGELOG
 - `intelmq.bots.collectors.http.collector_http`:
   - Added PGP signature check functionality (PR#1602 by sinus-x).
   - If status code is not 2xx, the request's and response's headers and body are logged in debug logging level (#1615).
-- `intelmq.bots.collectors.kafka.collector`: Added (PR#1654, closes #1634)
-- `intelmq.bots.collectors.xmpp.collector`: marked as deprecated (see https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html)
+- `intelmq.bots.collectors.kafka.collector`: Added (PR#1654 by Birger Schacht, closes #1634)
+- `intelmq.bots.collectors.xmpp.collector`: Marked as deprecated, see https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html (#1614, PR#1685 by Birger Schacht).
 
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
@@ -74,7 +74,7 @@ CHANGELOG
 
 #### Outputs
 - `intelmq.bots.outputs.rt`: Added Request Tracker output bot (PR#1589 by Marius Urkis).
-- `intelmq.bots.outputs.xmpp.output`: marked as deprecated (see https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html)
+- `intelmq.bots.outputs.xmpp.output`: Marked as deprecated, see https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html (#1614, PR#1685 by Birger Schacht).
 
 ### Documentation
 - Feeds:
@@ -87,7 +87,7 @@ CHANGELOG
 - Bots:
   - Enhanced documentation of RFC1918 Expert.
   - Enhanced documentation of SQL Output (PR #1620 by Edvard Rejthar).
-  - Updated documentation for Maxmind GeoIP, ASN Lookup, TOR Nodes and Recorded Future experts to reflect new `--update-database` option.  (PR#1524 by Filip Pokorný)
+  - Updated documentation for MaxMind GeoIP, ASN Lookup, TOR Nodes and Recorded Future experts to reflect new `--update-database` option.  (PR#1524 by Filip Pokorný)
 - Add n6 Integration documentation.
 - Moved 'Orphaned Queues' section from the FAQ to the intelmqctl documentation.
 - Generate documentation using Sphinx (PR#1622 by Birger Schacht).
@@ -117,7 +117,7 @@ CHANGELOG
   - Allow setting the pipeline host by environment variables for docker usage (PR#1669 by Sebastian Waldbauer).
 
 ### Contrib
-- eventdb:
+- EventDB:
   - Add SQL script for keeping track of the oldest inserted/update "time.source" information.
 - Cron Jobs: The script `intelmq-update-data` has been renamed to `intelmq-update-database`
 
