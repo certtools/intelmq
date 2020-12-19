@@ -36,6 +36,7 @@ EXAMPLE_EVENT = {
     "malware.name": "locky",
     'misp.attribute_uuid': '575c8598-f1f0-4c16-a94a-0612c0a83866',
     'misp.event_uuid': '5758ebf5-c898-48e6-9fe9-5665c0a83866',
+    'misp.to_ids': "false", 
     "raw": base64_encode(EXAMPLE_MISP_ATTR)
 }
 

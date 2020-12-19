@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+
+"""
+MISP parser
+
+Parameters:
+ids_only: boolean
+"""
+
 import json
 from datetime import datetime
 from urllib.parse import urljoin
@@ -95,10 +103,13 @@ class MISPParserBot(Bot):
             timestamp = attribute['timestamp']
             category = attribute['category']
             type_ = attribute['type']
+            to_ids = attribute['to_ids']
+            ids_only = self.parameters.ids_only
 
             # create intelmq events based on the category
             if (category in self.SUPPORTED_MISP_CATEGORIES and
-                    type_ in self.MISP_TYPE_MAPPING):
+                    type_ in self.MISP_TYPE_MAPPING and
+                    (not ids_only or to_ids)):
 
                 # Create and send the intelmq event
                 event = self.new_event(report)
@@ -106,6 +117,7 @@ class MISPParserBot(Bot):
                 event.add(self.MISP_TYPE_MAPPING[type_], value)
                 event.add('misp.event_uuid', misp_event['uuid'])
                 event.add('misp.attribute_uuid', uuid)
+                event.add('misp.to_ids', to_ids)
                 event.add('comment', comment)
                 event.add('event_description.text', category)
                 event.add('event_description.url', misp_event_url)
