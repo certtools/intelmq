@@ -1,0 +1,27 @@
+#Github Workflow to run pycodestyle
+#
+#SPDX-FileCopyrightText: 2020 Birger Schacht
+#SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: "Run pycodestyle on repository"
+
+on:
+  push:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  pycodestyle:
+    name: Run pycodestyle
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Install pycodestyle
+      run: |
+        sudo apt update
+        sudo apt install pycodestyle -y
+    - name: Run pycodestyle
+      run: |
+        pycodestyle intelmq/{bots,lib,bin}
