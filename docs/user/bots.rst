@@ -59,8 +59,8 @@ Initialization parameters
 * `name` and `description`: The name and description of the bot as can be found in BOTS-file, not used by the bot itself.
 * `group`: Can be `"Collector"`, `"Parser"`, `"Expert"` or `"Output"`. Only used for visualization by other tools.
 * `module`: The executable (should be in `$PATH`) which will be started.
-* `enabled`: If the parameter is set to `true` (which is NOT the default value if it is missing as a protection) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `false`, the Bot will not be started by `intelmqctl start`, however you can run the bot independently using `intelmqctl start <bot_id>`. Check the [User-Guide](./User-Guide.md) for more details.
-* `run_mode`: There are two run modes, "continuous" (default run mode) or "scheduled". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after one successful run. This is especially useful when scheduling bots via cron or systemd. Default is `continuous`. Check the [User-Guide](./User-Guide.md) for more details.
+* `enabled`: If the parameter is set to `true` (which is NOT the default value if it is missing as a protection) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `false`, the Bot will not be started by `intelmqctl start`, however you can run the bot independently using `intelmqctl start <bot_id>`. Check :doc:`configuration-management` for more details.
+* `run_mode`: There are two run modes, "continuous" (default run mode) or "scheduled". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after one successful run. This is especially useful when scheduling bots via cron or systemd. Default is `continuous`. Check :doc:`configuration-management` for more details.
 
 .. _common-parameters:
 
@@ -354,7 +354,7 @@ Github API
 * `basic_auth_password:` GitHub account password (optional)
 * `repository:` GitHub target repository (`<USER>/<REPOSITORY>`)
 * `regex:` Valid regex of target files within the repository (defaults to `.*.json`)
-* `extra_fields:` Comma-separated list of extra fields from [GitHub contents API](https://developer.github.com/v3/repos/contents/)
+* `extra_fields:` Comma-separated list of extra fields from `GitHub contents API <https://developer.github.com/v3/repos/contents/>`_.
 
 **Workflow**
 
@@ -466,7 +466,7 @@ MISP Generic
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` collect messages from [MISP](https://github.com/MISP), a malware information sharing platform server.
+* `description:` collect messages from `MISP <https://github.com/MISP>`_, a malware information sharing platform server.
 
 **Configuration Parameters**
 
@@ -837,6 +837,8 @@ The cache is used to remember which files have already been downloaded. Make sur
 **Additional functionalities**
 
 * Files are automatically ungzipped if the filename ends with `.gz`.
+
+.. _stomp collector bot:
 
 Stomp
 ^^^^^
@@ -1369,6 +1371,8 @@ MISP events collected by the MISPCollectorBot are passed to this parser
 for processing. Supported MISP event categories and attribute types are
 defined in the `SUPPORTED_MISP_CATEGORIES` and `MISP_TYPE_MAPPING` class
 constants.
+
+.. _n6 parser bot:
 
 n6
 ^^
@@ -2260,10 +2264,10 @@ This is useful to apply default values for empty fields.
 
 You can set the value of the field to a string literal or number.
 
-In addition you can use the [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax)
+In addition you can use the `standard Python string format syntax <https://docs.python.org/3/library/string.html#format-string-syntax>`_
 to access the values from the processed event as `msg` and the match groups
 of the conditions as `matches`, see the bitdefender example above.
-Group 0 (`[0]`) contains the full matching string. See also the documentation on [`re.Match.group`](https://docs.python.org/3/library/re.html?highlight=re%20search#re.Match.group).
+Group 0 (`[0]`) contains the full matching string. See also the documentation on `re.Match.group <https://docs.python.org/3/library/re.html?highlight=re%20search#re.Match.group>`_.
 
 Note that `matches` will also contain the match groups
 from the default conditions if there were any.
@@ -2419,7 +2423,7 @@ Online RIPE Abuse Contact and Geolocation Finder for IP addresses and Autonomous
 
 **Configuration Parameters**
 
-* **Cache parameters** (see in section [common parameters](#common-parameters))
+* **Cache parameters** (see section :ref:`common-parameters`)
 * `mode`: either `append` (default) or `replace`
 * `query_ripe_db_asn`: Query for IPs at `http://rest.db.ripe.net/abuse-contact/%s.json`, default `true`
 * `query_ripe_db_ip`: Query for ASNs at `http://rest.db.ripe.net/abuse-contact/as%s.json`, default `true`
@@ -2730,7 +2734,7 @@ Threshold
 **Information**
 
 
-* **Cache parameters** (see in section [common parameters](#common-parameters))
+* **Cache parameters** (see section :ref:`common-parameters`)
 * `name`: threshold
 * `lookup`: redis cache
 * `public`: no
@@ -3185,7 +3189,7 @@ The bot creates tickets in Request Tracker and uses event fields for the ticket 
 
   - all event fields are included in the ticket body,
   - event attributes are assigned to tickets' CFs according to the attribute mapping,
-  - ticket taxonomy can be assigned according to the CF mapping. If you use taxonomy different from [ENISA RSIT](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force), consider using some extra attribute field and do value mapping with modify or sieve bot,
+  - ticket taxonomy can be assigned according to the CF mapping. If you use taxonomy different from `ENISA RSIT <https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force>`_, consider using some extra attribute field and do value mapping with modify or sieve bot,
 
 - create linked ticket in Investigations queue, if these conditions are met
 
@@ -3367,6 +3371,8 @@ Create the new database (you can ignore all errors since SQLite doesn't know all
    sqlite> .read /tmp/initdb.sql
 
 Then, set the `database` parameter to the `your-db.db` file path. 
+
+.. _stomp output bot:
 
 STOMP
 ^^^^^

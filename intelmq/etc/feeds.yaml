@@ -1762,7 +1762,7 @@ providers:
     DailyIOC:
       description: Daily IOC from tweets and articles
       additional_information: |
-        collector's `extra_fields` parameter may be any of fields from the github [content API response](https://developer.github.com/v3/repos/contents/)
+        collector's `extra_fields` parameter may be any of fields from the github `content API response <https://developer.github.com/v3/repos/contents/>`_
       bots:
         collector:
           module: intelmq.bots.collectors.github_api.collector_github_contents_api
