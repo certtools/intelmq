@@ -21,21 +21,20 @@ try:
 except ImportError:
     requests = None
 
-
 class FireeyeCollectorBot(CollectorBot):
 
     def xml_processor(self, uuid, token, new_report, dns_name, product):
-        with requests.Session() as s :
-            url = 'https://'+dns_name+'/wsapis/v2.0.0/openioc?alert_uuid='+uuid
+        with requests.Session() as s:
+            url = 'https://' + dns_name + '/wsapis/v2.0.0/openioc?alert_uuid=' + uuid
             headers = {'X-FeApi-Token': token}
             r = requests.get(url, headers=headers, verify=False)
             binary = r.content
-            self.logger.info('collecting information for uuid :'+uuid)
+            self.logger.info('collecting information for uuid :' + uuid)
             mybool = 1
             try:
                     status =  my_dict['fireeyeapis']['httpStatus']
                     self.logger.info("status ist " + status)
-                    if status == '404' :
+                    if status == '404':
                       mybool= 0
                       self.logger.info("status 404")
             except:
@@ -62,7 +61,7 @@ class FireeyeCollectorBot(CollectorBot):
 
         self.session = create_request_session_from_bot(self)
 	# kein proxi im lokalen netz
-        self.session.proxies={}
+        self.session.proxies = {}
 
     def process(self):
         # define params 
@@ -72,20 +71,20 @@ class FireeyeCollectorBot(CollectorBot):
         pw = self.parameters.http_password
         
 	    #creat auth token  
-        token = user +":"+ pw
+        token = user + ":" + pw
         message_bytes = token.encode('ascii')
         base64_bytes = base64.b64encode(message_bytes)
         base64_message = base64_bytes.decode('ascii') 
         http_header = {'Authorization': 'Basic '+base64_message}
         #get token for requestst
-        auth_url = "https://"+dns_name+"/wsapis/v2.0.0/auth/login"
+        auth_url = "https://" + dns_name + "/wsapis/v2.0.0/auth/login"
         resp = self.session.post(url=auth_url,headers=http_header)
         
 	    #extract token and build auth header
-        token= resp.headers['X-FeApi-Token'] 
-        self.logger.info('Token:   '+token)
+        token = resp.headers['X-FeApi-Token'] 
+        self.logger.info('Token:   ' + token)
         http_header = {'X-FeApi-Token': token, 'Accept': 'application/json'}
-        http_url = "https://"+dns_name+"/wsapis/v2.0.0/alerts?duration="+request_duration
+        http_url = "https://" + dns_name + "/wsapis/v2.0.0/alerts?duration=" + request_duration
 
         self.logger.info("Downloading report from %r.", http_url)
         resp = self.session.get(url=http_url,headers=http_header)
