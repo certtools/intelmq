@@ -21,36 +21,36 @@ class FireeyeParserBot(ParserBot):
         raw_report = utils.base64_decode(report.get('raw'))
         my_dict = xmltodict.parse(raw_report)
         try:
-         event = self.new_event(report)
-         for indicator in my_dict['OpenIOC']['criteria']['Indicator']['IndicatorItem']:
-            hashValue = indicator['Content']['#text']
-            indicatorType = indicator['Context']['@search']
-            if indicatorType == 'FileItem/Md5sum':
-               event.add('malware.hash.md5', indicator['Content']['#text'])
-            if indicatorType == 'FileItem/Sha256sum':
-               self.logger.debug('#######FileItem/Md5sum aus uuid########'+ indicator['Content']['#text'])
-               event.add('malware.hash.sha256', indicator['Content']['#text'])
-               self.send_message(event)
-               data = raw_report.split('<Indicator id')
-               uuidres = data[0].split('"alert_id">')
-               uuid = uuidres[1].split('"')
-               self.logger.debug("My UUDI is:  " + uuid[0])
-               data.pop(0)
-               data.pop(0)
-               for Indicator in data:
-                  event = self.new_event(report)
-                  if "Network" in Indicator:
-                     fqdn=""
-                     urlpath=""
-                     IndicatorItem = Indicator.split('<IndicatorItem condition')
-                     for datainIndicator in IndicatorItem:
-                           if "search=" in datainIndicator:
+            event = self.new_event(report)
+            for indicator in my_dict['OpenIOC']['criteria']['Indicator']['IndicatorItem']:
+                hashValue = indicator['Content']['#text']
+                indicatorType = indicator['Context']['@search']
+                if indicatorType == 'FileItem/Md5sum':
+                   event.add('malware.hash.md5', indicator['Content']['#text'])
+                if indicatorType == 'FileItem/Sha256sum':
+                   self.logger.debug('#######FileItem/Md5sum aus uuid########'+ indicator['Content']['#text'])
+                   event.add('malware.hash.sha256', indicator['Content']['#text'])
+                   self.send_message(event)
+                   data = raw_report.split('<Indicator id')
+                   uuidres = data[0].split('"alert_id">')
+                   uuid = uuidres[1].split('"')
+                   self.logger.debug("My UUDI is:  " + uuid[0])
+                   data.pop(0)
+                   data.pop(0)
+                   for Indicator in data:
+                      event = self.new_event(report)
+                      if "Network" in Indicator:
+                         fqdn=""
+                         urlpath=""
+                         IndicatorItem = Indicator.split('<IndicatorItem condition')
+                         for datainIndicator in IndicatorItem:
+                            if "search=" in datainIndicator:
                                    search = datainIndicator.split('search="')
                                    for searchIndicator in search:
                                           classification = ""
                                           if '"/>' in searchIndicator:
                                              context_search = searchIndicator.split('"/>')
-                                             #context inhalt
+                                             # context inhalt
                                              if context_search[0] == "Network/HTTP/RequestURI":
                                                 classification = "destination.urlpath"
                                              if context_search[0] == "Network/HTTP/Host":
@@ -86,7 +86,7 @@ class FireeyeParserBot(ParserBot):
                                                 event.add(classification, context[0])
                                              elif classification == "destination.port":
                                                 event.add(classification, int(context[0]))
-                  self.send_message(event)
+                      self.send_message(event)
         self.acknowledge_message()
         except KeyError:
             self.logger.info("no Iocs Available")
