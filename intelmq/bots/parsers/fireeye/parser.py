@@ -15,25 +15,25 @@ import xmltodict
 import ipaddress
 
 class FireeyeParserBot(ParserBot):
-  
-   def process(self):
-      report = self.receive_message()
-      raw_report = utils.base64_decode(report.get('raw'))
-      my_dict = xmltodict.parse(raw_report)
-      try:
+
+    def process(self):
+        report = self.receive_message()
+        raw_report = utils.base64_decode(report.get('raw'))
+        my_dict = xmltodict.parse(raw_report)
+        try:
          event = self.new_event(report)
          for indicator in my_dict['OpenIOC']['criteria']['Indicator']['IndicatorItem']:
             hashValue = indicator['Content']['#text']
             indicatorType = indicator['Context']['@search']
             if indicatorType == 'FileItem/Md5sum':
-               event.add('malware.hash.md5' , indicator['Content']['#text'])
+               event.add('malware.hash.md5', indicator['Content']['#text'])
             if indicatorType == 'FileItem/Sha256sum':
                self.logger.debug('#######FileItem/Md5sum aus uuid########'+ indicator['Content']['#text'])
                event.add('malware.hash.sha256', indicator['Content']['#text'])
                self.send_message(event)
-               data= raw_report.split('<Indicator id')
-               uuidres= data[0].split('"alert_id">')
-               uuid= uuidres[1].split('"')
+               data = raw_report.split('<Indicator id')
+               uuidres = data[0].split('"alert_id">')
+               uuid = uuidres[1].split('"')
                self.logger.debug("My UUDI is:  " + uuid[0])
                data.pop(0)
                data.pop(0)
@@ -87,8 +87,8 @@ class FireeyeParserBot(ParserBot):
                                              elif classification == "destination.port":
                                                 event.add(classification, int(context[0]))
                   self.send_message(event)
-         self.acknowledge_message()
-         except KeyError:
+        self.acknowledge_message()
+        except KeyError:
             self.logger.info("no Iocs Available")
 
 BOT = FireeyeParserBot
