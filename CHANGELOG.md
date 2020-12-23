@@ -1,14 +1,11 @@
 CHANGELOG
 ==========
 
-2.2.3 (unreleased)
+2.2.3 (2020-12-23)
 ------------------
 
-### Configuration
-
-### Core
-
-### Development
+### Documentation
+- Bots/Sieve expert: Add information about parenthesis in if-expressions (#1681, PR#1687 by Birger Schacht).
 
 ### Harmonization
 - See NEWS.md for information on a fixed bug in the taxonomy expert.
@@ -31,20 +28,12 @@ CHANGELOG
 #### Experts
 - `intelmq.bots.experts.taxonomy.expert`: Map type `scanner` to `information-gathering` instead of `information gathering`. See NEWS file for more information.
 
-#### Outputs
-
-### Documentation
-
-### Packaging
-
 ### Tests
 - Travis: Deactivate tests with optional requirements on Python 3.5, as the build fails because of abusix/querycontacts version conflicts on dnspython.
 
-### Tools
-
-### Contrib
-
 ### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952).
+- Corrupt dump files when interrupted during writing (#870).
 
 
 2.2.2 (2020-10-28)

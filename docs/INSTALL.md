@@ -22,7 +22,7 @@ For testing pre-releases see also the [Developer's Guide](Developers-Guide.md#te
 The following instructions assume the following requirements. Python versions >= 3.5 are supported.
 
 Supported and recommended operating systems are:
-* CentOS 7
+* CentOS 7 and 8
 * Debian 9 and 10
 * OpenSUSE Leap 15.1, 15.2
 * Ubuntu: 16.04, 18.04, 20.04
@@ -55,7 +55,21 @@ yum install gcc gcc-c++
 yum install redis
 ```
 
-## openSUSE 15.1
+## CentOS 8
+
+```bash
+dnf install epel-release
+dnf install python3-dateutil python3-dns python3-pip python3-psutil python3-pytz python3-redis python3-requests redis
+```
+
+Optional dependencies:
+
+```bash
+dnf install bash-completion jq
+dnf install python3-psycopg2 python3-pymongo
+```
+
+## openSUSE 15.1 / 15.2
 
 ```bash
 zypper install python3-dateutil python3-dnspython python3-psutil python3-pytz python3-redis python3-requests python3-python-termstyle
@@ -81,19 +95,17 @@ Installation methods available:
 
 Supported Operating Systems:
 
-* **CentOS 7** (requires `epel-release`)
-* **Debian 8** (requires `python3-typing`)
+* **CentOS 7** (run `yum install epel-release` first)
+* **CentOS 8** (run `dnf install epel-release` first)
 * **Debian 9**
 * **Debian 10**
-* **Fedora 29**
-* **Fedora 30**
-* **RHEL 7**  (requires `epel-release`)
-* **openSUSE Leap 15.0**
+* **Fedora 32**
+* **Fedora 33**
 * **openSUSE Leap 15.1**
+* **openSUSE Leap 15.2**
 * **openSUSE Tumbleweed**
 * **Ubuntu 16.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ xenial main`)
 * **Ubuntu 18.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ bionic main`)
-* **Ubuntu 19.10** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ eoan main`)
 * **Ubuntu 20.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ focal main`)
 
 Get the installation instructions for your operating system here: [Installation Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq).
