@@ -213,11 +213,19 @@ EVENTS = [{'time.source': '2019-03-22T11:18:52+00:00',
            'time.source': '2020-10-15T09:22:10+00:00',
            'protocol.transport': 'ipv6-nonxt',
            },
+          {
+           'classification.type': 'proxy',
+           'classification.identifier': 'openproxy',
+           'time.source': '2020-12-14T08:28:01+00:00',
+           'extra.source.asns': [64496, 212682],
+           'protocol.application': 'httpconnect',
+           'source.port': 51915,
+           },
           ]
 
 # The number of events a single line in the raw data produces
 NUM_EVENTS = (1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              1, 1, 10, 1, 1, 1, 1, 1, 1, 1)
+              1, 1, 10, 1, 1, 1, 1, 1, 1, 1, 1)
 RAWS = []
 for i, line in enumerate(RAW_LINES[3:]):
     for count in range(NUM_EVENTS[i]):

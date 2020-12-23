@@ -18,7 +18,9 @@ CHANGELOG
 - `intelmq.bots.rt.collector_rt`: Log the size of the downloaded file in bytes on debug logging level.
 
 #### Parsers
-- `intelmq.bots.parsers.cymru.parser_cap_program`: Add support for protocols 47 (GRE) and 59 (IPv6-NoNxt).
+- `intelmq.bots.parsers.cymru.parser_cap_program`:
+  - Add support for protocols 47 (GRE) and 59 (IPv6-NoNxt).
+  - Add support for field `additional_asns` in optional information column.
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - Fix mapping of `DestinationIpInfo.DestinationIpConnectionType` field (contained a typo).
   - Explicitly ignore field `DestinationIpInfo.DestinationIpv4Int` as the data is already in another field.
@@ -27,7 +29,7 @@ CHANGELOG
   - Data fields containing `-` are now ignored and do not raise an exception anymore (#1651, PR#74 by Sebastian Waldbauer).
 
 #### Experts
-- `intelmq.bots.experts.taxonomy.expert`: Map type `scanner` to `information-gathering` instead of `information gathering` See NEWS file for more information.
+- `intelmq.bots.experts.taxonomy.expert`: Map type `scanner` to `information-gathering` instead of `information gathering`. See NEWS file for more information.
 
 #### Outputs
 

@@ -320,6 +320,8 @@ class CymruCAPProgramParserBot(ParserBot):
                 event['source.port'] = value
             elif key == 'username':
                 event['source.account'] = value
+            elif key == 'additional_asns':
+                event['extra.source.asns'] = [event['source.asn']] + list(map(int, value.split(',')))
             else:
                 raise ValueError('Unknown key %r in comment of category %r. Please report this.' % (key, category))
         for destination_port in destination_ports:
