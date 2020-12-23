@@ -1,0 +1,27 @@
+#Github Workflow to run pycodestyle and post result
+#
+#SPDX-FileCopyrightText: 2020 Birger Schacht
+#SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: "Run pycodestyle-comment.py on pull requests"
+
+on:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  pycodestyle-comment:
+    name: Run pycodestyle-comment.py
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Install pycodestyle and python3-github
+      run: |
+        sudo apt update
+        sudo apt install pycodestyle python3-github -y
+    - name: Run pycodestyle-comment.py
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: python3 .github/workflows/pycodestyle-comment.py
