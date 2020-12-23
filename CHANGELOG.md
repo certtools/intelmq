@@ -124,14 +124,11 @@ CHANGELOG
 ### Known issues
 
 
-2.2.3 (unreleased)
+2.2.3 (2020-12-23)
 ------------------
 
-### Configuration
-
-### Core
-
-### Development
+### Documentation
+- Bots/Sieve expert: Add information about parenthesis in if-expressions (#1681, PR#1687 by Birger Schacht).
 
 ### Harmonization
 - See NEWS.md for information on a fixed bug in the taxonomy expert.
@@ -141,7 +138,9 @@ CHANGELOG
 - `intelmq.bots.rt.collector_rt`: Log the size of the downloaded file in bytes on debug logging level.
 
 #### Parsers
-- `intelmq.bots.parsers.cymru.parser_cap_program`: Add support for protocols 47 (GRE) and 59 (IPv6-NoNxt).
+- `intelmq.bots.parsers.cymru.parser_cap_program`:
+  - Add support for protocols 47 (GRE) and 59 (IPv6-NoNxt).
+  - Add support for field `additional_asns` in optional information column.
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - Fix mapping of `DestinationIpInfo.DestinationIpConnectionType` field (contained a typo).
   - Explicitly ignore field `DestinationIpInfo.DestinationIpv4Int` as the data is already in another field.
@@ -150,22 +149,14 @@ CHANGELOG
   - Data fields containing `-` are now ignored and do not raise an exception anymore (#1651, PR#74 by Sebastian Waldbauer).
 
 #### Experts
-- `intelmq.bots.experts.taxonomy.expert`: Map type `scanner` to `information-gathering` instead of `information gathering` See NEWS file for more information.
-
-#### Outputs
-
-### Documentation
-
-### Packaging
+- `intelmq.bots.experts.taxonomy.expert`: Map type `scanner` to `information-gathering` instead of `information gathering`. See NEWS file for more information.
 
 ### Tests
 - Travis: Deactivate tests with optional requirements on Python 3.5, as the build fails because of abusix/querycontacts version conflicts on dnspython.
 
-### Tools
-
-### Contrib
-
 ### Known issues
+- Bots started with IntelMQ-Manager stop when the webserver is restarted. (#952).
+- Corrupt dump files when interrupted during writing (#870).
 
 
 2.2.2 (2020-10-28)

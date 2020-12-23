@@ -49,10 +49,6 @@ The bots are logging a deprecation warning now and the current plan is to remove
 2.2.3 Bugfix release (unreleased)
 ---------------------------------
 
-### Requirements
-
-### Tools
-
 ### Harmonization
 A bug in the taxonomy expert did set the Taxonomy for the type `scanning` to `information gathering`
 whereas for the type `sniffing` and `social-engineering`, the taxonomy was correctly set to `information-gathering`.
@@ -60,10 +56,6 @@ This inconsistency for the taxonomy `information-gathering` is now fixed, but th
 
 There are still some inconsistencies in the naming of the classification taxonomies and types,
 more fixes will come in version 3.0.0. See [issue #1409](https://github.com/certtools/intelmq/issues/1409).
-
-### Configuration
-
-### Libraries
 
 ### Postgres databases
 The following statements optionally update existing data.

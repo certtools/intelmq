@@ -32,3 +32,4 @@ conficker|172.16.0.21|64496|2020-05-08 09:13:34|srcport: 1997; destaddr: 172.16.
 scanner|172.16.0.21|64496|2020-07-09 03:40:15|username: pm;|Example AS Name, AT
 darknet|172.16.0.21|64496|2020-10-08 02:21:26|protocol: 47;|Example AS Name, AT
 darknet|172.16.0.21|64496|2020-10-15 09:22:10|protocol: 59;|Example AS Name, AT
+proxy|172.16.0.21|64496|2020-12-14 08:28:01|httpconnect-51915; additional_asns: 212682;|Example AS Name, AT
