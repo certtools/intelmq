@@ -63,6 +63,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
   - `OpenBugBounty <https://www.openbugbounty.org/>`_
   - `Payload Security <http://payload-security.com>`_
   - `Project Honeypot (#284) <http://www.projecthoneypot.org/list_of_ips.php?rss=1>`_
+  - `RST Threat Feed <https://rstcloud.net/>`_ (offers a free and a commercial feed)
   - `ShadowServer Sandbox API <http://www.shadowserver.org/wiki/pmwiki.php/Services/Sandboxapi>`_
   - `Shodan search API <https://shodan.readthedocs.io/en/latest/tutorial.html#searching-shodan>`_
   - `Snort <http://labs.snort.org/feeds/ip-filter.blf>`_
