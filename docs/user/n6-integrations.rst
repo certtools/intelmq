@@ -24,16 +24,16 @@ Data exchange interface
 n6 offers a STOMP interface via the RabbitMQ broker, which can be used for both sending and receiving data.
 IntelMQ has both a STOMP collector bot as well as a STOMP output bot.
 
-- [IntelMQ's Stomp collector bot](Bots.html#stomp)
-- [IntelMQ's n6 parser bot](Bots.html#n6)
-- [IntelMQ's Stomp output bot](Bots.html#stomp-1)
+- :ref:`IntelMQ's Stomp collector bot <stomp collector bot>`
+- :ref:`IntelMQ's n6 parser bot <n6 parser bot>`
+- :ref:`IntelMQ's Stomp output bot <stomp output bot>`
 
 Data conversion
 -------------------------------
 
 IntelMQ can parse n6 data using the n6 parser and n6 can parse IntelMQ data using the Intelmq2n6 parser.
 
-- [IntelMQ's n6 parser bot](Bots.html#n6)
+- :ref:`IntelMQ's n6 parser bot <n6 parser bot>`
 
 Webinput CSV
 -------------------------------

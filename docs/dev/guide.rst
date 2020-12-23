@@ -26,7 +26,7 @@ IntelMQ tries to:
 * Reduce the complexity of writing new bots for new data feeds
 * Make your code easily and pleasantly readable
 * Reduce the probability of events lost in all process with persistence functionality (even system crash)
-* Strictly adhere to the existing [Data Harmonization Ontology](Data-Harmonization.md) for key-values in events
+* Strictly adhere to the existing :doc:`data-harmonization` for key-values in events
 * Always use JSON format for all messages internally
 * Help and support the interconnection between IntelMQ and existing tools like AbuseHelper, CIF, etc. or new tools (in other words: we will not accept data-silos!)
 * Provide an easy way to store data into Log Collectors like ElasticSearch, Splunk
@@ -803,7 +803,7 @@ Testing Pre-releases
 Installation
 ============
 
-The [installation procedures](INSTALL.md) needs to be adapted only a little bit.
+The :doc:`installation procedures <../user/installation>` need to be adapted only a little bit.
 
 For native packages, you can find the unstable packages of the next version here: `Installation Unstable Native Packages <https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq%3Aunstable&package=intelmq>`_.
 
