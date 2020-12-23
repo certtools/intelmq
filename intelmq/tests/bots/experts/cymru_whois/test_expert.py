@@ -10,7 +10,7 @@ EXAMPLE_INPUT = {"__type": "Event",
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.ip": "93.184.216.34",
-                  "source.geolocation.cc": "EU",
+                  "source.geolocation.cc": "US",
                   "source.registry": "RIPE",
                   "source.network": "93.184.216.0/24",
                   "source.allocated": "2008-06-02T00:00:00+00:00",
