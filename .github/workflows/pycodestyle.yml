@@ -25,3 +25,8 @@ jobs:
     - name: Run pycodestyle
       run: |
         pycodestyle intelmq/{bots,lib,bin}
+    - name: Run pycodestyle_comment.py
+      if: ${{ github.event_name == 'pull_request' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: python3 .github/workflows/python/pycodestyle_comment.py
