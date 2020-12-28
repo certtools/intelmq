@@ -59,6 +59,11 @@ NumericValue: SingleNumericValue | NumericValueList ;
 SingleNumericValue: value=NUMBER ;
 NumericValueList: '[' values+=SingleNumericValue[','] ']' ;
 
+AssignOperator:
+  '='
+  | '+='
+  | '-='
+;
 
 Action: action=DropAction
     | ( action=KeepAction
@@ -71,9 +76,9 @@ Action: action=DropAction
 DropAction: 'drop';
 KeepAction: 'keep';
 PathAction: 'path' path=STRING;
-AddAction: 'add' key=Key '=' value=STRING;              // add key/value without overwriting existing key
-AddForceAction: 'add!' key=Key '=' value=STRING;        // add key/value, overwriting existing key
-UpdateAction: 'update' key=Key '=' value=STRING;        // update key/value, do not create if not exists
+AddAction: 'add' key=Key operator=AssignOperator value=STRING;              // add key/value without overwriting existing key
+AddForceAction: 'add!' key=Key operator=AssignOperator value=STRING;        // add key/value, overwriting existing key
+UpdateAction: 'update' key=Key operator=AssignOperator value=STRING;        // update key/value, do not create if not exists
 RemoveAction: 'remove' key=Key;
 
 Comment: /(#|\/\/).*$/ ;
