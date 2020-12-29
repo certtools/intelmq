@@ -1,0 +1,26 @@
+#Github Workflow to find and notify about misspellings
+#
+#SPDX-FileCopyrightText: 2020 IntelMQ Team
+#SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: "Codespell spelling check"
+
+on:
+  push:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  codespell:
+    name: Find and notify about common misspellings
+    runs-on: ubuntu-20.04
+    # This should not fail the whole workflow run
+    continue-on-error: true
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Install codespell
+      run: pip install codespell
+    - name: Run codespell
+      run: /home/runner/.local/bin/codespell
