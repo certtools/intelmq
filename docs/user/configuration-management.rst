@@ -285,7 +285,7 @@ As we can see the *default* path name is obviously ``_default``. Let's have a lo
 In that case, bot will be able to send the message to one of defined paths. The path ``"_default"`` is used if none is not specified.
 In case of errors during processing, and the optional path ``"_on_error"`` is specified, the message will be sent to the pipelines given given as on-error.
 Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the :ref:`filter expert` and the :ref:`sieve expert`.
-The named queues need to be explicitly addressed by the bot (e.g. fitering) or the core (``_on_error``) to be used. Setting arbitrary paths has no effect.
+The named queues need to be explicitly addressed by the bot (e.g. filtering) or the core (``_on_error``) to be used. Setting arbitrary paths has no effect.
 
 AMQP (Beta)
 ===========

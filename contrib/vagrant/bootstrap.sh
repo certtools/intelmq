@@ -12,7 +12,7 @@ function intelmq_install {
 	#Install Dependencies
 	apt-get update
 	apt-get -y install python-pip git build-essential python-dev redis-server
-    #Dependencies for pyhton REQUIREMENTS
+    #Dependencies for python REQUIREMENTS
     apt-get -y install libcurl4-gnutls-dev
 
 	#Install IntelMQ
