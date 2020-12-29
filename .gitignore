@@ -24,7 +24,7 @@ src/
 docs/source
 docs/_build
 docs/user/feeds.rst
-docs/dev/harmonization-fields.md
+docs/dev/harmonization-fields.rst
 
 # Debian build filed
 debian/files

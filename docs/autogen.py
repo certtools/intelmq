@@ -13,21 +13,19 @@ import yaml
 import intelmq.lib.harmonization
 
 
-HEADER = """
+HEADER = """#########################
 Harmonization field names
-=========================
+#########################
 
-|Section|Name|Type|Description|
-|:------|:---|:---|:----------|
+=========================== =================================== ========================= ===========
+Section                     Name                                Type                      Description
+=========================== =================================== ========================= ===========
 """
 HEADER_1 = """
+=========================== =================================== ========================= ===========
 
 Harmonization types
 -------------------
-
-"""
-TYPE_SECTION = """### {}
-{}
 
 """
 BASEDIR = os.path.join(os.path.dirname(__file__), '../')
@@ -41,9 +39,9 @@ def harm_docs():
 
     for key, value in sorted(HARM.items()):
         section = ' '.join([sec.title() for sec in key.split('.')[:-1]])
-        output += '|{}|{}|[{}](#{})|{}|\n'.format(' ' if not section else section,  # needed for GitHub
-                                                  key, value['type'],
-                                                  value['type'].lower(),
+        output += '{:27} {:35} {:25} {}\n'.format('|' if not section else section,  # needed for GitHub
+                                                  key,
+                                                  ':ref:`'+value['type'].lower()+'`',
                                                   value['description'])
 
     output += HEADER_1
@@ -59,7 +57,7 @@ def harm_docs():
                     doc = ''
                 else:
                     doc = textwrap.dedent(doc)
-                output += TYPE_SECTION.format(value, doc)
+                output += ".. _{}:\n\n{}\n{}\n{}\n\n".format(value.lower(),value,'-'*len(value),doc)
         except TypeError:
             pass
 
@@ -140,7 +138,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild 
 
 
 if __name__ == '__main__':  # pragma: no cover
-    with open('guides/Harmonization-fields.md', 'w') as handle:
+    with open('dev/harmonization-fields.rst', 'w') as handle:
         handle.write(harm_docs())
     with open('user/feeds.rst', 'w') as handle:
         handle.write(feeds_docs())
