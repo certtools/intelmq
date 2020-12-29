@@ -52,7 +52,7 @@ def split_chunks(chunk: bytes, chunk_size: int) -> List[bytes]:
     Note in particular, that the last item may not end in a newline!
 
     Params:
-        chunk: The string to be splitted
+        chunk: The string to be split
         chunk_size: maximum size of each chunk
 
     Returns:

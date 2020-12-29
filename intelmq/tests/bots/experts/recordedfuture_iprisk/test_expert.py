@@ -60,7 +60,7 @@ class TestRecordedFutureIPRiskExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EMPTY_OUTPUT)
 
-    # test presence of rf_iprisk wihtout overwrite
+    # test presence of rf_iprisk without overwrite
     def test_existing_not_overwrite(self):
         self.input_message = EXISTING_INPUT
         self.run_bot()

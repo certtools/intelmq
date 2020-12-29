@@ -547,7 +547,7 @@ class Report(Message):
         Parameters:
             message: Passed along to Message's and dict's init.
                 If this is an instance of the Event class, the resulting Report instance
-                has only the fiels which are possible in Report, all others are stripped.
+                has only the fields which are possible in Report, all others are stripped.
             auto: if False (default), time.observation is automatically added.
             harmonization: Harmonization definition to use
         """

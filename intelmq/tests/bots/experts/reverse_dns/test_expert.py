@@ -15,7 +15,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.reverse_dns": "icann.org",
                   "destination.ip": "192.0.43.8",
                   "destination.reverse_dns": "icann.org",
-                  # manual verfication shows another result:
+                  # manual verification shows another result:
                   # "destination.reverse_dns": "43-8.any.icann.org",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }

@@ -755,7 +755,7 @@
             }
         },
         "Deduplicator": {
-            "description": "Detection and drop exact duplicate messages. Message hashes are cached in the Redis datbase.",
+            "description": "Detection and drop exact duplicate messages. Message hashes are cached in the Redis database.",
             "module": "intelmq.bots.experts.deduplicator.expert",
             "parameters": {
                 "filter_keys": "raw,time.observation",
@@ -1009,7 +1009,7 @@
             }
         },
         "Wait": {
-            "description": "Wait for a some time or until a queue size is lower than a given numer.",
+            "description": "Wait for a some time or until a queue size is lower than a given number.",
             "module": "intelmq.bots.experts.wait.expert",
             "parameters": {
                 "queue_db": 2,

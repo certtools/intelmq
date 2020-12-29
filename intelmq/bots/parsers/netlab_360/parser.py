@@ -28,7 +28,7 @@ class Netlab360ParserBot(ParserBot):
             if report['feed.url'] in Netlab360ParserBot.DGA_FEED:
                 event.add('source.fqdn', value[1])
                 # DGA Feed format is
-                # DGA family, Domian, Start and end of valid time(UTC)
+                # DGA family, Domain, Start and end of valid time(UTC)
 
                 event.add('time.source', value[2] + ' UTC')
                 if event['time.source'] > event['time.observation']:

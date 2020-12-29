@@ -2346,7 +2346,7 @@ caida = {
         # FIXME Is is mappable to some classification.* field? Not included in example data.
         ('extra.', 'family', validate_to_none),
         ('source.network', 'network', validate_to_none),
-        (False, 'version', validate_to_none),  # we can ignore the IP version, it's obvious fron the address
+        (False, 'version', validate_to_none),  # we can ignore the IP version, it's obvious from the address
         ('extra.', 'routedspoof', validate_to_none),
         ('extra.', 'session', convert_int),
         ('extra.', 'nat', convert_bool),

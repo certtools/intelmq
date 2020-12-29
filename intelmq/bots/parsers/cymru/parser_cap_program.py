@@ -190,7 +190,7 @@ class CymruCAPProgramParserBot(ParserBot):
             try:
                 port = int(comments)
             except ValueError:
-                # TODO: How are ports splitted?
+                # TODO: How are ports split?
                 raise NotImplementedError("Can't properly parse report %r, format for multiple ports is unknown."
                                           "" % report_type)
             else:

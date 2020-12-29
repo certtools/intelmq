@@ -105,7 +105,7 @@ class SpamhausCERTParserBot(ParserBot):
             elif malware == 'proxyget':
                 event.add('classification.type', 'other')
                 event.add('classification.identifier', malware)
-                event.add('event_description.text', 'The malicous client used a honeypot as proxy.')
+                event.add('event_description.text', 'The malicious client used a honeypot as proxy.')
             elif malware == 'iotlogin':
                 event.add('classification.type', 'unauthorized-login')
                 event.add('classification.identifier', 'iot')
@@ -113,7 +113,7 @@ class SpamhausCERTParserBot(ParserBot):
             elif malware == 'iotcmd':
                 event.add('classification.type', 'unauthorized-command')
                 event.add('classification.identifier', 'iot')
-                event.add('event_description.text', 'The infected iot device logged in to a honeypot and issued malicous commands.')
+                event.add('event_description.text', 'The infected iot device logged in to a honeypot and issued malicious commands.')
             elif malware == 'iotmirai':
                 event.add('classification.type', 'infected-system')
                 event.add('classification.identifier', 'mirai')

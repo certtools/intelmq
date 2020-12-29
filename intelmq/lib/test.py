@@ -508,6 +508,6 @@ class BotTestCase(object):
         """
         Check if the bot did consume all messages.
 
-        Execued after every test run.
+        Executed after every test run.
         """
         self.assertEqual(len(self.input_queue), 0)

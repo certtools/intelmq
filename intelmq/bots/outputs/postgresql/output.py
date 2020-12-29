@@ -12,7 +12,7 @@ class PostgreSQLOutputBot(SQLOutputBot):
                             "is deprecated and replaced by "
                             "'intelmq.bots.outputs.sql.output' with the parameter "
                             "'engine' = 'postgresql'. "
-                            "The fallback compatibility will be removed in vresion 3.0.")
+                            "The fallback compatibility will be removed in version 3.0.")
         self.parameters.engine = 'postgresql'
         super().init()
 

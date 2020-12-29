@@ -296,7 +296,7 @@ providers:
             skip_header: false
             default_url_protocol: http://
             type_translation: '{"malware_download": "malware-distribution"}'
-            delimeter: ","
+            delimiter: ","
             columns:
               - time.source
               - source.url
@@ -542,7 +542,7 @@ providers:
       public: yes
   Turris:
     Greylist:
-      description: The data are processed and clasified every week and behaviour of
+      description: The data are processed and classified every week and behaviour of
         IP addresses that accessed a larger number of Turris routers is evaluated.
         The result is a list of addresses that have tried to obtain information about
         services on the router or tried to gain access to them. The list also
@@ -565,7 +565,7 @@ providers:
       public: yes
     Greylist with PGP signature verification:
       description: |
-        The data are processed and clasified every week and behaviour of
+        The data are processed and classified every week and behaviour of
         IP addresses that accessed a larger number of Turris routers is evaluated.
         The result is a list of addresses that have tried to obtain information about
         services on the router or tried to gain access to them. The list also
@@ -1779,7 +1779,7 @@ providers:
       public: yes
   CZ.NIC:
     HaaS:
-      description: SSH attackers against HaaS (Honeypot as a Sevice) provided by CZ.NIC, z.s.p.o. The dump is published once a day.
+      description: SSH attackers against HaaS (Honeypot as a Service) provided by CZ.NIC, z.s.p.o. The dump is published once a day.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http

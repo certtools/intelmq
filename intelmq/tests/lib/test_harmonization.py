@@ -17,7 +17,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.Boolean.is_valid(False))
 
     def test_boolean_valid_other(self):
-        """ Test Boolean.is_valid with otehr invalid values. """
+        """ Test Boolean.is_valid with other invalid values. """
         self.assertFalse(harmonization.Boolean.is_valid(None,))
         self.assertFalse(harmonization.Boolean.is_valid('True'))
         self.assertFalse(harmonization.Boolean.is_valid(0))
@@ -70,7 +70,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.Integer.is_valid('b13', sanitize=True))
 
     def test_float_valid_flaot(self):
-        """ Test Float.is_valid with flaot and integer values. """
+        """ Test Float.is_valid with float and integer values. """
         self.assertTrue(harmonization.Float.is_valid(-4532, sanitize=False))
         self.assertTrue(harmonization.Float.is_valid(1337, sanitize=False))
         self.assertTrue(harmonization.Float.is_valid(1337.2354,
@@ -141,7 +141,7 @@ class TestHarmonization(unittest.TestCase):
                          '127.0.0.1')
 
     def test_ipaddress_sanitize_invalid(self):
-        """ Test IPAddress.is_valid ans sanitize with invalid arguments. """
+        """ Test IPAddress.is_valid and sanitize with invalid arguments. """
         self.assertFalse(harmonization.IPAddress.is_valid(' 192.0.2.0/24\r\n',
                                                           sanitize=True))
         self.assertFalse(harmonization.IPAddress.is_valid(b'2001:DB8::1/32',

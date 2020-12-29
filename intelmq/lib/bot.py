@@ -4,7 +4,7 @@ The bot library has the base classes for all bots.
   * Bot: generic base class for all kind of bots
   * CollectorBot: base class for collectors
   * ParserBot: base class for parsers
-  * SQLBot: base classs for any bots using SQL
+  * SQLBot: base class for any bots using SQL
 """
 import argparse
 import atexit
@@ -203,7 +203,7 @@ class Bot(object):
 
     def __handle_sigterm_signal(self, signum: int, stack: Optional[object]):
         """
-        Calles when a SIGTERM is received. Stops the bot.
+        Calls when a SIGTERM is received. Stops the bot.
         """
         self.logger.info("Received SIGTERM.")
         self.stop(exitcode=0)
