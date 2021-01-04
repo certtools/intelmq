@@ -14,7 +14,7 @@ The documentation is now available at [intelmq.readthedocs.io](https://intelmq.r
 
 ### Bots
 
-#### Bot option `--updata-database`
+#### Bot option `--update-database`
 - Bots that require a database file (such as `maxmind_geoip`, `asn_lookup`, `tor_nodes` and `recordedfuture_iprisk`)
   have new command line option `--update-database`. It is not necessary to specify a
   bot ID, the function automatically updates the database for all the bots of the same
@@ -60,7 +60,7 @@ UPDATE events
    WHERE "event_description.text" = 'The infected iot device logged in to a honeypot and issued malicous commands.' AND "classification.taxonomy" = 'intrusions' AND "classification.type" = 'unauthorized-command' AND "classification.identifier" = 'iot' AND "feed.name" = 'Spamhaus CERT';
 ```
 
-2.2.3 Bugfix release (unreleased)
+2.2.3 Bugfix release (2020-12-23)
 ---------------------------------
 
 ### Harmonization
