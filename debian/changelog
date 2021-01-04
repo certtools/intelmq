@@ -308,7 +308,7 @@ intelmq (1.0.0~dev4~beta2) experimental; urgency=low
 
   * Added package recommends for python3-imbox, python3-pyasn,
     python3-stomp.py.  WARNING: these packages are currently not public
-    available (we propably will make them available later), but they are
+    available (we probably will make them available later), but they are
     needed by some bots.
 
  -- Sascha Wilde <wilde@intevation.de>  Fri, 01 Apr 2016 11:02:14 +0200
