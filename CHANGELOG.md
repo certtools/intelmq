@@ -21,6 +21,8 @@ CHANGELOG
   - `log`: Use RotatingFileHandler for allow log file rotation without external tools (PR#1637 by Vasek Bruzek).
 - `intelmq.lib.harmonization`:
   - The `IPAddress` type sanitation now accepts integer IP addresses and converts them to the string representation.
+- `intelmq.lib.upgrades`:
+  - Added upgrade function `v230_feed_fix`.
 
 ### Development
 - `intelmq.bin.intelmq_gen_docs`: Add bot name to the `Feeds.md` documentation (PR#1617 by Birger Schacht).

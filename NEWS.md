@@ -40,11 +40,25 @@ The bots are logging a deprecation warning now and the current plan is to remove
 ### Harmonization
 
 ### Configuration
+#### Abuse.ch URLHaus feed
+The feed template for the URLHaus feed contained a spelling error:
+The correct name for the parameter "delimeter" is "delimiter". Please fix your configured bots.
+The `intelmqctl upgrade-config` command automatically fixes a configuration if the misspelling is detected.
 
 ### Libraries
 
 ### Postgres databases
-
+There was a spelling error in the Spamhaus CERT parser's "event_description.text" texts.
+The following statements optionally update existing data.
+Please check if you did use these feed names and eventually adapt them for your setup!
+```sql
+UPDATE events
+   SET "event_description.text" = 'The malicious client used a honeypot as proxy.'
+   WHERE "event_description.text" = 'The malicous client used a honeypot as proxy.' AND "classification.taxonomy" = 'other' AND "classification.type" = 'other' AND "classification.identifier" = 'proxyget' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "event_description.text" = 'The infected iot device logged in to a honeypot and issued malicious commands.'
+   WHERE "event_description.text" = 'The infected iot device logged in to a honeypot and issued malicous commands.' AND "classification.taxonomy" = 'intrusions' AND "classification.type" = 'unauthorized-command' AND "classification.identifier" = 'iot' AND "feed.name" = 'Spamhaus CERT';
+```
 
 2.2.3 Bugfix release (unreleased)
 ---------------------------------
