@@ -101,10 +101,10 @@ class FireeyeCollectorBot(CollectorBot):
                 self.logger.debug('PRODUCT: ' + alert['product'] + "  UUID:  " + alert['uuid'])
                 if alert['product'] == 'EMAIL_MPS' and alert['name'] == 'MALWARE_OBJECT':
                     for k, v in alert['src'].items():
-                        uuid=alert['uuid']
-                        event=self.xml_processor(uuid, token, new_report, dns_name, product = "EMAIL_MPS")
+                        uuid = alert['uuid']
+                        event = self.xml_processor(uuid, token, new_report, dns_name, product="EMAIL_MPS")
                 if alert['product'] == 'MAS' and alert['name'] == 'MALWARE_OBJECT':
-                    uuid=alert['uuid']
+                    uuid = alert['uuid']
                     self.xml_processor(uuid, token, new_report, dns_name, product="MAS")
 
             self.logger.debug("Report transmitted")
