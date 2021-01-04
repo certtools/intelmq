@@ -16,6 +16,7 @@ import ipaddress
 
 class FireeyeParserBot(ParserBot):
 
+
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report.get('raw'))
@@ -28,7 +29,7 @@ class FireeyeParserBot(ParserBot):
                 if indicatorType == 'FileItem/Md5sum':
                     event.add('malware.hash.md5', indicator['Content']['#text'])
                 if indicatorType == 'FileItem/Sha256sum':
-                    self.logger.debug('FileItem/Md5sum aus uuid'+ indicator['Content']['#text'])
+                    self.logger.debug('FileItem/Md5sum aus uuid' + indicator['Content']['#text'])
                     event.add('malware.hash.sha256', indicator['Content']['#text'])
                     self.send_message(event)
                     data = raw_report.split('<Indicator id')
@@ -40,8 +41,8 @@ class FireeyeParserBot(ParserBot):
                     for Indicator in data:
                         event = self.new_event(report)
                         if "Network" in Indicator:
-                            fqdn=""
-                            urlpath=""
+                            fqdn = ""
+                            urlpath = ""
                             IndicatorItem = Indicator.split('<IndicatorItem condition')
                             for datainIndicator in IndicatorItem:
                                 if "search=" in datainIndicator:
@@ -62,20 +63,20 @@ class FireeyeParserBot(ParserBot):
                                             if context_search[0] == "Network/DNS":
                                                 classification = "destination.fqdn"
                                         if 'Content' in searchIndicator:
-                                            Content_search= searchIndicator.split('">')
+                                            Content_search = searchIndicator.split('">')
                                             context = Content_search[1].split('</Content>')
-                                            self.logger.debug(classification   +"   "+context[0])
-                                            if fqdn != "" and urlpath!= "":
-                                                event.add("destination.url", "http://"+fqdn+urlpath)
-                                                fqdn=""
-                                                urlpath=""
+                                            self.logger.debug(classification + "   "+context[0])
+                                            if fqdn != "" and urlpath != "":
+                                                event.add("destination.url", "http://" + fqdn+urlpath)
+                                                fqdn = ""
+                                                urlpath = ""
                                             if classification == "destination.ip":
-                                                try: 
-                                                   ipaddress.IPv4Network(context[0])
-                                                   event.add('destination.ip', context[0])
-                                                   break
-                                                except ValueError: 
-                                                   break
+                                                try:
+                                                    ipaddress.IPv4Network(context[0])
+                                                    event.add('destination.ip', context[0])
+                                                    break
+                                                except ValueError:
+                                                    break
                                             elif classification == "destination.fqdn":
                                                 fqdn = context[0]
                                                 event.add(classification, context[0])
@@ -84,9 +85,10 @@ class FireeyeParserBot(ParserBot):
                                                 event.add(classification, context[0])
                                             elif classification == "destination.port":
                                                 event.add(classification, int(context[0]))
-                    self.send_message(event) 
+                    self.send_message(event)
             self.acknowledge_message()
         except KeyError:
             self.logger.info("No Iocs Available")
+
 
 BOT = FireeyeParserBot
