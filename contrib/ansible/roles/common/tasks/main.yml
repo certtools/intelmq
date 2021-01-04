@@ -2,7 +2,7 @@
 - name: Update apt cache if not done today
   apt: update_cache=yes cache_valid_time=86400
 
-- name: Install system package requirments with apt
+- name: Install system package requirements with apt
   apt: pkg={{ item }} state=latest
   with_items: common.system_packages
   sudo: yes

@@ -1245,7 +1245,7 @@ There are some features considered as beta and marked as such in the documentati
 ### Tools
 - intelmqctl:
   - status: Show commandline differences if a program with the expected PID could be found, but they do not match (previous output was `None`).
-  - Use logging level from defauls configuration if possible, otherwise intelmq's internal default. Previously, DEBUG was used unconditionally.
+  - Use logging level from defaults configuration if possible, otherwise intelmq's internal default. Previously, DEBUG was used unconditionally.
 
 ### Known issues
 - Bots started with IntelMQ-Manager stop when the webserver is restarted (#952).
@@ -1682,7 +1682,7 @@ Update allowed classification fields to 2018-09-26 version (#802, #1350, #1380).
 ### Tools
 - `intelmqctl`:
   - `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
-  - `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
+  - `intelmqctl run [bot-id] message send` can now send report messages (#1077).
 - `intelmqdump`:
   - has now command completion for bot names, actions and queue names in interactive console.
   - automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
@@ -1757,7 +1757,7 @@ no known issues
 - `lib.harmonization`: Handle idna encoding error in FQDN sanitation (#1175, #1176).
 - `lib.bot`:
   - Bots stop when redis gives the error "OOM command not allowed when used memory > 'maxmemory'." (#1138).
-  - warnings of bots are catched by the logger (#1074, #1113).
+  - warnings of bots are caught by the logger (#1074, #1113).
   - Fixed exitcodes 0 for graceful shutdowns .
   - better handling of problems with pipeline and especially it's initialization (#1178).
   - All parsers using `ParserBot`'s methods now log the sum of successfully parsed and failed lines at the end of each run (#1161).
@@ -2009,7 +2009,7 @@ Changes between 0.9 and 1.0.0.dev6
 #### Experts
 - Added experts: asnlookup, cert.at contact lookup, filter, generic db lookup, gethostbyname, modify, reverse dns, rfc1918, tor_nodes, url2fqdn
 - removed experts: contactdb, countrycodefilter (obsolete), sanitizer (obsolete)
-- renamed `intelmq.bots.expers.abusix.abusix` to `intelmq.bots.expers.abusix.expert`
+- renamed `intelmq.bots.experts.abusix.abusix` to `intelmq.bots.experts.abusix.expert`
   `intelmq.bots.experts.asnlookup.asnlookup` to `intelmq.bots.experts.asn_lookup.expert`
   `intelmq.bots.experts.cymru.expert` to `intelmq.bots.experts.cymru_whois.expert`
   `intelmq.bots.experts.deduplicator.deduplicator` to `intelmq.bots.experts.deduplicator.expert`

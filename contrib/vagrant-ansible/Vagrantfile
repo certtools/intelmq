@@ -44,7 +44,7 @@ Vagrant.configure("2") do |config|
     # Setting the name of the machine in the VirtualBox GUI
     v.name = name
 
-    # Customise the amount of RAM avaliable to the machine:
+    # Customise the amount of RAM available to the machine:
     v.customize ["modifyvm", :id, "--memory", 1024]
   end
 

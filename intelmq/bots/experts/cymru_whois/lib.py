@@ -78,7 +78,7 @@ class Cymru():
     @staticmethod
     def __asn_query(asn):
         """
-        Querys ASN to get CC, registry, AS-name.
+        Queries ASN to get CC, registry, AS-name.
 
         Returns string object of first result in case of success
         or None if there's no result.

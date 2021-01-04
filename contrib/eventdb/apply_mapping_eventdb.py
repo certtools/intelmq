@@ -68,9 +68,9 @@ def eventdb_apply(malware_name_column, malware_family_column, host, port,
                 if identifier == rule[1]:
                     continue
                 if identifier:
-                    print('Correcting familiy for', malware_name, ':', identifier, '->', rule[1])
+                    print('Correcting family for', malware_name, ':', identifier, '->', rule[1])
                 else:
-                    print('Setting familiy for', malware_name, ':', rule[1])
+                    print('Setting family for', malware_name, ':', rule[1])
                 execute('UPDATE {table} SET "classification.identifier" = %s '
                         'WHERE "malware.name" = %s '
                         'AND "classification.identifier" IS DISTINCT FROM %s AND '

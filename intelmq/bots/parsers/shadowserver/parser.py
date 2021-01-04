@@ -6,7 +6,7 @@ Software engineering by Intevation GmbH
 This is an "all-in-one" parser for a lot of shadowserver feeds.
 It depends on the configuration in the file "config.py"
 which holds information on how to treat certain shadowserverfeeds.
-It uses the report field extra.file_name to determine wich config should apply,
+It uses the report field extra.file_name to determine which config should apply,
 so this field is required.
 
 This parser will only work with csv files named like

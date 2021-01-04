@@ -129,7 +129,7 @@ class GeoIPExpertBot(Bot):
         except ImportError:
             raise MissingDependencyError('maxminddb',
                                          additional_text="Package maxminddb should be present because it "
-                                                         "is a dependecy for the required geoip2 package.")
+                                                         "is a dependency for the required geoip2 package.")
 
         try:
             print("Downloading the latest database update...")

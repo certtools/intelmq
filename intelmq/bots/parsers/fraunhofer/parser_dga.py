@@ -4,7 +4,7 @@ The source provides a JSON file with a dictionary. The keys of this dict are
 identifiers and the values are lists of domains.
 
 The first part of the identifiers, before the first underscore, can be treated
-as malware name. The feed provider commited to retain this schema.
+as malware name. The feed provider committed to retain this schema.
 
 An overview of all names can be found here:
 https://dgarchive.caad.fkie.fraunhofer.de/pcres

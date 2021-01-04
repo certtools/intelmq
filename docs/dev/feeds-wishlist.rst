@@ -1,5 +1,5 @@
 ###############
-Feeds whishlist
+Feeds wishlist
 ###############
 
 This is a list with various feeds, which are either currently not supported or the usage is not clearly documented in IntelMQ.

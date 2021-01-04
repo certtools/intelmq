@@ -23,4 +23,4 @@ Optionally it's possible to clone the IntelMQ development branch.
 Please feel free to make pull requests, if there's anything you feel could be done better!
 
 
-Credits to Chris Sidiropoulos the autor of the original intelmq-elk.
+Credits to Chris Sidiropoulos the author of the original intelmq-elk.

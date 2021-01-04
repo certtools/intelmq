@@ -201,7 +201,7 @@ class IdeaExpertBot(Bot):
                 value = self.process_dict(src, value)
         except (KeyError, IndexError):
             # Usually raised when key not present in source Event
-            # Other nasty exceptions will get catched and logged by IMQ machinery
+            # Other nasty exceptions will get caught and logged by IMQ machinery
             value = None
         return value
 

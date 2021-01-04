@@ -807,7 +807,7 @@ Upgrade from a previous version:
     intelmqctl upgrade-config
 Make a backup of your configuration first, also including bot's configuration files.
 
-Get some debugging output on the settings and the enviroment (to be extended):
+Get some debugging output on the settings and the environment (to be extended):
     intelmqctl debug --get-paths
     intelmqctl debug --get-environment-variables
 '''
@@ -1368,7 +1368,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
         elif self.parameters.logging_handler == 'syslog':
             bot_log_path = '/var/log/syslog'
         else:
-            self.abort("Unknow logging handler %r" % self.parameters.logging_handler)
+            self.abort("Unknown logging handler %r" % self.parameters.logging_handler)
 
         if not os.access(bot_log_path, os.R_OK):
             self.logger.error('File %r is not readable.', bot_log_path)
@@ -1632,7 +1632,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
             We create the state file directly before any upgrade function.
             Otherwise we might run into the situation, that we can't write the state but we already upgraded.
             """
-            self.logger.info('Writing intial state file.')
+            self.logger.info('Writing initial state file.')
             state = {"version_history": [],
                      "upgrades": {},
                      "results": []}

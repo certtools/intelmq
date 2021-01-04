@@ -2,7 +2,7 @@
 
 """
     A Bot to collect data from the Certificate Transparency Log (CTL)
-    This bot works based on certstream libary (https://github.com/CaliDog/certstream-python)
+    This bot works based on certstream library (https://github.com/CaliDog/certstream-python)
     @author: Florian Krenn, Christoph Giese (Telekom Security)
     No parameters necessary.
 

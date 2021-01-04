@@ -16,7 +16,7 @@ class FilterExpertBot(Bot):
 
     def parse_timeattr(self, time_attr):
         """
-        Parses relative or absoute time specification, decides how to parse by
+        Parses relative or absolute time specification, decides how to parse by
         checking if the string contains any timespan identifier.
 
         See also https://github.com/certtools/intelmq/issues/1523

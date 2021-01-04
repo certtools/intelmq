@@ -9,7 +9,7 @@ from intelmq.bots.parsers.openphish.parser_commercial import OpenPhishCommercial
 with open(os.path.join(os.path.dirname(__file__), 'feed_commercial.txt'), 'r') as fh:
     FILE = fh.read()
 RAW = utils.base64_encode(FILE.encode())
-SPLITTED = FILE.splitlines()
+SPLIT = FILE.splitlines()
 
 OUTPUT1 = {"source.url": "http://example.com/glossy/zip/secure/d553c33636b465c21554b757e48bcf04/",
            "source.ip": "104.24.119.70",
@@ -18,7 +18,7 @@ OUTPUT1 = {"source.url": "http://example.com/glossy/zip/secure/d553c33636b465c21
            "source.asn": 13335,
            "source.fqdn": "example.com",
            "source.geolocation.cc": "US",
-           "raw": utils.base64_encode(SPLITTED[0]),
+           "raw": utils.base64_encode(SPLIT[0]),
            "extra.brand": "Webmail Providers",
            "extra.country_name": "United States",
            "extra.discover_time": "06-02-2018 15:16:06 UTC",
@@ -35,7 +35,7 @@ OUTPUT2 = {"source.url": "http://signin.eby.de.h7r9pganeatdzn6.civpro.example.co
            "source.asn": 36874,
            "source.fqdn": "signin.eby.de.h7r9pganeatdzn6.civpro.example.com",
            "source.geolocation.cc": "ZA",
-           "raw": utils.base64_encode(SPLITTED[1]),
+           "raw": utils.base64_encode(SPLIT[1]),
            "extra.brand": "eBay Inc.",
            "extra.country_name": "South Africa",
            "extra.discover_time": "06-02-2018 15:13:22 UTC",

@@ -407,7 +407,7 @@ You may want to update your harmonization configuration
 Some bots depend on the three new harmonization fields.
 
 ### Configuration
-A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field. The change is backwards compatibile and the change is not yet necessary, IntelMQ 1.x.x works with the old configuration too.
+A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field. The change is backwards compatible and the change is not yet necessary, IntelMQ 1.x.x works with the old configuration too.
 
 The feed names in the shadowserver parser have been adapted to the current subjects. Old subjects will still work in IntelMQ 1.x.x. Change your configuration accordingly:
 * `Botnet-Drone-Hadoop` to `Drone`
@@ -534,7 +534,7 @@ UPDATE events
 ---------------------------------
 
 ### Libraries
-- Some optional dependencies do not support Python 3.3 anymore. If your are still using this unsuported version consider upgrading. IntelMQ 1.0.x itself is compatible with Python 3.3.
+- Some optional dependencies do not support Python 3.3 anymore. If your are still using this unsupported version consider upgrading. IntelMQ 1.0.x itself is compatible with Python 3.3.
 
 ### Postgres databases
 Use the following statement carefully to upgrade your database.
@@ -544,7 +544,7 @@ UPDATE events
    SET "classification.taxonomy" = 'abusive content', "classification.type" = 'spam', "classification.identifier" = 'spamlink', "malware.name" = NULL, "event_description.text" = 'The URL appeared in a spam email sent by extra.spam_ip.', "source.url" = "destination.ip", "destination.ip" = NULL
    WHERE "malware.name" = 'l_spamlink' AND "feed.name" = 'Spamhaus CERT';
 UPDATE events
-   SET "classification.taxonomy" = 'other', "classification.type" = 'other', "classification.identifier" = 'proxyget', "malware.name" = NULL, "event_description.text" = 'The malicous client used a honeypot as proxy.'
+   SET "classification.taxonomy" = 'other', "classification.type" = 'other', "classification.identifier" = 'proxyget', "malware.name" = NULL, "event_description.text" = 'The malicious client used a honeypot as proxy.'
    WHERE "malware.name" = 'proxyget' AND "feed.name" = 'Spamhaus CERT';
 ```
 
@@ -612,7 +612,7 @@ UPDATE events
 | dns-query         | other      | other  | ignore me  | other          | other   | dns-query  |
 | proxy             | vulnerable | proxy  | open proxy | other          | proxy   | openproxy  |
 | sandbox-url       | ignore     | ignore | ignore me  | malicious code | malware | sandboxurl | As this previous taxonomy did not exist, these events have been rejected |
-| other             | vulnerable | unknow | unknown    | other          | other   | other      |
+| other             | vulnerable | unknown| unknown    | other          | other   | other      |
 
 ### Postgres databases
 Use the following statement carefully to upgrade your database.

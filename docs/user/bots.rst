@@ -175,7 +175,7 @@ Generic URL Fetcher
 
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
-* `extract_files`: Optional, boolean or list of strings. If it is true, the retrieved (compressed) file or archived will be uncompressed/unpacked and the files are extracted. If the parameter is a list for strings, only the files matching the filenames are extracted. Extraction handles gziped files and both compressed and uncompressed tar-archives as well as zip archives.
+* `extract_files`: Optional, boolean or list of strings. If it is true, the retrieved (compressed) file or archived will be uncompressed/unpacked and the files are extracted. If the parameter is a list for strings, only the files matching the filenames are extracted. Extraction handles gzipped files and both compressed and uncompressed tar-archives as well as zip archives.
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
 * `http_url_formatting`: (`bool|JSON`, default: `false`) If `true`, `{time[format]}` will be replaced by the current time in local timezone formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2019` for the year 2019. (Python's `Format Specification Mini-Language <https://docs.python.org/3/library/string.html#formatspec>`_ is used for this.). You may use a `JSON` specifying `time-delta <https://docs.python.org/3/library/datetime.html#datetime.timedelta>`_ parameters to shift the current time accordingly. For example use `{"days": -1}` for the yesterday's date; the URL `http://localhost/{time[%Y-%m-%d]}` will get translated to "http://localhost/2018-12-31" for the 1st Jan of 2019.
 * `verify_pgp_signatures`: `bool`, defaults to `false`. If `true`, signature file is downloaded and report file is checked. On error (missing signature, mismatch, ...), the error is logged and the report is not processed. Public key has to be imported in local keyring. This requires the `python-gnupg` library.
@@ -622,7 +622,7 @@ TCP
 
 **Response**
 
-TCP collector just sends an "Ok" message after every recevied message, this should not pose a problem for an arbitrary input.
+TCP collector just sends an "Ok" message after every received message, this should not pose a problem for an arbitrary input.
 If you intend to link two IntelMQ instance via TCP, have a look at the TCP output bot documentation.
 
 XMPP collector
@@ -3465,7 +3465,7 @@ Multihreading is disabled for this bot.
 **Configuration Parameters**
 
 * `field_delimiter`: If the format is 'delimited' this will be added between fields. String, default: `"|"`
-* `format`: Can be `'json'` or `'delimited'`. The JSON format outputs the event 'as-is'. Delimited will deconstruct the event and print each field:value separated by the field delimit. See examples bellow.
+* `format`: Can be `'json'` or `'delimited'`. The JSON format outputs the event 'as-is'. Delimited will deconstruct the event and print each field:value separated by the field delimit. See examples below.
 * `header`: Header text to be sent in the UDP datagram, string.
 * `keep_raw_field`: boolean, default: false
 * `udp_host`: Destination's server's Host name or IP address
