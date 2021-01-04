@@ -39,7 +39,7 @@ class FireeyeCollectorBot(CollectorBot):
                     mybool = 0
                     self.logger.info("status 404")
             except:
-                self.logger.debug("no 404 error")
+                self.logger.DEBUG("no 404 error")
             if mybool == 1:
                 try:
                     my_dict = xmltodict.parse(binary)
@@ -51,7 +51,7 @@ class FireeyeCollectorBot(CollectorBot):
                             new_report.add("raw", binary)
                             self.send_message(new_report)
                 except KeyError:
-                    self.logger.debug"no Iocs Available")
+                    self.logger.debug("no Iocs Available")
 
     def init(self):
         if requests is None:
@@ -89,18 +89,18 @@ class FireeyeCollectorBot(CollectorBot):
         self.logger.info("Downloading report from %r.", http_url)
         resp=self.session.get(url=http_url , headers=http_header)
         if resp.status_code // 100 != 2:
-            self.logger.info('Cloudnt connect to appliance check User/PW. Is the aplliance available?')
+            self.logger.info('Could not connect to appliance check User/PW. Is the aplliance reachable?')
             raise ValueError('HTTP response status code was %i.' % resp.status_code)
 
-        self.logger.info("Report downloaded.")
+        self.logger.debug("Report downloaded.")
         message=json.loads(resp.content)
         if  message['alert'][0]:
             new_report=self.new_report()
             for alert in message['alert']:
-               self.logger.info("new message")
+               self.logger.debug("got a new message")
 # if (alert['product'] == 'WEB_MPS' and alert['severity'] != 'MINR' and alert['name'] == 'MALWARE_CALLBACK'):
 # web fireye mit kritischen alert md5sum ist hier der gecklickten link!
-                self.logger.info('PRODUCT: ' + alert['product'] + "  UUID:  " + alert['uuid'])
+                self.logger.debug('PRODUCT: ' + alert['product'] + "  UUID:  " + alert['uuid'])
                 if alert['product'] == 'EMAIL_MPS' and alert['name'] == 'MALWARE_OBJECT':
                    for k, v in alert['src'].items():
                        uuid=alert['uuid']
@@ -109,7 +109,7 @@ class FireeyeCollectorBot(CollectorBot):
                     uuid=alert['uuid']
                     self.xml_processor(uuid, token, new_report, dns_name, product="MAS")
 
-            self.logger.info("Report transmitted")
-            self.logger.info(str(resp.content))
+            self.logger.debug("Report transmitted")
+            self.logger.debug(str(resp.content))
 
 BOT = FireeyeCollectorBot

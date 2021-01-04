@@ -28,7 +28,7 @@ class FireeyeParserBot(ParserBot):
                 if indicatorType == 'FileItem/Md5sum':
                    event.add('malware.hash.md5', indicator['Content']['#text'])
                 if indicatorType == 'FileItem/Sha256sum':
-                   self.logger.debug('#######FileItem/Md5sum aus uuid########'+ indicator['Content']['#text'])
+                   self.logger.debug('FileItem/Md5sum aus uuid'+ indicator['Content']['#text'])
                    event.add('malware.hash.sha256', indicator['Content']['#text'])
                    self.send_message(event)
                    data = raw_report.split('<Indicator id')
