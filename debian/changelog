@@ -1,4 +1,10 @@
-intelmq (2.3.0~alpha1-1) UNRELEASED; urgency=medium
+intelmq (2.3.0~alpha2-1) UNRELEASED; urgency=medium
+
+  * Update to 2.3.0 Alpha 2
+
+ -- Sebastian Wagner <wagner@cert.at>  Tue, 05 Jan 2021 17:09:09 +0100
+
+intelmq (2.3.0~alpha1-1) stable; urgency=medium
 
   * Update to 2.3.0 Alpha 1
 
