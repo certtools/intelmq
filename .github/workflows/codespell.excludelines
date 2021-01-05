@@ -1,0 +1,16 @@
+# Exact lines that should be ignored by codespell
+#
+# from NEWS.md
+The correct name for the parameter "delimeter" is "delimiter". Please fix your configured bots.
+   WHERE "event_description.text" = 'The malicous client used a honeypot as proxy.' AND "classification.taxonomy" = 'other' AND "classification.type" = 'other' AND "classification.identifier" = 'proxyget' AND "feed.name" = 'Spamhaus CERT';
+   WHERE "event_description.text" = 'The infected iot device logged in to a honeypot and issued malicous commands.' AND "classification.taxonomy" = 'intrusions' AND "classification.type" = 'unauthorized-command' AND "classification.identifier" = 'iot' AND "feed.name" = 'Spamhaus CERT';
+
+# from intelmq/tests/lib/test_upgrades.py
+        "delimeter": ","
+        "delimeter": ",",
+
+# from intelmq/lib/upgrades.py
+            if "delimeter" in bot["parameters"] and "delimiter" in bot["parameters"]:
+                del bot["parameters"]["delimeter"]
+            elif "delimeter" in bot["parameters"]:
+                bot["parameters"]["delimiter"] = bot["parameters"]["delimeter"]
