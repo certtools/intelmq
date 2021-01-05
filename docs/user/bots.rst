@@ -583,6 +583,24 @@ Rsync
 * `temp_directory`: The temporary directory for rsync, by default `$VAR_STATE_PATH/rsync_collector`. `$VAR_STATE_PATH` is `/var/run/intelmq/` or `/opt/intelmq/var/run/`.
 * `rsync_path`: The path of the file to process
 
+Shadowserver API
+^^^^^^^^^^^^^^^^
+
+The Cache is required to memorize which files have already been processed (TTL needs to be high enough to cover the oldest files available!).
+
+**Information**
+
+* `name`: intelmq.bots.parsers.shadowserverapi.collector
+* `description`: Connects to the `Shadowserver API <https://www.shadowserver.org/what-we-do/network-reporting/api-documentation/>`_, requests a list of all the reports for a specific country and processes the ones that are new.
+
+**Configuration Parameters**
+
+* `country`: The country you want to download the reports for
+* `apikey`: Your Shadowserver API key
+* `secret`: Your Shadowserver API secret
+* `types`: A list of strings or a string of comma-separated values with the names of reporttypes you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
+* **Cache parameters** (see in section :ref:`common-parameters`, the default TTL is set to 10 days)
+
 Shodan Stream
 ^^^^^^^^^^^^^
 
@@ -1421,9 +1439,12 @@ This does not affect URLs which already include the scheme.
 Shadowserver
 ^^^^^^^^^^^^
 
+There are two Shadowserver parsers, one for data in ``CSV`` format (``intelmq.bots.parsers.shadowserver.parser``) and one for data in ``JSON`` format (``intelmq.bots.parsers.shadowserver.jsonparser``).
+The latter was added in IntelMQ 2.3 and is meant to be used together with the Shadowserver API collector.
+
 **Information**
 
-* `name:` intelmq.bots.parsers.shadowserver.parser
+* `name:` intelmq.bots.parsers.shadowserver.parser or intelmq.bots.parsers.shadowserver.jsonparser
 * `public:` yes
 * `description:` Parses different reports from Shadowserver.
 
@@ -1531,7 +1552,7 @@ These are the supported feed name and their corresponding file name for automati
 
 The parser consists of two files:
  * `config.py`
- * `parser.py`
+ * `parser.py` or `jsonparser.py`
 
 Both files are required for the parser to work properly.
 
@@ -1542,6 +1563,7 @@ Add a new feed format and conversions if required to the file
 It is required to look up the correct configuration.
 
 Look at the documentation in the bots's `config.py` file for more information.
+
 
 Shodan
 ^^^^^^
