@@ -10,8 +10,6 @@ from intelmq.lib.message import MessageFactory
 from intelmq.lib.utils import base64_decode
 import json
 import xmltodict
-
-
 import ipaddress
 
 class FireeyeParserBot(ParserBot):

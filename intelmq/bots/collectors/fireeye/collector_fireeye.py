@@ -10,13 +10,13 @@ request_duration: how old date should be fetched eg 24_hours or 48_hours
 """
 import base64
 import json
+import MissingDependencyError
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import unzip, create_request_session_from_bot
 
 
 try:
-    import requests
     import xmltodict
 except ImportError:
     requests = None
@@ -28,13 +28,13 @@ class FireeyeCollectorBot(CollectorBot):
         with requests.Session() as s:
             url = 'https://' + dns_name + '/wsapis/v2.0.0/openioc?alert_uuid=' + uuid
             headers = {'X-FeApi-Token': token}
-            r = requests.get(url, headers=headers, verify=False)
-            binary = r.content
-            self.logger.info('collecting information for uuid :' + uuid)
+            httpResponse = requests.get(url, headers=headers, verify=False)
+            binary = httpResponse.content
+            self.logger.debug('Collecting information for UUID: %r', uuid)
             mybool = 1
             try:
                 status = my_dict['fireeyeapis']['httpStatus']
-                self.logger.info("status ist:" + status)
+                self.logger.debug("status ist:" + status)
                 if status == '404':
                     mybool = 0
                     self.logger.info("status 404")
@@ -54,43 +54,40 @@ class FireeyeCollectorBot(CollectorBot):
                     self.logger.debug("No Iocs Available")
 
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
+        if xmltodict is None:
+            raise MissingDependencyError("xmltodict")
 
         self.set_request_parameters()
-
         self.session = create_request_session_from_bot(self)
         # kein proxy im lokalen netz
         self.session.proxies = {}
 
-    def process(self):
-        # define params
         dns_name = self.parameters.dns_name
         request_duration = self.parameters.request_duration
         user = self.parameters.http_username
         pw = self.parameters.http_password
-
         # create auth token
         token = user + ":" + pw
         message_bytes = token.encode('ascii')
         base64_bytes = base64.b64encode(message_bytes)
         base64_message = base64_bytes.decode('ascii')
         http_header = {'Authorization': 'Basic ' + base64_message}
-        # get token for requestst
         auth_url = "https://" + dns_name + "/wsapis/v2.0.0/auth/login"
+
+
+    def process(self):
+        # get token for requestst     
         resp = self.session.post(url=auth_url, headers=http_header)
 
         # extract token and build auth header
         token = resp.headers['X-FeApi-Token']
-        self.logger.info('Token:   ' + token)
         http_header = {'X-FeApi-Token': token, 'Accept': 'application/json'}
         http_url = "https://" + dns_name + "/wsapis/v2.0.0/alerts?duration=" + request_duration
 
-        self.logger.info("Downloading report from %r.", http_url)
+        self.logger.debug("Downloading report from %r.", http_url)
         resp = self.session.get(url=http_url, headers=http_header)
         if resp.status_code // 100 != 2:
-            self.logger.info('Could not connect to appliance check User/PW. Is the aplliance reachable?')
-            raise ValueError('HTTP response status code was %i.' % resp.status_code)
+            raise ValueError('Could not connect to appliance check User/PW. HTTP response status code was %i.' % resp.status_code)
 
         self.logger.debug("Report downloaded.")
         message = json.loads(resp.content)
@@ -107,8 +104,6 @@ class FireeyeCollectorBot(CollectorBot):
                     uuid = alert['uuid']
                     self.xml_processor(uuid, token, new_report, dns_name, product="MAS")
 
-            self.logger.debug("Report transmitted")
-            self.logger.debug(str(resp.content))
 
 
 BOT = FireeyeCollectorBot
