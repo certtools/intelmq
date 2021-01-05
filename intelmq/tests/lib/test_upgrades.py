@@ -599,7 +599,7 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertTrue(result[0])
         self.assertEqual(V222_OUT, result[2])
 
-    def test_v230_feed_fix(self):
+    def v230_csv_parser_parameter_fix_1(self):
         """ Test v230_feed_fix """
         result = upgrades.v230_feed_fix({}, V230_IN, {}, False)
         self.assertTrue(result[0])

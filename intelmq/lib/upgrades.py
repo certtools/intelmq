@@ -27,7 +27,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v220_feed_changes',
            'v221_feed_changes',
            'v222_feed_changes',
-           'v230_feed_fix',
+           'v230_csv_parser_parameter_fix_1',
            ]
 
 
@@ -515,9 +515,9 @@ def v222_feed_changes(defaults, runtime, harmonization, dry_run):
     return changed, defaults, runtime, harmonization
 
 
-def v230_feed_fix(defaults, runtime, harmonization, dry_run):
+def v230_csv_parser_parameter_fix_1(defaults, runtime, harmonization, dry_run):
     """
-    Fix CSV parser parameter misspelling.
+    Fix CSV parser parameter misspelling
     """
     changed = None
     for bot in runtime.values():
@@ -549,7 +549,7 @@ UPGRADES = OrderedDict([
     ((2, 2, 1), (v221_feed_changes, )),
     ((2, 2, 2), (v222_feed_changes, )),
     ((2, 2, 3), ()),
-    ((2, 3, 0), (v230_feed_fix, )),
+    ((2, 3, 0), (v230_csv_parser_parameter_fix_1, )),
 ])
 
 ALWAYS = (harmonization, )
