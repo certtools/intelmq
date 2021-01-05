@@ -1,5 +1,5 @@
 Source: intelmq
-Maintainer: Sebastian Wagner <wagner@cert.at>
+Maintainer: IntelMQ Team <intelmq-team@cert.at>
 Section: python
 Priority: optional
 Build-Depends: debhelper (>= 4.1.16),
