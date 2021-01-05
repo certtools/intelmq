@@ -21,6 +21,9 @@ CHANGELOG
   - `log`: Use RotatingFileHandler for allow log file rotation without external tools (PR#1637 by Vasek Bruzek).
 - `intelmq.lib.harmonization`:
   - The `IPAddress` type sanitation now accepts integer IP addresses and converts them to the string representation.
+  - `DateTime.parse_utc_isoformat`: Add parameter `return_datetime` to return `datetime` object instead of string ISO format.
+  - `DateTime.convert`: Fix `utc_isoformat` format, it pointed to a string and not a function, causing an exception when used.
+  - `DateTime.from_timestamp`: Ensure that time zone information (`+00:00`) is always present.
 - `intelmq.lib.upgrades`:
   - Added upgrade function `v230_feed_fix`.
 
@@ -107,6 +110,7 @@ CHANGELOG
 - `intelmq.tests.bots.collectors.mail.test_collector_url`: Use requests_mock to mock all requests and do not require a local webserver.
 - `intelmq.tests.bots.experts.ripe.test_expert`: Use requests_mock to mock all requests and do not require a local webserver.
 - The test flag (environment variable) `INTELMQ_TEST_LOCAL_WEB` is no longer used.
+- Added tests for `intelmq.harmonization.DateTime.parse_utc_isoformat` and `convert_fuzzy`.
 - Travis:
   - Remove installation of local web-server (not necessary anymore) and HTTP proxy (no tests anymore).
 

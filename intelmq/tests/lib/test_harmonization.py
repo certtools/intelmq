@@ -2,6 +2,7 @@
 """
 Testing harmonization classes
 """
+import datetime
 import ipaddress
 import unittest
 
@@ -250,6 +251,24 @@ class TestHarmonization(unittest.TestCase):
         self.assertEqual('2011-02-01T02:43:11.572760+00:00',
                          harmonization.DateTime.convert(129410017915727600,
                                                         'windows_nt'))
+
+    def test_datetime_parse_utc_isoformat(self):
+        """ Test DateTime.parse_utc_isoformat """
+        self.assertEqual('2020-12-31T12:00:00+00:00',
+                         harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00+00:00'))
+        self.assertEqual('2020-12-31T12:00:00.001+00:00',
+                         harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00.001+00:00'))
+        self.assertEqual(datetime.datetime(year=2020, month=12, day=31, hour=12),
+                         harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00+00:00',
+                                                                    return_datetime=True))
+
+    def test_datetime_convert_fuzzy(self):
+        """ Test DateTime.convert_fuzzy """
+        self.assertEqual('2020-12-31T12:00:00+00:00',
+                         harmonization.DateTime.convert_fuzzy('2020-12-31T12:00:00+00:00'))
+        self.assertEqual('2020-12-31T12:00:00+00:00',
+                         harmonization.DateTime.convert_fuzzy('31st December 2020 12:00'))
+
 
     def test_fqdn_valid(self):
         """ Test FQDN.is_valid with valid arguments. """
