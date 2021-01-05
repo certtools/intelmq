@@ -22,7 +22,6 @@ class FireeyeParserBot(ParserBot):
         try:
             event = self.new_event(report)
             for indicator in my_dict['OpenIOC']['criteria']['Indicator']['IndicatorItem']:
-                hashValue = indicator['Content']['#text']
                 indicatorType = indicator['Context']['@search']
                 if indicatorType == 'FileItem/Md5sum':
                     event.add('malware.hash.md5', indicator['Content']['#text'])
@@ -33,7 +32,7 @@ class FireeyeParserBot(ParserBot):
                     data = raw_report.split('<Indicator id')
                     uuidres = data[0].split('"alert_id">')
                     uuid = uuidres[1].split('"')
-                    self.logger.debug("My UUDI is:  " + uuid[0])
+                    self.logger.debug('My UUDI is:  %r' + uuid[0])
                     data.pop(0)
                     data.pop(0)
                     for Indicator in data:

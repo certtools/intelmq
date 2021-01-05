@@ -59,8 +59,12 @@ class FireeyeCollectorBot(CollectorBot):
 
         self.set_request_parameters()
         self.session = create_request_session_from_bot(self)
-        # kein proxy im lokalen netz
-        self.session.proxies = {}
+        
+        if self.parameters.http_proxy and self.parameters.https_proxy:
+            elf.session.proxies = {'http': self.parameters.http_proxy,
+                     'https': self.parameters.https_proxy}
+        else: 
+            self.session.proxies = {}
 
         dns_name = self.parameters.dns_name
         request_duration = self.parameters.request_duration
