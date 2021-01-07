@@ -248,6 +248,33 @@ class BotTestCase(object):
             if self.default_input_message:  # None for collectors
                 self.input_queue = [self.default_input_message]
 
+    def test_static_bot_check_method(self, *args, **kwargs):
+        """
+        Check if the bot's static check() method completes without errors (exceptions).
+        The return value (errors) are *not* checked.
+
+        The arbitrary parameters for this test function are needed because if a
+        mocker mocks the test class, parameters can be added.
+        See for example `intelmq.tests.bots.collectors.http.test_collector`.
+        """
+        checks = self.bot_reference.check(self.sysconfig)
+        if checks is None:
+            return
+        self.assertIsInstance(checks, (list, tuple))
+        for check in checks:
+            self.assertIsInstance(check, (list, tuple),
+                                  '%s.check returned an invalid format. '
+                                  'Return value must be a sequence of sequences.'
+                                  '' % self.bot_name)
+            self.assertEqual(len(check), 2,
+                             '%s.check returned an invalid format. '
+                             'Return value\'s inner sequence must have a length of 2.'
+                             '' % self.bot_name)
+            self.assertNotEqual(check[0].upper(), 'ERROR',
+                                '%s.check returned the error %r.'
+                                '' % (self.bot_name, check[1]))
+        raise ValueError('checks is %r' % (checks, ))
+
     def run_bot(self, iterations: int = 1, error_on_pipeline: bool = False,
                 prepare=True, parameters={},
                 allowed_error_count=0,

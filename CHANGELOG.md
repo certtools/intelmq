@@ -117,6 +117,8 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - Added tests for `intelmq.harmonization.DateTime.parse_utc_isoformat` and `convert_fuzzy`.
 - Travis:
   - Remove installation of local web-server (not necessary anymore) and HTTP proxy (no tests anymore).
+- `intelmq.lib.test`:
+  - `test_static_bot_check_method` checks the bot's static `check(parameters)` method for any exceptions, and a valid formatted return value (#1505).
 
 ### Tools
 - `intelmqdump`:
