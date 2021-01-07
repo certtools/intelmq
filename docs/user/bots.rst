@@ -344,7 +344,7 @@ Github API
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` Collects files matched by regex from GitHub repository via the GitHub API.
+* `description:` Collects files matched by regular expression from GitHub repository via the GitHub API.
   Optionally with GitHub credentials, which are used as the Basic HTTP authentication.
   
 **Configuration Parameters**
@@ -353,7 +353,7 @@ Github API
 * `basic_auth_username:` GitHub account username (optional)
 * `basic_auth_password:` GitHub account password (optional)
 * `repository:` GitHub target repository (`<USER>/<REPOSITORY>`)
-* `regex:` Valid regex of target files within the repository (defaults to `.*.json`)
+* `regex:` Valid regular expression of target files within the repository (defaults to `.*.json`)
 * `extra_fields:` Comma-separated list of extra fields from `GitHub contents API <https://developer.github.com/v3/repos/contents/>`_.
 
 **Workflow**
@@ -504,7 +504,7 @@ You need the rt-library >= 1.9 from nic.cz, available via `pypi <https://pypi.or
 
 This rt bot will connect to RT and inspect the given `search_queue` for tickets matching all criteria in `search_*`, 
 Any matches will be inspected. For each match, all (RT-) attachments of the matching RT tickets are iterated over and within this loop, the first matching filename in the attachment is processed.
-If none of the filename matches apply, the contents of the first (RT-) "history" item is matched against the URL-regex.
+If none of the filename matches apply, the contents of the first (RT-) "history" item is matched against the regular expression for the URL (`url_regex`).
 
 **Configuration Parameters**
 
@@ -2252,7 +2252,7 @@ All sections will be considered, in the given order (from top to bottom).
 
 Each rule consists of *conditions* and *actions*.
 Conditions and actions are dictionaries holding the field names of events
-and regex-expressions to match values (selection) or set values (action).
+and regular expressions to match values (selection) or set values (action).
 All matching rules will be applied in the given order.
 The actions are only performed if all selections apply.
 
@@ -2280,7 +2280,7 @@ Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feo
 
 **Types**
 
-If the rule is a string, a regex-search is performed, also for numeric values (`str()` is called on them). If the rule is numeric for numeric values, a simple comparison is done. If other types are mixed, a warning will be thrown.
+If the rule is a string, a regular expression search is performed, also for numeric values (`str()` is called on them). If the rule is numeric for numeric values, a simple comparison is done. If other types are mixed, a warning will be thrown.
 
 For boolean values, the comparison value needs to be `true` or `false` as in JSON they are written all-lowercase.
 
@@ -2544,7 +2544,7 @@ The following operators may be used to match events:
 
  * `:contains` matches on substrings.
 
- * `=~` matches strings based on the given regex. `!~` is the inverse regex match.
+ * `=~` matches strings based on the given regular expression. `!~` is the inverse regular expression match.
 
  * Numerical comparisons are evaluated with `<`, `<=`, `>`, `>=`.
 
