@@ -21,6 +21,7 @@ Build-Depends: debhelper (>= 4.1.16),
                python3-termstyle,
                python3-tz,
                quilt,
+               rsync,
                safe-rm
 X-Python3-Version: >= 3.5
 Standards-Version: 3.9.6
