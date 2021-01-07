@@ -10,6 +10,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import codecs
 import os
 import subprocess
 import sys
@@ -97,9 +98,9 @@ def run_apidoc(_):
 
 
 def run_autogen(_):
-    with open('dev/harmonization-fields.rst', 'w') as handle:
+    with codecs.open('dev/harmonization-fields.rst', 'w', encoding='utf-8') as handle:
         handle.write(autogen.harm_docs())
-    with open('user/feeds.rst', 'w') as handle:
+    with codecs.open('user/feeds.rst', 'w', encoding='utf-8') as handle:
         handle.write(autogen.feeds_docs())
 
 

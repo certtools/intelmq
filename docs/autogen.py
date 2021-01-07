@@ -4,6 +4,7 @@
 # `guides/Harmonization-fields.md`
 # and `guides/Feeds.md`
 
+import codecs
 import json
 import os.path
 import textwrap
@@ -34,7 +35,7 @@ BASEDIR = os.path.join(os.path.dirname(__file__), '../')
 def harm_docs():
     output = HEADER
 
-    with open(os.path.join(BASEDIR, 'intelmq/etc/harmonization.conf')) as fhandle:
+    with codecs.open(os.path.join(BASEDIR, 'intelmq/etc/harmonization.conf'), encoding='utf-8') as fhandle:
         HARM = json.load(fhandle)['event']
 
     for key, value in sorted(HARM.items()):
@@ -69,7 +70,7 @@ def info(key, value=""):
 
 
 def feeds_docs():
-    with open(os.path.join(BASEDIR, 'intelmq/etc/feeds.yaml')) as fhandle:
+    with codecs.open(os.path.join(BASEDIR, 'intelmq/etc/feeds.yaml'), encoding='utf-8') as fhandle:
         config = yaml.safe_load(fhandle.read())
 
     output = """Feeds
@@ -138,7 +139,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild 
 
 
 if __name__ == '__main__':  # pragma: no cover
-    with open('dev/harmonization-fields.rst', 'w') as handle:
+    with codecs.open('dev/harmonization-fields.rst', 'w', encoding='utf-8') as handle:
         handle.write(harm_docs())
-    with open('user/feeds.rst', 'w') as handle:
+    with codecs.open('user/feeds.rst', 'w', encoding='utf-8') as handle:
         handle.write(feeds_docs())
