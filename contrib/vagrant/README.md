@@ -22,7 +22,7 @@ cd intelmq/scripts/vagrant
 * Fire up vagrant
 vagrant up
 
-* During this process the base image is downloaded and the provision script *bootstrap.sh* is run to install IntelMQ and IntelMQ-Manager. 
+* During this process the base image is downloaded and the provision script *bootstrap.sh* is run to install IntelMQ and IntelMQ-Manager.
 
 * Access virtual machine via ssh:
 

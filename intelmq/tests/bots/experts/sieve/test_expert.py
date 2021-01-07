@@ -1023,7 +1023,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = event
         self.run_bot()
         self.assertMessageEqual(0, test_minus_force)
-        
+
         test_minus_normal = event.copy()
         event['comment'] = "minus_normal"
         test_minus_normal['comment'] = 'minus_normal'
