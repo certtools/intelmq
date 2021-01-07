@@ -4,7 +4,6 @@ Section: python
 Priority: optional
 Build-Depends: debhelper (>= 4.1.16),
                dh-python,
-               dh-systemd,
                lsb-release,
                python-setuptools,
                python3-all,
