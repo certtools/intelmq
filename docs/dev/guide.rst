@@ -147,7 +147,7 @@ You can run the tests by changing to the directory with IntelMQ repository and r
 
    cd /opt/dev_intelmq
    sudo -u intelmq python3 -m unittest {discover|filename}  # or
-   sudo -u intelmq nosetests3 [filename]  # alternatively nosetests or nosetests-3.5 depending on your installation, or
+   sudo -u intelmq nosetests3 [filename]  # alternatively nosetests or nosetests-3.8 depending on your installation, or
    sudo -u intelmq python3 setup.py test  # uses a build environment (no external dependencies)
 
 Some bots need local databases to succeed. If you only want to test one explicit test file, give the file path as argument.

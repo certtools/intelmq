@@ -10,6 +10,7 @@ The documentation is now available at [intelmq.readthedocs.io](https://intelmq.r
 
 ### Requirements
 IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the minimum supported Python version is 3.6.
+CentOS 7 (with EPEL) provides both Python 3.4 and Python 3.6. If IntelMQ was installed with Python 3.4, the code needs to be re-installed with Python 3.6 and removed for Python 3.4. Application data is compatible. To install the Python 3.6 packages, use: `yum install python36 python36-devel python36-requests`.
 
 ### Tools
 

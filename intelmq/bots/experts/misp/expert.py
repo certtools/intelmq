@@ -13,8 +13,7 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
-    if sys.version_info >= (3, 6):
-        from pymisp import ExpandedPyMISP
+    from pymisp import ExpandedPyMISP
 except ImportError:
     ExpandedPyMISP = None
 
@@ -22,8 +21,6 @@ except ImportError:
 class MISPExpertBot(Bot):
 
     def init(self):
-        if sys.version_info < (3, 6):
-            raise ValueError('This bot requires Python >= 3.6.')
         if ExpandedPyMISP is None:
             raise MissingDependencyError('pymisp', '>=2.4.117.3')
 
