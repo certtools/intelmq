@@ -2578,14 +2578,12 @@ If part of a rule matches the given conditions, the actions enclosed in `{` and
 in the sieve file will be forwarded to the next bot in the pipeline, unless the
 `drop` action is applied.
 
-In addtion `add`, `add!` and `update` do also support super basic math operations `+` and `-`.
-
  * `add` adds a key value pair to the event. This action only applies if the key is not yet defined in the event. If the key is already defined, the action is ignored. Example:
 
    ``add comment = 'hello, world'``
 
-   **ATTENTION** Mathematical expressions currently support only DateTime objects!
-   Basic math operations
+   Some basic mathematical expressions are possible, but currently support only relative time specifications objects are supported.
+   For example:
    ```add time.observation += '1 hour'```
    ```add time.observation -= '10 hours'```
 
@@ -2595,8 +2593,8 @@ In addtion `add`, `add!` and `update` do also support super basic math operation
 
    ``update feed.accuracy = 50``
 
-   **ATTENTION** Mathematical expressions currently support only DateTime objects!
-   Basic math operations
+   Some basic mathematical expressions are possible, but currently support only relative time specifications objects are supported.
+   For example:
    ```update time.observation += '1 hour'```
    ```update time.observation -= '10 hours'```
 
