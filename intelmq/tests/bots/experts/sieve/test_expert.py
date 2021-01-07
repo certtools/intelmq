@@ -1004,7 +1004,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_basic_math(self):
         """ Test basic math operations"""
-        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
                                                 'test_sieve_files/test_basic_math.sieve')
 
         event = EXAMPLE_INPUT.copy()

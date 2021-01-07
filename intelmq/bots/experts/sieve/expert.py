@@ -233,7 +233,7 @@ class SieveExpertBot(Bot):
                 if addr in network:
                     return True
         return False
-    
+
     @staticmethod
     def compute_basic_math(action, event):
         date = DateTime.parse_utc_isoformat(event[action.key], True)
