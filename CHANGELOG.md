@@ -4,6 +4,8 @@ CHANGELOG
 2.3.0 (unreleased)
 ------------------
 
+IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the minimum supported Python version is 3.6.
+
 ### Configuration
 
 ### Core

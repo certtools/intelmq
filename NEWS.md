@@ -9,6 +9,7 @@ See the changelog for a full list of changes.
 The documentation is now available at [intelmq.readthedocs.io](https://intelmq.readthedocs.io/) (FIXME: Link to stable version?).
 
 ### Requirements
+IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the minimum supported Python version is 3.6.
 
 ### Tools
 

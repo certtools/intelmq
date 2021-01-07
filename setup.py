@@ -13,11 +13,8 @@ REQUIRES = [
     'python-termstyle>=0.1.10',
     'pytz>=2012c',
     'redis>=2.10',
+    'requests>=2.2.0',
 ]
-if sys.version_info[:2] == (3, 5):
-    REQUIRES.append('requests<2.26')
-else:
-    REQUIRES.append('requests>=2.2.0')
 
 exec(open(os.path.join(os.path.dirname(__file__),
                        'intelmq/version.py')).read())  # defines __version__
@@ -36,7 +33,7 @@ setup(
     version=__version__,  # noqa: F821
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     install_requires=REQUIRES,
     tests_require=[
         'Cerberus!=1.3',
@@ -72,7 +69,6 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
