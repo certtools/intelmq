@@ -2578,15 +2578,27 @@ If part of a rule matches the given conditions, the actions enclosed in `{` and
 in the sieve file will be forwarded to the next bot in the pipeline, unless the
 `drop` action is applied.
 
+In addtion `add`, `add!` and `update` do also support super basic math operations `+` and `-`.
+
  * `add` adds a key value pair to the event. This action only applies if the key is not yet defined in the event. If the key is already defined, the action is ignored. Example:
 
    ``add comment = 'hello, world'``
 
+   **ATTENTION** Mathematical expressions currently support only DateTime objects!
+   Basic math operations
+   ```add time.observation += '1 hour'```
+   ```add time.observation -= '10 hours'```
+
  * `add!` same as above, but will force overwrite the key in the event.
 
- * `update` modifies an existing value for a key. Only applies if the key is already defined. If the key is not defined in the event, this action is ignored.  Example:
+ * `update` modifies an existing value for a key. Only applies if the key is already defined. If the key is not defined in the event, this action is ignored. This supports mathematical expressions like above. Example:
 
    ``update feed.accuracy = 50``
+
+   **ATTENTION** Mathematical expressions currently support only DateTime objects!
+   Basic math operations
+   ```update time.observation += '1 hour'```
+   ```update time.observation -= '10 hours'```
 
  * `remove` removes a key/value from the event. Action is ignored if the key is not defined in the event. Example:
 

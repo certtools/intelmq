@@ -9,12 +9,15 @@ import ipaddress
 import os
 import re
 import traceback
+import datetime
 
 import intelmq.lib.exceptions as exceptions
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.utils import parse_relative
+from intelmq.lib.harmonization import DateTime
 
 try:
     import textx.model
@@ -230,6 +233,14 @@ class SieveExpertBot(Bot):
                 if addr in network:
                     return True
         return False
+    
+    @staticmethod
+    def compute_basic_math(action, event):
+        date = DateTime.parse_utc_isoformat(event[action.key], True)
+        if action.operator == '+=':
+            return (date + datetime.timedelta(minutes=parse_relative(action.value))).isoformat()
+        elif action.operator == '-=':
+            return (date - datetime.timedelta(minutes=parse_relative(action.value))).isoformat()
 
     @staticmethod
     def process_action(action, event):
@@ -241,11 +252,17 @@ class SieveExpertBot(Bot):
             event.path = action.path
         elif action.__class__.__name__ == 'AddAction':
             if action.key not in event:
+                if action.operator != '=':
+                    action.value = SieveExpertBot.compute_basic_math(action, event)
                 event.add(action.key, action.value)
         elif action.__class__.__name__ == 'AddForceAction':
+            if action.operator != '=':
+                action.value = SieveExpertBot.compute_basic_math(action, event)
             event.add(action.key, action.value, overwrite=True)
         elif action.__class__.__name__ == 'UpdateAction':
             if action.key in event:
+                if action.operator != '=':
+                    action.value = SieveExpertBot.compute_basic_math(action, event)
                 event.change(action.key, action.value)
         elif action.__class__.__name__ == 'RemoveAction':
             if action.key in event:

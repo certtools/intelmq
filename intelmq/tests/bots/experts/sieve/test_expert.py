@@ -1002,5 +1002,62 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, result)
 
+    def test_basic_math(self):
+        """ Test basic math operations"""
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 
+                                                'test_sieve_files/test_basic_math.sieve')
+
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = "add_force"
+        test_add_force = event.copy()
+        test_add_force['comment'] = "add_force"
+        test_add_force['time.observation'] = '2017-01-01T01:00:00+00:00'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, test_add_force)
+
+        test_minus_force = event.copy()
+        event['comment'] = "minus_force"
+        test_minus_force['comment'] = 'minus_force'
+        test_minus_force['time.observation'] = '2016-12-31T23:00:00+00:00'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, test_minus_force)
+        
+        test_minus_normal = event.copy()
+        event['comment'] = "minus_normal"
+        test_minus_normal['comment'] = 'minus_normal'
+        test_minus_normal['time.observation'] = '2016-12-31T23:00:00+00:00'
+        self.input_message = event
+        self.allowed_error_count = 1
+        self.run_bot()
+        self.assertMessageEqual(0, test_minus_normal)
+
+        test_add_normal = event.copy()
+        event['comment'] = "add_normal"
+        test_add_normal['comment'] = 'add_normal'
+        test_add_normal['time.observation'] = '2017-01-01T01:00:00+00:00'
+        self.input_message = event
+        self.allowed_error_count = 1
+        self.run_bot()
+        self.assertMessageEqual(0, test_add_normal)
+
+        test_add_update = event.copy()
+        event['comment'] = "add_update"
+        test_add_update['comment'] = 'add_update'
+        test_add_update['time.observation'] = '2017-01-01T01:00:00+00:00'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, test_add_update)
+
+        test_minus_update = event.copy()
+        event['comment'] = "minus_update"
+        test_minus_update['comment'] = 'minus_update'
+        test_minus_update['time.observation'] = '2016-12-31T23:00:00+00:00'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, test_minus_update)
+
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
