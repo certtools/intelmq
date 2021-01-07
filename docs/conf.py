@@ -26,6 +26,8 @@ import autogen
 project = 'intelmq'
 copyright = '2020, cert.at'
 author = 'IntelMQ Community'
+# for compatibility with Sphinx < 2.0 as the old versions default to 'contents'
+master_doc = 'index'
 
 # The full version, including alpha/beta/rc tags
 release = '2.3.0'
