@@ -29,6 +29,8 @@ build:
 	rm -rf intelmq/tests/bots/collectors/tcp/
 
 override_dh_auto_build:
+	dh_auto_build
+	$(MAKE) -C docs html
 
 override_dh_auto_install: $(BOTDOCS)
 	rm intelmq/bin/rewrite_config_files.py
