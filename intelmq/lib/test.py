@@ -98,6 +98,10 @@ def skip_travis():
                            'Test disabled on travis.')
 
 
+def skip_ci():
+    return unittest.skipIf(os.getenv('CI') == 'true', 'Test disabled on CI.')
+
+
 class BotTestCase(object):
     """
     Provides common tests and assert methods for bot testing.
