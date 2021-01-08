@@ -42,7 +42,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - If status code is not 2xx, the request's and response's headers and body are logged in debug logging level (#1615).
 - `intelmq.bots.collectors.kafka.collector`: Added (PR#1654 by Birger Schacht, closes #1634)
 - `intelmq.bots.collectors.xmpp.collector`: Marked as deprecated, see https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html (#1614, PR#1685 by Birger Schacht).
-- `intelmq.bots.collectors.shadowserverapi.collector`: Added (PR#1700 by Birger Schacht, closes #1683)
+- `intelmq.bots.collectors.shadowserver.collector_api`: Added (PR#1700 by Birger Schacht, closes #1683)
 
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
@@ -52,7 +52,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.bots.parsers.cznic.parser_proki`: Added (PR#1599 by sinus-x).
 - `intelmq.bots.parsers.key_value.parser`: Added (PR#1607 by Karl-Johan Karlsson).
 - `intelmq.bots.parsers.generic.parser_csv`: Added new parameter `compose_fields`.
-- `intelmq.bots.parsers.shadowserver.jsonparser`: Added (PR#1700 by Birger Schacht)
+- `intelmq.bots.parsers.shadowserver.parser_json`: Added (PR#1700 by Birger Schacht)
 
 #### Experts
 - `intelmq.bots.experts.rfc1918.expert`:

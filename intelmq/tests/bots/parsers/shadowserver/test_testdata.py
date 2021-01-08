@@ -10,7 +10,7 @@ import pathlib
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
-from intelmq.bots.parsers.shadowserver.jsonparser import ShadowserverJSONParserBot
+from intelmq.bots.parsers.shadowserver.parser_json import ShadowserverJSONParserBot
 
 def csvtojson(csvfile):
     datalist = []

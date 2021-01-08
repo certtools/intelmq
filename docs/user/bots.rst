@@ -583,14 +583,14 @@ Rsync
 * `temp_directory`: The temporary directory for rsync, by default `$VAR_STATE_PATH/rsync_collector`. `$VAR_STATE_PATH` is `/var/run/intelmq/` or `/opt/intelmq/var/run/`.
 * `rsync_path`: The path of the file to process
 
-Shadowserver API
-^^^^^^^^^^^^^^^^
+Shadowserver Reports API
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 The Cache is required to memorize which files have already been processed (TTL needs to be high enough to cover the oldest files available!).
 
 **Information**
 
-* `name`: intelmq.bots.parsers.shadowserverapi.collector
+* `name`: `intelmq.bots.collectors.shadowserver.collector_reports_api`
 * `description`: Connects to the `Shadowserver API <https://www.shadowserver.org/what-we-do/network-reporting/api-documentation/>`_, requests a list of all the reports for a specific country and processes the ones that are new.
 
 **Configuration Parameters**
@@ -598,7 +598,7 @@ The Cache is required to memorize which files have already been processed (TTL n
 * `country`: The country you want to download the reports for
 * `apikey`: Your Shadowserver API key
 * `secret`: Your Shadowserver API secret
-* `types`: A list of strings or a string of comma-separated values with the names of reporttypes you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
+* `types`: A list of strings or a string of comma-separated values with the names of report types you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined'). The possible report types are equivalent to the file names given in the section :ref:`Supported Reports <shadowserver-supported-reports>` of the ShadowServer parser.
 * **Cache parameters** (see in section :ref:`common-parameters`, the default TTL is set to 10 days)
 
 Shodan Stream
@@ -1439,12 +1439,12 @@ This does not affect URLs which already include the scheme.
 Shadowserver
 ^^^^^^^^^^^^
 
-There are two Shadowserver parsers, one for data in ``CSV`` format (``intelmq.bots.parsers.shadowserver.parser``) and one for data in ``JSON`` format (``intelmq.bots.parsers.shadowserver.jsonparser``).
+There are two Shadowserver parsers, one for data in ``CSV`` format (``intelmq.bots.parsers.shadowserver.parser``) and one for data in ``JSON`` format (``intelmq.bots.parsers.shadowserver.parser_json``).
 The latter was added in IntelMQ 2.3 and is meant to be used together with the Shadowserver API collector.
 
 **Information**
 
-* `name:` intelmq.bots.parsers.shadowserver.parser or intelmq.bots.parsers.shadowserver.jsonparser
+* `name:` intelmq.bots.parsers.shadowserver.parser or intelmq.bots.parsers.shadowserver.parser_json
 * `public:` yes
 * `description:` Parses different reports from Shadowserver.
 
@@ -1475,6 +1475,8 @@ Since version 2.1.2 the date in the filename is optional, so filenames like `sca
 If the method above is not possible and for upgraded instances, the feed can be set with the `feedname` parameter.
 Feed-names are derived from the subjects of the Shadowserver E-Mails.
 A list of possible feeds can be found in the table below in the column "feed name".
+
+.. _shadowserver-supported-reports:
 
 **Supported reports**
 
@@ -1552,7 +1554,7 @@ These are the supported feed name and their corresponding file name for automati
 
 The parser consists of two files:
  * `config.py`
- * `parser.py` or `jsonparser.py`
+ * `parser.py` or `parser_json.py`
 
 Both files are required for the parser to work properly.
 

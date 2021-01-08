@@ -6,7 +6,7 @@ import os
 import requests_mock
 
 import intelmq.lib.test as test
-from intelmq.bots.collectors.shadowserverapi.collector import ShadowServerAPICollectorBot
+from intelmq.bots.collectors.shadowserver.collector_reports_api import ShadowServerAPICollectorBot
 
 RANDSTR = secrets.token_urlsafe(50)
 ASSET_PATH = pathlib.Path(__file__).parent / 'reports-list.json'

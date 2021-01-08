@@ -1501,6 +1501,28 @@ providers:
       revision: 2018-01-20
       documentation: https://www.shadowserver.org/what-we-do/network-reporting/
       public: no
+    Via API:
+      description: Shadowserver sends out a variety of reports to subscribers, see documentation.
+      additional_information: This configuration fetches user-configurable reports from the Shadowserver Reports API. For a list of reports, have a look at the Shadowserver collector and parser documentation.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.shadowserver.collector_reports_api
+          parameters:
+            country: <CC>
+            api_key: <API key>
+            secret: <API secret>
+            types: <single report or list of reports>
+            rate_limit: 86400
+            redis_cache_db: 12
+            redis_cache_host: 127.0.0.1
+            redis_cache_port: 6379
+            redis_cache_ttl: 864000
+        parser:
+          module: intelmq.bots.parsers.shadowserver.parser_json
+          parameters:
+      revision: 2020-01-08
+      documentation: https://www.shadowserver.org/what-we-do/network-reporting/api-documentation/
+      public: no
   Fraunhofer:
     DGA Archive:
       description: Fraunhofer DGA collector fetches data from Fraunhofer's domain
