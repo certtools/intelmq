@@ -287,7 +287,7 @@ providers:
             http_url: https://urlhaus.abuse.ch/feeds/tld/<TLD>/,
               https://urlhaus.abuse.ch/feeds/country/<CC>/, or
               https://urlhaus.abuse.ch/feeds/asn/<ASN>/
-            rate_limit: 129600
+            rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
         parser:
@@ -406,7 +406,7 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt
-            rate_limit: 129600
+            rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
         parser:
@@ -429,7 +429,7 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: https://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
-            rate_limit: 129600
+            rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
         parser:
@@ -1190,7 +1190,7 @@ providers:
             http_url: http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=
             http_timeout_sec: 120
             http_user_agent: "{{ your user agent }}"
-            rate_limit: 129600
+            rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
         parser:
@@ -1210,7 +1210,7 @@ providers:
             http_url: http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&domain=
             http_timeout_sec: 120
             http_user_agent: "{{ your user agent }}"
-            rate_limit: 129600
+            rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
         parser:
@@ -1381,7 +1381,7 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: https://www.dshield.org/feeds/suspiciousdomains_High.txt
-            rate_limit: 129600
+            rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
         parser:
@@ -1400,7 +1400,7 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: https://www.dshield.org/block.txt
-            rate_limit: 129600
+            rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
         parser:
@@ -1417,7 +1417,7 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: https://dshield.org/asdetailsascii.html?as={{ AS Number }}
-            rate_limit: 129600
+            rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
         parser:

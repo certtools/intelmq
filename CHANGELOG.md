@@ -95,6 +95,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - Added CZ.NIC Proki feed (PR#1599 by sinus-x).
   - Added CERT-BUND CB-Report Malware infections feed (PR#1598 by sinus-x).
   - Fixed parsing of the `public` field in the generated feeds documentation (PR#1641 by Birger Schacht).
+  - Change the `rate_limit` parameter of some feeds from 2 days (129600 seconds) to one day (86400 seconds).
 - Bots:
   - Enhanced documentation of RFC1918 Expert.
   - Enhanced documentation of SQL Output (PR #1620 by Edvard Rejthar).
