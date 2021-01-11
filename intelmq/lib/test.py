@@ -163,6 +163,8 @@ class BotTestCase(object):
                                     socket_timeout=BOT_CONFIG['redis_cache_ttl'],
                                     password=password,
                                     )
+        elif cls.use_cache and os.environ.get('INTELMQ_SKIP_REDIS'):
+            cls.skipTest(cls, 'Requested cache requires deactivated Redis.')
 
     harmonization = utils.load_configuration(pkg_resources.resource_filename('intelmq',
                                                                              'etc/harmonization.conf'))
