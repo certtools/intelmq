@@ -1,7 +1,6 @@
 import unittest
 import pathlib
 import secrets
-import os
 
 import requests_mock
 
@@ -13,9 +12,11 @@ ASSET_PATH = pathlib.Path(__file__).parent / 'reports-list.json'
 PARAMETERS = {'country': 'anarres', 'apikey': RANDSTR, 'secret': RANDSTR, 'logging_level': 'DEBUG', 'types': ['scan_smb', 'cisco_smart_install', 'nonexistent'], 'name': 'shadowservercollector'}
 REPORT = {'__type': 'Report', 'extra.file_name': '2020-08-02-scan_smb-anarres-geo.csv', 'feed.accuracy': 100.0, 'feed.name': 'shadowservercollector', 'raw': 'e30='}
 
+
 def prepare_mocker(mocker):
     mocker.post('https://transform.shadowserver.org/api2/reports/list', content=ASSET_PATH.read_bytes())
     mocker.post('https://transform.shadowserver.org/api2/reports/download', text='{}')
+
 
 @requests_mock.Mocker()
 class TestShadowServerAPICollectorBot(test.BotTestCase, unittest.TestCase):
@@ -35,14 +36,14 @@ class TestShadowServerAPICollectorBot(test.BotTestCase, unittest.TestCase):
         self.assertEqual(str(exception), 'No apikey provided.')
 
     def test_faulty_config_0(self, mocker):
-        parameters = {'apikey': RANDSTR }
+        parameters = {'apikey': RANDSTR}
         with self.assertRaises(ValueError) as context:
             self.run_bot(iterations=1, parameters=parameters)
         exception = context.exception
         self.assertEqual(str(exception), 'No secret provided.')
 
     def test_faulty_config_1(self, mocker):
-        parameters = {'apikey': RANDSTR, 'secret': RANDSTR }
+        parameters = {'apikey': RANDSTR, 'secret': RANDSTR}
         with self.assertRaises(ValueError) as context:
             self.run_bot(iterations=1, parameters=parameters)
         exception = context.exception
@@ -80,3 +81,7 @@ class TestShadowServerAPICollectorBot(test.BotTestCase, unittest.TestCase):
         prepare_mocker(mocker)
         self.run_bot(iterations=1, parameters=PARAMETERS)
         self.assertMessageEqual(0, REPORT)
+
+
+if __name__ == '__main__':  # pragma: no cover
+    unittest.main()
