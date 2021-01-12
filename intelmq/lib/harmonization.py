@@ -347,7 +347,7 @@ class DateTime(String):
             dtvalue = datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f+00:00')
 
         if return_datetime:
-            return pytz.timezone('UTC').localize(dtvalue)
+            return pytz.utc.localize(dtvalue)
         else:
             return value
 

@@ -8,6 +8,7 @@ import unittest
 
 import intelmq.lib.harmonization as harmonization
 import intelmq.lib.test as test
+import pytz
 
 
 class TestHarmonization(unittest.TestCase):
@@ -258,7 +259,7 @@ class TestHarmonization(unittest.TestCase):
                          harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00+00:00'))
         self.assertEqual('2020-12-31T12:00:00.001+00:00',
                          harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00.001+00:00'))
-        self.assertEqual(datetime.datetime(year=2020, month=12, day=31, hour=12),
+        self.assertEqual(datetime.datetime(year=2020, month=12, day=31, hour=12, tzinfo=pytz.utc),
                          harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00+00:00',
                                                                     return_datetime=True))
 
