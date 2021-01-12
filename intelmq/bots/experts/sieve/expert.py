@@ -10,7 +10,6 @@ import os
 import re
 import traceback
 import datetime
-import pytz
 
 import intelmq.lib.exceptions as exceptions
 from intelmq import HARMONIZATION_CONF_FILE
@@ -243,8 +242,7 @@ class SieveExpertBot(Bot):
 
     @staticmethod
     def compute_basic_math(action, event):
-        tz = pytz.timezone('UTC')
-        date = tz.localize(DateTime.parse_utc_isoformat(event[action.key], True))
+        date = DateTime.parse_utc_isoformat(event[action.key], True)
         if action.operator == '+=':
             return (date + datetime.timedelta(minutes=parse_relative(action.value))).isoformat()
         elif action.operator == '-=':
