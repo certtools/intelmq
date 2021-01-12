@@ -258,18 +258,21 @@ class SieveExpertBot(Bot):
             event.path = action.path
         elif action.__class__.__name__ == 'AddAction':
             if action.key not in event:
+                value = action.value
                 if action.operator != '=':
-                    action.value = SieveExpertBot.compute_basic_math(action, event)
-                event.add(action.key, action.value)
+                    value = SieveExpertBot.compute_basic_math(action, event)
+                event.add(action.key, value)
         elif action.__class__.__name__ == 'AddForceAction':
+            value = action.value
             if action.operator != '=':
-                action.value = SieveExpertBot.compute_basic_math(action, event)
-            event.add(action.key, action.value, overwrite=True)
+                value = SieveExpertBot.compute_basic_math(action, event)
+            event.add(action.key, value, overwrite=True)
         elif action.__class__.__name__ == 'UpdateAction':
             if action.key in event:
+                value = action.value
                 if action.operator != '=':
-                    action.value = SieveExpertBot.compute_basic_math(action, event)
-                event.change(action.key, action.value)
+                    value = SieveExpertBot.compute_basic_math(action, event)
+                event.change(action.key, value)
         elif action.__class__.__name__ == 'RemoveAction':
             if action.key in event:
                 del event[action.key]
