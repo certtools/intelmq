@@ -115,14 +115,15 @@ class SieveExpertBot(Bot):
         self.acknowledge_message()
 
     def process_rule(self, rule, event):
-        # process mandatory 'if' clause
-        if self.match_expression(rule.if_.expr, event):
-            self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(rule.if_), event)
-            for action in rule.if_.actions:
-                procedure = self.process_action(action.action, event)
-                if procedure != Procedure.CONTINUE:
-                    return procedure
-            return Procedure.CONTINUE
+        # process optional 'if' clause
+        if rule.if_:
+            if self.match_expression(rule.if_.expr, event):
+                self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(rule.if_), event)
+                for action in rule.if_.actions:
+                    procedure = self.process_action(action.action, event)
+                    if procedure != Procedure.CONTINUE:
+                        return procedure
+                return Procedure.CONTINUE
 
         # process optional 'elif' clauses
         for clause in rule.elif_:
@@ -138,6 +139,13 @@ class SieveExpertBot(Bot):
         if rule.else_:
             self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(rule.else_), event)
             for action in rule.else_.actions:
+                procedure = self.process_action(action.action, event)
+                if procedure != Procedure.CONTINUE:
+                    return procedure
+
+        # process optional 'actions' clause
+        if rule.actions_:
+            for action in rule.actions_:
                 procedure = self.process_action(action.action, event)
                 if procedure != Procedure.CONTINUE:
                     return procedure
