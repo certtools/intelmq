@@ -50,7 +50,6 @@ EMPTY_OUTPUT = {"__type": "Event",
 
 
 @test.skip_internet()
-@test.skip_travis()
 @unittest.skipUnless(os.environ.get('DO_PORTAL_KEY'),
                      'No DO portal key provided.')
 @unittest.skipUnless(os.environ.get('DO_PORTAL_URL'),

@@ -33,7 +33,6 @@ EXAMPLE_EXISTING = {"__type": "Event",
 
 
 @test.skip_internet()
-@test.skip_travis()
 @test.skip_ci()
 class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
     """

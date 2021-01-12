@@ -68,7 +68,6 @@ OVERWRITE_OUT = {"__type": "Event",
 
 @test.skip_redis()
 @test.skip_internet()
-@test.skip_travis()
 @test.skip_ci()
 class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     """

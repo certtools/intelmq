@@ -93,11 +93,6 @@ def skip_exotic():
                                'Skipping tests requiring exotic libs.')
 
 
-def skip_travis():
-    return unittest.skipIf(os.getenv('TRAVIS') == 'true' and os.getenv('CI') == 'true',
-                           'Test disabled on travis.')
-
-
 def skip_ci():
     return unittest.skipIf(os.getenv('CI') == 'true', 'Test disabled on CI.')
 
