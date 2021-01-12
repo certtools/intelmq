@@ -5,7 +5,7 @@
 
 SieveModel: rules*=Rule ;
 
-Rule: if_=IfClause (elif_=ElifClause)* (else_=ElseClause)?;
+Rule: (if_=IfClause (elif_=ElifClause)* (else_=ElseClause)? | actions_*=Action);
 IfClause: 'if' expr=Expression '{' actions*=Action '}';
 ElifClause: 'elif' expr=Expression '{' actions*=Action '}';
 ElseClause: 'else' '{' actions*=Action '}';

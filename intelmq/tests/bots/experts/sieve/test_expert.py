@@ -1068,6 +1068,31 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_INPUT, path='one')
         self.assertMessageEqual(0, EXAMPLE_INPUT, path='two')
 
+    def test_only_one_action(self):
+        """ Test only one action """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                                'test_sieve_files/test_only_one_action.sieve')
+
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'Test action only'
+
+        self.input_message = EXAMPLE_INPUT
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
+    def test_only_multiple_actions(self):
+        """ Test only multiple action """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                                'test_sieve_files/test_only_multiple_actions.sieve')
+
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'Test action only'
+        event['source.ip'] = '1.3.3.7'
+
+        self.input_message = EXAMPLE_INPUT
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
