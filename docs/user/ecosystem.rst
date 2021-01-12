@@ -78,3 +78,10 @@ Malware Name Mapping
 A mapping for malware names of different feeds with different names to a common family name.
 
 → `Repository: malware_name_mapping <https://github.com/certtools/malware_name_mapping>`_
+
+IntelMQ-Docker
+--------------
+
+A repository with tools for IntelMQ docker instance.
+
+→ `Repository: intelmq-docker <https://github.com/certat/intelmq-docker>`_
