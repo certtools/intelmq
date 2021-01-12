@@ -139,6 +139,10 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - EventDB:
   - Add SQL script for keeping track of the oldest inserted/update "time.source" information.
 - Cron Jobs: The script `intelmq-update-data` has been renamed to `intelmq-update-database`
+- Dropped utterly outdated contrib modules:
+  - ansible
+  - vagrant
+  - vagrant-ansible
 
 ### Known issues
 
