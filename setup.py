@@ -51,7 +51,6 @@ setup(
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
     project_urls={
-        'Travis CI': 'https://travis-ci.org/certtools/intelmq',
         'Documentation': 'https://github.com/certtools/intelmq/blob/master/docs/',
         'Source and Issue Tracker': 'https://github.com/certtools/intelmq/',
     },

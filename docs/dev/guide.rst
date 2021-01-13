@@ -152,14 +152,14 @@ You can run the tests by changing to the directory with IntelMQ repository and r
 
 Some bots need local databases to succeed. If you only want to test one explicit test file, give the file path as argument.
 
-There is a `Travis-CI <https://travis-ci.org/certtools/intelmq/builds>`_ setup for automatic testing, which triggers on pull requests. You can also easily activate it for your forks.
+There are multiple `GitHub Action Workflows <https://github.com/certtools/intelmq/actions>`_ setup for automatic testing, which are triggered on pull requests. You can also easily activate them for your forks.
 
 Environment variables
 ---------------------
 
 There are a bunch of environment variables which switch on/off some tests:
 
-* `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default, set to 1 to test those bots. These tests need preparation, e.g. running databases with users and certain passwords etc. Have a look at the `.travis.yml` in IntelMQ's repository for steps to set databases up.
+* `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default. Set this environment variable to 1 to test those bots. These tests need preparation, e.g. running databases with users and certain passwords etc. Have a look at the `.github/workflows/nosetests.yml` and the corresponding `.github/workflows/scripts/setup-full.sh` in IntelMQ's repository for steps to set databases up.
 * `INTELMQ_SKIP_INTERNET`: tests requiring internet connection will be skipped if this is set to 1.
 * `INTELMQ_SKIP_REDIS`: redis-related tests are ran by default, set this to 1 to skip those.
 * `INTELMQ_TEST_EXOTIC`: some bots and tests require libraries which may not be available, those are skipped by default. To run them, set this to 1.

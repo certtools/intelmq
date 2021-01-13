@@ -38,7 +38,7 @@ MISSING_RESULT = {"__type": "Event",
 
 
 @test.skip_internet()
-@test.skip_travis()  # these tests are currently failing on Travis CI
+@test.skip_ci()
 class TestNationalCERTContactCertATExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for NationalCERTContactCertATExpertBot.
