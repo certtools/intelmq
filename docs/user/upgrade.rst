@@ -46,7 +46,7 @@ Docker (beta)
 
    docker pull certat/intelmq-full:1.0
 
-Alternativly you can use `docker-compose`:
+Alternatively you can use `docker-compose`:
 
 .. code-block:: bash
 

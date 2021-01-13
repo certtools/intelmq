@@ -88,7 +88,7 @@ Docker (beta)
 ^^^^^^^^^^^^^
 
 **ATTENTION** Currently the version published on docker hub is not tagged with the same IntelMQ version. During beta, each version is published with tag `1.0`.
-**ATTENTION** Currently you cant manage your botnet via :doc:`intelmqctl`. You need to use `IntelMQ-Manager <https://github.com/certtools/intelmq-manager>`_ currently!
+**ATTENTION** Currently you can't manage your botnet via :doc:`intelmqctl`. You need to use `IntelMQ-Manager <https://github.com/certtools/intelmq-manager>`_ currently!
 
 Follow `Docker Install <https://docs.docker.com/engine/install/>`_ and
 `Docker-Compose Install <https://docs.docker.com/compose/install/>`_ instructions.
@@ -169,7 +169,7 @@ You need to prepare some volumes & configs. Edit the left-side after -v, to chan
 
 Change ``redis_host`` to a running redis-instance. Docker will resolve it automatically.
 
-In order to work with your current infrastructure, you need to specify some enviroments variables
+In order to work with your current infrastructure, you need to specify some environment variables
 
 .. code-block:: bash
 
@@ -187,7 +187,7 @@ In order to work with your current infrastructure, you need to specify some envi
                    certat/intelmq-full:1.0
 
 **ATTENTION** Using networks requires better understanding of how docker works. Not recommended for End-Users.
-Alternativly you can use `Docker Networks <https://docs.docker.com/engine/tutorials/networkingcontainers/>`_.
+Alternatively you can use `Docker Networks <https://docs.docker.com/engine/tutorials/networkingcontainers/>`_.
 
 .. code-block:: bash
 
