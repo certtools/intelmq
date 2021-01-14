@@ -38,6 +38,7 @@ User guide
    user/intelmqctl
    user/feeds
    user/ecosystem
+   user/intelmq-manager
    user/ELK-Stack
    user/FAQ
    user/MISP-Integrations
