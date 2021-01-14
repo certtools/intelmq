@@ -7,8 +7,9 @@ name: "Run pycodestyle on repository"
 
 on:
   push:
+    branches: [develop, maintenance, master]
   pull_request:
-    branches: [ develop ]
+    branches: [develop, maintenance]
 
 jobs:
   pycodestyle:

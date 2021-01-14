@@ -7,8 +7,9 @@ name: "Codespell spelling check"
 
 on:
   push:
+    branches: [develop, maintenance, master]
   pull_request:
-    branches: [ develop ]
+    branches: [develop, maintenance]
 
 jobs:
   codespell:
