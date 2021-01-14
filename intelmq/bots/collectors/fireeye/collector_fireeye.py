@@ -10,16 +10,16 @@ request_duration: how old date should be fetched eg 24_hours or 48_hours
 """
 import base64
 import json
-import MissingDependencyError
+import requests
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import unzip, create_request_session_from_bot
-
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import xmltodict
 except ImportError:
-    requests = None
+    xmltodict = None
 
 
 class FireeyeCollectorBot(CollectorBot):
@@ -34,12 +34,12 @@ class FireeyeCollectorBot(CollectorBot):
             mybool = 1
             try:
                 status = my_dict['fireeyeapis']['httpStatus']
-                self.logger.debug("status ist:" + status)
+                self.logger.debug('Http state is: %r' + status)
                 if status == '404':
                     mybool = 0
-                    self.logger.info("status 404")
+                    self.logger.info("State 404")
             except:
-                self.logger.DEBUG("no 404 error")
+                self.logger.debug("No 404 error")
             if mybool == 1:
                 try:
                     my_dict = xmltodict.parse(binary)
@@ -59,15 +59,9 @@ class FireeyeCollectorBot(CollectorBot):
 
         self.set_request_parameters()
         self.session = create_request_session_from_bot(self)
-        
-        if self.parameters.http_proxy and self.parameters.https_proxy:
-            elf.session.proxies = {'http': self.parameters.http_proxy,
-                     'https': self.parameters.https_proxy}
-        else: 
-            self.session.proxies = {}
 
-        dns_name = self.parameters.dns_name
-        request_duration = self.parameters.request_duration
+        self.dns_name = self.parameters.dns_name
+        self.request_duration = self.parameters.request_duration
         user = self.parameters.http_username
         pw = self.parameters.http_password
         # create auth token
@@ -75,18 +69,18 @@ class FireeyeCollectorBot(CollectorBot):
         message_bytes = token.encode('ascii')
         base64_bytes = base64.b64encode(message_bytes)
         base64_message = base64_bytes.decode('ascii')
-        http_header = {'Authorization': 'Basic ' + base64_message}
-        auth_url = "https://" + dns_name + "/wsapis/v2.0.0/auth/login"
+        self.http_header = {'Authorization': 'Basic ' + base64_message}
+        self.custom_auth_url = "https://" + self.dns_name + "/wsapis/v2.0.0/auth/login"
 
 
     def process(self):
         # get token for requestst     
-        resp = self.session.post(url=auth_url, headers=http_header)
+        resp = self.session.post(url=self.custom_auth_url, headers=self.http_header)
 
         # extract token and build auth header
         token = resp.headers['X-FeApi-Token']
         http_header = {'X-FeApi-Token': token, 'Accept': 'application/json'}
-        http_url = "https://" + dns_name + "/wsapis/v2.0.0/alerts?duration=" + request_duration
+        http_url = "https://" + self.dns_name + "/wsapis/v2.0.0/alerts?duration=" + self.request_duration
 
         self.logger.debug("Downloading report from %r.", http_url)
         resp = self.session.get(url=http_url, headers=http_header)
@@ -103,10 +97,10 @@ class FireeyeCollectorBot(CollectorBot):
                 if alert['product'] == 'EMAIL_MPS' and alert['name'] == 'MALWARE_OBJECT':
                     for k, v in alert['src'].items():
                         uuid = alert['uuid']
-                        event = self.xml_processor(uuid, token, new_report, dns_name, product="EMAIL_MPS")
+                        event = self.xml_processor(uuid, token, new_report, self.dns_name, product="EMAIL_MPS")
                 if alert['product'] == 'MAS' and alert['name'] == 'MALWARE_OBJECT':
                     uuid = alert['uuid']
-                    self.xml_processor(uuid, token, new_report, dns_name, product="MAS")
+                    self.xml_processor(uuid, token, new_report, self.dns_name, product="MAS")
 
 
 
