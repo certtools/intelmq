@@ -5,7 +5,7 @@ Fireeye collector bot
 Parameters:
 http_username, http_password: string
 http_timeout_max_tries: an integer depicting how often a connection attempt is retried
-dns_name : dns name of the local machine
+dns_name : dns name of the local appliance
 request_duration: how old date should be fetched eg 24_hours or 48_hours
 """
 import base64
@@ -25,33 +25,22 @@ except ImportError:
 class FireeyeCollectorBot(CollectorBot):
 
     def xml_processor(self, uuid, token, new_report, dns_name, product):
-        with requests.Session() as s:
-            url = 'https://' + dns_name + '/wsapis/v2.0.0/openioc?alert_uuid=' + uuid
-            headers = {'X-FeApi-Token': token}
-            httpResponse = requests.get(url, headers=headers, verify=False)
-            binary = httpResponse.content
-            self.logger.debug('Collecting information for UUID: %r', uuid)
-            mybool = 1
-            try:
-                status = my_dict['fireeyeapis']['httpStatus']
-                self.logger.debug('Http state is: %r' + status)
-                if status == '404':
-                    mybool = 0
-                    self.logger.info("State 404")
-            except:
-                self.logger.debug("No 404 error")
-            if mybool == 1:
-                try:
-                    my_dict = xmltodict.parse(binary)
-                    for indicator in my_dict['OpenIOC']['criteria']['Indicator']['IndicatorItem']:
-                        hashValue = indicator['Content']['#text']
-                        indicatorType = indicator['Context']['@search']
-                        if indicatorType == 'FileItem/Md5sum':
-                            new_report = self.new_report()
-                            new_report.add("raw", binary)
-                            self.send_message(new_report)
-                except KeyError:
-                    self.logger.debug("No Iocs Available")
+
+        http_url = 'https://' + dns_name + '/wsapis/v2.0.0/openioc?alert_uuid=' + uuid
+        http_header = {'X-FeApi-Token': token}
+        httpResponse = self.session.get(url=http_url, headers=http_header)
+        binary = httpResponse.content
+        self.logger.debug('Collecting information for UUID: %r', uuid)
+        try:
+            my_dict = xmltodict.parse(binary)
+            for indicator in my_dict['OpenIOC']['criteria']['Indicator']['IndicatorItem']:
+                indicatorType = indicator['Context']['@search']
+                if indicatorType == 'FileItem/Md5sum':
+                    new_report = self.new_report()
+                    new_report.add("raw", binary)
+                    self.send_message(new_report)
+        except KeyError:
+            self.logger.debug("No Iocs for UUID: %r', uuid")
 
     def init(self):
         if xmltodict is None:
@@ -74,7 +63,7 @@ class FireeyeCollectorBot(CollectorBot):
 
 
     def process(self):
-        # get token for requestst     
+        # get token for request     
         resp = self.session.post(url=self.custom_auth_url, headers=self.http_header)
 
         # extract token and build auth header
@@ -84,7 +73,7 @@ class FireeyeCollectorBot(CollectorBot):
 
         self.logger.debug("Downloading report from %r.", http_url)
         resp = self.session.get(url=http_url, headers=http_header)
-        if resp.status_code // 100 != 2:
+        if not resp.ok:
             raise ValueError('Could not connect to appliance check User/PW. HTTP response status code was %i.' % resp.status_code)
 
         self.logger.debug("Report downloaded.")
@@ -97,7 +86,7 @@ class FireeyeCollectorBot(CollectorBot):
                 if alert['product'] == 'EMAIL_MPS' and alert['name'] == 'MALWARE_OBJECT':
                     for k, v in alert['src'].items():
                         uuid = alert['uuid']
-                        event = self.xml_processor(uuid, token, new_report, self.dns_name, product="EMAIL_MPS")
+                        self.xml_processor(uuid, token, new_report, self.dns_name, product="EMAIL_MPS")
                 if alert['product'] == 'MAS' and alert['name'] == 'MALWARE_OBJECT':
                     uuid = alert['uuid']
                     self.xml_processor(uuid, token, new_report, self.dns_name, product="MAS")
