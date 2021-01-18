@@ -106,6 +106,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - Generate documentation using Sphinx (PR#1622 by Birger Schacht).
   - The documentation is now available at https://intelmq.readthedocs.io/en/latest/
   - Refactor documentation and fix broken syntax (#1639, PRs #1638 #1640 #1642 by Birger Schacht).
+- Integrate intelmq-manager and intelmq-api user documentation to provide unified documentation place (PR#1714 & PR#1714 by Birger Schacht).
 
 ### Packaging
 - Fix paths in the integrated logcheck rules.
