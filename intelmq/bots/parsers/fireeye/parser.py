@@ -12,8 +12,8 @@ import json
 import xmltodict
 import ipaddress
 
-class FireeyeParserBot(ParserBot):
 
+class FireeyeParserBot(ParserBot):
 
     def process(self):
         report = self.receive_message()
@@ -62,9 +62,9 @@ class FireeyeParserBot(ParserBot):
                                         if 'Content' in searchIndicator:
                                             Content_search = searchIndicator.split('">')
                                             context = Content_search[1].split('</Content>')
-                                            self.logger.debug(classification + "   "+context[0])
+                                            self.logger.debug(classification + "   " + context[0])
                                             if fqdn != "" and urlpath != "":
-                                                event.add("destination.url", "http://" + fqdn+urlpath)
+                                                event.add("destination.url", "http://" + fqdn + urlpath)
                                                 fqdn = ""
                                                 urlpath = ""
                                             if classification == "destination.ip":

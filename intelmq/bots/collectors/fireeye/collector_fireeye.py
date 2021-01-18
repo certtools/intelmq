@@ -76,7 +76,7 @@ class FireeyeCollectorBot(CollectorBot):
             raise ValueError('Could not connect to appliance check User/PW. HTTP response status code was %i.' % resp.status_code)
 
         self.logger.debug("Report downloaded.")
-        message = resp.json
+        message = resp.json()
         if message['alert'][0]:
             new_report = self.new_report()
             for alert in message['alert']:
