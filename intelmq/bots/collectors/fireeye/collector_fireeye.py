@@ -10,7 +10,6 @@ request_duration: how old date should be fetched eg 24_hours or 48_hours
 """
 import base64
 import json
-import requests
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import unzip, create_request_session_from_bot
@@ -77,16 +76,15 @@ class FireeyeCollectorBot(CollectorBot):
             raise ValueError('Could not connect to appliance check User/PW. HTTP response status code was %i.' % resp.status_code)
 
         self.logger.debug("Report downloaded.")
-        message = json.loads(resp.content)
+        message = resp.json
         if message['alert'][0]:
             new_report = self.new_report()
             for alert in message['alert']:
                 self.logger.debug("got a new message")
                 self.logger.debug('PRODUCT: ' + alert['product'] + "  UUID:  " + alert['uuid'])
                 if alert['product'] == 'EMAIL_MPS' and alert['name'] == 'MALWARE_OBJECT':
-                    for k, v in alert['src'].items():
-                        uuid = alert['uuid']
-                        self.xml_processor(uuid, token, new_report, self.dns_name, product="EMAIL_MPS")
+                    uuid = alert['uuid']
+                    self.xml_processor(uuid, token, new_report, self.dns_name, product="EMAIL_MPS")
                 if alert['product'] == 'MAS' and alert['name'] == 'MALWARE_OBJECT':
                     uuid = alert['uuid']
                     self.xml_processor(uuid, token, new_report, self.dns_name, product="MAS")
