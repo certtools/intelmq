@@ -60,11 +60,9 @@ class FireeyeCollectorBot(CollectorBot):
         self.http_header = {'Authorization': 'Basic ' + base64_message}
         self.custom_auth_url = "https://" + self.dns_name + "/wsapis/v2.0.0/auth/login"
 
-
     def process(self):
-        # get token for request     
+        # get token for request
         resp = self.session.post(url=self.custom_auth_url, headers=self.http_header)
-
         # extract token and build auth header
         token = resp.headers['X-FeApi-Token']
         http_header = {'X-FeApi-Token': token, 'Accept': 'application/json'}
@@ -88,7 +86,6 @@ class FireeyeCollectorBot(CollectorBot):
                 if alert['product'] == 'MAS' and alert['name'] == 'MALWARE_OBJECT':
                     uuid = alert['uuid']
                     self.xml_processor(uuid, token, new_report, self.dns_name, product="MAS")
-
 
 
 BOT = FireeyeCollectorBot
