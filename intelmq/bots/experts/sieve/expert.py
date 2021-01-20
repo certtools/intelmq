@@ -37,6 +37,7 @@ class SieveExpertBot(Bot):
     _message_processed_verb = 'Forwarded'
 
     harmonization = None
+    file = None
 
     def init(self):
         if not SieveExpertBot.harmonization:
@@ -44,7 +45,7 @@ class SieveExpertBot(Bot):
             SieveExpertBot.harmonization = harmonization_config['event']
 
         self.metamodel = SieveExpertBot.init_metamodel()
-        self.sieve = SieveExpertBot.read_sieve_file(self.parameters.file, self.metamodel)
+        self.sieve = SieveExpertBot.read_sieve_file(self.file, self.metamodel)
 
     @staticmethod
     def init_metamodel():

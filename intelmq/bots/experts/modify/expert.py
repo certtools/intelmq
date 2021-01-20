@@ -37,23 +37,23 @@ class MatchGroupMapping:
 class ModifyExpertBot(Bot):
 
     def init(self):
-        config = load_configuration(self.parameters.configuration_path)
+        config = load_configuration(self.configuration_path)
         if type(config) is dict:
             self.logger.warning('Support for dict-based configuration will be '
                                 'removed in version 3.0. Have a look at the '
                                 'NEWS file section 1.0.0.dev7.')
             config = modify_expert_convert_config(config)
 
-        if getattr(self.parameters, 'case_sensitive', True):
+        if getattr(self, 'case_sensitive', True):
             self.re_kwargs = {}
         else:
             self.re_kwargs = {'flags': re.IGNORECASE}
 
-        if not hasattr(self.parameters, 'overwrite'):
+        if not hasattr(self, 'overwrite'):
             self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
                                 "Please set it explicitly, default will change to "
                                 "'False' in version 3.0.0'.")
-        self.overwrite = getattr(self.parameters, 'overwrite', True)
+        self.overwrite = getattr(self, 'overwrite', True)
 
         # regex compilation
         self.config = []
@@ -63,7 +63,7 @@ class ModifyExpertBot(Bot):
                 if isinstance(expression, str) and expression != '':
                     self.config[-1]["if"][field] = re.compile(expression, **self.re_kwargs)
 
-        self.maximum_matches = getattr(self.parameters, 'maximum_matches', None)
+        self.maximum_matches = getattr(self, 'maximum_matches', None)
 
     def matches(self, identifier, event, condition):
         matches = {}

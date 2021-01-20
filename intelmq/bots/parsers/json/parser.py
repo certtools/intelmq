@@ -12,10 +12,11 @@ from intelmq.lib.utils import base64_decode
 
 
 class JSONParserBot(Bot):
+    splitlines = False
 
     def process(self):
         report = self.receive_message()
-        if getattr(self.parameters, 'splitlines', False):
+        if self.splitlines:
             lines = base64_decode(report['raw']).splitlines()
         else:
             lines = [base64_decode(report['raw'])]

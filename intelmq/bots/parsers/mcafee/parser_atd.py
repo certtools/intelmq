@@ -19,6 +19,7 @@ from intelmq.lib.bot import Bot
 
 
 class ATDParserBot(Bot):
+    verdict_severity = None
 
     ATD_TYPE_MAPPING = {
         'domain': 'source.fqdn',
@@ -43,7 +44,7 @@ class ATDParserBot(Bot):
         subject_sha256 = atd_event['Summary']['Subject']['sha-256']
         verdict_severity = int(atd_event['Summary']['Verdict']['Severity'])
 
-        if (verdict_severity >= int(self.parameters.verdict_severity)):
+        if (verdict_severity >= int(self.verdict_severity)):
 
             # forward initial sample hashes
             event = self.new_event(report)

@@ -34,41 +34,50 @@ DOCS = "https://intelmq.readthedocs.io/en/latest/guides/Bots.html#generic-csv-pa
 
 
 class GenericCsvParserBot(ParserBot):
+    columns = None
+    type_translation = {}
+    data_type = None
+    column_regex_search = None
+    time_format = None
+    filter_text = None
+    filter_type = None
+    columns_required = None
+    compose_fields = {}
+    skip_header = False
+    delimiter = ''
+    default_url_protocol = ''
+    type = None
 
     def init(self):
-        self.columns = self.parameters.columns
         # convert columns to an array
         if type(self.columns) is str:
             self.columns = [column.strip() for column in self.columns.split(",")]
 
-        self.type_translation = getattr(self.parameters, 'type_translation', {})
         if self.type_translation and isinstance(self.type_translation, str):  # not-empty string
             self.type_translation = json.loads(self.type_translation)
         elif not self.type_translation:  # empty string
             self.type_translation = {}
-        self.data_type = json.loads(getattr(self.parameters, 'data_type', None) or '{}')
+        self.data_type = json.loads(self.data_type or '{}')
 
         # prevents empty strings:
-        self.column_regex_search = getattr(self.parameters, 'column_regex_search', None) or {}
+        self.column_regex_search = self.column_regex_search or {}
 
-        self.time_format = getattr(self.parameters, "time_format", None)
         if self.time_format not in TIME_CONVERSIONS.keys():
             raise InvalidArgument('time_format', got=self.time_format,
                                   expected=list(TIME_CONVERSIONS.keys()),
                                   docs=DOCS)
-        self.filter_text = getattr(self.parameters, 'filter_text', None)
-        self.filter_type = getattr(self.parameters, 'filter_type', None)
         if self.filter_type and self.filter_type not in ('blacklist', 'whitelist'):
             raise InvalidArgument('filter_type', got=self.filter_type,
                                   expected=("blacklist", "whitelist"),
                                   docs=DOCS)
-        self.columns_required = getattr(self.parameters, 'columns_required',
-                                        [True for _ in self.columns])
+
+        if self.columns_required is None:
+            self.columns_required = [True for _ in self.columns]
         if len(self.columns) != len(self.columns_required):
             raise ValueError("Length of parameters 'columns' (%d) and 'columns_required' (%d) "
                              "needs to be equal." % (len(self.columns), len(self.columns_required)))
 
-        self.compose = getattr(self.parameters, 'compose_fields', {}) or {}
+        self.compose = self.compose_fields or {}
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
@@ -80,14 +89,14 @@ class GenericCsvParserBot(ParserBot):
         # ignore lines having mix of spaces and tabs only
         raw_report = re.sub(r'(?m)^[ \t]*\n?', '', raw_report)
         # skip header
-        if getattr(self.parameters, 'skip_header', False):
+        if self.skip_header:
             self.tempdata.append(raw_report[:raw_report.find('\n')])
             raw_report = raw_report[raw_report.find('\n') + 1:]
         for row in csv.reader(io.StringIO(raw_report),
-                              delimiter=str(self.parameters.delimiter)):
+                              delimiter=str(self.delimiter)):
 
             if self.filter_text and self.filter_type:
-                text_in_row = self.filter_text in self.parameters.delimiter.join(row)
+                text_in_row = self.filter_text in self.delimiter.join(row)
                 if text_in_row and self.filter_type == 'whitelist':
                     yield row
                 elif not text_in_row and self.filter_type == 'blacklist':
@@ -111,6 +120,7 @@ class GenericCsvParserBot(ParserBot):
                     if search:
                         value = search.group(0)
                     else:
+                        type = None
                         value = None
 
                 if key in ("__IGNORE__", ""):
@@ -125,11 +135,11 @@ class GenericCsvParserBot(ParserBot):
                     if not value:
                         continue
                     if '://' not in value:
-                        value = self.parameters.default_url_protocol + value
+                        value = self.default_url_protocol + value
                 elif key in ["classification.type"] and self.type_translation:
                     if value in self.type_translation:
                         value = self.type_translation[value]
-                    elif not hasattr(self.parameters, 'type'):
+                    elif self.type is None:
                         continue
                 if event.add(key, value, raise_failure=False) is not False:
                     break
@@ -142,8 +152,8 @@ class GenericCsvParserBot(ParserBot):
         for key, value in self.compose.items():
             event[key] = value.format(*row)
 
-        if hasattr(self.parameters, 'type') and "classification.type" not in event:
-            event.add('classification.type', self.parameters.type)
+        if self.type is not None and "classification.type" not in event:
+            event.add('classification.type', self.type)
         event.add("raw", self.recover_line(row))
         yield event
 

@@ -9,7 +9,7 @@ from intelmq.lib.bot import CollectorBot
 class TCPCollectorBot(CollectorBot):
 
     def init(self):
-        self.address = (self.parameters.ip, int(self.parameters.port))
+        self.address = (self.ip, int(self.port))
         self.connect()
 
     def recvall(self, conn, n):

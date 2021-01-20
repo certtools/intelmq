@@ -74,7 +74,7 @@ class DummyParserBot(bot.ParserBot):
     """
 
     def parse_line(self, line, report):
-        if getattr(self.parameters, 'raise_warning', False):
+        if getattr(self, 'raise_warning', False):
             warnings.warn('This is a warning test.')
         if line.startswith('#'):
             self.logger.info('Lorem ipsum dolor sit amet.')

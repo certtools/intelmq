@@ -27,12 +27,13 @@ ALLOWED_FIELDS = ['fqdn', 'reverse_dns']
 
 class DomainSuffixExpertBot(Bot):
     suffixes = {}
+    field = None
+    suffix_file = None
 
     def init(self):
-        self.field = self.parameters.field
         if self.field not in ALLOWED_FIELDS:
             raise InvalidArgument('key', got=self.field, expected=ALLOWED_FIELDS)
-        with codecs.open(self.parameters.suffix_file, encoding='UTF-8') as file_handle:
+        with codecs.open(self.suffix_file, encoding='UTF-8') as file_handle:
             self.psl = PublicSuffixList(source=file_handle, only_icann=True)
 
     def process(self):

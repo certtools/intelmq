@@ -5,10 +5,11 @@ from intelmq.lib.bot import Bot
 
 
 class CSVConverterExpertBot(Bot):
+    fieldnames = None
+    delimiter = ','
 
     def init(self):
-        self.fieldnames = self.parameters.fieldnames.split(',')
-        self.delimiter = getattr(self.parameters, 'delimiter', ',')
+        self.fieldnames = self.fieldnames.split(',')
 
     def process(self):
         event = self.receive_message()

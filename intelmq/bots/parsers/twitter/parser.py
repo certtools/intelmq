@@ -41,11 +41,30 @@ except ImportError:
 
 
 class TwitterParserBot(Bot):
+    access_token_key = ""
+    access_token_secret = ""
+    consumer_key = ""
+    consumer_secret = ""
+    default_scheme = None
+    exclude_replies = "false"
+    follow_urls = ""
+    include_rts = "true"
+    name = None
+    provider = "Twitter"
+    target_timelines = ""
+    timelimit = ""
+    tweet_count = ""
+    domain_whitelist = 't.co'
+    _domain_whitelist = []
+    substitutions = ".net;[.]net"
+    _substitutions = []
+    classification_type = "blacklist"
+
     def init(self):
         if url_normalize is None:
             raise MissingDependencyError("url-normalize")
         url_version = pkg_resources.get_distribution("url-normalize").version
-        if tuple(int(v) for v in url_version.split('.')) < (1, 4, 1) and hasattr(self.parameters, 'default_scheme'):
+        if tuple(int(v) for v in url_version.split('.')) < (1, 4, 1) and self.default_scheme is not None:
             raise ValueError("Parameter 'default_scheme' given but 'url-normalize' version %r does not support it. "
                              "Get at least version '1.4.1'." % url_version)
         if get_tld is None:
@@ -54,25 +73,22 @@ class TwitterParserBot(Bot):
             update_tld_names()
         except tld.exceptions.TldIOError:
             self.logger.info("Could not update TLD names cache.")
-        self.domain_whitelist = []
-        if getattr(self.parameters, "domain_whitelist", '') != '':
-            self.domain_whitelist.extend(self.parameters.domain_whitelist.split(','))
-        self.substitutions = []
-        if getattr(self.parameters, "substitutions", '') != '':
-            temp = self.parameters.substitutions.split(';')
+        if self.domain_whitelist != '':
+            self._domain_whitelist.extend(self.domain_whitelist.split(','))
+        if self.substitutions != '':
+            temp = self.substitutions.split(';')
             if len(temp) % 2 != 0:
                 raise InvalidArgument(
                     'substitutions',
-                    got=self.parameters.substitutions,
+                    got=self.substitutions,
                     expected="even number of ; separated strings")
             for i in range(int(len(temp) / 2)):
-                self.substitutions.append([temp[2 * i], temp[2 * i + 1]])
-        self.classification_type = getattr(self.parameters, "classification_type", "undetermined")
+                self._substitutions.append([temp[2 * i], temp[2 * i + 1]])
         if not ClassificationType.is_valid(self.classification_type):
             self.classification_type = 'unknown'
 
-        if hasattr(self.parameters, 'default_scheme'):
-            self.url_kwargs = {'default_scheme': self.parameters.default_scheme}
+        if self.default_scheme is not None:
+            self.url_kwargs = {'default_scheme': self.default_scheme}
         else:
             self.url_kwargs = {}
 
@@ -90,14 +106,14 @@ class TwitterParserBot(Bot):
             return None
 
     def in_whitelist(self, domain: str) -> bool:
-        for dom_clean in self.domain_whitelist:
+        for dom_clean in self._domain_whitelist:
             if re.search(dom_clean, domain):
                 return True
         return False
 
     def get_data_from_text(self, text) -> list:
         data = []
-        for sub in self.substitutions:  # allows for custom matches
+        for sub in self._substitutions:  # allows for custom matches
             text = text.replace(sub[0], sub[1])
         tweet_text = text.split()
         tweet_text = [x.strip().lower() for x in tweet_text]

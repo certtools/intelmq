@@ -32,11 +32,9 @@ class Parameters(object):
 class TestPipeline(unittest.TestCase):
 
     def setUp(self):
-        params = Parameters()
         logger = logging.getLogger('foo')
         logger.addHandler(logging.NullHandler())
-        self.pipe = pipeline.PipelineFactory.create(params,
-                                                    logger=logger)
+        self.pipe = pipeline.PipelineFactory.create(logger=logger)
         self.pipe.set_queues('test-bot-input', 'source')
 
     def test_creation_from_string(self):
@@ -60,12 +58,9 @@ class TestPipeline(unittest.TestCase):
 class TestPythonlist(unittest.TestCase):
 
     def setUp(self):
-        params = Parameters()
-        params.broker = 'Pythonlist'
         logger = logging.getLogger('foo')
         logger.addHandler(logging.NullHandler())
-        self.pipe = pipeline.PipelineFactory.create(params,
-                                                    logger=logger)
+        self.pipe = pipeline.PipelineFactory.create(logger=logger, broker='Pythonlist')
         self.pipe.set_queues('test-bot-input', 'source')
         self.pipe.set_queues('test-bot-output', 'destination')
 
@@ -142,7 +137,6 @@ class TestRedis(unittest.TestCase):
 
     def setUp(self):
         params = Parameters()
-        params.broker = 'Redis'
         setattr(params, 'source_pipeline_host', os.getenv('INTELMQ_PIPELINE_HOST', 'localhost'))
         setattr(params, 'source_pipeline_password', os.getenv('INTELMQ_TEST_REDIS_PASSWORD'))
         setattr(params, 'source_pipeline_db', 4)
@@ -151,8 +145,7 @@ class TestRedis(unittest.TestCase):
         setattr(params, 'destination_pipeline_db', 4)
         logger = logging.getLogger('foo')
         logger.addHandler(logging.NullHandler())
-        self.pipe = pipeline.PipelineFactory.create(params,
-                                                    logger)
+        self.pipe = pipeline.PipelineFactory.create(logger, broker='Redis', pipeline_args=params)
         self.pipe.set_queues('test', 'source')
         self.pipe.set_queues('test', 'destination')
         self.pipe.connect()
@@ -217,12 +210,9 @@ class TestRedis(unittest.TestCase):
 class TestAmqp(unittest.TestCase):
 
     def setUp(self):
-        params = Parameters()
-        params.broker = 'Amqp'
         logger = logging.getLogger('foo')
         logger.addHandler(logging.NullHandler())
-        self.pipe = pipeline.PipelineFactory.create(params,
-                                                    logger=logger)
+        self.pipe = pipeline.PipelineFactory.create(logger=logger, broker='Amqp')
         self.pipe.set_queues('test', 'source')
         self.pipe.set_queues('test', 'destination')
         self.pipe.connect()

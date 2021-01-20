@@ -63,13 +63,13 @@ class RIPEExpertBot(Bot):
         if requests is None:
             raise MissingDependencyError("requests")
 
-        self.__mode = getattr(self.parameters, 'mode', 'append')
+        self.__mode = getattr(self, 'mode', 'append')
         self.__query = {
-            "db_asn": getattr(self.parameters, 'query_ripe_db_asn', True),
-            "db_ip": getattr(self.parameters, 'query_ripe_db_ip', True),
-            "stat_asn": getattr(self.parameters, 'query_ripe_stat_asn', True),
-            "stat_ip": getattr(self.parameters, 'query_ripe_stat_ip', True),
-            "stat_geo": getattr(self.parameters, 'query_ripe_stat_geolocation', True)
+            "db_asn": getattr(self, 'query_ripe_db_asn', True),
+            "db_ip": getattr(self, 'query_ripe_db_ip', True),
+            "stat_asn": getattr(self, 'query_ripe_stat_asn', True),
+            "stat_ip": getattr(self, 'query_ripe_stat_ip', True),
+            "stat_geo": getattr(self, 'query_ripe_stat_geolocation', True)
         }
 
         self.__initialize_http_session()
@@ -80,13 +80,13 @@ class RIPEExpertBot(Bot):
         self.http_session = utils.create_request_session(self)
 
     def __initialize_cache(self):
-        cache_host = getattr(self.parameters, 'redis_cache_host')
-        cache_port = getattr(self.parameters, 'redis_cache_port')
-        cache_db = getattr(self.parameters, 'redis_cache_db')
-        cache_ttl = getattr(self.parameters, 'redis_cache_ttl')
+        cache_host = getattr(self, 'redis_cache_host')
+        cache_port = getattr(self, 'redis_cache_port')
+        cache_db = getattr(self, 'redis_cache_db')
+        cache_ttl = getattr(self, 'redis_cache_ttl')
         if cache_host and cache_port and cache_db and cache_ttl:
             self.__cache = Cache(cache_host, cache_port, cache_db, cache_ttl,
-                                 getattr(self.parameters, "redis_cache_password", None))
+                                 getattr(self, "redis_cache_password", None))
 
     def process(self):
         event = self.receive_message()

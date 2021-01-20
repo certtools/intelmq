@@ -33,10 +33,10 @@ class ShadowserverParserBot(ParserBot):
     sparser_config = None
     feedname = None
     mode = None
+    overwrite = False
 
     def init(self):
-        if getattr(self.parameters, 'feedname', None):
-            self.feedname = self.parameters.feedname
+        if self.feedname is not None:
             self.sparser_config = config.get_feed_by_feedname(self.feedname)
             if self.sparser_config:
                 self.logger.info('Using fixed feed name %r for parsing reports.' % self.feedname)
@@ -48,13 +48,6 @@ class ShadowserverParserBot(ParserBot):
                 self.mode = 'detect'
         else:
             self.mode = 'detect'
-
-        # Set a switch if the parser shall reset the feed.name,
-        #  for this event
-        self.overwrite = False
-        if hasattr(self.parameters, 'overwrite'):
-            if self.parameters.overwrite:
-                self.overwrite = True
 
     def parse(self, report):
         if self.mode == 'fixed':

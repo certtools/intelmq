@@ -43,8 +43,8 @@ ASNS = ASN16 + ASN32
 class RFC1918ExpertBot(Bot):
 
     def init(self):
-        self.fields = self.parameters.fields.lower().strip().split(",")
-        self.policy = self.parameters.policy.lower().strip().split(",")
+        self.fields = self.fields.lower().strip().split(",")
+        self.policy = self.policy.lower().strip().split(",")
 
         if len(self.fields) != len(self.policy):
             raise ValueError("Length of parameters 'fields' (%d) and 'policy' (%d) is unequal."

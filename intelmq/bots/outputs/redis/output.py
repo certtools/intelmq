@@ -6,17 +6,22 @@ from intelmq.lib.bot import Bot
 
 
 class RedisOutputBot(Bot):
+    redis_server_ip = None
+    redis_server_port = None
+    redis_db = None
+    redis_queue = None
+    redis_password = None
+    redis_timeout = None
+    hierarchical_output = False
+    with_type = True
 
     def init(self):
-        self.host = self.parameters.redis_server_ip
-        self.port = int(self.parameters.redis_server_port)
-        self.db = int(self.parameters.redis_db)
-        self.queue = self.parameters.redis_queue
-        self.password = self.parameters.redis_password
-        self.timeout = int(self.parameters.redis_timeout)
-        self.hierarchical_output = getattr(self.parameters,
-                                           "hierarchical_output", False)
-        self.with_type = getattr(self.parameters, "with_type", True)  # backwards compat
+        self.host = self.redis_server_ip
+        self.port = int(self.redis_server_port)
+        self.db = int(self.redis_db)
+        self.queue = self.redis_queue
+        self.password = self.redis_password
+        self.timeout = int(self.redis_timeout)
 
         redis_version = tuple(int(x) for x in redis.__version__.split('.'))
         if redis_version >= (3, 0, 0):

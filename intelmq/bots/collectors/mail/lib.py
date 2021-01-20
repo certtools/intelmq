@@ -13,40 +13,51 @@ except ImportError:
 
 
 class MailCollectorBot(CollectorBot):
+    attach_unzip = None
+    mail_host = None
+    ssl_ca_certificate = None
+    mail_user = None
+    mail_password = None
+    mail_ssl = None
+    mail_port = None
+    folder = None
+    sent_to = None
+    sent_from = None
+    subject_regex = None
 
     def init(self):
         if imbox is None:
             raise MissingDependencyError("imbox")
 
-        if getattr(self.parameters, 'attach_unzip', None) and not self.extract_files:
+        if self.attach_unzip is not None and not self.extract_files:
             self.extract_files = True
             self.logger.warning("The parameter 'attach_unzip' is deprecated and will "
                                 "be removed in version 4.0. Use 'extract_files' instead.")
 
     def connect_mailbox(self):
-        self.logger.debug("Connecting to %s.", self.parameters.mail_host)
-        ca_file = getattr(self.parameters, 'ssl_ca_certificate', None)
+        self.logger.debug("Connecting to %s.", self.mail_host)
+        ca_file = self.ssl_ca_certificate
         ssl_custom_context = ssl.create_default_context(cafile=ca_file)
-        mailbox = imbox.Imbox(self.parameters.mail_host,
-                              self.parameters.mail_user,
-                              self.parameters.mail_password,
-                              self.parameters.mail_ssl,
+        mailbox = imbox.Imbox(self.mail_host,
+                              self.mail_user,
+                              self.mail_password,
+                              self.mail_ssl,
                               # imbox itself uses ports 143/993 as default depending on SSL setting
-                              port=getattr(self.parameters, 'mail_port', None),
+                              port=self.mail_port,
                               ssl_context=ssl_custom_context)
         return mailbox
 
     def process(self):
         mailbox = self.connect_mailbox()
-        emails = mailbox.messages(folder=self.parameters.folder, unread=True,
-                                  sent_to=getattr(self.parameters, "sent_to", None),
-                                  sent_from=getattr(self.parameters, "sent_from", None))
+        emails = mailbox.messages(folder=self.folder, unread=True,
+                                  sent_to=self.sent_to,
+                                  sent_from=self.sent_from)
 
         if emails:
             for uid, message in emails:
 
-                if (self.parameters.subject_regex and
-                        not re.search(self.parameters.subject_regex,
+                if (self.subject_regex and
+                        not re.search(self.subject_regex,
                                       re.sub(r"\r\n\s", " ", message.subject))):
                     self.logger.debug("Message with date %s skipped because subject %r does not match.",
                                       message.date, message.subject)

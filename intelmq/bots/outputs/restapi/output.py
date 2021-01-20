@@ -11,6 +11,13 @@ from intelmq.lib.exceptions import MissingDependencyError
 
 
 class RestAPIOutputBot(Bot):
+    auth_token_name = None
+    auth_token = None
+    auth_type = None
+    auth = None
+    use_json = None
+    host = None
+    hierarchical_output = None
 
     def init(self):
         if requests is None:
@@ -18,12 +25,12 @@ class RestAPIOutputBot(Bot):
 
         self.set_request_parameters()
 
-        if self.parameters.auth_token_name and self.parameters.auth_token:
-            if self.parameters.auth_type == 'http_header':
+        if self.auth_token_name and self.auth_token:
+            if self.auth_type == 'http_header':
                 self.http_header.update(
-                    {self.parameters.auth_token_name: self.parameters.auth_token})
-            elif self.parameters.auth_type == 'http_basic_auth':
-                self.auth = self.parameters.auth_token_name, self.parameters.auth_token
+                    {self.auth_token_name: self.auth_token})
+            elif self.auth_type == 'http_basic_auth':
+                self.auth = self.auth_token_name, self.auth_token
         self.http_header.update({"Content-Type":
                                  "application/json; charset=utf-8"})
 
@@ -32,16 +39,16 @@ class RestAPIOutputBot(Bot):
 
     def process(self):
         event = self.receive_message()
-        if self.parameters.use_json:
-            kwargs = {'json': event.to_dict(hierarchical=self.parameters.hierarchical_output)}
+        if self.use_json:
+            kwargs = {'json': event.to_dict(hierarchical=self.hierarchical_output)}
         else:
-            kwargs = {'data': event.to_dict(hierarchical=self.parameters.hierarchical_output)}
+            kwargs = {'data': event.to_dict(hierarchical=self.hierarchical_output)}
 
         timeoutretries = 0
         req = None
         while timeoutretries < self.http_timeout_max_tries and req is None:
             try:
-                req = self.session.post(self.parameters.host,
+                req = self.session.post(self.host,
                                         timeout=self.http_timeout_sec,
                                         **kwargs)
             except requests.exceptions.Timeout:

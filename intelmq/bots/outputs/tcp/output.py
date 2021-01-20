@@ -18,10 +18,10 @@ class TCPOutputBot(Bot):
     is_multithreadable = False
 
     def init(self):
-        self.to_intelmq = getattr(self.parameters, "counterpart_is_intelmq", False)
+        self.to_intelmq = getattr(self, "counterpart_is_intelmq", False)
 
-        self.address = (self.parameters.ip, int(self.parameters.port))
-        self.separator = utils.encode(self.parameters.separator) if (hasattr(self.parameters, "separator")) else None
+        self.address = (self.ip, int(self.port))
+        self.separator = utils.encode(self.separator) if (hasattr(self, "separator")) else None
         self.connect()
 
     def recvall(self, conn, n):
@@ -37,7 +37,7 @@ class TCPOutputBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        data = event.to_json(hierarchical=self.parameters.hierarchical_output)
+        data = event.to_json(hierarchical=self.hierarchical_output)
         try:
             while True:
                 if self.separator:

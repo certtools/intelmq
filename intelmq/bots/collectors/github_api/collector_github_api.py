@@ -25,9 +25,9 @@ class GithubAPICollectorBot(CollectorBot):
             raise ValueError('Could not import requests. Please install it.')
 
         self.__user_headers = static_params['headers']
-        if hasattr(self.parameters, 'basic_auth_username') and hasattr(self.parameters, 'basic_auth_password'):
-            self.__user_headers.update(self.__produce_auth_header(getattr(self.parameters, 'basic_auth_username'),
-                                                                  getattr(self.parameters, 'basic_auth_password')))
+        if hasattr(self, 'basic_auth_username') and hasattr(self, 'basic_auth_password'):
+            self.__user_headers.update(self.__produce_auth_header(getattr(self, 'basic_auth_username'),
+                                                                  getattr(self, 'basic_auth_password')))
         else:
             self.logger.warning('Using unauthenticated API access, means the request limit is at 60 per hour.')
 

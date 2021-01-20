@@ -22,19 +22,19 @@ class InvalidPTRResult(ValueError):
 class ReverseDnsExpertBot(Bot):
 
     def init(self):
-        self.cache = Cache(self.parameters.redis_cache_host,
-                           self.parameters.redis_cache_port,
-                           self.parameters.redis_cache_db,
-                           self.parameters.redis_cache_ttl,
-                           getattr(self.parameters, "redis_cache_password",
+        self.cache = Cache(self.redis_cache_host,
+                           self.redis_cache_port,
+                           self.redis_cache_db,
+                           self.redis_cache_ttl,
+                           getattr(self, "redis_cache_password",
                                    None)
                            )
 
-        if not hasattr(self.parameters, 'overwrite'):
+        if not hasattr(self, 'overwrite'):
             self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
                                 "Please set it explicitly, default will change to "
                                 "'False' in version 3.0.0'.")
-        self.overwrite = getattr(self.parameters, 'overwrite', True)
+        self.overwrite = getattr(self, 'overwrite', True)
 
     def process(self):
         event = self.receive_message()
@@ -81,7 +81,7 @@ class ReverseDnsExpertBot(Bot):
                 except (dns.exception.DNSException, InvalidPTRResult) as e:
                     # Set default TTL for 'DNS query name does not exist' error
                     ttl = None if isinstance(e, dns.resolver.NXDOMAIN) else \
-                        getattr(self.parameters, "cache_ttl_invalid_response",
+                        getattr(self, "cache_ttl_invalid_response",
                                 60)
                     self.cache.set(cache_key, DNS_EXCEPTION_VALUE, ttl)
                     result = None

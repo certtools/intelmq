@@ -58,25 +58,25 @@ class ThresholdExpertBot(Bot):
     _message_processed_verb = 'Forwarded'
 
     is_multithreadable = False
+    filter_keys = []
+    filter_type = "whitelist"
+    bypass = False
+    timeout = -1
+    threshold = -1
+    add_keys = {}
 
     def init(self):
-        self.cache = Cache(self.parameters.redis_cache_host,
-                           self.parameters.redis_cache_port,
-                           self.parameters.redis_cache_db,
-                           self.parameters.timeout,
-                           getattr(self.parameters, "redis_cache_password",
+        self.cache = Cache(self.redis_cache_host,
+                           self.redis_cache_port,
+                           self.redis_cache_db,
+                           self.timeout,
+                           getattr(self, "redis_cache_password",
                                    None)
                            )
-        self.filter_keys = getattr(self.parameters, "filter_keys", [])
-        self.filter_type = getattr(self.parameters, "filter_type", "whitelist")
-        self.bypass = getattr(self.parameters, "bypass", False)
-        self.timeout = getattr(self.parameters, "timeout", -1)
         if self.timeout <= 0:
             raise ConfigurationError('Timeout', 'Invalid timeout specified, use positive integer seconds.')
-        self.threshold = getattr(self.parameters, "threshold", -1)
         if self.threshold <= 0:
             raise ConfigurationError('Threshold', 'Invalid threshold specified, use positive integer count.')
-        self.add_keys = getattr(self.parameters, "add_keys", {})
 
     def process(self):
         message = self.receive_message()

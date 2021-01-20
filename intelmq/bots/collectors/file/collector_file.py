@@ -31,34 +31,33 @@ class FileCollectorBot(CollectorBot):
 
     def init(self):
         # Test if path is a directory
-        if not os.path.isdir(self.parameters.path):
-            raise exceptions.InvalidArgument('path', got=self.parameters.path,
+        if not os.path.isdir(self.path):
+            raise exceptions.InvalidArgument('path', got=self.path,
                                              expected="directory")
 
-        if not self.parameters.postfix:
+        if not self.postfix:
             self.logger.warn("No file extension was set. The collector will"
-                             " read all files in %s.", self.parameters.path)
-            if self.parameters.delete_file:
+                             " read all files in %s.", self.path)
+            if self.delete_file:
                 self.logger.error("This configuration would delete all files"
                                   " in %s. I'm stopping now....",
-                                  self.parameters.path)
+                                  self.path)
                 self.stop()
 
-        self.chunk_size = getattr(self.parameters, 'chunk_size', None)
-        self.chunk_replicate_header = getattr(self.parameters,
-                                              'chunk_replicate_header', None)
+        self.chunk_size = getattr(self, 'chunk_size', None)
+        self.chunk_replicate_header = getattr(self, 'chunk_replicate_header', None)
 
     def process(self):
         self.logger.debug("Started looking for files.")
 
-        if os.path.isdir(self.parameters.path):
-            p = os.path.abspath(self.parameters.path)
+        if os.path.isdir(self.path):
+            p = os.path.abspath(self.path)
 
             # iterate over all files in dir
             for f in os.listdir(p):
                 filename = os.path.join(p, f)
                 if os.path.isfile(filename):
-                    if fnmatch.fnmatch(f, '*' + self.parameters.postfix):
+                    if fnmatch.fnmatch(f, '*' + self.postfix):
                         self.logger.info("Processing file %r.", filename)
 
                         template = self.new_report()
@@ -70,7 +69,7 @@ class FileCollectorBot(CollectorBot):
                                                            self.chunk_replicate_header):
                                 self.send_message(report)
 
-                        if self.parameters.delete_file:
+                        if self.delete_file:
                             try:
                                 os.remove(filename)
                                 self.logger.debug("Deleted file: %r.", filename)

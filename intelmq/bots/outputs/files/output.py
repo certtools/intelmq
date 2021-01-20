@@ -10,10 +10,13 @@ from intelmq.lib.exceptions import ConfigurationError
 
 
 class FilesOutputBot(OutputBot):
+    tmp = None
+    dir = None
+    suffix = None
 
     def init(self):
-        self.tmp = self._ensure_path(self.parameters.tmp)
-        self.dir = self._ensure_path(self.parameters.dir)
+        self.tmp = self._ensure_path(self.tmp)
+        self.dir = self._ensure_path(self.dir)
         if os.stat(self.tmp).st_dev != os.stat(self.dir).st_dev:    # pragma: no cover (hard to test)
             raise ConfigurationError(
                 "bot setup",
@@ -33,7 +36,7 @@ class FilesOutputBot(OutputBot):
         """ Creates unique filename (Maildir inspired) """
         (inode, device) = os.fstat(fd)[1:3] if fd else (0, 0)
         return "%s.%d.%f.%d.%d%s" % (
-            self.hostname, self.pid, time.time(), device, inode, self.parameters.suffix)
+            self.hostname, self.pid, time.time(), device, inode, self.suffix)
 
     def create_unique_file(self):
         """ Safely creates machine-wide uniquely named file in tmp dir. """

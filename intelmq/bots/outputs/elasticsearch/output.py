@@ -52,29 +52,20 @@ def get_event_date(event_dict: dict) -> datetime.date:
 
 
 class ElasticsearchOutputBot(Bot):
+    elastic_host = '127.0.0.1'
+    elastic_port = '9200'
+    elastic_index = 'intelmq'
+    rotate_index = False
+    use_ssl = False
+    ssl_ca_certificate = None
+    ssl_show_warnings = True
+    replacement_char = None
+    flatten_fields = ['extra']
 
     def init(self):
         if Elasticsearch is None:
             raise MissingDependencyError('elasticsearch', version='>=5.0.0,<6.0.0')
 
-        self.elastic_host = getattr(self.parameters,
-                                    'elastic_host', '127.0.0.1')
-        self.elastic_port = getattr(self.parameters,
-                                    'elastic_port', '9200')
-        self.elastic_index = getattr(self.parameters,
-                                     'elastic_index', 'intelmq')
-        self.rotate_index = getattr(self.parameters,
-                                    'rotate_index', False)
-        self.use_ssl = getattr(self.parameters,
-                               'use_ssl', False)
-        self.ssl_ca_certificate = getattr(self.parameters,
-                                          'ssl_ca_certificate', None)
-        self.ssl_show_warnings = getattr(self.parameters,
-                                         'ssl_show_warnings', True)
-        self.replacement_char = getattr(self.parameters,
-                                        'replacement_char', None)
-        self.flatten_fields = getattr(self.parameters,
-                                      'flatten_fields', ['extra'])
         if isinstance(self.flatten_fields, str):
             self.flatten_fields = self.flatten_fields.split(',')
 

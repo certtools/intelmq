@@ -28,7 +28,7 @@ class AbusixExpertBot(Bot):
         for key in ['source.', 'destination.']:
             ip_key = key + "ip"
             abuse_contact_key = key + "abuse_contact"
-            if abuse_contact_key in event and not self.parameters.overwrite:
+            if abuse_contact_key in event and not self.overwrite:
                 continue
             if ip_key in event:
                 ip = event.get(ip_key)

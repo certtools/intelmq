@@ -13,11 +13,19 @@ from intelmq.lib.bot import SQLBot
 
 
 class SQLOutputBot(SQLBot):
+    autocommit = True
+    database = "intelmq-events"
+    engine = None
+    host = "localhost"
+    jsondict_as_string = True
+    password = None
+    port = "5432"
+    sslmode = "require"
+    table = 'events'
+    user = "intelmq"
 
     def init(self):
         super().init()
-        self.table = self.parameters.table
-        self.jsondict_as_string = getattr(self.parameters, 'jsondict_as_string', True)
 
     def process(self):
         event = self.receive_message().to_dict(jsondict_as_string=self.jsondict_as_string)

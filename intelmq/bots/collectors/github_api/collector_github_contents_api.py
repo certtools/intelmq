@@ -24,21 +24,21 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
 
     def init(self):
         super().init()
-        if hasattr(self.parameters, 'repository'):
+        if hasattr(self, 'repository'):
             self.__base_api_url = 'https://api.github.com/repos/{}/contents'.format(
-                getattr(self.parameters, 'repository'))
-        if hasattr(self.parameters, 'regex'):
+                getattr(self, 'repository'))
+        if hasattr(self, 'regex'):
             try:
-                re.compile(getattr(self.parameters, 'regex'))
+                re.compile(getattr(self, 'regex'))
             except Exception:
-                raise InvalidArgument('regex', expected='string', got=getattr(self.parameters, 'regex'))
+                raise InvalidArgument('regex', expected='string', got=getattr(self, 'regex'))
         else:
             raise InvalidArgument('regex', expected='string', got=None)
-        if not hasattr(self.parameters, 'repository'):
+        if not hasattr(self, 'repository'):
             raise InvalidArgument('repository', expected='string')
-        if hasattr(self.parameters, 'extra_fields'):
+        if hasattr(self, 'extra_fields'):
             try:
-                self.__extra_fields = [x.strip() for x in getattr(self.parameters, 'extra_fields').split(',')]
+                self.__extra_fields = [x.strip() for x in getattr(self, 'extra_fields').split(',')]
             except Exception:
                 raise InvalidArgument('extra_fields', expected='comma-separated list')
         else:
@@ -63,7 +63,7 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
         for github_file in data:
             if github_file['type'] == 'dir':
                 extracted_github_files = self.__recurse_repository_files(github_file['url'], extracted_github_files)
-            elif github_file['type'] == 'file' and bool(re.search(getattr(self.parameters, 'regex', '.*.json'),
+            elif github_file['type'] == 'file' and bool(re.search(getattr(self, 'regex', '.*.json'),
                                                                   github_file['name'])):
                 extracted_github_file_data = {
                     'download_url': github_file['download_url'],

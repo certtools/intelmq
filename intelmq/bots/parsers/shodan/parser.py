@@ -138,16 +138,8 @@ CONVERSIONS = {
 
 
 class ShodanParserBot(Bot):
-
-    def init(self):
-        if getattr(self.parameters, 'ignore_errors', True):
-            self.ignore_errors = True
-        else:
-            self.ignore_errors = False
-        if getattr(self.parameters, 'minimal_mode', False):
-            self.minimal_mode = True
-        else:
-            self.minimal_mode = False
+    ignore_errors = True
+    minimal_mode = False
 
     def apply_mapping(self, mapping, data):
         self.logger.debug('Applying mapping %r to data %r.', mapping, data)

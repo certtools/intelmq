@@ -13,6 +13,8 @@ except ImportError:
 
 
 class GeohashExpertBot(Bot):
+    precision = 7
+    overwrite = False
 
     def init(self):
         if not geohash:
@@ -30,8 +32,8 @@ class GeohashExpertBot(Bot):
             event.add(geohash_key,
                       geohash.encode(event[latitude_key],
                                      event[longitude_key],
-                                     precision=self.parameters.precision),
-                      overwrite=self.parameters.overwrite)
+                                     precision=self.precision),
+                      overwrite=self.overwrite)
 
         self.send_message(event)
         self.acknowledge_message()

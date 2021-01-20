@@ -60,7 +60,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
         """
         if isinstance(self.time_match, datetime):  # absolute
             now = datetime.now(tz=pytz.timezone('UTC'))
-            if now - timedelta(seconds=self.parameters.redis_cache_ttl) > self.time_match:
+            if now - timedelta(seconds=self.redis_cache_ttl) > self.time_match:
                 raise ValueError("The cache's TTL must be higher than 'not_older_than', "
                                  "otherwise the bot is processing the same data over and over again.")
 
@@ -70,33 +70,33 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
 
         self.set_request_parameters()
 
-        self.http_header['Ocp-Apim-Subscription-Key'] = self.parameters.api_key
-        if self.parameters.file_match:
-            self.file_match = re.compile(self.parameters.file_match)
+        self.http_header['Ocp-Apim-Subscription-Key'] = self.api_key
+        if self.file_match:
+            self.file_match = re.compile(self.file_match)
         else:
             self.file_match = None
 
-        if self.parameters.not_older_than:
+        if self.not_older_than:
             try:
-                self.time_match = timedelta(minutes=parse_relative(self.parameters.not_older_than))
+                self.time_match = timedelta(minutes=parse_relative(self.not_older_than))
             except ValueError:
-                self.time_match = parser.parse(self.parameters.not_older_than).astimezone(pytz.utc)
+                self.time_match = parser.parse(self.not_older_than).astimezone(pytz.utc)
                 self.logger.info("Filtering files absolute %r.", self.time_match)
                 self.check_ttl_time()
             else:
                 self.logger.info("Filtering files relative %r.", self.time_match)
-                if timedelta(seconds=self.parameters.redis_cache_ttl) < self.time_match:
+                if timedelta(seconds=self.redis_cache_ttl) < self.time_match:
                     raise ValueError("The cache's TTL must be higher than 'not_older_than', "
                                      "otherwise the bot is processing the same data over and over again.")
         else:
             self.time_match = None
         self.session = create_request_session(self)
 
-        self.cache = Cache(self.parameters.redis_cache_host,
-                           self.parameters.redis_cache_port,
-                           self.parameters.redis_cache_db,
-                           self.parameters.redis_cache_ttl,
-                           getattr(self.parameters, "redis_cache_password",
+        self.cache = Cache(self.redis_cache_host,
+                           self.redis_cache_port,
+                           self.redis_cache_db,
+                           self.redis_cache_ttl,
+                           getattr(self, "redis_cache_password",
                                    None)
                            )
 

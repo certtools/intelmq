@@ -26,11 +26,10 @@ MAP_geo_env_remote_addr = {"country_code": 'source.geolocation.cc',
 
 
 class AnubisNetworksParserBot(Bot):
+    use_malware_familiy_as_classification_identifier = True
 
     def init(self):
-        self.malware_as_identifier = getattr(self.parameters,
-                                             'use_malware_familiy_as_classification_identifier',
-                                             True)
+        self.malware_as_identifier = self.use_malware_familiy_as_classification_identifier
 
     def process(self):
         report = self.receive_message()

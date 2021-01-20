@@ -46,7 +46,7 @@ class NationalCERTContactCertATExpertBot(Bot):
             if key in event:
                 parameters = {
                     'ip': event[key],
-                    'bFilter': 'on' if self.parameters.filter else 'off',
+                    'bFilter': 'on' if self.filter else 'off',
                     'bShowNationalCERT': 'on',
                     'sep': 'semicolon',
                 }
@@ -58,7 +58,7 @@ class NationalCERTContactCertATExpertBot(Bot):
                 response = req.text.strip().split(';')
 
                 ccfield = '{}.geolocation.cc'.format(section)
-                if self.parameters.overwrite_cc or ccfield not in event:
+                if self.overwrite_cc or ccfield not in event:
                     event.add(ccfield, response[1])
 
                 if abuse in event:

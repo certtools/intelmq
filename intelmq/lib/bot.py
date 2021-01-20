@@ -10,6 +10,7 @@ import argparse
 import atexit
 import csv
 import fcntl
+import inspect
 import io
 import json
 import logging
@@ -52,6 +53,50 @@ class Bot(object):
     group = None
     module = None
     name = None
+    # Imported from the legacy defaults.conf
+    accuracy = 100
+    bot_heartbeat_min_wait = 60
+    bot_monitoring_interval = 86400
+    destination_pipeline_broker = "redis"
+    destination_pipeline_db = 2
+    destination_pipeline_host = "127.0.0.1"
+    destination_pipeline_password = None
+    destination_pipeline_port = 6379
+    error_dump_message = True
+    error_log_exception = True
+    error_log_message = False
+    error_max_retries = 3
+    error_procedure = "pass"
+    error_retry_delay = 15
+    http_proxy = None
+    http_timeout_max_tries = 3
+    http_timeout_sec = 30
+    http_user_agent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+    http_verify_cert = True
+    https_proxy = None
+    instances_threads = 0
+    load_balance = False
+    log_processed_messages_count = 500
+    log_processed_messages_seconds = 900
+    logging_handler = "file"
+    logging_level = "INFO"
+    logging_path = "/opt/intelmq/var/log/"
+    logging_syslog = "/dev/log"
+    process_manager = "intelmq"
+    rate_limit = 0
+    redis_cache_host = "127.0.0.1"
+    redis_cache_port = 6379
+    redis_cache_db = 5
+    source_pipeline_broker = "redis"
+    source_pipeline_db = 2
+    source_pipeline_host = "127.0.0.1"
+    source_pipeline_password = None
+    source_pipeline_port = 6379
+    ssl_ca_certificate = None
+    statistics_database = 3
+    statistics_host = "127.0.0.1"
+    statistics_password = None
+    statistics_port = 6379
 
     _message_processed_verb = 'Processed'
 
@@ -64,8 +109,8 @@ class Bot(object):
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
+
         self.__log_buffer = []
-        self.parameters = Parameters()
 
         self.__error_retries_counter = 0
         self.__source_pipeline = None
@@ -110,18 +155,15 @@ class Bot(object):
             self.logger.info('Bot is starting.')
             self.__load_runtime_configuration()
 
-            broker = getattr(self.parameters, "source_pipeline_broker",
-                             getattr(self.parameters, "broker", "redis")).title()
+            broker = self.source_pipeline_broker.title()
             if broker != 'Amqp':
                 self.is_multithreadable = False
 
             """ Multithreading """
-            if (getattr(self.parameters, 'instances_threads', 0) > 1 and
-                    not self.is_multithreaded and
-                    self.is_multithreadable and
-                    not disable_multithreading):
+            if (self.instances_threads > 1 and not self.is_multithreaded and
+               self.is_multithreadable and not disable_multithreading):
                 self.logger.handlers = []
-                num_instances = int(self.parameters.instances_threads)
+                num_instances = int(self.instances_threads)
                 instances = []
                 sighup_events = []
 
@@ -145,14 +187,14 @@ class Bot(object):
                 for i, thread in enumerate(instances):
                     thread.join()
                 return
-            elif (getattr(self.parameters, 'instances_threads', 1) > 1 and
+            elif (getattr(self, 'instances_threads', 1) > 1 and
                   not self.is_multithreadable):
                 self.logger.error('Multithreading is configured, but is not '
                                   'available for this bot. Look at the FAQ '
                                   'for a list of reasons for this. '
                                   'https://intelmq.readthedocs.io/en/latest/user/FAQ.html'
                                   '#multithreading-is-not-available-for-this-bot')
-            elif (getattr(self.parameters, 'instances_threads', 1) > 1 and
+            elif (getattr(self, 'instances_threads', 1) > 1 and
                   disable_multithreading):
                 self.logger.warning('Multithreading is configured, but is not '
                                     'available for interactive runs.')
@@ -177,7 +219,7 @@ class Bot(object):
                 def catch_shutdown():
                     self.stop()
         except Exception as exc:
-            if self.parameters.error_log_exception:
+            if self.error_log_exception:
                 self.logger.exception('Bot initialization failed.')
             else:
                 self.logger.error(utils.error_message_from_exc(exc))
@@ -187,16 +229,10 @@ class Bot(object):
             raise
         self.logger.info("Bot initialization completed.")
 
-        self.__stats_cache = cache.Cache(host=getattr(self.parameters,
-                                                      "statistics_host",
-                                                      "127.0.0.1"),
-                                         port=getattr(self.parameters,
-                                                      "statistics_port", "6379"),
-                                         db=int(getattr(self.parameters,
-                                                        "statistics_database", 3)),
-                                         password=getattr(self.parameters,
-                                                          "statistics_password",
-                                                          None),
+        self.__stats_cache = cache.Cache(host=self.statistics_host,
+                                         port=self.statistics_port,
+                                         db=int(self.statistics_database),
+                                         password=self.statistics_password,
                                          ttl=None,
                                          )
         if start:
@@ -252,8 +288,8 @@ class Bot(object):
             try:
                 if not starting and (error_on_pipeline or error_on_message):
                     self.logger.info('Bot will continue in %s seconds.',
-                                     self.parameters.error_retry_delay)
-                    time.sleep(self.parameters.error_retry_delay)
+                                     self.error_retry_delay)
+                    time.sleep(self.error_retry_delay)
 
                 starting = False
                 error_on_message = False
@@ -274,7 +310,7 @@ class Bot(object):
             except exceptions.PipelineError as exc:
                 error_on_pipeline = True
 
-                if self.parameters.error_log_exception:
+                if self.error_log_exception:
                     self.logger.exception('Pipeline failed.')
                 else:
                     self.logger.error(utils.error_message_from_exc(exc))
@@ -285,7 +321,7 @@ class Bot(object):
                 self.logger.exception('Could not decode message from pipeline. No retries useful.')
 
                 # ensure that we do not re-process the faulty message
-                self.__error_retries_counter = self.parameters.error_max_retries + 1
+                self.__error_retries_counter = self.error_max_retries + 1
                 error_on_message = sys.exc_info()
 
                 message_to_dump = exc.object
@@ -301,13 +337,13 @@ class Bot(object):
 
                 error_on_message = sys.exc_info()
 
-                if self.parameters.error_log_exception:
+                if self.error_log_exception:
                     self.logger.exception("Bot has found a problem.")
                 else:
                     self.logger.error(utils.error_message_from_exc(exc))
                     self.logger.error("Bot has found a problem.")
 
-                if self.parameters.error_log_message:
+                if self.error_log_message:
                     # Print full message if explicitly requested by config
                     self.logger.info("Current Message(event): %r.",
                                      self.__current_message)
@@ -329,11 +365,11 @@ class Bot(object):
 
                     # reached the maximum number of retries
                     if (self.__error_retries_counter >
-                            self.parameters.error_max_retries):
+                            self.error_max_retries):
 
                         if error_on_message:
 
-                            if self.parameters.error_dump_message:
+                            if self.error_dump_message:
                                 error_traceback = traceback.format_exception(*error_on_message)
                                 self._dump_message(error_traceback,
                                                    message=message_to_dump if message_to_dump else self.__current_message)
@@ -357,7 +393,7 @@ class Bot(object):
                             self.stop(exitcode=0)
 
                         # error_procedure: stop
-                        elif self.parameters.error_procedure == "stop":
+                        elif self.error_procedure == "stop":
                             self.stop()
 
                         # error_procedure: pass
@@ -378,14 +414,14 @@ class Bot(object):
                         self.logger.info('Shutting down scheduled bot.')
                         self.stop(exitcode=0)
 
-                if getattr(self.parameters, 'testing', False):
+                if getattr(self, 'testing', False):
                     self.logger.debug('Testing environment detected, returning now.')
                     return
 
                 # Do rate_limit at the end on success and after the retries
                 # counter has been reset: https://github.com/certtools/intelmq/issues/1431
                 if do_rate_limit:
-                    if self.parameters.rate_limit and self.run_mode != 'scheduled':
+                    if self.rate_limit and self.run_mode != 'scheduled':
                         self.__sleep()
                     if self.collector_empty_process and self.run_mode != 'scheduled':
                         self.__sleep(1, log=False)
@@ -437,7 +473,7 @@ class Bot(object):
         """
         starttime = time.time()
         if remaining is None:
-            remaining = self.parameters.rate_limit
+            remaining = self.rate_limit
 
         while remaining > 0:
             if log:
@@ -445,7 +481,7 @@ class Bot(object):
                                                                        utils.seconds_to_human(remaining)))
             time.sleep(remaining)
             self.__handle_sighup()
-            remaining = self.parameters.rate_limit - (time.time() - starttime)
+            remaining = self.rate_limit - (time.time() - starttime)
 
     def stop(self, exitcode: int = 1):
         if not self.logger:
@@ -481,7 +517,7 @@ class Bot(object):
             self.__log_buffer.append(('info', 'Bot stopped.'))
             self.__print_log_buffer()
 
-        if not getattr(self.parameters, 'testing', False):
+        if not getattr(self, 'testing', False):
             sys.exit(exitcode)
 
     def __print_log_buffer(self):
@@ -505,13 +541,16 @@ class Bot(object):
         self.stop()
 
     def __connect_pipelines(self):
+        pipeline_args = sorted(i for i in dir(self) if not inspect.ismethod(i) and (i.startswith('source_pipeline_') or i.startswith('destination_pipeline')))
         if self.__source_queues:
             self.logger.debug("Loading source pipeline and queue %r.", self.__source_queues)
-            self.__source_pipeline = PipelineFactory.create(self.parameters,
-                                                            logger=self.logger,
+            self.__source_pipeline = PipelineFactory.create(logger=self.logger,
                                                             direction="source",
                                                             queues=self.__source_queues,
-                                                            bot=self)
+                                                            pipeline_args=pipeline_args,
+                                                            load_balance=self.load_balance,
+                                                            is_multithreaded=self.is_multithreaded)
+
             self.__source_pipeline.connect()
             self.__current_message = None
             self.logger.debug("Connected to source queue.")
@@ -519,10 +558,13 @@ class Bot(object):
         if self.__destination_queues:
             self.logger.debug("Loading destination pipeline and queues %r.",
                               self.__destination_queues)
-            self.__destination_pipeline = PipelineFactory.create(self.parameters,
-                                                                 logger=self.logger,
+            self.__destination_pipeline = PipelineFactory.create(logger=self.logger,
                                                                  direction="destination",
-                                                                 queues=self.__destination_queues)
+                                                                 queues=self.__destination_queues,
+                                                                 pipeline_args=pipeline_args,
+                                                                 load_balance=self.load_balance,
+                                                                 is_multithreaded=self.is_multithreaded)
+
             self.__destination_pipeline.connect()
             self.logger.debug("Connected to destination queues.")
         else:
@@ -561,8 +603,8 @@ class Bot(object):
             self.__message_counter["path"][path] += 1
             if not self.__message_counter["start"]:
                 self.__message_counter["start"] = datetime.now()
-            if self.__message_counter["since"] % self.parameters.log_processed_messages_count == 0 or \
-                    datetime.now() - self.__message_counter["start"] > self.parameters.log_processed_messages_seconds:
+            if self.__message_counter["since"] % self.log_processed_messages_count == 0 or \
+                    datetime.now() - self.__message_counter["start"] > self.log_processed_messages_seconds:
                 self.logger.info("%s %d messages since last logging.",
                                  self._message_processed_verb,
                                  self.__message_counter["since"])
@@ -633,12 +675,12 @@ class Bot(object):
         self.__current_message = None
 
     def _dump_message(self, error_traceback, message: dict):
-        if message is None or getattr(self.parameters, 'testing', False):
+        if message is None or getattr(self, 'testing', False):
             return
 
         self.logger.info('Dumping message to dump file.')
 
-        dump_file = os.path.join(self.parameters.logging_path, self.__bot_id + ".dump")
+        dump_file = os.path.join(self.logging_path, self.__bot_id + ".dump")
 
         timestamp = datetime.utcnow()
         timestamp = timestamp.isoformat()
@@ -690,25 +732,25 @@ class Bot(object):
                                            "" % DEFAULTS_CONF_FILE))
         config = utils.load_configuration(DEFAULTS_CONF_FILE)
 
-        setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
+        setattr(self, 'logging_path', DEFAULT_LOGGING_PATH)
 
         for option, value in config.items():
-            setattr(self.parameters, option, value)
+            setattr(self, option, value)
             self.__log_configuration_parameter("defaults", option, value)
 
-        self.parameters.log_processed_messages_seconds = timedelta(seconds=self.parameters.log_processed_messages_seconds)
+        self.log_processed_messages_seconds = timedelta(seconds=self.log_processed_messages_seconds)
 
         # TODO: Rewrite variables with env. variables ( CURRENT IMPLEMENTATION NOT FINAL )
         if os.getenv('INTELMQ_IS_DOCKER', None):
             pipeline_driver = os.getenv('INTELMQ_PIPELINE_DRIVER', None)
             if pipeline_driver:
-                setattr(self.parameters, 'destination_pipeline_broker', pipeline_driver)
-                setattr(self.parameters, 'source_pipeline_broker', pipeline_driver)
+                setattr(self, 'destination_pipeline_broker', pipeline_driver)
+                setattr(self, 'source_pipeline_broker', pipeline_driver)
 
             pipeline_host = os.getenv('INTELMQ_PIPELINE_HOST', None)
             if pipeline_host:
-                setattr(self.parameters, 'destination_pipeline_host', pipeline_host)
-                setattr(self.parameters, 'source_pipeline_host', pipeline_host)
+                setattr(self, 'destination_pipeline_host', pipeline_host)
+                setattr(self, 'source_pipeline_host', pipeline_host)
 
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
@@ -718,15 +760,15 @@ class Bot(object):
         if self.__bot_id in config:
             params = config[self.__bot_id]
             self.run_mode = params.get('run_mode', 'continuous')
-            for option, value in params.get('parameters', {}).items():
-                setattr(self.parameters, option, value)
-                self.__log_configuration_parameter("runtime", option, value)
-                if option.startswith('logging_'):
-                    reinitialize_logging = True
+            self.name = params.get('name')
             self.description = params.get('description')
             self.group = params.get('group')
             self.module = params.get('module')
-            self.name = params.get('name')
+            for option, value in params.get('parameters', {}).items():
+                setattr(self, option, value)
+                self.__log_configuration_parameter("runtime", option, value)
+                if option.startswith('logging_'):
+                    reinitialize_logging = True
 
         if reinitialize_logging:
             self.logger.handlers = []  # remove all existing handlers
@@ -736,21 +778,21 @@ class Bot(object):
         if os.getenv('INTELMQ_IS_DOCKER', None):
             redis_cache_host = os.getenv('INTELMQ_REDIS_CACHE_HOST', None)
             if redis_cache_host:
-                setattr(self.parameters, 'redis_cache_host', redis_cache_host)
+                setattr(self, 'redis_cache_host', redis_cache_host)
 
     def __init_logger(self):
         """
         Initialize the logger.
         """
-        if self.parameters.logging_handler == 'syslog':
-            syslog = self.parameters.logging_syslog
+        if self.logging_handler == 'syslog':
+            syslog = self.logging_syslog
         else:
             syslog = False
         self.logger = utils.log(self.__bot_id_full, syslog=syslog,
-                                log_path=self.parameters.logging_path,
-                                log_level=self.parameters.logging_level,
-                                log_max_size=getattr(self.parameters, "logging_max_size", 0),
-                                log_max_copies=getattr(self.parameters, "logging_max_copies", None))
+                                log_path=self.logging_path,
+                                log_level=self.logging_level,
+                                log_max_size=getattr(self, "logging_max_size", 0),
+                                log_max_copies=getattr(self, "logging_max_copies", None))
 
     def __load_pipeline_configuration(self):
         self.logger.debug("Loading pipeline configuration from %r.", PIPELINE_CONF_FILE)
@@ -806,35 +848,35 @@ class Bot(object):
             instance.start()
 
     def set_request_parameters(self):
-        self.http_header = getattr(self.parameters, 'http_header', {})
-        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert', True)
-        self.ssl_client_cert = getattr(self.parameters, 'ssl_client_certificate', None)
+        self.http_header = getattr(self, 'http_header', {})
+        self.http_verify_cert = getattr(self, 'http_verify_cert', True)
+        self.ssl_client_cert = getattr(self, 'ssl_client_certificate', None)
 
-        if (hasattr(self.parameters, 'http_username') and
-                hasattr(self.parameters, 'http_password') and
-                self.parameters.http_username):
-            self.auth = (self.parameters.http_username,
-                         self.parameters.http_password)
+        if (hasattr(self, 'http_username') and
+                hasattr(self, 'http_password') and
+                self.http_username):
+            self.auth = (self.http_username,
+                         self.http_password)
         else:
             self.auth = None
 
-        if self.parameters.http_proxy and self.parameters.https_proxy:
-            self.proxy = {'http': self.parameters.http_proxy,
-                          'https': self.parameters.https_proxy}
-        elif self.parameters.http_proxy or self.parameters.https_proxy:
+        if self.http_proxy and self.https_proxy:
+            self.proxy = {'http': self.http_proxy,
+                          'https': self.https_proxy}
+        elif self.http_proxy or self.https_proxy:
             self.logger.warning('Only %s_proxy seems to be set.'
                                 'Both http and https proxies must be set.',
-                                'http' if self.parameters.http_proxy else 'https')
+                                'http' if self.http_proxy else 'https')
             self.proxy = {}
         else:
             self.proxy = {}
 
-        self.http_timeout_sec = getattr(self.parameters, 'http_timeout_sec', None)
-        self.http_timeout_max_tries = getattr(self.parameters, 'http_timeout_max_tries', 1)
+        self.http_timeout_sec = getattr(self, 'http_timeout_sec', None)
+        self.http_timeout_max_tries = getattr(self, 'http_timeout_max_tries', 1)
         # Be sure this is always at least 1
         self.http_timeout_max_tries = self.http_timeout_max_tries if self.http_timeout_max_tries >= 1 else 1
 
-        self.http_header['User-agent'] = self.parameters.http_user_agent
+        self.http_header['User-agent'] = self.http_user_agent
 
     @staticmethod
     def check(parameters: dict) -> Optional[List[List[str]]]:
@@ -867,7 +909,7 @@ class Bot(object):
 
          * extract_files
         """
-        parameter_value = getattr(self.parameters, parameter_name, None)
+        parameter_value = getattr(self, parameter_name, None)
         setattr(self, parameter_name, parameter_value)
         if parameter_value and isinstance(parameter_value, str):
             setattr(self, parameter_name, parameter_value.split(","))
@@ -1024,7 +1066,7 @@ class ParserBot(Bot):
         for exc, line in self.__failed:
             report_dump = report.copy()
             report_dump.change('raw', self.recover_line(line))
-            if self.parameters.error_dump_message:
+            if self.error_dump_message:
                 self._dump_message(exc, report_dump)
             if self._Bot__destination_queues and '_on_error' in self._Bot__destination_queues:
                 self.send_message(report_dump, path='_on_error')
@@ -1139,15 +1181,15 @@ class CollectorBot(Bot):
         return True
 
     def __add_report_fields(self, report: libmessage.Report):
-        if hasattr(self.parameters, 'name'):
-            report.add("feed.name", self.parameters.name)
-        if hasattr(self.parameters, 'code'):
-            report.add("feed.code", self.parameters.code)
-        if hasattr(self.parameters, 'documentation'):
-            report.add("feed.documentation", self.parameters.documentation)
-        if hasattr(self.parameters, 'provider'):
-            report.add("feed.provider", self.parameters.provider)
-        report.add("feed.accuracy", self.parameters.accuracy)
+        if hasattr(self, 'name'):
+            report.add("feed.name", self.name)
+        if hasattr(self, 'code'):
+            report.add("feed.code", self.code)
+        if hasattr(self, 'documentation'):
+            report.add("feed.documentation", self.documentation)
+        if hasattr(self, 'provider'):
+            report.add("feed.provider", self.provider)
+        report.add("feed.accuracy", self.accuracy)
         return report
 
     def send_message(self, *messages, path: str = "_default", auto_add: bool = True):
@@ -1180,7 +1222,7 @@ class SQLBot(Bot):
     default_engine = "postgresql"
 
     def init(self):
-        self.engine_name = getattr(self.parameters, 'engine', self.default_engine).lower()
+        self.engine_name = getattr(self, 'engine', self.default_engine).lower()
         engines = {SQLBot.POSTGRESQL: (self._init_postgresql, "%s"),
                    SQLBot.SQLITE: (self._init_sqlite, "?")}
         for key, val in engines.items():
@@ -1198,7 +1240,7 @@ class SQLBot(Bot):
         try:
             self.con = self.engine.connect(**connect_args)
             if autocommitable:  # psycopg2 has it, sqlite3 has not
-                self.con.autocommit = getattr(self.parameters, 'autocommit', True)  # True prevents deadlocks
+                self.con.autocommit = getattr(self, 'autocommit', True)  # True prevents deadlocks
             self.cur = self.con.cursor()
         except (self.engine.Error, Exception):
             self.logger.exception('Failed to connect to database.')
@@ -1213,13 +1255,13 @@ class SQLBot(Bot):
             raise exceptions.MissingDependencyError("psycopg2")
 
         self._connect(psycopg2,
-                      {"database": self.parameters.database,
-                       "user": self.parameters.user,
-                       "password": self.parameters.password,
-                       "host": self.parameters.host,
-                       "port": self.parameters.port,
-                       "sslmode": self.parameters.sslmode,
-                       "connect_timeout": getattr(self.parameters, 'connect_timeout', 5)
+                      {"database": self.database,
+                       "user": self.user,
+                       "password": self.password,
+                       "host": self.host,
+                       "port": self.port,
+                       "sslmode": self.sslmode,
+                       "connect_timeout": getattr(self, 'connect_timeout', 5)
                        },
                       autocommitable=True)
 
@@ -1230,14 +1272,14 @@ class SQLBot(Bot):
             raise exceptions.MissingDependencyError("sqlite3")
 
         self._connect(sqlite3,
-                      {"database": self.parameters.database,
-                       "timeout": getattr(self.parameters, 'connect_timeout', 5)
+                      {"database": self.database,
+                       "timeout": getattr(self, 'connect_timeout', 5)
                        }
                       )
 
     def execute(self, query: str, values: tuple, rollback=False):
         try:
-            self.logger.debug('Executing %r.', query, values)
+            self.logger.debug('Executing %r.', (query, values))
             # note: this assumes, the DB was created with UTF-8 support!
             self.cur.execute(query, values)
             self.logger.debug('Done.')
@@ -1278,14 +1320,14 @@ class OutputBot(Bot):
             self.stop()
         self.group = 'Output'
 
-        self.hierarchical = getattr(self.parameters, "hierarchical_output",  # file and files
-                                    getattr(self.parameters, "message_hierarchical",  # stomp and amqp code
-                                            getattr(self.parameters, "message_hierarchical_output", False)))  # stomp and amqp docs
-        self.with_type = getattr(self.parameters, "message_with_type", False)
-        self.jsondict_as_string = getattr(self.parameters, "message_jsondict_as_string", False)
+        self.hierarchical = getattr(self, "hierarchical_output",  # file and files
+                                    getattr(self, "message_hierarchical",  # stomp and amqp code
+                                            getattr(self, "message_hierarchical_output", False)))  # stomp and amqp docs
+        self.with_type = getattr(self, "message_with_type", False)
+        self.jsondict_as_string = getattr(self, "message_jsondict_as_string", False)
 
-        self.single_key = getattr(self.parameters, 'single_key', None)
-        self.keep_raw_field = getattr(self.parameters, 'keep_raw_field', False)
+        self.single_key = getattr(self, 'single_key', None)
+        self.keep_raw_field = getattr(self, 'keep_raw_field', False)
 
     def export_event(self, event: libmessage.Event,
                      return_type: Optional[type] = None):

@@ -29,9 +29,9 @@ class GethostbynameExpertBot(Bot):
 
     def init(self):
         # although True is the default value, we leave False here for backwards compatibility
-        self.fallback_to_url = getattr(self.parameters, 'fallback_to_url', False)
+        self.fallback_to_url = getattr(self, 'fallback_to_url', False)
 
-        ignore = getattr(self.parameters, 'gaierrors_to_ignore', ())
+        ignore = getattr(self, 'gaierrors_to_ignore', ())
         if not isinstance(ignore, (list, tuple)):
             ignore = ignore.split(',')
         elif not ignore:  # for null/None
@@ -48,7 +48,7 @@ class GethostbynameExpertBot(Bot):
         ignore = tuple(int(x) for x in ignore)  # convert to integers
 
         self.ignore = (-2, -4, -5, -8, -11) + ignore
-        self.overwrite = getattr(self.parameters, 'overwrite', False)
+        self.overwrite = getattr(self, 'overwrite', False)
 
     def process(self):
         event = self.receive_message()

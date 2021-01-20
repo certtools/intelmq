@@ -26,7 +26,7 @@ class DummyCollectorBot(bot.CollectorBot):
 
     def process(self):
         report = self.new_report()
-        if self.parameters.raw:
+        if self.raw:
             report['raw'] = 'test'
         self.send_message(report)
 

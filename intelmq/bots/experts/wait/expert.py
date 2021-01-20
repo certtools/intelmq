@@ -14,16 +14,16 @@ from intelmq.lib.bot import Bot
 class WaitExpertBot(Bot):
     def init(self):
         self.mode = None
-        self.queue_name = getattr(self.parameters, 'queue_name', None)
-        self.sleep_time = getattr(self.parameters, 'sleep_time', None)
+        self.queue_name = getattr(self, 'queue_name', None)
+        self.sleep_time = getattr(self, 'sleep_time', None)
         if self.queue_name:
             self.mode = 'queue'
-            self.queue_db = int(getattr(self.parameters, 'queue_db', 2))
-            self.queue_host = getattr(self.parameters, 'queue_host', 'localhost')
-            self.queue_password = getattr(self.parameters, 'queue_password', None)
-            self.queue_polling_interval = float(getattr(self.parameters, 'queue_polling_interval', 0.05))
-            self.queue_port = int(getattr(self.parameters, 'queue_port', 6379))
-            self.queue_size = int(getattr(self.parameters, 'queue_size', 0))
+            self.queue_db = int(getattr(self, 'queue_db', 2))
+            self.queue_host = getattr(self, 'queue_host', 'localhost')
+            self.queue_password = getattr(self, 'queue_password', None)
+            self.queue_polling_interval = float(getattr(self, 'queue_polling_interval', 0.05))
+            self.queue_port = int(getattr(self, 'queue_port', 6379))
+            self.queue_size = int(getattr(self, 'queue_size', 0))
             self.connect_redis()
         elif self.sleep_time:
             self.mode = 'sleep'

@@ -11,11 +11,12 @@ from intelmq.lib.bot import Bot
 
 class TouchOutputBot(Bot):
     file = None
+    path = None
 
     def process(self):
         self.receive_message()
         ctime = time.time()
-        os.utime(self.parameters.path, times=(ctime, ctime))
+        os.utime(self.path, times=(ctime, ctime))
         self.acknowledge_message()
 
 

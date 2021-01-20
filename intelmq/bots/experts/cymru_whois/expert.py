@@ -10,21 +10,16 @@ CACHE_KEY = "%d_%s"
 
 
 class CymruExpertBot(Bot):
+    overwrite = False
 
     def init(self):
-        self.cache = Cache(self.parameters.redis_cache_host,
-                           self.parameters.redis_cache_port,
-                           self.parameters.redis_cache_db,
-                           self.parameters.redis_cache_ttl,
-                           getattr(self.parameters, "redis_cache_password",
+        self.cache = Cache(self.redis_cache_host,
+                           self.redis_cache_port,
+                           self.redis_cache_db,
+                           self.redis_cache_ttl,
+                           getattr(self, "redis_cache_password",
                                    None)
                            )
-
-        if not hasattr(self.parameters, 'overwrite'):
-            self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
-                                "Please set it explicitly, default will change to "
-                                "'False' in version 3.0.0'.")
-        self.overwrite = getattr(self.parameters, 'overwrite', True)
 
     def process(self):
         event = self.receive_message()

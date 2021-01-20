@@ -37,18 +37,23 @@ class ShadowServerAPICollectorBot(CollectorBot):
         A list of strings or a string of comma-separated values with the names of reporttypes you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
     """
 
+    apikey = None
+    secret = None
+    country = None
+    types = None
+
     def init(self):
-        self.apikey = getattr(self.parameters, "api_key", None)
+        self.apikey = getattr(self, "api_key", None)
         if self.apikey is None:
             raise ValueError('No api_key provided.')
-        self.secret = getattr(self.parameters, "secret", None)
+        self.secret = getattr(self, "secret", None)
         if self.secret is None:
             raise ValueError('No secret provided.')
-        self.country = getattr(self.parameters, "country", None)
+        self.country = getattr(self, "country", None)
         if self.country is None:
             raise ValueError('No country provided.')
 
-        self.types = getattr(self.parameters, 'types', None)
+        self.types = getattr(self, 'types', None)
         if isinstance(self.types, str):
             self.types = self.types.split(',')
 
@@ -57,11 +62,11 @@ class ShadowServerAPICollectorBot(CollectorBot):
         self.set_request_parameters()
         self.session = create_request_session(self)
 
-        self.cache = Cache(self.parameters.redis_cache_host,
-                           self.parameters.redis_cache_port,
-                           self.parameters.redis_cache_db,
-                           getattr(self.parameters, 'redis_cache_ttl', 864000),  # 10 days
-                           getattr(self.parameters, "redis_cache_password", None)
+        self.cache = Cache(self.redis_cache_host,
+                           self.redis_cache_port,
+                           self.redis_cache_db,
+                           getattr(self, 'redis_cache_ttl', 864000),  # 10 days
+                           getattr(self, "redis_cache_password", None)
                            )
 
     def _headers(self, data):

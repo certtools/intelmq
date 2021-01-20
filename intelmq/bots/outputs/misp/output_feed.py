@@ -27,6 +27,10 @@ except SyntaxError:
 
 class MISPFeedOutputBot(OutputBot):
     is_multithreadable = False
+    misp_org_name = None
+    misp_org_uuid = None
+    output_dir = None
+    interval_event = None
 
     @staticmethod
     def check_output_dir(dirname):
@@ -47,16 +51,16 @@ class MISPFeedOutputBot(OutputBot):
         self.current_event = None
 
         self.misp_org = MISPOrganisation()
-        self.misp_org.name = self.parameters.misp_org_name
-        self.misp_org.uuid = self.parameters.misp_org_uuid
+        self.misp_org.name = self.misp_org_name
+        self.misp_org.uuid = self.misp_org_uuid
 
-        self.output_dir = Path(self.parameters.output_dir)
+        self.output_dir = Path(self.output_dir)
         MISPFeedOutputBot.check_output_dir(self.output_dir)
 
-        if not hasattr(self.parameters, 'interval_event'):
+        if self.interval_event is None:
             self.timedelta = datetime.timedelta(hours=1)
         else:
-            self.timedelta = datetime.timedelta(minutes=parse_relative(self.parameters.interval_event))
+            self.timedelta = datetime.timedelta(minutes=parse_relative(self.interval_event))
 
         if (self.output_dir / '.current').exists():
             with (self.output_dir / '.current').open() as f:

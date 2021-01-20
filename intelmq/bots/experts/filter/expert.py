@@ -13,6 +13,8 @@ from intelmq.lib.utils import parse_relative, TIMESPANS
 class FilterExpertBot(Bot):
 
     _message_processed_verb = 'Forwarded'
+    not_after = None
+    not_before = None
 
     def parse_timeattr(self, time_attr):
         """
@@ -32,33 +34,30 @@ class FilterExpertBot(Bot):
             return absolute
 
     def init(self):
-        self.not_after = None
-        self.not_before = None
-
-        if hasattr(self.parameters, 'not_after'):
-            self.not_after = self.parse_timeattr(self.parameters.not_after)
-        if hasattr(self.parameters, 'not_before'):
-            self.not_before = self.parse_timeattr(self.parameters.not_before)
+        if self.not_after is not None:
+            self.not_after = self.parse_timeattr(self.not_after)
+        if self.not_before is not None:
+            self.not_before = self.parse_timeattr(self.not_before)
 
         self.filter = True
-        if not (hasattr(self.parameters, 'filter_key')):
+        if not (hasattr(self, 'filter_key')):
             self.logger.info("No filter_key parameter found.")
             self.filter = False
-        elif not (hasattr(self.parameters, 'filter_value')):
+        elif not (hasattr(self, 'filter_value')):
             self.logger.info("No filter_value parameter found.")
             self.filter = False
-        elif not (hasattr(self.parameters, 'filter_action')):
+        elif not (hasattr(self, 'filter_action')):
             self.logger.info("No filter_action parameter found.")
             self.filter = False
-        elif hasattr(self.parameters, 'filter_action') and not \
-            (self.parameters.filter_action == "drop" or
-             self.parameters.filter_action == "keep"):
+        elif hasattr(self, 'filter_action') and not \
+            (self.filter_action == "drop" or
+             self.filter_action == "keep"):
             self.logger.info("Filter_action parameter definition unknown.")
             self.filter = False
 
         self.regex = False
-        if hasattr(self.parameters, 'filter_regex') and self.parameters.filter_regex:
-            self.regex = re.compile(self.parameters.filter_value)
+        if hasattr(self, 'filter_regex') and self.filter_regex:
+            self.regex = re.compile(self.filter_value)
 
         self.time_filter = self.not_after is not None or self.not_before is not None
 
@@ -95,9 +94,9 @@ class FilterExpertBot(Bot):
                     return
 
         # key/value based filtering
-        if self.filter and self.parameters.filter_action == "drop":
-            if self.doFilter(event, self.parameters.filter_key,
-                             self.parameters.filter_value):
+        if self.filter and self.filter_action == "drop":
+            if self.doFilter(event, self.filter_key,
+                             self.filter_value):
                 # action == drop, filter matches
                 self.send_message(event, path='action_other',
                                   path_permissive=True)
@@ -113,9 +112,9 @@ class FilterExpertBot(Bot):
                 self.acknowledge_message()
                 return
 
-        if self.filter and self.parameters.filter_action == "keep":
-            if self.doFilter(event, self.parameters.filter_key,
-                             self.parameters.filter_value):
+        if self.filter and self.filter_action == "keep":
+            if self.doFilter(event, self.filter_key,
+                             self.filter_value):
                 # action == keep, filter matches
                 self.send_message(event, path='filter_match',
                                   path_permissive=True)

@@ -12,6 +12,22 @@ except ImportError:
 
 class AMQPTopicOutputBot(OutputBot):
     connection = None
+    connection_heartbeat = None
+    delivery_mode = None
+    content_type = None
+    exchange_name = None
+    require_confirmation = None
+    exchange_durable = None
+    exchange_type = None
+    connection_host = None
+    connection_port = None
+    connection_vhost = None
+    username = None
+    password = None
+    use_ssl = False
+    connection_attempts = None
+    routing_key = None
+    format_routing_key = False
 
     def init(self):
         if pika is None:
@@ -23,39 +39,31 @@ class AMQPTopicOutputBot(OutputBot):
         pika_version = tuple(int(x) for x in pika.__version__.split('.'))
         self.kwargs = {}
         if pika_version < (0, 11):
-            self.kwargs['heartbeat_interval'] = self.parameters.connection_heartbeat
+            self.kwargs['heartbeat_interval'] = self.connection_heartbeat
         else:
-            self.kwargs['heartbeat'] = self.parameters.connection_heartbeat
+            self.kwargs['heartbeat'] = self.connection_heartbeat
         if pika_version < (1, ):
             # https://groups.google.com/forum/#!topic/pika-python/gz7lZtPRq4Q
             self.publish_raises_nack = False
         else:
             self.publish_raises_nack = True
 
-        self.delivery_mode = self.parameters.delivery_mode
-        self.content_type = self.parameters.content_type
-        self.exchange = self.parameters.exchange_name
-        self.require_confirmation = self.parameters.require_confirmation
-        self.durable = self.parameters.exchange_durable
-        self.exchange_type = self.parameters.exchange_type
-        self.connection_host = self.parameters.connection_host
-        self.connection_port = self.parameters.connection_port
-        self.connection_vhost = self.parameters.connection_vhost
-        if self.parameters.username and self.parameters.password:
-            self.kwargs['credentials'] = pika.PlainCredentials(self.parameters.username,
-                                                               self.parameters.password)
+        self.exchange = self.exchange_name
+        self.durable = self.exchange_durable
+        if self.username is not None and self.password is not None:
+            self.kwargs['credentials'] = pika.PlainCredentials(self.username,
+                                                               self.password)
 
-        if getattr(self.parameters, 'use_ssl', False):
+        if self.use_ssl:
             self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.create_default_context(ssl.Purpose.CLIENT_AUTH))
 
         self.connection_parameters = pika.ConnectionParameters(
             host=self.connection_host,
             port=self.connection_port,
             virtual_host=self.connection_vhost,
-            connection_attempts=self.parameters.connection_attempts,
+            connection_attempts=self.connection_attempts,
             **self.kwargs)
-        self.routing_key = self.parameters.routing_key
-        self.format_routing_key = getattr(self.parameters, 'format_routing_key', False)
+        self.routing_key = self.routing_key
         self.properties = pika.BasicProperties(
             content_type=self.content_type, delivery_mode=self.delivery_mode)
 

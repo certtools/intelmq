@@ -39,14 +39,14 @@ from dateutil.parser import parse
 
 
 class KeyValueParserBot(ParserBot):
+    pair_separator = ' '
+    kv_separator = '='
+    keys = {}
+    strip_quotes = True
 
     def init(self):
-        self.pair_separator = getattr(self.parameters, 'pair_separator', ' ')
-        self.kv_separator = getattr(self.parameters, 'kv_separator', '=')
-        self.keys = getattr(self.parameters, 'keys', {})
         if not self.keys:
             raise ConfigurationError('Key extraction', 'No keys specified.')
-        self.strip_quotes = getattr(self.parameters, "strip_quotes", True)
 
     def parse_line(self, row, report):
         event = self.new_event(report)

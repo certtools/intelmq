@@ -114,7 +114,7 @@ class IdeaExpertBot(Bot):
             ),
             "Category": [
                 lambda s: self.type_to_category[s.get("classification.type", "undetermined")],
-                lambda s: "Test" if self.parameters.test_mode else None
+                lambda s: "Test" if self.test_mode else None
             ],
             "DetectTime": "time.observation",
             "EventTime": "time.source",

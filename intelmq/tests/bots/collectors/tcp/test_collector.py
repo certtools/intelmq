@@ -133,7 +133,7 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
 
         def chunked_process_replacement(self):
             event = self.receive_message()
-            data = event.to_json(hierarchical=self.parameters.hierarchical_output)
+            data = event.to_json(hierarchical=self.hierarchical_output)
             d = utils.encode(data)
             msg = struct.pack('>I', len(d)) + d
             chunk_length = 40

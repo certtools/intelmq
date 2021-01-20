@@ -3,18 +3,18 @@ from intelmq.lib.bot import Bot
 
 
 class FormatFieldExpertBot(Bot):
+    strip_columns = None
+    strip_chars     = ' '
+    split_column    = None
+    split_separator = ','
+    replace_column  = None
+    old_value       = None
+    new_value       = None
+    replace_count   = 1
 
     def init(self):
-        self.strip_columns   = getattr(self.parameters, 'strip_columns', None)
         if type(self.strip_columns) is str:
             self.strip_columns = [column.strip() for column in self.strip_columns.split(",")]
-        self.strip_chars     = getattr(self.parameters, 'strip_chars', ' ')
-        self.split_column    = getattr(self.parameters, 'split_column', None)
-        self.split_separator = getattr(self.parameters, 'split_separator', ',')
-        self.replace_column  = getattr(self.parameters, 'replace_column', None)
-        self.old_value       = getattr(self.parameters, 'old_value', None)
-        self.new_value       = getattr(self.parameters, 'new_value', None)
-        self.replace_count   = getattr(self.parameters, 'replace_count', 1)
 
     def process(self):
         event = self.receive_message()

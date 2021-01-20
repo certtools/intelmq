@@ -60,18 +60,18 @@ class HTTPCollectorBot(CollectorBot):
 
         self.session = create_request_session(self)
 
-        self.use_gpg = getattr(self.parameters, "verify_pgp_signatures", False)
+        self.use_gpg = getattr(self, "verify_pgp_signatures", False)
         if self.use_gpg and gnupg is None:
             raise MissingDependencyError("gnupg")
         else:
             self.logger.info('PGP signature verification is active.')
 
     def process(self):
-        formatting = getattr(self.parameters, 'http_url_formatting', False)
+        formatting = getattr(self, 'http_url_formatting', False)
         if formatting:
-            http_url = self.format_url(self.parameters.http_url, formatting)
+            http_url = self.format_url(self.http_url, formatting)
         else:
-            http_url = self.parameters.http_url
+            http_url = self.http_url
 
         self.logger.info("Downloading report from %r.", http_url)
 
@@ -133,7 +133,7 @@ class HTTPCollectorBot(CollectorBot):
 
     def format_url(self, url: str, formatting) -> str:
         try:
-            return self.parameters.http_url.format(time=Time(formatting))
+            return self.http_url.format(time=Time(formatting))
         except TypeError:
             self.logger.error(
                 "Wrong formatting parameter: %s. Should be boolean or a time-delta JSON.",
@@ -143,7 +143,7 @@ class HTTPCollectorBot(CollectorBot):
         except KeyError:
             self.logger.error(
                 "Wrongly formatted url parameter: %s. Possible misspell with 'time' variable.",
-                self.parameters.http_url
+                self.http_url
             )
             raise
 
@@ -152,11 +152,11 @@ class HTTPCollectorBot(CollectorBot):
         Download signature file and verify the report data.
         """
         # get PGP parameters
-        formatting = getattr(self.parameters, 'signature_url_formatting', False)
+        formatting = getattr(self, 'signature_url_formatting', False)
         if formatting:
-            http_url = self.format_url(self.parameters.signature_url, formatting)
+            http_url = self.format_url(self.signature_url, formatting)
         else:
-            http_url = self.parameters.signature_url
+            http_url = self.signature_url
 
         # download signature file
         self.logger.info("Downloading PGP signature from {}.".format(http_url))
@@ -173,7 +173,7 @@ class HTTPCollectorBot(CollectorBot):
         sign.flush()
 
         # check signature
-        keyring = getattr(self.parameters, "gpg_keyring", None)
+        keyring = getattr(self, "gpg_keyring", None)
         gpg = gnupg.GPG(keyring=keyring)
         verified = gpg.verify_data(sign.name, data)
 

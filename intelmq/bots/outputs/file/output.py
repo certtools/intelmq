@@ -8,26 +8,28 @@ from intelmq.lib.bot import OutputBot
 
 
 class FileOutputBot(OutputBot):
-    file = None
+    _file = None
     is_multithreadable = False
+    file = None
+    format_filename = False
+    encoding_errors_mode = 'strict'
 
     def init(self):
         # needs to be done here, because in process() FileNotFoundError handling we call init(),
         # otherwise the file would not be opened again
-        self.file = None
+        self._file = None
 
-        self.logger.debug("Opening %r file.", self.parameters.file)
-        self.format_filename = getattr(self.parameters, 'format_filename', False)
-        self.errors = getattr(self.parameters, 'encoding_errors_mode', 'strict')
+        self.logger.debug("Opening %r file.", self.file)
+        self.errors = self.encoding_errors_mode
         if not self.format_filename:
-            self.open_file(self.parameters.file)
-        self.logger.info("File %r is open.", self.parameters.file)
+            self.open_file(self.file)
+        self.logger.info("File %r is open.", self.file)
 
     def open_file(self, filename: str = None):
-        if self.file is not None:
-            self.file.close()
+        if self._file is not None:
+            self._file.close()
         try:
-            self.file = open(filename, mode='at', encoding='utf-8', errors=self.errors)
+            self._file = open(filename, mode='at', encoding='utf-8', errors=self.errors)
         except FileNotFoundError:  # directory does not exist
             path = Path(os.path.dirname(filename))
             try:
@@ -36,7 +38,7 @@ class FileOutputBot(OutputBot):
                 self.logger.exception('Directory %r could not be created.', path)
                 self.stop()
             else:
-                self.file = open(filename, mode='at', encoding='utf-8', errors=self.errors)
+                self._file = open(filename, mode='at', encoding='utf-8', errors=self.errors)
 
     def process(self):
         event = self.receive_message()
@@ -58,24 +60,24 @@ class FileOutputBot(OutputBot):
                 except ValueError:
                     ev['time.source'] = datetime.datetime.strptime(ev['time.source'],
                                                                    '%Y-%m-%dT%H:%M:%S.%f+00:00')
-            filename = self.parameters.file.format(event=ev)
-            if not self.file or filename != self.file.name:
+            filename = self.file.format(event=ev)
+            if not self._file or filename != self._file.name:
                 self.open_file(filename)
 
         event_data = self.export_event(event, return_type=str)
 
         try:
-            self.file.write(event_data)
-            self.file.write("\n")
-            self.file.flush()
+            self._file.write(event_data)
+            self._file.write("\n")
+            self._file.flush()
         except FileNotFoundError:
             self.init()
         else:
             self.acknowledge_message()
 
     def shutdown(self):
-        if self.file:
-            self.file.close()
+        if self._file:
+            self._file.close()
 
     @staticmethod
     def check(parameters):

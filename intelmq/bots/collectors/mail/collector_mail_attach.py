@@ -14,10 +14,11 @@ from .lib import MailCollectorBot
 
 
 class MailAttachCollectorBot(MailCollectorBot):
+    attach_regex = None
 
     def init(self):
         super().init()
-        if not getattr(self.parameters, 'attach_regex', None):
+        if self.attach_regex is None:
             raise InvalidArgument('attach_regex', expected='string')
 
     def process_message(self, uid, message):
@@ -36,7 +37,7 @@ class MailAttachCollectorBot(MailCollectorBot):
             if attach_filename.startswith('"'):  # for imbox versions older than 0.9.5, see also above
                 attach_filename = attach_filename[1:-1]
 
-            if re.search(self.parameters.attach_regex, attach_filename):
+            if re.search(self.attach_regex, attach_filename):
 
                 self.logger.debug("Found suitable attachment %s.", attach_filename)
 

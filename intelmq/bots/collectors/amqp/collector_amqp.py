@@ -20,6 +20,16 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
     Inheriting from AMQPTopicOutputBot for connect_server method
     """
     exchange = False
+    connection_heartbeat = 3600
+    connection_host = "127.0.0.1"
+    connection_port = 5672
+    connection_vhost = None
+    username = None
+    password = None
+    use_ssl = False
+    connection_attempts = 3
+    queue_name = None
+    expect_intelmq_message = False
 
     def init(self):
         if pika is None:
@@ -34,28 +44,21 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
                                          installed=pika.__version__)
 
         self.kwargs = {}
-        self.kwargs['heartbeat'] = self.parameters.connection_heartbeat
+        self.kwargs['heartbeat'] = self.connection_heartbeat
 
-        self.connection_host = self.parameters.connection_host
-        self.connection_port = self.parameters.connection_port
-        self.connection_vhost = self.parameters.connection_vhost
-        if self.parameters.username and self.parameters.password:
-            self.kwargs['credentials'] = pika.PlainCredentials(self.parameters.username,
-                                                               self.parameters.password)
+        if self.username and self.password:
+            self.kwargs['credentials'] = pika.PlainCredentials(self.username,
+                                                               self.password)
 
-        if getattr(self.parameters, 'use_ssl', False):
+        if self.use_ssl:
             self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.create_default_context(ssl.Purpose.CLIENT_AUTH))
 
         self.connection_parameters = pika.ConnectionParameters(
             host=self.connection_host,
             port=self.connection_port,
             virtual_host=self.connection_vhost,
-            connection_attempts=self.parameters.connection_attempts,
+            connection_attempts=self.connection_attempts,
             **self.kwargs)
-
-        self.queue_name = self.parameters.queue_name
-        self.expect_intelmq_message = getattr(self.parameters, 'expect_intelmq_message',
-                                              False)
 
         self.connect_server()
 

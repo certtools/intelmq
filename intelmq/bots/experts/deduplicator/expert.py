@@ -29,18 +29,19 @@ from intelmq.lib.cache import Cache
 class DeduplicatorExpertBot(Bot):
 
     _message_processed_verb = 'Forwarded'
+    bypass = False
+    filter_keys = None
 
     def init(self):
-        self.cache = Cache(self.parameters.redis_cache_host,
-                           self.parameters.redis_cache_port,
-                           self.parameters.redis_cache_db,
-                           self.parameters.redis_cache_ttl,
-                           getattr(self.parameters, "redis_cache_password",
+        self.cache = Cache(self.redis_cache_host,
+                           self.redis_cache_port,
+                           self.redis_cache_db,
+                           self.redis_cache_ttl,
+                           getattr(self, "redis_cache_password",
                                    None)
                            )
         self.filter_keys = {k.strip() for k in
-                            self.parameters.filter_keys.split(',')}
-        self.bypass = getattr(self.parameters, "bypass", False)
+                            self.filter_keys.split(',')}
 
     def process(self):
         message = self.receive_message()
@@ -49,7 +50,7 @@ class DeduplicatorExpertBot(Bot):
             self.send_message(message)
         else:
             message_hash = message.hash(filter_keys=self.filter_keys,
-                                        filter_type=self.parameters.filter_type)
+                                        filter_type=self.filter_type)
 
             if not self.cache.exists(message_hash):
                 self.cache.set(message_hash, 'hash')

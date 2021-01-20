@@ -21,16 +21,17 @@ except ImportError:
 
 
 class ASNLookupExpertBot(Bot):
+    database = None
 
     def init(self):
         if pyasn is None:
             raise MissingDependencyError("pyasn")
 
         try:
-            self.database = pyasn.pyasn(self.parameters.database)
+            self._database = pyasn.pyasn(self.database)
         except IOError:
             self.logger.error("pyasn data file does not exist or could not be "
-                              "accessed in %r.", self.parameters.database)
+                              "accessed in %r.", self.database)
             self.logger.error("Read 'bots/experts/asn_lookup/README' and "
                               "follow the procedure.")
             self.stop()
@@ -47,7 +48,7 @@ class ASNLookupExpertBot(Bot):
             if ip_key not in event:
                 continue
 
-            info = self.database.lookup(event.get(ip_key))
+            info = self._database.lookup(event.get(ip_key))
 
             if info:
                 if info[0]:

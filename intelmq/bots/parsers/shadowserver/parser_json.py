@@ -30,8 +30,8 @@ class ShadowserverJSONParserBot(ParserBot):
     recover_line = ParserBot.recover_line_json
 
     def init(self):
-        if getattr(self.parameters, 'feedname', None):
-            feedname = self.parameters.feedname
+        if self.feedname is not None:
+            feedname = self.feedname
             self.sparser_config = config.get_feed_by_feedname(feedname)
             if self.sparser_config:
                 self.logger.info('Using fixed feed name %r for parsing reports.', feedname)

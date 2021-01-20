@@ -18,6 +18,10 @@ except ImportError:
 
 
 class MailURLCollectorBot(MailCollectorBot):
+    chunk_size = None
+    chunk_replicate_header = None
+    url_regex = None
+    error_procedure = None
 
     def init(self):
         super().init()
@@ -28,16 +32,12 @@ class MailURLCollectorBot(MailCollectorBot):
         self.set_request_parameters()
         self.session = create_request_session(self)
 
-        self.chunk_size = getattr(self.parameters, 'chunk_size', None)
-        self.chunk_replicate_header = getattr(self.parameters,
-                                              'chunk_replicate_header', None)
-
     def process_message(self, uid, message):
         erroneous = False  # If errors occurred this will be set to true.
         seen = False
 
         for body in message.body['plain']:
-            match = re.search(self.parameters.url_regex, str(body.decode('utf-8') if isinstance(body, bytes) else body))
+            match = re.search(self.url_regex, str(body.decode('utf-8') if isinstance(body, bytes) else body))
             if match:
                 url = match.group()
                 # strip leading and trailing spaces, newlines and
@@ -83,7 +83,7 @@ class MailURLCollectorBot(MailCollectorBot):
         if not erroneous:
             self.logger.info("Email report read.")
         else:
-            if self.parameters.error_procedure == 'pass':
+            if self.error_procedure == 'pass':
                 seen = True
             else:
                 self.logger.error("Email report read with above errors, the report was not processed.")
