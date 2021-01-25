@@ -42,7 +42,7 @@ But you can also run ``intelmq-api`` directly using ``hug``:
    gunicorn intelmq_api.serve:__hug_wsgi__
 
 
-The ``intelmq-api`` provides the route ``/api`` for managing the ``intelmq`` installation. If it has access to an installation of the ``intelmq-manager`` files it serves them under the ``/management`` route.
+The ``intelmq-api`` provides the route ``/api`` for managing the ``intelmq`` installation.
 
 ***********************
 Configuring intelmq-api
@@ -71,8 +71,7 @@ This also gives an example on how to disable a setting, namely by prefixing the 
            "allowed_path": "/opt/intelmq/var/lib/bots/",
            "_session_store": "/tmp/intelmq-session.sqlite",
            "session_duration": 86400,
-           "allow_origins": ["*"],
-           "html_dir": "/usr/share/intelmq-manager/html/"
+           "allow_origins": ["*"]
    }
 
 The following configuration options are available:
@@ -84,7 +83,6 @@ The following configuration options are available:
 * ``session_store``: this is an optional path to a sqlite database, which is used for session storage and authentication. If it is not set (which is the default), no authentication is used!
 * ``session_duration``: the maximal duration of a session, its 86400 seconds by default
 * ``allow_origins``: a list of origins the responses of the API can be shared with. Allows every origin by default.
-* ``html_dir``: the path to the html files of the ``intelmq-manager``. If this path exists it is served under the path ``/management``
 
 Permissions
 ^^^^^^^^^^^
