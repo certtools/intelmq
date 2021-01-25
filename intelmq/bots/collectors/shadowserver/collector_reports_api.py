@@ -27,7 +27,7 @@ class ShadowServerAPICollectorBot(CollectorBot):
 
     Parameters
     ----------
-    apikey: str
+    api_key: str
         Your Shadowserver API key
     secret: str
         Your Shadowserver API secret
@@ -38,9 +38,9 @@ class ShadowServerAPICollectorBot(CollectorBot):
     """
 
     def init(self):
-        self.apikey = getattr(self.parameters, "apikey", None)
+        self.apikey = getattr(self.parameters, "api_key", None)
         if self.apikey is None:
-            raise ValueError('No apikey provided.')
+            raise ValueError('No api_key provided.')
         self.secret = getattr(self.parameters, "secret", None)
         if self.secret is None:
             raise ValueError('No secret provided.')
