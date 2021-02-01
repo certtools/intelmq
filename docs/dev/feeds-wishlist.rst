@@ -9,9 +9,10 @@ See :ref:`feeds documentation` for more information on this.
 
 This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
 
-- A list of feeds
+- Lists of feeds:
   - `threatfeeds.io <https://threatfeeds.io>`_
   - `TheCyberThreat <http://thecyberthreat.com/cyber-threat-intelligence-feeds/>`_
+  - `sbilly: Awesome Security <https://github.com/sbilly/awesome-security#threat-intelligence>`_
 
 - Some third party intelmq bots: `NRDCS' IntelMQ fork <https://github.com/NRDCS/intelmq/tree/certlt/intelmq/bots>`_
 
