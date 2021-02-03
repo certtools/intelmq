@@ -150,7 +150,8 @@ class Bot(object):
                 self.logger.error('Multithreading is configured, but is not '
                                   'available for this bot. Look at the FAQ '
                                   'for a list of reasons for this. '
-                                  'https://github.com/certtools/intelmq/blob/master/docs/FAQ.md')
+                                  'https://intelmq.readthedocs.io/en/latest/user/FAQ.html'
+                                  '#multithreading-is-not-available-for-this-bot')
             elif (getattr(self.parameters, 'instances_threads', 1) > 1 and
                   disable_multithreading):
                 self.logger.warning('Multithreading is configured, but is not '
