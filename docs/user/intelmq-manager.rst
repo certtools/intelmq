@@ -9,11 +9,29 @@ Its goal is to provide an intuitive tool to allow non-programmers to specify the
 Installation
 ************
 
-To use the ``intelmq-manager`` webinterface, you have to have a working ``intelmq`` installation which provides access to the ``intelmq-api``.
-For the webinterface any operating system that can run a webserver and serve html pages is supported.
+For the `intelmq-manager` webinterface any operating system that can serve html pages is supported.
+`intelmq-manager` can be installed via Python pip or via the operating systems package manager.
+For the list of supported distributions, please see the intelmq :doc:`installation` page.
 
-`pip install intelmq-manager` installs the python module together with the html files.
-The html files are installed in ``/usr/share/intelmq-manager/html``.
+The packages install the html files in ``${PREFIX}/usr/share/intelmq-manager/html``.
+The value of ``${PREFIX}`` depends on your installation method- with distribution packages it is simply ``/``, when using pip (as root) it is ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version).
+
+To use the ``intelmq-manager`` webinterface, you have to have a working ``intelmq`` installation which provides access to the ``intelmq-api``.
+
+``intelmq-manager`` ships with a default configuration for the Apache webserver:
+
+.. code-block::
+
+   Alias /intelmq-manager /usr/share/intelmq_manager/html/
+
+   <Directory /usr/share/intelmq_manager/html>
+       <IfModule mod_headers.c>
+       Header set Content-Security-Policy "script-src 'self'"
+       Header set X-Content-Security-Policy "script-src 'self'"
+       </IfModule>
+   </Directory>
+
+Some distribution packages already create a symlink in the relevant apache configuration directory to the apache configuration file, so it should be easy to enable that (i.e. by using ``a2enconf intelmq-manager`` on Debian based systems).
 
 ***********************
 Security considerations
