@@ -1,0 +1,3 @@
+"timestamp","ip","port","host","asn","geo","type","count","query","response","tag","naics","region","sector"
+"2020-12-21 00:00:00","198.51.100.1",40159,,25192,"CZ","A",1,"4.wiNsrw.Com",,"boaxxe",0,"PRAHA",
+"2020-12-21 00:00:06","198.51.100.81",62937,,38044,"MY","A",1,"198-51-100-81.example.net",,"tsifiri",0,"SABAH","Communications"
