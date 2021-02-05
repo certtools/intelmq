@@ -53,6 +53,8 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.bots.parsers.key_value.parser`: Added (PR#1607 by Karl-Johan Karlsson).
 - `intelmq.bots.parsers.generic.parser_csv`: Added new parameter `compose_fields`.
 - `intelmq.bots.parsers.shadowserver.parser_json`: Added (PR#1700 by Birger Schacht)
+- `intelmq.bots.parsers.shadowserver.config`:
+  - Fixed mapping for Block list feed to accept network ranges in CIDR notation (#1720, PR#1728 by Sebastian Waldbauer).
 
 #### Experts
 - `intelmq.bots.experts.rfc1918.expert`:
