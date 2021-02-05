@@ -27,6 +27,7 @@ class ShadowserverJSONParserBot(ParserBot):
     reporttype_fn = None
     feedname = None
     sparser_config = None
+    recover_line = ParserBot.recover_line_json
 
     def init(self):
         if getattr(self.parameters, 'feedname', None):
