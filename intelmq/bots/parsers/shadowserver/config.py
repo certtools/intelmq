@@ -2395,8 +2395,7 @@ accessible_msrdpeudp = {
         ('extra.', 'sessionid'),
     ],
     'constant_fields': {
-        # FIXME Check if the classification is correct
-        'classification.identifier': 'accessible-msrdpeudp', # shadowserver returns only "rdpeudp"
+        'classification.identifier': 'accessible-msrdpeudp',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
     }
