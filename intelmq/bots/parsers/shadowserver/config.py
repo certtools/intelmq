@@ -2375,6 +2375,33 @@ caida = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ms-rdpeudp/
+accessible_msrdpeudp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int)
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'asn', convert_int),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag'),
+        ('extra.', 'naics', convert_int),
+        ('extra.', 'sic', convert_int),
+        ('extra.', 'sessionid'),
+    ],
+    'constant_fields': {
+        # FIXME Check if the classification is correct
+        'classification.identifier': 'accessible-msrdpeudp', # shadowserver returns only "rdpeudp"
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2386,6 +2413,7 @@ mapping = (
     ('Accessible-FTP', 'scan_ftp', accessible_ftp),
     ('Accessible-HTTP', 'scan_http', accessible_http),
     ('Accessible-Hadoop', 'scan_hadoop', accessible_hadoop),
+    ('Accessible-MS-RDPEUDP', 'scan_msrdpeudp', accessible_msrdpeudp),
     ('Accessible-Radmin', 'scan_radmin', accessible_radmin),
     ('Accessible-RDP', 'scan_rdp', accessible_rdp),
     ('Accessible-Rsync', 'scan_rsync', accessible_rsync),
