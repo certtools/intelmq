@@ -241,8 +241,13 @@ open_db2_discovery_service = {
     }
 }
 
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-HTTP
-accessible_http = {
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-http-report/
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-http-report/
+#
+# This mapping is for two feeds as they are the same, so we can use this mapping for
+# both :)
+#
+accessible_vulnerable_http = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -255,6 +260,7 @@ accessible_http = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('extra.', 'tag'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'http', validate_to_none),
@@ -2410,7 +2416,7 @@ mapping = (
     ('Accessible-CWMP', 'scan_cwmp', accessible_cwmp),
     ('Accessible-Cisco-Smart-Install', 'cisco_smart_install', accessible_cisco_smart_install),
     ('Accessible-FTP', 'scan_ftp', accessible_ftp),
-    ('Accessible-HTTP', 'scan_http', accessible_http),
+    ('Accessible-HTTP', 'scan_http', accessible_vulnerable_http),
     ('Accessible-Hadoop', 'scan_hadoop', accessible_hadoop),
     ('Accessible-MS-RDPEUDP', 'scan_msrdpeudp', accessible_msrdpeudp),
     ('Accessible-Radmin', 'scan_radmin', accessible_radmin),
@@ -2465,4 +2471,5 @@ mapping = (
     ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),
     ('Spam-URL', 'spam_url', spam_url),
     ('Vulnerable-ISAKMP', 'scan_isakmp', vulnerable_isakmp),
+    ('Vulnerable-HTTP', 'scan_http', accessible_vulnerable_http),
 )
