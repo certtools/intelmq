@@ -56,6 +56,25 @@ EVENTS = [{
     "source.ip": "198.123.245.171",
     "time.observation": "2015-01-01T00:00:00+00:00",
     "time.source": "2019-09-04T07:00:19+00:00"
+},
+{
+    '__type': 'Event',
+    'feed.name': 'Blocklist',
+    "classification.identifier": "blacklisted-ip",
+    "classification.taxonomy": "other",
+    "classification.type": "blacklist",
+    "extra.naics": 517311,
+    "extra.reason": "Malicious Host AA",
+    "extra.source": "Alien Vault",
+    'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                         EXAMPLE_LINES[3]])),
+    "source.asn": 5678,
+    "source.geolocation.cc": "XX",
+    "source.geolocation.city": "LOCATION",
+    "source.geolocation.region": "LOCATION",
+    "source.network": "198.123.245.0/24",
+    "time.observation": "2015-01-01T00:00:00+00:00",
+    "time.source": "2019-09-04T07:00:19+00:00"
 },]
 
 

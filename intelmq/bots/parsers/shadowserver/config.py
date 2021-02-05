@@ -187,7 +187,21 @@ def validate_ip(value):
     """Remove "invalid" IP."""
     if value == '0.0.0.0':
         return None
+
+    # FIX: https://github.com/certtools/intelmq/issues/1720 # TODO: Find better fix
+    if '/' in value:
+        return None
+
     if harmonization.IPAddress.is_valid(value, sanitize=True):
+        return value
+
+
+def validate_network(value):
+    # FIX: https://github.com/certtools/intelmq/issues/1720 # TODO: Find better fix
+    if '/' not in value:
+        return None
+
+    if harmonization.IPNetwork.is_valid(value, sanitize=True):
         return value
 
 
@@ -1582,9 +1596,10 @@ open_ldap = {
 blocklist = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
-        ('source.ip', 'ip'),
     ],
     'optional_fields': [
+        ('source.ip', 'ip', validate_ip),
+        ('source.network', 'ip', validate_network),
         ('source.reverse_dns', 'hostname'),
         ('extra.', 'source', validate_to_none),
         ('extra.', 'reason', validate_to_none),
