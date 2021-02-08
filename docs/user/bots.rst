@@ -1491,6 +1491,7 @@ These are the supported feed name and their corresponding file name for automati
    Accessible-Cisco-Smart-Install            `cisco_smart_install`
    Accessible-CoAP                           `scan_coap`
    Accessible-CWMP                           `scan_cwmp`
+   Accessible-MS-RDPEUDP                     `scan_msrdpeudp`
    Accessible-FTP                            `scan_ftp`
    Accessible-Hadoop                         `scan_hadoop`
    Accessible-HTTP                           `scan_http`
@@ -1530,7 +1531,7 @@ These are the supported feed name and their corresponding file name for automati
    Open-MSSQL                                `scan_mssql`
    Open-NATPMP                               `scan_nat_pmp`
    Open-NetBIOS-Nameservice                  `scan_netbios`
-   Open-Netis                                  ?
+   Open-Netis                                `netis_router`
    Open-Portmapper                           `scan_portmapper`
    Open-QOTD                                 `scan_qotd`
    Open-Redis                                `scan_redis`
@@ -1546,6 +1547,7 @@ These are the supported feed name and their corresponding file name for automati
    SSL-FREAK-Vulnerable-Servers              `scan_ssl_freak`
    SSL-POODLE-Vulnerable-Servers             `scan_ssl_poodle`
    Vulnerable-ISAKMP                         `scan_isakmp`
+   Vulnerable-HTTP                           `scan_http`
   =======================================   =========================
 
 **Development**
