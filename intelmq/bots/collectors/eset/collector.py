@@ -10,14 +10,20 @@ except ImportError:
 
 
 class ESETCollectorBot(CollectorBot):
+    """Collect data from ESET's TAXII API"""
+    collection: str = "<collection>"
+    endpoint: str = "eti.eset.com"
+    password: str = "<password>"
+    rate_limit: int = 3600
+    time_delta: int = 3600
+    username: str = "<username>"
+
     def init(self):
         if cabby is None:
             raise MissingDependencyError('cabby')
-        self.user = self.parameters.username
-        self.passwd = self.parameters.password
-        self.endpoint = self.parameters.endpoint
-        self.time_delta = int(self.parameters.time_delta)
-        self.collection = self.parameters.collection
+        self.user = self.username
+        self.passwd = self.password
+        self.time_delta = int(self.time_delta)
 
     def process(self):
         end = datetime.datetime.now(datetime.timezone.utc)
@@ -38,7 +44,7 @@ class ESETCollectorBot(CollectorBot):
 
             report = self.new_report()
             report.add("feed.url", "https://%s/taxiiservice/discovery" % self.endpoint)
-            report.add('extra.eset_feed', self.parameters.collection)
+            report.add('extra.eset_feed', self.collection)
             report.add('raw', item.content)
             self.send_message(report)
 

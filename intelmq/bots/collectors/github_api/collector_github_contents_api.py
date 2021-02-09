@@ -21,24 +21,29 @@ except ImportError:
 
 
 class GithubContentsAPICollectorBot(GithubAPICollectorBot):
+    "Collect files from a GitHub repository via the API. Optionally with GitHub credentials."
+    regex: str = None  # TODO: could be re
+    repository: str = None
+    extra_fields = None
 
     def init(self):
         super().init()
-        if hasattr(self, 'repository'):
-            self.__base_api_url = 'https://api.github.com/repos/{}/contents'.format(
-                getattr(self, 'repository'))
-        if hasattr(self, 'regex'):
+        if self.repository is not None:
+            self.__base_api_url = 'https://api.github.com/repos/{}/contents'.format(self.repository)
+        else:
+            raise InvalidArgument('repository', expected='string')
+
+        if self.regex is not None:
             try:
-                re.compile(getattr(self, 'regex'))
+                re.compile(self.regex)
             except Exception:
-                raise InvalidArgument('regex', expected='string', got=getattr(self, 'regex'))
+                raise InvalidArgument('regex', expected='string', got=self.regex)
         else:
             raise InvalidArgument('regex', expected='string', got=None)
-        if not hasattr(self, 'repository'):
-            raise InvalidArgument('repository', expected='string')
-        if hasattr(self, 'extra_fields'):
+
+        if self.extra_fields is not None:
             try:
-                self.__extra_fields = [x.strip() for x in getattr(self, 'extra_fields').split(',')]
+                self.__extra_fields = [x.strip() for x in self.extra_fields.split(',')]
             except Exception:
                 raise InvalidArgument('extra_fields', expected='comma-separated list')
         else:
@@ -63,8 +68,7 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
         for github_file in data:
             if github_file['type'] == 'dir':
                 extracted_github_files = self.__recurse_repository_files(github_file['url'], extracted_github_files)
-            elif github_file['type'] == 'file' and bool(re.search(getattr(self, 'regex', '.*.json'),
-                                                                  github_file['name'])):
+            elif github_file['type'] == 'file' and bool(re.search(self.regex, github_file['name'])):
                 extracted_github_file_data = {
                     'download_url': github_file['download_url'],
                     'content': requests.get(github_file['download_url']).content,

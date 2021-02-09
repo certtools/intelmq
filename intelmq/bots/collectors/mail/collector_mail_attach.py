@@ -14,7 +14,16 @@ from .lib import MailCollectorBot
 
 
 class MailAttachCollectorBot(MailCollectorBot):
-    attach_regex = None
+    """Monitor IMAP mailboxes and retrieve mail attachments"""
+    attach_regex: str = "csv.zip"
+    extract_files: bool = True
+    folder: str = "INBOX"
+    mail_host: str = "<host>"
+    mail_password: str = "<password>"
+    mail_ssl: bool = True
+    mail_user: str = "<user>"
+    rate_limit: int = 60
+    subject_regex: str = "<subject>"
 
     def init(self):
         super().init()

@@ -6,11 +6,19 @@ from .lib import MailCollectorBot
 
 
 class MailBodyCollectorBot(MailCollectorBot):
+    "Monitor IMAP mailboxes and fetch mail bodies"
+    content_types = ['plain', 'html']
+    folder: str = "INBOX"
+    mail_host: str = "<host>"
+    mail_password: str = "<password>"
+    mail_ssl: bool = True
+    mail_user: str = "<user>"
+    rate_limit: int = 60
+    subject_regex: str = "<subject>"
 
     def init(self):
         super().init()
 
-        self.content_types = getattr(self.parameters, 'content_types', ('plain', 'html'))
         if isinstance(self.content_types, str):
             self.content_types = [x.strip() for x in self.content_types.split(',')]
         elif not self.content_types or self.content_types is True:  # empty string, null, false, true

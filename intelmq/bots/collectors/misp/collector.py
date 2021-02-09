@@ -32,25 +32,31 @@ except ImportError:
 
 
 class MISPCollectorBot(CollectorBot):
+    """Collect events from a MISP server"""
+    misp_key: str = "<insert MISP Authkey>"
+    misp_tag_processed: str = None
+    misp_tag_to_process: str = "<insert MISP tag for events to be processed>"
+    misp_url: str = "<insert url of MISP server (with trailing '/')>"
+    rate_limit: int = 3600
 
     def init(self):
         if PyMISP is None:
             raise MissingDependencyError("pymisp")
 
-        if hasattr(self.parameters, 'misp_verify'):
-            self.parameters.http_verify_cert = self.parameters.misp_verify
+        if hasattr(self, 'misp_verify'):
+            self.http_verify_cert = self.misp_verify
             warnings.warn("The parameter 'misp_verify' is deprecated in favor of"
                           "'http_verify_cert'.", DeprecationWarning)
 
         # Initialize MISP connection
-        self.misp = PyMISP(self.parameters.misp_url,
-                           self.parameters.misp_key,
-                           self.parameters.http_verify_cert)
+        self.misp = PyMISP(self.misp_url,
+                           self.misp_key,
+                           self.http_verify_cert)
 
     def process(self):
         # Grab the events from MISP
         misp_result = self.misp.search(
-            tags=self.parameters.misp_tag_to_process
+            tags=self.misp_tag_to_process
         )
 
         # Process the response and events
@@ -66,21 +72,19 @@ class MISPCollectorBot(CollectorBot):
             # Send the results to the parser
             report = self.new_report()
             report.add('raw', json.dumps(misp_event, sort_keys=True))
-            report.add('feed.url', self.parameters.misp_url)
+            report.add('feed.url', self.misp_url)
             self.send_message(report)
 
         # Finally, update the tags on the MISP events.
 
         for e in misp_result:
             misp_event = e['Event']
-            if hasattr(self.parameters, 'misp_tag_processed'):
+            if self.misp_tag_processed is not None:
                 # Add a 'processed' tag to the event
-                self.misp.tag(misp_event['uuid'],
-                              self.parameters.misp_tag_processed)
+                self.misp.tag(misp_event['uuid'], self.misp_tag_processed)
 
             # Remove the 'to be processed' tag
-            self.misp.untag(misp_event['uuid'],
-                            self.parameters.misp_tag_to_process)
+            self.misp.untag(misp_event['uuid'], self.misp_tag_to_process)
 
 
 BOT = MISPCollectorBot

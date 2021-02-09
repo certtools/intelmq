@@ -35,9 +35,9 @@ else:
             report = self.stompbot.new_report()
             report.add("raw", message.rstrip())
             report.add("feed.url", "stomp://" +
-                       self.stompbot.parameters.server +
-                       ":" + str(self.stompbot.parameters.port) +
-                       "/" + self.stompbot.parameters.exchange)
+                       self.stompbot.server +
+                       ":" + str(self.stompbot.port) +
+                       "/" + self.stompbot.exchange)
             self.stompbot.send_message(report)
 
         def on_disconnected(self):
@@ -55,7 +55,16 @@ def connect_and_subscribe(conn, logger, destination, start=False):
 
 
 class StompCollectorBot(CollectorBot):
+    """Collect data from a STOMP Interface"""
     """ main class for the STOMP protocol collector """
+    exchange: str = ''
+    port: int = 61614
+    server: str = "n6stream.cert.pl"
+    http_verify_cert: bool = True
+    ssl_ca_certificate: str = 'ca.pem'  # TODO pathlib.Path
+    ssl_client_certificate: str = 'client.pem'  # TODO pathlib.Path
+    ssl_client_certificate_key: str = 'client.key'  # TODO pathlib.Path
+    heartbeat: int = 6000
 
     collector_empty_process = True
     conn = False  # define here so shutdown method can check for it
@@ -67,19 +76,9 @@ class StompCollectorBot(CollectorBot):
             raise MissingDependencyError("stomp", version="4.1.8",
                                          installed=stomp.__version__)
 
-        self.server = getattr(self.parameters, 'server', 'n6stream.cert.pl')
-        self.port = getattr(self.parameters, 'port', 61614)
-        self.exchange = getattr(self.parameters, 'exchange', '')
-        self.heartbeat = getattr(self.parameters, 'heartbeat', 60000)
-        self.ssl_ca_cert = getattr(self.parameters, 'ssl_ca_certificate',
-                                   'ca.pem')
-        self.ssl_cl_cert = getattr(self.parameters, 'ssl_client_certificate',
-                                   'client.pem')
-        self.ssl_cl_cert_key = getattr(self.parameters,
-                                       'ssl_client_certificate_key',
-                                       'client.key')
-        self.http_verify_cert = getattr(self.parameters,
-                                        'http_verify_cert', True)
+        self.ssl_ca_cert = self.ssl_ca_certificate
+        self.ssl_cl_cert = self.ssl_client_certificate
+        self.ssl_cl_cert_key = self.ssl_client_certificate_key
 
         # check if certificates exist
         for f in [self.ssl_ca_cert, self.ssl_cl_cert, self.ssl_cl_cert_key]:

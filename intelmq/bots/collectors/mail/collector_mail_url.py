@@ -18,10 +18,22 @@ except ImportError:
 
 
 class MailURLCollectorBot(MailCollectorBot):
-    chunk_size = None
-    chunk_replicate_header = None
-    url_regex = None
+    """Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies"""
     error_procedure = None
+
+    chunk_replicate_header: bool = True
+    chunk_size: int = None
+    folder: str = "INBOX"
+    http_password: str = None
+    http_username: str = None
+    mail_host: str = "<host>"
+    mail_password: str = "<password>"
+    mail_ssl: bool = True
+    mail_user: str = "<user>"
+    rate_limit: int = 60
+    ssl_client_certificate: str = None  # TODO pathlib.Path
+    subject_regex: str = "<subject>"
+    url_regex: str = "http://"
 
     def init(self):
         super().init()

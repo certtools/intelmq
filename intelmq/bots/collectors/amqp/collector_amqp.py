@@ -17,19 +17,20 @@ except ImportError:
 
 class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
     """
+    Collect data from an AMQP Server and fetch either intelmq or any other messages. Requires the pika python library.
     Inheriting from AMQPTopicOutputBot for connect_server method
     """
-    exchange = False
-    connection_heartbeat = 3600
-    connection_host = "127.0.0.1"
-    connection_port = 5672
-    connection_vhost = None
-    username = None
-    password = None
-    use_ssl = False
-    connection_attempts = 3
-    queue_name = None
-    expect_intelmq_message = False
+    exchange: bool = False
+    connection_attempts: int = 3
+    connection_heartbeat: int = 3600
+    connection_host: str = "127.0.0.1"  # TODO should be ipaddress
+    connection_port: int = 5672
+    connection_vhost: str = None
+    expect_intelmq_message: bool = False
+    password: str = None
+    queue_name: str = None
+    use_ssl: bool = False
+    username: str = None
 
     def init(self):
         if pika is None:

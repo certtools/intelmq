@@ -28,8 +28,14 @@ from intelmq.lib.exceptions import MissingDependencyError
 
 
 class HTTPStreamCollectorBot(CollectorBot):
-
+    "Open a streaming connection to the URL and process data per line"
     sighup_delay = False
+    http_password: str = None
+    http_url: str = "<insert url of feed>"
+    http_username: str = None
+    rate_limit: int = 3600
+    ssl_client_certificate: str = None  # TODO: pathlib.Path
+    strip_lines: bool = True
 
     def init(self):
         if requests is None:
@@ -41,11 +47,10 @@ class HTTPStreamCollectorBot(CollectorBot):
         self.__error_count = 0
 
     def process(self):
-        self.logger.info("Connecting to stream at %r.", self.parameters.http_url)
+        self.logger.info("Connecting to stream at %r.", self.http_url)
 
         try:
-            req = self.session.get(url=self.parameters.http_url,
-                                   stream=True)
+            req = self.session.get(url=self.http_url, stream=True)
         except requests.exceptions.ConnectionError:
             self.logger.exception('Connection Failed.')
         else:
@@ -55,7 +60,7 @@ class HTTPStreamCollectorBot(CollectorBot):
 
             try:
                 for line in req.iter_lines():
-                    if self.parameters.strip_lines:
+                    if self.strip_lines:
                         line = line.strip()
 
                     if not line:
@@ -66,7 +71,7 @@ class HTTPStreamCollectorBot(CollectorBot):
 
                     report = self.new_report()
                     report.add("raw", decode(line))
-                    report.add("feed.url", self.parameters.http_url)
+                    report.add("feed.url", self.http_url)
                     self.send_message(report)
                     self.__error_count = 0
             except (requests.exceptions.ChunkedEncodingError,

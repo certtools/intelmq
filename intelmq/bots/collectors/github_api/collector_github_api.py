@@ -19,15 +19,16 @@ static_params = {
 
 
 class GithubAPICollectorBot(CollectorBot):
+    basic_auth_username = None
+    basic_auth_password = None
 
     def init(self):
         if requests is None:
             raise ValueError('Could not import requests. Please install it.')
 
         self.__user_headers = static_params['headers']
-        if hasattr(self, 'basic_auth_username') and hasattr(self, 'basic_auth_password'):
-            self.__user_headers.update(self.__produce_auth_header(getattr(self, 'basic_auth_username'),
-                                                                  getattr(self, 'basic_auth_password')))
+        if self.basic_auth_username is not None and self.basic_auth_password is not None:
+            self.__user_headers.update(self.__produce_auth_header(self.basic_auth_username, self.basic_auth_password))
         else:
             self.logger.warning('Using unauthenticated API access, means the request limit is at 60 per hour.')
 

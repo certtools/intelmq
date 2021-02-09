@@ -7,6 +7,9 @@ from intelmq.lib.bot import CollectorBot
 
 
 class TCPCollectorBot(CollectorBot):
+    """Receive events by opening a TCP port (ex: from TCP Output of another IntelMQ instance)"""
+    ip: str = "<ip>"
+    port: int = "<port>"
 
     def init(self):
         self.address = (self.ip, int(self.port))

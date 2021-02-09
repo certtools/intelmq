@@ -1163,6 +1163,7 @@ class CollectorBot(Bot):
     """
 
     is_multithreadable = False
+    provider = None
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):

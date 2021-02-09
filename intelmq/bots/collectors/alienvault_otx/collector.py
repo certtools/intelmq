@@ -12,6 +12,11 @@ except ImportError:
 
 
 class AlienVaultOTXCollectorBot(CollectorBot):
+    "Collect reports from the AlienVault OTX Collector API. Report varies according to subscriptions."
+    api_key: str = "<insert your api key>"
+    interval: int = 24
+    modified_pulses_only: bool = False
+    rate_limit: int = 3600
 
     def init(self):
         if OTXv2 is None:
@@ -20,7 +25,6 @@ class AlienVaultOTXCollectorBot(CollectorBot):
         self.modified_pulses_only = False
         if hasattr(self, 'modified_pulses_only'):
             self.modified_pulses_only = self.modified_pulses_only
-            self.interval = getattr(self, 'interval', 24)
 
     def process(self):
         self.logger.info("Downloading report through API.")

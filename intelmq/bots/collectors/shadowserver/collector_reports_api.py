@@ -23,7 +23,7 @@ APIROOT = 'https://transform.shadowserver.org/api2/'
 
 class ShadowServerAPICollectorBot(CollectorBot):
     """
-    Shadowserver Reports API Collector Bot
+    Connects to the Shadowserver API, requests a list of all the reports for a specific country and processes the ones that are new
 
     Parameters
     ----------
@@ -37,27 +37,28 @@ class ShadowServerAPICollectorBot(CollectorBot):
         A list of strings or a string of comma-separated values with the names of reporttypes you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
     """
 
-    apikey = None
-    secret = None
     country = None
+    api_key = None
+    secret = None
     types = None
+    rate_limit: int = 86400
+    redis_cache_db: int = 12
+    redis_cache_host: str = "127.0.0.1"  # TODO: type could be ipadress
+    redis_cache_port: int = 6379
+    redis_cache_ttl: int = 864000  # 10 days
 
     def init(self):
-        self.apikey = getattr(self, "api_key", None)
-        if self.apikey is None:
+        if self.api_key is None:
             raise ValueError('No api_key provided.')
-        self.secret = getattr(self, "secret", None)
         if self.secret is None:
             raise ValueError('No secret provided.')
-        self.country = getattr(self, "country", None)
         if self.country is None:
             raise ValueError('No country provided.')
 
-        self.types = getattr(self, 'types', None)
         if isinstance(self.types, str):
             self.types = self.types.split(',')
 
-        self.preamble = '{{ "apikey": "{}" '.format(self.apikey)
+        self.preamble = '{{ "apikey": "{}" '.format(self.api_key)
 
         self.set_request_parameters()
         self.session = create_request_session(self)
@@ -65,8 +66,8 @@ class ShadowServerAPICollectorBot(CollectorBot):
         self.cache = Cache(self.redis_cache_host,
                            self.redis_cache_port,
                            self.redis_cache_db,
-                           getattr(self, 'redis_cache_ttl', 864000),  # 10 days
-                           getattr(self, "redis_cache_password", None)
+                           self.redis_cache_ttl,
+                           self.redis_cache_password
                            )
 
     def _headers(self, data):

@@ -51,6 +51,20 @@ except ImportError:
 
 
 class TwitterCollectorBot(CollectorBot):
+    "Collect tweets from given target timelines"
+    access_token_key: str = ""
+    access_token_secret: str = ""
+    consumer_key: str = ""
+    consumer_secret: str = ""
+    default_scheme: str = "http"
+    exclude_replies: bool = False
+    follow_urls: str = ""
+    include_rts: bool = True
+    target_timelines: str = ""
+    timelimit: int = 24 * 60 * 60
+    tweet_count: int = 20
+    _target_timelines = []
+    _follow_urls = []
 
     def init(self):
         if requests is None:
@@ -58,23 +72,17 @@ class TwitterCollectorBot(CollectorBot):
         if twitter is None:
             raise MissingDependencyError("twitter")
         self.current_time_in_seconds = int(time.time())
-        self.target_timelines = []
-        if getattr(self.parameters, "target_timelines", '') != '':
-            self.target_timelines.extend(
-                self.parameters.target_timelines.split(','))
-        self.tweet_count = int(getattr(self.parameters, "tweet_count", 20))
-        self.follow_urls = []
-        if getattr(self.parameters, "follow_urls", '') != '':
-            self.follow_urls.extend(
-                self.parameters.follow_urls.split(','))
-        self.include_rts = getattr(self.parameters, "include_rts", False)
-        self.exclude_replies = getattr(self.parameters, "exclude_replies", False)
-        self.timelimit = int(getattr(self.parameters, "timelimit", 24 * 60 * 60))
+        if self.target_timelines != '':
+            self._target_timelines.extend(
+                self.target_timelines.split(','))
+        if self.follow_urls != '':
+            self._follow_urls.extend(
+                self.follow_urls.split(','))
         self.api = twitter.Api(
-            consumer_key=self.parameters.consumer_key,
-            consumer_secret=self.parameters.consumer_secret,
-            access_token_key=self.parameters.access_token_key,
-            access_token_secret=self.parameters.access_token_secret,
+            consumer_key=self.consumer_key,
+            consumer_secret=self.consumer_secret,
+            access_token_key=self.access_token_key,
+            access_token_secret=self.access_token_secret,
             tweet_mode="extended")
 
         self.set_request_parameters()
@@ -95,7 +103,7 @@ class TwitterCollectorBot(CollectorBot):
 
     def process(self):
         tweets = []
-        for target in self.target_timelines:
+        for target in self._target_timelines:
             statuses = self.api.GetUserTimeline(
                 screen_name=target,
                 count=self.tweet_count,
@@ -114,7 +122,7 @@ class TwitterCollectorBot(CollectorBot):
                 'feed.url',
                 'https://twitter.com/{}/status/{}'.format(tweet.user.screen_name, tweet.id))
             self.send_message(report)
-            if tweet.user.screen_name in self.follow_urls:
+            if tweet.user.screen_name in self._follow_urls:
                 if len(tweet.urls) > 0:
                     text = ''
                     for source in tweet.urls:

@@ -51,6 +51,17 @@ URL_DOWNLOAD = 'https://interflow.azure-api.net/file/api/file/download?fileName=
 
 
 class MicrosoftInterflowCollectorBot(CollectorBot):
+    "Fetch data from the Microsoft Interflow API"
+    api_key: str = ""
+    file_match = None  # TODO type
+    http_timeout_sec: int = 300
+    not_older_than: str = "2 days"
+    rate_limit: int = 3600
+    redis_cache_db: str = "5"  # TODO type: int?
+    redis_cache_host: str = "127.0.0.1"  # TODO type ipadress
+    redis_cache_password: str = None
+    redis_cache_port: int = 6379
+    redis_cache_ttl: int = 604800
 
     def check_ttl_time(self):
         """
@@ -96,8 +107,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
                            self.redis_cache_port,
                            self.redis_cache_db,
                            self.redis_cache_ttl,
-                           getattr(self, "redis_cache_password",
-                                   None)
+                           self.redis_cache_password
                            )
 
     def process(self):

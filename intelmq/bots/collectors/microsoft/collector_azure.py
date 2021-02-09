@@ -20,29 +20,38 @@ except ImportError:
 
 
 class MicrosoftAzureCollectorBot(CollectorBot):
+    "Fetch data blobs from a Microsoft Azure container"
+    connection_string: str = "<insert your connection string here>"
+    container_name: str = "<insert the container name>"
+    rate_limit: int = 3600
+    redis_cache_db = "5"  # TODO could this be int?
+    redis_cache_host: str = "127.0.0.1"  # TODO could this be ip
+    redis_cache_password: str = None
+    redis_cache_port: int = 6379
+    redis_cache_ttl: int = 864000  # 10 days
+
     def init(self):
         if ContainerClient is None or create_configuration is None:
             raise MissingDependencyError("azure.storage")
 
         self.config = create_configuration(storage_sdk='blob')
-        if hasattr(self.parameters, 'https_proxy'):
+        if hasattr(self, 'https_proxy'):
             # Create a storage configuration object and update the proxy policy
             self.config.proxy_policy.proxies = {
-                'http': self.parameters.http_proxy,
-                'https': self.parameters.https_proxy,
+                'http': self.http_proxy,
+                'https': self.https_proxy,
             }
 
-        self.cache = Cache(self.parameters.redis_cache_host,
-                           self.parameters.redis_cache_port,
-                           self.parameters.redis_cache_db,
-                           getattr(self.parameters, 'redis_cache_ttl', 864000),  # 10 days
-                           getattr(self.parameters, "redis_cache_password",
-                                   None)
+        self.cache = Cache(self.redis_cache_host,
+                           self.redis_cache_port,
+                           self.redis_cache_db,
+                           self.redis_cache_ttl,
+                           self.redis_cache_password
                            )
 
     def process(self):
-        container_client = ContainerClient.from_connection_string(conn_str=self.parameters.connection_string,
-                                                                  container_name=self.parameters.container_name,
+        container_client = ContainerClient.from_connection_string(conn_str=self.connection_string,
+                                                                  container_name=self.container_name,
                                                                   _configuration=self.config)
         for blob in container_client.list_blobs():
             if self.cache.get(blob.name):

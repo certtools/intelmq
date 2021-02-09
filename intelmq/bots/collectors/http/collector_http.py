@@ -52,6 +52,19 @@ class Time(object):
 
 
 class HTTPCollectorBot(CollectorBot):
+    """Fetch reports from an URL"""
+    extract_files: bool = False
+    gpg_keyring: str = None  # TODO: pathlib.Path
+    http_password: str = None
+    http_url: str = "<insert url of feed>"
+    http_url_formatting: bool = False
+    http_username: str = None
+    rate_limit: int = 3600
+    signature_url: str = None
+    signature_url_formatting: bool = False
+    ssl_client_certificate: str = None  # TODO: pathlib.Path
+    verify_pgp_signatures: bool = False
+
     def init(self):
         if requests is None:
             raise MissingDependencyError("requests")
@@ -60,14 +73,14 @@ class HTTPCollectorBot(CollectorBot):
 
         self.session = create_request_session(self)
 
-        self.use_gpg = getattr(self, "verify_pgp_signatures", False)
+        self.use_gpg = self.verify_pgp_signatures
         if self.use_gpg and gnupg is None:
             raise MissingDependencyError("gnupg")
         else:
             self.logger.info('PGP signature verification is active.')
 
     def process(self):
-        formatting = getattr(self, 'http_url_formatting', False)
+        formatting = self.http_url_formatting
         if formatting:
             http_url = self.format_url(self.http_url, formatting)
         else:
@@ -152,7 +165,7 @@ class HTTPCollectorBot(CollectorBot):
         Download signature file and verify the report data.
         """
         # get PGP parameters
-        formatting = getattr(self, 'signature_url_formatting', False)
+        formatting = self.signature_url_formatting
         if formatting:
             http_url = self.format_url(self.signature_url, formatting)
         else:
@@ -173,7 +186,7 @@ class HTTPCollectorBot(CollectorBot):
         sign.flush()
 
         # check signature
-        keyring = getattr(self, "gpg_keyring", None)
+        keyring = self.gpg_keyring
         gpg = gnupg.GPG(keyring=keyring)
         verified = gpg.verify_data(sign.name, data)
 

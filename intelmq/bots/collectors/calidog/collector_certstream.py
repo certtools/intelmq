@@ -19,6 +19,8 @@ except ImportError:
 
 
 class CertstreamCollectorBot(CollectorBot):
+    """Collect information from CertStream certificate transparency logs"""
+
     def init(self):
         if CertStreamClient is None:
             raise MissingDependencyError("certstream")

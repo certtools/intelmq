@@ -18,22 +18,16 @@ except ImportError:
 
 
 class KafkaCollectorBot(CollectorBot):
+    """Fetch data from the Apache Kafka distributed stream processing system"""
+    bootstrap_servers: str = "localhost:9092"
+    topic = []
+    ssl_cafile = None
+    ssl_certfile = None
+    ssl_check_hostname = None
 
     def init(self):
         if kafka is None:
             raise MissingDependencyError("kafka")
-
-        self.topic = []
-        if getattr(self.parameters, 'topic', '') != '':
-            self.topic = self.parameters.topic
-
-        self.bootstrap_servers = 'localhost:9092'
-        if getattr(self.parameters, 'bootstrap_servers', '') != '':
-            self.bootstrap_servers = self.parameters.bootstrap_servers
-
-        self.ssl_cafile = getattr(self.parameters, 'ssl_ca_certificate', None)
-        self.ssl_certfile = getattr(self.parameters, 'ssl_client_certificate', None)
-        self.ssl_check_hostname = getattr(self.parameters, 'ssl_check_hostname', False)
 
         self.logger.debug("Topic set to {}, bootstrap_servers set to {}".format(self.topic, self.bootstrap_servers))
         self.logger.debug("ssl_cafile set to {}, ssl_certfile set to {}, ssl_check_hostname set to {}".format(self.ssl_cafile, self.ssl_certfile, self.ssl_check_hostname))
