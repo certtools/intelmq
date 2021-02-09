@@ -18,9 +18,9 @@ You can install the ``intelmq-api`` package using your preferred system package 
 We provide packages for the ``intelmq-api`` for the same operating systems as we do for the ``intelmq`` package itself.
 Our repository page gives `installation instructions for various operating systems <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq>`_.
 
-The ``intelmq-api`` packages ship a configuration file in ``${PREFIX}/etc/intelmq-api/config.json`` and a virtualhost configuration file for Apache 2 in ``${PREFIX}/etc/intelmq-api/apache-virtualhost.conf``.
+The ``intelmq-api`` packages ship a configuration file in ``${PREFIX}/etc/intelmq/api-config.json``, a virtualhost configuration file for Apache 2 in ``${PREFIX}/etc/intelmq/api-apache.conf`` and a sudoers configuration file in ``${PREFIX}/etc/intelmq/api-sudoers.conf``.
 The value of ``${PREFIX}`` depends on your installation method- with distribution packages it is simply ``/``, when using pip (as root) it is ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version.
-Some distribution packages already create a symlink in the relevant apache configuration directory to the apache configuration file, so it should be easy to enable that (i.e. by using ``a2ensite intelmq-api`` on Debian based systems).
+Some distribution packages already create a symlink to the sudoers file in the sudoers.d configuration directory and a symlink in the relevant apache configuration directory to the apache configuration file, so it should be easy to enable that (i.e. by using ``a2ensite intelmq-api`` on Debian based systems).
 
 But you can also run ``intelmq-api`` directly using ``hug``:
 
@@ -52,16 +52,16 @@ Depending on your setup you might have to install ``sudo`` to make it possible f
 
 ``intelmq-api`` is configured using a configuration file in ``json`` format.
 The path to the configuration file is set using the environment variable ``INTELMQ_API_CONFIG``.
-The default apache configuration file sets the environment variable to point to ``/etc/intelmq-api/config.json`` so if you are apache and your configuration file is stored somewhere else (i.e. because you used pip to install the package) you have to update the environment variable ``INTELMQ_API_CONFIG`` in the apache config.
+The default apache configuration file sets the environment variable to point to ``/etc/intelmq/api-config.json`` so if you are apache and your configuration file is stored somewhere else (i.e. because you used pip to install the package) you have to update the environment variable ``INTELMQ_API_CONFIG`` in the apache config.
 
 When running the API using ``hug``, you can set the environment variable like this:
 
 .. code-block:: bash
 
-   INTELMQ_API_CONFIG=/etc/intelmq-api/config.json hug -m intelmq_api.serve
+   INTELMQ_API_CONFIG=/etc/intelmq/api-config.json hug -m intelmq_api.serve
 
 
-The configuration file ``/etc/intelmq-api/config.json`` which is shipped with the packages is also listed here for reference.
+The configuration file ``/etc/intelmq/api-config.json`` which is shipped with the packages is also listed here for reference.
 This also gives an example on how to disable a setting, namely by prefixing the name with an underscore, like it is done here with the ``_session_store`` setting.
 
 .. code-block:: json
