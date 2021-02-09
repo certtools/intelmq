@@ -4,7 +4,6 @@ Parses simple newline separated list of IPs.
 
 Docs:
  - https://feodotracker.abuse.ch/blocklist/
- - https://zeustracker.abuse.ch/blocklist.php
 """
 import re
 
@@ -20,29 +19,15 @@ FEEDS = {
             'extra.first_seen',
             'source.ip',
             'source.port',
+            'status',
             'extra.last_online',
             'malware.name'
         ],
         'malware': 'feodo',
-        'position': 2,
         'additional_fields':
             {
                 'time.source': lambda row: row[3] + 'T00:00+00' if row[3] else row[0] + ' UTC',
         },
-    },
-    'https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist': {
-        'format': [
-            'source.ip'
-        ],
-        'malware': 'zeus',
-        'position': 1
-    },
-    'https://zeustracker.abuse.ch/blocklist.php?download=badips': {
-        'format': [
-            'source.ip'
-        ],
-        'malware': 'zeus',
-        'position': 1
     }
 }
 
@@ -56,9 +41,17 @@ class AbusechIPParserBot(ParserBot):
         feed = report['feed.url']
 
         raw_lines = utils.base64_decode(report.get("raw")).splitlines()
-        self.comments = list(r for r in raw_lines if self.__is_comment_line_regex.search(r))
 
-        fields = self.comments[-FEEDS[feed]['position']].split(',')
+        self.comments = []
+        data_lines = []
+        for r in raw_lines:
+            if self.__is_comment_line_regex.search(r):
+                self.comments.append(r)
+            else:
+                data_lines.append(r)
+
+        fields = data_lines[0].split(',')  # First line is the CSV header file
+        data_lines.pop(0)  # remove CSV header line
         if len(fields) is not len(FEEDS[feed]['format']):
             self.logger.warning("Feed '{}' has not the expected fields: {} != {}".format(feed,
                                                                                          len(fields),
@@ -69,8 +62,7 @@ class AbusechIPParserBot(ParserBot):
             if 'Last updated' in line:
                 self.__last_generated_date = dateutil.parser.parse(self.__date_regex.search(line).group(0)).isoformat()
 
-        lines = (line for line in raw_lines if not self.__is_comment_line_regex.search(line))
-        for line in lines:
+        for line in data_lines:
             yield line.strip()
 
     def parse_line(self, line, report):
