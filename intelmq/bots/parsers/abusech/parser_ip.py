@@ -24,9 +24,8 @@ FEEDS = {
             'malware.name'
         ],
         'malware': 'feodo',
-        'additional_fields':
-            {
-                'time.source': lambda row: row[3] + 'T00:00+00' if row[3] else row[0] + ' UTC',
+        'additional_fields': {
+            'time.source': lambda row: row[3] + 'T00:00+00' if row[3] else row[0] + ' UTC',
         },
     }
 }
@@ -48,10 +47,10 @@ class AbusechIPParserBot(ParserBot):
             if self.__is_comment_line_regex.search(r):
                 self.comments.append(r)
             else:
-                data_lines.append(r)
+                data_lines.append(self.__sanitize_csv_lines(r))
 
-        fields = data_lines[0].split(',')  # First line is the CSV header file
-        data_lines.pop(0)  # remove CSV header line
+        self.header_line = data_lines.pop(0)  # remove CSV header line
+        fields = [self.__sanitize_csv_lines(f) for f in self.header_line.split(',')]  # First line is the CSV header file
         if len(fields) is not len(FEEDS[feed]['format']):
             self.logger.warning("Feed '{}' has not the expected fields: {} != {}".format(feed,
                                                                                          len(fields),
@@ -106,8 +105,12 @@ class AbusechIPParserBot(ParserBot):
         for field, function in FEEDS[feed_url]['additional_fields'].items():
             event.add(field, function(line.split(',')))
 
+    @staticmethod
+    def __sanitize_csv_lines(s: str):
+        return s.replace('"', '')
+
     def recover_line(self, line):
-        return '\n'.join(self.comments + [line])
+        return '\n'.join(self.comments + [self.header_line, line])
 
 
 BOT = AbusechIPParserBot
