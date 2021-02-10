@@ -102,6 +102,19 @@ If you enable the ``session_store`` you will have to create user accounts to be 
 
    hug -m intelmq_api.serve -c add_user <username>
 
+*****************
+A note on SELinux
+*****************
+
+On systems with SELinux enabled, the API will fail to call intelmqctl.
+Therefore, SELinux needs to be disabled:
+
+.. code-block:: bash
+
+   setenforce 0
+
+We welcome contributions to provide SELinux policies.
+
 **************
 Usual problems
 **************
