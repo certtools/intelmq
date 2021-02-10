@@ -10,7 +10,7 @@ from intelmq.bots.parsers.abusech.parser_ip import AbusechIPParserBot
 with open(os.path.join(os.path.dirname(__file__), 'feodoips.txt')) as handle:
     EXAMPLE_FEODO_FILE = handle.read()
 LINES = EXAMPLE_FEODO_FILE.splitlines()
-HEADER = '\n'.join(LINES[:9]) + '\n' +  LINES[-1] + '\n'
+HEADER = '\n'.join(LINES[:8]) + '\n' +  LINES[-1] + '\n' + LINES[-4].replace('"', '') + '\n'
 
 EXAMPLE_FEODO_REPORT = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipblocklist.csv",
                         "feed.name": "AbuseCH Feodotracker",
@@ -21,31 +21,34 @@ EXAMPLE_FEODO_REPORT = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipb
 
 EXAMPLE_FEODO_EVENT = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipblocklist.csv",
                        "feed.name": "AbuseCH Feodotracker",
-                       "source.ip": "110.93.230.101",
-                       "source.port": 990,
-                       "raw": utils.base64_encode(HEADER + LINES[9]),
+                       "source.ip": "10.213.75.205",
+                       "source.port": 443,
+                       "raw": utils.base64_encode(HEADER + LINES[9].replace('"', '')),
                        "time.observation": "2019-03-01T01:01:01+00:00",
-                       "extra.first_seen": "2019-03-04T22:10:24+00:00",
-                       "extra.last_online": "2019-03-05T00:00:00+00:00",
-                       "extra.feed_last_generated": "2019-03-05T22:10:24+00:00",
-                       "time.source": "2019-03-05T00:00:00+00:00",
+                       "extra.first_seen": "2021-01-17T07:30:05+00:00",
+                       "extra.last_online": "2021-02-10T00:00:00+00:00",
+                       "extra.feed_last_generated": "2021-02-10T13:34:57+00:00",
+                       "time.source": "2021-02-10T00:00:00+00:00",
                        "classification.taxonomy": "malicious code",
                        "classification.type": "c2server",
-                       "malware.name": "heodo",
+                       "malware.name": "dridex",
+                       "status": "online",
                        "__type": "Event"
                        }
 EXAMPLE_FEODO_EVENT1 = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipblocklist.csv",
                         "feed.name": "AbuseCH Feodotracker",
-                        "source.ip": "192.155.88.196",
-                        "source.port": 8080,
-                        "raw": utils.base64_encode(HEADER + LINES[10]),
+                        "source.ip": "192.16.238.101",
+                        "source.port": 443,
+                        "raw": utils.base64_encode(HEADER + LINES[10].replace('"', '')),
                         "time.observation": "2019-03-01T01:01:01+00:00",
-                        "extra.feed_last_generated": "2019-03-05T22:10:24+00:00",
-                        "extra.first_seen": "2017-12-18T23:36:45+00:00",
-                        "time.source": "2017-12-18T23:36:45+00:00",
+                        "extra.feed_last_generated": "2021-02-10T13:34:57+00:00",
+                        "extra.first_seen": "2021-01-17T07:44:46+00:00",
+                        "extra.last_online": "2021-02-10T00:00:00+00:00",
+                        "time.source": "2021-02-10T00:00:00+00:00",
                         "classification.taxonomy": "malicious code",
                         "classification.type": "c2server",
-                        "malware.name": "heodo",
+                        "malware.name": "dridex",
+                        "status": "online",
                         "__type": "Event"
                         }
 
