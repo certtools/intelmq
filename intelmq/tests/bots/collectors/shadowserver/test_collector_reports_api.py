@@ -18,6 +18,8 @@ def prepare_mocker(mocker):
     mocker.post('https://transform.shadowserver.org/api2/reports/download', text='{}')
 
 
+# Explicit skip_redis is required (although implicitly called by no_cache), otherwise fails in package build environments
+@test.skip_redis()
 @requests_mock.Mocker()
 class TestShadowServerAPICollectorBot(test.BotTestCase, unittest.TestCase):
     """
