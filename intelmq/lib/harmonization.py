@@ -326,7 +326,7 @@ class DateTime(String):
             value = dateutil.parser.parse(value, fuzzy=True)
             value = value.astimezone(pytz.utc)
             value = value.isoformat()
-        except ValueError:
+        except (ValueError, OverflowError):
             return None
         return utils.decode(value)
 
