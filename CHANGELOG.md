@@ -26,6 +26,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - `DateTime.parse_utc_isoformat`: Add parameter `return_datetime` to return `datetime` object instead of string ISO format.
   - `DateTime.convert`: Fix `utc_isoformat` format, it pointed to a string and not a function, causing an exception when used.
   - `DateTime.from_timestamp`: Ensure that time zone information (`+00:00`) is always present.
+  - `DateTime.__parse` now handles OverflowError exceptions from the dateutil library, happens for large numbers (e.g. telehpone numbers).
 - `intelmq.lib.upgrades`:
   - Added upgrade function `v230_feed_fix`.
 
