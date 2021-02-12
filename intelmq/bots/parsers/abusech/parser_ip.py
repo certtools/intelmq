@@ -25,7 +25,7 @@ FEEDS = {
         ],
         'malware': 'feodo',
         'additional_fields': {
-            'time.source': lambda row: row[3] + 'T00:00+00' if row[3] else row[0] + ' UTC',
+            'time.source': lambda row: row[4] + 'T00:00+00' if row[4] else row[0] + ' UTC',
         },
     }
 }
@@ -51,7 +51,7 @@ class AbusechIPParserBot(ParserBot):
 
         self.header_line = data_lines.pop(0)  # remove CSV header line
         fields = [self.__sanitize_csv_lines(f) for f in self.header_line.split(',')]  # First line is the CSV header file
-        if len(fields) is not len(FEEDS[feed]['format']):
+        if len(fields) != len(FEEDS[feed]['format']):
             self.logger.warning("Feed '{}' has not the expected fields: {} != {}".format(feed,
                                                                                          len(fields),
                                                                                          len(FEEDS[feed]['format'])))
