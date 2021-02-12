@@ -46,19 +46,21 @@ Docker (beta)
 
    docker pull certat/intelmq-full:1.0
 
+   docker pull certat/intelmq-nginx:latest
+
 Alternatively you can use `docker-compose`:
 
 .. code-block:: bash
 
    docker-compose pull
 
-You can check the current versions from intelmq & intelmq-manager via git commit ref.
+You can check the current versions from intelmq & intelmq-manager & intelmq-api via git commit ref.
 
-The first one is the intelmq commit ref, and the second one is for intelmq-manager
+The Version format for each included item is `key=value` and they are saparated via `,`. I. e. `IntelMQ=ab12cd34f, IntelMQ-API=xy65z23`.
 
 .. code-block:: bash
 
-   docker inspect --format '{{ index .Config.Labels "org.label-schema.vcs-ref"}}' certat/intelmq-full:1.0
+   docker inspect --format '{{ index .Config.Labels "org.opencontainers.image.version" }}' intelmq-full:1.0
 
 Now restart your container, if you're using docker-compose you simply write:
 

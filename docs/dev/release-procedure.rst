@@ -64,6 +64,17 @@ First, test all the steps first with the `unstable-repository <http://build.open
 * Build locally for all distributions.
 * Commit.
 
+************
+Docker Image
+************
+
+Releasing a new Docker image is very easy.
+
+* Clone `IntelMQ Docker Repository <https://github.com/certat/intelmq-docker>`_ with ``git clone https://github.com/certat/intelmq-docker.git --recursive`` as this repository contains submodules
+* Run `./build.sh`, check your console if the build was successful.
+* Run `./test.sh` - It will run nosetests3 with exotic flag. All errors/warnings will be displayed.
+* If no error/warning was shown, you can release with `./publish.sh`. Change the namespace variable in `publish.sh`.
+
 *************
 Announcements
 *************
