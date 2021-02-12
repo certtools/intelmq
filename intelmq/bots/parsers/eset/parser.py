@@ -12,6 +12,7 @@ message_taxonomy_map = {
 
 
 class ESETParserBot(ParserBot):
+    """Parse data collected from ESET's TAXII API"""
     def init(self):
         self.f_map = {
             'ei.urls (json)': self.urls_parse,

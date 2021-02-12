@@ -68,6 +68,7 @@ MAPPING = {
 
 
 class BlockListDEParserBot(ParserBot):
+    "Parse the Blocklist.DE feeds"
 
     def parse_line(self, line, report):
         path = urlparse(report['feed.url']).path

@@ -26,6 +26,7 @@ MAP_geo_env_remote_addr = {"country_code": 'source.geolocation.cc',
 
 
 class AnubisNetworksParserBot(Bot):
+    """Parse single JSON-events from AnubisNetworks Cyberfeed stream"""
     use_malware_familiy_as_classification_identifier = True
 
     def init(self):

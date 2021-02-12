@@ -7,6 +7,7 @@ from intelmq.lib.bot import Bot
 
 
 class TurrisGreylistParserBot(Bot):
+    """Parse the Turris Greylist feed"""
 
     def process(self):
         report = self.receive_message()

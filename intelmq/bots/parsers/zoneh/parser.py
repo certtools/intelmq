@@ -8,6 +8,7 @@ from intelmq.lib.bot import ParserBot
 
 
 class ZoneHParserBot(ParserBot):
+    """Parse the ZoneH CSV feed"""
     recover_line = ParserBot.recover_line
     parse = ParserBot.parse_csv_dict
 

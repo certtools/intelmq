@@ -12,6 +12,7 @@ from intelmq.lib.utils import base64_decode
 
 
 class JSONParserBot(Bot):
+    """Parse IntelMQ-JSON data"""
     splitlines = False
 
     def process(self):

@@ -66,6 +66,7 @@ mapping['other']        = {"taxonomy": "other",
 
 
 class N6StompParserBot(Bot):
+    """Parse CERT.pl's n6 feed"""
 
     def process(self):
         report = self.receive_message()

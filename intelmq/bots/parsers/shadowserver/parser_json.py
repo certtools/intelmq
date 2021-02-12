@@ -14,7 +14,7 @@ import intelmq.lib.message as libmessage
 
 
 class ShadowserverJSONParserBot(ParserBot):
-    """
+    """Parse all Shadowserver feeds in JSON format (data coming from the reports API)
     Shadowserver JSON Parser
 
     Parameters
@@ -28,6 +28,7 @@ class ShadowserverJSONParserBot(ParserBot):
     feedname = None
     sparser_config = None
     recover_line = ParserBot.recover_line_json
+    overwrite = True
 
     def init(self):
         if self.feedname is not None:

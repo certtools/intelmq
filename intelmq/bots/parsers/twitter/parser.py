@@ -41,6 +41,7 @@ except ImportError:
 
 
 class TwitterParserBot(Bot):
+    """Parse tweets and extract IoC data. Currently only URLs are supported, a whitelist of safe domains can be provided"""
     access_token_key = ""
     access_token_secret = ""
     consumer_key = ""

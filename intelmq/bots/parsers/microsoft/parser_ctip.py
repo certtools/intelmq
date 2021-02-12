@@ -170,6 +170,7 @@ CONFIDENCE = {
 
 
 class MicrosoftCTIPParserBot(ParserBot):
+    """Parse JSON data from Microsoft's CTIP program"""
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))

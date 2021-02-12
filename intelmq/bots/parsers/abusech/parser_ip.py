@@ -32,6 +32,7 @@ FEEDS = {
 
 
 class AbusechIPParserBot(ParserBot):
+    """Parse Abuse.ch IP address feeds"""
     __last_generated_date = None
     __is_comment_line_regex = re.compile(r'^#+.*')
     __date_regex = re.compile(r'[0-9]{4}.[0-9]{2}.[0-9]{2}.[0-9]{2}.[0-9]{2}.[0-9]{2}( UTC)?')

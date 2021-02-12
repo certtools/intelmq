@@ -24,6 +24,7 @@ HASH_VALIDATORS = {
 
 
 class GithubFeedParserBot(Bot):
+    """Parse known GitHub feeds"""
 
     def init(self):
         if validators is None:

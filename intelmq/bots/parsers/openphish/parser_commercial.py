@@ -7,6 +7,7 @@ from intelmq.lib.bot import Bot
 
 
 class OpenPhishCommercialParserBot(Bot):
+    """Parse the OpenPhish feed"""
 
     def process(self):
         report = self.receive_message()

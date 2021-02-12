@@ -6,6 +6,7 @@ from intelmq.lib.harmonization import DateTime
 
 
 class Netlab360ParserBot(ParserBot):
+    """Parse the Netlab 360 DGA, Hajime, Magnitude and Mirai feeds"""
     DGA_FEED = {'http://data.netlab.360.com/feeds/dga/dga.txt',
                 'https://data.netlab.360.com/feeds/dga/dga.txt'}
     MAGNITUDE_FEED = {'http://data.netlab.360.com/feeds/ek/magnitude.txt',

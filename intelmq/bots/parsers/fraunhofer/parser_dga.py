@@ -18,6 +18,7 @@ __all__ = ['FraunhoferDGAParserBot']
 
 
 class FraunhoferDGAParserBot(Bot):
+    """Parse the Fraunhofer DGA feed"""
 
     def process(self):
         report = self.receive_message()

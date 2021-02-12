@@ -27,6 +27,7 @@ from intelmq.lib.bot import Bot
 
 
 class DshieldBlockParserBot(Bot):
+    """Parse the DShield Block feed"""
 
     def process(self):
         report = self.receive_message()

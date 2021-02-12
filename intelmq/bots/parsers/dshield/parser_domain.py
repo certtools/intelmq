@@ -18,6 +18,7 @@ from intelmq.lib.bot import Bot
 
 
 class DshieldDomainParserBot(Bot):
+    """Parse the DShield Suspicious Domains feed"""
 
     def process(self):
         report = self.receive_message()

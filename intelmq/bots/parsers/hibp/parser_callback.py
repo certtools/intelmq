@@ -12,6 +12,7 @@ from intelmq.lib.utils import base64_decode
 
 
 class HIBPCallbackParserBot(ParserBot):
+    """Parse reports of the 'Have I Been Pwned' Callback for Enterprise Subscribers"""
     def recover_line(self, line):
         return json.dumps(line, sort_keys=True)
 

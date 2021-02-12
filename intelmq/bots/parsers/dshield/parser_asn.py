@@ -18,6 +18,7 @@ from intelmq.lib.bot import Bot
 
 
 class DShieldASNParserBot(Bot):
+    """Parse the DShield AS"""
 
     def process(self):
         report = self.receive_message()

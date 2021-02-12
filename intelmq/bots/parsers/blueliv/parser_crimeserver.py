@@ -18,6 +18,7 @@ TYPES = {
 
 
 class BluelivCrimeserverParserBot(Bot):
+    """Parse data from the Blueliv Crimeserver API"""
 
     def process(self):
         report = self.receive_message()

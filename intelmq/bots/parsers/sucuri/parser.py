@@ -22,6 +22,7 @@ remove_comments = re.compile(r"<!--(.|\s|\n)*?-->")
 
 
 class SucuriParserBot(Bot):
+    """Parse the Sucuri Malware Hidden Iframes and Conditional redirections feeds"""
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])  # decoding

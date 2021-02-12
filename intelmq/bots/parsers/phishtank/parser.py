@@ -7,6 +7,7 @@ from intelmq.lib.bot import Bot
 
 
 class PhishTankParserBot(Bot):
+    """Parse the PhishTank feed"""
 
     def process(self):
         report = self.receive_message()

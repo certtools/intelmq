@@ -9,6 +9,7 @@ REGEX_TIMESTAMP = "# ([^ \t]+ [^ \t]+)"
 
 
 class BruteForceBlockerParserBot(Bot):
+    """Parse the Danger Rulez feed"""
 
     def process(self):
         report = self.receive_message()

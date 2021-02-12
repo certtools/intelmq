@@ -30,6 +30,7 @@ CLASSIFICATION = {
 
 
 class TaichungNetflowRecentParserBot(ParserBot):
+    """Parse the Taichung feed"""
 
     def get_type(self, value):
         value = value.lower()

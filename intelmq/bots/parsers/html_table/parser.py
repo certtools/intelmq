@@ -31,6 +31,7 @@ except ImportError:
 
 
 class HTMLTableParserBot(Bot):
+    """Parse HTML table data"""
     attribute_name = ""
     attribute_value = ""
     columns = ["", "source.fqdn"]

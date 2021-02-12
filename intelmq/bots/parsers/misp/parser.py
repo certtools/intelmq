@@ -8,6 +8,7 @@ from intelmq.lib.bot import Bot
 
 
 class MISPParserBot(Bot):
+    """Parse MISP events"""
 
     # Taxonomy library from ecsirt (default in MISP)
     # Mapping to the IntelMQ taxonomy

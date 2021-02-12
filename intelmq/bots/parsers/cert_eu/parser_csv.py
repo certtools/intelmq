@@ -15,6 +15,7 @@ from intelmq.lib.harmonization import DateTime
 
 
 class CertEUCSVParserBot(ParserBot):
+    """Parse CSV data of the CERT-EU feed"""
 
     abuse_to_intelmq = defaultdict(lambda: "other", {
         "backdoor": "backdoor",

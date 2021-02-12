@@ -26,6 +26,7 @@ from intelmq.lib.exceptions import InvalidKey, InvalidValue
 
 
 class ShadowserverParserBot(ParserBot):
+    """Parse all ShadowServer feeds"""
 
     recover_line = ParserBot.recover_line_csv_dict
     csv_params = {'dialect': 'unix'}

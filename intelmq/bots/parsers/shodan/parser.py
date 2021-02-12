@@ -138,6 +138,7 @@ CONVERSIONS = {
 
 
 class ShodanParserBot(Bot):
+    """Parse Shodan data collected via the Shodan API"""
     ignore_errors = True
     minimal_mode = False
 

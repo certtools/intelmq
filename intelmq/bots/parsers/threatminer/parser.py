@@ -24,6 +24,7 @@ parser = MyHTMLParser()
 
 
 class ThreatminerParserBot(Bot):
+    """Parse the Threatminer feed"""
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])

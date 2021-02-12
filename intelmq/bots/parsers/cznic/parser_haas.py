@@ -5,6 +5,7 @@ from intelmq.lib.bot import ParserBot
 
 
 class CZNICHaasParserBot(ParserBot):
+    """CZ.NIC HaaS Parser is the bot responsible to parse the report and sanitize the information"""
 
     parse = ParserBot.parse_json
     recover_line = ParserBot.recover_line_json

@@ -6,6 +6,7 @@ from intelmq.lib.message import Event
 
 
 class DataplaneParserBot(ParserBot):
+    """Parse the Dataplane feeds"""
     CATEGORY = {
         'sipquery': {
             'classification.type': 'brute-force',

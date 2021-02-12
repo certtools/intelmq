@@ -30,6 +30,7 @@ __all__ = ['SpamhausCERTParserBot']
 
 
 class SpamhausCERTParserBot(ParserBot):
+    """Parse the Spamhaus CERT feed"""
 
     def parse_line(self, row, report):
         if not len(row) or row.startswith(';'):

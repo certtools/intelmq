@@ -12,6 +12,7 @@ from intelmq.lib.bot import Bot
 
 
 class DynParserBot(Bot):
+    """Parse the DynDNS ponmocup feed"""
 
     def init(self):
         self.TZOFFSETS = {'PST': -8 * 60 * 60,

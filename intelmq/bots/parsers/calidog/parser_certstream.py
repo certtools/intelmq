@@ -10,6 +10,7 @@ from intelmq.lib.utils import base64_decode
 
 
 class CertStreamParserBot(ParserBot):
+    """Parse the CertStream feed"""
 
     def parse(self, report):
         raw = base64_decode(report['raw'])

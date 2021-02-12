@@ -7,6 +7,7 @@ from intelmq.lib.bot import ParserBot
 
 
 class SpamhausDropParserBot(ParserBot):
+    """Parse the Spamhaus DROP, EDROP, DROPv6, and ASN-DROP feeds"""
     """ Spamhaus Drop Parser Bot """
 
     NETWORK_DROP_URLS = {'https://www.spamhaus.org/drop/edrop.txt',

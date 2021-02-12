@@ -5,6 +5,7 @@ from intelmq.lib.bot import Bot
 
 
 class CIArmyParserBot(Bot):
+    """Parse the CI Army feed"""
 
     def process(self):
 

@@ -34,19 +34,20 @@ DOCS = "https://intelmq.readthedocs.io/en/latest/guides/Bots.html#generic-csv-pa
 
 
 class GenericCsvParserBot(ParserBot):
-    columns = None
-    type_translation = {}
-    data_type = None
+    """Parse generic CSV data. Ignoring lines starting with character #. URLs without protocol can be prefixed with a default value."""
     column_regex_search = None
-    time_format = None
+    columns = None
+    compose_fields = {}
+    columns_required = None
+    data_type = None
+    default_url_protocol = ''
+    delimiter = ''
     filter_text = None
     filter_type = None
-    columns_required = None
-    compose_fields = {}
-    skip_header = False
-    delimiter = ''
-    default_url_protocol = ''
+    time_format = None
     type = None
+    type_translation = {}
+    skip_header = False
 
     def init(self):
         # convert columns to an array

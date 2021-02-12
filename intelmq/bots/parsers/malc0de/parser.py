@@ -7,6 +7,7 @@ from intelmq.lib.bot import ParserBot
 
 
 class Malc0deParserBot(ParserBot):
+    """Parse the Malc0de IP feed in either IP Blacklist, Windows Format or Bind format"""
 
     WINDOWS_FORMAT = {'http://malc0de.com/bl/BOOT',
                       'https://malc0de.com/bl/BOOT'}

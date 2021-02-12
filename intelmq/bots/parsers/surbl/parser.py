@@ -4,6 +4,7 @@ from intelmq.lib.bot import Bot
 
 
 class SurblParserBot(Bot):
+    """Parse the Surbl feed"""
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])  # decoding

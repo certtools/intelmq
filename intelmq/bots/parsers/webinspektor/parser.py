@@ -22,6 +22,7 @@ parser = MyHTMLParser()
 
 
 class WebinspektorParserBot(Bot):
+    """Parse the Web Inspektor"""
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])

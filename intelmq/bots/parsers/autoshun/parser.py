@@ -15,6 +15,7 @@ TAXONOMY = {
 
 
 class AutoshunParserBot(ParserBot):
+    """Parse the Autoshun feed"""
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))

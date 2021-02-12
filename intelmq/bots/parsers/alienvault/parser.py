@@ -14,6 +14,7 @@ CLASSIFICATION = {
 
 
 class AlienVaultParserBot(ParserBot):
+    """Parse data from the AlienVault API"""
 
     def parse_line(self, row, report):
         values = row.split("#")

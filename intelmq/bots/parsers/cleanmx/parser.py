@@ -69,6 +69,7 @@ VIRUS = OrderedDict([
 
 
 class CleanMXParserBot(ParserBot):
+    """Parse the CleanMX feeds"""
 
     def get_mapping_and_type(self, url):
 

@@ -19,6 +19,7 @@ HASHES = {
 
 
 class AlienVaultOTXParserBot(ParserBot):
+    """Parse data from the AlienVault OTX API"""
     parse = ParserBot.parse_json
     recover_line = ParserBot.recover_line_json
 

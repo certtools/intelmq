@@ -6,6 +6,7 @@ from intelmq.lib.bot import ParserBot
 
 
 class VXVaultParserBot(ParserBot):
+    """Parse the VXVault feed"""
 
     def parse(self, report):
         report_split = utils.base64_decode(report["raw"]).strip().splitlines()

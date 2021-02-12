@@ -39,10 +39,12 @@ from dateutil.parser import parse
 
 
 class KeyValueParserBot(ParserBot):
-    pair_separator = ' '
-    kv_separator = '='
+    """Parse key=value strings"""
     keys = {}
+    kv_separator = '='
+    pair_separator = ' '
     strip_quotes = True
+    timestamp_key = None  # TODO: that seems to be legacy
 
     def init(self):
         if not self.keys:

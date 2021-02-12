@@ -20,6 +20,7 @@ SOURCE_FEEDS = {'https://feodotracker.abuse.ch/blocklist/?download=domainblockli
 
 
 class AbusechDomainParserBot(ParserBot):
+    """Parse Abuse.ch domain feeds"""
     lastgenerated = None
 
     def parse_line(self, line, report):

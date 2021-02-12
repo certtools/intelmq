@@ -48,6 +48,7 @@ DESTINATION_PORT_NUMBERS_TOTAL = re.compile(r' \(total_count:\d+\)$')
 
 
 class CymruCAPProgramParserBot(ParserBot):
+    """Parse the Cymru CAP Program feed"""
 
     def parse(self, report):
         lines = utils.base64_decode(report.get("raw")).splitlines()
