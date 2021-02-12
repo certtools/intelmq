@@ -24,68 +24,74 @@ class FireeyeParserBot(ParserBot):
             for indicator in my_dict['OpenIOC']['criteria']['Indicator']['IndicatorItem']:
                 indicatorType = indicator['Context']['@search']
                 if indicatorType == 'FileItem/Md5sum':
-                    event.add('malware.hash.md5', indicator['Content']['#text'])
+                    md5sum =  indicator['Content']['#text']
+                    event.add('malware.hash.md5', md5sum)
                 if indicatorType == 'FileItem/Sha256sum':
-                    self.logger.debug('FileItem/Sha256sum from uuid' + indicator['Content']['#text'])
-                    event.add('malware.hash.sha256', indicator['Content']['#text'])
+                    self.logger.debug('FileItem/Sha256sum from uuid' + indicator['Content']['#text'] + '.' )
+                    sha256sum = indicator['Content']['#text']
+                    event.add('malware.hash.sha256', sha256sum)
+                    event.add( 'classification.type', 'malware')
+                    event.add( 'raw',  raw_report)
                     self.send_message(event)
                     data = raw_report.split('<Indicator id')
                     uuidres = data[0].split('"alert_id">')
                     uuid = uuidres[1].split('"')
-                    self.logger.debug('My UUDI is:  %r' + uuid[0])
-                    data.pop(0)
-                    data.pop(0)
-                    for Indicator in data:
-                        event = self.new_event(report)
-                        if "Network" in Indicator:
-                            fqdn = ""
-                            urlpath = ""
-                            IndicatorItem = Indicator.split('<IndicatorItem condition')
-                            for datainIndicator in IndicatorItem:
-                                if "search=" in datainIndicator:
-                                    search = datainIndicator.split('search="')
-                                    for searchIndicator in search:
-                                        classification = ""
-                                        if '"/>' in searchIndicator:
-                                            context_search = searchIndicator.split('"/>')
+                    self.logger.debug('My UUID is:  %r' + uuid[0] + '.')
+                    Indicator = data.__getitem__(2)
+                    event = self.new_event(report)
+                    if "Network" in Indicator:
+                        event.add( 'classification.type', 'malware-distribution')
+                        event.add( 'raw',  raw_report)
+                        event.add('malware.hash.sha256', sha256sum)
+                        event.add('malware.hash.md5', md5sum)
+                        fqdn = ""
+                        urlpath = ""
+                        IndicatorItem = Indicator.split('<IndicatorItem condition')
+                        for datainIndicator in IndicatorItem:
+                            if "search=" in datainIndicator:
+                                search = datainIndicator.split('search="')
+                                for searchIndicator in search:
+                                    classification = ""
+                                    if '"/>' in searchIndicator:
+                                        context_search = searchIndicator.split('"/>')
                                             # context inhalt
-                                            if context_search[0] == "Network/HTTP/RequestURI":
-                                                classification = "destination.urlpath"
-                                            if context_search[0] == "Network/HTTP/Host":
-                                                classification = "destination.ip"
-                                            if context_search[0] == "Network/Connection/RemotePort":
-                                                classification = "destination.port"
-                                            if context_search[0] == "Network/Connection/Protocol":
-                                                classification = "protocol.transport"
-                                            if context_search[0] == "Network/DNS":
-                                                classification = "destination.fqdn"
-                                        if 'Content' in searchIndicator:
-                                            Content_search = searchIndicator.split('">')
-                                            context = Content_search[1].split('</Content>')
-                                            self.logger.debug(classification + "   " + context[0])
-                                            if fqdn != "" and urlpath != "":
-                                                event.add("destination.url", "http://" + fqdn + urlpath)
-                                                fqdn = ""
-                                                urlpath = ""
-                                            if classification == "destination.ip":
-                                                try:
-                                                    ipaddress.IPv4Network(context[0])
-                                                    event.add('destination.ip', context[0])
-                                                    break
-                                                except ValueError:
-                                                    break
-                                            elif classification == "destination.fqdn":
-                                                fqdn = context[0]
-                                                event.add(classification, context[0])
-                                            elif classification == "destination.urlpath":
-                                                urlpath = context[0]
-                                                event.add(classification, context[0])
-                                            elif classification == "destination.port":
-                                                event.add(classification, int(context[0]))
-                    self.send_message(event)
+                                        if context_search[0] == "Network/HTTP/RequestURI":
+                                            classification = "destination.urlpath"
+                                        if context_search[0] == "Network/HTTP/Host":
+                                            classification = "destination.ip"
+                                        if context_search[0] == "Network/Connection/RemotePort":
+                                            classification = "destination.port"
+                                        if context_search[0] == "Network/Connection/Protocol":
+                                            classification = "protocol.transport"
+                                        if context_search[0] == "Network/DNS":
+                                            classification = "destination.fqdn"
+                                    if 'Content' in searchIndicator:
+                                        Content_search = searchIndicator.split('">')
+                                        context = Content_search[1].split('</Content>')
+                                        self.logger.debug(classification + "   " + context[0] + '.')
+                                        if fqdn != "" and urlpath != "":
+                                            event.add("destination.url", "http://" + fqdn + urlpath)
+                                             #self.send_message(event)                   fqdn = ""
+                                            urlpath = ""
+                                        if classification == "destination.ip":
+                                            try:
+                                                ipaddress.IPv4Network(context[0])
+                                                event.add('destination.ip', context[0])
+                                                break
+                                            except ValueError:
+                                                break
+                                        elif classification == "destination.fqdn":
+                                            fqdn = context[0]
+                                            event.add(classification, context[0])
+                                        elif classification == "destination.urlpath":
+                                            urlpath = context[0]
+                                            event.add(classification, context[0])
+                                        elif classification == "destination.port":
+                                            event.add(classification, int(context[0]))
+                        self.send_message(event)
             self.acknowledge_message()
         except KeyError:
-            self.logger.info("No Iocs Available")
+            self.logger.info("No IOCs Available.")
 
 
 BOT = FireeyeParserBot

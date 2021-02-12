@@ -420,33 +420,6 @@ To prevent data loss, the bot also stops when no `postfix` is set and
 
 The bot always sets the file name as feed.url
 
-Fireeye
-^^^^^^^^^
-
-**Information**
-
-* `name:` intelmq.bots.collectors.fireeye.collector_fireeye
-* `lookup:` yes
-* `public:` no
-* `cache (redis db):` none
-* `description:` This bot is capable of collecting hashes and urls from a Fireeye MAS appliance. 
-
-
-**Configuration Parameters**
-
-* **Feed parameters** (see above)
-* `dns_name`: DNS name of the target appliance. 
-* `request_duration`: Length of the query in past eg. collect alerts from last 24hours/48hours.  
-* `http_username`: Password for authentication.
-* `http_password`: Username for authentication .
-
-**Workflow**
-
-The bot collects all alerts which occurred during specified duration. After this we 
-make a second call and check if there is additional information like domains and hashes available. 
-After collecting the openioc data we send this information to the fireeye parser.  
-
-
 Kafka
 ^^^^^
 

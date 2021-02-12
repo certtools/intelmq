@@ -425,6 +425,32 @@ V222_OUT = {
     "parameters": {
         "feedname": "Blocklist"}}}
 
+V230_IN = {
+"urlhaus-parser": {
+    "module": "intelmq.bots.parsers.generic.parser_csv",
+    "parameters": {
+        "delimeter": ","
+    }
+}
+}
+V230_IN_BOTH = {
+"urlhaus-parser": {
+    "module": "intelmq.bots.parsers.generic.parser_csv",
+    "parameters": {
+        "delimeter": ",",
+        "delimiter": ","
+    }
+}
+}
+V230_OUT = {
+"urlhaus-parser": {
+    "module": "intelmq.bots.parsers.generic.parser_csv",
+    "parameters": {
+        "delimiter": ","
+    }
+}
+}
+
 
 def generate_function(function):
     def test_function(self):
@@ -572,6 +598,22 @@ class TestUpgradeLib(unittest.TestCase):
         result = upgrades.v222_feed_changes({}, V222, {}, False)
         self.assertTrue(result[0])
         self.assertEqual(V222_OUT, result[2])
+
+    def v230_csv_parser_parameter_fix_1(self):
+        """ Test v230_feed_fix """
+        result = upgrades.v230_feed_fix({}, V230_IN, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual(V230_OUT, result[2])
+
+        # with also the new fixed parameter
+        result = upgrades.v230_feed_fix({}, V230_IN_BOTH, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual(V230_OUT, result[2])
+
+        # with new parameter, no change
+        result = upgrades.v230_feed_fix({}, V230_OUT, {}, False)
+        self.assertIsNone(result[0])
+        self.assertEqual(V230_OUT, result[2])
 
 
 for name in upgrades.__all__:

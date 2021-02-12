@@ -2,11 +2,13 @@
 """
 Testing harmonization classes
 """
+import datetime
 import ipaddress
 import unittest
 
 import intelmq.lib.harmonization as harmonization
 import intelmq.lib.test as test
+import pytz
 
 
 class TestHarmonization(unittest.TestCase):
@@ -17,7 +19,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.Boolean.is_valid(False))
 
     def test_boolean_valid_other(self):
-        """ Test Boolean.is_valid with otehr invalid values. """
+        """ Test Boolean.is_valid with other invalid values. """
         self.assertFalse(harmonization.Boolean.is_valid(None,))
         self.assertFalse(harmonization.Boolean.is_valid('True'))
         self.assertFalse(harmonization.Boolean.is_valid(0))
@@ -70,7 +72,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.Integer.is_valid('b13', sanitize=True))
 
     def test_float_valid_flaot(self):
-        """ Test Float.is_valid with flaot and integer values. """
+        """ Test Float.is_valid with float and integer values. """
         self.assertTrue(harmonization.Float.is_valid(-4532, sanitize=False))
         self.assertTrue(harmonization.Float.is_valid(1337, sanitize=False))
         self.assertTrue(harmonization.Float.is_valid(1337.2354,
@@ -141,7 +143,7 @@ class TestHarmonization(unittest.TestCase):
                          '127.0.0.1')
 
     def test_ipaddress_sanitize_invalid(self):
-        """ Test IPAddress.is_valid ans sanitize with invalid arguments. """
+        """ Test IPAddress.is_valid and sanitize with invalid arguments. """
         self.assertFalse(harmonization.IPAddress.is_valid(' 192.0.2.0/24\r\n',
                                                           sanitize=True))
         self.assertFalse(harmonization.IPAddress.is_valid(b'2001:DB8::1/32',
@@ -250,6 +252,24 @@ class TestHarmonization(unittest.TestCase):
         self.assertEqual('2011-02-01T02:43:11.572760+00:00',
                          harmonization.DateTime.convert(129410017915727600,
                                                         'windows_nt'))
+
+    def test_datetime_parse_utc_isoformat(self):
+        """ Test DateTime.parse_utc_isoformat """
+        self.assertEqual('2020-12-31T12:00:00+00:00',
+                         harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00+00:00'))
+        self.assertEqual('2020-12-31T12:00:00.001+00:00',
+                         harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00.001+00:00'))
+        self.assertEqual(datetime.datetime(year=2020, month=12, day=31, hour=12, tzinfo=pytz.utc),
+                         harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00+00:00',
+                                                                    return_datetime=True))
+
+    def test_datetime_convert_fuzzy(self):
+        """ Test DateTime.convert_fuzzy """
+        self.assertEqual('2020-12-31T12:00:00+00:00',
+                         harmonization.DateTime.convert_fuzzy('2020-12-31T12:00:00+00:00'))
+        self.assertEqual('2020-12-31T12:00:00+00:00',
+                         harmonization.DateTime.convert_fuzzy('31st December 2020 12:00'))
+
 
     def test_fqdn_valid(self):
         """ Test FQDN.is_valid with valid arguments. """

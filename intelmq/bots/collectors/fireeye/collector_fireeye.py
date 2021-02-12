@@ -29,7 +29,7 @@ class FireeyeCollectorBot(CollectorBot):
         http_header = {'X-FeApi-Token': token}
         httpResponse = self.session.get(url=http_url, headers=http_header)
         binary = httpResponse.content
-        self.logger.debug('Collecting information for UUID: %r', uuid)
+        self.logger.debug('Collecting information for UUID: %r .', uuid)
         try:
             my_dict = xmltodict.parse(binary)
             for indicator in my_dict['OpenIOC']['criteria']['Indicator']['IndicatorItem']:
@@ -39,7 +39,7 @@ class FireeyeCollectorBot(CollectorBot):
                     new_report.add("raw", binary)
                     self.send_message(new_report)
         except KeyError:
-            self.logger.debug("No Iocs for UUID: %r', uuid")
+            self.logger.debug("No Iocs for UUID: %r .', uuid")
 
     def init(self):
         if xmltodict is None:
@@ -47,11 +47,19 @@ class FireeyeCollectorBot(CollectorBot):
 
         self.set_request_parameters()
         self.session = create_request_session_from_bot(self)
-
-        self.dns_name = self.parameters.dns_name
-        self.request_duration = self.parameters.request_duration
-        user = self.parameters.http_username
-        pw = self.parameters.http_password
+        self.dns_name = getattr(self.parameters, "dns_name", None)
+        if self.dns_name is None:
+            raise ValueError('No dns name provided.')
+        self.request_duration = getattr(self.parameters, "request_duration", None)
+        if self.request_duration is None:
+            raise ValueError('No request_duration provided.')
+        user = getattr(self.parameters, "http_username", None)
+        if user is None:
+            raise ValueError('No http_username provided.')
+        pw = getattr(self.parameters, "http_password", None)
+        if pw is None:
+            raise ValueError('No http_password provided.')
+        
         # create auth token
         token = user + ":" + pw
         message_bytes = token.encode('ascii')
@@ -63,6 +71,9 @@ class FireeyeCollectorBot(CollectorBot):
     def process(self):
         # get token for request
         resp = self.session.post(url=self.custom_auth_url, headers=self.http_header)
+        if not resp.ok:
+            raise ValueError('Could not connect to appliance check User/PW. HTTP response status code was %i.' % resp.status_code)
+        
         # extract token and build auth header
         token = resp.headers['X-FeApi-Token']
         http_header = {'X-FeApi-Token': token, 'Accept': 'application/json'}
@@ -70,16 +81,14 @@ class FireeyeCollectorBot(CollectorBot):
 
         self.logger.debug("Downloading report from %r.", http_url)
         resp = self.session.get(url=http_url, headers=http_header)
-        if not resp.ok:
-            raise ValueError('Could not connect to appliance check User/PW. HTTP response status code was %i.' % resp.status_code)
+
 
         self.logger.debug("Report downloaded.")
         message = resp.json()
         if message['alert'][0]:
             new_report = self.new_report()
             for alert in message['alert']:
-                self.logger.debug("got a new message")
-                self.logger.debug('PRODUCT: ' + alert['product'] + "  UUID:  " + alert['uuid'])
+                self.logger.debug('Got a new message from PRODUCT: ' + alert['product'] + "  UUID:  " + alert['uuid'] + '.')
                 if alert['product'] == 'EMAIL_MPS' and alert['name'] == 'MALWARE_OBJECT':
                     uuid = alert['uuid']
                     self.xml_processor(uuid, token, new_report, self.dns_name, product="EMAIL_MPS")

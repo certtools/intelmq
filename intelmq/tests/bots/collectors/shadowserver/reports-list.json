@@ -1,0 +1,32 @@
+[
+    {
+        "report": "anarres@shadowserver.org",
+        "file": "2020-08-02-scan_smb-anarres-geo.csv",
+        "id": "xNDSuwXrKnrLrDopU926rR75CAESMWesVCKsuyI8b8ncTv7GCX",
+        "timestamp": "2020-08-02"
+    },
+    {
+        "report": "anarres@shadowserver.org",
+        "id": "unnzVtn92tS9459rKIEz2J8qb7oJDv0Fa2feGUOiJLCDLqBXnN",
+        "file": "2020-08-02-cisco_smart_install-anarres-geo.csv",
+        "timestamp": "2020-08-02"
+    },
+    {
+        "timestamp": "2020-08-02",
+        "id": "EhngMTvBT7tD4ehUpVJNqW8TRZRI9N6ozsarxuick4ritIIxOG",
+        "file": "2020-08-02-scan_adb-anarres-geo.csv",
+        "report": "anarres@shadowserver.org"
+    },
+    {
+        "id": "GYb7n9SbR5jM2PMsfvo78r3G7tYF4v37koXEB8Kngs3ewCvHF4",
+        "file": "2020-08-02-scan_rsync-anarres-geo.csv",
+        "report": "anarres@shadowserver.org",
+        "timestamp": "2020-08-02"
+    },
+    {
+        "timestamp": "2020-08-02",
+        "report": "anarres@shadowserver.org",
+        "file": "2020-08-02-scan_ldap_tcp-anarres-geo.csv",
+        "id": "qxe9EGItMY7eyDQwPBwGgEP2VOpvZqnqSDRIJGkXy3UWVUC06B"
+    }
+]
