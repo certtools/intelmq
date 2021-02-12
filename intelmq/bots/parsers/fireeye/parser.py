@@ -31,7 +31,7 @@ class FireeyeParserBot(ParserBot):
                     sha256sum = indicator['Content']['#text']
                     event.add('malware.hash.sha256', sha256sum)
                     event.add('classification.type', 'malware')
-                    event.add('raw',  raw_report)
+                    event.add('raw', raw_report)
                     self.send_message(event)
                     data = raw_report.split('<Indicator id')
                     uuidres = data[0].split('"alert_id">')
@@ -41,7 +41,7 @@ class FireeyeParserBot(ParserBot):
                     event = self.new_event(report)
                     if "Network" in Indicator:
                         event.add('classification.type', 'malware-distribution')
-                        event.add('raw',  raw_report)
+                        event.add('raw', raw_report)
                         event.add('malware.hash.sha256', sha256sum)
                         event.add('malware.hash.md5', md5sum)
                         fqdn = ""
