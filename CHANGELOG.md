@@ -57,6 +57,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.bots.parsers.shadowserver.config`:
   - Fixed mapping for Block list feed to accept network ranges in CIDR notation (#1720, PR#1728 by Sebastian Waldbauer).
   - Added mapping for new feed MSRDPUDP, Vulnerable-HTTP (#1726, #1733, PR#1732, PR#1736 by Sebastian Waldbauer).
+- `intelmq.bots.parsers.abusech.parser_ip`: Adapt to changes in the Feodo Tracker Botnet C2 IP Blocklist feed (PR#1741 by Thomas Bellus).
 
 #### Experts
 - `intelmq.bots.experts.rfc1918.expert`:
@@ -131,6 +132,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - `test_static_bot_check_method` checks the bot's static `check(parameters)` method for any exceptions, and a valid formatted return value (#1505).
   - `setUpClass`: Skip tests if cache was requests with `use_cache` member, but Redis is deactivated with the environment variable `INTELMQ_SKIP_REDIS`.
 - `intelmq.tests.bots.experts.cymru_whois.test_expert`: Switch from example.com to ns2.univie.ac.at for hopefully more stable responses (#1730, PR#1731 by Sebastian Waldbauer).
+- `intelmq.tests.bots.parsers.abusech`: Remove tests cases of discontinued feeds (PR#1741 by Thomas Bellus).
 
 ### Tools
 - `intelmqdump`:
