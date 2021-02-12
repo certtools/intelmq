@@ -24,14 +24,14 @@ class FireeyeParserBot(ParserBot):
             for indicator in my_dict['OpenIOC']['criteria']['Indicator']['IndicatorItem']:
                 indicatorType = indicator['Context']['@search']
                 if indicatorType == 'FileItem/Md5sum':
-                    md5sum =  indicator['Content']['#text']
+                    md5sum = indicator['Content']['#text']
                     event.add('malware.hash.md5', md5sum)
                 if indicatorType == 'FileItem/Sha256sum':
-                    self.logger.debug('FileItem/Sha256sum from uuid' + indicator['Content']['#text'] + '.' )
+                    self.logger.debug('FileItem/Sha256sum from uuid' + indicator['Content']['#text'] + '.')
                     sha256sum = indicator['Content']['#text']
                     event.add('malware.hash.sha256', sha256sum)
-                    event.add( 'classification.type', 'malware')
-                    event.add( 'raw',  raw_report)
+                    event.add('classification.type', 'malware')
+                    event.add('raw',  raw_report)
                     self.send_message(event)
                     data = raw_report.split('<Indicator id')
                     uuidres = data[0].split('"alert_id">')
@@ -40,8 +40,8 @@ class FireeyeParserBot(ParserBot):
                     Indicator = data.__getitem__(2)
                     event = self.new_event(report)
                     if "Network" in Indicator:
-                        event.add( 'classification.type', 'malware-distribution')
-                        event.add( 'raw',  raw_report)
+                        event.add('classification.type', 'malware-distribution')
+                        event.add('raw',  raw_report)
                         event.add('malware.hash.sha256', sha256sum)
                         event.add('malware.hash.md5', md5sum)
                         fqdn = ""
@@ -54,7 +54,7 @@ class FireeyeParserBot(ParserBot):
                                     classification = ""
                                     if '"/>' in searchIndicator:
                                         context_search = searchIndicator.split('"/>')
-                                            # context inhalt
+                                        # context inhalt
                                         if context_search[0] == "Network/HTTP/RequestURI":
                                             classification = "destination.urlpath"
                                         if context_search[0] == "Network/HTTP/Host":
@@ -71,7 +71,6 @@ class FireeyeParserBot(ParserBot):
                                         self.logger.debug(classification + "   " + context[0] + '.')
                                         if fqdn != "" and urlpath != "":
                                             event.add("destination.url", "http://" + fqdn + urlpath)
-                                             #self.send_message(event)                   fqdn = ""
                                             urlpath = ""
                                         if classification == "destination.ip":
                                             try:
