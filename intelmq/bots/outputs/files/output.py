@@ -10,9 +10,15 @@ from intelmq.lib.exceptions import ConfigurationError
 
 
 class FilesOutputBot(OutputBot):
-    tmp = None
-    dir = None
-    suffix = None
+    """Write events lockfree into separate files"""
+    dir: str = "/opt/intelmq/var/lib/bots/files-output/incoming"  # TODO: could be path
+    hierarchical_output: bool = False
+    keep_raw_field: bool = False
+    message_jsondict_as_string: bool = False
+    message_with_type: bool = False
+    single_key: bool = False
+    suffix: str = ".json"
+    tmp: str = "/opt/intelmq/var/lib/bots/files-output/tmp"  # TODO: could be path
 
     def init(self):
         self.tmp = self._ensure_path(self.tmp)

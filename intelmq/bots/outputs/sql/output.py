@@ -13,6 +13,7 @@ from intelmq.lib.bot import SQLBot
 
 
 class SQLOutputBot(SQLBot):
+    """Send events to a PostgreSQL or SQLite database"""
     autocommit = True
     database = "intelmq-events"
     engine = None

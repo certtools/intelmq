@@ -26,11 +26,12 @@ except SyntaxError:
 
 
 class MISPFeedOutputBot(OutputBot):
-    is_multithreadable = False
+    """Generate an output in the MISP Feed format"""
+    interval_event: str = "1 hour"
     misp_org_name = None
     misp_org_uuid = None
-    output_dir = None
-    interval_event = None
+    output_dir: str = "/opt/intelmq/var/lib/bots/mispfeed-output"  # TODO: should be path
+    is_multithreadable: bool = False
 
     @staticmethod
     def check_output_dir(dirname):

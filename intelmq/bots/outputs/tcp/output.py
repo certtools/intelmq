@@ -14,14 +14,20 @@ from intelmq.lib.bot import Bot
 
 
 class TCPOutputBot(Bot):
+    """Send events to a TCP server as Splunk, ElasticSearch or another IntelMQ etc"""
+    counterpart_is_intelmq: bool = True
+    hierarchical_output: bool = False
+    ip: str = None  # TODO: could ip ipaddress type
+    port: int = None
+    separator: str = None
 
     is_multithreadable = False
 
     def init(self):
-        self.to_intelmq = getattr(self, "counterpart_is_intelmq", False)
+        self.to_intelmq = self.counterpart_is_intelmq
 
         self.address = (self.ip, int(self.port))
-        self.separator = utils.encode(self.separator) if (hasattr(self, "separator")) else None
+        self.separator = utils.encode(self.separator) if self.separator is not None else None
         self.connect()
 
     def recvall(self, conn, n):

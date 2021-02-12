@@ -12,27 +12,27 @@ except ImportError:
 
 
 class StompOutputBot(OutputBot):
+    """Send events to a STMOP server"""
     """ main class for the STOMP protocol output bot """
+    exchange: str = "/exchange/_push"
+    heartbeat: int = 60000
+    http_verify_cert = True
+    keep_raw_field: bool = False
+    message_hierarchical_output: bool = False
+    message_jsondict_as_string: bool = False
+    message_with_type: bool = False
+    port: int = 61614
+    server: str = "127.0.0.1"  # TODO: could be ip address
+    single_key: bool = False
+    ssl_ca_certificate: str = 'ca.pem'  # TODO: could be pathlib.Path
+    ssl_client_certificate: str = 'client.pem'  # TODO: pathlib.Path
+    ssl_client_certificate_key: str = 'client.key'  # TODO: patlib.Path
 
     conn = None
 
     def init(self):
         if stomp is None:
             raise MissingDependencyError("stomp")
-
-        self.server = getattr(self.parameters, 'server', '127.0.0.1')
-        self.port = getattr(self.parameters, 'port', 61614)
-        self.exchange = getattr(self.parameters, 'exchange', '/exchange/_push')
-        self.heartbeat = getattr(self.parameters, 'heartbeat', 60000)
-        self.ssl_ca_cert = getattr(self.parameters, 'ssl_ca_certificate',
-                                   'ca.pem')
-        self.ssl_cl_cert = getattr(self.parameters, 'ssl_client_certificate',
-                                   'client.pem')
-        self.ssl_cl_cert_key = getattr(self.parameters,
-                                       'ssl_client_certificate_key',
-                                       'client.key')
-        self.http_verify_cert = getattr(self.parameters,
-                                        'http_verify_cert', True)
 
         # check if certificates exist
         for f in [self.ssl_ca_cert, self.ssl_cl_cert, self.ssl_cl_cert_key]:

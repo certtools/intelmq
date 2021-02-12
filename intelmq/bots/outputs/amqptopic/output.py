@@ -11,22 +11,29 @@ except ImportError:
 
 
 class AMQPTopicOutputBot(OutputBot):
-    connection = None
-    connection_heartbeat = None
-    delivery_mode = None
-    content_type = None
-    exchange_name = None
-    require_confirmation = None
-    exchange_durable = None
-    exchange_type = None
-    connection_host = None
-    connection_port = None
-    connection_vhost = None
-    username = None
-    password = None
+    """Send events to an AMQP topic exchange. Requires the pika python library"""
+    connection_attempts: int = 3
+    connection_heartbeat: int = 3600
+    connection_host: str = "127.0.0.1"  # TODO: could be ipaddress
+    connection_port: int = 5672
+    connection_vhost: str = None
+    content_type: str = "application/json"
+    delivery_mode: int = 2
+    exchange_durable: bool = True
+    exchange_name: str = None
+    exchange_type: str = "topic"
+    keep_raw_field: bool = False  # TODO: legacy? not used..
+    message_hierarchical_output: bool = False
+    message_jsondict_as_string: bool = False
+    message_with_type: bool = False
+    password: str = None
+    require_confirmation: bool = True
+    routing_key: str = None
+    single_key: bool = False
     use_ssl = False
-    connection_attempts = None
-    routing_key = None
+    username = None
+
+    connection = None
     format_routing_key = False
 
     def init(self):

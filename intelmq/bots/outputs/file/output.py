@@ -8,11 +8,17 @@ from intelmq.lib.bot import OutputBot
 
 
 class FileOutputBot(OutputBot):
+    """Write events to a file"""
     _file = None
-    is_multithreadable = False
-    file = None
-    format_filename = False
     encoding_errors_mode = 'strict'
+    file: str = "/opt/intelmq/var/lib/bots/file-output/events.txt"  # TODO: should be pathlib.Path
+    format_filename: bool = False
+    hierarchical_output: bool = False
+    keep_raw_field: bool = False
+    message_jsondict_as_string: bool = False
+    message_with_type: bool = False
+    single_key: bool = False
+    is_multithreadable = False
 
     def init(self):
         # needs to be done here, because in process() FileNotFoundError handling we call init(),

@@ -15,18 +15,20 @@ except ImportError:
 
 
 class MongoDBOutputBot(Bot):
-    client = None
-    replacement_char = '_'
-    username = None
-    db_user = None
-    password = None
-    db_pass = None
-    port = 27017
-    host = None
-    database = None
+    """Send events to a MongoDB database"""
     collection = None
+    database = None
+    db_pass = None
+    db_user = None
+    hierarchical_output: bool = False
+    host: str = "localhost"
+    port: int = 27017
+    replacement_char = '_'
+
+    client = None
+    username = None
+    password = None
     _collection = None
-    hierarchical_output = False
 
     def init(self):
         if pymongo is None:

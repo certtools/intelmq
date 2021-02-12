@@ -10,21 +10,25 @@ from intelmq.lib.bot import Bot
 
 
 class SMTPOutputBot(Bot):
-    ssl = True
-    starttls = False
-    fieldnames = None
+    """Send single events as CSV attachment in dynamically formatted e-mails via SMTP"""
+    fieldnames: str = "classification.taxonomy,classification.type,classification.identifier,source.ip,source.asn,source.port"
+    mail_from: str = "cert@localhost"
+    mail_to: str = "{ev[source.abuse_contact]}"
+    smtp_host: str = "localhost"
+    smtp_password: str = None
+    smtp_port: int = None
+    smtp_username: str = None
+    ssl: bool = False
+    starttls: bool = False
+    subject: str = "Incident in your AS {ev[source.asn]}"
+    text: str = "Dear network owner,\\n\\nWe have been informed that the following device might have security problems.\\n\\nYour localhost CERT"
+
     username = None
     password = None
     http_verify_cert = True
-    smtp_host = None
-    smtp_port = None
-    text = None
-    subject = None
-    mail_from = None
-    mail_to = None
 
     def init(self):
-        if getattr(self, 'ssl', False):
+        if self.ssl:
             self.smtp_class = smtplib.SMTP_SSL
         else:
             self.smtp_class = smtplib.SMTP

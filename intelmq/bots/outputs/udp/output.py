@@ -7,17 +7,22 @@ from intelmq.lib.bot import Bot
 
 
 class UDPOutputBot(Bot):
+    """Send events to a UDP server, e.g. a syslog daemon"""
+    field_delimiter: str = "|"
+    format: str = None
+    header: str = "<header text>"
+    keep_raw_field: bool = False
+    udp_host: str = "localhost"
+    udp_port: int = None
 
     is_multithreadable = False
 
     def init(self):
-        self.delimiter = self.parameters.field_delimiter
-        self.header = self.parameters.header
-        self.udp_host = socket.gethostbyname(self.parameters.udp_host)
-        self.upd_address = (self.udp_host, self.parameters.udp_port)
+        self.delimiter = self.field_delimiter
+        self.udp_host = socket.gethostbyname(self.udp_host)
+        self.upd_address = (self.udp_host, self.udp_port)
         self.udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.keep_raw_field = bool(self.parameters.keep_raw_field)
-        self.format = self.parameters.format.lower()
+        self.format = self.format.lower()
         if self.format not in ['json', 'delimited']:
             raise ValueError('Unknown format %r given. Check your configuration.' % self.format)
 
@@ -48,7 +53,7 @@ class UDPOutputBot(Bot):
             self.udp.sendto(data, self.upd_address)
         except Exception:
             self.logger.exception('Failed to send message to %s:%s!',
-                                  self.udp_host, self.parameters.udp_port)
+                                  self.udp_host, self.udp_port)
         else:
             self.acknowledge_message()
 

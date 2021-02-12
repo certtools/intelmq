@@ -78,6 +78,18 @@ MISPOBJECT_NAME = 'intelmq_event'
 
 
 class MISPAPIOutputBot(OutputBot):
+    """Insert events into a MISP instance"""
+    add_feed_name_as_tag: bool = True
+    add_feed_provider_as_tag: bool = True
+    misp_additional_correlation_fields = []
+    misp_additional_tags = []
+    misp_key: str = None
+    misp_publish: bool = False
+    misp_tag_for_bot: str = None
+    misp_to_ids_fields = []
+    misp_url: str = None
+    significant_fields: str = None
+
     is_multithreadable = False
 
     def init(self):

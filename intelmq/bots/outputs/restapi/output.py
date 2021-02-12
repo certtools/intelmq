@@ -11,13 +11,14 @@ from intelmq.lib.exceptions import MissingDependencyError
 
 
 class RestAPIOutputBot(Bot):
-    auth_token_name = None
-    auth_token = None
+    """Send events to a REST API listener through HTTP POST"""
+    auth_token_name: str = None
+    auth_token: str = None
     auth_type = None
+    hierarchical_output: bool = False
+    host: str = None
+    use_json: bool = True
     auth = None
-    use_json = None
-    host = None
-    hierarchical_output = None
 
     def init(self):
         if requests is None:

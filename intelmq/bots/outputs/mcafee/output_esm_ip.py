@@ -21,6 +21,12 @@ except ImportError:
 
 
 class ESMIPOutputBot(Bot):
+    """Write events to the McAfee Enterprise Security Manager (ESM)"""
+    esm_ip: str = "1.2.3.4"  # TODO: should be ipaddress
+    esm_password: str = None
+    esm_user: str = "NGCP"
+    esm_watchlist: str = None
+    field: str = "source.ip"
 
     def init(self):
         if ESM is None:

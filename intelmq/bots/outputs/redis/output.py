@@ -6,13 +6,14 @@ from intelmq.lib.bot import Bot
 
 
 class RedisOutputBot(Bot):
-    redis_server_ip = None
-    redis_server_port = None
-    redis_db = None
-    redis_queue = None
-    redis_password = None
-    redis_timeout = None
+    """Send events to a Redis database"""
     hierarchical_output = False
+    redis_db: int = 2
+    redis_password: str = None
+    redis_queue: str = None
+    redis_server_ip = "127.0.0.1"
+    redis_server_port = 6379
+    redis_timeout = 5000
     with_type = True
 
     def init(self):

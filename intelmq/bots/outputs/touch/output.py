@@ -10,6 +10,7 @@ from intelmq.lib.bot import Bot
 
 
 class TouchOutputBot(Bot):
+    """Touch a file for every event received"""
     file = None
     path = None
 

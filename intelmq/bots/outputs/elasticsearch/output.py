@@ -52,15 +52,19 @@ def get_event_date(event_dict: dict) -> datetime.date:
 
 
 class ElasticsearchOutputBot(Bot):
-    elastic_host = '127.0.0.1'
-    elastic_port = '9200'
-    elastic_index = 'intelmq'
-    rotate_index = False
-    use_ssl = False
-    ssl_ca_certificate = None
-    ssl_show_warnings = True
-    replacement_char = None
+    """Send events to an Elasticsearch database server"""
+    elastic_host: str = '127.0.0.1'  # TODO: could be ipadd
+    elastic_index: str = 'intelmq'
+    elastic_port: int = 9200
     flatten_fields = ['extra']
+    http_password: str = None
+    http_username: str = None
+    http_verify_cert: bool = False
+    replacement_char = None
+    rotate_index: str = 'never'
+    ssl_ca_certificate: str = None  # TODO: could be pathlib.Path
+    ssl_show_warnings: bool = True
+    use_ssl: bool = False
 
     def init(self):
         if Elasticsearch is None:
