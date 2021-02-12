@@ -59,7 +59,7 @@ class FireeyeCollectorBot(CollectorBot):
         pw = getattr(self.parameters, "http_password", None)
         if pw is None:
             raise ValueError('No http_password provided.')
-        
+
         # create auth token
         token = user + ":" + pw
         message_bytes = token.encode('ascii')
@@ -73,16 +73,12 @@ class FireeyeCollectorBot(CollectorBot):
         resp = self.session.post(url=self.custom_auth_url, headers=self.http_header)
         if not resp.ok:
             raise ValueError('Could not connect to appliance check User/PW. HTTP response status code was %i.' % resp.status_code)
-        
         # extract token and build auth header
         token = resp.headers['X-FeApi-Token']
         http_header = {'X-FeApi-Token': token, 'Accept': 'application/json'}
         http_url = "https://" + self.dns_name + "/wsapis/v2.0.0/alerts?duration=" + self.request_duration
-
         self.logger.debug("Downloading report from %r.", http_url)
         resp = self.session.get(url=http_url, headers=http_header)
-
-
         self.logger.debug("Report downloaded.")
         message = resp.json()
         if message['alert'][0]:
