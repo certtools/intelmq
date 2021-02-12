@@ -5,17 +5,17 @@ import intelmq.lib.test as test
 from intelmq.bots.experts.cymru_whois.expert import CymruExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
-                 "source.ip": "93.184.216.34",  # example.com
+                 "source.ip": "78.104.144.2",  # example.com
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
-                  "source.ip": "93.184.216.34",
-                  "source.geolocation.cc": "EU",
+                  "source.ip": "78.104.144.2",
+                  "source.geolocation.cc": "AT",
                   "source.registry": "RIPE",
-                  "source.network": "93.184.216.0/24",
-                  "source.allocated": "2008-06-02T00:00:00+00:00",
-                  "source.asn": 15133,
-                  "source.as_name": "EDGECAST, US",
+                  "source.network": "78.104.0.0/16",
+                  "source.allocated": "2007-06-07T00:00:00+00:00",
+                  "source.asn": 1853,
+                  "source.as_name": "ACONET ACOnet Backbone, AT",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
@@ -55,20 +55,20 @@ EXAMPLE_6TO4_OUTPUT_1 = {"__type": "Event",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 OVERWRITE_OUT = {"__type": "Event",
-                  "source.ip": "93.184.216.34",
+                  "source.ip": "78.104.144.2",
                   "source.geolocation.cc": "AA",
                   "source.registry": "LACNIC",
-                  "source.network": "93.184.216.0/24",
-                  "source.allocated": "2008-06-02T00:00:00+00:00",
-                  "source.asn": 15133,
-                  "source.as_name": "EDGECAST, US",
+                  "source.network": "78.104.0.0/16",
+                  "source.allocated": "2007-06-07T00:00:00+00:00",
+                  "source.asn": 1853,
+                  "source.as_name": "ACONET ACOnet Backbone, AT",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 
 
 @test.skip_redis()
 @test.skip_internet()
-@test.skip_travis()
+@test.skip_ci()
 class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.

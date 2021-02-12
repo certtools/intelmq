@@ -181,8 +181,8 @@ If **get** is the parameter, you see the message that waits in the input (source
        "time.source": "2017-05-17T22:00:32+00:00"
    }
 
-To send directly to the bot's ouput queue, just as it was sent by ```self.send_message()``` in bot's ```process()``` method, use the **send** argument.
-In our case of ```file-output```, it has no destionation queue so that nothing happens.
+To send directly to the bot's output queue, just as it was sent by ```self.send_message()``` in bot's ```process()``` method, use the **send** argument.
+In our case of ```file-output```, it has no destination queue so that nothing happens.
 
 .. code-block:: bash
 

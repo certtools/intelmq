@@ -187,7 +187,21 @@ def validate_ip(value):
     """Remove "invalid" IP."""
     if value == '0.0.0.0':
         return None
+
+    # FIX: https://github.com/certtools/intelmq/issues/1720 # TODO: Find better fix
+    if '/' in value:
+        return None
+
     if harmonization.IPAddress.is_valid(value, sanitize=True):
+        return value
+
+
+def validate_network(value):
+    # FIX: https://github.com/certtools/intelmq/issues/1720 # TODO: Find better fix
+    if '/' not in value:
+        return None
+
+    if harmonization.IPNetwork.is_valid(value, sanitize=True):
         return value
 
 
@@ -227,8 +241,13 @@ open_db2_discovery_service = {
     }
 }
 
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-HTTP
-accessible_http = {
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-http-report/
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-http-report/
+#
+# This mapping is for two feeds as they are the same, so we can use this mapping for
+# both :)
+#
+accessible_vulnerable_http = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -241,6 +260,7 @@ accessible_http = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('extra.', 'tag'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'http', validate_to_none),
@@ -1582,9 +1602,10 @@ open_ldap = {
 blocklist = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
-        ('source.ip', 'ip'),
     ],
     'optional_fields': [
+        ('source.ip', 'ip', validate_ip),
+        ('source.network', 'ip', validate_network),
         ('source.reverse_dns', 'hostname'),
         ('extra.', 'source', validate_to_none),
         ('extra.', 'reason', validate_to_none),
@@ -2346,7 +2367,7 @@ caida = {
         # FIXME Is is mappable to some classification.* field? Not included in example data.
         ('extra.', 'family', validate_to_none),
         ('source.network', 'network', validate_to_none),
-        (False, 'version', validate_to_none),  # we can ignore the IP version, it's obvious fron the address
+        (False, 'version', validate_to_none),  # we can ignore the IP version, it's obvious from the address
         ('extra.', 'routedspoof', validate_to_none),
         ('extra.', 'session', convert_int),
         ('extra.', 'nat', convert_bool),
@@ -2360,6 +2381,32 @@ caida = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ms-rdpeudp/
+accessible_msrdpeudp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int)
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'asn', convert_int),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag'),
+        ('extra.', 'naics', convert_int),
+        ('extra.', 'sic', convert_int),
+        ('extra.', 'sessionid'),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'accessible-msrdpeudp',
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2369,8 +2416,9 @@ mapping = (
     ('Accessible-CWMP', 'scan_cwmp', accessible_cwmp),
     ('Accessible-Cisco-Smart-Install', 'cisco_smart_install', accessible_cisco_smart_install),
     ('Accessible-FTP', 'scan_ftp', accessible_ftp),
-    ('Accessible-HTTP', 'scan_http', accessible_http),
+    ('Accessible-HTTP', 'scan_http', accessible_vulnerable_http),
     ('Accessible-Hadoop', 'scan_hadoop', accessible_hadoop),
+    ('Accessible-MS-RDPEUDP', 'scan_msrdpeudp', accessible_msrdpeudp),
     ('Accessible-Radmin', 'scan_radmin', accessible_radmin),
     ('Accessible-RDP', 'scan_rdp', accessible_rdp),
     ('Accessible-Rsync', 'scan_rsync', accessible_rsync),
@@ -2423,4 +2471,5 @@ mapping = (
     ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),
     ('Spam-URL', 'spam_url', spam_url),
     ('Vulnerable-ISAKMP', 'scan_isakmp', vulnerable_isakmp),
+    ('Vulnerable-HTTP', 'scan_http', accessible_vulnerable_http),
 )

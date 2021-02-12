@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 
-MARExpertBot queries environment for occurences of IOCs via McAfee Active Response.
+MARExpertBot queries environment for occurrences of IOCs via McAfee Active Response.
 
 Parameter:
 dxl_config_file: string

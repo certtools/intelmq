@@ -1,0 +1,79 @@
+#Github Workflow to run nosetest tests
+#
+#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+#SPDX-License-Identifier: AGPL-3.0-or-later
+#
+name: "Nosetest test suite"
+on:
+  push:
+    branches: [develop, maintenance, master]
+  pull_request:
+    branches: [develop, maintenance]
+
+jobs:
+  nosetest:
+    runs-on: ubuntu-latest
+    name: Run nosetest test suite
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.6', '3.7', '3.8', '3.9']
+        type: ['full', 'basic']
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: intelmq
+          POSTGRES_PASSWORD: intelmq
+        ports:
+          - 5432:5432
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+      rabbitmq:
+        image: rabbitmq:management
+        ports:
+          - 5672:5672
+          - 15672:15672
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies for full run
+      if: ${{ matrix.type == 'full' }}
+      env:
+        PGHOST: localhost
+        PGPORT: 5432
+        PGUSER: intelmq
+        PGPASSWORD: intelmq
+      run: bash .github/workflows/scripts/setup-full.sh
+
+    - name: Install test dependencies
+      run: pip install nose Cerberus pyyaml requests_mock coverage codecov
+
+    - name: Install dependencies
+      run: pip install -e .
+
+    - name: Run basic testsuite
+      if: ${{ matrix.type == 'basic' }}
+      run: nosetests --with-coverage --cover-package=intelmq --cover-branches
+
+    - name: Run full testsuite
+      if: ${{ matrix.type == 'full' }}
+      run: TZ=utc INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; find contrib/ -name "test*.py" -exec nosetests {} \+
+
+    - name: Run codecov
+      if: ${{ matrix.type == 'full' }}
+      run: codecov

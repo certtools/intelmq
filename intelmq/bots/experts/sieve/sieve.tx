@@ -5,7 +5,7 @@
 
 SieveModel: rules*=Rule ;
 
-Rule: if_=IfClause (elif_=ElifClause)* (else_=ElseClause)?;
+Rule: (if_=IfClause (elif_=ElifClause)* (else_=ElseClause)? | actions_*=Action);
 IfClause: 'if' expr=Expression '{' actions*=Action '}';
 ElifClause: 'elif' expr=Expression '{' actions*=Action '}';
 ElseClause: 'else' '{' actions*=Action '}';
@@ -59,6 +59,15 @@ NumericValue: SingleNumericValue | NumericValueList ;
 SingleNumericValue: value=NUMBER ;
 NumericValueList: '[' values+=SingleNumericValue[','] ']' ;
 
+AssignOperator:
+  '='
+  | '+='
+  | '-='
+;
+
+PathValue: SinglePathValue | PathValueList ;
+SinglePathValue: value=STRING ;
+PathValueList: '[' values+=SinglePathValue[','] ']' ;
 
 Action: action=DropAction
     | ( action=KeepAction
@@ -70,10 +79,10 @@ Action: action=DropAction
       );
 DropAction: 'drop';
 KeepAction: 'keep';
-PathAction: 'path' path=STRING;
-AddAction: 'add' key=Key '=' value=STRING;              // add key/value without overwriting existing key
-AddForceAction: 'add!' key=Key '=' value=STRING;        // add key/value, overwriting existing key
-UpdateAction: 'update' key=Key '=' value=STRING;        // update key/value, do not create if not exists
+PathAction: 'path' path=PathValue;
+AddAction: 'add' key=Key operator=AssignOperator value=STRING;              // add key/value without overwriting existing key
+AddForceAction: 'add!' key=Key operator=AssignOperator value=STRING;        // add key/value, overwriting existing key
+UpdateAction: 'update' key=Key operator=AssignOperator value=STRING;        // update key/value, do not create if not exists
 RemoveAction: 'remove' key=Key;
 
 Comment: /(#|\/\/).*$/ ;

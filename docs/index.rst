@@ -7,8 +7,8 @@ IntelMQ
 
 |Build Status| |codecov.io| |CII Badge|
 
-.. |Build Status| image:: https://travis-ci.org/certtools/intelmq.svg?branch=develop
-   :target: https://travis-ci.org/certtools/intelmq
+.. |Build Status| image:: https://github.com/certtools/intelmq/workflows/Nosetest%20test%20suite/badge.svg
+   :target: https://github.com/certtools/intelmq/actions
 .. |codecov.io| image:: https://codecov.io/github/certtools/intelmq/coverage.svg?branch=develop
    :target: https://codecov.io/github/certtools/intelmq?branch=master
 .. |CII Badge| image:: https://bestpractices.coreinfrastructure.org/projects/4186/badge
@@ -38,6 +38,8 @@ User guide
    user/intelmqctl
    user/feeds
    user/ecosystem
+   user/intelmq-api
+   user/intelmq-manager
    user/ELK-Stack
    user/FAQ
    user/MISP-Integrations
@@ -52,10 +54,9 @@ Getting involved
 
    dev/guide
    dev/data-harmonization
-   dev/harmonization-fields.md
+   dev/harmonization-fields
    dev/release-procedure
    dev/feeds-wishlist
-   dev/IntelMQ-3.0-Architecture.md
 
 Licence
 =======

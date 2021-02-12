@@ -59,8 +59,8 @@ Initialization parameters
 * `name` and `description`: The name and description of the bot as can be found in BOTS-file, not used by the bot itself.
 * `group`: Can be `"Collector"`, `"Parser"`, `"Expert"` or `"Output"`. Only used for visualization by other tools.
 * `module`: The executable (should be in `$PATH`) which will be started.
-* `enabled`: If the parameter is set to `true` (which is NOT the default value if it is missing as a protection) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `false`, the Bot will not be started by `intelmqctl start`, however you can run the bot independently using `intelmqctl start <bot_id>`. Check the [User-Guide](./User-Guide.md) for more details.
-* `run_mode`: There are two run modes, "continuous" (default run mode) or "scheduled". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after one successful run. This is especially useful when scheduling bots via cron or systemd. Default is `continuous`. Check the [User-Guide](./User-Guide.md) for more details.
+* `enabled`: If the parameter is set to `true` (which is NOT the default value if it is missing as a protection) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `false`, the Bot will not be started by `intelmqctl start`, however you can run the bot independently using `intelmqctl start <bot_id>`. Check :doc:`configuration-management` for more details.
+* `run_mode`: There are two run modes, "continuous" (default run mode) or "scheduled". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after one successful run. This is especially useful when scheduling bots via cron or systemd. Default is `continuous`. Check :doc:`configuration-management` for more details.
 
 .. _common-parameters:
 
@@ -175,7 +175,7 @@ Generic URL Fetcher
 
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
-* `extract_files`: Optional, boolean or list of strings. If it is true, the retrieved (compressed) file or archived will be uncompressed/unpacked and the files are extracted. If the parameter is a list for strings, only the files matching the filenames are extracted. Extraction handles gziped files and both compressed and uncompressed tar-archives as well as zip archives.
+* `extract_files`: Optional, boolean or list of strings. If it is true, the retrieved (compressed) file or archived will be uncompressed/unpacked and the files are extracted. If the parameter is a list for strings, only the files matching the filenames are extracted. Extraction handles gzipped files and both compressed and uncompressed tar-archives as well as zip archives.
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
 * `http_url_formatting`: (`bool|JSON`, default: `false`) If `true`, `{time[format]}` will be replaced by the current time in local timezone formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2019` for the year 2019. (Python's `Format Specification Mini-Language <https://docs.python.org/3/library/string.html#formatspec>`_ is used for this.). You may use a `JSON` specifying `time-delta <https://docs.python.org/3/library/datetime.html#datetime.timedelta>`_ parameters to shift the current time accordingly. For example use `{"days": -1}` for the yesterday's date; the URL `http://localhost/{time[%Y-%m-%d]}` will get translated to "http://localhost/2018-12-31" for the 1st Jan of 2019.
 * `verify_pgp_signatures`: `bool`, defaults to `false`. If `true`, signature file is downloaded and report file is checked. On error (missing signature, mismatch, ...), the error is logged and the report is not processed. Public key has to be imported in local keyring. This requires the `python-gnupg` library.
@@ -344,7 +344,7 @@ Github API
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` Collects files matched by regex from GitHub repository via the GitHub API.
+* `description:` Collects files matched by regular expression from GitHub repository via the GitHub API.
   Optionally with GitHub credentials, which are used as the Basic HTTP authentication.
   
 **Configuration Parameters**
@@ -353,8 +353,8 @@ Github API
 * `basic_auth_username:` GitHub account username (optional)
 * `basic_auth_password:` GitHub account password (optional)
 * `repository:` GitHub target repository (`<USER>/<REPOSITORY>`)
-* `regex:` Valid regex of target files within the repository (defaults to `.*.json`)
-* `extra_fields:` Comma-separated list of extra fields from [GitHub contents API](https://developer.github.com/v3/repos/contents/)
+* `regex:` Valid regular expression of target files within the repository (defaults to `.*.json`)
+* `extra_fields:` Comma-separated list of extra fields from `GitHub contents API <https://developer.github.com/v3/repos/contents/>`_.
 
 **Workflow**
 
@@ -466,7 +466,7 @@ MISP Generic
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` collect messages from [MISP](https://github.com/MISP), a malware information sharing platform server.
+* `description:` collect messages from `MISP <https://github.com/MISP>`_, a malware information sharing platform server.
 
 **Configuration Parameters**
 
@@ -504,7 +504,7 @@ You need the rt-library >= 1.9 from nic.cz, available via `pypi <https://pypi.or
 
 This rt bot will connect to RT and inspect the given `search_queue` for tickets matching all criteria in `search_*`, 
 Any matches will be inspected. For each match, all (RT-) attachments of the matching RT tickets are iterated over and within this loop, the first matching filename in the attachment is processed.
-If none of the filename matches apply, the contents of the first (RT-) "history" item is matched against the URL-regex.
+If none of the filename matches apply, the contents of the first (RT-) "history" item is matched against the regular expression for the URL (`url_regex`).
 
 **Configuration Parameters**
 
@@ -583,6 +583,24 @@ Rsync
 * `temp_directory`: The temporary directory for rsync, by default `$VAR_STATE_PATH/rsync_collector`. `$VAR_STATE_PATH` is `/var/run/intelmq/` or `/opt/intelmq/var/run/`.
 * `rsync_path`: The path of the file to process
 
+Shadowserver Reports API
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+The Cache is required to memorize which files have already been processed (TTL needs to be high enough to cover the oldest files available!).
+
+**Information**
+
+* `name`: `intelmq.bots.collectors.shadowserver.collector_reports_api`
+* `description`: Connects to the `Shadowserver API <https://www.shadowserver.org/what-we-do/network-reporting/api-documentation/>`_, requests a list of all the reports for a specific country and processes the ones that are new.
+
+**Configuration Parameters**
+
+* `country`: The country you want to download the reports for
+* `apikey`: Your Shadowserver API key
+* `secret`: Your Shadowserver API secret
+* `types`: A list of strings or a string of comma-separated values with the names of report types you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined'). The possible report types are equivalent to the file names given in the section :ref:`Supported Reports <shadowserver-supported-reports>` of the ShadowServer parser.
+* **Cache parameters** (see in section :ref:`common-parameters`, the default TTL is set to 10 days)
+
 Shodan Stream
 ^^^^^^^^^^^^^
 
@@ -622,7 +640,7 @@ TCP
 
 **Response**
 
-TCP collector just sends an "Ok" message after every recevied message, this should not pose a problem for an arbitrary input.
+TCP collector just sends an "Ok" message after every received message, this should not pose a problem for an arbitrary input.
 If you intend to link two IntelMQ instance via TCP, have a look at the TCP output bot documentation.
 
 XMPP collector
@@ -837,6 +855,8 @@ The cache is used to remember which files have already been downloaded. Make sur
 **Additional functionalities**
 
 * Files are automatically ungzipped if the filename ends with `.gz`.
+
+.. _stomp collector bot:
 
 Stomp
 ^^^^^
@@ -1370,6 +1390,8 @@ for processing. Supported MISP event categories and attribute types are
 defined in the `SUPPORTED_MISP_CATEGORIES` and `MISP_TYPE_MAPPING` class
 constants.
 
+.. _n6 parser bot:
+
 n6
 ^^
 
@@ -1417,9 +1439,12 @@ This does not affect URLs which already include the scheme.
 Shadowserver
 ^^^^^^^^^^^^
 
+There are two Shadowserver parsers, one for data in ``CSV`` format (``intelmq.bots.parsers.shadowserver.parser``) and one for data in ``JSON`` format (``intelmq.bots.parsers.shadowserver.parser_json``).
+The latter was added in IntelMQ 2.3 and is meant to be used together with the Shadowserver API collector.
+
 **Information**
 
-* `name:` intelmq.bots.parsers.shadowserver.parser
+* `name:` intelmq.bots.parsers.shadowserver.parser or intelmq.bots.parsers.shadowserver.parser_json
 * `public:` yes
 * `description:` Parses different reports from Shadowserver.
 
@@ -1451,6 +1476,8 @@ If the method above is not possible and for upgraded instances, the feed can be 
 Feed-names are derived from the subjects of the Shadowserver E-Mails.
 A list of possible feeds can be found in the table below in the column "feed name".
 
+.. _shadowserver-supported-reports:
+
 **Supported reports**
 
 These are the supported feed name and their corresponding file name for automatic detection:
@@ -1464,6 +1491,7 @@ These are the supported feed name and their corresponding file name for automati
    Accessible-Cisco-Smart-Install            `cisco_smart_install`
    Accessible-CoAP                           `scan_coap`
    Accessible-CWMP                           `scan_cwmp`
+   Accessible-MS-RDPEUDP                     `scan_msrdpeudp`
    Accessible-FTP                            `scan_ftp`
    Accessible-Hadoop                         `scan_hadoop`
    Accessible-HTTP                           `scan_http`
@@ -1503,7 +1531,7 @@ These are the supported feed name and their corresponding file name for automati
    Open-MSSQL                                `scan_mssql`
    Open-NATPMP                               `scan_nat_pmp`
    Open-NetBIOS-Nameservice                  `scan_netbios`
-   Open-Netis                                  ?
+   Open-Netis                                `netis_router`
    Open-Portmapper                           `scan_portmapper`
    Open-QOTD                                 `scan_qotd`
    Open-Redis                                `scan_redis`
@@ -1519,6 +1547,7 @@ These are the supported feed name and their corresponding file name for automati
    SSL-FREAK-Vulnerable-Servers              `scan_ssl_freak`
    SSL-POODLE-Vulnerable-Servers             `scan_ssl_poodle`
    Vulnerable-ISAKMP                         `scan_isakmp`
+   Vulnerable-HTTP                           `scan_http`
   =======================================   =========================
 
 **Development**
@@ -1527,7 +1556,7 @@ These are the supported feed name and their corresponding file name for automati
 
 The parser consists of two files:
  * `config.py`
- * `parser.py`
+ * `parser.py` or `parser_json.py`
 
 Both files are required for the parser to work properly.
 
@@ -1538,6 +1567,7 @@ Add a new feed format and conversions if required to the file
 It is required to look up the correct configuration.
 
 Look at the documentation in the bots's `config.py` file for more information.
+
 
 Shodan
 ^^^^^^
@@ -2248,7 +2278,7 @@ All sections will be considered, in the given order (from top to bottom).
 
 Each rule consists of *conditions* and *actions*.
 Conditions and actions are dictionaries holding the field names of events
-and regex-expressions to match values (selection) or set values (action).
+and regular expressions to match values (selection) or set values (action).
 All matching rules will be applied in the given order.
 The actions are only performed if all selections apply.
 
@@ -2260,10 +2290,10 @@ This is useful to apply default values for empty fields.
 
 You can set the value of the field to a string literal or number.
 
-In addition you can use the [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax)
+In addition you can use the `standard Python string format syntax <https://docs.python.org/3/library/string.html#format-string-syntax>`_
 to access the values from the processed event as `msg` and the match groups
 of the conditions as `matches`, see the bitdefender example above.
-Group 0 (`[0]`) contains the full matching string. See also the documentation on [`re.Match.group`](https://docs.python.org/3/library/re.html?highlight=re%20search#re.Match.group).
+Group 0 (`[0]`) contains the full matching string. See also the documentation on `re.Match.group <https://docs.python.org/3/library/re.html?highlight=re%20search#re.Match.group>`_.
 
 Note that `matches` will also contain the match groups
 from the default conditions if there were any.
@@ -2276,7 +2306,7 @@ Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feo
 
 **Types**
 
-If the rule is a string, a regex-search is performed, also for numeric values (`str()` is called on them). If the rule is numeric for numeric values, a simple comparison is done. If other types are mixed, a warning will be thrown.
+If the rule is a string, a regular expression search is performed, also for numeric values (`str()` is called on them). If the rule is numeric for numeric values, a simple comparison is done. If other types are mixed, a warning will be thrown.
 
 For boolean values, the comparison value needs to be `true` or `false` as in JSON they are written all-lowercase.
 
@@ -2419,7 +2449,7 @@ Online RIPE Abuse Contact and Geolocation Finder for IP addresses and Autonomous
 
 **Configuration Parameters**
 
-* **Cache parameters** (see in section [common parameters](#common-parameters))
+* **Cache parameters** (see section :ref:`common-parameters`)
 * `mode`: either `append` (default) or `replace`
 * `query_ripe_db_asn`: Query for IPs at `http://rest.db.ripe.net/abuse-contact/%s.json`, default `true`
 * `query_ripe_db_ip`: Query for ASNs at `http://rest.db.ripe.net/abuse-contact/as%s.json`, default `true`
@@ -2540,7 +2570,7 @@ The following operators may be used to match events:
 
  * `:contains` matches on substrings.
 
- * `=~` matches strings based on the given regex. `!~` is the inverse regex match.
+ * `=~` matches strings based on the given regular expression. `!~` is the inverse regular expression match.
 
  * Numerical comparisons are evaluated with `<`, `<=`, `>`, `>=`.
 
@@ -2578,11 +2608,21 @@ in the sieve file will be forwarded to the next bot in the pipeline, unless the
 
    ``add comment = 'hello, world'``
 
+   Some basic mathematical expressions are possible, but currently support only relative time specifications objects are supported.
+   For example:
+   ```add time.observation += '1 hour'```
+   ```add time.observation -= '10 hours'```
+
  * `add!` same as above, but will force overwrite the key in the event.
 
- * `update` modifies an existing value for a key. Only applies if the key is already defined. If the key is not defined in the event, this action is ignored.  Example:
+ * `update` modifies an existing value for a key. Only applies if the key is already defined. If the key is not defined in the event, this action is ignored. This supports mathematical expressions like above. Example:
 
    ``update feed.accuracy = 50``
+
+   Some basic mathematical expressions are possible, but currently support only relative time specifications objects are supported.
+   For example:
+   ```update time.observation += '1 hour'```
+   ```update time.observation -= '10 hours'```
 
  * `remove` removes a key/value from the event. Action is ignored if the key is not defined in the event. Example:
 
@@ -2597,6 +2637,20 @@ in the sieve file will be forwarded to the next bot in the pipeline, unless the
    pipeline, see the User Guide for more information.
 
    ``path 'named-queue'``
+
+   You can as well set multiple destination paths with the same syntax as for value lists:
+
+   ``path ['one', 'two']``
+
+   This will result in two identical message, one sent to the path `one` and the other sent to the path `two`.
+
+   If the path is not configured, the error looks like:
+
+   ```
+     File "/path/to/intelmq/intelmq/lib/pipeline.py", line 353, in send
+       for destination_queue in self.destination_queues[path]:
+   KeyError: 'one'
+   ```
 
  * `drop` marks the event to be dropped. The event will not be forwarded to the next bot in the pipeline. The sieve file processing is interrupted upon
    reaching this action. No other actions may be specified besides the `drop` action within `{` and `}`.
@@ -2730,7 +2784,7 @@ Threshold
 **Information**
 
 
-* **Cache parameters** (see in section [common parameters](#common-parameters))
+* **Cache parameters** (see section :ref:`common-parameters`)
 * `name`: threshold
 * `lookup`: redis cache
 * `public`: no
@@ -3185,7 +3239,7 @@ The bot creates tickets in Request Tracker and uses event fields for the ticket 
 
   - all event fields are included in the ticket body,
   - event attributes are assigned to tickets' CFs according to the attribute mapping,
-  - ticket taxonomy can be assigned according to the CF mapping. If you use taxonomy different from [ENISA RSIT](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force), consider using some extra attribute field and do value mapping with modify or sieve bot,
+  - ticket taxonomy can be assigned according to the CF mapping. If you use taxonomy different from `ENISA RSIT <https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force>`_, consider using some extra attribute field and do value mapping with modify or sieve bot,
 
 - create linked ticket in Investigations queue, if these conditions are met
 
@@ -3368,6 +3422,8 @@ Create the new database (you can ignore all errors since SQLite doesn't know all
 
 Then, set the `database` parameter to the `your-db.db` file path. 
 
+.. _stomp output bot:
+
 STOMP
 ^^^^^
 
@@ -3459,7 +3515,7 @@ Multihreading is disabled for this bot.
 **Configuration Parameters**
 
 * `field_delimiter`: If the format is 'delimited' this will be added between fields. String, default: `"|"`
-* `format`: Can be `'json'` or `'delimited'`. The JSON format outputs the event 'as-is'. Delimited will deconstruct the event and print each field:value separated by the field delimit. See examples bellow.
+* `format`: Can be `'json'` or `'delimited'`. The JSON format outputs the event 'as-is'. Delimited will deconstruct the event and print each field:value separated by the field delimit. See examples below.
 * `header`: Header text to be sent in the UDP datagram, string.
 * `keep_raw_field`: boolean, default: false
 * `udp_host`: Destination's server's Host name or IP address

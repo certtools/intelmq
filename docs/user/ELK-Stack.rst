@@ -78,7 +78,7 @@ Before passing the data to the database you can apply certain changes. This is d
 
 * It is not recommended to apply any modifications to the data (within the `mutate` key) outside of the IntelMQ. All necessary modifications should be done only by appropriate IntelMQ bots. This example only demonstrates the possibility.
 
-* It is recommended to use the `date` filter: generally we have two timestamp fields - `time.source` (provided by the feed source this can be understood as when the event happend; however it is not always present) and `time.observation` (when IntelMQ collected this event). Logstash also adds another field `@timestamp` with time of processing by Logstash. While it can be useful for debugging, I recommend to set the `@timestamp` to the same value as `time.observation`.
+* It is recommended to use the `date` filter: generally we have two timestamp fields - `time.source` (provided by the feed source this can be understood as when the event happened; however it is not always present) and `time.observation` (when IntelMQ collected this event). Logstash also adds another field `@timestamp` with time of processing by Logstash. While it can be useful for debugging, I recommend to set the `@timestamp` to the same value as `time.observation`.
 
 Output 
 ^^^^^^

@@ -700,7 +700,7 @@ def version_smaller(version1: tuple, version2: tuple) -> Optional[bool]:
 
 def lazy_int(value: Any) -> Optional[Any]:
     """
-    Tries to conver the value to int if possible. Original value otherwise
+    Tries to convert the value to int if possible. Original value otherwise
     """
     try:
         return int(value)

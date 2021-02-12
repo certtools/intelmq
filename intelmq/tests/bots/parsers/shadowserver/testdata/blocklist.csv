@@ -1,3 +1,4 @@
 "timestamp","ip","hostname","source","reason","asn","geo","region","city","naics","sic","sector"
 "2019-09-04 07:00:19","198.123.245.134",host.local,"Alien Vault","Malicious Host AA",5678,"XX","LOCATION","LOCATION",517311,0,0
 "2019-09-04 07:00:19","198.123.245.171",,"Alien Vault","Malicious Host AA",5678,"XX","LOCATION","LOCATION",517311,0,
+"2019-09-04 07:00:19","198.123.245.0/24",,"Alien Vault","Malicious Host AA",5678,"XX","LOCATION","LOCATION",517311,0,

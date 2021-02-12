@@ -9,7 +9,7 @@ Overview
 
 All messages (reports and events) are Python/JSON dictionaries. The key names and according types are defined by the so called *harmonization*.
 
-The purpose of this document is to list and clearly define known **fields** in Abusehelper as well as IntelMQ or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a  structured log record in the form ```key=value, key=value, key=value, …```. In the [List of known fields](#fields), each field is grouped by a **section**. We describe these sections briefly below.
+The purpose of this document is to list and clearly define known **fields** in Abusehelper as well as IntelMQ or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a  structured log record in the form ```key=value, key=value, key=value, …```. In the :ref:`List of known fields <data harmonization field list>`, each field is grouped by a **section**. We describe these sections briefly below.
 Every event **MUST** contain a timestamp field.
 
 An `IOC <https://en.wikipedia.org/wiki/Indicator_of_compromise>`_ (Indicator of compromise) is a single observation like a log line.
@@ -74,10 +74,12 @@ Extra values
 ------------
 Data which does not fit in the harmonization can be saved in the 'extra' namespace. All keys must begin with `extra.`, there are no other rules on key names and values. The values can be get/set like all other fields.
 
+.. _data harmonization field list:
+
 Fields List and data types
 ==========================
 
-A list of allowed fields and data types can be found in [Harmonization-fields.md](Harmonization-fields.md)
+A list of allowed fields and data types can be found in :doc:`harmonization-fields`.
 
 .. _data harmonization classification:
 

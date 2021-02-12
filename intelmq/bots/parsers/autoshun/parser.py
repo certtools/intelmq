@@ -18,10 +18,10 @@ class AutoshunParserBot(ParserBot):
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
-        splitted = raw_report.split("</tr>")
-        self.tempdata = ['</tr>'.join(splitted[:2])]
+        split = raw_report.split("</tr>")
+        self.tempdata = ['</tr>'.join(split[:2])]
         # TODO: save ending line
-        for line in splitted[2:]:
+        for line in split[2:]:
             yield line.strip()
 
     def parse_line(self, line, report):

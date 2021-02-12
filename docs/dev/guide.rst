@@ -26,7 +26,7 @@ IntelMQ tries to:
 * Reduce the complexity of writing new bots for new data feeds
 * Make your code easily and pleasantly readable
 * Reduce the probability of events lost in all process with persistence functionality (even system crash)
-* Strictly adhere to the existing [Data Harmonization Ontology](Data-Harmonization.md) for key-values in events
+* Strictly adhere to the existing :doc:`data-harmonization` for key-values in events
 * Always use JSON format for all messages internally
 * Help and support the interconnection between IntelMQ and existing tools like AbuseHelper, CIF, etc. or new tools (in other words: we will not accept data-silos!)
 * Provide an easy way to store data into Log Collectors like ElasticSearch, Splunk
@@ -147,19 +147,19 @@ You can run the tests by changing to the directory with IntelMQ repository and r
 
    cd /opt/dev_intelmq
    sudo -u intelmq python3 -m unittest {discover|filename}  # or
-   sudo -u intelmq nosetests3 [filename]  # alternatively nosetests or nosetests-3.5 depending on your installation, or
+   sudo -u intelmq nosetests3 [filename]  # alternatively nosetests or nosetests-3.8 depending on your installation, or
    sudo -u intelmq python3 setup.py test  # uses a build environment (no external dependencies)
 
 Some bots need local databases to succeed. If you only want to test one explicit test file, give the file path as argument.
 
-There is a `Travis-CI <https://travis-ci.org/certtools/intelmq/builds>`_ setup for automatic testing, which triggers on pull requests. You can also easily activate it for your forks.
+There are multiple `GitHub Action Workflows <https://github.com/certtools/intelmq/actions>`_ setup for automatic testing, which are triggered on pull requests. You can also easily activate them for your forks.
 
 Environment variables
 ---------------------
 
 There are a bunch of environment variables which switch on/off some tests:
 
-* `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default, set to 1 to test those bots. These tests need preparation, e.g. running databases with users and certain passwords etc. Have a look at the `.travis.yml` in IntelMQ's repository for steps to set databases up.
+* `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default. Set this environment variable to 1 to test those bots. These tests need preparation, e.g. running databases with users and certain passwords etc. Have a look at the `.github/workflows/nosetests.yml` and the corresponding `.github/workflows/scripts/setup-full.sh` in IntelMQ's repository for steps to set databases up.
 * `INTELMQ_SKIP_INTERNET`: tests requiring internet connection will be skipped if this is set to 1.
 * `INTELMQ_SKIP_REDIS`: redis-related tests are ran by default, set this to 1 to skip those.
 * `INTELMQ_TEST_EXOTIC`: some bots and tests require libraries which may not be available, those are skipped by default. To run them, set this to 1.
@@ -803,7 +803,7 @@ Testing Pre-releases
 Installation
 ============
 
-The [installation procedures](INSTALL.md) needs to be adapted only a little bit.
+The :doc:`installation procedures <../user/installation>` need to be adapted only a little bit.
 
 For native packages, you can find the unstable packages of the next version here: `Installation Unstable Native Packages <https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq%3Aunstable&package=intelmq>`_.
 

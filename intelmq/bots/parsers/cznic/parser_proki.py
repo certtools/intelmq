@@ -14,7 +14,7 @@ class CZNICProkiParserBot(ParserBot):
         report = json.loads(raw_report)
 
         if isinstance(report, dict) and "data" in report:
-            # extract event list from recieved JSON
+            # extract event list from received JSON
             report = report.get("data")
 
         for line in report:

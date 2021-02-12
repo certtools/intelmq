@@ -9,12 +9,14 @@ See the changelog for a full list of changes.
 The documentation is now available at [intelmq.readthedocs.io](https://intelmq.readthedocs.io/) (FIXME: Link to stable version?).
 
 ### Requirements
+IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the minimum supported Python version is 3.6.
+CentOS 7 (with EPEL) provides both Python 3.4 and Python 3.6. If IntelMQ was installed with Python 3.4, the code needs to be re-installed with Python 3.6 and removed for Python 3.4. Application data is compatible. To install the Python 3.6 packages, use: `yum install python36 python36-devel python36-requests`.
 
 ### Tools
 
 ### Bots
 
-#### Bot option `--updata-database`
+#### Bot option `--update-database`
 - Bots that require a database file (such as `maxmind_geoip`, `asn_lookup`, `tor_nodes` and `recordedfuture_iprisk`)
   have new command line option `--update-database`. It is not necessary to specify a
   bot ID, the function automatically updates the database for all the bots of the same
@@ -40,18 +42,28 @@ The bots are logging a deprecation warning now and the current plan is to remove
 ### Harmonization
 
 ### Configuration
+#### Abuse.ch URLHaus feed
+The feed template for the URLHaus feed contained a spelling error:
+The correct name for the parameter "delimeter" is "delimiter". Please fix your configured bots.
+The `intelmqctl upgrade-config` command automatically fixes a configuration if the misspelling is detected.
 
 ### Libraries
 
 ### Postgres databases
+There was a spelling error in the Spamhaus CERT parser's "event_description.text" texts.
+The following statements optionally update existing data.
+Please check if you did use these feed names and eventually adapt them for your setup!
+```sql
+UPDATE events
+   SET "event_description.text" = 'The malicious client used a honeypot as proxy.'
+   WHERE "event_description.text" = 'The malicous client used a honeypot as proxy.' AND "classification.taxonomy" = 'other' AND "classification.type" = 'other' AND "classification.identifier" = 'proxyget' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "event_description.text" = 'The infected iot device logged in to a honeypot and issued malicious commands.'
+   WHERE "event_description.text" = 'The infected iot device logged in to a honeypot and issued malicous commands.' AND "classification.taxonomy" = 'intrusions' AND "classification.type" = 'unauthorized-command' AND "classification.identifier" = 'iot' AND "feed.name" = 'Spamhaus CERT';
+```
 
-
-2.2.3 Bugfix release (unreleased)
+2.2.3 Bugfix release (2020-12-23)
 ---------------------------------
-
-### Requirements
-
-### Tools
 
 ### Harmonization
 A bug in the taxonomy expert did set the Taxonomy for the type `scanning` to `information gathering`
@@ -60,10 +72,6 @@ This inconsistency for the taxonomy `information-gathering` is now fixed, but th
 
 There are still some inconsistencies in the naming of the classification taxonomies and types,
 more fixes will come in version 3.0.0. See [issue #1409](https://github.com/certtools/intelmq/issues/1409).
-
-### Configuration
-
-### Libraries
 
 ### Postgres databases
 The following statements optionally update existing data.
@@ -415,7 +423,7 @@ You may want to update your harmonization configuration
 Some bots depend on the three new harmonization fields.
 
 ### Configuration
-A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field. The change is backwards compatibile and the change is not yet necessary, IntelMQ 1.x.x works with the old configuration too.
+A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field. The change is backwards compatible and the change is not yet necessary, IntelMQ 1.x.x works with the old configuration too.
 
 The feed names in the shadowserver parser have been adapted to the current subjects. Old subjects will still work in IntelMQ 1.x.x. Change your configuration accordingly:
 * `Botnet-Drone-Hadoop` to `Drone`
@@ -542,7 +550,7 @@ UPDATE events
 ---------------------------------
 
 ### Libraries
-- Some optional dependencies do not support Python 3.3 anymore. If your are still using this unsuported version consider upgrading. IntelMQ 1.0.x itself is compatible with Python 3.3.
+- Some optional dependencies do not support Python 3.3 anymore. If your are still using this unsupported version consider upgrading. IntelMQ 1.0.x itself is compatible with Python 3.3.
 
 ### Postgres databases
 Use the following statement carefully to upgrade your database.
@@ -552,7 +560,7 @@ UPDATE events
    SET "classification.taxonomy" = 'abusive content', "classification.type" = 'spam', "classification.identifier" = 'spamlink', "malware.name" = NULL, "event_description.text" = 'The URL appeared in a spam email sent by extra.spam_ip.', "source.url" = "destination.ip", "destination.ip" = NULL
    WHERE "malware.name" = 'l_spamlink' AND "feed.name" = 'Spamhaus CERT';
 UPDATE events
-   SET "classification.taxonomy" = 'other', "classification.type" = 'other', "classification.identifier" = 'proxyget', "malware.name" = NULL, "event_description.text" = 'The malicous client used a honeypot as proxy.'
+   SET "classification.taxonomy" = 'other', "classification.type" = 'other', "classification.identifier" = 'proxyget', "malware.name" = NULL, "event_description.text" = 'The malicious client used a honeypot as proxy.'
    WHERE "malware.name" = 'proxyget' AND "feed.name" = 'Spamhaus CERT';
 ```
 
@@ -620,7 +628,7 @@ UPDATE events
 | dns-query         | other      | other  | ignore me  | other          | other   | dns-query  |
 | proxy             | vulnerable | proxy  | open proxy | other          | proxy   | openproxy  |
 | sandbox-url       | ignore     | ignore | ignore me  | malicious code | malware | sandboxurl | As this previous taxonomy did not exist, these events have been rejected |
-| other             | vulnerable | unknow | unknown    | other          | other   | other      |
+| other             | vulnerable | unknown| unknown    | other          | other   | other      |
 
 ### Postgres databases
 Use the following statement carefully to upgrade your database.

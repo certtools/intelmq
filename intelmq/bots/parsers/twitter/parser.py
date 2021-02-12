@@ -64,7 +64,7 @@ class TwitterParserBot(Bot):
                 raise InvalidArgument(
                     'substitutions',
                     got=self.parameters.substitutions,
-                    expected="even number of ; separeted strings")
+                    expected="even number of ; separated strings")
             for i in range(int(len(temp) / 2)):
                 self.substitutions.append([temp[2 * i], temp[2 * i + 1]])
         self.classification_type = getattr(self.parameters, "classification_type", "unknown")

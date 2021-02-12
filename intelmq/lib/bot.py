@@ -4,7 +4,7 @@ The bot library has the base classes for all bots.
   * Bot: generic base class for all kind of bots
   * CollectorBot: base class for collectors
   * ParserBot: base class for parsers
-  * SQLBot: base classs for any bots using SQL
+  * SQLBot: base class for any bots using SQL
 """
 import argparse
 import atexit
@@ -150,7 +150,8 @@ class Bot(object):
                 self.logger.error('Multithreading is configured, but is not '
                                   'available for this bot. Look at the FAQ '
                                   'for a list of reasons for this. '
-                                  'https://github.com/certtools/intelmq/blob/master/docs/FAQ.md')
+                                  'https://intelmq.readthedocs.io/en/latest/user/FAQ.html'
+                                  '#multithreading-is-not-available-for-this-bot')
             elif (getattr(self.parameters, 'instances_threads', 1) > 1 and
                   disable_multithreading):
                 self.logger.warning('Multithreading is configured, but is not '
@@ -203,7 +204,7 @@ class Bot(object):
 
     def __handle_sigterm_signal(self, signum: int, stack: Optional[object]):
         """
-        Calles when a SIGTERM is received. Stops the bot.
+        Calls when a SIGTERM is received. Stops the bot.
         """
         self.logger.info("Received SIGTERM.")
         self.stop(exitcode=0)

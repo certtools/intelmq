@@ -22,31 +22,19 @@ from intelmq.lib.bot import CollectorBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
-    if sys.version_info >= (3, 6):
-        try:
-            from pymisp import ExpandedPyMISP as PyMISP
-        except ImportError:
-            from pymisp import PyMISP
-    else:
+    try:
+        from pymisp import ExpandedPyMISP as PyMISP
+    except ImportError:
         from pymisp import PyMISP
-
 except ImportError:
     PyMISP = None
     import_fail_reason = 'import'
-except SyntaxError:
-    PyMISP = None
-    import_fail_reason = 'syntax'
 
 
 class MISPCollectorBot(CollectorBot):
 
     def init(self):
-        if PyMISP is None and import_fail_reason == 'syntax':
-            raise MissingDependencyError("pymisp",
-                                         version='>=2.4.36,<=2.4.119.1',
-                                         additional_text="Python versions below 3.6 are "
-                                                         "only supported by pymisp <= 2.4.119.1.")
-        elif PyMISP is None:
+        if PyMISP is None:
             raise MissingDependencyError("pymisp")
 
         if hasattr(self.parameters, 'misp_verify'):

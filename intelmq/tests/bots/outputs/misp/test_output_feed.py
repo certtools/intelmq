@@ -32,8 +32,6 @@ EXAMPLE_EVENT = {"classification.type": "malware",
 
 
 @test.skip_exotic()
-@unittest.skipIf(sys.version_info < (3, 6),
-                 'The MISP Feed Output Bot does require Python >= 3.6.')
 class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod

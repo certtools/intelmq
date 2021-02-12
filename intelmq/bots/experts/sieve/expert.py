@@ -9,12 +9,15 @@ import ipaddress
 import os
 import re
 import traceback
+import datetime
 
 import intelmq.lib.exceptions as exceptions
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.utils import parse_relative
+from intelmq.lib.harmonization import DateTime
 
 try:
     import textx.model
@@ -100,20 +103,27 @@ class SieveExpertBot(Bot):
 
         # forwarding decision
         if procedure != Procedure.DROP:
-            path = getattr(event, "path", "_default")
-            self.send_message(event, path=path)
+            paths = getattr(event, "path", ("_default", ))
+            if hasattr(paths, 'values'):  # PathValueList
+                paths = tuple(path.value for path in paths.values)
+            elif hasattr(paths, 'value'):  # SinglePathValue
+                paths = (paths.value, )
+            # else: default value -> pass
+            for path in paths:
+                self.send_message(event, path=path)
 
         self.acknowledge_message()
 
     def process_rule(self, rule, event):
-        # process mandatory 'if' clause
-        if self.match_expression(rule.if_.expr, event):
-            self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(rule.if_), event)
-            for action in rule.if_.actions:
-                procedure = self.process_action(action.action, event)
-                if procedure != Procedure.CONTINUE:
-                    return procedure
-            return Procedure.CONTINUE
+        # process optional 'if' clause
+        if rule.if_:
+            if self.match_expression(rule.if_.expr, event):
+                self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(rule.if_), event)
+                for action in rule.if_.actions:
+                    procedure = self.process_action(action.action, event)
+                    if procedure != Procedure.CONTINUE:
+                        return procedure
+                return Procedure.CONTINUE
 
         # process optional 'elif' clauses
         for clause in rule.elif_:
@@ -129,6 +139,13 @@ class SieveExpertBot(Bot):
         if rule.else_:
             self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(rule.else_), event)
             for action in rule.else_.actions:
+                procedure = self.process_action(action.action, event)
+                if procedure != Procedure.CONTINUE:
+                    return procedure
+
+        # process optional 'actions' clause
+        if rule.actions_:
+            for action in rule.actions_:
                 procedure = self.process_action(action.action, event)
                 if procedure != Procedure.CONTINUE:
                     return procedure
@@ -232,6 +249,14 @@ class SieveExpertBot(Bot):
         return False
 
     @staticmethod
+    def compute_basic_math(action, event):
+        date = DateTime.parse_utc_isoformat(event[action.key], True)
+        if action.operator == '+=':
+            return (date + datetime.timedelta(minutes=parse_relative(action.value))).isoformat()
+        elif action.operator == '-=':
+            return (date - datetime.timedelta(minutes=parse_relative(action.value))).isoformat()
+
+    @staticmethod
     def process_action(action, event):
         if action == 'drop':
             return Procedure.DROP
@@ -241,12 +266,21 @@ class SieveExpertBot(Bot):
             event.path = action.path
         elif action.__class__.__name__ == 'AddAction':
             if action.key not in event:
-                event.add(action.key, action.value)
+                value = action.value
+                if action.operator != '=':
+                    value = SieveExpertBot.compute_basic_math(action, event)
+                event.add(action.key, value)
         elif action.__class__.__name__ == 'AddForceAction':
-            event.add(action.key, action.value, overwrite=True)
+            value = action.value
+            if action.operator != '=':
+                value = SieveExpertBot.compute_basic_math(action, event)
+            event.add(action.key, value, overwrite=True)
         elif action.__class__.__name__ == 'UpdateAction':
             if action.key in event:
-                event.change(action.key, action.value)
+                value = action.value
+                if action.operator != '=':
+                    value = SieveExpertBot.compute_basic_math(action, event)
+                event.change(action.key, value)
         elif action.__class__.__name__ == 'RemoveAction':
             if action.key in event:
                 del event[action.key]

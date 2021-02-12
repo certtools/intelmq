@@ -91,8 +91,8 @@ This project was partially funded by the CEF framework
 .. figure:: docs/_static/cef_logo.png
    :alt: Co-financed by the Connecting Europe Facility of the European Union
 
-.. |Build Status| image:: https://travis-ci.org/certtools/intelmq.svg?branch=develop
-   :target: https://travis-ci.org/certtools/intelmq
+.. |Build Status| image:: https://github.com/certtools/intelmq/workflows/Nosetest%20test%20suite/badge.svg
+   :target: https://github.com/certtools/intelmq/actions
 .. |codecov.io| image:: https://codecov.io/github/certtools/intelmq/coverage.svg?branch=develop
    :target: https://codecov.io/github/certtools/intelmq?branch=master
 .. |CII Badge| image:: https://bestpractices.coreinfrastructure.org/projects/4186/badge

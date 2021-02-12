@@ -80,12 +80,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
             try:
                 self.time_match = timedelta(minutes=parse_relative(self.parameters.not_older_than))
             except ValueError:
-                if sys.version_info >= (3, 6):
-                    self.time_match = parser.parse(self.parameters.not_older_than).astimezone(pytz.utc)
-                else:  # "astimezone() cannot be applied to a naive datetime" otherwise
-                    if '+' not in self.parameters.not_older_than:
-                        self.parameters.not_older_than += '+00:00'
-                    self.time_match = parser.parse(self.parameters.not_older_than)
+                self.time_match = parser.parse(self.parameters.not_older_than).astimezone(pytz.utc)
                 self.logger.info("Filtering files absolute %r.", self.time_match)
                 self.check_ttl_time()
             else:

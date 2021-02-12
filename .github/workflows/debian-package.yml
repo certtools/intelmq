@@ -1,0 +1,34 @@
+#Github Workflow to build Debian packages for intelmq-api
+#
+#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+#SPDX-License-Identifier: AGPL-3.0-or-later
+#
+name: "Build Debian packages"
+on:
+  push:
+    branches: [develop, maintenance, master]
+  pull_request:
+    branches: [develop, maintenance]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build Debian packages
+    strategy:
+      matrix:
+        codename: ['buster', 'bullseye']
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build package
+      run: bash .github/workflows/scripts/debian-package.sh ${{ matrix.codename }}
+
+    - name: Upload artifact
+      if: ${{ github.event_name == 'push' }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: debian-package-${{ matrix.codename }}-${{ github.sha }}
+        path: '~/artifacts'
+        retention-days: 5

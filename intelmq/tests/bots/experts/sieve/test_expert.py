@@ -930,7 +930,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, expected)
 
     def test_named_queues(self):
-        """ Test == numeric match """
+        """ Test named queues """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
                                               'test_sieve_files/test_named_queues.sieve')
 
@@ -1001,6 +1001,98 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = event2
         self.run_bot()
         self.assertMessageEqual(0, result)
+
+    def test_basic_math(self):
+        """ Test basic math operations"""
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                                'test_sieve_files/test_basic_math.sieve')
+
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = "add_force"
+        test_add_force = event.copy()
+        test_add_force['comment'] = "add_force"
+        test_add_force['time.observation'] = '2017-01-01T01:00:00+00:00'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, test_add_force)
+
+        test_minus_force = event.copy()
+        event['comment'] = "minus_force"
+        test_minus_force['comment'] = 'minus_force'
+        test_minus_force['time.observation'] = '2016-12-31T23:00:00+00:00'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, test_minus_force)
+
+        test_minus_normal = event.copy()
+        event['comment'] = "minus_normal"
+        test_minus_normal['comment'] = 'minus_normal'
+        test_minus_normal['time.observation'] = '2016-12-31T23:00:00+00:00'
+        self.input_message = event
+        self.allowed_error_count = 1
+        self.run_bot()
+        self.assertMessageEqual(0, test_minus_normal)
+
+        test_add_normal = event.copy()
+        event['comment'] = "add_normal"
+        test_add_normal['comment'] = 'add_normal'
+        test_add_normal['time.observation'] = '2017-01-01T01:00:00+00:00'
+        self.input_message = event
+        self.allowed_error_count = 1
+        self.run_bot()
+        self.assertMessageEqual(0, test_add_normal)
+
+        test_add_update = event.copy()
+        event['comment'] = "add_update"
+        test_add_update['comment'] = 'add_update'
+        test_add_update['time.observation'] = '2017-01-01T01:00:00+00:00'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, test_add_update)
+
+        test_minus_update = event.copy()
+        event['comment'] = "minus_update"
+        test_minus_update['comment'] = 'minus_update'
+        test_minus_update['time.observation'] = '2016-12-31T23:00:00+00:00'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, test_minus_update)
+
+    def test_multiple_paths(self):
+        """ Test path = ['one', 'two'] """
+        self.input_message = EXAMPLE_INPUT
+        self.prepare_bot(destination_queues={"_default", "one", "two"},
+                         parameters={'file': os.path.join(os.path.dirname(__file__),
+                                                          'test_sieve_files/test_named_queues_multi.sieve')})
+        self.run_bot(prepare=False)
+        self.assertMessageEqual(0, EXAMPLE_INPUT, path='one')
+        self.assertMessageEqual(0, EXAMPLE_INPUT, path='two')
+
+    def test_only_one_action(self):
+        """ Test only one action """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                                'test_sieve_files/test_only_one_action.sieve')
+
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'Test action only'
+
+        self.input_message = EXAMPLE_INPUT
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
+    def test_only_multiple_actions(self):
+        """ Test only multiple action """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                                'test_sieve_files/test_only_multiple_actions.sieve')
+
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'Test action only'
+        event['source.ip'] = '1.3.3.7'
+
+        self.input_message = EXAMPLE_INPUT
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

@@ -196,6 +196,8 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.DateTime.is_valid(
             '2015-08-31T36:16:10+00:00'
         ))
+        # This is a telephone number. dateutil.parser.parse will throw OverflowError here
+        self.assertFalse(harmonization.DateTime.is_valid('0018005550199'))
 
     def test_datetime_from_epoch_millis(self):
         """ Test DateTime.from_epoch_millis method. """

@@ -1,5 +1,5 @@
 ###############
-Feeds whishlist
+Feeds wishlist
 ###############
 
 This is a list with various feeds, which are either currently not supported or the usage is not clearly documented in IntelMQ.
@@ -9,9 +9,10 @@ See :ref:`feeds documentation` for more information on this.
 
 This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
 
-- A list of feeds
+- Lists of feeds:
   - `threatfeeds.io <https://threatfeeds.io>`_
   - `TheCyberThreat <http://thecyberthreat.com/cyber-threat-intelligence-feeds/>`_
+  - `sbilly: Awesome Security <https://github.com/sbilly/awesome-security#threat-intelligence>`_
 
 - Some third party intelmq bots: `NRDCS' IntelMQ fork <https://github.com/NRDCS/intelmq/tree/certlt/intelmq/bots>`_
 
@@ -63,6 +64,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
   - `OpenBugBounty <https://www.openbugbounty.org/>`_
   - `Payload Security <http://payload-security.com>`_
   - `Project Honeypot (#284) <http://www.projecthoneypot.org/list_of_ips.php?rss=1>`_
+  - `RST Threat Feed <https://rstcloud.net/>`_ (offers a free and a commercial feed)
   - `ShadowServer Sandbox API <http://www.shadowserver.org/wiki/pmwiki.php/Services/Sandboxapi>`_
   - `Shodan search API <https://shodan.readthedocs.io/en/latest/tutorial.html#searching-shodan>`_
   - `Snort <http://labs.snort.org/feeds/ip-filter.blf>`_

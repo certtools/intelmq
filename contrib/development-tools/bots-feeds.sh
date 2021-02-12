@@ -7,7 +7,7 @@ jq '.Expert | keys | length' intelmq/bots/BOTS
 jq '.Output | keys | length' intelmq/bots/BOTS
 
 echo "Feeds:"
-egrep -c '^    [^ ]' intelmq/etc/feeds.yaml
+grep -Ec '^    [^ ]' intelmq/etc/feeds.yaml
 echo "Shadowserver:"
 python3 -c "import intelmq.bots.parsers.shadowserver.config; print(len(intelmq.bots.parsers.shadowserver.config.mapping))"
 

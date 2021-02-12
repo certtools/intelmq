@@ -12,14 +12,15 @@ For testing pre-releases see also the :doc:`../dev/guide` section *Testing Pre-r
 Requirements
 ------------
 
-The following instructions assume the following requirements. Python versions >= 3.5 are supported.
+The following instructions assume the following requirements. Python versions >= 3.6 are supported.
 
 Supported and recommended operating systems are:
 
 * CentOS 7 and 8
-* Debian 9 and 10
+* Debian 10
 * OpenSUSE Leap 15.1, 15.2
-* Ubuntu: 16.04, 18.04, 20.04
+* Ubuntu: 18.04, 20.04
+* Docker Engine: 18.x and higher
 
 Other distributions which are (most probably) supported include CentOS 8, RHEL, Fedora and openSUSE Tumbleweed.
 
@@ -83,6 +84,17 @@ Optional dependencies:
    zypper in bash-completion jq
    zypper in python3-psycopg2 python3-pymongo python3-sleekxmpp
 
+Docker (beta)
+^^^^^^^^^^^^^
+
+**ATTENTION** Currently the version published on docker hub is not tagged with the same IntelMQ version. During beta, each version is published with tag `1.0`.
+**ATTENTION** Currently you can't manage your botnet via :doc:`intelmqctl`. You need to use `IntelMQ-Manager <https://github.com/certtools/intelmq-manager>`_ currently!
+
+Follow `Docker Install <https://docs.docker.com/engine/install/>`_ and
+`Docker-Compose Install <https://docs.docker.com/compose/install/>`_ instructions.
+
+The latest image is hosted on `Docker Hub <https://hub.docker.com/r/certat/intelmq-full>`_
+
 Installation
 ------------
 
@@ -100,7 +112,6 @@ These are the operating systems which are currently supported by packages:
 
 * **CentOS 7** (run `yum install epel-release` first)
 * **CentOS 8** (run `dnf install epel-release` first)
-* **Debian 9**
 * **Debian 10**
 * **Fedora 30**
 * **Fedora 31**
@@ -108,12 +119,11 @@ These are the operating systems which are currently supported by packages:
 * **openSUSE Leap 15.1**
 * **openSUSE Leap 15.2**
 * **openSUSE Tumbleweed**
-* **Ubuntu 16.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ xenial main` first)
 * **Ubuntu 18.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ bionic main` first)
 * **Ubuntu 20.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ focal main` first)
 
 Get the installation instructions for your operating system here: `Installation Native Packages <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq>`_.
-The instructions show how to add the repository and install the `intelmq` package. You can also install the `intelmq-manager` package to get the [Web-Frontend IntelMQ Manager](https://github.com/certtools/intelmq-manager/).
+The instructions show how to add the repository and install the `intelmq` package. You can also install the `intelmq-manager` package to get the `Web-Frontend IntelMQ Manager <https://github.com/certtools/intelmq-manager/>`_.
 
 Please report any errors or improvements at `IntelMQ Issues <https://github.com/certtools/intelmq/issues>`_. Thanks!
 
@@ -130,6 +140,69 @@ PyPi
    sudo intelmqsetup
 
 `intelmqsetup` will create all necessary directories, provides a default configuration for new setups. See the :ref:`configuration` for more information on them and how to influence them.
+
+Docker **with** docker-compose (recommended)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Navigate to your preferred installation directory, i. e. use ``mkdir ~/intelmq && cd ~/intelmq``
+
+.. code-block:: bash
+
+   git clone https://github.com/certat/intelmq-docker.git
+
+   sudo docker pull certat/intelmq-full:1.0
+
+   cd intelmq-docker
+
+   sudo docker-compose up
+
+Your installation should be successful now. You're now able to visit ``http://127.0.0.1:1337/`` to access the intelmq-manager.
+
+NOTE: If you get an `Permission denied`, you should use `chown -R $USER:$USER example_config`
+
+Docker without docker-compose
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Navigate to your preferred installation directory, i. e. use ``mkdir ~/intelmq && cd ~/intelmq``
+
+You need to prepare some volumes & configs. Edit the left-side after -v, to change paths.
+
+Change ``redis_host`` to a running redis-instance. Docker will resolve it automatically.
+
+In order to work with your current infrastructure, you need to specify some environment variables
+
+.. code-block:: bash
+
+   sudo docker pull certat/intelmq-full:1.0
+
+   sudo docker run -e INTELMQ_IS_DOCKER="true" \
+                   -e INTELMQ_PIPELINE_DRIVER="redis" \
+                   -e INTELMQ_PIPELINE_HOST=redis_host \
+                   -e INTELMQ_REDIS_CACHE_HOST=redis_host \
+                   -e INTELMQ_MANAGER_CONFIG="/opt/intelmq-manager/config/config.json" \
+                   -v ~/intelmq/config/etc:/opt/intelmq/etc \
+                   -v ~/intelmq/config/intelmq-manager:/opt/intelmq-manager/config \
+                   -v /var/log/intelmq:/opt/intelmq/var/log \
+                   -v ~/intelmq/lib:/opt/intelmq/var/lib \
+                   certat/intelmq-full:1.0
+
+**ATTENTION** Using networks requires better understanding of how docker works. Not recommended for End-Users.
+Alternatively you can use `Docker Networks <https://docs.docker.com/engine/tutorials/networkingcontainers/>`_.
+
+.. code-block:: bash
+
+   sudo docker pull certat/intelmq-full:1.0
+
+   docker network create -d bridge intelmq_net
+
+   sudo docker run -e INTELMQ_IS_DOCKER="true" \
+                   -e INTELMQ_MANAGER_CONFIG="/opt/intelmq-manager/config/config.json" \
+                   --net intelmq_net \
+                   -v ~/intelmq/config/etc:/opt/intelmq/etc \
+                   -v ~/intelmq/config/intelmq-manager:/opt/intelmq-manager/config \
+                   -v /var/log/intelmq:/opt/intelmq/var/log \
+                   -v ~/intelmq/lib:/opt/intelmq/var/lib \
+                   certat/intelmq-full:1.0
 
 Additional Information
 ^^^^^^^^^^^^^^^^^^^^^^

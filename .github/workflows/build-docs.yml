@@ -1,0 +1,35 @@
+#Github Workflow to run test documentation built
+#
+#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+#SPDX-License-Identifier: AGPL-3.0-or-later
+#
+name: "Build the documentation with sphinx"
+on:
+  push:
+    branches: [develop, maintenance, master]
+  pull_request:
+    branches: [develop, maintenance]
+
+jobs:
+  documentationbuild:
+    runs-on: ubuntu-latest
+    name: Build the documentation
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.6', '3.7', '3.8', '3.9']
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install documentation dependencies
+      run: pip install -r docs/requirements.txt
+
+    - name: Build documentation
+      run: make -C docs html
