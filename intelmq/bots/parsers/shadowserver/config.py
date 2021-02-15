@@ -2428,7 +2428,7 @@ accessible_sinkhole_dns = {
         ('extra.', 'naics', convert_int),
     ],
     'constant_fields': {
-        'classification.identifier': 'accessible-sinkholedns',
+        'classification.identifier': 'sinkholedns',
         'classification.taxonomy': 'other',
         'classification.type': 'other',
         'protocol.application': 'dns',

@@ -56,7 +56,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.bots.parsers.shadowserver.parser_json`: Added (PR#1700 by Birger Schacht)
 - `intelmq.bots.parsers.shadowserver.config`:
   - Fixed mapping for Block list feed to accept network ranges in CIDR notation (#1720, PR#1728 by Sebastian Waldbauer).
-  - Added mapping for new feed MSRDPUDP, Vulnerable-HTTP (#1726, #1733, PR#1732, PR#1736 by Sebastian Waldbauer).
+  - Added mapping for new feed MSRDPUDP, Vulnerable-HTTP, Sinkhole DNS (#1716, #1726, #1733, PR#1732, PR#1735, PR#1736 by Sebastian Waldbauer).
 - `intelmq.bots.parsers.abusech.parser_ip`: Adapt to changes in the Feodo Tracker Botnet C2 IP Blocklist feed (PR#1741 by Thomas Bellus).
 
 #### Experts
