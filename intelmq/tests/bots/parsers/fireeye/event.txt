@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OpenIOC xmlns="http://openioc.org/schemas/OpenIOC_1.1" id="8835182046018028622" last-modified="2021-01-05T13:23:08.181Z" published-date="0001-01-01T00:00:00">
+    <metadata>
+        <short_description>New Malware-Object Indicator</short_description>
+        <description>Downloader.Emotet</description>
+        <authored_by>fe-cm</authored_by>
+        <authored_date>2021-01-05T13:23:07.921Z</authored_date>
+        <links>
+            <link href="https://127.0.0.1/emps/eanalysis?e_id=161862&amp;type=attch" rel="tracebackurl">Alert URL</link>
+            <link rel="alert_id">27072</link>
+            <link rel="uuid">1591de22-4926-4124-b3ed-ffff96766295</link>
+            <link rel="alert_type">malware-object</link>
+            <link rel="lms_iden">000BABDDC4FE</link>
+            <link rel="lms_inf_id">1454270</link>
+            <link rel="alert_severity">majr</link>
+            <link rel="alert_name">Downloader.Emotet</link>
+            <link rel="alert_timestamp">2021-01-05T13:19:06Z</link>
+            <link rel="src_ip">0.0.0.0</link>
+            <link rel="dst_ip">0.0.0.0</link>
+            <link rel="product_type">eMPS</link>
+        </links>
+    </metadata>
+    <criteria>
+        <Indicator id="6105137953854343568" operator="OR">
+            <IndicatorItem condition="is" id="1082865067269638543" negate="false" preserve-case="false">
+                <Context document="FileItem" search="FileItem/Md5sum" type="mir"/>
+                <Content type="md5">21232f297a57a5a743894a0e4a801fc3</Content>
+            </IndicatorItem>
+            <IndicatorItem condition="is" id="4917082633666119950" negate="false" preserve-case="false">
+                <Context document="FileItem" search="FileItem/Sha256sum" type="mir"/>
+                <Content type="string">8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918</Content>
+            </IndicatorItem>
+            <Indicator id="5420081528109681130" operator="AND">
+                <IndicatorItem condition="is" id="1509402135602087790" negate="false" preserve-case="false">
+                    <Context document="Network" search="Network/HTTP/Method"/>
+                    <Content type="string">GET</Content>
+                </IndicatorItem>
+                <IndicatorItem condition="is" id="4272090514790958048" negate="false" preserve-case="true">
+                    <Context document="Network" search="Network/HTTP/RequestURI"/>
+                    <Content type="string">/wp-content/n/</Content>
+                </IndicatorItem>
+                <IndicatorItem condition="is" id="4748176689776443574" negate="false" preserve-case="false">
+                    <Context document="Network" search="Network/HTTP/Host"/>
+                    <Content type="string">shop.domain1.com</Content>
+                </IndicatorItem>
+                <IndicatorItem condition="is" id="5834947856271820606" negate="false" preserve-case="false">
+                    <Context document="Network" search="Network/DNS"/>
+                    <Content type="string">shop.domain1.com</Content>
+                </IndicatorItem>
+                <IndicatorItem condition="is" id="2723246917599511516" negate="false" preserve-case="false">
+                    <Context document="Network" search="Network/Connection/RemotePort"/>
+                    <Content type="int">80</Content>
+                </IndicatorItem>
+                <IndicatorItem condition="is" id="6912661358802455201" negate="false" preserve-case="false">
+                    <Context document="Network" search="Network/Connection/Protocol"/>
+                    <Content type="string">tcp</Content>
+                </IndicatorItem>
+            </Indicator>
+        </Indicator>
+    </criteria>
+</OpenIOC>
