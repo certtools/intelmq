@@ -14,6 +14,7 @@ except ImportError:
 
 
 class AbusixExpertBot(Bot):
+    """Add abuse contact information from the Abusix online service for source and destination IP address"""
 
     def init(self):
         if querycontacts:

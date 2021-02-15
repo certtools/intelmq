@@ -7,13 +7,21 @@ from intelmq.lib.bot import SQLBot
 
 
 class GenericDBLookupExpertBot(SQLBot):
-    _replace = None
+    """Fetche data from a database"""
+    database: str = "intelmq"
+    engine: str = "<postgresql OR sqlite>"
+    host: str = "localhost"
+    match_fields = {"source.asn": "asn"}
+    overwrite: bool = False
+    password: str = "<password>"
+    port: int = 5432
     replace_fields = {'contact': 'source.abuse_contact', 'note': 'comment'}
+    sslmode: str = "require"
+    table: str = "contacts"
+    user: str = "intelmq"
+
+    _replace = None
     _match = None
-    match_fields = {'source.asn': 'asn'}
-    table = None
-    overwrite = None
-    engine = None
 
     def init(self):
         super().init()

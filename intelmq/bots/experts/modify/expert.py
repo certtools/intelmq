@@ -35,6 +35,11 @@ class MatchGroupMapping:
 
 
 class ModifyExpertBot(Bot):
+    """Perform arbitrary changes to event's fields based on regular-expression-based rules on different values. See the bot's documentation for some examples"""
+    case_sensitive: bool = True
+    configuration_path: str = "/opt/intelmq/var/lib/bots/modify/modify.conf"  # TODO: should be pathlib.Path
+    maximum_matches = None
+    overwrite: bool = True
 
     def init(self):
         config = load_configuration(self.configuration_path)
@@ -44,16 +49,10 @@ class ModifyExpertBot(Bot):
                                 'NEWS file section 1.0.0.dev7.')
             config = modify_expert_convert_config(config)
 
-        if getattr(self, 'case_sensitive', True):
+        if self.case_sensitive:
             self.re_kwargs = {}
         else:
             self.re_kwargs = {'flags': re.IGNORECASE}
-
-        if not hasattr(self, 'overwrite'):
-            self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
-                                "Please set it explicitly, default will change to "
-                                "'False' in version 3.0.0'.")
-        self.overwrite = getattr(self, 'overwrite', True)
 
         # regex compilation
         self.config = []
@@ -62,8 +61,6 @@ class ModifyExpertBot(Bot):
             for field, expression in rule["if"].items():
                 if isinstance(expression, str) and expression != '':
                     self.config[-1]["if"][field] = re.compile(expression, **self.re_kwargs)
-
-        self.maximum_matches = getattr(self, 'maximum_matches', None)
 
     def matches(self, identifier, event, condition):
         matches = {}

@@ -20,21 +20,27 @@ class InvalidPTRResult(ValueError):
 
 
 class ReverseDnsExpertBot(Bot):
+    """Get the correspondent domain name for source and destination IP address"""
+    cache_ttl_invalid_response: int = 60
+    overwrite: bool = False
+    redis_cache_db: int = 7
+    redis_cache_host: str = "127.0.0.1"  # TODO: should be ipaddress
+    redis_cache_password: str = None
+    redis_cache_port: int = 6379
+    redis_cache_ttl: int = 86400
 
     def init(self):
         self.cache = Cache(self.redis_cache_host,
                            self.redis_cache_port,
                            self.redis_cache_db,
                            self.redis_cache_ttl,
-                           getattr(self, "redis_cache_password",
-                                   None)
+                           self.redis_cache_password
                            )
 
         if not hasattr(self, 'overwrite'):
             self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
                                 "Please set it explicitly, default will change to "
                                 "'False' in version 3.0.0'.")
-        self.overwrite = getattr(self, 'overwrite', True)
 
     def process(self):
         event = self.receive_message()
@@ -80,9 +86,7 @@ class ReverseDnsExpertBot(Bot):
                         raise InvalidPTRResult
                 except (dns.exception.DNSException, InvalidPTRResult) as e:
                     # Set default TTL for 'DNS query name does not exist' error
-                    ttl = None if isinstance(e, dns.resolver.NXDOMAIN) else \
-                        getattr(self, "cache_ttl_invalid_response",
-                                60)
+                    ttl = None if isinstance(e, dns.resolver.NXDOMAIN) else self.cache_ttl_invalid_response
                     self.cache.set(cache_key, DNS_EXCEPTION_VALUE, ttl)
                     result = None
 

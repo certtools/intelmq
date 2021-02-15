@@ -8,6 +8,7 @@ from intelmq.lib.message import Event
 
 
 class FieldReducerExpertBot(Bot):
+    """Remove fields from events"""
     type = None
     keys = None
 

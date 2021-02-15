@@ -13,8 +13,9 @@ except ImportError:
 
 
 class GeohashExpertBot(Bot):
-    precision = 7
-    overwrite = False
+    """Compute the geohash from longitude/latitude information, save it to extra.(source|destination)"""
+    overwrite: bool = False
+    precision: int = 7
 
     def init(self):
         if not geohash:

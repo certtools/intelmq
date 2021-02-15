@@ -14,6 +14,9 @@ from intelmq.bin.intelmqctl import IntelMQController
 
 
 class TorExpertBot(Bot):
+    """Check if the IP address is a Tor Exit Node based on a local database of TOR nodes"""
+    database: str = "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"  # TODO: pathlib.Path
+    overwrite: bool = False
 
     _database = set()
 
@@ -32,8 +35,6 @@ class TorExpertBot(Bot):
 
         except IOError:
             raise ValueError("TOR rule not defined or failed on open.")
-
-        self.overwrite = getattr(self, 'overwrite', False)
 
     def process(self):
         event = self.receive_message()

@@ -41,6 +41,9 @@ ASNS = ASN16 + ASN32
 
 
 class RFC1918ExpertBot(Bot):
+    """Removes fields or discard events if an IP address or domain is invalid as defined in standards like RFC 1918 (invalid, local, reserved, documentation). IP address, FQDN and URL fields are supported"""
+    fields: str = "destination.ip,source.ip,source.url"  # TODO: could be List[str]
+    policy: str = "del,drop,drop"  # TODO: detto
 
     def init(self):
         self.fields = self.fields.lower().strip().split(",")

@@ -23,22 +23,26 @@ except ImportError:
 
 
 class GeoIPExpertBot(Bot):
+    """Add geolocation information from a local MaxMind database to events (country, city, longitude, latitude)"""
+    database: str = "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"  # TODO: should be pathlib.Path
+    license_key: str = "<insert Maxmind license key>"
+    overwrite: bool = False
+    use_registered: bool = False
 
     def init(self):
         if geoip2 is None:
             raise MissingDependencyError("geoip2")
 
         try:
-            self.database = geoip2.database.Reader(self.parameters.database)
+            self.database = geoip2.database.Reader(self.database)
         except IOError:
             self.logger.exception("GeoIP Database does not exist or could not "
                                   "be accessed in %r.",
-                                  self.parameters.database)
+                                  self.database)
             self.logger.error("Read 'bots/experts/geoip/README' and follow the"
                               " procedure.")
             self.stop()
-        self.overwrite = getattr(self.parameters, 'overwrite', False)
-        self.registered = getattr(self.parameters, 'use_registered', False)
+        self.registered = self.use_registered
 
     def process(self):
         event = self.receive_message()
@@ -57,23 +61,23 @@ class GeoIPExpertBot(Bot):
                 if self.registered:
                     if info.registered_country.iso_code:
                         event.add(geo_key % "cc", info.registered_country.iso_code,
-                                  overwrite=self.parameters.overwrite)
+                                  overwrite=self.overwrite)
                 else:
                     if info.country.iso_code:
                         event.add(geo_key % "cc", info.country.iso_code,
-                                  overwrite=self.parameters.overwrite)
+                                  overwrite=self.overwrite)
 
                 if info.location.latitude:
                     event.add(geo_key % "latitude", info.location.latitude,
-                              overwrite=self.parameters.overwrite)
+                              overwrite=self.overwrite)
 
                 if info.location.longitude:
                     event.add(geo_key % "longitude", info.location.longitude,
-                              overwrite=self.parameters.overwrite)
+                              overwrite=self.overwrite)
 
                 if info.city.name:
                     event.add(geo_key % "city", info.city.name,
-                              overwrite=self.parameters.overwrite)
+                              overwrite=self.overwrite)
 
             except geoip2.errors.AddressNotFoundError:
                 pass

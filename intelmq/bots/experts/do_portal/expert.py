@@ -14,19 +14,23 @@ from intelmq.lib.bot import Bot
 
 
 class DoPortalExpertBot(Bot):
+    """Retrieve abuse contact information for the source IP address from a do-portal instance"""
+    mode: str = "append"
+    portal_api_key: str = None
+    portal_url: str = None
+
     def init(self):
         if requests is None:
             raise ValueError("Library 'requests' could not be loaded. Please install it.")
 
         self.set_request_parameters()
 
-        self.url = self.parameters.portal_url + '/api/1.0/ripe/contact?cidr=%s'
+        self.url = self.portal_url + '/api/1.0/ripe/contact?cidr=%s'
         self.http_header.update({
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "API-Authorization": self.parameters.portal_api_key
+            "API-Authorization": self.portal_api_key
         })
-        self.mode = self.parameters.mode
 
         self.session = utils.create_request_session(self)
         retries = requests.urllib3.Retry.from_int(self.http_timeout_max_tries)

@@ -29,6 +29,11 @@ URL = 'https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl'
 
 
 class NationalCERTContactCertATExpertBot(Bot):
+    """Add country and abuse contact information from the CERT.at national CERT Contact Database. Set filter to true if you want to filter out events for Austria. Set overwrite_cc to true if you want to overwrite an existing country code value"""
+    filter: bool = False
+    http_verify_cert: bool = True
+    overwrite_cc: bool = False
+
     def init(self):
         if requests is None:
             raise MissingDependencyError("requests")

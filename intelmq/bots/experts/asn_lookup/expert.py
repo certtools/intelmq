@@ -21,7 +21,8 @@ except ImportError:
 
 
 class ASNLookupExpertBot(Bot):
-    database = None
+    """Add ASN and netmask information from a local BGP dump"""
+    database = None  # TODO: should be pathlib.Path
 
     def init(self):
         if pyasn is None:

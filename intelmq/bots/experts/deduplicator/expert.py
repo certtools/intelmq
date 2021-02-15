@@ -27,6 +27,14 @@ from intelmq.lib.cache import Cache
 
 
 class DeduplicatorExpertBot(Bot):
+    """Detection and drop exact duplicate messages. Message hashes are cached in the Redis database"""
+    filter_keys: str = "raw,time.observation"  # TODO: could be List[str]
+    filter_type: str = "blacklist"
+    redis_cache_db: int = 6
+    redis_cache_host: str = "127.0.0.1"  # TODO: could be ipaddress
+    redis_cache_password: str = None
+    redis_cache_port: int = 6379
+    redis_cache_ttl: int = 86400
 
     _message_processed_verb = 'Forwarded'
     bypass = False
@@ -37,8 +45,7 @@ class DeduplicatorExpertBot(Bot):
                            self.redis_cache_port,
                            self.redis_cache_db,
                            self.redis_cache_ttl,
-                           getattr(self, "redis_cache_password",
-                                   None)
+                           self.redis_cache_password
                            )
         self.filter_keys = {k.strip() for k in
                             self.filter_keys.split(',')}

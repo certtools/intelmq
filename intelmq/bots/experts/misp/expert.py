@@ -19,15 +19,18 @@ except ImportError:
 
 
 class MISPExpertBot(Bot):
+    """Looking up the IP address in MISP instance and retrieve attribute and event UUIDs"""
+    misp_key: str = "<insert MISP Authkey>"
+    misp_url: str = "<insert url of MISP server (with trailing '/')>"
 
     def init(self):
         if ExpandedPyMISP is None:
             raise MissingDependencyError('pymisp', '>=2.4.117.3')
 
         # Initialize MISP connection
-        self.misp = ExpandedPyMISP(self.parameters.misp_url,
-                                   self.parameters.misp_key,
-                                   self.parameters.http_verify_cert)
+        self.misp = ExpandedPyMISP(self.misp_url,
+                                   self.misp_key,
+                                   self.http_verify_cert)
 
     def process(self):
         event = self.receive_message()

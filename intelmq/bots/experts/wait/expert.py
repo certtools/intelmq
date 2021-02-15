@@ -12,18 +12,20 @@ from intelmq.lib.bot import Bot
 
 
 class WaitExpertBot(Bot):
+    """Wait for a some time or until a queue size is lower than a given number"""
+    queue_db: int = 2
+    queue_host: str = "localhost"
+    queue_name: str = None
+    queue_password: str = None
+    queue_polling_interval: float = 0.05
+    queue_port: int = 6379
+    queue_size: int = 0
+    sleep_time: int = None
+
     def init(self):
         self.mode = None
-        self.queue_name = getattr(self, 'queue_name', None)
-        self.sleep_time = getattr(self, 'sleep_time', None)
         if self.queue_name:
             self.mode = 'queue'
-            self.queue_db = int(getattr(self, 'queue_db', 2))
-            self.queue_host = getattr(self, 'queue_host', 'localhost')
-            self.queue_password = getattr(self, 'queue_password', None)
-            self.queue_polling_interval = float(getattr(self, 'queue_polling_interval', 0.05))
-            self.queue_port = int(getattr(self, 'queue_port', 6379))
-            self.queue_size = int(getattr(self, 'queue_size', 0))
             self.connect_redis()
         elif self.sleep_time:
             self.mode = 'sleep'

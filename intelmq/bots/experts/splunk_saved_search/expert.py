@@ -71,6 +71,16 @@ import time
 
 
 class SplunkSavedSearchBot(Bot):
+    """Enrich an event from Splunk search results"""
+    auth_token: str = None
+    multiple_result_handling = ["warn", "use_first", "send"]
+    not_found = ["warn", "send"]
+    overwrite = None
+    result_fields = {"result field": "event field"}
+    retry_interval: int = 5
+    saved_search: str = None
+    search_parameters = {"event field": "search parameter"}
+    url: str = None
 
     is_multithreadable = False
 
@@ -78,33 +88,22 @@ class SplunkSavedSearchBot(Bot):
         if requests is None:
             raise MissingDependencyError("requests")
 
-        self.retry_interval = getattr(self.parameters, "retry_interval", 5)
-        self.url = getattr(self.parameters, "url", None)
-        if not self.url:
+        if self.url is None:
             raise ConfigurationError("Connection", "No Splunk API URL specified")
-        self.auth_token = getattr(self.parameters, "auth_token", None)
-        if not self.auth_token:
+        if self.auth_token is None:
             raise ConfigurationError("Connection", "No Splunk API authorization token specified")
-        self.saved_search = getattr(self.parameters, "saved_search", None)
-        if not self.saved_search:
+        if self.saved_search is None:
             raise ConfigurationError("Search", "No Splunk saved search specified")
 
-        self.search_parameters = getattr(self.parameters, "search_parameters", {})
-        self.result_fields = getattr(self.parameters, "result_fields", {})
-
-        self.not_found = getattr(self.parameters, "not_found", ["warn", "send"])
         if "send" in self.not_found and "drop" in self.not_found:
             raise ConfigurationError("Processing", "Cannot both drop and send messages without search results")
 
-        self.multiple_result_handling = getattr(self.parameters, "multiple_result_handling", ["warn", "use_first", "send"])
         if "limit" in self.multiple_result_handling and len(self.multiple_result_handling) != 1:
             raise ConfigurationError("Processing", "Search results limited to one, no processing of multiple results possible")
         if "send" in self.multiple_result_handling and "drop" in self.multiple_result_handling:
             raise ConfigurationError("Processing", "Cannot both drop and send messages with multiple search results")
         if "ignore" in self.multiple_result_handling and "use_first" in self.multiple_result_handling:
             raise ConfigurationError("Processing", "Cannot both ignore and use multiple search results")
-
-        self.overwrite = getattr(self.parameters, "overwrite", None)
 
         self.set_request_parameters()
 

@@ -23,6 +23,8 @@ def addr6(s):
 
 
 class IdeaExpertBot(Bot):
+    """Convert events into the IDEA format"""
+    test_mode: bool = False
 
     type_to_category = {
         "phishing": "Fraud.Phishing",

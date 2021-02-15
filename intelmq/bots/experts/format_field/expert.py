@@ -3,14 +3,15 @@ from intelmq.lib.bot import Bot
 
 
 class FormatFieldExpertBot(Bot):
-    strip_columns = None
+    """Perform string method operations on column values"""
+    new_value       = ""
+    old_value       = ""
+    replace_column  = ""
+    replace_count   = 1
+    strip_columns   = ""
+    split_separator = ','
     strip_chars     = ' '
     split_column    = None
-    split_separator = ','
-    replace_column  = None
-    old_value       = None
-    new_value       = None
-    replace_count   = 1
 
     def init(self):
         if type(self.strip_columns) is str:

@@ -25,6 +25,9 @@ from intelmq.lib.exceptions import MissingDependencyError
 
 
 class MARExpertBot(Bot):
+    """Query connections to IP addresses to the given destination within the local environment using McAfee Active Response queries"""
+    dxl_config_file: str = "<insert /path/to/dxlclient.config>"  # TODO: should be pathlib.Path
+    lookup_type: str = "<Hash|DestSocket|DestIP|DestFQDN>"
 
     query = {
         'Hash':
@@ -89,13 +92,13 @@ class MARExpertBot(Bot):
         if MarClient is None:
             raise MissingDependencyError('dxlmarclient')
 
-        self.config = DxlClientConfig.create_dxl_config_from_file(self.parameters.dxl_config_file)
+        self.config = DxlClientConfig.create_dxl_config_from_file(self.dxl_config_file)
 
     def process(self):
         report = self.receive_message()
 
         try:
-            mar_search_str = self.query[self.parameters.lookup_type] % report
+            mar_search_str = self.query[self.lookup_type] % report
             for ip_address in self.MAR_Query(mar_search_str):
                 event = self.new_event(report)
                 event.add('source.ip', ip_address)

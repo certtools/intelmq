@@ -11,10 +11,15 @@ from intelmq.lib.utils import parse_relative, TIMESPANS
 
 
 class FilterExpertBot(Bot):
+    """Filter events, supports named paths for splitting the message flow"""
 
     _message_processed_verb = 'Forwarded'
     not_after = None
     not_before = None
+    filter_action: str = None
+    filter_key: str = None
+    filter_regex: str = None  # TODO: could be re
+    filter_value: str = None
 
     def parse_timeattr(self, time_attr):
         """
@@ -40,23 +45,23 @@ class FilterExpertBot(Bot):
             self.not_before = self.parse_timeattr(self.not_before)
 
         self.filter = True
-        if not (hasattr(self, 'filter_key')):
+        if self.filter_key is None:
             self.logger.info("No filter_key parameter found.")
             self.filter = False
-        elif not (hasattr(self, 'filter_value')):
+        elif self.filter_value is None:
             self.logger.info("No filter_value parameter found.")
             self.filter = False
-        elif not (hasattr(self, 'filter_action')):
+        elif self.filter_action is None:
             self.logger.info("No filter_action parameter found.")
             self.filter = False
-        elif hasattr(self, 'filter_action') and not \
+        elif self.filter_action is not None and not \
             (self.filter_action == "drop" or
              self.filter_action == "keep"):
             self.logger.info("Filter_action parameter definition unknown.")
             self.filter = False
 
         self.regex = False
-        if hasattr(self, 'filter_regex') and self.filter_regex:
+        if self.filter_regex is not None:
             self.regex = re.compile(self.filter_value)
 
         self.time_filter = self.not_after is not None or self.not_before is not None

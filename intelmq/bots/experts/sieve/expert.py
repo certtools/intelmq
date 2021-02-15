@@ -34,10 +34,11 @@ class Procedure:
 
 
 class SieveExpertBot(Bot):
+    """Filter and modify events based on a sieve-based language"""
     _message_processed_verb = 'Forwarded'
 
     harmonization = None
-    file = None
+    file: str = "/opt/intelmq/var/lib/bots/sieve/filter.sieve"  # TODO: should be pathlib.Path
 
     def init(self):
         if not SieveExpertBot.harmonization:

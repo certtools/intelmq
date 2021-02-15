@@ -5,9 +5,8 @@ from intelmq.lib.bot import Bot
 
 
 class Url2fqdnExpertBot(Bot):
-
-    def init(self):
-        self.overwrite = getattr(self, 'overwrite', False)
+    """Parse the FQDN from the URL"""
+    overwrite = False
 
     def process(self):
         event = self.receive_message()

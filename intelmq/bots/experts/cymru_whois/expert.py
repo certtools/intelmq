@@ -10,15 +10,20 @@ CACHE_KEY = "%d_%s"
 
 
 class CymruExpertBot(Bot):
+    """Add ASN, netmask, AS name, country, registry and allocation time from the Cymru Whois DNS service"""
     overwrite = False
+    redis_cache_db: int = 5
+    redis_cache_host: str = "127.0.0.1"  # TODO: could be ipaddress
+    redis_cache_password: str = None
+    redis_cache_port: int = 6379
+    redis_cache_ttl: int = 86400
 
     def init(self):
         self.cache = Cache(self.redis_cache_host,
                            self.redis_cache_port,
                            self.redis_cache_db,
                            self.redis_cache_ttl,
-                           getattr(self, "redis_cache_password",
-                                   None)
+                           self.redis_cache_password
                            )
 
     def process(self):

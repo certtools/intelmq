@@ -54,24 +54,28 @@ from intelmq.lib.exceptions import ConfigurationError
 
 
 class ThresholdExpertBot(Bot):
+    """Check if the number of similar messages during a specified time interval exceeds a set value"""
+    add_keys = {}
+    filter_keys = ["raw", "time.observation"]
+    filter_type: str = "blacklist"
+    redis_cache_db: int = 11
+    redis_cache_host: str = "127.0.0.1"  # TODO: could be ipaddress
+    redis_cache_password: str = None
+    redis_cache_port: int = 6379
+    threshold: int = 100
+    timeout: int = 3600
 
     _message_processed_verb = 'Forwarded'
 
     is_multithreadable = False
-    filter_keys = []
-    filter_type = "whitelist"
     bypass = False
-    timeout = -1
-    threshold = -1
-    add_keys = {}
 
     def init(self):
         self.cache = Cache(self.redis_cache_host,
                            self.redis_cache_port,
                            self.redis_cache_db,
                            self.timeout,
-                           getattr(self, "redis_cache_password",
-                                   None)
+                           self.redis_cache_password
                            )
         if self.timeout <= 0:
             raise ConfigurationError('Timeout', 'Invalid timeout specified, use positive integer seconds.')

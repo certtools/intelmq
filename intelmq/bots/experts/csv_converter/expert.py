@@ -5,8 +5,9 @@ from intelmq.lib.bot import Bot
 
 
 class CSVConverterExpertBot(Bot):
-    fieldnames = None
-    delimiter = ','
+    """Convert data to CSV"""
+    fieldnames: str = "time.source,classification.type,source.ip"  # TODO: could maybe be List[str]
+    delimiter: str = ','
 
     def init(self):
         self.fieldnames = self.fieldnames.split(',')

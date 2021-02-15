@@ -17,6 +17,10 @@ from intelmq.bin.intelmqctl import IntelMQController
 
 
 class RecordedFutureIPRiskExpertBot(Bot):
+    """Adds the Risk Score from RecordedFuture IPRisk associated with source.ip or destination.ip with a local database"""
+    api_token: str = "<insert Recorded Future IPRisk API token>"
+    database: str = "/opt/intelmq/var/lib/bots/recordedfuture_iprisk/rfiprisk.dat"  # TODO: should be pathlib.Path
+    overwrite: bool = False
 
     _database = dict()
 
@@ -31,8 +35,6 @@ class RecordedFutureIPRiskExpertBot(Bot):
 
         except IOError:
             raise ValueError("Recorded future risklist not defined or failed on open.")
-
-        self.overwrite = getattr(self, 'overwrite', False)
 
     def process(self):
         event = self.receive_message()

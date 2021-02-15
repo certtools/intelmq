@@ -38,6 +38,19 @@ def clean_geo(geo_data):
 
 
 class RIPEExpertBot(Bot):
+    """Fetch abuse contact and/or geolocation information for the source and/or destination IP addresses and/or ASNs of the events"""
+    mode: str = "append"
+    query_ripe_db_asn: bool = True
+    query_ripe_db_ip: bool = True
+    query_ripe_stat_asn: bool = True
+    query_ripe_stat_geolocation: bool = True
+    query_ripe_stat_ip: bool = True
+    redis_cache_db: int = 10
+    redis_cache_host: str = "127.0.0.1"  # TODO: should be ipaddress
+    redis_cache_password: str = None
+    redis_cache_port: int = 6379
+    redis_cache_ttl: int = 86400
+
     QUERY = {
         'db_ip': 'https://rest.db.ripe.net/abuse-contact/{}.json',
         'db_asn': 'https://rest.db.ripe.net/abuse-contact/as{}.json',
@@ -63,13 +76,13 @@ class RIPEExpertBot(Bot):
         if requests is None:
             raise MissingDependencyError("requests")
 
-        self.__mode = getattr(self, 'mode', 'append')
+        self.__mode = self.mode
         self.__query = {
-            "db_asn": getattr(self, 'query_ripe_db_asn', True),
-            "db_ip": getattr(self, 'query_ripe_db_ip', True),
-            "stat_asn": getattr(self, 'query_ripe_stat_asn', True),
-            "stat_ip": getattr(self, 'query_ripe_stat_ip', True),
-            "stat_geo": getattr(self, 'query_ripe_stat_geolocation', True)
+            "db_asn": self.query_ripe_db_asn,
+            "db_ip": self.query_ripe_db_ip,
+            "stat_asn": self.query_ripe_stat_asn,
+            "stat_ip": self.query_ripe_stat_ip,
+            "stat_geo": self.query_ripe_stat_geolocation,
         }
 
         self.__initialize_http_session()
@@ -80,13 +93,12 @@ class RIPEExpertBot(Bot):
         self.http_session = utils.create_request_session(self)
 
     def __initialize_cache(self):
-        cache_host = getattr(self, 'redis_cache_host')
-        cache_port = getattr(self, 'redis_cache_port')
-        cache_db = getattr(self, 'redis_cache_db')
-        cache_ttl = getattr(self, 'redis_cache_ttl')
+        cache_host = self.redis_cache_host
+        cache_port = self.redis_cache_port
+        cache_db = self.redis_cache_db
+        cache_ttl = self.redis_cache_ttl
         if cache_host and cache_port and cache_db and cache_ttl:
-            self.__cache = Cache(cache_host, cache_port, cache_db, cache_ttl,
-                                 getattr(self, "redis_cache_password", None))
+            self.__cache = Cache(cache_host, cache_port, cache_db, cache_ttl, self.redis_cache_password)
 
     def process(self):
         event = self.receive_message()
