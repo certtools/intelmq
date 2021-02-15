@@ -2407,6 +2407,34 @@ accessible_msrdpeudp = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-dns-report/
+accessible_sinkhole_dns = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int)
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'host'),
+        ('source.asn', 'asn', convert_int),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('extra.dns_query_type', 'type'),
+        ('extra.dns_query', 'query'),
+        ('extra.', 'count', convert_int),
+        ('extra.', 'response'),
+        ('extra.', 'tag'),
+        ('extra.', 'sector'),
+        ('extra.', 'naics', convert_int),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'accessible-sinkholedns',
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+        'protocol.application': 'dns',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2422,6 +2450,7 @@ mapping = (
     ('Accessible-Radmin', 'scan_radmin', accessible_radmin),
     ('Accessible-RDP', 'scan_rdp', accessible_rdp),
     ('Accessible-Rsync', 'scan_rsync', accessible_rsync),
+    ('Accessible-Sinkhole-DNS', 'scan_sinkholedns', accessible_sinkhole_dns),
     ('Accessible-SMB', 'scan_smb', accessible_smb),
     ('Accessible-Telnet', 'scan_telnet', accessible_telnet),
     ('Accessible-Ubiquiti-Discovery-Service', 'scan_ubiquiti', accessible_ubiquiti_discovery_service),
