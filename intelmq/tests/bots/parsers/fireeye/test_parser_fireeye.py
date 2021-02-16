@@ -27,7 +27,7 @@ EXAMPLE_EVENTS_PARTS = [{'classification.type': 'malware',
                          'malware.hash.md5': '21232f297a57a5a743894a0e4a801fc3',
                          'malware.hash.sha256': '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
                          },
-                        {'destination.fqdn': 'shop.domain1.com',
+                       {'destination.fqdn': 'shop.domain1.com',
                          'classification.type': 'malware-distribution',
                          'destination.port': 80,
                          'destination.url': 'http://shop.domain1.com/wp-content/n/',
@@ -37,7 +37,7 @@ EXAMPLE_EVENTS_PARTS = [{'classification.type': 'malware',
                          'malware.hash.md5': '21232f297a57a5a743894a0e4a801fc3',
                          'malware.hash.sha256': '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
                          'time.observation': '2015-01-01T00:00:00+00:00',
-                        },
+                         },
                         ]
 
 
