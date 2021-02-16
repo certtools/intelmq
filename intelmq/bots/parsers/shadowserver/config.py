@@ -2408,7 +2408,7 @@ accessible_msrdpeudp = {
 }
 
 # https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-dns-report/
-accessible_sinkhole_dns = {
+sinkhole_dns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip', validate_ip),
