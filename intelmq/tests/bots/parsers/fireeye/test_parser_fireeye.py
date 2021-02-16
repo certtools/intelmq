@@ -59,7 +59,7 @@ class TestFireeyeParserBot(test.BotTestCase, unittest.TestCase):
             event_.update(event)
             event_['raw'] = utils.base64_encode(FILE)
             self.assertMessageEqual(position, event_)
-        self.assertOutputQFILE_LINES = FILE.splitlines()  # pragma: no cover
+        self.assertOutputQFILE_LINES = FILE.splitlines() 
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
