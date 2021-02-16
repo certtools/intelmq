@@ -37,7 +37,7 @@ EXAMPLE_EVENTS_PARTS = [{'classification.type': 'malware',
                          'malware.hash.md5': '21232f297a57a5a743894a0e4a801fc3',
                          'malware.hash.sha256': '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
                          'time.observation': '2015-01-01T00:00:00+00:00',
-                        },
+                         },
                         ]
 
 
@@ -59,5 +59,7 @@ class TestFireeyeParserBot(test.BotTestCase, unittest.TestCase):
             event_.update(event)
             event_['raw'] = utils.base64_encode(FILE)
             self.assertMessageEqual(position, event_)
-        self.assertOutputQFILE_LINES = FILE.splitlines()  # pragma: no cover
+        self.assertOutputQFILE_LINES = FILE.splitlines() 
+
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
