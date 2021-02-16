@@ -22,24 +22,11 @@ The ``intelmq-api`` packages ship a configuration file in ``${PREFIX}/etc/intelm
 The value of ``${PREFIX}`` depends on your installation method- with distribution packages it is simply ``/``, when using pip (as root) it is ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version.
 Some distribution packages already create a symlink to the sudoers file in the sudoers.d configuration directory and a symlink in the relevant apache configuration directory to the apache configuration file, so it should be easy to enable that (i.e. by using ``a2ensite intelmq-api`` on Debian based systems).
 
-But you can also run ``intelmq-api`` directly using ``hug``:
+But for development purposes and testing you can also run ``intelmq-api`` directly using ``hug``:
 
 .. code-block:: bash
 
    hug -m intelmq_api.serve
-
-
-... or using uwsgi
-
-.. code-block:: bash
-
-   uwsgi --http 0.0.0.0:8000 -w intelmq_api.serve --callable __hug_wsgi__
-
-... or using gunicorn
-
-.. code-block:: bash
-
-   gunicorn intelmq_api.serve:__hug_wsgi__
 
 
 The ``intelmq-api`` provides the route ``/api`` for managing the ``intelmq`` installation.
@@ -51,8 +38,8 @@ Configuring intelmq-api
 Depending on your setup you might have to install ``sudo`` to make it possible for the ``intelmq-api`` to run the ``intelmq`` command as the user-account usually used to run ``intelmq`` (which is also often called ``intelmq``).
 
 ``intelmq-api`` is configured using a configuration file in ``json`` format.
-The path to the configuration file is set using the environment variable ``INTELMQ_API_CONFIG``.
-The default apache configuration file sets the environment variable to point to ``/etc/intelmq/api-config.json`` so if you are apache and your configuration file is stored somewhere else (i.e. because you used pip to install the package) you have to update the environment variable ``INTELMQ_API_CONFIG`` in the apache config.
+``intelmq-api`` tries to load the configuration file from ``/etc/intelmq/api-config.json`` and ``${PREFIX}/etc/intelmq/api-config.json``, but you can override the path setting the environment variable ``INTELMQ_API_CONFIG``.
+(When using apache, you can do this by modifying the apache configuration file shipped with ``intelmq-api``, the file contains an example)
 
 When running the API using ``hug``, you can set the environment variable like this:
 
@@ -61,18 +48,20 @@ When running the API using ``hug``, you can set the environment variable like th
    INTELMQ_API_CONFIG=/etc/intelmq/api-config.json hug -m intelmq_api.serve
 
 
-The configuration file ``/etc/intelmq/api-config.json`` which is shipped with the packages is also listed here for reference.
-This also gives an example on how to disable a setting, namely by prefixing the name with an underscore, like it is done here with the ``_session_store`` setting.
+The default configuration which is shipped with the packages is also listed here for reference:
 
 .. code-block:: json
 
    {
-           "intelmq_ctl_cmd": ["intelmqctl"],
-           "allowed_path": "/opt/intelmq/var/lib/bots/",
-           "_session_store": "/tmp/intelmq-session.sqlite",
-           "session_duration": 86400,
-           "allow_origins": ["*"]
+       "intelmq_ctl_cmd": ["sudo", "-u", "intelmq", "intelmqctl"],
+       "allowed_path": "/opt/intelmq/var/lib/bots/",
+       "session_store": "/etc/intelmq/api-session.sqlite",
+       "session_duration": 86400,
+       "allow_origins": ["*"]
    }
+
+
+On Debian based systems, the default path for the ``session_store`` is ``/var/lib/dbconfig-common/sqlite3/intelmq-api/intelmqapi``, because the Debian package uses the Debian packaging tools to manage the database file.
 
 The following configuration options are available:
 
@@ -96,11 +85,11 @@ You should therefore create the folder ``${PREFIX}/etc/intelmq/manager`` and the
 Adding a user
 *************
 
-If you enable the ``session_store`` you will have to create user accounts to be able to access the API functionality. You can also do this using hug:
+If you enable the ``session_store`` you will have to create user accounts to be able to access the API functionality. You can do this using ``intelmq-api-adduser``:
 
 .. code-block:: bash
 
-   hug -m intelmq_api.serve -c add_user <username>
+   intelmq-api-adduser --user <username> --password <password>
 
 *****************
 A note on SELinux
