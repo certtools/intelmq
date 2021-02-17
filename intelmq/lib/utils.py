@@ -207,7 +207,7 @@ def load_configuration(configuration_filepath: str) -> dict:
 
 def write_configuration(configuration_filepath: str,
                         content: dict, backup: bool = True,
-                        new=False) -> bool:
+                        new=False) -> Optional[bool]:
     """
     Writes a configuration to the file, optionally with making a backup.
     Checks if the file needs to be written at all.
@@ -715,7 +715,7 @@ class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
 
     def __init__(self, *args, timeout=None, **kwargs):
         self.timeout = timeout
-        return super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def send(self, *args, **kwargs):
         kwargs['timeout'] = self.timeout

@@ -139,11 +139,6 @@ class CymruCAPProgramParserBot(ParserBot):
             # ddosreport|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<PROTOCOL> <PORT>] [category: <CATEGORY>]
             # [servpass: <PASSWORD>] [SSL] [url: <URL>]|ASNAME
             raise NotImplementedError('Report %r not implemented, format is unknown.' % report_type)
-            event['classification.type'] = 'c2server'
-            event['protocol.application'] = comment_split[0]
-            event['source.port'] = comment_split[1]
-            # TODO: category? password? ssl?
-            event['source.url'] = comment_split[-1]
         elif report_type == 'defacement':  # TODO: verify
             # defacement|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<URL> [<ZONE-H ID>]|ASNAME
             event['classification.type'] = 'compromised'
