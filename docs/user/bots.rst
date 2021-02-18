@@ -244,6 +244,7 @@ Generic Mail URL Fetcher
 The resulting reports contains the following special fields:
 
 * `feed.url`: The URL the data was downloaded from
+* `extra.email_date`: The content of the email's `Date` header
 * `extra.email_subject`: The subject of the email
 * `extra.email_from`: The email's from address
 * `extra.email_message_id`: The email's message ID
@@ -293,7 +294,7 @@ Generic Mail Attachment Fetcher
 * `ssl_ca_certificate`: Optional string of path to trusted CA certificate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
 The resulting reports contains the following special fields:
-
+* `extra.email_date`: The content of the email's `Date` header
 * `extra.email_subject`: The subject of the email
 * `extra.email_from`: The email's from address
 * `extra.email_message_id`: The email's message ID
@@ -330,7 +331,7 @@ Generic Mail Body Fetcher
   - `string`, e.g. `'plain'`
 
 The resulting reports contains the following special fields:
-
+* `extra.email_date`: The content of the email's `Date` header
 * `extra.email_subject`: The subject of the email
 * `extra.email_from`: The email's from address
 * `extra.email_message_id`: The email's message ID

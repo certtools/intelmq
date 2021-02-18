@@ -20,6 +20,7 @@ REPORT_FOOBARTXT = {
                     'extra.email_from': 'wagner@cert.at',
                     'extra.email_message_id': '<07ce0153-060b-f48d-73d9-d92a20b3b3aa@cert.at>',
                     'extra.email_subject': 'foobar txt',
+                    'extra.email_date': 'Tue, 3 Sep 2019 16:57:40 +0200',
                     'feed.accuracy': 100.0,
                     'feed.name': 'IMAP Feed',
                     'extra.file_name': 'foobar.txt',

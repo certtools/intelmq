@@ -71,6 +71,7 @@ class MailURLCollectorBot(MailCollectorBot):
                     template["extra.email_from"] = ','.join(x['email'] for x in message.sent_from)
                     template["extra.email_message_id"] = message.message_id
                     template["extra.file_name"] = file_name_from_response(resp)
+                    template["extra.email_date"] = message.date
 
                     for report in generate_reports(template, io.BytesIO(resp.content),
                                                    self.chunk_size,
