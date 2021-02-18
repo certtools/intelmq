@@ -29,6 +29,7 @@ class MailBodyCollectorBot(MailCollectorBot):
                 report["extra.email_subject"] = message.subject
                 report["extra.email_from"] = ','.join(x['email'] for x in message.sent_from)
                 report["extra.email_message_id"] = message.message_id
+                report["extra.email_received"] = message.date
 
                 self.send_message(report)
 
