@@ -633,10 +633,10 @@ class Bot(object):
         self.__current_message = None
 
     def _dump_message(self, error_traceback, message: dict):
-        self.logger.info('Dumping message to dump file.')
-
         if message is None or getattr(self.parameters, 'testing', False):
             return
+
+        self.logger.info('Dumping message to dump file.')
 
         dump_file = os.path.join(self.parameters.logging_path, self.__bot_id + ".dump")
 

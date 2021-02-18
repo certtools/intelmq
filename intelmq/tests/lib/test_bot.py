@@ -58,10 +58,6 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = b'foo\xc9bar'
         self.run_bot(iterations=1, allowed_error_count=1)
         self.assertLogMatches('.*intelmq\.lib\.exceptions\.DecodingError:.*')
-        self.assertLogMatches(pattern='Dumping message to dump file.',
-                              levelname='INFO')
-        # raise ValueError(self.loglines)
-        # raise ValueError(self.input_queue)
         self.assertEqual(self.pipe.state['test-bot-input-internal'], [])
         self.assertEqual(self.pipe.state['test-bot-input'], [])
         self.assertEqual(self.pipe.state['test-bot-output'], [])
