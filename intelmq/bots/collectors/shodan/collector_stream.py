@@ -8,11 +8,15 @@ The only possible selector is currently the country:
 * countries: A list of strings or a comma separated list with country codes
 """
 import pkg_resources
+from http.client import IncompleteRead
+from urllib3.exceptions import ProtocolError, ReadTimeoutError
 
+from requests.exceptions import ChunkedEncodingError, ConnectionError
 from intelmq.lib.bot import CollectorBot
 
 try:
     import shodan
+    from shodan.exception import APIError
 except ImportError:
     shodan = None
 
@@ -34,12 +38,29 @@ class ShodanStreamCollectorBot(CollectorBot):
         if isinstance(self.parameters.countries, str):
             self.countries = self.parameters.countries.split(',')
 
+        self.__error_count = 0
+
     def process(self):
-        for line in self.api.stream.countries(timeout=self.http_timeout_sec, raw=True,
-                                              countries=self.countries):
-            report = self.new_report()
-            report.add('raw', line)
-            self.send_message(report)
+        try:
+            for line in self.api.stream.countries(timeout=self.http_timeout_sec, raw=True,
+                                                  countries=self.countries):
+                report = self.new_report()
+                report.add('raw', line)
+                self.send_message(report)
+                self.__error_count = 0
+        except (ChunkedEncodingError,
+                ConnectionError,
+                ProtocolError,
+                IncompleteRead,
+                ReadTimeoutError,
+                APIError) as exc:
+            self.__error_count += 1
+            if (self.__error_count > self.parameters.error_max_retries):
+                self.__error_count = 0
+                raise
+            else:
+                self.logger.info('Got exception %r, retrying (consecutive error count %d <= %d).',
+                                 exc, self.__error_count, self.parameters.error_max_retries)
 
 
 BOT = ShodanStreamCollectorBot

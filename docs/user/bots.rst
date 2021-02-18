@@ -210,7 +210,10 @@ Generic URL Stream Fetcher
 * **HTTP parameters** (see above)
 * `strip_lines`: boolean, if single lines should be stripped (removing whitespace from the beginning and the end of the line)
 
-If the stream is interrupted, the connection will be aborted using the timeout parameter. Then, an error will be thrown and rate_limit applies if not null.
+If the stream is interrupted, the connection will be aborted using the timeout parameter.
+No error will be logged if the number of consecutive connection fails does not reach the parameter `error_max_retries`. Instead of errors, an INFO message is logged. This is a measurement against too frequent ERROR logging messages. The consecutive connection fails are reset if a data line has been successfully transferred.
+If the consecutive connection fails reaches the parameter `error_max_retries`, an exception will be thrown and `rate_limit` applies, if not null.
+
 The parameter `http_timeout_max_tries` is of no use in this collector.
 
 
@@ -621,6 +624,10 @@ Requires the shodan library to be installed:
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above). Only the proxy is used (requires `shodan-python > 1.8.1`). Certificate is always verified.
 * `countries`: A list of countries to query for. If it is a string, it will be spit by `,`.
+
+If the stream is interrupted, the connection will be aborted using the timeout parameter.
+No error will be logged if the number of consecutive connection fails does not reach the parameter `error_max_retries`. Instead of errors, an INFO message is logged. This is a measurement against too frequent ERROR logging messages. The consecutive connection fails are reset if a data line has been successfully transferred.
+If the consecutive connection fails reaches the parameter `error_max_retries`, an exception will be thrown and `rate_limit` applies, if not null.
 
 TCP
 ^^^
