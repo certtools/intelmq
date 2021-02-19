@@ -858,9 +858,9 @@ providers:
       revision: 2018-01-20
       documentation: https://www.phishtank.com/developer_info.php
       public: no
-  CINSscore:
-    Army List:
-      description: 'The CINS Army list is a subset of the CINS Active Threat Intelligence
+   CINS Army:
+    CINS Army List:
+      description: 'The CINS Army (CIArmy.com) list is a subset of the CINS Active Threat Intelligence
         ruleset, and consists of IP addresses that meet one of two basic criteria:
         1) The IP''s recent Rogue Packet score factor is very poor, or 2) The IP has
         tripped a designated number of ''trusted'' alerts across a given number of
