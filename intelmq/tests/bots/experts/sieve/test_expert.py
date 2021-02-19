@@ -618,7 +618,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
         # Match the first rule
         string_value_list_match_1 = EXAMPLE_INPUT.copy()
-        string_value_list_match_1['classification.type'] = 'malware'
+        string_value_list_match_1['classification.type'] = 'malware-distribution'
         string_value_list_expected_result_1 = string_value_list_match_1.copy()
         string_value_list_expected_result_1['comment'] = 'infected hosts'
         self.input_message = string_value_list_match_1
@@ -627,7 +627,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
         # Match the second rule
         string_value_list_match_2 = EXAMPLE_INPUT.copy()
-        string_value_list_match_2['classification.type'] = 'c2server'
+        string_value_list_match_2['classification.type'] = 'c2-server'
         string_value_list_expected_result_2 = string_value_list_match_2.copy()
         string_value_list_expected_result_2['comment'] = 'malicious server / service'
         self.input_message = string_value_list_match_2
@@ -809,7 +809,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_multiple_actions.sieve')
 
         event = EXAMPLE_INPUT.copy()
-        event['classification.type'] = 'unknown'
+        event['classification.type'] = 'undetermined'
         self.input_message = event
         self.run_bot()
 

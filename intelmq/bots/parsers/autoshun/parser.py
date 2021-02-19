@@ -46,7 +46,7 @@ class AutoshunParserBot(ParserBot):
                     break
 
         if "classification.type" not in event:
-            event.add("classification.type", 'unknown')
+            event.add("classification.type", 'undetermined')
 
         event.add("time.source", last_seen)
         event.add("source.ip", ip)

@@ -49,13 +49,13 @@ class BambenekParserBot(ParserBot):
             if report['feed.url'] in BambenekParserBot.IPMASTERLIST:
                 event.add('source.ip', value[0])
                 event.add('time.source', value[2] + ' UTC')
-                event.add('classification.type', 'c2server')
+                event.add('classification.type', 'c2-server')
                 event.add('status', 'online')
 
             elif report['feed.url'] in BambenekParserBot.DOMMASTERLIST:
                 event.add('source.fqdn', value[0])
                 event.add('time.source', value[2] + ' UTC')
-                event.add('classification.type', 'c2server')
+                event.add('classification.type', 'c2-server')
                 event.add('status', 'online')
 
             elif report['feed.url'] in BambenekParserBot.DGA_FEED:

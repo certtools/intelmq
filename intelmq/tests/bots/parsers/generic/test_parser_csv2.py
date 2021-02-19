@@ -25,7 +25,7 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "source.ip": "198.105.221.161",
                  "source.fqdn": "mail5.bulls.unisonplatform.com",
                  "event_description.text": "Really bad actor site comment",
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "raw": "MjAxNi0xMi0xNCAwNDoxOTowMCxUZXN0aW5nLFJlYWxseSBiYWQgYWN"
                         "0b3Igc2l0ZSBjb21tZW50LE5vdGhpbmcsVW5pbXBvcnRhbnQsd3d3Lm"
                         "Nlbm5vd29ybGQuY29tL1BheW1lbnRfQ29uZmlybWF0aW9uL1BheW1lb"
@@ -50,7 +50,7 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                                      "__IGNORE__", "source.url", "source.ip",
                                      "source.fqdn", "__IGNORE__"],
                          "delimiter": "\t",
-                         "type_translation": "{\"Testing\": \"malware\"}",
+                         "type_translation": "{\"Testing\": \"malware-distribution\"}",
                          "default_url_protocol": "http://"}
 
     def test_event(self):
@@ -60,7 +60,7 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
 
     def test_type_translation_dict(self):
         """ Test with type_translation as native dictionary. """
-        self.run_bot(parameters={"type_translation": {"Testing": "malware"}})
+        self.run_bot(parameters={"type_translation": {"Testing": "malware-distribution"}})
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
 

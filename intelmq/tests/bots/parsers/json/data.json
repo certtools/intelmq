@@ -1,2 +1,2 @@
-{"__type": "Event", "source.ip": "127.0.0.1", "classification.type": "c2server"}
-{"__type": "Event", "source.ip": "127.0.0.2", "classification.type": "c2server"}
+{"__type": "Event", "source.ip": "127.0.0.1", "classification.type": "c2-server"}
+{"__type": "Event", "source.ip": "127.0.0.2", "classification.type": "c2-server"}

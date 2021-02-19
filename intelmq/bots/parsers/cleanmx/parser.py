@@ -76,7 +76,7 @@ class CleanMXParserBot(ParserBot):
             return PHISHING, 'phishing'
 
         elif 'xmlviruses' in url:
-            return VIRUS, 'malware'
+            return VIRUS, 'malware-distribution'
 
         else:
             raise ValueError('Unknown report.')

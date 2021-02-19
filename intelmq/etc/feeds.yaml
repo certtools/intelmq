@@ -16,7 +16,7 @@ providers:
           module: intelmq.bots.parsers.html_table.parser
           parameters:
             columns: ["malware.name", "source.url", "source.ip", "time.source"]
-            type: malware
+            type: malware-distribution
             time_format: from_format_midnight|%d-%m-%Y
             html_parser: lxml
       revision: 2018-06-27
@@ -326,7 +326,7 @@ providers:
             columns: "time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc"
             ignore_values: ",,,,Not listed,,"
             skip_table_head: True
-            type: c2server
+            type: c2-server
       revision: 2019-03-19
       documentation: https://feodotracker.abuse.ch/browse
       public: yes
@@ -1716,6 +1716,7 @@ providers:
             columns: ["time.source", "source.url", "source.ip", "malware.name", "__IGNORE__"]
             skip_table_head: true
             default_url_protocol: http://
+            type: c2-server
             type: c2server
       revision: 2019-03-19
       documentation: https://cybercrime-tracker.net/index.php
@@ -1738,7 +1739,7 @@ providers:
             columns: ["source.ip|source.url", "time.source"]
             skip_table_head: true
             default_url_protocol: http://
-            type: malware
+            type: malware-distribution
       revision: 2019-04-02
       documentation: https://precisionsec.com/threat-intelligence-feeds/agent-tesla/
       public: yes

@@ -12,7 +12,7 @@ class SurblParserBot(Bot):
             if line[0] == ":":
                 attributes = line.split()[-3][1:-2].split("][")
                 if "mw" in attributes:
-                    attribute = "malware"
+                    attribute = "malware-distribution"
                 elif "ph" in attributes:
                     attribute = "phishing"
                 else:

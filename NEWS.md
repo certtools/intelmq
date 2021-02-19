@@ -3,6 +3,85 @@ NEWS
 
 See the changelog for a full list of changes.
 
+3.0.0 Major release (unreleased)
+--------------------------------
+
+### Requirements
+
+### Tools
+
+### Harmonization
+The classification scheme has been updated to better match the [Reference Security Incident Taxonomy](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed:
+
+| old taxonomy name | old type name | new taxonomy name | new type name |
+|-|-|-|-|
+| abusive content              |                    | abusive-content              |                                        |
+| information content security |                    | information-content-security |                                        |
+| information content security | leak               | information-content-security | data-leak                              |
+| intrusion attempts           |                    | intrusion-attempts           |                                        |
+| information gathering        |                    | information-gathering        |                                        |
+| malicious code               |                    | malicious-code               |                                        |
+| malicious code               | c2server           | malicious-code               | c2-server                              |
+| malicious code               | malware            | malicious-code               | infected-system / malware-distribution |
+| malicious code               | ransomware         | malicious-code               | infected-system                        |
+| vulnerable                   | vulnerable client  | vulnerable                   | vulnerable-system                      |
+| vulnerable                   | vulnerable service | vulnerable                   | vulnerable-system                      |
+| other                        | unknown            | other                        | undetermined                           |
+
+- For the taxonomy 'availability', the type `misconfiguration` is new.
+- For the taxonomy 'other', the type `undetermined` is new.
+
+The old names can still be used in code, and they are automatically converted to the new names.
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+The following statements optionally update existing data for the harmonization classification changes:
+```SQL
+UPDATE events
+   SET "classification.taxonomy" = 'abusive-content'
+   WHERE "classification.taxonomy" = 'abusive content';
+UPDATE events
+   SET "classification.taxonomy" = 'information-content-security'
+   WHERE "classification.taxonomy" = 'information content security';
+UPDATE events
+   SET "classification.type" = 'data-leak'
+   WHERE "classification.type" = 'leak' AND "classification.taxonomy" = 'information-content-security';
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion-attempts'
+   WHERE "classification.taxonomy" = 'intrusion attempts';
+UPDATE events
+   SET "classification.taxonomy" = 'information-gathering'
+   WHERE "classification.taxonomy" = 'information gathering';
+UPDATE events
+   SET "classification.taxonomy" = 'malicious-code'
+   WHERE "classification.taxonomy" = 'malicious code';
+UPDATE events
+   SET "classification.type" = 'c2-server'
+   WHERE "classification.taxonomy" = 'malicious-code' AND "classification.type" = 'c2server';
+UPDATE events
+   SET "classification.type" = 'vulnerable-system'
+   WHERE "classification.taxonomy" = 'vulnerable' AND ("classification.type" = 'vulnerable service' OR "classification.type" = 'vulnerable client');
+UPDATE events
+   SET "classification.type" = 'undetermined'
+   WHERE "classification.taxonomy" = 'other' AND "classification.type" = 'unknown';
+```
+Depending on the data (e.g. feed), the correct statement for the `malware` type deprecation may be either this:
+```sql
+UPDATE events
+   SET "classification.type" = 'infected-system'
+   WHERE "classification.taxonomy" = 'malicious-code' AND ("classification.type" = 'malware' OR "classification.type" = 'ransomware');
+```
+or this:
+```sql
+UPDATE events
+   SET "classification.type" = 'malware-distribution'
+   WHERE "classification.taxonomy" = 'malicious-code' AND ("classification.type" = 'malware' OR "classification.type" = 'ransomware');
+```
+
+
 2.3.0 Bugfix release (unreleased)
 ----------------------------------
 

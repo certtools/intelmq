@@ -9,7 +9,7 @@ MAPPING_STATIC = {'bot': {
     'bruteforce': {
     'classification.type': 'brute-force'},
     'controller': {
-    'classification.type': 'c2server'},
+    'classification.type': 'c2-server'},
     'darknet': {'classification.type': 'scanner',
                 'classification.identifier': 'darknet'},
     'phishing': {'classification.type': 'phishing',
@@ -17,11 +17,11 @@ MAPPING_STATIC = {'bot': {
     'proxy': {'classification.type': 'proxy',
               'classification.identifier': 'openproxy'},
     'honeypot': {'classification.type': 'scanner'},
-    'openresolvers': {'classification.type': 'vulnerable service',
+    'openresolvers': {'classification.type': 'vulnerable-system',
                       'classification.identifier': 'dns-open-resolver',
                       'protocol.application': 'dns',
                       },
-    'openresolver': {'classification.type': 'vulnerable service',
+    'openresolver': {'classification.type': 'vulnerable-system',
                      'classification.identifier': 'dns-open-resolver',
                      'protocol.application': 'dns',
                      },
@@ -105,7 +105,7 @@ class CymruCAPProgramParserBot(ParserBot):
         event.add('raw', self.recover_line(line))
         if report_type == 'beagle':  # TODO: verify
             # beagle|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<GET REQUEST>] [srcport <PORT>]|ASNAME
-            event.add('classification.type', 'malware')
+            event.add('classification.type', 'infected-system')
             event.add('classification.identifier', 'beagle')
             event.add('malware.name', 'beagle')
             if len(comments):
@@ -122,7 +122,7 @@ class CymruCAPProgramParserBot(ParserBot):
             # phatbot|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS||ASNAME
             # sinit|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS||ASNAME
             # slammer|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS||ASNAME
-            event.add('classification.type', 'malware')
+            event.add('classification.type', 'infected-system')
             event.add('classification.identifier', report_type)
             event.add('malware.name', report_type)
         elif report_type == 'bots':
@@ -154,11 +154,11 @@ class CymruCAPProgramParserBot(ParserBot):
         elif report_type == 'malwareurl':  # TODO: verify
             # malwareurl|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<URL> <SCAN-ID>|ASNAME
             event['source.url'] = comment_split[0]
-            event.add('classification.type', 'malware')
+            event.add('classification.type', 'malware-distribution')
             event.add('classification.identifier', 'malwareurl')
         elif report_type == 'openresolvers':
             # openresolvers|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS||ASNAME
-            event['classification.type'] = 'vulnerable service'
+            event['classification.type'] = 'vulnerable-system'
             event['classification.identifier'] = 'dns-open-resolver'
             event['protocol.application'] = 'dns'
         elif report_type == 'phishing':
@@ -203,7 +203,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event.add('source.url', comment_split[0])
             if len(comment_split == 2):
                 event.add('malware.hash.md5', comment_split[1])
-            event.add('classification.type', 'malware')
+            event.add('classification.type', 'malware-distribution')
             event.add('classification.identifier', 'spreader')
         elif report_type == 'stormworm':  # TODO: verify
             # stormworm|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|confidence:<NUMBER> [legacy|crypto] [srcport <SOURCE PORT>]|ASNAME

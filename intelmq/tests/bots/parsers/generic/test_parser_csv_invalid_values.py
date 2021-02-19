@@ -19,7 +19,7 @@ EXAMPLE_REPORT = {"feed.name": "Sample CSV Feed",
 EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "__type": "Event",
                  "time.source": "2018-08-01T07:49:41+00:00",
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "source.ip": "127.0.0.1",
                  "raw": utils.base64_encode(SAMPLE_SPLIT[0]+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
@@ -48,7 +48,7 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         cls.sysconfig = {"columns": ["time.source", "source.ip",
                                      "source.fqdn"],
                          "delimiter": ",",
-                         "type": "malware",
+                         "type": "malware-distribution",
                          "default_url_protocol": "http://"}
 
     def test_invalid_value(self):
@@ -65,7 +65,7 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig = {"columns": ["time.source", "source.ip",
                                       "source.fqdn"],
                           "delimiter": ",",
-                          "type": "malware",
+                          "type": "malware-distribution",
                           "default_url_protocol": "http://",
                           "columns_required": [True, True, False],
                           }

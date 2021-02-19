@@ -4,6 +4,7 @@ The following types are implemented with sanitize() and is_valid() functions:
 
  - Base64
  - Boolean
+ - ClassificationTaxonomy
  - ClassificationType
  - DateTime
  - FQDN
@@ -44,6 +45,7 @@ __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
            'Integer', 'JSON', 'JSONDict', 'LowercaseString', 'Registry',
            'String', 'URL', 'ASN', 'UppercaseString', 'TLP',
+           'ClassificationTaxonomy',
            ]
 
 
@@ -170,6 +172,70 @@ class Boolean(GenericType):
         return None
 
 
+class ClassificationTaxonomy(String):
+    """
+    `classification.taxonomy` type.
+
+    The mapping follows
+    Reference Security Incident Taxonomy Working Group – RSIT WG
+    https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
+
+    These old values are automatically mapped to the new ones:
+        'abusive content' -> 'abusive-content'
+        'information gathering' -> 'information-gathering'
+        'intrusion attempts' -> 'intrusion-attempts'
+        'malicious code' -> 'malicious-code'
+
+    Allowed values are:
+     * """
+
+    allowed_values = ['abusive-content',
+                      'availability',
+                      'fraud',
+                      'information-content-security',
+                      'information-gathering',
+                      'intrusion-attempts',
+                      'intrusions',
+                      'malicious-code',
+                      'other',
+                      'test',
+                      'vulnerable',
+                      ]
+
+    __doc__ += '\n     * '.join(allowed_values)
+
+    @staticmethod
+    def is_valid(value: str, sanitize: bool = False) -> bool:
+        if sanitize:
+            value = ClassificationTaxonomy().sanitize(value)
+
+        if not GenericType().is_valid(value):
+            return False
+
+        if not isinstance(value, str):
+            return False
+
+        if value not in ClassificationTaxonomy().allowed_values:
+            return False
+
+        return True
+
+    @staticmethod
+    def sanitize(value: str) -> Optional[str]:
+        value = LowercaseString.sanitize(value)
+        if not value:
+            return None
+        if value == 'abusive content':
+            value = 'abusive-content'
+        elif value == 'information gathering':
+            value = 'information-gathering'
+        elif value == 'intrusion attempts':
+            value = 'intrusion-attempts'
+        elif value == 'malicious code':
+            value = 'malicious-code'
+        return GenericType().sanitize(value)
+
+
 class ClassificationType(String):
     """
     `classification.type` type.
@@ -182,45 +248,54 @@ class ClassificationType(String):
     These old values are automatically mapped to the new ones:
         'botnet drone' -> 'infected-system'
         'ids alert' -> 'ids-alert'
-        'c&c' -> 'c2server'
+        'c&c' -> 'c2-server'
+        'c2server' -> 'c2-server'
         'infected system' -> 'infected-system'
         'malware configuration' -> 'malware-configuration'
+        'Unauthorised-information-access' -> 'unauthorised-information-access'
+        'leak' -> 'data-leak'
+        'vulnerable client' -> 'vulnerable-system'
+        'vulnerable service' -> 'vulnerable-system'
+        'ransomware' -> 'infected-system'
+        'unknown' -> 'undetermined'
+
+    These old values can not be automatically mapped as they are ambiguous:
+        'malware': Either 'infected-system' or 'malware-distribution'
 
     Allowed values are:
      * """
 
-    allowed_values = ["application-compromise",
+    allowed_values = ['application-compromise',
                       'backdoor',
                       'blacklist',
                       'brute-force',
-                      "burglary",
-                      'c2server',
+                      'burglary',
+                      'c2-server',
                       'compromised',
-                      "copyright",
-                      "data-loss",
+                      'copyright',
+                      'data-loss',
                       'ddos',
-                      "ddos-amplifier",
+                      'ddos-amplifier',
                       'defacement',
                       'dga domain',
-                      "dos",
+                      'dos',
                       'dropzone',
                       'exploit',
                       'harmful-speech',
                       'ids-alert',
                       'infected-system',
-                      "information-disclosure",
-                      'leak',
-                      'malware',
+                      'information-disclosure',
+                      'data-leak',
                       'malware-configuration',
                       'malware-distribution',
-                      "masquerade",
+                      'masquerade',
+                      'misconfiguration',
                       'other',
                       'outage',
                       'phishing',
-                      "potentially-unwanted-accessible",
-                      "privileged-account-compromise",
+                      'potentially-unwanted-accessible',
+                      'privileged-account-compromise',
                       'proxy',
-                      'ransomware',
                       'sabotage',
                       'scanner',
                       'sniffing',
@@ -228,18 +303,16 @@ class ClassificationType(String):
                       'spam',
                       'test',
                       'tor',
-                      "Unauthorised-information-access",
-                      "Unauthorised-information-modification",
+                      'unauthorised-information-access',
+                      'unauthorised-information-modification',
                       'unauthorized-command',
                       'unauthorized-login',
-                      "unauthorized-use-of-resources",
-                      'unknown',
-                      "unprivileged-account-compromise",
+                      'unauthorized-use-of-resources',
+                      'unprivileged-account-compromise',
                       'violence',
-                      'vulnerable client',
-                      'vulnerable service',
-                      "vulnerable-system",
-                      "weak-crypto",
+                      'vulnerable-system',
+                      'weak-crypto',
+                      'undetermined',
                       ]
 
     __doc__ += '\n     * '.join(allowed_values)
@@ -270,11 +343,28 @@ class ClassificationType(String):
         elif value == 'ids alert':
             value = 'ids-alert'
         elif value == 'c&c':
-            value = 'c2server'
+            value = 'c2-server'
+        elif value == 'c2server':
+            value = 'c2-server'
         elif value == 'infected system':
             value = 'infected-system'
         elif value == 'malware configuration':
             value = 'malware-configuration'
+        # RSIT 2020-01-28
+        # https://github.com/certtools/intelmq/pull/1476/files
+        elif value == 'Unauthorised-information-access':
+            value = 'unauthorised-information-access'
+        elif value == 'vulnerable client':
+            value = 'vulnerable-system'
+        elif value == 'vulnerable service':
+            value = 'vulnerable-system'
+        # https://github.com/certtools/intelmq/issues/1409
+        elif value == 'leak':
+            value = 'data-leak'
+        elif value == 'ransomware':
+            value = 'infected-system'
+        elif value == 'unknown':
+            value = 'undetermined'
         return GenericType().sanitize(value)
 
 

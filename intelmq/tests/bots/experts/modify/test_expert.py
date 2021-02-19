@@ -15,7 +15,7 @@ EVENT_TEMPL = {"__type": "Event",
                "feed.name": "Spamhaus Cert",
                "feed.url": "https://portal.spamhaus.org/cert/api.php?cert="
                            "<CERTNAME>&key=<APIKEY>",
-               "classification.taxonomy": "malicious code",
+               "classification.taxonomy": "malicious-code",
                "classification.type": "infected-system",
                "time.observation": "2015-01-01T00:00:00+00:00",
                }
@@ -48,7 +48,7 @@ OUTPUT = [{'classification.identifier': 'feodo'},
           {'classification.identifier': 'someexample-value'},
           {'classification.identifier': 'anyvalue'},  # 5
           {'protocol.application': 'http', 'protocol.transport': 'tcp', 'classification.identifier': 'dga'},
-          {'classification.type': 'vulnerable service'},
+          {'classification.type': 'vulnerable-system'},
           {'event_description.text': 'This is a TOR node.'},
           {'event_description.text': 'This is not a TOR node.'},
           {'event_description.text': 'We don\'t know if this is a TOR node.'},  # 10

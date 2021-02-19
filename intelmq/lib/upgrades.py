@@ -550,6 +550,7 @@ UPGRADES = OrderedDict([
     ((2, 2, 2), (v222_feed_changes, )),
     ((2, 2, 3), ()),
     ((2, 3, 0), (v230_csv_parser_parameter_fix_1, )),
+    ((3, 0, 0), ()),
 ])
 
 ALWAYS = (harmonization, )

@@ -49,7 +49,7 @@ class SpamhausCERTParserBot(ParserBot):
 
             malware = row_splitted[4].lower()
             if malware == 'openrelay':
-                event.add('classification.type', 'vulnerable service')
+                event.add('classification.type', 'vulnerable-system')
                 event.add('classification.identifier', 'openrelay')
                 event.add('protocol.application', 'smtp')
             elif malware == 'sshauth':
@@ -119,7 +119,7 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('classification.identifier', 'mirai')
                 event.add('malware.name', 'mirai')
             elif malware == 'ioturl':
-                event.add('classification.type', 'c2server')
+                event.add('classification.type', 'c2-server')
                 event.add('classification.identifier', 'malware-generic')
             elif malware == 'automatedtest':
                 event.add('classification.type', 'brute-force')

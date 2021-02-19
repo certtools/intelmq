@@ -21,7 +21,7 @@ EXAMPLE_EVENT = {"feed.name": "Feodo Tracker Browse",
                  "__type": "Event",
                  "time.source": "2019-02-06T10:36:27+00:00",
                  "malware.name": "heodo",
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "source.ip": "201.192.163.160",
                  "status": "Online",
                  "time.observation": "2019-01-01T00:00:00+00:00",
@@ -52,7 +52,7 @@ EXAMPLE_EVENT3 = {"feed.name": "Feodo Tracker Browse",
                  "__type": "Event",
                  "time.source": "2018-12-11T18:26:22+00:00",
                  "malware.name": "heodo",
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "source.ip": "179.33.30.194",
                  "status": "Offline",
                  "time.observation": "2019-01-01T00:00:00+00:00",
@@ -82,7 +82,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
                                       "source.as_name", "source.geolocation.cc"],
                           "ignore_values": ["", "", "", "", "Not listed", "", ""],
                           "skip_head": True,
-                          "type": "malware"}
+                          "type": "malware-distribution"}
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
         self.assertMessageEqual(1, EXAMPLE_EVENT3)
@@ -93,7 +93,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
                                       "malware.name", "status", "extra.SBL",
                                       "source.as_name", "source.geolocation.cc"],
                           "skip_head": True,
-                          "type": "malware"}
+                          "type": "malware-distribution"}
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT2)
 

@@ -29,8 +29,8 @@ EXAMPLE_FEODO_EVENT = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipbl
                        "extra.last_online": "2021-02-10T00:00:00+00:00",
                        "extra.feed_last_generated": "2021-02-10T13:34:57+00:00",
                        "time.source": "2021-02-10T00:00:00+00:00",
-                       "classification.taxonomy": "malicious code",
-                       "classification.type": "c2server",
+                       "classification.taxonomy": "malicious-code",
+                       "classification.type": "c2-server",
                        "malware.name": "dridex",
                        "status": "online",
                        "__type": "Event"
@@ -45,8 +45,8 @@ EXAMPLE_FEODO_EVENT1 = {"feed.url": "https://feodotracker.abuse.ch/downloads/ipb
                         "extra.first_seen": "2021-01-17T07:44:46+00:00",
                         "extra.last_online": "2021-02-10T00:00:00+00:00",
                         "time.source": "2021-02-10T00:00:00+00:00",
-                        "classification.taxonomy": "malicious code",
-                        "classification.type": "c2server",
+                        "classification.taxonomy": "malicious-code",
+                        "classification.type": "c2-server",
                         "malware.name": "dridex",
                         "status": "online",
                         "__type": "Event"

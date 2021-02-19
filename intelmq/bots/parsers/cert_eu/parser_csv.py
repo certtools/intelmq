@@ -16,12 +16,12 @@ from intelmq.lib.harmonization import DateTime
 
 class CertEUCSVParserBot(ParserBot):
 
-    abuse_to_intelmq = defaultdict(lambda: "unknown", {
+    abuse_to_intelmq = defaultdict(lambda: "other", {
         "backdoor": "backdoor",
         "blacklist": "blacklist",
         "botnet drone": "infected-system",
         "brute-force": "brute-force",
-        "c2server": "c2server",
+        "c2server": "c2-server",
         "compromised server": "compromised",
         "ddos infrastructure": "ddos",
         "ddos target": "ddos",
@@ -30,13 +30,13 @@ class CertEUCSVParserBot(ParserBot):
         "exploit url": "exploit",
         "ids alert": "ids-alert",
         "malware-configuration": "malware-configuration",
-        "malware url": "malware",
+        "malware url": "malware-distribution",
         "phishing": "phishing",
-        "ransomware": "ransomware",
+        "ransomware": "infected-system",
         "scanner": "scanner",
         "spam infrastructure": "spam",
         "test": "test",
-        "vulnerable service": "vulnerable service"
+        "vulnerable service": "vulnerable-system"
     })
 
     unknown_fields = ["threat type", "ns1", "ns2", "response", "recent"]

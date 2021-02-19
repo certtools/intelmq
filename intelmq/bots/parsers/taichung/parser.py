@@ -15,9 +15,9 @@ CLASSIFICATION = {
                     "office 365 attack", "sip attack", "ssh attack",
                     "ssh密碼猜測攻擊",  # Password Guess Attack
                     ],
-    "c2server": ["c&c server", "attack controller"],
+    "c2-server": ["c&c server", "attack controller"],
     "infected-system": ["irc-botnet"],
-    "malware": ["malware provider", "malware website", '\u60e1\u610f', "worm", "malware proxy"],
+    "malware-distribution": ["malware provider", "malware website", '\u60e1\u610f', "worm", "malware proxy"],
     "scanner": ["scan"],
     "exploit": ["bash", "php-cgi", "phpmyadmin"],
     "ddos": ["ddos"],
@@ -39,7 +39,7 @@ class TaichungNetflowRecentParserBot(ParserBot):
                     return event_type
         warnings.warn("Unknown classification: %r. Please report this as bug."
                       "" % value)
-        return "unknown"
+        return "undetermined"
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))

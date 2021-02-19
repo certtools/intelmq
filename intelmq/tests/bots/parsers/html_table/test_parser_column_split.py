@@ -23,7 +23,7 @@ EXAMPLE_EVENT = {"feed.name": "HTML Table Feed",
                  "__type": "Event",
                  "source.url": "http://lingvaworld.ru/media/system/css/messg.jpg",
                  "time.source": "%d-02-15T00:00:00+00:00" % THIS_YEAR,
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "source.ip": "81.177.135.172",
                  "time.observation": "2019-01-01T00:00:00+00:00",
                  "malware.hash.md5": "A5144B1F31AAD413075FFBD9D91D4EB9",
@@ -62,7 +62,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
                           "split_column": "source.url",
                           "split_separator": "[D]",
                           "split_index": "1",
-                          "type": "malware"}
+                          "type": "malware-distribution"}
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
@@ -71,7 +71,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
                                       "source.ip", "__IGNORE__"],
                           "skip_head": True,
                           "default_url_protocol": "http://",
-                          "type": "malware"}
+                          "type": "malware-distribution"}
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT2)
 

@@ -6,39 +6,33 @@ import intelmq.lib.test as test
 from intelmq.bots.experts.format_field.expert import FormatFieldExpertBot
 
 EXAMPLE_INPUT1 = {"__type": "Event",
-                  "classification.type": "malware",
                   "time.observation": "2018-07-27T00:00:00+00:00",
                   "feed.name": "AbuseCh URLHaus Feed",
                   "extra.tags": "ddos,elf,gafgyt"}
 
 EXAMPLE_INPUT2 = {"__type": "Event",
-                  "classification.type": "malware",
                   "time.observation": "2018-07-27T00:00:00+00:00",
                   "feed.name": "test-feed",
                   "malware.name": " cryptowall ",
                   "extra.abuse": " abuse@iana.org"}
 
 EXAMPLE_INPUT3 = {"__type": "Event",
-                  "classification.type": "malware",
                   "time.observation": "2018-07-27T00:00:00+00:00",
                   "feed.name": "test-feed-1",
                   "feed.url": "http://localhost/a.php"}
 
 EXAMPLE_OUTPUT1 = {"__type": "Event",
-                   "classification.type": "malware",
                    "time.observation": "2018-07-27T00:00:00+00:00",
                    "feed.name": "AbuseCh URLHaus Feed",
                    "extra.tags": ["ddos", "elf", "gafgyt"]}
 
 EXAMPLE_OUTPUT2 = {"__type": "Event",
-                   "classification.type": "malware",
                    "time.observation": "2018-07-27T00:00:00+00:00",
                    "feed.name": "test-feed",
                    "malware.name": "cryptowall",
                    "extra.abuse": "abuse@iana.org"}
 
 EXAMPLE_OUTPUT3 = {"__type": "Event",
-                   "classification.type": "malware",
                    "time.observation": "2018-07-27T00:00:00+00:00",
                    "feed.name": "test-feed-1",
                    "feed.url": "http://127.0.0.1/a.php"}

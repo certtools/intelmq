@@ -35,7 +35,7 @@ class DynParserBot(Bot):
 
             event_infected = self.new_event(report)
             event_infected.add('time.source', source_time)
-            event_infected.add('classification.type', 'malware')
+            event_infected.add('classification.type', 'malware-distribution')
             if row_split[0] != '/':
                 event_infected.add('source.ip', row_split[0])
             event_infected.add('source.fqdn', row_split[1])

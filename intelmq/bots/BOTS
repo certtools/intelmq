@@ -517,7 +517,7 @@
                 "filter_type": null,
                 "skip_header": true,
                 "time_format": null,
-                "type": "c2server",
+                "type": "c2-server",
                 "type_translation": null
             }
         },
@@ -547,7 +547,7 @@
                 "split_separator": "",
                 "table_index": 0,
                 "time_format": null,
-                "type": "c2server"
+                "type": "c2-server"
             }
         },
         "Have I been Pwned Enterprise Callback": {

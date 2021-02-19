@@ -236,7 +236,7 @@ open_db2_discovery_service = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-db2-discovery-service',
     }
 }
@@ -317,7 +317,7 @@ open_mdns = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-mdns',
         'protocol.application': 'mdns',
     }
@@ -345,7 +345,7 @@ open_chargen = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-chargen',
         'protocol.application': 'chargen',
     },
@@ -376,7 +376,7 @@ open_tftp = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-tftp',
         'protocol.application': 'tftp',
     },
@@ -418,7 +418,7 @@ sinkhole_http_drone = {
         ('extra.', 'version', validate_to_none),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'malicious code',
+        'classification.taxonomy': 'malicious-code',
         'classification.type': 'infected-system',
         # classification.identifier will be set to (harmonized) malware name by modify expert
         # The feed does not include explicit information on the protocol
@@ -460,7 +460,7 @@ ipv6_sinkhole_http_drone = {
         ('extra.', 'forwarded_by', validate_to_none),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'malicious code',
+        'classification.taxonomy': 'malicious-code',
         'classification.type': 'infected-system',
         # classification.identifier will be set to (harmonized) malware name by modify expert
         # The feed does not include explicit information on the protocol
@@ -505,7 +505,7 @@ microsoft_sinkhole = {
         ('extra.', 'version', validate_to_none),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'malicious code',
+        'classification.taxonomy': 'malicious-code',
         'classification.type': 'infected-system',
         # classification.identifier will be set to (harmonized) malware name by modify expert
         'protocol.transport': 'tcp',
@@ -547,7 +547,7 @@ open_redis = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-redis',
         'protocol.application': 'redis',
     },
@@ -577,7 +577,7 @@ open_portmapper = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-portmapper',
         'protocol.application': 'portmapper',
     },
@@ -621,7 +621,7 @@ open_ipmi = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-ipmi',
         'protocol.application': 'ipmi',
         'protocol.transport': 'udp',
@@ -650,7 +650,7 @@ open_qotd = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-qotd',
         'protocol.application': 'qotd',
     },
@@ -687,7 +687,7 @@ open_ssdp = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-ssdp',
         'protocol.application': 'ssdp',
     },
@@ -716,7 +716,7 @@ open_snmp = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-snmp',
         'protocol.application': 'snmp',
     },
@@ -750,7 +750,7 @@ open_mssql = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-mssql',
         'protocol.application': 'mssql',
     },
@@ -787,7 +787,7 @@ open_mongodb = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-mongodb',
         'protocol.application': 'mongodb',
     },
@@ -818,7 +818,7 @@ open_netbios_nameservice = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-netbios-nameservice',
         'protocol.application': 'netbios-nameservice',
     },
@@ -855,7 +855,7 @@ open_elasticsearch = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-elasticsearch',
         'protocol.application': 'elasticsearch',
     },
@@ -885,7 +885,7 @@ dns_open_resolvers = {
         ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.taxonomy': 'vulnerable',
         'classification.identifier': 'dns-open-resolver',
         'protocol.application': 'dns',
@@ -914,7 +914,7 @@ ntp_monitor = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'ntp-monitor',
         'protocol.application': 'ntp',
     },
@@ -997,7 +997,7 @@ ssl_freak_vulnerable_servers = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'ssl-freak',
         'protocol.application': 'https',
     },
@@ -1082,7 +1082,7 @@ ssl_poodle_vulnerable_servers = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'ssl-poodle',
         'protocol.application': 'https',
     },
@@ -1116,7 +1116,7 @@ open_memcached = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-memcached',
         'protocol.application': 'memcached',
     },
@@ -1163,7 +1163,7 @@ drone = {
         ('extra.', 'public_source', validate_to_none),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'malicious code',
+        'classification.taxonomy': 'malicious-code',
         'classification.type': 'infected-system',
         # classification.identifier will be set to (harmonized) malware name by modify expert
     },
@@ -1208,7 +1208,7 @@ drone_spam = {
         ('extra.', 'public_source', validate_to_none),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'abusive content',
+        'classification.taxonomy': 'abusive-content',
         'classification.type': 'spam',
         'classification.identifier': 'spam',
     },
@@ -1238,7 +1238,7 @@ open_xdmcp = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-xdmcp',
         'protocol.application': 'xdmcp',
     },
@@ -1302,7 +1302,7 @@ open_natpmp = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-natpmp',
         'protocol.application': 'natpmp',
     },
@@ -1329,7 +1329,7 @@ open_netis = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-netis',
         'protocol.transport': 'udp',
     },
@@ -1380,7 +1380,7 @@ ntp_version = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'ntp-version',
         'protocol.application': 'ntp',
     },
@@ -1402,8 +1402,8 @@ sandbox_url = {
         ('extra.', 'method', validate_to_none),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'malicious code',
-        'classification.type': 'malware',
+        'classification.taxonomy': 'malicious-code',
+        'classification.type': 'malware-distribution',
         'classification.identifier': 'sandbox-url',
     },
 }
@@ -1432,7 +1432,7 @@ spam_url = {
         ('extra.', 'sic', invalidate_zero),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'abusive content',
+        'classification.taxonomy': 'abusive-content',
         'classification.type': 'spam',
         'classification.identifier': 'spam-url',
     },
@@ -1469,7 +1469,7 @@ vulnerable_isakmp = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-ike',
         'protocol.application': 'ipsec',
     }
@@ -1514,7 +1514,7 @@ accessible_rdp = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-rdp',
         'protocol.transport': 'tcp',
         'protocol.application': 'rdp',
@@ -1542,7 +1542,7 @@ accessible_smb = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-smb',
         'protocol.transport': 'tcp',
         'protocol.application': 'smb',
@@ -1592,7 +1592,7 @@ open_ldap = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-ldap',
         'protocol.application': 'ldap',
     }
@@ -1645,7 +1645,7 @@ accessible_telnet = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-telnet',
         'protocol.application': 'telnet',
     }
@@ -1682,7 +1682,7 @@ accessible_cwmp = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-cwmp',
         'protocol.application': 'cwmp',
     }
@@ -1708,7 +1708,7 @@ accessible_vnc = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-vnc',
         'protocol.transport': 'tcp',
         'protocol.application': 'vnc',
@@ -1735,7 +1735,7 @@ accessible_cisco_smart_install = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'accessible-cisco-smart-install',
         'protocol.application': 'cisco-smart-install',
     }
@@ -1777,7 +1777,7 @@ drone_brute_force = {
         ('extra.', 'payload_md5', validate_to_none),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'intrusion attempts',
+        'classification.taxonomy': 'intrusion-attempts',
         'classification.type': 'brute-force',
     }
 }
@@ -1811,7 +1811,7 @@ accessible_hadoop = {
         'protocol.application': 'hadoop',
         'protocol.transport': 'tcp',
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'accessible-hadoop',
     }
 }
@@ -1840,7 +1840,7 @@ accessible_adb = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'accessible-adb',
         'protocol.application': 'adb',
     },
@@ -1904,7 +1904,7 @@ accessible_rsync = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'accessible-rsync',
         'protocol.application': 'rsync',
     },
@@ -1939,7 +1939,7 @@ accessible_afp = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'accessible-afp',
         'protocol.application': 'afp',
     },
@@ -2045,7 +2045,7 @@ http_scanners = {
         ('extra.', 'request_raw', validate_to_none),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'information gathering',
+        'classification.taxonomy': 'information-gathering',
         'classification.type': 'scanner',
         'classification.identifier': 'http',
         'protocol.application': 'http',
@@ -2086,7 +2086,7 @@ ics_scanners = {
         ('extra.', 'response', convert_int),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'information gathering',
+        'classification.taxonomy': 'information-gathering',
         'classification.type': 'scanner',
         'classification.identifier': 'ics',
     }
@@ -2119,7 +2119,7 @@ accessible_ubiquiti_discovery_service = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'accessible-ubiquiti-discovery-service',
     }
 }
@@ -2190,7 +2190,7 @@ accessible_ftp = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'accessible-ftp',
         'protocol.application': 'ftp',
     }
@@ -2220,7 +2220,7 @@ open_mqtt = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-mqtt',
         'protocol.application': 'mqtt',
     }
@@ -2260,7 +2260,7 @@ open_ipp = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'open-ipp',
         'protocol.application': 'ipp',
     }
@@ -2287,7 +2287,7 @@ accessible_coap = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'accessible-coap',
         'protocol.application': 'coap',
     }
@@ -2315,7 +2315,7 @@ accessible_ard = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'accessible-ard',
     }
 }
@@ -2341,7 +2341,7 @@ accessible_radmin = {
     'constant_fields': {
         'classification.identifier': 'accessible-radmin',
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
     }
 }
 

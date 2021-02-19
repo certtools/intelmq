@@ -30,7 +30,7 @@ class Malc0deParserBot(ParserBot):
             event = self.new_event(report)
             if self.lastgenerated:
                 event.add('time.source', self.lastgenerated)
-            event.add('classification.type', 'malware')
+            event.add('classification.type', 'malware-distribution')
             event.add('raw', line)
 
             if report['feed.url'] in Malc0deParserBot.WINDOWS_FORMAT:

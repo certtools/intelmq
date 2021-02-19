@@ -54,7 +54,7 @@ def eventdb_apply(malware_name_column, malware_family_column, host, port,
     cur = db.cursor(cursor_factory=DictCursor)
 
     cur.execute('SELECT DISTINCT "classification.identifier", "malware.name" FROM {table} '
-                'WHERE "classification.taxonomy" = \'malicious code\' {where}'
+                'WHERE "classification.taxonomy" = \'malicious-code\' {where}'
                 ''.format(table=table, where=where))
     if dry_run:
         execute = lambda x, y: print(cur.mogrify(x, y).decode())  # noqa: E731
@@ -74,7 +74,7 @@ def eventdb_apply(malware_name_column, malware_family_column, host, port,
                 execute('UPDATE {table} SET "classification.identifier" = %s '
                         'WHERE "malware.name" = %s '
                         'AND "classification.identifier" IS DISTINCT FROM %s AND '
-                        '"classification.taxonomy" = \'malicious code\' {where}'
+                        '"classification.taxonomy" = \'malicious-code\' {where}'
                         ''.format(table=table, where=where),
                         (rule[1], malware_name, rule[1]))
                 break
