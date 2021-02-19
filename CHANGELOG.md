@@ -12,7 +12,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.lib.bot`:
   - `ParserBot.recover_line_json_stream`: Make `line` parameter optional, as it is not needed for this method.
   - `Bot.argparser`: Added class method `_create_argparser` (returns `argparse.ArgumentParser`) for easy command line arguments parsing.
-  - Runtime configuration does not necessarily need a parameter entry for each block. Previously and at least empty block was required (PR#1604 by Filip Pokorný).
+  - Runtime configuration does not necessarily need a parameter entry for each block. Previously an at least empty block was required (PR#1604 by Filip Pokorný).
   - Allow setting the pipeline host and the Redis cache host by environment variables for docker usage (PR#1669 by Sebastian Waldbauer).
 - `intelmq.lib.upgrades`:
   - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559).
@@ -20,7 +20,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - `PipelineError`: Remove unused code to format exceptions.
 - `intelmq.lib.utils`:
   - `create_request_session_from_bot`: Changed bot argument to optional, uses defaults.conf as fallback, renamed to `create_request_session`. Name `create_request_session_from_bot` will be removed in version 3.0.0.
-  - `log`: Use RotatingFileHandler for allow log file rotation without external tools (PR#1637 by Vasek Bruzek).
+  - `log`: Use `RotatingFileHandler` for allow log file rotation without external tools (PR#1637 by Vasek Bruzek).
 - `intelmq.lib.harmonization`:
   - The `IPAddress` type sanitation now accepts integer IP addresses and converts them to the string representation.
   - `DateTime.parse_utc_isoformat`: Add parameter `return_datetime` to return `datetime` object instead of string ISO format.
@@ -31,7 +31,9 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - Added upgrade function `v230_feed_fix`.
 
 ### Development
-- `intelmq.bin.intelmq_gen_docs`: Add bot name to the `Feeds.md` documentation (PR#1617 by Birger Schacht).
+- `intelmq.bin.intelmq_gen_docs`:
+  - Add bot name to the resulting feed documentation (PR#1617 by Birger Schacht).
+  - Merged into `docs/autogen.py`.
 
 ### Harmonization
 
@@ -41,7 +43,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.bots.collectors.http.collector_http`:
   - Added PGP signature check functionality (PR#1602 by sinus-x).
   - If status code is not 2xx, the request's and response's headers and body are logged in debug logging level (#1615).
-- `intelmq.bots.collectors.kafka.collector`: Added (PR#1654 by Birger Schacht, closes #1634)
+- `intelmq.bots.collectors.kafka.collector`: Added (PR#1654 by Birger Schacht, closes #1634).
 - `intelmq.bots.collectors.xmpp.collector`: Marked as deprecated, see https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html (#1614, PR#1685 by Birger Schacht).
 - `intelmq.bots.collectors.shadowserver.collector_api`: Added (PR#1700 by Birger Schacht, closes #1683).
 - `intelmq.bots.collectors.mail`: Add content of the email's `Date` header as `extra.email_date` to the report in all email collectors (PR#1749 by aleksejsv, Sebastian Wagner).
@@ -54,7 +56,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.bots.parsers.cznic.parser_proki`: Added (PR#1599 by sinus-x).
 - `intelmq.bots.parsers.key_value.parser`: Added (PR#1607 by Karl-Johan Karlsson).
 - `intelmq.bots.parsers.generic.parser_csv`: Added new parameter `compose_fields`.
-- `intelmq.bots.parsers.shadowserver.parser_json`: Added (PR#1700 by Birger Schacht)
+- `intelmq.bots.parsers.shadowserver.parser_json`: Added (PR#1700 by Birger Schacht).
 - `intelmq.bots.parsers.shadowserver.config`:
   - Fixed mapping for Block list feed to accept network ranges in CIDR notation (#1720, PR#1728 by Sebastian Waldbauer).
   - Added mapping for new feed MSRDPUDP, Vulnerable-HTTP, Sinkhole DNS (#1716, #1726, #1733, PR#1732, PR#1735, PR#1736 by Sebastian Waldbauer).
@@ -62,34 +64,34 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 
 #### Experts
 - `intelmq.bots.experts.rfc1918.expert`:
-  - Add support for ASN (PR#1557 by Mladen Markovic).
+  - Add support for ASNs (PR#1557 by Mladen Markovic).
   - Speed improvements.
   - More output in debug logging mode.
   - Checks parameter length on initialization and in check method.
 - `intelmq.bots.experts.gethostbyname.expert`:
-  - Added parameter `fallback_to_url` and set to True. (PR#1586 by Edvard Rejthar)
+  - Added parameter `fallback_to_url` and set to True (PR#1586 by Edvard Rejthar).
   - Added parameter `gaierrors_to_ignore` to optionally ignore other `gethostbyname` errors (#1553).
   - Added parameter `overwrite` to optionally overwrite existing IP addresses.
 - `intelmq.bots.experts.asn_lookup.expert`
-  - Added `--update-database` option. (PR#1524 by Filip Pokorný)
+  - Added `--update-database` option (PR#1524 by Filip Pokorný).
   - The script `update-asn-data` is now deprecated and will be removed in version 3.0.
 - `intelmq.bots.experts.maxmind_geoip.expert`
-  - Added `--update-database` option. (PR#1524 by Filip Pokorný)
-  - Added `license_key` parameter. (PR#1524 by Filip Pokorný)
+  - Added `--update-database` option (PR#1524 by Filip Pokorný).
+  - Added `license_key` parameter (PR#1524 by Filip Pokorný).
   - The script `update-geoip-data` is now deprecated and will be removed in version 3.0.
 - `intelmq.bots.experts.tor_nodes.expert`
-  - Added `--update-database` option. (PR#1524 by Filip Pokorný)
+  - Added `--update-database` option (PR#1524 by Filip Pokorný).
   - The script `update-tor-nodes` is now deprecated and will be removed in version 3.0.
 - `intelmq.bots.experts.recordedfuture_iprisk.expert`
-  - Added `--update-database` option. (PR#1524 by Filip Pokorný)
-  - Added `api_token` parameter. (PR#1524 by Filip Pokorný)
+  - Added `--update-database` option (PR#1524 by Filip Pokorný).
+  - Added `api_token` parameter (PR#1524 by Filip Pokorný).
   - The script `update-rfiprisk-data` is now deprecated and will be removed in version 3.0.
 - Added `intelmq.bots.experts.threshold` (PR#1608 by Karl-Johan Karlsson).
 - Added `intelmq.bots.experts.splunk_saved_search.expert` (PR#1666 by Karl-Johan Karlsson).
 - `intelmq.bots.experts.sieve.expert`:
   - Added possibility to give multiple queue names for the `path` directive (#1462).
 - `intelmq.bots.experts.maxmind_geoip.expert`:
-  - Fixed handing over of `overwrite` parameter to `event.add`
+  - Fixed handing over of `overwrite` parameter to `event.add` (PR#1743).
 
 #### Outputs
 - `intelmq.bots.outputs.rt`: Added Request Tracker output bot (PR#1589 by Marius Urkis).
@@ -97,7 +99,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 
 ### Documentation
 - Feeds:
-  - Add ESET URL and Domain feeds
+  - Add ESET URL and Domain feeds.
   - Remove unavailable *HPHosts Hosts file* feed (#1559).
   - Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
   - Added CZ.NIC Proki feed (PR#1599 by sinus-x).
@@ -107,9 +109,9 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - Bots:
   - Enhanced documentation of RFC1918 Expert.
   - Enhanced documentation of SQL Output (PR #1620 by Edvard Rejthar).
-  - Updated documentation for MaxMind GeoIP, ASN Lookup, TOR Nodes and Recorded Future experts to reflect new `--update-database` option.  (PR#1524 by Filip Pokorný)
-  - Added documentation for Shadowserver API collector and parser
-- Add n6 Integration documentation.
+  - Updated documentation for MaxMind GeoIP, ASN Lookup, TOR Nodes and Recorded Future experts to reflect new `--update-database` option (PR#1524 by Filip Pokorný).
+  - Added documentation for Shadowserver API collector and parser.
+- Add n6 integration documentation.
 - Moved 'Orphaned Queues' section from the FAQ to the intelmqctl documentation.
 - Generate documentation using Sphinx (PR#1622 by Birger Schacht).
   - The documentation is now available at https://intelmq.readthedocs.io/en/latest/
@@ -131,7 +133,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.tests.bots.experts.ripe.test_expert`: Use `requests_mock` to mock all requests and do not require a local webserver.
 - The test flag (environment variable) `INTELMQ_TEST_LOCAL_WEB` is no longer used.
 - Added tests for `intelmq.harmonization.DateTime.parse_utc_isoformat` and `convert_fuzzy`.
-- Move from Travis to GitHub Actions
+- Move from Travis to GitHub Actions (PR#1707 by Birger Schacht).
 - `intelmq.lib.test`:
   - `test_static_bot_check_method` checks the bot's static `check(parameters)` method for any exceptions, and a valid formatted return value (#1505).
   - `setUpClass`: Skip tests if cache was requests with `use_cache` member, but Redis is deactivated with the environment variable `INTELMQ_SKIP_REDIS`.
@@ -149,14 +151,19 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 ### Contrib
 - EventDB:
   - Add SQL script for keeping track of the oldest inserted/update "time.source" information.
-- Cron Jobs: The script `intelmq-update-data` has been renamed to `intelmq-update-database`
+- Cron Jobs: The script `intelmq-update-data` has been renamed to `intelmq-update-database`.
 - Dropped utterly outdated contrib modules:
   - ansible
   - vagrant
   - vagrant-ansible
 
 ### Known issues
-
+- Bots started with IntelMQ-API/Manager stop when the webserver is restarted #952.
+- Corrupt dump files when interrupted during writing (#870).
+- CSV line recovery forces Windows line endings (#1597).
+- intelmqdump: Honor logging_path variable (#1605).
+- Timeout error in mail URL fetcher (#1621).
+- AMQP pipeline: get_queues needs to check vhost of response (#1746).
 
 2.2.3 (2020-12-23)
 ------------------
