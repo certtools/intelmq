@@ -858,7 +858,7 @@ providers:
       revision: 2018-01-20
       documentation: https://www.phishtank.com/developer_info.php
       public: no
-   CINS Army:
+  CINS Army:
     CINS Army List:
       description: 'The CINS Army (CIArmy.com) list is a subset of the CINS Active Threat Intelligence
         ruleset, and consists of IP addresses that meet one of two basic criteria:

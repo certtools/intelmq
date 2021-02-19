@@ -2403,7 +2403,7 @@ accessible_msrdpeudp = {
     'constant_fields': {
         'classification.identifier': 'accessible-msrdpeudp',
         'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable service',
+        'classification.type': 'vulnerable-system',
     }
 }
 
