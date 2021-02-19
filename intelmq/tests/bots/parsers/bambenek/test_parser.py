@@ -45,7 +45,7 @@ IP_REPORT = {'feed.url': 'http://osint.bambenekconsulting.com/feeds/c2-ipmasterl
              'time.observation': '2016-01-01T00:00:00+00:00'
             }
 
-IP_EVENTS = {'feed.url': 'http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt',
+IP_EVENTS = [{'feed.url': 'http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt',
              'feed.name': 'Bambenek C2 IP Feed',
              '__type': 'Event',
              'time.observation': '2016-01-01T00:00:00+00:00',
@@ -57,7 +57,21 @@ IP_EVENTS = {'feed.url': 'http://osint.bambenekconsulting.com/feeds/c2-ipmasterl
              'time.source': '2016-11-12T18:02:00+00:00',
              'event_description.text': 'IP used by shiotob/urlzone/bebloh C&C',
              'event_description.url': 'http://osint.bambenekconsulting.com/manual/bebloh.txt'
-            }
+            },
+            {'feed.url': 'http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt',
+             'feed.name': 'Bambenek C2 IP Feed',
+             '__type': 'Event',
+             'time.observation': '2016-01-01T00:00:00+00:00',
+             'raw': 'NjQuMTgzLjE4Ny4yMCxJUCByZXNvbHZlZCBieSBuZWN1cnMgQyZDLCB1c2VzIGVuY29kZWQgSVAsIHRoaXMgaXMgbm90IHRoZSBDMiBJUCwgMjAxOS0wOS0xNyAwNjowNixodHRwOi8vb3NpbnQuYmFtYmVuZWtjb25zdWx0aW5nLmNvbS9tYW51YWwvbmVjdXJzLnR4dAo=',
+             'source.ip': '64.183.187.20',
+             'malware.name': 'necurs',
+             'classification.type': 'c2server',
+             'status': 'online',
+             'time.source': '2019-09-17T06:06:00+00:00',
+             'event_description.text': 'IP resolved by necurs C&C, uses encoded IP, this is not the C2 IP',
+             'event_description.url': 'http://osint.bambenekconsulting.com/manual/necurs.txt'
+            },
+             ]
 
 DGA_REPORT = {'feed.url': 'http://osint.bambenekconsulting.com/feeds/dga-feed.txt',
               'feed.name': 'Bambenek DGA Domain Feed',
@@ -95,7 +109,8 @@ class TestBambenekParserBot(test.BotTestCase, unittest.TestCase):
     def test_ip(self):
         self.input_message = IP_REPORT
         self.run_bot()
-        self.assertMessageEqual(0, IP_EVENTS)
+        self.assertMessageEqual(0, IP_EVENTS[0])
+        self.assertMessageEqual(1, IP_EVENTS[1])
 
     def test_dga(self):
         self.input_message = DGA_REPORT
