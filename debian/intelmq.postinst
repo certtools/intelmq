@@ -13,7 +13,7 @@ if [ "$1" = "configure" ] ; then
     systemd-tmpfiles --create /usr/lib/tmpfiles.d/intelmq.conf
 
     runuser -u intelmq -- /usr/bin/intelmqctl upgrade-config
-    runuser -u intelmq -- /usr/bin/intelmqctl -q check --no-connections
+    runuser -u intelmq -- /usr/bin/intelmqctl -q check --no-connections ||:
 fi
 
 #DEBHELPER#

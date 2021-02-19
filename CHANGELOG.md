@@ -119,6 +119,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 ### Packaging
 - Fix paths in the integrated logcheck rules.
 - Build the sphinx documentation on package build (PR#1701 by Birger Schacht).
+- Ignore non-zero exit-codes for the `intelmqctl check` call in postinst (#1748).
 
 ### Tests
 - Added tests for `intelmq.lib.exceptions.PipelineError`.
