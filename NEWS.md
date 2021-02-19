@@ -32,12 +32,33 @@ CentOS 7 (with EPEL) provides both Python 3.4 and Python 3.6. If IntelMQ was ins
   intelmq.bots.experts.tor_nodes.expert --update-database
   ```
   The provided shell scripts use these new commands, however they are now deprecated and will be removed in version 3.0.
+- `intelmqctl list queues` is now able to sum events over all queues with the `--sum`, `--count` or simple `-s` flag.
 
 #### XMPP Bots
 Both the XMPP output bot and the XMPP collector bot are deprecated.
 The bots need to be migrate to another XMPP library (see [#1614](https://github.com/certtools/intelmq/issues/1614) for details) and a survey on the mailing listed revealed no users.
 If you depend on this bot, please reach out to us via the mailing list or GitHub.
 The bots are logging a deprecation warning now and the current plan is to remove them in IntelMQ version 3.0.
+
+#### Shadowserver Bots
+The Shadowserver Collector is now able to collect data from the [Shadowserver Reports API](https://intelmq.readthedocs.io/en/latest/user/bots.html#shadowserver-reports-api). Moreover the Shadowserver Parser now supports the JSON format used by the Reports API.
+
+#### Sieve Expert
+Sieve-Expert is now capable of basic math operations & you can do actions without any `if` statements.
+
+1. How to use basic math in sieve, only with DateTimes currently:
+```
+add time.observation += '1 hour'
+add time.observation -= '10 hours'
+```
+2. Actions can now be used without an `if` statement, just write the following into a `.sieve` file
+```
+add comment = "Adding this to all computed events"
+```
+More details can be found in our [documentation](https://intelmq.readthedocs.io/en/latest/user/bots.html#sieve).
+
+#### Kafka Collector
+Now you're able to fetch data from Kafka with the [Kafka Collector](https://intelmq.readthedocs.io/en/latest/user/bots.html#kafka).
 
 ### Harmonization
 
@@ -46,6 +67,9 @@ The bots are logging a deprecation warning now and the current plan is to remove
 The feed template for the URLHaus feed contained a spelling error:
 The correct name for the parameter "delimeter" is "delimiter". Please fix your configured bots.
 The `intelmqctl upgrade-config` command automatically fixes a configuration if the misspelling is detected.
+
+#### IntelMQ-Manager -> IntelMQ-API
+`IntelMQ-Manager` PHP backend is getting replaced by the newly developed `IntelMQ-API`. The `IntelMQ-Manager` release only contains the files for the web frontend. The `IntelMQ-Manager` packages now depend or recommend the installation of the `IntelMQ-API` package, therefore a normal upgrade should pull in the API. Follow the instructions in our [documentation](https://intelmq.readthedocs.io/en/latest/user/intelmq-api.html) to configure the API. It uses its own authentication backend now, how to setup users is described in the [documentation](https://intelmq.readthedocs.io/en/latest/user/intelmq-api.html#adding-a-user).
 
 ### Libraries
 
