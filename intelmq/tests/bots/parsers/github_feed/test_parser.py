@@ -49,6 +49,8 @@ class TestGithubFeedParserBot(test.BotTestCase, unittest.TestCase):
 
         self.assertRegexpMatchesLog("Unknown feed '{}'.".format(wrong_report['feed.url']))
 
+    # https://github.com/certtools/intelmq/issues/1752
+    @unittest.expectedFailure
     def test_extra_fields_are_present_in_generated_event(self):
         custom_report = EXAMPLE_STRANGEREALINTEL_REPORT.copy()
         custom_report['extra.file_metadata'] = {
@@ -62,6 +64,8 @@ class TestGithubFeedParserBot(test.BotTestCase, unittest.TestCase):
         for event in self.get_output_queue():
             assert 'extra.file_metadata.sha' in event and 'extra.file_metadata.size' in event
 
+    # https://github.com/certtools/intelmq/issues/1752
+    @unittest.expectedFailure
     def test_strangerealintel_feed_processing_is_successful(self):
         self.run_bot()
 
