@@ -618,7 +618,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
         # Match the first rule
         string_value_list_match_1 = EXAMPLE_INPUT.copy()
-        string_value_list_match_1['classification.type'] = 'malware-distribution'
+        string_value_list_match_1['classification.type'] = 'infected-system'
         string_value_list_expected_result_1 = string_value_list_match_1.copy()
         string_value_list_expected_result_1['comment'] = 'infected hosts'
         self.input_message = string_value_list_match_1
