@@ -177,7 +177,7 @@ Field in italics is the interesting one for CERTs.
 
 Example:
 
-If you know of an IP address that connects to a zeus c&c server, it's about the infected device, thus `classification.taxonomy` is *malicious-code*, `classification.type` is *infected-system* and the `classification.identifier` ist zeus. If you want to complain about the c&c server, the event's `classification.type` is *c2server*. The `malware.name` can have the full name, eg. `zeus_p2p`.
+If you know of an IP address that connects to a zeus c&c server, it's about the infected device, thus `classification.taxonomy` is *malicious-code*, `classification.type` is *infected-system* and the `classification.identifier` is zeus. If you want to complain about the c&c server, the event's `classification.type` is *c2server*. The `malware.name` can have the full name, eg. `zeus_p2p`.
 
 Minimum recommended requirements for events
 ===========================================
