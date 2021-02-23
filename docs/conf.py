@@ -25,6 +25,8 @@ import autogen
 # -- Project information -----------------------------------------------------
 
 year = datetime.date.today().year
+exec(open(os.path.join(os.path.dirname(__file__), '../intelmq/version.py')).read())  # defines __version__
+
 project = 'intelmq'
 copyright = f'{year}, cert.at'
 author = 'IntelMQ Community'
@@ -32,7 +34,7 @@ author = 'IntelMQ Community'
 master_doc = 'index'
 
 # The full version, including alpha/beta/rc tags
-release = '2.3.0'
+release = __version__
 
 rst_prolog = """
 .. |intelmq-users-list-link| replace:: `IntelMQ Users Mailinglist <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users>`__
