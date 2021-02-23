@@ -10,6 +10,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import datetime
 import codecs
 import os
 import subprocess
@@ -23,8 +24,9 @@ import autogen
 
 # -- Project information -----------------------------------------------------
 
+year = datetime.date.today().year
 project = 'intelmq'
-copyright = '2020, cert.at'
+copyright = f'{year}, cert.at'
 author = 'IntelMQ Community'
 # for compatibility with Sphinx < 2.0 as the old versions default to 'contents'
 master_doc = 'index'
