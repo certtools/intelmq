@@ -26,7 +26,7 @@ class TestSMTPOutputBot(test.BotTestCase, unittest.TestCase):
                          "text": 'foobar',
                          "subject": "type: {ev[classification.type]}",
                          "mail_from": "myself",
-                         "mail_to": "you"}
+                         "mail_to": "you,yourself"}
 
     def test_event(self):
         self.input_message = EVENT
@@ -36,12 +36,12 @@ class TestSMTPOutputBot(test.BotTestCase, unittest.TestCase):
 
         self.assertEqual(SENT_MESSAGE[0]['Subject'], 'type: None')
         self.assertEqual(SENT_MESSAGE[0]['From'], 'myself')
-        self.assertEqual(SENT_MESSAGE[0]['To'], 'you')
+        self.assertEqual(SENT_MESSAGE[0]['To'], 'you,yourself')
         self.assertEqual(SENT_MESSAGE[0].get_payload()[0].get_payload(), 'foobar')
         self.assertEqual(SENT_MESSAGE[0].get_payload()[1].get_payload(), '''source.ip;time.source;source.url
 127.0.0.1;;http://example.com/
 ''')
-        self.assertEqual({'from_addr': 'myself', 'to_addrs': ['you']},
+        self.assertEqual({'from_addr': 'myself', 'to_addrs': ['you', 'yourself']},
                          SENT_MESSAGE[1])
 
 
