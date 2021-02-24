@@ -19,7 +19,9 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.lib.exceptions`:
   - `PipelineError`: Remove unused code to format exceptions.
 - `intelmq.lib.utils`:
-  - `create_request_session_from_bot`: Changed bot argument to optional, uses defaults.conf as fallback, renamed to `create_request_session`. Name `create_request_session_from_bot` will be removed in version 3.0.0.
+  - `create_request_session_from_bot`:
+    - Changed bot argument to optional, uses defaults.conf as fallback, renamed to `create_request_session`. Name `create_request_session_from_bot` will be removed in version 3.0.0.
+    - Fixed setting of `http_verify_cert` from defaults configuration (PR#1758 by Birger Schacht).
   - `log`: Use `RotatingFileHandler` for allow log file rotation without external tools (PR#1637 by Vasek Bruzek).
 - `intelmq.lib.harmonization`:
   - The `IPAddress` type sanitation now accepts integer IP addresses and converts them to the string representation.
