@@ -749,7 +749,7 @@ def create_request_session(bot: type = None) -> requests.Session:
     if bot and hasattr(bot, 'http_verify_cert'):
         session.verify = bot.http_verify_cert
     else:
-        defaults.get('http_verify_cert', True)
+        session.verify = defaults.get('http_verify_cert', True)
 
     # tls certificate settings
     if bot and hasattr(bot, 'ssl_client_cert'):
