@@ -1673,6 +1673,7 @@ Use this command to create/update the database and reload the bot:
 
    intelmq.bots.experts.asn_lookup.expert --update-database
 
+The database is fetched from [routeviews.org/](http://www.routeviews.org/routeviews/) and licensed under the Creative Commons Attribution 4.0 International license (see the [FAQ](http://www.routeviews.org/routeviews/index.php/faq/#faq-6666).
 
 
 CSV Converter
