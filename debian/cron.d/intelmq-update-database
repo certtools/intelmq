@@ -2,11 +2,11 @@
 #  This updates the data files used by some expert bots.
 #
 # m h  dom mon dow      command
-# Update database for tor_nodes bot:
+# Update database for tor_nodes bot, update frequency is unknown:
 11  0 * * *     intelmq   intelmq.bots.experts.tor_nodes.expert --update-database
-# Update database for maxmind_geoip bot:
+# Update database for maxmind_geoip bot, updated every Tuesday:
 30 23 * * 2     intelmq   intelmq.bots.experts.maxmind_geoip.expert --update-database
-# Update database for asn_lookup bot:
+# Update database for asn_lookup bot, updated every two hours:
 5 */2 * * *     intelmq   intelmq.bots.experts.asn_lookup.expert --update-database
 # Update database for domain_suffix bot, updated daily:
 45 1 * * *     intelmq   intelmq.bots.experts.domain_suffix.expert --update-database
