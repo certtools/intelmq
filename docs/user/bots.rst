@@ -1669,7 +1669,9 @@ Install `pyasn` module
 
 Use this command to create/update the database and reload the bot:
 
-`intelmq.bots.experts.asn_lookup.expert --update-database`
+.. code-block:: bash
+
+   intelmq.bots.experts.asn_lookup.expert --update-database
 
 
 
@@ -2121,7 +2123,9 @@ You may want to use a shell script provided in the contrib directory to keep the
 
 Use this command to create/update the database and reload the bot:
 
-`intelmq.bots.experts.maxmind_geoip.expert --update-database`
+.. code-block:: bash
+
+   intelmq.bots.experts.maxmind_geoip.expert --update-database
 
 
 
@@ -2376,7 +2380,9 @@ A script is supplied that may be run as intelmq to update the database.
 
 Use this command to create/update the database and reload the bot:
 
-`intelmq.bots.experts.recordedfuture_iprisk.expert --update-database`
+.. code-block:: bash
+
+   intelmq.bots.experts.recordedfuture_iprisk.expert --update-database
 
 
 
@@ -2844,7 +2850,9 @@ Tor Nodes
 
 Use this command to create/update the database and reload the bot:
 
-`intelmq.bots.experts.tor_nodes.expert --update-database`
+.. code-block:: bash
+
+   intelmq.bots.experts.tor_nodes.expert --update-database
 
 Url2FQDN
 ^^^^^^^^
