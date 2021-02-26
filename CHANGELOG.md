@@ -143,6 +143,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - `setUpClass`: Skip tests if cache was requests with `use_cache` member, but Redis is deactivated with the environment variable `INTELMQ_SKIP_REDIS`.
 - `intelmq.tests.bots.experts.cymru_whois.test_expert`: Switch from example.com to ns2.univie.ac.at for hopefully more stable responses (#1730, PR#1731 by Sebastian Waldbauer).
 - `intelmq.tests.bots.parsers.abusech`: Remove tests cases of discontinued feeds (PR#1741 by Thomas Bellus).
+- Activate GitHub's CodeQL Code Analyzing tool.
 
 ### Tools
 - `intelmqdump`:
