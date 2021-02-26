@@ -1,7 +1,6 @@
 compress
 delaycompress
-copytruncate
-create 640 intelmq intelmq
+create 644 intelmq intelmq
 
 /opt/intelmq/var/log/*.log {
     su intelmq intelmq

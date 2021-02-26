@@ -104,6 +104,9 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.bots.collectors.mail`: Add content of the email's `Date` header as `extra.email_date` to the report in all email collectors (PR#1749 by aleksejsv, Sebastian Wagner).
 - `intelmq.bots.collectors.http.collector_http_stream`: Retry on common connection issues without raising exceptions (#1435, PR#1747 by Sebastian Waldbauer and Sebastian Wagner).
 - `intelmq.bots.collectors.shodan.collector_stream`: Retry on common connection issues without raising exceptions (#1435, PR#1747 by Sebastian Waldbauer and Sebastian Wagner).
+- `intelmq.bots.collectors.twitter.collector_twitter`:
+  - Proper input validation in URLs using urllib. CWE-20, found by GitHub's CodeQL (PR#1754).
+  - Limit replacement ("pastebin.com", "pastebin.com/raw") to a maximum of one.
 
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).
@@ -153,6 +156,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 #### Outputs
 - `intelmq.bots.outputs.rt`: Added Request Tracker output bot (PR#1589 by Marius Urkis).
 - `intelmq.bots.outputs.xmpp.output`: Marked as deprecated, see https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html (#1614, PR#1685 by Birger Schacht).
+- `intelmq.bots.outputs.smtp.output`: Fix sending to multiple recipients when recipients are defined by event-data (#1759, PR#1760 by Sebastian Waldbauer and Sebastian Wagner).
 
 ### Documentation
 - Feeds:
@@ -196,6 +200,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - `setUpClass`: Skip tests if cache was requests with `use_cache` member, but Redis is deactivated with the environment variable `INTELMQ_SKIP_REDIS`.
 - `intelmq.tests.bots.experts.cymru_whois.test_expert`: Switch from example.com to ns2.univie.ac.at for hopefully more stable responses (#1730, PR#1731 by Sebastian Waldbauer).
 - `intelmq.tests.bots.parsers.abusech`: Remove tests cases of discontinued feeds (PR#1741 by Thomas Bellus).
+- Activate GitHub's CodeQL Code Analyzing tool.
 
 ### Tools
 - `intelmqdump`:
@@ -213,6 +218,9 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - ansible
   - vagrant
   - vagrant-ansible
+- logrotate:
+  - do not use the old "copytruncate" option as intelmq re-opens the log anyways.
+  - fix file permissions to `0644`.
 
 ### Known issues
 - Bots started with IntelMQ-API/Manager stop when the webserver is restarted #952.

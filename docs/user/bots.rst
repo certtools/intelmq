@@ -1669,7 +1669,9 @@ Install `pyasn` module
 
 Use this command to create/update the database and reload the bot:
 
-`intelmq.bots.experts.asn_lookup.expert --update-database`
+.. code-block:: bash
+
+   intelmq.bots.experts.asn_lookup.expert --update-database
 
 
 
@@ -2129,7 +2131,9 @@ You may want to use a shell script provided in the contrib directory to keep the
 
 Use this command to create/update the database and reload the bot:
 
-`intelmq.bots.experts.maxmind_geoip.expert --update-database`
+.. code-block:: bash
+
+   intelmq.bots.experts.maxmind_geoip.expert --update-database
 
 
 
@@ -2152,6 +2156,7 @@ Queries a MISP instance for the `source.ip` and adds the MISP Attribute UUID and
 * `misp_url`: URL of MISP server (with trailing '/')
 
 Generic parameters used in this bot:
+
 * `http_verify_cert`: Verify the TLS certificate of the server, boolean (default: `true`)
 
 
@@ -2383,7 +2388,9 @@ A script is supplied that may be run as intelmq to update the database.
 
 Use this command to create/update the database and reload the bot:
 
-`intelmq.bots.experts.recordedfuture_iprisk.expert --update-database`
+.. code-block:: bash
+
+   intelmq.bots.experts.recordedfuture_iprisk.expert --update-database
 
 
 
@@ -2851,7 +2858,9 @@ Tor Nodes
 
 Use this command to create/update the database and reload the bot:
 
-`intelmq.bots.experts.tor_nodes.expert --update-database`
+.. code-block:: bash
+
+   intelmq.bots.experts.tor_nodes.expert --update-database
 
 Url2FQDN
 ^^^^^^^^
@@ -3333,6 +3342,7 @@ Sends a MIME Multipart message containing the text and the event as CSV for ever
 
 For several strings you can use values from the string using the `standard Python string format syntax <https://docs.python.org/3/library/string.html#format-string-syntax>`_.
 Access the event's values with `{ev[source.ip]}` and similar. Any not existing fields will result in `None`.
+For example, to set the recipient(s) to the value given in the event's `source.abuse_contact` field, use this as `mail_to` parameter: `{ev[source.abuse_contact]}`
 
 Authentication is optional. If both username and password are given, these
 mechanism are tried: CRAM-MD5, PLAIN, and LOGIN.

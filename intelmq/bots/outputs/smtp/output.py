@@ -58,9 +58,9 @@ class SMTPOutputBot(Bot):
             msg['Subject'] = self.parameters.subject.format(ev=event)
             msg['From'] = self.parameters.mail_from.format(ev=event)
             msg['To'] = self.parameters.mail_to.format(ev=event)
-            recipients = [recipient.format(ev=event)
+            recipients = [recipient
                           for recipient
-                          in self.parameters.mail_to.split(',')]
+                          in self.parameters.mail_to.format(ev=event).split(',')]
             smtp.send_message(msg, from_addr=self.parameters.mail_from,
                               to_addrs=recipients)
 
