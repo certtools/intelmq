@@ -2144,6 +2144,7 @@ Queries a MISP instance for the `source.ip` and adds the MISP Attribute UUID and
 * `misp_url`: URL of MISP server (with trailing '/')
 
 Generic parameters used in this bot:
+
 * `http_verify_cert`: Verify the TLS certificate of the server, boolean (default: `true`)
 
 

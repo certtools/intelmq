@@ -8,11 +8,12 @@ The MISP API Collector fetches data from MISP via the MISP API.
 
 Look at the Bots' documentation for more information.
 
-Coming soon: MISP Expert
+MISP Expert
 -------------------------------
 
-The MISP Expert will search MISP by API
-for attributes/events matching data of the event.
+The MISP Expert searches MISP by API
+for attributes/events matching the `source.ip` of the event.
+The MISP Attribute UUID and MISP Event ID of the newest attribute are added to the event.
 
 Look at the Bots' documentation for more information.
 
