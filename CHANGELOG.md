@@ -103,6 +103,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 #### Outputs
 - `intelmq.bots.outputs.rt`: Added Request Tracker output bot (PR#1589 by Marius Urkis).
 - `intelmq.bots.outputs.xmpp.output`: Marked as deprecated, see https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html (#1614, PR#1685 by Birger Schacht).
+- `intelmq.bots.outputs.smtp.output`: Fix sending to multiple recipients when recipients are defined by event-data (#1759, PR#1760 by Sebastian Waldbauer and Sebastian Wagner).
 
 ### Documentation
 - Feeds:
