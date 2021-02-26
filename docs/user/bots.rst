@@ -3318,6 +3318,7 @@ Sends a MIME Multipart message containing the text and the event as CSV for ever
 
 For several strings you can use values from the string using the `standard Python string format syntax <https://docs.python.org/3/library/string.html#format-string-syntax>`_.
 Access the event's values with `{ev[source.ip]}` and similar. Any not existing fields will result in `None`.
+For example, to set the recipient(s) to the value given in the event's `source.abuse_contact` field, use this as `mail_to` parameter: `{ev[source.abuse_contact]}`
 
 Authentication is optional. If both username and password are given, these
 mechanism are tried: CRAM-MD5, PLAIN, and LOGIN.
