@@ -160,6 +160,9 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - ansible
   - vagrant
   - vagrant-ansible
+- logrotate:
+  - do not use the old "copytruncate" option as intelmq re-opens the log anyways.
+  - fix file permissions to `0644`.
 
 ### Known issues
 - Bots started with IntelMQ-API/Manager stop when the webserver is restarted #952.
