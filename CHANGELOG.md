@@ -51,6 +51,9 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.bots.collectors.mail`: Add content of the email's `Date` header as `extra.email_date` to the report in all email collectors (PR#1749 by aleksejsv, Sebastian Wagner).
 - `intelmq.bots.collectors.http.collector_http_stream`: Retry on common connection issues without raising exceptions (#1435, PR#1747 by Sebastian Waldbauer and Sebastian Wagner).
 - `intelmq.bots.collectors.shodan.collector_stream`: Retry on common connection issues without raising exceptions (#1435, PR#1747 by Sebastian Waldbauer and Sebastian Wagner).
+- `intelmq.bots.collectors.twitter.collector_twitter`:
+  - Proper input validation in URLs using urllib. CWE-20, found by GitHub's CodeQL (PR#1754).
+  - Limit replacement ("pastebin.com", "pastebin.com/raw") to a maximum of one.
 
 #### Parsers
 - `intelmq.bots.parsers.eset.parser`: Added (PR#1554 by Mikk Margus Möll).

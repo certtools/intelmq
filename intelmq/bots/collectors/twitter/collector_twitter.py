@@ -33,6 +33,7 @@ To get api login data see: https://python-twitter.readthedocs.io/en/latest/getti
 """
 
 import time
+from urllib.parse import urlsplit
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import create_request_session
@@ -80,11 +81,13 @@ class TwitterCollectorBot(CollectorBot):
         self.session = create_request_session(self)
 
     def get_text_from_url(self, url: str) -> str:
-        if "pastebin.com" in url:
+        # netloc could include the port explicityly, but we ignore that improbable case here
+        netloc = urlsplit(url).netloc
+        if netloc == "pastebin.com" or netloc.endswith('.pastebin.com'):
             self.logger.debug('Processing url %r.', url)
             if "raw" not in url:
                 request = self.session.get(
-                    url.replace("pastebin.com", "pastebin.com/raw"))
+                    url.replace("pastebin.com", "pastebin.com/raw", count=1))
             else:
                 request = self.session.get(url)
             return request.text
