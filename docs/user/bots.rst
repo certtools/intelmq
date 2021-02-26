@@ -1773,6 +1773,14 @@ And additionally the exceptions, together with the above wildcard rule:
 `www.example.com` does now not lead to `www.example.com`, but to `example.com`.
 
 
+**Database**
+
+Use this command to create/update the database and reload the bot:
+
+.. code-block:: bash
+
+   intelmq.bots.experts.domain_suffix.expert --update-database
+
 
 Deduplicator
 ^^^^^^^^^^^^

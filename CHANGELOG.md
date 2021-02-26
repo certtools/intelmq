@@ -37,6 +37,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 #### Parsers
 
 #### Experts
+- `intelmq.bots.experts.domain_suffix.expert`: Added `--update-database` option to update domain suffix database.
 
 #### Outputs
 

@@ -8,3 +8,5 @@
 30 23 * * 2     intelmq   intelmq.bots.experts.maxmind_geoip.expert --update-database
 # Update database for asn_lookup bot:
 5 */2 * * *     intelmq   intelmq.bots.experts.asn_lookup.expert --update-database
+# Update database for domain_suffix bot, updated daily:
+45 1 * * *     intelmq   intelmq.bots.experts.domain_suffix.expert --update-database
