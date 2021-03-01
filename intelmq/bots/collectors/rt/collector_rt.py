@@ -5,21 +5,17 @@ from datetime import datetime, timedelta
 from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import (parse_relative, create_request_session,
-                               file_name_from_response, unzip)
+from intelmq.lib.mixins import HttpMixin
+from intelmq.lib.utils import (parse_relative, file_name_from_response, unzip)
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     import rt
 except ImportError:
     rt = None
-try:
-    import requests
-except ImportError:
-    requests = None
 
 
-class RTCollectorBot(CollectorBot):
+class RTCollectorBot(CollectorBot, HttpMixin):
     "Fetches attachments and URLs from an Request Tracker ticketing server"
     attachment_regex: str = "\\.csv\\.zip$"  # TODO: type could be re?
     extract_attachment: bool = True
@@ -49,8 +45,6 @@ class RTCollectorBot(CollectorBot):
                          }
 
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
         if rt is None:
             raise MissingDependencyError("rt")
 
@@ -69,8 +63,6 @@ class RTCollectorBot(CollectorBot):
         else:
             self.not_older_than_type = False
 
-        self.set_request_parameters()
-        self.session = create_request_session(self)
         self._parse_extract_file_parameter('extract_attachment')
         self._parse_extract_file_parameter('extract_download')
 
@@ -145,7 +137,7 @@ class RTCollectorBot(CollectorBot):
 
                 raw = attachment
             else:
-                resp = self.session.get(url=url)
+                resp = self.http_get(url)
 
                 response_code_class = resp.status_code // 100
                 if response_code_class != 2:

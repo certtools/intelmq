@@ -37,20 +37,15 @@ from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.cache import Cache
-from intelmq.lib.utils import parse_relative, create_request_session
+from intelmq.lib.mixins import HttpMixin
+from intelmq.lib.utils import parse_relative
 from intelmq.lib.exceptions import MissingDependencyError
-
-try:
-    import requests
-except ImportError:
-    requests = None
-
 
 URL_LIST = 'https://interflow.azure-api.net/file/api/file/listsharedfiles'
 URL_DOWNLOAD = 'https://interflow.azure-api.net/file/api/file/download?fileName=%s'
 
 
-class MicrosoftInterflowCollectorBot(CollectorBot):
+class MicrosoftInterflowCollectorBot(CollectorBot, HttpMixin):
     "Fetch data from the Microsoft Interflow API"
     api_key: str = ""
     file_match = None  # TODO type
@@ -76,11 +71,6 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
                                  "otherwise the bot is processing the same data over and over again.")
 
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
-
-        self.set_request_parameters()
-
         self.http_header['Ocp-Apim-Subscription-Key'] = self.api_key
         if self.file_match:
             self.file_match = re.compile(self.file_match)
@@ -101,7 +91,6 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
                                      "otherwise the bot is processing the same data over and over again.")
         else:
             self.time_match = None
-        self.session = create_request_session(self)
 
         self.cache = Cache(self.redis_cache_host,
                            self.redis_cache_port,
@@ -113,7 +102,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
     def process(self):
         self.check_ttl_time()
         self.logger.debug('Downloading file list.')
-        files = self.session.get(URL_LIST)
+        files = self.http_get(URL_LIST)
         files.raise_for_status()
         self.logger.debug('Downloaded file list, %s entries.', len(files.json()))
         for file in files.json():
@@ -135,7 +124,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
 
             self.logger.debug('Processing file %r.', file['Name'])
             download_url = URL_DOWNLOAD % file['Name']
-            download = self.session.get(download_url)
+            download = self.http_get(download_url)
             download.raise_for_status()
             if download_url.endswith('.gz'):
                 raw = gzip.open(io.BytesIO(download.content)).read().decode()
@@ -151,7 +140,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
     def print_filelist(self):
         """ Can be called from the debugger for example. """
         self.logger.debug('Downloading file list.')
-        files = self.session.get(URL_LIST)
+        files = self.http_get(URL_LIST)
         files.raise_for_status()
         self.logger.debug('Downloaded file list, %s entries.', len(files.json()))
         print(files.text)

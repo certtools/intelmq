@@ -5,19 +5,14 @@ Uses the common mail iteration method from the lib file.
 import io
 import re
 
+from intelmq.lib.mixins import HttpMixin
 from intelmq.lib.splitreports import generate_reports
-from intelmq.lib.utils import create_request_session, file_name_from_response
+from intelmq.lib.utils import file_name_from_response
 
 from ._lib import MailCollectorBot
-from intelmq.lib.exceptions import MissingDependencyError
-
-try:
-    import requests
-except ImportError:
-    requests = None
 
 
-class MailURLCollectorBot(MailCollectorBot):
+class MailURLCollectorBot(MailCollectorBot, HttpMixin):
     """Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies"""
     chunk_replicate_header: bool = True
     chunk_size: int = None
@@ -35,12 +30,6 @@ class MailURLCollectorBot(MailCollectorBot):
 
     def init(self):
         super().init()
-        if requests is None:
-            raise MissingDependencyError("requests")
-
-        # Build request
-        self.set_request_parameters()
-        self.session = create_request_session(self)
 
     def process_message(self, uid, message):
         erroneous = False  # If errors occurred this will be set to true.
@@ -56,7 +45,7 @@ class MailURLCollectorBot(MailCollectorBot):
 
                 self.logger.info("Downloading report from %r.", url)
                 try:
-                    resp = self.session.get(url=url)
+                    resp = self.http_get(url)
                 except requests.exceptions.Timeout:
                     self.logger.error("Request timed out %i times in a row." %
                                       self.http_timeout_max_tries)
