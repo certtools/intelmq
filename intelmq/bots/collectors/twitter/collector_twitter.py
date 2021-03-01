@@ -36,13 +36,8 @@ import time
 from urllib.parse import urlsplit
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import create_request_session
+from intelmq.lib.mixins import HttpMixin
 from intelmq.lib.exceptions import MissingDependencyError
-
-try:
-    import requests
-except ImportError:
-    requests = None
 
 try:
     import twitter
@@ -50,7 +45,7 @@ except ImportError:
     twitter = None
 
 
-class TwitterCollectorBot(CollectorBot):
+class TwitterCollectorBot(CollectorBot, HttpMixin):
     "Collect tweets from given target timelines"
     access_token_key: str = ""
     access_token_secret: str = ""
@@ -67,8 +62,6 @@ class TwitterCollectorBot(CollectorBot):
     _follow_urls = []
 
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
         if twitter is None:
             raise MissingDependencyError("twitter")
         self.current_time_in_seconds = int(time.time())
@@ -85,19 +78,16 @@ class TwitterCollectorBot(CollectorBot):
             access_token_secret=self.access_token_secret,
             tweet_mode="extended")
 
-        self.set_request_parameters()
-        self.session = create_request_session(self)
-
     def get_text_from_url(self, url: str) -> str:
         # netloc could include the port explicityly, but we ignore that improbable case here
         netloc = urlsplit(url).netloc
         if netloc == "pastebin.com" or netloc.endswith('.pastebin.com'):
             self.logger.debug('Processing url %r.', url)
             if "raw" not in url:
-                request = self.session.get(
+                request = self.http_get(
                     url.replace("pastebin.com", "pastebin.com/raw", count=1))
             else:
-                request = self.session.get(url)
+                request = self.http_get(url)
             return request.text
         return ''
 

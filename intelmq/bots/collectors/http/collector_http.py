@@ -25,13 +25,9 @@ gpg_keyring: none (defaults to user's GPG keyring) or string (path to keyring fi
 from datetime import datetime, timedelta
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import unzip, create_request_session
+from intelmq.lib.mixins import HttpMixin
+from intelmq.lib.utils import unzip
 from intelmq.lib.exceptions import MissingDependencyError
-
-try:
-    import requests
-except ImportError:
-    requests = None
 
 try:
     import gnupg
@@ -51,7 +47,7 @@ class Time(object):
         return self.time.strftime(timeformat)
 
 
-class HTTPCollectorBot(CollectorBot):
+class HTTPCollectorBot(CollectorBot, HttpMixin):
     """Fetch reports from an URL"""
     extract_files: bool = False
     gpg_keyring: str = None  # TODO: pathlib.Path
@@ -66,13 +62,6 @@ class HTTPCollectorBot(CollectorBot):
     verify_pgp_signatures: bool = False
 
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
-
-        self.set_request_parameters()
-
-        self.session = create_request_session(self)
-
         self.use_gpg = self.verify_pgp_signatures
         if self.use_gpg and gnupg is None:
             raise MissingDependencyError("gnupg")
@@ -88,7 +77,7 @@ class HTTPCollectorBot(CollectorBot):
 
         self.logger.info("Downloading report from %r.", http_url)
 
-        resp = self.session.get(url=http_url)
+        resp = self.http_get(http_url)
 
         if resp.status_code // 100 != 2:
             self.logger.debug('Request headers: %r.', resp.request.headers)
@@ -174,7 +163,7 @@ class HTTPCollectorBot(CollectorBot):
         # download signature file
         self.logger.info("Downloading PGP signature from {}.".format(http_url))
 
-        resp = self.session.get(url=http_url)
+        resp = self.http_get(http_url)
         if resp.status_code // 100 != 2:
             raise ValueError("Could not download PGP signature for report: {}.".format(resp.status_code))
 

@@ -14,20 +14,16 @@ strip_lines: boolean
 http_timeout_sec: tuple of two floats or float
 """
 
-try:
-    import requests
-except ImportError:
-    requests = None
-
 from http.client import IncompleteRead
 from urllib3.exceptions import ProtocolError, ReadTimeoutError
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.mixins import HttpMixin
 from intelmq.lib.utils import decode, create_request_session
 from intelmq.lib.exceptions import MissingDependencyError
 
 
-class HTTPStreamCollectorBot(CollectorBot):
+class HTTPStreamCollectorBot(CollectorBot, HttpMixin):
     "Open a streaming connection to the URL and process data per line"
     _sighup_delay: bool = False
     http_password: str = None
@@ -38,19 +34,13 @@ class HTTPStreamCollectorBot(CollectorBot):
     strip_lines: bool = True
 
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
-
-        self.set_request_parameters()
-        self.session = create_request_session(self)
-
         self.__error_count = 0
 
     def process(self):
         self.logger.info("Connecting to stream at %r.", self.http_url)
 
         try:
-            req = self.session.get(url=self.http_url, stream=True)
+            req = self.http_get(url=self.http_url, stream=True)
         except requests.exceptions.ConnectionError:
             self.logger.exception('Connection Failed.')
         else:
