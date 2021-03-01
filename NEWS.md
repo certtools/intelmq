@@ -10,6 +10,11 @@ See the changelog for a full list of changes.
 
 ### Tools
 
+### Bots
+
+Both the XMPP collector bot and the XMPP output bot were removed. This [was evaluated on the mailinglist](https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html)
+and the XMPP bots were deprecated in 391d625.
+
 ### Harmonization
 The classification scheme has been updated to better match the [Reference Security Incident Taxonomy](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed:
 

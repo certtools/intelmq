@@ -211,26 +211,6 @@
                 "provider": "__PROVIDER__"
             }
         },
-        "XMPP": {
-            "description": "Connect to an XMPP Server and a room, in order to receive reports from it. TLS is used by default. Bot can either pass on the body or the whole event.",
-            "module": "intelmq.bots.collectors.xmpp.collector",
-            "parameters": {
-                "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
-                "name": "__FEED__",
-                "pass_full_xml": false,
-                "provider": "__PROVIDER__",
-                "strip_message": true,
-                "use_muc": false,
-                "xmpp_password": "<xmpp password>",
-                "xmpp_room": null,
-                "xmpp_room_nick": null,
-                "xmpp_room_password": null,
-                "xmpp_server": "<xmpp server>",
-                "xmpp_user": "<xmpp username>",
-                "xmpp_userlist": null,
-                "xmpp_whitelist_mode": false
-            }
-        },
         "AlienVault OTX": {
             "description": "Collect reports from the AlienVault OTX Collector API. Report varies according to subscriptions.",
             "module": "intelmq.bots.collectors.alienvault_otx.collector",
@@ -1311,23 +1291,6 @@
                 "keep_raw_field": false,
                 "udp_host": "localhost",
                 "udp_port": "<port>"
-            }
-        },
-        "XMPP": {
-            "description": "Send events to an XMPP server.",
-            "module": "intelmq.bots.outputs.xmpp.output",
-            "parameters": {
-                "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
-                "hierarchical_output": false,
-                "use_muc": false,
-                "xmpp_password": "<xmpp password>",
-                "xmpp_room": null,
-                "xmpp_room_nick": null,
-                "xmpp_room_password": null,
-                "xmpp_server": "<xmpp server>",
-                "xmpp_to_server": "<destination server>",
-                "xmpp_to_user": "<destination username>",
-                "xmpp_user": "<xmpp username>"
             }
         }
     }

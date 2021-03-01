@@ -33,6 +33,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 
 ### Bots
 #### Collectors
+- Remove `intelmq.bots.collectors.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
+  users mailinglist, the bot is not used by anyone. (https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html, PR#1761, closes #1614)
 
 #### Parsers
 
@@ -40,6 +42,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - `intelmq.bots.experts.domain_suffix.expert`: Added `--update-database` option to update domain suffix database.
 
 #### Outputs
+- Remove `intelmq.bots.outputs.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
+  users mailinglist, the bot is not used by anyone. (https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html, PR#1761, closes #1614)
 
 ### Documentation
 
