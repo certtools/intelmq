@@ -50,7 +50,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.prepare_bot()
         self.assertEqual(self.bot.group, 'Parser')
 
-    def test_invalid_input_message(self):
+    def test_encoding_error_on_input_message(self):
         """
         Test if the bot is dumping / not retrying a message which is impossible to parse.
         https://github.com/certtools/intelmq/issues/1494
@@ -58,6 +58,18 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = b'foo\xc9bar'
         self.run_bot(iterations=1, allowed_error_count=1)
         self.assertLogMatches('.*intelmq\.lib\.exceptions\.DecodingError:.*')
+        self.assertEqual(self.pipe.state['test-bot-input-internal'], [])
+        self.assertEqual(self.pipe.state['test-bot-input'], [])
+        self.assertEqual(self.pipe.state['test-bot-output'], [])
+
+    def test_invalid_value_on_input_message(self):
+        """
+        Test if the bot is dumping / not retrying a message which is impossible to parse.
+        https://github.com/certtools/intelmq/issues/1765
+        """
+        self.input_message = b'{"source.asn": 0, "__type": "Event"}'
+        self.run_bot(iterations=1, allowed_error_count=1)
+        self.assertLogMatches(r'.*intelmq\.lib\.exceptions\.InvalidValue:.*')
         self.assertEqual(self.pipe.state['test-bot-input-internal'], [])
         self.assertEqual(self.pipe.state['test-bot-input'], [])
         self.assertEqual(self.pipe.state['test-bot-output'], [])
