@@ -227,6 +227,7 @@ class Bot(object):
             self.stop()
             raise
         self.logger.info("Bot initialization completed.")
+        super().__init__()
 
         self.__stats_cache = cache.Cache(host=self.statistics_host,
                                          port=self.statistics_port,
