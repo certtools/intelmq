@@ -50,7 +50,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
                               levelname="DEBUG")
         self.assertLogMatches(pattern="Failed to parse line.")
         self.assertLogMatches(pattern="ValueError: Required column 'timestamp' not found in feed 'Accessible-HTTP'. Possible change in data format or misconfiguration.")
-        self.assertLogMatches(pattern="Sent 0 events and found 1 problem\(s\)\.",
+        self.assertLogMatches(pattern=r"Sent 0 events and found 1 problem\(s\)\.",
                               levelname="INFO")
 
     def test_half_broken(self):
@@ -63,7 +63,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
                               levelname="DEBUG")
         self.assertLogMatches(pattern="Optional key 'protocol' not found in feed 'Accessible-FTP'. Possible change in data format or misconfiguration.",
                               levelname="WARNING")
-        self.assertLogMatches(pattern="Sent 1 events and found 0 problem\(s\)\.",
+        self.assertLogMatches(pattern=r"Sent 1 events and found 0 problem\(s\)\.",
                               levelname="INFO")
 
     def test_no_config(self):
@@ -72,7 +72,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         """
         self.input_message = REPORT3
         self.run_bot(allowed_error_count=1)
-        self.assertLogMatches(pattern="ValueError: Could not get a config for 'some_string', check the documentation." )
+        self.assertLogMatches(pattern="ValueError: Could not get a config for 'some_string', check the documentation.")
 
     def test_invalid_filename(self):
         """
@@ -80,7 +80,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         """
         self.input_message = REPORT4
         self.run_bot(allowed_error_count=1)
-        self.assertLogMatches(pattern="ValueError: Report's 'extra.file_name' '2020.wrong-filename.csv' is not valid." )
+        self.assertLogMatches(pattern="ValueError: Report's 'extra.file_name' '2020.wrong-filename.csv' is not valid.")
 
     def test_no_report_name(self):
         """

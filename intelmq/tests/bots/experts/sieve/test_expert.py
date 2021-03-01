@@ -571,7 +571,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             self.run_bot()
         exception = context.exception
-        self.assertRegex(str(exception), '.*Incompatible type: FQDN\.$')
+        self.assertRegex(str(exception), r'.*Incompatible type: FQDN\.$')
 
     def test_exists_match(self):
         """ Test :exists match """
@@ -1005,7 +1005,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     def test_basic_math(self):
         """ Test basic math operations"""
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
-                                                'test_sieve_files/test_basic_math.sieve')
+                                              'test_sieve_files/test_basic_math.sieve')
 
         event = EXAMPLE_INPUT.copy()
         event['comment'] = "add_force"
@@ -1071,7 +1071,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     def test_only_one_action(self):
         """ Test only one action """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
-                                                'test_sieve_files/test_only_one_action.sieve')
+                                              'test_sieve_files/test_only_one_action.sieve')
 
         event = EXAMPLE_INPUT.copy()
         event['comment'] = 'Test action only'
@@ -1083,7 +1083,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     def test_only_multiple_actions(self):
         """ Test only multiple action """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
-                                                'test_sieve_files/test_only_multiple_actions.sieve')
+                                              'test_sieve_files/test_only_multiple_actions.sieve')
 
         event = EXAMPLE_INPUT.copy()
         event['comment'] = 'Test action only'
