@@ -117,12 +117,12 @@ class Message(dict):
 
         super().__init__()
         if isinstance(message, dict):
-            iterable = message.items()
+            self.iterable = message
         elif isinstance(message, tuple):
-            iterable = message
+            self.iterable = dict(message)
         else:
             raise ValueError("Type %r of message can't be handled, must be dict or tuple.", type(message))
-        for key, value in iterable:
+        for key, value in self.iterable.items():
             if not self.add(key, value, sanitize=False, raise_failure=False):
                 self.add(key, value, sanitize=True)
 
@@ -246,14 +246,14 @@ class Message(dict):
             value = self.__sanitize_value(key, value)
             if value is None:
                 if raise_failure:
-                    raise exceptions.InvalidValue(key, old_value)
+                    raise exceptions.InvalidValue(key, old_value, object=bytes(json.dumps(self.iterable), 'utf-8'))
                 else:
                     return False
 
         valid_value = self.__is_valid_value(key, value)
         if not valid_value[0]:
             if raise_failure:
-                raise exceptions.InvalidValue(key, value, reason=valid_value[1])
+                raise exceptions.InvalidValue(key, value, reason=valid_value[1], object=bytes(json.dumps(self.iterable), 'utf-8'))
             else:
                 return False
 

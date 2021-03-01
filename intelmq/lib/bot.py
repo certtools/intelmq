@@ -326,6 +326,15 @@ class Bot(object):
 
                 message_to_dump = exc.object
 
+            except exceptions.InvalidValue as exc:
+                self.logger.exception('Found an invalid value that violates the harmonization rules.')
+
+                # ensure that we do not re-process the faulty message
+                self.__error_retries_counter = self.error_max_retries + 1
+                error_on_message = sys.exc_info()
+
+                message_to_dump = exc.object
+
             except Exception as exc:
                 # in case of serious system issues, exit immediately
                 if isinstance(exc, MemoryError):
