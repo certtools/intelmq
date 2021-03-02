@@ -15,8 +15,7 @@ if os.getenv('INTELMQ_TEST_EXOTIC'):
     from .lib import MockedTxtImbox
 
 
-REPORT_FOOBARTXT = {
-                    '__type': 'Report',
+REPORT_FOOBARTXT = {'__type': 'Report',
                     'extra.email_from': 'wagner@cert.at',
                     'extra.email_message_id': '<07ce0153-060b-f48d-73d9-d92a20b3b3aa@cert.at>',
                     'extra.email_subject': 'foobar txt',
@@ -43,7 +42,7 @@ class TestMailURLCollectorBot(test.BotTestCase, unittest.TestCase):
                          'mail_ssl': None,
                          'folder': None,
                          'subject_regex': None,
-                         'url_regex': 'http://localhost/.*\.txt',
+                         'url_regex': r'http://localhost/.*\.txt',
                          'name': 'IMAP Feed',
                          }
 

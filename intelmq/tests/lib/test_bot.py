@@ -40,7 +40,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = test_parser_bot.EXAMPLE_SHORT
         self.run_bot(parameters={'raise_warning': True},
                      allowed_warning_count=1)
-        self.assertLogMatches(levelname='WARNING', pattern='.*intelmq/tests/lib/test_parser_bot\.py\:[0-9]+\: UserWarning: This is a warning test.')
+        self.assertLogMatches(levelname='WARNING', pattern=r'.*intelmq/tests/lib/test_parser_bot\.py\:[0-9]+\: UserWarning: This is a warning test.')
 
     def test_bot_group(self):
         """
@@ -57,7 +57,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         """
         self.input_message = b'foo\xc9bar'
         self.run_bot(iterations=1, allowed_error_count=1)
-        self.assertLogMatches('.*intelmq\.lib\.exceptions\.DecodingError:.*')
+        self.assertLogMatches(r'.*intelmq\.lib\.exceptions\.DecodingError:.*')
         self.assertEqual(self.pipe.state['test-bot-input-internal'], [])
         self.assertEqual(self.pipe.state['test-bot-input'], [])
         self.assertEqual(self.pipe.state['test-bot-output'], [])

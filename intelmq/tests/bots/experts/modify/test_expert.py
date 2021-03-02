@@ -141,12 +141,12 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
         inp.update(INPUT[6])
         self.input_message = inp
         self.run_bot(parameters={'overwrite': True, 'logging_level': 'DEBUG'})
-        self.assertLogMatches('.*Apply rule Fraunhofer DGA\.$', 'DEBUG')
+        self.assertLogMatches(r'.*Apply rule Fraunhofer DGA\.$', 'DEBUG')
         self.assertMessageEqual(0, OUTPUT[6])
 
         self.input_message = inp
         self.run_bot(parameters={'maximum_matches': 1, 'overwrite': True, 'logging_level': 'DEBUG'})
-        self.assertLogMatches('Reached maximum number of matches, breaking\.$', 'DEBUG')
+        self.assertLogMatches(r'Reached maximum number of matches, breaking\.$', 'DEBUG')
         out = OUTPUT[6].copy()
         del out['classification.identifier']
         self.assertMessageEqual(0, out)
