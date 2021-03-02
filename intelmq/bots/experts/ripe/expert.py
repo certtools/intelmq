@@ -76,7 +76,6 @@ class RIPEExpertBot(Bot):
         if requests is None:
             raise MissingDependencyError("requests")
 
-        self.__mode = self.mode
         self.__query = {
             "db_asn": self.query_ripe_db_asn,
             "db_ip": self.query_ripe_db_ip,
@@ -104,7 +103,7 @@ class RIPEExpertBot(Bot):
         event = self.receive_message()
         for target in {'source.', 'destination.'}:
             abuse_key = target + "abuse_contact"
-            abuse = set(event.get(abuse_key).split(',')) if self.__mode == 'append' and abuse_key in event else set()
+            abuse = set(event.get(abuse_key).split(',')) if self.mode == 'append' and abuse_key in event else set()
 
             asn = event.get(target + "asn", None)
             if asn:
@@ -122,7 +121,7 @@ class RIPEExpertBot(Bot):
                 if self.__query['stat_geo']:
                     info = self.__perform_cached_query('stat_geolocation', ip)
 
-                    should_overwrite = self.__mode == 'replace'
+                    should_overwrite = self.mode == 'replace'
 
                     for local_key, ripe_key in self.GEOLOCATION_REPLY_TO_INTERNAL:
                         if ripe_key in info:
