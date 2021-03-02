@@ -11,12 +11,6 @@ import hmac
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.cache import Cache
 from intelmq.lib.utils import create_request_session
-from intelmq.lib.exceptions import MissingDependencyError
-
-try:
-    import requests
-except ImportError:
-    requests = None
 
 APIROOT = 'https://transform.shadowserver.org/api2/'
 
