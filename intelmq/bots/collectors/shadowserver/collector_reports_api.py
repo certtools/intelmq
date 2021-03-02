@@ -7,12 +7,14 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 from datetime import datetime, timedelta
 import hashlib
 import hmac
+import re
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.cache import Cache
 from intelmq.lib.utils import create_request_session
 
 APIROOT = 'https://transform.shadowserver.org/api2/'
+FILENAME_PATTERN = re.compile(r'\.csv$')
 
 
 class ShadowServerAPICollectorBot(CollectorBot):
@@ -121,17 +123,18 @@ class ShadowServerAPICollectorBot(CollectorBot):
 
         for item in reportslist:
             filename = item['file']
+            filename_fixed = FILENAME_PATTERN.sub('.json', filename, count=1)
             if self.cache.get(filename):
-                self.logger.debug('Processed file %r already.', filename)
+                self.logger.debug('Processed file %r (fixed: %r) already.', filename, filename_fixed)
                 continue
-            self.logger.debug('Processing file %s.', filename)
+            self.logger.debug('Processing file %r (fixed: %r).', filename, filename_fixed)
             reportdata = self._report_download(item['id'])
             report = self.new_report()
-            report.add('extra.file_name', filename)
+            report.add('extra.file_name', filename_fixed)
             report.add('raw', str(reportdata))
             self.send_message(report)
             self.cache.set(filename, 1)
-            self.logger.debug('Sent report: %s.', filename)
+            self.logger.debug('Sent report: %r (fixed: %r).', filename, filename_fixed)
 
 
 BOT = ShadowServerAPICollectorBot
