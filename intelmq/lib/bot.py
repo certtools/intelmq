@@ -214,9 +214,10 @@ class Bot(object):
         Called when signal is received and postpone.
         """
         self.__sighup.set()
-        self.logger.info('Received SIGHUP, initializing again later.')
         if not self.sighup_delay:
             self.__handle_sighup()
+        else:
+            self.logger.info('Received SIGHUP, initializing again later.')
 
     def __handle_sighup(self):
         """

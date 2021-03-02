@@ -14,6 +14,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - `Bot.argparser`: Added class method `_create_argparser` (returns `argparse.ArgumentParser`) for easy command line arguments parsing (PR#1586 by Filip Pokorný).
   - Runtime configuration does not necessarily need a parameter entry for each block. Previously at least an empty block was required (PR#1604 by Filip Pokorný).
   - Allow setting the pipeline host and the Redis cache host by environment variables for docker usage (PR#1669 by Sebastian Waldbauer).
+  - Better logging message for SIGHUP handling if the handling of the signal is not delayed (by Sebastian Wagner).
 - `intelmq.lib.upgrades`:
   - Add upgrade function for removal of *HPHosts Hosts file* feed and `intelmq.bots.parsers.hphosts` parser (#1559, by Sebastian Wagner).
 - `intelmq.lib.exceptions`:
