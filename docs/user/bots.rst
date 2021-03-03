@@ -2115,8 +2115,6 @@ The bot requires the MaxMind's `geoip2` Python library, version 2.2.0 has been t
 
 To download the database a free license key is required. More information can be found at https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/
 
-You may want to use a shell script provided in the contrib directory to keep the database up to date: `contrib/cron-jobs/update-geoip-data`
-
 **Configuration Parameters**
 
 * `database`: Path to the local database, e.g. `"/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"`

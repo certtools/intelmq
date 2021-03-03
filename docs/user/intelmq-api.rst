@@ -16,11 +16,11 @@ Installing and running intelmq-api
 
 You can install the ``intelmq-api`` package using your preferred system package installation mechanism or using the ``pip`` Python package installer.
 We provide packages for the ``intelmq-api`` for the same operating systems as we do for the ``intelmq`` package itself.
-Our repository page gives `installation instructions for various operating systems <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq>`_.
+Our repository page gives `installation instructions for various operating systems <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq-api>`_.
 
 The ``intelmq-api`` packages ship a configuration file in ``${PREFIX}/etc/intelmq/api-config.json``, a virtualhost configuration file for Apache 2 in ``${PREFIX}/etc/intelmq/api-apache.conf`` and a sudoers configuration file in ``${PREFIX}/etc/intelmq/api-sudoers.conf``.
 The value of ``${PREFIX}`` depends on your installation method- with distribution packages it is simply ``/``, when using pip (as root) it is ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version.
-Some distribution packages already create a symlink to the sudoers file in the sudoers.d configuration directory and a symlink in the relevant apache configuration directory to the apache configuration file, so it should be easy to enable that (i.e. by using ``a2ensite intelmq-api`` on Debian based systems).
+Some distribution packages already create a symlink to the sudoers file in the sudoers.d configuration directory and a symlink in the relevant Apache configuration directory to the Apache configuration file, so it should be easy to enable that (i.e. by using ``a2ensite intelmq-api`` on Debian based systems).
 
 But for development purposes and testing you can also run ``intelmq-api`` directly using ``hug``:
 
@@ -39,7 +39,7 @@ Depending on your setup you might have to install ``sudo`` to make it possible f
 
 ``intelmq-api`` is configured using a configuration file in ``json`` format.
 ``intelmq-api`` tries to load the configuration file from ``/etc/intelmq/api-config.json`` and ``${PREFIX}/etc/intelmq/api-config.json``, but you can override the path setting the environment variable ``INTELMQ_API_CONFIG``.
-(When using apache, you can do this by modifying the apache configuration file shipped with ``intelmq-api``, the file contains an example)
+(When using Apache, you can do this by modifying the Apache configuration file shipped with ``intelmq-api``, the file contains an example)
 
 When running the API using ``hug``, you can set the environment variable like this:
 
@@ -77,7 +77,7 @@ Permissions
 ^^^^^^^^^^^
 
 ``intelmq-api`` tries to write a couple of configuration files in the ``${PREFIX}/etc/intelmq`` directory - this is only possible if you set the permissions accordingly, given that ``intelmq-api`` runs under a different user.
-If you're using the default apache2 setup, you might want to set the group of the files to ``www-data`` and give it write permissions (``chmod g+w <filename>``).
+If you're using the default Apache 2 setup, you might want to set the group of the files to ``www-data`` and give it write permissions (``chmod g+w <filename>``).
 In addition to that, the ``intelmq-manager`` tries to store the bot positions via the API into the file ``${PREFIX}/etc/intelmq/manager/positions.conf``.
 You should therefore create the folder ``${PREFIX}/etc/intelmq/manager`` and the file ``positions.conf`` in it.
 
@@ -104,9 +104,12 @@ Therefore, SELinux needs to be disabled:
 
 We welcome contributions to provide SELinux policies.
 
-**************
-Usual problems
-**************
+*****************************
+Frequent operational problems
+*****************************
+
+IntelMQCtlError
+^^^^^^^^^^^^^^^
 
 If the command is not configured correctly, you'll see exceptions on startup like this:
 
@@ -116,3 +119,32 @@ If the command is not configured correctly, you'll see exceptions on startup lik
 
 This means the intelmqctl command could not be executed as a subprocess.
 The ``<ERROR_MESSAGE>`` should indicate why.
+
+Access Denied / Authentication Required "Please provide valid Token verification credentials"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you see the IntelMQ Manager interface and menu, but the API calls to the back-end querying configuration and status of IntelMQ fail with "Access Denied" or "Authentication Required: Please provide valid Token verification credentials" errors, you are maybe not logged in while the API requires authentication.
+
+By default, the API requires authentication. Create user accounts and login with them or - if you have other protection means in place - deactivate the authentication requirement by removing or renaming the `session_store` parameter in the configuration.
+
+Internal Server Error
+^^^^^^^^^^^^^^^^^^^^^
+
+There can be various reasons for internal server errors. You need to look at the error log of your web server, for example ``/var/log/apache2/error.log`` or ``/var/log/httpd/error_log`` for Apache 2. It could be that the sudo-setup is not functional, the configuration file or session database file can not be read or written or other errors in regards to the execution of the API program.
+
+Can I just install it from the deb/rpm packages while installing IntelMQ from a different source?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Yes, you can install the API and the Manager from the deb/rpm repositories, and install your IntelMQ from a somewhere else, e.g. a local repository.
+However, knowledge about Python system administration experience and is recommended if you do so.
+
+The packages install IntelMQ to ``/usr/lib/python3*/site-packages/intelmq/``.
+Installing with ``pip`` results in ``/usr/local/lib/python3*/site-packages/intelmq/`` (and some other accompaning resources) which overrides the installation in ``/usr/lib/``.
+You probably need to adapt the configuration parameter ``intelmq_ctl_cmd`` to the ``/usr/local/bin/intelmqctl`` executable and some other tweaks.
+
+
+************
+Getting help
+************
+
+You can use the `IntelMQ users mailing lists <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users>`_ and `GitHub issues <https://github.com/certtools/intelmq-api/issues/new>`_ for getting help and getting in touch with other users and developers. See also the :doc:`introduction` page.

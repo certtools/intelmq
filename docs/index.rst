@@ -37,11 +37,19 @@ User guide
    user/bots
    user/intelmqctl
    user/feeds
-   user/ecosystem
+   user/FAQ
    user/intelmq-api
    user/intelmq-manager
+
+Connecting with other systems
+=============================
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+
+   user/ecosystem
    user/ELK-Stack
-   user/FAQ
    user/MISP-Integrations
    user/n6-integrations
 

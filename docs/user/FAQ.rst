@@ -3,20 +3,22 @@ Frequently asked questions
 
 .. contents::
 
+For questions about the API, have a look at the :doc:`API documentation page <intelmq-api>`
+
 Send IntelMQ events to Splunk
 -------------------------------------------------------------------
 
-1. Go to Splunk and configure in order to be able to receive logs(intelmq events) to a tcp port
-2. Use tcp output bot and configure accordingly to the Splunk configuration that you applied.
+1. Go to Splunk and configure in order to be able to receive logs(intelmq events) to a TCP port
+2. Use TCP output bot and configure accordingly to the Splunk configuration that you applied.
 
-Permission denied when using redis unix socket
+Permission denied when using Redis Unix socket
 -------------------------------------------------------------------
 
 If you get an error like this:
 
 ``intelmq.lib.exceptions.PipelineError: pipeline failed - ConnectionError('Error 13 connecting to unix socket: /var/run/redis/redis.sock. Permission denied.',)``
 
-make sure the permissions for the socket are set accordingly in ``/etc/redis/redis.conf`` (or wherever your config is), e.g.:
+make sure the permissions for the socket are set accordingly in ``/etc/redis/redis.conf`` (or wherever your configuration is), e.g.:
 
 ``unixsocketperm 777``
 

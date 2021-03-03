@@ -52,7 +52,7 @@ It follows the following basic meta-guidelines:
 -  Strive for perfection while keeping a deadline
 -  Reduce complexity/avoid feature bloat
 -  Embrace unit testing
--  Code readability: test with unexperienced programmers
+-  Code readability: test with inexperienced programmers
 -  Communicate clearly
 
 *****
