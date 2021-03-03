@@ -176,21 +176,6 @@
                 "user": "intelmq"
             }
         },
-        "Shadowserver Reports API": {
-            "description": "Connects to the Shadowserver API, requests a list of all the reports for a specific country and processes the ones that are new.",
-            "module": "intelmq.bots.collectors.shadowserver.collector_reports_api",
-            "parameters": {
-                "country": "<CC>",
-                "api_key": "<API key>",
-                "secret": "<API secret>",
-                "types": "<single report or list of reports>",
-                "rate_limit": 86400,
-                "redis_cache_db": 12,
-                "redis_cache_host": "127.0.0.1",
-                "redis_cache_port": 6379,
-                "redis_cache_ttl": 864000
-            }
-        },
         "Rsync": {
             "description": "Collect data with rsync from any resource rsync supports.",
             "module": "intelmq.bots.collectors.rsync.collector_rsync",
@@ -327,6 +312,21 @@
                 "redis_cache_password": null,
                 "redis_cache_port": 6379,
                 "redis_cache_ttl": 604800
+            }
+        },
+        "Shadowserver Reports API": {
+            "description": "Connects to the Shadowserver API, requests a list of all the reports for a specific country and processes the ones that are new.",
+            "module": "intelmq.bots.collectors.shadowserver.collector_reports_api",
+            "parameters": {
+                "country": "<CC>",
+                "api_key": "<API key>",
+                "secret": "<API secret>",
+                "types": "<single report or list of reports>",
+                "rate_limit": 86400,
+                "redis_cache_db": 12,
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": 6379,
+                "redis_cache_ttl": 864000
             }
         },
         "Shodan Stream": {
