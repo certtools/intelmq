@@ -4,7 +4,7 @@ NEWS
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 Please refer to the changelog for a full list of changes.
 
-2.3.0 Bugfix release (unreleased)
+2.3.0 Feature release (2021-03-04)
 ----------------------------------
 
 The documentation is now available at [intelmq.readthedocs.io](https://intelmq.readthedocs.io/).
