@@ -583,11 +583,6 @@
             "module": "intelmq.bots.parsers.malc0de.parser",
             "parameters": {}
         },
-        "Malware Domain List": {
-            "description": "Parse the Malware Domain List feed.",
-            "module": "intelmq.bots.parsers.malwaredomainlist.parser",
-            "parameters": {}
-        },
         "Malware Domains": {
             "description": "Parse the Malware Domains feed.",
             "module": "intelmq.bots.parsers.malwaredomains.parser",

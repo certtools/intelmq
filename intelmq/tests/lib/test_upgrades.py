@@ -450,7 +450,19 @@ V230_OUT = {
     }
 }
 }
-
+V230_MALWAREDOMAINLIST_IN = {
+"malwaredomainlist-parser": {
+    "module": "intelmq.bots.parsers.malwaredomainlist.parser",
+    "parameters": {
+    }
+},
+"malwaredomainlist-collector": {
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "http_url": "http://www.malwaredomainlist.com/updatescsv.php"
+        }
+    }
+}
 
 def generate_function(function):
     def test_function(self):
@@ -614,6 +626,24 @@ class TestUpgradeLib(unittest.TestCase):
         result = upgrades.v230_feed_fix({}, V230_OUT, {}, False)
         self.assertIsNone(result[0])
         self.assertEqual(V230_OUT, result[2])
+
+    def test_v230_deprecations(self):
+        """ Test v230_deprecations """
+        result = upgrades.v230_deprecations({}, V230_MALWAREDOMAINLIST_IN, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual('A discontinued bot "Malware Domain List Parser" has been found as bot '
+                         'malwaredomainlist-parser. Remove affected bots yourself.',
+                         result[0])
+        self.assertEqual(V230_MALWAREDOMAINLIST_IN, result[2])
+
+    def test_v230_feed_changes(self):
+        """ Test v230_feed_changes """
+        result = upgrades.v230_feed_changes({}, V230_MALWAREDOMAINLIST_IN, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual('A discontinued feed "Malware Domain List" has been found as bot '
+                         'malwaredomainlist-collector. Remove affected bots yourself.',
+                         result[0])
+        self.assertEqual(V230_MALWAREDOMAINLIST_IN, result[2])
 
 
 for name in upgrades.__all__:

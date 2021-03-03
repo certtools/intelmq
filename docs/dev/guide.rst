@@ -280,7 +280,6 @@ Examples:
 
 .. code-block::
 
-   intelmq/bots/parser/malwaredomainlist/parser.py
    intelmq/bots/parser/taichung/parser.py
    intelmq/bots/parser/cymru/parser_full_bogons.py
    intelmq/bots/parser/abusech/parser_ransomware.py
