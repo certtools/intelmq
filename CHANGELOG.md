@@ -157,7 +157,9 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.lib.test`:
   - `test_static_bot_check_method` checks the bot's static `check(parameters)` method for any exceptions, and a valid formatted return value (#1505, by Sebastian Wagner).
   - `setUpClass`: Skip tests if cache was requests with `use_cache` member, but Redis is deactivated with the environment variable `INTELMQ_SKIP_REDIS` (by Sebastian Wagner).
-- `intelmq.tests.bots.experts.cymru_whois.test_expert`: Switch from `example.com` to `ns2.univie.ac.at` for hopefully more stable responses (#1730, PR#1731 by Sebastian Waldbauer).
+- `intelmq.tests.bots.experts.cymru_whois.test_expert`:
+  - Switch from `example.com` to `ns2.univie.ac.at` for hopefully more stable responses (#1730, PR#1731 by Sebastian Waldbauer).
+  - Do not test for exact expected values in the 6to4 network test, as the values are changing regularly (by Sebastian Wagner).
 - `intelmq.tests.bots.parsers.abusech`: Remove tests cases of discontinued feeds (PR#1741 by Thomas Bellus).
 - Activate GitHub's CodeQL Code Analyzing tool as GitHub Action (by Sebastian Wagner).
 
