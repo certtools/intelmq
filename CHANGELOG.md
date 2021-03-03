@@ -9,6 +9,10 @@ CHANGELOG
 ### Core
 - `intelmq.lib.harmonization`:
   - New class `ClassificationTaxonomy` with fixed list of taxonomies and sanitiation
+- `intelmq.lib.bot`:
+  - Handle `InvalidValue` exceptions upon message retrieval by dumping the message instead of repeating endlessly (#1765, PR#1766 by Filip Pokorný).
+- `intelmq.lib.exceptions`:
+  - `InvalidValue`: Add optional parameter `object` (PR#1766 by Filip Pokorný).
 
 ### Development
 
@@ -50,6 +54,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Packaging
 
 ### Tests
+- `intelmq.tests.lib.test_bot`:
+  - Add test case for a raised `InvalidValue` exception upon message retrieval (#1765, PR#1766 by Filip Pokorný and Sebastian Wagner).
 
 ### Tools
 
