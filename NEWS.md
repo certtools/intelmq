@@ -1,24 +1,23 @@
 NEWS
 ====
 
-See the changelog for a full list of changes.
+This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
+Please refer to the changelog for a full list of changes.
 
 2.3.0 Bugfix release (unreleased)
 ----------------------------------
 
-The documentation is now available at [intelmq.readthedocs.io](https://intelmq.readthedocs.io/) (FIXME: Link to stable version?).
+The documentation is now available at [intelmq.readthedocs.io](https://intelmq.readthedocs.io/).
 
 ### Requirements
 IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the minimum supported Python version is 3.6.
-CentOS 7 (with EPEL) provides both Python 3.4 and Python 3.6. If IntelMQ was installed with Python 3.4, the code needs to be re-installed with Python 3.6 and removed for Python 3.4. Application data is compatible. To install the Python 3.6 packages, use: `yum install python36 python36-devel python36-requests`.
-
-### Tools
+CentOS 7 (with EPEL) provides both Python 3.4 and Python 3.6. If IntelMQ was installed manually with Python 3.4, the code needs to be re-installed with Python 3.6 and removed for Python 3.4. Application data is compatible. To install the Python 3.6 packages, use: `yum install python36 python36-devel python36-requests`.
 
 ### Bots
 
 #### Bot option `--update-database`
 - Bots that require a database file (such as `maxmind_geoip`, `asn_lookup`, `tor_nodes` and `recordedfuture_iprisk`)
-  have new command line option `--update-database`. It is not necessary to specify a
+  have a new command line option `--update-database`. It is not necessary to specify a
   bot ID, the function automatically updates the database for all the bots of the same
   type and reloads them afterwards. Removes any external dependencies (such as curl or wget).
   This is a replacement for shell scripts such as `update-tor-nodes`, `update-asn-data`,
@@ -41,7 +40,7 @@ If you depend on this bot, please reach out to us via the mailing list or GitHub
 The bots are logging a deprecation warning now and the current plan is to remove them in IntelMQ version 3.0.
 
 #### Shadowserver Bots
-The Shadowserver Collector is now able to collect data from the [Shadowserver Reports API](https://intelmq.readthedocs.io/en/latest/user/bots.html#shadowserver-reports-api). Moreover the Shadowserver Parser now supports the JSON format used by the Reports API.
+The Shadowserver Collector is now able to collect data from the [Shadowserver Reports API](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#shadowserver-reports-api). Moreover the Shadowserver Parser now supports the JSON format used by the Reports API.
 
 #### Sieve Expert
 Sieve-Expert is now capable of basic math operations & you can do actions without any `if` statements.
@@ -51,16 +50,14 @@ Sieve-Expert is now capable of basic math operations & you can do actions withou
 add time.observation += '1 hour'
 add time.observation -= '10 hours'
 ```
-2. Actions can now be used without an `if` statement, just write the following into a `.sieve` file
+2. Actions can now be used without an `if` statement, just write the following into a `.sieve` file:
 ```
 add comment = "Adding this to all computed events"
 ```
-More details can be found in our [documentation](https://intelmq.readthedocs.io/en/latest/user/bots.html#sieve).
+More details can be found in our [documentation](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#sieve).
 
 #### Kafka Collector
-Now you're able to fetch data from Kafka with the [Kafka Collector](https://intelmq.readthedocs.io/en/latest/user/bots.html#kafka).
-
-### Harmonization
+Now you're able to fetch data from Kafka with the [Kafka Collector](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#kafka).
 
 ### Configuration
 #### Abuse.ch URLHaus feed
@@ -69,12 +66,10 @@ The correct name for the parameter "delimeter" is "delimiter". Please fix your c
 The `intelmqctl upgrade-config` command automatically fixes a configuration if the misspelling is detected.
 
 #### IntelMQ-Manager -> IntelMQ-API
-`IntelMQ-Manager` PHP backend is getting replaced by the newly developed `IntelMQ-API`. The `IntelMQ-Manager` release only contains the files for the web frontend. The `IntelMQ-Manager` packages now depend or recommend the installation of the `IntelMQ-API` package, therefore a normal upgrade should pull in the API. Follow the instructions in our [documentation](https://intelmq.readthedocs.io/en/latest/user/intelmq-api.html) to configure the API. It uses its own authentication backend now, how to setup users is described in the [documentation](https://intelmq.readthedocs.io/en/latest/user/intelmq-api.html#adding-a-user).
-
-### Libraries
+`IntelMQ-Manager` PHP backend is getting replaced by the newly developed `IntelMQ-API`. The `IntelMQ-Manager` release only contains the files for the web frontend. The `IntelMQ-Manager` packages now depend or recommend the installation of the `IntelMQ-API` package, therefore a normal upgrade should pull in the API. Follow the instructions in our [documentation](https://intelmq.readthedocs.io/en/maintenance/user/intelmq-api.html) to configure the API. It uses its own authentication backend now, how to setup users is described in the [documentation](https://intelmq.readthedocs.io/en/maintenance/user/intelmq-api.html#adding-a-user).
 
 ### Postgres databases
-There was a spelling error in the Spamhaus CERT parser's "event_description.text" texts.
+There was a spelling error in the Spamhaus CERT Parser's "event_description.text" texts.
 The following statements optionally update existing data.
 Please check if you did use these feed names and eventually adapt them for your setup!
 ```sql
