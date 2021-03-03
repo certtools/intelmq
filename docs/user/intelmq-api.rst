@@ -104,9 +104,12 @@ Therefore, SELinux needs to be disabled:
 
 We welcome contributions to provide SELinux policies.
 
-**************
-Usual problems
-**************
+*****************************
+Frequent operational problems
+*****************************
+
+IntelMQCtlError
+^^^^^^^^^^^^^^^
 
 If the command is not configured correctly, you'll see exceptions on startup like this:
 
@@ -116,3 +119,32 @@ If the command is not configured correctly, you'll see exceptions on startup lik
 
 This means the intelmqctl command could not be executed as a subprocess.
 The ``<ERROR_MESSAGE>`` should indicate why.
+
+Access Denied / Authentication Required "Please provide valid Token verification credentials"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you see the IntelMQ Manager interface and menu, but the API calls to the back-end querying configuration and status of IntelMQ fail with "Access Denied" or "Authentication Required: Please provide valid Token verification credentials" errors, you are maybe not logged in while the API requires authentication.
+
+By default, the API requires authentication. Create user accounts and login with them or - if you have other protection means in place - deactivate the authentication requirement by removing or renaming the `session_store` parameter in the configuration.
+
+Internal Server Error
+^^^^^^^^^^^^^^^^^^^^^
+
+There can be various reasons for internal server errors. You need to look at the error log of your web server, for example ``/var/log/apache2/error.log`` or ``/var/log/httpd/error_log`` for Apache 2. It could be that the sudo-setup is not functional, the configuration file or session database file can not be read or written or other errors in regards to the execution of the API program.
+
+Can I just install it from the deb/rpm packages while installing IntelMQ from a different source?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Yes, you can install the API and the Manager from the deb/rpm repositories, and install your IntelMQ from a somewhere else, e.g. a local repository.
+However, knowledge about Python system administration experience and is recommended if you do so.
+
+The packages install IntelMQ to ``/usr/lib/python3*/site-packages/intelmq/``.
+Installing with ``pip`` results in ``/usr/local/lib/python3*/site-packages/intelmq/`` (and some other accompaning resources) which overrides the installation in ``/usr/lib/``.
+You probably need to adapt the configuration parameter ``intelmq_ctl_cmd`` to the ``/usr/local/bin/intelmqctl`` executable and some other tweaks.
+
+
+************
+Getting help
+************
+
+You can use the `IntelMQ users mailing lists <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users>`_ and `GitHub issues <https://github.com/certtools/intelmq-api/issues/new>`_ for getting help and getting in touch with other users and developers. See also the :doc:`introduction` page.

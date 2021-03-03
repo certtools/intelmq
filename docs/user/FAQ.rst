@@ -3,6 +3,8 @@ Frequently asked questions
 
 .. contents::
 
+For questions about the API, have a look at the :doc:`API documentation page <intelmq-api>`
+
 Send IntelMQ events to Splunk
 -------------------------------------------------------------------
 
