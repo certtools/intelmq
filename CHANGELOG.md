@@ -32,6 +32,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - `DateTime.__parse` now handles OverflowError exceptions from the dateutil library, happens for large numbers, e.g. telehpone numbers (by Sebastian Wagner).
 - `intelmq.lib.upgrades`:
   - Added upgrade function for CSV parser parameter misspelling (by Sebastian Wagner).
+  - Check for existence of collector and parser for the obsolete Malware Domain List feed and raise warning if found (#1762, PR#1771 by Birger Schacht).
 
 ### Development
 - `intelmq.bin.intelmq_gen_docs`:
@@ -67,6 +68,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - Fixed mapping for Block list feed to accept network ranges in CIDR notation (#1720, PR#1728 by Sebastian Waldbauer).
   - Added mapping for new feed MSRDPUDP, Vulnerable-HTTP, Sinkhole DNS (#1716, #1726, #1733, PR#1732, PR#1735, PR#1736 by Sebastian Waldbauer).
 - `intelmq.bots.parsers.abusech.parser_ip`: Adapt to changes in the Feodo Tracker Botnet C2 IP Blocklist feed (PR#1741 by Thomas Bellus).
+- `intelmq.bots.parsers.malwaredomainlist`: Removed, as the feed is obsolete (#1762, PR#1771 by Birger Schacht).
 
 #### Experts
 - `intelmq.bots.experts.rfc1918.expert`:
@@ -108,7 +110,6 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 
 ### Documentation
 - Feeds:
-
   - Add ESET URL and Domain feeds (by Sebastian Wagner).
   - Remove unavailable *HPHosts Hosts file* feed (#1559 by Sebastian Wagner).
   - Added CZ.NIC HaaS feed (PR#1560 by Filip Pokorný and Edvard Rejthar).
@@ -121,6 +122,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - Update the cAPTure Ponmocup Domains feed documentation (PR#1574 by Filip Pokorný and Sebastian Wagner).
   - Added Shadowserver Reports API (by Sebastian Wagner).
   - Change the `rate_limit` parameter for many feeds from 2 days to the default one day (by Sebastian Wagner).
+  - Removed Malware Domain List feed, as the feed is obsolete (#1762, PR#1771 by Birger Schacht).
 - Bots:
   - Enhanced documentation of RFC1918 Expert (PR#1557 by Mladen Markovic and Sebastian Wagner).
   - Enhanced documentation of SQL Output (PR#1620 by Edvard Rejthar).
