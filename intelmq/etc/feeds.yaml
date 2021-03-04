@@ -1219,24 +1219,6 @@ providers:
       revision: 2018-01-20
       documentation: http://clean-mx.de/
       public: no
-  Malware Domain List:
-    Blacklist:
-      description: No description provided by feed provider.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://www.malwaredomainlist.com/updatescsv.php
-            rate_limit: 3600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.malwaredomainlist.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://www.malwaredomainlist.com/
-      public: yes
   AnubisNetworks:
     Cyberfeed Stream:
       description: Fetches and parsers the Cyberfeed data stream.

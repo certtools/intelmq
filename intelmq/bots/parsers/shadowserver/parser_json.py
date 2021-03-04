@@ -23,7 +23,7 @@ class ShadowserverJSONParserBot(ParserBot):
         The name of the feed
 
     """
-    __is_filename_regex = re.compile(r'^(?:\d{4}-\d{2}-\d{2}-)?(\w+)(-\w+)*\.csv$')
+    __is_filename_regex = re.compile(r'^(?:\d{4}-\d{2}-\d{2}-)?(\w+)(-\w+)*\.json$')
     reporttype_fn = None
     feedname = None
     sparser_config = None

@@ -28,6 +28,8 @@ __all__ = ['v100_dev7_modify_syntax',
            'v221_feed_changes',
            'v222_feed_changes',
            'v230_csv_parser_parameter_fix_1',
+           'v230_deprecations',
+           'v230_feed_changes',
            ]
 
 
@@ -532,6 +534,43 @@ def v230_csv_parser_parameter_fix_1(defaults, runtime, harmonization, dry_run):
     return changed, defaults, runtime, harmonization
 
 
+def v230_deprecations(defaults, runtime, harmonization, dry_run):
+    """
+    Deprecate malwaredomainlist parser
+    """
+    found_malwaredomainlistparser = []
+    changed = None
+    messages = []
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.parsers.malwaredomainlist.parser":
+            found_malwaredomainlistparser.append(bot_id)
+    if found_malwaredomainlistparser:
+        messages.append('A discontinued bot "Malware Domain List Parser" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_malwaredomainlistparser)))
+    messages = ' '.join(messages)
+    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
+
+
+def v230_feed_changes(defaults, runtime, harmonization, dry_run):
+    """
+    Migrates feeds' configuration for changed/fixed parameter
+    """
+    found_malwaredomainlist = []
+    changed = None
+    messages = []
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.collectors.http.collector_http":
+            if "http_url" not in bot["parameters"]:
+                continue
+            if bot["parameters"]["http_url"].startswith("http://www.malwaredomainlist.com/updatescsv.php"):
+                found_malwaredomainlist.append(bot_id)
+    if found_malwaredomainlist:
+        messages.append('A discontinued feed "Malware Domain List" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_malwaredomainlist)))
+    messages = ' '.join(messages)
+    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -549,7 +588,7 @@ UPGRADES = OrderedDict([
     ((2, 2, 1), (v221_feed_changes, )),
     ((2, 2, 2), (v222_feed_changes, )),
     ((2, 2, 3), ()),
-    ((2, 3, 0), (v230_csv_parser_parameter_fix_1, )),
+    ((2, 3, 0), (v230_csv_parser_parameter_fix_1, v230_feed_changes, v230_deprecations,)),
     ((3, 0, 0), ()),
 ])
 

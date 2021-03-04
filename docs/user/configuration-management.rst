@@ -76,7 +76,7 @@ The logging can be configured with the following parameters:
 
 * ``logging_handler``: Can be one of ``"file"`` or ``"syslog"``.
 * ``logging_level``: Defines the system-wide log level that will be use by all bots and the intelmqctl tool. Possible values are: ``"CRITICAL"``, ``"ERROR"``, ``"WARNING"``, ``"INFO"`` and ``"DEBUG"``.
-* ``logging_path``: If ``logging_handler`` is ``file``. Defines the system-wide log-folder that will be use by all bots and the intelmqctl tool. Default value: ``/opt/intelmq/var/log/``/``/opt/var/log/intelmq/``.
+* ``logging_path``: If ``logging_handler`` is ``file``. Defines the system-wide log-folder that will be use by all bots and the intelmqctl tool. Default value: ``/opt/intelmq/var/log/`` or ``/var/log/intelmq/`` respectively.
 * ``logging_syslog``: If ``logging_handler`` is ``syslog``. Either a list with hostname and UDP port of syslog service, e.g. ``["localhost", 514]`` or a device name/path, e.g. the default ``"/var/log"``.
 
 We recommend ``logging_level`` ``WARNING`` for production environments and ``INFO`` if you want more details. In any case, watch your free disk space!

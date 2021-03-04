@@ -37,7 +37,7 @@ for filename in testdata.glob('*.csv'):
     JSONREPORTS[shortname] = {"raw": utils.base64_encode(csvtojson(filename)),
                           "__type": "Report",
                           "time.observation": "2015-01-01T00:00:00+00:00",
-                          "extra.file_name": "2019-01-01-{}-test-test.csv".format(shortname),
+                          "extra.file_name": "2019-01-01-{}-test-test.json".format(shortname),
                           }
 
 

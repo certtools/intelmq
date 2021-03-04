@@ -15,7 +15,7 @@ EXAMPLE_REPORT = {
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
-                  "extra.file_name": "2019-01-01-scan_smb-test-geo.csv",
+                  "extra.file_name": "2019-01-01-scan_smb-test-geo.json",
                   }
 
 EVENTS = [{'__type': 'Event',
