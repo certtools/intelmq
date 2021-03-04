@@ -64,6 +64,7 @@ jobs:
       run: pip install nose Cerberus pyyaml requests_mock coverage codecov
 
     - name: Install dependencies
+      if: ${{ matrix.type == 'basic' }}
       run: pip install -e .
 
     - name: Run basic testsuite
