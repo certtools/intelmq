@@ -93,9 +93,8 @@ Update
 In case you developed a new bot, you need to update your current development installation. In order to do that, please follow this procedure:
 
 
-1. Add the new bot information to `/opt/dev_intelmq/intelmq/bots/BOTS`, not `/opt/intelmq/etc/BOTS`.
-2. Make sure that you have your new bot in the right place and the information on BOTS file is correct.
-3. Execute the following commands:
+1. Make sure that you have your new bot in the right place.
+2. Execute the following commands:
 
 .. code-block:: bash
 
@@ -104,8 +103,6 @@ In case you developed a new bot, you need to update your current development ins
    cd /opt/dev_intelmq
    ## necessary for pip metadata update and new executables:
    pip3 install -e .
-   ## only necessary if it's not a link yet
-   cp -fs /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/BOTS
    
    find /opt/intelmq/ -type d -exec chmod 0770 {} \+
    find /opt/intelmq/ -type f -exec chmod 0660 {} \+
@@ -232,7 +229,6 @@ Layout Rules
        output/
          <bot name>/
                output.py
-       BOTS
      /conf
        pipeline.conf
        runtime.conf
@@ -744,18 +740,12 @@ When calling the file directly, only the tests in this file for the bot will be 
 
 See the :ref:`testing` section about how to run the tests.
 
-Configuration
-=============
-
-In the end, the new information about the new bot should be added to BOTS file
-located at `intelmq/bots`. Note that the file is sorted!
-
 Cache
 =====
 
 Bots can use a Redis database as cache instance. Use the `intelmq.lib.utils.Cache` class to set this up and/or look at existing bots, like the `cymru_whois` expert how the cache can be used.
 Bots must set a TTL for all keys that are cached to avoid caches growing endless over time.
-Bots must use the Redis databases `>=` 10, but not those already used by other bots. See `bots/BOTS` what databases are already used.
+Bots must use the Redis databases `>=` 10, but not those already used by other bots. Look at `intelmqctl list bots` to see which databases are already used.
 
 The databases `<` 10 are reserved for the IntelMQ core:
  * 2: pipeline
