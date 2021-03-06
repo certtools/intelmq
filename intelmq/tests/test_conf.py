@@ -162,18 +162,6 @@ class CerberusTests(unittest.TestCase):
             schema = schema.replace('"propertyschema"', '"keyschema"')
         return schema
 
-    def test_bots(self):
-        with open(os.path.join(os.path.dirname(__file__), 'assets/bots.schema.json')) as handle:
-            schema = json.loads(self.convert_cerberus_schema(handle.read()))
-        with open(pkg_resources.resource_filename('intelmq',
-                                                  'bots/BOTS')) as handle:
-            bots = json.load(handle)
-
-        v = cerberus.Validator(schema)
-
-        self.assertTrue(v.validate(bots),
-                        msg='Invalid BOTS file:\n%s' % pprint.pformat(v.errors))
-
     def test_feeds(self):
         with open(os.path.join(os.path.dirname(__file__), 'assets/feeds.schema.json')) as handle:
             schema = json.loads(self.convert_cerberus_schema(handle.read()))

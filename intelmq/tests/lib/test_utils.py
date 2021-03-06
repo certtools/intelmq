@@ -13,9 +13,15 @@ import os
 import tempfile
 import unittest
 import requests
+import pprint
+import importlib
+
+import cerberus
+import json
 
 import termstyle
 
+from intelmq.tests.test_conf import CerberusTests
 import intelmq.lib.utils as utils
 
 LINES = {'spare': ['Lorem', 'ipsum', 'dolor'],
@@ -265,6 +271,26 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(utils.file_name_from_response(response),
                          '2019-09-09-drone_brute_force-austria-geo.csv')
 
+
+    def test_parse_docstring(self):
+        """ test parse_docstring """
+        metadata = utils.parse_docstring('Class docstring\n\n\nIntelMQ-Bot-Name: TestClass\nIntelMQ-TestKey: TestValue')
+        self.assertEqual(metadata['__doc__'], 'Class docstring')
+        self.assertEqual(metadata['IntelMQ-Bot-Name'], 'TestClass')
+        self.assertEqual(metadata['IntelMQ-TestKey'], 'TestValue')
+
+
+    def test_list_all_bots(self):
+        """ test list_all_bots """
+        bots_list = utils.list_all_bots()
+        test = CerberusTests()
+        with open(os.path.join(os.path.dirname(__file__), '../assets/bots.schema.json')) as handle:
+            schema = json.loads(test.convert_cerberus_schema(handle.read()))
+
+        v = cerberus.Validator(schema)
+
+        self.assertTrue(v.validate(bots_list),
+                        msg='Invalid BOTS list:\n%s' % pprint.pformat(v.errors))
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
