@@ -28,6 +28,5 @@ DEFAULTS_CONF_FILE = os.path.join(CONFIG_DIR, "defaults.conf")
 HARMONIZATION_CONF_FILE = os.path.join(CONFIG_DIR, "harmonization.conf")
 PIPELINE_CONF_FILE = os.path.join(CONFIG_DIR, "pipeline.conf")
 RUNTIME_CONF_FILE = os.path.join(CONFIG_DIR, "runtime.conf")
-BOTS_FILE = os.path.join(CONFIG_DIR, "BOTS")
 STATE_FILE_PATH = path = os.path.abspath(os.path.join(VAR_STATE_PATH,
                                                       '../state.json'))
