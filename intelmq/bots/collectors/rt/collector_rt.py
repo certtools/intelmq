@@ -41,7 +41,7 @@ class RTCollectorBot(CollectorBot):
     url_regex: str = "https://dl.shadowserver.org/[a-zA-Z0-9?_-]*"  # TODO: type could be re?
     user: str = "intelmq"
 
-    parameter_mapping = {'search_owner': 'Owner',
+    PARAMETER_MAPPING = {'search_owner': 'Owner',
                          'search_queue': 'Queue',
                          'search_requestor': 'Requestor',
                          'search_status': 'Status',
@@ -100,7 +100,7 @@ class RTCollectorBot(CollectorBot):
         else:
             kwargs = {}
 
-        for parameter_name, rt_name in self.parameter_mapping.items():
+        for parameter_name, rt_name in self.PARAMETER_MAPPING.items():
             parameter_value = getattr(self, parameter_name, None)
             if parameter_value:
                 kwargs[rt_name] = parameter_value

@@ -15,7 +15,7 @@ import intelmq.lib.exceptions as exceptions
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.exceptions import MissingDependencyError, ConfigurationError
 from intelmq.lib.utils import parse_relative
 from intelmq.lib.harmonization import DateTime
 
@@ -85,8 +85,24 @@ class SieveExpertBot(Bot):
             harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
             SieveExpertBot.harmonization = harmonization_config['event']
 
-            metamodel = SieveExpertBot.init_metamodel()
-            SieveExpertBot.read_sieve_file(parameters['file'], metamodel)
+            grammarfile = os.path.join(os.path.dirname(__file__), 'sieve.tx')
+            if not os.path.exists(grammarfile):
+                raise FileExistsError('Sieve grammar file not found: %r.' % grammarfile)
+
+            metamodel = None
+
+            try:
+                metamodel = metamodel_from_file(grammarfile)
+            except TextXError as e:
+                raise ConfigurationError('Could not process sieve grammar file. Error in (%d, %d).' % (e.line, e.col))
+
+            if not os.path.exists(parameters['file']):
+                raise ConfigurationError('File does not exist: %r' % parameters['file'])
+
+            try:
+                metamodel.model_from_file(parameters['file'])
+            except TextXError as e:
+                raise TextXSemanticError('Could not process sieve file %r. Error in (%d, %d).' % (parameters['file'], e.line, e.col))
         except Exception:
             return [['error', 'Validation of Sieve file failed with the following traceback: %r' % traceback.format_exc()]]
 

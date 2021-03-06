@@ -103,7 +103,7 @@ class Bot(object):
     # True for (non-main) threads of a bot instance
     is_multithreaded = False
     # True if the bot is thread-safe and it makes sense
-    is_multithreadable = True
+    __is_multithreadable = True
     # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
     collector_empty_process = False
 
@@ -157,11 +157,11 @@ class Bot(object):
 
             broker = self.source_pipeline_broker.title()
             if broker != 'Amqp':
-                self.is_multithreadable = False
+                self.__is_multithreadable = False
 
             """ Multithreading """
             if (self.instances_threads > 1 and not self.is_multithreaded and
-               self.is_multithreadable and not disable_multithreading):
+               self.__is_multithreadable and not disable_multithreading):
                 self.logger.handlers = []
                 num_instances = int(self.instances_threads)
                 instances = []
@@ -188,7 +188,7 @@ class Bot(object):
                     thread.join()
                 return
             elif (getattr(self, 'instances_threads', 1) > 1 and
-                  not self.is_multithreadable):
+                  not self.__is_multithreadable):
                 self.logger.error('Multithreading is configured, but is not '
                                   'available for this bot. Look at the FAQ '
                                   'for a list of reasons for this. '
@@ -1172,7 +1172,7 @@ class CollectorBot(Bot):
     Does some sanity checks on message sending.
     """
 
-    is_multithreadable = False
+    __is_multithreadable = False
     provider = None
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,

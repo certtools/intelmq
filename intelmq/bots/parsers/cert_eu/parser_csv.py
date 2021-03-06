@@ -17,7 +17,7 @@ from intelmq.lib.harmonization import DateTime
 class CertEUCSVParserBot(ParserBot):
     """Parse CSV data of the CERT-EU feed"""
 
-    abuse_to_intelmq = defaultdict(lambda: "other", {
+    ABUSE_TO_INTELMQ = defaultdict(lambda: "other", {
         "backdoor": "backdoor",
         "blacklist": "blacklist",
         "botnet drone": "infected-system",
@@ -60,7 +60,7 @@ class CertEUCSVParserBot(ParserBot):
                   DateTime.sanitize(line["observation time"]))
         event.add("tlp", line["tlp"])
         event.add("event_description.text", line["description"])
-        event.add("classification.type", self.abuse_to_intelmq[line["type"]])
+        event.add("classification.type", self.ABUSE_TO_INTELMQ[line["type"]])
         if line["count"]:
             event["extra.count"] = int(line["count"])
         event.add("time.source", line["source time"])

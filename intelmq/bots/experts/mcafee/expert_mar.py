@@ -29,7 +29,7 @@ class MARExpertBot(Bot):
     dxl_config_file: str = "<insert /path/to/dxlclient.config>"  # TODO: should be pathlib.Path
     lookup_type: str = "<Hash|DestSocket|DestIP|DestFQDN>"
 
-    query = {
+    QUERY = {
         'Hash':
             [
                 {
@@ -98,7 +98,7 @@ class MARExpertBot(Bot):
         report = self.receive_message()
 
         try:
-            mar_search_str = self.query[self.lookup_type] % report
+            mar_search_str = self.QUERY[self.lookup_type] % report
             for ip_address in self.MAR_Query(mar_search_str):
                 event = self.new_event(report)
                 event.add('source.ip', ip_address)

@@ -21,7 +21,12 @@ except ImportError:
 
 
 class ESMIPOutputBot(Bot):
-    """Write events to the McAfee Enterprise Security Manager (ESM)"""
+    """
+    Write events to the McAfee Enterprise Security Manager (ESM)
+
+
+    IntelMQ-Bot-Name: McAfee ESM IP
+    """
     esm_ip: str = "1.2.3.4"  # TODO: should be ipaddress
     esm_password: str = None
     esm_user: str = "NGCP"
