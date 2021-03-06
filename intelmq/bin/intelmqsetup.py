@@ -37,7 +37,7 @@ except ImportError:
 
 from termstyle import red
 from intelmq import (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
-                     VAR_STATE_PATH, BOTS_FILE, STATE_FILE_PATH)
+                     VAR_STATE_PATH, STATE_FILE_PATH)
 from intelmq.bin.intelmqctl import IntelMQController
 
 

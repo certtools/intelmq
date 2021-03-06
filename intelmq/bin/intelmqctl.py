@@ -22,7 +22,7 @@ from collections import OrderedDict
 import pkg_resources
 from termstyle import green
 
-from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,  # noqa: F401
+from intelmq import (DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,  # noqa: F401
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
                      DEFAULT_LOGGING_PATH, __version_info__,
@@ -865,6 +865,8 @@ Get some debugging output on the settings and the environment (to be extended):
                                      help='Only show the total '
                                           'number of messages in queues. '
                                           'Only valid for listing queues.')
+            parser_list.add_argument('--configured', '-c', action='store_true',
+                                     help='Only show configured bots')
             parser_list.set_defaults(func=self.list)
 
             parser_clear = subparsers.add_parser('clear', help='Clear a queue')
@@ -1220,11 +1222,11 @@ Get some debugging output on the settings and the environment (to be extended):
                 retval = 1
         return retval, botnet_status
 
-    def list(self, kind=None, non_zero=False, count=False):
+    def list(self, kind=None, non_zero=False, count=False, configured=False):
         if kind == 'queues':
             return self.list_queues(non_zero=non_zero, count=count)
         elif kind == 'bots':
-            return self.list_bots(non_zero=non_zero)
+            return self.list_bots(non_zero=non_zero, configured=configured)
         elif kind == 'queues-and-status':
             q = self.list_queues()
             b = self.botnet_status()
@@ -1243,25 +1245,29 @@ Get some debugging output on the settings and the environment (to be extended):
             self.abort('Can\'t update runtime configuration: Permission denied.')
         return True
 
-    def list_bots(self, non_zero=False):
+    def list_bots(self, non_zero=False, configured=False):
         """
-        Lists all configured bots from runtime.conf with bot id and
-        description.
+        Lists all (configured) bots from runtime.conf or generated on demand
+        with bot id/module and description and parameters.
 
         If description is not set, None is used instead.
         """
-        if RETURN_TYPE == 'text':
-            for bot_id in sorted(self.runtime_configuration.keys(), key=str.lower):
-                if non_zero and not self.runtime_configuration[bot_id].get('enabled'):
-                    continue
-                if QUIET:
-                    print(bot_id)
-                else:
-                    print("Bot ID: {}\nDescription: {}"
-                          "".format(bot_id, self.runtime_configuration[bot_id].get('description')))
-        return 0, [{'id': bot_id,
-                    'description': self.runtime_configuration[bot_id].get('description')}
-                   for bot_id in sorted(self.runtime_configuration.keys())]
+        if configured:
+            if RETURN_TYPE == 'text':
+                for bot_id in sorted(self.runtime_configuration.keys(), key=str.lower):
+                    if non_zero and not self.runtime_configuration[bot_id].get('enabled'):
+                        continue
+                    if QUIET:
+                        print(bot_id)
+                    else:
+                        print("Bot ID: {}\nDescription: {}"
+                              "".format(bot_id, self.runtime_configuration[bot_id].get('description')))
+            return 0, [{'id': bot_id,
+                        'description': self.runtime_configuration[bot_id].get('description')}
+                       for bot_id in sorted(self.runtime_configuration.keys())]
+        else:
+            val = utils.list_all_bots()
+            return 0, val
 
     def get_queues(self, with_internal_queues=False):
         """
@@ -1421,8 +1427,7 @@ Get some debugging output on the settings and the environment (to be extended):
 
         # loading files and syntax check
         files = {DEFAULTS_CONF_FILE: None, PIPELINE_CONF_FILE: None,
-                 RUNTIME_CONF_FILE: None, BOTS_FILE: None,
-                 HARMONIZATION_CONF_FILE: None}
+                 RUNTIME_CONF_FILE: None, HARMONIZATION_CONF_FILE: None}
         check_logger.info('Reading configuration files.')
         for filename in files:
             try:
@@ -1555,7 +1560,7 @@ Get some debugging output on the settings and the environment (to be extended):
             if bot_check:
                 for log_line in bot_check:
                     getattr(check_logger, log_line[0])("Bot %r: %s" % (bot_id, log_line[1]))
-        for group in files[BOTS_FILE].values():
+        for group in utils.list_all_bots():
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
                                    stderr=subprocess.DEVNULL):
@@ -1874,7 +1879,7 @@ Get some debugging output on the settings and the environment (to be extended):
             variables = globals()
             if RETURN_TYPE == 'text':
                 print('Paths:')
-            for path in ('BOTS_FILE', 'DEFAULTS_CONF_FILE',
+            for path in ('DEFAULTS_CONF_FILE',
                          'HARMONIZATION_CONF_FILE', 'PIPELINE_CONF_FILE',
                          'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
                          'DEFAULT_LOGGING_PATH', '__file__',
