@@ -26,7 +26,7 @@ class IdeaExpertBot(Bot):
     """Convert events into the IDEA format"""
     test_mode: bool = False
 
-    type_to_category = {
+    TYPE_TO_CATEGORY = {
         "phishing": "Fraud.Phishing",
         "ddos": "Availability.DDoS",
         "spam": "Abusive.Spam",
@@ -78,7 +78,7 @@ class IdeaExpertBot(Bot):
         "undetermined": "Other",
     }
 
-    type_to_source_type = {
+    TYPE_TO_SOURCE_TYPE = {
         # Added nonstandard Dropzone, MalwareConf, DGA, will consider adding to Idea spec
 
         "phishing": "Phishing",
@@ -115,7 +115,7 @@ class IdeaExpertBot(Bot):
                             s.get("classification.type", "undetermined")))
             ),
             "Category": [
-                lambda s: self.type_to_category[s.get("classification.type", "undetermined")],
+                lambda s: self.TYPE_TO_CATEGORY[s.get("classification.type", "undetermined")],
                 lambda s: "Test" if self.test_mode else None
             ],
             "DetectTime": "time.observation",
@@ -152,7 +152,7 @@ class IdeaExpertBot(Bot):
                 {
                     "Proto": ["protocol.transport", "protocol.application"],
                     "Type": [
-                        lambda s: self.type_to_source_type.get(s["classification.type"], None),
+                        lambda s: self.TYPE_TO_SOURCE_TYPE.get(s["classification.type"], None),
                         lambda s: s["source.tor_node"] and "Tor"
                     ],
                     "Account": ["source.account"],

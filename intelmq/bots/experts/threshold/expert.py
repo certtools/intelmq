@@ -67,7 +67,7 @@ class ThresholdExpertBot(Bot):
 
     _message_processed_verb = 'Forwarded'
 
-    is_multithreadable = False
+    __is_multithreadable = False
     bypass = False
 
     def init(self):

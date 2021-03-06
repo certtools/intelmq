@@ -21,7 +21,7 @@ class TCPOutputBot(Bot):
     port: int = None
     separator: str = None
 
-    is_multithreadable = False
+    __is_multithreadable = False
 
     def init(self):
         self.to_intelmq = self.counterpart_is_intelmq

@@ -25,7 +25,7 @@ except ImportError:
 
 class RTOutputBot(Bot):
     """Request Tracker ticket creation bot. Create linked Investigation queue ticket if needed, according to the RTIR flow"""
-    CF_mapping = {
+    CF_MAPPING = {
         "classification.taxonomy": "Classification",
         "classification.type": "Incident Type",
         "event_description.text": "Description",
@@ -83,10 +83,10 @@ class RTOutputBot(Bot):
             # Add all event attributes to the body of the incident ticket
             ticket_content += key + ": " + str(value) + "\n"
             # Add some (mapped) event attributes to the Custom Fields of the ticket
-            if self.CF_mapping.get(key):
+            if self.CF_MAPPING.get(key):
                 str_value = str(value)
-                kwargs["CF_" + self.CF_mapping.get(key)] = str_value
-                self.logger.debug("Added custom field CF_%s: %s", self.CF_mapping.get(key), kwargs["CF_" + self.CF_mapping.get(key)])
+                kwargs["CF_" + self.CF_MAPPING.get(key)] = str_value
+                self.logger.debug("Added custom field CF_%s: %s", self.CF_MAPPING.get(key), kwargs["CF_" + self.CF_MAPPING.get(key)])
         self.logger.debug("RT ticket subject: %s", self.subject)
         ticket_id = RT.create_ticket(Queue=self.queue, Subject=self.subject, Text=ticket_content, **kwargs)
         if ticket_id > -1:

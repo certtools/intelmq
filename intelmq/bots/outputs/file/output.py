@@ -18,7 +18,7 @@ class FileOutputBot(OutputBot):
     message_jsondict_as_string: bool = False
     message_with_type: bool = False
     single_key: bool = False
-    is_multithreadable = False
+    __is_multithreadable = False
 
     def init(self):
         # needs to be done here, because in process() FileNotFoundError handling we call init(),
