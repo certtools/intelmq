@@ -30,6 +30,12 @@ import traceback
 import warnings
 import zipfile
 from typing import Any, Dict, Generator, Iterator, Optional, Sequence, Union
+from pathlib import Path
+import importlib
+import inspect
+import pathlib
+import textwrap
+from pkg_resources import resource_filename
 
 import dateutil.parser
 from dateutil.relativedelta import relativedelta
@@ -37,13 +43,15 @@ from termstyle import red
 
 import intelmq
 from intelmq.lib.exceptions import DecodingError
-from intelmq import DEFAULTS_CONF_FILE
+from intelmq import DEFAULTS_CONF_FILE, ROOT_DIR
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
            'reverse_readline', 'error_message_from_exc', 'parse_relative',
            'RewindableFileHandle',
            'file_name_from_response',
+           'parse_docstring',
+           'list_all_bots',
            ]
 
 # Used loglines format
@@ -808,3 +816,44 @@ def file_name_from_response(response: requests.Response) -> str:
     except KeyError:
         file_name = response.url.split("/")[-1]
     return file_name
+
+
+def list_all_bots() -> str:
+    bots = {
+        'Collector': {},
+        'Parser': {},
+        'Expert': {},
+        'Output': {},
+    }
+
+    base_path = resource_filename('intelmq', 'bots')
+
+    botfiles = [botfile for botfile in pathlib.Path(base_path).glob('**/*.py') if botfile.is_file() and botfile.name != '__init__.py']
+    for file in botfiles:
+        file = Path(file.as_posix().replace(base_path, 'intelmq/bots'))
+        mod = importlib.import_module('.'.join(file.with_suffix('').parts))
+        if hasattr(mod, 'BOT'):
+            name = mod.BOT.__name__
+            keys = {}
+            variables = sorted(
+                (key, value) for key, value in vars(mod.BOT).items()
+                if not inspect.ismethod(value) and
+                not inspect.isfunction(value) and
+                not inspect.isclass(value) and
+                not inspect.isroutine(value) and
+                not key.isupper() and
+                not key.startswith('_')
+            )
+
+            for key, value in variables:
+                keys[key] = value
+
+            for bot_type in ['CollectorBot', 'ParserBot', 'OutputBot', 'Bot']:
+                name = name.replace(bot_type, '')
+
+            bots[file.parts[2].capitalize()[:-1]][name] = {
+                "module": mod.__name__,
+                "description": "Missing description" if __doc__ not in mod.BOT else textwrap.dedent(mod.BOT.__doc__),
+                "parameters": keys
+            }
+    return bots
