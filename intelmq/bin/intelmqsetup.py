@@ -9,6 +9,11 @@ Sets up an intelmq environment after installation or upgrade by
  * set intelmq as owner for those
  * providing example configuration files if not already existing
 
+If intelmq-api is installed, the similar steps are performed:
+ * creates needed directories
+ * sets the webserver as group for them
+ * sets group write permissions
+
 Reasoning:
 Pip does not (and cannot) create `/opt/intelmq`/user-given ROOT_DIR, as described in
 https://github.com/certtools/intelmq/issues/819
@@ -17,6 +22,7 @@ import argparse
 import glob
 import os
 import shutil
+import stat
 import sys
 import pkg_resources
 
@@ -78,6 +84,18 @@ def change_owner(file: str, owner=None, group=None):
         shutil.chown(file, group=group)
 
 
+def find_webserver_user():
+    candidates = ('www-data', 'wwwrun', 'httpd', 'apache')
+    for candidate in candidates:
+        try:
+            getpwnam(candidate)
+        except KeyError:
+            pass
+        else:
+            print(f'Detected webserver username {candidate!r}.')
+            return candidate
+
+
 def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
     directories_modes = ((FILE_OUTPUT_PATH, 0o755, 'drwxr-xr-x'),
                          (VAR_RUN_PATH, 0o755, 'drwxr-xr-x'),
@@ -115,6 +133,24 @@ def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
     controller.upgrade_conf(state_file=state_file, no_backup=True)
 
 
+def intelmqsetup_api(ownership: bool = True, webserver_user: Optional[str] = None):
+    if ownership:
+        change_owner(CONFIG_DIR, group='intelmq')
+
+    # Manager configuration directory
+    create_directory(MANAGER_CONFIG_DIR, 0o775, 'drwxrwxr-x')
+    if ownership:
+        change_owner(MANAGER_CONFIG_DIR, group='intelmq')
+
+    intelmq_group = getgrnam('intelmq')
+    webserver_user = webserver_user or find_webserver_user()
+    if webserver_user not in intelmq_group.gr_mem:
+        sys.exit(red("Webserver user {webserver_user} is not a member of the 'intelmq' group. "
+                     f"Please add it with: 'usermod -aG intelmq {webserver_user}'."))
+
+    print('Setup of intelmq-api successful.')
+
+
 def main():
     parser = argparse.ArgumentParser("Set's up directories and example "
                                      "configurations for IntelMQ.")
@@ -123,11 +159,17 @@ def main():
     parser.add_argument('--state-file',
                         help='The state file location to use.',
                         default=STATE_FILE_PATH)
+    parser.add_argument('--webserver-user',
+                        help='The webserver to use instead of auto-detection.')
     args = parser.parse_args()
 
     basic_checks(skip_ownership=args.skip_ownership)
     intelmqsetup_core(ownership=not args.skip_ownership,
                       state_file=args.state_file)
+    if intelmq_api:
+        print('Running setup for intelmq-api.')
+        intelmqsetup_api(ownership=not args.skip_ownership,
+                         webserver_user=args.webserver_user)
 
 
 if __name__ == '__main__':

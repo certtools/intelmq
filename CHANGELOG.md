@@ -33,6 +33,8 @@ CHANGELOG
 - Add missing newlines at end of various test input files (PR#1785 by Sebastian Wagner, fixes #1777).
 
 ### Tools
+- `intelmqsetup`:
+  - Also cover required directory layout and file permissions for `intelmq-api` (PR#1787 by Sebastian Wagner, fixes #1783).
 
 ### Contrib
 
