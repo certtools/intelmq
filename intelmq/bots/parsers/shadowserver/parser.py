@@ -29,29 +29,29 @@ class ShadowserverParserBot(ParserBot):
     """Parse all ShadowServer feeds"""
 
     recover_line = ParserBot.recover_line_csv_dict
-    csv_params = {'dialect': 'unix'}
+    _csv_params = {'dialect': 'unix'}
     __is_filename_regex = re.compile(r'^(?:\d{4}-\d{2}-\d{2}-)?(\w+)(-\w+)*\.csv$')
-    sparser_config = None
+    _sparser_config = None
     feedname = None
-    mode = None
+    _mode = None
     overwrite = False
 
     def init(self):
         if self.feedname is not None:
-            self.sparser_config = config.get_feed_by_feedname(self.feedname)
-            if self.sparser_config:
+            self._sparser_config = config.get_feed_by_feedname(self.feedname)
+            if self._sparser_config:
                 self.logger.info('Using fixed feed name %r for parsing reports.' % self.feedname)
-                self.mode = 'fixed'
+                self._mode = 'fixed'
             else:
                 self.logger.info('Could not determine the feed by the feed name %r given by parameter. '
                                  'Will determine the feed from the file names.',
                                  self.feedname)
-                self.mode = 'detect'
+                self._mode = 'detect'
         else:
-            self.mode = 'detect'
+            self._mode = 'detect'
 
     def parse(self, report):
-        if self.mode == 'fixed':
+        if self._mode == 'fixed':
             return self.parse_csv_dict(report)
 
         # Set config to parse report
@@ -73,14 +73,14 @@ class ShadowserverParserBot(ParserBot):
             if not retval:
                 raise ValueError('Could not get a config for {!r}, check the documentation.'
                                  ''.format(self.report_name))
-            self.feedname, self.sparser_config = retval
+            self.feedname, self._sparser_config = retval
 
         # Set default csv parse function
         return self.parse_csv_dict(report)
 
     def parse_line(self, row, report):
 
-        conf = self.sparser_config
+        conf = self._sparser_config
 
         # https://github.com/certtools/intelmq/issues/1271
         if conf == config.drone and row.get('infection') == 'spam':

@@ -18,8 +18,9 @@ Parameters:
     classification_type : string with a valid classificationtype
 """
 import re
-
 import pkg_resources
+
+from typing import Optional, Iterable
 
 from intelmq.lib.bot import Bot, utils
 from intelmq.lib.exceptions import InvalidArgument
@@ -42,24 +43,12 @@ except ImportError:
 
 class TwitterParserBot(Bot):
     """Parse tweets and extract IoC data. Currently only URLs are supported, a whitelist of safe domains can be provided"""
-    access_token_key = ""
-    access_token_secret = ""
-    consumer_key = ""
-    consumer_secret = ""
-    default_scheme = None
-    exclude_replies = "false"
-    follow_urls = ""
-    include_rts = "true"
-    name = None
-    provider = "Twitter"
-    target_timelines = ""
-    timelimit = ""
-    tweet_count = ""
-    domain_whitelist = 't.co'
-    _domain_whitelist = []
-    substitutions = ".net;[.]net"
-    _substitutions = []
-    classification_type = "blacklist"
+    default_scheme: Optional[str] = None
+    domain_whitelist: str = 't.co'
+    _domain_whitelist: Iterable[str] = []
+    substitutions: str = ".net;[.]net"
+    _substitutions: Iterable[str] = []
+    classification_type: str = "blacklist"
 
     def init(self):
         if url_normalize is None:

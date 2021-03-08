@@ -2,12 +2,14 @@
 """
 Uses the common mail iteration method from the lib file.
 """
+from typing import Union, Iterable
+
 from .lib import MailCollectorBot
 
 
 class MailBodyCollectorBot(MailCollectorBot):
     "Monitor IMAP mailboxes and fetch mail bodies"
-    content_types = ['plain', 'html']
+    content_types: Union[bool, str, Iterable[str]] = ('plain', 'html')
     folder: str = "INBOX"
     mail_host: str = "<host>"
     mail_password: str = "<password>"

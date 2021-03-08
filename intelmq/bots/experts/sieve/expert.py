@@ -15,7 +15,7 @@ import intelmq.lib.exceptions as exceptions
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.exceptions import MissingDependencyError, ConfigurationError
+from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.utils import parse_relative
 from intelmq.lib.harmonization import DateTime
 
@@ -37,13 +37,13 @@ class SieveExpertBot(Bot):
     """Filter and modify events based on a sieve-based language"""
     _message_processed_verb = 'Forwarded'
 
-    harmonization = None
+    _harmonization = None
     file: str = "/opt/intelmq/var/lib/bots/sieve/filter.sieve"  # TODO: should be pathlib.Path
 
     def init(self):
-        if not SieveExpertBot.harmonization:
+        if not SieveExpertBot._harmonization:
             harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
-            SieveExpertBot.harmonization = harmonization_config['event']
+            SieveExpertBot._harmonization = harmonization_config['event']
 
         self.metamodel = SieveExpertBot.init_metamodel()
         self.sieve = SieveExpertBot.read_sieve_file(self.file, self.metamodel)
@@ -83,7 +83,7 @@ class SieveExpertBot(Bot):
     def check(parameters):
         try:
             harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
-            SieveExpertBot.harmonization = harmonization_config['event']
+            SieveExpertBot._harmonization = harmonization_config['event']
 
             grammarfile = os.path.join(os.path.dirname(__file__), 'sieve.tx')
             if not os.path.exists(grammarfile):
@@ -94,15 +94,15 @@ class SieveExpertBot(Bot):
             try:
                 metamodel = metamodel_from_file(grammarfile)
             except TextXError as e:
-                raise ConfigurationError('Could not process sieve grammar file. Error in (%d, %d).' % (e.line, e.col))
+                raise ValueError('Could not process sieve grammar file. Error in (%d, %d).' % (e.line, e.col))
 
             if not os.path.exists(parameters['file']):
-                raise ConfigurationError('File does not exist: %r' % parameters['file'])
+                raise ValueError('File does not exist: %r' % parameters['file'])
 
             try:
                 metamodel.model_from_file(parameters['file'])
             except TextXError as e:
-                raise TextXSemanticError('Could not process sieve file %r. Error in (%d, %d).' % (parameters['file'], e.line, e.col))
+                raise ValueError('Could not process sieve file %r. Error in (%d, %d).' % (parameters['file'], e.line, e.col))
         except Exception:
             return [['error', 'Validation of Sieve file failed with the following traceback: %r' % traceback.format_exc()]]
 
@@ -327,7 +327,7 @@ class SieveExpertBot(Bot):
 
         # validate harmonization type (event key)
         try:
-            type = SieveExpertBot.harmonization[num_match.key]['type']
+            type = SieveExpertBot._harmonization[num_match.key]['type']
             if type not in valid_types:
                 raise TextXSemanticError('Incompatible type: %s.' % type, **position)
         except KeyError:
@@ -345,7 +345,7 @@ class SieveExpertBot(Bot):
         """
 
         # validate IPAddress
-        ipaddr_types = [k for k, v in SieveExpertBot.harmonization.items() if v['type'] == 'IPAddress']
+        ipaddr_types = [k for k, v in SieveExpertBot._harmonization.items() if v['type'] == 'IPAddress']
         if str_match.key in ipaddr_types:
             if str_match.value.__class__.__name__ == 'SingleStringValue':
                 SieveExpertBot.validate_ip_address(str_match.value)

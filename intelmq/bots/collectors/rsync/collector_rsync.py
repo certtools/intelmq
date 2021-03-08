@@ -14,16 +14,15 @@ class RsyncCollectorBot(CollectorBot):
     temp_directory: str = path.join(VAR_STATE_PATH, "rsync_collector")  # TODO: should be pathlib.Path
 
     def init(self):
-        self.rsync_data_directory = self.temp_directory
         try:
-            mkdir(self.rsync_data_directory)
+            mkdir(self.temp_directory)
         except FileExistsError:
             pass
 
     def process(self):
         self.logger.info("Updating file {}.".format(self.file))
         process = run(["rsync", path.join(self.rsync_path, self.file),
-                       self.rsync_data_directory],
+                       self.temp_directory],
                       stderr=PIPE)
         if process.returncode != 0:
             raise ValueError("Rsync on file {!r} failed with exitcode {} and stderr {!r}."
@@ -31,7 +30,7 @@ class RsyncCollectorBot(CollectorBot):
                                        process.returncode,
                                        process.stderr))
         report = self.new_report()
-        with open(path.join(self.rsync_data_directory, self.file), "r") as rsync_file:
+        with open(path.join(self.temp_directory, self.file), "r") as rsync_file:
             report.add("raw", rsync_file.read())
             self.send_message(report)
 

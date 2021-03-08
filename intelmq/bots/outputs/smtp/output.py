@@ -19,7 +19,7 @@ class SMTPOutputBot(Bot):
     smtp_port: int = None
     smtp_username: str = None
     ssl: bool = False
-    starttls: bool = False
+    starttls: bool = True
     subject: str = "Incident in your AS {ev[source.asn]}"
     text: str = "Dear network owner,\\n\\nWe have been informed that the following device might have security problems.\\n\\nYour localhost CERT"
 

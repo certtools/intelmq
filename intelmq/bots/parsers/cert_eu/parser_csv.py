@@ -40,15 +40,15 @@ class CertEUCSVParserBot(ParserBot):
         "vulnerable service": "vulnerable-system"
     })
 
-    unknown_fields = ["threat type", "ns1", "ns2", "response", "recent"]
-    ignore_lines_starting = ["#"]
+    _unknown_fields = ["threat type", "ns1", "ns2", "response", "recent"]
+    _ignore_lines_starting = ["#"]
 
     def parse_line(self, line, report):
         event = self.new_event(report)
         if line["version"] not in ("1.5", ''):
             raise ValueError("Unknown version %r. Please report this with an example."
                              "" % line["version"])
-        for unknown in self.unknown_fields:
+        for unknown in self._unknown_fields:
             if line[unknown]:
                 raise ValueError("Unable to parse field %r. Please report this with an example"
                                  "" % unknown)

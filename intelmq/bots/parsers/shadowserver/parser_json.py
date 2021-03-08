@@ -24,17 +24,16 @@ class ShadowserverJSONParserBot(ParserBot):
 
     """
     __is_filename_regex = re.compile(r'^(?:\d{4}-\d{2}-\d{2}-)?(\w+)(-\w+)*\.json$')
-    reporttype_fn = None
     feedname = None
-    sparser_config = None
+    _sparser_config = None
     recover_line = ParserBot.recover_line_json
     overwrite = True
 
     def init(self):
         if self.feedname is not None:
             feedname = self.feedname
-            self.sparser_config = config.get_feed_by_feedname(feedname)
-            if self.sparser_config:
+            self._sparser_config = config.get_feed_by_feedname(feedname)
+            if self._sparser_config:
                 self.logger.info('Using fixed feed name %r for parsing reports.', feedname)
             else:
                 self.logger.info('Could not determine the feed by the feed name %r given by parameter. '
@@ -60,12 +59,12 @@ class ShadowserverJSONParserBot(ParserBot):
         if not retval:
             raise ValueError('Could not get a config for {!r}, check the documentation.'
                              ''.format(report_name))
-        self.feedname, self.sparser_config = retval
+        self.feedname, self._sparser_config = retval
 
         return self.parse_json(report)
 
     def parse_line(self, line: Any, report: libmessage.Report):
-        conf = self.sparser_config
+        conf = self._sparser_config
         processedkeys = []
 
         event = self.new_event(report)
