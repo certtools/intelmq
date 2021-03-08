@@ -1,3 +1,9 @@
+intelmq (2.3.1~alpha1-1) UNRELEASED; urgency=medium
+
+  * Start 2.3.1 development.
+
+ -- Sebastian Wagner <wagner@cert.at>  Mon, 08 Mar 2021 20:36:58 +0100
+
 intelmq (2.3.0-1) unstable; urgency=medium
 
   * Update to 2.3.0 stable version.
