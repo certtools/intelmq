@@ -22,10 +22,12 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
+- Add missing newlines at end of `docs/_static/intelmq-manager/*.png.license` files (PR#1785 by Sebastian Wagner, fixes #1777).
 
 ### Packaging
 
 ### Tests
+- Add missing newlines at end of various test input files (PR#1785 by Sebastian Wagner, fixes #1777).
 
 ### Tools
 
