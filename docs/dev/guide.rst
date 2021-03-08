@@ -473,6 +473,10 @@ Please adjust the doc strings accordingly and remove the in-line comments (`#`).
    
    
    class ExampleParserBot(Bot):
+
+       option1: str = "defaultvalue"
+       option2: bool = False
+
        def process(self):
            report = self.receive_message()
    
@@ -480,6 +484,8 @@ Please adjust the doc strings accordingly and remove the in-line comments (`#`).
            ... # implement the logic here
            event.add('source.ip', '127.0.0.1')
            event.add('extra', {"os.name": "Linux"})
+           if self.option2:
+                event.add('extra', {"customvalue": self.option1})
    
            self.send_message(event)
            self.acknowledge_message()
@@ -487,12 +493,12 @@ Please adjust the doc strings accordingly and remove the in-line comments (`#`).
    
    BOT = ExampleParserBot
 
+Any attributes of the bot that are not private can be set by the user using the IntelMQ configuration settings.
 
 There are some names with special meaning. These can be used i.e. called:
 
 * `stop`: Shuts the bot down.
 * `receive_message`, `send_message`, `acknowledge_message`: see next section
-* `parameters`: the bots configuration as object
 * `start`: internal method to run the bot
 
 These can be defined:
@@ -585,10 +591,10 @@ Maybe it is necessary so setup a Cache instance or load a file into memory. Use 
    class ExampleParserBot(Bot):
        def init(self):
            try:
-               self.database = pyasn.pyasn(self.parameters.database)
+               self.database = pyasn.pyasn(self.database)
            except IOError:
                self.logger.error("pyasn data file does not exist or could not be "
-                                 "accessed in '%s'." % self.parameters.database)
+                                 "accessed in '%s'." % self.database)
                self.logger.error("Read 'bots/experts/asn_lookup/README.md' and "
                                  "follow the procedure.")
                self.stop()
@@ -745,7 +751,7 @@ Cache
 
 Bots can use a Redis database as cache instance. Use the `intelmq.lib.utils.Cache` class to set this up and/or look at existing bots, like the `cymru_whois` expert how the cache can be used.
 Bots must set a TTL for all keys that are cached to avoid caches growing endless over time.
-Bots must use the Redis databases `>=` 10, but not those already used by other bots. Look at `intelmqctl list bots` to see which databases are already used.
+Bots must use the Redis databases `>=` 10, but not those already used by other bots. Look at `find intelmq -type f -name '*.py' -exec grep -r 'redis_cache_db' {} \+` to see which databases are already used.
 
 The databases `<` 10 are reserved for the IntelMQ core:
  * 2: pipeline

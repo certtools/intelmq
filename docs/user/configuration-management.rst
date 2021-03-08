@@ -55,7 +55,7 @@ For new installations a default setup with some examples is provided by the `int
 * ``runtime.conf``: Configuration for the individual bots. See :doc:`bots` for more details.
 * ``pipeline.conf``: Defines source and destination queues per bot (i.e. where does a bot get its data from, where does it send it to?).
 
-To configure a new bot, you need to define and configure it in ``runtime.conf``. You can base your configuration on the outputp of ``intelmqctl list bots``.
+To configure a new bot, you need to define and configure it in ``runtime.conf``. You can base your configuration on the output of ``intelmqctl list bots``.
 Configure source and destination queues in ``pipeline.conf``.
 Use the IntelMQ Manager mentioned above to generate the configuration files if unsure.
 
@@ -335,7 +335,7 @@ Setting the statistics (and cache) parameters is necessary when the local redis 
 Runtime Configuration
 *********************
 
-This configuration is used by each bot to load its specific (runtime) parameters. You can use the output of ``intelmqctl list bots`` to write the ``runtime.conf``. Also, the IntelMQ Manager generates this configuration. You may edit it manually as well. Be sure to re-load the bot (see the :doc:`intelmqctl`).
+This configuration is used by each bot to load its specific (runtime) parameters. You can use the output of ``intelmqctl --type json list bots`` to write the ``runtime.conf``. Also, the IntelMQ Manager generates this configuration. You may edit it manually as well. Be sure to re-load the bot (see the :doc:`intelmqctl`).
 
 **Template:**
 
