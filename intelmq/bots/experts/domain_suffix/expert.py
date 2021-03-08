@@ -27,7 +27,6 @@ ALLOWED_FIELDS = ['fqdn', 'reverse_dns']
 
 class DomainSuffixExpertBot(Bot):
     """Extract the domain suffix from a domain and save it in the the domain_suffix field. Requires a local file with valid domain suffixes"""
-    suffixes = {}
     field: str = None
     suffix_file: str = None  # TODO: should be pathlib.Path
 

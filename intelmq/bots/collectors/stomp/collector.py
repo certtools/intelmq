@@ -60,14 +60,13 @@ class StompCollectorBot(CollectorBot):
     exchange: str = ''
     port: int = 61614
     server: str = "n6stream.cert.pl"
-    http_verify_cert: bool = True
     ssl_ca_certificate: str = 'ca.pem'  # TODO pathlib.Path
     ssl_client_certificate: str = 'client.pem'  # TODO pathlib.Path
     ssl_client_certificate_key: str = 'client.key'  # TODO pathlib.Path
     heartbeat: int = 6000
 
-    collector_empty_process = True
-    conn = False  # define here so shutdown method can check for it
+    __collector_empty_process: bool = True
+    __conn = False  # define here so shutdown method can check for it
 
     def init(self):
         if stomp is None:
@@ -86,22 +85,22 @@ class StompCollectorBot(CollectorBot):
                 raise ValueError("Could not open file %r." % f)
 
         _host = [(self.server, self.port)]
-        self.conn = stomp.Connection(host_and_ports=_host, use_ssl=True,
-                                     ssl_key_file=self.ssl_cl_cert_key,
-                                     ssl_cert_file=self.ssl_cl_cert,
-                                     ssl_ca_certs=self.ssl_ca_cert,
-                                     heartbeats=(self.heartbeat,
-                                                 self.heartbeat))
+        self.__conn = stomp.Connection(host_and_ports=_host, use_ssl=True,
+                                       ssl_key_file=self.ssl_cl_cert_key,
+                                       ssl_cert_file=self.ssl_cl_cert,
+                                       ssl_ca_certs=self.ssl_ca_cert,
+                                       heartbeats=(self.heartbeat,
+                                                   self.heartbeat))
 
-        self.conn.set_listener('', StompListener(self, self.conn, self.exchange))
-        connect_and_subscribe(self.conn, self.logger, self.exchange,
+        self.__conn.set_listener('', StompListener(self, self.__conn, self.exchange))
+        connect_and_subscribe(self.__conn, self.logger, self.exchange,
                               start=stomp.__version__ < (4, 1, 20))
 
     def shutdown(self):
-        if not stomp or not self.conn:
+        if not stomp or not self.__conn:
             return
         try:
-            self.conn.disconnect()
+            self.__conn.disconnect()
         except stomp.exception.NotConnectedException:
             pass
 

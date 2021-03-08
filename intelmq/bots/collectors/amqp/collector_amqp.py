@@ -20,7 +20,6 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
     Collect data from an AMQP Server and fetch either intelmq or any other messages. Requires the pika python library.
     Inheriting from AMQPTopicOutputBot for connect_server method
     """
-    exchange: bool = False
     connection_attempts: int = 3
     connection_heartbeat: int = 3600
     connection_host: str = "127.0.0.1"  # TODO should be ipaddress

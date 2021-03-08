@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from typing import Iterable
 
 try:
     import requests
@@ -18,7 +19,8 @@ class RestAPIOutputBot(Bot):
     hierarchical_output: bool = False
     host: str = None
     use_json: bool = True
-    auth = None
+
+    _auth: Iterable[str] = None
 
     def init(self):
         if requests is None:

@@ -19,8 +19,6 @@ except ImportError:
 
 class MailURLCollectorBot(MailCollectorBot):
     """Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies"""
-    error_procedure = None
-
     chunk_replicate_header: bool = True
     chunk_size: int = None
     folder: str = "INBOX"

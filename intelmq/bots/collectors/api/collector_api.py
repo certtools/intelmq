@@ -28,7 +28,7 @@ class APICollectorBot(CollectorBot):
     """Collect data by exposing a HTTP API interface"""
     name: str = "API"
     port: int = 5000
-    collector_empty_process: bool = True
+    __collector_empty_process: bool = True
     provider: str = "APICollector"
     __is_multithreadable: bool = False
 

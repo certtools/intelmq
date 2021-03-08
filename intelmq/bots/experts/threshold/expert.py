@@ -47,6 +47,7 @@ Parameters:
               messages seen (which will be the threshold value).
 
 """
+from typing import Iterable, Optional
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
@@ -55,12 +56,12 @@ from intelmq.lib.exceptions import ConfigurationError
 
 class ThresholdExpertBot(Bot):
     """Check if the number of similar messages during a specified time interval exceeds a set value"""
-    add_keys = {}
-    filter_keys = ["raw", "time.observation"]
+    add_keys: dict = {"comment": "Threshold reached"}
+    filter_keys: Iterable = ["raw", "time.observation"]
     filter_type: str = "blacklist"
     redis_cache_db: int = 11
     redis_cache_host: str = "127.0.0.1"  # TODO: could be ipaddress
-    redis_cache_password: str = None
+    redis_cache_password: Optional[str] = None
     redis_cache_port: int = 6379
     threshold: int = 100
     timeout: int = 3600
