@@ -37,9 +37,9 @@ class PipelineFactory(object):
                                              expected=["destination", "source"])
 
         if direction == 'source' and 'source_pipeline_broker' in pipeline_args:
-            broker = source_pipeline_broker.title()
+            broker = pipeline_args['source_pipeline_broker'].title()
         if direction == 'destination' and 'destination_pipeline_broker' in pipeline_args:
-            broker = destination_pipeline_broker.title()
+            broker = pipeline_args['destination_pipeline_broker'].title()
         elif (getattr(pipeline_args, 'source_pipeline_broker', None) == getattr(pipeline_args, 'destination_pipeline_broker', None) and
               getattr(pipeline_args, 'source_pipeline_broker', None) is not None):
             broker = pipeline_args['source_pipeline_broker'].title()

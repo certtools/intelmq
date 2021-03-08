@@ -551,7 +551,7 @@ class Bot(object):
         self.stop()
 
     def __connect_pipelines(self):
-        pipeline_args = sorted(i for i in dir(self) if not inspect.ismethod(i) and (i.startswith('source_pipeline_') or i.startswith('destination_pipeline')))
+        pipeline_args = {key: getattr(self, key) for key in dir(self) if not inspect.ismethod(key) and (key.startswith('source_pipeline_') or key.startswith('destination_pipeline'))}
         if self.__source_queues:
             self.logger.debug("Loading source pipeline and queue %r.", self.__source_queues)
             self.__source_pipeline = PipelineFactory.create(logger=self.logger,
