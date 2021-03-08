@@ -844,6 +844,15 @@
                 "overwrite": false
             }
         },
+        "HTTP Status": {
+            "description": "Get the HTTP Status for an URL.",
+            "module": "intelmq.bots.experts.http.expert_status",
+            "parameters": {
+                "field": "source.url",
+                "success_status_codes": [],
+                "overwrite": false
+            }
+        },
         "IDEA Converter": {
             "description": "Convert events into the IDEA format.",
             "module": "intelmq.bots.experts.idea.expert",

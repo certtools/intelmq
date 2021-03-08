@@ -44,6 +44,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 
 #### Experts
 - `intelmq.bots.experts.domain_suffix.expert`: Added `--update-database` option to update domain suffix database.
+- Added `intelmq.bots.experts.http.expert_status`: A bot that fetches the HTTP Status for a given URI and adds it to the message.
 
 #### Outputs
 - Remove `intelmq.bots.outputs.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ

@@ -2041,6 +2041,21 @@ Other errors result in an exception if not ignored by the parameter `gaierrors_t
 All gaierrors can be found here: http://www.castaglia.org/proftpd/doc/devel-guide/src/lib/glibc-gai_strerror.c.html
 
 
+HTTP Status
+^^^^^^^^^^^
+
+Fetches the HTTP Status for a given URI
+
+**Information**
+
+* `name:` intelmq.bots.experts.http.expert_status
+* `description:` The bot fetches the HTTP status for a given URL and saves it in the event.
+
+**Configuration Parameters**
+
+* `field:` The name of the field containing the URL to be checked (required).
+* `success_status_codes:` A list of success status codes. If this parameter is omitted or the list is empty, successful status codes are the ones between 200 and 400.
+* `overwrite:` Specifies if an existing 'status' value should be overwritten.
 
 IDEA Converter
 ^^^^^^^^^^^^^^
