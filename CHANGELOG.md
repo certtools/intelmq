@@ -11,8 +11,11 @@ CHANGELOG
   - New class `ClassificationTaxonomy` with fixed list of taxonomies and sanitiation
 - `intelmq.lib.bot`:
   - Handle `InvalidValue` exceptions upon message retrieval by dumping the message instead of repeating endlessly (#1765, PR#1766 by Filip Pokorný).
+  - Rewrite of the parameter loading and handling, getting rid of the `parameters` member (PR#1729 by Birger Schacht).
 - `intelmq.lib.exceptions`:
   - `InvalidValue`: Add optional parameter `object` (PR#1766 by Filip Pokorný).
+- `intelmq.lib.utils`:
+  - New function `list_all_bots` to list all available/installed bots as replacement for the BOTS file (#368, #552, #644, #757, #1069, #1750, PR#1751 by Sebastian Waldbauer).
 
 ### Development
 
@@ -36,6 +39,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
   - The type `vulnerable service` has been renamed to `vulnerable-system`.
 
 ### Bots
+- The parameters handling of numerous bots has been refactored (PR#1751, PR#1729, by Birger Schacht, Sebastian Wagner, Sebastian Waldbauer).
+
 #### Collectors
 - Remove `intelmq.bots.collectors.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
   users mailinglist, the bot is not used by anyone. (https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html, PR#1761, closes #1614)
