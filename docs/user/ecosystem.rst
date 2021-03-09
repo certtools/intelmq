@@ -36,17 +36,24 @@ A web-based interface to inject CSV data into IntelMQ with on-line validation an
 
 → `Repository: intelmq-webinput-csv <https://github.com/certat/intelmq-webinput-csv>`_
 
-intelmq-mailgen
----------------
+intelmq-cb-mailgen
+------------------
 
-A solution to send grouped notifications to network owners using SMTP/OTRS.
+A solution allowing
+an IntelMQ setup with a complex contact database,
+managed by a web interface and sending out aggregated email reports.
+(In different words:
+To send grouped notifications to network owners using SMTP.)
 
-→ `Repository: intelmq-mailgen <https://github.com/Intevation/intelmq-mailgen>`_
+→ `Repository: intelmq-cb-mailgen <https://github.com/Intevation/intelmq-mailgen-release>`_
+
 
 IntelMQ Fody + Backend
-----------------------
+^^^^^^^^^^^^^^^^^^^^^^
 
-Fody is an interface for intelmq-mailgen's contact database, it's OTRS and the EventDB.
+Fody is a web based interface for intelmq-mailgen's contact database
+and the EventDB.  It can also be used to just query the EventDB.
+
 The certbund-contact expert fetches the information from this contact database and provides scripts to import RIPE data into the contact database.
 
 → `Repository: intelmq-fody <https://github.com/Intevation/intelmq-fody>`_
@@ -54,6 +61,14 @@ The certbund-contact expert fetches the information from this contact database a
 → `Repository: intelmq-fody-backend <https://github.com/Intevation/intelmq-fody-backend>`_
 
 → `Repository: intelmq-certbund-contact <https://github.com/Intevation/intelmq-certbund-contact>`_
+
+intelmq-mailgen
+^^^^^^^^^^^^^^^
+
+The email sending part:
+
+→ `Repository: intelmq-mailgen <https://github.com/Intevation/intelmq-mailgen>`_
+
 
 "Constituency Portal" do-portal (not developed any further)
 -----------------------------------------------------------
