@@ -818,7 +818,7 @@ def file_name_from_response(response: requests.Response) -> str:
     return file_name
 
 
-def list_all_bots() -> str:
+def list_all_bots() -> dict:
     bots = {
         'Collector': {},
         'Parser': {},
@@ -835,25 +835,18 @@ def list_all_bots() -> str:
         if hasattr(mod, 'BOT'):
             name = mod.BOT.__name__
             keys = {}
-            variables = sorted(
-                (key, value) for key, value in vars(mod.BOT).items()
-                if not inspect.ismethod(value) and
-                not inspect.isfunction(value) and
-                not inspect.isclass(value) and
-                not inspect.isroutine(value) and
-                not key.isupper() and
-                not key.startswith('_')
-            )
-
-            for key, value in variables:
-                keys[key] = value
+            variables = sorted((key) for key in dir(mod.BOT) if not key.isupper() and not key.startswith('_'))
+            for variable in variables:
+                value = getattr(mod.BOT, variable)
+                if not inspect.ismethod(value) and not inspect.isfunction(value) and not inspect.isclass(value) and not inspect.isroutine(value):
+                    keys[variable] = value
 
             for bot_type in ['CollectorBot', 'ParserBot', 'OutputBot', 'Bot']:
                 name = name.replace(bot_type, '')
 
             bots[file.parts[2].capitalize()[:-1]][name] = {
                 "module": mod.__name__,
-                "description": "Missing description" if __doc__ not in mod.BOT else textwrap.dedent(mod.BOT.__doc__),
+                "description": "Missing description" if getattr(mod.BOT, '__doc__') is None else textwrap.dedent(mod.BOT.__doc__),
                 "parameters": keys
             }
     return bots
