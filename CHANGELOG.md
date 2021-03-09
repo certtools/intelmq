@@ -7,6 +7,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.utils`:
+  - `log`: Handle null value for logging parameter `logging_max_size` (PR#1786 by Sebastian Wagner, fixes #1778).
 
 ### Development
 
