@@ -27,6 +27,7 @@ for msg in EVENTS_OUT:
 
 
 PARAMETERS = {
+    'add_keys': {},
     'filter_keys': ['source.ip'],
     'filter_type': 'whitelist',
     'redis_cache_db': '11',
