@@ -583,8 +583,11 @@ def v300_bots_file_removal(defaults, runtime, harmonization, dry_run):
     messages = []
     bots_file = Path(os.path.join(CONFIG_DIR, "BOTS"))
     if bots_file.exists():
-        bots_file.unlink()
-        changed = True
+        if dry_run:
+            print('Would now remove file {bots_file!r}.')
+        else:
+            bots_file.unlink()
+            changed = True
     messages = ' '.join(messages)
     return messages if messages else changed, defaults, runtime, harmonization
 
