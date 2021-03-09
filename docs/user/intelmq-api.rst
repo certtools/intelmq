@@ -77,7 +77,8 @@ Permissions
 ^^^^^^^^^^^
 
 ``intelmq-api`` tries to write a couple of configuration files in the ``${PREFIX}/etc/intelmq`` directory - this is only possible if you set the permissions accordingly, given that ``intelmq-api`` runs under a different user.
-If you're using the default Apache 2 setup, you might want to set the group of the files to ``www-data`` and give it write permissions (``chmod g+w <filename>``).
+The user the API run as also needs write access to the folder the ``session_store`` is located in, otherwise there will be an error accessing the session data.
+If you're using the default Apache 2 setup, you might want to set the group of the files to ``www-data`` and give it write permissions (``chmod -R g+w <directoryname>``).
 In addition to that, the ``intelmq-manager`` tries to store the bot positions via the API into the file ``${PREFIX}/etc/intelmq/manager/positions.conf``.
 You should therefore create the folder ``${PREFIX}/etc/intelmq/manager`` and the file ``positions.conf`` in it.
 
@@ -141,6 +142,12 @@ However, knowledge about Python system administration experience and is recommen
 The packages install IntelMQ to ``/usr/lib/python3*/site-packages/intelmq/``.
 Installing with ``pip`` results in ``/usr/local/lib/python3*/site-packages/intelmq/`` (and some other accompaning resources) which overrides the installation in ``/usr/lib/``.
 You probably need to adapt the configuration parameter ``intelmq_ctl_cmd`` to the ``/usr/local/bin/intelmqctl`` executable and some other tweaks.
+
+sqlite3.OperationalError: attempt to write a readonly database
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+SQLite does not only need write access to the database itself, but also the folder the database file is located in. Please check that the webserver has write permissions to the folder
+the session file is located in.
 
 
 ************
