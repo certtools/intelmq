@@ -849,7 +849,7 @@ def list_all_bots() -> dict:
 
             bots[file.parts[2].capitalize()[:-1]][name] = {
                 "module": mod.__name__,
-                "description": "Missing description" if not hasattr(mod.BOT, '__doc__') else textwrap.dedent(mod.BOT.__doc__),
+                "description": "Missing description" if not getattr(mod.BOT, '__doc__', None) else textwrap.dedent(mod.BOT.__doc__),
                 "parameters": keys,
             }
     return bots
