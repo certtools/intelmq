@@ -7,6 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from intelmq.lib.bot import Bot
+from typing import Optional
 
 
 class SMTPOutputBot(Bot):
@@ -15,16 +16,14 @@ class SMTPOutputBot(Bot):
     mail_from: str = "cert@localhost"
     mail_to: str = "{ev[source.abuse_contact]}"
     smtp_host: str = "localhost"
-    smtp_password: str = None
-    smtp_port: int = None
-    smtp_username: str = None
+    smtp_password: Optional[str] = None
+    smtp_port: int = 25
+    smtp_username: Optional[str] = None
     ssl: bool = False
     starttls: bool = True
     subject: str = "Incident in your AS {ev[source.asn]}"
     text: str = "Dear network owner,\\n\\nWe have been informed that the following device might have security problems.\\n\\nYour localhost CERT"
 
-    username = None
-    password = None
     http_verify_cert = True
 
     def init(self):
@@ -32,6 +31,11 @@ class SMTPOutputBot(Bot):
             self.smtp_class = smtplib.SMTP_SSL
         else:
             self.smtp_class = smtplib.SMTP
+        if self.http_verify_cert and self.smtp_class is smtplib.SMTP_SSL:
+            self.kwargs = {'context': ssl.create_default_context()}
+        else:
+            self.kwargs = {}
+
         if isinstance(self.fieldnames, str):
             self.fieldnames = self.fieldnames.split(',')
 
@@ -41,25 +45,20 @@ class SMTPOutputBot(Bot):
 
         csvfile = io.StringIO()
         writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames,
-                                quoting=csv.QUOTE_MINIMAL, delimiter=str(";"),
+                                quoting=csv.QUOTE_MINIMAL, delimiter=";",
                                 extrasaction='ignore', lineterminator='\n')
         writer.writeheader()
         writer.writerow(event)
         attachment = csvfile.getvalue()
 
-        if self.http_verify_cert and self.smtp_class == smtplib.SMTP_SSL:
-            kwargs = {'context': ssl.create_default_context()}
-        else:
-            kwargs = {}
-
-        with self.smtp_class(self.smtp_host, self.smtp_port, **kwargs) as smtp:
+        with self.smtp_class(self.smtp_host, self.smtp_port, **self.kwargs) as smtp:
             if self.starttls:
                 if self.http_verify_cert:
                     smtp.starttls(context=ssl.create_default_context())
                 else:
                     smtp.starttls()
-            if self.username and self.password:
-                smtp.login(user=self.username, password=self.password)
+            if self.smtp_username and self.smtp_password:
+                smtp.login(user=self.smtp_username, password=self.smtp_password)
             msg = MIMEMultipart()
             if self.text is not None:
                 msg.attach(MIMEText(self.text.format(ev=event)))
