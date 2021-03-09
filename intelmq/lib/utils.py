@@ -43,14 +43,13 @@ from termstyle import red
 
 import intelmq
 from intelmq.lib.exceptions import DecodingError
-from intelmq import DEFAULTS_CONF_FILE, ROOT_DIR
+from intelmq import DEFAULTS_CONF_FILE
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
            'reverse_readline', 'error_message_from_exc', 'parse_relative',
            'RewindableFileHandle',
            'file_name_from_response',
-           'parse_docstring',
            'list_all_bots',
            ]
 
