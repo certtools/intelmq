@@ -55,8 +55,6 @@ class AMQPTopicOutputBot(OutputBot):
         else:
             self.publish_raises_nack = True
 
-        self._exchange = self.exchange_name
-        self.durable = self.exchange_durable
         if self.username is not None and self.password is not None:
             self.kwargs['credentials'] = pika.PlainCredentials(self.username,
                                                                self.password)
@@ -93,11 +91,11 @@ class AMQPTopicOutputBot(OutputBot):
         else:
             self.logger.info('AMQP connection successful.')
             self.channel = self._connection.channel()
-            if self._exchange:  # do not declare default exchange (#1295)
+            if self.exchange_name:  # do not declare default exchange (#1295)
                 try:
-                    self.channel.exchange_declare(exchange=self._exchange,
+                    self.channel.exchange_declare(exchange=self.exchange_name,
                                                   exchange_type=self.exchange_type,
-                                                  durable=self.durable)
+                                                  durable=self.exchange_durable)
                 except pika.exceptions.ChannelClosed:
                     self.logger.error('Access to exchange refused.')
                     raise
@@ -121,7 +119,7 @@ class AMQPTopicOutputBot(OutputBot):
             routing_key = self.routing_key
 
         try:
-            if not self.channel.basic_publish(exchange=self._exchange,
+            if not self.channel.basic_publish(exchange=self.exchange_name,
                                               routing_key=routing_key,
                                               body=body,
                                               properties=self.properties,
