@@ -1174,7 +1174,7 @@ class CollectorBot(Bot):
 
     __is_multithreadable: bool = False
     name: Optional[str] = None
-    accuracy: Optional[str] = None
+    accuracy: Optional[str] = 100
     code: Optional[str] = None
     provider: Optional[str] = None
     documentation: Optional[str] = None
@@ -1196,15 +1196,25 @@ class CollectorBot(Bot):
         return True
 
     def __add_report_fields(self, report: libmessage.Report):
-        if hasattr(self, 'name'):
+        """
+        Adds the configured feed parameters to the report, of they are set (!= None).
+        The following parameters are set to these report fields:
+            * name -> feed.name
+            * code -> feed.code
+            * documentation -> feed.documentation
+            * provider -> feed.provider
+            * accuracy -> feed.accuracy
+        """
+        if self.name:
             report.add("feed.name", self.name)
-        if hasattr(self, 'code'):
+        if self.code:
             report.add("feed.code", self.code)
-        if hasattr(self, 'documentation'):
+        if self.documentation:
             report.add("feed.documentation", self.documentation)
-        if hasattr(self, 'provider'):
+        if self.provider:
             report.add("feed.provider", self.provider)
-        report.add("feed.accuracy", self.accuracy)
+        if self.accuracy:
+            report.add("feed.accuracy", self.accuracy)
         return report
 
     def send_message(self, *messages, path: str = "_default", auto_add: bool = True):
