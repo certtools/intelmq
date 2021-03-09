@@ -24,7 +24,7 @@ MAPPING = {"Attributable": "extra.attributable",
            }
 
 
-class MicrosoftCTIPParserBot(ParserBot):
+class MicrosoftBingMurlsParserBot(ParserBot):
     """Parse JSON data from Microsoft's Bing Malicious URLs list"""
 
     parse = ParserBot.parse_json
@@ -66,4 +66,4 @@ class MicrosoftCTIPParserBot(ParserBot):
         yield event
 
 
-BOT = MicrosoftCTIPParserBot
+BOT = MicrosoftBingMurlsParserBot
