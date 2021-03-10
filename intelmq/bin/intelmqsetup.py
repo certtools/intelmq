@@ -19,7 +19,6 @@ Pip does not (and cannot) create `/opt/intelmq`/user-given ROOT_DIR, as describe
 https://github.com/certtools/intelmq/issues/819
 """
 import argparse
-import glob
 import os
 import shutil
 import stat
@@ -27,7 +26,8 @@ import sys
 import pkg_resources
 
 from grp import getgrnam
-from pwd import getpwuid, getpwnam
+from pathlib import Path
+from pwd import getpwnam
 from typing import Optional
 
 try:
@@ -41,8 +41,8 @@ from intelmq import (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
 from intelmq.bin.intelmqctl import IntelMQController
 
 
-MANAGER_CONFIG_DIR = os.path.join(CONFIG_DIR, 'manager/')
-FILE_OUTPUT_PATH = os.path.join(VAR_STATE_PATH, 'file-output/')
+MANAGER_CONFIG_DIR = Path(CONFIG_DIR) / 'manager/'
+FILE_OUTPUT_PATH = Path(VAR_STATE_PATH) / 'file-output/'
 
 
 def basic_checks(skip_ownership):
@@ -63,24 +63,28 @@ def basic_checks(skip_ownership):
         sys.exit(red("Group 'intelmq' does not exist. Please create it and then re-run this program."))
 
 
-def create_directory(directory: str, octal_mode: int, readable_mode: str):
-    if not os.path.isdir(directory):
-        os.makedirs(directory, mode=octal_mode,
-                    exist_ok=True)
-        print(f'Created directory {directory!r} with permissions {readable_mode}.')
+def create_directory(directory: str, octal_mode: int):
+    directory = Path(directory)
+    readable_mode = stat.filemode(octal_mode)
+    if not directory.is_dir():
+        directory.mkdir(mode=octal_mode, exist_ok=True, parents=True)
+        print(f'Created directory {directory!s} with permissions {readable_mode}.')
     else:
-        actual_mode = stat.filemode(os.stat(directory).st_mode)
-        if actual_mode != readable_mode:
-            print(f'Fixed wrong permissions of {directory!r}: {actual_mode!r} -> {readable_mode!r}.')
-            os.chmod(directory, octal_mode)
+        current_mode = directory.stat().st_mode
+        if current_mode != octal_mode:
+            current_mode_readable = stat.filemode(current_mode)
+            print(f'Fixed wrong permissions of {directory!s}: {current_mode_readable!r} -> {readable_mode!r}.')
+            directory.chmod(octal_mode)
 
 
-def change_owner(file: str, owner=None, group=None):
-    if owner and getpwuid(os.stat(file).st_uid).pw_name != owner:
-        print(f'Fixing owner of directory {file!r}.')
+def change_owner(file: str, owner=None, group=None, log: bool = True):
+    if owner and Path(file).owner() != owner:
+        if log:
+            print(f'Fixing owner of {file!s}.')
         shutil.chown(file, user=owner)
-    if group and getpwuid(os.stat(file).st_gid).pw_name != group:
-        print(f'Fixing group of directory {file!r}.')
+    if group and Path(file).group() != group:
+        if log:
+            print(f'Fixing group of {file!s}.')
         shutil.chown(file, group=group)
 
 
@@ -97,24 +101,26 @@ def find_webserver_user():
 
 
 def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
-    directories_modes = ((FILE_OUTPUT_PATH, 0o755, 'drwxr-xr-x'),
-                         (VAR_RUN_PATH, 0o755, 'drwxr-xr-x'),
-                         (DEFAULT_LOGGING_PATH, 0o755, 'drwxr-xr-x'),
-                         (CONFIG_DIR, 0o775, 'drwxrwxr-x'),
-                         )
-    for directory, octal_mode, readable_mode in directories_modes:
-        create_directory(directory, octal_mode, readable_mode)
+    create_directory(FILE_OUTPUT_PATH, 0o40755)
+    create_directory(VAR_RUN_PATH, 0o40755)
+    create_directory(DEFAULT_LOGGING_PATH, 0o40755)
+    create_directory(CONFIG_DIR, 0o40775)
 
-    example_confs = glob.glob(pkg_resources.resource_filename('intelmq', 'etc/*.conf'))
+    example_confs = Path(pkg_resources.resource_filename('intelmq', 'etc')).glob('*.conf')
     for example_conf in example_confs:
-        fname = os.path.split(example_conf)[-1]
-        if os.path.exists(os.path.join(CONFIG_DIR, fname)):
+        fname = Path(example_conf).name
+        destination_file = Path(CONFIG_DIR) / fname
+        if destination_file.exists():
             print(f'Not overwriting existing {fname!r} with example.')
+            log_ownership_change = True
         else:
             shutil.copy(example_conf, CONFIG_DIR)
-            print(f'Use example {fname!r}.')
+            print(f'Installing example {fname!r} to {CONFIG_DIR}.')
+            log_ownership_change = False  # For installing the new files, we don't need to inform the admin that the permissions have been "fixed"
+        if ownership:
+            change_owner(destination_file, owner='intelmq', group='intelmq', log=log_ownership_change)
 
-    if os.path.islink(BOTS_FILE):
+    if Path(BOTS_FILE).is_symlink():
         print('Skip writing BOTS file as it is a link.')
     else:
         print('Writing BOTS file.')
@@ -127,7 +133,7 @@ def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
                     VAR_STATE_PATH, FILE_OUTPUT_PATH):
             change_owner(obj, owner='intelmq')
 
-    print('Calling `intelmqctl upgrade-config to update/create state file')
+    print('Calling `intelmqctl upgrade-config` to update/create state file.')
     controller = IntelMQController(interactive=False, no_file_logging=True,
                                    drop_privileges=False)
     controller.upgrade_conf(state_file=state_file, no_backup=True)
@@ -138,14 +144,14 @@ def intelmqsetup_api(ownership: bool = True, webserver_user: Optional[str] = Non
         change_owner(CONFIG_DIR, group='intelmq')
 
     # Manager configuration directory
-    create_directory(MANAGER_CONFIG_DIR, 0o775, 'drwxrwxr-x')
+    create_directory(MANAGER_CONFIG_DIR, 0o40775)
     if ownership:
         change_owner(MANAGER_CONFIG_DIR, group='intelmq')
 
     intelmq_group = getgrnam('intelmq')
     webserver_user = webserver_user or find_webserver_user()
     if webserver_user not in intelmq_group.gr_mem:
-        sys.exit(red("Webserver user {webserver_user} is not a member of the 'intelmq' group. "
+        sys.exit(red(f"Webserver user {webserver_user} is not a member of the 'intelmq' group. "
                      f"Please add it with: 'usermod -aG intelmq {webserver_user}'."))
 
     print('Setup of intelmq-api successful.')
