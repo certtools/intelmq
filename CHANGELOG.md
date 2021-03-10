@@ -64,7 +64,45 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Known issues
 
 
-2.3.0 (unreleased)
+2.3.1 (unreleased)
+------------------
+
+### Configuration
+
+### Core
+- `intelmq.lib.utils`:
+  - `log`: Handle null value for logging parameter `logging_max_size` (PR#1786 by Sebastian Wagner, fixes #1778).
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+- Add missing newlines at end of `docs/_static/intelmq-manager/*.png.license` files (PR#1785 by Sebastian Wagner, fixes #1777).
+- Ecosystem: Revise sections on intelmq-cb-mailgen and fody (PR#1792 by Bernhard Reiter).
+
+### Packaging
+
+### Tests
+- Add missing newlines at end of various test input files (PR#1785 by Sebastian Wagner, fixes #1777).
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
+2.3.0 (2021-03-04)
 ------------------
 
 IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the minimum supported Python version is 3.6.
@@ -146,17 +184,17 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - Added parameter `fallback_to_url` and set to True (PR#1586 by Edvard Rejthar).
   - Added parameter `gaierrors_to_ignore` to optionally ignore other `gethostbyname` errors (#1553).
   - Added parameter `overwrite` to optionally overwrite existing IP addresses (by Sebastian Wagner).
-- `intelmq.bots.experts.asn_lookup.expert`
+- `intelmq.bots.experts.asn_lookup.expert`:
   - Added `--update-database` option (PR#1524 by Filip Pokorný).
   - The script `update-asn-data` is now deprecated and will be removed in version 3.0.
-- `intelmq.bots.experts.maxmind_geoip.expert`
+- `intelmq.bots.experts.maxmind_geoip.expert`:
   - Added `--update-database` option (PR#1524 by Filip Pokorný).
   - Added `license_key` parameter (PR#1524 by Filip Pokorný).
   - The script `update-geoip-data` is now deprecated and will be removed in version 3.0.
-- `intelmq.bots.experts.tor_nodes.expert`
+- `intelmq.bots.experts.tor_nodes.expert`:
   - Added `--update-database` option (PR#1524 by Filip Pokorný).
   - The script `update-tor-nodes` is now deprecated and will be removed in version 3.0.
-- `intelmq.bots.experts.recordedfuture_iprisk.expert`
+- `intelmq.bots.experts.recordedfuture_iprisk.expert`:
   - Added `--update-database` option (PR#1524 by Filip Pokorný).
   - Added `api_token` parameter (PR#1524 by Filip Pokorný).
   - The script `update-rfiprisk-data` is now deprecated and will be removed in version 3.0.
@@ -207,7 +245,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - Ignore non-zero exit-codes for the `intelmqctl check` call in postinst (#1748, by Sebastian Wagner).
 
 ### Tests
-- Added tests for `intelmq.lib.exceptions.PipelineError`.
+- Added tests for `intelmq.lib.exceptions.PipelineError` (by Sebastian Wagner).
 - `intelmq.tests.bots.collectors.http_collector.test_collector`: Use `requests_mock` to mock all requests and do not require a local webserver (by Sebastian Wagner).
 - `intelmq.tests.bots.outputs.restapi.test_output`:
   - Use `requests_mock` to mock all requests and do not require a local webserver (by Sebastian Wagner).
@@ -220,7 +258,9 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.lib.test`:
   - `test_static_bot_check_method` checks the bot's static `check(parameters)` method for any exceptions, and a valid formatted return value (#1505, by Sebastian Wagner).
   - `setUpClass`: Skip tests if cache was requests with `use_cache` member, but Redis is deactivated with the environment variable `INTELMQ_SKIP_REDIS` (by Sebastian Wagner).
-- `intelmq.tests.bots.experts.cymru_whois.test_expert`: Switch from `example.com` to `ns2.univie.ac.at` for hopefully more stable responses (#1730, PR#1731 by Sebastian Waldbauer).
+- `intelmq.tests.bots.experts.cymru_whois.test_expert`:
+  - Switch from `example.com` to `ns2.univie.ac.at` for hopefully more stable responses (#1730, PR#1731 by Sebastian Waldbauer).
+  - Do not test for exact expected values in the 6to4 network test, as the values are changing regularly (by Sebastian Wagner).
 - `intelmq.tests.bots.parsers.abusech`: Remove tests cases of discontinued feeds (PR#1741 by Thomas Bellus).
 - Activate GitHub's CodeQL Code Analyzing tool as GitHub Action (by Sebastian Wagner).
 
@@ -235,7 +275,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 ### Contrib
 - EventDB:
   - Add SQL script for keeping track of the oldest inserted/update "time.source" information (by Sebastian Wagner).
-- Cron Jobs: The script `intelmq-update-data` has been renamed to `intelmq-update-database`.
+- Cron Jobs: The script `intelmq-update-data` has been renamed to `intelmq-update-database` (by Filip Pokorný).
 - Dropped utterly outdated contrib modules (by Sebastian Wagner):
   - ansible
   - vagrant
@@ -245,7 +285,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
   - Set file permissions to `0644` (by Sebastian Wagner).
 
 ### Known issues
-- Bots started with IntelMQ-API/Manager stop when the webserver is restarted #952.
+- Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
 - Corrupt dump files when interrupted during writing (#870).
 - CSV line recovery forces Windows line endings (#1597).
 - intelmqdump: Honor logging_path variable (#1605).

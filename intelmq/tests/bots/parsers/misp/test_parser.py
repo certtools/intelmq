@@ -11,7 +11,7 @@ with open(os.path.join(os.path.dirname(__file__), 'misp_event.json')) as handle:
     EXAMPLE_MISP_EVENT = handle.read()
 
 with open(os.path.join(os.path.dirname(__file__), 'misp_attribute.json')) as handle:
-    EXAMPLE_MISP_ATTR = handle.read()
+    EXAMPLE_MISP_ATTR = handle.read().strip()
 
 EXAMPLE_REPORT = {
     "__type": "Report",

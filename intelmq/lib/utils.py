@@ -330,6 +330,10 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH,
         logging_level_stream:
             The logging level for stream (console) output.
             By default the same as log_level.
+        log_max_size:
+            The maximum size of the logfile. 0 means no restriction.
+        log_max_copies:
+            Maximum number of logfiles to keep.
 
     Returns:
         logger: An instance of logging.Logger
@@ -352,7 +356,7 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH,
 
     if log_path and not syslog:
         handler = RotatingFileHandler("%s/%s.log" % (log_path, name),
-                                      maxBytes=log_max_size,
+                                      maxBytes=log_max_size if log_max_size else 0,
                                       backupCount=log_max_copies)
         handler.setLevel(log_level)
         handler.setFormatter(logging.Formatter(LOG_FORMAT))

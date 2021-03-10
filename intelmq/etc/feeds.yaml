@@ -1426,7 +1426,7 @@ providers:
       revision: 2018-01-20
       documentation: http://vxvault.net/ViriList.php
       public: yes
-  ShadowServer:
+  Shadowserver:
     Via IMAP:
       description: Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
       additional_information: The configuration retrieves the data from a e-mails via IMAP from the attachments.

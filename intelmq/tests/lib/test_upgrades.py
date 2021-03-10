@@ -611,19 +611,19 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertTrue(result[0])
         self.assertEqual(V222_OUT, result[2])
 
-    def v230_csv_parser_parameter_fix_1(self):
+    def test_v230_csv_parser_parameter_fix(self):
         """ Test v230_feed_fix """
-        result = upgrades.v230_feed_fix({}, V230_IN, {}, False)
+        result = upgrades.v230_csv_parser_parameter_fix({}, V230_IN, {}, False)
         self.assertTrue(result[0])
         self.assertEqual(V230_OUT, result[2])
 
         # with also the new fixed parameter
-        result = upgrades.v230_feed_fix({}, V230_IN_BOTH, {}, False)
+        result = upgrades.v230_csv_parser_parameter_fix({}, V230_IN_BOTH, {}, False)
         self.assertTrue(result[0])
         self.assertEqual(V230_OUT, result[2])
 
         # with new parameter, no change
-        result = upgrades.v230_feed_fix({}, V230_OUT, {}, False)
+        result = upgrades.v230_csv_parser_parameter_fix({}, V230_OUT, {}, False)
         self.assertIsNone(result[0])
         self.assertEqual(V230_OUT, result[2])
 

@@ -620,8 +620,8 @@
             "module": "intelmq.bots.parsers.phishtank.parser",
             "parameters": {}
         },
-        "ShadowServer": {
-            "description": "Parse all ShadowServer feeds.",
+        "Shadowserver CSV": {
+            "description": "Parse Shadowserver feeds in CSV format.",
             "module": "intelmq.bots.parsers.shadowserver.parser",
             "parameters": {
                 "feedname": "",
