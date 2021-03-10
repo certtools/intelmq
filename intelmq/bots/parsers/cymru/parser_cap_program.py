@@ -6,8 +6,7 @@ from intelmq.lib.bot import ParserBot
 
 MAPPING_STATIC = {'bot': {
     'classification.type': 'infected-system'},
-    'bruteforce': {
-    'classification.type': 'brute-force'},
+    'bruteforce': {'classification.type': 'brute-force'},
     'controller': {
     'classification.type': 'c2server'},
     'darknet': {'classification.type': 'scanner',
@@ -33,8 +32,6 @@ MAPPING_STATIC = {'bot': {
                   'classification.identifier': 'conficker',
                   'malware.name': 'conficker'},
 }
-MAPPING_COMMENT = {'bruteforce': ('classification.identifier', 'protocol.application'),
-                   'phishing': ('source.url', )}
 PROTOCOL_MAPPING = {  # TODO: use `getent protocols <number>`, maybe in harmonization
     '1': 'icmp',
     '6': 'tcp',
@@ -269,11 +266,6 @@ class CymruCAPProgramParserBot(ParserBot):
         event.add('time.source', timestamp + ' GMT')
         event.add('source.as_name', ', '.join(asninfo_split[:-1]))  # contains CC at the end
         event.add('source.geolocation.cc', asninfo_split[-1])
-        if category in MAPPING_COMMENT:
-            # if the comment is missing, we can't add that information
-            if comment_split:
-                for field in MAPPING_COMMENT[category]:
-                    event.add(field, comment_split[0])
 
         try:
             for key, value in MAPPING_STATIC[category].items():
@@ -283,11 +275,16 @@ class CymruCAPProgramParserBot(ParserBot):
         destination_ports = []
 
         for comment in comment_split:
-            if category in MAPPING_COMMENT:
-                break
             if ': ' not in comment:
                 if category == 'proxy':
                     comment = 'proxy_type: %s' % comment
+                elif category == 'bruteforce':  # optional_information can just be 'ssh;'
+                    event.add('classification.identifier', comment)
+                    event.add('protocol.application', comment)
+                    break
+                elif category == 'phishing':
+                    event.add('source.url', comment)
+                    break
                 else:
                     if category == 'bot':
                         try:

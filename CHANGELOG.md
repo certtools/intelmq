@@ -18,6 +18,8 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.cymru.parser_cap_program`:
+  - Adapt parser to new upstream format for events of category "bruteforce" (PR#1795 by Sebastian Wagner, fixes 1794).
 
 #### Experts
 
