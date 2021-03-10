@@ -7,7 +7,6 @@ SPDX-License-Identifier: AGPL-3.0
 from collections import OrderedDict
 from pkg_resources import resource_filename
 from pathlib import Path
-import os
 from intelmq import CONFIG_DIR
 
 from intelmq.lib.utils import load_configuration, write_configuration
@@ -581,7 +580,7 @@ def v300_bots_file_removal(defaults, runtime, harmonization, dry_run):
     """
     changed = None
     messages = []
-    bots_file = Path(os.path.join(CONFIG_DIR, "BOTS"))
+    bots_file = Path(CONFIG_DIR) / "BOTS"
     if bots_file.exists():
         if dry_run:
             print('Would now remove file {bots_file!r}.')
