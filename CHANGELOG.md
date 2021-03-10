@@ -25,6 +25,7 @@ CHANGELOG
 
 ### Documentation
 - Add missing newlines at end of `docs/_static/intelmq-manager/*.png.license` files (PR#1785 by Sebastian Wagner, fixes #1777).
+- Ecosystem: Revise sections on intelmq-cb-mailgen and fody (PR#1792 by Bernhard Reiter).
 
 ### Packaging
 
