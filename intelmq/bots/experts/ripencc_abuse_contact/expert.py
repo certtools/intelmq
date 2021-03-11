@@ -3,7 +3,7 @@ from ..ripe.expert import RIPEExpertBot
 
 
 class RIPENCCExpertDeprecatedBot(RIPEExpertBot):
-
+    """RIPENCC Expert (deprecated)"""
     def init(self):
         self.logger.warning("The parser 'intelmq.bots.experts.ripencc_abuse_contact"
                             ".expert has been renamed to 'intelmq.bots."

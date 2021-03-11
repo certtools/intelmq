@@ -7,6 +7,7 @@ from intelmq.bots.outputs.sql.output import SQLOutputBot
 
 
 class PostgreSQLOutputBot(SQLOutputBot):
+    """PostgreSQL Output (deprecated), replaced by SQL Output"""
     engine = 'postgresql'
 
     def init(self):
