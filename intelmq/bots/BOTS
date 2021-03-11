@@ -853,6 +853,15 @@
                 "overwrite": false
             }
         },
+        "HTTP Content": {
+            "description": "Test if a given string is part of the content for a given URL",
+            "module": "intelmq.bots.experts.http.expert_content",
+            "parameters": {
+                "field": "source.url",
+                "needle": null,
+                "overwrite": true
+            }
+        },
         "IDEA Converter": {
             "description": "Convert events into the IDEA format.",
             "module": "intelmq.bots.experts.idea.expert",

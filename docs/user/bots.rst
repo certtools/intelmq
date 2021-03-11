@@ -2057,6 +2057,23 @@ Fetches the HTTP Status for a given URI
 * `success_status_codes:` A list of success status codes. If this parameter is omitted or the list is empty, successful status codes are the ones between 200 and 400.
 * `overwrite:` Specifies if an existing 'status' value should be overwritten.
 
+
+HTTP Content
+^^^^^^^^^^^^
+
+Fetches an HTTP resource and checks if it contains a specific string.
+
+**Information**
+
+* `name:` intelmq.bots.experts.http.expert_status
+* `description:` The bot fetches an HTTP resource and checks if it contains a specific string.
+
+**Configuration Parameters**
+
+* `field:` The name of the field containing the URL to be checked (defaults to `source.url`)
+* `needle:` The string that the content available on URL is checked for
+* `overwrite:` A boolean value that specifies if an existing 'status' value should be overwritten.
+
 IDEA Converter
 ^^^^^^^^^^^^^^
 
