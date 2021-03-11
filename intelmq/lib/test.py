@@ -229,7 +229,7 @@ class BotTestCase(object):
                 self.bot = self.bot_reference(self.bot_id)
         self.bot._Bot__stats_cache = None
 
-        pipeline_args = sorted(i for i in dir(self) if not inspect.ismethod(i) and (i.startswith('source_pipeline_') or i.startswith('destination_pipeline')))
+        pipeline_args = {key: getattr(self, key) for key in dir(self) if not inspect.ismethod(getattr(self, key)) and (key.startswith('source_pipeline_') or key.startswith('destination_pipeline'))}
         self.pipe = pipeline.Pythonlist(logger=self.logger, pipeline_args=pipeline_args, load_balance=self.bot.load_balance, is_multithreaded=self.bot.is_multithreaded)
         self.pipe.set_queues(parameters.source_queue, "source")
         self.pipe.set_queues(parameters.destination_queues, "destination")
