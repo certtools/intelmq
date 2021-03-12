@@ -10,7 +10,7 @@ import re
 from intelmq.lib.utils import unzip
 from intelmq.lib.exceptions import InvalidArgument
 
-from .lib import MailCollectorBot
+from ._lib import MailCollectorBot
 
 
 class MailAttachCollectorBot(MailCollectorBot):

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import json
 
-from intelmq.bots.experts.cymru_whois.lib import Cymru
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
 from intelmq.lib.harmonization import IPAddress
+
+from ._lib import Cymru
 
 CACHE_KEY = "%d_%s"
 

@@ -8,7 +8,7 @@ import re
 from intelmq.lib.splitreports import generate_reports
 from intelmq.lib.utils import create_request_session, file_name_from_response
 
-from .lib import MailCollectorBot
+from ._lib import MailCollectorBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
