@@ -5,20 +5,34 @@ IntelMQ Manager
 **IntelMQ Manager** is a graphical interface to manage configurations for IntelMQ.
 Its goal is to provide an intuitive tool to allow non-programmers to specify the data flow in IntelMQ.
 
+.. contents::
+
 ************
 Installation
 ************
 
-For the `intelmq-manager` webinterface any operating system that can serve html pages is supported.
+For the `intelmq-manager` webinterface any operating system that can serve HTML pages is supported.
 `intelmq-manager` can be installed via Python pip or via the operating systems package manager.
-For the list of supported distributions, please see the intelmq :doc:`installation` page.
+We provide packages for the `intelmq-manager` for the same operating systems as we do for the `intelmq` package itself.
+For the list of supported distributions, please see the IntelMQ :doc:`installation` page.
 
-The packages install the html files in ``${PREFIX}/usr/share/intelmq-manager/html``.
-The value of ``${PREFIX}`` depends on your installation method- with distribution packages it is simply ``/``, when using pip (as root) it is ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version).
+Our repository page gives `installation instructions for various operating systems <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq-manager>`_.
+No additional set-up steps are needed if you use these packages.
 
-To use the ``intelmq-manager`` webinterface, you have to have a working ``intelmq`` installation which provides access to the ``intelmq-api``.
+To use the `intelmq-manager` webinterface, you have to have a working `intelmq` installation which provides access to the :doc:`intelmq-api`.
 
-``intelmq-manager`` ships with a default configuration for the Apache webserver:
+When using distribution packages, the webserver configuration (which is also shown below) for Apache will be automatically installed and the HTML files are stored under ``/usr/share/intelmq-manager/html``.
+The webinterface is then available at ``http://localhost/intelmq-manager``.
+
+Installation using pip
+^^^^^^^^^^^^^^^^^^^^^^
+
+For installation via pip, the situation is more complex.
+The packages install the HTML files in ``${PREFIX}/usr/share/intelmq-manager/html``.
+The value of ``${PREFIX}`` depends on your environment and is something like ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version).
+You can either move the files to ``/usr/share/intelmq-manager/html`` or adapt the path in the webserver configuration, see below.
+
+`intelmq-manager` ships with a default configuration for the Apache webserver (in ``${PREFIX}/etc/intelmq/manager-apache.conf``):
 
 .. code-block::
 
@@ -31,7 +45,15 @@ To use the ``intelmq-manager`` webinterface, you have to have a working ``intelm
        </IfModule>
    </Directory>
 
-Some distribution packages already create a symlink in the relevant apache configuration directory to the apache configuration file, so it should be easy to enable that (i.e. by using ``a2enconf intelmq-manager`` on Debian based systems).
+This file needs to be placed in the correct place for your Apache 2 installation.
+ - On Debian and Ubuntu, move the file to ``/etc/apache2/conf-available.d/manager-apache.conf`` and then execute ``a2enconf manager-apache``.
+ - On CentOS, RHEL and Fedora, move the file to ``/etc/httpd/conf.d/``.
+ - On openSUSE, move the file to ``/etc/apache2/conf.d/``.
+Don't forget to reload your webserver afterwards.
+
+IntelMQ 2.3.1 comes with a tool ``intelmqsetup`` which performs these set-up steps automatically.
+Please note that the tool is very new and may not detect all situations correctly. Please report us any bugs you are observing.
+The tools is idempotent, you can execute it multiple times.
 
 ***********************
 Security considerations
