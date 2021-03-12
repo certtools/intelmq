@@ -50,6 +50,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
   users mailinglist, the bot is not used by anyone. (https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html, PR#1761, closes #1614)
 
 ### Documentation
+- Updated user and developer documentation to reflect the removal of the BOTS file (PR#1780 by Birger Schacht).
 
 ### Packaging
 
