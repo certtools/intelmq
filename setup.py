@@ -3,6 +3,7 @@
 import json
 import os
 import sys
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
@@ -19,11 +20,12 @@ REQUIRES = [
 exec(open(os.path.join(os.path.dirname(__file__),
                        'intelmq/version.py')).read())  # defines __version__
 BOTS = []
-bots = json.load(open(os.path.join(os.path.dirname(__file__), 'intelmq/bots/BOTS')))
-for bot_type, bots in bots.items():
-    for bot_name, bot in bots.items():
-        module = bot['module']
-        BOTS.append('{0} = {0}:BOT.run'.format(module))
+
+base_path = Path(__file__).parent / 'intelmq/bots'
+botfiles = [botfile for botfile in Path(base_path).glob('**/*.py') if botfile.is_file() and not botfile.name.startswith('_')]
+for file in botfiles:
+    module = '.'.join(file.with_suffix('').parts)
+    BOTS.append('{0} = {0}:BOT.run'.format(module))
 
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as handle:
     README = handle.read()
