@@ -56,7 +56,7 @@ This configuration resides in the file `runtime.conf` in your IntelMQ's configur
 Initialization parameters
 *************************
 
-* `name` and `description`: The name and description of the bot as can be found in BOTS-file, not used by the bot itself.
+* `name` and `description`: The name and description of the bot. See also ``intelmqctl list --configured bots``.
 * `group`: Can be `"Collector"`, `"Parser"`, `"Expert"` or `"Output"`. Only used for visualization by other tools.
 * `module`: The executable (should be in `$PATH`) which will be started.
 * `enabled`: If the parameter is set to `true` (which is NOT the default value if it is missing as a protection) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `false`, the Bot will not be started by `intelmqctl start`, however you can run the bot independently using `intelmqctl start <bot_id>`. Check :doc:`configuration-management` for more details.
@@ -915,7 +915,7 @@ Parser Bots
 Not complete
 ^^^^^^^^^^^^
 
-This list is not complete. Look at `intelmq/bots/BOTS` or the list of parsers shown in the manager. But most parsers do not need configuration parameters.
+This list is not complete. Look at ``intelmqctl list bots`` or the list of parsers shown in the manager. But most parsers do not need configuration parameters.
 
 TODO
 
