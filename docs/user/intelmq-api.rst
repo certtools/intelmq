@@ -3,33 +3,55 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 
 ###########
-Intelmq Api
+IntelMQ API
 ###########
 
-intelmq-api is a `hug <http://hug.rest>`_ based API for the `intelmq <https://github.com/certtools/intelmq/>`_ project.
+`intelmq-api` is a `hug <http://hug.rest>`_ based API for the `IntelMQ <https://github.com/certtools/intelmq/>`_ project.
+
+.. contents::
 
 **********************************
 Installing and running intelmq-api
 **********************************
 
-``intelmq-api`` requires the IntelMQ package to be installed on the system (it uses ``intelmqctl`` to control the botnet).
+`intelmq-api` requires the IntelMQ package to be installed on the system (it uses ``intelmqctl`` to control the botnet).
 
 You can install the ``intelmq-api`` package using your preferred system package installation mechanism or using the ``pip`` Python package installer.
-We provide packages for the ``intelmq-api`` for the same operating systems as we do for the ``intelmq`` package itself.
+We provide packages for the `intelmq-api` for the same operating systems as we do for the `intelmq` package itself.
+For the list of supported distributions, please see the intelmq :doc:`installation` page.
+
 Our repository page gives `installation instructions for various operating systems <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq-api>`_.
+No additional set-up steps are needed if you use these packages.
 
-The ``intelmq-api`` packages ship a configuration file in ``${PREFIX}/etc/intelmq/api-config.json``, a virtualhost configuration file for Apache 2 in ``${PREFIX}/etc/intelmq/api-apache.conf`` and a sudoers configuration file in ``${PREFIX}/etc/intelmq/api-sudoers.conf``.
-The value of ``${PREFIX}`` depends on your installation method- with distribution packages it is simply ``/``, when using pip (as root) it is ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version.
-Some distribution packages already create a symlink to the sudoers file in the sudoers.d configuration directory and a symlink in the relevant Apache configuration directory to the Apache configuration file, so it should be easy to enable that (i.e. by using ``a2ensite intelmq-api`` on Debian based systems).
+The `intelmq-api` provides the route ``/api`` for managing the IntelMQ installation.
 
-But for development purposes and testing you can also run ``intelmq-api`` directly using ``hug``:
+For development purposes and testing you can also run `intelmq-api` directly using ``hug``:
 
 .. code-block:: bash
 
    hug -m intelmq_api.serve
 
+Installation using pip
+^^^^^^^^^^^^^^^^^^^^^^
 
-The ``intelmq-api`` provides the route ``/api`` for managing the ``intelmq`` installation.
+The `intelmq-api` packages ship a configuration file in ``${PREFIX}/etc/intelmq/api-config.json``, a positions configuration for the manager in ``{PREFIX}/etc/intelmq/manager/positions.conf``, a virtualhost configuration file for Apache 2 in ``${PREFIX}/etc/intelmq/api-apache.conf`` and a sudoers configuration file in ``${PREFIX}/etc/intelmq/api-sudoers.conf``.
+The value of ``${PREFIX}`` depends on your environment and is something like ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version).
+
+The file ``${PREFIX}/etc/intelmq/api-apache.conf`` needs to be placed in the correct place for your Apache 2 installation.
+ - On Debian and Ubuntu, move the file to ``/etc/apache2/conf-available.d/manager-apache.conf`` and then execute ``a2enconf manager-apache``.
+ - On CentOS, RHEL and Fedora, move the file to ``/etc/httpd/conf.d/``.
+ - On openSUSE, move the file to ``/etc/apache2/conf.d/``.
+Don't forget to reload your webserver afterwards.
+
+- The file ``${PREFIX}/etc/intelmq/api-config.json`` needs to be moved to ``/etc/intelmq/api-config.json``.
+- The file ``${PREFIX}/etc/intelmq/manager/positions.conf`` needs to be moved to ``/etc/intelmq/manager/positions.conf``.
+- Last but not least move the file ``${PREFIX}/etc/intelmq/api-sudoers.conf`` to ``/etc/sudoers.d/01_intelmq-api`` and adapt the webserver user name in this file. Set the file permissions to ``0o440``.
+
+Afterwards continue with the section Permissions below.
+
+IntelMQ 2.3.1 comes with a tool ``intelmqsetup`` which performs these set-up steps automatically.
+Please note that the tool is very new and may not detect all situations correctly. Please report us any bugs you are observing.
+The tools is idempotent, you can execute it multiple times.
 
 ***********************
 Configuring intelmq-api
