@@ -82,6 +82,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.cymru.parser_cap_program`:
+  - Adapt parser to new upstream format for events of category "bruteforce" (PR#1795 by Sebastian Wagner, fixes 1794).
 
 #### Experts
 
@@ -90,6 +92,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Documentation
 - Add missing newlines at end of `docs/_static/intelmq-manager/*.png.license` files (PR#1785 by Sebastian Wagner, fixes #1777).
 - Ecosystem: Revise sections on intelmq-cb-mailgen and fody (PR#1792 by Bernhard Reiter).
+- intelmq-api: Add documentation about necessary write permission for the session database file (PR#1798 by Birger Schacht, fixes intelmq-api#23).
 
 ### Packaging
 
@@ -97,6 +100,10 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - Add missing newlines at end of various test input files (PR#1785 by Sebastian Wagner, fixes #1777).
 
 ### Tools
+- `intelmqsetup`:
+  - Also cover required directory layout and file permissions for `intelmq-api` (PR#1787 by Sebastian Wagner, fixes #1783).
+- `intelmqctl`:
+  - Do not log an error message if logging to file is explicitly disabled, e.g. in calls from `intelmsetup`. The error message would not be useful for the user and is not necessary.
 
 ### Contrib
 

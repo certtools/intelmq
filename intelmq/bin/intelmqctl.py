@@ -710,7 +710,7 @@ class IntelMQController():
 
         try:
             if no_file_logging:
-                raise FileNotFoundError
+                raise FileNotFoundError('Logging to file disabled.')
             logger = utils.log('intelmqctl', log_level=self.logging_level,
                                log_format_stream=utils.LOG_FORMAT_SIMPLE,
                                logging_level_stream=logging_level_stream,
@@ -720,7 +720,8 @@ class IntelMQController():
             logger = utils.log('intelmqctl', log_level=self.logging_level, log_path=False,
                                log_format_stream=utils.LOG_FORMAT_SIMPLE,
                                logging_level_stream=logging_level_stream)
-            logger.error('Not logging to file: %s', exc)
+            if not isinstance(exc, FileNotFoundError) and exc.args[0] != 'Logging to file disabled.':
+                logger.error('Not logging to file: %s', exc)
         self.logger = logger
         if defaults_loading_exc:
             self.logger.exception('Loading the defaults configuration failed!',

@@ -6,8 +6,7 @@ from intelmq.lib.bot import ParserBot
 
 MAPPING_STATIC = {'bot': {
     'classification.type': 'infected-system'},
-    'bruteforce': {
-    'classification.type': 'brute-force'},
+    'bruteforce': {'classification.type': 'brute-force'},
     'controller': {
     'classification.type': 'c2-server'},
     'darknet': {'classification.type': 'scanner',
@@ -33,8 +32,6 @@ MAPPING_STATIC = {'bot': {
                   'classification.identifier': 'conficker',
                   'malware.name': 'conficker'},
 }
-MAPPING_COMMENT = {'bruteforce': ('classification.identifier', 'protocol.application'),
-                   'phishing': ('source.url', )}
 PROTOCOL_MAPPING = {  # TODO: use `getent protocols <number>`, maybe in harmonization
     '1': 'icmp',
     '6': 'tcp',
@@ -229,6 +226,24 @@ class CymruCAPProgramParserBot(ParserBot):
         yield event
 
     def parse_line_new(self, line, report):
+        """
+        The format is two following:
+        category|address|asn|timestamp|optional_information|asninfo
+        Therefore very similar to CSV, just with the pipe as separator
+        category: the type (resulting in classification.*) and optional_information needs to be parsed differently per category
+        address: source.ip
+        asn: source.asn
+        timestamp: time.source
+        optional_information: needs special care.
+            For some categories it needs parsing, as it contains a mapping of keys to values, whereas the meaning of the keys can differ between the categories
+            For categories in MAPING_COMMENT, this field only contains one value.
+            For the category 'bruteforce' *both* situations apply.
+            Previously, the bruteforce events only had the protocol in the comment,
+            while most other categories had a mapping. Now, the bruteforce categories also uses
+            the type-value syntax. So we need to support both formats, the old and the new.
+            See also https://github.com/certtools/intelmq/issues/1794
+        asninfo: source.as_name
+        """
         category, ip, asn, timestamp, notes, asninfo = line.split('|')
 
         # to detect bogous lines like 'hostname: sub.example.comport: 80'
@@ -252,11 +267,6 @@ class CymruCAPProgramParserBot(ParserBot):
         event.add('time.source', timestamp + ' GMT')
         event.add('source.as_name', ', '.join(asninfo_split[:-1]))  # contains CC at the end
         event.add('source.geolocation.cc', asninfo_split[-1])
-        if category in MAPPING_COMMENT:
-            # if the comment is missing, we can't add that information
-            if comment_split:
-                for field in MAPPING_COMMENT[category]:
-                    event.add(field, comment_split[0])
 
         try:
             for key, value in MAPPING_STATIC[category].items():
@@ -266,11 +276,16 @@ class CymruCAPProgramParserBot(ParserBot):
         destination_ports = []
 
         for comment in comment_split:
-            if category in MAPPING_COMMENT:
-                break
             if ': ' not in comment:
                 if category == 'proxy':
                     comment = 'proxy_type: %s' % comment
+                elif category == 'bruteforce':  # optional_information can just be 'ssh;'
+                    event.add('classification.identifier', comment)
+                    event.add('protocol.application', comment)
+                    break
+                elif category == 'phishing':
+                    event.add('source.url', comment)
+                    break
                 else:
                     if category == 'bot':
                         try:

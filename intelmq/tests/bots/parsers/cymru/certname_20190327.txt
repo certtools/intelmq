@@ -33,3 +33,4 @@ scanner|172.16.0.21|64496|2020-07-09 03:40:15|username: pm;|Example AS Name, AT
 darknet|172.16.0.21|64496|2020-10-08 02:21:26|protocol: 47;|Example AS Name, AT
 darknet|172.16.0.21|64496|2020-10-15 09:22:10|protocol: 59;|Example AS Name, AT
 proxy|172.16.0.21|64496|2020-12-14 08:28:01|httpconnect-51915; additional_asns: 212682;|Example AS Name, AT
+bruteforce|172.16.0.21|64496|2021-03-09 00:11:21|destination_port_numbers: 22;port: 16794;protocol: 6;|Example AS Name, AT

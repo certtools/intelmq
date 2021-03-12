@@ -221,11 +221,17 @@ EVENTS = [{'time.source': '2019-03-22T11:18:52+00:00',
            'protocol.application': 'httpconnect',
            'source.port': 51915,
            },
+          {'classification.type': 'brute-force',
+           'protocol.transport': 'tcp',
+           'destination.port': 22,
+           'source.port': 16794,
+           'time.source': '2021-03-09T00:11:21+00:00',
+           },
           ]
 
 # The number of events a single line in the raw data produces
 NUM_EVENTS = (1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              1, 1, 10, 1, 1, 1, 1, 1, 1, 1, 1)
+              1, 1, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 RAWS = []
 for i, line in enumerate(RAW_LINES[3:]):
     for count in range(NUM_EVENTS[i]):
