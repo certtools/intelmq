@@ -12,7 +12,7 @@ PARAMETERS:
 import re
 
 from intelmq.lib.exceptions import InvalidArgument
-from intelmq.bots.collectors.github_api.collector_github_api import GithubAPICollectorBot
+from intelmq.bots.collectors.github_api._collector_github_api import GithubAPICollectorBot
 
 try:
     import requests

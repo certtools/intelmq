@@ -19,7 +19,7 @@ from intelmq.bin.intelmqctl import IntelMQController
 try:
     from publicsuffixlist import PublicSuffixList
 except ImportError:
-    from .lib import PublicSuffixList
+    from ._lib import PublicSuffixList
 
 
 ALLOWED_FIELDS = ['fqdn', 'reverse_dns']

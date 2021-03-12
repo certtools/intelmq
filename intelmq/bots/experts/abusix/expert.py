@@ -4,8 +4,9 @@ Reference: https://abusix.com/contactdb.html
 RIPE abuse contacts resolving through DNS TXT queries
 '''
 
-from intelmq.bots.experts.abusix.lib import Abusix
 from intelmq.lib.bot import Bot
+
+from ._lib import Abusix
 
 try:
     import querycontacts

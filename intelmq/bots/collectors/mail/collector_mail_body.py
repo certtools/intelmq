@@ -4,7 +4,7 @@ Uses the common mail iteration method from the lib file.
 """
 from typing import Union, Iterable
 
-from .lib import MailCollectorBot
+from ._lib import MailCollectorBot
 
 
 class MailBodyCollectorBot(MailCollectorBot):

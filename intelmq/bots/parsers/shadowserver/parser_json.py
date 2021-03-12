@@ -9,8 +9,8 @@ from typing import Any
 
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidKey, InvalidValue
-import intelmq.bots.parsers.shadowserver.config as config
 import intelmq.lib.message as libmessage
+import intelmq.bots.parsers.shadowserver._config as config
 
 
 class ShadowserverJSONParserBot(ParserBot):

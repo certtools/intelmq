@@ -20,9 +20,9 @@ Optional parameters:
 import copy
 import re
 
-import intelmq.bots.parsers.shadowserver.config as config
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidKey, InvalidValue
+import intelmq.bots.parsers.shadowserver._config as config
 
 
 class ShadowserverParserBot(ParserBot):
