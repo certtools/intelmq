@@ -58,6 +58,8 @@ For any bottleneck based on (online) lookups, optimize the lookup itself and if 
 
 It is also possible to use multiple servers to spread the workload. To get the messages from one system to the other you can either directly connect to the other's pipeline or use a fast exchange mechanism such as the TCP Collector/Output (make sure to secure the network by other means).
 
+.. _faq-remove-raw-data:
+
 Removing raw data for higher performance and less space usage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

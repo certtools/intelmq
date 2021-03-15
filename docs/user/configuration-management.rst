@@ -69,6 +69,9 @@ System Configuration (defaults)
 All bots inherit the default configuration parameters and they can overwrite them using the same parameters in their respective configuration in the ``runtime.conf`` file.
 You can set the parameters from ``defaults.conf`` per bot as well. The settings will take effect for running bots after the bot re-reads the configuration (restart or reload).
 
+
+.. _configuration-logging:
+
 Logging
 =======
 
