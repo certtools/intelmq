@@ -4,16 +4,18 @@ Tests if configuration in /etc is valid
 """
 import collections
 import importlib
+import io
 import json
 import os
 import pkgutil
 import pprint
 import re
 import unittest
+import yaml
 
 import cerberus
 import pkg_resources
-import yaml
+from ruamel.yaml import YAML
 
 import intelmq.bots
 import intelmq.lib.harmonization as harmonization
@@ -21,6 +23,7 @@ import intelmq.lib.harmonization as harmonization
 
 from intelmq.lib.utils import lazy_int
 
+myyaml = YAML(typ="safe", pure=True)
 
 def to_json(obj):
     """
@@ -38,11 +41,8 @@ def to_unsorted_json(obj):
                       separators=(',', ': ')) + '\n'
 
 
-CONF_NAMES = ['defaults', 'harmonization', 'runtime', 'system']
-
-CONF_FILES = {name: pkg_resources.resource_filename('intelmq',
-                                                    'etc/' + name + '.conf')
-              for name in CONF_NAMES}
+CONF_FILES = {'harmonization': pkg_resources.resource_filename('intelmq', 'etc/harmonization.conf'),
+              'runtime': pkg_resources.resource_filename('intelmq', 'etc/runtime.yaml')}
 
 
 class TestConf(unittest.TestCase):
@@ -78,11 +78,13 @@ class TestConf(unittest.TestCase):
             getattr(harmonization, value['type'])
 
     def test_runtime_syntax(self):
-        """ Test if runtime.conf has correct syntax. """
+        """ Test if runtime.yaml has correct syntax. """
         with open(CONF_FILES['runtime']) as fhandle:
             fcontent = fhandle.read()
-        interpreted = json.loads(fcontent)
-        self.assertEqual(to_json(interpreted), fcontent)
+        interpreted = myyaml.load(fcontent)
+        buf = io.BytesIO()
+        myyaml.dump(interpreted, buf)
+        self.assertEqual(buf.getvalue().decode(), fcontent)
 
 
 class CerberusTests(unittest.TestCase):

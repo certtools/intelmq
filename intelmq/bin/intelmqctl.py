@@ -1616,7 +1616,7 @@ Get some debugging output on the settings and the environment (to be extended):
                                  state_file)
                 return 0, 'success'
             try:
-                utils.write_configuration(state_file, state, new=True)
+                utils.write_configuration(state_file, state, new=True, useyaml=False)
             except Exception as exc:
                 self.logger.error('Error writing state file %r: %s.', state_file, exc)
                 return 1, 'Error writing state file %r: %s.' % (state_file, exc)
@@ -1651,7 +1651,7 @@ Get some debugging output on the settings and the environment (to be extended):
                     utils.write_configuration(RUNTIME_CONF_FILE, runtime_new,
                                               backup=not no_backup)
                     utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization_new,
-                                              backup=not no_backup)
+                                              backup=not no_backup, useyaml=False)
             except Exception:
                 self.logger.exception('Upgrade %r failed, please report this bug '
                                       'with the shown traceback.',
@@ -1682,7 +1682,7 @@ Get some debugging output on the settings and the environment (to be extended):
             state['upgrades'][function] = result['success']
             if not dry_run:
                 utils.write_configuration(state_file, state,
-                                          backup=not no_backup)
+                                          backup=not no_backup, useyaml=False)
 
             if result['success']:
                 return 0, 'success'
@@ -1798,7 +1798,7 @@ Get some debugging output on the settings and the environment (to be extended):
                 # some upgrade function had a problem
                 if not dry_run:
                     utils.write_configuration(state_file, state,
-                                              backup=not no_backup)
+                                              backup=not no_backup, useyaml=False)
                 self.logger.error('Some migration did not succeed or '
                                   'manual intervention is needed. Look at '
                                   'the output above. Afterwards, re-run '
@@ -1810,7 +1810,7 @@ Get some debugging output on the settings and the environment (to be extended):
                     utils.write_configuration(RUNTIME_CONF_FILE, runtime,
                                               backup=not no_backup)
                     utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization,
-                                              backup=not no_backup)
+                                              backup=not no_backup, useyaml=False)
             except Exception as exc:
                 self.logger.error('Writing runtime configuration '
                                   'did not succeed: %s\nFix the problem and '
@@ -1826,7 +1826,7 @@ Get some debugging output on the settings and the environment (to be extended):
 
             if not dry_run:
                 utils.write_configuration(state_file, state,
-                                          backup=not no_backup)
+                                          backup=not no_backup, useyaml=False)
 
         if error:
             return 1, 'error'
