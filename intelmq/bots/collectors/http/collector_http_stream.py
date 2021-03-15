@@ -29,7 +29,7 @@ from intelmq.lib.exceptions import MissingDependencyError
 
 class HTTPStreamCollectorBot(CollectorBot):
     "Open a streaming connection to the URL and process data per line"
-    sighup_delay = False
+    _sighup_delay: bool = False
     http_password: str = None
     http_url: str = "<insert url of feed>"
     http_username: str = None

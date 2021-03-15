@@ -8,7 +8,7 @@ import re
 from intelmq.lib.splitreports import generate_reports
 from intelmq.lib.utils import create_request_session, file_name_from_response
 
-from .lib import MailCollectorBot
+from ._lib import MailCollectorBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -19,8 +19,6 @@ except ImportError:
 
 class MailURLCollectorBot(MailCollectorBot):
     """Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies"""
-    error_procedure = None
-
     chunk_replicate_header: bool = True
     chunk_size: int = None
     folder: str = "INBOX"

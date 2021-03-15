@@ -6,7 +6,7 @@ Creates a ticket in the specified queue
 Parameters:
 rt_uri, rt_user, rt_password, verify_cert -  RT API endpoint
 queue - ticket destination queue
-CF_mapping - mapping attributes-ticket CFs
+cf_mapping - mapping attributes-ticket CFs
 final_status - what is final status for the created ticket
 create_investigation - should we create Investigation ticket (in case of RTIR workflow)
 fieldnames - attributes to include into investigation ticket
@@ -25,7 +25,7 @@ except ImportError:
 
 class RTOutputBot(Bot):
     """Request Tracker ticket creation bot. Create linked Investigation queue ticket if needed, according to the RTIR flow"""
-    CF_mapping = {
+    cf_mapping = {
         "classification.taxonomy": "Classification",
         "classification.type": "Incident Type",
         "event_description.text": "Description",
@@ -35,9 +35,9 @@ class RTOutputBot(Bot):
         "source.ip": "IP"}
     create_investigation: bool = False
     description_attr: str = "event_description.text"
-    final_status: str = None
+    final_status: str = "resolved"
     investigation_fields: str = "time.source,time.observation,source.ip,source.port,source.fqdn,source.url,classification.taxonomy,classification.type,classification.identifier,event_description.url,event_description.text,malware.name,protocol.application,protocol.transport"
-    queue: str = None  # "Incidents"
+    queue: str = "Incidents"
     rt_password: str = None
     rt_uri: str = "http://localhost/REST/1.0"
     rt_user: str = "apiuser"
@@ -83,10 +83,10 @@ class RTOutputBot(Bot):
             # Add all event attributes to the body of the incident ticket
             ticket_content += key + ": " + str(value) + "\n"
             # Add some (mapped) event attributes to the Custom Fields of the ticket
-            if self.CF_mapping.get(key):
+            if self.cf_mapping.get(key):
                 str_value = str(value)
-                kwargs["CF_" + self.CF_mapping.get(key)] = str_value
-                self.logger.debug("Added custom field CF_%s: %s", self.CF_mapping.get(key), kwargs["CF_" + self.CF_mapping.get(key)])
+                kwargs["CF_" + self.cf_mapping.get(key)] = str_value
+                self.logger.debug("Added custom field CF_%s: %s", self.cf_mapping.get(key), kwargs["CF_" + self.cf_mapping.get(key)])
         self.logger.debug("RT ticket subject: %s", self.subject)
         ticket_id = RT.create_ticket(Queue=self.queue, Subject=self.subject, Text=ticket_content, **kwargs)
         if ticket_id > -1:

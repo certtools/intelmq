@@ -47,7 +47,7 @@ class Bot(object):
     __stats_cache = None
 
     # Bot is capable of SIGHUP delaying
-    sighup_delay = True
+    _sighup_delay: bool = True
     # From the runtime configuration
     description = None
     group = None
@@ -103,9 +103,9 @@ class Bot(object):
     # True for (non-main) threads of a bot instance
     is_multithreaded = False
     # True if the bot is thread-safe and it makes sense
-    is_multithreadable = True
+    __is_multithreadable = True
     # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
-    collector_empty_process = False
+    __collector_empty_process: bool = False
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
@@ -157,11 +157,11 @@ class Bot(object):
 
             broker = self.source_pipeline_broker.title()
             if broker != 'Amqp':
-                self.is_multithreadable = False
+                self.__is_multithreadable = False
 
             """ Multithreading """
             if (self.instances_threads > 1 and not self.is_multithreaded and
-               self.is_multithreadable and not disable_multithreading):
+               self.__is_multithreadable and not disable_multithreading):
                 self.logger.handlers = []
                 num_instances = int(self.instances_threads)
                 instances = []
@@ -188,7 +188,7 @@ class Bot(object):
                     thread.join()
                 return
             elif (getattr(self, 'instances_threads', 1) > 1 and
-                  not self.is_multithreadable):
+                  not self.__is_multithreadable):
                 self.logger.error('Multithreading is configured, but is not '
                                   'available for this bot. Look at the FAQ '
                                   'for a list of reasons for this. '
@@ -250,7 +250,7 @@ class Bot(object):
         Called when signal is received and postpone.
         """
         self.__sighup.set()
-        if not self.sighup_delay:
+        if not self._sighup_delay:
             self.__handle_sighup()
         else:
             self.logger.info('Received SIGHUP, initializing again later.')
@@ -433,7 +433,7 @@ class Bot(object):
                 if do_rate_limit:
                     if self.rate_limit and self.run_mode != 'scheduled':
                         self.__sleep()
-                    if self.collector_empty_process and self.run_mode != 'scheduled':
+                    if self.__collector_empty_process and self.run_mode != 'scheduled':
                         self.__sleep(1, log=False)
 
             self.__stats()
@@ -943,8 +943,8 @@ class Bot(object):
 
 
 class ParserBot(Bot):
-    csv_params = {}
-    ignore_lines_starting = []
+    _csv_params = {}
+    _ignore_lines_starting = []
     handle = None
     current_line = None
 
@@ -963,12 +963,12 @@ class ParserBot(Bot):
         """
         raw_report = utils.base64_decode(report.get("raw")).strip()
         raw_report = raw_report.translate({0: None})
-        if self.ignore_lines_starting:
+        if self._ignore_lines_starting:
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
-                                                in self.ignore_lines_starting])])
+                                                in self._ignore_lines_starting])])
         self.handle = RewindableFileHandle(io.StringIO(raw_report))
-        for line in csv.reader(self.handle, **self.csv_params):
+        for line in csv.reader(self.handle, **self._csv_params):
             self.current_line = self.handle.current_line
             yield line
 
@@ -978,13 +978,13 @@ class ParserBot(Bot):
         """
         raw_report = utils.base64_decode(report.get("raw")).strip()
         raw_report = raw_report.translate({0: None})
-        if self.ignore_lines_starting:
+        if self._ignore_lines_starting:
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
-                                                in self.ignore_lines_starting])])
+                                                in self._ignore_lines_starting])])
         self.handle = RewindableFileHandle(io.StringIO(raw_report))
 
-        csv_reader = csv.DictReader(self.handle, **self.csv_params)
+        csv_reader = csv.DictReader(self.handle, **self._csv_params)
         # create an array of fieldnames,
         # those were automagically created by the dictreader
         self.csv_fieldnames = csv_reader.fieldnames
@@ -1028,7 +1028,7 @@ class ParserBot(Bot):
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
             line = line.strip()
-            if not any([line.startswith(prefix) for prefix in self.ignore_lines_starting]):
+            if not any([line.startswith(prefix) for prefix in self._ignore_lines_starting]):
                 yield line
 
     def parse_line(self, line: Any, report: libmessage.Report):
@@ -1125,7 +1125,7 @@ class ParserBot(Bot):
 
     def recover_line_csv(self, line: str):
         out = io.StringIO()
-        writer = csv.writer(out, **self.csv_params)
+        writer = csv.writer(out, **self._csv_params)
         writer.writerow(line)
         tempdata = '\r\n'.join(self.tempdata) + '\r\n' if self.tempdata else ''
         return tempdata + out.getvalue()
@@ -1135,7 +1135,7 @@ class ParserBot(Bot):
         Converts dictionaries to csv. self.csv_fieldnames must be list of fields.
         """
         out = io.StringIO()
-        writer = csv.DictWriter(out, self.csv_fieldnames, **self.csv_params)
+        writer = csv.DictWriter(out, self.csv_fieldnames, **self._csv_params)
         writer.writeheader()
         out.write(self.current_line)
 
@@ -1172,8 +1172,12 @@ class CollectorBot(Bot):
     Does some sanity checks on message sending.
     """
 
-    is_multithreadable = False
-    provider = None
+    __is_multithreadable: bool = False
+    name: Optional[str] = None
+    accuracy: Optional[str] = 100
+    code: Optional[str] = None
+    provider: Optional[str] = None
+    documentation: Optional[str] = None
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
@@ -1192,15 +1196,25 @@ class CollectorBot(Bot):
         return True
 
     def __add_report_fields(self, report: libmessage.Report):
-        if hasattr(self, 'name'):
+        """
+        Adds the configured feed parameters to the report, of they are set (!= None).
+        The following parameters are set to these report fields:
+            * name -> feed.name
+            * code -> feed.code
+            * documentation -> feed.documentation
+            * provider -> feed.provider
+            * accuracy -> feed.accuracy
+        """
+        if self.name:
             report.add("feed.name", self.name)
-        if hasattr(self, 'code'):
+        if self.code:
             report.add("feed.code", self.code)
-        if hasattr(self, 'documentation'):
+        if self.documentation:
             report.add("feed.documentation", self.documentation)
-        if hasattr(self, 'provider'):
+        if self.provider:
             report.add("feed.provider", self.provider)
-        report.add("feed.accuracy", self.accuracy)
+        if self.accuracy:
+            report.add("feed.accuracy", self.accuracy)
         return report
 
     def send_message(self, *messages, path: str = "_default", auto_add: bool = True):

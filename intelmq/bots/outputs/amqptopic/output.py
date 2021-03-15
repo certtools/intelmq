@@ -21,6 +21,7 @@ class AMQPTopicOutputBot(OutputBot):
     delivery_mode: int = 2
     exchange_durable: bool = True
     exchange_name: str = None
+    format_routing_key: bool = False
     exchange_type: str = "topic"
     keep_raw_field: bool = False  # TODO: legacy? not used..
     message_hierarchical_output: bool = False
@@ -33,14 +34,13 @@ class AMQPTopicOutputBot(OutputBot):
     use_ssl = False
     username = None
 
-    connection = None
-    format_routing_key = False
+    _connection = None
 
     def init(self):
         if pika is None:
             raise MissingDependencyError("pika")
 
-        self.connection = None
+        self._connection = None
         self.channel = None
 
         pika_version = tuple(int(x) for x in pika.__version__.split('.'))
@@ -55,8 +55,6 @@ class AMQPTopicOutputBot(OutputBot):
         else:
             self.publish_raises_nack = True
 
-        self.exchange = self.exchange_name
-        self.durable = self.exchange_durable
         if self.username is not None and self.password is not None:
             self.kwargs['credentials'] = pika.PlainCredentials(self.username,
                                                                self.password)
@@ -80,7 +78,7 @@ class AMQPTopicOutputBot(OutputBot):
         self.logger.info('AMQP Connecting to %s:%s/%s.',
                          self.connection_host, self.connection_port, self.connection_vhost)
         try:
-            self.connection = pika.BlockingConnection(self.connection_parameters)
+            self._connection = pika.BlockingConnection(self.connection_parameters)
         except pika.exceptions.ProbableAuthenticationError:
             self.logger.error('AMQP authentication failed!')
             raise
@@ -92,12 +90,12 @@ class AMQPTopicOutputBot(OutputBot):
             raise
         else:
             self.logger.info('AMQP connection successful.')
-            self.channel = self.connection.channel()
-            if self.exchange:  # do not declare default exchange (#1295)
+            self.channel = self._connection.channel()
+            if self.exchange_name:  # do not declare default exchange (#1295)
                 try:
-                    self.channel.exchange_declare(exchange=self.exchange,
+                    self.channel.exchange_declare(exchange=self.exchange_name,
                                                   exchange_type=self.exchange_type,
-                                                  durable=self.durable)
+                                                  durable=self.exchange_durable)
                 except pika.exceptions.ChannelClosed:
                     self.logger.error('Access to exchange refused.')
                     raise
@@ -106,8 +104,8 @@ class AMQPTopicOutputBot(OutputBot):
     def process(self):
         ''' Stop the Bot if cannot connect to AMQP Server after the defined connection attempts '''
 
-        # self.connection and self.channel can be None
-        if getattr(self.connection, 'is_closed', None) or getattr(self.channel, 'is_closed', None):
+        # self._connection and self.channel can be None
+        if getattr(self._connection, 'is_closed', None) or getattr(self.channel, 'is_closed', None):
             self.connect_server()
 
         event = self.receive_message()
@@ -121,7 +119,7 @@ class AMQPTopicOutputBot(OutputBot):
             routing_key = self.routing_key
 
         try:
-            if not self.channel.basic_publish(exchange=self.exchange,
+            if not self.channel.basic_publish(exchange=self.exchange_name,
                                               routing_key=routing_key,
                                               body=body,
                                               properties=self.properties,
@@ -140,8 +138,8 @@ class AMQPTopicOutputBot(OutputBot):
             self.acknowledge_message()
 
     def shutdown(self):
-        if self.connection:
-            self.connection.close()
+        if self._connection:
+            self._connection.close()
 
 
 BOT = AMQPTopicOutputBot

@@ -28,7 +28,9 @@ class TestSMTPOutputBot(test.BotTestCase, unittest.TestCase):
                          "text": 'foobar',
                          "subject": "type: {ev[classification.type]}",
                          "mail_from": "myself",
-                         "mail_to": "you,yourself"}
+                         "mail_to": "you,yourself",
+                         "starttls": False,
+                         }
 
     def test_event(self):
         self.input_message = EVENT
@@ -66,6 +68,7 @@ class TestSMTPOutputBot(test.BotTestCase, unittest.TestCase):
 ''')
         self.assertEqual({'from_addr': 'myself', 'to_addrs': ['one@example.com', 'two@example.com']},
                          SENT_MESSAGE[1])
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

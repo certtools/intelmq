@@ -6,6 +6,8 @@ SPDX-License-Identifier: AGPL-3.0
 """
 from collections import OrderedDict
 from pkg_resources import resource_filename
+from pathlib import Path
+from intelmq import CONFIG_DIR
 
 from intelmq.lib.utils import load_configuration, write_configuration
 
@@ -30,6 +32,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v230_csv_parser_parameter_fix',
            'v230_deprecations',
            'v230_feed_changes',
+           'v300_bots_file_removal'
            ]
 
 
@@ -571,6 +574,23 @@ def v230_feed_changes(defaults, runtime, harmonization, dry_run):
     return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
 
 
+def v300_bots_file_removal(defaults, runtime, harmonization, dry_run):
+    """
+    Remove BOTS file
+    """
+    changed = None
+    messages = []
+    bots_file = Path(CONFIG_DIR) / "BOTS"
+    if bots_file.exists():
+        if dry_run:
+            print('Would now remove file {bots_file!r}.')
+        else:
+            bots_file.unlink()
+            changed = True
+    messages = ' '.join(messages)
+    return messages if messages else changed, defaults, runtime, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -589,8 +609,7 @@ UPGRADES = OrderedDict([
     ((2, 2, 2), (v222_feed_changes, )),
     ((2, 2, 3), ()),
     ((2, 3, 0), (v230_csv_parser_parameter_fix, v230_feed_changes, v230_deprecations,)),
-    ((2, 3, 1), ()),
-    ((3, 0, 0), ()),
+    ((3, 0, 0), (v300_bots_file_removal, ))
 ])
 
 ALWAYS = (harmonization, )

@@ -20,7 +20,7 @@ from intelmq.lib.bot import Bot
 
 class ATDParserBot(Bot):
     """Parse IoCs from McAfee Advanced Threat Defense reports (hash, IP, URL)"""
-    verdict_severity = None
+    verdict_severity: int = 4
 
     ATD_TYPE_MAPPING = {
         'domain': 'source.fqdn',

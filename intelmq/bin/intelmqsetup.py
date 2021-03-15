@@ -44,7 +44,7 @@ except ImportError:
 
 from termstyle import red
 from intelmq import (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
-                     VAR_STATE_PATH, BOTS_FILE, STATE_FILE_PATH)
+                     VAR_STATE_PATH, STATE_FILE_PATH)
 from intelmq.bin.intelmqctl import IntelMQController
 
 
@@ -160,13 +160,6 @@ def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
             log_ownership_change = False  # For installing the new files, we don't need to inform the admin that the permissions have been "fixed"
         if ownership:
             change_owner(destination_file, owner='intelmq', group='intelmq', log=log_ownership_change)
-
-    if Path(BOTS_FILE).is_symlink():
-        print('Skip writing BOTS file as it is a link.')
-    else:
-        print('Writing BOTS file.')
-        shutil.copy(pkg_resources.resource_filename('intelmq', 'bots/BOTS'),
-                    BOTS_FILE)
 
     if ownership:
         print('Setting intelmq as owner for it\'s directories.')

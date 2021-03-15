@@ -17,7 +17,7 @@ from intelmq.lib.harmonization import DateTime
 class CertEUCSVParserBot(ParserBot):
     """Parse CSV data of the CERT-EU feed"""
 
-    abuse_to_intelmq = defaultdict(lambda: "other", {
+    ABUSE_TO_INTELMQ = defaultdict(lambda: "other", {
         "backdoor": "backdoor",
         "blacklist": "blacklist",
         "botnet drone": "infected-system",
@@ -40,15 +40,15 @@ class CertEUCSVParserBot(ParserBot):
         "vulnerable service": "vulnerable-system"
     })
 
-    unknown_fields = ["threat type", "ns1", "ns2", "response", "recent"]
-    ignore_lines_starting = ["#"]
+    _unknown_fields = ["threat type", "ns1", "ns2", "response", "recent"]
+    _ignore_lines_starting = ["#"]
 
     def parse_line(self, line, report):
         event = self.new_event(report)
         if line["version"] not in ("1.5", ''):
             raise ValueError("Unknown version %r. Please report this with an example."
                              "" % line["version"])
-        for unknown in self.unknown_fields:
+        for unknown in self._unknown_fields:
             if line[unknown]:
                 raise ValueError("Unable to parse field %r. Please report this with an example"
                                  "" % unknown)
@@ -60,7 +60,7 @@ class CertEUCSVParserBot(ParserBot):
                   DateTime.sanitize(line["observation time"]))
         event.add("tlp", line["tlp"])
         event.add("event_description.text", line["description"])
-        event.add("classification.type", self.abuse_to_intelmq[line["type"]])
+        event.add("classification.type", self.ABUSE_TO_INTELMQ[line["type"]])
         if line["count"]:
             event["extra.count"] = int(line["count"])
         event.add("time.source", line["source time"])

@@ -28,7 +28,7 @@ class StompOutputBot(OutputBot):
     ssl_client_certificate: str = 'client.pem'  # TODO: pathlib.Path
     ssl_client_certificate_key: str = 'client.key'  # TODO: patlib.Path
 
-    conn = None
+    _conn = None
 
     def init(self):
         if stomp is None:
@@ -40,33 +40,33 @@ class StompOutputBot(OutputBot):
                 raise ValueError("Could not open SSL (certificate) file '%s'." % f)
 
         _host = [(self.server, self.port)]
-        self.conn = stomp.Connection(host_and_ports=_host, use_ssl=True,
-                                     ssl_key_file=self.ssl_cl_cert_key,
-                                     ssl_cert_file=self.ssl_cl_cert,
-                                     ssl_ca_certs=self.ssl_ca_cert,
-                                     heartbeats=(self.heartbeat,
-                                                 self.heartbeat))
+        self._conn = stomp.Connection(host_and_ports=_host, use_ssl=True,
+                                      ssl_key_file=self.ssl_cl_cert_key,
+                                      ssl_cert_file=self.ssl_cl_cert,
+                                      ssl_ca_certs=self.ssl_ca_cert,
+                                      heartbeats=(self.heartbeat,
+                                                  self.heartbeat))
         self.connect()
 
     def connect(self):
         self.logger.debug('Connecting.')
         # based on the documentation at:
         # https://github.com/jasonrbriggs/stomp.py/wiki/Simple-Example
-        self.conn.start()
-        self.conn.connect(wait=True)
+        self._conn.start()
+        self._conn.connect(wait=True)
         self.logger.debug('Connected.')
 
     def shutdown(self):
-        if self.conn:
-            self.conn.disconnect()
+        if self._conn:
+            self._conn.disconnect()
 
     def process(self):
         event = self.receive_message()
 
         body = self.export_event(event)
 
-        self.conn.send(body=body,
-                       destination=self.exchange)
+        self._conn.send(body=body,
+                        destination=self.exchange)
         self.acknowledge_message()
 
 

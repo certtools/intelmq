@@ -16,6 +16,7 @@ import csv
 import io
 import json
 import re
+from typing import Optional, Union, Iterable
 
 from dateutil.parser import parse
 
@@ -35,19 +36,19 @@ DOCS = "https://intelmq.readthedocs.io/en/latest/guides/Bots.html#generic-csv-pa
 
 class GenericCsvParserBot(ParserBot):
     """Parse generic CSV data. Ignoring lines starting with character #. URLs without protocol can be prefixed with a default value."""
-    column_regex_search = None
-    columns = None
-    compose_fields = {}
-    columns_required = None
-    data_type = None
-    default_url_protocol = ''
-    delimiter = ''
+    column_regex_search: Optional[dict] = None
+    columns: Union[str, Iterable] = None
+    compose_fields: Optional[dict] = {}
+    columns_required: Optional[dict] = None
+    data_type: Optional[dict] = None
+    default_url_protocol: str = ''
+    delimiter: str = ''
     filter_text = None
     filter_type = None
     time_format = None
-    type = None
+    type: Optional[str] = None
     type_translation = {}
-    skip_header = False
+    skip_header: bool = False
 
     def init(self):
         # convert columns to an array

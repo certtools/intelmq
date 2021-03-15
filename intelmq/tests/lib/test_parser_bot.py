@@ -103,7 +103,7 @@ class DummyCSVParserBot(bot.ParserBot):
     A csv parser bot only for testing purpose.
     """
     csv_fieldnames = ['source.ip', 'foobar']
-    ignore_lines_starting = ['#']
+    _ignore_lines_starting = ['#']
 
     def parse_line(self, line, report):
         event = self.new_event(report)

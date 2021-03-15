@@ -16,20 +16,20 @@ class SpamhausDropParserBot(ParserBot):
                          'https://www.spamhaus.org/drop/drop.lasso'}
 
     ASN_DROP_URLS = {'https://www.spamhaus.org/drop/asndrop.txt'}
-    lastgenerated = None
+    _lastgenerated = None
 
     def parse_line(self, line, report):
 
         if line.startswith(';') or len(line) == 0:
             self.tempdata.append(line)
             if 'Last-Modified:' in line:
-                self.lastgenerated = line.strip('; ')[15:]
-                self.lastgenerated = dateutil.parser.parse(self.lastgenerated).isoformat()
+                self._lastgenerated = line.strip('; ')[15:]
+                self._lastgenerated = dateutil.parser.parse(self._lastgenerated).isoformat()
 
         else:
             event = self.new_event(report)
-            if self.lastgenerated:
-                event.add('time.source', self.lastgenerated)
+            if self._lastgenerated:
+                event.add('time.source', self._lastgenerated)
             event.add('classification.type', 'spam')
             event.add('raw', line)
 

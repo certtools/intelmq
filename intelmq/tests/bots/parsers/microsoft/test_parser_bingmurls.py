@@ -3,7 +3,7 @@ import json
 import os
 import unittest
 
-from intelmq.bots.parsers.microsoft.parser_bingmurls import MicrosoftCTIPParserBot
+from intelmq.bots.parsers.microsoft.parser_bingmurls import MicrosoftBingMurlsParserBot
 from intelmq.lib import test
 from intelmq.lib.utils import base64_encode
 
@@ -61,14 +61,14 @@ EXAMPLE_EVENTS = [{
     ]
 
 
-class TestMicrosoftCTIPParserBot(test.BotTestCase, unittest.TestCase):
+class TestMicrosoftBingMurlsParserBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for the MicrosoftCTIPParserBot.
+    A TestCase for the MicrosoftBingMurlsParserBot.
     """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = MicrosoftCTIPParserBot
+        cls.bot_reference = MicrosoftBingMurlsParserBot
         cls.default_input_message = EXAMPLE_REPORT
 
     def test_event(self):

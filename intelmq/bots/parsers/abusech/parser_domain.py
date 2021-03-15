@@ -21,17 +21,17 @@ SOURCE_FEEDS = {'https://feodotracker.abuse.ch/blocklist/?download=domainblockli
 
 class AbusechDomainParserBot(ParserBot):
     """Parse Abuse.ch domain feeds"""
-    lastgenerated = None
+    _lastgenerated = None
 
     def parse_line(self, line, report):
         if line.startswith('#'):
             self.tempdata.append(line)
             if 'Generated on' in line:
                 row = line.strip('# ')[13:]
-                self.lastgenerated = dateutil.parser.parse(row).isoformat()
+                self._lastgenerated = dateutil.parser.parse(row).isoformat()
         else:
             event = self.new_event(report)
-            event.add('time.source', self.lastgenerated)
+            event.add('time.source', self._lastgenerated)
             event.add('classification.taxonomy', 'malicious-code')
             event.add('classification.type', 'c2-server')
             event.add('source.fqdn', line)
