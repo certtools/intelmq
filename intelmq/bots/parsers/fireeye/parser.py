@@ -8,7 +8,10 @@ from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.utils import base64_decode
+<<<<<<< HEAD
 from intelmq.lib.exceptions import MissingDependencyError
+=======
+>>>>>>> efa5499372c5c26d90bf4ccef648b1be8279834f
 import json
 import xmltodict
 import ipaddress
