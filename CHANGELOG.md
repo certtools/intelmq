@@ -94,6 +94,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - Add missing newlines at end of `docs/_static/intelmq-manager/*.png.license` files (PR#1785 by Sebastian Wagner, fixes #1777).
 - Ecosystem: Revise sections on intelmq-cb-mailgen and fody (PR#1792 by Bernhard Reiter).
 - intelmq-api: Add documentation about necessary write permission for the session database file (PR#1798 by Birger Schacht, fixes intelmq-api#23).
+- FAQ: Section on redis socket permissions: set only minimal necessary permissions (PR#1809 by Sebastian Wagner).
 
 ### Packaging
 
