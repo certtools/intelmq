@@ -147,7 +147,8 @@ def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
     create_directory(DEFAULT_LOGGING_PATH, 0o40755)
     create_directory(CONFIG_DIR, 0o40775)
 
-    example_confs = Path(pkg_resources.resource_filename('intelmq', 'etc')).glob('*.conf')
+    example_path = Path(pkg_resources.resource_filename('intelmq', 'etc'))
+    example_confs = [example_path / 'runtime.yaml', example_path / 'harmonization.conf']
     for example_conf in example_confs:
         fname = Path(example_conf).name
         destination_file = Path(CONFIG_DIR) / fname

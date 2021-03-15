@@ -429,7 +429,7 @@ def main():
                             utils.write_configuration(configuration_filepath=filename,
                                                       content=json.loads(content[meta[entry][0]]['message']),
                                                       new=True,
-                                                      backup=False)
+                                                      backup=False, useyaml=False)
                             proc = subprocess.run(['sensible-editor', filename])
                             if proc.returncode != 0:
                                 print(red('Calling editor failed with exitcode %r.' % proc.returncode))

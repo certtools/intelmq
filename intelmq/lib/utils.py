@@ -40,10 +40,13 @@ from pkg_resources import resource_filename
 import dateutil.parser
 from dateutil.relativedelta import relativedelta
 from termstyle import red
+from ruamel.yaml import YAML
 
 import intelmq
 from intelmq.lib.exceptions import DecodingError
 from intelmq import RUNTIME_CONF_FILE
+
+yaml = YAML(typ="safe", pure=True)
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
@@ -193,10 +196,10 @@ def flatten_queues(queues: Union[list, Dict]) -> Iterator[str]:
 
 def load_configuration(configuration_filepath: str) -> dict:
     """
-    Load JSON configuration file.
+    Load JSON or YAML configuration file.
 
     Parameters:
-        configuration_filepath: Path to JSON file to load.
+        configuration_filepath: Path to file to load.
 
     Returns:
         config: Parsed configuration
@@ -206,7 +209,7 @@ def load_configuration(configuration_filepath: str) -> dict:
     """
     if os.path.exists(configuration_filepath):
         with open(configuration_filepath, 'r') as fpconfig:
-            config = json.load(fpconfig)
+            config = yaml.load(fpconfig)
     else:
         raise ValueError('File not found: %r.' % configuration_filepath)
     return config
@@ -214,7 +217,7 @@ def load_configuration(configuration_filepath: str) -> dict:
 
 def write_configuration(configuration_filepath: str,
                         content: dict, backup: bool = True,
-                        new=False) -> Optional[bool]:
+                        new=False, useyaml=True) -> Optional[bool]:
     """
     Writes a configuration to the file, optionally with making a backup.
     Checks if the file needs to be written at all.
@@ -240,10 +243,13 @@ def write_configuration(configuration_filepath: str,
     if not new and backup:
         shutil.copy2(configuration_filepath, configuration_filepath + '.bak')
     with open(configuration_filepath, 'w') as handle:
-        json.dump(content, fp=handle, indent=4,
-                  sort_keys=True,
-                  separators=(',', ': '))
-        handle.write('\n')
+        if useyaml:
+            yaml.dump(content, handle)
+        else:
+            json.dump(content, fp=handle, indent=4,
+                      sort_keys=True,
+                      separators=(',', ': '))
+            handle.write('\n')
 
 
 def load_parameters(*configs: dict) -> Parameters:

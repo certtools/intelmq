@@ -1,0 +1,208 @@
+cymru-whois-expert:
+  bot_id: cymru-whois-expert
+  description: Cymru Whois (IP to ASN) is the bot responsible to add network information
+    to the events (BGP, ASN, AS Name, Country, etc..).
+  enabled: true
+  group: Expert
+  groupname: experts
+  module: intelmq.bots.experts.cymru_whois.expert
+  name: Cymru Whois
+  parameters:
+    destination_queues:
+      _default: [file-output-queue]
+    overwrite: true
+    redis_cache_db: 5
+    redis_cache_host: 127.0.0.1
+    redis_cache_password: null
+    redis_cache_port: 6379
+    redis_cache_ttl: 86400
+  run_mode: continuous
+deduplicator-expert:
+  bot_id: deduplicator-expert
+  description: Deduplicator is the bot responsible for detection and removal of duplicate
+    messages. Messages get cached for <redis_cache_ttl> seconds. If found in the cache,
+    it is assumed to be a duplicate.
+  enabled: true
+  group: Expert
+  groupname: experts
+  module: intelmq.bots.experts.deduplicator.expert
+  name: Deduplicator
+  parameters:
+    destination_queues:
+      _default: [taxonomy-expert-queue]
+    filter_keys: raw,time.observation
+    filter_type: blacklist
+    redis_cache_db: 6
+    redis_cache_host: 127.0.0.1
+    redis_cache_port: 6379
+    redis_cache_ttl: 86400
+  run_mode: continuous
+feodo-tracker-browse-collector:
+  description: Generic URL Fetcher is the bot responsible to get the report from an
+    URL.
+  enabled: true
+  group: Collector
+  module: intelmq.bots.collectors.http.collector_http
+  name: URL Fetcher
+  parameters:
+    destination_queues:
+      _default: [feodo-tracker-browse-parser-queue]
+    extract_files: false
+    http_password: null
+    http_url: https://feodotracker.abuse.ch/browse
+    http_url_formatting: false
+    http_username: null
+    name: Feodo Tracker Browse
+    provider: Abuse.ch
+    rate_limit: 86400
+    ssl_client_certificate: null
+  run_mode: continuous
+feodo-tracker-browse-parser:
+  description: HTML Table Parser is a bot configurable to parse different html table
+    data.
+  enabled: true
+  group: Parser
+  module: intelmq.bots.parsers.html_table.parser
+  name: HTML Table
+  parameters:
+    attribute_name: ''
+    attribute_value: ''
+    columns: time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc
+    default_url_protocol: http://
+    destination_queues:
+      _default: [deduplicator-expert-queue]
+    ignore_values: ',,,,Not listed,,'
+    skip_table_head: true
+    split_column: ''
+    split_index: 0
+    split_separator: ''
+    table_index: 0
+    time_format: null
+    type: c2-server
+  run_mode: continuous
+file-output:
+  bot_id: file-output
+  description: File is the bot responsible to send events to a file.
+  enabled: true
+  group: Output
+  groupname: outputs
+  module: intelmq.bots.outputs.file.output
+  name: File
+  parameters: {file: /opt/intelmq/var/lib/bots/file-output/events.txt, hierarchical_output: false,
+    single_key: null}
+  run_mode: continuous
+gethostbyname-1-expert:
+  bot_id: gethostbyname-1-expert
+  description: fqdn2ip is the bot responsible to parsing the ip from the fqdn.
+  enabled: true
+  group: Expert
+  groupname: experts
+  module: intelmq.bots.experts.gethostbyname.expert
+  name: Gethostbyname
+  parameters:
+    destination_queues:
+      _default: [cymru-whois-expert-queue]
+  run_mode: continuous
+gethostbyname-2-expert:
+  bot_id: gethostbyname-2-expert
+  description: fqdn2ip is the bot responsible to parsing the ip from the fqdn.
+  enabled: true
+  group: Expert
+  groupname: experts
+  module: intelmq.bots.experts.gethostbyname.expert
+  name: Gethostbyname
+  parameters:
+    destination_queues:
+      _default: [cymru-whois-expert-queue]
+  run_mode: continuous
+malc0de-parser:
+  bot_id: malc0de-parser
+  description: Malc0de Parser is the bot responsible to parse the IP Blacklist and
+    either Windows Format or Bind Format reports and sanitize the information.
+  enabled: true
+  group: Parser
+  groupname: parsers
+  module: intelmq.bots.parsers.malc0de.parser
+  name: Malc0de
+  parameters:
+    destination_queues:
+      _default: [deduplicator-expert-queue]
+  run_mode: continuous
+malc0de-windows-format-collector:
+  bot_id: malc0de-windows-format-collector
+  description: ''
+  enabled: true
+  group: Collector
+  groupname: collectors
+  module: intelmq.bots.collectors.http.collector_http
+  name: Malc0de Windows Format
+  parameters:
+    destination_queues:
+      _default: [malc0de-parser-queue]
+    http_password: null
+    http_url: https://malc0de.com/bl/BOOT
+    http_username: null
+    name: Windows Format
+    provider: Malc0de
+    rate_limit: 10800
+    ssl_client_certificate: null
+  run_mode: continuous
+spamhaus-drop-collector:
+  bot_id: spamhaus-drop-collector
+  description: ''
+  enabled: true
+  group: Collector
+  groupname: collectors
+  module: intelmq.bots.collectors.http.collector_http
+  name: Spamhaus Drop
+  parameters:
+    destination_queues:
+      _default: [spamhaus-drop-parser-queue]
+    http_password: null
+    http_url: https://www.spamhaus.org/drop/drop.txt
+    http_username: null
+    name: Drop
+    provider: Spamhaus
+    rate_limit: 3600
+    ssl_client_certificate: null
+  run_mode: continuous
+spamhaus-drop-parser:
+  bot_id: spamhaus-drop-parser
+  description: Spamhaus Drop Parser is the bot responsible to parse the DROP, EDROP,
+    DROPv6, and ASN-DROP reports and sanitize the information.
+  enabled: true
+  group: Parser
+  groupname: parsers
+  module: intelmq.bots.parsers.spamhaus.parser_drop
+  name: Spamhaus Drop
+  parameters:
+    destination_queues:
+      _default: [deduplicator-expert-queue]
+  run_mode: continuous
+taxonomy-expert:
+  bot_id: taxonomy-expert
+  description: Taxonomy is the bot responsible to apply the eCSIRT Taxonomy to all
+    events.
+  enabled: true
+  group: Expert
+  groupname: experts
+  module: intelmq.bots.experts.taxonomy.expert
+  name: Taxonomy
+  parameters:
+    destination_queues:
+      _default: [url2fqdn-expert-queue]
+  run_mode: continuous
+url2fqdn-expert:
+  bot_id: url2fqdn-expert
+  description: url2fqdn is the bot responsible to parsing the fqdn from the url.
+  enabled: true
+  group: Expert
+  groupname: experts
+  module: intelmq.bots.experts.url2fqdn.expert
+  name: URL2FQDN
+  parameters:
+    destination_queues:
+      _default: [gethostbyname-1-expert-queue, gethostbyname-2-expert-queue]
+    load_balance: true
+    overwrite: false
+  run_mode: continuous
