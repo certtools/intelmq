@@ -16,11 +16,23 @@ Permission denied when using Redis Unix socket
 
 If you get an error like this:
 
-``intelmq.lib.exceptions.PipelineError: pipeline failed - ConnectionError('Error 13 connecting to unix socket: /var/run/redis/redis.sock. Permission denied.',)``
+.. code-block::
 
-make sure the permissions for the socket are set accordingly in ``/etc/redis/redis.conf`` (or wherever your configuration is), e.g.:
+   intelmq.lib.exceptions.PipelineError: pipeline failed - ConnectionError('Error 13 connecting to unix socket: /var/run/redis/redis.sock. Permission denied.',)
 
-``unixsocketperm 777``
+Make sure the intelmq user as sufficient permissions for the socket.
+
+In ``/etc/redis/redis.conf`` (or wherever your configuration is), check the permissions and set it for example to group-writeable:
+
+.. code-block::
+
+   unixsocketperm 770
+
+And add the user intelmq to the redis-group:
+
+.. code-block:: bash
+
+   usermod -aG redis intelmq
 
 Why is the time invalid?
 -------------------------------------------------------------------
