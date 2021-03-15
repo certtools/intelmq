@@ -98,51 +98,6 @@ class TestConf(unittest.TestCase):
         interpreted = json.loads(fcontent)
         self.assertEqual(to_json(interpreted), fcontent)
 
-    def test_bots(self):
-        """ Test if BOTS has correct syntax and consistent content. """
-        with open(pkg_resources.resource_filename('intelmq',
-                                                  'bots/BOTS')) as fhandle:
-            fcontent = fhandle.read()
-
-        interpreted = json.loads(fcontent,
-                                 object_pairs_hook=collections.OrderedDict)
-        self.assertEqual(to_unsorted_json(interpreted), fcontent)
-
-        for groupname, group in interpreted.items():
-            for bot_name, bot_config in group.items():
-                for field in ['description', 'module', 'parameters']:
-                    self.assertIn(field, bot_config)
-                importlib.import_module(bot_config['module'])
-
-    def test_modules_in_bots(self):
-        """ Test if all bot modules are mentioned BOTS file. """
-        with open(pkg_resources.resource_filename('intelmq',
-                                                  'bots/BOTS')) as fhandle:
-            fcontent = fhandle.read()
-
-        interpreted = json.loads(fcontent,
-                                 object_pairs_hook=collections.OrderedDict)
-        modules = set()
-
-        for groupname, group in interpreted.items():
-            for bot_name, bot_config in group.items():
-                modules.add(bot_config['module'])
-
-        for _, groupname, _ in pkgutil.iter_modules(path=intelmq.bots.__path__):
-            group = importlib.import_module('intelmq.bots.%s' % groupname)
-            for _, providername, _ in pkgutil.iter_modules(path=group.__path__):
-                modulename = 'intelmq.bots.%s.%s' % (groupname, providername)
-                provider = importlib.import_module(modulename)
-                for _, botname, _ in pkgutil.iter_modules(path=provider.__path__):
-                    classname = 'intelmq.bots.%s.%s.%s' % (groupname, providername, botname)
-                    self.assertFalse(classname not in modules and '_' in botname,
-                                    msg="Bot %r not found in BOTS file." % classname)
-
-        for module in modules:
-            bot = importlib.import_module(module)
-            self.assertTrue(hasattr(bot, 'BOT'),
-                            msg='Module %r has no variable BOT.' % module)
-
 
 class CerberusTests(unittest.TestCase):
 

@@ -120,13 +120,6 @@ def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
         if ownership:
             change_owner(destination_file, owner='intelmq', group='intelmq', log=log_ownership_change)
 
-    if Path(BOTS_FILE).is_symlink():
-        print('Skip writing BOTS file as it is a link.')
-    else:
-        print('Writing BOTS file.')
-        shutil.copy(pkg_resources.resource_filename('intelmq', 'bots/BOTS'),
-                    BOTS_FILE)
-
     if ownership:
         print('Setting intelmq as owner for it\'s directories.')
         for obj in (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,

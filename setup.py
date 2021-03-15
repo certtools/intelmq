@@ -24,6 +24,7 @@ BOTS = []
 base_path = Path(__file__).parent / 'intelmq/bots'
 botfiles = [botfile for botfile in Path(base_path).glob('**/*.py') if botfile.is_file() and not botfile.name.startswith('_')]
 for file in botfiles:
+    file = Path(str(file).replace(str(base_path), 'intelmq/bots'))
     module = '.'.join(file.with_suffix('').parts)
     BOTS.append('{0} = {0}:BOT.run'.format(module))
 
