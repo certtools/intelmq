@@ -14,6 +14,7 @@ PARAMETERS = {'dns_name': 'myfireeye.local', 'http_username': RANDSTR, 'http_pas
 
 
 def prepare_mocker(mocker):
+    test.skip_exotic()
     mocker.post('https://myfireeye.local/wsapis/v2.0.0/auth/login', headers={'X-FeApi-Token': '1234567890'})
     mocker.get('https://myfireeye.local/wsapis/v2.0.0/alerts?duration=24_hours', text=ASSET_PATH_FIRST.read_text())
     mocker.get('https://myfireeye.local/wsapis/v2.0.0/openioc?alert_uuid=1591de22-4926-4124-b3ed-ffff96766295', text=ASSET_PATH_SECOND.read_text())
