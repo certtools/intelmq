@@ -15,6 +15,12 @@ import ipaddress
 
 class FireeyeParserBot(ParserBot):
 
+    def init(self):
+        if xmltodict is None:
+            raise MissingDependencyError("xmltodict")
+        if ipaddress is None:
+            raise MissingDependencyError("ipaddress")
+
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report.get('raw'))
