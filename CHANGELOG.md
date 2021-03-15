@@ -39,6 +39,7 @@ CHANGELOG
 ### Tools
 - `intelmqsetup`:
   - Also cover required directory layout and file permissions for `intelmq-api` (PR#1787 by Sebastian Wagner, fixes #1783).
+  - Also cover webserver and sudoers configuration for `intelmq-api` and `intelmq-manger` (PR#1805 by Sebastian Wagner, fixes #1803).
 - `intelmqctl`:
   - Do not log an error message if logging to file is explicitly disabled, e.g. in calls from `intelmsetup`. The error message would not be useful for the user and is not necessary.
 
