@@ -31,6 +31,7 @@ User guide
    :maxdepth: 1
 
    user/introduction
+   user/hardware-requirements
    user/installation
    user/upgrade
    user/configuration-management

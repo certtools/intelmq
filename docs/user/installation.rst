@@ -24,6 +24,8 @@ Supported and recommended operating systems are:
 
 Other distributions which are (most probably) supported include CentOS 8, RHEL, Fedora and openSUSE Tumbleweed.
 
+A short guide on hardware requirements can be found on the page :doc:`hardware-requirements`.
+
 Install Dependencies
 --------------------
 
