@@ -93,7 +93,7 @@ class MISPAPIOutputBot(OutputBot):
     misp_tag_for_bot: str = None
     misp_to_ids_fields = []
     misp_url: str = None
-    significant_fields: str = None
+    significant_fields: list = []
 
     __is_multithreadable = False
 
@@ -229,25 +229,19 @@ class MISPAPIOutputBot(OutputBot):
     @staticmethod
     def check(parameters):
         required_parameters = [
-            'add_feed_provider_as_tag',
-            'add_feed_name_as_tag',
-            'misp_additional_correlation_fields',
-            'misp_additional_tags',
             'misp_key',
-            'misp_publish',
             'misp_tag_for_bot',
-            'misp_to_ids_fields',
             'misp_url',
-            'significant_fields'
+            'significant_fields',
         ]
         missing_parameters = []
         for para in required_parameters:
-            if para not in parameters:
+            if parameters[para] is None:
                 missing_parameters.append(para)
 
         if len(missing_parameters) > 0:
             return [["error",
-                     "Parameters missing: " + str(missing_parameters)]]
+                     f"These parameters must be set (not null): {missing_parameters!s}."]]
 
 
 BOT = MISPAPIOutputBot
