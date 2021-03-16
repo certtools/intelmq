@@ -20,7 +20,7 @@ import redis
 import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, DEFAULTS_CONF_FILE
+from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
 
 __all__ = ['BotTestCase']
 
@@ -59,8 +59,6 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}, gr
                              'name': 'Test Bot',
                              'parameters': sysconfig,
                              }}
-        elif conf_file == DEFAULTS_CONF_FILE:
-            return BOT_CONFIG
         elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
@@ -71,6 +69,18 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}, gr
             return utils.load_configuration(conf_file)
 
     return mocked
+
+
+def mocked_get_global_settings():
+    return {"destination_pipeline_broker": "pythonlist",
+            "redis_cache_host": os.getenv('INTELMQ_PIPELINE_HOST', 'localhost'),
+            "redis_cache_port": 6379,
+            "redis_cache_db": 4,
+            "redis_cache_ttl": 10,
+            "redis_cache_password": os.environ.get('INTELMQ_TEST_REDIS_PASSWORD'),
+            "source_pipeline_broker": "pythonlist",
+            "testing": True,
+            }
 
 
 def skip_database():
@@ -226,7 +236,8 @@ class BotTestCase(object):
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.get_mocked_logger(self.logger)):
-                self.bot = self.bot_reference(self.bot_id)
+                with mock.patch('intelmq.lib.utils.get_global_settings', mocked_get_global_settings):
+                    self.bot = self.bot_reference(self.bot_id)
         self.bot._Bot__stats_cache = None
 
         pipeline_args = {key: getattr(self, key) for key in dir(self) if not inspect.ismethod(getattr(self, key)) and (key.startswith('source_pipeline_') or key.startswith('destination_pipeline'))}

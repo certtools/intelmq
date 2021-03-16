@@ -43,14 +43,14 @@ from termstyle import red
 
 import intelmq
 from intelmq.lib.exceptions import DecodingError
-from intelmq import DEFAULTS_CONF_FILE
+from intelmq import RUNTIME_CONF_FILE
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
            'reverse_readline', 'error_message_from_exc', 'parse_relative',
            'RewindableFileHandle',
            'file_name_from_response',
-           'list_all_bots',
+           'list_all_bots', 'get_global_settings',
            ]
 
 # Used loglines format
@@ -753,7 +753,7 @@ def create_request_session(bot: type = None) -> requests.Session:
     Returns:
         session: A preconfigured instance of requests.Session
     """
-    defaults = load_configuration(DEFAULTS_CONF_FILE)
+    defaults = get_global_settings()
     session = requests.Session()
 
     # tls settings
@@ -868,3 +868,8 @@ def list_all_bots() -> dict:
                 "parameters": keys,
             }
     return bots
+
+
+def get_global_settings() -> dict:
+    runtime_conf = load_configuration(RUNTIME_CONF_FILE)
+    return getattr(runtime_conf, 'global', {})

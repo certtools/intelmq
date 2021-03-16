@@ -50,13 +50,6 @@ class TestConf(unittest.TestCase):
     A TestCase for configuration files.
     """
 
-    def test_defaults_syntax(self):
-        """ Test if defaults.conf has correct syntax. """
-        with open(CONF_FILES['defaults']) as fhandle:
-            fcontent = fhandle.read()
-        interpreted = json.loads(fcontent)
-        self.assertEqual(to_json(interpreted), fcontent)
-
     def test_harmonization(self):
         """ Test if harmonization.conf has correct syntax and valid content. """
         with open(CONF_FILES['harmonization']) as fhandle:

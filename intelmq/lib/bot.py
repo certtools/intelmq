@@ -30,7 +30,7 @@ from typing import Any, List, Optional, Union
 import psutil
 
 import intelmq.lib.message as libmessage
-from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
+from intelmq import (DEFAULT_LOGGING_PATH,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, __version__)
 from intelmq.lib import cache, exceptions, utils
@@ -737,9 +737,7 @@ class Bot(object):
         self.logger.debug('Message dumped.')
 
     def __load_defaults_configuration(self):
-        self.__log_buffer.append(('debug', "Loading defaults configuration from %r."
-                                           "" % DEFAULTS_CONF_FILE))
-        config = utils.load_configuration(DEFAULTS_CONF_FILE)
+        config = utils.get_global_settings()
 
         setattr(self, 'logging_path', DEFAULT_LOGGING_PATH)
 

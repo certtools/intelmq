@@ -22,7 +22,7 @@ from collections import OrderedDict
 import pkg_resources
 from termstyle import green
 
-from intelmq import (DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,  # noqa: F401
+from intelmq import (DEFAULT_LOGGING_LEVEL,  # noqa: F401
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
                      DEFAULT_LOGGING_PATH, __version_info__,
@@ -703,7 +703,7 @@ class IntelMQController():
             defaults_loading_exc = exc
             logging_level_stream = 'DEBUG'
         else:
-            self.logging_level = self.parameters.logging_level.upper()
+            self.logging_level = getattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL).upper()
         # make sure that logging_level_stream is always at least INFO or more verbose
         # otherwise the output on stdout/stderr is less than the user expects
         logging_level_stream = self.logging_level if self.logging_level == 'DEBUG' else 'INFO'
@@ -1010,13 +1010,7 @@ Get some debugging output on the settings and the environment (to be extended):
             self.parser = parser
 
     def load_defaults_configuration(self, silent=False):
-        # Load defaults configuration
-        try:
-            config = utils.load_configuration(DEFAULTS_CONF_FILE)
-        except ValueError as exc:  # pragma: no cover
-            if not silent:
-                self.abort('Error loading %r: %s' % (DEFAULTS_CONF_FILE, exc))
-        for option, value in config.items():
+        for option, value in utils.get_global_settings():
             setattr(self.parameters, option, value)
 
         # TODO: Rewrite variables with env. variables ( CURRENT IMPLEMENTATION NOT FINAL )
@@ -1426,8 +1420,7 @@ Get some debugging output on the settings and the environment (to be extended):
             check_logger = self.logger
 
         # loading files and syntax check
-        files = {DEFAULTS_CONF_FILE: None, PIPELINE_CONF_FILE: None,
-                 RUNTIME_CONF_FILE: None, HARMONIZATION_CONF_FILE: None}
+        files = {PIPELINE_CONF_FILE: None, RUNTIME_CONF_FILE: None, HARMONIZATION_CONF_FILE: None}
         check_logger.info('Reading configuration files.')
         for filename in files:
             try:
@@ -1442,25 +1435,6 @@ Get some debugging output on the settings and the environment (to be extended):
             else:
                 self.logger.error('Fatal errors occurred.')
                 return 1, retval
-
-        check_logger.info('Checking defaults configuration.')
-        try:
-            with open(pkg_resources.resource_filename('intelmq', 'etc/defaults.conf')) as fh:
-                defaults = json.load(fh)
-        except FileNotFoundError:
-            pass
-        else:
-            keys = set(defaults.keys()) - set(files[DEFAULTS_CONF_FILE].keys())
-            if keys:
-                check_logger.error("Keys missing in your 'defaults.conf' file: %r", keys)
-
-        check_logger.info('Checking runtime configuration.')
-        http_proxy = files[DEFAULTS_CONF_FILE].get('http_proxy')
-        https_proxy = files[DEFAULTS_CONF_FILE].get('https_proxy')
-        # Either both are given or both are not given
-        if (not http_proxy or not https_proxy) and not (http_proxy == https_proxy):
-            check_logger.warning('Incomplete configuration: Both http and https proxies must be set.')
-            retval = 1
 
         check_logger.info('Checking runtime and pipeline configuration.')
         all_queues = set()
@@ -1546,20 +1520,21 @@ Get some debugging output on the settings and the environment (to be extended):
 
         check_logger.info('Checking for bots.')
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
-            # importable module
-            try:
-                bot_module = importlib.import_module(bot_config['module'])
-            except ImportError as exc:
-                check_logger.error('Incomplete installation: Bot %r not importable: %r.', bot_id, exc)
-                retval = 1
-                continue
-            bot = getattr(bot_module, 'BOT')
-            bot_parameters = files[DEFAULTS_CONF_FILE].copy()
-            bot_parameters.update(bot_config.get('parameters', {}))  # the parameters field may not exist
-            bot_check = bot.check(bot_parameters)
-            if bot_check:
-                for log_line in bot_check:
-                    getattr(check_logger, log_line[0])("Bot %r: %s" % (bot_id, log_line[1]))
+            if bot_id != 'global':
+                # importable module
+                try:
+                    bot_module = importlib.import_module(bot_config['module'])
+                except ImportError as exc:
+                    check_logger.error('Incomplete installation: Bot %r not importable: %r.', bot_id, exc)
+                    retval = 1
+                    continue
+                bot = getattr(bot_module, 'BOT')
+                bot_parameters = utils.get_global_settings()
+                bot_parameters.update(bot_config.get('parameters', {}))  # the parameters field may not exist
+                bot_check = bot.check(bot_parameters)
+                if bot_check:
+                    for log_line in bot_check:
+                        getattr(check_logger, log_line[0])("Bot %r: %s" % (bot_id, log_line[1]))
         for group in utils.list_all_bots().values():
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
@@ -1653,8 +1628,8 @@ Get some debugging output on the settings and the environment (to be extended):
                 return 1, 'Error writing state file %r: %s.' % (state_file, exc)
             self.logger.info('Successfully wrote initial state file.')
 
-        defaults = utils.load_configuration(DEFAULTS_CONF_FILE)
         runtime = utils.load_configuration(RUNTIME_CONF_FILE)
+        defaults = utils.get_global_settings()
         harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
         if dry_run:
             self.logger.info('Doing a dry run, not writing anything now.')
@@ -1678,8 +1653,7 @@ Get some debugging output on the settings and the environment (to be extended):
                     upgrades, function)(defaults, runtime, harmonization, dry_run)
                 # Handle changed configurations
                 if retval is True and not dry_run:
-                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new,
-                                              backup=not no_backup)
+                    runtime_new['global'] = defaults_new
                     utils.write_configuration(RUNTIME_CONF_FILE, runtime_new,
                                               backup=not no_backup)
                     utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization_new,
@@ -1838,14 +1812,13 @@ Get some debugging output on the settings and the environment (to be extended):
 
             try:
                 if not dry_run:
-                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults,
-                                              backup=not no_backup)
+                    runtime['global'] = defaults
                     utils.write_configuration(RUNTIME_CONF_FILE, runtime,
                                               backup=not no_backup)
                     utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization,
                                               backup=not no_backup)
             except Exception as exc:
-                self.logger.error('Writing defaults or runtime configuration '
+                self.logger.error('Writing runtime configuration '
                                   'did not succeed: %s\nFix the problem and '
                                   'afterwards, re-run this program.',
                                   exc)
@@ -1879,8 +1852,7 @@ Get some debugging output on the settings and the environment (to be extended):
             variables = globals()
             if RETURN_TYPE == 'text':
                 print('Paths:')
-            for path in ('DEFAULTS_CONF_FILE',
-                         'HARMONIZATION_CONF_FILE', 'PIPELINE_CONF_FILE',
+            for path in ('HARMONIZATION_CONF_FILE', 'PIPELINE_CONF_FILE',
                          'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
                          'DEFAULT_LOGGING_PATH', '__file__',
                          'CONFIG_DIR', 'ROOT_DIR'):

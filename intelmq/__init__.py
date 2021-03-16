@@ -24,7 +24,6 @@ elif path == "opt":
 
 
 DEFAULT_LOGGING_LEVEL = "INFO"
-DEFAULTS_CONF_FILE = os.path.join(CONFIG_DIR, "defaults.conf")
 HARMONIZATION_CONF_FILE = os.path.join(CONFIG_DIR, "harmonization.conf")
 PIPELINE_CONF_FILE = os.path.join(CONFIG_DIR, "pipeline.conf")
 RUNTIME_CONF_FILE = os.path.join(CONFIG_DIR, "runtime.conf")

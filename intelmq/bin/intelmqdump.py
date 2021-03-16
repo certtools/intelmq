@@ -24,7 +24,7 @@ import intelmq.lib.exceptions as exceptions
 import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
+from intelmq import (DEFAULT_LOGGING_PATH,
                      PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
                      DEFAULT_LOGGING_LEVEL)
 
@@ -188,7 +188,7 @@ def main():
 
     # Try to get log_level from defaults_configuration, else use default
     try:
-        defaults = utils.load_configuration(DEFAULTS_CONF_FILE)
+        defaults = utils.get_global_settings()
     except Exception:
         log_level = DEFAULT_LOGGING_LEVEL
 
@@ -327,8 +327,8 @@ def main():
                 save_file(handle, content)
             elif answer[0] == 'r':
                 # recover entries
-                default = utils.load_configuration(DEFAULTS_CONF_FILE)
                 runtime = utils.load_configuration(RUNTIME_CONF_FILE)
+                defaults = utils.get_global_settings()
                 params = utils.load_parameters(default, runtime)
                 pipe = pipeline.PipelineFactory.create(params, logger)
                 try:
