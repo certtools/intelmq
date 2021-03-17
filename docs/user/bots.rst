@@ -350,7 +350,7 @@ Github API
 * `cache (redis db):` none
 * `description:` Collects files matched by regular expression from GitHub repository via the GitHub API.
   Optionally with GitHub credentials, which are used as the Basic HTTP authentication.
-  
+
 **Configuration Parameters**
 
 * **Feed parameters** (see above)
@@ -363,7 +363,7 @@ Github API
 **Workflow**
 
 The optional authentication parameters provide a high limit of the GitHub API requests.
-With the git hub user authentication, the requests are rate limited to 5000 per hour, otherwise to 60 requests per hour. 
+With the git hub user authentication, the requests are rate limited to 5000 per hour, otherwise to 60 requests per hour.
 
 The collector recursively searches for `regex`-defined files in the provided `repository`.
 Additionally it adds extra file metadata defined by the `extra_fields`.
@@ -506,7 +506,7 @@ Request Tracker
 
 You need the rt-library >= 1.9 from nic.cz, available via `pypi <https://pypi.org/project/rt/>`_: `pip3 install rt`
 
-This rt bot will connect to RT and inspect the given `search_queue` for tickets matching all criteria in `search_*`, 
+This rt bot will connect to RT and inspect the given `search_queue` for tickets matching all criteria in `search_*`,
 Any matches will be inspected. For each match, all (RT-) attachments of the matching RT tickets are iterated over and within this loop, the first matching filename in the attachment is processed.
 If none of the filename matches apply, the contents of the first (RT-) "history" item is matched against the regular expression for the URL (`url_regex`).
 
@@ -672,7 +672,7 @@ Alien Vault OTX
 Install the library from GitHub, as there is no package in PyPi:
 
 .. code-block:: bash
-   
+
    pip3 install -r intelmq/bots/collectors/alienvault_otx/REQUIREMENTS.txt
 
 **Configuration Parameters**
@@ -701,7 +701,7 @@ For more information visit https://github.com/Blueliv/api-python-sdk
 Install the required library:
 
 .. code-block:: bash
-   
+
    pip3 install -r intelmq/bots/collectors/blueliv/REQUIREMENTS.txt
 
 **Configuration Parameters**
@@ -747,7 +747,7 @@ For more information visit https://www.eset.com/int/business/services/threat-int
 Install the required `cabby` library:
 
 .. code-block:: bash
-   
+
    pip3 install -r intelmq/bots/collectors/eset/REQUIREMENTS.txt
 
 **Configuration Parameters**
@@ -844,7 +844,7 @@ Stomp
 Install the `stomp.py` library from PyPI:
 
 .. code-block:: bash
-   
+
    pip3 install -r intelmq/bots/collectors/stomp/REQUIREMENTS.txt
 
 **Configuration Parameters**
@@ -898,7 +898,7 @@ API collector bot
 example usage:
 
 .. code-block:: bash
-   
+
    curl -X POST http://localhost:5000/intelmq/push -H 'Content-Type: application/json' --data '{"source.ip": "127.0.0.101", "classification.type": "backdoor"}'
 
 **Configuration Parameters**
@@ -947,10 +947,10 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 **Configuration parameters**
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Empty column specifications and columns named `"__IGNORE__"` are ignored. E.g.
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the IntelMQ Data Format field names. Empty column specifications and columns named `"__IGNORE__"` are ignored. E.g.
 
    .. code-block:: json
-   
+
       "columns": [
            "",
            "source.fqdn",
@@ -959,13 +959,13 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
       ],
 
    is equivalent to:
-   
+
    .. code-block:: json
-   
+
       "columns": ",source.fqdn,extra.http_host_header,"
 
    The first and the last column are not used in this example.
-   
+
    It is possible to specify multiple columns using the `|` character. E.g.
 
    .. code-block::
@@ -988,15 +988,15 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
       example.net,/bar/
 
    using this compose_fields parameter:
-   
+
    .. code-block:: json
-   
+
       {"source.url": "http://{0}{1}"}
 
    You get:
 
    .. code-block::
-   
+
       http://example.com/foo/
       http://example.net/bar/
 
@@ -1009,7 +1009,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
  * `"data_type"`: sets the data of specific type, currently only `"json"` is supported value. An example
 
    .. code-block:: json
-      
+
       {
           "columns": [ "source.ip", "source.url", "extra.tags"],
           "data_type": "{\"extra.tags\":\"json\"}"
@@ -1032,9 +1032,9 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
  * `"type_translation"`: If the source does have a field with information for `classification.type`, but it does not correspond to IntelMQ's types,
    you can map them to the correct ones. The `type_translation` field can hold a dictionary, or a string with a JSON dictionary which maps the feed's values to IntelMQ's.
    Example:
-   
+
    .. code-block:: json
-     
+
      {"malware_download": "malware-distribution"}
 
  * `"columns_required"`: A list of true/false for each column. By default, it is true for every column.
@@ -1144,7 +1144,7 @@ HTML Table Parser
 
 **Configuration parameters**
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Empty column specifications and columns named `"__IGNORE__"` are ignored. E.g.
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the IntelMQ Data Format field names. Empty column specifications and columns named `"__IGNORE__"` are ignored. E.g.
 
    .. code-block:: json
 
@@ -1158,7 +1158,7 @@ HTML Table Parser
    is equivalent to:
 
    .. code-block:: json
-      
+
       "columns": ",source.fqdn,extra.http_host_header,"
 
    The first and the last column are not used in this example.
@@ -1187,7 +1187,7 @@ HTML Table Parser
    is equivalent to:
 
    .. code-block:: json
-      
+
       "ignore_values": ",unknown,Not listed,"
 
    The following configuration will lead to assigning all values to malware.name and extra.SBL except `unknown` and `Not listed` respectively.
@@ -1267,13 +1267,13 @@ Key-Value Parser
 The input must not have (quoted) occurrences of the separator in the values. For example, this is not parsable (with space as separator):
 
 .. code-block::
-   
+
    key="long value" key2="other value"
 
 In firewall logs like FortiGate, this does not occur. These logs usually look like:
 
 .. code-block::
-   
+
    srcip=192.0.2.1 srcmac="00:00:5e:00:17:17"
 
 McAfee Advanced Threat Defense File
@@ -1396,7 +1396,7 @@ Twitter
 
 * `domain_whitelist`: domains to be filtered out
 * `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
-* `classification_type`: string with a valid classification type as defined in data harmonization
+* `classification_type`: string with a valid classification type as defined in data format
 * `default_scheme`: Default scheme for URLs if not given. See also the next section.
 
 **Default scheme**
@@ -1475,7 +1475,7 @@ These are the supported feed name and their corresponding file name for automati
    Blacklisted-IP (deprecated)               `blacklist`
    Blocklist                                 `blocklist`
    CAIDA-IP-Spoofer                          `caida_ip_spoofer`
-   Compromised-Website                       `compromised_website` 
+   Compromised-Website                       `compromised_website`
    Darknet                                   `darknet`
    DNS-Open-Resolvers                        `scan_dns`
    Drone                                     `botnet_drone`
@@ -1597,7 +1597,7 @@ This bot can optionally use the python module *querycontacts* by Abusix itself:
 https://pypi.org/project/querycontacts/
 
 .. code-block:: bash
-   
+
    pip3 install querycontacts
 
 If the package is not installed, our own routines are used.
@@ -1624,7 +1624,7 @@ Install `pyasn` module
 
 .. code-block:: bash
 
-   pip3 install pyasn 
+   pip3 install pyasn
 
 **Database**
 
@@ -1872,7 +1872,7 @@ The filter bot is capable of filtering specific events.
 
 *Parameters for filtering with key/value attributes*
 
-* `filter_key` - key from data harmonization
+* `filter_key` - key from data format
 * `filter_value` - value for the key
 * `filter_action` - action when a message match to the criteria (possible actions: keep/drop)
 * `filter_regex` - attribute determines if the `filter_value` shall be treated as regular expression or not.
@@ -1908,12 +1908,12 @@ Both parameters accept string values describing absolute or relative time:
  * `filter_no_match`: For all events the filter does not match
 
  ======= ====== ============ ==============  ==============  =================
- action  match   `_default`  `action_other`  `filter_match`  `filter_no_match` 
+ action  match   `_default`  `action_other`  `filter_match`  `filter_no_match`
  ======= ====== ============ ==============  ==============  =================
- keep    ✓      ✓            ✗               ✓               ✗                 
- keep    ✗      ✗            ✓               ✗               ✓                 
- drop    ✓      ✗            ✓               ✓               ✗                 
- drop    ✗      ✓            ✗               ✗               ✓                 
+ keep    ✓      ✓            ✗               ✓               ✗
+ keep    ✗      ✗            ✓               ✗               ✓
+ drop    ✓      ✗            ✓               ✓               ✗
+ drop    ✗      ✓            ✗               ✗               ✓
  ======= ====== ============ ==============  ==============  =================
 
 In `DEBUG` logging level, one can see that the message is sent to both matching paths, also if one of the paths is not configured. Of course the message is only delivered to the configured paths.
@@ -1932,10 +1932,10 @@ Format Field
 
 *Parameters for stripping chars*
 
-* `strip_columns` -  A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. E.g.
+* `strip_columns` -  A list of strings or a string of comma-separated values with field names. The names must match the IntelMQ Data Format field names. E.g.
 
    .. code-block:: json
-   
+
       "columns": [
            "malware.name",
            "extra.tags"
@@ -1950,13 +1950,13 @@ Format Field
 * `strip_chars` -  a set of characters to remove as leading/trailing characters(default: ` ` or whitespace)
 
 *Parameters for replacing chars*
-* `replace_column` - key from data harmonization
+* `replace_column` - key from data format
 * `old_value` - the string to search for
 * `new_value` - the string to replace the old value with
 * `replace_count` - number specifying how many occurrences of the old value you want to replace(default: `1`)
 
 *Parameters for splitting string to list of string*
-* `split_column` - key from data harmonization
+* `split_column` - key from data format
 * `split_separator` - specifies the separator to use when splitting the string(default: `,`)
 
 Order of operation: `strip -> replace -> split`. These three methods can be combined such as first strip and then split.
@@ -2005,7 +2005,7 @@ The values are compared with `=` only.
 * `overwrite`: defaults to `false`. Is applied per field
 * `replace_fields`: defaults to `{"contact": "source.abuse_contact"}`
 
-`replace_fields` is again a key-value mapping an arbitrary number of **table** column names **to intelmq** field names 
+`replace_fields` is again a key-value mapping an arbitrary number of **table** column names **to intelmq** field names
 
 
 
@@ -2507,17 +2507,17 @@ format:
    if :exists source.fqdn {
      keep  // aborts processing of subsequent rules and forwards the event.
    }
-   
-   
+
+
    if :notexists source.abuse_contact || source.abuse_contact =~ '.*@example.com' {
      drop  // aborts processing of subsequent rules and drops the event.
    }
-   
+
    if source.ip << '192.0.0.0/24' {
        add! comment = 'bogon' // sets the field comment to this value and overwrites existing values
        path 'other-path' // the message is sent to the given path
    }
-   
+
    if classification.type == ['phishing', 'malware-distribution'] && source.fqdn =~ '.*\.(ch|li)$' {
      add! comment = 'domainabuse'
      keep
@@ -2668,12 +2668,12 @@ Use the following command to validate your sieve files:
 
    $ intelmq.bots.experts.sieve.validator
    usage: intelmq.bots.experts.sieve.validator [-h] sievefile
-   
+
    Validates the syntax of sievebot files.
-   
+
    positional arguments:
      sievefile   Sieve file
-   
+
    optional arguments:
      -h, --help  show this help message and exit
 
@@ -2799,7 +2799,7 @@ Threshold
 * `add_keys`: Array of string->string, optional, fields and values to add (or update) to propagated messages. Example:
 
   .. code-block:: json
-  
+
      "add_keys": {
          "classification.type": "spam",
          "comment": "Started more than 10 SMTP connections"
@@ -3188,7 +3188,7 @@ Saves events in a MongoDB either as hierarchical structure or flat with full key
 **Installation Requirements**
 
 .. code-block:: bash
-   
+
    pip3 install pymongo>=2.7.1
 
 The bot has been tested with pymongo versions 2.7.1, 3.4 and 3.10.1 (server versions 2.6.10 and 3.6.8).
@@ -3219,7 +3219,7 @@ Redis
 
 * Can be used to send events to be processed in another system. E.g.: send events to Logstash.
 * In a multi tenant installation can be used to send events to external/remote IntelMQ instance. Any expert bot queue can receive the events.
-* In a complex configuration can be used to create logical sets in IntelMQ-Manager. 
+* In a complex configuration can be used to create logical sets in IntelMQ-Manager.
 
 Request Tracker
 ^^^^^^^^^^^^^^^
@@ -3361,16 +3361,16 @@ You have two basic choices to run PostgreSQL:
 1. on the same machine as intelmq, then you could use Unix sockets if available on your platform
 2. on a different machine. In which case you would need to use a TCP connection and make sure you give the right connection parameters to each psql or client call.
 
-Make sure to consult your PostgreSQL documentation 
+Make sure to consult your PostgreSQL documentation
 about how to allow network connections and authentication in case 2.
 
 **PostgreSQL Version**
 
 Any supported version of PostgreSQL should work (v>=9.2 as of Oct 2016) `[1] <https://www.postgresql.org/support/versioning/>`_.
 
-If you use PostgreSQL server v >= 9.4, it gives you the possibility 
-to use the time-zone `formatting string <https://www.postgresql.org/docs/9.4/static/functions-formatting.html>`_ "OF" for date-times 
-and the `GiST index for the CIDR type <https://www.postgresql.org/docs/9.4/static/release-9-4.html#AEN120769>`_. This may be useful depending on how 
+If you use PostgreSQL server v >= 9.4, it gives you the possibility
+to use the time-zone `formatting string <https://www.postgresql.org/docs/9.4/static/functions-formatting.html>`_ "OF" for date-times
+and the `GiST index for the CIDR type <https://www.postgresql.org/docs/9.4/static/release-9-4.html#AEN120769>`_. This may be useful depending on how
 you plan to use the events that this bot writes into the database.
 
 **How to install**
@@ -3389,13 +3389,13 @@ Therefore if still necessary: create the database-user
 as postgresql superuser, which usually is done via the system user `postgres`:
 
 .. code-block:: bash
-   
+
    createuser --no-superuser --no-createrole --no-createdb --encrypted --pwprompt intelmq
 
 Create the new database:
 
 .. code-block:: bash
-   
+
    createdb --encoding='utf-8' --owner=intelmq intelmq-events
 
 (The encoding parameter should ensure the right encoding on platform
@@ -3422,7 +3422,7 @@ Create the new database (you can ignore all errors since SQLite doesn't know all
    sqlite3 your-db.db
    sqlite> .read /tmp/initdb.sql
 
-Then, set the `database` parameter to the `your-db.db` file path. 
+Then, set the `database` parameter to the `your-db.db` file path.
 
 .. _stomp output bot:
 
@@ -3543,7 +3543,7 @@ With the following Parameters:
 Resulting line in syslog:
 
 .. code-block::
-   
+
    Apr 29 11:01:29 header example {"raw": "MjAxNi8wNC8yNV8xMTozOSxzY2hpenppbm8ub21hcmF0aG9uLmNvbS9na0NDSnVUSE0vRFBlQ1pFay9XdFZOSERLbC1tWFllRk5Iai8sODUuMjUuMTYwLjExNCxzdGF0aWMtaXAtODUtMjUtMTYwLTExNC5pbmFkZHIuaXAtcG9vbC5jb20uLEFuZ2xlciBFSywtLDg5NzI=", "source": {"asn": 8972, "ip": "85.25.160.114", "url": "http://schizzino.omarathon.com/gkCCJuTHM/DPeCZEk/WtVNHDKl-mXYeFNHj/", "reverse_dns": "static-ip-85-25-160-114.inaddr.ip-pool.com"}, "classification": {"type": "malware-distribution"}, "event_description": {"text": "Angler EK"}, "feed": {"url": "http://www.malwaredomainlist.com/updatescsv.php", "name": "Malware Domain List", "accuracy": 100.0}, "time": {"observation": "2016-04-29T10:59:34+00:00", "source": "2016-04-25T11:39:00+00:00"}}
 
 With the following Parameters:
