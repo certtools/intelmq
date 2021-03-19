@@ -149,19 +149,21 @@ class ShodanParserBot(Bot):
         else:
             self.minimal_mode = False
 
-    def apply_mapping(self, mapping, data):
+    def apply_mapping(self, mapping, data, key_path=()):
         self.logger.debug('Applying mapping %r to data %r.', mapping, data)
         event = {}
         for key, value in data.items():
+            current_key_path = key_path + (key,)
+            conversion_key = '.'.join(current_key_path)
             try:
                 if value and mapping[key] != '__IGNORE__':
                     if isinstance(mapping[key], dict):
-                        update = self.apply_mapping(mapping[key], value)
+                        update = self.apply_mapping(mapping[key], value, current_key_path)
                         if update:
                             event.update(update)
                     else:
-                        if key in CONVERSIONS:
-                            value = CONVERSIONS[key](value)
+                        if conversion_key in CONVERSIONS:
+                            value = CONVERSIONS[conversion_key](value)
                         event[mapping[key]] = value
             except KeyError:
                 if not self.ignore_errors:
