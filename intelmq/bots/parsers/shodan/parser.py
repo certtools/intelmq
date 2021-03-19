@@ -190,9 +190,9 @@ class ShodanParserBot(Bot):
             event.update(self.apply_mapping(MAPPING, decoded))
             event.add('classification.type', 'other')
             event.add('classification.identifier', 'shodan-scan')
-            for protocol in PROTOCOLS:
-                if protocol in decoded:
-                    event.add('protocol.application', protocol)
+            decoded_protocols = PROTOCOLS & decoded.keys()
+            if decoded_protocols:
+                event.add('protocol.application', decoded_protocols.pop())
         self.send_message(event)
         self.acknowledge_message()
 
