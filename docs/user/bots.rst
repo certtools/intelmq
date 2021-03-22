@@ -2996,6 +2996,8 @@ Elasticsearch Output Bot
 
 Only ElasticSearch version 7 supported.
 
+It is also possible to feed data into ElasticSearch using ELK-Stack via Redis and Logstash, see :doc:`ELK-Stack` for more information. This methods supports various different versions of ElasticSearch.
+
 **Configuration parameters**
 
 * `elastic_host`: Name/IP for the Elasticsearch server, defaults to 127.0.0.1
