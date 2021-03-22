@@ -1854,3 +1854,25 @@ providers:
       revision: 2020-06-30
       documentation: https://www.eset.com/int/business/services/threat-intelligence/
       public: no
+  Shodan:
+    Country Stream:
+      description: Collects the Shodan stream for one or multiple countries from the Shodan API.
+      additional_information: A Shodan account with streaming permissions is needed.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.shodan.collector_stream
+          parameters:
+            api_key: <API key>
+            countries: <comma-separated list of country codes>
+            error_retry_delay: 0
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.shodan.parser
+          parameters:
+            ignore_errors: false
+            error_retry_delay: 0
+            minimal_mode: false
+      revision: 2021-03-22
+      documentation: https://developer.shodan.io/api/stream
+      public: no

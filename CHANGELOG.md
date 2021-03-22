@@ -31,6 +31,7 @@ CHANGELOG
 - intelmq-api: Add documentation about necessary write permission for the session database file (PR#1798 by Birger Schacht, fixes intelmq-api#23).
 - FAQ: Section on redis socket permissions: set only minimal necessary permissions (PR#1809 by Sebastian Wagner).
 - Add document on hardware requirements (PR#1811 by Sebastian Wagner).
+- Feeds: Added Shodan Country Stream (by Sebastian Wagner).
 
 ### Packaging
 
