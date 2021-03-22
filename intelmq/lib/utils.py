@@ -605,8 +605,8 @@ class RewindableFileHandle(object):
 
     def __init__(self, f):
         self.f = f
-        self.current_line = None
-        self.first_line = None
+        self.current_line: Optional[str] = None
+        self.first_line: Optional[str] = None
 
     def __iter__(self):
         return self
