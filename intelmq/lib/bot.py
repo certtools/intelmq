@@ -25,7 +25,7 @@ import types
 import warnings
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 
 import psutil
 
@@ -34,7 +34,7 @@ from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, __version__)
 from intelmq.lib import cache, exceptions, utils
-from intelmq.lib.pipeline import PipelineFactory
+from intelmq.lib.pipeline import PipelineFactory, Pipeline
 from intelmq.lib.utils import RewindableFileHandle, base64_decode
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot', 'SQLBot', 'OutputBot']
@@ -42,79 +42,78 @@ __all__ = ['Bot', 'CollectorBot', 'ParserBot', 'SQLBot', 'OutputBot']
 
 class Bot(object):
     """ Not to be reset when initialized again on reload. """
-    __current_message = None
-    __message_counter_delay = timedelta(seconds=2)
-    __stats_cache = None
+    __current_message: Optional[libmessage.Message] = None
+    __message_counter_delay: timedelta = timedelta(seconds=2)
+    __stats_cache: cache.Cache = None
 
     # Bot is capable of SIGHUP delaying
     _sighup_delay: bool = True
     # From the runtime configuration
-    description = None
-    group = None
+    description: Optional[str] = None
+    group: Optional[str] = None
     module = None
-    name = None
+    name: Optional[str] = None
     # Imported from the legacy defaults.conf
-    accuracy = 100
-    bot_heartbeat_min_wait = 60
-    bot_monitoring_interval = 86400
-    destination_pipeline_broker = "redis"
-    destination_pipeline_db = 2
-    destination_pipeline_host = "127.0.0.1"
-    destination_pipeline_password = None
-    destination_pipeline_port = 6379
-    error_dump_message = True
-    error_log_exception = True
-    error_log_message = False
-    error_max_retries = 3
-    error_procedure = "pass"
-    error_retry_delay = 15
-    http_proxy = None
-    http_timeout_max_tries = 3
-    http_timeout_sec = 30
-    http_user_agent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
-    http_verify_cert = True
-    https_proxy = None
-    instances_threads = 0
-    load_balance = False
-    log_processed_messages_count = 500
-    log_processed_messages_seconds = 900
-    logging_handler = "file"
-    logging_level = "INFO"
-    logging_path = "/opt/intelmq/var/log/"
-    logging_syslog = "/dev/log"
-    process_manager = "intelmq"
-    rate_limit = 0
-    redis_cache_host = "127.0.0.1"
-    redis_cache_port = 6379
-    redis_cache_db = 5
-    source_pipeline_broker = "redis"
-    source_pipeline_db = 2
-    source_pipeline_host = "127.0.0.1"
-    source_pipeline_password = None
-    source_pipeline_port = 6379
-    ssl_ca_certificate = None
-    statistics_database = 3
-    statistics_host = "127.0.0.1"
-    statistics_password = None
-    statistics_port = 6379
+    accuracy: int = 100
+    destination_pipeline_broker: str = "redis"
+    destination_pipeline_db: int = 2
+    destination_pipeline_host: str = "127.0.0.1"
+    destination_pipeline_password: Optional[str] = None
+    destination_pipeline_port: int = 6379
+    error_dump_message: bool = True
+    error_log_exception: bool = True
+    error_log_message: bool = False
+    error_max_retries: int = 3
+    error_procedure: str = "pass"
+    error_retry_delay: int = 15
+    http_proxy: Optional[str] = None
+    http_timeout_max_tries: int = 3
+    http_timeout_sec: int = 30
+    http_user_agent: str = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+    http_verify_cert: Union[bool, str] = True
+    https_proxy: Optional[str] = None
+    instances_threads: int = 0
+    load_balance: bool = False
+    log_processed_messages_count: int = 500
+    log_processed_messages_seconds: int = 900
+    logging_handler: str = "file"
+    logging_level: str = "INFO"
+    logging_path: str = "/opt/intelmq/var/log/"
+    logging_syslog: str = "/dev/log"
+    process_manager: str = "intelmq"
+    rate_limit: int = 0
+    redis_cache_host: str = "127.0.0.1"
+    redis_cache_port: int = 6379
+    redis_cache_db: int = 5
+    redis_cache_password: Optional[str] = None
+    source_pipeline_broker: str = "redis"
+    source_pipeline_db: int = 2
+    source_pipeline_host: str = "127.0.0.1"
+    source_pipeline_password: Optional[str] = None
+    source_pipeline_port: int = 6379
+    ssl_ca_certificate: Optional[str] = None
+    statistics_database: int = 3
+    statistics_host: str = "127.0.0.1"
+    statistics_password: Optional[str] = None
+    statistics_port: int = 6379
 
-    _message_processed_verb = 'Processed'
+    _message_processed_verb: str = 'Processed'
 
     # True for (non-main) threads of a bot instance
-    is_multithreaded = False
+    is_multithreaded: bool = False
     # True if the bot is thread-safe and it makes sense
-    __is_multithreadable = True
+    __is_multithreadable: bool = True
     # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
     __collector_empty_process: bool = False
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
 
-        self.__log_buffer = []
+        self.__log_buffer: list = []
 
-        self.__error_retries_counter = 0
-        self.__source_pipeline = None
-        self.__destination_pipeline = None
+        self.__error_retries_counter: int = 0
+        self.__source_pipeline: Optional[Pipeline] = None
+        self.__destination_pipeline: Optional[Pipeline] = None
         self.logger = None
 
         self.__message_counter = {"since": 0,  # messages since last logging
@@ -292,9 +291,9 @@ class Bot(object):
                                      self.error_retry_delay)
                     time.sleep(self.error_retry_delay)
 
-                starting = False
-                error_on_message = False
-                message_to_dump = None
+                starting: bool = False
+                error_on_message: bool = False
+                message_to_dump: Optional[dict] = None
 
                 if error_on_pipeline:
                     try:
@@ -367,7 +366,7 @@ class Bot(object):
                 self.stop(exitcode=0)
 
             finally:
-                do_rate_limit = False
+                do_rate_limit: bool = False
 
                 if error_on_message or error_on_pipeline:
                     self.__message_counter["failure"] += 1
@@ -693,9 +692,9 @@ class Bot(object):
         dump_file = os.path.join(self.logging_path, self.__bot_id + ".dump")
 
         timestamp = datetime.utcnow()
-        timestamp = timestamp.isoformat()
-        new_dump_data = {}
-        new_dump_data[timestamp] = {}
+        timestamp: str = timestamp.isoformat()
+        new_dump_data: dict = {}
+        new_dump_data[timestamp]: dict = {}
         new_dump_data[timestamp]["bot_id"] = self.__bot_id
         new_dump_data[timestamp]["source_queue"] = self.__source_queues
         new_dump_data[timestamp]["traceback"] = error_traceback
@@ -858,9 +857,9 @@ class Bot(object):
             instance.start()
 
     def set_request_parameters(self):
-        self.http_header = getattr(self, 'http_header', {})
-        self.http_verify_cert = getattr(self, 'http_verify_cert', True)
-        self.ssl_client_cert = getattr(self, 'ssl_client_certificate', None)
+        self.http_header: dict = getattr(self, 'http_header', {})
+        self.http_verify_cert: bool = getattr(self, 'http_verify_cert', True)
+        self.ssl_client_cert: Optional[str] = getattr(self, 'ssl_client_certificate', None)
 
         if (hasattr(self, 'http_username') and
                 hasattr(self, 'http_password') and
@@ -881,8 +880,8 @@ class Bot(object):
         else:
             self.proxy = {}
 
-        self.http_timeout_sec = getattr(self, 'http_timeout_sec', None)
-        self.http_timeout_max_tries = getattr(self, 'http_timeout_max_tries', 1)
+        self.http_timeout_sec: Optional[int] = getattr(self, 'http_timeout_sec', None)
+        self.http_timeout_max_tries: int = getattr(self, 'http_timeout_max_tries', 1)
         # Be sure this is always at least 1
         self.http_timeout_max_tries = self.http_timeout_max_tries if self.http_timeout_max_tries >= 1 else 1
 
@@ -961,7 +960,7 @@ class ParserBot(Bot):
         """
         A basic CSV parser.
         """
-        raw_report = utils.base64_decode(report.get("raw")).strip()
+        raw_report: str = utils.base64_decode(report.get("raw")).strip()
         raw_report = raw_report.translate({0: None})
         if self._ignore_lines_starting:
             raw_report = '\n'.join([line for line in raw_report.splitlines()
@@ -976,8 +975,8 @@ class ParserBot(Bot):
         """
         A basic CSV Dictionary parser.
         """
-        raw_report = utils.base64_decode(report.get("raw")).strip()
-        raw_report = raw_report.translate({0: None})
+        raw_report: str = utils.base64_decode(report.get("raw")).strip()
+        raw_report: str = raw_report.translate({0: None})
         if self._ignore_lines_starting:
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
@@ -997,7 +996,7 @@ class ParserBot(Bot):
         """
         A basic JSON parser. Assumes a *list* of objects as input to be yield.
         """
-        raw_report = utils.base64_decode(report.get("raw"))
+        raw_report: str = utils.base64_decode(report.get("raw"))
         for line in json.loads(raw_report):
             yield line
 
@@ -1005,7 +1004,7 @@ class ParserBot(Bot):
         """
         A JSON Stream parses (one JSON data structure per line)
         """
-        raw_report = utils.base64_decode(report.get("raw"))
+        raw_report: str = utils.base64_decode(report.get("raw"))
         for line in raw_report.splitlines():
             self.current_line = line
             yield json.loads(line)
@@ -1041,9 +1040,9 @@ class ParserBot(Bot):
         raise NotImplementedError
 
     def process(self):
-        self.tempdata = []  # temporary data for parse, parse_line and recover_line
-        self.__failed = []
-        report = self.receive_message()
+        self.tempdata: list = []  # temporary data for parse, parse_line and recover_line
+        self.__failed: list = []
+        report: libmessage.Report = self.receive_message()
 
         if 'raw' not in report:
             self.logger.warning('Report without raw field received. Possible '
@@ -1051,7 +1050,7 @@ class ParserBot(Bot):
             self.acknowledge_message()
             return
 
-        events_count = 0
+        events_count: int = 0
 
         for line in self.parse(report):
 
@@ -1063,9 +1062,9 @@ class ParserBot(Bot):
                     continue
                 elif type(value) is list or isinstance(value, types.GeneratorType):
                     # filter out None
-                    events = list(filter(bool, value))
+                    events: list[libmessage.Event] = list(filter(bool, value))
                 else:
-                    events = [value]
+                    events: list[libmessage.Event] = [value]
             except Exception:
                 self.logger.exception('Failed to parse line.')
                 self.__failed.append((traceback.format_exc(), line))
@@ -1074,7 +1073,7 @@ class ParserBot(Bot):
                 self.send_message(*events)
 
         for exc, line in self.__failed:
-            report_dump = report.copy()
+            report_dump: libmessage.Message = report.copy()
             report_dump.change('raw', self.recover_line(line))
             if self.error_dump_message:
                 self._dump_message(exc, report_dump)
@@ -1123,14 +1122,14 @@ class ParserBot(Bot):
         line = line if line else self.current_line
         return '\n'.join(tempdata + [line])
 
-    def recover_line_csv(self, line: str):
+    def recover_line_csv(self, line: str) -> str:
         out = io.StringIO()
         writer = csv.writer(out, **self._csv_params)
         writer.writerow(line)
         tempdata = '\r\n'.join(self.tempdata) + '\r\n' if self.tempdata else ''
         return tempdata + out.getvalue()
 
-    def recover_line_csv_dict(self, line: str):
+    def recover_line_csv_dict(self, line: str) -> str:
         """
         Converts dictionaries to csv. self.csv_fieldnames must be list of fields.
         """
@@ -1141,7 +1140,7 @@ class ParserBot(Bot):
 
         return out.getvalue().strip()
 
-    def recover_line_json(self, line: dict):
+    def recover_line_json(self, line: dict) -> str:
         """
         Reverse of parse for JSON pulses.
 
@@ -1174,7 +1173,7 @@ class CollectorBot(Bot):
 
     __is_multithreadable: bool = False
     name: Optional[str] = None
-    accuracy: Optional[str] = 100
+    accuracy: int = 100
     code: Optional[str] = None
     provider: Optional[str] = None
     documentation: Optional[str] = None
@@ -1345,17 +1344,17 @@ class OutputBot(Bot):
             self.stop()
         self.group = 'Output'
 
-        self.hierarchical = getattr(self, "hierarchical_output",  # file and files
-                                    getattr(self, "message_hierarchical",  # stomp and amqp code
-                                            getattr(self, "message_hierarchical_output", False)))  # stomp and amqp docs
-        self.with_type = getattr(self, "message_with_type", False)
-        self.jsondict_as_string = getattr(self, "message_jsondict_as_string", False)
+        self.hierarchical: bool = getattr(self, "hierarchical_output",  # file and files
+                                          getattr(self, "message_hierarchical",  # stomp and amqp code
+                                                  getattr(self, "message_hierarchical_output", False)))  # stomp and amqp docs
+        self.with_type: bool = getattr(self, "message_with_type", False)
+        self.jsondict_as_string: bool = getattr(self, "message_jsondict_as_string", False)
 
-        self.single_key = getattr(self, 'single_key', None)
-        self.keep_raw_field = getattr(self, 'keep_raw_field', False)
+        self.single_key: Optional[str] = getattr(self, 'single_key', None)
+        self.keep_raw_field: bool = getattr(self, 'keep_raw_field', False)
 
     def export_event(self, event: libmessage.Event,
-                     return_type: Optional[type] = None):
+                     return_type: Optional[type] = None) -> Union[str, dict]:
         """
         exports an event according to the following parameters:
             * message_hierarchical
