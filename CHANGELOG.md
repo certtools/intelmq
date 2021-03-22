@@ -37,6 +37,7 @@ CHANGELOG
 
 ### Tests
 - Add missing newlines at end of various test input files (PR#1785 by Sebastian Wagner, fixes #1777).
+- `intelmq.tests.lib.test_harmonization.test_datetime_convert`: Only run this test in timezone UTC (PR#1825 by Sebastian Wagner).
 
 ### Tools
 - `intelmqsetup`:
