@@ -20,6 +20,8 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`:
   - Adapt parser to new upstream format for events of category "bruteforce" (PR#1795 by Sebastian Wagner, fixes 1794).
+- `intelmq.bots.parsers.shodan.parser`:
+  - Support nested conversions, improved protocol detection and extended Shodan parser mappings (PR#1821 by Mikk Markus Möll).
 
 #### Experts
 
@@ -37,6 +39,7 @@ CHANGELOG
 
 ### Tests
 - Add missing newlines at end of various test input files (PR#1785 by Sebastian Wagner, fixes #1777).
+- `intelmq.tests.bots.parsers.shodan.test_parser`: Add test cases for new code (PR#1821 by Mikk Markus Möll).
 
 ### Tools
 - `intelmqsetup`:
