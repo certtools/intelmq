@@ -76,7 +76,7 @@ class TestShadowServerAPICollectorBot(test.BotTestCase, unittest.TestCase):
         self.cache.flushdb()
         prepare_mocker(mocker)
         self.run_bot(iterations=1, parameters=PARAMETERS)
-        self.assertAnyLoglineEqual("Sent report: '2020-08-02-cisco_smart_install-anarres-geo.csv' (fixed: '2020-08-02-cisco_smart_install-anarres-geo.json').", 'DEBUG')
+        self.assertAnyLoglineEqual("Sent report: '2020-08-02-cisco_smart_install-anarres-geo.csv' (fixed: '2020-08-02-cisco_smart_install-anarres-geo.json', size: 0.00195 KiB).", 'DEBUG')
 
     def test_report_content(self, mocker):
         self.cache.flushdb()
