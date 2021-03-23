@@ -14,3 +14,6 @@ The correct name for the parameter "delimeter" is "delimiter". Please fix your c
                 del bot["parameters"]["delimeter"]
             elif "delimeter" in bot["parameters"]:
                 bot["parameters"]["delimiter"] = bot["parameters"]["delimeter"]
+
+# from intelmq/bots/parsers/shodan/parser.py
+        'dont': 'extra.telnet.dont',
