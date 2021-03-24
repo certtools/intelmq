@@ -9,6 +9,8 @@ CHANGELOG
 ### Core
 - `intelmq.lib.utils`:
   - `log`: Handle null value for logging parameter `logging_max_size` (PR#1786 by Sebastian Wagner, fixes #1778).
+- `intelmq.lib.pipeline`:
+  - `Amqp._get_queues`: Check virtual host when retrieving queue sizes. Fixes output of `intelmqctl check` for orphaned queues if AMQP is used and the AMQP user has access to more virtual hosts (PR#1830 by Sebastian Wagner, fixes #1746).
 
 ### Development
 
