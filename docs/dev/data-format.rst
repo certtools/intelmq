@@ -7,8 +7,8 @@ Data Format
 Overview
 ========
 
-In IntelMQ version 3.x+ the internal data format changed from DHO ( IntelMQ Data Harmonization ) to IDF ( IntelMQ Data Format ).
-The python module and the configuration file kept the name `harmonization`. DHO and IDF are working similar.
+In IntelMQ version 3.x+ the internal data format name changed from DHO ( IntelMQ Data Harmonization ) to IDF ( IntelMQ Data Format ).
+The python module `intelmq.lib.harmonization` and the configuration file `harmonization.conf` keep the name `harmonization` for now. DHO and IDF have the same meaning.
 
 All messages (reports and events) are Python/JSON dictionaries. The key names and according types are defined by the IntelMQ Data Format.
 
