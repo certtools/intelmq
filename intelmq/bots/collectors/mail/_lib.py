@@ -20,6 +20,7 @@ class MailCollectorBot(CollectorBot):
     mail_password = None
     mail_ssl = None
     mail_port = None
+    mail_starttls = False
     folder = None
     sent_to = None
     sent_from = None
@@ -44,6 +45,7 @@ class MailCollectorBot(CollectorBot):
                               self.mail_ssl,
                               # imbox itself uses ports 143/993 as default depending on SSL setting
                               port=self.mail_port,
+                              starttls=self.mail_starttls,
                               ssl_context=ssl_custom_context)
         return mailbox
 
