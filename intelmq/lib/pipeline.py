@@ -617,7 +617,7 @@ class Amqp(Pipeline):
         elif response.status_code != 200:
             raise ValueError("Unknown error %r.", response.text)
         try:
-            return {x['name']: x.get('messages', 0) for x in response.json()}
+            return {queue['name']: queue.get('messages', 0) for queue in response.json() if queue['vhost'] == self.virtual_host}
         except SyntaxError:
             self.logger.error("Unable to parse response from server as JSON: %r.", response.text)
             return {}
