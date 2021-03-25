@@ -121,6 +121,8 @@ class ShadowServerAPICollectorBot(CollectorBot):
         reportslist = self._reports_list()
         self.logger.debug('Reports list contains %s entries after filtering.', len(reportslist))
 
+        reports_downloaded = 0
+
         for item in reportslist:
             filename = item['file']
             filename_fixed = FILENAME_PATTERN.sub('.json', filename, count=1)
@@ -131,10 +133,13 @@ class ShadowServerAPICollectorBot(CollectorBot):
             reportdata = self._report_download(item['id'])
             report = self.new_report()
             report.add('extra.file_name', filename_fixed)
-            report.add('raw', str(reportdata))
+            report.add('raw', reportdata)
             self.send_message(report)
             self.cache.set(filename, 1)
-            self.logger.debug('Sent report: %r (fixed: %r).', filename, filename_fixed)
+            self.logger.debug('Sent report: %r (fixed: %r, size: %.3g KiB).', filename, filename_fixed,
+                              len(reportdata) / 1024)  # TODO: Replace by a generic size-conversion function
+            reports_downloaded += 1
+        self.logger.info('Downloaded %d of %d available reports.', reports_downloaded, len(reportslist))
 
 
 BOT = ShadowServerAPICollectorBot

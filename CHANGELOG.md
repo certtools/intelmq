@@ -18,6 +18,7 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.shadowserver.collector_reports_api`: Added debug logging to show number of downloaded reports and download size (PR#1826 by Sebastian Wagner, partly addresses #1688 and #1823).
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`:
