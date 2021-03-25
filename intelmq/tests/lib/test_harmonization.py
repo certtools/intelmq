@@ -4,6 +4,7 @@ Testing harmonization classes
 """
 import datetime
 import ipaddress
+import time
 import unittest
 
 import intelmq.lib.harmonization as harmonization
@@ -244,6 +245,7 @@ class TestHarmonization(unittest.TestCase):
         with self.assertRaises(TypeError):
             harmonization.DateTime.from_timestamp('1441008970')
 
+    @unittest.skipIf(time.timezone != 0, 'Test only works with UTC')
     def test_datetime_convert(self):
         self.assertEqual('2019-07-01T15:15:15+00:00',
                          harmonization.DateTime.convert('15 15 15 07 01 2019',

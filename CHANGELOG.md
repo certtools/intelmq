@@ -90,6 +90,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.shadowserver.collector_reports_api`: Added debug logging to show number of downloaded reports and download size (PR#1826 by Sebastian Wagner, partly addresses #1688 and #1823).
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`:
@@ -114,6 +115,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Tests
 - Add missing newlines at end of various test input files (PR#1785 by Sebastian Wagner, fixes #1777).
 - `intelmq.tests.bots.parsers.shodan.test_parser`: Add test cases for new code (PR#1821 by Mikk Markus Möll).
+- `intelmq.tests.lib.test_harmonization.test_datetime_convert`: Only run this test in timezone UTC (PR#1825 by Sebastian Wagner).
 
 ### Tools
 - `intelmqsetup`:
