@@ -1095,6 +1095,15 @@
                 "use_ssl": false
             }
         },
+        "Kafka": {
+            "description": "Kafka is the bot responsible to send events to a kafka topic.",
+            "module": "intelmq.bots.outputs.kafka.output",
+            "parameters": {
+                "kafka_broker_list": "127.0.0.1",
+                "kafka_topic": "intelmq",
+                "flatten_fields": "extra"
+            }
+        },
         "File": {
             "description": "Write events to a file.",
             "module": "intelmq.bots.outputs.file.output",
