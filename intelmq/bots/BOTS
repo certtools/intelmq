@@ -186,6 +186,16 @@
                 "rsync_path": "<path>"
             }
         },
+        "UDP": {
+            "description": "Receive UDP messages.",
+            "module": "intelmq.bots.collectors.udp.collector",
+            "parameters": {
+                "ip": "0.0.0.0",
+                "name": "UDP",
+                "port": 514,
+                "provider": "UDP"
+            }
+        },
         "TCP": {
             "description": "Receive events by opening a TCP port (ex: from TCP Output of another IntelMQ instance).",
             "module": "intelmq.bots.collectors.tcp.collector",
