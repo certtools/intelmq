@@ -1234,6 +1234,38 @@ HTML Table Parser
  * `"type"`: set the `classification.type` statically, optional
  * `"html_parser"`: The HTML parser to use, by default "html.parser", can also be e.g. "lxml", have a look at https://www.crummy.com/software/BeautifulSoup/bs4/doc/
 
+JSON Custom Parser
+^^^^^^^^^^^^^^^^^
+
+**Configuration parameters**
+
+* `"json_data_format"`: Boolean, if list of data is within key of json object, optional. Default: false.
+* `"json_data_key"`: Key of json object where data list is present. string should be flatten_key, optional. To be used in conjunction with `"json_data_format"`. Default: `""`.
+   E.g.
+
+  .. code-block:: json
+
+     "json_data_format": true,
+     "json_data_key": "data.ipdata"
+
+  With above configuration, list of dict will be created from list present in json["data"]["ipdata"]. Each dict will then create atleast an event.
+* `"splitlines"`: Boolean, spit multiline data into list, optional. Default: `"false"`. Either `"json_data_format"` or `"splitlines"` can be used.`
+* `"translate_fields"`: A Dictionary to map harmonized field to flatten json key(separator: `"."`). these flatten key should be relative to `"json_data_key"`.
+
+  .. code-block:: json
+
+     "translate_fields": {
+         "source.url": "url",
+         "time.source": "lseen",
+         "extra.tags": "tags.str"
+     },
+
+  Above configuration will put value from "url" key to "source.url", "lseen" key to "time.source" and so on.
+
+* `"default_url_protocol"`: For URLs you can give a default protocol which will be pretended to the data. Default: `"http://"`.
+* `"time_format"`: Optional. If `"timestamp"`, `"windows_nt"`, `"epoch_millis"`, `"from_format"`, `"from_format_midnight"`, `"utc_isoformat"` or  `"fuzzy"`  the time will be converted first. With the default `"null"` fuzzy time parsing will be used.
+* `"type"`: set the `classification.type` statically, optional. Default: "c2server".
+
 Key-Value Parser
 ^^^^^^^^^^^^^^^^
 
