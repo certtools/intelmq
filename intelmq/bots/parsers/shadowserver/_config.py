@@ -1769,7 +1769,7 @@ drone_brute_force = {
         ('extra.destination.sector', 'dest_sector', validate_to_none),
         ('extra.', 'public_source', validate_to_none),
         ('extra.', 'start_time', validate_to_none),
-        ('extra.', 'end_time', validate_to_none),
+        ('extra.', 'end_time', convert_date),
         ('extra.', 'client_version', validate_to_none),
         ('destination.account', 'username', validate_to_none),
         ('extra.', 'password', validate_to_none),
@@ -2003,7 +2003,7 @@ amplification_ddos_victim = {
         ('extra.', 'bytes', convert_int),
         ('extra.', 'sensor_geo', validate_to_none),
         ('extra.', 'sector', validate_to_none),
-        ('extra.', 'end_time', validate_to_none),
+        ('extra.', 'end_time', convert_date),
         ('extra.', 'public_source', validate_to_none),
     ],
     'constant_fields': {
