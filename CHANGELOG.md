@@ -5,6 +5,7 @@ CHANGELOG
 ------------------
 
 ### Configuration
+- The `BOTS` file is no longer used and has been removed (by Sebastian Wagner).
 
 ### Core
 - `intelmq.lib.harmonization`:
@@ -18,6 +19,7 @@ CHANGELOG
   - New function `list_all_bots` to list all available/installed bots as replacement for the BOTS file (#368, #552, #644, #757, #1069, #1750, PR#1751 by Sebastian Waldbauer).
 
 ### Development
+- `rewrite_config_files.py`: Removed obsolete BOTS-file-related rewriting functionality.
 
 ### Harmonization
 Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old namings are still supported until at least version 3.0.
