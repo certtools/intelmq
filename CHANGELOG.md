@@ -90,6 +90,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.shadowserver.config`:
+  - Parse and harmonize field `end_time` as date in Feeds "Drone-Brute-Force" and "Amplification-DDoS-Victim" (PR#1833 by Mikk Margus Möll).
 
 #### Experts
 
@@ -128,7 +130,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - `intelmq.bots.parsers.cymru.parser_cap_program`:
   - Adapt parser to new upstream format for events of category "bruteforce" (PR#1795 by Sebastian Wagner, fixes 1794).
 - `intelmq.bots.parsers.shodan.parser`:
-  - Support nested conversions, improved protocol detection and extended Shodan parser mappings (PR#1821 by Mikk Markus Möll).
+  - Support nested conversions, improved protocol detection and extended Shodan parser mappings (PR#1821 by Mikk Margus Möll).
 
 ### Documentation
 - Add missing newlines at end of `docs/_static/intelmq-manager/*.png.license` files (PR#1785 by Sebastian Wagner, fixes #1777).
@@ -140,7 +142,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 
 ### Tests
 - Add missing newlines at end of various test input files (PR#1785 by Sebastian Wagner, fixes #1777).
-- `intelmq.tests.bots.parsers.shodan.test_parser`: Add test cases for new code (PR#1821 by Mikk Markus Möll).
+- `intelmq.tests.bots.parsers.shodan.test_parser`: Add test cases for new code (PR#1821 by Mikk Margus Möll).
 - `intelmq.tests.lib.test_harmonization.test_datetime_convert`: Only run this test in timezone UTC (PR#1825 by Sebastian Wagner).
 
 ### Tools
