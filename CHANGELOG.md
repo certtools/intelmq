@@ -75,7 +75,41 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Known issues
 
 
-2.3.1 (unreleased)
+2.3.2 (unreleased)
+------------------
+
+### Configuration
+
+### Core
+
+### Development
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+- `intelmq.bots.outputs.elasticsearch`: Fix log message on required elasticsearch library message (by Sebastian Wagner).
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
+2.3.1 (2021-03-25)
 ------------------
 
 ### Configuration
@@ -85,10 +119,6 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
   - `log`: Handle null value for logging parameter `logging_max_size` (PR#1786 by Sebastian Wagner, fixes #1778).
 - `intelmq.lib.pipeline`:
   - `Amqp._get_queues`: Check virtual host when retrieving queue sizes. Fixes output of `intelmqctl check` for orphaned queues if AMQP is used and the AMQP user has access to more virtual hosts (PR#1830 by Sebastian Wagner, fixes #1746).
-
-### Development
-
-### Harmonization
 
 ### Bots
 #### Collectors
@@ -100,10 +130,6 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - `intelmq.bots.parsers.shodan.parser`:
   - Support nested conversions, improved protocol detection and extended Shodan parser mappings (PR#1821 by Mikk Markus Möll).
 
-#### Experts
-
-#### Outputs
-
 ### Documentation
 - Add missing newlines at end of `docs/_static/intelmq-manager/*.png.license` files (PR#1785 by Sebastian Wagner, fixes #1777).
 - Ecosystem: Revise sections on intelmq-cb-mailgen and fody (PR#1792 by Bernhard Reiter).
@@ -111,8 +137,6 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - FAQ: Section on redis socket permissions: set only minimal necessary permissions (PR#1809 by Sebastian Wagner).
 - Add document on hardware requirements (PR#1811 by Sebastian Wagner).
 - Feeds: Added Shodan Country Stream (by Sebastian Wagner).
-
-### Packaging
 
 ### Tests
 - Add missing newlines at end of various test input files (PR#1785 by Sebastian Wagner, fixes #1777).
@@ -126,9 +150,13 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - `intelmqctl`:
   - Do not log an error message if logging to file is explicitly disabled, e.g. in calls from `intelmsetup`. The error message would not be useful for the user and is not necessary.
 
-### Contrib
-
 ### Known issues
+- Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
+- Corrupt dump files when interrupted during writing (#870).
+- CSV line recovery forces Windows line endings (#1597).
+- intelmqdump: Honor logging_path variable (#1605).
+- Timeout error in mail URL fetcher (#1621).
+- Shadowserver Parser: Drone feed has (also?) application protocol in type field (mapped to transport protocol) (#1763).
 
 
 2.3.0 (2021-03-04)

@@ -4,11 +4,17 @@ intelmq (3.0.0~alpha1-1) UNRELEASED; urgency=medium
 
  -- Sebastian Wagner <wagner@cert.at>  Fri, 19 Feb 2021 20:31:40 +0100
 
-intelmq (2.3.1~alpha1-1) UNRELEASED; urgency=medium
+intelmq (2.3.2~alpha1-1) UNRELEASED; urgency=medium
 
-  * Start 2.3.1 development.
+  * Update to 2.3.2.
 
- -- Sebastian Wagner <wagner@cert.at>  Mon, 08 Mar 2021 20:36:58 +0100
+ -- Sebastian Wagner <wagner@cert.at>  Tue, 30 Mar 2021 14:57:35 +0200
+
+intelmq (2.3.1-1) unstable; urgency=medium
+
+  * Update to 2.3.1.
+
+ -- Sebastian Wagner <wagner@cert.at>  Thu, 25 Mar 2021 15:18:19 +0100
 
 intelmq (2.3.0-1) unstable; urgency=medium
 

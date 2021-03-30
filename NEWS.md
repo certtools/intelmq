@@ -88,7 +88,7 @@ UPDATE events
 ```
 
 
-2.3.1 Bugfix release (unreleased)
+2.3.2 Bugfix release (unreleased)
 ---------------------------------
 
 ### Requirements
@@ -104,6 +104,12 @@ UPDATE events
 ### Libraries
 
 ### Postgres databases
+
+
+2.3.1 Bugfix release (2021-03-25)
+---------------------------------
+
+No changes are required by administrators.
 
 
 2.3.0 Feature release (2021-03-04)

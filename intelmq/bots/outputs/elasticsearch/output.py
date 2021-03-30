@@ -68,7 +68,7 @@ class ElasticsearchOutputBot(Bot):
 
     def init(self):
         if Elasticsearch is None:
-            raise MissingDependencyError('elasticsearch', version='>=5.0.0,<6.0.0')
+            raise MissingDependencyError('elasticsearch', version='>=7.0.0,<8.0.0')
 
         if isinstance(self.flatten_fields, str):
             self.flatten_fields = self.flatten_fields.split(',')
