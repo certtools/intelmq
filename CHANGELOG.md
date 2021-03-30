@@ -20,6 +20,7 @@ CHANGELOG
 #### Experts
 
 #### Outputs
+- `intelmq.bots.outputs.elasticsearch`: Fix log message on required elasticsearch library message (by Sebastian Wagner).
 
 ### Documentation
 

@@ -55,7 +55,7 @@ class ElasticsearchOutputBot(Bot):
 
     def init(self):
         if Elasticsearch is None:
-            raise MissingDependencyError('elasticsearch', version='>=5.0.0,<6.0.0')
+            raise MissingDependencyError('elasticsearch', version='>=7.0.0,<8.0.0')
 
         self.elastic_host = getattr(self.parameters,
                                     'elastic_host', '127.0.0.1')
