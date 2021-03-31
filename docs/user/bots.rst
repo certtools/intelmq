@@ -2609,7 +2609,7 @@ The following operators may be used to match events:
   ``if source.ip != ['8.8.8.8', '8.8.4.4'] { ... }``
 
   Events with values like `8.8.8.8` or `8.8.4.4` will match, as they are always unequal to the other value.
-  The result is *not* that the field must be unequal to all given values.
+  **Attention:** The result is *not* that the field must be unequal to all given values.
 
  * The combination of multiple expressions can be done using parenthesis and boolean operators:
 
