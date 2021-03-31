@@ -18,6 +18,8 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.config`:
   - Parse and harmonize field `end_time` as date in Feeds "Drone-Brute-Force" and "Amplification-DDoS-Victim" (PR#1833 by Mikk Margus Möll).
+- `intelmq.bots.parsers.shadowserver.parser_json`:
+  - Use the overwrite parameter for optionally overwriting the "feed.name" field (by Sebastian Wagner).
 
 #### Experts
 
