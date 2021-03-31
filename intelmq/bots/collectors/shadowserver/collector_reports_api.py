@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import hashlib
 import hmac
 import re
+from typing import Optional
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.cache import Cache
@@ -42,6 +43,7 @@ class ShadowServerAPICollectorBot(CollectorBot):
     redis_cache_host: str = "127.0.0.1"  # TODO: type could be ipadress
     redis_cache_port: int = 6379
     redis_cache_ttl: int = 864000  # 10 days
+    redis_cache_password: Optional[str] = None
 
     def init(self):
         if self.api_key is None:
