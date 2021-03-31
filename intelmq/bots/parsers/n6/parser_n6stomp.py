@@ -47,7 +47,7 @@ mapping['proxy']        = {"taxonomy": "other",
                            "type": "proxy", "identifier": "openproxy"}
 mapping['sandbox-url']  = {"taxonomy": "malicious code",
                            "type": "malware", "identifier": "sandboxurl"}
-mapping['scanning']     = {"taxonomy": "information gathering",
+mapping['scanning']     = {"taxonomy": "information-gathering",
                            "type": "scanner", "identifier": "scanning"}
 mapping['server-exploit'] = {"taxonomy": "malicious code",
                              "type": "exploit", "identifier": "server-exploit"}

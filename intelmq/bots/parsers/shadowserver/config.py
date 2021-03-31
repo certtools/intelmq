@@ -2045,7 +2045,7 @@ http_scanners = {
         ('extra.', 'request_raw', validate_to_none),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'information gathering',
+        'classification.taxonomy': 'information-gathering',
         'classification.type': 'scanner',
         'classification.identifier': 'http',
         'protocol.application': 'http',
@@ -2086,7 +2086,7 @@ ics_scanners = {
         ('extra.', 'response', convert_int),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'information gathering',
+        'classification.taxonomy': 'information-gathering',
         'classification.type': 'scanner',
         'classification.identifier': 'ics',
     }
