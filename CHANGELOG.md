@@ -25,6 +25,7 @@ CHANGELOG
 - `intelmq.bots.outputs.elasticsearch`: Fix log message on required elasticsearch library message (by Sebastian Wagner).
 
 ### Documentation
+- `dev/data-harmonization`: Fix taxonomy name "information gathering" should be "information-gathering" (by Sebastian Wagner).
 
 ### Packaging
 
