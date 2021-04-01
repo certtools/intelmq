@@ -24,6 +24,7 @@ MAPPING = {
     'info': 'extra.info',
     'mac': 'extra.mac',
     'version': 'extra.version',
+    'vulns': 'extra.vulns',
     "ftp": {
             "features": {
                 "AUTH": {
@@ -280,7 +281,6 @@ MAPPING = {
         },
         'raw': 'extra.raw',
         'text': 'extra.text',
-        'vulns': 'extra.vulns',
     },
     'tags': 'extra.tags',
     'telnet': {
@@ -517,7 +517,6 @@ MAPPING = {
         'vendor': 'extra.vmware.vendor',
         'version': 'extra.vmware.version',
     },
-    # TODO bgp, coap
 }
 
 MAPPING_MINIMAL = {
@@ -644,9 +643,21 @@ class ShodanParserBot(Bot):
             event.update(self.apply_mapping(MAPPING, decoded))
             event.add('classification.type', 'other')
             event.add('classification.identifier', 'shodan-scan')
-            decoded_protocols = PROTOCOLS & decoded.keys()
+
+            common_keys = {  # not indicative of type
+                '_id', '_shodan', 'asn', 'data', 'device', 'devicetype', 'domains', 'hash',
+                'hostnames', 'html', 'ip', 'ip_str', 'isp', 'location', 'opts', 'org',
+                'os', 'port', 'tags', 'timestamp', 'transport',
+            }
+            uncommon_keys = decoded.keys() - common_keys
+            event.add('extra.shodan.unique_keys', sorted(uncommon_keys))
+            decoded_protocols = PROTOCOLS & uncommon_keys
             if decoded_protocols:
                 event.add('protocol.application', decoded_protocols.pop())
+
+            if event.get('extra.vulns', []):
+                event.add('extra.verified_vulns', [k for k, v in decoded['vulns'].items() if v['verified']])
+
         self.send_message(event)
         self.acknowledge_message()
 
