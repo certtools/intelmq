@@ -1281,7 +1281,7 @@ Get some debugging output on the settings and the environment (to be extended):
         return source_queues, destination_queues, internal_queues, all_queues
 
     def list_queues(self, non_zero=False, count=False):
-        pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
+        pipeline = PipelineFactory.create(logger=self.logger, pipeline_args=self.parameters)
         pipeline.set_queues(None, "source")
         pipeline.connect()
         source_queues, destination_queues, internal_queues,\

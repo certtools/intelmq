@@ -40,15 +40,15 @@ class PipelineFactory(object):
             broker = pipeline_args['source_pipeline_broker'].title()
         if direction == 'destination' and 'destination_pipeline_broker' in pipeline_args:
             broker = pipeline_args['destination_pipeline_broker'].title()
-        elif (getattr(pipeline_args, 'source_pipeline_broker', None) == getattr(pipeline_args, 'destination_pipeline_broker', None) and
-              getattr(pipeline_args, 'source_pipeline_broker', None) is not None):
+        elif (pipeline_args.get('source_pipeline_broker', None) == pipeline_args.get('destination_pipeline_broker', None) and
+              pipeline_args.get('source_pipeline_broker', None) is not None):
             broker = pipeline_args['source_pipeline_broker'].title()
         else:
             if broker is not None:
                 broker = broker.title()
             else:
                 broker = "Redis"
-        pipe = getattr(intelmq.lib.pipeline, broker)(logger, pipeline_args, load_balance, is_multithreaded)
+        pipe = getattr(intelmq.lib.pipeline, broker)(logger=logger, pipeline_args=pipeline_args, load_balance=load_balance, is_multithreaded=is_multithreaded)
         if queues and not direction:
             raise ValueError("Parameter 'direction' must be given when using "
                              "the queues parameter.")

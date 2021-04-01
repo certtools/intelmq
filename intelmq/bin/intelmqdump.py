@@ -211,6 +211,7 @@ def main():
 
     if args.botid is None:
         filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
+        print(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
         if not len(filenames):
             print(green('Nothing to recover from, no dump files found!'))
             sys.exit(0)
