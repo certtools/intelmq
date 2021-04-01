@@ -1560,7 +1560,7 @@ Get some debugging output on the settings and the environment (to be extended):
             if bot_check:
                 for log_line in bot_check:
                     getattr(check_logger, log_line[0])("Bot %r: %s" % (bot_id, log_line[1]))
-        for group in utils.list_all_bots():
+        for group in utils.list_all_bots().values():
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
                                    stderr=subprocess.DEVNULL):
