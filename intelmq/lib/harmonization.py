@@ -1074,4 +1074,6 @@ class TLP(UppercaseString):
         value = UppercaseString.sanitize(value)
         if value:
             value = TLP.prefix_pattern.sub('', value)
+            if value.lower() == 'yellow':
+                value = 'AMBER'
             return value

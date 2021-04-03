@@ -21,15 +21,12 @@ EXAMPLE_REPORT = {
     "raw": base64_encode(EXAMPLE_DATA)
 }
 
-EXAMPLE_TEMPLATE = {
-    "feed.name": "CTIP-Infected",
-    "event_description.text": "SinkHoleMessage",
-    "tlp": "AMBER",
-    }
-
 
 EXAMPLE_EVENTS = [{
     "__type": "Event",
+    "feed.name": "CTIP-Infected",
+    "event_description.text": "SinkHoleMessage",
+    "tlp": "AMBER",
     'feed.accuracy': 20.0,
     'classification.type': 'infected-system',
     'destination.ip': '198.18.18.18',
@@ -59,6 +56,9 @@ EXAMPLE_EVENTS = [{
     'extra.malware': 'Avalanche',
     }, {
     "__type": "Event",
+    "feed.name": "CTIP-Infected",
+    "event_description.text": "SinkHoleMessage",
+    "tlp": "AMBER",
     'feed.accuracy': 100.0,
     'classification.type': 'infected-system',
     'destination.ip': '198.18.18.18',
@@ -83,9 +83,6 @@ EXAMPLE_EVENTS = [{
     'extra.malware': 'Avalanche',
     },
     ]
-
-for index, data in enumerate(EXAMPLE_EVENTS):
-    EXAMPLE_EVENTS[index].update(EXAMPLE_TEMPLATE)
 
 
 class TestMicrosoftCTIPParserBot(test.BotTestCase, unittest.TestCase):

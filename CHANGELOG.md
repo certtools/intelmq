@@ -7,6 +7,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.harmonization`:
+  - `TLP` type: accept value "yellow" for TLP level AMBER.
 
 ### Development
 
@@ -32,6 +34,8 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- `intelmq.tests.bots.parsers.microsoft.test_parser_ctip_azure`:
+  - Add test case for TLP level "YELLOW".
 
 ### Tools
 
