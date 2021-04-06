@@ -32,7 +32,8 @@ __all__ = ['v100_dev7_modify_syntax',
            'v230_csv_parser_parameter_fix',
            'v230_deprecations',
            'v230_feed_changes',
-           'v300_bots_file_removal'
+           'v300_bots_file_removal',
+           'v300_defaults_file_removal'
            ]
 
 
@@ -591,6 +592,24 @@ def v300_bots_file_removal(defaults, runtime, harmonization, dry_run):
     return messages if messages else changed, defaults, runtime, harmonization
 
 
+def v300_defaults_file_removal(defaults, runtime, harmonization, dry_run):
+    """
+    Remove the defaults.conf file
+    """
+    changed = None
+    messages = []
+    defaults_file = Path(CONFIG_DIR) / "defaults.conf"
+    if defaults_file.exists():
+        if dry_run:
+            print('Would now remove file {defaults_file!r}.')
+        else:
+            defaults = load_configuration(defaults_file)
+            defaults_file.unlink()
+            changed = True
+    messages = ' '.join(messages)
+    return messages if messages else changed, defaults, runtime, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -611,7 +630,7 @@ UPGRADES = OrderedDict([
     ((2, 3, 0), (v230_csv_parser_parameter_fix, v230_feed_changes, v230_deprecations,)),
     ((2, 3, 1), ()),
     ((2, 3, 2), ()),
-    ((3, 0, 0), (v300_bots_file_removal, ))
+    ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, ))
 ])
 
 ALWAYS = (harmonization, )
