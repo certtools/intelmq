@@ -12,7 +12,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # temporary fix for https://github.com/actions/virtual-environments/issues/3080
+    runs-on: ubuntu-18.04
     name: Build Debian packages
     strategy:
       matrix:
