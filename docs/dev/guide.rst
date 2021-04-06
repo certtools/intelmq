@@ -26,7 +26,7 @@ IntelMQ tries to:
 * Reduce the complexity of writing new bots for new data feeds
 * Make your code easily and pleasantly readable
 * Reduce the probability of events lost in all process with persistence functionality (even system crash)
-* Strictly adhere to the existing :doc:`data-harmonization` for key-values in events
+* Strictly adhere to the existing :doc:`data-format` for key-values in events
 * Always use JSON format for all messages internally
 * Help and support the interconnection between IntelMQ and existing tools like AbuseHelper, CIF, etc. or new tools (in other words: we will not accept data-silos!)
 * Provide an easy way to store data into Log Collectors like ElasticSearch, Splunk
@@ -58,12 +58,12 @@ In this guide we use `/opt/dev_intelmq` as local repository copy. You can also u
 .. code-block:: bash
 
    sudo -s
-   
+
    git clone https://github.com/<your username>/intelmq.git /opt/dev_intelmq
    cd /opt/dev_intelmq
-   
+
    pip3 install -e .
-   
+
    useradd -d /opt/intelmq -U -s /bin/bash intelmq
 
    intelmqsetup
@@ -79,9 +79,9 @@ After you successfully setup your IntelMQ development environment, you can perfo
 .. code-block:: bash
 
    su - intelmq
-   
+
    intelmqctl start spamhaus-drop-collector
-   
+
    tail -f /opt/intelmq/var/log/spamhaus-drop-collector.log
 
 You can also add new bots, creating the new `.py` file on the proper directory inside `cd /opt/dev_intelmq/intelmq`. However, your IntelMQ installation with pip3 needs to be updated. Please check the following section.
@@ -99,11 +99,11 @@ In case you developed a new bot, you need to update your current development ins
 .. code-block:: bash
 
    sudo -s
-   
+
    cd /opt/dev_intelmq
    ## necessary for pip metadata update and new executables:
    pip3 install -e .
-   
+
    find /opt/intelmq/ -type d -exec chmod 0770 {} \+
    find /opt/intelmq/ -type f -exec chmod 0660 {} \+
    chown -R intelmq.intelmq /opt/intelmq
@@ -115,7 +115,7 @@ Now you can test run your new bot following this procedure:
 .. code-block:: bash
 
    su - intelmq
-   
+
    intelmqctl start <bot_id>
 
 Testing
@@ -127,7 +127,7 @@ Additional optional requirements
 For the documentation tests two additional libraries are required: Cerberus and PyYAML. You can install them with pip:
 
 .. code-block:: bash
-   
+
    pip3 install Cerberus PyYAML
 
 or the package management of your operating system.
@@ -243,7 +243,7 @@ Example (including the current ones):
    /intelmq/bots/parser/abusech/parser_domain.py
    /intelmq/bots/parser/abusech/parser_ip.py
    /intelmq/bots/parser/abusech/parser_ransomware.py
-   
+
    /intelmq/bots/parser/abusech/parser_malicious_url.py
 
 Documentation
@@ -286,12 +286,12 @@ Class Names
 Class name of the bot (ex: PhishTank Parser) must correspond to the type of the bot (ex: Parser) e.g. `PhishTankParserBot`
 
 
-Data Harmonization Rules
+IntelMQ Data Format Rules
 ========================
 
-Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
+Any component of IntelMQ MUST respect the IntelMQ Data Format.
 
-**Reference:** IntelMQ Data Harmonization - :doc:`data-harmonization`
+**Reference:** IntelMQ Data Format - :doc:`data-format`
 
 
 Code Submission Rules
@@ -463,15 +463,15 @@ Please adjust the doc strings accordingly and remove the in-line comments (`#`).
 .. code-block:: python
 
    """Parse data from example.com, be a nice ExampleParserBot.
-   
+
    Document possible necessary configurations.
    """
    import sys
-   
+
    # imports for additional libraries and intelmq
    from intelmq.lib.bot import Bot
-   
-   
+
+
    class ExampleParserBot(Bot):
 
        option1: str = "defaultvalue"
@@ -479,18 +479,18 @@ Please adjust the doc strings accordingly and remove the in-line comments (`#`).
 
        def process(self):
            report = self.receive_message()
-   
+
            event = self.new_event(report)  # copies feed.name, time.observation
            ... # implement the logic here
            event.add('source.ip', '127.0.0.1')
            event.add('extra', {"os.name": "Linux"})
            if self.option2:
                 event.add('extra', {"customvalue": self.option1})
-   
+
            self.send_message(event)
            self.acknowledge_message()
-   
-   
+
+
    BOT = ExampleParserBot
 
 Any attributes of the bot that are not private can be set by the user using the IntelMQ configuration settings.
@@ -639,33 +639,33 @@ You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e
 .. code-block::python
 
    class MyParserBot(ParserBot):
-   
+
        def parse(self, report):
            """A generator yielding the single elements of the data.
-   
+
            Comments, headers etc. can be processed here. Data needed by
            `self.parse_line` can be saved in `self.tempdata` (list).
-   
+
            Default parser yields stripped lines.
            Override for your use or use an existing parser, e.g.:
                parse = ParserBot.parse_csv
            """
            for line in utils.base64_decode(report.get("raw")).splitlines():
                yield line.strip()
-   
+
        def parse_line(self, line, report):
            """A generator which can yield one or more messages contained in line.
-   
+
            Report has the full message, thus you can access some metadata.
            Override for your use.
            """
            raise NotImplementedError
-   
+
        def process(self):
            self.tempdata = []  # temporary data for parse, parse_line and recover_line
            self.__failed = []
            report = self.receive_message()
-   
+
            for line in self.parse(report):
                if not line:
                    continue
@@ -677,20 +677,20 @@ You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e
                    self.__failed.append((exc, line))
                else:
                    self.send_message(*events)
-   
+
            for exc, line in self.__failed:
                self._dump_message(exc, self.recover_line(line))
-   
+
            self.acknowledge_message()
-   
+
        def recover_line(self, line):
            """Reverse of parse for single lines.
-   
+
            Recovers a fully functional report with only the problematic line.
            """
            return '\n'.join(self.tempdata + [line])
-   
-   
+
+
    BOT = MyParserBot
 
 parse_line
@@ -713,32 +713,32 @@ Most existing bots are only tested with one message. For newly written test it i
 .. code-block::python
 
    import unittest
-   
+
    import intelmq.lib.test as test
    from intelmq.bots.parsers.exampleparser.parser import ExampleParserBot  # adjust bot class name and module
-   
-   
+
+
    class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test class name
        """A TestCase for ExampleParserBot."""
-   
+
        @classmethod
        def set_bot(cls):
            cls.bot_reference = ExampleParserBot  # adjust bot class name
            cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict), by default an empty event or report (depending on bot type)
-   
+
        # This is an example how to test the log output
        def test_log_test_line(self):
            """Test if bot does log example message."""
            self.run_bot()
            self.assertRegexpMatches(self.loglines_buffer,
                                     "INFO - Lorem ipsum dolor sit amet")
-   
+
        def test_event(self):
            """Test if correct Event has been produced."""
            self.run_bot()
            self.assertMessageEqual(0, EXAMPLE_REPORT)
-   
-   
+
+
    if __name__ == '__main__':  # pragma: no cover
     unittest.main()
 

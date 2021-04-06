@@ -95,32 +95,32 @@ Add new entries to `CHANGELOG.md` and `NEWS.md`. For `CHANGELOG.md`:
 .. code-block:: markdown
 
    ### Configuration
-   
+
    ### Core
-   
+
    ### Development
-   
-   ### Harmonization
-   
+
+   ### Data Format
+
    ### Bots
    #### Collectors
-   
+
    #### Parsers
-   
+
    #### Experts
-   
+
    #### Outputs
-   
+
    ### Documentation
-   
+
    ### Packaging
-   
+
    ### Tests
-   
+
    ### Tools
-   
+
    ### Contrib
-   
+
    ### Known issues
 
 And for `NEWS.md`:
@@ -128,13 +128,13 @@ And for `NEWS.md`:
 .. code-block:: markdown
 
    ### Requirements
-   
+
    ### Tools
-   
-   ### Harmonization
-   
+
+   ### Data Format
+
    ### Configuration
-   
+
    ### Libraries
-   
+
    ### Postgres databases
