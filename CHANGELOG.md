@@ -21,7 +21,8 @@ CHANGELOG
 ### Development
 - `rewrite_config_files.py`: Removed obsolete BOTS-file-related rewriting functionality.
 
-### Harmonization
+### Data Format
+The IntelMQ Data Harmonization ("DHO") is renamed to IntelMQ Data Format ("IDF"). Internal files remain and work the same as before (PR#1818 by Sebastian Waldbauer, fixes 1810).
 Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old namings are still supported until at least version 3.0.
 - The taxonomy `abusive content` has been renamed to `abusive-content`.
 - The taxonomy `information content security` has been renamed to `information-content-security`.
@@ -63,6 +64,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - Updated user and developer documentation to reflect the removal of the BOTS file (PR#1780 by Birger Schacht).
 
 ### Packaging
+- Docker images tagged with `certat/intelmq-full:develop` are built and published on every push to the develop branch (PR#1753 by Sebastian Waldbauer).
 
 ### Tests
 - `intelmq.tests.lib.test_bot`:
