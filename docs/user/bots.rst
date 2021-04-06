@@ -551,7 +551,7 @@ Empty strings and `null` as value for search parameters are ignored.
 
 **File downloads**
 
-Attachments can be optionally unzipped, remote files are downloaded with the `http_*` settings applied (see `defaults.conf`).
+Attachments can be optionally unzipped, remote files are downloaded with the `http_*` settings applied.
 
 If `url_regex` or `attachment_regex` are empty strings, false or null, they are ignored.
 

@@ -51,7 +51,6 @@ All configuration files are in the JSON format.
 For new installations a default setup with some examples is provided by the `intelmqsetup` tool. If this is not the case, make sure the program was run (see installation instructions).
 
 
-* ``defaults.conf``: default values for all bots and their behavior, e.g. error handling, log options and pipeline configuration. Will be :issue:`removed in the future <267>`.
 * ``runtime.conf``: Configuration for the individual bots. See :doc:`bots` for more details.
 * ``pipeline.conf``: Defines source and destination queues per bot (i.e. where does a bot get its data from, where does it send it to?).
 
@@ -61,13 +60,11 @@ Use the IntelMQ Manager mentioned above to generate the configuration files if u
 
 In the shipped examples 4 collectors and parsers, 6 common experts and one output are configured. The default collector and the parser handle data from malware domain list, the file output bot writes all data to ``/opt/intelmq/var/lib/bots/file-output/events.txt``/``/var/lib/intelmq/bots/file-output/events.txt``.
 
-*******************************
-System Configuration (defaults)
-*******************************
+*********************************
+Systemwide Configuration (global)
+*********************************
 
-All bots inherit the default configuration parameters and they can overwrite them using the same parameters in their respective configuration in the ``runtime.conf`` file.
-You can set the parameters from ``defaults.conf`` per bot as well. The settings will take effect for running bots after the bot re-reads the configuration (restart or reload).
-
+All bots inherit the global configuration parameters in the ``runtime.conf`` and they can overwrite them using the same parameters in their individual configuration in the ``runtime.conf`` file.
 
 .. _configuration-logging:
 
@@ -186,7 +183,7 @@ Create default config ``/etc/supervisor/conf.d/intelmq.conf`` and restart ``supe
 
    [group:intelmq]
 
-Change IntelMQ process manager in the *defaults* configuration:
+Change IntelMQ process manager in the *global* configuration:
 
 .. code-block::
 
@@ -298,7 +295,7 @@ The configuration and the differences are outlined here.
 Keep in mind that it is slower, but has better monitoring capabilities and is more stable.
 The AMQP support is considered beta, so small problems might occur. So far, only RabbitMQ as broker has been tested.
 
-You can change the broker for single bots (set the parameters in the runtime configuration per bot) or for the whole botnet (in defaults configuration).
+You can change the broker for single bots (set the parameters in the runtime configuration per bot) or for the whole botnet (using the global configuration).
 
 You need to set the parameter ``source_pipeline_broker``/``destination_pipeline_broker`` to ``amqp``. There are more parameters available:
 

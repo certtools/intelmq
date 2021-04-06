@@ -6,7 +6,7 @@ If you wish to run IntelMQ with ELK (Elasticsearch, Logstash, Kibana) it is enti
 Configuring IntelMQ for Logstash
 --------------------------------
 
-In order to pass IntelMQ events to Logstash we will utilize already installed Redis. Add a new Redis Output Bot to your pipeline. As the minimum fill in the following parameters: `bot-id`, `redis_server_ip` (can be hostname), `redis_server_port`, `redis_password` (if required, else set to empty!), `redis_queue` (name for the queue). Redis IP, port and password can be taken from `defaults.conf`. It is recommended to use a different `redis_db` parameter than used by the IntelMQ (specified in `defaults.conf` as `source_pipeline_db`, `destination_pipeline_db` and `statistics_database`).
+In order to pass IntelMQ events to Logstash we will utilize already installed Redis. Add a new Redis Output Bot to your pipeline. As the minimum fill in the following parameters: `bot-id`, `redis_server_ip` (can be hostname), `redis_server_port`, `redis_password` (if required, else set to empty!), `redis_queue` (name for the queue). It is recommended to use a different `redis_db` parameter than used by the IntelMQ (specified as `source_pipeline_db`, `destination_pipeline_db` and `statistics_database`).
 
 Example values:
 
