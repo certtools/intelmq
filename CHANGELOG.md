@@ -55,6 +55,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - `intelmq.bots.experts.domain_suffix.expert`: Added `--update-database` option to update domain suffix database.
 - Added `intelmq.bots.experts.http.expert_status`: A bot that fetches the HTTP Status for a given URI and adds it to the message (PR#1789 by Birger Schacht, fixes #1047 partly).
 - Added `intelmq.bots.experts.http.expert_content`: A bot that fetches an HTTP resource and checks if it contains a specific string.
+- Added `intelmq.bots.experts.lookyloo.expert`: A bot that sends requests to a lookyloo instance & adds `screenshot_url` to the event (PR#1844 by Sebastian Waldbauer, fixes #1048).
 
 #### Outputs
 - Remove `intelmq.bots.outputs.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
