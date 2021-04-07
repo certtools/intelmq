@@ -1,4 +1,3 @@
 /etc/intelmq/harmonization.conf
 /etc/intelmq/pipeline.conf
-/etc/intelmq/defaults.conf
 /etc/intelmq/runtime.conf
