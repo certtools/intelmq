@@ -2093,7 +2093,25 @@ Documentation about IDEA: https://idea.cesnet.cz/en/index
 
 * `test_mode`: add `Test` category to mark all outgoing IDEA events as informal (meant to simplify setting up and debugging new IDEA producers) (default: `true`)
 
+Lookyloo
+^^^^^^^^
 
+Lookyloo is a website screenshotting and analysis tool. For more information and installation instructions visit https://www.lookyloo.eu/
+
+The bot sends a request for `source.url` to the configured Lookyloo instance and saves the retrieved website screenshot link in the field `screenshot_url`. Lookyloo only *queues* the website for screenshotting, therefore the screenshot may not be directly ready after the bot requested it.
+The `pylookyloo` library is required for this bot.
+The `http_user_agent` parameter is passed on, but not other HTTP-related parameter like proxies.
+
+Events without `source.url` are ignored.
+
+**Information**
+
+* `name:` intelmq.bots.experts.lookyloo.expert
+* `description:` LookyLoo expert bot for automated website screenshots
+
+**Configuration Parameters**
+
+* `instance_url`: LookyLoo instance to connect to
 
 MaxMind GeoIP
 ^^^^^^^^^^^^^

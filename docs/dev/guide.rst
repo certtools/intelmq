@@ -161,6 +161,7 @@ There are a bunch of environment variables which switch on/off some tests:
 * `INTELMQ_SKIP_REDIS`: redis-related tests are ran by default, set this to 1 to skip those.
 * `INTELMQ_TEST_EXOTIC`: some bots and tests require libraries which may not be available, those are skipped by default. To run them, set this to 1.
 * `INTELMQ_TEST_REDIS_PASSWORD`: Set this value to the password for the local redis database if needed.
+* `INTELMQ_LOOKYLOO_TEST`: Set this value to run the lookyloo tests. Public lookyloo instance will be used as default.
 
 For example, to run all tests you can use:
 
