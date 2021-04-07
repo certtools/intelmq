@@ -45,8 +45,13 @@ mapping['phish']        = {"taxonomy": "fraud",
                            "type": "phishing", "identifier": "phishing"}
 mapping['proxy']        = {"taxonomy": "other",
                            "type": "proxy", "identifier": "openproxy"}
+<<<<<<< HEAD
 mapping['sandbox-url']  = {"taxonomy": "malicious-code",
                            "type": "infected-system", "identifier": "sandboxurl"}
+=======
+mapping['sandbox-url']  = {"taxonomy": "malicious code",
+                           "type": "malware", "identifier": "sandboxurl"}
+>>>>>>> maintenance
 mapping['scanning']     = {"taxonomy": "information-gathering",
                            "type": "scanner", "identifier": "scanning"}
 mapping['server-exploit'] = {"taxonomy": "malicious-code",

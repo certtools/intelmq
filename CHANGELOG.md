@@ -83,6 +83,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Configuration
 
 ### Core
+- `intelmq.lib.harmonization`:
+  - `TLP` type: accept value "yellow" for TLP level AMBER.
 
 ### Development
 
@@ -94,6 +96,10 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.config`:
   - Parse and harmonize field `end_time` as date in Feeds "Drone-Brute-Force" and "Amplification-DDoS-Victim" (PR#1833 by Mikk Margus Möll).
+- `intelmq.bots.parsers.shadowserver.parser_json`:
+  - Use the overwrite parameter for optionally overwriting the "feed.name" field (by Sebastian Wagner).
+- `intelmq.bots.parsers.microsoft.parser_ctip`:
+  - Handle field `timestamp_utc` in `Payload` of CTIP Azure format (by Sebastian Wagner).
 
 #### Experts
 
@@ -101,10 +107,13 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - `intelmq.bots.outputs.elasticsearch`: Fix log message on required elasticsearch library message (by Sebastian Wagner).
 
 ### Documentation
+- `dev/data-harmonization`: Fix taxonomy name "information gathering" should be "information-gathering" (by Sebastian Wagner).
 
 ### Packaging
 
 ### Tests
+- `intelmq.tests.bots.parsers.microsoft.test_parser_ctip_azure`:
+  - Add test case for TLP level "YELLOW".
 
 ### Tools
 
