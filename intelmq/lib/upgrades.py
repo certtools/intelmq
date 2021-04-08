@@ -33,7 +33,8 @@ __all__ = ['v100_dev7_modify_syntax',
            'v230_deprecations',
            'v230_feed_changes',
            'v300_bots_file_removal',
-           'v300_defaults_file_removal'
+           'v300_defaults_file_removal',
+           'v300_pipeline_file_removal'
            ]
 
 
@@ -610,6 +611,37 @@ def v300_defaults_file_removal(defaults, runtime, harmonization, dry_run):
     return messages if messages else changed, defaults, runtime, harmonization
 
 
+def v300_pipeline_file_removal(defaults, runtime, harmonization, dry_run):
+    """
+    Remove the pipeline.conf file
+    """
+    changed = None
+    messages = []
+    pipeline_file = Path(CONFIG_DIR) / "pipeline.conf"
+    if pipeline_file.exists():
+        pipelines = load_configuration(pipeline_file)
+        for bot in runtime:
+            if bot in pipelines:
+                if 'destination-queues' in pipelines[bot]:
+                    destination_queues = pipelines[bot]['destination-queues']
+                    if isinstance(destination_queues, dict):
+                        runtime[bot]['parameters']['destination_queues'] = destination_queues
+                    if isinstance(destination_queues, list):
+                        runtime[bot]['parameters']['destination_queues'] = {'_default': destination_queues}
+                    if isinstance(destination_queues, str):
+                        runtime[bot]['parameters']['destination_queues'] = {'_default': [destination_queues]}
+                if 'source-queue' in pipelines[bot]:
+                    if pipelines[bot]['source-queue'] != f"{bot}-queue":
+                        runtime[bot]['parameters']['source_queue'] = pipelines[bot]['source-queue']
+        if dry_run:
+            print('Would now remove file {pipeline_file!r}.')
+        else:
+            pipeline_file.unlink()
+        changed = True
+    messages = ' '.join(messages)
+    return messages if messages else changed, defaults, runtime, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -630,7 +662,7 @@ UPGRADES = OrderedDict([
     ((2, 3, 0), (v230_csv_parser_parameter_fix, v230_feed_changes, v230_deprecations,)),
     ((2, 3, 1), ()),
     ((2, 3, 2), ()),
-    ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, ))
+    ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, v300_pipeline_file_removal, ))
 ])
 
 ALWAYS = (harmonization, )
