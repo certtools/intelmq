@@ -25,7 +25,7 @@ import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 from intelmq import (DEFAULT_LOGGING_PATH,
-                     PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
+                     RUNTIME_CONF_FILE,
                      DEFAULT_LOGGING_LEVEL)
 
 APPNAME = "intelmqdump"
@@ -204,10 +204,10 @@ def main():
     readline.parse_and_bind("tab: complete")
     readline.set_completer_delims('')
 
-    pipeline_config = utils.load_configuration(PIPELINE_CONF_FILE)
+    runtime_config = utils.load_configuration(RUNTIME_CONF_FILE)
     pipeline_pipes = {}
-    for bot, pipes in pipeline_config.items():
-        pipeline_pipes[pipes.get('source-queue', '')] = bot
+    for bot, parameters in runtime_config.items():
+        pipeline_pipes[parameters.get('source_queue', f"{bot}-queue")] = bot
 
     if args.botid is None:
         filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))

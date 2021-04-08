@@ -25,7 +25,6 @@ elif path == "opt":
 
 DEFAULT_LOGGING_LEVEL = "INFO"
 HARMONIZATION_CONF_FILE = os.path.join(CONFIG_DIR, "harmonization.conf")
-PIPELINE_CONF_FILE = os.path.join(CONFIG_DIR, "pipeline.conf")
 RUNTIME_CONF_FILE = os.path.join(CONFIG_DIR, "runtime.conf")
 STATE_FILE_PATH = path = os.path.abspath(os.path.join(VAR_STATE_PATH,
                                                       '../state.json'))
