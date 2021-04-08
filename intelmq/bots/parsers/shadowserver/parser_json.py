@@ -68,7 +68,7 @@ class ShadowserverJSONParserBot(ParserBot):
         processedkeys = []
 
         event = self.new_event(report)
-        event.add('feed.name', self.feedname, overwrite=self.parameters.overwrite)
+        event.add('feed.name', self.feedname, overwrite=self.overwrite)
 
         extra = {}
 
