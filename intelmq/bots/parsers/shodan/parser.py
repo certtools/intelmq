@@ -585,6 +585,12 @@ CONVERSIONS = {
 
 class ShodanParserBot(Bot):
 
+    common_keys = {  # not indicative of type
+        '_id', '_shodan', 'asn', 'data', 'device', 'devicetype', 'domains', 'hash',
+        'hostnames', 'html', 'ip', 'ip_str', 'isp', 'location', 'opts', 'org',
+        'os', 'port', 'tags', 'timestamp', 'transport',
+    }
+
     def init(self):
         if getattr(self.parameters, 'ignore_errors', True):
             self.ignore_errors = True
@@ -644,12 +650,7 @@ class ShodanParserBot(Bot):
             event.add('classification.type', 'other')
             event.add('classification.identifier', 'shodan-scan')
 
-            common_keys = {  # not indicative of type
-                '_id', '_shodan', 'asn', 'data', 'device', 'devicetype', 'domains', 'hash',
-                'hostnames', 'html', 'ip', 'ip_str', 'isp', 'location', 'opts', 'org',
-                'os', 'port', 'tags', 'timestamp', 'transport',
-            }
-            uncommon_keys = decoded.keys() - common_keys
+            uncommon_keys = decoded.keys() - self.common_keys
             event.add('extra.shodan.unique_keys', sorted(uncommon_keys))
             decoded_protocols = PROTOCOLS & uncommon_keys
             if decoded_protocols:

@@ -24,6 +24,8 @@ CHANGELOG
   - Use the overwrite parameter for optionally overwriting the "feed.name" field (by Sebastian Wagner).
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - Handle field `timestamp_utc` in `Payload` of CTIP Azure format (by Sebastian Wagner).
+- `intelmq.bots.parsers.shodan.parser`:
+  - Added support for unique keys and verified vulns (PR#1835 by Mikk Margus Möll).
 
 #### Experts
 
