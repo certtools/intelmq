@@ -52,10 +52,8 @@ For new installations a default setup with some examples is provided by the `int
 
 
 * ``runtime.conf``: Configuration for the individual bots. See :doc:`bots` for more details.
-* ``pipeline.conf``: Defines source and destination queues per bot (i.e. where does a bot get its data from, where does it send it to?).
 
 To configure a new bot, you need to define and configure it in ``runtime.conf``. You can base your configuration on the output of ``intelmqctl list bots``.
-Configure source and destination queues in ``pipeline.conf``.
 Use the IntelMQ Manager mentioned above to generate the configuration files if unsure.
 
 In the shipped examples 4 collectors and parsers, 6 common experts and one output are configured. The default collector and the parser handle data from malware domain list, the file output bot writes all data to ``/opt/intelmq/var/lib/bots/file-output/events.txt``/``/var/lib/intelmq/bots/file-output/events.txt``.
@@ -191,143 +189,6 @@ Change IntelMQ process manager in the *global* configuration:
 
 After this it is possible to manage bots like before with ``intelmqctl`` command.
 
-**********************
-Pipeline Configuration
-**********************
-
-The pipeline configuration defines how the data is exchanges between the bots. For each bot, it defines the source queue (there is always only one) and one or multiple destination queues. This section shows the possibilities and definition as well as examples. The configuration of the pipeline can be done by the |intelmq-manager-github-link|  with no need to intervene manually. It is recommended to use this tool as it guarantees that the configuration is correct. The location of the file is ``etc/pipeline.conf`` in your IntelMQ directory, for example ``/opt/intelmq/etc/pipeline.conf`` or ``/etc/intelmq/pipeline.conf``.
-
-Structure
-=========
-
-The pipeline configuration has the same structure on the first level as the runtime configuration, i.e. it's a dictionary with the bot IDs' as keys. Each item holds again a dictionary with one entry for each the source and destination queue. A full example can be found later in this section.
-
-.. code-block:: json
-
-   {
-       "example-bot": {
-           "source-queue": <source queue data>,
-           "destination-queues": <destination queue data>
-       }
-   }
-
-Source queue
-------------
-
-The source queue is only a string, by convention the bot ID plus "-queue" appended. For example, if the bot ID is ``example-bot``, the source queue name is ``example-bot-queue``.
-
-.. code-block::
-
-   "source-queue": "example-bot-queue"
-
-For collectors, this field does not exist, as the fetch the data from outside the IntelMQ system by definition.
-
-Destination queues
-------------------
-
-There are multiple possibilities for the destination queues:
-- no value, i.e. the field does not exist. This is the case for outputs, as they push the data outside the IntelMQ system by default.
-- A single string (deprecated) with the name of the source queue of the next bot.
-- A list of strings, each with the name of the source queue of the next bot.
-- *Named queues*: a dictionary of either strings or lists.
-
-Before going into the details of named paths, first dive into some simpler cases. A typical configuration may look like this:
-
-.. code-block:: json
-
-    "deduplicator-expert": {
-        "source-queue": "deduplicator-expert-queue",
-        "destination-queues": [
-            "taxonomy-expert-queue"
-        ]
-    }
-
-And a bot with two destination queues:
-
-.. code-block:: json
-
-    "cymru-whois-expert": {
-        "source-queue": "cymru-whois-expert-queue",
-        "destination-queues": [
-            "file-output-queue",
-            "misp-output-queue"
-        ]
-    }
-
-These are the usual configurations you mostly see.
-
-Named queues / paths
---------------------
-
-Beginning with version 1.1.0, queues can be "named", these are the so-called *paths*. The following two configurations are equivalent:
-
-.. code-block:: json
-
-   "destination-queues": ["taxonomy-expert-queue"]
-   "destination-queues": {"_default": ["taxonomy-expert-queue"]}
-
-As we can see the *default* path name is obviously ``_default``. Let's have a look at a more complex and complete example:
-
-.. code-block:: json
-
-   "destination-queues": {
-       "_default": "<first destination pipeline name>",
-       "_on_error": "<optional destination pipeline name in case of errors>",
-       "other-path": [
-           "<second destination pipeline name>",
-           "<third destination pipeline name>",
-           ...
-           ],
-       ...
-       }
-
-In that case, bot will be able to send the message to one of defined paths. The path ``"_default"`` is used if none is not specified.
-In case of errors during processing, and the optional path ``"_on_error"`` is specified, the message will be sent to the pipelines given given as on-error.
-Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the :ref:`filter expert` and the :ref:`sieve expert`.
-The named queues need to be explicitly addressed by the bot (e.g. filtering) or the core (``_on_error``) to be used. Setting arbitrary paths has no effect.
-
-AMQP (Beta)
-===========
-
-Starting with IntelMQ 1.2 the AMQP protocol is supported as message queue.
-To use it, install a broker, for example RabbitMQ.
-The configuration and the differences are outlined here.
-Keep in mind that it is slower, but has better monitoring capabilities and is more stable.
-The AMQP support is considered beta, so small problems might occur. So far, only RabbitMQ as broker has been tested.
-
-You can change the broker for single bots (set the parameters in the runtime configuration per bot) or for the whole botnet (using the global configuration).
-
-You need to set the parameter ``source_pipeline_broker``/``destination_pipeline_broker`` to ``amqp``. There are more parameters available:
-
-* ``destination_pipeline_broker``: ``"amqp"``
-* ``destination_pipeline_host`` (default: ``'127.0.0.1'``)
-* ``destination_pipeline_port`` (default: 5672)
-* ``destination_pipeline_username``
-* ``destination_pipeline_password``
-* ``destination_pipeline_socket_timeout`` (default: no timeout)
-* ``destination_pipeline_amqp_exchange``: Only change/set this if you know what you do. If set, the destination queues are not declared as queues, but used as routing key. (default: ``''``).
-* ``destination_pipeline_amqp_virtual_host`` (default: ``'/'``)
-* ``source_pipeline_host`` (default: ``'127.0.0.1'``)
-* ``source_pipeline_port`` (default: 5672)
-* ``source_pipeline_username``
-* ``source_pipeline_password``
-* ``source_pipeline_socket_timeout`` (default: no timeout)
-* ``source_pipeline_amqp_exchange``: Only change/set this if you know what you do. If set, the destination queues are not declared as queues, but used as routing key. (default: `''`).
-* ``source_pipeline_amqp_virtual_host`` (default: ``'/'``)
-* ``intelmqctl_rabbitmq_monitoring_url`` string, see below (default: ``"http://{host}:15672"``)
-
-For getting the queue sizes, ``intelmqctl`` needs to connect to the monitoring interface of RabbitMQ. If the monitoring interface is not available under ``http://{host}:15672`` you can manually set using the parameter ``intelmqctl_rabbitmq_monitoring_url``.
-In a RabbitMQ's default configuration you might not provide a user account, as by default the administrator (``guest``:``guest``) allows full access from localhost. If you create a separate user account, make sure to add the tag "monitoring" to it, otherwise IntelMQ can't fetch the queue sizes.
-
-.. figure:: /_static/rabbitmq-user-monitoring.png
-   :alt: RabbitMQ User Account Monitoring Tag
-
-Setting the statistics (and cache) parameters is necessary when the local redis is running under a non-default host/port. If this is the case, you can set them explicitly:
-
-* ``statistics_database``: ``3``
-* ``statistics_host``: ``"127.0.0.1"``
-* ``statistics_password``: ``null``
-* ``statistics_port``: ``6379``
 
 .. _runtime-configuration:
 
@@ -393,6 +254,89 @@ By default, all of the bots are started when you start the whole botnet, however
            }
        }
    }
+
+Pipeline Configuration
+======================
+
+The pipeline configuration defines how the data is exchanges between the bots. For each bot, it defines the source queue (there is always only one) and one or multiple destination queues. This section shows the possibilities and definition as well as examples. The configuration of the pipeline can be done by the |intelmq-manager-github-link|  with no need to intervene manually. It is recommended to use this tool as it guarantees that the configuration is correct. The configuration of the pipelines is done in the ``runtime.conf`` as part of the individiual bots settings.
+
+Source queue
+------------
+
+This setting is **optional**, by default, the source queue is the bot ID plus "-queue" appended.
+For example, if the bot ID is ``example-bot``, the source queue name is ``example-bot-queue``.
+
+.. code-block::
+
+   "source-queue": "example-bot-queue"
+
+For collectors, this field does not exist, as the fetch the data from outside the IntelMQ system by definition.
+
+Destination queues
+------------------
+
+Destination queues are defined using a dictionary with a name as key and a list of queue-identifiers as the value.
+
+.. code-block:: json
+
+   "destination-queues": {
+       "_default": ["<first destination pipeline name>"],
+       "_on_error": ["<optional first destination pipeline name in case of errors>"],
+       "other-path": [
+           "<second destination pipeline name>",
+           "<third destination pipeline name>",
+           ...
+           ],
+       ...
+       }
+
+In this case, bot will be able to send the message to one of defined paths. The path ``"_default"`` is used if none is specified by the bot itself.
+In case of errors during processing, and the optional path ``"_on_error"`` is specified, the message will be sent to the pipelines given given as on-error.
+Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the :ref:`filter expert` and the :ref:`sieve expert`.
+The named queues need to be explicitly addressed by the bot (e.g. filtering) or the core (``_on_error``) to be used. Setting arbitrary paths has no effect.
+
+AMQP (Beta)
+-----------
+
+Starting with IntelMQ 1.2 the AMQP protocol is supported as message queue.
+To use it, install a broker, for example RabbitMQ.
+The configuration and the differences are outlined here.
+Keep in mind that it is slower, but has better monitoring capabilities and is more stable.
+The AMQP support is considered beta, so small problems might occur. So far, only RabbitMQ as broker has been tested.
+
+You can change the broker for single bots (set the parameters in the runtime configuration per bot) or for the whole botnet (using the global configuration).
+
+You need to set the parameter ``source_pipeline_broker``/``destination_pipeline_broker`` to ``amqp``. There are more parameters available:
+
+* ``destination_pipeline_broker``: ``"amqp"``
+* ``destination_pipeline_host`` (default: ``'127.0.0.1'``)
+* ``destination_pipeline_port`` (default: 5672)
+* ``destination_pipeline_username``
+* ``destination_pipeline_password``
+* ``destination_pipeline_socket_timeout`` (default: no timeout)
+* ``destination_pipeline_amqp_exchange``: Only change/set this if you know what you do. If set, the destination queues are not declared as queues, but used as routing key. (default: ``''``).
+* ``destination_pipeline_amqp_virtual_host`` (default: ``'/'``)
+* ``source_pipeline_host`` (default: ``'127.0.0.1'``)
+* ``source_pipeline_port`` (default: 5672)
+* ``source_pipeline_username``
+* ``source_pipeline_password``
+* ``source_pipeline_socket_timeout`` (default: no timeout)
+* ``source_pipeline_amqp_exchange``: Only change/set this if you know what you do. If set, the destination queues are not declared as queues, but used as routing key. (default: `''`).
+* ``source_pipeline_amqp_virtual_host`` (default: ``'/'``)
+* ``intelmqctl_rabbitmq_monitoring_url`` string, see below (default: ``"http://{host}:15672"``)
+
+For getting the queue sizes, ``intelmqctl`` needs to connect to the monitoring interface of RabbitMQ. If the monitoring interface is not available under ``http://{host}:15672`` you can manually set using the parameter ``intelmqctl_rabbitmq_monitoring_url``.
+In a RabbitMQ's default configuration you might not provide a user account, as by default the administrator (``guest``:``guest``) allows full access from localhost. If you create a separate user account, make sure to add the tag "monitoring" to it, otherwise IntelMQ can't fetch the queue sizes.
+
+.. figure:: /_static/rabbitmq-user-monitoring.png
+   :alt: RabbitMQ User Account Monitoring Tag
+
+Setting the statistics (and cache) parameters is necessary when the local redis is running under a non-default host/port. If this is the case, you can set them explicitly:
+
+* ``statistics_database``: ``3``
+* ``statistics_host``: ``"127.0.0.1"``
+* ``statistics_password``: ``null``
+* ``statistics_port``: ``6379``
 
 .. _multithreading:
 
@@ -527,7 +471,7 @@ Command-line interface: intelmqctl
 Botnet Concept
 --------------
 
-The "botnet" represents all currently configured bots which are explicitly enabled. It is, in essence, the graph (pipeline.conf) of the bots which are connected together via their input source queues and destination queues. 
+The "botnet" represents all currently configured bots which are explicitly enabled. It is, in essence, the graph of the bots which are connected together via their input source queues and destination queues.
 
 To get an overview which bots are running, use ``intelmqctl status`` or use the IntelMQ Manager. Set ``"enabled": true`` in the runtime configuration to add a bot to the botnet. By default, bots will be configured as ``"enabled": true``. See :doc:`bots` for more details on configuration.
 
