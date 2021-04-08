@@ -41,6 +41,9 @@ The old names can still be used in code, and they are automatically converted to
 
 ### Configuration
 
+The `defaults.conf` file was removed. Settings that should effect all the bots are not part of the runtime.conf file and are configured in the `global` section in that file.
+The `intelmqctl upgrade-config` command migrates the existing values from the `defaults.conf` file to the `runtime.conf` file under the `global` section and then deletes the `defaults.conf` file.
+
 ### Libraries
 
 ### Postgres databases
