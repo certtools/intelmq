@@ -39,9 +39,6 @@ class ShadowserverJSONParserBot(ParserBot):
                 self.logger.info('Could not determine the feed by the feed name %r given by parameter. '
                                  'Will determine the feed from the file names.', feedname)
 
-        if not hasattr(self.parameters, 'overwrite'):
-            setattr(self.parameters, 'overwrite', True)
-
     def parse(self, report):
         report_name = report.get('extra.file_name')
         if not report_name:
