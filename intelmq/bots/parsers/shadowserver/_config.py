@@ -214,6 +214,14 @@ def convert_date(value):
     return harmonization.DateTime.sanitize(value)
 
 
+def convert_date_utc(value):
+    """
+    Parses a datetime from the value and assumes UTC by appending the TZ to the value.
+    Not the same as add_UTC_to_timestamp, as convert_date_utc also does the sanitiation
+    """
+    return harmonization.DateTime.sanitize(value + '+00:00')
+
+
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-DB2
 open_db2_discovery_service = {
     'required_fields': [
@@ -1769,7 +1777,7 @@ drone_brute_force = {
         ('extra.destination.sector', 'dest_sector', validate_to_none),
         ('extra.', 'public_source', validate_to_none),
         ('extra.', 'start_time', validate_to_none),
-        ('extra.', 'end_time', convert_date),
+        ('extra.', 'end_time', convert_date_utc),
         ('extra.', 'client_version', validate_to_none),
         ('destination.account', 'username', validate_to_none),
         ('extra.', 'password', validate_to_none),
@@ -2003,7 +2011,7 @@ amplification_ddos_victim = {
         ('extra.', 'bytes', convert_int),
         ('extra.', 'sensor_geo', validate_to_none),
         ('extra.', 'sector', validate_to_none),
-        ('extra.', 'end_time', convert_date),
+        ('extra.', 'end_time', convert_date_utc),
         ('extra.', 'public_source', validate_to_none),
     ],
     'constant_fields': {

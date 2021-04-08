@@ -97,6 +97,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.config`:
   - Parse and harmonize field `end_time` as date in Feeds "Drone-Brute-Force" and "Amplification-DDoS-Victim" (PR#1833 by Mikk Margus Möll).
+  - Add conversion function `convert_date_utc` which assumes UTC and sanitizes the data to datetime (by Sebastian Wagner).
 - `intelmq.bots.parsers.shadowserver.parser_json`:
   - Use the overwrite parameter for optionally overwriting the "feed.name" field (by Sebastian Wagner).
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
