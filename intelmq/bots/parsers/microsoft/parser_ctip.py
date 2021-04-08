@@ -161,6 +161,12 @@ AZURE = {
     "Payload.Custom4": "extra.payload.custom_field4",
     "Payload.Custom5": "extra.payload.custom_field5",
     "Payload.timestamp_utc": "extra.payload.timestamp_utc",
+    "Payload.source_ip": "extra.payload.source.ip",
+    "Payload.source_port": "extra.payload.source.port",
+    "Payload.destination_ip": "extra.payload.destination.ip",
+    "Payload.destination_port": "extra.payload.destination.port",
+    "Payload.computer_name": "extra.payload.computer_name",
+    "Payload.bot_id": "extra.payload.bot_id",
 }
 CONFIDENCE = {
     "High": 100,
