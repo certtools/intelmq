@@ -261,7 +261,7 @@ Manage the botnet
 ------------------
 
 In IntelMQ, the botnet is the set of all currently configured and enabled bots.
-All configured bots have their configuration in runtime.conf and their queues in pipeline.conf.
+All configured bots have their configuration in runtime.conf.
 By default, all bots are enabled. To disable a bot set `enabled` to `false`.
 Also see :doc:`bots` and :ref:`runtime-configuration`.
 
