@@ -553,7 +553,7 @@ class Amqp(Pipeline):
              path_permissive: bool = False):
         """
         In principle we could use AMQP's exchanges here but that architecture is incompatible
-        to the format of our pipeline.conf file.
+        to the format of our pipeline configuration.
         """
         if path not in self.destination_queues and path_permissive:
             return

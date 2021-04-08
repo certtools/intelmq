@@ -20,7 +20,7 @@ import redis
 import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
+from intelmq import CONFIG_DIR, RUNTIME_CONF_FILE
 
 __all__ = ['BotTestCase']
 
@@ -46,13 +46,9 @@ class Parameters(object):
     pass
 
 
-def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}, group=None, module=None):
+def mocked_config(bot_id='test-bot', sysconfig={}, group=None, module=None):
     def mocked(conf_file):
-        if conf_file == PIPELINE_CONF_FILE:
-            return {bot_id: {"source-queue": src_name,
-                             "destination-queues": dst_names},
-                    }
-        elif conf_file == RUNTIME_CONF_FILE:
+        if conf_file == RUNTIME_CONF_FILE:
             return {bot_id: {'description': 'Instance of a bot for automated unit tests.',
                              'group': group,
                              'module': module,
@@ -211,9 +207,8 @@ class BotTestCase(object):
 
         config = self.sysconfig.copy()
         config.update(parameters)
+        config['destination_queues'] = destination_queues
         self.mocked_config = mocked_config(self.bot_id,
-                                           src_name,
-                                           destination_queues,
                                            sysconfig=config,
                                            group=self.bot_type.title(),
                                            module=self.bot_reference.__module__,

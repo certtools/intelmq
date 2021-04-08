@@ -31,7 +31,7 @@ import psutil
 
 import intelmq.lib.message as libmessage
 from intelmq import (DEFAULT_LOGGING_PATH,
-                     HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
+                     HARMONIZATION_CONF_FILE,
                      RUNTIME_CONF_FILE, __version__)
 from intelmq.lib import cache, exceptions, utils
 from intelmq.lib.pipeline import PipelineFactory, Pipeline
@@ -60,6 +60,7 @@ class Bot(object):
     destination_pipeline_host: str = "127.0.0.1"
     destination_pipeline_password: Optional[str] = None
     destination_pipeline_port: int = 6379
+    destination_queues: Optional[dict] = None
     error_dump_message: bool = True
     error_log_exception: bool = True
     error_log_message: bool = False
@@ -91,6 +92,7 @@ class Bot(object):
     source_pipeline_host: str = "127.0.0.1"
     source_pipeline_password: Optional[str] = None
     source_pipeline_port: int = 6379
+    source_queue: Optional[str] = None
     ssl_ca_certificate: Optional[str] = None
     statistics_database: int = 3
     statistics_host: str = "127.0.0.1"
@@ -198,7 +200,6 @@ class Bot(object):
                 self.logger.warning('Multithreading is configured, but is not '
                                     'available for interactive runs.')
 
-            self.__load_pipeline_configuration()
             self.__load_harmonization_configuration()
 
             self._parse_common_parameters()
@@ -386,7 +387,7 @@ class Bot(object):
                                 warnings.warn("Message will be removed from the pipeline and not dumped to the disk. "
                                               "Set `error_dump_message` to true to save the message on disk. "
                                               "This warning is only shown once in the runtime of a bot.")
-                            if self.__destination_queues and '_on_error' in self.__destination_queues:
+                            if self.destination_queues and '_on_error' in self.destination_queues:
                                 self.send_message(self.__current_message, path='_on_error')
 
                             if message_to_dump or self.__current_message:
@@ -551,11 +552,11 @@ class Bot(object):
 
     def __connect_pipelines(self):
         pipeline_args = {key: getattr(self, key) for key in dir(self) if not inspect.ismethod(getattr(self, key)) and (key.startswith('source_pipeline_') or key.startswith('destination_pipeline'))}
-        if self.__source_queues:
-            self.logger.debug("Loading source pipeline and queue %r.", self.__source_queues)
+        if self.source_queue is not None:
+            self.logger.debug("Loading source pipeline and queue %r.", self.source_queue)
             self.__source_pipeline = PipelineFactory.create(logger=self.logger,
                                                             direction="source",
-                                                            queues=self.__source_queues,
+                                                            queues=self.source_queue,
                                                             pipeline_args=pipeline_args,
                                                             load_balance=self.load_balance,
                                                             is_multithreaded=self.is_multithreaded)
@@ -564,12 +565,11 @@ class Bot(object):
             self.__current_message = None
             self.logger.debug("Connected to source queue.")
 
-        if self.__destination_queues:
-            self.logger.debug("Loading destination pipeline and queues %r.",
-                              self.__destination_queues)
+        if self.destination_queues is not None:
+            self.logger.debug("Loading destination pipeline and queues %r.", self.destination_queues)
             self.__destination_pipeline = PipelineFactory.create(logger=self.logger,
                                                                  direction="destination",
-                                                                 queues=self.__destination_queues,
+                                                                 queues=self.destination_queues,
                                                                  pipeline_args=pipeline_args,
                                                                  load_balance=self.load_balance,
                                                                  is_multithreaded=self.is_multithreaded)
@@ -696,7 +696,7 @@ class Bot(object):
         new_dump_data: dict = {}
         new_dump_data[timestamp]: dict = {}
         new_dump_data[timestamp]["bot_id"] = self.__bot_id
-        new_dump_data[timestamp]["source_queue"] = self.__source_queues
+        new_dump_data[timestamp]["source_queue"] = self.source_queue
         new_dump_data[timestamp]["traceback"] = error_traceback
 
         if isinstance(message, bytes):
@@ -781,6 +781,11 @@ class Bot(object):
             self.logger.handlers = []  # remove all existing handlers
             self.__init_logger()
 
+        # The default source_queue should be "{bot-id}-queue",
+        # but this can be overridden
+        if self.source_queue is None:
+            self.source_queue = f"{self.__bot_id}-queue"
+
         # TODO: Rework
         if os.getenv('INTELMQ_IS_DOCKER', None):
             redis_cache_host = os.getenv('INTELMQ_REDIS_CACHE_HOST', None)
@@ -800,27 +805,6 @@ class Bot(object):
                                 log_level=self.logging_level,
                                 log_max_size=getattr(self, "logging_max_size", 0),
                                 log_max_copies=getattr(self, "logging_max_copies", None))
-
-    def __load_pipeline_configuration(self):
-        self.logger.debug("Loading pipeline configuration from %r.", PIPELINE_CONF_FILE)
-        config = utils.load_configuration(PIPELINE_CONF_FILE)
-
-        self.__source_queues = None
-        self.__destination_queues = None
-
-        if self.__bot_id in list(config.keys()):
-
-            if 'source-queue' in config[self.__bot_id].keys():
-                self.__source_queues = config[self.__bot_id]['source-queue']
-
-            if 'destination-queues' in config[self.__bot_id].keys():
-                self.__destination_queues = config[
-                    self.__bot_id]['destination-queues']
-                # Convert old to new format here
-
-        else:
-            raise exceptions.ConfigurationError('pipeline', "no key "
-                                                            "{!r}.".format(self.__bot_id))
 
     def __log_configuration_parameter(self, config_name: str, option: str, value: Any):
         if "password" in option or "token" in option:
@@ -1075,7 +1059,7 @@ class ParserBot(Bot):
             report_dump.change('raw', self.recover_line(line))
             if self.error_dump_message:
                 self._dump_message(exc, report_dump)
-            if self._Bot__destination_queues and '_on_error' in self._Bot__destination_queues:
+            if self.destination_queues and '_on_error' in self.destination_queues:
                 self.send_message(report_dump, path='_on_error')
 
         self.logger.info('Sent %d events and found %d problem(s).', events_count, len(self.__failed))

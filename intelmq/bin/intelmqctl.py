@@ -23,7 +23,7 @@ import pkg_resources
 from termstyle import green
 
 from intelmq import (DEFAULT_LOGGING_LEVEL,  # noqa: F401
-                     HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
+                     HARMONIZATION_CONF_FILE,
                      RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
                      DEFAULT_LOGGING_PATH, __version_info__,
                      CONFIG_DIR, ROOT_DIR)
@@ -813,13 +813,6 @@ Get some debugging output on the settings and the environment (to be extended):
     intelmqctl debug --get-environment-variables
 '''
 
-        # stolen functions from the bot file
-        # this will not work with various instances of REDIS
-        try:
-            self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
-        except ValueError as exc:  # pragma: no cover
-            self.abort('Error loading %r: %s' % (PIPELINE_CONF_FILE, exc))
-
         try:
             self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
@@ -1420,7 +1413,7 @@ Get some debugging output on the settings and the environment (to be extended):
             check_logger = self.logger
 
         # loading files and syntax check
-        files = {PIPELINE_CONF_FILE: None, RUNTIME_CONF_FILE: None, HARMONIZATION_CONF_FILE: None}
+        files = {RUNTIME_CONF_FILE: None, HARMONIZATION_CONF_FILE: None}
         check_logger.info('Reading configuration files.')
         for filename in files:
             try:
@@ -1448,32 +1441,21 @@ Get some debugging output on the settings and the environment (to be extended):
                 message = "Bot %r has invalid `run_mode` %r. Must be 'continuous' or 'scheduled'."
                 check_logger.warning(message, bot_id, bot_config['run_mode'])
                 retval = 1
-            if bot_id not in files[PIPELINE_CONF_FILE] and bot_config.get('enabled', True):
-                check_logger.error('Misconfiguration: No pipeline configuration found for %r.', bot_id)
-                retval = 1
-            elif bot_id not in files[PIPELINE_CONF_FILE] and not bot_config.get('enabled', True):
-                check_logger.warning('Misconfiguration: No pipeline configuration found for %r.', bot_id)
-            elif bot_id in files[PIPELINE_CONF_FILE]:
-                if ('group' in bot_config and
-                        bot_config['group'] in ['Collector', 'Parser', 'Expert']):
-                    if ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
-                            (isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) and
-                             len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1) or
-                            (isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], dict) and
-                             '_default' not in files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])):
-                        check_logger.error('Misconfiguration: No (default) destination queue for %r.', bot_id)
-                        retval = 1
-                    else:
-                        all_queues = all_queues.union(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])
-                if ('group' in bot_config and
-                        bot_config['group'] in ['Parser', 'Expert', 'Output']):
-                    if ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
-                            not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str)):
-                        check_logger.error('Misconfiguration: No source queue for %r.', bot_id)
-                        retval = 1
-                    else:
-                        all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'])
-                        all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'] + '-internal')
+            if ('group' in bot_config and bot_config['group'] in ['Collector', 'Parser', 'Expert']):
+                if ('destination_queues' not in bot_config['parameters'] or
+                   (isinstance(bot_config['parameters']['destination_queues'], list) and len(bot_config['parameters']['destination_queues']) < 1) or
+                   (isinstance(bot_config['parameters']['destination_queues'], dict) and '_default' not in bot_config['parameters']['destination_queues'])):
+                    check_logger.error('Misconfiguration: No (default) destination queue for %r.', bot_id)
+                    retval = 1
+                else:
+                    all_queues = all_queues.union(bot_config['parameters']['destination_queues'])
+            if ('group' in bot_config and bot_config['group'] in ['Parser', 'Expert', 'Output']):
+                if ('source_queue' in bot_config['parameters'] and isinstance(bot_config['parameters']['source_queue'], str)):
+                    all_queues.add(bot_config['parameters']['source_queue'])
+                    all_queues.add(f"{bot_config['parameters']['source_queue']}-internal")
+                else:
+                    all_queues.add(f"{bot_id}-queue")
+                    all_queues.add(f"{bot_id}-queue-internal")
         # ignore allowed orphaned queues
         allowed_orphan_queues = set(getattr(self.parameters, 'intelmqctl_check_orphaned_queues_ignore', ()))
         if not no_connections:
@@ -1852,7 +1834,7 @@ Get some debugging output on the settings and the environment (to be extended):
             variables = globals()
             if RETURN_TYPE == 'text':
                 print('Paths:')
-            for path in ('HARMONIZATION_CONF_FILE', 'PIPELINE_CONF_FILE',
+            for path in ('HARMONIZATION_CONF_FILE',
                          'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
                          'DEFAULT_LOGGING_PATH', '__file__',
                          'CONFIG_DIR', 'ROOT_DIR'):
