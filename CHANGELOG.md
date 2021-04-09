@@ -29,6 +29,8 @@ CHANGELOG
   - Added support for unique keys and verified vulns (PR#1835 by Mikk Margus Möll).
 
 #### Experts
+- `intelmq.bots.experts.modify`:
+  - Add a new rule to the example configuration to change the type of malicious-code events to `c2server` if the malware name indicates c2 (PR#1854 by Sebastian Wagner).
 
 #### Outputs
 - `intelmq.bots.outputs.elasticsearch`: Fix log message on required elasticsearch library message (by Sebastian Wagner).
