@@ -2342,6 +2342,33 @@ National CERT contact lookup by CERT.AT
 * `filter`: (true/false) act as a filter for AT.
 * `overwrite_cc`: set to true if you want to overwrite any potentially existing cc fields in the event.
 
+RDAP
+^^^^
+
+**Information**
+
+* `name:` rdap
+* `lookup:` http/https
+* `public:` yes/no
+* `cache (redis db):` 5
+* `description:` Asks rdap servers for a given domain.
+
+**Configuration Parameters**
+
+* `rdap_order`: ['abuse', 'technical'], searching for email in this order
+* `rdap_bootstrapped_servers`: Customized RDAP servers. Do not forget the trailing slash
+i.e. ```
+{
+   "at": {
+      "url": "rdap.server.at/v1/,
+      "auth": {
+         "type": "jwt",
+         "token": "ey..."
+      }
+   },
+   "de": "rdap.service:1337/v1/"
+}
+```
 
 
 RecordedFuture IP risk
