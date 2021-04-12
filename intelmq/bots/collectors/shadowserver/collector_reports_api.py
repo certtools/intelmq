@@ -149,7 +149,7 @@ class ShadowServerAPICollectorBot(CollectorBot):
                               len(reportdata) / 1024)  # TODO: Replace by a generic size-conversion function
                 reports_downloaded += 1
             except:
-                self.logger.error("Data download ERROR: %r, %r!", item['file'], item['id'])
+                self.logger.error("Timeout on data download: %r, %r!", item['file'], item['id'])
         self.logger.info('Downloaded %d of %d available reports.', reports_downloaded, len(reportslist))
 
 
