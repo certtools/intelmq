@@ -138,7 +138,7 @@ def debian_activate_apache_config(config_name: str):
     enabled = Path(WEBSERVER_CONFIG_DIR.as_posix().replace('available', 'enabled')) / config_name
     if not enabled.exists():
         enabled.symlink_to(available)
-        print('Created symbolic link {enabled!s} pointing to {available!s}.')
+        print(f'Created symbolic link {enabled!s} pointing to {available!s}.')
 
 
 def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
