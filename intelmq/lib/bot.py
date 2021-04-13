@@ -748,18 +748,6 @@ class Bot(object):
 
         self.log_processed_messages_seconds = timedelta(seconds=self.log_processed_messages_seconds)
 
-        # TODO: Rewrite variables with env. variables ( CURRENT IMPLEMENTATION NOT FINAL )
-        if os.getenv('INTELMQ_IS_DOCKER', None):
-            pipeline_driver = os.getenv('INTELMQ_PIPELINE_DRIVER', None)
-            if pipeline_driver:
-                setattr(self, 'destination_pipeline_broker', pipeline_driver)
-                setattr(self, 'source_pipeline_broker', pipeline_driver)
-
-            pipeline_host = os.getenv('INTELMQ_PIPELINE_HOST', None)
-            if pipeline_host:
-                setattr(self, 'destination_pipeline_host', pipeline_host)
-                setattr(self, 'source_pipeline_host', pipeline_host)
-
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
         config = utils.load_configuration(RUNTIME_CONF_FILE)
@@ -778,6 +766,21 @@ class Bot(object):
                 if option.startswith('logging_'):
                     reinitialize_logging = True
 
+        intelmq_environment = [elem for elem in os.environ if elem.startswith('INTELMQ_')]
+        for elem in intelmq_environment:
+            option = elem[8:].lower()
+            value = os.environ[elem]
+            # do some conversions:
+            if value == 'True':
+                value = True
+            elif value == 'False':
+                value = False
+            elif value.isnumeric():
+                value = int(value)
+
+            setattr(self, option, value)
+            self.__log_configuration_parameter("environment", option, value)
+
         if reinitialize_logging:
             self.logger.handlers = []  # remove all existing handlers
             self.__init_logger()
@@ -786,12 +789,6 @@ class Bot(object):
         # but this can be overridden
         if self.source_queue is None:
             self.source_queue = f"{self.__bot_id}-queue"
-
-        # TODO: Rework
-        if os.getenv('INTELMQ_IS_DOCKER', None):
-            redis_cache_host = os.getenv('INTELMQ_REDIS_CACHE_HOST', None)
-            if redis_cache_host:
-                setattr(self, 'redis_cache_host', redis_cache_host)
 
     def __init_logger(self):
         """
