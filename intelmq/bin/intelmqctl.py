@@ -703,7 +703,7 @@ class IntelMQController():
             defaults_loading_exc = exc
             logging_level_stream = 'DEBUG'
         else:
-            self.logging_level = getattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL).upper()
+            self.logging_level = getattr(self, 'logging_level', DEFAULT_LOGGING_LEVEL).upper()
         # make sure that logging_level_stream is always at least INFO or more verbose
         # otherwise the output on stdout/stderr is less than the user expects
         logging_level_stream = self.logging_level if self.logging_level == 'DEBUG' else 'INFO'

@@ -19,6 +19,7 @@ from os.path import exists
 
 import time
 
+from intelmq import RUNTIME_CONF_FILE
 from intelmq.lib import utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import Pipeline
@@ -32,6 +33,7 @@ class BotDebugger:
     load_configuration = utils.load_configuration
     logging_level = None
     output = []
+    instance = None
 
     def __init__(self, runtime_configuration, bot_id, run_subcommand=None, console_type=None,
                  message_kind=None, dryrun=None, msg=None, show=None, loglevel=None):
@@ -53,6 +55,11 @@ class BotDebugger:
         bot = getattr(module, 'BOT')
         if run_subcommand == "message":
             bot.init = lambda *args, **kwargs: None
+
+        if self.logging_level:
+            # Set's the bot's default and initial value for the logging_level to the value we want
+            bot.logging_level = self.logging_level
+
         self.instance = bot(bot_id, disable_multithreading=True)
 
     def run(self) -> str:
@@ -168,19 +175,32 @@ class BotDebugger:
 
     def leverageLogger(self, level):
         utils.load_configuration = BotDebugger.load_configuration_patch
-        BotDebugger.logging_level = level
-        if hasattr(self, "instance"):
+        self.logging_level = level
+        if self.instance:
             self.instance.logger.setLevel(level)
             for h in self.instance.logger.handlers:
                 if isinstance(h, StreamHandler):
                     h.setLevel(level)
 
     @staticmethod
-    def load_configuration_patch(*args, **kwargs):
-        d = BotDebugger.load_configuration(*args, **kwargs)
-        if "logging_level" in d and BotDebugger.logging_level:
-            d["logging_level"] = BotDebugger.logging_level
-        return d
+    def load_configuration_patch(configuration_filepath: str, *args, **kwargs) -> dict:
+        """
+        Mock function for utils.load_configuration which ensures the logging level parameter is set to the value we want.
+        If Runtime configuration is detected, the logging_level parameter is
+        - inserted in all bot's parameters. bot_id is not accessible here, hence we add it everywhere
+        - inserted in the global parameters (ex-defaults).
+        Maybe not everything is necessary, but we can make sure the logging_level is just everywhere where it might be relevant, also in the future.
+        """
+        config = BotDebugger.load_configuration(configuration_filepath=configuration_filepath, *args, **kwargs)
+        if BotDebugger.logging_level and configuration_filepath == RUNTIME_CONF_FILE:
+            for bot_id in config.keys():
+                if bot_id == "global":
+                    config[bot_id]["logging_level"] = BotDebugger.logging_level
+                else:
+                    config[bot_id]['parameters']["logging_level"] = BotDebugger.logging_level
+            if "global" not in config:
+                config["global"] = {"logging_level": BotDebugger.logging_level}
+        return config
 
     def messageWizzard(self, msg):
         self.instance.logger.error(msg)
