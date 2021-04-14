@@ -585,7 +585,7 @@ def v300_bots_file_removal(defaults, runtime, harmonization, dry_run):
     bots_file = Path(CONFIG_DIR) / "BOTS"
     if bots_file.exists():
         if dry_run:
-            print('Would now remove file {bots_file!r}.')
+            print(f'Would now remove file {bots_file!r}.')
         else:
             bots_file.unlink()
             changed = True
@@ -602,7 +602,7 @@ def v300_defaults_file_removal(defaults, runtime, harmonization, dry_run):
     defaults_file = Path(CONFIG_DIR) / "defaults.conf"
     if defaults_file.exists():
         if dry_run:
-            print('Would now remove file {defaults_file!r}.')
+            print(f'Would now remove file {defaults_file!r}.')
         else:
             defaults = load_configuration(defaults_file)
             defaults_file.unlink()
@@ -634,7 +634,7 @@ def v300_pipeline_file_removal(defaults, runtime, harmonization, dry_run):
                     if pipelines[bot]['source-queue'] != f"{bot}-queue":
                         runtime[bot]['parameters']['source_queue'] = pipelines[bot]['source-queue']
         if dry_run:
-            print('Would now remove file {pipeline_file!r}.')
+            print(f'Would now remove file {pipeline_file!r}.')
         else:
             pipeline_file.unlink()
         changed = True
