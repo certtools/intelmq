@@ -47,13 +47,13 @@ The environment variable ``ROOT_DIR`` is meant to set an alternative root direct
 Overview
 ========
 
-All configuration files are in the JSON format.
+The main configuration file is formatted in the YAML format since IntelMQ 3.0 (before it was JSON, which had some downsides).
 For new installations a default setup with some examples is provided by the `intelmqsetup` tool. If this is not the case, make sure the program was run (see installation instructions).
 
 
-* ``runtime.conf``: Configuration for the individual bots. See :doc:`bots` for more details.
+* ``runtime.yaml``: Configuration for the individual bots. See :doc:`bots` for more details.
 
-To configure a new bot, you need to define and configure it in ``runtime.conf``. You can base your configuration on the output of ``intelmqctl list bots``.
+To configure a new bot, you need to define and configure it in ``runtime.yaml``. You can base your configuration on the output of ``intelmqctl list bots``.
 Use the IntelMQ Manager mentioned above to generate the configuration files if unsure.
 
 In the shipped examples 4 collectors and parsers, 6 common experts and one output are configured. The default collector and the parser handle data from malware domain list, the file output bot writes all data to ``/opt/intelmq/var/lib/bots/file-output/events.txt``/``/var/lib/intelmq/bots/file-output/events.txt``.
@@ -183,9 +183,9 @@ Create default config ``/etc/supervisor/conf.d/intelmq.conf`` and restart ``supe
 
 Change IntelMQ process manager in the *global* configuration:
 
-.. code-block::
+.. code-block:: yaml
 
-   "process_manager": "supervisor",
+   process_manager: supervisor
 
 After this it is possible to manage bots like before with ``intelmqctl`` command.
 
@@ -200,60 +200,48 @@ This configuration is used by each bot to load its specific (runtime) parameters
 
 **Template:**
 
-.. code-block:: json
+.. code-block:: yaml
 
-   {
-       "<bot ID>": {
-           "group": "<bot type (Collector, Parser, Expert, Output)>",
-           "name": "<human-readable bot name>",
-           "module": "<bot code (python module)>",
-           "description": "<generic description of the bot>",
-           "parameters": {
-               "<parameter 1>": "<value 1>",
-               "<parameter 2>": "<value 2>",
-               "<parameter 3>": "<value 3>"
-           }
-       }
-   }
+   <bot ID>:
+     group: <bot type (Collector, Parser, Expert, Output)>
+     name: <human-readable bot name>
+     module: <bot code (python module)>
+     description: <generic description of the bot>
+     parameters:
+       <parameter 1>: <value 1>
+       <parameter 2>: <value 2>
+       <parameter 3>: <value 3>
 
 **Example:**
 
-.. code-block:: json
+.. code-block:: yaml
 
-   {
-       "malware-domain-list-collector": {
-           "group": "Collector",
-           "name": "Malware Domain List",
-           "module": "intelmq.bots.collectors.http.collector_http",
-           "description": "Malware Domain List Collector is the bot responsible to get the report from source of information.",
-           "parameters": {
-               "http_url": "http://www.malwaredomainlist.com/updatescsv.php",
-               "feed": "Malware Domain List",
-               "rate_limit": 3600
-           }
-       }
-   }
+   malware-domain-list-collector:
+     group: Collector
+     name: Malware Domain List
+     module: intelmq.bots.collectors.http.collector_http
+     description: Malware Domain List Collector is the bot responsible to get the report from source of information.
+     parameters:
+       http_url: http://www.malwaredomainlist.com/updatescsv.php
+       feed: Malware Domain List
+       rate_limit: 3600
 
 More examples can be found in the ``intelmq/etc/runtime.conf`` directory. See :doc:`bots` for more details.
 
 By default, all of the bots are started when you start the whole botnet, however there is a possibility to *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your runtime.conf: ``"enabled": false``. For example: 
 
-.. code-block:: json
+.. code-block:: yaml
 
-   {
-       "malware-domain-list-collector": {
-           "group": "Collector",
-           "name": "Malware Domain List",
-           "module": "intelmq.bots.collectors.http.collector_http",
-           "description": "Malware Domain List Collector is the bot responsible to get the report from source of information.",
-           "enabled": false,
-           "parameters": {
-               "http_url": "http://www.malwaredomainlist.com/updatescsv.php",
-               "feed": "Malware Domain List",
-               "rate_limit": 3600
-           }
-       }
-   }
+    malware-domain-list-collector:
+      group: Collector
+      name: Malware Domain List
+      module: intelmq.bots.collectors.http.collector_http
+      description: Malware Domain List Collector is the bot responsible to get the report from source of information.
+      enabled: false,
+      parameters:
+        http_url: http://www.malwaredomainlist.com/updatescsv.php
+        feed: Malware Domain List
+        rate_limit: 3600
 
 Pipeline Configuration
 ======================
@@ -266,9 +254,9 @@ Source queue
 This setting is **optional**, by default, the source queue is the bot ID plus "-queue" appended.
 For example, if the bot ID is ``example-bot``, the source queue name is ``example-bot-queue``.
 
-.. code-block::
+.. code-block:: yaml
 
-   "source-queue": "example-bot-queue"
+   source-queue: example-bot-queue
 
 For collectors, this field does not exist, as the fetch the data from outside the IntelMQ system by definition.
 
@@ -277,18 +265,18 @@ Destination queues
 
 Destination queues are defined using a dictionary with a name as key and a list of queue-identifiers as the value.
 
-.. code-block:: json
+.. code-block:: yaml
 
-   "destination-queues": {
-       "_default": ["<first destination pipeline name>"],
-       "_on_error": ["<optional first destination pipeline name in case of errors>"],
-       "other-path": [
-           "<second destination pipeline name>",
-           "<third destination pipeline name>",
-           ...
-           ],
-       ...
-       }
+   destination-queues:
+     _default:
+       - <first destination pipeline name>
+       - <second destination pipeline name>
+     _on_error:
+       - <optional first destination pipeline name in case of errors>
+       - <optional second destination pipeline name in case of errors>
+     other-path:
+       - <second destination pipeline name>
+       - <third destination pipeline name>
 
 In this case, bot will be able to send the message to one of defined paths. The path ``"_default"`` is used if none is specified by the bot itself.
 In case of errors during processing, and the optional path ``"_on_error"`` is specified, the message will be sent to the pipelines given given as on-error.
@@ -483,22 +471,20 @@ Scheduled Run Mode
 
 In many cases, it is useful to schedule a bot at a specific time (i.e. via cron(1)), for example to collect information from a website every day at midnight. To do this, set ``run_mode`` to ``scheduled`` in the ``runtime.conf`` for the bot. Check out the following example:
 
-.. code-block:: json
+.. code-block:: yaml
 
-   "blocklistde-apache-collector": {
-       "name": "Generic URL Fetcher",
-       "group": "Collector",
-       "module": "intelmq.bots.collectors.http.collector_http",
-       "description": "All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.",
-       "enabled": false,
-       "run_mode": "scheduled",
-       "parameters": {
-           "feed": "Blocklist.de Apache",
-           "provider": "Blocklist.de",
-           "http_url": "https://lists.blocklist.de/lists/apache.txt",
-           "ssl_client_certificate": null
-       },
-   }
+   blocklistde-apache-collector:
+     name: Generic URL Fetcher
+     group: Collector
+     module: intelmq.bots.collectors.http.collector_http
+     description: All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.
+     enabled: false
+     run_mode: scheduled
+     parameters:
+       feed: Blocklist.de Apache
+       provider: Blocklist.de
+       http_url: https://lists.blocklist.de/lists/apache.txt
+       ssl_client_certificate: null
 
 You can schedule the bot with a crontab-entry like this:
 
@@ -515,18 +501,16 @@ Continuous Run Mode
 
 Most of the cases, bots will need to be configured as ``continuous`` run mode (the default) in order to have them always running and processing events. Usually, the types of bots that will require the continuous mode will be Parsers, Experts and Outputs. To do this, set ``run_mode`` to ``continuous`` in the ``runtime.conf`` for the bot. Check the following example:
 
-.. code-block:: json
+.. code-block:: yaml
 
-   "blocklistde-apache-parser": {
-       "name": "Blocklist.de Parser",
-       "group": "Parser",
-       "module": "intelmq.bots.parsers.blocklistde.parser",
-       "description": "Blocklist.DE Parser is the bot responsible to parse the report and sanitize the information.",
-       "enabled": false,
-       "run_mode": "continuous",
-       "parameters": {
-       },
-   }
+   blocklistde-apache-parser:
+     name: Blocklist.de Parser
+     group: Parser
+     module: intelmq.bots.parsers.blocklistde.parser
+     description: Blocklist.DE Parser is the bot responsible to parse the report and sanitize the information.
+     enabled: false
+     run_mode: continuous
+     parameters: ...
 
 You can now start the bot using the following command:
 
