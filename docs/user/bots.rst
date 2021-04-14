@@ -19,38 +19,30 @@ There are two different types of parameters: The initialization parameters are n
 
 The initialization parameters are in the first level, the runtime parameters live in the `parameters` sub-dictionary:
 
-.. code-block:: json
+.. code-block:: yaml
 
-   {
-       "bot-id": {
-           "parameters": {
-               runtime parameters...
-           },
-           initialization parameters...
-       }
-   }
+    bot-id:
+      parameters:
+          runtime parameters...
+      initialization parameters...
 
 For example:
 
-.. code-block:: json
+.. code-block:: yaml
 
-   {
-       "abusech-feodo-domains-collector": {
-           "parameters": {
-               "provider": "Abuse.ch",
-               "name": "Abuse.ch Feodo Domains",
-               "http_url": "http://example.org/feodo-domains.txt"
-           },
-           "name": "Generic URL Fetcher",
-           "group": "Collector",
-           "module": "intelmq.bots.collectors.http.collector_http",
-           "description": "collect report messages from remote hosts using http protocol",
-           "enabled": true,
-           "run_mode": "scheduled"
-       }
-   }
+   abusech-feodo-domains-collector:
+     parameters:
+       provider: Abuse.ch
+       name: Abuse.ch Feodo Domains
+       http_url: http://example.org/feodo-domains.txt
+     name: Generic URL Fetcher
+     group: Collector
+     module: intelmq.bots.collectors.http.collector_http
+     description: collect report messages from remote hosts using http protocol
+     enabled: true
+     run_mode: scheduled
 
-This configuration resides in the file `runtime.conf` in your IntelMQ's configuration directory for each configured bot.
+This configuration resides in the file `runtime.yaml` in your IntelMQ's configuration directory for each configured bot.
 
 *************************
 Initialization parameters
@@ -1775,33 +1767,31 @@ Deduplicator
 
 The bot with this configuration will detect duplication only based on `source.ip` and `destination.ip` keys.
 
-.. code-block::
+.. code-block:: yaml
 
-   "parameters": {
-       "redis_cache_db": 6,
-       "redis_cache_host": "127.0.0.1",
-       "redis_cache_password": null,
-       "redis_cache_port": 6379,
-       "redis_cache_ttl": 86400,
-       "filter_type": "whitelist",
-       "filter_keys": "source.ip,destination.ip",
-   }
+   parameters:
+     redis_cache_db: 6
+     redis_cache_host: "127.0.0.1"
+     redis_cache_password: null
+     redis_cache_port: 6379
+     redis_cache_ttl: 86400
+     filter_type: "whitelist"
+     filter_keys: "source.ip,destination.ip"
 
 *Example 2*
 
 The bot with this configuration will detect duplication based on all keys, except `source.ip` and `destination.ip` keys.
 
-.. code-block::
+.. code-block:: yaml
 
-   "parameters": {
-       "redis_cache_db": 6,
-       "redis_cache_host": "127.0.0.1",
-       "redis_cache_password": null,
-       "redis_cache_port": 6379,
-       "redis_cache_ttl": 86400,
-       "filter_type": "blacklist",
-       "filter_keys": "source.ip,destination.ip",
-   }
+   parameters:
+     redis_cache_db: 6
+     redis_cache_host: "127.0.0.1"
+     redis_cache_password: null
+     redis_cache_port: 6379
+     redis_cache_ttl: 86400
+     filter_type: "blacklist"
+     filter_keys: "source.ip,destination.ip"
 
 **Flushing the cache**
 
