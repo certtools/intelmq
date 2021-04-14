@@ -276,7 +276,7 @@ class CymruCAPProgramParserBot(ParserBot):
         destination_ports = []
 
         for comment in comment_split:
-            if ':' not in comment:
+            if ': ' not in comment:
                 if category == 'proxy':
                     comment = 'proxy_type: %s' % comment
                 elif category == 'bruteforce':  # optional_information can just be 'ssh;'
