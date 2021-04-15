@@ -1281,7 +1281,7 @@ Get some debugging output on the settings and the environment (to be extended):
         return source_queues, destination_queues, internal_queues, all_queues
 
     def list_queues(self, non_zero=False, count=False):
-        pipeline = PipelineFactory.create(logger=self.logger, pipeline_args=self.parameters)
+        pipeline = PipelineFactory.create(logger=self.logger, pipeline_args=self.parameters.__dict__)
         pipeline.set_queues(None, "source")
         pipeline.connect()
         source_queues, destination_queues, internal_queues,\
@@ -1322,7 +1322,7 @@ Get some debugging output on the settings and the environment (to be extended):
 
         First checks if the queue does exist in the pipeline configuration.
         """
-        pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
+        pipeline = PipelineFactory.create(logger=self.logger, pipeline_args=self.parameters.__dict__)
         pipeline.set_queues(None, "source")
         pipeline.connect()
 
@@ -1460,7 +1460,7 @@ Get some debugging output on the settings and the environment (to be extended):
         allowed_orphan_queues = set(getattr(self.parameters, 'intelmqctl_check_orphaned_queues_ignore', ()))
         if not no_connections:
             try:
-                pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
+                pipeline = PipelineFactory.create(logger=self.logger, pipeline_args=self.parameters.__dict__)
                 pipeline.set_queues(None, "source")
                 pipeline.connect()
                 orphan_queues = "', '".join(pipeline.nonempty_queues() - all_queues - allowed_orphan_queues)
