@@ -1431,6 +1431,8 @@ Get some debugging output on the settings and the environment (to be extended):
         check_logger.info('Checking runtime and pipeline configuration.')
         all_queues = set()
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
+            if bot_id == 'global':
+                continue
             # pipeline keys
             for field in ['description', 'group', 'module', 'name', 'enabled']:
                 if field not in bot_config:
