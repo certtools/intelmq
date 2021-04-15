@@ -193,7 +193,7 @@ def main():
         log_level = DEFAULT_LOGGING_LEVEL
 
     try:
-        logger = utils.log('intelmqdump', log_level=defaults['logging_level'],
+        logger = utils.log('intelmqdump', log_level=defaults.get('logging_level', DEFAULT_LOGGING_LEVEL),
                            log_max_size=defaults.get("logging_max_size", 0),
                            log_max_copies=defaults.get("logging_max_copies", None))
     except (FileNotFoundError, PermissionError) as exc:
@@ -204,6 +204,7 @@ def main():
     readline.parse_and_bind("tab: complete")
     readline.set_completer_delims('')
 
+    defaults = utils.get_global_settings()
     runtime_config = utils.load_configuration(RUNTIME_CONF_FILE)
     pipeline_pipes = {}
     for bot, parameters in runtime_config.items():
@@ -211,7 +212,6 @@ def main():
 
     if args.botid is None:
         filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
-        print(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
         if not len(filenames):
             print(green('Nothing to recover from, no dump files found!'))
             sys.exit(0)
@@ -328,10 +328,9 @@ def main():
                 save_file(handle, content)
             elif answer[0] == 'r':
                 # recover entries
-                runtime = utils.load_configuration(RUNTIME_CONF_FILE)
-                defaults = utils.get_global_settings()
-                params = utils.load_parameters(default, runtime)
-                pipe = pipeline.PipelineFactory.create(params, logger)
+                params = defaults.copy()
+                params.update(runtime_config[botid].get("parameters", {}))
+                pipe = pipeline.PipelineFactory.create(logger=logger, pipeline_args=params)
                 try:
                     for i, (key, entry) in enumerate([item for (count, item)
                                                       in enumerate(content.items()) if count in ids]):
@@ -350,7 +349,7 @@ def main():
                             else:
                                 queue_name = entry['source_queue']
                         if queue_name in pipeline_pipes:
-                            if runtime[pipeline_pipes[queue_name]]['group'] == 'Parser' and json.loads(msg)['__type'] == 'Event':
+                            if runtime_config[pipeline_pipes[queue_name]]['group'] == 'Parser' and json.loads(msg)['__type'] == 'Event':
                                 print('Event converted to Report automatically.')
                                 msg = message.Report(message.MessageFactory.unserialize(msg)).serialize()
                         else:
