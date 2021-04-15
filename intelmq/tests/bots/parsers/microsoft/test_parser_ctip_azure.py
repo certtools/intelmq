@@ -81,8 +81,44 @@ EXAMPLE_EVENTS = [{
     "raw": base64_encode(EXAMPLE_LINES[1]),
     "extra.payload.text": 'this is just some text',
     'extra.malware': 'Avalanche',
+    }, {
+    "__type": "Event",
+    "feed.name": "CTIP-Infected",
+    "event_description.text": "SinkHoleMessage",
+    'feed.accuracy': 100.0,
+    'classification.type': 'infected-system',
+    'destination.ip': '10.0.0.1',
+    'destination.port': 8080,
+    'event_description.text': 'Microsoft.DCU.CTIP.Gov.0001',
+    'extra.custom_field1': 'bot-id-data',
+    'extra.custom_field2': 'comp-name',
+    'extra.malware': 'Emotet',
+    'extra.payload.bot_id': 'bot-id-data',
+    'extra.payload.computer_name': 'comp-name',
+    'extra.payload.destination.ip': '10.0.0.1',
+    'extra.payload.destination.port': '8080',
+    'extra.payload.source.ip': '10.0.0.1',
+    'extra.payload.source.port': '33587',
+    'extra.payload.timestamp_utc': '2021-04-07T10:59:32',
+    'extra.source.geolocation.area_code': 6,
+    'extra.source.geolocation.postal_code': '8042',
+    'extra.total_encounters': 1,
+    'feed.name': 'Microsoft.DCU.CTIP.Infected',
+    'malware.name': 'b77-gv',
+    "raw": base64_encode(EXAMPLE_LINES[2]),
+    'source.as_name': 'Example AS',
+    'source.asn': 64496,
+    'source.geolocation.city': 'Graz',
+    'source.geolocation.latitude': 47.1298,
+    'source.geolocation.longitude': 15.466,
+    'source.geolocation.region': 'Styria',
+    'source.ip': '213.225.32.129',
+    'source.port': 33587,
+    'time.source': '2021-04-07T10:59:32+00:00',
+    'tlp': 'GREEN',
+    'source.geolocation.cc': 'AT',
     },
-    ]
+]
 
 
 class TestMicrosoftCTIPParserBot(test.BotTestCase, unittest.TestCase):
@@ -98,7 +134,7 @@ class TestMicrosoftCTIPParserBot(test.BotTestCase, unittest.TestCase):
     def test_event(self):
         """ Test with azure format. """
         self.run_bot()
-        for i in range(2):
+        for i in range(3):
             self.assertMessageEqual(i, EXAMPLE_EVENTS[i])
 
 

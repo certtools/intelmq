@@ -102,15 +102,17 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.config`:
   - Parse and harmonize field `end_time` as date in Feeds "Drone-Brute-Force" and "Amplification-DDoS-Victim" (PR#1833 by Mikk Margus Möll).
-  - Add conversion function `convert_date_utc` which assumes UTC and sanitizes the data to datetime (by Sebastian Wagner).
+  - Add conversion function `convert_date_utc` which assumes UTC and sanitizes the data to datetime (by Sebastian Wagner, fixes #1848).
 - `intelmq.bots.parsers.shadowserver.parser_json`:
   - Use the overwrite parameter for optionally overwriting the "feed.name" field (by Sebastian Wagner).
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
-  - Handle field `timestamp_utc` in `Payload` of CTIP Azure format (by Sebastian Wagner).
+  - Handle fields `timestamp_utc`, `source_ip`, `source_port`, `destination_ip`, `destination_port`, `computer_name`, `bot_id` in `Payload` of CTIP Azure format (by Sebastian Wagner).
 - `intelmq.bots.parsers.shodan.parser`:
   - Added support for unique keys and verified vulns (PR#1835 by Mikk Margus Möll).
 
 #### Experts
+- `intelmq.bots.experts.modify`:
+  - Add a new rule to the example configuration to change the type of malicious-code events to `c2server` if the malware name indicates c2 (PR#1854 by Sebastian Wagner).
 
 #### Outputs
 - `intelmq.bots.outputs.elasticsearch`: Fix log message on required elasticsearch library message (by Sebastian Wagner).
