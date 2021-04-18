@@ -275,7 +275,7 @@ class CymruCAPProgramParserBot(ParserBot):
         destination_ports = []
 
         for comment in comment_split:
-            if ': ' not in comment:
+            if ':' not in comment or comment.startswith('http'):
                 if category == 'proxy':
                     comment = 'proxy_type: %s' % comment
                 elif category == 'bruteforce':  # optional_information can just be 'ssh;'
@@ -295,7 +295,7 @@ class CymruCAPProgramParserBot(ParserBot):
                         else:
                             break
                     raise ValueError('Unable to parse comment %r of category %r. Please report this.' % (comment, category))
-            key, value = comment.split(': ')
+            key, value = comment.split(':', 1)
             key = key.strip()
             value = value.strip()
             if key == 'family':
