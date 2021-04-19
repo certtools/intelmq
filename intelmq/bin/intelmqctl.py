@@ -876,7 +876,7 @@ Get some debugging output on the settings and the environment (to be extended):
 
             parser_run = subparsers.add_parser('run', help='Run a bot interactively')
             parser_run.add_argument('bot_id',
-                                    choices=self.runtime_configuration.keys())
+                                    choices=self._configured_bots_list())
             parser_run.add_argument('--loglevel', '-l',
                                     nargs='?', default=None,
                                     choices=LOG_LEVEL.keys())
@@ -926,47 +926,47 @@ Get some debugging output on the settings and the environment (to be extended):
 
             parser_start = subparsers.add_parser('start', help='Start a bot or botnet')
             parser_start.add_argument('bot_id', nargs='?',
-                                      choices=self.runtime_configuration.keys())
+                                      choices=self._configured_bots_list())
             parser_start.add_argument('--group', help='Start a group of bots',
                                       choices=BOT_GROUP.keys())
             parser_start.set_defaults(func=self.bot_start)
 
             parser_stop = subparsers.add_parser('stop', help='Stop a bot or botnet')
             parser_stop.add_argument('bot_id', nargs='?',
-                                     choices=self.runtime_configuration.keys())
+                                     choices=self._configured_bots_list())
             parser_stop.add_argument('--group', help='Stop a group of bots',
                                      choices=BOT_GROUP.keys())
             parser_stop.set_defaults(func=self.bot_stop)
 
             parser_restart = subparsers.add_parser('restart', help='Restart a bot or botnet')
             parser_restart.add_argument('bot_id', nargs='?',
-                                        choices=self.runtime_configuration.keys())
+                                        choices=self._configured_bots_list())
             parser_restart.add_argument('--group', help='Restart a group of bots',
                                         choices=BOT_GROUP.keys())
             parser_restart.set_defaults(func=self.bot_restart)
 
             parser_reload = subparsers.add_parser('reload', help='Reload a bot or botnet')
             parser_reload.add_argument('bot_id', nargs='?',
-                                       choices=self.runtime_configuration.keys())
+                                       choices=self._configured_bots_list())
             parser_reload.add_argument('--group', help='Reload a group of bots',
                                        choices=BOT_GROUP.keys())
             parser_reload.set_defaults(func=self.bot_reload)
 
             parser_status = subparsers.add_parser('status', help='Status of a bot or botnet')
             parser_status.add_argument('bot_id', nargs='?',
-                                       choices=self.runtime_configuration.keys())
+                                       choices=self._configured_bots_list())
             parser_status.add_argument('--group', help='Get status of a group of bots',
                                        choices=BOT_GROUP.keys())
             parser_status.set_defaults(func=self.bot_status)
 
             parser_status = subparsers.add_parser('enable', help='Enable a bot')
             parser_status.add_argument('bot_id',
-                                       choices=self.runtime_configuration.keys())
+                                       choices=self._configured_bots_list())
             parser_status.set_defaults(func=self.bot_enable)
 
             parser_status = subparsers.add_parser('disable', help='Disable a bot')
             parser_status.add_argument('bot_id',
-                                       choices=self.runtime_configuration.keys())
+                                       choices=self._configured_bots_list())
             parser_status.set_defaults(func=self.bot_disable)
 
             parser_upgrade_conf = subparsers.add_parser('upgrade-config',
@@ -1177,10 +1177,7 @@ Get some debugging output on the settings and the environment (to be extended):
         botnet_status = {}
         log_botnet_message('reloading', group)
 
-        if group:
-            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
-        else:
-            bots = sorted(self.runtime_configuration.keys())
+        bots = sorted(self._configured_bots_list(group=group))
         for bot_id in bots:
             self.bot_reload(bot_id, getstatus=False)
 
@@ -1204,10 +1201,7 @@ Get some debugging output on the settings and the environment (to be extended):
     def botnet_status(self, group=None):
         retval = 0
         botnet_status = {}
-        if group:
-            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
-        else:
-            bots = sorted(self.runtime_configuration.keys())
+        bots = sorted(self._configured_bots_list(group=group))
         for bot_id in bots:
             botnet_status[bot_id] = self.bot_status(bot_id)[1]
             if botnet_status[bot_id] not in ['running', 'disabled']:
@@ -1256,7 +1250,7 @@ Get some debugging output on the settings and the environment (to be extended):
                               "".format(bot_id, self.runtime_configuration[bot_id].get('description')))
             return 0, [{'id': bot_id,
                         'description': self.runtime_configuration[bot_id].get('description')}
-                       for bot_id in sorted(self.runtime_configuration.keys())]
+                       for bot_id in sorted(self._configured_bots_list())]
         else:
             val = utils.list_all_bots()
             return 0, val
