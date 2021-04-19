@@ -27,6 +27,8 @@ CHANGELOG
   - Handle fields `timestamp_utc`, `source_ip`, `source_port`, `destination_ip`, `destination_port`, `computer_name`, `bot_id` in `Payload` of CTIP Azure format (by Sebastian Wagner).
 - `intelmq.bots.parsers.shodan.parser`:
   - Added support for unique keys and verified vulns (PR#1835 by Mikk Margus Möll).
+- `intelmq.bots.parsers.cymru.parser_cap_program`:
+  - Fix parsing in whitespace edge case in comments (PR#1870 by Alex Kaplan, fixes #1862).
 
 #### Experts
 - `intelmq.bots.experts.modify`:
