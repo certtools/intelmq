@@ -145,7 +145,7 @@ class TestRedis(unittest.TestCase):
         setattr(params, 'destination_pipeline_db', 4)
         logger = logging.getLogger('foo')
         logger.addHandler(logging.NullHandler())
-        self.pipe = pipeline.PipelineFactory.create(logger, broker='Redis', pipeline_args=params)
+        self.pipe = pipeline.PipelineFactory.create(logger, broker='Redis', pipeline_args=params.__dict__)
         self.pipe.set_queues('test', 'source')
         self.pipe.set_queues('test', 'destination')
         self.pipe.connect()
