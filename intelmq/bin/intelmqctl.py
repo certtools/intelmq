@@ -1119,14 +1119,21 @@ Get some debugging output on the settings and the environment (to be extended):
     def _is_enabled(self, bot_id):
         return self.runtime_configuration[bot_id].get('enabled', True)
 
+    def _configured_bots_list(self, group=None):
+        if group is not None:
+            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
+        else:
+            bots = sorted(self.runtime_configuration.keys())
+        if 'global' in bots:
+            bots.remove('global')
+        return bots
+
     def botnet_start(self, group=None):
         botnet_status = {}
         log_botnet_message('starting', group)
 
-        if group:
-            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
-        else:
-            bots = sorted(self.runtime_configuration.keys())
+        bots = self._configured_bots_list(group=group)
+
         for bot_id in bots:
             if self.runtime_configuration[bot_id].get('enabled', True):
                 self.bot_start(bot_id, getstatus=False)
@@ -1151,10 +1158,8 @@ Get some debugging output on the settings and the environment (to be extended):
         botnet_status = {}
         log_botnet_message('stopping', group)
 
-        if group:
-            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
-        else:
-            bots = sorted(self.runtime_configuration.keys())
+        bots = self._configured_bots_list(group=group)
+
         for bot_id in bots:
             self.bot_stop(bot_id, getstatus=False)
 
@@ -1241,7 +1246,7 @@ Get some debugging output on the settings and the environment (to be extended):
         """
         if configured:
             if RETURN_TYPE == 'text':
-                for bot_id in sorted(self.runtime_configuration.keys(), key=str.lower):
+                for bot_id in self._configured_bots_list():
                     if non_zero and not self.runtime_configuration[bot_id].get('enabled'):
                         continue
                     if QUIET:
