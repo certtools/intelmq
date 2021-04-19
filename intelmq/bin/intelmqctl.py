@@ -1255,6 +1255,17 @@ Get some debugging output on the settings and the environment (to be extended):
             val = utils.list_all_bots()
             return 0, val
 
+    def _pipeline_configuration(self):
+        pipeline_configuration = {}
+        for botid, botconfig in self.runtime_configuration.items():
+            if botid != 'global':
+                pipeline_configuration[botid] = {"source_queue": f"{botid}-queue", "destination_queues": []}
+                if 'source_queue' in botconfig['parameters']:
+                    pipeline_configuration[botid]['source_queue'] = botconfig['parameters']['source_queue']
+                if 'destination_queues' in botconfig['parameters']:
+                    pipeline_configuration[botid]['destination_queues'] = botconfig['parameters']['destination_queues']
+        return pipeline_configuration
+
     def get_queues(self, with_internal_queues=False):
         """
         :return: 4-tuple of source, destination, internal queues, and all queues combined.
@@ -1266,14 +1277,14 @@ Get some debugging output on the settings and the environment (to be extended):
         destination_queues = set()
         internal_queues = set()
 
-        for botid, value in self.pipeline_configuration.items():
-            if 'source-queue' in value:
-                source_queues.add(value['source-queue'])
+        for botid, value in self._pipeline_configuration().items():
+            if 'source_queue' in value:
+                source_queues.add(value['source_queue'])
                 if with_internal_queues:
-                    internal_queues.add(value['source-queue'] + '-internal')
-            if 'destination-queues' in value:
+                    internal_queues.add(value['source_queue'] + '-internal')
+            if 'destination_queues' in value:
                 # flattens ["one", "two"] → {"one", "two"}, {"_default": "one", "other": ["two", "three"]} → {"one", "two", "three"}
-                destination_queues.update(utils.flatten_queues(value['destination-queues']))
+                destination_queues.update(utils.flatten_queues(value['destination_queues']))
 
         all_queues = source_queues.union(destination_queues).union(internal_queues)
 
@@ -1299,18 +1310,18 @@ Get some debugging output on the settings and the environment (to be extended):
         if count:
             return_dict = {'total-messages': sum(counters.values())}
         else:
-            for bot_id, info in self.pipeline_configuration.items():
+            for bot_id, info in self._pipeline_configuration().items():
                 return_dict[bot_id] = {}
 
-                if 'source-queue' in info:
+                if 'source_queue' in info:
                     return_dict[bot_id]['source_queue'] = (
-                        info['source-queue'], counters[info['source-queue']])
+                        info['source_queue'], counters[info['source_queue']])
                     if pipeline.has_internal_queues:
-                        return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
+                        return_dict[bot_id]['internal_queue'] = counters[info['source_queue'] + '-internal']
 
-                if 'destination-queues' in info:
+                if 'destination_queues' in info:
                     return_dict[bot_id]['destination_queues'] = []
-                    for dest_queue in utils.flatten_queues(info['destination-queues']):
+                    for dest_queue in utils.flatten_queues(info['destination_queues']):
                         return_dict[bot_id]['destination_queues'].append((dest_queue, counters[dest_queue]))
 
         return 0, return_dict
@@ -1328,13 +1339,13 @@ Get some debugging output on the settings and the environment (to be extended):
         if RETURN_TYPE == 'text':
             logger.info("Clearing queue %s.", queue)
         queues = set()
-        for key, value in self.pipeline_configuration.items():
-            if 'source-queue' in value:
-                queues.add(value['source-queue'])
+        for key, value in self._pipeline_configuration().items():
+            if 'source_queue' in value:
+                queues.add(value['source_queue'])
                 if pipeline.has_internal_queues:
-                    queues.add(value['source-queue'] + '-internal')
-            if 'destination-queues' in value:
-                queues.update(value['destination-queues'])
+                    queues.add(value['source_queue'] + '-internal')
+            if 'destination_queues' in value:
+                queues.update(value['destination_queues'])
 
         if queue not in queues:
             if RETURN_TYPE == 'text':
