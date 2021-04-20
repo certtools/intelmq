@@ -8,6 +8,7 @@ Please refer to the changelog for a full list of changes.
 --------------------------------
 
 ### Requirements
+IntelMQ now uses YAML for the runtime configuration and therefore needs the `ruamel.yaml` library.
 
 ### Tools
 
@@ -45,6 +46,7 @@ The `defaults.conf` file was removed. Settings that should effect all the bots a
 The `intelmqctl upgrade-config` command migrates the existing values from the `defaults.conf` file to the `runtime.conf` file under the `global` section and then deletes the `defaults.conf` file.
 The `pipeline.conf` file was removed. The source- and destination-queues of the bots are now configured in the bot configuration itself, thus in the `runtime.conf` file.
 The `intelmqctl upgrade-config` command migrates the existing configuration from the `pipeline.conf` file to the individual bot configurations in the `runtime.conf` configuration file.
+The `runtime.conf` file was replaced by a `runtime.yaml` file. IntelMQ moves the file for you if it does not find a runtime.conf but a runtime.yaml file. When IntelMQ changes the file, it now writes YAML syntax.
 
 ### Libraries
 
