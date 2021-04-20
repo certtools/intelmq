@@ -159,8 +159,8 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
     def test_processed_messages_seconds(self):
         self.input_message = EXAMPLE_SHORT
         self.run_bot(parameters={'log_processed_messages_count': 10,
-                                 'log_processed_messages_seconds': datetime.timedelta(seconds=0)})
-        self.assertAnyLoglineEqual(message='Processed 1 messages since last logging.',
+                                 'log_processed_messages_seconds': 0})
+        self.assertAnyLoglineEqual(message='Processed 2 messages since last logging.',
                                    levelname='INFO')
 
     def test_processed_messages_shutdown(self):
