@@ -22,8 +22,6 @@ CHANGELOG
 - `intelmq.lib.bot_debugger`:
   - Set bot's `logging_level` directly in `__init__` before the bot's initialization by changing the default value (by Sebastian Wagner).
   - Rewrite `load_configuration_patch` by adapting it to the parameter and configuration rewrite (by Sebastian Wagner).
-- `intelmq.bin.intelmqctl`:
-  - Fixed list queues (#1782, PR#1840 by Sebastian Waldbauer and Sebastian Wagner)
 
 ### Development
 - `rewrite_config_files.py`: Removed obsolete BOTS-file-related rewriting functionality.
