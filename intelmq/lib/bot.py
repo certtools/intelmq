@@ -614,7 +614,7 @@ class Bot(object):
             if not self.__message_counter["start"]:
                 self.__message_counter["start"] = datetime.now()
             if self.__message_counter["since"] % self.log_processed_messages_count == 0 or \
-                    datetime.now() - self.__message_counter["start"] > self.log_processed_messages_seconds:
+                    datetime.now() - self.__message_counter["start"] > self.__log_processed_messages_seconds:
                 self.logger.info("%s %d messages since last logging.",
                                  self._message_processed_verb,
                                  self.__message_counter["since"])
@@ -746,7 +746,7 @@ class Bot(object):
             setattr(self, option, value)
             self.__log_configuration_parameter("defaults", option, value)
 
-        self.log_processed_messages_seconds = timedelta(seconds=self.log_processed_messages_seconds)
+        self.__log_processed_messages_seconds = timedelta(seconds=self.log_processed_messages_seconds)
 
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
