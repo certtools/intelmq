@@ -8,6 +8,7 @@ CHANGELOG
 - The `BOTS` file is no longer used and has been removed (by Sebastian Wagner).
 - The `defaults.conf` file is no longer used and has been removed (PR#1814 by Birger Schacht).
 - The `pipeline.conf` file is no longer used and has been removed (PR#1849 by Birger Schacht).
+- The `runtime.conf` was renamed to `runtime.yaml` and is now in YAML format (PR#1812 by Birger Schacht).
 
 ### Core
 - `intelmq.lib.harmonization`:
