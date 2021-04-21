@@ -24,7 +24,7 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver.parser_json`:
   - Use the overwrite parameter for optionally overwriting the "feed.name" field (by Sebastian Wagner).
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
-  - Handle fields `timestamp_utc`, `source_ip`, `source_port`, `destination_ip`, `destination_port`, `computer_name`, `bot_id` in `Payload` of CTIP Azure format (by Sebastian Wagner).
+  - Handle fields `timestamp`, `timestamp_utc`, `source_ip`, `source_port`, `destination_ip`, `destination_port`, `computer_name`, `bot_id` in `Payload` of CTIP Azure format (PR#1841, PR#1851 and PR#1879 by Sebastian Wagner).
 - `intelmq.bots.parsers.shodan.parser`:
   - Added support for unique keys and verified vulns (PR#1835 by Mikk Margus Möll).
 - `intelmq.bots.parsers.cymru.parser_cap_program`:
