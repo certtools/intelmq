@@ -92,11 +92,17 @@ class RDAPExpertBot(Bot):
                 if domain_suffix in self.__rdap_directory:
                     service = self.__rdap_directory[domain_suffix]
                     if 'auth' in service:
-                        if service['auth']['type'] is 'jwt':
+                        if service['auth']['type'] == 'jwt':
                             self.__session.headers['Authorization'] = "Bearer %s" % (service['auth']['token'])
+                        else:
+                            raise NotImplementedError("Authentication type %r (configured for service %r) is not implemented" % (service['auth'], domain_suffix))
 
                     resp = self.__session.get("{0}domain/{1}".format(service['url'], url))
-                    resp = json.loads(resp.text)
+                    try:
+                        resp = resp.json()
+                    except ValueError:
+                        self.logger.debug("Server response: %r", resp.text)
+                        raise ValueError("Unable to parse server response as JSON. Enable debug logging to see more details.")
                     for entity in resp['entities']:
                         if 'removed' in entity['roles']:
                             continue
