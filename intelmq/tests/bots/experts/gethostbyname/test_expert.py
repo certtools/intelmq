@@ -52,9 +52,19 @@ class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
         cls.sysconfig = {'gaierrors_to_ignore': '-8,-9'}
 
     def test_existing(self):
+        """
+        Test bot with domains which exists
+        """
         self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
+
+    def test_gaierrors_to_ignore_none(self):
+        """
+        Test parameter gaierrors_to_ignore with value none
+        """
+        self.input_message = EXAMPLE_INPUT
+        self.run_bot(parameters={'gaierrors_to_ignore': None})
 
     def test_non_existing(self):
         self.input_message = NONEXISTING_INPUT
