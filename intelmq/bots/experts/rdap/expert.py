@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
-from urllib.parse import urlparse
-
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
 from intelmq.lib.utils import create_request_session
@@ -22,6 +19,7 @@ class RDAPExpertBot(Bot):
     redis_cache_password: str = None
     redis_cache_port: int = 6379
     redis_cache_ttl: int = 86400
+    overwrite: bool = True
 
     __rdap_directory: dict = {}
     __rdap_order_dict: dict = {}
@@ -76,7 +74,7 @@ class RDAPExpertBot(Bot):
             cache_key = "rdap_%s" % (url)
             result = self.cache.get(cache_key)
             if result:
-                event.add('source.abuse_contact', result)
+                event.add('source.abuse_contact', result, overwrite=self.overwrite)
             else:
                 self.__session = create_request_session(self)
                 domain_parts = url.split('.')
@@ -129,7 +127,7 @@ class RDAPExpertBot(Bot):
                         if role in self.__rdap_order_dict:
                             if self.__rdap_order_dict[role]['email'] is not None:
                                 self.cache.set(cache_key, self.__rdap_order_dict[role]['email'], 86800)
-                                event.add('source.abuse_contact', self.__rdap_order_dict[role]['email'])
+                                event.add('source.abuse_contact', self.__rdap_order_dict[role]['email'], overwrite=self.overwrite)
                                 break
 
                 self.__session.close()
