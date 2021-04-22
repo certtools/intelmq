@@ -89,6 +89,9 @@ class RDAPExpertBot(Bot):
                             break
                         domain_parts.pop(0)
 
+                url_without_domain_suffix = url.replace(".%s" % (domain_suffix), "")
+                url = "%s.%s" % (url_without_domain_suffix.split(".")[-1], domain_suffix)
+
                 if domain_suffix in self.__rdap_directory:
                     service = self.__rdap_directory[domain_suffix]
                     if 'auth' in service:
