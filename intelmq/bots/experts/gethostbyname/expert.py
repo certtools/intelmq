@@ -32,10 +32,10 @@ class GethostbynameExpertBot(Bot):
         self.fallback_to_url = getattr(self.parameters, 'fallback_to_url', False)
 
         ignore = getattr(self.parameters, 'gaierrors_to_ignore', ())
-        if not isinstance(ignore, (list, tuple)):
-            ignore = ignore.split(',')
-        elif not ignore:  # for null/None
+        if not ignore:  # for null/None/empty lists or strings
             ignore = ()
+        elif not isinstance(ignore, (list, tuple)):
+            ignore = ignore.split(',')
         # otherwise a string
         ignore = tuple(x.strip() for x in ignore)
         # check if every element is an integer:

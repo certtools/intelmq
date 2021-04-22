@@ -33,6 +33,8 @@ CHANGELOG
 #### Experts
 - `intelmq.bots.experts.modify`:
   - Add a new rule to the example configuration to change the type of malicious-code events to `c2server` if the malware name indicates c2 (PR#1854 by Sebastian Wagner).
+- `intelmq.bots.experts.gethostbyname.expert`:
+  - Fix handling of parameter `gaierrors_to_ignore` with value `None` (PR#1890 by Sebastian Wagner, fixes #1886).
 
 #### Outputs
 - `intelmq.bots.outputs.elasticsearch`: Fix log message on required elasticsearch library message (by Sebastian Wagner).
