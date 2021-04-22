@@ -16,6 +16,8 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.shadowserver.collector_reports_api`:
+  - Handle timeouts by logging the error and continuing to next report (PR#1852 by Marius Karotkis and Sebastian Wagner, fixes #1823).
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver.config`:

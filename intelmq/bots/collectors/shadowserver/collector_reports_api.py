@@ -9,6 +9,8 @@ import hashlib
 import hmac
 import re
 
+import requests.exceptions
+
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.cache import Cache
 from intelmq.lib.utils import create_request_session
@@ -138,9 +140,9 @@ class ShadowServerAPICollectorBot(CollectorBot):
                 self.send_message(report)
                 self.cache.set(filename, 1)
                 self.logger.debug('Sent report: %r (fixed: %r, size: %.3g KiB).', filename, filename_fixed,
-                              len(reportdata) / 1024)  # TODO: Replace by a generic size-conversion function
+                                  len(reportdata) / 1024)  # TODO: Replace by a generic size-conversion function
                 reports_downloaded += 1
-            except:
+            except requests.exceptions.ReadTimeout:
                 self.logger.error("Timeout on data download: %r, %r!", item['file'], item['id'])
         self.logger.info('Downloaded %d of %d available reports.', reports_downloaded, len(reportslist))
 
