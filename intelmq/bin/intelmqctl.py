@@ -1260,10 +1260,11 @@ Get some debugging output on the settings and the environment (to be extended):
         for botid, botconfig in self.runtime_configuration.items():
             if botid != 'global':
                 pipeline_configuration[botid] = {"source_queue": f"{botid}-queue", "destination_queues": []}
-                if 'source_queue' in botconfig['parameters']:
-                    pipeline_configuration[botid]['source_queue'] = botconfig['parameters']['source_queue']
-                if 'destination_queues' in botconfig['parameters']:
-                    pipeline_configuration[botid]['destination_queues'] = botconfig['parameters']['destination_queues']
+                if 'parameters' in botconfig:
+                    if 'source_queue' in botconfig['parameters']:
+                        pipeline_configuration[botid]['source_queue'] = botconfig['parameters']['source_queue']
+                    if 'destination_queues' in botconfig['parameters']:
+                        pipeline_configuration[botid]['destination_queues'] = botconfig['parameters']['destination_queues']
         return pipeline_configuration
 
     def get_queues(self, with_internal_queues=False):
@@ -1454,7 +1455,7 @@ Get some debugging output on the settings and the environment (to be extended):
                 check_logger.warning(message, bot_id, bot_config['run_mode'])
                 retval = 1
             if ('group' in bot_config and bot_config['group'] in ['Collector', 'Parser', 'Expert']):
-                if ('destination_queues' not in bot_config['parameters'] or
+                if ('parameters' not in bot_config or 'destination_queues' not in bot_config['parameters'] or
                    (isinstance(bot_config['parameters']['destination_queues'], list) and len(bot_config['parameters']['destination_queues']) < 1) or
                    (isinstance(bot_config['parameters']['destination_queues'], dict) and '_default' not in bot_config['parameters']['destination_queues'])):
                     check_logger.error('Misconfiguration: No (default) destination queue for %r.', bot_id)
@@ -1462,7 +1463,7 @@ Get some debugging output on the settings and the environment (to be extended):
                 else:
                     all_queues = all_queues.union(bot_config['parameters']['destination_queues'])
             if ('group' in bot_config and bot_config['group'] in ['Parser', 'Expert', 'Output']):
-                if ('source_queue' in bot_config['parameters'] and isinstance(bot_config['parameters']['source_queue'], str)):
+                if ('parameters' in bot_config and 'source_queue' in bot_config['parameters'] and isinstance(bot_config['parameters']['source_queue'], str)):
                     all_queues.add(bot_config['parameters']['source_queue'])
                     all_queues.add(f"{bot_config['parameters']['source_queue']}-internal")
                 else:
