@@ -508,6 +508,23 @@ These can be defined:
 
 All other names can be used freely.
 
+Mixins
+======
+
+For common settings and methods you can use mixins from :code:`intelmq.lib.mixins`. To use the mixins, just let your bot inherit from the Mixin class (in addition to the inheritance from the Bot class). For example:
+
+.. code-block:: python
+
+   class HTTPCollectorBot(CollectorBot, HttpMixin):
+
+At the moment there is a HttpMixin that you can use for common http requests.
+It provides the HTTP attributes described in :ref:`common-parameters` and the following methods:
+
+* :code:`http_get` takes an URL as argument. Any other arguments get passed to the :code:`request.Session.get` method. :code:`http_get` returns a :code:`reqests.Response`.
+
+* :code:`http_session` can be used if you ever want to work with the session object directly. It takes no arguments and returns the bots request.Session.
+
+
 Pipeline interactions
 =====================
 
