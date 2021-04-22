@@ -21,6 +21,7 @@ from collections import OrderedDict
 
 import pkg_resources
 from termstyle import green
+from ruamel.yaml import YAML
 
 from intelmq import (DEFAULT_LOGGING_LEVEL,  # noqa: F401
                      HARMONIZATION_CONF_FILE,
@@ -33,6 +34,8 @@ from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.pipeline import PipelineFactory
 import intelmq.lib.upgrades as upgrades
 from typing import Union, Iterable
+
+yaml = YAML(typ="safe", pure=True)
 
 try:
     import psutil
@@ -1425,13 +1428,18 @@ Get some debugging output on the settings and the environment (to be extended):
         # loading files and syntax check
         files = {RUNTIME_CONF_FILE: None, HARMONIZATION_CONF_FILE: None}
         check_logger.info('Reading configuration files.')
-        for filename in files:
-            try:
-                with open(filename) as file_handle:
-                    files[filename] = json.load(file_handle)
-            except (IOError, ValueError) as exc:  # pragma: no cover
-                check_logger.error('Could not load %r: %s.', filename, exc)
-                retval = 1
+        try:
+            with open(HARMONIZATION_CONF_FILE) as file_handle:
+                files[HARMONIZATION_CONF_FILE] = json.load(file_handle)
+        except (IOError, ValueError) as exc:  # pragma: no cover
+            check_logger.error('Could not load %r: %s.', HARMONIZATION_CONF_FILE, exc)
+            retval = 1
+        try:
+            with open(RUNTIME_CONF_FILE) as file_handle:
+                files[RUNTIME_CONF_FILE] = yaml.load(file_handle)
+        except (IOError, ValueError) as exc:
+            check_logger.error('Could not load %r: %s.', RUNTIME_CONF_FILE, exc)
+            retval = 1
         if retval:
             if RETURN_TYPE == 'json':
                 return 1, {'status': 'error', 'lines': list_handler.buffer}
