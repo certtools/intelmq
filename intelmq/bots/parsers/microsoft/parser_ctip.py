@@ -160,6 +160,7 @@ AZURE = {
     "Payload.Custom3": "extra.payload.custom_field3",
     "Payload.Custom4": "extra.payload.custom_field4",
     "Payload.Custom5": "extra.payload.custom_field5",
+    "Payload.timestamp": "extra.payload.timestamp",
     "Payload.timestamp_utc": "extra.payload.timestamp_utc",
     "Payload.source_ip": "extra.payload.source.ip",
     "Payload.source_port": "extra.payload.source.port",

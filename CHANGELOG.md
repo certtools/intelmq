@@ -108,7 +108,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - `intelmq.bots.parsers.shadowserver.parser_json`:
   - Use the overwrite parameter for optionally overwriting the "feed.name" field (by Sebastian Wagner).
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
-  - Handle fields `timestamp_utc`, `source_ip`, `source_port`, `destination_ip`, `destination_port`, `computer_name`, `bot_id` in `Payload` of CTIP Azure format (by Sebastian Wagner).
+  - Handle fields `timestamp`, `timestamp_utc`, `source_ip`, `source_port`, `destination_ip`, `destination_port`, `computer_name`, `bot_id` in `Payload` of CTIP Azure format (PR#1841, PR#1851 and PR#1879 by Sebastian Wagner).
 - `intelmq.bots.parsers.shodan.parser`:
   - Added support for unique keys and verified vulns (PR#1835 by Mikk Margus Möll).
 - `intelmq.bots.parsers.cymru.parser_cap_program`:
@@ -117,6 +117,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 #### Experts
 - `intelmq.bots.experts.modify`:
   - Add a new rule to the example configuration to change the type of malicious-code events to `c2server` if the malware name indicates c2 (PR#1854 by Sebastian Wagner).
+- `intelmq.bots.experts.gethostbyname.expert`:
+  - Fix handling of parameter `gaierrors_to_ignore` with value `None` (PR#1890 by Sebastian Wagner, fixes #1886).
 
 #### Outputs
 - `intelmq.bots.outputs.elasticsearch`: Fix log message on required elasticsearch library message (by Sebastian Wagner).
