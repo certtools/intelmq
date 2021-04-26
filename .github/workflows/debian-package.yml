@@ -16,8 +16,10 @@ on:
 
 jobs:
   build:
-    # temporary fix for https://github.com/actions/virtual-environments/issues/3080
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
+    env:
+      # Fixes https://github.com/actions/virtual-environments/issues/3080
+      STORAGE_OPTS: overlay.mount_program=/usr/bin/fuse-overlayfs
     name: Build Debian packages
     strategy:
       matrix:
