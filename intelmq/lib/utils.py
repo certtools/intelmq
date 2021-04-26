@@ -865,7 +865,7 @@ def list_all_bots() -> dict:
                         not (variable in bot_parameters and getattr(Bot, variable) == value)):
                     keys[variable] = value
 
-            for bot_type in ['CollectorBot', 'ParserBot', 'OutputBot', 'Bot']:
+            for bot_type in ['CollectorBot', 'ParserBot', 'ExpertBot', 'OutputBot', 'Bot']:
                 name = name.replace(bot_type, '')
 
             bots[file.parts[2].capitalize()[:-1]][name] = {
