@@ -2986,6 +2986,25 @@ The following operators may be used to match events:
  * Boolean values can be matched with `==` or `!=` followed by `true` or `false`. Example:
    ``if extra.has_known_vulns == true { ... }``
 
+ * `:equals` tests for equality between lists, including order. Its result can be inverted by using `! :equals`. Example for checking a hostname-port pair:
+   ``if extra.host_tuple :equals ['dns.google', 53] { ... }``
+ * `:setequals` tests for set-based equality (ignoring duplicates and value order) between a list of given values. Example for checking for the first nameserver of two domains, regardless of the order they are given in the list:
+   ``if extra.hostnames :setequals ['ns1.example.com', 'ns1.example.mx'] { ... }``
+
+ * `:overlaps` tests if there is at least one element in common between the list specified by a key and a list of values. Example for checking if at least one of the ICS, database or vulnerable tags is given:
+   ``if extra.tags :overlaps ['ics', 'database', 'vulnerable'] { ... } ``
+
+ * `:subsetof` tests if the list of values from the given key only contains values from a set of values specified as the argument. Example for checking for a host that has only ns1.example.com and/or ns2.[...] as its apparent hostname:
+   ``if extra.hostnames :subsetof ['ns1.example.com', 'ns2.example.com'] { ... }``
+
+ * `:supersetof` tests if the list of values from the given key is a superset of the values specified as the argument. Example for matching hosts with at least the IoT and vulnerable tags:
+   ``if extra.tags :supersetof ['iot', 'vulnerable'] { ... }``
+
+ * The results of the list operators (`:equals`, `:setequals`, `:overlaps`, `:subsetof` and `:supersetof`) can be inverted with a prepended exclamation mark, such as `! :overlaps`. Note that in case there is no value with the given key or it is a non-list value, the result will always be false, regardless of negation. The existence of the key can be checked for separately.
+
+ * Boolean values can be matched with `==` or `!=` followed by `true` or `false`. Example:
+   ``if extra.has_known_vulns == true { ... }``
+
  * The combination of multiple expressions can be done using parenthesis and boolean operators:
 
   ``if (source.ip == '127.0.0.1') && (comment == 'add field' || classification.taxonomy == 'vulnerable') { ... }``
