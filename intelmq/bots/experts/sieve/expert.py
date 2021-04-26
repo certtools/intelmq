@@ -54,6 +54,13 @@ class SieveExpertBot(Bot):
         '!~': lambda lhs, rhs: re.search(rhs, lhs) is None,
     }
 
+    _list_op_map = {
+        ':setequals': operator.eq,
+        ':overlaps': lambda l, r: not l.isdisjoint(r),
+        ':subsetof': set.issubset,
+        ':supersetof': set.issuperset,
+    }
+
     _numeric_op_map = {
         '==': operator.eq,
         '!=': operator.ne,
@@ -68,11 +75,18 @@ class SieveExpertBot(Bot):
         '-=': operator.sub,
     }
 
+    _bool_op_map = {
+        '==': operator.eq,
+        '!=': operator.ne,
+    }
+
     _cond_map = {
         'ExistMatch': lambda self, match, event: self.process_exist_match(match.key, match.op, event),
         'StringMatch': lambda self, match, event: self.process_string_match(match.key, match.op, match.value, event),
         'NumericMatch': lambda self, match, event: self.process_numeric_match(match.key, match.op, match.value, event),
         'IpRangeMatch': lambda self, match, event: self.process_ip_range_match(match.key, match.range, event),
+        'ListMatch': lambda self, match, event: self.process_list_match(match.key, match.neg, match.op, match.value, event),
+        'BoolMatch': lambda self, match, event: self.process_bool_match(match.key, match.op, match.value, event),
         'Expression': lambda self, match, event: self.match_expression(match, event),
     }
 
@@ -274,6 +288,22 @@ class SieveExpertBot(Bot):
             return any(addr in ipaddress.ip_network(val.value, strict=False) for val in ip_range.values)
         raise TextXSemanticError(f'Unhandled type: {name}')
 
+    def process_list_match(self, key, neg, op, value, event) -> bool:
+        if not (key in event and isinstance(event[key], list)):
+            return False
+
+        lhs = event[key]
+        rhs = value.values
+        result = lhs == rhs if op == ':equals' else self._list_op_map[op](set(lhs), set(rhs))
+
+        return not result if neg else result
+
+    def process_bool_match(self, key, op, value, event):
+        if not (key in event and isinstance(event[key], bool)):
+            return False
+
+        return self._bool_op_map[op](event[key], value)
+
     def compute_basic_math(self, action, event) -> str:
         date = DateTime.parse_utc_isoformat(event[action.key], True)
         delta = datetime.timedelta(minutes=parse_relative(action.value))
@@ -308,6 +338,22 @@ class SieveExpertBot(Bot):
         elif name == 'RemoveAction':
             if action.key in event:
                 del event[action.key]
+        elif name == 'AppendAction':
+            if action.key in event:
+                if isinstance(event[action.key], list):  # silently ignore existing non-list values
+                    event[action.key].append(action.value)
+            else:
+                event[action.key] = [action.value]
+        elif name == 'AppendForceAction':
+            if action.key in event:
+                old_value = event[action.key]
+                list_ = old_value if isinstance(old_value, list) else [old_value]
+            else:
+                list_ = []
+
+            list_.append(action.value)
+            event.add(action.key, list_, overwrite=True)
+
         return Procedure.CONTINUE
 
     @staticmethod
