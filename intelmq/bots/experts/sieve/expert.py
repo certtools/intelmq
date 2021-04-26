@@ -10,6 +10,11 @@ import os
 import re
 import traceback
 import datetime
+import operator
+
+from typing import Optional
+from enum import Enum, auto
+from functools import partial
 
 import intelmq.lib.exceptions as exceptions
 from intelmq import HARMONIZATION_CONF_FILE
@@ -27,10 +32,10 @@ except ImportError:
     metamodel_from_file = None
 
 
-class Procedure:
-    CONTINUE = 1  # continue processing subsequent rules (default)
-    KEEP = 2      # stop processing and keep event
-    DROP = 3      # stop processing and drop event
+class Procedure(Enum):
+    CONTINUE = auto()  # continue processing subsequent rules (default)
+    KEEP = auto()      # stop processing and keep event
+    DROP = auto()      # stop processing and drop event
 
 
 class SieveExpertBot(Bot):
@@ -40,7 +45,38 @@ class SieveExpertBot(Bot):
     _harmonization = None
     file: str = "/opt/intelmq/var/lib/bots/sieve/filter.sieve"  # TODO: should be pathlib.Path
 
-    def init(self):
+    _string_op_map = {
+        '==': operator.eq,
+        '!=': operator.ne,
+        ':contains': lambda lhs, rhs: lhs.find(rhs) >= 0,
+        ':notcontains': lambda lhs, rhs: lhs.find(rhs) == -1,
+        '=~': lambda lhs, rhs: re.search(rhs, lhs) is not None,
+        '!~': lambda lhs, rhs: re.search(rhs, lhs) is None,
+    }
+
+    _numeric_op_map = {
+        '==': operator.eq,
+        '!=': operator.ne,
+        '<=': operator.le,
+        '>=': operator.ge,
+        '<': operator.lt,
+        '>': operator.gt,
+    }
+
+    _basic_math_op_map = {
+        '+=': operator.add,
+        '-=': operator.sub,
+    }
+
+    _cond_map = {
+        'ExistMatch': lambda self, match, event: self.process_exist_match(match.key, match.op, event),
+        'StringMatch': lambda self, match, event: self.process_string_match(match.key, match.op, match.value, event),
+        'NumericMatch': lambda self, match, event: self.process_numeric_match(match.key, match.op, match.value, event),
+        'IpRangeMatch': lambda self, match, event: self.process_ip_range_match(match.key, match.range, event),
+        'Expression': lambda self, match, event: self.match_expression(match, event),
+    }
+
+    def init(self) -> None:
         if not SieveExpertBot._harmonization:
             harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
             SieveExpertBot._harmonization = harmonization_config['event']
@@ -106,7 +142,7 @@ class SieveExpertBot(Bot):
         except Exception:
             return [['error', 'Validation of Sieve file failed with the following traceback: %r' % traceback.format_exc()]]
 
-    def process(self):
+    def process(self) -> None:
         event = self.receive_message()
         procedure = Procedure.CONTINUE
         if self.sieve:  # empty rules file results in empty string
@@ -132,34 +168,24 @@ class SieveExpertBot(Bot):
 
         self.acknowledge_message()
 
-    def process_rule(self, rule, event):
+    def process_rule(self, rule, event) -> Procedure:
         # process optional 'if' clause
         if rule.if_:
-            if self.match_expression(rule.if_.expr, event):
-                self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(rule.if_), event)
-                for action in rule.if_.actions:
-                    procedure = self.process_action(action.action, event)
-                    if procedure != Procedure.CONTINUE:
-                        return procedure
-                return Procedure.CONTINUE
+            result = self.process_clause(rule.if_, event)
+            if isinstance(result, Procedure):
+                return result
 
         # process optional 'elif' clauses
         for clause in rule.elif_:
-            if self.match_expression(clause.expr, event):
-                self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(clause), event)
-                for action in clause.actions:
-                    procedure = self.process_action(action.action, event)
-                    if procedure != Procedure.CONTINUE:
-                        return procedure
-                return Procedure.CONTINUE
+            result = self.process_clause(clause, event)
+            if isinstance(result, Procedure):
+                return result
 
         # process optional 'else' clause
         if rule.else_:
-            self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(rule.else_), event)
-            for action in rule.else_.actions:
-                procedure = self.process_action(action.action, event)
-                if procedure != Procedure.CONTINUE:
-                    return procedure
+            result = self.process_clause(rule.else_, event, True)
+            if isinstance(result, Procedure):
+                return result
 
         # process optional 'actions' clause
         if rule.actions_:
@@ -170,83 +196,67 @@ class SieveExpertBot(Bot):
 
         return Procedure.CONTINUE
 
-    def match_expression(self, expr, event):
-        for conj in expr.conj:
-            if self.process_conjunction(conj, event):
-                return True
-        return False
+    def process_clause(self, clause, event, else_clause=False) -> Optional[Procedure]:
+        if else_clause or self.match_expression(clause.expr, event):
+            self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(clause), event)
+            for procedure in (self.process_action(action.action, event) for action in clause.actions):
+                if procedure != Procedure.CONTINUE:
+                    return procedure
+            if not else_clause:
+                return Procedure.CONTINUE
+        return None
 
-    def process_conjunction(self, conj, event):
-        for cond in conj.cond:
-            if not self.process_condition(cond, event):
-                return False
-        return True
+    def match_expression(self, expr, event) -> bool:
+        return any(self.process_conjunction(conj, event) for conj in expr.conj)
 
-    def process_condition(self, cond, event):
-        match = cond.match
-        if match.__class__.__name__ == 'ExistMatch':
-            return self.process_exist_match(match.key, match.op, event)
-        elif match.__class__.__name__ == 'StringMatch':
-            return self.process_string_match(match.key, match.op, match.value, event)
-        elif match.__class__.__name__ == 'NumericMatch':
-            return self.process_numeric_match(match.key, match.op, match.value, event)
-        elif match.__class__.__name__ == 'IpRangeMatch':
-            return self.process_ip_range_match(match.key, match.range, event)
-        elif match.__class__.__name__ == 'Expression':
-            return self.match_expression(match, event)
+    def process_conjunction(self, conj, event) -> bool:
+        return all(self.process_condition(cond, event) for cond in conj.cond)
+
+    def process_condition(self, cond, event) -> bool:
+        name = cond.match.__class__.__name__
+        return self._cond_map[name](self, cond.match, event)
 
     @staticmethod
-    def process_exist_match(key, op, event):
+    def process_exist_match(key, op, event) -> bool:
         if op == ':exists':
             return key in event
         elif op == ':notexists':
             return key not in event
+        raise TextXSemanticError(f'Unhandled operator: {op}')
 
-    def process_string_match(self, key, op, value, event):
+    def process_string_match(self, key, op, value, event) -> bool:
         if key not in event:
-            return op == '!=' or op == '!~' or op == ':notcontains'
+            return op in {'!=', '!~', ':notcontains'}
 
-        if value.__class__.__name__ == 'SingleStringValue':
+        name = value.__class__.__name__
+
+        if name == 'SingleStringValue':
             return self.process_string_operator(event[key], op, value.value)
-        elif value.__class__.__name__ == 'StringValueList':
-            for val in value.values:
-                if self.process_string_operator(event[key], op, val.value):
-                    return True
-            return False
+        elif name == 'StringValueList':
+            return any(self.process_string_operator(event[key], op, val.value) for val in value.values)
+        raise TextXSemanticError(f'Unhandled type: {name}')
 
-    @staticmethod
-    def process_string_operator(lhs, op, rhs):
-        if op == '==':
-            return lhs == rhs
-        elif op == '!=':
-            return lhs != rhs
-        elif op == ':contains':
-            return lhs.find(rhs) >= 0
-        elif op == ':notcontains':
-            return lhs.find(rhs) == -1
-        elif op == '=~':
-            return re.search(rhs, lhs) is not None
-        elif op == '!~':
-            return re.search(rhs, lhs) is None
+    def process_string_operator(self, lhs, op, rhs) -> bool:
+        return self._string_op_map[op](lhs, rhs)
 
-    def process_numeric_match(self, key, op, value, event):
+    def process_numeric_match(self, key, op, value, event) -> bool:
         if key not in event:
             return False
 
-        if value.__class__.__name__ == 'SingleNumericValue':
-            return self.process_numeric_operator(event[key], op, value.value)
-        elif value.__class__.__name__ == 'NumericValueList':
-            for val in value.values:
-                if self.process_numeric_operator(event[key], op, val.value):
-                    return True
-            return False
+        name = value.__class__.__name__
 
-    def process_numeric_operator(self, lhs, op, rhs):
+        if name == 'SingleNumericValue':
+            return self.process_numeric_operator(event[key], op, value.value)
+        elif name == 'NumericValueList':
+            return any(self.process_numeric_operator(event[key], op, val.value) for val in value.values)
+        raise TextXSemanticError(f'Unhandled type: {name}')
+
+    def process_numeric_operator(self, lhs, op, rhs) -> bool:
         if not self.is_numeric(lhs) or not self.is_numeric(rhs):
             return False
-        return eval(str(lhs) + op + str(rhs))
+        return self._numeric_op_map[op](lhs, rhs)
 
-    def process_ip_range_match(self, key, ip_range, event):
+    def process_ip_range_match(self, key, ip_range, event) -> bool:
         if key not in event:
             return False
 
@@ -256,56 +266,52 @@ class SieveExpertBot(Bot):
             self.logger.warning("Could not parse IP address %s=%s in %s.", key, event[key], event)
             return False
 
-        if ip_range.__class__.__name__ == 'SingleIpRange':
-            network = ipaddress.ip_network(ip_range.value, strict=False)
-            return addr in network
-        elif ip_range.__class__.__name__ == 'IpRangeList':
-            for val in ip_range.values:
-                network = ipaddress.ip_network(val.value, strict=False)
-                if addr in network:
-                    return True
-        return False
+        name = ip_range.__class__.__name__
 
-    @staticmethod
-    def compute_basic_math(action, event):
+        if name == 'SingleIpRange':
+            return addr in ipaddress.ip_network(ip_range.value, strict=False)
+        elif name == 'IpRangeList':
+            return any(addr in ipaddress.ip_network(val.value, strict=False) for val in ip_range.values)
+        raise TextXSemanticError(f'Unhandled type: {name}')
+
+    def compute_basic_math(self, action, event) -> str:
         date = DateTime.parse_utc_isoformat(event[action.key], True)
-        if action.operator == '+=':
-            return (date + datetime.timedelta(minutes=parse_relative(action.value))).isoformat()
-        elif action.operator == '-=':
-            return (date - datetime.timedelta(minutes=parse_relative(action.value))).isoformat()
+        delta = datetime.timedelta(minutes=parse_relative(action.value))
 
-    @staticmethod
-    def process_action(action, event):
+        return self._basic_math_op_map[action.operator](date, delta).isoformat()
+
+    def process_action(self, action, event) -> Procedure:
+        name = action.__class__.__name__
         if action == 'drop':
             return Procedure.DROP
         elif action == 'keep':
             return Procedure.KEEP
-        elif action.__class__.__name__ == 'PathAction':
+        elif name == 'PathAction':
             event.path = action.path
-        elif action.__class__.__name__ == 'AddAction':
+        elif name == 'AddAction':
             if action.key not in event:
                 value = action.value
                 if action.operator != '=':
-                    value = SieveExpertBot.compute_basic_math(action, event)
+                    value = self.compute_basic_math(action, event)
                 event.add(action.key, value)
-        elif action.__class__.__name__ == 'AddForceAction':
+        elif name == 'AddForceAction':
             value = action.value
             if action.operator != '=':
-                value = SieveExpertBot.compute_basic_math(action, event)
+                value = self.compute_basic_math(action, event)
             event.add(action.key, value, overwrite=True)
-        elif action.__class__.__name__ == 'UpdateAction':
+        elif name == 'UpdateAction':
             if action.key in event:
                 value = action.value
                 if action.operator != '=':
-                    value = SieveExpertBot.compute_basic_math(action, event)
+                    value = self.compute_basic_math(action, event)
                 event.change(action.key, value)
-        elif action.__class__.__name__ == 'RemoveAction':
+        elif name == 'RemoveAction':
             if action.key in event:
                 del event[action.key]
         return Procedure.CONTINUE
 
     @staticmethod
-    def validate_ip_range(ip_range):
+    def validate_ip_range(ip_range) -> None:
         try:
             ipaddress.ip_network(ip_range.value, strict=False)
         except ValueError:
@@ -313,7 +319,7 @@ class SieveExpertBot(Bot):
             raise TextXSemanticError('Invalid ip range: %s.' % ip_range.value, **position)
 
     @staticmethod
-    def validate_numeric_match(num_match):
+    def validate_numeric_match(num_match) -> None:
         """ Validates a numeric match expression.
 
         Checks if the event key (given on the left hand side of the expression) is of a valid type for a numeric
@@ -322,7 +328,7 @@ class SieveExpertBot(Bot):
         Raises:
             TextXSemanticError: when the key is of an incompatible type for numeric match expressions.
         """
-        valid_types = ['Integer', 'Float', 'Accuracy', 'ASN']
+        valid_types = {'Integer', 'Float', 'Accuracy', 'ASN'}
         position = SieveExpertBot.get_linecol(num_match.value, as_dict=True)
 
         # validate harmonization type (event key)
@@ -334,7 +340,7 @@ class SieveExpertBot(Bot):
             raise TextXSemanticError('Invalid key: %s.' % num_match.key, **position)
 
     @staticmethod
-    def validate_string_match(str_match):
+    def validate_string_match(str_match) -> None:
         """ Validates a string match expression.
 
         Checks if the type of the value given on the right hand side of the expression matches the event key in the left
@@ -347,14 +353,15 @@ class SieveExpertBot(Bot):
         # validate IPAddress
         ipaddr_types = [k for k, v in SieveExpertBot._harmonization.items() if v['type'] == 'IPAddress']
         if str_match.key in ipaddr_types:
-            if str_match.value.__class__.__name__ == 'SingleStringValue':
+            name = str_match.value.__class__.__name__
+            if name == 'SingleStringValue':
                 SieveExpertBot.validate_ip_address(str_match.value)
-            elif str_match.value.__class__.__name__ == 'StringValueList':
+            elif name == 'StringValueList':
                 for val in str_match.value.values:
                     SieveExpertBot.validate_ip_address(val)
 
     @staticmethod
-    def validate_ip_address(ipaddr):
+    def validate_ip_address(ipaddr) -> None:
         try:
             ipaddress.ip_address(ipaddr.value)
         except ValueError:
@@ -362,7 +369,7 @@ class SieveExpertBot(Bot):
             raise TextXSemanticError('Invalid ip address: %s.' % ipaddr.value, **position)
 
     @staticmethod
-    def is_numeric(num):
+    def is_numeric(num) -> bool:
         """ Returns True if argument is a number (integer or float). """
         return str(num).lstrip('-').replace('.', '', 1).isnumeric()
 
