@@ -698,6 +698,10 @@ class IntelMQController():
         QUIET = quiet
         self.parameters = Parameters()
 
+        # set default values for the logging handler
+        self.parameters.logging_handler = 'file'
+        self.parameters.logging_path = '/opt/intelmq/var/log'
+
         # Try to get logging_level from defaults configuration, else use default (defined above)
         defaults_loading_exc = None
         try:
