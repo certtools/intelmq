@@ -17,6 +17,8 @@ Condition:
     | match=NumericMatch
     | match=IpRangeMatch
     | match=ExistMatch
+    | match=ListMatch
+    | match=BoolMatch
     | ( '(' match=Expression ')' )
 ;
 
@@ -49,6 +51,24 @@ IpRangeList: '[' values+=SingleIpRange[','] ']' ;
 ExistMatch: op=ExistOperator key=Key;
 ExistOperator: ':exists' | ':notexists';
 
+ListMatch: key=Key neg=Negation? op=ListOperator value=ListValue;
+ListOperator:
+  ':equals'           // lists are equal, including order
+  | ':setequals'      // lists contain the same elements, ignoring order and repeating values
+  | ':overlaps'       // lists contain one or more common values
+  | ':subsetof'       // key is a proper subset of value
+  | ':supersetof'     // key is a proper superset of value
+;
+
+BoolMatch: key=Key op=BoolOperator value=BOOL;
+BoolOperator: '==' | '!=';
+
+
+Negation: '!';
+
+TypedValue: STRICTFLOAT | INT | BOOL | STRING;
+ListValue: '[' values+=TypedValue[','] ']' ;
+
 Key: /[a-z0-9_\.]+/;
 
 StringValue: SingleStringValue | StringValueList ;
@@ -76,6 +96,8 @@ Action: action=DropAction
         | action=AddForceAction
         | action=UpdateAction
         | action=RemoveAction
+        | action=AppendAction
+        | action=AppendForceAction
       );
 DropAction: 'drop';
 KeepAction: 'keep';
@@ -84,5 +106,7 @@ AddAction: 'add' key=Key operator=AssignOperator value=STRING;              // a
 AddForceAction: 'add!' key=Key operator=AssignOperator value=STRING;        // add key/value, overwriting existing key
 UpdateAction: 'update' key=Key operator=AssignOperator value=STRING;        // update key/value, do not create if not exists
 RemoveAction: 'remove' key=Key;
-
+AppendAction: 'append' key=Key value=TypedValue;                            // append an element to a list if it exists
+AppendForceAction: 'append!' key=Key value=TypedValue;                      // append an element to a list; converts a single item to a list with one element
+                                                                            // or creates a new list if the key is not included yet
 Comment: /(#|\/\/).*$/ ;

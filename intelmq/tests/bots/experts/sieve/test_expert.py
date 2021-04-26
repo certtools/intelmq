@@ -1093,6 +1093,400 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, event)
 
+    def test_list_equals_match(self):
+        """ Test list-based :equals match """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_list_equals_match.sieve')
+
+        base = EXAMPLE_INPUT.copy()
+        base['extra.list'] = ['a', 'b', 'c']
+
+        # positive test
+        event = base.copy()
+        event['comment'] = 'match1'
+        expected = base.copy()
+        expected['comment'] = 'changed1'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test
+        event = base.copy()
+        event['comment'] = 'match2'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with negation (!)
+        event = base.copy()
+        event['comment'] = 'match3'
+        expected = base.copy()
+        expected['comment'] = 'changed3'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test with negation (!)
+        event = base.copy()
+        event['comment'] = 'match4'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+    def test_list_setequals_match(self):
+        """ Test list/set-based :setequals match """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_list_setequals_match.sieve')
+
+        base = EXAMPLE_INPUT.copy()
+        base['extra.list'] = ['a', 'b', 'c']
+
+        # positive test
+        event = base.copy()
+        event['comment'] = 'match1'
+        expected = base.copy()
+        expected['comment'] = 'changed1'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test
+        event = base.copy()
+        event['comment'] = 'match2'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with negation (!)
+        event = base.copy()
+        event['comment'] = 'match3'
+        expected = base.copy()
+        expected['comment'] = 'changed3'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test with negation (!)
+        event = base.copy()
+        event['comment'] = 'match4'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+    def test_list_overlaps_match(self):
+        """ Test list/set-based :overlaps match """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_list_overlaps_match.sieve')
+
+        base = EXAMPLE_INPUT.copy()
+        base['extra.list'] = ['a', 'b', 'c']
+
+        # positive test
+        event = base.copy()
+        event['comment'] = 'match1'
+        expected = base.copy()
+        expected['comment'] = 'changed1'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test
+        event = base.copy()
+        event['comment'] = 'match2'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with negation (!)
+        event = base.copy()
+        event['comment'] = 'match3'
+        expected = base.copy()
+        expected['comment'] = 'changed3'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test with negation (!)
+        event = base.copy()
+        event['comment'] = 'match4'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+    def test_list_subsetof_match(self):
+        """ Test list/set-based :subsetof match """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_list_subsetof_match.sieve')
+
+        base = EXAMPLE_INPUT.copy()
+        base['extra.list'] = ['a', 'b', 'c']
+
+        # positive test
+        event = base.copy()
+        event['comment'] = 'match1'
+        expected = base.copy()
+        expected['comment'] = 'changed1'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test
+        event = base.copy()
+        event['comment'] = 'match2'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with negation (!)
+        event = base.copy()
+        event['comment'] = 'match3'
+        expected = base.copy()
+        expected['comment'] = 'changed3'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test with negation (!)
+        event = base.copy()
+        event['comment'] = 'match4'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+    def test_list_supersetof_match(self):
+        """ Test list/set-based :supersetof match """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_list_supersetof_match.sieve')
+
+        base = EXAMPLE_INPUT.copy()
+        base['extra.list'] = ['a', 'b', 'c']
+
+        # positive test
+        event = base.copy()
+        event['comment'] = 'match1'
+        expected = base.copy()
+        expected['comment'] = 'changed1'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test
+        event = base.copy()
+        event['comment'] = 'match2'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with negation (!)
+        event = base.copy()
+        event['comment'] = 'match3'
+        expected = base.copy()
+        expected['comment'] = 'changed3'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test with negation (!)
+        event = base.copy()
+        event['comment'] = 'match4'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+    def test_bool_match(self):
+        ''' Test bool match '''
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_bool_match.sieve')
+        base = EXAMPLE_INPUT.copy()
+        base['extra.truthy'] = True
+        base['extra.falsy'] = False
+
+        # positive test with true == true
+        event = base.copy()
+        event['comment'] = 'match1'
+        expected = base.copy()
+        expected['comment'] = 'changed1'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with false == false
+        event = base.copy()
+        event['comment'] = 'match2'
+        expected = base.copy()
+        expected['comment'] = 'changed2'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with true != false
+        event = base.copy()
+        event['comment'] = 'match3'
+        expected = base.copy()
+        expected['comment'] = 'changed3'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with false != true
+        event = base.copy()
+        event['comment'] = 'match4'
+        expected = base.copy()
+        expected['comment'] = 'changed4'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+
+        # negative test with true == false
+        event = base.copy()
+        event['comment'] = 'match5'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test with false == true
+        event = base.copy()
+        event['comment'] = 'match6'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test with true != true
+        event = base.copy()
+        event['comment'] = 'match7'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test with false != false
+        event = base.copy()
+        event['comment'] = 'match8'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+    def test_typed_values(self):
+        ''' Test typed values '''
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_typed_values.sieve')
+        event = EXAMPLE_INPUT.copy()
+        event['extra.list'] = [True, 2.0, 'three', 4]
+        event['comment'] = 'match'
+
+        expected = event.copy()
+        expected['comment'] = 'changed'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+    def test_append(self):
+        ''' Test append action '''
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_append.sieve')
+
+        # positive test
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match1'
+        expected = event.copy()
+        event['extra.list'] = ['a', 'b']
+        expected['extra.list'] = ['a', 'b', 'c']
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test - non-list value
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match2'
+        event['extra.single'] = 'something'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test - nonexistent value
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match3'
+        expected = event.copy()
+        expected['extra.nonexistent'] = ['new']
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+    def test_force_append(self):
+        ''' Test force append action '''
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_force_append.sieve')
+
+        # positive test with list
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match1'
+        expected = event.copy()
+        event['extra.list'] = ['a', 'b']
+        expected['extra.list'] = ['a', 'b', 'c']
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test - with non-list value
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match2'
+        expected = event.copy()
+        event['extra.single'] = 'something'
+        expected['extra.single'] = ['something', 'more']
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with nonexistent value
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match3'
+        expected = event.copy()
+        expected['extra.nonexistent'] = ['something']
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
