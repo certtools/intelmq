@@ -4,6 +4,22 @@ NEWS
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 Please refer to the changelog for a full list of changes.
 
+2.3.3 Bugfix release (unreleased)
+---------------------------------
+
+### Requirements
+
+### Tools
+
+### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
 2.3.2 Bugfix release (2021-04-27)
 ---------------------------------
 
