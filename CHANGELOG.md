@@ -85,18 +85,45 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Known issues
 
 
-2.3.2 (unreleased)
+2.3.3 (unreleased)
 ------------------
 
 ### Configuration
 
 ### Core
-- `intelmq.lib.harmonization`:
-  - `TLP` type: accept value "yellow" for TLP level AMBER.
 
 ### Development
 
 ### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
+2.3.2 (2021-04-27)
+------------------
+
+### Core
+- `intelmq.lib.harmonization`:
+  - `TLP` type: accept value "yellow" for TLP level AMBER.
 
 ### Bots
 #### Collectors
@@ -128,17 +155,12 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Documentation
 - `dev/data-harmonization`: Fix taxonomy name "information gathering" should be "information-gathering" (by Sebastian Wagner).
 
-### Packaging
-
 ### Tests
 - `intelmq.tests.bots.parsers.microsoft.test_parser_ctip_azure`:
   - Add test case for TLP level "YELLOW".
 
-### Tools
-
-### Contrib
-
 ### Known issues
+- ParserBot: erroneous raw line recovery in error handling (#1850).
 
 
 2.3.1 (2021-03-25)

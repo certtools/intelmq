@@ -18,7 +18,7 @@ Supported and recommended operating systems are:
 
 * CentOS 7 and 8
 * Debian 10
-* OpenSUSE Leap 15.1, 15.2
+* openSUSE Leap 15.2
 * Ubuntu: 18.04, 20.04
 * Docker Engine: 18.x and higher
 
