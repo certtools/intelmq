@@ -800,6 +800,7 @@ Installation
 The :doc:`installation procedures <../user/installation>` need to be adapted only a little bit.
 
 For native packages, you can find the unstable packages of the next version here: `Installation Unstable Native Packages <https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq%3Aunstable&package=intelmq>`_.
+The unstable only has a limited set of packages, so enabling the stable repository can be activated in parallel. For CentOS 8 unstable, the stable repository is required.
 
 For the installation with pip, use the `--pre` parameter as shown here following command:
 
