@@ -39,6 +39,18 @@
         state: directory
         owner: intelmq
         group: intelmq
+    - name: Create /opt/intelmq/var/lib/
+      file:
+        path: /opt/intelmq/var/lib/
+        state: directory
+        owner: intelmq
+        group: intelmq
+    - name: Create /opt/intelmq/var/lib/state.json
+      file:
+        path: /opt/intelmq/var/lib/state.json
+        state: touch
+        owner: intelmq
+        group: intelmq
 
     - name: Copy runtime.conf
       copy:
