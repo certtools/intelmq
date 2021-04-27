@@ -14,7 +14,7 @@ Check before
   You can test most of the steps described here locally before doing it real.
 * Check the upgrade functions in `intelmq/lib/upgrades.py`.
 * Close the milestone on GitHub and move any open issues to the next one.
-* `docs/INSTALL.md`: Update supported operating systems.
+* `docs/user/installation.rst`: Update supported operating systems.
 
 *************
 Documentation
