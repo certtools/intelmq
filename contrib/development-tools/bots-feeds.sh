@@ -1,13 +1,14 @@
 #!/bin/bash
 
 echo "Bots:"
-jq '.Collector | keys | length' intelmq/bots/BOTS
-jq '.Parser | keys | length' intelmq/bots/BOTS
-jq '.Expert | keys | length' intelmq/bots/BOTS
-jq '.Output | keys | length' intelmq/bots/BOTS
+bots=$(intelmqctl --type json list bots)
+echo $bots | jq '.Collector | keys | length'
+echo $bots | jq '.Parser | keys | length'
+echo $bots | jq '.Expert | keys | length'
+echo $bots | jq '.Output | keys | length'
 
 echo "Feeds:"
 grep -Ec '^    [^ ]' intelmq/etc/feeds.yaml
 echo "Shadowserver:"
-python3 -c "import intelmq.bots.parsers.shadowserver.config; print(len(intelmq.bots.parsers.shadowserver.config.mapping))"
+python3 -c "import intelmq.bots.parsers.shadowserver._config; print(len(intelmq.bots.parsers.shadowserver._config.mapping))"
 
