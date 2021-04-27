@@ -1262,18 +1262,6 @@ Get some debugging output on the settings and the environment (to be extended):
             val = utils.list_all_bots()
             return 0, val
 
-    def _pipeline_configuration(self):
-        pipeline_configuration = {}
-        for botid, botconfig in self.runtime_configuration.items():
-            if botid != 'global':
-                pipeline_configuration[botid] = {"source_queue": f"{botid}-queue", "destination_queues": []}
-                if 'parameters' in botconfig:
-                    if 'source_queue' in botconfig['parameters']:
-                        pipeline_configuration[botid]['source_queue'] = botconfig['parameters']['source_queue']
-                    if 'destination_queues' in botconfig['parameters']:
-                        pipeline_configuration[botid]['destination_queues'] = botconfig['parameters']['destination_queues']
-        return pipeline_configuration
-
     def get_queues(self, with_internal_queues=False):
         """
         :return: 4-tuple of source, destination, internal queues, and all queues combined.
@@ -1285,7 +1273,7 @@ Get some debugging output on the settings and the environment (to be extended):
         destination_queues = set()
         internal_queues = set()
 
-        for botid, value in self._pipeline_configuration().items():
+        for botid, value in utils.get_legacy_pipeline().items():
             if 'source_queue' in value:
                 source_queues.add(value['source_queue'])
                 if with_internal_queues:
@@ -1318,7 +1306,7 @@ Get some debugging output on the settings and the environment (to be extended):
         if count:
             return_dict = {'total-messages': sum(counters.values())}
         else:
-            for bot_id, info in self._pipeline_configuration().items():
+            for bot_id, info in utils.get_legacy_pipeline().items():
                 return_dict[bot_id] = {}
 
                 if 'source_queue' in info:
@@ -1347,7 +1335,7 @@ Get some debugging output on the settings and the environment (to be extended):
         if RETURN_TYPE == 'text':
             logger.info("Clearing queue %s.", queue)
         queues = set()
-        for key, value in self._pipeline_configuration().items():
+        for key, value in utils.get_legacy_pipeline().items():
             if 'source_queue' in value:
                 queues.add(value['source_queue'])
                 if pipeline.has_internal_queues:

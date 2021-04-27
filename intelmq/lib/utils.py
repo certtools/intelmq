@@ -879,3 +879,31 @@ def list_all_bots() -> dict:
 def get_global_settings() -> dict:
     runtime_conf = load_configuration(RUNTIME_CONF_FILE)
     return getattr(runtime_conf, 'global', {})
+
+
+def get_legacy_runtime() -> dict:
+    runtime_conf = load_configuration(RUNTIME_CONF_FILE)
+    if 'global' in runtime_conf:
+        del runtime_conf['global']
+    for item in runtime_conf:
+        if 'parameters' in item:
+            parameters = item['parameters']
+            if 'destination_queues' in parameters:
+                del parameters['destination_queues']
+            if 'source_queue' in parameters:
+                del parameters['source_queue']
+    return runtime_conf
+
+
+def get_legacy_pipeline() -> dict:
+    pipeline_configuration = {}
+    runtime_conf = load_configuration(RUNTIME_CONF_FILE)
+    for botid, botconfig in runtime_conf.items():
+        if botid != 'global':
+            pipeline_configuration[botid] = {"source_queue": f"{botid}-queue", "destination_queues": []}
+            if 'parameters' in botconfig:
+                if 'source_queue' in botconfig['parameters']:
+                    pipeline_configuration[botid]['source_queue'] = botconfig['parameters']['source_queue']
+                if 'destination_queues' in botconfig['parameters']:
+                    pipeline_configuration[botid]['destination_queues'] = botconfig['parameters']['destination_queues']
+    return pipeline_configuration
