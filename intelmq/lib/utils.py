@@ -876,6 +876,15 @@ def list_all_bots() -> dict:
     return bots
 
 
+def get_runtime() -> dict:
+    return load_configuration(RUNTIME_CONF_FILE)
+
+
 def get_global_settings() -> dict:
-    runtime_conf = load_configuration(RUNTIME_CONF_FILE)
+    runtime_conf = get_runtime()
     return getattr(runtime_conf, 'global', {})
+
+
+def set_runtime(runtime: dict) -> dict:
+    write_configuration(configuration_filepath=RUNTIME_CONF_FILE, content=runtime)
+    return get_runtime()
