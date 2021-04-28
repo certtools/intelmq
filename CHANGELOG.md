@@ -28,6 +28,8 @@ CHANGELOG
 ### Tests
 
 ### Tools
+- intelmqsetup:
+  - Set ownershop of state file path and its parent directory (PR#1911 by Sebastian Wagner).
 
 ### Contrib
 
