@@ -112,6 +112,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Tests
 
 ### Tools
+- intelmqsetup:
+  - Set ownershop of state file path and its parent directory (PR#1911 by Sebastian Wagner).
 
 ### Contrib
 
