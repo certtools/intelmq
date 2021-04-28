@@ -172,6 +172,7 @@ def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
     controller = IntelMQController(interactive=False, no_file_logging=True,
                                    drop_privileges=False)
     controller.upgrade_conf(state_file=state_file, no_backup=True)
+    change_owner(STATE_FILE_PATH, owner='intelmq', group='intelmq')
 
 
 def intelmqsetup_api(ownership: bool = True, webserver_user: Optional[str] = None):
