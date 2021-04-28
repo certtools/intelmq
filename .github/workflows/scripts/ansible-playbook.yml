@@ -53,6 +53,20 @@
         state: started
         name: "{{webserver}}"
 
+    # Store the intelmq version in a variable
+    - name: Get intelmq version
+      command: intelmqctl --version
+      register: intelmqversion
+    - name: Set intelmq_version fact
+      set_fact:
+        intelmq_version={{ intelmqversion.stdout }}
+    - name: Set intelmq_major_version fact
+      set_fact:
+        intelmq_major_version={{ intelmqversion.stdout[:1] }}
+    - name: Print version
+      debug:
+        msg: IntelMQ Version {{ intelmq_version }} and IntelMQ Major Version {{ intelmq_major_version }}
+
     - name: Run CLI tests
       include: "{{ item }}"
       loop: "{{ query('fileglob', '/src/intelmq-vagrant/ansible/tasks/cli/*.yml') | sort }}"
