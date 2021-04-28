@@ -165,8 +165,7 @@ def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
     if ownership:
         print('Setting intelmq as owner for it\'s directories.')
         for obj in (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
-                    VAR_STATE_PATH, FILE_OUTPUT_PATH, STATE_FILE_PATH,
-                    Path(STATE_FILE_PATH).parent):
+                    VAR_STATE_PATH, FILE_OUTPUT_PATH, Path(STATE_FILE_PATH).parent):
             change_owner(obj, owner='intelmq')
 
     print('Calling `intelmqctl upgrade-config` to update/create state file.')
