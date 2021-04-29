@@ -40,7 +40,7 @@ class UniversalWhoisExpertBot(Bot):
 
         if query:
             whois_entry = self._whois(query)
-            event.add('extra', {'whois': whois_entry})
+            event.add('extra.whois': whois_entry)
 
         self.send_message(event)
         self.acknowledge_message()
