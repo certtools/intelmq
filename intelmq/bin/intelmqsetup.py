@@ -165,13 +165,15 @@ def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
     if ownership:
         print('Setting intelmq as owner for it\'s directories.')
         for obj in (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
-                    VAR_STATE_PATH, FILE_OUTPUT_PATH):
+                    VAR_STATE_PATH, FILE_OUTPUT_PATH, Path(STATE_FILE_PATH).parent):
             change_owner(obj, owner='intelmq')
 
     print('Calling `intelmqctl upgrade-config` to update/create state file.')
     controller = IntelMQController(interactive=False, no_file_logging=True,
                                    drop_privileges=False)
     controller.upgrade_conf(state_file=state_file, no_backup=True)
+    if ownership:
+        change_owner(STATE_FILE_PATH, owner='intelmq', group='intelmq')
 
 
 def intelmqsetup_api(ownership: bool = True, webserver_user: Optional[str] = None):
@@ -274,8 +276,12 @@ def intelmqsetup_manager_webserver_configuration(webserver_configuration_directo
         print(red(f'Unable to install webserver configuration manager-config.conf: Neither {manager_config!s} nor {apache_manager_config!s} exists.'))
 
     if html_dir.exists():
-        shutil.copy(html_dir, '/')
-        print(f'Copied {html_dir!s} to {html_dir_destination!s}.')
+        try:
+            shutil.copy(html_dir, '/')
+        except Exception as exc:
+            print(red(f"Unable to copy {html_dir} to {html_dir_destination}: {exc!s}"))
+        else:
+            print(f'Copied {html_dir!s} to {html_dir_destination!s}.')
 
 
 def main():
