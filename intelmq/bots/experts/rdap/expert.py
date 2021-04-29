@@ -99,6 +99,13 @@ class RDAPExpertBot(Bot):
                             raise NotImplementedError("Authentication type %r (configured for service %r) is not implemented" % (service['auth'], domain_suffix))
 
                     resp = self.__session.get("{0}domain/{1}".format(service['url'], url))
+
+                    if resp.status_code < 200 or resp.status_code > 299:
+                        if resp.status_code == 404:
+                            return
+                        self.logger.debug("RDAP Server '%s' responded with '%d' for domain '%s'.", service['url'], resp.status_code, url)
+                        raise ValueError(f"Unable to process server's response, the returned status-code was {resp.status_code}. Enable debug logging to see more details.")
+
                     try:
                         resp = resp.json()
                     except ValueError:
