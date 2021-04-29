@@ -18,7 +18,7 @@ Both the XMPP collector bot and the XMPP output bot were removed. This [was eval
 and the XMPP bots were deprecated in 391d625.
 
 ### Harmonization
-The classification scheme has been updated to better match the [Reference Security Incident Taxonomy](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed:
+The classification scheme has been updated to better match the [Reference Security Incident Taxonomy (RSIT)](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed:
 
 | old taxonomy name | old type name | new taxonomy name | new type name |
 |-|-|-|-|
