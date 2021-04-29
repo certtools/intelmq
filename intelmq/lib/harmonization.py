@@ -259,8 +259,9 @@ class ClassificationType(String):
         'ransomware' -> 'infected-system'
         'unknown' -> 'undetermined'
 
-    These old values can not be automatically mapped as they are ambiguous:
-        'malware': Either 'infected-system' or 'malware-distribution'
+    These values changed their taxonomy:
+        'malware': In terms of the taxonomy 'malicious-code' they can be either 'infected-system' or 'malware-distribution'
+            but in terms of malware actually, it is now taxonomy 'other'
 
     Allowed values are:
      * """
@@ -286,6 +287,7 @@ class ClassificationType(String):
                       'infected-system',
                       'information-disclosure',
                       'data-leak',
+                      'malware',
                       'malware-configuration',
                       'malware-distribution',
                       'masquerade',

@@ -135,13 +135,13 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
    malicious-code                c2-server                                   This is a command and control server in charge of a given number of botnet drones.
    malicious-code                dga domain                                  DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers. Not in ENISA eCSIRT-II taxonomy.
    malicious-code                infected-system                             This is a compromised machine, which has been observed to make a connection to a command and control server.
-   malicious-code                malware                                     A URL is the most common resource with reference to malware binary distribution. Not in ENISA eCSIRT-II taxonomy.
    malicious-code                malware-configuration                       This is a resource which updates botnet drones with a new configuration.
    malicious-code                malware-distribution                        URI used for malware distribution, e.g. a download URL included in fake invoice malware spam.
    other                         blacklist                                   Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.
    other                         other                                       All incidents which don't fit in one of the given categories should be put into this class.
    other                         proxy                                       This refers to the use of proxies from inside your network. Not in ENISA eCSIRT-II taxonomy.
    other                         tor                                         This IOC refers to incidents related to TOR network infrastructure. Not in ENISA eCSIRT-II taxonomy.
+   other                         malware                                     An IoC referring to a malware (sample) itself. Not in RSIT.
    other                         undetermined                                The categorisation of the incident is unknown/undetermined.
    test                          test                                        Meant for testing.
    vulnerable                    ddos-amplifier                              Publicly accessible services that can be abused for conducting DDoS reflection/amplification attacks, e.g. DNS open-resolvers or NTP servers with monlist enabled.

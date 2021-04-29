@@ -30,15 +30,23 @@ The classification scheme has been updated to better match the [Reference Securi
 | malicious code               |                    | malicious-code               |                                        |
 | malicious code               | c2server           | malicious-code               | c2-server                              |
 | malicious code               | malware            | malicious-code               | infected-system / malware-distribution |
+| malicious code               | malware            | other                        | malware                                |
 | malicious code               | ransomware         | malicious-code               | infected-system                        |
 | vulnerable                   | vulnerable client  | vulnerable                   | vulnerable-system                      |
 | vulnerable                   | vulnerable service | vulnerable                   | vulnerable-system                      |
 | other                        | unknown            | other                        | undetermined                           |
 
 - For the taxonomy 'availability', the type `misconfiguration` is new.
-- For the taxonomy 'other', the type `undetermined` is new.
+- For the taxonomy 'other', the types `malware` and `undetermined` are new.
 
 The old names can still be used in code, and they are automatically converted to the new names.
+
+#### "Malware"
+
+The previously existing classification type "malware" under the taxonomy "malicious code" was removed, as this type does not exist in the RSIT.
+Most of the usages were wrong anyway, and should have been infected-device, malware-distribution or something else anyway.
+There is only one usage in IntelMQ, which can not be changed.
+And that one is really about malware itself (or: the hashes of samples). For this purpose, the new type "malware" under the taxonomy "other" was created, *slightly* deviating from the RSIT in this respect, but "other" can be freely extended.
 
 ### Configuration
 
@@ -93,6 +101,11 @@ UPDATE events
    SET "classification.type" = 'malware-distribution'
    WHERE "classification.taxonomy" = 'malicious-code' AND ("classification.type" = 'malware' OR "classification.type" = 'ransomware');
 ```
+or this:
+```sql
+UPDATE events
+   SET "classification.taxonomy" = 'other'
+   WHERE "classification.type" = 'malware';
 
 
 2.3.3 Bugfix release (unreleased)
