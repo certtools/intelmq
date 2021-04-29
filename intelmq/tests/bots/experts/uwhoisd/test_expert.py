@@ -32,9 +32,7 @@ class TestUniversalWhoisExpertBot(test.BotTestCase, unittest.TestCase):
         event = self.get_output_queue()[0]
         self.assertIsInstance(event, str)
         event = json.loads(event)
-        if 'extra.whois' in event and 'NG8867695-NICAT' in event['extra.whois']:
-            EXAMPLE_OUTPUT['extra.whois'] = event['extra.whois']
-        self.assertMessageEqual(0, EXAMPLE_OUTPUT)
+        self.assertTrue('NG8867695-NICAT' in event['extra.whois'], event['extra.whois'])
 
 
 if __name__ == '__main__':  # pragma: no cover

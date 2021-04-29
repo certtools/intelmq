@@ -12,11 +12,10 @@ class UniversalWhoisExpertBot(Bot):
     port: int = 4243
 
     def _whois(self, query: str) -> str:
-        print(query)
         bytes_whois = b''
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.connect((self.server, self.port))
-            sock.sendall('{}\n'.format(query).encode())
+            sock.sendall(f'{query}\n'.encode())
             while True:
                 data = sock.recv(2048)
                 if not data:
