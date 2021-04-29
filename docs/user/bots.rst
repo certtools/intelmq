@@ -2908,6 +2908,27 @@ writes it to `source.fqdn` or `destination.fqdn` if it is a hostname, or
 
 * `overwrite`: boolean, replace existing FQDN / IP address?
 
+uWhoisd
+^^^^^^^
+
+[uWhoisd](https://github.com/Lookyloo/uwhoisd) is a universal Whois server that supports
+caching and stores whois entries for historical purposes.
+
+The bot sends a request for `source.url`, `source.asn`, `source.fqdn`, or `source.ip`
+to the configured uWhoisd instance and saves the retrieved whois entry `extra.whois`.
+
+Events without `source.url`, `source.asn`, `source.fqdn`, or `source.ip`, are ignored.
+
+**Information**
+
+* `name:` intelmq.bots.experts.uwhoisd.expert
+* `description:` uWhoisd is a universal Whois server
+
+**Configuration Parameters**
+
+* `server`: IP or hostname to connect to
+* `port`: Port to connect to
+
 Wait
 ^^^^
 
