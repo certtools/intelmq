@@ -8,14 +8,9 @@ from intelmq.bots.experts.uwhoisd.expert import UniversalWhoisExpertBot
 
 
 EXAMPLE_INPUT = {"__type": "Event",
-                 "source.fqdn": "www.cert.at",
+                 "source.url": "http://www.cert.at/",
                  "time.observation": "2015-01-01T00:00:00+00:00"
                  }
-EXAMPLE_OUTPUT = {"__type": "Event",
-                  "source.fqdn": "www.cert.at",
-                  "extra.whois": "Whois record",  # will be replaced in the code below
-                  "time.observation": "2015-01-01T00:00:00+00:00"
-                  }
 
 
 @test.skip_exotic()

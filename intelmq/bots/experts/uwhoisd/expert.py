@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import socket
+from urllib.parse import urlparse
 
 from intelmq.lib.bot import Bot
 
@@ -27,19 +28,20 @@ class UniversalWhoisExpertBot(Bot):
     def process(self):
         event = self.receive_message()
         if 'source.url' in event:
-            query = event.get('source.url')
+            parsed = urlparse(event.get('source.url'))
+            query = parsed.hostname
         elif 'source.asn' in event:
             query = event.get('source.asn')
         elif 'source.fqdn' in event:
             query = event.get('source.fqdn')
         elif 'source.ip' in event:
-            query = event.get('source.ip ')
+            query = event.get('source.ip')
         else:
             query = None
 
         if query:
             whois_entry = self._whois(query)
-            event.add('extra.whois': whois_entry)
+            event.add('extra.whois', whois_entry)
 
         self.send_message(event)
         self.acknowledge_message()
