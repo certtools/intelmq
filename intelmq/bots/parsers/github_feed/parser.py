@@ -79,7 +79,7 @@ class GithubFeedParserBot(Bot):
             for ioc in json_content:
                 event = clean_event.copy()
                 event.add('raw', str(ioc))
-                event.add('classification.type', 'unknown')
+                event.add('classification.type', 'malware')
                 event.add('classification.taxonomy', 'other')
                 event.add('event_description.text', ioc['Description'])
 
@@ -129,7 +129,7 @@ def parse_domain_indicator(event, ioc_indicator: str):
 
 def parse_hash_indicator(event, ioc_indicator: str, hash_type: str):
     event.add('malware.hash.{}'.format(hash_type), ioc_indicator)
-    event.change('classification.taxonomy', 'malicious code')
+    event.change('classification.taxonomy', 'other')
     event.change('classification.type', 'malware')
     return event
 

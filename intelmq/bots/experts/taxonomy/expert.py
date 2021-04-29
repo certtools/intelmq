@@ -55,6 +55,7 @@ TAXONOMY = {
     "undetermined": "other",
     "proxy": "other",  # not in ENISA eCSIRT-II taxonomy
     "tor": "other",  # not in ENISA eCSIRT-II taxonomy
+    "malware": "other",  # intentionally not in RSIT
     "test": "test",
     "ddos-amplifier": "vulnerable",
     "information-disclosure": "vulnerable",

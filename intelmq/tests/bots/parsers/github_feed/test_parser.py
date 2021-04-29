@@ -23,7 +23,7 @@ EXAMPLE_STRANGEREALINTEL_EVENT = {
     "feed.name": "Strangereal Intel DailyIOC",
     "time.observation": "2019-03-01T01:01:01+00:00",
     "classification.taxonomy": "other",
-    "classification.type": "unknown",
+    "classification.type": "malware",
     "__type": "Event"
 }
 
@@ -49,8 +49,6 @@ class TestGithubFeedParserBot(test.BotTestCase, unittest.TestCase):
 
         self.assertRegexpMatchesLog("Unknown feed '{}'.".format(wrong_report['feed.url']))
 
-    # https://github.com/certtools/intelmq/issues/1752
-    @unittest.expectedFailure
     def test_extra_fields_are_present_in_generated_event(self):
         custom_report = EXAMPLE_STRANGEREALINTEL_REPORT.copy()
         custom_report['extra.file_metadata'] = {
@@ -64,8 +62,6 @@ class TestGithubFeedParserBot(test.BotTestCase, unittest.TestCase):
         for event in self.get_output_queue():
             assert 'extra.file_metadata.sha' in event and 'extra.file_metadata.size' in event
 
-    # https://github.com/certtools/intelmq/issues/1752
-    @unittest.expectedFailure
     def test_strangerealintel_feed_processing_is_successful(self):
         self.run_bot()
 
@@ -74,7 +70,7 @@ class TestGithubFeedParserBot(test.BotTestCase, unittest.TestCase):
         sha256_event = EXAMPLE_STRANGEREALINTEL_EVENT.copy()
         sha256_event['malware.hash.sha256'] = EXAMPLE_STRANGERINTEL_FILE_JSON[0]['Indicator']
         sha256_event['event_description.text'] = EXAMPLE_STRANGERINTEL_FILE_JSON[0]['Description']
-        sha256_event['classification.taxonomy'] = 'malicious code'
+        sha256_event['classification.taxonomy'] = 'other'
         sha256_event['classification.type'] = 'malware'
         sha256_event['raw'] = utils.base64_encode(str(EXAMPLE_STRANGERINTEL_FILE_JSON[0]))
         self.assertMessageEqual(0, sha256_event)
@@ -82,7 +78,7 @@ class TestGithubFeedParserBot(test.BotTestCase, unittest.TestCase):
         md5_event = EXAMPLE_STRANGEREALINTEL_EVENT.copy()
         md5_event['malware.hash.md5'] = EXAMPLE_STRANGERINTEL_FILE_JSON[1]['Indicator']
         md5_event['event_description.text'] = EXAMPLE_STRANGERINTEL_FILE_JSON[1]['Description']
-        md5_event['classification.taxonomy'] = 'malicious code'
+        md5_event['classification.taxonomy'] = 'other'
         md5_event['classification.type'] = 'malware'
         md5_event['raw'] = utils.base64_encode(str(EXAMPLE_STRANGERINTEL_FILE_JSON[1]))
         self.assertMessageEqual(1, md5_event)

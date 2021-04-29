@@ -76,6 +76,7 @@ class IdeaExpertBot(Bot):
         "copyright": "Fraud.Copyright",
         "misconfiguration": "Availability.Outage",  # outage includes human error
         "undetermined": "Other",
+        "malware": "Malware",
     }
 
     TYPE_TO_SOURCE_TYPE = {
