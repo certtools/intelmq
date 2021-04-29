@@ -62,7 +62,7 @@ Getting involved
    :maxdepth: 1
 
    dev/guide
-   dev/data-harmonization
+   dev/data-format
    dev/harmonization-fields
    dev/release-procedure
    dev/feeds-wishlist

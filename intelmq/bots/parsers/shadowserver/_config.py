@@ -58,9 +58,9 @@ the second value is the row in the shadowserver csv.
 Reference material:
     * when setting the classification.* fields,
       please use the taxonomy from the Data Harmonization
-      :ref:`data harmonization classification`
+      :ref:`data format classification`
       or upstream from https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
-    * please respect the Data harmonization ontology: :doc:`/dev/data-harmonization`
+    * please respect the Data format ontology: :doc:`/dev/data-format`
 
 
 TODOs:

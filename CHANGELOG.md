@@ -106,6 +106,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 #### Outputs
 
 ### Documentation
+- `dev/data-harmonization` renamed to `dev/data-format` (by Sebastian Waldbauer)
 
 ### Packaging
 
