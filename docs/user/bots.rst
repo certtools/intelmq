@@ -2914,10 +2914,20 @@ uWhoisd
 [uWhoisd](https://github.com/Lookyloo/uwhoisd) is a universal Whois server that supports
 caching and stores whois entries for historical purposes.
 
-The bot sends a request for `source.url`, `source.asn`, `source.fqdn` or `source.ip` (the first existing field takes precedence)
+The bot sends a request for `source.url`, `source.fqdn`, `source.ip` or `source.asn` (the first existing field takes precedence)
 to the configured uWhoisd instance and saves the retrieved whois entry `extra.whois`.
 
-Events without `source.url`, `source.asn`, `source.fqdn`, or `source.ip`, are ignored.
+Events without `source.url`, `source.fqdn`, `source.ip`, or `source.asn`, are ignored.
+
+**Note**: requesting a whois entry for a fully qualified domain name (FQDN) only works if the request
+only contains the domain. uWhoisd will automatically strip the subdomain part if it is present in the request.
+
+Example: `https://www.theguardian.co.uk`
+* TLD: `co.uk` (uWhoisd uses the [Mozilla public suffix list](https://publicsuffix.org/list/) as a reference)
+* Domain: `theguardian.co.uk`
+* Subdomain: `www`
+
+The whois request will be for `theguardian.co.uk`
 
 **Information**
 

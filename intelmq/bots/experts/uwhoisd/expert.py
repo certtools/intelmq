@@ -30,12 +30,12 @@ class UniversalWhoisExpertBot(Bot):
         if 'source.url' in event:
             parsed = urlparse(event.get('source.url'))
             query = parsed.hostname
-        elif 'source.asn' in event:
-            query = event.get('source.asn')
         elif 'source.fqdn' in event:
             query = event.get('source.fqdn')
         elif 'source.ip' in event:
             query = event.get('source.ip')
+        elif 'source.asn' in event:
+            query = event.get('source.asn')
         else:
             query = None
 
