@@ -3415,7 +3415,6 @@ Events without `source.url`, `source.fqdn`, `source.ip`, or `source.asn`, are ig
 only contains the domain. uWhoisd will automatically strip the subdomain part if it is present in the request.
 
 Example: `https://www.theguardian.co.uk`
-
 * TLD: `co.uk` (uWhoisd uses the `Mozilla public suffix list <https://publicsuffix.org/list/>`_ as a reference)
 * Domain: `theguardian.co.uk`
 * Subdomain: `www`
