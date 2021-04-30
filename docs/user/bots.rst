@@ -2911,7 +2911,7 @@ writes it to `source.fqdn` or `destination.fqdn` if it is a hostname, or
 uWhoisd
 ^^^^^^^
 
-[uWhoisd](https://github.com/Lookyloo/uwhoisd) is a universal Whois server that supports
+`uWhoisd <https://github.com/Lookyloo/uwhoisd>`_ is a universal Whois server that supports
 caching and stores whois entries for historical purposes.
 
 The bot sends a request for `source.url`, `source.fqdn`, `source.ip` or `source.asn` (the first existing field takes precedence)
