@@ -2914,7 +2914,7 @@ uWhoisd
 [uWhoisd](https://github.com/Lookyloo/uwhoisd) is a universal Whois server that supports
 caching and stores whois entries for historical purposes.
 
-The bot sends a request for `source.url`, `source.asn`, `source.fqdn`, or `source.ip`
+The bot sends a request for `source.url`, `source.asn`, `source.fqdn` or `source.ip` (the first existing field takes precedence)
 to the configured uWhoisd instance and saves the retrieved whois entry `extra.whois`.
 
 Events without `source.url`, `source.asn`, `source.fqdn`, or `source.ip`, are ignored.
