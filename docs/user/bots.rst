@@ -2930,6 +2930,43 @@ writes it to `source.fqdn` or `destination.fqdn` if it is a hostname, or
 
 * `overwrite`: boolean, replace existing FQDN / IP address?
 
+uWhoisd
+^^^^^^^
+
+`uWhoisd <https://github.com/Lookyloo/uwhoisd>`_ is a universal Whois server that supports
+caching and stores whois entries for historical purposes.
+
+The bot sends a request for `source.url`, `source.fqdn`, `source.ip` or `source.asn`
+to the configured uWhoisd instance and saves the retrieved whois entry:
+
+* If both `source.url` and `source.fqdn` are present, it will only do a request for `source.fqdn`,
+  as the hostname of `source.url` should be the same as `source.fqdn`.
+  The whois entry will be saved in `extra.whois.fqdn`.
+* If `source.ip` is present, the whois entry will be saved in `extra.whois.ip`
+* If `source.asn` is present, he whois entry will be saved in `extra.whois.asn`
+
+Events without `source.url`, `source.fqdn`, `source.ip`, or `source.asn`, are ignored.
+
+**Note**: requesting a whois entry for a fully qualified domain name (FQDN) only works if the request
+only contains the domain. uWhoisd will automatically strip the subdomain part if it is present in the request.
+
+Example: `https://www.theguardian.co.uk`
+* TLD: `co.uk` (uWhoisd uses the `Mozilla public suffix list <https://publicsuffix.org/list/>`_ as a reference)
+* Domain: `theguardian.co.uk`
+* Subdomain: `www`
+
+The whois request will be for `theguardian.co.uk`
+
+**Information**
+
+* `name:` intelmq.bots.experts.uwhoisd.expert
+* `description:` uWhoisd is a universal Whois server
+
+**Configuration Parameters**
+
+* `server`: IP or hostname to connect to  (default: localhost)
+* `port`: Port to connect to (default: 4243)
+
 Wait
 ^^^^
 
