@@ -2926,8 +2926,8 @@ Events without `source.url`, `source.asn`, `source.fqdn`, or `source.ip`, are ig
 
 **Configuration Parameters**
 
-* `server`: IP or hostname to connect to
-* `port`: Port to connect to
+* `server`: IP or hostname to connect to  (default: localhost)
+* `port`: Port to connect to (default: 4243)
 
 Wait
 ^^^^
