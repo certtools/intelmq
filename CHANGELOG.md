@@ -77,6 +77,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
     - `append`
     - `append!` (forced/overwriting)
   - Rewrite the rule-processing and operator-handling code to make it more comprehensible and extensible.
+- Added `intelmq.bots.experts.uwhoisd`: A bot that fetches the whois entry from a uwhois-instance (PR#1918 by Raphaël Vinot).
 
 #### Outputs
 - Remove `intelmq.bots.outputs.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
