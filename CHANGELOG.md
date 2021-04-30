@@ -63,6 +63,20 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - Added `intelmq.bots.experts.http.expert_content`: A bot that fetches an HTTP resource and checks if it contains a specific string.
 - Added `intelmq.bots.experts.lookyloo.expert`: A bot that sends requests to a lookyloo instance & adds `screenshot_url` to the event (PR#1844 by Sebastian Waldbauer, fixes #1048).
 - Added `intelmq.bots.experts.rdap.expert`: A bot that checks the rdap protocol for an abuse contact for a given domain.
+- `intelmq.bots.experts.sieve.expert`: (all changes PR#1895 by Mikk Margus Möll):
+  - Add operators for comparing lists and sets:
+    - `:equals`
+    - `:overlaps`
+    - `:supersetof`
+    - `:subsetof`
+    - `:equals`
+  - Add support for comparing boolean values.
+  - Add support for rule negation with `!` (currently only for list comparators).
+  - Add support for values types float, int, bool and string for all lists items.
+  - Add actions for lists:
+    - `append`
+    - `append!` (forced/overwriting)
+  - Rewrite the rule-processing and operator-handling code to make it more comprehensible and extensible.
 
 #### Outputs
 - Remove `intelmq.bots.outputs.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
