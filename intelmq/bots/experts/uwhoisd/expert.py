@@ -27,21 +27,22 @@ class UniversalWhoisExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
-        if 'source.url' in event:
-            parsed = urlparse(event.get('source.url'))
-            query = parsed.hostname
-        elif 'source.fqdn' in event:
-            query = event.get('source.fqdn')
-        elif 'source.ip' in event:
-            query = event.get('source.ip')
-        elif 'source.asn' in event:
-            query = event.get('source.asn')
-        else:
-            query = None
-
-        if query:
+        if 'source.url' in event or 'source.fqdn' in event:
+            if 'source.fqdn' in event:
+                query = event.get('source.fqdn')
+            else:
+                parsed = urlparse(event.get('source.url'))
+                query = parsed.hostname
             whois_entry = self._whois(query)
-            event.add('extra.whois', whois_entry)
+            event.add('extra.whois.fqdn', whois_entry)
+        if 'source.ip' in event:
+            query = event.get('source.ip')
+            whois_entry = self._whois(query)
+            event.add('extra.whois.ip', whois_entry)
+        if 'source.asn' in event:
+            query = event.get('source.asn')
+            whois_entry = self._whois(f'AS{query}')
+            event.add('extra.whois.asn', whois_entry)
 
         self.send_message(event)
         self.acknowledge_message()
