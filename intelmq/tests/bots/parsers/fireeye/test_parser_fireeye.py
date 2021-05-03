@@ -41,6 +41,7 @@ EXAMPLE_EVENTS_PARTS = [{'classification.type': 'malware',
                         ]
 
 
+@test.skip_exotic()
 class TestFireeyeParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for FireeyeParserBot.
@@ -60,6 +61,7 @@ class TestFireeyeParserBot(test.BotTestCase, unittest.TestCase):
             event_['raw'] = utils.base64_encode(FILE)
             self.assertMessageEqual(position, event_)
         self.assertOutputQFILE_LINES = FILE.splitlines()
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

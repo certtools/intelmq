@@ -1,17 +1,18 @@
-
 """
 Fireeye Parser Bot
 Retrieves a base64 encoded JSON-String from raw and converts it into an
 event.
 """
+import ipaddress
+
+try:
+    import xmltodict
+except ImportError:
+    xmltodict = None
+
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import MessageFactory
-from intelmq.lib.utils import base64_decode
 from intelmq.lib.exceptions import MissingDependencyError
-import json
-import xmltodict
-import ipaddress
 
 
 class FireeyeParserBot(ParserBot):
@@ -19,8 +20,6 @@ class FireeyeParserBot(ParserBot):
     def init(self):
         if xmltodict is None:
             raise MissingDependencyError("xmltodict")
-        if ipaddress is None:
-            raise MissingDependencyError("ipaddress")
 
     def process(self):
         report = self.receive_message()
@@ -34,7 +33,7 @@ class FireeyeParserBot(ParserBot):
                     md5sum = indicator['Content']['#text']
                     event.add('malware.hash.md5', md5sum)
                 if indicatorType == 'FileItem/Sha256sum':
-                    self.logger.debug('FileItem/Sha256sum from uuid' + indicator['Content']['#text'] + '.')
+                    self.logger.debug('FileItem/Sha256sum from UUID %r.', indicator['Content']['#text'])
                     sha256sum = indicator['Content']['#text']
                     event.add('malware.hash.sha256', sha256sum)
                     event.add('classification.type', 'malware')
@@ -43,8 +42,8 @@ class FireeyeParserBot(ParserBot):
                     data = raw_report.split('<Indicator id')
                     uuidres = data[0].split('"alert_id">')
                     uuid = uuidres[1].split('"')
-                    self.logger.debug('My UUID is:  %r' + uuid[0] + '.')
-                    Indicator = data.__getitem__(2)
+                    self.logger.debug('My UUID is: %r.', uuid[0])
+                    Indicator = data[2]
                     event = self.new_event(report)
                     if "Network" in Indicator:
                         event.add('classification.type', 'malware-distribution')
@@ -75,9 +74,9 @@ class FireeyeParserBot(ParserBot):
                                     if 'Content' in searchIndicator:
                                         Content_search = searchIndicator.split('">')
                                         context = Content_search[1].split('</Content>')
-                                        self.logger.debug(classification + "   " + context[0] + '.')
+                                        self.logger.debug("Classification: %r Context: %r.", classification, context[0])
                                         if fqdn != "" and urlpath != "":
-                                            event.add("destination.url", "http://" + fqdn + urlpath)
+                                            event.add("destination.url", f"http://{fqdn}{urlpath}")
                                             urlpath = ""
                                         if classification == "destination.ip":
                                             try:
