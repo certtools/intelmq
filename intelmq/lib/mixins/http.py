@@ -66,7 +66,7 @@ class HttpMixin:
             self.__session.cert = self.ssl_client_cert
         # auth settings
         if self.http_username is not None:
-            self.__auth = (self.http_username, self, http_password)
+            self.__auth = (self.http_username, self.http_password)
         self.__session.auth = self.__auth
         # headers settings
         if self.http_header is not None:
