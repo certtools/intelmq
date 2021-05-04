@@ -4,7 +4,7 @@ Configuration and Management
 
 .. contents::
 
-For installation instructions, see :doc:`installation`. 
+For installation instructions, see :doc:`installation`.
 For upgrade instructions, see :doc:`upgrade`.
 
 ******************
@@ -102,7 +102,7 @@ Error Handling
 * **error_procedure** - in case of an error, this option defines the procedure that the bot will adopt. Use the following values:
 
     * **stop** - stop bot after retrying X times (as defined in ``error_max_retries``)  with a delay between retries (as defined in ``error_retry_delay``). If the bot reaches the ``error_max_retries`` value, it will remove the message from the pipeline and stop. If the option ``error_dump_message`` is also enable, the bot will dump the removed message to its dump file (to be found in var/log).
-    
+
     * **pass** - will skip this message and will process the next message after retrying X times, removing the current message from pipeline. If the option ``error_dump_message`` is also enable, then the bot will dump the removed message to its dump file. After max retries are reached, the rate limit is applied (e.g. a collector bot fetch an unavailable resource does not try forever).
 
 * **error_max_retries** - in case of an error, the bot will try to re-start processing the current message X times as defined by this option. int value.
@@ -228,7 +228,7 @@ This configuration is used by each bot to load its specific (runtime) parameters
 
 More examples can be found in the ``intelmq/etc/runtime.conf`` directory. See :doc:`bots` for more details.
 
-By default, all of the bots are started when you start the whole botnet, however there is a possibility to *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your runtime.conf: ``"enabled": false``. For example: 
+By default, all of the bots are started when you start the whole botnet, however there is a possibility to *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your runtime.conf: ``"enabled": false``. For example:
 
 .. code-block:: yaml
 
@@ -400,7 +400,7 @@ Management
 IntelMQ has a modular structure consisting of bots. There are four types of bots:
 
 * :ref:`collector bots` retrieve data from internal or external sources, the output are *reports* consisting of many individual data sets / log lines.
-* :ref:`parser bots` parse the (report) data by splitting it into individual *events* (log lines) and giving them a defined structure, see also :doc:`/dev/data-harmonization` for the list of fields an event may be split up into.
+* :ref:`parser bots` parse the (report) data by splitting it into individual *events* (log lines) and giving them a defined structure, see also :doc:`/dev/data-format` for the list of fields an event may be split up into.
 * :ref:`expert bots` enrich the existing events by e.g. lookup up information such as DNS reverse records, geographic location information (country code) or abuse contacts for an IP address or domain name.
 * :ref:`output bots` write events to files, databases, (REST)-APIs or any other data sink that you might want to write to.
 
@@ -552,19 +552,19 @@ When bots are failing due to bad input data or programming errors, they can dump
    usage:
        intelmqdump [botid]
        intelmqdump [-h|--help]
-   
+
    intelmqdump can inspect dumped messages, show, delete or reinject them into
    the pipeline. It's an interactive tool, directly start it to get a list of
    available dumps or call it with a known bot id as parameter.
-   
+
    positional arguments:
      botid       botid to inspect dumps of
-   
+
    optional arguments:
      -h, --help  show this help message and exit
      --truncate TRUNCATE, -t TRUNCATE
                            Truncate raw-data with more characters than given. 0 for no truncating. Default: 1000.
-   
+
    Interactive actions after a file has been selected:
    - r, Recover by IDs
      > r id{,id} [queue name]
@@ -597,7 +597,7 @@ When bots are failing due to bad input data or programming errors, they can dump
      Opens an editor (by calling `sensible-editor`) on the message. The modified message is then saved in the dump.
    - q, Quit
      > q
-   
+
    $ intelmqdump
     id: name (bot id)                    content
      0: alienvault-otx-parser            1 dumps
@@ -649,7 +649,7 @@ Integration with ticket systems, etc.
 
 First of all, IntelMQ is a message (event) processing system: it collects feeds, processes them, enriches them, filters them and then stores them somewhere or sends them to another system. It does this in a composable, data flow oriented fashion, based on single events. There are no aggregation or grouping features. Now, if you want to integrate IntelMQ with your ticket system or some other system, you need to send its output to somewhere where your ticket system or other services can pick up IntelMQ's data. This could be a database, splunk, or you could send your events directly via email to a ticket system.
 
-Different users came up with different solutions for this, each of them fitting their own organisation. Hence these solutions are not part of the core IntelMQ repository. 
+Different users came up with different solutions for this, each of them fitting their own organisation. Hence these solutions are not part of the core IntelMQ repository.
   * CERT.at uses a postgresql DB (sql output bot) and has a small tool ``intelmqcli`` which fetches the events in the postgresql DB which are marked as "new" and will group them and send them out via the RT ticket system.
   * Others, including BSI, use a tool called ``intelmq-mailgen``. It sends E-Mails to the recipients, optionally PGP-signed with defined text-templates, CSV formatted attachments with grouped events and generated ticket numbers.
 
@@ -657,7 +657,7 @@ The following lists external github repositories which you might consult for exa
 
   * `certat repository <https://github.com/certat/intelmq>`_
   * `Intevation's Mailgen <https://github.com/Intevation/intelmq-mailgen>`_
-  
+
 If you came up with another solution for integration, we'd like to hear from you! Please reach out to us on the |intelmq-users-list-link|.
 
 **************************
