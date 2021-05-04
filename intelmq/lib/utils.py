@@ -888,3 +888,25 @@ def get_global_settings() -> dict:
 def set_runtime(runtime: dict) -> dict:
     write_configuration(configuration_filepath=RUNTIME_CONF_FILE, content=runtime)
     return get_runtime()
+
+
+def get_bots_settings(bot_id: str = None) -> dict:
+    """
+    Returns the settings for configured bots.
+    Global default values are merged into the bots' parameters.
+
+    If bot_id is given, only the settings for this bot_id are returned
+    """
+    runtime_conf = get_runtime()
+    for bot in runtime_conf:
+        if bot_id and bot_id != bot:  # Skip merging parameters if we don't need to do so
+            continue
+        # bot's parameters take precedence
+        runtime_conf[bot]['parameters'] = {**runtime_conf.get('global', {}), **runtime_conf[bot].get('parameters', {})}
+
+    if bot_id:
+        return runtime_conf[bot_id]
+
+    if 'global' in runtime_conf:
+        del runtime_conf['global']
+    return runtime_conf
