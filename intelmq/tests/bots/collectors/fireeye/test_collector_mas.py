@@ -5,7 +5,7 @@ import secrets
 import requests_mock
 
 import intelmq.lib.test as test
-from intelmq.bots.collectors.fireeye.collector_fireeye import FireeyeCollectorBot
+from intelmq.bots.collectors.fireeye.collector_mas import FireeyeMASCollectorBot
 
 RANDSTR = secrets.token_urlsafe(50)
 ASSET_PATH_FIRST = pathlib.Path(__file__).parent / 'first_request.json'
@@ -21,14 +21,14 @@ def prepare_mocker(mocker):
 
 @test.skip_exotic()
 @requests_mock.Mocker()
-class TestFireeyeCollectorBot(test.BotTestCase, unittest.TestCase):
+class TestFireeyeMASCollectorBot(test.BotTestCase, unittest.TestCase):
     """
     Testcases for the Fireeye collector bot
     """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = FireeyeCollectorBot
+        cls.bot_reference = FireeyeMASCollectorBot
 
     def test_faulty_config(self, mocker):
         prepare_mocker(mocker)
