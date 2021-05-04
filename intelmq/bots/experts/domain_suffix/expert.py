@@ -12,8 +12,7 @@ import requests.exceptions
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import InvalidArgument
-from intelmq import RUNTIME_CONF_FILE
-from intelmq.lib.utils import load_configuration, create_request_session
+from intelmq.lib.utils import get_bots_settings, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
 
 try:
@@ -77,7 +76,7 @@ class DomainSuffixExpertBot(Bot):
     @classmethod
     def update_database(cls):
         bots = {}
-        runtime_conf = load_configuration(RUNTIME_CONF_FILE)
+        runtime_conf = get_bots_settings()
         try:
             for bot in runtime_conf:
                 if runtime_conf[bot]["module"] == __name__:
