@@ -12,9 +12,10 @@ import io
 import os
 import tempfile
 import unittest
+import unittest.mock
 import requests
+import pkg_resources
 import pprint
-import importlib
 
 import cerberus
 import json
@@ -35,6 +36,16 @@ SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
                       'Lorem ipsum dolor sit amet'],
            'unicode': [b'\xc2\xa9\xc2\xab\xc2\xbb \xc2\xa4\xc2\xbc',
                        '©«» ¤¼']}
+
+
+def new_get_runtime() -> dict:
+    runtime_conf = utils.load_configuration(pkg_resources.resource_filename('intelmq', 'etc/runtime.yaml'))
+    if 'global' not in runtime_conf:
+        runtime_conf['global'] = {}
+    runtime_conf['global']['http_proxy'] = 'http://localhost:8080'
+    runtime_conf['global']['https_proxy'] = 'http://localhost:8080'
+    runtime_conf['cymru-whois-expert']['parameters']['http_proxy'] = 'http://localhost:8081'
+    return runtime_conf
 
 
 class TestUtils(unittest.TestCase):
@@ -271,7 +282,6 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(utils.file_name_from_response(response),
                          '2019-09-09-drone_brute_force-austria-geo.csv')
 
-
     def test_list_all_bots(self):
         """ test list_all_bots """
         bots_list = utils.list_all_bots()
@@ -283,6 +293,21 @@ class TestUtils(unittest.TestCase):
 
         self.assertTrue(v.validate(bots_list),
                         msg='Invalid BOTS list:\n%s' % pprint.pformat(v.errors))
+
+    def test_get_bots_settings(self):
+        with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
+            runtime = utils.get_bots_settings()
+        self.assertEqual(runtime['cymru-whois-expert']['parameters']['http_proxy'], 'http://localhost:8081')
+        self.assertEqual(runtime['deduplicator-expert']['parameters']['http_proxy'], 'http://localhost:8080')
+
+        with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
+            cymru = utils.get_bots_settings('cymru-whois-expert')
+        self.assertEqual(cymru['parameters']['http_proxy'], 'http://localhost:8081')
+
+        with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
+            deduplicator = utils.get_bots_settings('deduplicator-expert')
+        self.assertEqual(deduplicator['parameters']['http_proxy'], 'http://localhost:8080')
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
