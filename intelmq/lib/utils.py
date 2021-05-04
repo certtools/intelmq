@@ -882,7 +882,7 @@ def get_runtime() -> dict:
 
 def get_global_settings() -> dict:
     runtime_conf = get_runtime()
-    return getattr(runtime_conf, 'global', {})
+    return runtime_conf.get('global', {})
 
 
 def set_runtime(runtime: dict) -> dict:
