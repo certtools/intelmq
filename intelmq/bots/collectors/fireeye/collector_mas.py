@@ -5,7 +5,7 @@ Fireeye collector bot
 Parameters:
 http_username, http_password: string
 http_timeout_max_tries: an integer depicting how often a connection attempt is retried
-dns_name : dns name of the local appliance
+host : dns name of the local appliance
 request_duration: how old date should be fetched eg 24_hours or 48_hours
 """
 from intelmq.lib.bot import CollectorBot
@@ -18,14 +18,14 @@ except ImportError:
     xmltodict = None
 
 
-class FireeyeCollectorBot(CollectorBot, HttpMixin):
+class FireeyeMASCollectorBot(CollectorBot, HttpMixin):
 
-    dns_name: str = None
+    host: str = None
     request_duration: str = None
     http_username: str = None
     http_password: str = None
 
-    def xml_processor(self, uuid, token, new_report, dns_name, product):
+    def xml_processor(self, uuid, token, new_report, host, product):
 
         http_url = f'https://{host}/wsapis/v2.0.0/openioc?alert_uuid={uuid}'
         http_header = {'X-FeApi-Token': token}
@@ -47,8 +47,8 @@ class FireeyeCollectorBot(CollectorBot, HttpMixin):
         if xmltodict is None:
             raise MissingDependencyError("xmltodict")
 
-        if self.dns_name is None:
-            raise ValueError('No dns name provided.')
+        if self.host is None:
+            raise ValueError('No host provided.')
         if self.request_duration is None:
             raise ValueError('No request_duration provided.')
         if self.http_username is None:
@@ -79,10 +79,10 @@ class FireeyeCollectorBot(CollectorBot, HttpMixin):
                 self.logger.debug('Got a new message from product %r with UUID %r.', alert['product'], alert['uuid'])
                 if alert['product'] == 'EMAIL_MPS' and alert['name'] == 'MALWARE_OBJECT':
                     uuid = alert['uuid']
-                    self.xml_processor(uuid, token, new_report, self.dns_name, product="EMAIL_MPS")
+                    self.xml_processor(uuid, token, new_report, self.host, product="EMAIL_MPS")
                 if alert['product'] == 'MAS' and alert['name'] == 'MALWARE_OBJECT':
                     uuid = alert['uuid']
-                    self.xml_processor(uuid, token, new_report, self.dns_name, product="MAS")
+                    self.xml_processor(uuid, token, new_report, self.host, product="MAS")
 
 
-BOT = FireeyeCollectorBot
+BOT = FireeyeMASCollectorBot
