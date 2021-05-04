@@ -1010,7 +1010,7 @@ Get some debugging output on the settings and the environment (to be extended):
             self.parser = parser
 
     def load_defaults_configuration(self, silent=False):
-        for option, value in utils.get_global_settings():
+        for option, value in utils.get_global_settings().items():
             setattr(self.parameters, option, value)
 
         # TODO: Rewrite variables with env. variables ( CURRENT IMPLEMENTATION NOT FINAL )

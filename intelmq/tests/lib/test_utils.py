@@ -308,6 +308,12 @@ class TestUtils(unittest.TestCase):
             deduplicator = utils.get_bots_settings('deduplicator-expert')
         self.assertEqual(deduplicator['parameters']['http_proxy'], 'http://localhost:8080')
 
+    def test_get_global_settings(self):
+        with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
+            defaults = utils.get_global_settings()
+        self.assertEqual(defaults['http_proxy'], 'http://localhost:8080')
+        self.assertEqual(defaults['https_proxy'], 'http://localhost:8080')
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
