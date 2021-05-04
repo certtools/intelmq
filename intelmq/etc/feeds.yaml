@@ -1877,3 +1877,20 @@ providers:
       revision: 2021-03-22
       documentation: https://developer.shodan.io/api/stream
       public: no
+  Fireeye:
+    Malware Analysis System:
+      description: Process data from Fireeye mail and file analysis appliances. SHA1 and MD5 malware hashes are extracted and if there is network communication, also URLs and domains.
+      documentation: https://www.fireeye.com/products/malware-analysis.html
+      public: no
+      revision: 2021-05-03
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.fireeye.collector_mas
+          parameters:
+            host: <hostname of your appliance>
+            request_duration: <how old date should be fetched eg 24_hours or 48_hours>
+            http_username: <your username>
+            http_password: <your password>
+        parser:
+          module: intelmq.bots.parsers.fireeye.parser
