@@ -1259,8 +1259,14 @@ Get some debugging output on the settings and the environment (to be extended):
                         'description': self.runtime_configuration[bot_id].get('description')}
                        for bot_id in sorted(self._configured_bots_list())]
         else:
-            val = utils.list_all_bots()
-            return 0, val
+            bots = utils.list_all_bots()
+            if RETURN_TYPE == 'text':
+                for bot_type in bots:
+                    print(f"\n======== {bot_type} ========\n")
+                    for bot in bots[bot_type]:
+                        print("Bot ID: {}\nDescription: {}"
+                              "".format(bot, bots[bot_type][bot].get('description')))
+            return 0, bots
 
     def _pipeline_configuration(self):
         pipeline_configuration = {}
