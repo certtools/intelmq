@@ -3325,7 +3325,7 @@ Sends a MIME Multipart message containing the text and the event as CSV for ever
 
 **Configuration Parameters**
 
-* `fieldnames`: a list of field names to be included in the email, comma separated string or list of strings
+* `fieldnames`: a list of field names to be included in the email, comma separated string or list of strings. If empty, no attachment is sent - this can be useful if the actual data is already in the body (parameter ``text``) or the ``subject``.
 * `mail_from`: string. Supports formatting, see below
 * `mail_to`: string of email addresses, comma separated. Supports formatting, see below
 * `smtp_host`: string

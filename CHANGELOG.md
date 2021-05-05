@@ -25,6 +25,8 @@ CHANGELOG
 #### Experts
 
 #### Outputs
+- `intelmq.bots.outputs.smtp.output`:
+  - Handle empty "fieldnames" parameter by sending no attachment (PR#1932 by Sebastian Wagner).
 
 ### Documentation
 - Feeds:
