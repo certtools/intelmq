@@ -52,6 +52,7 @@ jobs:
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
+        if: github.repository == 'certtools/intelmq'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -71,6 +72,7 @@ jobs:
           ./test.sh
 
       - name: Publish develop version to dockerhub
+        if: github.repository == 'certtools/intelmq'
         run: |
           docker tag intelmq-full:latest certat/intelmq-full:develop
           docker push certat/intelmq-full:develop
