@@ -10,8 +10,8 @@ import warnings
 
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.cache import Cache
 from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.mixins import CacheMixin
 
 try:
     import requests
@@ -37,7 +37,7 @@ def clean_geo(geo_data):
     return geo_data
 
 
-class RIPEExpertBot(Bot):
+class RIPEExpertBot(Bot, CacheMixin):
     """Fetch abuse contact and/or geolocation information for the source and/or destination IP addresses and/or ASNs of the events"""
     mode: str = "append"
     query_ripe_db_asn: bool = True
@@ -85,19 +85,10 @@ class RIPEExpertBot(Bot):
         }
 
         self.__initialize_http_session()
-        self.__initialize_cache()
 
     def __initialize_http_session(self):
         self.set_request_parameters()
         self.http_session = utils.create_request_session(self)
-
-    def __initialize_cache(self):
-        cache_host = self.redis_cache_host
-        cache_port = self.redis_cache_port
-        cache_db = self.redis_cache_db
-        cache_ttl = self.redis_cache_ttl
-        if cache_host and cache_port and cache_db and cache_ttl:
-            self.__cache = Cache(cache_host, cache_port, cache_db, cache_ttl, self.redis_cache_password)
 
     def process(self):
         event = self.receive_message()
@@ -132,7 +123,7 @@ class RIPEExpertBot(Bot):
         self.acknowledge_message()
 
     def __perform_cached_query(self, type, resource):
-        cached_value = self.__cache.get('{}:{}'.format(type, resource))
+        cached_value = self.cache_get('{}:{}'.format(type, resource))
         if cached_value:
             if cached_value == CACHE_NO_VALUE:
                 return {}
@@ -147,7 +138,7 @@ class RIPEExpertBot(Bot):
                     """ If no abuse contact could be found, a 404 is given. """
                     try:
                         if response.json()['message'].startswith('No abuse contact found for '):
-                            self.__cache.set('{}:{}'.format(type, resource), CACHE_NO_VALUE)
+                            self.cache_set('{}:{}'.format(type, resource), CACHE_NO_VALUE)
                             return {}
                     except ValueError:
                         pass
@@ -164,11 +155,11 @@ class RIPEExpertBot(Bot):
                                   '' % (type, status))
 
                 data = self.REPLY_TO_DATA[type](response_data)
-                self.__cache.set('{}:{}'.format(type, resource),
+                self.cache_set('{}:{}'.format(type, resource),
                                  (json.dumps(list(data) if isinstance(data, set) else data) if data else CACHE_NO_VALUE))
                 return data
             except (KeyError, IndexError):
-                self.__cache.set('{}:{}'.format(type, resource), CACHE_NO_VALUE)
+                self.cache_set('{}:{}'.format(type, resource), CACHE_NO_VALUE)
 
             return {}
 

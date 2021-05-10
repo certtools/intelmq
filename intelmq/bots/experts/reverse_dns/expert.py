@@ -7,8 +7,8 @@ import dns.resolver
 import dns.reversename
 
 from intelmq.lib.bot import Bot
-from intelmq.lib.cache import Cache
 from intelmq.lib.harmonization import IPAddress
+from intelmq.lib.mixins import CacheMixin
 
 MINIMUM_BGP_PREFIX_IPV4 = 24
 MINIMUM_BGP_PREFIX_IPV6 = 128
@@ -19,7 +19,7 @@ class InvalidPTRResult(ValueError):
     pass
 
 
-class ReverseDnsExpertBot(Bot):
+class ReverseDnsExpertBot(Bot, CacheMixin):
     """Get the correspondent domain name for source and destination IP address"""
     cache_ttl_invalid_response: int = 60
     overwrite: bool = False
@@ -30,13 +30,6 @@ class ReverseDnsExpertBot(Bot):
     redis_cache_ttl: int = 86400
 
     def init(self):
-        self.cache = Cache(self.redis_cache_host,
-                           self.redis_cache_port,
-                           self.redis_cache_db,
-                           self.redis_cache_ttl,
-                           self.redis_cache_password
-                           )
-
         if not hasattr(self, 'overwrite'):
             self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
                                 "Please set it explicitly, default will change to "
@@ -66,7 +59,7 @@ class ReverseDnsExpertBot(Bot):
                 minimum = MINIMUM_BGP_PREFIX_IPV6
 
             cache_key = bin(ip_integer)[2: minimum + 2]
-            cachevalue = self.cache.get(cache_key)
+            cachevalue = self.cache_get(cache_key)
 
             result = None
             if cachevalue == DNS_EXCEPTION_VALUE:
@@ -87,12 +80,12 @@ class ReverseDnsExpertBot(Bot):
                 except (dns.exception.DNSException, InvalidPTRResult) as e:
                     # Set default TTL for 'DNS query name does not exist' error
                     ttl = None if isinstance(e, dns.resolver.NXDOMAIN) else self.cache_ttl_invalid_response
-                    self.cache.set(cache_key, DNS_EXCEPTION_VALUE, ttl)
+                    self.cache_set(cache_key, DNS_EXCEPTION_VALUE, ttl)
                     result = None
 
                 else:
                     ttl = datetime.fromtimestamp(expiration) - datetime.now()
-                    self.cache.set(cache_key, str(result),
+                    self.cache_set(cache_key, str(result),
                                    ttl=int(ttl.total_seconds()))
 
             if result is not None:

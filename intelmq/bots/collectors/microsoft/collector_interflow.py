@@ -36,8 +36,7 @@ import pytz
 from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.cache import Cache
-from intelmq.lib.mixins import HttpMixin
+from intelmq.lib.mixins import HttpMixin, CacheMixin
 from intelmq.lib.utils import parse_relative
 from intelmq.lib.exceptions import MissingDependencyError
 
@@ -45,7 +44,7 @@ URL_LIST = 'https://interflow.azure-api.net/file/api/file/listsharedfiles'
 URL_DOWNLOAD = 'https://interflow.azure-api.net/file/api/file/download?fileName=%s'
 
 
-class MicrosoftInterflowCollectorBot(CollectorBot, HttpMixin):
+class MicrosoftInterflowCollectorBot(CollectorBot, HttpMixin, CacheMixin):
     "Fetch data from the Microsoft Interflow API"
     api_key: str = ""
     file_match = None  # TODO type
@@ -92,13 +91,6 @@ class MicrosoftInterflowCollectorBot(CollectorBot, HttpMixin):
         else:
             self.time_match = None
 
-        self.cache = Cache(self.redis_cache_host,
-                           self.redis_cache_port,
-                           self.redis_cache_db,
-                           self.redis_cache_ttl,
-                           self.redis_cache_password
-                           )
-
     def process(self):
         self.check_ttl_time()
         self.logger.debug('Downloading file list.')
@@ -106,7 +98,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot, HttpMixin):
         files.raise_for_status()
         self.logger.debug('Downloaded file list, %s entries.', len(files.json()))
         for file in files.json():
-            if self.cache.get(file['Name']):
+            if self.cache_get(file['Name']):
                 self.logger.debug('Processed file %s already.', file['Name'])
                 continue
             if self.file_match and not self.file_match.match(file['Name']):
@@ -135,7 +127,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot, HttpMixin):
             report.add('raw', raw)
             self.send_message(report)
             # redis-py >= 3.0.0 does no longer support boolean values, cast to string explicitly, also for backwards compatibility
-            self.cache.set(file['Name'], "True")
+            self.cache_set(file['Name'], "True")
 
     def print_filelist(self):
         """ Can be called from the debugger for example. """
