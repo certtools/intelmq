@@ -7,6 +7,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.upgrade`:
+  - Added `v233_feodotracker_browse` for Abuse.ch Feodotracker Browse parser configuration adaption (PR#1941 by Sebastian Wagner).
 
 ### Development
 
@@ -24,10 +26,14 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
+- Feeds:
+  - Fixed Abuse.ch Feodotracker Browse parser configuration (PR#1941 by Sebastian Wagner fixes #1938).
 
 ### Packaging
 
 ### Tests
+- `intelmq.bots.parsers.html_table`:
+  - Added testcase for Abuse.ch Feodotracker Browse (PR#1941 by Sebastian Wagner).
 
 ### Tools
 - intelmqsetup:
