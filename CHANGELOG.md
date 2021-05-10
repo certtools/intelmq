@@ -16,6 +16,8 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.microsoft.parser_ctip`:
+  - Add support for new field `SourceIpInfo.SourceIpv4Int` (PR#FIXME by Sebastian Wagner).
 
 #### Experts
 
