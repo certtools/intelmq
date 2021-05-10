@@ -101,7 +101,7 @@ AZURE = {
     "DestinationIpInfo.DestinationIpLongitude": "destination.geolocation.longitude",
     "DestinationIpInfo.DestinationIpMetroCode": "extra.destination.geolocation.metro_code",
     "DestinationIpInfo.DestinationIpAreaCode": "extra.destination.geolocation.area_code",
-    "DestinationIpInfo.DestinationIpConnectionType": "protocol.application",
+    "DestinationIpInfo.DestinationIpConnectionType": "extra.destination.connection_type",
     "DestinationIpInfo.DestinationIpv4Int": "__IGNORE__",
     "DestinationPort": "destination.port",
     "TargetIp": "__IGNORE__",
@@ -117,7 +117,7 @@ AZURE = {
     "SourceIpInfo.SourceIpLongitude": "source.geolocation.longitude",
     "SourceIpInfo.SourceIpMetroCode": "extra.source.geolocation.metro_code",
     "SourceIpInfo.SourceIpAreaCode": "extra.source.geolocation.area_code",
-    "SourceIpInfo.SourceIpConnectionType": "protocol.application",
+    "SourceIpInfo.SourceIpConnectionType": "extra.source.connection_type",
     "SourceIpInfo.SourceIpv4Int": "__IGNORE__",  # Duplicate of SourceIP
     "HttpInfo.HttpHost": "extra.http.host",
     "HttpInfo.HttpRequest": "extra.http.request",
@@ -274,7 +274,9 @@ class MicrosoftCTIPParserBot(ParserBot):
             elif key == 'Payload.ts':
                 value = DateTime.from_timestamp(value)
             elif key == 'Payload.Protocol':
-                event.add('protocol.application', value[:value.find('/')])  # "HTTP/1.1", save additionally
+                payload_protocol = value[:value.find('/')]
+                if payload_protocol:
+                    event.add('protocol.application', payload_protocol, overwrite=True)  # "HTTP/1.1", save additionally
             elif not value:
                 continue
             if AZURE[key] != '__IGNORE__':

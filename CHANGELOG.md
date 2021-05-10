@@ -17,7 +17,8 @@ CHANGELOG
 
 #### Parsers
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
-  - Add support for new field `SourceIpInfo.SourceIpv4Int` (PR#FIXME by Sebastian Wagner).
+  - Add support for new field `SourceIpInfo.SourceIpv4Int` (PR#1940 by Sebastian Wagner).
+  - Fix mapping of "ConnectionType" fields, this is not `protocol.application`. Now mapped to `extra.*.connection_type` (PR#1940 by Sebastian Wagner).
 
 #### Experts
 
