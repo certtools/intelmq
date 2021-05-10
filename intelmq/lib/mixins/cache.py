@@ -10,6 +10,7 @@ from typing import Any, Optional
 import redis
 import intelmq.lib.utils as utils
 
+
 class CacheMixin:
     __redis: redis.Redis = None
     redis_cache_host: str = "127.0.0.1"
@@ -18,7 +19,7 @@ class CacheMixin:
     redis_cache_ttl: int = 15
     redis_cache_password: Optional[str] = None
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         if self.redis_cache_host.startswith("/"):
             kwargs = {"unix_socket_path": self.redis_cache_host}
         elif self.redis_cache_host.startswith("unix://"):
@@ -31,6 +32,7 @@ class CacheMixin:
             }
 
         self.__redis = redis.Redis(db=self.redis_cache_db, password=self.redis_cache_password, **kwargs)
+        super().__init__()
 
     def cache_exists(self, key: str):
         return self.__redis.exists(key)

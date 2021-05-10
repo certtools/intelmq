@@ -83,10 +83,6 @@ class Bot(object):
     logging_syslog: str = "/dev/log"
     process_manager: str = "intelmq"
     rate_limit: int = 0
-    redis_cache_host: str = "127.0.0.1"
-    redis_cache_port: int = 6379
-    redis_cache_db: int = 5
-    redis_cache_password: Optional[str] = None
     source_pipeline_broker: str = "redis"
     source_pipeline_db: int = 2
     source_pipeline_host: str = "127.0.0.1"

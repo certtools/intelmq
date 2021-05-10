@@ -156,7 +156,7 @@ class RIPEExpertBot(Bot, CacheMixin):
 
                 data = self.REPLY_TO_DATA[type](response_data)
                 self.cache_set('{}:{}'.format(type, resource),
-                                 (json.dumps(list(data) if isinstance(data, set) else data) if data else CACHE_NO_VALUE))
+                               (json.dumps(list(data) if isinstance(data, set) else data) if data else CACHE_NO_VALUE))
                 return data
             except (KeyError, IndexError):
                 self.cache_set('{}:{}'.format(type, resource), CACHE_NO_VALUE)
