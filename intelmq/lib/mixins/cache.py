@@ -10,6 +10,7 @@ from typing import Any, Optional
 import redis
 import intelmq.lib.utils as utils
 
+
 class CacheMixin:
     __redis: redis.Redis = None
     redis_cache_host: str = "127.0.0.1"
