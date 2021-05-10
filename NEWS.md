@@ -15,6 +15,22 @@ Please refer to the changelog for a full list of changes.
 
 ### Configuration
 
+#### Feodotracker Browse
+The parameters required to parse the Abuse.ch Feodotracker Browse feed with the HTML Table parser have changed.
+Old parameters:
+- `columns`: `time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc`
+- `ignore_values`: `,,,,Not listed,,`
+New parameters:
+- `columns`: `time.source,source.ip,malware.name,status,source.as_name,source.geolocation.cc`
+- `ignore_values`: `,,,,,`
+The column with the SBL number has been removed.
+These parameters remain unchanged:
+- `skip_table_head`: `true`
+- `type`: `c2server`
+
+Please adapt the configuration of your configured bots.
+The `intelmqctl upgrade-config` command automatically fixes a configuration if the parser for this feed is detected by the bot ID (name contains "feodo") and its parameters.
+
 ### Libraries
 
 ### Postgres databases
