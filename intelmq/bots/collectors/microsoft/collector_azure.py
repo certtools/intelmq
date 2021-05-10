@@ -7,7 +7,7 @@ import io
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.exceptions import MissingDependencyError
-from intelmq.lib.cache import Cache
+from intelmq.lib.mixins import CacheMixin
 
 try:
     from azure.storage.blob import ContainerClient
@@ -19,7 +19,7 @@ except ImportError:
     create_configuration = None  # noqa
 
 
-class MicrosoftAzureCollectorBot(CollectorBot):
+class MicrosoftAzureCollectorBot(CollectorBot, CacheMixin):
     "Fetch data blobs from a Microsoft Azure container"
     connection_string: str = "<insert your connection string here>"
     container_name: str = "<insert the container name>"
@@ -42,19 +42,12 @@ class MicrosoftAzureCollectorBot(CollectorBot):
                 'https': self.https_proxy,
             }
 
-        self.cache = Cache(self.redis_cache_host,
-                           self.redis_cache_port,
-                           self.redis_cache_db,
-                           self.redis_cache_ttl,
-                           self.redis_cache_password
-                           )
-
     def process(self):
         container_client = ContainerClient.from_connection_string(conn_str=self.connection_string,
                                                                   container_name=self.container_name,
                                                                   _configuration=self.config)
         for blob in container_client.list_blobs():
-            if self.cache.get(blob.name):
+            if self.cache_get(blob.name):
                 self.logger.debug('Processed file %r already.', blob.name)
                 continue
             self.logger.debug('Processing blob %r.', blob.name)
@@ -64,7 +57,7 @@ class MicrosoftAzureCollectorBot(CollectorBot):
             report = self.new_report()
             report.add('raw', gzip.GzipFile(fileobj=blob_obj).read().decode())
             self.send_message(report)
-            self.cache.set(blob.name, 1)  # Redis-py >= 3.0.0 does not allow True
+            self.cache_set(blob.name, 1)  # Redis-py >= 3.0.0 does not allow True
 
 
 BOT = MicrosoftAzureCollectorBot

@@ -23,10 +23,10 @@ Parameters:
 """
 
 from intelmq.lib.bot import Bot
-from intelmq.lib.cache import Cache
+from intelmq.lib.mixins import CacheMixin
 
 
-class DeduplicatorExpertBot(Bot):
+class DeduplicatorExpertBot(Bot, CacheMixin):
     """Detection and drop exact duplicate messages. Message hashes are cached in the Redis database"""
     filter_keys: str = "raw,time.observation"  # TODO: could be List[str]
     filter_type: str = "blacklist"
@@ -41,12 +41,6 @@ class DeduplicatorExpertBot(Bot):
     filter_keys = None
 
     def init(self):
-        self.cache = Cache(self.redis_cache_host,
-                           self.redis_cache_port,
-                           self.redis_cache_db,
-                           self.redis_cache_ttl,
-                           self.redis_cache_password
-                           )
         self.filter_keys = {k.strip() for k in
                             self.filter_keys.split(',')}
 
@@ -59,8 +53,8 @@ class DeduplicatorExpertBot(Bot):
             message_hash = message.hash(filter_keys=self.filter_keys,
                                         filter_type=self.filter_type)
 
-            if not self.cache.exists(message_hash):
-                self.cache.set(message_hash, 'hash')
+            if not self.cache_exists(message_hash):
+                self.cache_set(message_hash, 'hash')
                 self.send_message(message)
             else:
                 self.logger.debug('Dropped message.')

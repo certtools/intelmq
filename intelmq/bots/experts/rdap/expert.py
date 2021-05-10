@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from intelmq.lib.bot import Bot
-from intelmq.lib.cache import Cache
 from intelmq.lib.utils import create_request_session
 from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.mixins import CacheMixin
 
 try:
     import requests
@@ -10,7 +10,7 @@ except ImportError:
     requests = None
 
 
-class RDAPExpertBot(Bot):
+class RDAPExpertBot(Bot, CacheMixin):
     """ Get RDAP data"""
     rdap_order: list = ['abuse', 'technical', 'administrative', 'registrant', 'registrar']
     rdap_bootstrapped_servers: dict = {}
@@ -31,13 +31,6 @@ class RDAPExpertBot(Bot):
 
         self.set_request_parameters()
         self.__session = create_request_session(self)
-
-        self.cache = Cache(self.redis_cache_host,
-                           self.redis_cache_port,
-                           self.redis_cache_db,
-                           self.redis_cache_ttl,
-                           self.redis_cache_password
-                           )
 
         # get overall rdap data from iana
         resp = self.__session.get('https://data.iana.org/rdap/dns.json')
@@ -72,7 +65,7 @@ class RDAPExpertBot(Bot):
         if 'source.fqdn' in event:
             url = event.get('source.fqdn')
             cache_key = "rdap_%s" % (url)
-            result = self.cache.get(cache_key)
+            result = self.cache_get(cache_key)
             if result:
                 event.add('source.abuse_contact', result, overwrite=self.overwrite)
             else:
@@ -141,7 +134,7 @@ class RDAPExpertBot(Bot):
                     for role in self.rdap_order:
                         if role in self.__rdap_order_dict:
                             if self.__rdap_order_dict[role]['email'] is not None:
-                                self.cache.set(cache_key, self.__rdap_order_dict[role]['email'], 86800)
+                                self.cache_set(cache_key, self.__rdap_order_dict[role]['email'], 86800)
                                 event.add('source.abuse_contact', self.__rdap_order_dict[role]['email'], overwrite=self.overwrite)
                                 break
 

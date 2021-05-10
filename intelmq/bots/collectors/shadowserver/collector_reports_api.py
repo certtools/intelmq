@@ -13,15 +13,14 @@ from typing import Optional
 import requests.exceptions
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.cache import Cache
-from intelmq.lib.mixins import HttpMixin
+from intelmq.lib.mixins import HttpMixin, CacheMixin
 
 
 APIROOT = 'https://transform.shadowserver.org/api2/'
 FILENAME_PATTERN = re.compile(r'\.csv$')
 
 
-class ShadowServerAPICollectorBot(CollectorBot, HttpMixin):
+class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
     """
     Connects to the Shadowserver API, requests a list of all the reports for a specific country and processes the ones that are new
 
@@ -60,13 +59,6 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin):
             self.types = self.types.split(',')
 
         self.preamble = '{{ "apikey": "{}" '.format(self.api_key)
-
-        self.cache = Cache(self.redis_cache_host,
-                           self.redis_cache_port,
-                           self.redis_cache_db,
-                           self.redis_cache_ttl,
-                           self.redis_cache_password
-                           )
 
     def _headers(self, data):
         return {'HMAC2': hmac.new(self.secret.encode(), data.encode('utf-8'), digestmod=hashlib.sha256).hexdigest()}
@@ -134,7 +126,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin):
         for item in reportslist:
             filename = item['file']
             filename_fixed = FILENAME_PATTERN.sub('.json', filename, count=1)
-            if self.cache.get(filename):
+            if self.cache_get(filename):
                 self.logger.debug('Processed file %r (fixed: %r) already.', filename, filename_fixed)
                 continue
             self.logger.debug('Processing file %r (fixed: %r).', filename, filename_fixed)
@@ -144,7 +136,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin):
                 report.add('extra.file_name', filename_fixed)
                 report.add('raw', reportdata)
                 self.send_message(report)
-                self.cache.set(filename, 1)
+                self.cache_set(filename, 1)
                 self.logger.debug('Sent report: %r (fixed: %r, size: %.3g KiB).', filename, filename_fixed,
                                   len(reportdata) / 1024)  # TODO: Replace by a generic size-conversion function
                 reports_downloaded += 1
