@@ -3000,7 +3000,7 @@ The following operators may be used to match events:
  * Boolean values can be matched with `==` or `!=` followed by `true` or `false`. Example:
    ``if extra.has_known_vulns == true { ... }``
 
- * `:equals` tests for equality between lists, including order. Its result can be inverted by using `! :equals`. Example for checking a hostname-port pair:
+ * `:equals` tests for equality between lists, including order. Example for checking a hostname-port pair:
    ``if extra.host_tuple :equals ['dns.google', 53] { ... }``
  * `:setequals` tests for set-based equality (ignoring duplicates and value order) between a list of given values. Example for checking for the first nameserver of two domains, regardless of the order they are given in the list:
    ``if extra.hostnames :setequals ['ns1.example.com', 'ns1.example.mx'] { ... }``
@@ -3013,8 +3013,6 @@ The following operators may be used to match events:
 
  * `:supersetof` tests if the list of values from the given key is a superset of the values specified as the argument. Example for matching hosts with at least the IoT and vulnerable tags:
    ``if extra.tags :supersetof ['iot', 'vulnerable'] { ... }``
-
- * The results of the list operators (`:equals`, `:setequals`, `:overlaps`, `:subsetof` and `:supersetof`) can be inverted with a prepended exclamation mark, such as `! :overlaps`. Note that in case there is no value with the given key or it is a non-list value, the result will always be false, regardless of negation. The existence of the key can be checked for separately.
 
  * Boolean values can be matched with `==` or `!=` followed by `true` or `false`. Example:
    ``if extra.has_known_vulns == true { ... }``
