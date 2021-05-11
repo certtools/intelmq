@@ -935,31 +935,6 @@ example usage:
 * **Feed parameters** (see above)
 * `port`: 5000
 
-Fireeye
-^^^^^^^^
-
-**Information**
-
-* `name:` intelmq.bots.collectors.fireeye.collector_fireeye
-* `lookup:` yes
-* `public:` no
-* `cache (redis db):` none
-* `description:` This bot is capable of collecting hashes and urls from a Fireeye MAS appliance.
-
-
-**Configuration Parameters**
-
-* **Feed parameters** (see above)
-* `dns_name:` DNS name of the target appliance.
-* `request_duration:` Length of the query in past eg. collect alerts from last 24hours/48hours.
-* `http_username:` Password for authentication.
-* `http_password:` Username for authentication.
-
-**Workflow**
-
-The bot collects all alerts which occurred during specified duration. After this we
-make a second call and check if there is additional information like domains and hashes available.
-After collecting the openioc data we send this information to the fireeye parser.
 
 .. _parser bots:
 
@@ -997,6 +972,14 @@ Events with the Malware "TestSinkholingLoss" are ignored, as they are for the fe
 
 Generic CSV Parser
 ^^^^^^^^^^^^^^^^^^
+
+**Information**
+
+* `name`: `intelmq.bots.parsers.generic.parser_csv`
+* `lookup`: no
+* `public`: yes
+* `cache (redis db)`: none
+* `description`: Parses CSV data
 
 Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
@@ -1331,53 +1314,26 @@ In firewall logs like FortiGate, this does not occur. These logs usually look li
 
    srcip=192.0.2.1 srcmac="00:00:5e:00:17:17"
 
+
+.. _intelmq.bots.parsers.mcafee.parser_atd:
+
 McAfee Advanced Threat Defense File
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Information**
 
-* `name:` intelmq.bots.parsers.mcafee.parser_atd_file
+* `name:` intelmq.bots.parsers.mcafee.parser_atd
 * `lookup:` yes
 * `public:` no
 * `cache (redis db):` none
-* `description:` parses file hash information off ATD reports
+* `description:` Parse IoCs from McAfee Advanced Threat Defense reports (hash, IP, URL)
 
 **Configuration Parameters**
 
 * **Feed parameters** (see above)
 * `verdict_severity`: min report severity to parse
 
-McAfee Advanced Threat Defense IP
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-**Information**
-
-* `name:` intelmq.bots.parsers.mcafee.parser_atd_file
-* `lookup:` yes
-* `public:` no
-* `cache (redis db):` none
-* `description:` parses IP addresses off ATD reports
-
-**Configuration Parameters**
-
-* **Feed parameters** (see above)
-* `verdict_severity`: min report severity to parse
-
-McAfee Advanced Threat Defense URL
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-**Information**
-
-* `name:` intelmq.bots.parsers.mcafee.parser_atd_file
-* `lookup:` yes
-* `public:` no
-* `cache (redis db):` none
-* `description:` parses URLs off ATD reports
-
-**Configuration Parameters**
-
-* **Feed parameters** (see above)
-* `verdict_severity`: min report severity to parse
 
 Microsoft CTIP Parser
 ^^^^^^^^^^^^^^^^^^^^^
@@ -2247,39 +2203,22 @@ McAfee Active Response Hash lookup
 
 
 
-McAfee Active Response IP lookup
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+McAfee Active Response lookup
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Information**
 
-* `name:` intelmq.bots.experts.mcafee.expert_mar_ip
+* `name:` intelmq.bots.experts.mcafee.expert_mar
 * `lookup:` yes
 * `public:` no
 * `cache (redis db):` none
-* `description:` Queries occurrences of connection attempts to destination ip/port within local environment
+* `description:` Queries DXL bus for hashes, IP addresses or FQDNs.
 
 **Configuration Parameters**
 
 * **Feed parameters** (see above)
 * `dxl_config_file`: location of file containing required information to connect to DXL bus
-
-
-
-McAfee Active Response URL lookup
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-**Information**
-
-* `name:` intelmq.bots.experts.mcafee.expert_mar_url
-* `lookup:` yes
-* `public:` no
-* `cache (redis db):` none
-* `description:` Queries occurrences of FQDN lookups within local environment
-
-**Configuration Parameters**
-
-* **Feed parameters** (see above)
-* `dxl_config_file`: location of file containing required information to connect to DXL bus
+* `lookup_type`: One of <Hash|DestSocket|DestIP|DestFQDN>
 
 
 
