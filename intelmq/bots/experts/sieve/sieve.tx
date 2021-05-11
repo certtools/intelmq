@@ -13,13 +13,15 @@ ElseClause: 'else' '{' actions*=Action '}';
 Expression: conj=Conjunction ('||' conj=Conjunction)*;
 Conjunction: cond=Condition ('&&' cond=Condition)*;
 Condition:
-    match=StringMatch
-    | match=NumericMatch
-    | match=IpRangeMatch
-    | match=ExistMatch
-    | match=ListMatch
-    | match=BoolMatch
-    | ( '(' match=Expression ')' )
+    neg?=Negation (
+        match=StringMatch
+        | match=NumericMatch
+        | match=IpRangeMatch
+        | match=ExistMatch
+        | match=ListMatch
+        | match=BoolMatch
+        | ( '(' match=Expression ')' )
+    )
 ;
 
 
@@ -51,7 +53,7 @@ IpRangeList: '[' values+=SingleIpRange[','] ']' ;
 ExistMatch: op=ExistOperator key=Key;
 ExistOperator: ':exists' | ':notexists';
 
-ListMatch: key=Key neg=Negation? op=ListOperator value=ListValue;
+ListMatch: key=Key op=ListOperator value=ListValue;
 ListOperator:
   ':equals'           // lists are equal, including order
   | ':setequals'      // lists contain the same elements, ignoring order and repeating values
