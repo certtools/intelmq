@@ -1310,9 +1310,11 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     def test_typed_values(self):
         ''' Test typed values '''
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_typed_values.sieve')
+
+        # test with list of values of mixed types
         event = EXAMPLE_INPUT.copy()
-        event['extra.list'] = [True, 2.0, 'three', 4]
-        event['comment'] = 'match'
+        event['extra.list'] = [True, 2.1, 'three', 4]
+        event['comment'] = 'foo'
 
         expected = event.copy()
         expected['comment'] = 'changed'
@@ -1320,6 +1322,49 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = event
         self.run_bot()
         self.assertMessageEqual(0, expected)
+
+        # test assigning a string
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match1'
+        expected = event.copy()
+        expected['extra.value'] = 'string'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # test force-adding an int
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match2'
+        expected = event.copy()
+        expected['extra.value'] = 100
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # test updating to a string
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match3'
+        expected = event.copy()
+        expected['extra.value'] = 1.5
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # test assigning a bool
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match4'
+        expected = event.copy()
+        expected['extra.value'] = True
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+
+
 
     def test_append(self):
         ''' Test append action '''
