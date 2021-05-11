@@ -60,7 +60,10 @@ Initialization parameters
 Common parameters
 *************************
 
-**Feed parameters**: Common configuration options for all collectors.
+Feed parameters
+^^^^^^^^^^^^^^^
+
+Common configuration options for all collectors.
 
 * `name`: Name for the feed (`feed.name`). In IntelMQ versions smaller than 2.2 the parameter name `feed` is also supported.
 * `accuracy`: Accuracy for the data of the feed (`feed.accuracy`).
@@ -69,7 +72,10 @@ Common parameters
 * `provider`: Name of the provider of the feed (`feed.provider`).
 * `rate_limit`: time interval (in seconds) between fetching data if applicable.
 
-**HTTP parameters**: Common URL fetching parameters used in multiple bots.
+HTTP parameters
+^^^^^^^^^^^^^^^
+
+Common URL fetching parameters used in multiple bots.
 
 * `http_timeout_sec`: A tuple of floats or only one float describing the timeout of the HTTP connection. Can be a tuple of two floats (read and connect timeout) or just one float (applies for both timeouts). The default is 30 seconds in default.conf, if not given no timeout is used. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
 * `http_timeout_max_tries`: An integer depicting how often a connection is retried, when a timeout occurred. Defaults to 3 in default.conf.
@@ -83,7 +89,10 @@ Common parameters
 * `ssl_ca_certificate`: Optional string of path to trusted CA certificate. Only used by some bots.
 * `http_header`: HTTP request headers
 
-**Cache parameters**: Common Redis cache parameters used in multiple bots (mainly lookup experts):
+Cache parameters
+^^^^^^^^^^^^^^^^
+
+Common Redis cache parameters used in multiple bots (mainly lookup experts):
 
 * `redis_cache_host`: Hostname of the Redis database.
 * `redis_cache_port`: Port of the Redis database.
