@@ -3,12 +3,13 @@
  For details, see: https://github.com/igordejanovic/textX
 */
 
-SieveModel: rules*=Rule ;
+SieveModel: statements*=Statement;
 
-Rule: (if_=IfClause (elif_=ElifClause)* (else_=ElseClause)? | actions_*=Action);
-IfClause: 'if' expr=Expression '{' actions*=Action '}';
-ElifClause: 'elif' expr=Expression '{' actions*=Action '}';
-ElseClause: 'else' '{' actions*=Action '}';
+Statement: Action | Branching;
+Branching: if_=IfClause elif_*=ElifClause (else_=ElseClause)?;
+IfClause: 'if' expr=Expression '{' statements*=Statement '}';
+ElifClause: 'elif' expr=Expression '{' statements*=Statement '}';
+ElseClause: 'else' '{' statements*=Statement '}';
 
 Expression: conj=Conjunction ('||' conj=Conjunction)*;
 Conjunction: cond=Condition ('&&' cond=Condition)*;

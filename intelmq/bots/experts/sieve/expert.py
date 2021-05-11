@@ -33,7 +33,7 @@ except ImportError:
 
 
 class Procedure(Enum):
-    CONTINUE = auto()  # continue processing subsequent rules (default)
+    CONTINUE = auto()  # continue processing subsequent statements (default)
     KEEP = auto()      # stop processing and keep event
     DROP = auto()      # stop processing and drop event
 
@@ -160,13 +160,13 @@ class SieveExpertBot(Bot):
         event = self.receive_message()
         procedure = Procedure.CONTINUE
         if self.sieve:  # empty rules file results in empty string
-            for rule in self.sieve.rules:
-                procedure = self.process_rule(rule, event)
+            for statement in self.sieve.statements:
+                procedure = self.process_statement(statement, event)
                 if procedure == Procedure.KEEP:
-                    self.logger.debug('Stop processing based on rule at %s: %s.', self.get_linecol(rule), event)
+                    self.logger.debug('Stop processing based on statement at %s: %s.', self.get_linecol(statement), event)
                     break
                 elif procedure == Procedure.DROP:
-                    self.logger.debug('Dropped event based on rule at %s: %s.', self.get_linecol(rule), event)
+                    self.logger.debug('Dropped event based on statement at %s: %s.', self.get_linecol(statement), event)
                     break
 
         # forwarding decision
@@ -182,7 +182,14 @@ class SieveExpertBot(Bot):
 
         self.acknowledge_message()
 
-    def process_rule(self, rule, event) -> Procedure:
+    def process_statement(self, statement, event):
+        name = statement.__class__.__name__
+        if name == 'Branching':
+            return self.process_branching(statement, event)
+        elif name == 'Action':
+            return self.process_action(statement.action, event)
+
+    def process_branching(self, rule, event) -> Procedure:
         # process optional 'if' clause
         if rule.if_:
             result = self.process_clause(rule.if_, event)
@@ -201,19 +208,13 @@ class SieveExpertBot(Bot):
             if isinstance(result, Procedure):
                 return result
 
-        # process optional 'actions' clause
-        if rule.actions_:
-            for action in rule.actions_:
-                procedure = self.process_action(action.action, event)
-                if procedure != Procedure.CONTINUE:
-                    return procedure
-
         return Procedure.CONTINUE
 
     def process_clause(self, clause, event, else_clause=False) -> Optional[Procedure]:
         if else_clause or self.match_expression(clause.expr, event):
             self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(clause), event)
-            for procedure in (self.process_action(action.action, event) for action in clause.actions):
+
+            for procedure in (self.process_statement(statement, event) for statement in clause.statements):
                 if procedure != Procedure.CONTINUE:
                     return procedure
             if not else_clause:
