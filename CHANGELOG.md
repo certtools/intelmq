@@ -88,6 +88,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 
 ### Documentation
 - Updated user and developer documentation to reflect the removal of the BOTS file (PR#1780 by Birger Schacht).
+- Bots documentation:
+  - Added anchors to all bot sections derived from the module names for easier linking (PR#1943 by Sebastian Wagner fixes part of certtools/intelmq-api#4).
 
 ### Packaging
 - Docker images tagged with `certat/intelmq-full:develop` are built and published on every push to the develop branch (PR#1753 by Sebastian Waldbauer).

@@ -108,6 +108,8 @@ Collector Bots
 
 Multihreading is disabled for all Collectors, as this would lead to duplicated data.
 
+.. _intelmq.bots.collectors.amqp.collector_amqp:
+
 AMQP
 ^^^^
 
@@ -138,6 +140,7 @@ Requires the `pika python library <https://pypi.org/project/pika/>`_, minimum ve
 Currently only fetching from a queue is supported can be extended in the future. Messages will be acknowledge at AMQP after it is sent to the pipeline.
 
 
+.. _intelmq.bots.collectors.api.collector:
 
 API
 ^^^
@@ -159,7 +162,7 @@ The API is available at `/intelmq/push`.
 The `tornado` library is required.
 
 
-
+.. _intelmq.bots.collectors.http.collector_http:
 
 Generic URL Fetcher
 ^^^^^^^^^^^^^^^^^^^
@@ -194,6 +197,9 @@ If the HTTP response' status code is not 2xx, this is treated as error.
 
 In Debug logging level, the request's and response's headers and body are logged for further inspection.
 
+
+.. _intelmq.bots.collectors.http.collector_http_stream:
+
 Generic URL Stream Fetcher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -217,6 +223,8 @@ If the consecutive connection fails reaches the parameter `error_max_retries`, a
 
 The parameter `http_timeout_max_tries` is of no use in this collector.
 
+
+.. _intelmq.bots.collectors.mail.collector_mail_url:
 
 Generic Mail URL Fetcher
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -269,6 +277,8 @@ Specifically, to configure a large file input to work around Redis' size
 limitation set `chunk_size` to something like `384000000`, i.e., ~384 MB.
 
 
+.. _intelmq.bots.collectors.mail.collector_mail_attach:
+
 Generic Mail Attachment Fetcher
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -305,6 +315,8 @@ The resulting reports contains the following special fields:
 * `extra.file_name`: The file name of the attachment or the file name in the attached archive if attachment is to uncompress.
 
 
+.. _intelmq.bots.collectors.mail.collector_mail_body:
+
 Generic Mail Body Fetcher
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -340,6 +352,9 @@ The resulting reports contains the following special fields:
 * `extra.email_from`: The email's from address
 * `extra.email_message_id`: The email's message ID
 
+
+.. _intelmq.bots.collectors.github_api.collector_github_contents_api:
+
 Github API
 ^^^^^^^^^^
 
@@ -370,6 +385,9 @@ The collector recursively searches for `regex`-defined files in the provided `re
 Additionally it adds extra file metadata defined by the `extra_fields`.
 
 The bot always sets the url, from which downloaded the file, as `feed.url`.
+
+
+.. _intelmq.bots.collectors.file.collector_file:
 
 Fileinput
 ^^^^^^^^^
@@ -425,6 +443,9 @@ To prevent data loss, the bot also stops when no `postfix` is set and
 
 The bot always sets the file name as feed.url
 
+
+.. _intelmq.bots.collectors.fireeye.collector_fireeye:
+
 Fireeye
 ^^^^^^^
 
@@ -453,6 +474,8 @@ make a second call and check if there is additional information like domains and
 After collecting the openioc data we send this information to the Fireeye parser.
 
 
+.. _intelmq.bots.collectors.kafka.collector:
+
 Kafka
 ^^^^^
 
@@ -469,6 +492,9 @@ Requires the `kafka python library <https://pypi.org/project/kafka/>`_.
 * `ssl_check_hostname`: `false` to ignore verifying SSL certificates, or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
 * `ssl_ca_certificate`: Optional string of path to trusted CA certificate. Only used by some bots.
+
+
+.. _intelmq.bots.collectors.rsync.collector_rsync:
 
 Rsync
 ^^^^^
@@ -489,6 +515,9 @@ Requires the rsync executable
 * `file`: Name of downloaded file.
 * `rsync_path`: Path to file. It can be "/home/username/directory" or "username@remote_host:/home/username/directory"
 * `temp_directory`: Path of a temporary state directory to use for rsync'd files. Optional. Default: `/opt/intelmq/var/run/rsync_collector/`.
+
+
+.. _intelmq.bots.collectors.misp.collector:
 
 MISP Generic
 ^^^^^^^^^^^^
@@ -521,6 +550,9 @@ processed the `to_process` tag is removed from the MISP event and a
 
 **NB.** The MISP tags must be configured to be 'exportable' otherwise they will
 not be retrieved by the collector.
+
+
+.. _intelmq.bots.collectors.rt.collector_rt:
 
 Request Tracker
 ^^^^^^^^^^^^^^^
@@ -597,6 +629,9 @@ To find only tickets newer than a given absolute or relative time, you can use t
 
 Relative must be in this format: `[number] [timespan]s`, e.g. `3 days`. `timespan` can be hour, day, week, month, year. Trailing 's' is supported for all timespans. Relative times are subtracted from the current time directly before the search is performed.
 
+
+.. _intelmq.bots.collectors.rsync.collector_rsync:
+
 Rsync
 ^^^^^
 
@@ -615,6 +650,9 @@ Rsync
 * `file`: The filename to process, combine with `rsync_path`.
 * `temp_directory`: The temporary directory for rsync, by default `$VAR_STATE_PATH/rsync_collector`. `$VAR_STATE_PATH` is `/var/run/intelmq/` or `/opt/intelmq/var/run/`.
 * `rsync_path`: The path of the file to process
+
+
+.. _intelmq.bots.collectors.shadowserver.collector_reports_api:
 
 Shadowserver Reports API
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -637,6 +675,9 @@ The Cache is required to memorize which files have already been processed (TTL n
 The resulting reports contain the following special field:
 
 * `extra.file_name`: The name of the downloaded file, with fixed filename extension. The API returns file names with the extension `.csv`, although the files are JSON, not CSV. Therefore, for clarity and better error detection in the parser, the file name in `extra.file_name` uses `.json` as extension.
+
+
+.. _intelmq.bots.collectors.shodan.collector_stream:
 
 Shodan Stream
 ^^^^^^^^^^^^^
@@ -663,6 +704,9 @@ If the stream is interrupted, the connection will be aborted using the timeout p
 No error will be logged if the number of consecutive connection fails does not reach the parameter `error_max_retries`. Instead of errors, an INFO message is logged. This is a measurement against too frequent ERROR logging messages. The consecutive connection fails are reset if a data line has been successfully transferred.
 If the consecutive connection fails reaches the parameter `error_max_retries`, an exception will be thrown and `rate_limit` applies, if not null.
 
+
+.. _intelmq.bots.collectors.tcp.collector:
+
 TCP
 ^^^
 
@@ -683,6 +727,9 @@ TCP
 
 TCP collector just sends an "Ok" message after every received message, this should not pose a problem for an arbitrary input.
 If you intend to link two IntelMQ instance via TCP, have a look at the TCP output bot documentation.
+
+
+.. _intelmq.bots.collectors.alienvault_otx.collector:
 
 Alien Vault OTX
 ^^^^^^^^^^^^^^^
@@ -710,6 +757,9 @@ Install the library from GitHub, as there is no package in PyPi:
 * `api_key`: API Key
 * `modified_pulses_only`: get only modified pulses instead of all, set to it to true or false, default false
 * `interval`: if "modified_pulses_only" is set, define the time in hours (integer value) to get modified pulse since then, default 24 hours
+
+
+.. _intelmq.bots.collectors.blueliv.collector_crimeserver:
 
 Blueliv Crimeserver
 ^^^^^^^^^^^^^^^^^^^
@@ -739,6 +789,9 @@ Install the required library:
 * `api_key`: location of information resource, see https://map.blueliv.com/?redirect=get-started#signup
 * `api_url`: The optional API endpoint, by default `https://freeapi.blueliv.com`.
 
+
+.. _intelmq.bots.collectors.calidog.collector_certstream:
+
 Calidog Certstream
 ^^^^^^^^^^^^^^^^^^
 
@@ -756,6 +809,9 @@ This bot works based on certstream library (https://github.com/CaliDog/certstrea
 **Configuration Parameters**
 
 * **Feed parameters** (see above)
+
+
+.. _intelmq.bots.collectors.eset.collector:
 
 ESET ETI
 ^^^^^^^^
@@ -788,6 +844,9 @@ Install the required `cabby` library:
 * `time_delta`: The time span to look back, in seconds. Default `3600`.
 * `collection`: The collection to fetch.
 
+
+.. _intelmq.bots.collectors.opendxl.collector:
+
 McAfee openDXL
 ^^^^^^^^^^^^^^
 
@@ -804,6 +863,9 @@ McAfee openDXL
 * **Feed parameters** (see above)
 * `dxl_config_file`: location of the configuration file containing required information to connect $
 * `dxl_topic`: the name of the DXL topic to subscribe
+
+
+.. _intelmq.bots.collectors.microsoft.collector_azure:
 
 Microsoft Azure
 ^^^^^^^^^^^^^^^
@@ -827,6 +889,9 @@ This bot significantly changed in a backwards-incompatible way in IntelMQ Versio
 * **Feed parameters** (see above)
 * `connection_string`: connection string as given by Microsoft
 * `container_name`: name of the container to connect to
+
+
+.. _intelmq.bots.collectors.microsoft.collector_interflow:
 
 Microsoft Interflow
 ^^^^^^^^^^^^^^^^^^^
@@ -855,6 +920,9 @@ The cache is used to remember which files have already been downloaded. Make sur
 * Files are automatically ungzipped if the filename ends with `.gz`.
 
 .. _stomp collector bot:
+
+
+.. _intelmq.bots.collectors.stomp.collector:
 
 Stomp
 ^^^^^
@@ -886,6 +954,9 @@ Install the `stomp.py` library from PyPI:
 * `ssl_client_certificate`: path to client cert file
 * `ssl_client_certificate_key`: path to client cert key file
 
+
+.. _intelmq.bots.collectors.twitter.collector_twitter:
+
 Twitter
 ^^^^^^^
 
@@ -912,6 +983,9 @@ Collects tweets from target_timelines. Up to tweet_count tweets from each user a
 * `consumer_secret`: Twitter API login data
 * `access_token_key`: Twitter API login data
 * `access_token_secret`: Twitter API login data
+
+
+.. _intelmq.bots.collectors.api.collector_api:
 
 API collector bot
 ^^^^^^^^^^^^^^^^^
@@ -949,6 +1023,9 @@ This list is not complete. Look at ``intelmqctl list bots`` or the list of parse
 
 TODO
 
+
+.. _intelmq.bots.parsers.anubisnetworks.parser:
+
 AnubisNetworks Cyberfeed Stream
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -969,6 +1046,9 @@ Events with the Malware "TestSinkholingLoss" are ignored, as they are for the fe
 **Configuration parameters**
 
 * `use_malware_familiy_as_classification_identifier`: default: `true`. Use the `malw.family` field as `classification.type`. If `false`, check if the same as `malw.variant`. If it is the same, it is ignored. Otherwise saved as `extra.malware.family`.
+
+
+.. _intelmq.bots.parsers.generic.parser_csv:
 
 Generic CSV Parser
 ^^^^^^^^^^^^^^^^^^
@@ -1078,6 +1158,8 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
  * `"columns_required"`: A list of true/false for each column. By default, it is true for every column.
 
 
+.. _intelmq.bots.parsers.calidog.parser_certstream:
+
 Calidog Certstream
 ^^^^^^^^^^^^^^^^^^
 
@@ -1096,6 +1178,9 @@ The seen-date is saved in `time.source` and the classification type is `other`.
 
 * **Feed parameters** (see above)
 
+
+.. _intelmq.bots.parsers.eset.parser:
+
 ESET
 ^^^^
 
@@ -1112,6 +1197,9 @@ ESET
 Supported collections:
 * "ei.urls (json)"
 * "ei.domains v2 (json)"
+
+
+.. _intelmq.bots.parsers.cymru.parser_cap_program:
 
 Cymru CAP Program
 ^^^^^^^^^^^^^^^^^
@@ -1138,6 +1226,9 @@ Some reports are not implemented at all as there is no data available to check i
 
 The information about the event could be better in many cases but as Cymru does not want to be associated with the report, we can't add comments to the events in the parser, because then the source would be easily identifiable for the recipient.
 
+
+.. _intelmq.bots.parsers.cymru.parser_full_bogons:
+
 Cymru Full Bogons
 ^^^^^^^^^^^^^^^^^
 
@@ -1150,6 +1241,9 @@ http://www.team-cymru.com/bogon-reference.html
 * `cache (redis db):` none
 * `description:` Parses data from full bogons feed.
 
+
+.. _intelmq.bots.parsers.github_feed.parser:
+
 Github Feed
 ^^^^^^^^^^^
 
@@ -1158,6 +1252,9 @@ Github Feed
 
 * `name:` intelmq.bots.parsers.github_feed.parser
 * `description:` Parses Feeds available publicly on GitHub (should receive from `github_api` collector)
+
+
+.. _intelmq.bots.parsers.hibp.parser_callback:
 
 Have I Been Pwned Callback Parser
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1177,8 +1274,15 @@ Parses breaches and pastes and creates one event per e-mail address. The e-mail 
 `classification.type` is `leak` and `classification.identifier` is `breach` or `paste`.
 
 
+.. _intelmq.bots.parsers.html_table.parser:
+
 HTML Table Parser
 ^^^^^^^^^^^^^^^^^
+
+* `name:` intelmq.bots.parsers.html_table.parser
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Parses tables in HTML documents
 
 **Configuration parameters**
 
@@ -1272,6 +1376,9 @@ HTML Table Parser
  * `"type"`: set the `classification.type` statically, optional
  * `"html_parser"`: The HTML parser to use, by default "html.parser", can also be e.g. "lxml", have a look at https://www.crummy.com/software/BeautifulSoup/bs4/doc/
 
+
+.. _intelmq.bots.parsers.key_value.parser:
+
 Key-Value Parser
 ^^^^^^^^^^^^^^^^
 
@@ -1334,6 +1441,7 @@ McAfee Advanced Threat Defense File
 * `verdict_severity`: min report severity to parse
 
 
+.. _intelmq.bots.parsers.microsoft.parser_ctip:
 
 Microsoft CTIP Parser
 ^^^^^^^^^^^^^^^^^^^^^
@@ -1356,6 +1464,9 @@ The feeds only differ by a few fields, not in the format.
 The feeds contain a field called `Payload` which is nearly always a base64 encoded JSON structure.
 If decoding works, the contained fields are saved as `extra.payload.*`, otherwise the field is saved as `extra.payload.text`.
 
+
+.. _intelmq.bots.parsers.misp.parser:
+
 MISP
 ^^^^
 * `name:` intelmq.bots.parsers.misp.parser
@@ -1370,7 +1481,8 @@ for processing. Supported MISP event categories and attribute types are
 defined in the `SUPPORTED_MISP_CATEGORIES` and `MISP_TYPE_MAPPING` class
 constants.
 
-.. _n6 parser bot:
+
+.. _intelmq.bots.parsers.n6.parser_n6stomp:
 
 n6
 ^^
@@ -1392,6 +1504,9 @@ Also contains a mapping for the classification (results in taxonomy, type and id
 The `name` field is normally used as `malware.name`, if that fails due to disallowed characters, these characters are removed and the original value is saved as `event_description.text`. This can happen for names like `"further iocs: text with invalid ’ char"`.
 
 If an n6 message contains multiple IP addresses, multiple events are generated, resulting in events only differing in the address information.
+
+
+.. _intelmq.bots.parsers.twitter.parser:
 
 Twitter
 ^^^^^^^
@@ -1415,6 +1530,10 @@ Twitter
 The dependency `url-normalize` changed it's behavior in version 1.4.0 from using `http://` as default scheme to `https://`. Version 1.4.1 added the possibility to specify it. Thus you can only use the `default_scheme` parameter with a current version of this library >= 1.4.1, with 1.4.0 you will always get `https://` as default scheme and for older versions < 1.4.0 `http://` is used.
 
 This does not affect URLs which already include the scheme.
+
+
+.. _intelmq.bots.parsers.shadowserver.parser:
+.. _intelmq.bots.parsers.shadowserver.parser_json:
 
 Shadowserver
 ^^^^^^^^^^^^
@@ -1550,6 +1669,8 @@ It is required to look up the correct configuration.
 Look at the documentation in the bots's `config.py` file for more information.
 
 
+.. _intelmq.bots.parsers.shodan.parser:
+
 Shodan
 ^^^^^^
 
@@ -1565,6 +1686,9 @@ The parser is by far not complete as there are a lot of fields in a big nested s
 
 * `ignore_errors`: Boolean (default true)
 * `minimal_mode`: Boolean (default false)
+
+
+.. _intelmq.bots.parsers.zoneh.parser:
 
 ZoneH
 ^^^^^
@@ -1586,12 +1710,15 @@ fields normally present in CSV files distributed by email.
 Expert Bots
 ***********
 
+
+.. _intelmq.bots.experts.abusix.expert:
+
 Abusix
 ^^^^^^
 
 **Information**
 
-* `name:` abusix
+* `name:` intelmq.bots.experts.abusix.expert
 * `lookup:` dns
 * `public:` yes
 * `cache (redis db):` 5
@@ -1613,12 +1740,15 @@ https://pypi.org/project/querycontacts/
 
 If the package is not installed, our own routines are used.
 
+
+.. _intelmq.bots.experts.asn_lookup.expert:
+
 ASN Lookup
 ^^^^^^^^^^
 
 **Information**
 
-* `name:` ASN lookup
+* `name:` `intelmq.bots.experts.asn_lookup.expert`
 * `lookup:` local database
 * `public:` yes
 * `cache (redis db):` none
@@ -1648,9 +1778,10 @@ Use this command to create/update the database and reload the bot:
 The database is fetched from [routeviews.org/](http://www.routeviews.org/routeviews/) and licensed under the Creative Commons Attribution 4.0 International license (see the [FAQ](http://www.routeviews.org/routeviews/index.php/faq/#faq-6666).
 
 
+.. _intelmq.bots.experts.csv_converter.expert:
+
 CSV Converter
 ^^^^^^^^^^^^^
-
 
 **Information**
 
@@ -1671,13 +1802,14 @@ To use the CSV-converted data in an output bot - for example in a file output,
 use the configuration parameter `single_key` of the output bot and set it to `output`.
 
 
+.. _intelmq.bots.experts.cymru_whois.expert:
 
 Cymru Whois
 ^^^^^^^^^^^
 
 **Information**
 
-* `name:` cymru-whois
+* `name:` `intelmq.bots.experts.cymru_whois.expert`
 * `lookup:` Cymru DNS
 * `public:` yes
 * `cache (redis db):` 5
@@ -1690,6 +1822,8 @@ Public documentation: https://www.team-cymru.com/IP-ASN-mapping.html#dns
 * **Cache parameters** (see in section :ref:`common-parameters`)
 * `overwrite`: Overwrite existing fields. Default: `True` if not given (for backwards compatibility, will change in version 3.0.0)
 
+
+.. _intelmq.bots.experts.domain_suffix.expert:
 
 Domain Suffix
 ^^^^^^^^^^^^^
@@ -1706,7 +1840,7 @@ public suffix list too, are ignored.
 
 **Information**
 
-* `name:` domain suffix
+* `name:` `intelmq.bots.experts.domain_suffix.expert`
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` -
@@ -1757,12 +1891,14 @@ Use this command to create/update the database and reload the bot:
    intelmq.bots.experts.domain_suffix.expert --update-database
 
 
+.. _intelmq.bots.experts.deduplicator.expert:
+
 Deduplicator
 ^^^^^^^^^^^^
 
 **Information**
 
-* `name:` deduplicator
+* `name:` `intelmq.bots.experts.deduplicator.expert`
 * `lookup:` redis cache
 * `public:` yes
 * `cache (redis db):` 6
@@ -1822,13 +1958,14 @@ To flush the deduplicator's cache, you can use the `redis-cli` tool. Enter the d
    flushdb
 
 
+.. _intelmq.bots.experts.do_portal.expert:
 
 DO Portal Expert Bot
 ^^^^^^^^^^^^^^^^^^^^
 
 **Information**
 
-* `name:` do_portal
+* `name:` `intelmq.bots.experts.do_portal.expert`
 * `lookup:` yes
 * `public:` no
 * `cache (redis db):` none
@@ -1839,12 +1976,15 @@ DO Portal Expert Bot
 * `portal_url` - The URL to the portal, without the API-path. The used URL is `$portal_url + '/api/1.0/ripe/contact?cidr=%s'`.
 * `portal_api_key` - The API key of the user to be used. Must have sufficient privileges.
 
+
+.. _intelmq.bots.experts.field_reducer.expert:
+
 Field Reducer Bot
 ^^^^^^^^^^^^^^^^^
 
 **Information**
 
-* `name:` reducer
+* `name:` `intelmq.bots.experts.field_reducer.expert`
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
@@ -1862,7 +2002,8 @@ Only the fields in `keys` will passed along.
 
 The fields in `keys` will be removed from events.
 
-.. _filter bot:
+
+.. _intelmq.bots.experts.filter.expert:
 
 Filter
 ^^^^^^
@@ -1871,7 +2012,7 @@ The filter bot is capable of filtering specific events.
 
 **Information**
 
-* `name:` filter
+* `name:` `intelmq.bots.experts.filter.expert`
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
@@ -1927,12 +2068,15 @@ Both parameters accept string values describing absolute or relative time:
 
 In `DEBUG` logging level, one can see that the message is sent to both matching paths, also if one of the paths is not configured. Of course the message is only delivered to the configured paths.
 
+
+.. _intelmq.bots.experts.format_field.expert:
+
 Format Field
 ^^^^^^^^^^^^
 
 **Information**
 
-* `name:` Format Field
+* `name:` `intelmq.bots.experts.format_field.expert`
 * `lookup:` none
 * `cache (redis db):` none
 * `description:` String method operations on column values
@@ -1969,6 +2113,9 @@ Format Field
 * `split_separator` - specifies the separator to use when splitting the string(default: `,`)
 
 Order of operation: `strip -> replace -> split`. These three methods can be combined such as first strip and then split.
+
+
+.. _intelmq.bots.experts.generic_db_lookup.expert:
 
 Generic DB Lookup
 ^^^^^^^^^^^^^^^^^
@@ -2017,13 +2164,14 @@ The values are compared with `=` only.
 `replace_fields` is again a key-value mapping an arbitrary number of **table** column names **to intelmq** field names
 
 
+.. _intelmq.bots.experts.gethostbyname.expert:
 
 Gethostbyname
 ^^^^^^^^^^^^^
 
 **Information**
 
-* `name:` gethostbyname
+* `name:` `intelmq.bots.experts.gethostbyname.expert`
 * `lookup:` DNS
 * `public:` yes
 * `cache (redis db):` none
@@ -2050,6 +2198,8 @@ Other errors result in an exception if not ignored by the parameter `gaierrors_t
 All gaierrors can be found here: http://www.castaglia.org/proftpd/doc/devel-guide/src/lib/glibc-gai_strerror.c.html
 
 
+.. _intelmq.bots.experts.http.expert_status:
+
 HTTP Status
 ^^^^^^^^^^^
 
@@ -2067,6 +2217,8 @@ Fetches the HTTP Status for a given URI
 * `overwrite:` Specifies if an existing 'status' value should be overwritten.
 
 
+.. _intelmq.bots.experts.http.expert_content:
+
 HTTP Content
 ^^^^^^^^^^^^
 
@@ -2074,7 +2226,7 @@ Fetches an HTTP resource and checks if it contains a specific string.
 
 **Information**
 
-* `name:` intelmq.bots.experts.http.expert_status
+* `name:` intelmq.bots.experts.http.expert_content
 * `description:` The bot fetches an HTTP resource and checks if it contains a specific string.
 
 **Configuration Parameters**
@@ -2082,6 +2234,9 @@ Fetches an HTTP resource and checks if it contains a specific string.
 * `field:` The name of the field containing the URL to be checked (defaults to `source.url`)
 * `needle:` The string that the content available on URL is checked for
 * `overwrite:` A boolean value that specifies if an existing 'status' value should be overwritten.
+
+
+.. _intelmq.bots.experts.idea.expert:
 
 IDEA Converter
 ^^^^^^^^^^^^^^
@@ -2102,6 +2257,9 @@ Documentation about IDEA: https://idea.cesnet.cz/en/index
 
 * `test_mode`: add `Test` category to mark all outgoing IDEA events as informal (meant to simplify setting up and debugging new IDEA producers) (default: `true`)
 
+
+.. _intelmq.bots.experts.lookyloo.expert:
+
 Lookyloo
 ^^^^^^^^
 
@@ -2121,6 +2279,9 @@ Events without `source.url` are ignored.
 **Configuration Parameters**
 
 * `instance_url`: LookyLoo instance to connect to
+
+
+.. _intelmq.bots.experts.maxmind_geoip.expert:
 
 MaxMind GeoIP
 ^^^^^^^^^^^^^
@@ -2155,6 +2316,7 @@ Use this command to create/update the database and reload the bot:
    intelmq.bots.experts.maxmind_geoip.expert --update-database
 
 
+.. _intelmq.bots.experts.misp.expert:
 
 MISP
 ^^^^
@@ -2179,6 +2341,7 @@ Generic parameters used in this bot:
 * `http_verify_cert`: Verify the TLS certificate of the server, boolean (default: `true`)
 
 
+.. _intelmq.bots.experts.mcafee.expert_mar:
 
 McAfee Active Response Hash lookup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2202,6 +2365,7 @@ McAfee Active Response Hash lookup
   - `DestFQDN`: looks up in `destination.fqdn`
 
 
+.. _intelmq.bots.experts.mcafee.expert_mar:
 
 McAfee Active Response lookup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2221,13 +2385,14 @@ McAfee Active Response lookup
 * `lookup_type`: One of <Hash|DestSocket|DestIP|DestFQDN>
 
 
+.. _intelmq.bots.experts.modify.expert:
 
 Modify
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Information**
 
-* `name:` modify
+* `name:` `intelmq.bots.experts.modify.expert`
 * `lookup:` local config
 * `public:` yes
 * `cache (redis db):` none
@@ -2335,13 +2500,14 @@ If the rule is a string, a regular expression search is performed, also for nume
 For boolean values, the comparison value needs to be `true` or `false` as in JSON they are written all-lowercase.
 
 
+.. _intelmq.bots.experts.national_cert_contact_certat.expert:
 
 National CERT contact lookup by CERT.AT
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Information**
 
-* `name:` `national_cert_contact_certat`
+* `name:` `intelmq.bots.experts.national_cert_contact_certat.expert`
 * `lookup:` https
 * `public:` yes
 * `cache (redis db):` none
@@ -2352,12 +2518,15 @@ National CERT contact lookup by CERT.AT
 * `filter`: (true/false) act as a filter for AT.
 * `overwrite_cc`: set to true if you want to overwrite any potentially existing cc fields in the event.
 
+
+.. _intelmq.bots.experts.rdap.expert:
+
 RDAP
 ^^^^
 
 **Information**
 
-* `name:` rdap
+* `name:` `intelmq.bots.experts.rdap.expert`
 * `lookup:` http/https
 * `public:` yes/no
 * `cache (redis db):` 5
@@ -2381,14 +2550,16 @@ i.e. ```
 ```
 
 
+.. _intelmq.bots.experts.recordedfuture_iprisk.expert:
+
 RecordedFuture IP risk
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 
 This Bot tags events with score found in recorded futures large IP risklist.
 
 **Information**
 
-* `name:` recordedfuture_iprisk
+* `name:` `intelmq.bots.experts.recordedfuture_iprisk.expert`
 * `lookup:` local database
 * `public:` no
 * `cache (redis db):` none
@@ -2422,15 +2593,16 @@ Use this command to create/update the database and reload the bot:
    intelmq.bots.experts.recordedfuture_iprisk.expert --update-database
 
 
+.. _intelmq.bots.experts.reverse_dns.expert:
 
 Reverse DNS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^
 
 For both `source.ip` and `destination.ip` the PTR record is fetched and the first valid result is used for `source.reverse_dns`/`destination.reverse_dns`.
 
 **Information**
 
-* `name:` reverse-dns
+* `name:` `intelmq.bots.experts.reverse_dns.expert`
 * `lookup:` DNS
 * `public:` yes
 * `cache (redis db):` 8
@@ -2443,9 +2615,10 @@ For both `source.ip` and `destination.ip` the PTR record is fetched and the firs
 * `overwrite`: Overwrite existing fields. Default: `True` if not given (for backwards compatibility, will change in version 3.0.0)
 
 
+.. _intelmq.bots.experts.rfc1918.expert:
 
 RFC1918
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^
 
 Several RFCs define ASNs, IP Addresses and Hostnames (and TLDs) reserved for *documentation*.
 Events or fields of events can be dropped if they match the criteria of either being reserved for documentation (e.g. AS 64496, Domain `example.com`)
@@ -2465,7 +2638,7 @@ Sources:
 
 **Information**
 
-* `name:` rfc1918
+* `name:` `intelmq.bots.experts.rfc1918.expert`
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
@@ -2486,6 +2659,7 @@ With the example parameter values given above, this means that:
 * If a `source.url` value contains a host with either an IP address part of a reserved network block, or a reserved domain name (or with a reserved TLD), the event will be dropped (policy "drop")
 
 
+.. _intelmq.bots.experts.ripe.expert:
 
 Ripe
 ^^^^
@@ -2494,7 +2668,7 @@ Online RIPE Abuse Contact and Geolocation Finder for IP addresses and Autonomous
 
 **Information**
 
-* `name:` ripencc-abuse-contact
+* `name:` `intelmq.bots.experts.ripe.expert`
 * `lookup:` HTTPS API
 * `public:` yes
 * `cache (redis db):` 10
@@ -2511,14 +2685,14 @@ Online RIPE Abuse Contact and Geolocation Finder for IP addresses and Autonomous
 * `query_ripe_stat_geolocation`: Query for IPs at `https://stat.ripe.net/data/maxmind-geo-lite/data.json?resource=%s`, default `true`
 
 
-.. _sieve expert:
+.. _intelmq.bots.experts.sieve.expert:
 
 Sieve
 ^^^^^
 
 **Information**
 
-* `name:` sieve
+* `name:` `intelmq.bots.experts.sieve.expert`
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
@@ -2753,12 +2927,15 @@ Use the following command to validate your sieve files:
    optional arguments:
      -h, --help  show this help message and exit
 
+
+.. _intelmq.bots.experts.splunk_saved_search.expert:
+
 Splunk saved search
 ^^^^^^^^^^^^^^^^^^^
 
 **Information**
 
-* `name`: splunk_saved_search
+* `name`: `intelmq.bots.experts.splunk_saved_search.expert`
 * `lookup`: splunk database
 * `public`: no
 * `cache (redis db)`: none
@@ -2826,12 +3003,15 @@ The time window used is the one saved with the search.
 
 Waits for Splunk to return an answer for each message, so slow searches will delay the entire botnet. If you anticipate a load of more than one search every few seconds, consider running multiple load-balanced copies of this bot.
 
+
+.. _intelmq.bots.experts.taxonomy.expert:
+
 Taxonomy
 ^^^^^^^^
 
 **Information**
 
-* `name:` taxonomy
+* `name:` `intelmq.bots.experts.taxonomy.expert`
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
@@ -2853,6 +3033,9 @@ For brevity, "type" means `classification.type` and "taxonomy" means `classifica
 - If neither taxonomy, not type is given, taxonomy is set to "other" and type to "unknown".
 - If taxonomy is given, but type is not, type is set to "unknown".
 
+
+.. _intelmq.bots.experts.threshold.expert:
+
 Threshold
 ^^^^^^^^^
 
@@ -2860,7 +3043,7 @@ Threshold
 
 
 * **Cache parameters** (see section :ref:`common-parameters`)
-* `name`: threshold
+* `name`: `intelmq.bots.experts.threshold.expert`
 * `lookup`: redis cache
 * `public`: no
 * `cache (redis db)`: 11
@@ -2890,12 +3073,15 @@ This bot has certain limitations and is not a true threshold filter (yet). It wo
 
 Please note: Even if a message is sent, any further identical messages are dropped, if the time difference to the last message is less than the timeout! The counter is not reset if the threshold is reached.
 
+
+.. _intelmq.bots.experts.tor_nodes.expert:
+
 Tor Nodes
 ^^^^^^^^^
 
 **Information**
 
-* `name:` tor-nodes
+* `name:` `intelmq.bots.experts.tor_nodes.expert`
 * `lookup:` local database
 * `public:` yes
 * `cache (redis db):` none
@@ -2913,6 +3099,9 @@ Use this command to create/update the database and reload the bot:
 
    intelmq.bots.experts.tor_nodes.expert --update-database
 
+
+.. _intelmq.bots.experts.url2fqdn.expert:
+
 Url2FQDN
 ^^^^^^^^
 
@@ -2922,7 +3111,7 @@ writes it to `source.fqdn` or `destination.fqdn` if it is a hostname, or
 
 **Information**
 
-* `name:` url2fqdn
+* `name:` `intelmq.bots.experts.url2fqdn.expert`
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
@@ -2931,6 +3120,9 @@ writes it to `source.fqdn` or `destination.fqdn` if it is a hostname, or
 **Configuration Parameters**
 
 * `overwrite`: boolean, replace existing FQDN / IP address?
+
+
+.. _intelmq.bots.experts.uwhoisd.expert:
 
 uWhoisd
 ^^^^^^^
@@ -2969,12 +3161,15 @@ The whois request will be for `theguardian.co.uk`
 * `server`: IP or hostname to connect to  (default: localhost)
 * `port`: Port to connect to (default: 4243)
 
+
+.. _intelmq.bots.experts.wait.expert:
+
 Wait
 ^^^^
 
 **Information**
 
-* `name:` wait
+* `name:` `intelmq.bots.experts.wait.expert`
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
@@ -3003,8 +3198,11 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 Output Bots
 ***********
 
+
+.. _intelmq.bots.outputs.amqptopic.output:
+
 AMQP Topic
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^
 
 Sends data to an AMQP Server
 See https://www.rabbitmq.com/tutorials/amqp-concepts.html for more details on amqp topic exchange.
@@ -3063,6 +3261,9 @@ The destination exchange and queue need to exist beforehand,
 with your preferred settings (e.g. durable, `lazy queue <https://www.rabbitmq.com/lazy-queues.html>`_.
 If the error message says that the message is "unroutable", the queue doesn't exist.
 
+
+.. _intelmq.bots.outputs.blackhole.output:
+
 Blackhole
 ^^^^^^^^^
 
@@ -3070,11 +3271,14 @@ This output bot discards all incoming messages.
 
 **Information**
 
-* `name`: blackhole
+* `name`: `intelmq.bots.outputs.blackhole.output`
 * `lookup`: no
 * `public`: yes
 * `cache`: no
 * `description`: discards messages
+
+
+.. _intelmq.bots.outputs.elasticsearch.output:
 
 Elasticsearch Output Bot
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3131,12 +3335,15 @@ The data in ES can be retrieved with the HTTP-Interface:
 
    > curl -XGET 'http://localhost:9200/intelmq/events/_search?pretty=True'
 
+
+.. _intelmq.bots.outputs.file.output:
+
 File
 ^^^^
 
 **Information**
 
-* `name:` file
+* `name:` `intelmq.bots.outputs.file.output`
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
@@ -3162,12 +3369,15 @@ For example:
 
 If the field used in the format string is not defined, `None` will be used as fallback.
 
+
+.. _intelmq.bots.outputs.files.output:
+
 Files
 ^^^^^
 
 **Information**
 
-* `name:` files
+* `name:` `intelmq.bots.outputs.files.output`
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
@@ -3181,12 +3391,15 @@ Files
 * `hierarchical_output`: if `true`, use nested dictionaries; if `false`, use flat structure with dot separated keys (default)
 * `single_key`: if `none`, the whole event is saved (default); otherwise the bot saves only contents of the specified key
 
+
+.. _intelmq.bots.outputs.mcafee.output_esm_ip:
+
 McAfee Enterprise Security Manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Information**
 
-* `name:` intelmq.bots.outputs.mcafee.output_esm_ip
+* `name:` `intelmq.bots.outputs.mcafee.output_esm_ip`
 * `lookup:` yes
 * `public:` no
 * `cache (redis db):` none
@@ -3200,6 +3413,9 @@ McAfee Enterprise Security Manager
 * `esm_pw`: password of user
 * `esm_watchlist`: name of the watchlist to write to
 * `field`: name of the IntelMQ field to be written to ESM
+
+
+.. _intelmq.bots.outputs.misp.output_feed:
 
 MISP Feed
 ^^^^^^^^^
@@ -3225,6 +3441,9 @@ The PyMISP library >= 2.4.119.1 is required, see `REQUIREMENTS.txt <https://gith
 **Usage in MISP**
 
 Configure the destination directory of this feed as feed in MISP, either as local location, or served via a web server. See `the MISP documentation on Feeds <https://www.circl.lu/doc/misp/managing-feeds>`_ for more information
+
+
+.. _intelmq.bots.outputs.misp.output_api:
 
 MISP API
 ^^^^^^^^
@@ -3276,6 +3495,9 @@ that you do not want to be inserted into MISP.
 
 (More details can be found in the docstring of `output_api.py <https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/misp/output_api.py>`_.
 
+
+.. _intelmq.bots.outputs.mongodb.output:
+
 MongoDB
 ^^^^^^^
 
@@ -3283,7 +3505,7 @@ Saves events in a MongoDB either as hierarchical structure or flat with full key
 
 **Information**
 
-* `name:` mongodb
+* `name:` `intelmq.bots.outputs.mongodb.output`
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
@@ -3307,6 +3529,9 @@ Saves events in a MongoDB either as hierarchical structure or flat with full key
    pip3 install pymongo>=2.7.1
 
 The bot has been tested with pymongo versions 2.7.1, 3.4 and 3.10.1 (server versions 2.6.10 and 3.6.8).
+
+
+.. _intelmq.bots.outputs.redis.output:
 
 Redis
 ^^^^^
@@ -3335,6 +3560,9 @@ Redis
 * Can be used to send events to be processed in another system. E.g.: send events to Logstash.
 * In a multi tenant installation can be used to send events to external/remote IntelMQ instance. Any expert bot queue can receive the events.
 * In a complex configuration can be used to create logical sets in IntelMQ-Manager.
+
+
+.. _intelmq.bots.outputs.rt.output:
 
 Request Tracker
 ^^^^^^^^^^^^^^^
@@ -3380,13 +3608,14 @@ Take extra caution not to flood your ticketing system with enormous amount of ti
 - `description_attr`: which event attribute contains text message being sent to the recipient, string. If it is not specified or not found in the event, the Investigation ticket is not going to be created. Example: `extra.message.text`.
 
 
+.. _intelmq.bots.outputs.restapi.output:
 
 REST API
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^
 
 **Information**
 
-* `name:` restapi
+* `name:` `intelmq.bots.outputs.restapi.output`
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
@@ -3402,15 +3631,16 @@ REST API
 * `use_json`: boolean
 
 
+.. _intelmq.bots.outputs.smtp.output:
 
 SMTP Output Bot
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^
 
 Sends a MIME Multipart message containing the text and the event as CSV for every single event.
 
 **Information**
 
-* `name:` smtp
+* `name:` `intelmq.bots.outputs.smtp.output`
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
@@ -3440,14 +3670,14 @@ mechanism are tried: CRAM-MD5, PLAIN, and LOGIN.
 Client certificates are not supported. If `http_verify_cert` is true, TLS certificates are checked.
 
 
-.. _bot sql:
+.. _intelmq.bots.outputs.sql.output:
 
 SQL
 ^^^
 
 **Information**
 
-* `name:` sql
+* `name:` `intelmq.bots.outputs.sql.output`
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
@@ -3539,7 +3769,8 @@ Create the new database (you can ignore all errors since SQLite doesn't know all
 
 Then, set the `database` parameter to the `your-db.db` file path.
 
-.. _stomp output bot:
+
+.. _intelmq.bots.outputs.stomp.output:
 
 STOMP
 ^^^^^
@@ -3574,6 +3805,9 @@ Also you will need a so called "exchange point".
 * `ssl_client_certificate`: path to client cert file
 * `ssl_client_certificate_key`: path to client cert key file
 
+
+.. _intelmq.bots.outputs.tcp.output:
+
 TCP
 ^^^
 
@@ -3601,6 +3835,9 @@ Multihreading is disabled for this bot.
 If you intend to link two IntelMQ instance via TCP, set the parameter `counterpart_is_intelmq` to true. The bot then awaits an "Ok" message to be received after each message is sent.
 The TCP collector just sends "Ok" after every message it gets.
 
+
+.. _intelmq.bots.outputs.touch.output:
+
 Touch
 ^^^^^
 
@@ -3615,6 +3852,9 @@ Touch
 **Configuration Parameters**
 
 * `path`: Path to the file to touch.
+
+
+.. _intelmq.bots.outputs.udp.output:
 
 UDP
 ^^^
