@@ -85,7 +85,7 @@ class SieveExpertBot(Bot):
         'StringMatch': lambda self, match, event: self.process_string_match(match.key, match.op, match.value, event),
         'NumericMatch': lambda self, match, event: self.process_numeric_match(match.key, match.op, match.value, event),
         'IpRangeMatch': lambda self, match, event: self.process_ip_range_match(match.key, match.range, event),
-        'ListMatch': lambda self, match, event: self.process_list_match(match.key, match.neg, match.op, match.value, event),
+        'ListMatch': lambda self, match, event: self.process_list_match(match.key, match.op, match.value, event),
         'BoolMatch': lambda self, match, event: self.process_bool_match(match.key, match.op, match.value, event),
         'Expression': lambda self, match, event: self.match_expression(match, event),
     }
@@ -228,7 +228,7 @@ class SieveExpertBot(Bot):
 
     def process_condition(self, cond, event) -> bool:
         name = cond.match.__class__.__name__
-        return self._cond_map[name](self, cond.match, event)
+        return cond.neg ^ self._cond_map[name](self, cond.match, event)
 
     @staticmethod
     def process_exist_match(key, op, event) -> bool:
@@ -288,15 +288,13 @@ class SieveExpertBot(Bot):
             return any(addr in ipaddress.ip_network(val.value, strict=False) for val in ip_range.values)
         raise TextXSemanticError(f'Unhandled type: {name}')
 
-    def process_list_match(self, key, neg, op, value, event) -> bool:
+    def process_list_match(self, key, op, value, event) -> bool:
         if not (key in event and isinstance(event[key], list)):
             return False
 
         lhs = event[key]
         rhs = value.values
-        result = lhs == rhs if op == ':equals' else self._list_op_map[op](set(lhs), set(rhs))
-
-        return not result if neg else result
+        return lhs == rhs if op == ':equals' else self._list_op_map[op](set(lhs), set(rhs))
 
     def process_bool_match(self, key, op, value, event):
         if not (key in event and isinstance(event[key], bool)):

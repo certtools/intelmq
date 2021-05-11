@@ -17,7 +17,7 @@ EXAMPLE_MD5 = {"__type": "Event",
                }
 
 
-@test.skip_exotic()
+#@test.skip_exotic()
 class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for SieveExpertBot.
@@ -1119,25 +1119,6 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, expected)
 
-        # positive test with negation (!)
-        event = base.copy()
-        event['comment'] = 'match3'
-        expected = base.copy()
-        expected['comment'] = 'changed3'
-
-        self.input_message = event
-        self.run_bot()
-        self.assertMessageEqual(0, expected)
-
-        # negative test with negation (!)
-        event = base.copy()
-        event['comment'] = 'match4'
-        expected = event.copy()
-
-        self.input_message = event
-        self.run_bot()
-        self.assertMessageEqual(0, expected)
-
     def test_list_setequals_match(self):
         """ Test list/set-based :setequals match """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_list_setequals_match.sieve')
@@ -1158,25 +1139,6 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         # negative test
         event = base.copy()
         event['comment'] = 'match2'
-        expected = event.copy()
-
-        self.input_message = event
-        self.run_bot()
-        self.assertMessageEqual(0, expected)
-
-        # positive test with negation (!)
-        event = base.copy()
-        event['comment'] = 'match3'
-        expected = base.copy()
-        expected['comment'] = 'changed3'
-
-        self.input_message = event
-        self.run_bot()
-        self.assertMessageEqual(0, expected)
-
-        # negative test with negation (!)
-        event = base.copy()
-        event['comment'] = 'match4'
         expected = event.copy()
 
         self.input_message = event
@@ -1209,25 +1171,6 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, expected)
 
-        # positive test with negation (!)
-        event = base.copy()
-        event['comment'] = 'match3'
-        expected = base.copy()
-        expected['comment'] = 'changed3'
-
-        self.input_message = event
-        self.run_bot()
-        self.assertMessageEqual(0, expected)
-
-        # negative test with negation (!)
-        event = base.copy()
-        event['comment'] = 'match4'
-        expected = event.copy()
-
-        self.input_message = event
-        self.run_bot()
-        self.assertMessageEqual(0, expected)
-
     def test_list_subsetof_match(self):
         """ Test list/set-based :subsetof match """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_list_subsetof_match.sieve')
@@ -1254,25 +1197,6 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, expected)
 
-        # positive test with negation (!)
-        event = base.copy()
-        event['comment'] = 'match3'
-        expected = base.copy()
-        expected['comment'] = 'changed3'
-
-        self.input_message = event
-        self.run_bot()
-        self.assertMessageEqual(0, expected)
-
-        # negative test with negation (!)
-        event = base.copy()
-        event['comment'] = 'match4'
-        expected = event.copy()
-
-        self.input_message = event
-        self.run_bot()
-        self.assertMessageEqual(0, expected)
-
     def test_list_supersetof_match(self):
         """ Test list/set-based :supersetof match """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_list_supersetof_match.sieve')
@@ -1293,25 +1217,6 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         # negative test
         event = base.copy()
         event['comment'] = 'match2'
-        expected = event.copy()
-
-        self.input_message = event
-        self.run_bot()
-        self.assertMessageEqual(0, expected)
-
-        # positive test with negation (!)
-        event = base.copy()
-        event['comment'] = 'match3'
-        expected = base.copy()
-        expected['comment'] = 'changed3'
-
-        self.input_message = event
-        self.run_bot()
-        self.assertMessageEqual(0, expected)
-
-        # negative test with negation (!)
-        event = base.copy()
-        event['comment'] = 'match4'
         expected = event.copy()
 
         self.input_message = event
@@ -1486,6 +1391,94 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = event
         self.run_bot()
         self.assertMessageEqual(0, expected)
+
+    def test_negation(self):
+        ''' Test expression negation '''
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_negation.sieve')
+
+        # positive test with single expression
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match1'
+        expected = event.copy()
+        expected['comment'] = 'changed1'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with single expression in braces
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match2'
+        expected = event.copy()
+        expected['comment'] = 'changed2'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with OR'ing of two negated expressions, first matches
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match3'
+        event['extra.text'] = 'test1'
+        expected = event.copy()
+        expected['comment'] = 'changed3'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with OR'ing of two negated expressions, second matches
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match3'
+        event['extra.text'] = 'test2'
+        expected = event.copy()
+        expected['comment'] = 'changed3'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with OR'ing of two negated expressions, neither match
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match3'
+        event['extra.text'] = 'test3'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test with AND'ing of two negated expressions, first does not match
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match4'
+        event['extra.text'] = 'test1'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test with AND'ing of two negated expressions, second does not match
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match4'
+        event['extra.text'] = 'test2'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test with AND'ing of two negated expressions
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match4'
+        event['extra.text'] = 'test3'
+        expected = event.copy()
+        expected['comment'] = 'changed4'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
 
 
 if __name__ == '__main__':  # pragma: no cover
