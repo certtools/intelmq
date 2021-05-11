@@ -2774,8 +2774,7 @@ The sieve file contains an arbitrary number of rules of the form:
    }
 
 
-*Please note* that nesting if-statements is currently not possible. `ACTIONS`
-must contain one or more actions of the actions listed below.
+Nested if-statements and mixed if statements and rules in the same scope are possible.
 
 *Expressions*
 
@@ -2794,9 +2793,9 @@ The following operators may be used to match events:
 
     ``if :exists source.fqdn { ... }``
 
- * `==` and `!=` match for equality of strings and numbers, for example:
+ * `==` and `!=` match for equality of strings, numbers, and booleans, for example:
 
-   ``if feed.name != 'acme-security' || feed.accuracy == 100 { ... }``
+   ``if feed.name != 'acme-security' || feed.accuracy == 100 || extra.false_positive == false { ... }``
 
  * `:contains` matches on substrings.
 
@@ -2822,7 +2821,7 @@ The following operators may be used to match events:
   Events with values like `8.8.8.8` or `8.8.4.4` will match, as they are always unequal to the other value.
   **Attention:** The result is *not* that the field must be unequal to all given values.
 
- * `:equals` tests for equality between lists, including order. Its result can be inverted by using `! :equals`. Example for checking a hostname-port pair:
+ * `:equals` tests for equality between lists, including order. Example for checking a hostname-port pair:
    ``if extra.host_tuple :equals ['dns.google', 53] { ... }``
  * `:setequals` tests for set-based equality (ignoring duplicates and value order) between a list of given values. Example for checking for the first nameserver of two domains, regardless of the order they are given in the list:
    ``if extra.hostnames :setequals ['ns1.example.com', 'ns1.example.mx'] { ... }``
@@ -2836,14 +2835,16 @@ The following operators may be used to match events:
  * `:supersetof` tests if the list of values from the given key is a superset of the values specified as the argument. Example for matching hosts with at least the IoT and vulnerable tags:
    ``if extra.tags :supersetof ['iot', 'vulnerable'] { ... }``
 
- * The results of the list operators (`:equals`, `:setequals`, `:overlaps`, `:subsetof` and `:supersetof`) can be inverted with a prepended exclamation mark, such as `! :overlaps`. Note that in case there is no value with the given key or it is a non-list value, the result will always be false, regardless of negation. The existence of the key can be checked for separately.
-
  * Boolean values can be matched with `==` or `!=` followed by `true` or `false`. Example:
    ``if extra.has_known_vulns == true { ... }``
 
  * The combination of multiple expressions can be done using parenthesis and boolean operators:
 
   ``if (source.ip == '127.0.0.1') && (comment == 'add field' || classification.taxonomy == 'vulnerable') { ... }``
+
+ * Any single expression or a parenthesised group of expressions can be negated using `!`:
+
+ ``if ! source.ip :contains '127.0.0' || ! ( source.ip == '172.16.0.5' && source.port == 25 ) { ... }``
 
 
 *Actions*
@@ -2853,7 +2854,7 @@ If part of a rule matches the given conditions, the actions enclosed in `{` and
 in the sieve file will be forwarded to the next bot in the pipeline, unless the
 `drop` action is applied.
 
- * `add` adds a key value pair to the event. This action only applies if the key is not yet defined in the event. If the key is already defined, the action is ignored. Example:
+ * `add` adds a key value pair to the event. It can be a string, number, or boolean. This action only applies if the key is not yet defined in the event. If the key is already defined, the action is ignored. Example:
 
    ``add comment = 'hello, world'``
 
