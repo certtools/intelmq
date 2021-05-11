@@ -29,10 +29,10 @@ for msg in EVENTS_OUT:
 PARAMETERS = {
     'filter_keys': ['source.ip'],
     'filter_type': 'whitelist',
-    'redis_cache_db': '11',
+    'redis_cache_db': 4,
     'redis_cache_host': '127.0.0.1',
     'redis_cache_password': None,
-    'redis_cache_port': '6379',
+    'redis_cache_port': 6379,
     'timeout': 1,
     'threshold': 10
 }
@@ -48,25 +48,24 @@ class TestThresholdExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = ThresholdExpertBot
         cls.use_cache = True
+        cls.sysconfig = PARAMETERS
 
     def test_one(self):
         """
         One message, not enough to reach the threshold.
         """
-        time.sleep(2)  # Ensure cache has timed out
+        self.cache.flushdb()
         self.input_message = EVENTS_IN[0:1]
-        self.run_bot(parameters=PARAMETERS,
-                     iterations=len(self.input_message))
+        self.run_bot(iterations=len(self.input_message))
         self.assertOutputQueueLen(0)
 
     def test_threshold_reached(self):
         """
         Ten messages, just enough to reach the threshold.
         """
-        time.sleep(2)  # Ensure cache has timed out
+        self.cache.flushdb()
         self.input_message = EVENTS_IN[0:10]
-        self.run_bot(parameters=PARAMETERS,
-                     iterations=len(self.input_message))
+        self.run_bot(iterations=len(self.input_message))
         self.assertOutputQueueLen(1)
         self.assertMessageEqual(0, EVENTS_OUT[PARAMETERS['threshold'] - 1])
 
@@ -74,11 +73,10 @@ class TestThresholdExpertBot(test.BotTestCase, unittest.TestCase):
         """
         Thirty messages, looking at fields that differ.
         """
-        time.sleep(2)  # Ensure cache has timed out
+        self.cache.flushdb()
         self.input_message = EVENTS_IN
-        self.run_bot(parameters={**PARAMETERS,
-                                 **{'filter_keys':
-                                    ['source.ip', 'destination.ip']}},
+        self.run_bot(parameters={'filter_keys':
+                                 ['source.ip', 'destination.ip']},
                      iterations=len(self.input_message))
         self.assertOutputQueueLen(0)
 
@@ -86,10 +84,9 @@ class TestThresholdExpertBot(test.BotTestCase, unittest.TestCase):
         """
         Thirty identical messages, within the timeout period.
         """
-        time.sleep(2)  # Ensure cache has timed out
+        self.cache.flushdb()
         self.input_message = EVENTS_IN
-        self.run_bot(parameters=PARAMETERS,
-                     iterations=len(self.input_message))
+        self.run_bot(iterations=len(self.input_message))
         self.assertOutputQueueLen(1)
         self.assertMessageEqual(0, EVENTS_OUT[PARAMETERS['threshold'] - 1])
 
@@ -97,12 +94,10 @@ class TestThresholdExpertBot(test.BotTestCase, unittest.TestCase):
         """
         Add a field to the propagated event.
         """
-        time.sleep(2)  # Ensure cache has timed out
+        self.cache.flushdb()
         self.input_message = EVENTS_IN[0:10]
-        self.run_bot(parameters={**PARAMETERS,
-                                 **{'add_keys':
-                                    {'comment':
-                                     'Threshold reached'}}},
+        self.run_bot(parameters={'add_keys':
+                                 {'comment': 'Threshold reached'}},
                      iterations=len(self.input_message))
         self.assertOutputQueueLen(1)
         self.assertMessageEqual(0, {**EVENTS_OUT[PARAMETERS['threshold'] - 1],
