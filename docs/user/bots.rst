@@ -504,6 +504,9 @@ Requires the `kafka python library <https://pypi.org/project/kafka/>`_.
 
 .. _intelmq.bots.collectors.misp.collector:
 
+
+.. _intelmq.bots.collectors.misp.collector:
+
 MISP Generic
 ^^^^^^^^^^^^
 
@@ -639,6 +642,9 @@ Requires the rsync executable
 * `file`: The filename to process, combined with `rsync_path`.
 * `rsync_path`: Path to file. It can be "/home/username/directory" or "username@remote_host:/home/username/directory"
 * `temp_directory`: The temporary directory for rsync to use for rsync'd files. Optional. Default: `$VAR_STATE_PATH/rsync_collector`. `$VAR_STATE_PATH` is `/var/run/intelmq/` or `/opt/intelmq/var/run/`.
+
+
+.. _intelmq.bots.collectors.shadowserver.collector_reports_api:
 
 
 .. _intelmq.bots.collectors.shadowserver.collector_reports_api:
@@ -1703,6 +1709,8 @@ Look at the documentation in the bot's ``_config.py`` file for more information.
 
 .. _intelmq.bots.parsers.shodan.parser:
 
+.. _intelmq.bots.parsers.shodan.parser:
+
 Shodan
 ^^^^^^
 
@@ -1858,6 +1866,8 @@ The database is fetched from `routeviews.org <http://www.routeviews.org/routevie
 
 .. _intelmq.bots.experts.csv_converter.expert:
 
+.. _intelmq.bots.experts.csv_converter.expert:
+
 CSV Converter
 ^^^^^^^^^^^^^
 
@@ -1923,6 +1933,8 @@ RemoveAffix
 **Description**
 Remove part of string from string, example: `www.` from domains.
 
+
+.. _intelmq.bots.experts.domain_suffix.expert:
 
 .. _intelmq.bots.experts.domain_suffix.expert:
 
@@ -2695,6 +2707,8 @@ RDAP
       "de": "rdap.service:1337/v1/"
    }
 
+
+.. _intelmq.bots.experts.recordedfuture_iprisk.expert:
 
 .. _intelmq.bots.experts.recordedfuture_iprisk.expert:
 
@@ -4113,7 +4127,8 @@ Create the new database (you can ignore all errors since SQLite doesn't know all
 
 Then, set the `database` parameter to the `your-db.db` file path.
 
-.. _stomp output bot:
+
+.. _intelmq.bots.outputs.stomp.output:
 
 .. _intelmq.bots.outputs.stomp.output:
 
