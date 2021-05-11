@@ -17,7 +17,7 @@ EXAMPLE_MD5 = {"__type": "Event",
                }
 
 
-#@test.skip_exotic()
+@test.skip_exotic()
 class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for SieveExpertBot.
