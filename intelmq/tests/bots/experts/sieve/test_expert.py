@@ -1479,6 +1479,129 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, expected)
 
+    def test_nested_if(self):
+        ''' Test nested if statements '''
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_nested_if.sieve')
+
+        # match outer if and inner if
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match1'
+        event['extra.text'] = 'test1'
+        expected = event.copy()
+        expected['comment'] = 'changed1'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # match outer if and inner elif
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match1'
+        event['extra.text'] = 'test2'
+        expected = event.copy()
+        expected['comment'] = 'changed2'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # match outer if and inner else
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match1'
+        expected = event.copy()
+        expected['comment'] = 'changed3'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # match outer elif and inner if
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match2'
+        event['extra.text'] = 'test4'
+        expected = event.copy()
+        expected['comment'] = 'changed4'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # match outer elif and inner elif
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match2'
+        event['extra.text'] = 'test5'
+        expected = event.copy()
+        expected['comment'] = 'changed5'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # match outer elif and inner else
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match2'
+        expected = event.copy()
+        expected['comment'] = 'changed6'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # match outer else and inner if
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match3'
+        event['extra.text'] = 'test7'
+        expected = event.copy()
+        expected['comment'] = 'changed7'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # match outer else and inner elif
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match3'
+        event['extra.text'] = 'test8'
+        expected = event.copy()
+        expected['comment'] = 'changed8'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # match outer else and inner else
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match3'
+        expected = event.copy()
+        expected['comment'] = 'changed9'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+    def test_mixed_if_and_actions(self):
+        ''' Test mixed if statements and actions '''
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_mixed_if.sieve')
+
+        # pass unconditional and conditional statement
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match'
+        expected = event.copy()
+        expected['comment'] = 'changed'
+        expected['extra.tag'] = 'matched'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # pass unconditional, but not conditional statement
+        event = EXAMPLE_INPUT.copy()
+        expected = event.copy()
+        expected['extra.tag'] = 'matched'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
 
 
 if __name__ == '__main__':  # pragma: no cover
