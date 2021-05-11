@@ -105,9 +105,9 @@ Action: action=DropAction
 DropAction: 'drop';
 KeepAction: 'keep';
 PathAction: 'path' path=PathValue;
-AddAction: 'add' key=Key operator=AssignOperator value=STRING;              // add key/value without overwriting existing key
-AddForceAction: 'add!' key=Key operator=AssignOperator value=STRING;        // add key/value, overwriting existing key
-UpdateAction: 'update' key=Key operator=AssignOperator value=STRING;        // update key/value, do not create if not exists
+AddAction: 'add' key=Key operator=AssignOperator value=TypedValue;          // add key/value without overwriting existing key
+AddForceAction: 'add!' key=Key operator=AssignOperator value=TypedValue;    // add key/value, overwriting existing key
+UpdateAction: 'update' key=Key operator=AssignOperator value=TypedValue;    // update key/value, do not create if not exists
 RemoveAction: 'remove' key=Key;
 AppendAction: 'append' key=Key value=TypedValue;                            // append an element to a list if it exists
 AppendForceAction: 'append!' key=Key value=TypedValue;                      // append an element to a list; converts a single item to a list with one element
