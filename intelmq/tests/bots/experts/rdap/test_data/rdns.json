@@ -1,0 +1,43 @@
+{
+    "description": "RDAP bootstrap file for Domain Name System registrations",
+    "publication": "2021-05-11T21:00:02Z",
+    "services": [
+      [
+        [
+          "nowruz",
+          "pars",
+          "shia",
+          "tci",
+          "xn--mgbt3dhd"
+        ],
+        [
+          "https://api.rdap.agitsys.net/"
+        ]
+      ],
+      [
+        [
+          "xn--p1acf"
+        ],
+        [
+          "https://api.rdap.nic.xn--p1acf/"
+        ]
+      ],
+      [
+        [
+          "moscow"
+        ],
+        [
+          "https://flexireg.net/moscow/rdap/"
+        ]
+      ],
+      [
+        [
+          "xn--80adxhks"
+        ],
+        [
+          "https://flexireg.net/xn--80adxhks/rdap/"
+        ]
+      ]
+    ],
+    "version": "1.0"
+  }
