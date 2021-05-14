@@ -66,20 +66,22 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - Added `intelmq.bots.experts.http.expert_content`: A bot that fetches an HTTP resource and checks if it contains a specific string.
 - Added `intelmq.bots.experts.lookyloo.expert`: A bot that sends requests to a lookyloo instance & adds `screenshot_url` to the event (PR#1844 by Sebastian Waldbauer, fixes #1048).
 - Added `intelmq.bots.experts.rdap.expert`: A bot that checks the rdap protocol for an abuse contact for a given domain.
-- `intelmq.bots.experts.sieve.expert`: (all changes PR#1895 by Mikk Margus Möll):
-  - Add operators for comparing lists and sets:
+- `intelmq.bots.experts.sieve.expert`:
+  - Add operators for comparing lists and sets (PR#1895 by Mikk Margus Möll):
     - `:equals`
     - `:overlaps`
     - `:supersetof`
     - `:subsetof`
     - `:equals`
-  - Add support for comparing boolean values.
-  - Add support for rule negation with `!` (currently only for list comparators).
-  - Add support for values types float, int, bool and string for all lists items.
-  - Add actions for lists:
+  - Add support for comparing boolean values (PR#1895 by Mikk Margus Möll).
+  - Add support for rule negation with `!` (PR#1895, PR#1923 by Mikk Margus Möll).
+  - Add support for values types float, int, bool and string for all lists items (PR#1895 by Mikk Margus Möll).
+  - Add actions for lists (PR#1895 by Mikk Margus Möll).
     - `append`
     - `append!` (forced/overwriting)
-  - Rewrite the rule-processing and operator-handling code to make it more comprehensible and extensible.
+  - Rewrite the rule-processing and operator-handling code to make it more comprehensible and extensible (PR#1895, PR#1923 by Mikk Margus Möll).
+  - Nested if statements, plus mixed actions and actions in the same scope (PR #1923 by Mikk Margus Möll).
+  - The attribute manipulation actions add, add! and update support non-string (bool/int/float) values (PR #1923 by Mikk Margus Möll).
 - Added `intelmq.bots.experts.uwhoisd`: A bot that fetches the whois entry from a uwhois-instance (PR#1918 by Raphaël Vinot).
 
 #### Outputs
