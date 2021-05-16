@@ -40,11 +40,11 @@ Use your systems package management.
 Docker (beta)
 ^^^^^^^^^^^^^
 
-**ATTENTION** Currently the version published on docker hub is not tagged with the same IntelMQ version. During beta, each version is published with tag `1.0`.
+You can check out all current versions on our `DockerHub <https://hub.docker.com/r/certat/intelmq-full>`_.
 
 .. code-block:: bash
 
-   docker pull certat/intelmq-full:1.0
+   docker pull certat/intelmq-full:latest
 
    docker pull certat/intelmq-nginx:latest
 
@@ -60,7 +60,7 @@ The Version format for each included item is `key=value` and they are saparated 
 
 .. code-block:: bash
 
-   docker inspect --format '{{ index .Config.Labels "org.opencontainers.image.version" }}' intelmq-full:1.0
+   docker inspect --format '{{ index .Config.Labels "org.opencontainers.image.version" }}' intelmq-full:latest
 
 Now restart your container, if you're using docker-compose you simply write:
 
