@@ -1,0 +1,157 @@
+{
+    "events": [{
+        "eventDate": "2014-04-29T14:08:54.068772Z",
+        "eventActor": 9999,
+        "eventAction": "registration"
+    }, {
+        "eventDate": "2017-06-07T06:39:57.707217Z",
+        "eventActor": 9999,
+        "eventAction": "last changed"
+    }, {
+        "eventDate": "2022-04-29T14:08:54.068772Z",
+        "eventAction": "expiration"
+    }, {
+        "eventDate": "2021-05-12T10:32:02.024808Z",
+        "eventAction": "last update of RDAP database"
+    }],
+    "handle": "D0000000007-VERS",
+    "status": ["auto renew period", "client delete prohibited", "client transfer prohibited", "client update prohibited", "server delete prohibited", "server transfer prohibited", "server update prohibited"],
+    "ldhName": "nic.versicherung",
+    "notices": [{
+        "links": [{
+            "rel": "terms-of-service",
+            "href": "http://www.nic.versicherung/rdap/tos",
+            "type": "text/html"
+        }],
+        "title": "Terms of service",
+        "description": ["Copyright (c) 2021 by tldbox GmbH (2)", "Except for agreed Internet operational purposes, no part of this information may be reproduced, stored in a retrieval system, or transmitted, in any form or by any means, electronic, mechanical, recording, or otherwise, without  prior permission of tldbox GmbH on behalf of itself and/or the copyright holders. Any use of this material to target advertising or similar activities is explicitly forbidden and can be prosecuted.", "Furthermore, it is strictly forbidden to use the RDAP database in such a way that jeopardizes or could jeopardize the stability of the technical systems of tldbox GmbH under any circumstances. In particular, this includes any misuse of the RDAP database and any use of he RDAP database which disturbs its operation. ", "Should the user violate these points, tldbox GmbH reserves the right to deactivate the RDAP database entirely or partly for the user. Moreover, the user shall be held liable for any and all damage arising from a violation of these points."]
+    }, {
+        "links": [{
+            "href": "https://icann.org/epp",
+            "type": "text/html"
+        }],
+        "title": "Status Codes",
+        "description": ["For more information on domain status codes, please visit https://icann.org/epp"]
+    }, {
+        "links": [{
+            "href": "https://icann.org/wicf",
+            "type": "text/html"
+        }],
+        "title": "RDDS Inaccuracy Complaint Form",
+        "description": ["URL of the ICANN RDDS Inaccuracy Complaint Form: https://icann.org/wicf"]
+    }],
+    "entities": [{
+        "roles": ["registrant", "administrative"],
+        "events": [{
+            "eventDate": "2017-01-24T07:28:44.320049Z",
+            "eventActor": 9999,
+            "eventAction": "registration"
+        }, {
+            "eventDate": "2018-09-26T07:16:34.157134Z",
+            "eventActor": 9999,
+            "eventAction": "last changed"
+        }],
+        "handle": "C0000013489-VERS",
+        "status": ["active", "associated"],
+        "remarks": [{
+            "type": "object redacted due to authorization",
+            "title": "EMAIL REDACTED FOR PRIVACY",
+            "description": ["Please query the RDDS  service of the registrar of record identified in this output for information on how to contact the registrant of the queried domain name"]
+        }],
+        "vcardArray": ["vcard", [
+            ["version", {}, "text", "4.0"],
+            ["fn", {}, "text", "tldbox GmbH"],
+            ["adr", {
+                "cc": "AT"
+            }, "text", ["", "", "Jakob-Haringer-Strasse 8/V", "Salzburg", "", "5020", ""]]
+        ]],
+        "objectClassName": "entity"
+    }, {
+        "roles": ["technical"],
+        "events": [{
+            "eventDate": "2014-04-29T14:08:52.546880Z",
+            "eventActor": 9999,
+            "eventAction": "registration"
+        }, {
+            "eventDate": "2018-05-24T07:32:11.358333Z",
+            "eventActor": 9999,
+            "eventAction": "last changed"
+        }],
+        "handle": "C0000000002-VERS",
+        "status": ["active", "associated"],
+        "remarks": [{
+            "type": "object redacted due to authorization",
+            "title": "EMAIL REDACTED FOR PRIVACY",
+            "description": ["Please query the RDDS  service of the registrar of record identified in this output for information on how to contact the registrant of the queried domain name"]
+        }],
+        "vcardArray": ["vcard", [
+            ["version", {}, "text", "4.0"],
+            ["fn", {}, "text", "TLDBOX"],
+            ["org", {}, "text", "tldbox GmbH"],
+            ["adr", {
+                "cc": "AT"
+            }, "text", ["", "", "Jakob-Haringer-Strasse 8/V", "Salzburg", "Salzburg", "5020", ""]],
+            ["tel", {
+                "type": "voice"
+            }, "uri", "tel:+13.371337;ext=730"],
+            ["tel", {
+                "type": "fax"
+            }, "uri", "tel:+13.371337;ext=19"]
+        ]],
+        "objectClassName": "entity"
+    }, {
+        "roles": ["registrar"],
+        "handle": 9999,
+        "entities": [{
+            "roles": ["abuse"],
+            "vcardArray": ["vcard", [
+                ["version", {}, "text", "4.0"],
+                ["fn", {}, "text", "tldbox GmbH"],
+                ["role", {}, "text", "abuse"],
+                ["tel", {
+                    "type": "voice"
+                }, "uri", "tel:+13.371337"],
+                ["email", {}, "text", "service@tld-box.at"]
+            ]],
+            "objectClassName": "entity"
+        }],
+        "publicIds": [{
+            "type": "IANA Registrar ID",
+            "identifier": 9999
+        }],
+        "objectClassName": "entity"
+    }],
+    "secureDNS": {
+        "dsData": [{
+            "digest": "ad739f5b95e0cab749fc1fb6859270de8614fe0aadd2662fe9f556324a3b8f1b",
+            "keyTag": "34525",
+            "algorithm": "8",
+            "digestType": "2"
+        }],
+        "zoneSigned": true,
+        "delegationSigned": true
+    },
+    "nameservers": [{
+        "events": [{
+            "eventDate": "2014-04-29T14:08:52.601632Z",
+            "eventActor": 9999,
+            "eventAction": "registration"
+        }],
+        "handle": "H0000000003-VERS",
+        "status": ["active", "associated"],
+        "ldhName": "sec1.rcode0.net",
+        "objectClassName": "nameserver"
+    }, {
+        "events": [{
+            "eventDate": "2014-04-29T14:08:52.662556Z",
+            "eventActor": 9999,
+            "eventAction": "registration"
+        }],
+        "handle": "H0000000004-VERS",
+        "status": ["active", "associated"],
+        "ldhName": "sec2.rcode0.net",
+        "objectClassName": "nameserver"
+    }],
+    "objectClassName": "domain",
+    "rdapConformance": ["rdap_level_0", "icann_rdap_response_profile_0", "icann_rdap_technical_implementation_guide_0"]
+}
