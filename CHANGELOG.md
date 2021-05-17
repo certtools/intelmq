@@ -24,6 +24,7 @@ CHANGELOG
 - `intelmq.lib.bot_debugger`:
   - Set bot's `logging_level` directly in `__init__` before the bot's initialization by changing the default value (by Sebastian Wagner).
   - Rewrite `load_configuration_patch` by adapting it to the parameter and configuration rewrite (by Sebastian Wagner).
+  - Do not rely on the runtime configuration's `group` setting of bots to determine the required message type of messages given on the command line (PR#1949 by Sebastian Wagner).
 
 ### Development
 - `rewrite_config_files.py`: Removed obsolete BOTS-file-related rewriting functionality.
