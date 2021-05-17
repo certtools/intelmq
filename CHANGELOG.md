@@ -88,6 +88,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 #### Outputs
 - Remove `intelmq.bots.outputs.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
   users mailinglist, the bot is not used by anyone. (https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html, PR#1761, closes #1614)
+- `intelmq.bots.outputs.smtp`: Add more debug logging (PR#1949 by Sebastian Wagner).
 
 ### Documentation
 - Updated user and developer documentation to reflect the removal of the BOTS file (PR#1780 by Birger Schacht).
