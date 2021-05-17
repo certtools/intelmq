@@ -57,7 +57,7 @@ build () {
 	# this is a hack because intelmq does
 	# not like to be run as root :( :
 	${BR} "${CONTAINER}" chown -R nobody:nogroup "${PARENT}"
-	${BR} --user nobody:nogroup "${CONTAINER}" /bin/sh -c 'dpkg-buildpackage -us -uc -b'
+	${BR} --user nobody:nogroup "${CONTAINER}" /bin/sh -c 'DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -b'
 
 	# create a directory for the artifacts
 	# and copy the relevant files there
