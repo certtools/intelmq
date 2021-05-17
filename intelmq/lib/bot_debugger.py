@@ -21,6 +21,7 @@ import time
 
 from intelmq import RUNTIME_CONF_FILE
 from intelmq.lib import utils
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import Pipeline
 from intelmq.lib.utils import StreamHandler, error_message_from_exc
@@ -162,8 +163,8 @@ class BotDebugger:
         self.output.append(msg)
 
     def arg2msg(self, msg):
+        default_type = "Report" if (self.runtime_configuration.get("group", None) == "Parser" or isinstance(self.instance, ParserBot)) else "Event"
         try:
-            default_type = "Report" if self.runtime_configuration["group"] == "Parser" else "Event"
             msg = MessageFactory.unserialize(msg, default_type=default_type)
         except (Exception, KeyError, TypeError, ValueError) as exc:
             if exists(msg):
