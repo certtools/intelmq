@@ -54,11 +54,13 @@ class SMTPOutputBot(Bot):
 
         with self.smtp_class(self.smtp_host, self.smtp_port, **self.kwargs) as smtp:
             if self.starttls:
+                self.logger.debug("Issuing STARTTLS with{verify} certificate verification.".format(verify="" if self.http_verify_cert else "out"))
                 if self.http_verify_cert:
                     smtp.starttls(context=ssl.create_default_context())
                 else:
                     smtp.starttls()
             if self.smtp_username and self.smtp_password:
+                self.logger.debug('Authenticating against SMTP server.')
                 smtp.login(user=self.smtp_username, password=self.smtp_password)
             msg = MIMEMultipart()
             if self.text is not None:
@@ -71,6 +73,7 @@ class SMTPOutputBot(Bot):
             recipients = [recipient
                           for recipient
                           in self.mail_to.format(ev=event).split(',')]
+            self.logger.debug(f'Sending mail to {recipients!r}.')
             smtp.send_message(msg, from_addr=self.mail_from,
                               to_addrs=recipients)
 
