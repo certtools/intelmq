@@ -1,14 +1,17 @@
+========================
 intelmqctl documentation
 ========================
 
 .. contents::
 
+------------
 Introduction
 ------------
 
 intelmqctl is the main tool to handle a intelmq installation.
 It handles the bots themselves and has some tools to handle the installation.
 
+-----------
 Output type
 -----------
 
@@ -17,13 +20,14 @@ If called directly, it will print all output to the console (stderr).
 If used as python library, the python types themselves are returned.
 The third option is to use machine-readable JSON as output (used by other managing tools).
 
+----------------------
 Manage individual bots
 ----------------------
 
 As all init systems, intelmqctl has the methods start, stop, restart, reload and status.
 
 start
-^^^^^
+=====
 
 This will start the bot with the ID `file-output`. A file with it's PID will be created in `/opt/intelmq/var/run/[bot-id].pid`.
 
@@ -41,7 +45,7 @@ If the bot is already running, it won't be started again:
    file-output is running.
 
 stop
-^^^^^^^^^^^^^^^
+====
 
 If the PID file does exist, a SIGINT will be sent to the process. After 0.25s we check if the process is running. If not, the PID file will be removed.
 
@@ -66,7 +70,7 @@ If the bot did not stop in 0.25s, intelmqctl will say it's still running:
    file-output is still running
 
 status
-^^^^^^^^^^^^^^^
+======
 
 Checks for the PID file and if the process with the given PID is alive. If the PID file exists, but the process does not exist, it will be removed.
 
@@ -81,7 +85,7 @@ Checks for the PID file and if the process with the given PID is alive. If the P
    file-output is running.
 
 restart
-^^^^^^^^^^^^^^^
+=======
 
 The same as stop and start consecutively.
 
@@ -94,7 +98,7 @@ The same as stop and start consecutively.
    file-output is running.
 
 reload
-^^^^^^^^^^^^^^^
+======
 
 Sends a SIGHUP to the bot, which will then reload the configuration.
 
@@ -112,7 +116,7 @@ If the bot is not running, we can't reload it:
    file-output was NOT RUNNING.
 
 run
-^^^^^^^^^^^^^^^
+===
 
 Run a bot directly for debugging purpose.
 
@@ -145,7 +149,7 @@ Note that if another instance of the bot is running, only warning will be displa
 You can set the log level with the `-l` flag, e.g. `-l DEBUG`. For the 'console' subcommand, 'DEBUG' is the default.
 
 console
-^^^^^^^
+-------
 
 If launched with **console** argument, you get a ```pdb``` live console; or ```ipdb``` or ```pudb``` consoles if they were previously installed (I.E. ```pip3 install ipdb --user```).
 
@@ -162,7 +166,7 @@ You may specify the desired console in the next argument.
    > intelmqctl run file-output console pudb
 
 message
-^^^^^^^
+-------
 
 Operate directly with the input / output pipelines.
 
@@ -192,7 +196,7 @@ In our case of ```file-output```, it has no destination queue so that nothing ha
 Note, if you would like to know possible parameters of the message, put a wrong one – you will be prompted if you want to list all the current bot harmonization.
 
 process
-^^^^^^^
+-------
 
 With no other arguments, bot\'s ```process()``` method will be run one time.
 
@@ -227,7 +231,7 @@ If you wish to display the processed message as well, you the **--show-sent|-s**
 
 
 disable
-^^^^^^^
+=======
 
 Sets the `enabled` flag in the runtime configuration of the bot to `false`.
 By default, all bots are enabled.
@@ -243,7 +247,7 @@ Example output:
    file-output is disabled.
 
 enable
-^^^^^^^^^^^^^^^
+======
 
 Sets the `enabled` flag in the runtime configuration of the bot to `true`.
 
@@ -257,8 +261,9 @@ Example output:
    > intelmqctl status file-output
    file-output is stopped.
 
+-----------------
 Manage the botnet
-------------------
+-----------------
 
 In IntelMQ, the botnet is the set of all currently configured and enabled bots.
 All configured bots have their configuration in runtime.conf.
@@ -272,7 +277,7 @@ But only enabled bots are started.
 In the examples below, a very minimal botnet is used.
 
 start
-^^^^^^^^^^^^^^^
+=====
 
 The start action applies to all bots which are enabled.
 
@@ -291,7 +296,8 @@ The start action applies to all bots which are enabled.
 As we can file-output is disabled and thus has not been started. You can always explicitly start disabled bots.
 
 stop
-^^^^^^^^^^^^^^^
+====
+
 The stop action applies to all bots. Assume that all bots have been running:
 
 .. code-block:: bash
@@ -309,7 +315,7 @@ The stop action applies to all bots. Assume that all bots have been running:
    Botnet is stopped.
 
 status
-^^^^^^^^^^^^^^^
+======
 
 With this command we can see the status of all configured bots. Here, the botnet was started beforehand:
 
@@ -342,15 +348,18 @@ If the botnet is stopped, the output looks like this:
    file-output is disabled.
 
 restart
-^^^^^^^^^^^^^^^
+=======
+
 The same as start and stop consecutively.
 
 reload
-^^^^^^^^^^^^^^^
+======
+
 The same as reload of every bot.
 
 enable / disable
-^^^^^^^^^^^^^^^^
+================
+
 The sub commands `enable` and `disable` set the corresponding flags in runtime.conf.
 
 .. code-block:: bash
@@ -370,12 +379,16 @@ The sub commands `enable` and `disable` set the corresponding flags in runtime.c
    malware-domain-list-collector is stopped.
    malware-domain-list-parser is stopped.
 
+---------
 List bots
----------------
+---------
+
 `intelmqctl list bots` does list all configured bots and their description.
 
+-----------
 List queues
----------------
+-----------
+
 `intelmqctl list queues` shows all queues which are currently in use according to the configuration and how much events are in it:
 
 .. code-block:: bash
@@ -402,22 +415,25 @@ The `--sum` or `--count` flag will show the sum of events on all queues:
    > intelmqctl list queues --sum
    42
 
+---
 Log
----------------
+---
 
 intelmqctl can show the last log lines for a bot, filtered by the log level.
 
 See the help page for more information.
 
+-----
 Check
----------------
+-----
+
 This command will do various sanity checks on the installation and especially the configuration.
 
 
 .. _orphan-queues:
 
 Orphaned Queues
-^^^^^^^^^^^^^^^
+===============
 
 The `intelmqctl check` tool can search for orphaned queues. "Orphaned queues" are queues that have been used in the past and are no longer in use. For example you had a bot which you removed or renamed afterwards, but there were still messages in it's source queue. The source queue won't be renamed automatically and is now disconnected. As this queue is no longer configured, it won't show up in the list of IntelMQ's queues too. In case you are using redis as message broker, you can use the `redis-cli` tool to examine or remove these queues:
 
@@ -435,8 +451,10 @@ To ignore certain queues in this check, you can set the parameter `intelmqctl_ch
 
    "intelmqctl_check_orphaned_queues_ignore": ["Taichung-Parser"],
 
+---------------------
 Configuration upgrade
-----------------------
+---------------------
+
 The `intelmqctl upgrade-config` function upgrade, upgrade the configuration from previous versions to the current one.
 It keeps track of previously installed versions and the result of all "upgrade functions" in the "state file", locate in the `$var_state_path/state.json` (`/opt/intelmq/var/lib/state.json` or `/var/lib/intelmq/state.json`).
 
@@ -444,13 +462,16 @@ This function has been introduced in version 2.0.1.
 
 It makes backups itself for all changed files before every run. Backups are overridden if they already exists. So make sure to always have a backup of your configuration just in case.
 
+---------
 Exit code
----------------
+---------
+
 In case of errors, unsuccessful operations, the exit code is higher than 0.
 For example, when running `intelmqctl start` and one enabled bot is not running, the exit code is 1.
 The same is valid for e.g. `intelmqctl status`, which can be used for monitoring, and all other operations.
 
+------------
 Known issues
----------------
+------------
 
 The currently implemented process managing using PID files is very erroneous.
