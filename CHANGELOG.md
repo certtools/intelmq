@@ -125,11 +125,14 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 
 #### Parsers
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
-  - Add support for new field `SourceIpInfo.SourceIpv4Int` (PR#FIXME by Sebastian Wagner).
+  - Add support for new field `SourceIpInfo.SourceIpv4Int` (PR#1940 by Sebastian Wagner).
+  - Fix mapping of "ConnectionType" fields, this is not `protocol.application`. Now mapped to `extra.*.connection_type` (PR#1940 by Sebastian Wagner).
 
 #### Experts
 
 #### Outputs
+- `intelmq.bots.outputs.smtp.output`:
+  - Handle empty "fieldnames" parameter by sending no attachment (PR#1932 by Sebastian Wagner).
 
 ### Documentation
 - `dev/data-harmonization` renamed to `dev/data-format` (by Sebastian Waldbauer)

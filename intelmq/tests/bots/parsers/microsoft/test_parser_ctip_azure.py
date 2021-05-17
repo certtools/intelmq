@@ -150,6 +150,7 @@ EXAMPLE_EVENTS = [{
         'source.port': 28285,
         'time.source': '2021-05-10T15:47:42.241999+00:00',
         'tlp': 'GREEN',
+        'extra.source.connection_type': 'Cellular',
     },
 ]
 

@@ -36,20 +36,21 @@ class SMTPOutputBot(Bot):
         else:
             self.kwargs = {}
 
-        if isinstance(self.fieldnames, str):
+        if self.fieldnames and isinstance(self.fieldnames, str):
             self.fieldnames = self.fieldnames.split(',')
 
     def process(self):
         event = self.receive_message()
         event.set_default_value()
 
-        csvfile = io.StringIO()
-        writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames,
-                                quoting=csv.QUOTE_MINIMAL, delimiter=";",
-                                extrasaction='ignore', lineterminator='\n')
-        writer.writeheader()
-        writer.writerow(event)
-        attachment = csvfile.getvalue()
+        if self.fieldnames:
+            csvfile = io.StringIO()
+            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames,
+                                    quoting=csv.QUOTE_MINIMAL, delimiter=";",
+                                    extrasaction='ignore', lineterminator='\n')
+            writer.writeheader()
+            writer.writerow(event)
+            attachment = csvfile.getvalue()
 
         with self.smtp_class(self.smtp_host, self.smtp_port, **self.kwargs) as smtp:
             if self.starttls:
@@ -62,7 +63,8 @@ class SMTPOutputBot(Bot):
             msg = MIMEMultipart()
             if self.text is not None:
                 msg.attach(MIMEText(self.text.format(ev=event)))
-            msg.attach(MIMEText(attachment, 'csv'))
+            if self.fieldnames:
+                msg.attach(MIMEText(attachment, 'csv'))
             msg['Subject'] = self.subject.format(ev=event)
             msg['From'] = self.mail_from.format(ev=event)
             msg['To'] = self.mail_to.format(ev=event)
