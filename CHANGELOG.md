@@ -113,6 +113,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Configuration
 
 ### Core
+- `intelmq.lib.upgrade`:
+  - Added `v233_feodotracker_browse` for Abuse.ch Feodotracker Browse parser configuration adaption (PR#1941 by Sebastian Wagner).
 
 ### Development
 
@@ -122,6 +124,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.microsoft.parser_ctip`:
+  - Add support for new field `SourceIpInfo.SourceIpv4Int` (PR#FIXME by Sebastian Wagner).
 
 #### Experts
 
@@ -129,10 +133,14 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 
 ### Documentation
 - `dev/data-harmonization` renamed to `dev/data-format` (by Sebastian Waldbauer)
+- Feeds:
+  - Fixed Abuse.ch Feodotracker Browse parser configuration (PR#1941 by Sebastian Wagner fixes #1938).
 
 ### Packaging
 
 ### Tests
+- `intelmq.bots.parsers.html_table`:
+  - Added testcase for Abuse.ch Feodotracker Browse (PR#1941 by Sebastian Wagner).
 
 ### Tools
 - intelmqsetup:

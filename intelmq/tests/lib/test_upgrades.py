@@ -463,6 +463,28 @@ V230_MALWAREDOMAINLIST_IN = {
         }
     }
 }
+V233_FEODOTRACKER_BROWSE_IN = {
+'Feodo-tracker-browse-parser': {
+    'module': "intelmq.bots.parsers.html_table.parser",
+    'parameters': {
+        'columns': 'time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc'.split(','),
+        'type': 'c2server',
+        'ignore_values': ',,,,Not listed,,',
+        'skip_table_head': True,
+    }
+}
+}
+V233_FEODOTRACKER_BROWSE_OUT = {
+'Feodo-tracker-browse-parser': {
+    'module': "intelmq.bots.parsers.html_table.parser",
+    'parameters': {
+        'columns': 'time.source,source.ip,malware.name,status,source.as_name,source.geolocation.cc',
+        'type': 'c2server',
+        'ignore_values': ',,,,,',
+        'skip_table_head': True,
+    }
+}
+}
 
 def generate_function(function):
     def test_function(self):
@@ -644,6 +666,12 @@ class TestUpgradeLib(unittest.TestCase):
                          'malwaredomainlist-collector. Remove affected bots yourself.',
                          result[0])
         self.assertEqual(V230_MALWAREDOMAINLIST_IN, result[2])
+
+    def test_v233_feodotracker_browse(self):
+        """ Test v233_feodotracker_browse """
+        result = upgrades.v233_feodotracker_browse({}, V233_FEODOTRACKER_BROWSE_IN, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual(V233_FEODOTRACKER_BROWSE_OUT, result[2])
 
 
 for name in upgrades.__all__:

@@ -32,6 +32,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v230_csv_parser_parameter_fix',
            'v230_deprecations',
            'v230_feed_changes',
+           'v233_feodotracker_browse',
            'v300_bots_file_removal',
            'v300_defaults_file_removal',
            'v300_pipeline_file_removal'
@@ -611,6 +612,25 @@ def v300_defaults_file_removal(defaults, runtime, harmonization, dry_run):
     return messages if messages else changed, defaults, runtime, harmonization
 
 
+def v233_feodotracker_browse(defaults, runtime, harmonization, dry_run):
+    """
+    Migrate Abuse.ch Feodotracker Browser feed parsing parameters
+    """
+    changed = None
+    old_feodo_columns = 'time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc'
+    old_ignore_values = ',,,,Not listed,,'
+    for bot_id, bot in runtime.items():
+        # The parameters can be given as string or list of strings
+        if (bot["module"] == "intelmq.bots.parsers.html_table.parser" and 'feodo' in bot_id.lower() and
+                "columns" in bot["parameters"] and "ignore_values" in bot["parameters"] and
+                (bot["parameters"]["columns"] == old_feodo_columns or bot["parameters"]["columns"] == old_feodo_columns.split(',')) and
+                (bot["parameters"]["ignore_values"] == old_ignore_values or bot["parameters"]["ignore_values"] == old_ignore_values.split(','))):
+            bot["parameters"]["columns"] = 'time.source,source.ip,malware.name,status,source.as_name,source.geolocation.cc'
+            bot["parameters"]['ignore_values'] = ',,,,,'
+            changed = True
+    return changed, defaults, runtime, harmonization
+
+
 def v300_pipeline_file_removal(defaults, runtime, harmonization, dry_run):
     """
     Remove the pipeline.conf file
@@ -662,7 +682,7 @@ UPGRADES = OrderedDict([
     ((2, 3, 0), (v230_csv_parser_parameter_fix, v230_feed_changes, v230_deprecations,)),
     ((2, 3, 1), ()),
     ((2, 3, 2), ()),
-    ((2, 3, 3), ()),
+    ((2, 3, 3), (v233_feodotracker_browse, )),
     ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, v300_pipeline_file_removal, ))
 ])
 

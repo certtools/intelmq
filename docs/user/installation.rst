@@ -89,7 +89,6 @@ Optional dependencies:
 Docker (beta)
 ^^^^^^^^^^^^^
 
-**ATTENTION** Currently the version published on docker hub is not tagged with the same IntelMQ version. During beta, each version is published with tag `1.0`.
 **ATTENTION** Currently you can't manage your botnet via :doc:`intelmqctl`. You need to use `IntelMQ-Manager <https://github.com/certtools/intelmq-manager>`_ currently!
 
 Follow `Docker Install <https://docs.docker.com/engine/install/>`_ and
@@ -135,9 +134,9 @@ PyPi
 .. code-block:: bash
 
    sudo -i
-   
+
    pip3 install intelmq
-   
+
    useradd -d /opt/intelmq -U -s /bin/bash intelmq
    sudo intelmqsetup
 
@@ -178,7 +177,7 @@ In order to work with your current infrastructure, you need to specify some envi
 
    sudo docker pull redis:latest
 
-   sudo docker pull certat/intelmq-full:1.0
+   sudo docker pull certat/intelmq-full:latest
 
    sudo docker pull certat/intelmq-nginx:latest
 
@@ -189,8 +188,7 @@ In order to work with your current infrastructure, you need to specify some envi
                    --name redis \
                    redis:latest
 
-   sudo docker run -v ~/intelmq/intelmq-manager/html:/www \
-                   --network intelmq-internal \
+   sudo docker run --network intelmq-internal \
                    --name nginx \
                    certat/intelmq-nginx:latest
 

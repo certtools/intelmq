@@ -118,6 +118,7 @@ AZURE = {
     "SourceIpInfo.SourceIpMetroCode": "extra.source.geolocation.metro_code",
     "SourceIpInfo.SourceIpAreaCode": "extra.source.geolocation.area_code",
     "SourceIpInfo.SourceIpConnectionType": "protocol.application",
+    "SourceIpInfo.SourceIpv4Int": "__IGNORE__",  # Duplicate of SourceIP
     "HttpInfo.HttpHost": "extra.http.host",
     "HttpInfo.HttpRequest": "extra.http.request",
     "HttpInfo.HttpMethod": "extra.http.method",
