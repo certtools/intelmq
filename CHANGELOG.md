@@ -129,6 +129,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - Add support for new field `SourceIpInfo.SourceIpv4Int` (PR#1940 by Sebastian Wagner).
   - Fix mapping of "ConnectionType" fields, this is not `protocol.application`. Now mapped to `extra.*.connection_type` (PR#1940 by Sebastian Wagner).
+- `intelmq.bots.parsers.shadowserver._config`:
+  - Add support for the new feeds *Honeypot-Amplification-DDoS-Events* and *Honeypot-Brute-Force-Events* (PR#1950 and PR#1952 by Birger Schacht and Sebastian Wagner).
 
 #### Experts
 
