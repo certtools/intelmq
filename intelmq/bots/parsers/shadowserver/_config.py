@@ -1990,6 +1990,7 @@ darknet = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Amplification-DDoS-Victim
+# legacy (replaced by honeypot-ddos-amp)
 amplification_ddos_victim = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2444,6 +2445,53 @@ sinkhole_dns = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-amplification-ddos-events-report/
+honeypot_ddos_amp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip', validate_ip),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.port', 'src_port', convert_int),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port', convert_int),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('malware.name', 'infection'),
+        ('extra.source.naics', 'src_naics', invalidate_zero),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', invalidate_zero),
+        ('extra.', 'public_source', validate_to_none),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('extra.', 'request', validate_to_none),
+        ('extra.', 'count', convert_int),
+        ('extra.', 'bytes', convert_int),
+        ('extra.', 'end_time', convert_date_utc),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'availability',
+        'classification.type': 'ddos',
+        'classification.identifier': 'amplification-ddos-victim',
+    }
+}
+
 # https://www.shadowserver.org/what-we-do/network-reporting/honeypot-brute-force-events-report/
 honeypot_brute_force = {
     'required_fields': [
@@ -2464,7 +2512,7 @@ honeypot_brute_force = {
         ('extra.', 'device_type', validate_to_none),
         ('extra.', 'device_model', validate_to_none),
         ('destination.ip', 'dst_ip', validate_ip),
-        ('destination.port', 'dst_port'),
+        ('destination.port', 'dst_port'), 
         ('destination.asn', 'dst_asn', invalidate_zero),
         ('destination.geolocation.cc', 'dst_geo'),
         ('destination.geolocation.region', 'dst_region'),
@@ -2523,6 +2571,7 @@ mapping = (
     ('Drone', 'botnet_drone', drone),
     ('Drone-Brute-Force', 'drone_brute_force', drone_brute_force),
     ('HTTP-Scanners', 'hp_http_scan', http_scanners),
+    ('Honeypot-Amplification-DDoS-Events', 'honeypot_ddos_amp', honeypot_ddos_amp),
     ('Honeypot-Brute-Force-Events', 'honeypot_brute_force', honeypot_brute_force),
     ('ICS-Scanners', 'hp_ics_scan', ics_scanners),
     ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),
