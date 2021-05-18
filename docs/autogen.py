@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: 2020 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 # This script generates the files
 # `guides/Harmonization-fields.md`

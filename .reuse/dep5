@@ -1,0 +1,23 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: intelmq
+Source: https://github.com/certtools/intelmq
+
+Files:     debian/*
+Copyright: 
+License:   AGPL-3.0-or-later
+
+Files:     intelmq/*
+Copyright: 
+License:   AGPL-3.0-or-later
+
+Files:     contrib/*
+Copyright: 
+License:   AGPL-3.0-or-later
+
+Files:     docs/dev/*
+Copyright: 
+License:   AGPL-3.0-or-later
+
+Files:     docs/user/*
+Copyright: 
+License:   AGPL-3.0-or-later

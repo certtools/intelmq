@@ -2,7 +2,7 @@
 """
 © 2020 Sebastian Wagner <wagner@cert.at>
 
-SPDX-License-Identifier: AGPL-3.0
+SPDX-License-Identifier: AGPL-3.0-or-later
 """
 from collections import OrderedDict
 from pkg_resources import resource_filename

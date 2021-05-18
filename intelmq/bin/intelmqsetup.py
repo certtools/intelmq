@@ -2,7 +2,7 @@
 """
 © 2019-2021 nic.at GmbH <intelmq-team@cert.at>
 
-SPDX-License-Identifier: AGPL-3.0-only
+SPDX-License-Identifier: AGPL-3.0-or-later
 
 Sets up an intelmq environment after installation or upgrade by
  * creating needed directories
