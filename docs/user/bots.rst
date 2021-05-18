@@ -1706,7 +1706,6 @@ It is required to look up the correct configuration.
 
 Look at the documentation in the bot's ``_config.py`` file for more information.
 
-
 .. _intelmq.bots.parsers.shodan.parser:
 
 .. _intelmq.bots.parsers.shodan.parser:
