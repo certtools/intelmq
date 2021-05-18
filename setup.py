@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+#
+# SPDX-FileCopyrightText: 2014-2021 Tomás Lima, Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # -*- coding: utf-8 -*-
 import json
 import os

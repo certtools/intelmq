@@ -1,2 +1,6 @@
+# SPDX-FileCopyrightText: 2017-2021 Sebastian Wagner
+#
+# SPDX-License-Identifier: CC0-1.0
+#
 comment:
   layout: "diff, flags, files"

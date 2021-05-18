@@ -1,3 +1,7 @@
+..
+   SPDX-FileCopyrightText: 2020-2021 Birger Schacht
+   SPDX-License-Identifier: AGPL-3.0-or-later
+
 IntelMQ
 -------
 
@@ -77,7 +81,7 @@ Funded by
 
 This project was partially funded by the CEF framework
 
-.. figure:: _static/cef_logo.png
+.. figure:: https://ec.europa.eu/inea/sites/default/files/ceflogos/en_horizontal_cef_logo_2.png
    :alt: Co-financed by the Connecting Europe Facility of the European Union
 
 Indices and tables

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016-2021 Sebastian Wagner
+#
+# SPDX-License-Identifier: CC0-1.0
+
 graft contrib
 graft docs
 graft intelmq/bots

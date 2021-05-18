@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016-2021 Sebastian Wagner
+#
+# SPDX-License-Identifier: CC0-1.0
+
 *.conf  text eol=lf
 *.csv   text eol=lf
 *.html  text eol=lf

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 Birger Schacht
+#
+# SPDX-License-Identifier: CC0-1.0
 cymru-whois-expert:
   bot_id: cymru-whois-expert
   description: Cymru Whois (IP to ASN) is the bot responsible to add network information

@@ -1,3 +1,8 @@
+# Github Workflow to build container image
+# 
+# SPDX-FileCopyrightText: 2021 Sebastian Waldbauer
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
 name: "Build and upload docker image"
 
 on:

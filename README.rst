@@ -1,3 +1,7 @@
+..
+   SPDX-FileCopyrightText: 2020-2021 Birger Schacht
+   SPDX-License-Identifier: AGPL-3.0-or-later
+
 ===================
 Welcome to IntelMQ!
 ===================
@@ -88,7 +92,7 @@ Funding
 
 This project was partially funded by the CEF framework
 
-.. figure:: docs/_static/cef_logo.png
+.. figure:: https://ec.europa.eu/inea/sites/default/files/ceflogos/en_horizontal_cef_logo_2.png
    :alt: Co-financed by the Connecting Europe Facility of the European Union
 
 .. |Build Status| image:: https://github.com/certtools/intelmq/workflows/Nosetest%20test%20suite/badge.svg
