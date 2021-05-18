@@ -1750,6 +1750,7 @@ accessible_cisco_smart_install = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Drone-BruteForce
+# legacy (replaced by honeypot_brute_force)
 drone_brute_force = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2489,8 +2490,58 @@ honeypot_ddos_amp = {
         'classification.type': 'ddos',
         'classification.identifier': 'amplification-ddos-victim',
     }
-
 }
+
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-brute-force-events-report/
+honeypot_brute_force = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+        ('source.port', 'src_port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', invalidate_zero),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port'),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('classification.identifier', 'service'),
+        ('extra.', 'start_time', validate_to_none),
+        ('extra.', 'end_time', convert_date_utc),
+        ('extra.', 'client_version', validate_to_none),
+        ('destination.account', 'username', validate_to_none),
+        ('extra.', 'password', validate_to_none),
+        ('extra.', 'payload_url', validate_to_none),
+        ('extra.', 'payload_md5', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'intrusion-attempts',
+        'classification.type': 'brute-force',
+    }
+}
+
 
 mapping = (
     # feed name, file name, function
@@ -2522,6 +2573,7 @@ mapping = (
     ('Drone-Brute-Force', 'drone_brute_force', drone_brute_force),
     ('HTTP-Scanners', 'hp_http_scan', http_scanners),
     ('Honeypot-Amplification-DDoS-Events', 'honeypot_ddos_amp', honeypot_ddos_amp),
+    ('Honeypot-Brute-Force-Events', 'honeypot_brute_force', honeypot_brute_force),
     ('ICS-Scanners', 'hp_ics_scan', ics_scanners),
     ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),
     ('Microsoft-Sinkhole', 'microsoft_sinkhole', microsoft_sinkhole),
