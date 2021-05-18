@@ -24,6 +24,7 @@ CHANGELOG
 - `intelmq.lib.bot_debugger`:
   - Set bot's `logging_level` directly in `__init__` before the bot's initialization by changing the default value (by Sebastian Wagner).
   - Rewrite `load_configuration_patch` by adapting it to the parameter and configuration rewrite (by Sebastian Wagner).
+  - Do not rely on the runtime configuration's `group` setting of bots to determine the required message type of messages given on the command line (PR#1949 by Sebastian Wagner).
 
 ### Development
 - `rewrite_config_files.py`: Removed obsolete BOTS-file-related rewriting functionality.
@@ -87,6 +88,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 #### Outputs
 - Remove `intelmq.bots.outputs.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
   users mailinglist, the bot is not used by anyone. (https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html, PR#1761, closes #1614)
+- `intelmq.bots.outputs.smtp`: Add more debug logging (PR#1949 by Sebastian Wagner).
 
 ### Documentation
 - Updated user and developer documentation to reflect the removal of the BOTS file (PR#1780 by Birger Schacht).

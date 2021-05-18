@@ -41,8 +41,8 @@ class GenericCsvParserBot(ParserBot):
     compose_fields: Optional[dict] = {}
     columns_required: Optional[dict] = None
     data_type: Optional[dict] = None
-    default_url_protocol: str = ''
-    delimiter: str = ''
+    default_url_protocol: str = 'http://'
+    delimiter: str = ','
     filter_text = None
     filter_type = None
     time_format = None
