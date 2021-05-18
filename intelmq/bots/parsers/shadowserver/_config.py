@@ -2520,7 +2520,7 @@ honeypot_brute_force = {
         ('extra.', 'device_type', validate_to_none),
         ('extra.', 'device_model', validate_to_none),
         ('destination.ip', 'dst_ip', validate_ip),
-        ('destination.port', 'dst_port'),
+        ('destination.port', 'dst_port'), 
         ('destination.asn', 'dst_asn', invalidate_zero),
         ('destination.geolocation.cc', 'dst_geo'),
         ('destination.geolocation.region', 'dst_region'),
