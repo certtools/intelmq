@@ -2588,7 +2588,6 @@ event4_ip_spoofer = {
         'classification.type': 'masquerade',
     }
 }
-<<<<<<< HEAD
 
 # https://www.shadowserver.org/what-we-do/network-reporting/honeypot-darknet-events-report/
 event4_honeypot_darknet = {
@@ -2970,8 +2969,48 @@ device_id = {
         'classification.identifier': 'device-id',
     }
 }
-=======
->>>>>>> ecef0ea7f (ENH: add event_ip_spoofer shadowserver config and corresponding tests)
+
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-darknet-events-report/
+event4_honeypot_darknet = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+    ],
+    'optional_fields': [
+        ('source.port', 'src_port'),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', convert_int),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port', convert_int),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('classification.identifier', 'tag'),  # different values possible in this report
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('extra.', 'count', convert_int),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+    },
+}
 
 mapping = (
     # feed name, file name, function
@@ -3011,17 +3050,11 @@ mapping = (
     ('Honeypot-Darknet', 'event4_honeypot_darknet', event4_honeypot_darknet),
     ('Honeypot-HTTP-Scan', 'event4_honeypot_http_scan', honeypot_http_scan),
     ('ICS-Scanners', 'hp_ics_scan', ics_scanners),
-<<<<<<< HEAD
     ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
     ('IP-Spoofer-Events', 'event4_ip_spoofer', event4_ip_spoofer),
     ('Microsoft-Sinkhole', 'microsoft_sinkhole', microsoft_sinkhole),  # legacy (replaced by event46_sinkhole_http)
     ('Microsoft-Sinkhole-Events IPv4', 'event4_microsoft_sinkhole', event46_sinkhole),
     ('Microsoft-Sinkhole-Events-HTTP IPv4', 'event4_microsoft_sinkhole_http', event46_sinkhole_http),
-=======
-    ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),
-    ('IP-Spoofer-Events', 'event4_ip_spoofer', event4_ip_spoofer),
-    ('Microsoft-Sinkhole', 'microsoft_sinkhole', microsoft_sinkhole),
->>>>>>> ecef0ea7f (ENH: add event_ip_spoofer shadowserver config and corresponding tests)
     ('NTP-Monitor', 'scan_ntpmonitor', ntp_monitor),
     ('NTP-Version', 'scan_ntp', ntp_version),
     ('Open-Chargen', 'scan_chargen', open_chargen),
