@@ -1131,6 +1131,7 @@ open_memcached = {
 }
 
 # https://www.shadowserver.org/what-we-do/network-reporting/drone-botnet-drone-report/
+# legacy (replaced by event4_sinkhole, event4_honeypot_darknet and eventr_sinkhole_http)
 drone = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2625,6 +2626,47 @@ event4_honeypot_darknet = {
     },
 }
 
+event4_sinkhole = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+        ('source.port', 'src_port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', convert_int),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port'),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('classification.identifier', 'tag'),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'malicious code',
+        'classification.type': 'infected-system',
+    },
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2651,7 +2693,7 @@ mapping = (
     ('Compromised-Website', 'compromised_website', compromised_website),
     ('DNS-Open-Resolvers', 'scan_dns', dns_open_resolvers),
     ('Darknet', 'darknet', darknet),  # legacy (replaced by event4_honeypot_darknet)
-    ('Drone', 'botnet_drone', drone),
+    ('Drone', 'botnet_drone', drone),  # legacy (replaced by event4_sinkhole, event4_honeypot_darknet and eventr_sinkhole_http)
     ('Drone-Brute-Force', 'drone_brute_force', drone_brute_force),  # legacy (replaced by honeypot_brute_force)
     ('HTTP-Scanners', 'hp_http_scan', http_scanners),
     ('Honeypot-Amplification-DDoS-Events', 'event4_honeypot_ddos_amp', honeypot_ddos_amp),
@@ -2691,6 +2733,7 @@ mapping = (
     ('SSL-POODLE-Vulnerable-Servers', 'scan_ssl_poodle', ssl_poodle_vulnerable_servers),
     ('Sandbox-URL', 'cwsandbox_url', sandbox_url),
     ('Sinkhole-DNS', 'sinkhole_dns', sinkhole_dns),
+    ('Sinkhole-Event', 'event4_sinkhole', event4_sinkhole),
     ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),
     ('Spam-URL', 'spam_url', spam_url),
     ('Vulnerable-ISAKMP', 'scan_isakmp', vulnerable_isakmp),
