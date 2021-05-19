@@ -1,7 +1,10 @@
+<<<<<<< HEAD
 # SPDX-FileCopyrightText: 2021 Birger Schacht
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+=======
+>>>>>>> ecef0ea7f (ENH: add event_ip_spoofer shadowserver config and corresponding tests)
 import os
 import unittest
 

@@ -2588,6 +2588,7 @@ event4_ip_spoofer = {
         'classification.type': 'masquerade',
     }
 }
+<<<<<<< HEAD
 
 # https://www.shadowserver.org/what-we-do/network-reporting/honeypot-darknet-events-report/
 event4_honeypot_darknet = {
@@ -2969,6 +2970,8 @@ device_id = {
         'classification.identifier': 'device-id',
     }
 }
+=======
+>>>>>>> ecef0ea7f (ENH: add event_ip_spoofer shadowserver config and corresponding tests)
 
 mapping = (
     # feed name, file name, function
@@ -3008,11 +3011,17 @@ mapping = (
     ('Honeypot-Darknet', 'event4_honeypot_darknet', event4_honeypot_darknet),
     ('Honeypot-HTTP-Scan', 'event4_honeypot_http_scan', honeypot_http_scan),
     ('ICS-Scanners', 'hp_ics_scan', ics_scanners),
+<<<<<<< HEAD
     ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
     ('IP-Spoofer-Events', 'event4_ip_spoofer', event4_ip_spoofer),
     ('Microsoft-Sinkhole', 'microsoft_sinkhole', microsoft_sinkhole),  # legacy (replaced by event46_sinkhole_http)
     ('Microsoft-Sinkhole-Events IPv4', 'event4_microsoft_sinkhole', event46_sinkhole),
     ('Microsoft-Sinkhole-Events-HTTP IPv4', 'event4_microsoft_sinkhole_http', event46_sinkhole_http),
+=======
+    ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),
+    ('IP-Spoofer-Events', 'event4_ip_spoofer', event4_ip_spoofer),
+    ('Microsoft-Sinkhole', 'microsoft_sinkhole', microsoft_sinkhole),
+>>>>>>> ecef0ea7f (ENH: add event_ip_spoofer shadowserver config and corresponding tests)
     ('NTP-Monitor', 'scan_ntpmonitor', ntp_monitor),
     ('NTP-Version', 'scan_ntp', ntp_version),
     ('Open-Chargen', 'scan_chargen', open_chargen),
