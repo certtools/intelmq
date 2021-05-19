@@ -2357,6 +2357,7 @@ accessible_radmin = {
 
 # https://www.shadowserver.org/what-we-do/network-reporting/caida-ip-spoofer-report/
 # NOTE: The "type" field is included twice with the same values
+# legacy (replaced by event4_ip_spoofer)
 caida = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2542,6 +2543,44 @@ honeypot_brute_force = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/ip-spoofer-events-report/
+event4_ip_spoofer = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+        ('source.port', 'src_port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', convert_int),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('classification.identifier', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('source.network', 'network', validate_to_none),
+        ('extra.', 'routedspoof', validate_to_none),
+        ('extra.', 'session', convert_int),
+        ('extra.', 'nat', convert_bool),
+    ],
+    'constant_fields': {
+        # FIXME Check if the classification is correct
+        'classification.identifier': 'ip-spoofer',
+        'classification.taxonomy': 'fraud',
+        'classification.type': 'masquerade',
+    }
+}
 
 mapping = (
     # feed name, file name, function
@@ -2565,7 +2604,7 @@ mapping = (
     ('Amplification-DDoS-Victim', 'ddos_amplification', amplification_ddos_victim),   # legacy (replaced by honeypot-ddos-amp)
     ('Blacklisted-IP', 'blacklist', blocklist),
     ('Blocklist', 'blocklist', blocklist),
-    ('CAIDA-IP-Spoofer', 'caida_ip_spoofer', caida),
+    ('CAIDA-IP-Spoofer', 'caida_ip_spoofer', caida),  # legacy (replaced by event4_ip_spoofer)
     ('Compromised-Website', 'compromised_website', compromised_website),
     ('DNS-Open-Resolvers', 'scan_dns', dns_open_resolvers),
     ('Darknet', 'darknet', darknet),
@@ -2576,6 +2615,7 @@ mapping = (
     ('Honeypot-Brute-Force-Events', 'event4_honeypot_brute_force', honeypot_brute_force),
     ('ICS-Scanners', 'hp_ics_scan', ics_scanners),
     ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),
+    ('IP-Spoofer-Events', 'event4_ip_spoofer', event4_ip_spoofer),
     ('Microsoft-Sinkhole', 'microsoft_sinkhole', microsoft_sinkhole),
     ('NTP-Monitor', 'scan_ntpmonitor', ntp_monitor),
     ('NTP-Version', 'scan_ntp', ntp_version),
