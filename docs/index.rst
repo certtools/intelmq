@@ -57,6 +57,7 @@ Connecting with other systems
    user/ELK-Stack
    user/MISP-Integrations
    user/n6-integrations
+   user/eventdb
 
 
 Getting involved
