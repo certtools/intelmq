@@ -20,15 +20,6 @@ This software provides a graphical user interface to the management tool `intelm
 
 → `Repository: IntelMQ Manager <https://github.com/certtools/intelmq-manager/>`_
 
-EventDB
--------
-
-This is not a software itself but listed here because the term it is often mentioned.
-
-The EventDB is a (usually PostgreSQL) database with data from intelmq.
-
-For some related scripts see the `contrib/eventdb <https://github.com/certtools/intelmq/tree/develop/contrib/eventdb>`_ directory and the `eventdb-stats <https://github.com/wagner-certat/eventdb-stats>`_ repository for simple statistics generation.
-
 intelmq-webinput-csv
 --------------------
 
