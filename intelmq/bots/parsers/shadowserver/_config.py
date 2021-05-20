@@ -3012,6 +3012,54 @@ event4_honeypot_darknet = {
     },
 }
 
+event46_sinkhole_http = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+        ('source.port', 'src_port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', convert_int),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port'),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('classification.identifier', 'tag'),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('destination.url', 'http_url', convert_http_host_and_url, True),
+        ('destination.fqdn', 'http_host', validate_fqdn),
+        ('extra.', 'http_agent', validate_to_none),
+        ('extra.', 'forwarded_by', validate_to_none),
+        ('extra.', 'ssl_cipher', validate_to_none),
+        ('extra.', 'http_referer', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'malicious code',
+        'classification.type': 'infected-system',
+        'protocol.application': 'http',
+    },
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
