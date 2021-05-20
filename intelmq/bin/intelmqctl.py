@@ -874,7 +874,7 @@ Get some debugging output on the settings and the environment (to be extended):
             parser_clear.set_defaults(func=self.clear_queue)
 
             parser_log = subparsers.add_parser('log', help='Get last log lines of a bot')
-            parser_log.add_argument('bot_id', help='bot id')
+            parser_log.add_argument('bot_id', help='bot id', choices=self._configured_bots_list())
             parser_log.add_argument('number_of_lines', help='number of lines',
                                     default=10, type=int, nargs='?')
             parser_log.add_argument('log_level', help='logging level',
