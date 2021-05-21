@@ -17,7 +17,7 @@ EXAMPLE_MD5 = {"__type": "Event",
                }
 
 
-@test.skip_exotic()
+#@test.skip_exotic()
 class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for SieveExpertBot.
@@ -610,6 +610,64 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = string_value_list_match_3
         self.run_bot()
         self.assertMessageEqual(0, string_value_list_match_3)
+
+        # match containsany, first match
+        event = EXAMPLE_INPUT.copy()
+        event['source.fqdn'] = 'matched.mx'
+        expected = event.copy()
+        expected['comment'] = 'containsany match'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # match containsany, first match
+        event = EXAMPLE_INPUT.copy()
+        event['source.fqdn'] = 'matched.zz'
+        expected = event.copy()
+        expected['comment'] = 'containsany match'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # do not match containsany
+        event = EXAMPLE_INPUT.copy()
+        event['source.fqdn'] = 'matched.yy'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # match regexin, first match
+        event = EXAMPLE_INPUT.copy()
+        event['extra.tag'] = 'xxee'
+        expected = event.copy()
+        expected['comment'] = 'regexin match'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # match regexin, second match
+        event = EXAMPLE_INPUT.copy()
+        event['extra.tag'] = 'abcd'
+        expected = event.copy()
+        expected['comment'] = 'regexin match'
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # do not match regexin
+        event = EXAMPLE_INPUT.copy()
+        event['extra.tag'] = 'eeabcc'
+        expected = event.copy()
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
 
     def test_numeric_match_value_list(self):
         """ Test numeric match with NumericValueList """
