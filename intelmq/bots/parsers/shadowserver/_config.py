@@ -110,7 +110,6 @@ def convert_bool(value: str) -> Optional[bool]:
 def validate_to_none(value: str) -> Optional[str]:
     return None if (not value or value in {'0', 'unknown'}) else value
 
-
 def convert_int(value: str) -> Optional[int]:
     """ Returns an int or None for empty strings. """
     return int(value) if value else None
