@@ -5,6 +5,6 @@ if comment == 'keep' {
   keep
 }
 
-if comment == ['continue', 'keep'] {
+if comment :in ['continue', 'keep'] {
   update comment = 'changed'
 }

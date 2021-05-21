@@ -26,8 +26,11 @@ Condition:
 ;
 
 
-StringMatch: key=Key op=StringOperator value=StringValue;
-StringOperator:
+StringMatch: SingleStringMatch | MultiStringMatch;
+SingleStringMatch: key=Key op=SingleStringOperator value=SingleStringValue;
+MultiStringMatch: key=Key op=MultiStringOperator value=StringValueList;
+
+SingleStringOperator:
   '=='             // compares two whole strings with each other
   | '!='           // test for string inequality
   | ':contains'    // sub-string match
@@ -35,8 +38,18 @@ StringOperator:
   | '!~'           // inverse match with regular expression
 ;
 
-NumericMatch: key=Key op=NumericOperator value=NumericValue;
-NumericOperator:
+MultiStringOperator:
+  ':in'            // tests if a string is in a list of strings
+  | ':containsany' // sub-string match against multiple substrings
+  | ':regexin'     // match a string against at least one of a list of regex patterns
+;
+
+
+NumericMatch: SingleNumericMatch | MultiNumericMatch;
+SingleNumericMatch: key=Key op=SingleNumericOperator value=SingleNumericValue;
+MultiNumericMatch: key=Key op=MultiNumericOperator value=NumericValueList;
+
+SingleNumericOperator:
   '=='          // equal
   | '!='        // not equal
   | '<='        // less than or equal
@@ -44,6 +57,11 @@ NumericOperator:
   | '<'         // less than
   | '>'         // greater than
 ;
+
+MultiNumericOperator:
+  ':in'         // tests if number is in a list of numbers
+;
+
 
 IpRangeMatch: key=Key '<<' range=IpRange;
 IpRange: SingleIpRange | IpRangeList;
@@ -73,11 +91,9 @@ ListValue: '[' values+=TypedValue[','] ']' ;
 
 Key: /[a-z0-9_\.]+/;
 
-StringValue: SingleStringValue | StringValueList ;
 SingleStringValue: value=STRING ;
 StringValueList: '[' values+=SingleStringValue[','] ']' ;
 
-NumericValue: SingleNumericValue | NumericValueList ;
 SingleNumericValue: value=NUMBER ;
 NumericValueList: '[' values+=SingleNumericValue[','] ']' ;
 

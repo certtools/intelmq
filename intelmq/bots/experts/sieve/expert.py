@@ -53,6 +53,12 @@ class SieveExpertBot(Bot):
         '!~': lambda lhs, rhs: re.search(rhs, lhs) is None,
     }
 
+    _string_multi_op_map = {
+        ':in': lambda lhs, rhs: lhs in rhs,
+        ':containsany': lambda lhs, rhs: any(lhs.find(s) >= 0 for s in rhs),
+        ':regexin': lambda lhs, rhs: any(re.search(s, lhs) is not None for s in rhs),
+    }
+
     _list_op_map = {
         ':setequals': operator.eq,
         ':overlaps': lambda l, r: not l.isdisjoint(r),
@@ -69,6 +75,10 @@ class SieveExpertBot(Bot):
         '>': operator.gt,
     }
 
+    _numeric_multi_op_map = {
+        ':in': lambda lhs, rhs: lhs in rhs,
+    }
+
     _basic_math_op_map = {
         '+=': operator.add,
         '-=': operator.sub,
@@ -81,8 +91,10 @@ class SieveExpertBot(Bot):
 
     _cond_map = {
         'ExistMatch': lambda self, match, event: self.process_exist_match(match.key, match.op, event),
-        'StringMatch': lambda self, match, event: self.process_string_match(match.key, match.op, match.value, event),
-        'NumericMatch': lambda self, match, event: self.process_numeric_match(match.key, match.op, match.value, event),
+        'SingleStringMatch': lambda self, match, event: self.process_single_string_match(match.key, match.op, match.value, event),
+        'MultiStringMatch': lambda self, match, event: self.process_multi_string_match(match.key, match.op, match.value, event),
+        'SingleNumericMatch': lambda self, match, event: self.process_single_numeric_match(match.key, match.op, match.value, event),
+        'MultiNumericMatch': lambda self, match, event: self.process_multi_numeric_match(match.key, match.op, match.value, event),
         'IpRangeMatch': lambda self, match, event: self.process_ip_range_match(match.key, match.range, event),
         'ListMatch': lambda self, match, event: self.process_list_match(match.key, match.op, match.value, event),
         'BoolMatch': lambda self, match, event: self.process_bool_match(match.key, match.op, match.value, event),
@@ -108,9 +120,11 @@ class SieveExpertBot(Bot):
 
             # apply custom validation rules
             metamodel.register_obj_processors({
-                'StringMatch': SieveExpertBot.validate_string_match,
-                'NumericMatch': SieveExpertBot.validate_numeric_match,
-                'SingleIpRange': SieveExpertBot.validate_ip_range
+                'SingleStringMatch': SieveExpertBot.validate_string_match,
+                'MultiStringMatch': SieveExpertBot.validate_string_match,
+                'SingleNumericMatch': SieveExpertBot.validate_numeric_match,
+                'MultiNumericMatch': SieveExpertBot.validate_numeric_match,
+                'SingleIpRange': SieveExpertBot.validate_ip_range,
             })
 
             return metamodel
@@ -232,32 +246,31 @@ class SieveExpertBot(Bot):
 
     @staticmethod
     def process_exist_match(key, op, event) -> bool:
-        if op == ':exists':
-            return key in event
-        elif op == ':notexists':
-            return key not in event
-        raise TextXSemanticError(f'Unhandled operator: {op}')
+        return (key in event) ^ (op == ':notexists')
 
-    def process_string_match(self, key, op, value, event) -> bool:
+    def process_single_string_match(self, key, op, value, event) -> bool:
         if key not in event:
             return op in {'!=', '!~'}
 
-        name = value.__class__.__name__
+        return self._string_op_map[op](event[key], value.value)
 
-        if name == 'SingleStringValue':
-            return self.process_string_operator(event[key], op, value.value)
-        elif name == 'StringValueList':
-            return any(self.process_string_operator(event[key], op, val.value) for val in value.values)
-        raise TextXSemanticError(f'Unhandled type: {name}')
-
-    def process_string_operator(self, lhs, op, rhs) -> bool:
-        return self._string_op_map[op](lhs, rhs)
-
-    def process_numeric_match(self, key, op, value, event) -> bool:
+    def process_multi_string_match(self, key, op, value, event) -> bool:
         if key not in event:
             return False
 
-        name = value.__class__.__name__
+        return self._string_multi_op_map[op](event[key], (v.value for v in value.values))
+
+    def process_single_numeric_match(self, key, op, value, event) -> bool:
+        if key not in event:
+            return False
+
+        return self._numeric_op_map[op](event[key], value.value)
+
+    def process_multi_numeric_match(self, key, op, value, event) -> bool:
+        if key not in event:
+            return False
+
+        return self._numeric_multi_op_map[op](event[key], (v.value for v in value.values))
 
         if name == 'SingleNumericValue':
             return self.process_numeric_operator(event[key], op, value.value)
@@ -393,7 +406,7 @@ class SieveExpertBot(Bot):
         """
 
         # validate IPAddress
-        ipaddr_types = [k for k, v in SieveExpertBot._harmonization.items() if v['type'] == 'IPAddress']
+        ipaddr_types = (k for k, v in SieveExpertBot._harmonization.items() if v['type'] == 'IPAddress')
         if str_match.key in ipaddr_types:
             name = str_match.value.__class__.__name__
             if name == 'SingleStringValue':
