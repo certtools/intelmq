@@ -266,8 +266,6 @@ class SieveExpertBot(Bot):
         raise TextXSemanticError(f'Unhandled type: {name}')
 
     def process_numeric_operator(self, lhs, op, rhs) -> bool:
-        if not self.is_numeric(lhs) or not self.is_numeric(rhs):
-            return False
         return self._numeric_op_map[op](lhs, rhs)
 
     def process_ip_range_match(self, key, ip_range, event) -> bool:
@@ -411,11 +409,6 @@ class SieveExpertBot(Bot):
         except ValueError:
             position = SieveExpertBot.get_linecol(ipaddr, as_dict=True)
             raise TextXSemanticError('Invalid ip address: %s.' % ipaddr.value, **position)
-
-    @staticmethod
-    def is_numeric(num) -> bool:
-        """ Returns True if argument is a number (integer or float). """
-        return str(num).lstrip('-').replace('.', '', 1).isnumeric()
 
     @staticmethod
     def get_linecol(model_obj, as_dict=False):
