@@ -2818,19 +2818,19 @@ The following operators may be used to match events:
 
    ``if source.ip << '10.0.0.0/8' { ... }``
 
- * Values to match against can also be specified as list, in which case any one of the values will result in a match:
+ * String values to match against can also be specified as lists of strings, which have separate operators. For example:
 
-   ``if source.ip == ['8.8.8.8', '8.8.4.4'] { ... }``
+   ``if source.ip :in ['8.8.8.8', '8.8.4.4'] { ... }``
 
   In this case, the event will match if it contains a key `source.ip` with
   either value `8.8.8.8` or `8.8.4.4`.
 
-  With inequality operators, the behavior is the same, so it matches if any expression does not match:
+  There are also `:containsany` to match at least one of a list of substrings, and `:regexin` to match at least one of
+  a list of regular expressions, similar to the `:contains` and `=~` operators.
 
-  ``if source.ip != ['8.8.8.8', '8.8.4.4'] { ... }``
+ * Lists of numeric values support `:in` to check for inclusion in a list of numbers:
 
-  Events with values like `8.8.8.8` or `8.8.4.4` will match, as they are always unequal to the other value.
-  **Attention:** The result is *not* that the field must be unequal to all given values.
+   ``if source.port :in [80, 443] { ... }``
 
  * `:equals` tests for equality between lists, including order. Example for checking a hostname-port pair:
    ``if extra.host_tuple :equals ['dns.google', 53] { ... }``
@@ -2855,8 +2855,12 @@ The following operators may be used to match events:
 
  * Any single expression or a parenthesised group of expressions can be negated using `!`:
 
- ``if ! source.ip :contains '127.0.0' || ! ( source.ip == '172.16.0.5' && source.port == 25 ) { ... }``
+ ``if ! source.ip :contains '127.0.0.' || ! ( source.ip == '172.16.0.5' && source.port == 25 ) { ... }``
 
+  * Note: Since 3.0.0, list-based operators are used on list values, such as `foo :in [1, 2, 3]` instead of `foo == [1, 2, 3]`
+    and `foo :regexin ['.mx', '.zz']` rather than `foo =~ ['.mx', '.zz']`, and similarly for `:containsany` vs `:contains`.
+    Besides that, ``:notcontains` has been removed, with e.g `foo :notcontains ['.mx', '.zz']` now being represented using negation
+    as `! foo :contains ['.mx', '.zz']`.
 
 *Actions*
 
