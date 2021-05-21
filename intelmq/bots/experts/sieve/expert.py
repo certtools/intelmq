@@ -129,7 +129,7 @@ class SieveExpertBot(Bot):
 
             return metamodel
         except TextXError as e:
-            raise ValueError('Could not process sieve grammar file. Error in (%d, %d): %s' % (e.line, e.col, str(e)))
+            raise ValueError(f'Could not process sieve grammar file. Error in ({e.line}, {e.col}): {e}')
 
     @staticmethod
     def read_sieve_file(filename, metamodel):
@@ -140,7 +140,7 @@ class SieveExpertBot(Bot):
             sieve = metamodel.model_from_file(filename)
             return sieve
         except TextXError as e:
-            raise ValueError('Could not parse sieve file %r, error in (%d, %d): %s' % (filename, e.line, e.col, str(e)))
+            raise ValueError(f'Could not parse sieve file {filename!r}, error in ({e.line}, {e.col}): {e}')
 
     @staticmethod
     def check(parameters):
@@ -150,24 +150,24 @@ class SieveExpertBot(Bot):
 
             grammarfile = os.path.join(os.path.dirname(__file__), 'sieve.tx')
             if not os.path.exists(grammarfile):
-                raise FileExistsError('Sieve grammar file not found: %r.' % grammarfile)
+                raise FileExistsError(f'Sieve grammar file not found: {grammarfile!r}.')
 
             metamodel = None
 
             try:
                 metamodel = metamodel_from_file(grammarfile)
             except TextXError as e:
-                raise ValueError('Could not process sieve grammar file. Error in (%d, %d).' % (e.line, e.col))
+                raise ValueError(f'Could not process sieve grammar file. Error in ({e.line}, {e.col}).')
 
             if not os.path.exists(parameters['file']):
-                raise ValueError('File does not exist: %r' % parameters['file'])
+                raise ValueError(f'File does not exist: {parameters["file"]!r}')
 
             try:
                 metamodel.model_from_file(parameters['file'])
             except TextXError as e:
-                raise ValueError('Could not process sieve file %r. Error in (%d, %d).' % (parameters['file'], e.line, e.col))
+                raise ValueError(f'Could not process sieve file {parameters["file"]!r}. Error in ({e.line}, {e.col}).')
         except Exception:
-            return [['error', 'Validation of Sieve file failed with the following traceback: %r' % traceback.format_exc()]]
+            return [['error', f'Validation of Sieve file failed with the following traceback: {traceback.format_exc()!r}']]
 
     def process(self) -> None:
         event = self.receive_message()
@@ -176,10 +176,10 @@ class SieveExpertBot(Bot):
             for statement in self.sieve.statements:
                 procedure = self.process_statement(statement, event)
                 if procedure == Procedure.KEEP:
-                    self.logger.debug('Stop processing based on statement at %s: %s.', self.get_linecol(statement), event)
+                    self.logger.debug(f'Stop processing based on statement at {self.get_linecol(statement)}: event.')
                     break
                 elif procedure == Procedure.DROP:
-                    self.logger.debug('Dropped event based on statement at %s: %s.', self.get_linecol(statement), event)
+                    self.logger.debug(f'Dropped event based on statement at {self.get_linecol(statement)}: {event}.')
                     break
 
         # forwarding decision
@@ -225,7 +225,7 @@ class SieveExpertBot(Bot):
 
     def process_clause(self, clause, event, else_clause=False) -> Optional[Procedure]:
         if else_clause or self.match_expression(clause.expr, event):
-            self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(clause), event)
+            self.logger.debug(f'Matched event based on rule at {self.get_linecol(clause)}: {event}.')
 
             for procedure in (self.process_statement(statement, event) for statement in clause.statements):
                 if procedure != Procedure.CONTINUE:
@@ -278,9 +278,6 @@ class SieveExpertBot(Bot):
             return any(self.process_numeric_operator(event[key], op, val.value) for val in value.values)
         raise TextXSemanticError(f'Unhandled type: {name}')
 
-    def process_numeric_operator(self, lhs, op, rhs) -> bool:
-        return self._numeric_op_map[op](lhs, rhs)
-
     def process_ip_range_match(self, key, ip_range, event) -> bool:
         if key not in event:
             return False
@@ -288,7 +285,7 @@ class SieveExpertBot(Bot):
         try:
             addr = ipaddress.ip_address(event[key])
         except ValueError:
-            self.logger.warning("Could not parse IP address %s=%s in %s.", key, event[key], event)
+            self.logger.warning(f'Could not parse IP address {key}={event[key]} in {event}.')
             return False
 
         name = ip_range.__class__.__name__
@@ -371,7 +368,7 @@ class SieveExpertBot(Bot):
             ipaddress.ip_network(ip_range.value, strict=False)
         except ValueError:
             position = SieveExpertBot.get_linecol(ip_range, as_dict=True)
-            raise TextXSemanticError('Invalid ip range: %s.' % ip_range.value, **position)
+            raise TextXSemanticError(f'Invalid ip range: {ip_range.value}.', **position)
 
     @staticmethod
     def validate_numeric_match(num_match) -> None:
@@ -390,9 +387,9 @@ class SieveExpertBot(Bot):
         try:
             type = SieveExpertBot._harmonization[num_match.key]['type']
             if type not in valid_types:
-                raise TextXSemanticError('Incompatible type: %s.' % type, **position)
+                raise TextXSemanticError(f'Incompatible type: {type}.', **position)
         except KeyError:
-            raise TextXSemanticError('Invalid key: %s.' % num_match.key, **position)
+            raise TextXSemanticError(f'Invalid key: {num_match.key}.', **position)
 
     @staticmethod
     def validate_string_match(str_match) -> None:
@@ -421,7 +418,7 @@ class SieveExpertBot(Bot):
             ipaddress.ip_address(ipaddr.value)
         except ValueError:
             position = SieveExpertBot.get_linecol(ipaddr, as_dict=True)
-            raise TextXSemanticError('Invalid ip address: %s.' % ipaddr.value, **position)
+            raise TextXSemanticError(f'Invalid IP address: {ipaddr.value}.', **position)
 
     @staticmethod
     def get_linecol(model_obj, as_dict=False):
