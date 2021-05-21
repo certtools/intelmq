@@ -21,6 +21,20 @@ IntelMQ now uses YAML for the runtime configuration and therefore needs the `rua
 Both the XMPP collector bot and the XMPP output bot were removed. This [was evaluated on the mailinglist](https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html)
 and the XMPP bots were deprecated in 391d625.
 
+The Sieve expert bot has had major updates to its syntax. Breaking new changes:
+* the removal of the `:notcontains` operator, which can be replaced using the newly added
+ expression negation, e.g `! foo :contains ['.mx', '.zz']` rather than `foo :notcontains ['.mx', '.zz']`. 
+* changed operators for comparisons against lists of values, e.g `source.ip :in ['127.0.0.5', '192.168.1.2']` rather than `source.ip == ['127.0.0.5', '192.168.1.2']`
+
+New features:
+* arbitrary nesting of if clauses + mixed conditionals and actions in the same level of nesting
+* new matches on fields containing list values and booleans
+* new list-based actions
+* negation of arbitrary expressions and expression groups separated by brackets through a prepended `!`, e.g `! src.port :in [80, 443]`
+* non-string values accepted by `add`/`add!`/`update`
+
+The bot documentation at `docs/user/bots.rst` has been updated to reflect on these new changes.
+
 ### Harmonization
 The classification scheme has been updated to better match the [Reference Security Incident Taxonomy (RSIT)](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed:
 
