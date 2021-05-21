@@ -49,7 +49,6 @@ class SieveExpertBot(Bot):
         '==': operator.eq,
         '!=': operator.ne,
         ':contains': lambda lhs, rhs: lhs.find(rhs) >= 0,
-        ':notcontains': lambda lhs, rhs: lhs.find(rhs) == -1,
         '=~': lambda lhs, rhs: re.search(rhs, lhs) is not None,
         '!~': lambda lhs, rhs: re.search(rhs, lhs) is None,
     }
@@ -241,7 +240,7 @@ class SieveExpertBot(Bot):
 
     def process_string_match(self, key, op, value, event) -> bool:
         if key not in event:
-            return op in {'!=', '!~', ':notcontains'}
+            return op in {'!=', '!~'}
 
         name = value.__class__.__name__
 
