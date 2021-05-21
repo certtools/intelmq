@@ -17,7 +17,7 @@ EXAMPLE_MD5 = {"__type": "Event",
                }
 
 
-#@test.skip_exotic()
+@test.skip_exotic()
 class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for SieveExpertBot.
@@ -401,7 +401,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             self.run_bot()
         exception = context.exception
-        self.assertRegex(str(exception), 'Invalid ip address:')
+        self.assertRegex(str(exception), 'Invalid IP address:')
 
     def test_numeric_equal_match(self):
         """ Test == numeric match """
