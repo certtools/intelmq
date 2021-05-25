@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: 2018 dargen3
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 from os import path
 import unittest
 

@@ -1,4 +1,7 @@
-# -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: 2015-2021 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 import base64
 import os
 import unittest

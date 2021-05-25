@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: 2018 dargen3, satya deep
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 import os
 import unittest
 
