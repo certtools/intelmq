@@ -2545,20 +2545,21 @@ RDAP
 
 **Configuration Parameters**
 
-* `rdap_order`: ['abuse', 'technical'], searching for email in this order
-* `rdap_bootstrapped_servers`: Customized RDAP servers. Do not forget the trailing slash
-i.e. ```
-{
-   "at": {
-      "url": "rdap.server.at/v1/,
-      "auth": {
-         "type": "jwt",
-         "token": "ey..."
-      }
-   },
-   "de": "rdap.service:1337/v1/"
-}
-```
+* ``rdap_order``: a list of strings, default ``['abuse', 'technical']``. Search order of contacts with these roles.
+* ``rdap_bootstrapped_servers``: Customized RDAP servers. Do not forget the trailing slash. For example:
+
+.. code-block:: bash
+
+   {
+      "at": {
+         "url": "rdap.server.at/v1/,
+         "auth": {
+            "type": "jwt",
+            "token": "ey..."
+         }
+      },
+      "de": "rdap.service:1337/v1/"
+   }
 
 
 .. _intelmq.bots.experts.recordedfuture_iprisk.expert:

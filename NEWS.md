@@ -126,6 +126,7 @@ or this:
 UPDATE events
    SET "classification.taxonomy" = 'other'
    WHERE "classification.type" = 'malware';
+```
 
 
 2.3.3 Bugfix release (unreleased)
