@@ -137,7 +137,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
   - Add support for new field `SourceIpInfo.SourceIpv4Int` (PR#1940 by Sebastian Wagner).
   - Fix mapping of "ConnectionType" fields, this is not `protocol.application`. Now mapped to `extra.*.connection_type` (PR#1940 by Sebastian Wagner).
 - `intelmq.bots.parsers.shadowserver._config`:
-  - Add support for the new feeds *Honeypot-Amplification-DDoS-Events* and *Honeypot-Brute-Force-Events* (PR#1950 and PR#1952 by Birger Schacht and Sebastian Wagner).
+  - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events* (PR#1950, PR#1952, PR#1953 and PR#1954 by Birger Schacht and Sebastian Wagner).
 
 #### Experts
 

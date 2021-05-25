@@ -391,6 +391,7 @@ open_tftp = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Sinkhole-HTTP-Drone
+# legacy (replaced by event46_sinkhole_http)
 sinkhole_http_drone = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -437,6 +438,7 @@ sinkhole_http_drone = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Sinkhole6-HTTP-Drone
+# legacy (replaced by event46_sinkhole_http)
 ipv6_sinkhole_http_drone = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -478,6 +480,7 @@ ipv6_sinkhole_http_drone = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Microsoft-Sinkhole
+# legacy (replaced by event46_sinkhole_http)
 microsoft_sinkhole = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1131,6 +1134,7 @@ open_memcached = {
 }
 
 # https://www.shadowserver.org/what-we-do/network-reporting/drone-botnet-drone-report/
+# legacy (replaced by event4_sinkhole, event4_honeypot_darknet and event46_sinkhole_http)
 drone = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1955,6 +1959,7 @@ accessible_afp = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Darknet
+# legacy (replaced by event4_honeypot_darknet)
 darknet = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2357,6 +2362,7 @@ accessible_radmin = {
 
 # https://www.shadowserver.org/what-we-do/network-reporting/caida-ip-spoofer-report/
 # NOTE: The "type" field is included twice with the same values
+# legacy (replaced by event4_ip_spoofer)
 caida = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2542,6 +2548,176 @@ honeypot_brute_force = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/ip-spoofer-events-report/
+event4_ip_spoofer = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+        ('source.port', 'src_port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', convert_int),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('classification.identifier', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('source.network', 'network', validate_to_none),
+        ('extra.', 'routedspoof', validate_to_none),
+        ('extra.', 'session', convert_int),
+        ('extra.', 'nat', convert_bool),
+    ],
+    'constant_fields': {
+        # FIXME Check if the classification is correct
+        'classification.identifier': 'ip-spoofer',
+        'classification.taxonomy': 'fraud',
+        'classification.type': 'masquerade',
+    }
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-darknet-events-report/
+event4_honeypot_darknet = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+    ],
+    'optional_fields': [
+        ('source.port', 'src_port'),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', convert_int),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port', convert_int),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('classification.identifier', 'tag'),  # different values possible in this report
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('extra.', 'count', convert_int),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+    },
+}
+
+event4_sinkhole = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+        ('source.port', 'src_port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', convert_int),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port'),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('classification.identifier', 'tag'),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'malicious-code',
+        'classification.type': 'infected-system',
+    },
+}
+
+event46_sinkhole_http = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+        ('source.port', 'src_port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', convert_int),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port'),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('classification.identifier', 'tag'),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('destination.url', 'http_url', convert_http_host_and_url, True),
+        ('destination.fqdn', 'http_host', validate_fqdn),
+        ('extra.', 'http_agent', validate_to_none),
+        ('extra.', 'forwarded_by', validate_to_none),
+        ('extra.', 'ssl_cipher', validate_to_none),
+        ('extra.', 'http_referer', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'malicious-code',
+        'classification.type': 'infected-system',
+        'protocol.application': 'http',
+    },
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2564,18 +2740,20 @@ mapping = (
     ('Amplification-DDoS-Victim', 'ddos_amplification', amplification_ddos_victim),   # legacy (replaced by honeypot-ddos-amp)
     ('Blacklisted-IP', 'blacklist', blocklist),
     ('Blocklist', 'blocklist', blocklist),
-    ('CAIDA-IP-Spoofer', 'caida_ip_spoofer', caida),
+    ('CAIDA-IP-Spoofer', 'caida_ip_spoofer', caida),  # legacy (replaced by event4_ip_spoofer)
     ('Compromised-Website', 'compromised_website', compromised_website),
     ('DNS-Open-Resolvers', 'scan_dns', dns_open_resolvers),
-    ('Darknet', 'darknet', darknet),
-    ('Drone', 'botnet_drone', drone),
+    ('Darknet', 'darknet', darknet),  # legacy (replaced by event4_honeypot_darknet)
+    ('Drone', 'botnet_drone', drone),  # legacy (replaced by event4_sinkhole, event4_honeypot_darknet and event46_sinkhole_http)
     ('Drone-Brute-Force', 'drone_brute_force', drone_brute_force),  # legacy (replaced by honeypot_brute_force)
     ('HTTP-Scanners', 'hp_http_scan', http_scanners),
     ('Honeypot-Amplification-DDoS-Events', 'event4_honeypot_ddos_amp', honeypot_ddos_amp),
     ('Honeypot-Brute-Force-Events', 'event4_honeypot_brute_force', honeypot_brute_force),
+    ('Honeypot-Darknet', 'event4_honeypot_darknet', event4_honeypot_darknet),
     ('ICS-Scanners', 'hp_ics_scan', ics_scanners),
-    ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),
-    ('Microsoft-Sinkhole', 'microsoft_sinkhole', microsoft_sinkhole),
+    ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
+    ('IP-Spoofer-Events', 'event4_ip_spoofer', event4_ip_spoofer),
+    ('Microsoft-Sinkhole', 'microsoft_sinkhole', microsoft_sinkhole),  # legacy (replaced by event46_sinkhole_http)
     ('NTP-Monitor', 'scan_ntpmonitor', ntp_monitor),
     ('NTP-Version', 'scan_ntp', ntp_version),
     ('Open-Chargen', 'scan_chargen', open_chargen),
@@ -2606,7 +2784,10 @@ mapping = (
     ('SSL-POODLE-Vulnerable-Servers', 'scan_ssl_poodle', ssl_poodle_vulnerable_servers),
     ('Sandbox-URL', 'cwsandbox_url', sandbox_url),
     ('Sinkhole-DNS', 'sinkhole_dns', sinkhole_dns),
-    ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),
+    ('Sinkhole-Events', 'event4_sinkhole', event4_sinkhole),
+    ('Sinkhole-Events-HTTP IPv4', 'event4_sinkhole_http', event46_sinkhole_http),
+    ('Sinkhole-Events-HTTP IPv6', 'event6_sinkhole_http', event46_sinkhole_http),
+    ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
     ('Spam-URL', 'spam_url', spam_url),
     ('Vulnerable-ISAKMP', 'scan_isakmp', vulnerable_isakmp),
     ('Vulnerable-HTTP', 'scan_http', accessible_vulnerable_http),

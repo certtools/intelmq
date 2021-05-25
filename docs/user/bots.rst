@@ -1603,17 +1603,14 @@ These are the supported feed name and their corresponding file name for automati
    Accessible-VNC                            `scan_vnc`
    Blacklisted-IP (deprecated)               `blacklist`
    Blocklist                                 `blocklist`
-   CAIDA-IP-Spoofer                          `caida_ip_spoofer`
    Compromised-Website                       `compromised_website`
-   Darknet                                   `darknet`
    DNS-Open-Resolvers                        `scan_dns`
-   Drone                                     `botnet_drone`
    Honeypot-Amplification-DDoS-Events        `event4_honeypot_ddos_amp`
    Honeypot-Brute-Force-Events               `event4_honeypot_brute_force`
+   Honeypot-Darknet                          `event4_honeypot_darknet`
    HTTP-Scanners                             `hp_http_scan`
    ICS-Scanners                              `hp_ics_scan`
-   IPv6-Sinkhole-HTTP-Drone                  `sinkhole6_http`
-   Microsoft-Sinkhole                        `microsoft_sinkhole`
+   IP-Spoofer-Events                         `event4_ip_spoofer`
    NTP-Monitor                               `scan_ntpmonitor`
    NTP-Version                               `scan_ntp`
    Open-Chargen                              `scan_chargen`
@@ -1642,7 +1639,8 @@ These are the supported feed name and their corresponding file name for automati
    Outdated-DNSSEC-Key-IPv6                  `outdated_dnssec_key_v6`
    Sandbox-URL                               `cwsandbox_url`
    Sinkhole-DNS                              `sinkhole_dns`
-   Sinkhole-HTTP-Drone                       `sinkhole_http_drone`
+   Sinkhole-Events                           `event4_sinkhole`
+   Sinkhole-HTTP-Events                      `event46_sinkhole_http`
    Spam-URL                                  `spam_url`
    SSL-FREAK-Vulnerable-Servers              `scan_ssl_freak`
    SSL-POODLE-Vulnerable-Servers             `scan_ssl_poodle`
@@ -1652,12 +1650,18 @@ These are the supported feed name and their corresponding file name for automati
 
 In addition, the following legacy reports are supported:
 
-  ===========================   ====================================   ========================
-   feed name                     successor feed name                    file name
-  ===========================   ====================================   ========================
-   Amplification-DDoS-Victim     Honeypot-Amplification-DDoS-Events     ``ddos_amplification``
-   Drone-Brute-Force             Honeypot-Brute-Force-Events            ``drone_brute_force``
-  ===========================   ====================================   ========================
+  ===========================   ===================================================   ========================
+   feed name                     successor feed name                                  file name
+  ===========================   ===================================================   ========================
+   Amplification-DDoS-Victim     Honeypot-Amplification-DDoS-Events                   ``ddos_amplification``
+   CAIDA-IP-Spoofer              IP-Spoofer-Events                                    ``caida_ip_spoofer``
+   Darknet                       Honeypot-Darknet                                     ``darknet``
+   Drone                         Sinkhole-Events                                      ``botnet_drone``
+   Drone-Brute-Force             Honeypot-Brute-Force-Events, Sinkhole-HTTP-Events    ``drone_brute_force``
+   Microsoft-Sinkhole            Sinkhole-HTTP-Events                                 ``microsoft_sinkhole``
+   Sinkhole-HTTP-Drone           Sinkhole-HTTP-Events                                 ``sinkhole_http_drone``
+   IPv6-Sinkhole-HTTP-Drone      Sinkhole-HTTP-Events                                 ``sinkhole6_http``
+  ===========================   ===================================================   ========================
 
 More information on these legacy reports can be found in `Changes in Sinkhole and Honeypot Report Types and Formats <https://www.shadowserver.org/news/changes-in-sinkhole-and-honeypot-report-types-and-formats/>`_.
 
