@@ -140,6 +140,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
   - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events* (PR#1950, PR#1952, PR#1953 and PR#1954 by Birger Schacht and Sebastian Wagner).
 
 #### Experts
+- `intelmq.bots.experts.splunk_saved_search.expert`:
+  - fixed erroneous string formatting (PR#1960 by Karl-Johan Karlsson).
 
 #### Outputs
 - `intelmq.bots.outputs.smtp.output`:

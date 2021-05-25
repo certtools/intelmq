@@ -133,7 +133,7 @@ class SplunkSavedSearchBot(Bot):
 
         query = '|savedsearch "{saved_search}"'.format(saved_search=self.saved_search)
         for field, parameter in self.search_parameters.items():
-            query += ' "{parameter}"="{event[field]}"'.format(parameter=parameter, event=event)
+            query += ' "{parameter}"="{field}"'.format(parameter=parameter, field=event[field])
         if "limit" in self.multiple_result_handling:
             query += " | head 1"
 
