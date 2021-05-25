@@ -87,6 +87,9 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
   - Rewrite the rule-processing and operator-handling code to make it more comprehensible and extensible (PR#1895, PR#1923 by Mikk Margus Möll).
   - Nested if statements, plus mixed actions and actions in the same scope (PR #1923 by Mikk Margus Möll).
   - The attribute manipulation actions add, add! and update support non-string (bool/int/float) values (PR #1923 by Mikk Margus Möll).
+  - Drop the `:notcontains` operator, as it made is redundant by generic negation: `! foo :contains 'x'` instead of `foo :notcontains 'x'` (PR#1957 by Mikk Margus Möll).
+  - Split string and numeric matches into single- and multivalued variants, with the relevant new operators `:in`, `:containsany` and `:regexin` for string lists, and `:in` for numeric value lists (PR#1957 by Mikk Margus Möll).
+    - Removed the `==` operator for lists, with the previous meaning of `:in`. Have a look at the NEWS.md for more information.
 - Added `intelmq.bots.experts.uwhoisd`: A bot that fetches the whois entry from a uwhois-instance (PR#1918 by Raphaël Vinot).
 
 #### Outputs
