@@ -134,7 +134,7 @@ class RDAPExpertBot(Bot, CacheMixin):
                     for role in self.rdap_order:
                         if role in self.__rdap_order_dict:
                             if self.__rdap_order_dict[role]['email'] is not None:
-                                self.cache_set(cache_key, self.__rdap_order_dict[role]['email'], 86800)
+                                self.cache_set(cache_key, self.__rdap_order_dict[role]['email'], self.redis_cache_ttl)
                                 event.add('source.abuse_contact', self.__rdap_order_dict[role]['email'], overwrite=self.overwrite)
                                 break
 
