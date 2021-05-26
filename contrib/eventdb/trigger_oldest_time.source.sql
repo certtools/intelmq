@@ -1,3 +1,7 @@
+-- SPDX-FileCopyrightText: 2020 Sebastian Wagner
+--
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+
 -- create a table to save the information
 CREATE TABLE meta (
     "oldest_time.source" TIMESTAMP WITH TIME ZONE NULL

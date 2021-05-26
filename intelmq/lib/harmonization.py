@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Dognaedis
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 The following types are implemented with sanitize() and is_valid() functions:

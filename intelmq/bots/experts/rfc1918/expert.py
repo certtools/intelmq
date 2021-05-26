@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # *- coding: utf-8 -*-
 """
 RFC 1918 Will Drop Local IP from a given record and a bit more.

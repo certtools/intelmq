@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Pierre Dumont
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 CERT-EU parser
 

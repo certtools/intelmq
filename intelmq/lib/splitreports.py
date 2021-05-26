@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Bernhard Herzog
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Support for splitting large raw reports into smaller ones.

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Pavel Kácha
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 IDEA classification: https://idea.cesnet.cz/en/classifications

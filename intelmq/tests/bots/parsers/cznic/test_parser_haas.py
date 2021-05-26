@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 gethvi
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 import unittest
 import sys
 
