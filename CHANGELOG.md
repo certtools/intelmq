@@ -20,6 +20,7 @@ CHANGELOG
 - `intelmq.lib.bot`:
   - Handle `InvalidValue` exceptions upon message retrieval by dumping the message instead of repeating endlessly (#1765, PR#1766 by Filip Pokorný).
   - Rewrite of the parameter loading and handling, getting rid of the `parameters` member (PR#1729 by Birger Schacht).
+  - New function `once` will run once after bot start. Useful for one-time after-start data preparation or cleanups. (PR#1968 by Sebastian Waldbauer).
 - `intelmq.lib.exceptions`:
   - `InvalidValue`: Add optional parameter `object` (PR#1766 by Filip Pokorný).
 - `intelmq.lib.utils`:
