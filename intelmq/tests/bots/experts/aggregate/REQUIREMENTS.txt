@@ -1,0 +1,3 @@
+# SPDX-FileCopyrightText: 2021 Intelmq Team <intelmq-team@cert.at>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+time-machine>=2.1

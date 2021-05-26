@@ -1765,6 +1765,48 @@ https://pypi.org/project/querycontacts/
 
 If the package is not installed, our own routines are used.
 
+.. _intelmq.bots.experts.aggregate.expert:
+
+Aggregate
+^^^^^^^^^
+
+**Information**
+
+* `name:` intelmq.bots.experts.aggregate.expert
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` 8
+* `description:` Aggregates events based upon given fields & timespan
+
+**Configuration Parameters**
+
+* **Cache parameters** (see in section :ref:`common-parameters`)
+  * TTL is not used, using it would result in data loss.
+* **fields** Given fields which are used to aggregate like `classification.type, classification.identifier`
+* **threshold** If the aggregated event is lower than the given threshold after the timespan, the event will get dropped.
+* **timespan** Timespan to aggregate events during the given time. I. e. `1 hour`
+
+**Usage**
+
+Define specific fields to filter incoming events and aggregate them.
+Also set the timespan you want the events to get aggregated.
+Usage i. e. `1 hour`
+
+**Note**
+
+If you're running on low traffic ( less events within the given timestamp ) we'd recommend reloading or restarting the bot
+via cronjob each 30 minutes. This has to be done to fire the cleanup process, and the cleanup process sends out the
+aggregated events or drops them based upon the given threshold value.
+
+I. e.:
+.. code-block:: bash
+
+   crontab -e
+
+   0 * * * *   intelmqctl restart my-aggregate-bot
+
+
+For reloading/restarting please check the :ref:`intelmqctl` documentation.
 
 .. _intelmq.bots.experts.asn_lookup.expert:
 
