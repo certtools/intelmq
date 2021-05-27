@@ -2764,6 +2764,46 @@ scan_exchange = {
     },
 }
 
+event46_sinkhole_http_referer = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port'),
+    ],
+    'optional_fields': [
+        ('extra.', 'http_referer_ip', validate_ip),
+        ('extra.', 'http_referer_asn', convert_int),
+        ('extra.', 'http_referer_geo', validate_to_none),
+        ('extra.', 'http_referer_region', validate_to_none),
+        ('extra.', 'http_referer_city', validate_to_none),
+        ('extra.', 'http_referer_hostname', validate_to_none),
+        ('extra.', 'http_referer_naics', invalidate_zero),
+        ('extra.', 'http_referer_sector', validate_to_none),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('destination.url', 'http_url', convert_http_host_and_url, True),
+        ('destination.fqdn', 'http_host', validate_fqdn),
+        ('extra.', 'http_referer', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'sinkhole-http-referer',
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2834,6 +2874,8 @@ mapping = (
     ('Sinkhole-Events-HTTP IPv4', 'event4_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-Events-HTTP IPv6', 'event6_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
+    ('Sinkhole-Events-HTTP-Referer IPv4', 'event4_sinkhole_http_referer', event46_sinkhole_http_referer),
+    ('Sinkhole-Events-HTTP-Referer IPv6', 'event6_sinkhole_http_referer', event46_sinkhole_http_referer),
     ('Spam-URL', 'spam_url', spam_url),
     ('Vulnerable-ISAKMP', 'scan_isakmp', vulnerable_isakmp),
     ('Vulnerable-HTTP', 'scan_http', accessible_vulnerable_http),
