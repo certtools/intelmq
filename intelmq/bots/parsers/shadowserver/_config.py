@@ -168,8 +168,7 @@ def set_tor_node(value: str) -> Optional[bool]:
 def validate_ip(value: str) -> Optional[str]:
     """Remove "invalid" IP."""
     # FIX: https://github.com/certtools/intelmq/issues/1720 # TODO: Find better fix
-    if not (value == '0.0.0.0' or '/' in value) and \
-        harmonization.IPAddress.is_valid(value, sanitize=True):
+    if not (value == '0.0.0.0' or '/' in value) and harmonization.IPAddress.is_valid(value, sanitize=True):
         return value
 
     return None
