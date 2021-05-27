@@ -2718,6 +2718,33 @@ event46_sinkhole_http = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-exchange-server-report/
+scan_exchange = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('classification.identifier', 'tag'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', convert_int),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'servername', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'malicious code',
+        'classification.type': 'infected-system',
+        'protocol.application': 'http',
+    },
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2791,4 +2818,5 @@ mapping = (
     ('Spam-URL', 'spam_url', spam_url),
     ('Vulnerable-ISAKMP', 'scan_isakmp', vulnerable_isakmp),
     ('Vulnerable-HTTP', 'scan_http', accessible_vulnerable_http),
+    ('Vulnerable-Exchange-Server', 'scan_exchange', scan_exchange),
 )
