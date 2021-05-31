@@ -3228,10 +3228,7 @@ mapping = (
     ('Sinkhole-Events-HTTP IPv4', 'event4_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-Events-HTTP IPv6', 'event6_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
-<<<<<<< HEAD
     ('Sinkhole-Events-HTTP-Referer', 'event4_sinkhole_http_referer', event46_sinkhole_http_referer),
-=======
->>>>>>> 55f126930 (ENH: support event-sinkhole-http-referer in shadowserver parser)
     ('Sinkhole-Events-HTTP-Referer IPv4', 'event4_sinkhole_http_referer', event46_sinkhole_http_referer),
     ('Sinkhole-Events-HTTP-Referer IPv6', 'event6_sinkhole_http_referer', event46_sinkhole_http_referer),
     ('Spam-URL', 'spam_url', spam_url),
