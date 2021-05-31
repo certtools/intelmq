@@ -1,0 +1,8 @@
+"timestamp","ip","port","hostname","tag","asn","geo","region","city","naics","sic","sector","version","servername","url"
+"2021-05-14 00:11:30","12.237.1.2",443,"afs-exch-cas2.xxx.com","exchange;cve-2021-26855",7018,"US","CALIFORNIA","TURLOCK",517311,,"Communications, Service Provider, and Hosting Service","15.2.721","AFS-EXCH2019",
+"2021-05-14 00:11:37","98.153.3.4",443,"rrcs-98-153-x-x.west.biz.rr.com","exchange;webshell",20001,"US","CALIFORNIA","LOS ANGELES",517311,,"Communications, Service Provider, and Hosting Service","15.0.847","SSAMAIL",
+"2021-05-14 00:11:38","206.210.5.6",443,"webmail.xxx.com","exchange;webshell",17054,"US","PENNSYLVANIA","PITTSBURGH",518210,,,"15.0.1178","OMNYXEXCH02",
+"2021-05-14 00:11:38","12.33.7.8",443,"mail.xxx.org","exchange;cve-2021-26855",7018,"US","ARKANSAS","LITTLE ROCK",921120,,"Communications, Service Provider, and Hosting Service","15.1.2176","MHASVR02",
+"2021-05-14 00:11:38","41.204.9.10",443,"mail.xxx.mg","exchange;cve-2021-26855",21042,"MG","ANTANANARIVO","ANTANANARIVO",,,,,"SABMHQE0232",
+"2021-05-14 00:11:38","62.33.11.12",443,,"exchange;cve-2021-26855",20485,"RU","ALTAYSKIY KRAY","BARNAUL",,,,"15.2.659","PV-SRV04",
+"2021-05-14 00:11:43","199.33.13.14",443,"mail.xxx.tv","exchange;cve-2021-26855",26481,"US","CALIFORNIA","LOS ANGELES",,,,"15.1.1779","MAIL",

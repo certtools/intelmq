@@ -18,7 +18,7 @@ Supported and recommended operating systems are:
 
 * CentOS 7 and 8
 * Debian 10
-* openSUSE Leap 15.2
+* openSUSE Leap 15.2, 15.13
 * Ubuntu: 18.04, 20.04
 * Docker Engine: 18.x and higher
 
@@ -89,7 +89,6 @@ Optional dependencies:
 Docker (beta)
 ^^^^^^^^^^^^^
 
-**ATTENTION** Currently the version published on docker hub is not tagged with the same IntelMQ version. During beta, each version is published with tag `1.0`.
 **ATTENTION** Currently you can't manage your botnet via :doc:`intelmqctl`. You need to use `IntelMQ-Manager <https://github.com/certtools/intelmq-manager>`_ currently!
 
 Follow `Docker Install <https://docs.docker.com/engine/install/>`_ and
@@ -118,8 +117,8 @@ These are the operating systems which are currently supported by packages:
 * **Fedora 30**
 * **Fedora 31**
 * **Fedora 32**
-* **openSUSE Leap 15.1**
 * **openSUSE Leap 15.2**
+* **openSUSE Leap 15.3**
 * **openSUSE Tumbleweed**
 * **Ubuntu 18.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ bionic main` first)
 * **Ubuntu 20.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ focal main` first)
@@ -135,9 +134,9 @@ PyPi
 .. code-block:: bash
 
    sudo -i
-   
+
    pip3 install intelmq
-   
+
    useradd -d /opt/intelmq -U -s /bin/bash intelmq
    sudo intelmqsetup
 
@@ -178,7 +177,7 @@ In order to work with your current infrastructure, you need to specify some envi
 
    sudo docker pull redis:latest
 
-   sudo docker pull certat/intelmq-full:1.0
+   sudo docker pull certat/intelmq-full:latest
 
    sudo docker pull certat/intelmq-nginx:latest
 
@@ -189,8 +188,7 @@ In order to work with your current infrastructure, you need to specify some envi
                    --name redis \
                    redis:latest
 
-   sudo docker run -v ~/intelmq/intelmq-manager/html:/www \
-                   --network intelmq-internal \
+   sudo docker run --network intelmq-internal \
                    --name nginx \
                    certat/intelmq-nginx:latest
 

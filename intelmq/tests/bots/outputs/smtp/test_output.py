@@ -67,5 +67,18 @@ class TestSMTPOutputBot(test.BotTestCase, unittest.TestCase):
         self.assertEqual({'from_addr': 'myself', 'to_addrs': ['one@example.com', 'two@example.com']},
                          SENT_MESSAGE[1])
 
+    def test_no_attachment(self):
+        """
+        Assert that no attachment is sent if no fieldname is set
+        """
+        self.input_message = EVENT1
+        with unittest.mock.patch('smtplib.SMTP.send_message', new=send_message):
+            with unittest.mock.patch('smtplib.SMTP.close'):
+                self.run_bot(parameters={'fieldnames': None})
+        self.assertEqual(len(SENT_MESSAGE[0].get_payload()), 1)
+        self.assertIn(('Content-Type', 'text/plain; charset="us-ascii"'),
+                      SENT_MESSAGE[0].get_payload()[0]._headers)
+
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

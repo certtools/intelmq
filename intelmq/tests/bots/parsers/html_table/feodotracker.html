@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="robots" content="all">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Browse TrickBot, Dridex and Emotet/Heodo botnet C&amp;Cs identified by Feodo Tracker">
+    <meta name="keywords" content="abuse.ch, malware, botnets, ioc, list, botnet, tracker, feodo, heodo, emotet, browse, dridex, trickbot">
+    <link rel="icon" href="https://feodotracker.abuse.ch/favicon.ico">
+    <title>Feodo Tracker | Browse Botnet C&amp;Cs</title>
+    <!-- Bootstrap core CSS -->
+    <link href="feodotracker_files/bootstrap.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="feodotracker_files/all.css" rel="stylesheet">
+    <!-- Datatables CSS -->
+    <link href="feodotracker_files/datatables.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <link href="feodotracker_files/jumbotron.css" rel="stylesheet">
+    <link href="feodotracker_files/custom.css" rel="stylesheet">
+  <style type="text/css">@media print {
+        .TridactylStatusIndicator {
+            display: none !important;
+        }
+    }</style></head>
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-green">
+        <div class="container">
+          <a class="navbar-brand" href="https://feodotracker.abuse.ch/">
+            <img src="feodotracker_files/feodotracker_logo.png" alt="Feodo Tracker">
+          </a>
+          <button class="navbar-toggler custom-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="https://feodotracker.abuse.ch/mitigate/" title="Mitigate Emotet">Mitigate</a>
+              </li>
+              <li class="nav-item active">
+                <a class="nav-link" href="https://feodotracker.abuse.ch/browse/" title="Browse Feodo Tracker">Browse</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://feodotracker.abuse.ch/blocklist/" title="Blocklist">Blocklist</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://feodotracker.abuse.ch/statistics/" title="Statistics">Statistics</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://feodotracker.abuse.ch/about/" title="About">About</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main class="container">
+      <h1 class="mt-5">Browse Botnet C&amp;Cs</h1>
+      <p>Here you can browse the list of botnet Command&amp;Control 
+servers (C&amp;Cs) tracked by Feodo Tracker, associated with Dridex and 
+Emotet (aka Heodo). When Feodo Tracker was launched in 2010, it was meant
+ to track Feodo botnet C&amp;Cs. However, Feodo evolved further and 
+different piece of malware of Feodo appeared:</p>
+      <ul>
+        <li><strong>Emotet:</strong> is a successor of the Geodo It first appeared in March 2017 and is also known as <em>Heodo</em>).
+ While it was initially used to commit ebanking fraud, it later turned
+over to a Pay-Per-Install (PPI)-like botnet which is propagating itself 
+through compromised email credentials. More information about Emotet is 
+available on <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.emotet" target="_parent" rel="noopener" title="Malepdia: Emotet">Malpedia</a></li>
+        <li><strong>TrickBot:</strong> has <strong>no</strong> code base
+ with Emotet. However, TrickBot usually gets dropped by Emotet for 
+lateral movement and to drop additional malware (such as <a href="https://www.cybereason.com/blog/triple-threat-emotet-deploys-trickbot-to-steal-data-spread-ryuk-ransomware">Ryuk</a> ransomware). More information about TrickBot is available on <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.trickbot" target="_parent" rel="noopener" title="Malepdia: TrickBot">Malpedia</a></li>
+        <li><strong>Dridex:</strong> is a successor of the Cridex 
+ebanking Trojan. It first appeared in 2011 and is still very active as 
+of today. There are speculations that the botnet masters behind the 
+ebanking Trojan <em>Dyre</em> moved their operation over to Dridex. More information about Dridex is available on <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.dridex" target="_parent" rel="noopener" title="Malepdia: Dridex">Malpedia</a></li>
+      </ul>
+      <form action="/browse.php" method="get" name="search">
+       <div class="form-group row">
+        <div class="col-md-10">
+         <input class="form-control" type="text" placeholder="IP address, AS number or AS name" id="search" name="search">
+       </div>
+       <div class="col-md-2">
+         <button type="submit" class="btn btn-primary">Search</button>
+       </div>
+      </div>
+      </form>
+      <p>Filter for: <a class="btn btn-primary btn-sm" href="https://feodotracker.abuse.ch/browse/emotet/">Emotet (aka Heodo)</a> <a class="btn btn-primary btn-sm" href="https://feodotracker.abuse.ch/browse/trickbot/">TrickBot</a> <a class="btn btn-primary btn-sm" href="https://feodotracker.abuse.ch/browse/dridex/">Dridex</a></p>
+      <div class="table-responsive">
+        <div id="botnet_c2s_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer"><div class="row"><div class="col-sm-12 col-md-6"><div class="dataTables_length" id="botnet_c2s_length"><label>Show <select name="botnet_c2s_length" aria-controls="botnet_c2s" class="custom-select custom-select-sm form-control form-control-sm"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="-1">All</option></select> entries</label></div></div><div class="col-sm-12 col-md-6"><div id="botnet_c2s_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="botnet_c2s"></label></div></div></div><div class="row"><div class="col-sm-12"><table id="botnet_c2s" class="table table-sm table-hover table-bordered dataTable no-footer" role="grid">
+          <thead>
+            <tr role="row"><th class="sorting_desc" tabindex="0" aria-controls="botnet_c2s" rowspan="1" colspan="1" style="width: 167.95px;" aria-sort="descending" aria-label="Firstseen (UTC): activate to sort column ascending">Firstseen (UTC)</th><th class="sorting" tabindex="0" aria-controls="botnet_c2s" rowspan="1" colspan="1" style="width: 136.6px;" aria-label="Host: activate to sort column ascending">Host</th><th class="sorting" tabindex="0" aria-controls="botnet_c2s" rowspan="1" colspan="1" style="width: 76.8833px;" aria-label="Malware: activate to sort column ascending">Malware</th><th class="sorting" tabindex="0" aria-controls="botnet_c2s" rowspan="1" colspan="1" style="width: 59.6333px;" aria-label="Status: activate to sort column ascending">Status</th><th class="sorting" tabindex="0" aria-controls="botnet_c2s" rowspan="1" colspan="1" style="width: 436px;" aria-label="Network (ASN): activate to sort column ascending">Network (ASN)</th><th class="sorting" tabindex="0" aria-controls="botnet_c2s" rowspan="1" colspan="1" style="width: 71.1px;" aria-label="Country: activate to sort column ascending">Country</th></tr>
+          </thead>
+          <tbody>
+          <tr class="odd" role="row"><td class="sorting_1">2021-05-10 14:56:05</td><td><a href="https://feodotracker.abuse.ch/browse/host/94.177.255.18/" target="_parent" title="Get more information about this botnet C&amp;C">94.177.255.18</a></td><td><center><span class="badge badge-dark"><i class="fas fa-bug"></i> Dridex</span></center></td><td><center><span class="badge badge-danger"><i class="fas fa-fire"></i>  Online</span></center></td><td class="text-truncate">AS199883 ARUBACLOUDLTD-ASN</td><td><img src="feodotracker_files/gb.png" title="GB"> GB</td></tr>
+          <tr class="even" role="row"><td class="sorting_1">2021-05-10 14:56:04</td><td><a href="https://feodotracker.abuse.ch/browse/host/203.114.109.124/" target="_parent" title="Get more information about this botnet C&amp;C">203.114.109.124</a></td><td><center><span class="badge badge-dark"><i class="fas fa-bug"></i> Dridex</span></center></td><td><center><span class="badge badge-success"><i class="fas fa-fire"></i>  Offline</span></center></td><td class="text-truncate">AS131293 TOT-LLI-AS-AP TOT Public Company Limited</td><td><img src="feodotracker_files/th.png" title="TH"> TH</td></tr>
+</tbody>
+        </table></div></div><div class="row"><div class="col-sm-12 col-md-5"></div><div class="col-sm-12 col-md-7"><div class="dataTables_paginate paging_simple_numbers" id="botnet_c2s_paginate"><ul class="pagination"><li class="paginate_button page-item previous disabled" id="botnet_c2s_previous"><a href="#" aria-controls="botnet_c2s" data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li><li class="paginate_button page-item active"><a href="#" aria-controls="botnet_c2s" data-dt-idx="1" tabindex="0" class="page-link">1</a></li><li class="paginate_button page-item "><a href="#" aria-controls="botnet_c2s" data-dt-idx="2" tabindex="0" class="page-link">2</a></li><li class="paginate_button page-item "><a href="#" aria-controls="botnet_c2s" data-dt-idx="3" tabindex="0" class="page-link">3</a></li><li class="paginate_button page-item "><a href="#" aria-controls="botnet_c2s" data-dt-idx="4" tabindex="0" class="page-link">4</a></li><li class="paginate_button page-item "><a href="#" aria-controls="botnet_c2s" data-dt-idx="5" tabindex="0" class="page-link">5</a></li><li class="paginate_button page-item next" id="botnet_c2s_next"><a href="#" aria-controls="botnet_c2s" data-dt-idx="6" tabindex="0" class="page-link">Next</a></li></ul></div></div></div></div>
+      </div>
+    </main>
+    <footer class="container">
+      <hr>
+      <p>© abuse.ch 2021</p>
+    </footer>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="feodotracker_files/jquery-3.js"></script><span class="cleanslate TridactylStatusIndicator  TridactylModenormal">normal</span>
+    <script src="feodotracker_files/bootstrap.js"></script>
+    <script src="feodotracker_files/datatables.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('#botnet_c2s').DataTable( {
+          "order": [[ 0, "desc" ]],
+          "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+          "pageLength": 100,
+          "paging": true,
+          "searching": true,
+          "info": false
+        } );
+    } );
+    </script>
+  
+</body><iframe class="cleanslate hidden" src="feodotracker_files/commandline.html" id="cmdline_iframe" loading="lazy" style="height: 0px !important;"></iframe></html>

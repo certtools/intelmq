@@ -1,0 +1,7 @@
+"timestamp","protocol","src_ip","src_port","src_asn","src_geo","src_region","src_city","src_hostname","src_naics","src_sector","device_vendor","device_type","device_model","dst_ip","dst_port","dst_asn","dst_geo","dst_region","dst_city","dst_hostname","dst_naics","dst_sector","public_source","infection","family","tag","application","version","event_id","network","routedspoof","session","nat"
+"2021-03-28 00:42:59","tcp","98.191.250.0",,22898,"US","OKLAHOMA","OKLAHOMA CITY","ip-98.191.250.0.atlinkservices.com",517311,,,,,,,,,,,,,,"caida","ip-spoofer",,,,"ipv4",,"98.191.250.0/24","received",1112907,"True"
+"2021-03-28 01:36:22","tcp","191.7.16.0",,262485,"BR","RIO DE JANEIRO","NOVA IGUACU",,,,,,,,,,,,,,,,"caida","ip-spoofer",,,,"ipv4",,"191.7.16.0/24","received",1112914,"False"
+"2021-03-28 02:10:58","tcp","202.53.160.0",,23923,"BD","DHAKA","DHAKA",,,,,,,,,,,,,,,,"caida","ip-spoofer",,,,"ipv4",,"202.53.160.0/24","received",1112931,"True"
+"2021-03-28 03:41:51","tcp","87.121.75.0",,134697,"AU","QUEENSLAND","BRISBANE",,,,,,,,,,,,,,,,"caida","ip-spoofer",,,,"ipv4",,"87.121.75.0/24","received",1112953,"True"
+"2021-03-28 06:07:17","tcp","189.201.194.0",,262944,"MX","COAHUILA","SALTILLO","ip-189-201-194-0.slw.spectro.mx",,,,,,,,,,,,,,,"caida","ip-spoofer",,,,"ipv4",,"189.201.194.0/24","received",1113015,"True"
+"2021-03-28 06:59:53","tcp","197.15.48.0",,37671,"TN","TUNIS","TUNIS",,517311,,,,,,,,,,,,,,"caida","ip-spoofer",,,,"ipv4",,"197.15.48.0/24","received",1113035,"True"

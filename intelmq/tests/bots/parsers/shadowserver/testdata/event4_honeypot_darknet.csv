@@ -1,0 +1,9 @@
+"timestamp","protocol","src_ip","src_port","src_asn","src_geo","src_region","src_city","src_hostname","src_naics","src_sector","device_vendor","device_type","device_model","dst_ip","dst_port","dst_asn","dst_geo","dst_region","dst_city","dst_hostname","dst_naics","dst_sector","public_source","infection","family","tag","application","version","event_id","count"
+"2021-03-07 00:00:00","tcp","61.3.1.2",4717,9829,"IN","KERALA","CHENGANNUR",,518210,,,,,,23,,,,,,,,,"mirai",,"mirai",,,,
+"2021-03-07 00:00:00","tcp","211.218.3.4",4405,4766,"KR","GANGWON-DO","PYEONGCHANG-EUP",,517311,,,,,,23,,,,,,,,,"mirai",,"mirai",,,,
+"2021-03-07 00:00:00","tcp","45.225.5.6",59777,266915,"BR","BAHIA","VITORIA DA CONQUISTA","static-45-225-x-x.example.net",,,,,,,23,,,,,,,,,"mirai",,"mirai",,,,
+"2021-03-07 00:00:00","tcp","125.122.7.8",8460,4134,"CN","ZHEJIANG SHENG","HANGZHOU",,517311,,,,,,23,,,,,,,,,"mirai",,"mirai",,,,
+"2021-03-07 00:00:00","tcp","219.77.9.10",21867,4760,"HK","HONG KONG","HONG KONG","n219077092196.example.com",517311,,,,,,5555,,,,,,,,,"mirai",,"mirai",,,,
+"2021-03-07 00:00:00","tcp","24.137.11.12",4680,14638,"PR","PUERTO RICO","SAN JUAN","dynamic.libertypr.net",,,,,,,5555,,,,,,,,,"mirai",,"mirai",,,,
+"2021-03-07 00:00:00","tcp","119.182.13.14",13175,4837,"CN","SHANDONG SHENG","JINING",,517311,,,,,,23,,,,,,,,,"mirai",,"mirai",,,,
+"2021-03-07 00:00:00","tcp","27.198.15.16",56133,4837,"CN","SHANDONG SHENG","JINAN",,517311,,,,,,23,,,,,,,,,"mirai",,"mirai",,,,
