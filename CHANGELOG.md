@@ -395,10 +395,14 @@ Update allowed classification fields to version 1.3 (2021-05-18) (by Sebastian W
   - Fix mapping of "ConnectionType" fields, this is not `protocol.application`. Now mapped to `extra.*.connection_type` (PR#1940 by Sebastian Wagner).
 - `intelmq.bots.parsers.shadowserver._config`:
 <<<<<<< HEAD
+<<<<<<< HEAD
   - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events*, *Vulnerable-Exchange-Server*, *Sinkhole-Events-HTTP-Referer* (PR#1950, PR#1952, PR#1953, PR#1954, PR#1970 by Birger Schacht and Sebastian Wagner, PR#1971 by Mikk Margus Möll).
 =======
   - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events* (PR#1950, PR#1952, PR#1953 and PR#1954 by Birger Schacht and Sebastian Wagner).
 >>>>>>> 366505cc6 (ENH: add event46_sinkhole shadowserver config & tests)
+=======
+  - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events*, *Vulnerable-Exchange-Server* (PR#1950, PR#1952, PR#1953, PR#1954, PR#1970 by Birger Schacht and Sebastian Wagner).
+>>>>>>> 4d3f4d647 (ENH+DOC: shadowserver exchange feed)
 
 #### Experts
 - `intelmq.bots.experts.splunk_saved_search.expert`:
