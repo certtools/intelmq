@@ -1,5 +1,9 @@
 <!-- comment
+<<<<<<< HEAD
    SPDX-FileCopyrightText: 2015-2022 Sebastian Wagner
+=======
+   SPDX-FileCopyrightText: 2015-2021 Sebastian Wagner
+>>>>>>> ffcf676a8 (FIX: change copyright header syntax in md files)
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
