@@ -117,28 +117,20 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Known issues
 
 
-2.3.3 (unreleased)
+2.3.3 (2021-05-31)
 ------------------
-
-### Configuration
 
 ### Core
 - `intelmq.lib.upgrade`:
   - Added `v233_feodotracker_browse` for Abuse.ch Feodotracker Browse parser configuration adaption (PR#1941 by Sebastian Wagner).
 
-### Development
-
-### Harmonization
-
 ### Bots
-#### Collectors
-
 #### Parsers
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - Add support for new field `SourceIpInfo.SourceIpv4Int` (PR#1940 by Sebastian Wagner).
   - Fix mapping of "ConnectionType" fields, this is not `protocol.application`. Now mapped to `extra.*.connection_type` (PR#1940 by Sebastian Wagner).
 - `intelmq.bots.parsers.shadowserver._config`:
-  - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events* (PR#1950, PR#1952, PR#1953 and PR#1954 by Birger Schacht and Sebastian Wagner).
+  - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events*, *Vulnerable-Exchange-Server*, *Sinkhole-Events-HTTP-Referer* (PR#1950, PR#1952, PR#1953, PR#1954, PR#1970 by Birger Schacht and Sebastian Wagner, PR#1971 by Mikk Margus Möll).
 
 #### Experts
 - `intelmq.bots.experts.splunk_saved_search.expert`:
@@ -153,8 +145,6 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - Feeds:
   - Fixed Abuse.ch Feodotracker Browse parser configuration (PR#1941 by Sebastian Wagner fixes #1938).
 
-### Packaging
-
 ### Tests
 - `intelmq.bots.parsers.html_table`:
   - Added testcase for Abuse.ch Feodotracker Browse (PR#1941 by Sebastian Wagner).
@@ -163,9 +153,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - intelmqsetup:
   - Set ownershop of state file path and its parent directory (PR#1911 by Sebastian Wagner).
 
-### Contrib
-
 ### Known issues
+- ParserBot: erroneous raw line recovery in error handling (#1850).
 
 
 2.3.2 (2021-04-27)

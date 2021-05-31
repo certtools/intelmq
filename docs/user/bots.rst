@@ -1639,14 +1639,18 @@ These are the supported feed name and their corresponding file name for automati
    Outdated-DNSSEC-Key-IPv6                  `outdated_dnssec_key_v6`
    Sandbox-URL                               `cwsandbox_url`
    Sinkhole-DNS                              `sinkhole_dns`
-   Sinkhole-Events                           `event4_sinkhole`
-   Sinkhole-HTTP-Events                      `event46_sinkhole_http`
+   Sinkhole-Events                           `event4_sinkhole`/`event6_sinkhole`
+   Sinkhole-HTTP-Events                      `event4_sinkhole_http`/`event6_sinkhole_http`
+   Sinkhole-Events-HTTP-Referer              `event4_sinkhole_http_referer`/`event6_sinkhole_http_referer`
    Spam-URL                                  `spam_url`
    SSL-FREAK-Vulnerable-Servers              `scan_ssl_freak`
    SSL-POODLE-Vulnerable-Servers             `scan_ssl_poodle`
+   Vulnerable-Exchange-Server `*`            `scan_exchange`
    Vulnerable-ISAKMP                         `scan_isakmp`
    Vulnerable-HTTP                           `scan_http`
   =======================================   =========================
+
+`*` This report can also contain data on active webshells (column `tag` is `exchange;webshell`), and are therefore not only vulnerable but also actively infected.
 
 In addition, the following legacy reports are supported:
 

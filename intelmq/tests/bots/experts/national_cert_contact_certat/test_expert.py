@@ -33,7 +33,7 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "time.observation": "2015-01-01T00:00:00+00:00",
                    }
 MISSING_RESULT = {"__type": "Event",
-                  "source.ip": "45.8.126.3",
+                  "source.ip": "10.0.0.1",
                   }
 
 
