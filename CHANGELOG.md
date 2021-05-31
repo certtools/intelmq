@@ -22,7 +22,7 @@ CHANGELOG
   - Add support for new field `SourceIpInfo.SourceIpv4Int` (PR#1940 by Sebastian Wagner).
   - Fix mapping of "ConnectionType" fields, this is not `protocol.application`. Now mapped to `extra.*.connection_type` (PR#1940 by Sebastian Wagner).
 - `intelmq.bots.parsers.shadowserver._config`:
-  - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events*, *Vulnerable-Exchange-Server* (PR#1950, PR#1952, PR#1953, PR#1954, PR#1970 by Birger Schacht and Sebastian Wagner).
+  - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events*, *Vulnerable-Exchange-Server*, *Sinkhole-Events-HTTP-Referer* (PR#1950, PR#1952, PR#1953, PR#1954, PR#1970 by Birger Schacht and Sebastian Wagner, PR#1971 by Mikk Margus Möll).
 
 #### Experts
 - `intelmq.bots.experts.splunk_saved_search.expert`:

@@ -2764,6 +2764,7 @@ scan_exchange = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-http-referer-events-report/
 event46_sinkhole_http_referer = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
