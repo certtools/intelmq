@@ -535,6 +535,10 @@ class BotTestCase(object):
             del event_dict['time.observation']
         if 'time.observation' in expected:
             del expected['time.observation']
+        if 'output' in event_dict:
+            event_dict['output'] = json.loads(event_dict['output'])
+        if 'output' in expected:
+            expected['output'] = json.loads(expected['output'])
 
         self.assertDictEqual(expected, event_dict)
 
