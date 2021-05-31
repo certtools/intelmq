@@ -18,7 +18,7 @@ Supported and recommended operating systems are:
 
 * CentOS 7 and 8
 * Debian 10
-* openSUSE Leap 15.2
+* openSUSE Leap 15.2, 15.13
 * Ubuntu: 18.04, 20.04
 * Docker Engine: 18.x and higher
 
@@ -117,8 +117,8 @@ These are the operating systems which are currently supported by packages:
 * **Fedora 30**
 * **Fedora 31**
 * **Fedora 32**
-* **openSUSE Leap 15.1**
 * **openSUSE Leap 15.2**
+* **openSUSE Leap 15.3**
 * **openSUSE Tumbleweed**
 * **Ubuntu 18.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ bionic main` first)
 * **Ubuntu 20.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ focal main` first)

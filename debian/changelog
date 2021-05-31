@@ -1,8 +1,8 @@
-intelmq (2.3.3~alpha1-1) UNRELEASED; urgency=medium
+intelmq (2.3.3-1) stable; urgency=medium
 
   * Update to 2.3.3.
 
- -- Sebastian Wagner <wagner@cert.at>  Tue, 27 Apr 2021 15:54:32 +0200
+ -- Sebastian Wagner <wagner@cert.at>  Mon, 31 May 2021 21:18:07 +0200
 
 intelmq (2.3.2-1) stable; urgency=medium
 

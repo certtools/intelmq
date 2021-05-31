@@ -4,14 +4,8 @@ NEWS
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 Please refer to the changelog for a full list of changes.
 
-2.3.3 Bugfix release (unreleased)
+2.3.3 Bugfix release (2021-05-31)
 ---------------------------------
-
-### Requirements
-
-### Tools
-
-### Harmonization
 
 ### Configuration
 
@@ -36,10 +30,6 @@ The `intelmqctl upgrade-config` command automatically fixes a configuration if t
 Shadowserver changed some of their feeds, for more information see [Changes in Sinkhole and Honeypot Report Types and Formats](https://www.shadowserver.org/news/changes-in-sinkhole-and-honeypot-report-types-and-formats/). Support for the legacy feeds has not been removed yet.
 
 The [Shadowserver Parser Bot documentation](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#shadowserver-supported-reports) lists the supported feeds, as well as the legacy feeds.
-
-### Libraries
-
-### Postgres databases
 
 
 2.3.2 Bugfix release (2021-04-27)

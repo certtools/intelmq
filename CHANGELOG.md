@@ -1,22 +1,14 @@
 CHANGELOG
 ==========
 
-2.3.3 (unreleased)
+2.3.3 (2021-05-31)
 ------------------
-
-### Configuration
 
 ### Core
 - `intelmq.lib.upgrade`:
   - Added `v233_feodotracker_browse` for Abuse.ch Feodotracker Browse parser configuration adaption (PR#1941 by Sebastian Wagner).
 
-### Development
-
-### Harmonization
-
 ### Bots
-#### Collectors
-
 #### Parsers
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - Add support for new field `SourceIpInfo.SourceIpv4Int` (PR#1940 by Sebastian Wagner).
@@ -36,8 +28,6 @@ CHANGELOG
 - Feeds:
   - Fixed Abuse.ch Feodotracker Browse parser configuration (PR#1941 by Sebastian Wagner fixes #1938).
 
-### Packaging
-
 ### Tests
 - `intelmq.bots.parsers.html_table`:
   - Added testcase for Abuse.ch Feodotracker Browse (PR#1941 by Sebastian Wagner).
@@ -46,9 +36,8 @@ CHANGELOG
 - intelmqsetup:
   - Set ownershop of state file path and its parent directory (PR#1911 by Sebastian Wagner).
 
-### Contrib
-
 ### Known issues
+- ParserBot: erroneous raw line recovery in error handling (#1850).
 
 
 2.3.2 (2021-04-27)
