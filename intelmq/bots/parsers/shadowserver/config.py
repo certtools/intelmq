@@ -2629,7 +2629,7 @@ event4_honeypot_darknet = {
     },
 }
 
-event4_sinkhole = {
+event46_sinkhole = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'src_ip'),
@@ -2871,7 +2871,8 @@ mapping = (
     ('SSL-POODLE-Vulnerable-Servers', 'scan_ssl_poodle', ssl_poodle_vulnerable_servers),
     ('Sandbox-URL', 'cwsandbox_url', sandbox_url),
     ('Sinkhole-DNS', 'sinkhole_dns', sinkhole_dns),
-    ('Sinkhole-Events', 'event4_sinkhole', event4_sinkhole),
+    ('Sinkhole-Events', 'event4_sinkhole', event46_sinkhole),
+    ('Sinkhole-Events', 'event6_sinkhole', event46_sinkhole),
     ('Sinkhole-Events-HTTP IPv4', 'event4_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-Events-HTTP IPv6', 'event6_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
