@@ -1,5 +1,6 @@
-..
+<!-- comment
    SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 
 # Please read the notes below and replace them with the description of you pull request
 
