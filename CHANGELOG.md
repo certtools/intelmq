@@ -1,9 +1,5 @@
 <!-- comment
-<<<<<<< HEAD
    SPDX-FileCopyrightText: 2015-2022 Sebastian Wagner
-=======
-   SPDX-FileCopyrightText: 2015-2021 Sebastian Wagner
->>>>>>> ffcf676a8 (FIX: change copyright header syntax in md files)
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -396,6 +392,7 @@ Update allowed classification fields to version 1.3 (2021-05-18) (by Sebastian W
 - `intelmq.bots.parsers.shadowserver._config`:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events*, *Vulnerable-Exchange-Server*, *Sinkhole-Events-HTTP-Referer* (PR#1950, PR#1952, PR#1953, PR#1954, PR#1970 by Birger Schacht and Sebastian Wagner, PR#1971 by Mikk Margus Möll).
 =======
   - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events* (PR#1950, PR#1952, PR#1953 and PR#1954 by Birger Schacht and Sebastian Wagner).
@@ -403,6 +400,9 @@ Update allowed classification fields to version 1.3 (2021-05-18) (by Sebastian W
 =======
   - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events*, *Vulnerable-Exchange-Server* (PR#1950, PR#1952, PR#1953, PR#1954, PR#1970 by Birger Schacht and Sebastian Wagner).
 >>>>>>> 4d3f4d647 (ENH+DOC: shadowserver exchange feed)
+=======
+  - Add support for the new feeds *Honeypot-Amplification-DDoS-Events*, *Honeypot-Brute-Force-Events*, *Honeypot-Darknet*, *IP-Spoofer-Events*, *Sinkhole-Events*, *Sinkhole-HTTP-Events*, *Vulnerable-Exchange-Server*, *Sinkhole-Events-HTTP-Referer* (PR#1950, PR#1952, PR#1953, PR#1954, PR#1970 by Birger Schacht and Sebastian Wagner, PR#1971 by Mikk Margus Möll).
+>>>>>>> f056ff7d4 (DOC for PR#1971)
 
 #### Experts
 - `intelmq.bots.experts.splunk_saved_search.expert`:
