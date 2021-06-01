@@ -3130,6 +3130,23 @@ Use this command to create/update the database and reload the bot:
 
    intelmq.bots.experts.tor_nodes.expert --update-database
 
+.. _intelmq.bots.experts.trusted_introducer_lookup.expert:
+
+Trusted Introducer Lookup Expert
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Information**
+
+* `name:` `intelmq.bots.experts.trusted_introducer_lookup.expert`
+* `lookup:` internet
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Lookups data from trusted introducer public teams list.
+
+**Configuration Parameters**
+
+* **order**: Possible values are 'domain', 'asn'
+
 
 .. _intelmq.bots.experts.url2fqdn.expert:
 
