@@ -1,1 +1,4 @@
+# SPDX-FileCopyrightText: 2018 root
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 dxlclient>=4.1.0.185
