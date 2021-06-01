@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2016 by Bundesamt für Sicherheit in der Informationstechnik
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # -*- coding: utf-8 -*-
 """
 Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik

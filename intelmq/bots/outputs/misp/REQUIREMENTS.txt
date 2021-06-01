@@ -1,1 +1,4 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 pymisp>=2.4.120; python_version >= '3.6'

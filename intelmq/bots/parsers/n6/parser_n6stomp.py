@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 aaronkaplan
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 The source provides a JSON file with a dictionary. The keys of this dict are

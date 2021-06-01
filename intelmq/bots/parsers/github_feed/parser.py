@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Tomas Bellus
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 Github IOC feeds' parser
 """

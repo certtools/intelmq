@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Raphaël Vinot
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 An expert to for looking up values in MISP.

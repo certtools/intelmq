@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 CysihZ
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 Fireeye Parser Bot
 Retrieves a base64 encoded JSON-String from raw and converts it into an

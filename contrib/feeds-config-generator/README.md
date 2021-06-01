@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2018 SYNchroACK
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # Feeds Configuration Generator
 
 Quickly generate feeds configurations (runtime and pipeline configs).

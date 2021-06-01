@@ -1,3 +1,7 @@
+..
+   SPDX-FileCopyrightText: 2014 Tomás Lima <synchroack@gmail.com>
+   SPDX-License-Identifier: AGPL-3.0-or-later
+
 Frequently asked questions
 ==========================
 

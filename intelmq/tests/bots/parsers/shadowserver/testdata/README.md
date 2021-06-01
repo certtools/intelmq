@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2017 Gernot Schulz
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 Shadowserver test feeds
 =======================
 

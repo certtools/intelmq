@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2016 by Bundesamt für Sicherheit in der Informationstechnik
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """
 JSON Parser Bot
 Retrieves a base64 encoded JSON-String from raw and converts it into an

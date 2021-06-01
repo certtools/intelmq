@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Edvard Rejthar
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Utilities for debugging intelmq bots.

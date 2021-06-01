@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 kralca
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import json
 from datetime import datetime
