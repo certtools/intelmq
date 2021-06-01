@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2014 Mauro Silva
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Messages are the information packages in pipelines.

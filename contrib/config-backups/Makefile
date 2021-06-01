@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 aaronkaplan
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 DATE:=$(shell date +"%Y%m%d-%H%M%S")
 
 backup:

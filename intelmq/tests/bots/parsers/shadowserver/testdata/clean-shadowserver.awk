@@ -1,5 +1,9 @@
 #!/usr/bin/awk -f
 
+# SPDX-FileCopyrightText: 2017 Gernot Schulz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 function rand_ip(n) {
     # Return IP from TEST-NET-2 (RFC 5737) address block
     rand_int = int(n * rand())

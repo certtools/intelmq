@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 echo "Bots:"
 bots=$(intelmqctl --type json list bots)
 echo $bots | jq '.Collector | keys | length'

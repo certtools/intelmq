@@ -1,3 +1,7 @@
+..
+   SPDX-FileCopyrightText: 2020 gethvi <gethvi@tuta.io>
+   SPDX-License-Identifier: AGPL-3.0-or-later
+
 ELK Stack
 =========
 

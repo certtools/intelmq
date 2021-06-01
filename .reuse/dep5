@@ -2,22 +2,30 @@ Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: intelmq
 Source: https://github.com/certtools/intelmq
 
+Files:     contrib/logcheck/*
+Copyright: 2018 Sebastian Wagner
+License:   AGPL-3.0-or-later
+
+Files:     contrib/logrotate/intelmq
+Copyright: 2016 aaronkaplan <aaron@lo-res.org>
+License:   AGPL-3.0-or-later
+
+Files:     contrib/tmpfiles.d/intelmq.conf
+Copyright: 2016 Sebastian Wagner <sebix@sebix.at>
+License:   AGPL-3.0-or-later
+
 Files:     debian/*
-Copyright: 
+Copyright: 2016 Intevation GmbH
 License:   AGPL-3.0-or-later
 
-Files:     intelmq/*
-Copyright: 
+Files:     debian/cron.d/intelmq-update-database
+Copyright: 2020 gethvi <gethvi@tuta.io>
 License:   AGPL-3.0-or-later
 
-Files:     contrib/*
-Copyright: 
+Files:     debian/intelmq.maintscript, debian/intelmq.tmpfile, debian/patches/fix-intelmq-paths.patch, debian/sedfile
+Copyright: 2020 Sebastian Wagner <wagner@cert.at>
 License:   AGPL-3.0-or-later
 
-Files:     docs/dev/*
-Copyright: 
-License:   AGPL-3.0-or-later
-
-Files:     docs/user/*
-Copyright: 
+Files:     debian/debian/py3dist-overrides
+Copyright: 2021 Birger Schacht
 License:   AGPL-3.0-or-later

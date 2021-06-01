@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 Mikk Margus Möll
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 import json
 
 from intelmq.lib.bot import ParserBot

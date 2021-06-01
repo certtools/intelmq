@@ -1,3 +1,7 @@
+..
+   SPDX-FileCopyrightText: 2015 Aaron Kaplan <aaron@lo-res.org>
+   SPDX-License-Identifier: AGPL-3.0-or-later
+
 ################
 Developers Guide
 ################

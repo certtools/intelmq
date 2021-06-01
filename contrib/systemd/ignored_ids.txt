@@ -1,2 +1,6 @@
+# SPDX-FileCopyrightText: 2017 navtej <nsbuttar@hotmail.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
 # all the bot ids existing in this file will be ignored by systemd script
 # one bot id on one line
