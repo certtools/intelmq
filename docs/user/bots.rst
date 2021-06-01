@@ -583,6 +583,7 @@ If none of the filename matches apply, the contents of the first (RT-) "history"
 * `search_not_older_than`: Absolute time (use ISO format) or relative time, e.g. `3 days`.
 * `search_owner`: owner of the ticket to search for (default: `nobody`)
 * `search_queue`: queue of the ticket to search for (default: `Incident Reports`)
+* `search_requestor`: the e-mail address of the requestor
 * `search_status`: status of the ticket to search for (default: `new`)
 * `search_subject_like`: part of the subject of the ticket to search for (default: `Report`)
 * `set_status`: status to set the ticket to after processing (default: `open`). `false` or `null` to not set a different status.
@@ -597,7 +598,7 @@ The resulting reports contains the following special fields:
 
 * `rtir_id`: The ticket ID
 * `extra.email_subject` and `extra.ticket_subject`: The subject of the ticket
-* `extra.email_from` and `extra.ticket_requestors`: Comma separated list of requestor's email addresses.
+* `extra.email_from` and `extra.ticket_requestors`: Comma separated list of the ticket's requestor's email addresses.
 * `extra.ticket_owner`: The ticket's owner name
 * `extra.ticket_status`: The ticket's status
 * `extra.ticket_queue`: The ticket's queue

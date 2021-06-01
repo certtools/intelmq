@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 from datetime import datetime, timedelta
+from typing import Optional
 
 from dateutil import parser
 
@@ -27,7 +28,7 @@ class RTCollectorBot(CollectorBot, HttpMixin):
     search_not_older_than: str = None  # TODO: type could be something time,
     search_owner: str = "nobody"
     search_queue: str = "Incident Reports"
-    search_requestor: str = None  # TODO: type could be list[emailaddresstype]
+    search_requestor: Optional[str] = None
     search_status: str = "new"
     search_subject_like: str = "Report"
     set_status: str = "open"
