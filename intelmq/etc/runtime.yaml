@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 Birger Schacht <schacht@cert.at>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 cymru-whois-expert:
   bot_id: cymru-whois-expert
   description: Cymru Whois (IP to ASN) is the bot responsible to add network information
