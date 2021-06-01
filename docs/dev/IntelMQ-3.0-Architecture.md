@@ -1,3 +1,8 @@
+<!-- comment
+   SPDX-FileCopyrightText: 2019 aaronkaplan <aaron@lo-res.org>
+   SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # Idea list and architecture of IntelMQ 3.0
 
 Authors: Aaron Kaplan <kaplan@cert.at>, Sebastian Wagner <wagner@cert.at>
