@@ -75,11 +75,14 @@ Docker Image
 Releasing a new Docker image is very easy.
 
 * Clone `IntelMQ Docker Repository <https://github.com/certat/intelmq-docker>`_ with ``git clone https://github.com/certat/intelmq-docker.git --recursive`` as this repository contains submodules
-* Run `./build.sh`, check your console if the build was successful.
-* Run `./test.sh` - It will run nosetests3 with exotic flag. All errors/warnings will be displayed.
+* If the ``intelmq-docker`` repository is not updated yet, use `git pull --recurse-submodules` to pull the latest changes from their respective repository.
+* Run ``./build.sh``, check your console if the build was successful.
+* Run ``./test.sh`` - It will run nosetests3 with the exotic flag. All errors/warnings will be displayed.
 * Change the ``build_version`` in ``publish.sh`` to the new version you want to release.
 * Change the ``namespace`` variable in `publish.sh`.
-* If no error/warning was shown, you can release with `./publish.sh`.
+* If no error/warning was shown, you can release with ``./publish.sh``.
+* Update the `DockerHub ReadMe <https://hub.docker.com/repository/docker/certat/intelmq-full>`_ and add the latest version.
+* Commit and push the updates to the ``intelmq-docker`` repository``
 
 *************
 Announcements
