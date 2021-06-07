@@ -826,6 +826,7 @@ Iterates over all blobs in all containers in an Azure storage.
 The Cache is required to memorize which files have already been processed (TTL needs to be high enough to cover the oldest files available!).
 
 This bot significantly changed in a backwards-incompatible way in IntelMQ Version 2.2.0 to support current versions of the Microsoft Azure Python libraries.
+``azure-storage-blob>=12.0.0`` is required.
 
 **Information**
 
