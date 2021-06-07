@@ -245,7 +245,8 @@ def write_configuration(configuration_filepath: str,
         if content == old_content:
             return None
     if not new and backup:
-        shutil.copy2(configuration_filepath, configuration_filepath + '.bak')
+        config = pathlib.Path(configuration_filepath)
+        pathlib.Path(configuration_filepath + '.bak').write_text(config.read_text())
     with open(configuration_filepath, 'w') as handle:
         if useyaml:
             yaml.dump(content, handle)
