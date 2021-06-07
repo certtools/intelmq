@@ -109,6 +109,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Tests
 - `intelmq.tests.lib.test_bot`:
   - Add test case for a raised `InvalidValue` exception upon message retrieval (#1765, PR#1766 by Filip Pokorný and Sebastian Wagner).
+- `intelmq.lib.test`:
+  - Compare content of the `output` field as dictionaries, not as string in `assertMessageEqual` (PR#1975 by Karl-Johan Karlsson).
 
 ### Tools
 
