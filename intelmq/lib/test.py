@@ -68,15 +68,7 @@ def mocked_config(bot_id='test-bot', sysconfig={}, group=None, module=None):
 
 
 def mocked_get_global_settings():
-    return {"destination_pipeline_broker": "pythonlist",
-            "redis_cache_host": os.getenv('INTELMQ_PIPELINE_HOST', 'localhost'),
-            "redis_cache_port": 6379,
-            "redis_cache_db": 4,
-            "redis_cache_ttl": 10,
-            "redis_cache_password": os.environ.get('INTELMQ_TEST_REDIS_PASSWORD'),
-            "source_pipeline_broker": "pythonlist",
-            "testing": True,
-            }
+    return BOT_CONFIG
 
 
 def skip_database():
@@ -205,7 +197,8 @@ class BotTestCase(object):
                                                                 queue_name.strip('_'))
                                   for queue_name in destination_queues}
 
-        config = self.sysconfig.copy()
+        config = BOT_CONFIG.copy()
+        config.update(self.sysconfig)
         config.update(parameters)
         config['destination_queues'] = destination_queues
         self.mocked_config = mocked_config(self.bot_id,
@@ -214,14 +207,10 @@ class BotTestCase(object):
                                            module=self.bot_reference.__module__,
                                            )
 
-        self.resulting_config = BOT_CONFIG.copy()
-        self.resulting_config.update(self.sysconfig)
-        self.resulting_config.update(parameters)
-
         self.logger = utils.log(self.bot_id,
                                 log_path=False, stream=self.log_stream,
                                 log_format_stream=utils.LOG_FORMAT,
-                                log_level=self.resulting_config['logging_level'])
+                                log_level=config['logging_level'])
         self.logger_handlers_backup = self.logger.handlers
 
         parameters = Parameters()

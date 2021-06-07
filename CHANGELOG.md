@@ -21,6 +21,7 @@ CHANGELOG
 - `intelmq.lib.bot`:
   - Handle `InvalidValue` exceptions upon message retrieval by dumping the message instead of repeating endlessly (#1765, PR#1766 by Filip Pokorný).
   - Rewrite of the parameter loading and handling, getting rid of the `parameters` member (PR#1729 by Birger Schacht).
+  - The pipeline is now initialized before the call of `init` to allow bots accessing data directly on startup/initialization for cleanup or maintenance tasks (PR#1982 by Sebastian Wagner).
 - `intelmq.lib.exceptions`:
   - `InvalidValue`: Add optional parameter `object` (PR#1766 by Filip Pokorný).
 - `intelmq.lib.utils`:
