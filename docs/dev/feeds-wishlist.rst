@@ -14,6 +14,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
   - `TheCyberThreat <http://thecyberthreat.com/cyber-threat-intelligence-feeds/>`_
   - `sbilly: Awesome Security <https://github.com/sbilly/awesome-security#threat-intelligence>`_
   - `pannoniait: Backlists <https://doku.pannoniait.at/doku.php?id=know-how:blacklists>`_
+  - `hslatman: awesome-threat-intelligence <https://github.com/hslatman/awesome-threat-intelligence>`_
 
 - Some third party intelmq bots: `NRDCS' IntelMQ fork <https://github.com/NRDCS/intelmq/tree/certlt/intelmq/bots>`_
 
