@@ -203,6 +203,9 @@ class Bot(object):
             self.__load_harmonization_configuration()
 
             self._parse_common_parameters()
+
+            super().__init__()
+            self.__connect_pipelines()
             self.init()
 
             if not self.__instance_id:
@@ -228,7 +231,6 @@ class Bot(object):
             self.stop()
             raise
         self.logger.info("Bot initialization completed.")
-        super().__init__()
 
         self.__stats_cache = cache.Cache(host=self.statistics_host,
                                          port=self.statistics_port,
@@ -271,7 +273,6 @@ class Bot(object):
         self.logger.handlers = []  # remove all existing handlers
         self.__sighup.clear()
         self.__init__(self.__bot_id_full, sighup_event=self.__sighup)
-        self.__connect_pipelines()
 
     def init(self):
         pass

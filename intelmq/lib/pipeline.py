@@ -342,8 +342,11 @@ class Pythonlist(Pipeline):
     state = {}  # type: Dict[str, list]
 
     def connect(self):
-        if self.raise_on_connect:
-            raise exceptions.PipelineError('Connect failed as requested')
+        try:
+            if self.parameters.raise_on_connect:
+                raise exceptions.PipelineError('Connect failed as requested')
+        except AttributeError:
+            pass
 
     def disconnect(self):
         pass
