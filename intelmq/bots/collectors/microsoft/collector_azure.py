@@ -22,7 +22,7 @@ except ImportError:
 class MicrosoftAzureCollectorBot(CollectorBot):
     def init(self):
         if ContainerClient is None or create_configuration is None:
-            raise MissingDependencyError("azure.storage")
+            raise MissingDependencyError("azure.storage", version='>=12.0.0')
 
         self.config = create_configuration(storage_sdk='blob')
         if hasattr(self.parameters, 'https_proxy'):
