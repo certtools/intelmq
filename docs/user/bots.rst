@@ -1838,6 +1838,28 @@ Public documentation: https://www.team-cymru.com/IP-ASN-mapping.html#dns
 * `overwrite`: Overwrite existing fields. Default: `True` if not given (for backwards compatibility, will change in version 3.0.0)
 
 
+.. _intelmq.bots.experts.cut_from_string.expert:
+
+Cut from string
+^^^^^^^^^^^
+
+**Information**
+
+* `name:` `intelmq.bots.experts.cut_from_string.expert`
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Cut string from string
+
+**Configuration Parameters**
+
+* `string_from_start`: 1 - cut from start, 0 - cut from end
+* `string_for_cut`: example 'www.'
+* `field_for_cut`: example field 'source.fqdn'
+
+**Description**
+Remove `www.` from domains.
+
 .. _intelmq.bots.experts.domain_suffix.expert:
 
 Domain Suffix
