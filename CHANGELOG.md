@@ -33,6 +33,7 @@ CHANGELOG
 
 ### Development
 - `rewrite_config_files.py`: Removed obsolete BOTS-file-related rewriting functionality.
+- A Github action that checks for [reuse compliance](https://reuse.software) of all the license and copyright headers was added.
 
 ### Data Format
 The IntelMQ Data Harmonization ("DHO") is renamed to IntelMQ Data Format ("IDF"). Internal files remain and work the same as before (PR#1818 by Sebastian Waldbauer, fixes 1810).
@@ -102,6 +103,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - Updated user and developer documentation to reflect the removal of the BOTS file (PR#1780 by Birger Schacht).
 - Bots documentation:
   - Added anchors to all bot sections derived from the module names for easier linking (PR#1943 by Sebastian Wagner fixes part of certtools/intelmq-api#4).
+- License and copyright information was added to all the bots.
 
 ### Packaging
 - Docker images tagged with `certat/intelmq-full:develop` are built and published on every push to the develop branch (PR#1753 by Sebastian Waldbauer).

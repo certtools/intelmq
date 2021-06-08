@@ -209,6 +209,11 @@ Back-end independence and Compatibility
 
 Any component of the IntelMQ MUST be independent of the message queue technology (Redis, RabbitMQ, etc...).
 
+License Header
+--------------
+
+Please add a license and copyright header to your bots. There is a Github action that tests for `reuse compliance <https://reuse.software/>`_ of your code files.
+
 Layout Rules
 ============
 
@@ -458,6 +463,7 @@ Don't forget to give an bot id as first argument. Also, running bots with other 
 
 You will get all logging outputs directly on stderr as well as in the log file.
 
+
 Template
 ========
 
@@ -465,7 +471,11 @@ Please adjust the doc strings accordingly and remove the in-line comments (`#`).
 
 .. code-block:: python
 
-   """Parse data from example.com, be a nice ExampleParserBot.
+   """
+   SPDX-FileCopyrightText: 2021 Your Name
+   SPDX-License-Identifier: AGPL-3.0-or-later
+
+   Parse data from example.com, be a nice ExampleParserBot.
 
    Document possible necessary configurations.
    """
