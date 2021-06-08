@@ -1853,7 +1853,7 @@ Cut from string
 
 **Configuration Parameters**
 
-* `string_from_start`: 1 - cut from start, 0 - cut from end
+* `string_from_start`: True - cut from start, False - cut from end
 * `string_for_cut`: example 'www.'
 * `field_for_cut`: example field 'source.fqdn'
 

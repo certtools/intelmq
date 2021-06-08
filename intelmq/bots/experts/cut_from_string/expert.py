@@ -6,7 +6,7 @@ from intelmq.lib.bot import Bot
 
 
 class CutFromStringExpertBot(Bot):
-    string_from_start: int = 1  # 1 - from start, 0 - from end
+    string_from_start: bool = True  # True - from start, False - from end
     string_for_cut: str = 'www.'
     field_for_cut: str = 'source.fqdn'
 
