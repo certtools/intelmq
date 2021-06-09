@@ -78,60 +78,48 @@ TODOs:
 
 """
 import re
+from typing import Optional, Dict, Tuple, Any
 
 import intelmq.lib.harmonization as harmonization
 
 
-def get_feed_by_feedname(given_feedname):
-    for feedname, filename, function in mapping:
-        if given_feedname == feedname:
-            return function
-    else:
-        return None
+def get_feed_by_feedname(given_feedname: str) -> Optional[Dict[str, Any]]:
+    return feedname_mapping.get(given_feedname, None)
 
 
-def get_feed_by_filename(given_filename):
-    for feedname, filename, function in mapping:
-        if given_filename == filename:
-            return feedname, function
-    else:
-        return None
+def get_feed_by_filename(given_filename: str) -> Optional[Tuple[str, Dict[str, Any]]]:
+    return filename_mapping.get(given_filename, None)
 
 
-def add_UTC_to_timestamp(value):
+def add_UTC_to_timestamp(value: str) -> str:
     return value + ' UTC'
 
 
-def convert_bool(value):
-    if value.lower() in ('y', 'yes', 'true', 'enabled', '1'):
+def convert_bool(value: str) -> Optional[bool]:
+    value = value.lower()
+    if value in {'y', 'yes', 'true', 'enabled', '1'}:
         return True
-    elif value.lower() in ('n', 'no', 'false', 'disabled', '0'):
+    elif value in {'n', 'no', 'false', 'disabled', '0'}:
         return False
 
-
-def validate_to_none(value):
-    if not len(value) or value in ('0', 'unknown'):
-        return None
-    return value
+    return None
 
 
-def convert_int(value):
+def validate_to_none(value: str) -> Optional[str]:
+    return None if (not value or value in {'0', 'unknown'}) else value
+
+
+def convert_int(value: str) -> Optional[int]:
     """ Returns an int or None for empty strings. """
-    if not value:
-        return None
-    else:
-        return int(value)
+    return int(value) if value else None
 
 
-def convert_float(value):
+def convert_float(value: str) -> Optional[float]:
     """ Returns an float or None for empty strings. """
-    if not value:
-        return None
-    else:
-        return float(value)
+    return float(value) if value else None
 
 
-def convert_http_host_and_url(value, row):
+def convert_http_host_and_url(value: str, row: Dict[str, str]) -> str:
     """
     URLs are split into hostname and path. The column names differ in reports.
     Compromised-Website: http_host, url
@@ -160,64 +148,55 @@ def convert_http_host_and_url(value, row):
         path = re.sub(r'^[^/]*', '', path)
         path = re.sub(r'\s.*$', '', path)
 
-        application = "http"
-        if "application" in row:
-            if row['application'] in ['http', 'https']:
-                application = row['application']
+        if "application" in row and row['application'] in {'http', 'https'}:
+            application = row['application']
+        else:
+            application = 'http'
 
         return application + "://" + hostname + path
 
     return value
 
 
-def invalidate_zero(value):
+def invalidate_zero(value: str) -> Optional[int]:
     """ Returns an int or None for empty strings or '0'. """
-    if not value:
-        return None
-    elif int(value) != 0:
-        return int(value)
+    return int(value) if value and int(value) != 0 else None
 
 
 # TODO this function is a wild guess...
-def set_tor_node(value):
-    if value:
-        return True
-    else:
-        return None
+def set_tor_node(value: str) -> Optional[bool]:
+    return True if value else None
 
 
-def validate_ip(value):
+def validate_ip(value: str) -> Optional[str]:
     """Remove "invalid" IP."""
-    if value == '0.0.0.0':
-        return None
-
     # FIX: https://github.com/certtools/intelmq/issues/1720 # TODO: Find better fix
-    if '/' in value:
-        return None
-
-    if harmonization.IPAddress.is_valid(value, sanitize=True):
+    if not (value == '0.0.0.0' or '/' in value) and harmonization.IPAddress.is_valid(value, sanitize=True):
         return value
 
+    return None
 
-def validate_network(value):
+
+def validate_network(value: str) -> Optional[str]:
     # FIX: https://github.com/certtools/intelmq/issues/1720 # TODO: Find better fix
-    if '/' not in value:
-        return None
-
-    if harmonization.IPNetwork.is_valid(value, sanitize=True):
+    if '/' in value and harmonization.IPNetwork.is_valid(value, sanitize=True):
         return value
 
+    return None
 
-def validate_fqdn(value):
+
+def validate_fqdn(value: str) -> Optional[str]:
     if value and harmonization.FQDN.is_valid(value, sanitize=True):
         return value
 
+    return None
 
-def convert_date(value):
+
+def convert_date(value: str) -> Optional[str]:
     return harmonization.DateTime.sanitize(value)
 
 
-def convert_date_utc(value):
+def convert_date_utc(value: str) -> Optional[str]:
     """
     Parses a datetime from the value and assumes UTC by appending the TZ to the value.
     Not the same as add_UTC_to_timestamp, as convert_date_utc also does the sanitiation
@@ -2886,3 +2865,6 @@ mapping = (
     ('Vulnerable-HTTP', 'scan_http', accessible_vulnerable_http),
     ('Vulnerable-Exchange-Server', 'scan_exchange', scan_exchange),
 )
+
+feedname_mapping = {feedname: function for feedname, filename, function in mapping}
+filename_mapping = {filename: (feedname, function) for feedname, filename, function in mapping}

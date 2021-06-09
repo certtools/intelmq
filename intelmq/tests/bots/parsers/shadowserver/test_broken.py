@@ -53,7 +53,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.assertLogMatches(pattern="Detected report's file name: 'scan_http'.",
                               levelname="DEBUG")
         self.assertLogMatches(pattern="Failed to parse line.")
-        self.assertLogMatches(pattern="ValueError: Required column 'timestamp' not found in feed 'Accessible-HTTP'. Possible change in data format or misconfiguration.")
+        self.assertLogMatches(pattern="ValueError: Required column 'timestamp' not found in feed 'Vulnerable-HTTP'. Possible change in data format or misconfiguration.")
         self.assertLogMatches(pattern=r"Sent 0 events and found 1 problem\(s\)\.",
                               levelname="INFO")
 
