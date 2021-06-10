@@ -44,6 +44,7 @@ class APICollectorBot(CollectorBot):
     socket_path = '/tmp/imq_api_default_socket'
     _server: Optional[HTTPServer] = None
     _unix_socket: Optional[socket.socket] = None
+    _eventLoopThread: Optional[Thread] = None
 
     def init(self):
         if IOLoop is None:
@@ -60,9 +61,9 @@ class APICollectorBot(CollectorBot):
         else:
             self.server = app.listen(self.port)
 
-        self.eventLoopThread = Thread(target=IOLoop.current().start)
-        self.eventLoopThread.daemon = True
-        self.eventLoopThread.start()
+        self._eventLoopThread = Thread(target=IOLoop.current().start)
+        self._eventLoopThread.daemon = True
+        self._eventLoopThread.start()
 
     def request_handler(self, data):
         report = self.new_report()
@@ -76,8 +77,12 @@ class APICollectorBot(CollectorBot):
         if self.server:
             # Closes the server and the socket, prevents address already in use
             self.server.stop()
-        if IOLoop.current():
-            IOLoop.current().stop()
+
+        loop = IOLoop.current()
+        if loop:
+            loop.add_callback(loop.stop)
+            if self._eventLoopThread:
+                self._eventLoopThread.join()
 
 
 BOT = APICollectorBot
