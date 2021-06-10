@@ -42,7 +42,7 @@ class APICollectorBot(CollectorBot):
     __is_multithreadable: bool = False
     use_socket = False
     socket_path = '/tmp/imq_api_default_socket'
-    _server: Optional[HTTPServer] = None
+    _server: Optional['HTTPServer'] = None
     _unix_socket: Optional[socket.socket] = None
     _eventLoopThread: Optional[Thread] = None
 
