@@ -7,6 +7,9 @@
 API Collector bot
 """
 from threading import Thread
+from typing import Optional
+import os
+import socket
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.exceptions import MissingDependencyError
@@ -14,6 +17,8 @@ from intelmq.lib.exceptions import MissingDependencyError
 try:
     import tornado.web
     from tornado.ioloop import IOLoop
+    from tornado.netutil import bind_unix_socket
+    from tornado.httpserver import HTTPServer
 except ImportError:
     IOLoop = None
 else:
@@ -35,6 +40,10 @@ class APICollectorBot(CollectorBot):
     __collector_empty_process: bool = True
     provider: str = "APICollector"
     __is_multithreadable: bool = False
+    use_socket = False
+    socket_path = '/tmp/imq_api_default_socket'
+    _server: Optional[HTTPServer] = None
+    _unix_socket: Optional[socket.socket] = None
 
     def init(self):
         if IOLoop is None:
@@ -44,7 +53,13 @@ class APICollectorBot(CollectorBot):
             ("/intelmq/push", MainHandler),
         ])
 
-        self.server = app.listen(self.port)
+        if self.use_socket:
+            self.server = HTTPServer(app)
+            self._unix_socket = bind_unix_socket(self.socket_path)
+            self.server.add_socket(self._unix_socket)
+        else:
+            self.server = app.listen(self.port)
+
         self.eventLoopThread = Thread(target=IOLoop.current().start)
         self.eventLoopThread.daemon = True
         self.eventLoopThread.start()
