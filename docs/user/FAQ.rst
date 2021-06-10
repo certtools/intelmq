@@ -1,5 +1,5 @@
 ..
-   SPDX-FileCopyrightText: 2014 Tomás Lima <synchroack@gmail.com>
+   SPDX-FileCopyrightText: 2014 Tomás Lima <synchroack@gmail.com>, 2016-2021 Sebastian Wagner <wagner@cert.at>
    SPDX-License-Identifier: AGPL-3.0-or-later
 
 Frequently asked questions

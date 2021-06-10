@@ -106,6 +106,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - Bots documentation:
   - Added anchors to all bot sections derived from the module names for easier linking (PR#1943 by Sebastian Wagner fixes part of certtools/intelmq-api#4).
 - License and copyright information was added to all the bots.
+- Added documentation on the EventDB (PR#1955 by Birger Schacht, PR#1985 by Sebastian Wagner).
 
 ### Packaging
 - Docker images tagged with `certat/intelmq-full:develop` are built and published on every push to the develop branch (PR#1753 by Sebastian Waldbauer).
@@ -119,6 +120,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 ### Tools
 
 ### Contrib
+- eventdb:
+  - Added `separate-raws-table.sql` (PR#1985 by Sebastian Wagner).
 
 ### Known issues
 
