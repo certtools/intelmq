@@ -67,3 +67,32 @@ Using EventDB with Timescale DB
 -------------------------------
 
 TBD
+
+.. _eventdb_raws_table:
+
+----------------------------------------------------------
+Separating raw values in PostgreSQL using view and trigger
+----------------------------------------------------------
+
+In order to reduce the row size in the events table, the `raw` column's data can be separated from the other columns.
+While the raw-data is about 30-50% of the data row's size, it is not used in most database queries, as it serves only a backup functionality.
+Other possibilities to reduce or getting rid of this field are described in the FAQ, section :ref:`faq-remove-raw-data`.
+
+The steps described here are best performed before the `events` table is filled with data, but can as well be done with existing data.
+
+The approach requires four steps:
+
+1. An existing `events` table, see the first section of this document.
+2. Deleting or renaming the `raw` column of the `events` table.
+3. Creating a table `raws` which holds only the `raw` field of the events and linking both tables using the `event_id`.
+4. Creating the view `v_events` which joins the tables `events` and `raws`.
+5. Creating the function `process_v_events_insert` and `INSERT` trigger `tr_events`.
+
+The last steps brings us several advantages:
+
+- All `INSERT` statements can contain all data, including the `raw` field.
+- No code changes are needed in the IntelMQ output bot or your own scripts. A migration is seamless.
+- PostgreSQL itself ensures that the data of both tables is consistent and linked correctly.
+
+The complete SQL script can be found in the `contrib/eventdb <https://github.com/certtools/intelmq/tree/develop/contrib/eventdb>`_ directory of IntelMQ.
+It does *not* cover step 2 to avoid accidental data loss - you need to do this step manually.
