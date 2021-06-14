@@ -29,6 +29,7 @@ EXAMPLE_OUTPUT = {'__type': 'Event',
                     'extra.time_end': '2015-01-01T00:59:00+00:00',
                     'source.ip': '93.184.216.34'}
 
+
 @test.skip_exotic()
 class TestAggregateExpertBot(test.BotTestCase, TestCase):
     """
@@ -49,14 +50,15 @@ class TestAggregateExpertBot(test.BotTestCase, TestCase):
                 EVENTS.append(json.loads(line))
 
         self.input_message = EVENTS[0:25]
-        self.run_bot(iterations=25)
+        self.run_bot(iterations=25, stop_bot=False)
 
         # forwarding time +1 hour 1 minute
         dt_new = datetime.now() + timedelta(hours=1, minutes=30)
         traveller = time_machine.travel(dt_new.timestamp())
         traveller.start()
         self.input_message = EVENTS[0:25]
-        self.run_bot(iterations=25)
+        self.prepare_source_queue()
+        self.run_bot(iterations=25, prepare=False)
         traveller.stop()
 
         EXAMPLE_OUTPUT['time.source'] = json.loads(self.get_output_queue()[0])["time.source"]
