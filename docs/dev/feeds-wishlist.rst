@@ -51,6 +51,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
   - `Google Webmaster Alerts <https://www.google.com/webmasters/>`_
   - `GPF Comics DNS Blacklist <https://www.gpf-comics.com/dnsbl/export.php>`_
   - `Greensnow <https://blocklist.greensnow.co/greensnow.txt>`_
+  - `Greynoise <https://developer.greynoise.io/reference/community-api>`_
   - `HP Feeds <https://github.com/rep/hpfeeds>`_
   - `IBM X-Force Exchange <https://exchange.xforce.ibmcloud.com/>`_
   - `ImproWare AntiSpam <https://antispam.imp.ch/>`_
