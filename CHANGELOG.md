@@ -126,6 +126,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
 - License and copyright information was added to all the bots.
 - Added documentation on the EventDB (PR#1955 by Birger Schacht, PR#1985 by Sebastian Wagner).
 - Added TimescaleDB for time-series documentation (PR#1990 by Sebastian Waldbauer).
+- Improved n6 interoperability documentation by adding more graphs and illustrations (PR#1991 by Sebastian Wagner).
 
 ### Packaging
 - Docker images tagged with `certat/intelmq-full:develop` are built and published on every push to the develop branch (PR#1753 by Sebastian Waldbauer).

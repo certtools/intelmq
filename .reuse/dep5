@@ -29,3 +29,7 @@ License:   AGPL-3.0-or-later
 Files:     debian/debian/py3dist-overrides
 Copyright: 2021 Birger Schacht
 License:   AGPL-3.0-or-later
+
+Files:     docs/_static/n6/data-flow.png docs/_static/n6/n6-schemat2.png
+Copyright: CERT.pl <n6@cert.pl>
+License:   AGPL-3.0-only
