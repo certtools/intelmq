@@ -77,7 +77,7 @@ DGA_EVENTS = {'feed.url': 'http://osint.bambenekconsulting.com/feeds/dga-feed.tx
               'raw': 'eHFtY2xudXNhc3d2b2YuY29tLERvbWFpbiB1c2VkIGJ5IENyeXB0b2xvY2tlciAtIEZsYXNoYmFjayBER0EgZm9yIDEwIE5vdiAyMDE2LDIwMTYtMTEtMTAsaHR0cDovL29zaW50LmJhbWJlbmVrY29uc3VsdGluZy5jb20vbWFudWFsL2NsLnR4dA==',
               'time.source': '2016-11-10T00:00:00+00:00',
               'source.fqdn': 'xqmclnusaswvof.com',
-              'classification.type': 'dga domain',
+              'classification.type': 'dga-domain',
               'malware.name': 'cryptolocker',
               'event_description.text': 'Domain used by Cryptolocker - Flashback DGA for 10 Nov 2016',
               'event_description.url': 'http://osint.bambenekconsulting.com/manual/cl.txt'

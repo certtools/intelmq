@@ -65,7 +65,7 @@ class BambenekParserBot(ParserBot):
             elif report['feed.url'] in BambenekParserBot.DGA_FEED:
                 event.add('source.fqdn', value[0])
                 event.add('time.source', value[2] + ' 00:00 UTC')
-                event.add('classification.type', 'dga domain')
+                event.add('classification.type', 'dga-domain')
 
             else:
                 raise ValueError('Unknown data feed %s.' % report['feed.url'])

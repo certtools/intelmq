@@ -46,7 +46,7 @@ class IdeaExpertBot(Bot):
         "compromised": "Intrusion.AdminCompromise",
         "backdoor": "Intrusion.AdminCompromise",
         "blacklist": "Other",
-        "dga domain": "Anomaly.Behaviour",
+        "dga-domain": "Anomaly.Behaviour",
         "proxy": "Vulnerable.Config",
         "data-leak": "Information",
         "tor": "Other",
@@ -90,7 +90,7 @@ class IdeaExpertBot(Bot):
         "dropzone": "Dropzone",
         "malware-configuration": "MalwareConf",
         "c2-server": "CC",
-        "dga domain": "DGA",
+        "dga-domain": "DGA",
         "proxy": "Proxy",
         "tor": "Tor",
         "malware-distribution": "Malware"

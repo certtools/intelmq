@@ -51,6 +51,7 @@ The classification scheme has been updated to better match the [Reference Securi
 | malicious code               |                    | malicious-code               |                                        |
 | malicious code               | c2server           | malicious-code               | c2-server                              |
 | malicious code               | malware            | malicious-code               | infected-system / malware-distribution |
+| malicious code               | dga domain         | other                        | dga-domain                             |
 | malicious code               | malware            | other                        | malware                                |
 | malicious code               | ransomware         | malicious-code               | infected-system                        |
 | vulnerable                   | vulnerable client  | vulnerable                   | vulnerable-system                      |
@@ -60,7 +61,9 @@ The classification scheme has been updated to better match the [Reference Securi
 - For the taxonomy 'availability', the type `misconfiguration` is new.
 - For the taxonomy 'other', the types `malware` and `undetermined` are new.
 
-The old names can still be used in code, and they are automatically converted to the new names.
+The old `classification.type` names can still be used in code, and they are automatically converted to the new names.
+Existing data in databases and alike are *not* changed automatically.
+See the section "Postgres databases" below for instructions to update existing data in databases.
 
 #### "Malware"
 
@@ -109,6 +112,9 @@ UPDATE events
 UPDATE events
    SET "classification.type" = 'undetermined'
    WHERE "classification.taxonomy" = 'other' AND "classification.type" = 'unknown';
+UPDATE events
+   SET "classification.taxonomy" = 'other', "classification.type" = 'dga-domain'
+   WHERE "classification.taxonomy" = 'malicious-code' AND "classification.type" = 'dga domain';
 ```
 Depending on the data (e.g. feed), the correct statement for the `malware` type deprecation may be either this:
 ```sql

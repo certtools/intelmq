@@ -50,7 +50,7 @@ TAXONOMY = {
     "unauthorized-login": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "unprivileged-account-compromise": "intrusions",
     "c2-server": "malicious-code",
-    "dga domain": "malicious-code",  # not in ENISA eCSIRT-II taxonomy
+    "dga-domain": "other",  # intentionally not in RSIT, see #1409, #1613 and https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/pull/32
     "infected-system": "malicious-code",
     "malware-configuration": "malicious-code",
     "malware-distribution": "malicious-code",
