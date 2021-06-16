@@ -81,7 +81,30 @@ By modifying the configuration file it is possible to configure various queries 
 Using EventDB with Timescale DB
 -------------------------------
 
-TBD
+`Timescale DB <https://www.timescale.com/>`_ is a PostgreSQL extension to add time-series support, which is quite handy as you dont have to learn other syntaxes as you already know. You can use the SQL Queries as before, the extension will handle the rest.
+To see all limitations, please check the `Timescale DB Documentation <https://docs.timescale.com/timescaledb/latest/>`_.
+
+What is time-series?
+--------------------
+
+Time-series has been invented as traditional database design like relational or nosql are not made for time-based data.
+A big benefit of time-series instead of other database designs over a time-based search pattern is the performance.
+As IntelMQ uses data based upon time, this design is awesome & will give you a performance boost.
+
+How to setup
+------------
+
+Thanks to TimescaleDB its very easy to setup.
+1. Choose your preferred `Timescale DB <https://docs.timescale.com/timescaledb/latest/how-to-guides/install-timescaledb/self-hosted/>`_ environment & follow the installation instructions.
+2. Now lets create a `hypertable <https://docs.timescale.com/api/latest/hypertable/create_hypertable/>`_, which is the timescale DB time-series structure. ``SELECT create_hypertable('', 'time.source');``.
+3. Now our hypertable is setup & timescaleDB takes care of the rest. You can perform queries as usual, for further information please check `Timescale DB Documentation <https://docs.timescale.com/timescaledb/latest/>`_.
+
+How to upgrade from my existing database?
+-----------------------------------------
+
+To update your existing database to use this awesome time-series feature, just follow the ``How to setup`` instruction.
+You can perform the ``hypertable`` command even on already existing databases. **BUT** there are `some limitations <https://docs.timescale.com/timescaledb/latest/overview/limitations/>`_ from timescaleDB.
+
 
 .. _eventdb_raws_table:
 
