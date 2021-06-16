@@ -1490,6 +1490,8 @@ defined in the `SUPPORTED_MISP_CATEGORIES` and `MISP_TYPE_MAPPING` class
 constants.
 
 
+.. _n6 parser bot:
+
 .. _intelmq.bots.parsers.n6.parser_n6stomp:
 
 n6
@@ -3819,6 +3821,7 @@ Create the new database (you can ignore all errors since SQLite doesn't know all
 
 Then, set the `database` parameter to the `your-db.db` file path.
 
+.. _stomp output bot:
 
 .. _intelmq.bots.outputs.stomp.output:
 
