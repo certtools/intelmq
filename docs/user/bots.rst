@@ -4124,6 +4124,7 @@ Create the new database (you can ignore all errors since SQLite doesn't know all
 
 Then, set the `database` parameter to the `your-db.db` file path.
 
+.. _stomp output bot:
 
 .. _intelmq.bots.outputs.stomp.output:
 
