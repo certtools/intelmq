@@ -514,6 +514,8 @@ class TestHarmonization(unittest.TestCase):
                                                    sanitize=True))
         self.assertTrue(harmonization.ClassificationType.is_valid('infected system ',
                                                    sanitize=True))
+        self.assertEqual(harmonization.ClassificationType.sanitize('dga domain'),
+                         'dga-domain')
 
     def test_classification_type_sanitize_invalid(self):
         """ Test ClassificationType.is_valid with invalid arguments. """

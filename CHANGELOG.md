@@ -38,7 +38,7 @@ CHANGELOG
 
 ### Data Format
 The IntelMQ Data Harmonization ("DHO") is renamed to IntelMQ Data Format ("IDF"). Internal files remain and work the same as before (PR#1818 by Sebastian Waldbauer, fixes 1810).
-Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old namings are still supported until at least version 3.0.
+Update allowed classification fields to 2020-01-28 version (#1409, #1476).
 - The taxonomy `abusive content` has been renamed to `abusive-content`.
 - The taxonomy `information content security` has been renamed to `information-content-security`.
   - The validation of type `unauthorised-information-access` has been fixed, a bug prevented the use of it.
@@ -48,8 +48,9 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476). Old n
 - The taxonomy `information gathering` has been rename to `information-gathering`.
 - The taxonomy `malicious code` has been renamed to `malicious-code`.
   - The type `c2server` has been renamed to `c2-server`.
-  - The type `malware` has been integrated into `infected-system` and `malware-distribution`, respectively.
+  - The type `malware` has been integrated into `infected-system` and `malware-distribution`, respectively (PR#1917 by Sebastian Wagner addresses #1409).
   - The type `ransomware` has been integrated into `infected-system`.
+  - The type `dga domain` has been moved to the taxonomy `other` renamed `dga-domain` (PR#1992 by Sebastian Wagner fixes #1613).
 - For the taxonomy 'availability', the type `misconfiguration` is new.
 - For the taxonomy 'other', the type `unknown` has been renamed to `undetermined`.
 - For the taxonomy 'vulnerable':

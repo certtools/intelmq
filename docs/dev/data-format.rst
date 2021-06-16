@@ -137,11 +137,11 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
    intrusions                    unauthorized-login                          A possibly infected device logged in to a remote device without authorization. Not in ENISA eCSIRT-II taxonomy.
    intrusions                    unprivileged-account-compromise             Compromise of a system using an unprivileged (user/service) account.
    malicious-code                c2-server                                   This is a command and control server in charge of a given number of botnet drones.
-   malicious-code                dga domain                                  DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers. Not in ENISA eCSIRT-II taxonomy.
    malicious-code                infected-system                             This is a compromised machine, which has been observed to make a connection to a command and control server.
    malicious-code                malware-configuration                       This is a resource which updates botnet drones with a new configuration.
    malicious-code                malware-distribution                        URI used for malware distribution, e.g. a download URL included in fake invoice malware spam.
    other                         blacklist                                   Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another. Not in RSIT.
+   other                         dga-domain                                  DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers. Not in RSIT.
    other                         other                                       All incidents which don't fit in one of the given categories should be put into this class.
    other                         malware                                     An IoC referring to a malware (sample) itself. Not in RSIT.
    other                         proxy                                       This refers to the use of proxies from inside your network. Not in RSIT.
@@ -170,7 +170,7 @@ Meaning of source, destination and local values for each classification type and
  compromised              *server*
  ddos                     *attacker*                                        target
  defacement               *defaced website*
- dga domain               *infected device*
+ dga-domain               *infected device*
  dropzone                 *server hosting stolen data*
  exploit                  *hosting server*
  ids-alert                *triggering device*

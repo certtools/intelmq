@@ -282,7 +282,7 @@ class ClassificationType(String):
                       'ddos',
                       'ddos-amplifier',
                       'defacement',
-                      'dga domain',
+                      'dga-domain',
                       'dos',
                       'dropzone',
                       'exploit',
@@ -371,6 +371,8 @@ class ClassificationType(String):
             value = 'infected-system'
         elif value == 'unknown':
             value = 'undetermined'
+        elif value == 'dga domain':
+            value = 'dga-domain'
         return GenericType().sanitize(value)
 
 
