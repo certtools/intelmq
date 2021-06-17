@@ -105,6 +105,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
   - Split string and numeric matches into single- and multivalued variants, with the relevant new operators `:in`, `:containsany` and `:regexin` for string lists, and `:in` for numeric value lists (PR#1957 by Mikk Margus Möll).
     - Removed the `==` operator for lists, with the previous meaning of `:in`. Have a look at the NEWS.md for more information.
 - Added `intelmq.bots.experts.uwhoisd`: A bot that fetches the whois entry from a uwhois-instance (PR#1918 by Raphaël Vinot).
+- Removed deprecated `intelmq.bots.experts.ripencc_abuse_contact.expert`. It was replaced by `intelmq.bots.experts.ripe.expert` and marked as deprecated in 2.0.0.beta1 (PR#1997 by Sebastian Wagner, #1404).
 
 #### Outputs
 - Remove `intelmq.bots.outputs.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
