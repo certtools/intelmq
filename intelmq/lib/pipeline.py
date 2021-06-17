@@ -4,9 +4,8 @@
 
 # -*- coding: utf-8 -*-
 import time
-import inspect
 from itertools import chain
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
 import ssl
 
 import redis
@@ -67,8 +66,11 @@ class Pipeline(object):
     # If the class currently holds a message, restricts the actions
     _has_message = False
 
-    def __init__(self, logger, pipeline_args={}, load_balance=False, is_multithreaded=False):
-        self.pipeline_args = pipeline_args
+    def __init__(self, logger, pipeline_args: dict = None, load_balance=False, is_multithreaded=False):
+        if pipeline_args:
+            self.pipeline_args = pipeline_args
+        else:
+            self.pipeline_args = {}
         self.destination_queues = {}  # type: dict[str, list]
         self.internal_queue = None
         self.source_queue = None
@@ -185,22 +187,16 @@ class Redis(Pipeline):
     destination_pipeline_password = None
 
     def load_configurations(self, queues_type):
-        self.host = getattr(self.pipeline_args,
-                            "{}_pipeline_host".format(queues_type),
-                            "127.0.0.1")
-        self.port = getattr(self.pipeline_args,
-                            "{}_pipeline_port".format(queues_type), "6379")
-        self.db = getattr(self.pipeline_args,
-                          "{}_pipeline_db".format(queues_type), 2)
-        self.password = getattr(self.pipeline_args,
-                                "{}_pipeline_password".format(queues_type),
-                                None)
+        self.host = self.pipeline_args.get("{}_pipeline_host".format(queues_type),
+                                           "127.0.0.1")
+        self.port = self.pipeline_args.get("{}_pipeline_port".format(queues_type), "6379")
+        self.db = self.pipeline_args.get("{}_pipeline_db".format(queues_type), 2)
+        self.password = self.pipeline_args.get("{}_pipeline_password".format(queues_type),
+                                               None)
         #  socket_timeout is None by default, which means no timeout
-        self.socket_timeout = getattr(self.pipeline_args,
-                                      "{}_pipeline_socket_timeout".format(
-                                          queues_type),
-                                      None)
-        self.load_balance = getattr(self, "load_balance", False)
+        self.socket_timeout = self.pipeline_args.get("{}_pipeline_socket_timeout".format(queues_type),
+                                                     None)
+        self.load_balance = self.pipeline_args.get("load_balance", False)
         self.load_balance_iterator = 0
 
     def connect(self):
@@ -433,35 +429,25 @@ class Amqp(Pipeline):
     destination_pipeline_amqp_exchange = ""
     intelmqctl_rabbitmq_monitoring_url = None
 
-    def __init__(self, logger, pipeline_args={}, load_balance=False, is_multithreaded=False):
+    def __init__(self, logger, pipeline_args: dict = None, load_balance=False, is_multithreaded=False):
         super(Amqp, self).__init__(logger, pipeline_args, load_balance, is_multithreaded)
         if pika is None:
             raise ValueError("To use AMQP you must install the 'pika' library.")
         self.properties = pika.BasicProperties(delivery_mode=2)  # message persistence
 
     def load_configurations(self, queues_type):
-        self.host = getattr(self,
-                            "{}_pipeline_host".format(queues_type),
-                            "127.0.0.1")
-        self.port = getattr(self,
-                            "{}_pipeline_port".format(queues_type), 5672)
-        self.username = getattr(self,
-                                "{}_pipeline_username".format(queues_type),
-                                None)
-        self.password = getattr(self,
-                                "{}_pipeline_password".format(queues_type),
-                                None)
+        self.host = self.pipeline_args.get("{}_pipeline_host".format(queues_type), "10.0.0.1")
+        self.port = self.pipeline_args.get("{}_pipeline_port".format(queues_type), 5672)
+        self.username = self.pipeline_args.get("{}_pipeline_username".format(queues_type), None)
+        self.password = self.pipeline_args.get("{}_pipeline_password".format(queues_type), None)
         #  socket_timeout is None by default, which means no timeout
-        self.socket_timeout = getattr(self,
-                                      "{}_pipeline_socket_timeout".format(
-                                          queues_type),
-                                      None)
-        self.load_balance = getattr(self, "load_balance", False)
-        self.virtual_host = getattr(self,
-                                    "{}_pipeline_amqp_virtual_host".format(queues_type),
-                                    '/')
-        self.ssl = getattr(self, "{}_pipeline_ssl".format(queues_type), False)
-        self.exchange = getattr(self, "{}_pipeline_amqp_exchange".format(queues_type), "")
+        self.socket_timeout = self.pipeline_args.get("{}_pipeline_socket_timeout".format(queues_type),
+                                                     None)
+        self.load_balance = self.pipeline_args.get("load_balance", False)
+        self.virtual_host = self.pipeline_args.get("{}_pipeline_amqp_virtual_host".format(queues_type),
+                                                   '/')
+        self.ssl = self.pipeline_args.get("{}_pipeline_ssl".format(queues_type), False)
+        self.exchange = self.pipeline_args.get("{}_pipeline_amqp_exchange".format(queues_type), "")
         self.load_balance_iterator = 0
         self.kwargs = {}
         if self.username and self.password:
