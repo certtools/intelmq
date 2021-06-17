@@ -27,6 +27,7 @@ CHANGELOG
 - `intelmq.lib.utils`:
   - New function `list_all_bots` to list all available/installed bots as replacement for the BOTS file (#368, #552, #644, #757, #1069, #1750, PR#1751 by Sebastian Waldbauer).
   - New function `get_bots_settings` to return the effective bot parameters, with global parameters applied.
+  - Removed deprecated function `create_request_session_from_bot` (PR#1997 by Sebastian Wagner, #1404).
 - `intelmq.lib.bot_debugger`:
   - Set bot's `logging_level` directly in `__init__` before the bot's initialization by changing the default value (by Sebastian Wagner).
   - Rewrite `load_configuration_patch` by adapting it to the parameter and configuration rewrite (by Sebastian Wagner).
