@@ -21,6 +21,14 @@ IntelMQ now uses YAML for the runtime configuration and therefore needs the `rua
 The command `e` for deleting single entries by given IDs has been merged into the command `d` ("delete"), which can now delete either entries by ID or the whole file.
 The command `v` for editing entries has been renamed to `e` ("edit").
 
+#### Cronjobs
+The deprecated shell scripts
+- `update-asn-data`
+- `update-geoip-data`
+- `update-tor-nodes`
+- `update-rfiprisk-data`
+have been removed in favor of the built-in update-mechanisms (see the bots' documentation). A crontab file for calling all new update command can be found in `contrib/cron-jobs/intelmq-update-database`.
+
 ### Bots
 
 Both the XMPP collector bot and the XMPP output bot were removed. This [was evaluated on the mailinglist](https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html)

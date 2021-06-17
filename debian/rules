@@ -37,15 +37,6 @@ override_dh_auto_install: $(BOTDOCS)
 	sed -i -e '/#!\/usr\/bin\//d' intelmq/bin/*.py
 	sed -i -f debian/sedfile intelmq/etc/* docs/user/intelmqctl.rst docs/user/bots.rst setup.py contrib/logrotate/intelmq contrib/logcheck/logcheck.logfiles
 	python3 setup.py install --root=debian/intelmq --prefix=/usr
-	# these are already in /usr/bin/
-	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/maxmind_geoip/update-geoip-data
-	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/asn_lookup/update-asn-data
-	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/tor_nodes/update-tor-nodes
-	# and rename those in /usr/bin
-	mv debian/intelmq/usr/bin/update-geoip-data debian/intelmq/usr/bin/intelmq-update-geoip-data
-	mv debian/intelmq/usr/bin/update-asn-data debian/intelmq/usr/bin/intelmq-update-asn-data
-	mv debian/intelmq/usr/bin/update-tor-nodes debian/intelmq/usr/bin/intelmq-update-tor-nodes
-	mv debian/intelmq/usr/bin/update-rfiprisk-data debian/intelmq/usr/bin/intelmq-update-rfiprisk-data
 	# create directories
 	mkdir -p debian/intelmq/var/log/intelmq
 	mkdir -p debian/intelmq/var/lib/intelmq/bots/file-output

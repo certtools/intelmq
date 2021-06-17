@@ -143,6 +143,12 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
 ### Contrib
 - eventdb:
   - Added `separate-raws-table.sql` (PR#1985 by Sebastian Wagner).
+- cron-jobs: Removed the deprecated update scripts (PR#1997 by Sebastian Wagner, #1404):
+  - `update-asn-data`
+  - `update-geoip-data`
+  - `update-tor-nodes`
+  - `update-rfiprisk-data`
+  in favor of the built-in update-mechanisms (see the bots' documentation). A crontab file for calling all new update command can be found in `contrib/cron-jobs/intelmq-update-database`.
 
 ### Known issues
 - ParserBot: erroneous raw line recovery in error handling (#1850).
