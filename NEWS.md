@@ -191,6 +191,9 @@ UPDATE events
    SET "classification.taxonomy" = 'information-content-security', "classification.type" = 'unauthorised-information-modification'
    WHERE "classification.taxonomy" = 'intrusions', "classification.type" = 'defacement'
 UPDATE events
+   SET "classification.taxonomy" = 'information-content-security', "classification.type" = 'unauthorised-information-modification'
+   WHERE "classification.taxonomy" = 'intrusions', "classification.type" = 'defacement'
+UPDATE events
    SET "classification.taxonomy" = 'malicious-code'
    WHERE "classification.taxonomy" = 'malicious code';
 UPDATE events
