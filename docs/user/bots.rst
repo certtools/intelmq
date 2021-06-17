@@ -155,14 +155,16 @@ API
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` collect report messages from an HTTP REST API
+* `description:` collect report messages from an HTTP or Socket REST API
 
 **Configuration Parameters**
 
 * **Feed parameters** (see above)
 * `port`: Optional, integer. Default: 5000. The local port, the API will be available at.
+* `use_socket`: Optional, boolean. Default: false. If true, the socket will be opened at the location given with `socket_path`.
+* `socket_path`: Optional, string. Default: ``/tmp/imq_api_default_socket``
 
-The API is available at `/intelmq/push`.
+The API is available at `/intelmq/push` if the HTTP interface is used (default).
 The `tornado` library is required.
 
 

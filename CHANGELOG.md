@@ -70,6 +70,9 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
   users mailinglist, the bot is not used by anyone. (https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html, PR#1761, closes #1614)
 - `intelmq.bots.collectors.mail._lib`: Added parameter `mail_starttls` for STARTTLS in all mail collector bots (PR#1831 by Marius Karotkis, fixes #1128).
 - Added `intelmq.bots.collectors.fireeye`: A bot that collects indicators from Fireeye MAS appliances (PR#1745 by Christopher Schappelwein).
+- `intelmq.bots.collectors.api.collector_api` (PR#1987 by Mikk Margus Möll, fixes #1986):
+  - Added UNIX socket capability.
+  - Correctly close the IOLoop in the shutdown method to fix reload.
 
 #### Parsers
 - Added `intelmq.bots.parsers.fireeye`: A bot that parses hashes and URLs from Fireeye MAS indicators (PR#1745 by Christopher Schappelwein).
