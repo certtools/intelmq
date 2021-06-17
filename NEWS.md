@@ -48,6 +48,9 @@ The classification scheme has been updated to better match the [Reference Securi
 | information content security | leak               | information-content-security | data-leak                              |
 | intrusion attempts           |                    | intrusion-attempts           |                                        |
 | information gathering        |                    | information-gathering        |                                        |
+| intrusions                   | compromised        | intrusions                   | system-compromise                      |
+| intrusions                   | unauthorized-login | intrusions                   | system-compromise                      |
+| intrusions                   | unauthorized-command | intrusions                 | system-compromise                      |
 | malicious code               |                    | malicious-code               |                                        |
 | malicious code               | c2server           | malicious-code               | c2-server                              |
 | malicious code               | malware            | malicious-code               | infected-system / malware-distribution |
@@ -59,6 +62,7 @@ The classification scheme has been updated to better match the [Reference Securi
 | other                        | unknown            | other                        | undetermined                           |
 
 - For the taxonomy 'availability', the type `misconfiguration` is new.
+- For the taxonomy 'intrusions', the type `system-compromise` is new.
 - For the taxonomy 'other', the types `malware` and `undetermined` are new.
 
 The old `classification.type` names can still be used in code, and they are automatically converted to the new names.
@@ -100,6 +104,9 @@ UPDATE events
 UPDATE events
    SET "classification.taxonomy" = 'information-gathering'
    WHERE "classification.taxonomy" = 'information gathering';
+UPDATE events
+   SET "classification.type" = 'system-compromise'
+   WHERE "classification.type" IN ('compromised', 'unauthorized-login', 'unauthorized-command');
 UPDATE events
    SET "classification.taxonomy" = 'malicious-code'
    WHERE "classification.taxonomy" = 'malicious code';

@@ -43,11 +43,9 @@ TAXONOMY = {
     "application-compromise": "intrusions",
     "backdoor": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "burglary": "intrusions",
-    "compromised": "intrusions",  # not in ENISA eCSIRT-II taxonomy,
     "defacement": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "privileged-account-compromise": "intrusions",
-    "unauthorized-command": "intrusions",  # not in ENISA eCSIRT-II taxonomy
-    "unauthorized-login": "intrusions",  # not in ENISA eCSIRT-II taxonomy
+    "system-compromise": "intrusions",
     "unprivileged-account-compromise": "intrusions",
     "c2-server": "malicious-code",
     "dga-domain": "other",  # intentionally not in RSIT, see #1409, #1613 and https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/pull/32

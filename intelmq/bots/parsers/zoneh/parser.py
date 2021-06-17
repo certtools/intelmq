@@ -21,7 +21,7 @@ class ZoneHParserBot(ParserBot):
         parsed_url = urlparse(row["domain"])
 
         event.add('classification.identifier', "compromised-website")
-        event.add('classification.type', 'compromised')
+        event.add('classification.type', 'system-compromise')
         event.add('event_description.text', 'defacement')
         event.add('time.source', row["add_date"] + ' UTC')
         event.add('raw', self.recover_line(self.current_line))
