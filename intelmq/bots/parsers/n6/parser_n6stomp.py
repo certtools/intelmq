@@ -23,7 +23,7 @@ mapping['amplifier']    = {"taxonomy": "vulnerable",
 mapping['bots']         = {"taxonomy": "malicious-code",
                            "type": "infected-system", "identifier": "malware-generic"}
 mapping['backdoor']     = {"taxonomy": "intrusions",
-                           "type": "backdoor", "identifier": "hacked server"}
+                           "type": "system-compromise", "identifier": "hacked server"}
 mapping['cnc']          = {"taxonomy": "malicious-code",
                            "type": "c2-server", "identifier": "c&c server"}
 mapping['dns-query']    = {"taxonomy": "other",

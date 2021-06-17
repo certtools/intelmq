@@ -48,6 +48,7 @@ The classification scheme has been updated to better match the [Reference Securi
 | information content security | leak               | information-content-security | data-leak                              |
 | intrusion attempts           |                    | intrusion-attempts           |                                        |
 | information gathering        |                    | information-gathering        |                                        |
+| intrusions                   | backdoor           | intrusions                   | system-compromise                      |
 | intrusions                   | compromised        | intrusions                   | system-compromise                      |
 | intrusions                   | defacement         | information-content-security | unauthorised-information-modification  |
 | intrusions                   | unauthorized-login | intrusions                   | system-compromise                      |
@@ -107,7 +108,7 @@ UPDATE events
    WHERE "classification.taxonomy" = 'information gathering';
 UPDATE events
    SET "classification.type" = 'system-compromise'
-   WHERE "classification.type" IN ('compromised', 'unauthorized-login', 'unauthorized-command');
+   WHERE "classification.type" IN ('backdoor', 'compromised', 'unauthorized-login', 'unauthorized-command');
 UPDATE events
    SET "classification.taxonomy" = 'information-content-security', "classification.type" = 'unauthorised-information-modification'
    WHERE "classification.taxonomy" = 'intrusions', "classification.type" = 'defacement'

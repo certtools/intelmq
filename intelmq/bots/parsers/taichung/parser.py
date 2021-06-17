@@ -26,7 +26,7 @@ CLASSIFICATION = {
     "exploit": ["bash", "php-cgi", "phpmyadmin"],
     "ddos": ["ddos"],
     "application-compromise": ["injection"],  # apache vulns, sql
-    "ids-alert": ["backdoor"],  # ids-alert is exploitation of known vulnerability
+    "ids-alert": ["ids-alert"],  # ids-alert is exploitation of known vulnerability
     "dos": ["dns", "dos",  # must be after ddos
             "超量連線",  # google: "Excess connection"
             ],

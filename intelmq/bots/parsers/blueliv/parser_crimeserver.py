@@ -15,7 +15,7 @@ TYPES = {
     'PHISHING': 'phishing',
     'MALWARE': 'malware-distribution',
     'EXPLOIT_KIT': 'exploit',
-    'BACKDOOR': 'backdoor',
+    'BACKDOOR': 'system-compromise',
     'TOR_IP': 'proxy',
     'C_AND_C': 'c2-server'
 }
