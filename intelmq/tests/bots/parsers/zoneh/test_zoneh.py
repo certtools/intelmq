@@ -28,7 +28,7 @@ ACCEPTED_REPORT = {
 ACCEPTED_EVENT00 = {
     '__type': 'Event',
     'feed.name': 'ZoneH Defacements',
-    'classification.type': 'compromised',
+    'classification.type': 'system-compromise',
     'classification.identifier': 'compromised-website',
     'extra.accepted_date': "2016-06-01 13:20:21",
     "extra.actor": "L33tz",
@@ -50,7 +50,7 @@ ACCEPTED_EVENT00 = {
 ACCEPTED_EVENT01 = {
     '__type': 'Event',
     'feed.name': 'ZoneH Defacements',
-    'classification.type': 'compromised',
+    'classification.type': 'system-compromise',
     'classification.identifier': 'compromised-website',
     'extra.accepted_date': "2017-06-11 10:00:00",
     "extra.actor": "mayhab",
@@ -86,7 +86,7 @@ PENDING_REPORT = {
 PENDING_EVENT00 = {
     '__type': 'Event',
     'feed.name': 'ZoneH Defacements',
-    'classification.type': 'compromised',
+    'classification.type': 'system-compromise',
     'classification.identifier': 'compromised-website',
     'protocol.application': 'https',
     'extra.actor': "xyz crew",

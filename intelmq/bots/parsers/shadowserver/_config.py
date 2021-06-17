@@ -1266,7 +1266,7 @@ compromised_website = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'intrusions',
-        'classification.type': 'compromised',
+        'classification.type': 'system-compromise',
         'classification.identifier': 'compromised-website',
     },
 }
@@ -2710,7 +2710,7 @@ def scan_exchange_taxonomy(field):
 
 def scan_exchange_type(field):
     if field == 'exchange;webshell':
-        return 'compromised'
+        return 'system-compromise'
     return 'infected-system'
 
 

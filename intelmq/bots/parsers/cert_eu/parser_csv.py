@@ -27,7 +27,7 @@ class CertEUCSVParserBot(ParserBot):
         "botnet drone": "infected-system",
         "brute-force": "brute-force",
         "c2server": "c2-server",
-        "compromised server": "compromised",
+        "compromised server": "system-compromise",
         "ddos infrastructure": "ddos",
         "ddos target": "ddos",
         "defacement": "defacement",

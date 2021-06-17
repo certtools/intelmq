@@ -45,6 +45,10 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
   - The validation of type `unauthorised-information-modification` has been fixed, a bug prevented the use of it.
   - The type `leak` has been renamed to `data-leak`.
 - The taxonomy `intrusion attempts` has been renamed to `intrusion-attempts`.
+- For the taxonomy intrusions (PR#1993 by Sebastian Wagner, addresses #1409):
+  - The type `compromised` has been renamed to `system-compromise`.
+  - The type `unauthorized-command` has been merged into `system-compromise`.
+  - The type `unauthorized-login` has been merged into `system-compromise`.
 - The taxonomy `information gathering` has been rename to `information-gathering`.
 - The taxonomy `malicious code` has been renamed to `malicious-code`.
   - The type `c2server` has been renamed to `c2-server`.

@@ -130,11 +130,9 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
    intrusions                    application-compromise                      Compromise of an application by exploiting (un)known software vulnerabilities, e.g. SQL injection.
    intrusions                    backdoor                                    This refers to hosts, which have been compromised and backdoored with a remote administration software or Trojan in the traditional sense. Not in ENISA eCSIRT-II taxonomy.
    intrusions                    burglary                                    Physical intrusion, e.g. into corporate building or data center.
-   intrusions                    compromised                                 This IOC refers to compromised system. Not in ENISA eCSIRT-II taxonomy.
    intrusions                    defacement                                  This IOC refers to hacktivism related activity. Not in ENISA eCSIRT-II taxonomy.
    intrusions                    privileged-account-compromise               Compromise of a system where the attacker gained administrative privileges.
-   intrusions                    unauthorized-command                        The possibly infected device sent unauthorized commands to a remote device with malicious intent. Not in ENISA eCSIRT-II taxonomy.
-   intrusions                    unauthorized-login                          A possibly infected device logged in to a remote device without authorization. Not in ENISA eCSIRT-II taxonomy.
+   intrusions                    system-compromise                           Compromise of a system, e.g. unauthorised logins or commands. This includes compromising attempts on honeypot systems.
    intrusions                    unprivileged-account-compromise             Compromise of a system using an unprivileged (user/service) account.
    malicious-code                c2-server                                   This is a command and control server in charge of a given number of botnet drones.
    malicious-code                infected-system                             This is a compromised machine, which has been observed to make a connection to a command and control server.
@@ -167,7 +165,6 @@ Meaning of source, destination and local values for each classification type and
  blacklist                *blacklisted device*
  brute-force              *attacker*                                        target
  c2-server                *(sinkholed) c&c server*                                                      zeus, palevo, feodo
- compromised              *server*
  ddos                     *attacker*                                        target
  defacement               *defaced website*
  dga-domain               *infected device*
@@ -182,6 +179,7 @@ Meaning of source, destination and local values for each classification type and
  proxy                    *server allowing policy and security bypass*
  scanner                  *scanning device*                                 scanned device              http,modbus,wordpress
  spam                     *infected device*                                 targeted server
+ system-compromise        *server*
  vulnerable-system        *vulnerable device*                                                           heartbleed, openresolver, snmp, wpad
 =======================  ================================================  ==========================  ===========================
 

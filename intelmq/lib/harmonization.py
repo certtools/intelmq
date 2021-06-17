@@ -276,7 +276,6 @@ class ClassificationType(String):
                       'brute-force',
                       'burglary',
                       'c2-server',
-                      'compromised',
                       'copyright',
                       'data-loss',
                       'ddos',
@@ -307,12 +306,12 @@ class ClassificationType(String):
                       'sniffing',
                       'social-engineering',
                       'spam',
+                      'system-compromise',
                       'test',
                       'tor',
                       'unauthorised-information-access',
                       'unauthorised-information-modification',
-                      'unauthorized-command',
-                      'unauthorized-login',
+                      'system-compromise',
                       'unauthorized-use-of-resources',
                       'unprivileged-account-compromise',
                       'violence',
@@ -373,6 +372,12 @@ class ClassificationType(String):
             value = 'undetermined'
         elif value == 'dga domain':
             value = 'dga-domain'
+        elif value == 'unauthorized-login':
+            value = 'system-compromise'
+        elif value == 'unauthorized-command':
+            value = 'system-compromise'
+        elif value == 'compromised':
+            value = 'system-compromise'
         return GenericType().sanitize(value)
 
 

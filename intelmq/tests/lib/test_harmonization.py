@@ -516,6 +516,12 @@ class TestHarmonization(unittest.TestCase):
                                                    sanitize=True))
         self.assertEqual(harmonization.ClassificationType.sanitize('dga domain'),
                          'dga-domain')
+        self.assertEqual(harmonization.ClassificationType.sanitize('unauthorized-command'),
+                         'system-compromise')
+        self.assertEqual(harmonization.ClassificationType.sanitize('unauthorized-login'),
+                         'system-compromise')
+        self.assertEqual(harmonization.ClassificationType.sanitize('compromised'),
+                         'system-compromise')
 
     def test_classification_type_sanitize_invalid(self):
         """ Test ClassificationType.is_valid with invalid arguments. """

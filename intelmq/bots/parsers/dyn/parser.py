@@ -55,7 +55,7 @@ class DynParserBot(Bot):
 
             event_compromised = self.new_event(report)
             event_compromised.add('time.source', source_time)
-            event_compromised.add('classification.type', 'compromised')
+            event_compromised.add('classification.type', 'system-compromise')
             if row_split[0] != '/':
                 event_compromised.add('destination.ip', row_split[0])
             event_compromised.add('destination.fqdn', row_split[1])
