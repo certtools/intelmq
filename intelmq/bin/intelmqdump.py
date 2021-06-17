@@ -51,9 +51,9 @@ Interactive actions after a file has been selected:
   > a modify-expert-queue
   All messages in the opened file will be recovered to the stored or given
   queue and removed from the file.
-- e, Delete entries by IDs
-  > e id{,id}
-  > e 3,5
+- d, Delete entries by IDs
+  > d id{,id}
+  > d 3,5
   The entries will be deleted from the dump file.
 - d, Delete file
   > d
@@ -63,10 +63,10 @@ Interactive actions after a file has been selected:
   > s 0,4,5
   Show the selected IP in a readable format. It's still a raw format from
   repr, but with newlines for message and traceback.
-- v, Edit by ID
-  > v id
-  > v 0
-  > v 1,2
+- e, Edit by ID
+  > e id
+  > e 0
+  > e 1,2
   Opens an editor (by calling `sensible-editor`) on the message. The modified message is then saved in the dump.
 - q, Quit
   > q
@@ -77,11 +77,10 @@ USAGE = '''
 # shortcut: description, takes ids, available for corrupted files
 ACTIONS = {'r': ('(r)ecover by ids', True, False),
            'a': ('recover (a)ll', False, False),
-           'e': ('delete (e)ntries', True, False),
-           'd': ('(d)elete file', False, True),
+           'd': ('(d)elete file or entries by id', True, False),
            's': ('(s)how by ids', True, False),
            'q': ('(q)uit', False, True),
-           'v': ('edit id (v)', True, False),
+           'e': ('(e)dit by id', True, False),
            }
 AVAILABLE_IDS = [key for key, value in ACTIONS.items() if value[1]]
 
@@ -273,7 +272,7 @@ def main():
                 print('Restricted actions.')
             else:
                 # don't display list after 'show', 'recover' & edit commands
-                if not (answer and isinstance(answer, list) and answer[0] in ['s', 'r', 'v']):
+                if not (answer and isinstance(answer, list) and answer[0] in ['s', 'r', 'e']):
                     content = json.load(handle)
                     handle.seek(0)
                     content = OrderedDict(sorted(content.items(), key=lambda t: t[0]))  # sort by key here, #1280
@@ -325,11 +324,6 @@ def main():
                     queue_name = answer[1]
             if answer[0] == 'q':
                 break
-            elif answer[0] == 'e':
-                # Delete entries
-                for entry in ids:
-                    del content[meta[entry][0]]
-                save_file(handle, content)
             elif answer[0] == 'r':
                 # recover entries
                 params = defaults.copy()
@@ -376,10 +370,17 @@ def main():
                     print('Deleting empty file {}'.format(fname))
                     break
             elif answer[0] == 'd':
-                # delete dumpfile
-                delete_file = True
-                print('Deleting empty file {}'.format(fname))
-                break
+                # Delete entries or file
+                if ids:
+                    # delete entries
+                    for entry in ids:
+                        del content[meta[entry][0]]
+                    save_file(handle, content)
+                else:
+                    # delete dumpfile
+                    delete_file = True
+                    print('Deleting file {}'.format(fname))
+                    break
             elif answer[0] == 's':
                 # Show entries by id
                 for count, (key, orig_value) in enumerate(content.items()):
@@ -401,7 +402,7 @@ def main():
                     if type(value['traceback']) is not list:
                         value['traceback'] = value['traceback'].splitlines()
                     pprint.pprint(value)
-            elif answer[0] == 'v':
+            elif answer[0] == 'e':
                 # edit given id
                 if not ids:
                     print(red('Edit mode needs an id'))

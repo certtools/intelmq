@@ -131,6 +131,9 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
   - Compare content of the `output` field as dictionaries, not as string in `assertMessageEqual` (PR#1975 by Karl-Johan Karlsson).
 
 ### Tools
+- intelmqdump (PR#1997 by Sebastian Wagner, #1404):
+  - The command `e` for deleting single entries by given IDs has been merged into the command `d` ("delete"), which can now delete either entries by ID or the whole file.
+  - The command `v` for editing entries has been renamed to `e` ("edit").
 
 ### Contrib
 - eventdb:

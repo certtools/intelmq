@@ -17,6 +17,10 @@ IntelMQ now uses YAML for the runtime configuration and therefore needs the `rua
 
 ### Tools
 
+#### intelmqdump
+The command `e` for deleting single entries by given IDs has been merged into the command `d` ("delete"), which can now delete either entries by ID or the whole file.
+The command `v` for editing entries has been renamed to `e` ("edit").
+
 ### Bots
 
 Both the XMPP collector bot and the XMPP output bot were removed. This [was evaluated on the mailinglist](https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html)

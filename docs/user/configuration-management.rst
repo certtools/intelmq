@@ -582,9 +582,9 @@ When bots are failing due to bad input data or programming errors, they can dump
      > a modify-expert-queue
      All messages in the opened file will be recovered to the stored or given
      queue and removed from the file.
-   - e, Delete entries by IDs
-     > e id{,id}
-     > e 3,5
+   - d, Delete entries by IDs
+     > d id{,id}
+     > d 3,5
      The entries will be deleted from the dump file.
    - d, Delete file
      > d
@@ -594,10 +594,10 @@ When bots are failing due to bad input data or programming errors, they can dump
      > s 0,4,5
      Show the selected IP in a readable format. It's still a raw format from
      repr, but with newlines for message and traceback.
-   - v, Edit by ID
-     > v id
-     > v 0
-     > v 1,2
+   - e, Edit by ID
+     > e id
+     > e 0
+     > e 1,2
      Opens an editor (by calling `sensible-editor`) on the message. The modified message is then saved in the dump.
    - q, Quit
      > q
@@ -616,7 +616,7 @@ When bots are failing due to bad input data or programming errors, they can dump
    Processing dragon-research-group-ssh-parser: 2 dumps
      0: 2015-09-03T13:13:22.159014 InvalidValue: invalid value u'NA' (<type 'unicode'>) for key u'source.asn'
      1: 2015-09-01T14:40:20.973743 InvalidValue: invalid value u'NA' (<type 'unicode'>) for key u'source.asn'
-   recover (a)ll, delete (e)ntries, (d)elete file, (q)uit, (s)how by ids, (r)ecover by ids? d
+   (r)ecover by ids, recover (a)ll, delete (e)ntries, (d)elete file, (s)how by ids, (q)uit, edit id (v)? d
    Deleted file /opt/intelmq/var/log/dragon-research-group-ssh-parser.dump
 
 Bots and the intelmqdump tool use file locks to prevent writing to already opened files. Bots are trying to lock the file for up to 60 seconds if the dump file is locked already by another process (intelmqdump) and then give up. Intelmqdump does not wait and instead only shows an error message.
