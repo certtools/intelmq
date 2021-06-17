@@ -280,7 +280,6 @@ class ClassificationType(String):
                       'data-loss',
                       'ddos',
                       'ddos-amplifier',
-                      'defacement',
                       'dga-domain',
                       'dos',
                       'dropzone',
@@ -378,6 +377,8 @@ class ClassificationType(String):
             value = 'system-compromise'
         elif value == 'compromised':
             value = 'system-compromise'
+        elif value == 'defacement':
+            value = 'unauthorised-information-modification'
         return GenericType().sanitize(value)
 
 

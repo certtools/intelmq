@@ -130,7 +130,6 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
    intrusions                    application-compromise                      Compromise of an application by exploiting (un)known software vulnerabilities, e.g. SQL injection.
    intrusions                    backdoor                                    This refers to hosts, which have been compromised and backdoored with a remote administration software or Trojan in the traditional sense. Not in ENISA eCSIRT-II taxonomy.
    intrusions                    burglary                                    Physical intrusion, e.g. into corporate building or data center.
-   intrusions                    defacement                                  This IOC refers to hacktivism related activity. Not in ENISA eCSIRT-II taxonomy.
    intrusions                    privileged-account-compromise               Compromise of a system where the attacker gained administrative privileges.
    intrusions                    system-compromise                           Compromise of a system, e.g. unauthorised logins or commands. This includes compromising attempts on honeypot systems.
    intrusions                    unprivileged-account-compromise             Compromise of a system using an unprivileged (user/service) account.
@@ -166,7 +165,6 @@ Meaning of source, destination and local values for each classification type and
  brute-force              *attacker*                                        target
  c2-server                *(sinkholed) c&c server*                                                      zeus, palevo, feodo
  ddos                     *attacker*                                        target
- defacement               *defaced website*
  dga-domain               *infected device*
  dropzone                 *server hosting stolen data*
  exploit                  *hosting server*

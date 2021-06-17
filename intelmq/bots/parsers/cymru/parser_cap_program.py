@@ -143,7 +143,7 @@ class CymruCAPProgramParserBot(ParserBot):
             raise NotImplementedError('Report %r not implemented, format is unknown.' % report_type)
         elif report_type == 'defacement':  # TODO: verify
             # defacement|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<URL> [<ZONE-H ID>]|ASNAME
-            event['classification.type'] = 'system-compromise'
+            event['classification.type'] = 'unauthorised-information-modification'
             event['classification.identifier'] = report_type
             event['source.url'] = comment_split[0]
             event['extra.zoneh.id'] = comment_split[1]

@@ -30,7 +30,7 @@ class MISPParserBot(Bot):
         'ecsirt:intrusion-attempts="exploit"': 'exploit',
         'ecsirt:intrusion-attempts="brute-force"': 'brute-force',
         'ecsirt:intrusion-attempts="ids-alert"': 'ids-alert',
-        'ecsirt:intrusions="defacement"': 'defacement',
+        'ecsirt:intrusions="defacement"': 'unauthorised-information-modification',
         'ecsirt:intrusions="compromised"': 'system-compromise',
         'ecsirt:intrusions="backdoor"': 'backdoor',
         'ecsirt:vulnerable="vulnerable-service"': 'vulnerable-system',

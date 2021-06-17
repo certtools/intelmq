@@ -42,7 +42,6 @@ class IdeaExpertBot(Bot):
         "exploit": "Attempt.Exploit",
         "brute-force": "Attempt.Login",
         "ids-alert": "Attempt.Exploit",
-        "defacement": "Intrusion.AppCompromise",
         "system-compromise": "Intrusion.AdminCompromise",
         "backdoor": "Intrusion.AdminCompromise",
         "blacklist": "Other",

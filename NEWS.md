@@ -39,7 +39,7 @@ New features:
 The [sieve bot documentation](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#intelmq-bots-experts-sieve-expert) has been updated to reflect on these new changes.
 
 ### Harmonization
-The classification scheme has been updated to better match the [Reference Security Incident Taxonomy (RSIT)](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed:
+The classification scheme has been updated to better match the [Reference Security Incident Taxonomy (RSIT)](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed, deleted or merged into others:
 
 | old taxonomy name | old type name | new taxonomy name | new type name |
 |-|-|-|-|
@@ -49,6 +49,7 @@ The classification scheme has been updated to better match the [Reference Securi
 | intrusion attempts           |                    | intrusion-attempts           |                                        |
 | information gathering        |                    | information-gathering        |                                        |
 | intrusions                   | compromised        | intrusions                   | system-compromise                      |
+| intrusions                   | defacement         | information-content-security | unauthorised-information-modification  |
 | intrusions                   | unauthorized-login | intrusions                   | system-compromise                      |
 | intrusions                   | unauthorized-command | intrusions                 | system-compromise                      |
 | malicious code               |                    | malicious-code               |                                        |
@@ -107,6 +108,9 @@ UPDATE events
 UPDATE events
    SET "classification.type" = 'system-compromise'
    WHERE "classification.type" IN ('compromised', 'unauthorized-login', 'unauthorized-command');
+UPDATE events
+   SET "classification.taxonomy" = 'information-content-security', "classification.type" = 'unauthorised-information-modification'
+   WHERE "classification.taxonomy" = 'intrusions', "classification.type" = 'defacement'
 UPDATE events
    SET "classification.taxonomy" = 'malicious-code'
    WHERE "classification.taxonomy" = 'malicious code';
