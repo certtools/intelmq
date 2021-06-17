@@ -71,18 +71,6 @@ class RTCollectorBot(CollectorBot, HttpMixin):
         self._parse_extract_file_parameter('extract_attachment')
         self._parse_extract_file_parameter('extract_download')
 
-        if hasattr(self, 'unzip_attachment'):
-            self.logger.warning("The parameter 'unzip_attachment' is deprecated and "
-                                "will be removed in version 3.0 in favor of the "
-                                "more generic and powerful 'extract_attachment'. "
-                                "Look at the Bots documentation for more details.")
-            if not self.extract_attachment:
-                self.extract_attachment = self.unzip_attachment
-            else:
-                self.logger.warn("Both 'extract_attachment' and the deprecated "
-                                 "'unzip_attachment' parameter are in use. Ignoring "
-                                 "the latter one.")
-
     def process(self):
         RT = rt.Rt(self.uri, self.user,
                    self.password)

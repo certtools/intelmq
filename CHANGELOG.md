@@ -73,6 +73,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
 - `intelmq.bots.collectors.api.collector_api` (PR#1987 by Mikk Margus Möll, fixes #1986):
   - Added UNIX socket capability.
   - Correctly close the IOLoop in the shutdown method to fix reload.
+- `intelmq.bots.collectors.rt.collector_rt` (PR#1997 by Sebastian Wagner, #1404):
+  - compatibility with the deprecated parameter `unzip_attachment` (removed in 2.1.0) was removed.
 
 #### Parsers
 - Added `intelmq.bots.parsers.fireeye`: A bot that parses hashes and URLs from Fireeye MAS indicators (PR#1745 by Christopher Schappelwein).

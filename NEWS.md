@@ -92,6 +92,7 @@ The `runtime.conf` file was replaced by a `runtime.yaml` file. IntelMQ moves the
 #### Removal of deprecated bots and behaviour
 - The bot `intelmq.bots.experts.ripencc_abuse_contact.expert` has been removed. It was replaced by `intelmq.bots.experts.ripe.expert` and marked as deprecated in 2.0.0.beta1.
 - Modify expert: Compatibility with the deprecated configuration format (before 1.0.0.dev7) was removed.
+- RT collector: compatibility with the deprecated parameter `unzip_attachment` (removed in 2.1.0) was removed.
 
 
 ### Libraries
