@@ -744,13 +744,6 @@ class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
         return super().send(*args, **kwargs)
 
 
-def create_request_session_from_bot(bot: type) -> requests.Session:
-    warnings.warn("This function is deprecated in favor of create_request_session"
-                  " and will be removed in version 3.0.0.",
-                  DeprecationWarning)
-    return create_request_session(bot)
-
-
 def create_request_session(bot: type = None) -> requests.Session:
     """
     Creates a requests.Session object preconfigured with the parameters
