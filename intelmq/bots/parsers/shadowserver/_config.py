@@ -3059,6 +3059,53 @@ event46_sinkhole_http = {
     },
 }
 
+
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-exchange-server-report/
+def scan_exchange_taxonomy(field):
+    if field == 'exchange;webshell':
+        return 'intrusions'
+    return 'vulnerable'
+
+
+def scan_exchange_type(field):
+    if field == 'exchange;webshell':
+        return 'system-compromise'
+    return 'infected-system'
+
+
+def scan_exchange_identifier(field):
+    if field == 'exchange;webshell':
+        return 'exchange-server-webshell'
+    return 'vulnerable-exchange-server'
+
+
+scan_exchange = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', convert_int),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'servername', validate_to_none),
+        ('classification.taxonomy', 'tag', scan_exchange_taxonomy),
+        ('classification.type', 'tag', scan_exchange_type),
+        ('classification.identifier', 'tag', scan_exchange_identifier),
+    ],
+    'constant_fields': {
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-http-referer-events-report/
 event46_sinkhole_http_referer = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
