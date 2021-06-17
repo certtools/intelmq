@@ -119,14 +119,14 @@ UPDATE events
    SET "classification.type" = 'c2-server'
    WHERE "classification.taxonomy" = 'malicious-code' AND "classification.type" = 'c2server';
 UPDATE events
+   SET "classification.taxonomy" = 'other', "classification.type" = 'dga-domain'
+   WHERE "classification.taxonomy" = 'malicious-code' AND "classification.type" = 'dga domain';
+UPDATE events
    SET "classification.type" = 'vulnerable-system'
    WHERE "classification.taxonomy" = 'vulnerable' AND ("classification.type" = 'vulnerable service' OR "classification.type" = 'vulnerable client');
 UPDATE events
    SET "classification.type" = 'undetermined'
    WHERE "classification.taxonomy" = 'other' AND "classification.type" = 'unknown';
-UPDATE events
-   SET "classification.taxonomy" = 'other', "classification.type" = 'dga-domain'
-   WHERE "classification.taxonomy" = 'malicious-code' AND "classification.type" = 'dga domain';
 ```
 Depending on the data (e.g. feed), the correct statement for the `malware` type deprecation may be either this:
 ```sql
