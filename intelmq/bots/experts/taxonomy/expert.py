@@ -43,7 +43,6 @@ TAXONOMY = {
     "application-compromise": "intrusions",
     "backdoor": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "burglary": "intrusions",
-    "defacement": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "privileged-account-compromise": "intrusions",
     "system-compromise": "intrusions",
     "unprivileged-account-compromise": "intrusions",

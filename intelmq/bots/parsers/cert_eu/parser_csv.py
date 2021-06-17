@@ -30,7 +30,7 @@ class CertEUCSVParserBot(ParserBot):
         "compromised server": "system-compromise",
         "ddos infrastructure": "ddos",
         "ddos target": "ddos",
-        "defacement": "defacement",
+        "defacement": "unauthorised-information-modification",
         "dropzone": "dropzone",
         "exploit url": "exploit",
         "ids alert": "ids-alert",
