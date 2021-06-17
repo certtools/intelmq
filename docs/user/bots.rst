@@ -1010,7 +1010,7 @@ example usage:
 
 .. code-block:: bash
 
-   curl -X POST http://localhost:5000/intelmq/push -H 'Content-Type: application/json' --data '{"source.ip": "127.0.0.101", "classification.type": "backdoor"}'
+   curl -X POST http://localhost:5000/intelmq/push -H 'Content-Type: application/json' --data '{"source.ip": "127.0.0.101", "classification.type": "system-compromise"}'
 
 **Configuration Parameters**
 

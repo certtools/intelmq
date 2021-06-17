@@ -41,7 +41,6 @@ TAXONOMY = {
     "exploit": "intrusion-attempts",
     "ids-alert": "intrusion-attempts",
     "application-compromise": "intrusions",
-    "backdoor": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "burglary": "intrusions",
     "privileged-account-compromise": "intrusions",
     "system-compromise": "intrusions",

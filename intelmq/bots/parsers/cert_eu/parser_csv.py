@@ -22,7 +22,7 @@ class CertEUCSVParserBot(ParserBot):
     """Parse CSV data of the CERT-EU feed"""
 
     ABUSE_TO_INTELMQ = defaultdict(lambda: "other", {
-        "backdoor": "backdoor",
+        "backdoor": "system-compromise",
         "blacklist": "blacklist",
         "botnet drone": "infected-system",
         "brute-force": "brute-force",

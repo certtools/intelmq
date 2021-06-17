@@ -524,6 +524,8 @@ class TestHarmonization(unittest.TestCase):
                          'system-compromise')
         self.assertEqual(harmonization.ClassificationType.sanitize('defacement'),
                          'unauthorised-information-modification')
+        self.assertEqual(harmonization.ClassificationType.sanitize('backdoor'),
+                         'system-compromise')
 
     def test_classification_type_sanitize_invalid(self):
         """ Test ClassificationType.is_valid with invalid arguments. """

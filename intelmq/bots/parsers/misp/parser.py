@@ -32,7 +32,7 @@ class MISPParserBot(Bot):
         'ecsirt:intrusion-attempts="ids-alert"': 'ids-alert',
         'ecsirt:intrusions="defacement"': 'unauthorised-information-modification',
         'ecsirt:intrusions="compromised"': 'system-compromise',
-        'ecsirt:intrusions="backdoor"': 'backdoor',
+        'ecsirt:intrusions="backdoor"': 'system-compromise',
         'ecsirt:vulnerable="vulnerable-service"': 'vulnerable-system',
         'ecsirt:other="blacklist"': 'blacklist',
         'ecsirt:other="unknown"': 'undetermined',

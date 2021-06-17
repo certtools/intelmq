@@ -128,7 +128,6 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
    intrusion-attempts            exploit                                     An attack using an unknown exploit.
    intrusion-attempts            ids-alert                                   IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.
    intrusions                    application-compromise                      Compromise of an application by exploiting (un)known software vulnerabilities, e.g. SQL injection.
-   intrusions                    backdoor                                    This refers to hosts, which have been compromised and backdoored with a remote administration software or Trojan in the traditional sense. Not in ENISA eCSIRT-II taxonomy.
    intrusions                    burglary                                    Physical intrusion, e.g. into corporate building or data center.
    intrusions                    privileged-account-compromise               Compromise of a system where the attacker gained administrative privileges.
    intrusions                    system-compromise                           Compromise of a system, e.g. unauthorised logins or commands. This includes compromising attempts on honeypot systems.
@@ -160,7 +159,6 @@ Meaning of source, destination and local values for each classification type and
 =======================  ================================================  ==========================  ===========================
  Type                     Source                                            Destination                 Possible identifiers
 =======================  ================================================  ==========================  ===========================
- backdoor                 *backdoored device*
  blacklist                *blacklisted device*
  brute-force              *attacker*                                        target
  c2-server                *(sinkholed) c&c server*                                                      zeus, palevo, feodo

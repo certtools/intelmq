@@ -43,7 +43,6 @@ class IdeaExpertBot(Bot):
         "brute-force": "Attempt.Login",
         "ids-alert": "Attempt.Exploit",
         "system-compromise": "Intrusion.AdminCompromise",
-        "backdoor": "Intrusion.AdminCompromise",
         "blacklist": "Other",
         "dga-domain": "Anomaly.Behaviour",
         "proxy": "Vulnerable.Config",

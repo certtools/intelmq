@@ -271,7 +271,6 @@ class ClassificationType(String):
      * """
 
     allowed_values = ['application-compromise',
-                      'backdoor',
                       'blacklist',
                       'brute-force',
                       'burglary',
@@ -379,6 +378,8 @@ class ClassificationType(String):
             value = 'system-compromise'
         elif value == 'defacement':
             value = 'unauthorised-information-modification'
+        elif value == 'backdoor':
+            value = 'system-compromise'
         return GenericType().sanitize(value)
 
 
