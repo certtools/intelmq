@@ -136,6 +136,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
   - Added `separate-raws-table.sql` (PR#1985 by Sebastian Wagner).
 
 ### Known issues
+- ParserBot: erroneous raw line recovery in error handling (#1850).
 
 
 2.3.3 (2021-05-31)
