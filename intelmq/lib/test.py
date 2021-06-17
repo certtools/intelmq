@@ -233,6 +233,9 @@ class BotTestCase(object):
         self.pipe.set_queues(parameters.source_queue, "source")
         self.pipe.set_queues(parameters.destination_queues, "destination")
 
+        self.prepare_source_queue()
+
+    def prepare_source_queue(self):
         if self.input_message is not None:
             if not isinstance(self.input_message, (list, tuple)):
                 self.input_message = [self.input_message]
@@ -279,7 +282,8 @@ class BotTestCase(object):
     def run_bot(self, iterations: int = 1, error_on_pipeline: bool = False,
                 prepare=True, parameters={},
                 allowed_error_count=0,
-                allowed_warning_count=0):
+                allowed_warning_count=0,
+                stop_bot: bool = True):
         """
         Call this method for actually doing a test run for the specified bot.
 
@@ -288,6 +292,7 @@ class BotTestCase(object):
             parameters: passed to prepare_bot
             allowed_error_count: maximum number allow allowed errors in the logs
             allowed_warning_count: maximum number allow allowed warnings in the logs
+            bot_stop: If the bot should be stopped/shut down after running it. Set to False, if you are calling this method again afterwards, as the bot shutdown destroys structures (pipeline, etc.)
         """
         if prepare:
             self.prepare_bot(parameters=parameters)
@@ -302,7 +307,8 @@ class BotTestCase(object):
                     self.bot.start(error_on_pipeline=error_on_pipeline,
                                    source_pipeline=self.pipe,
                                    destination_pipeline=self.pipe)
-                self.bot.stop(exitcode=0)
+                if stop_bot:
+                    self.bot.stop(exitcode=0)
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
 
@@ -337,7 +343,8 @@ class BotTestCase(object):
                                      "".format(self.bot_name,
                                                self.bot_id), "INFO")
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
-        self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
+        if stop_bot:
+            self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
 
         allowed_error_count = max(allowed_error_count, self.allowed_error_count)
         self.assertLessEqual(len(re.findall(' - ERROR - ', self.loglines_buffer)), allowed_error_count)
