@@ -31,13 +31,19 @@ class AggregateExpertBot(Bot, CacheMixin):
 
     def cleanup(self):
         if self.__next_cleanup <= time.time():
+            self.logger.debug('Started Cleanup.')
             delta = timedelta(minutes=self.__timespan)
+
+            counter_sent = 0
+            counter_ignored = 0
+            counter_dropped = 0
             for key in self.cache_get_redis_instance().keys(pattern="aggregate.*"):
                 keys = self.cache_get_redis_instance().hgetall(key)
                 data = {y.decode('utf-8'): keys.get(y).decode('utf-8')
                         for y in keys.keys()}
 
                 if datetime.now() <= (datetime.strptime(data['s'], '%Y-%m-%dT%H:%M:%S.%f') + delta):
+                    counter_ignored += 1
                     continue
 
                 if int(data['c']) >= self.threshold:
@@ -46,8 +52,14 @@ class AggregateExpertBot(Bot, CacheMixin):
                     event.add("extra.count", int(data['c']))
                     event.add("extra.time_end", data['l'])
                     self.send_message(event)
+                    counter_sent += 1
+                else:
+                    counter_dropped += 1
                 self.cache_get_redis_instance().delete(key)
             self.__next_cleanup = int(time.time()) + 10
+            self.logger.debug('Completed Cleanup. Messages sent: %d, messages ignored: %d, messages dropped: %d.', counter_sent, counter_ignored, counter_dropped)
+        else:
+            self.logger.debug('Skipped Cleanup (%fs < 10s).', self.__next_cleanup - time.time())
 
     def process(self):
         event = self.receive_message()

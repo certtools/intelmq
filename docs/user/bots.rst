@@ -1798,16 +1798,19 @@ Usage i. e. `1 hour`
 
 **Note**
 
-If you're running on low traffic ( less events within the given timestamp ) we'd recommend reloading or restarting the bot
-via cronjob each 30 minutes. This has to be done to fire the cleanup process, and the cleanup process sends out the
-aggregated events or drops them based upon the given threshold value.
+The "cleanup" procedure, sends out the aggregated events or drops them based upon the given threshold value.
+It is called on every incoming message and on the bot's initialization.
+If you're potentially running on low traffic ( no incoming events within the given timestamp ) it is recommended to reload or restart the bot
+via cronjob each 30 minutes (adapt to your configured timespan).
+Otherwise you might loose information.
 
 I. e.:
+
 .. code-block:: bash
 
    crontab -e
 
-   0 * * * *   intelmqctl restart my-aggregate-bot
+   0,30 * * * *   intelmqctl reload my-aggregate-bot
 
 
 For reloading/restarting please check the :ref:`intelmqctl` documentation.
