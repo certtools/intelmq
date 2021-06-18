@@ -3886,6 +3886,105 @@ If you intend to link two IntelMQ instance via TCP, set the parameter `counterpa
 The TCP collector just sends "Ok" after every message it gets.
 
 
+.. _intelmq.bots.outputs.templated_smtp.output:
+
+Templated SMTP
+^^^^^^^^^^^^^^
+
+Sends a MIME Multipart message built from an event and static text using Jinja2 templates.
+
+**Information**
+
+* `name:` intelmq.bots.outputs.templated_smtp.output
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Sends events via SMTP
+
+**Requirements**
+
+Install the required `jinja2` library:
+
+.. code-block:: bash
+
+   pip3 install -r intelmq/bots/collectors/templated_smtp/REQUIREMENTS.txt
+
+**Configuration Parameters**
+
+Parameters:
+
+* `attachments`: list of objects with structure::
+
+   - content-type: string, templated, content-type to use.
+     text: string, templated, attachment text.
+     name: string, templated, filename of attachment.
+
+* `body`: string, optional, templated, body text. The default body template prints every field in the event except 'raw', in undefined order, one field per line, as "field: value".
+
+* `mail_from`: string, templated, sender address.
+
+* `mail_to`: string, templated, recipient addresses, comma-separated.
+
+* `smtp_host`: string, optional, default "localhost", hostname of SMTP server.
+
+* `smtp_password`: string, default null, password (if any) for authenticated SMTP.
+
+* `smtp_port`: integer, default 25, TCP port to connect to.
+
+* `smtp_username`: string, default null, username (if any) for authenticated SMTP.
+
+* `tls`: boolean, default false, whether to use use SMTPS. If true, also set smtp_port to the SMTPS port.
+
+* `starttls`: boolean, default true, whether to use opportunistic STARTTLS over SMTP.
+
+* `subject`: string, optional, default "IntelMQ event", templated, e-mail subject line.
+
+* `verify_cert`: boolean, default true, whether to verify the server certificate in STARTTLS or SMTPS.
+
+Authentication is attempted only if both username and password are specified.
+
+Templates are in Jinja2 format with the event provided in the variable "event". E.g.::
+
+   mail_to: "{{ event['source.abuse_contact'] }}"
+
+See the Jinja2 documentation at https://jinja.palletsprojects.com/ .
+
+Attachments are template strings, especially useful for sending
+structured data. E.g. to send a JSON document including "malware.name"
+and all other fields starting with "source."::
+
+   attachments:
+     - content-type: application/json
+       text: |
+         {
+           "malware": "{{ event['malware.name'] }}",
+           {%- set comma = joiner(", ") %}
+           {%- for key in event %}
+              {%- if key.startswith('source.') %}
+           {{ comma() }}"{{ key }}": "{{ event[key] }}"
+              {%- endif %}
+           {%- endfor %}
+         }
+       name: report.json
+
+You are responsible for making sure that the text produced by the
+template is valid according to the content-type.
+
+If you are migrating from the SMTP output bot that produced CSV format
+attachments, use the following configuration to produce a matching
+format::
+
+   attachments:
+     - content-type: text/csv
+       text: |
+         {%- set fields = ["classification.taxonomy", "classification.type", "classification.identifier", "source.ip", "source.asn", "source.port"] %}
+         {%- set sep = joiner(";") %}
+         {%- for field in fields %}{{ sep() }}{{ field }}{%- endfor %}
+         {% set sep = joiner(";") %}
+         {%- for field in fields %}{{ sep() }}{{ event[field] }}{%- endfor %}
+       name: event.csv
+
+
 .. _intelmq.bots.outputs.touch.output:
 
 Touch
