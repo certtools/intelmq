@@ -537,8 +537,8 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertTrue(result[0])
         self.assertEqual(V210_EXP, result[2])
 
-    def test_v211_harmonization(self):
-        """ Test v211_harmonization """
+    def test_harmonization(self):
+        """ Test harmonization: Addition of extra to report """
         result = upgrades.harmonization({}, {}, V210_HARM, False)
         self.assertTrue(result[0])
         self.assertEqual(HARM, result[3])
