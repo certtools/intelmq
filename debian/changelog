@@ -1,4 +1,10 @@
-intelmq (3.0.0~alpha1-1) UNRELEASED; urgency=medium
+intelmq (3.0.0~beta1) UNRELEASED; urgency=medium
+
+  * Update to 3.0.0 Beta 1.
+
+ -- Sebastian Wagner <wagner@cert.at>  Mon, 21 Jun 2021 10:54:43 +0200
+
+intelmq (3.0.0~alpha1-1) unstable; urgency=low
 
   * Update to 3.0.0 Alpha 1.
 
