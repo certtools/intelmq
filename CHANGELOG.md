@@ -112,6 +112,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
 - Removed deprecated `intelmq.bots.experts.ripencc_abuse_contact.expert`. It was replaced by `intelmq.bots.experts.ripe.expert` and marked as deprecated in 2.0.0.beta1 (PR#1997 by Sebastian Wagner, #1404).
 - `intelmq.bots.experts.modify.expert`:
   - Removed compatibility with deprecated configuration format before 1.0.0.dev7 (PR#1997 by Sebastian Wagner, #1404).
+- Added `intelmq.bots.experts.aggregate`: A bot that aggregate events based upon given fields & a timespan. (PR#1959 by Sebastian Waldbauer)
 
 #### Outputs
 - Remove `intelmq.bots.outputs.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
