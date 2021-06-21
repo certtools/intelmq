@@ -1646,6 +1646,12 @@ Get some debugging output on the settings and the environment (to be extended):
             self.logger.info('Successfully wrote initial state file.')
 
         runtime = utils.load_configuration(RUNTIME_CONF_FILE)
+        try:
+            # remove global defaults, handled by 'defaults'
+            del runtime['global']
+        except KeyError:
+            # no global parameters is ok
+            pass
         defaults = utils.get_global_settings()
         harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
         if dry_run:
