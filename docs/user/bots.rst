@@ -1795,7 +1795,6 @@ Aggregate
 **Configuration Parameters**
 
 * **Cache parameters** (see in section :ref:`common-parameters`)
-
   * TTL is not used, using it would result in data loss.
 * **fields** Given fields which are used to aggregate like `classification.type, classification.identifier`
 * **threshold** If the aggregated event is lower than the given threshold after the timespan, the event will get dropped.
@@ -4257,7 +4256,6 @@ Templates are in Jinja2 format with the event provided in the variable "event". 
 
 See the Jinja2 documentation at https://jinja.palletsprojects.com/ .
 
-<<<<<<< HEAD
 As an extension to the Jinja2 environment, the function "from_json" is
 available for parsing JSON strings into Python structures. This is
 useful if you want to handle complicated structures in the "output"
@@ -4269,8 +4267,6 @@ line like::
 and can then use "output" as a regular Python object in the rest of
 the template.
 
-=======
->>>>>>> 87651101c (DOC: Document templated SMTP output bot)
 Attachments are template strings, especially useful for sending
 structured data. E.g. to send a JSON document including "malware.name"
 and all other fields starting with "source."::
