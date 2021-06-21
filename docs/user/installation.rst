@@ -118,9 +118,8 @@ These are the operating systems which are currently supported by packages:
 * **CentOS 7** (run `yum install epel-release` first)
 * **CentOS 8** (run `dnf install epel-release` first)
 * **Debian 10**
-* **Fedora 30**
-* **Fedora 31**
-* **Fedora 32**
+* **Fedora 33**
+* **Fedora 34**
 * **openSUSE Leap 15.2**
 * **openSUSE Leap 15.3**
 * **openSUSE Tumbleweed**
