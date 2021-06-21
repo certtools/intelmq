@@ -1898,3 +1898,30 @@ providers:
             http_password: <your password>
         parser:
           module: intelmq.bots.parsers.fireeye.parser
+  Benkow:
+    Benkow Panels Tracker:
+      description: Benkow Panels tracker is a list of fresh panel from various malware. The feed is available on the webpage: http://benkow.cc/passwords.php
+      public: yes
+      revision: 2021-06-21
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: http://benkow.cc/export.php
+            name: __FEED__
+            provider: benkow.cc
+        parser:
+          module: intelmq.bots.parsers.generic.parser_csv
+          parameters:
+            type: malware
+            filter_text: "id;type;url;ip;date;"
+            filter_type: blacklist
+            delimiter: ";"
+            skip_header: True
+            columns:
+              - __IGNORE__
+              - malware.name|__IGNORE__
+              - destination.url
+              - destination.fqdn|destination.ip|__IGNORE__
+              - time.source|__IGNORE__
