@@ -1910,7 +1910,7 @@ providers:
           parameters:
             http_url: http://benkow.cc/export.php
             name: __FEED__
-            provider: benkow.cc
+            provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.generic.parser_csv
           parameters:
