@@ -82,6 +82,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
 - Added `intelmq.bots.parsers.fireeye`: A bot that parses hashes and URLs from Fireeye MAS indicators (PR#1745 by Christopher Schappelwein).
 - `intelmq.bots.parsers.shadowserver._config`:
   - Improved the feed-mapping and all conversion functions (PR#1971 by Mikk Margus Möll).
+- `intelmq.bots.parsers.generic.parser_csv`:
+  - Fix handling of empty string values for parameter `time_format` (by Sebastian Wagner).
 
 #### Experts
 - `intelmq.bots.experts.domain_suffix.expert`: Added `--update-database` option to update domain suffix database.

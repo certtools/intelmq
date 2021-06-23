@@ -68,6 +68,9 @@ class GenericCsvParserBot(ParserBot):
         # prevents empty strings:
         self.column_regex_search = self.column_regex_search or {}
 
+        # handle empty strings, false etc.
+        if not self.time_format:
+            self.time_format = None
         if self.time_format not in TIME_CONVERSIONS.keys():
             raise InvalidArgument('time_format', got=self.time_format,
                                   expected=list(TIME_CONVERSIONS.keys()),

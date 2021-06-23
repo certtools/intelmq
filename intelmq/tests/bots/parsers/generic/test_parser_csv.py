@@ -80,6 +80,11 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_EVENT)
         self.assertMessageEqual(1, EXAMPLE_EVENT2)
 
+    def test_time_format_empty_string(self):
+        """ Test if empty string value for parameter time_format is handled correctly. """
+        self.run_bot(parameters={'time_format': ''})
+        self.assertMessageEqual(0, EXAMPLE_EVENT)
+
     def test_strcol(self):
         self.run_bot(parameters={"columns": "time.source, __IGNORE__,"
                                             "event_description.text, __IGNORE__,"
