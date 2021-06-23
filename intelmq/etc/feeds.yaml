@@ -1899,7 +1899,7 @@ providers:
         parser:
           module: intelmq.bots.parsers.fireeye.parser
   Benkow:
-    Benkow Panels Tracker:
+    Malware Panels Tracker:
       description: Benkow Panels tracker is a list of fresh panel from various malware. The feed is available on the webpage: http://benkow.cc/passwords.php
       public: yes
       revision: 2021-06-21
