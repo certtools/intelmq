@@ -1915,8 +1915,6 @@ providers:
           module: intelmq.bots.parsers.generic.parser_csv
           parameters:
             type: malware
-            filter_text: "id;type;url;ip;date;"
-            filter_type: blacklist
             delimiter: ";"
             skip_header: True
             columns:
