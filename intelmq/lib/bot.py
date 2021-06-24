@@ -16,6 +16,7 @@ import fcntl
 import inspect
 import io
 import json
+import msgpack
 import logging
 import os
 import re
@@ -329,8 +330,8 @@ class Bot:
                     self.logger.error('Pipeline failed.')
                 self.__disconnect_pipelines()
 
-            except exceptions.DecodingError as exc:
-                self.logger.exception('Could not decode message from pipeline. No retries useful.')
+            except exceptions.UnserializationError as exc:
+                self.logger.exception('Could not unserialize message from pipeline. No retries useful.')
 
                 # ensure that we do not re-process the faulty message
                 self.__error_retries_counter = self.error_max_retries + 1

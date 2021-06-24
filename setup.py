@@ -20,6 +20,7 @@ REQUIRES = [
     'redis>=2.10',
     'requests>=2.2.0',
     'ruamel.yaml',
+    'msgpack>=0.5',
 ]
 
 exec(open(os.path.join(os.path.dirname(__file__),

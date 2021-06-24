@@ -126,7 +126,10 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
         for i, msg in enumerate(self.get_output_queue()):
             report = MessageFactory.unserialize(msg, harmonization=self.harmonization, default_type='Event')
 
-            output = MessageFactory.unserialize(utils.base64_decode(report["raw"]), harmonization=self.harmonization, default_type='Event')
+            output = MessageFactory.unserialize(utils.base64_decode(report["raw"]),
+                                                harmonization=self.harmonization,
+                                                default_type='Event',
+                                                use_packer="json")
             self.assertDictEqual(output, INPUT1)
 
             del report['time.observation']

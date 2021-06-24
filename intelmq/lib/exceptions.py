@@ -167,3 +167,12 @@ class DecodingError(IntelMQException, ValueError):
             suffixes.append('with reason %r' % exception.reason)
         suffix = (' ' + ' '.join(suffixes)) if suffixes else ''
         super().__init__("Could not decode string%s." % suffix)
+
+
+class UnserializationError(IntelMQException, ValueError):
+    """
+    Unrecoverable error during message unserialization
+    """
+    def __init__(self, exception: Exception = None, object: bytes = None):
+        self.object = object
+        super().__init__("Could not unserialize message%s." % exception)

@@ -14,6 +14,7 @@ import re
 import warnings
 from collections import defaultdict
 from typing import Any, Dict, Iterable, Optional, Sequence, Union
+import msgpack
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
@@ -60,8 +61,8 @@ class MessageFactory:
         return class_reference(message, auto=True, harmonization=harmonization)
 
     @staticmethod
-    def unserialize(raw_message: str, harmonization: dict = None,
-                    default_type: Optional[str] = None) -> dict:
+    def unserialize(raw_message: bytes, harmonization: dict = None,
+                    default_type: Optional[str] = None, use_packer: str = "msgpack") -> dict:
         """
         Takes JSON-encoded Message object, returns instance of correct class.
 
@@ -74,12 +75,12 @@ class MessageFactory:
             MessageFactory.from_dict
             MessageFactory.serialize
         """
-        message = Message.unserialize(raw_message)
+        message = Message.unserialize(raw_message, use_packer=use_packer)
         return MessageFactory.from_dict(message, harmonization=harmonization,
                                         default_type=default_type)
 
     @staticmethod
-    def serialize(message):
+    def serialize(message) -> bytes:
         """
         Takes instance of message-derived class and makes JSON-encoded Message.
 
@@ -127,7 +128,7 @@ class Message(dict):
         elif isinstance(message, tuple):
             self.iterable = dict(message)
         else:
-            raise ValueError("Type %r of message can't be handled, must be dict or tuple.", type(message))
+            raise ValueError("Type %r of message can't be handled, must be dict or tuple." % type(message))
         for key, value in self.iterable.items():
             if not self.add(key, value, sanitize=False, raise_failure=False):
                 self.add(key, value, sanitize=True)
@@ -310,18 +311,32 @@ class Message(dict):
                                           harmonization={self.__class__.__name__.lower(): self.harmonization_config})
 
     def __str__(self):
-        return self.serialize()
+        return self.serialize(use_packer="json")
 
-    def serialize(self):
-        self['__type'] = self.__class__.__name__
-        json_dump = utils.decode(json.dumps(self))
-        del self['__type']
-        return json_dump
+    def serialize(self, use_packer: str = "msgpack"):
+        delete_type = False
+        if '__type' not in self:
+            delete_type = True
+            self['__type'] = self.__class__.__name__
+
+        if use_packer == "json":
+            packed = json.dumps(self)
+        else:
+            packed = msgpack.packb(self)
+
+        if delete_type:
+            del self['__type']
+        return packed
 
     @staticmethod
-    def unserialize(message_string: str):
-        message = json.loads(message_string)
-        return message
+    def unserialize(message: bytes, use_packer: str = "msgpack"):
+        try:
+            if use_packer == "json":
+                return json.loads(message)
+            else:
+                return msgpack.unpackb(message, raw=False)
+        except Exception as exc:
+            raise exceptions.UnserializationError(exception=exc, object=message)
 
     def __is_valid_key(self, key: str):
         try:
@@ -470,13 +485,17 @@ class Message(dict):
                 json_dict_fp = json_dict_fp[subkey]
 
         for key, value in jsondicts.items():
-            new_dict[key] = json.dumps(value, ensure_ascii=False)
+            new_dict[key] = json.dumps(value)
 
         return new_dict
 
     def to_json(self, hierarchical=False, with_type=False, jsondict_as_string=False):
         json_dict = self.to_dict(hierarchical=hierarchical, with_type=with_type)
         return json.dumps(json_dict, ensure_ascii=False, sort_keys=True)
+
+    def to_msgpack(self, hierarchical=False, with_type=False):
+        msgpack_dict = self.to_dict(hierarchical=hierarchical, with_type=with_type)
+        return msgpack.packb(msgpack_dict)
 
     def __eq__(self, other: dict) -> bool:
         """

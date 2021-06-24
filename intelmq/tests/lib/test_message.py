@@ -11,6 +11,7 @@ Most tests are performed on Report, as it is formally the same as Message,
 but has a valid Harmonization configuration.
 """
 import json
+import msgpack
 import unittest
 
 import pkg_resources
@@ -158,12 +159,12 @@ class TestMessageFactory(unittest.TestCase):
     def test_invalid_type(self):
         """ Test if Message raises InvalidArgument for invalid type. """
         with self.assertRaises(exceptions.InvalidArgument):
-            message.MessageFactory.unserialize('{"__type": "Message"}', harmonization=HARM)
+            message.MessageFactory.unserialize(msgpack.dumps({"__type": "Message"}), harmonization=HARM)
 
     def test_invalid_type2(self):
         """ Test if MessageFactory raises InvalidArgument for invalid type. """
         with self.assertRaises(exceptions.InvalidArgument):
-            message.MessageFactory.unserialize('{"__type": "Invalid"}', harmonization=HARM)
+            message.MessageFactory.unserialize(msgpack.dumps({"__type": "Invalid"}), harmonization=HARM)
 
     def test_report_invalid_key(self):
         """ Test if report raises InvalidKey for invalid key in add(). """
@@ -365,10 +366,8 @@ class TestMessageFactory(unittest.TestCase):
         report.add('feed.url', URL_SANE)
         report.add('raw', LOREM_BASE64, sanitize=False)
         actual = message.MessageFactory.serialize(report)
-        expected = ('{"raw": "bG9yZW0gaXBzdW0=", "__type": "Report", "feed.url'
-                    '": "https://example.com/", "feed.name": "Example"}')
-        self.assertDictEqual(json.loads(expected),
-                             json.loads(actual))
+        expected = (b'\x84\xa9feed.name\xa7Example\xa8feed.url\xb4https://example.com/\xa3raw\xb0bG9yZW0gaXBzdW0=\xa6__type\xa6Report')
+        self.assertDictEqual(msgpack.unpackb(expected), msgpack.unpackb(actual))
 
     def test_deep_copy_content(self):
         """ Test if deep_copy does return the same items. """
@@ -518,22 +517,31 @@ class TestMessageFactory(unittest.TestCase):
                     '{"observation": "2015-01-01T13:37:00+00:00"}}')
         self.assertDictEqual(json.loads(expected), json.loads(actual))
 
+    def test_event_msgpack(self):
+        """ Test event to_msgpack """
+        event = self.new_event()
+        event = self.add_event_examples(event)
+        actual = event.to_msgpack()
+        self.assertIsInstance(actual, bytes)
+        excepted = (b'\x84\xa9feed.name\xa7Example\xa8feed.url\xb4https://example.com/\xa3raw\xb0bG9yZW0gaXBzdW0=\xb0time.observation\xb92015-01-01T13:37:00+00:00')
+        self.assertDictEqual(msgpack.unpackb(excepted), msgpack.unpackb(actual))
+
     def test_event_serialize(self):
         """ Test Event serialize. """
         event = self.new_event()
-        self.assertEqual('{"__type": "Event"}',
+        self.assertEqual(b'\x81\xa6__type\xa5Event',
                          event.serialize())
 
     def test_event_string(self):
         """ Test Event serialize. """
         event = self.new_event()
-        self.assertEqual('{"__type": "Event"}',
+        self.assertEqual(b'\x81\xa6__type\xa5Event',
                          event.serialize())
 
     def test_event_unicode(self):
         """ Test Event serialize. """
         event = self.new_event()
-        self.assertEqual('{"__type": "Event"}',
+        self.assertEqual(b'\x81\xa6__type\xa5Event',
                          event.serialize())
 
     def test_event_from_report(self):
@@ -599,7 +607,7 @@ class TestMessageFactory(unittest.TestCase):
 
     def test_event_init(self):
         """ Test if initialization method checks fields. """
-        event = '{"__type": "Event", "source.asn": "foo"}'
+        event = msgpack.dumps({"__type": "Event", "source.asn": "foo"})
         with self.assertRaises(exceptions.InvalidValue):
             message.MessageFactory.unserialize(event, harmonization=HARM)
 
