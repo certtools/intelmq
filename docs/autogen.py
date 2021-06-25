@@ -129,7 +129,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild 
                         # format non-empty lists with double-quotes
                         # single quotes are not conform JSON and not correctly detected/transformed by the manager
                         if isinstance(value, (list, tuple)) and value:
-                            value = '["%s"]' % '", "'.join(value)
+                            value = json.dumps(value)
 
                         output += "   * `%s`: `%s`\n" % (key, value)
 

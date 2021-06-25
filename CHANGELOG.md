@@ -130,6 +130,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
 - Added documentation on the EventDB (PR#1955 by Birger Schacht, PR#1985 by Sebastian Wagner).
 - Added TimescaleDB for time-series documentation (PR#1990 by Sebastian Waldbauer).
 - Improved n6 interoperability documentation by adding more graphs and illustrations (PR#1991 by Sebastian Wagner).
+- Feed documentation generation: fix and simplify formatting of parameters of types lists, non-string values have been ill-treated (by Sebastian Wagner).
 
 ### Packaging
 - Docker images tagged with `certat/intelmq-full:develop` are built and published on every push to the develop branch (PR#1753 by Sebastian Waldbauer).
