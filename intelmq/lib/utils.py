@@ -50,7 +50,7 @@ import intelmq
 from intelmq.lib.exceptions import DecodingError
 from intelmq import RUNTIME_CONF_FILE
 
-yaml = YAML(pure=True)
+yaml = YAML(typ="safe", pure=True)
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',

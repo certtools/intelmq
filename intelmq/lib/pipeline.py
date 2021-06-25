@@ -107,15 +107,15 @@ class Pipeline(object):
                 q = {"_default": queues}
             elif type_ is str:
                 q = {"_default": queues.split()}
-            elif isinstance(queues, dict):
+            elif type_ is dict:
                 q = queues
                 for key, val in queues.items():
-                    q[key] = val if isinstance(val, list) else str(val).split()
+                    q[key] = val if type(val) is list else val.split()
             else:
                 raise exceptions.InvalidArgument(
                     'queues', got=queues,
                     expected=["None", "list of strings", "dict (of strings or lists that should have the _default key)"])
-            self.destination_queues = dict(q)
+            self.destination_queues = q
         else:
             raise exceptions.InvalidArgument('queues_type', got=queues_type, expected=['source', 'destination'])
 
