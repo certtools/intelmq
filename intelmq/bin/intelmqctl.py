@@ -1331,7 +1331,10 @@ Get some debugging output on the settings and the environment (to be extended):
             for bot_id, info in self._pipeline_configuration().items():
                 return_dict[bot_id] = {}
 
-                if 'source_queue' in info:
+                # Do not report source queues for collectors
+                if 'source_queue' in info and not (
+                        self.runtime_configuration[bot_id].get('group', None) == 'Collector' or
+                        self.runtime_configuration[bot_id].get('groupname', None) == 'collectors'):
                     return_dict[bot_id]['source_queue'] = (
                         info['source_queue'], counters[info['source_queue']])
                     if pipeline.has_internal_queues:
