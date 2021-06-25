@@ -55,7 +55,7 @@ class DomainSuffixExpertBot(Bot):
         if not os.path.exists(parameters.get('suffix_file', '')):
             return [["error", "File given as parameter 'suffix_file' does not exist."]]
         try:
-            with open(parameters['suffix_file']) as database:
+            with codecs.open(parameters['suffix_file'], encoding='UTF-8') as database:
                 PublicSuffixList(source=database, only_icann=True)
         except Exception as exc:
             return [["error", "Error reading database: %r." % exc]]
