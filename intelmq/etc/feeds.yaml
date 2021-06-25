@@ -1919,7 +1919,13 @@ providers:
             skip_header: True
             columns:
               - __IGNORE__
-              - malware.name|__IGNORE__
+              - malware.name
               - destination.url
-              - destination.fqdn|destination.ip|__IGNORE__
-              - time.source|__IGNORE__
+              - destination.fqdn|destination.ip
+              - time.source
+              columns_required:
+              - false
+              - true
+              - true
+              - false
+              - true
