@@ -16,6 +16,7 @@ EXAMPLE_INPUT1 = {"__type": "Event",
                  }
 
 
+@test.skip_build_environment()
 class TestWaitExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for WaitExpertBot.

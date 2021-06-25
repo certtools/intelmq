@@ -99,6 +99,11 @@ def skip_ci():
     return unittest.skipIf(os.getenv('CI') == 'true', 'Test disabled on CI.')
 
 
+def skip_build_environment():
+    # For test that regularly fail in build environments like local or public Open Build Service builds
+    return unittest.skipIf(os.getenv('USER') == 'abuild', 'Test disabled in Build Service.')
+
+
 class BotTestCase(object):
     """
     Provides common tests and assert methods for bot testing.

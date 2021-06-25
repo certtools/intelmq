@@ -41,6 +41,7 @@ INPUT2 = {'feed.name': 'Example feed 2',
           'raw': utils.base64_encode('foo text\n')}
 ORIGINAL_DATA = ('some random input{}another line').format(SEPARATOR)
 
+
 class Client:
     """ You find here an example of a non-intelmq client that might connect to the bot. """
 
@@ -64,6 +65,7 @@ class Client:
         connection.close()
 
 
+@test.skip_build_environment()
 class TestTCPOutputBot(test.BotTestCase, unittest.TestCase):
     """ Instance of TCPOutput bot might help to simulate a real world situation with reconnecting etc. """
 
@@ -82,6 +84,7 @@ class TestTCPOutputBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(iterations=len(self.input_message))
 
 
+@test.skip_build_environment()
 class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for TCPCollectorBot.
