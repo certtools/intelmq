@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 Sebastian Wagner
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
-
+import codecs
 import os
 import unittest
 
@@ -9,7 +9,7 @@ import intelmq.lib.test as test
 from intelmq.bots.parsers.html_table.parser import HTMLTableParserBot
 from intelmq.lib import utils
 
-with open(os.path.join(os.path.dirname(__file__), 'feodotracker.html')) as handle:
+with codecs.open(os.path.join(os.path.dirname(__file__), 'feodotracker.html'), encoding='UTF-8') as handle:
     REPORT_DATA = handle.read()
 REPORT_LINES = REPORT_DATA.splitlines()
 
