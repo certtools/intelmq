@@ -1,5 +1,5 @@
 ..
-   SPDX-FileCopyrightText: 2015 Aaron Kaplan <aaron@lo-res.org>
+   SPDX-FileCopyrightText: 2015 Aaron Kaplan <aaron@lo-res.org>, 2015-2021 Sebastian Wagner, 2020-2021 Birger Schacht
    SPDX-License-Identifier: AGPL-3.0-or-later
 
 ############################
@@ -52,12 +52,15 @@ Overview
 ========
 
 The main configuration file is formatted in the YAML format since IntelMQ 3.0 (before it was JSON, which had some downsides).
-For new installations a default setup with some examples is provided by the `intelmqsetup` tool. If this is not the case, make sure the program was run (see installation instructions).
+Although, comments in YAML are currently not preserved by IntelMQ (known bug `#2003 <https://github.com/certtools/intelmq/issues/2003>`_).
+For new installations a default setup with some examples is provided by the `intelmqsetup` tool. If this is not the case, make sure the program was run (see :doc:`installation` instructions).
 
 
 * ``runtime.yaml``: Configuration for the individual bots. See :doc:`bots` for more details.
+* ``harmonization.conf``: Configuration of the internal data format, see :doc:`/dev/data-format` and :doc:`/dev/harmonization-fields`.
 
-To configure a new bot, you need to define and configure it in ``runtime.yaml``. You can base your configuration on the output of ``intelmqctl list bots``.
+To configure a new bot, you need to define and configure it in ``runtime.yaml``.
+You can base your configuration on the output of ``intelmqctl list bots`` and the :doc:`feeds` documentation page.
 Use the IntelMQ Manager mentioned above to generate the configuration files if unsure.
 
 In the shipped examples 4 collectors and parsers, 6 common experts and one output are configured. The default collector and the parser handle data from malware domain list, the file output bot writes all data to ``/opt/intelmq/var/lib/bots/file-output/events.txt``/``/var/lib/intelmq/bots/file-output/events.txt``.
