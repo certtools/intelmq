@@ -1914,7 +1914,7 @@ providers:
         parser:
           module: intelmq.bots.parsers.generic.parser_csv
           parameters:
-            type: malware
+            type: c2-server
             delimiter: ";"
             skip_header: True
             columns:
