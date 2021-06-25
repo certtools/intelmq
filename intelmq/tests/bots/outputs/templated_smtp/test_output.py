@@ -5,10 +5,13 @@
 import unittest
 import json
 import base64
-import yaml
+from ruamel.yaml import YAML
 
 import intelmq.lib.test as test
 from intelmq.bots.outputs.templated_smtp.output import TemplatedSMTPOutputBot
+
+
+yaml = YAML(typ="safe", pure=True)
 
 SENT_MESSAGE = None
 EVENT = {
@@ -62,7 +65,7 @@ class TestCustomTemplatedSMTPOutputBot(test.BotTestCase, unittest.TestCase):
   name: report.csv
 """
         cls.sysconfig = {
-            "attachments": yaml.safe_load(attachments),
+            "attachments": yaml.load(attachments),
             "smtp_host": "localhost",
             "body": "URL: {{ event['source.url'] }}",
             "subject": "{{ event['malware.name'] }} on {{ event['destination.fqdn'] }}",

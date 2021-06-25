@@ -15,7 +15,6 @@ import pkgutil
 import pprint
 import re
 import unittest
-import yaml
 
 import cerberus
 import pkg_resources
@@ -27,7 +26,7 @@ import intelmq.lib.harmonization as harmonization
 
 from intelmq.lib.utils import lazy_int
 
-myyaml = YAML(typ="safe", pure=True)
+yaml = YAML(typ="safe", pure=True)
 
 def to_json(obj):
     """
@@ -85,9 +84,9 @@ class TestConf(unittest.TestCase):
         """ Test if runtime.yaml has correct syntax. """
         with open(CONF_FILES['runtime']) as fhandle:
             fcontent = fhandle.read()
-        interpreted = myyaml.load(fcontent)
+        interpreted = yaml.load(fcontent)
         buf = io.BytesIO()
-        myyaml.dump(interpreted, buf)
+        yaml.dump(interpreted, buf)
         self.assertEqual(buf.getvalue().decode(), fcontent)
 
 
@@ -114,7 +113,7 @@ class CerberusTests(unittest.TestCase):
             schema = json.loads(self.convert_cerberus_schema(handle.read()))
         with open(pkg_resources.resource_filename('intelmq',
                                                   'etc/feeds.yaml'), encoding='UTF-8') as handle:
-            feeds = yaml.safe_load(handle)
+            feeds = yaml.load(handle)
 
         v = cerberus.Validator(schema)
 

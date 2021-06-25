@@ -128,11 +128,11 @@ Testing
 Additional optional requirements
 --------------------------------
 
-For the documentation tests two additional libraries are required: Cerberus and PyYAML. You can install them with pip:
+For the documentation tests one additional librariy is required: Cerberus. You can install it with pip:
 
 .. code-block:: bash
 
-   pip3 install Cerberus PyYAML
+   pip3 install Cerberus
 
 or the package management of your operating system.
 

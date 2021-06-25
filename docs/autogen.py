@@ -11,9 +11,12 @@ import json
 import os.path
 import textwrap
 
-import yaml
+from ruamel.yaml import YAML
 
 import intelmq.lib.harmonization
+
+
+yaml = YAML(typ="safe", pure=True)
 
 
 HEADER = """#########################
@@ -73,7 +76,7 @@ def info(key, value=""):
 
 def feeds_docs():
     with codecs.open(os.path.join(BASEDIR, 'intelmq/etc/feeds.yaml'), encoding='utf-8') as fhandle:
-        config = yaml.safe_load(fhandle.read())
+        config = yaml.load(fhandle.read())
 
     output = """Feeds
 ======

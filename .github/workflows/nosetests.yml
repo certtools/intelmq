@@ -65,7 +65,7 @@ jobs:
       run: bash .github/workflows/scripts/setup-full.sh
 
     - name: Install test dependencies
-      run: pip install nose Cerberus pyyaml requests_mock coverage codecov
+      run: pip install nose Cerberus requests_mock coverage codecov
 
     - name: Install dependencies
       if: ${{ matrix.type == 'basic' }}
