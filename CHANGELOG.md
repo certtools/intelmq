@@ -137,6 +137,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
 
 ### Packaging
 - Docker images tagged with `certat/intelmq-full:develop` are built and published on every push to the develop branch (PR#1753 by Sebastian Waldbauer).
+- Adapt packaging to IntelMQ 3.0 changes: ruamel.yaml dependency, changed configuration, updated database-update scripts (by Birger Schacht and Sebastian Wagner).
 
 ### Tests
 - `intelmq.tests.lib.test_bot`:
