@@ -32,7 +32,6 @@ TAXONOMY = {
     "unauthorised-information-access": "information-content-security",
     "unauthorised-information-modification": "information-content-security",
     "data-loss": "information-content-security",
-    "dropzone": "information-content-security",  # not in ENISA eCSIRT-II taxonomy
     "data-leak": "information-content-security",
     "scanner": "information-gathering",
     "sniffing": "information-gathering",

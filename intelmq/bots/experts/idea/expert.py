@@ -35,7 +35,6 @@ class IdeaExpertBot(Bot):
         "ddos": "Availability.DDoS",
         "spam": "Abusive.Spam",
         "scanner": "Recon.Scanning",
-        "dropzone": "Information.UnauthorizedAccess",
         "infected-system": "Malware",
         "malware-configuration": "Malware",
         "c2-server": "Intrusion.Botnet",
@@ -75,7 +74,6 @@ class IdeaExpertBot(Bot):
         "ddos-amplifier": "Intrusion.Botnet",
         "copyright": "Fraud.Copyright",
         "misconfiguration": "Availability.Outage",  # outage includes human error
-        "undetermined": "Other",
         "malware": "Malware",
     }
 
@@ -83,7 +81,6 @@ class IdeaExpertBot(Bot):
         # Added nonstandard Dropzone, MalwareConf, DGA, will consider adding to Idea spec
 
         "phishing": "Phishing",
-        "dropzone": "Dropzone",
         "malware-configuration": "MalwareConf",
         "c2-server": "CC",
         "dga-domain": "DGA",

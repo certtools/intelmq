@@ -281,7 +281,6 @@ class ClassificationType(String):
                       'ddos-amplifier',
                       'dga-domain',
                       'dos',
-                      'dropzone',
                       'exploit',
                       'harmful-speech',
                       'ids-alert',
@@ -380,6 +379,8 @@ class ClassificationType(String):
             value = 'unauthorised-information-modification'
         elif value == 'backdoor':
             value = 'system-compromise'
+        elif value == 'dropzone':
+            value = 'other'
         return GenericType().sanitize(value)
 
 
