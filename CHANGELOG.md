@@ -12,8 +12,6 @@ CHANGELOG
 ### Configuration
 
 ### Core
-- `intelmq.lib.bot_debugger`: Fix accessing the bot's destination queues (PR#2027 by Mikk Margus Möll).
-- `intelmq.lib.pipeline`: Fix handling of `load_balance` parameter (PR#2027 by Mikk Margus Möll).
 
 ### Development
 
@@ -21,35 +19,18 @@ CHANGELOG
 
 ### Bots
 #### Collectors
-- `intelmq.bots.collectors.shodan.collector_stream`: Fix access to parameters, the bot wrongly used `self.parameters` (PR#2020 by Mikk Margus Möll).
-- `intelmq.bots.collectors.mail.collector_mail_attach`: Add attachment file name as `extra.file_name` also if the attachment is not compressed (PR#2021 by Alex Kaplan).
-- `intelmq.bots.collectors.http.collector_http_stream`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).
 
 #### Parsers
-- `intelmq.bots.parsers.microsoft.parser_ctip`: Map `Payload.domain` to `destination.fqdn` instead of `extra.payload.domain` as it matches to `destination.ip` from `DestinationIp` (PR#2023 by Sebastian Wagner).
-- Removed `intelmq.bots.parsers.malwaredomains` because the upstream data source (malwaredomains.com) does not exist anymore (PR#2026 by Birger Schacht, fixes #2024).
-- `intelmq.bots.parsers.shadowserver.config`:
-  - Add support for feed "Vulnerable SMTP Server" (PR#2037 by Mikk Margus Möll).
-  - Fix differentiation between feeds "Accessible HTTP" and "Vulnerable HTTP" (PR#2037 by Mikk Margus Möll, fixes #1984).
-  - Add support for the new feeds *Microsoft Sinkhole Events Report*, *Microsoft Sinkhole HTTP Events Report* (PR#2036 by Birger Schacht).
 
 #### Experts
 
 #### Outputs
-- `intelmq.bots.outputs.mcafee.output_esm_ip`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).
-- `intelmq.bots.outputs.misp.output_api`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).
 
 ### Documentation
-- Various formatting fixes (by Sebastian Wagner).
-- Removed the malwaredomains feed from the feeds list because the upstream data source (malwaredomains.com) does not exist anymore (PR#2026 by Birger Schacht, fixes #2024).
 
 ### Packaging
-- intelmq-update-database crontab: Add missing `recordedfuture_iprisk` update call (by Sebastian Wagner).
 
 ### Tests
-- Replace calls to deprecated/undocumented `logging.warn` with `logging.warning` (by Sebastian Wagner, fixes #2013).
-- `intelmq.tests.bots.experts.rdap.test_expert`: Declare cache use, fixes build failures (by Sebastian Wagner, fixes #2014).
-- `intelmq.tests.bots.collectors.mail.test_collector_attach`: Test text attachment (by Sebastian Wagner).
 
 ### Tools
 
@@ -58,7 +39,7 @@ CHANGELOG
 ### Known issues
 
 
-3.0.0 (2021-07-02)
+3.0.0 (unreleased)
 ------------------
 
 ### Configuration

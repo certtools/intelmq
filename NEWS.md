@@ -9,16 +9,12 @@ NEWS
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 Please refer to the changelog for a full list of changes.
 
-3.0.1 Maintenance release (unreleased)
---------------------------------------
-
+3.0.0 Bugfix release (unreleased)
+--------------------------------
 
 ### Requirements
 
 ### Tools
-
-### Bots
-The malwardomains parser bot was removed. The malwaredomains.com website is offline, therefore the parser can not be used anymore. The `intelmqctl upgrade-config` command warns if you have the feed and the bot in use.
 
 ### Data Format
 
@@ -29,7 +25,7 @@ The malwardomains parser bot was removed. The malwaredomains.com website is offl
 ### Postgres databases
 
 
-3.0.0 Major release (2021-07-02)
+3.0.0 Major release (unreleased)
 --------------------------------
 
 ### Requirements
@@ -57,7 +53,7 @@ and the XMPP bots were deprecated in 391d625.
 #### Sieve expert
 The Sieve expert bot has had major updates to its syntax. Breaking new changes:
 * the removal of the `:notcontains` operator, which can be replaced using the newly added
- expression negation, e.g `! foo :contains ['.mx', '.zz']` rather than `foo :notcontains ['.mx', '.zz']`. 
+ expression negation, e.g `! foo :contains ['.mx', '.zz']` rather than `foo :notcontains ['.mx', '.zz']`.
 * changed operators for comparisons against lists of values, e.g `source.ip :in ['127.0.0.5', '192.168.1.2']` rather than `source.ip == ['127.0.0.5', '192.168.1.2']`
   The "old" syntax with `==` on lists is no longer valid and raises an error.
 
@@ -243,7 +239,7 @@ CentOS 7 (with EPEL) provides both Python 3.4 and Python 3.6. If IntelMQ was ins
   type and reloads them afterwards. Removes any external dependencies (such as curl or wget).
   This is a replacement for shell scripts such as `update-tor-nodes`, `update-asn-data`,
   `update-geoip-data`, `update-rfiprisk-data`.
-  
+
   Usage:
   ```
   intelmq.bots.experts.asn_lookup.expert --update-database
