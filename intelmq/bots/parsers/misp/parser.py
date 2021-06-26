@@ -21,7 +21,7 @@ class MISPParserBot(Bot):
         'ecsirt:availability="ddos"': 'ddos',
         'ecsirt:abusive-content="spam"': 'spam',
         'ecsirt:information-gathering="scanner"': 'scanner',
-        'ecsirt:information-content-security="dropzone"': 'dropzone',
+        'ecsirt:information-content-security="dropzone"': 'other',
         'ecsirt:malicious-code="malware"': 'infected-system',
         'ecsirt:malicious-code="botnet-drone"': 'infected-system',
         'ecsirt:malicious-code="ransomware"': 'infected-system',
@@ -66,8 +66,11 @@ class MISPParserBot(Bot):
 
         # Set the classifier based on the ecsirt tag
         classifier = None
+        identifier = None
         if misp_event.get('Tag'):
             for tag in misp_event['Tag']:
+                if tag['name'] == 'dropzone':
+                    identifier = 'dropzone'
                 if tag['name'] in self.MISP_TAXONOMY_MAPPING:
                     classifier = self.MISP_TAXONOMY_MAPPING[tag['name']]
                     break
@@ -116,6 +119,7 @@ class MISPParserBot(Bot):
                 event.add('event_description.url', misp_event_url)
                 event.add('malware.name', malware_variant, raise_failure=False)
                 event.add('classification.type', classifier)
+                event.add('classification.identifier', identifier)
                 event.add('time.source', '{} UTC'.format(
                           datetime.utcfromtimestamp(float(timestamp))))
                 self.send_message(event)

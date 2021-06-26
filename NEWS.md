@@ -58,6 +58,7 @@ The classification scheme has been updated to better match the [Reference Securi
 | abusive content              |                    | abusive-content              |                                        |
 | information content security |                    | information-content-security |                                        |
 | information content security | leak               | information-content-security | data-leak                              |
+| information content security | dropzone           | other                        | other (identifier: ``dropzone``)       |
 | intrusion attempts           |                    | intrusion-attempts           |                                        |
 | information gathering        |                    | information-gathering        |                                        |
 | intrusions                   | backdoor           | intrusions                   | system-compromise                      |

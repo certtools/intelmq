@@ -40,12 +40,13 @@ CHANGELOG
 
 ### Data Format
 The IntelMQ Data Harmonization ("DHO") is renamed to IntelMQ Data Format ("IDF"). Internal files remain and work the same as before (PR#1818 by Sebastian Waldbauer, fixes 1810).
-Update allowed classification fields to 2020-01-28 version (#1409, #1476).
+Update allowed classification fields to version 1.3 (2021-05-18) (fixes #1409, #1476).
 - The taxonomy `abusive content` has been renamed to `abusive-content`.
 - The taxonomy `information content security` has been renamed to `information-content-security`.
   - The validation of type `unauthorised-information-access` has been fixed, a bug prevented the use of it.
   - The validation of type `unauthorised-information-modification` has been fixed, a bug prevented the use of it.
   - The type `leak` has been renamed to `data-leak`.
+  - The type `dropzone` has been removed. Taxonomy `other` with type `other` and identifier `dropzone` can be used instead. Ongoing discussion in the RSIT WG.
 - The taxonomy `intrusion attempts` has been renamed to `intrusion-attempts`.
 - For the taxonomy intrusions (PR#1993 by Sebastian Wagner, addresses #1409):
   - The type `compromised` has been renamed to `system-compromise`.
