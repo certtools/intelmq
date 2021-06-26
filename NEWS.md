@@ -9,6 +9,22 @@ NEWS
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 Please refer to the changelog for a full list of changes.
 
+3.0.0 Bugfix release (unreleased)
+--------------------------------
+
+### Requirements
+
+### Tools
+
+### Data Format
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
 3.0.0 Major release (unreleased)
 --------------------------------
 

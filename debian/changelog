@@ -1,3 +1,9 @@
+intelmq (3.0.1~alpha1-1) UNRELEASED; urgency=medium
+
+  * 3.0.1
+
+ -- Sebastian Wagner <wagner@cert.at>  Sat, 26 Jun 2021 12:32:29 +0200
+
 intelmq (3.0.0~rc1-1) stable; urgency=low
 
   * Update to 3.0.0 Release candidate 1.
