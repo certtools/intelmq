@@ -75,7 +75,7 @@ Optional dependencies:
     dnf install bash-completion jq
     dnf install python3-psycopg2 python3-pymongo
 
-openSUSE 15.1 / 15.2
+openSUSE 15.2 / 15.3
 ^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash

@@ -165,6 +165,8 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
 
 ### Known issues
 - ParserBot: erroneous raw line recovery in error handling (#1850).
+- ruamel.yaml loader and dumper: human readability bug / support for comments (#2003).
+- load_configuration does not support JSON files with tab whitespace because of ruamel loader (#1999).
 
 
 2.3.3 (2021-05-31)
