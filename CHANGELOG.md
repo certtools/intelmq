@@ -118,6 +118,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
 - `intelmq.bots.experts.modify.expert`:
   - Removed compatibility with deprecated configuration format before 1.0.0.dev7 (PR#1997 by Sebastian Wagner, #1404).
 - Added `intelmq.bots.experts.aggregate`: A bot that aggregate events based upon given fields & a timespan. (PR#1959 by Sebastian Waldbauer)
+- Added `intelmq.bots.experts.tuency`: A bot that queries the IntelMQ API of a tuency instance (PR#1857 by Sebastian Wagner, fixes #1856).
 
 #### Outputs
 - Remove `intelmq.bots.outputs.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ

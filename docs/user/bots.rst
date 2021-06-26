@@ -3197,6 +3197,50 @@ Trusted Introducer Lookup Expert
 * **order**: Possible values are 'domain', 'asn'
 
 
+.. _intelmq.bots.experts.tuency.expert:
+
+Tuency
+^^^^^^
+
+**Information**
+
+* `name:` `intelmq.bots.experts.tuency.expert`
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Queries the `IntelMQ API<https://gitlab.com/intevation/tuency/tuency/-/blob/master/backend/docs/IntelMQ-API.md>`_ of a `Tuency Contact Database<https://gitlab.com/intevation/tuency/tuency/>`_ instance.
+
+**Configuration Parameters**
+
+- `url`: Tuency instance URL. Without the API path.
+- `authentication_token`: The Bearer authentication token. Without the ``Bearer `` prefix.
+- `overwrite`: Boolean, if existing data in ``source.abuse_contact`` should be overwritten. Default: true
+
+**Description**
+
+*tuency* is a contact management database addressing the needs of CERTs.
+Users of *tuency* can configure contact addresses and delivery settings for IP objects (addresses, netblocks), Autonomous Systems, and (sub-)domains.
+This expert queries the information for ``source.ip`` and ``source.fqdn`` using the following other fields:
+- ``classification.taxonomy``
+- ``classification.type``
+- ``feed.provider``
+- ``feed.name``
+These fields therefore need to exist, otherwise the message is skipped.
+
+The API parameter "feed_status" is currently set to "production" constantly, until IntelMQ supports this field.
+
+The API answer is processed as following. For the notification interval:
+- If *suppress* is true, then ``extra.notify`` is set to false.
+- Otherwise:
+  - If the interval is *immediate*, then ``extra.ttl`` is set to 0.
+  - Otherwise the interval is converted into seconds and saved in ``extra.ttl``.
+
+For the contact lookup:
+For both fields *ip* and *domain*, the *destinations* objects are iterated and its *email* fields concatenated to a comma-separated list in ``source.abuse_contact``.
+
+The IntelMQ fields used by this bot may change in the next IntelMQ release, as soon as better suited fields are available.
+
+
 .. _intelmq.bots.experts.url2fqdn.expert:
 
 Url2FQDN
