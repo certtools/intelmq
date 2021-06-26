@@ -210,13 +210,15 @@ class TestUtils(unittest.TestCase):
         """Tests if parse_reltive returns the correct timespan."""
         self.assertEqual(utils.parse_relative('1 hour'), 60)
         self.assertEqual(utils.parse_relative('2\tyears'), 1051200)
+        self.assertEqual(utils.parse_relative('5 minutes'), 5)
+        self.assertEqual(utils.parse_relative('10 seconds'), 1 / 60 * 10)
 
     def test_parse_relative_raises(self):
         """Tests if parse_reltive correctly raises ValueError."""
         with self.assertRaises(ValueError):
             utils.parse_relative('1 hou')
         with self.assertRaises(ValueError):
-            utils.parse_relative('1 minute')
+            utils.parse_relative('1 µs')
 
     def test_seconds_to_human(self):
         """ Test seconds_to_human """
