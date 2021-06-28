@@ -127,6 +127,33 @@ Therefore, SELinux needs to be disabled:
 
 We welcome contributions to provide SELinux policies.
 
+*******************
+Usage from programs
+*******************
+
+The IntelMQ API can also be used from programs, not just browsers.
+To do so, first send a POST-Request with JSON-formatted data to http://localhost/intelmq/v1/api/login/
+
+.. code-block:: json
+
+   {
+       "username": "$your_username",
+       "password: "$your_password"
+   }
+
+With valid credentials, the JSON-formatted response contains the ``login_token``.
+This token can be used like an API key in the Authorization header for the next API calls:
+
+.. code-block:: bash
+
+   Authorization: $login_token
+
+
+The same approach also works for Ansible, as you can see here:
+
+1. https://github.com/schacht-certat/intelmq-vagrant/blob/7082719609c0aafc9324942a8775cf2f8813703d/ansible/tasks/api/00_registerauth.yml#L1-L9
+2. https://github.com/schacht-certat/intelmq-vagrant/blob/7082719609c0aafc9324942a8775cf2f8813703d/ansible/tasks/api/02_queuestatus.yml#L1-L5
+
 *****************************
 Frequent operational problems
 *****************************
