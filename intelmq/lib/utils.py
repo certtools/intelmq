@@ -481,7 +481,8 @@ def error_message_from_exc(exc: Exception) -> str:
 
 
 # number of minutes in time units
-TIMESPANS = {'hour': 60, 'day': 24 * 60, 'week': 7 * 24 * 60,
+TIMESPANS = {'second': 1 / 60, 'minute': 1,
+             'hour': 60, 'day': 24 * 60, 'week': 7 * 24 * 60,
              'month': 30 * 24 * 60, 'year': 365 * 24 * 60}
 
 

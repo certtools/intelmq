@@ -62,6 +62,7 @@ CHANGELOG
   - New function `list_all_bots` to list all available/installed bots as replacement for the BOTS file (#368, #552, #644, #757, #1069, #1750, PR#1751 by Sebastian Waldbauer).
   - New function `get_bots_settings` to return the effective bot parameters, with global parameters applied.
   - Removed deprecated function `create_request_session_from_bot` (PR#1997 by Sebastian Wagner, #1404).
+  - `parse_relative`: Add support for parsing minutes and seconds (PR#1857 by Sebastian Wagner).
 - `intelmq.lib.bot_debugger`:
   - Set bot's `logging_level` directly in `__init__` before the bot's initialization by changing the default value (by Sebastian Wagner).
   - Rewrite `load_configuration_patch` by adapting it to the parameter and configuration rewrite (by Sebastian Wagner).
@@ -74,12 +75,13 @@ CHANGELOG
 
 ### Data Format
 The IntelMQ Data Harmonization ("DHO") is renamed to IntelMQ Data Format ("IDF"). Internal files remain and work the same as before (PR#1818 by Sebastian Waldbauer, fixes 1810).
-Update allowed classification fields to 2020-01-28 version (#1409, #1476).
+Update allowed classification fields to version 1.3 (2021-05-18) (fixes #1409, #1476).
 - The taxonomy `abusive content` has been renamed to `abusive-content`.
 - The taxonomy `information content security` has been renamed to `information-content-security`.
   - The validation of type `unauthorised-information-access` has been fixed, a bug prevented the use of it.
   - The validation of type `unauthorised-information-modification` has been fixed, a bug prevented the use of it.
   - The type `leak` has been renamed to `data-leak`.
+  - The type `dropzone` has been removed. Taxonomy `other` with type `other` and identifier `dropzone` can be used instead. Ongoing discussion in the RSIT WG.
 - The taxonomy `intrusion attempts` has been renamed to `intrusion-attempts`.
 - For the taxonomy intrusions (PR#1993 by Sebastian Wagner, addresses #1409):
   - The type `compromised` has been renamed to `system-compromise`.
@@ -152,6 +154,7 @@ Update allowed classification fields to 2020-01-28 version (#1409, #1476).
 - `intelmq.bots.experts.modify.expert`:
   - Removed compatibility with deprecated configuration format before 1.0.0.dev7 (PR#1997 by Sebastian Wagner, #1404).
 - Added `intelmq.bots.experts.aggregate`: A bot that aggregate events based upon given fields & a timespan. (PR#1959 by Sebastian Waldbauer)
+- Added `intelmq.bots.experts.tuency`: A bot that queries the IntelMQ API of a tuency instance (PR#1857 by Sebastian Wagner, fixes #1856).
 
 #### Outputs
 - Remove `intelmq.bots.outputs.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
