@@ -8,7 +8,7 @@ EventDB
 
 The EventDB is not a software itself.
 
-The EventDB is a database (usually PostgreSQL) that gets filled with with data from intelmq using the SQL Output bot.
+The EventDB is a database (usually `PostgreSQL <postgresql.org/>`_) that gets filled with with data from IntelMQ using the :ref:`intelmq.bots.outputs.sql.output` Output Bot.
 
 -----------------------
 The events table itself
@@ -21,7 +21,7 @@ IntelMQ comes with the ``intelmq_psql_initdb`` command line tool. It creates an 
 
 All elements of this SQL file can be adapted and extended before running the SQL file against a database, especially the indexes.
 
-Having an `events` table as outlined in the SQL file, IntelMQ's PostgreSQL Output bot can write all received events into this database table.
+Having an `events` table as outlined in the SQL file, IntelMQ's :ref:`intelmq.bots.outputs.sql.output` Output Bot can write all received events into this database table.
 
 This events table is the core of the so-called EventDB and also required by all other sections of this document.
 
@@ -29,12 +29,12 @@ This events table is the core of the so-called EventDB and also required by all 
 EventDB Utilities
 -----------------
 
-Some scripts related to the eventdb are located in the `contrib/eventdb <https://github.com/certtools/intelmq/tree/develop/contrib/eventdb>`_ folder in the IntelMQ git repository.
+Some scripts related to the EventDB are located in the `contrib/eventdb <https://github.com/certtools/intelmq/tree/develop/contrib/eventdb>`_ folder in the IntelMQ git repository.
 
 Apply Malware Name Mapping
 --------------------------
 
-The `apply_mapping_eventdb.py` script applies the malware name mapping to the eventdb.
+The `apply_mapping_eventdb.py` script applies the malware name mapping to the EventDB.
 Source and destination columns can be given, also a local file. If no local file is present, the mapping can be downloaded on demand.
 It queries the database for all distinct malware names with the taxonomy "malicious-code" and sets another column to the malware family name.
 

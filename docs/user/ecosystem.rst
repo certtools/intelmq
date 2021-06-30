@@ -47,7 +47,7 @@ IntelMQ Fody + Backend
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Fody is a web based interface for intelmq-mailgen's contact database
-and the EventDB.  It can also be used to just query the EventDB.
+and the :doc:`eventdb`. It can also be used to just query the :doc:`eventdb`.
 
 The certbund-contact expert fetches the information from this contact database and provides scripts to import RIPE data into the contact database.
 
@@ -102,7 +102,7 @@ Can be queried from IntelMQ and integrates the stats-portal.
 stats-portal
 ------------
 
-A Grafana-based statistics portal for the EventDB. Integrated in do-portal.
+A Grafana-based statistics portal for the :doc:`eventdb`. Integrated in do-portal.
 
 → `Repository: stats-portal <https://github.com/certtools/stats-portal>`_
 
