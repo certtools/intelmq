@@ -148,8 +148,21 @@ This token can be used like an API key in the Authorization header for the next 
 
    Authorization: $login_token
 
+Here is a full example using *curl*:
 
-The same approach also works for Ansible, as you can see here:
+.. code-block:: bash
+
+   > curl --location --request POST "http://localhost/intelmq/v1/api/login/"\
+       --header "Content-Type: application/x-www-form-urlencoded"\
+       --data-urlencode "username=$username"\
+       --data-urlencode "password=$password"
+   {"login_token":"68b329da9893e34099c7d8ad5cb9c940","username":"$username"}
+   > curl --location "http://localhost/intelmq/v1/api/version"\
+       --header "Authorization: 68b329da9893e34099c7d8ad5cb9c940"
+   {"intelmq":"3.0.0rc1","intelmq-manager":"2.3.1"}
+
+
+The same approach also works for *Ansible*, as you can see here:
 
 1. https://github.com/schacht-certat/intelmq-vagrant/blob/7082719609c0aafc9324942a8775cf2f8813703d/ansible/tasks/api/00_registerauth.yml#L1-L9
 2. https://github.com/schacht-certat/intelmq-vagrant/blob/7082719609c0aafc9324942a8775cf2f8813703d/ansible/tasks/api/02_queuestatus.yml#L1-L5
