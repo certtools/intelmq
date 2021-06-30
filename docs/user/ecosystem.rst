@@ -65,10 +65,34 @@ The email sending part:
 → `Repository: intelmq-mailgen <https://github.com/Intevation/intelmq-mailgen>`_
 
 
+"Constituency Portal" tuency
+----------------------------
+
+A web application helping CERTs to enable members of their constituency
+to self-administrate how they get warnings related to their network objects
+(IP addresses, IP ranges, autonomous systems, domains).
+*tuency* is developed by `Intevation <https://intevation.de/>`_ for
+`CERT.at <https://cert.at/>`_.
+
+If features organizational hierarchies, contact roles, self-administration
+and network objects per organization (Autonomous systems, network ranges,
+(sub-)domains, RIPE organization handles). A network object claiming and
+approval process prevents abuse.
+An hierarchical rule-system on the network objects allow fine-grained settings.
+The tagging system for contacts and organization complement the
+contact-management features of the portal.
+Authentication is based on keycloak, which enables the re-use of the user
+accounts in the portal.
+The integrated API enables IntelMQ to query the portal for the right abuse
+contact and notification settings.
+
+→ `Repository: tuency <https://gitlab.com/Intevation/tuency/tuency>`_
+
+
 "Constituency Portal" do-portal (not developed any further)
 -----------------------------------------------------------
 
-*Note:* A new version is being developed from scratch, see `do-portal#133 <https://github.com/certat/do-portal/issues/133>`_ for more information.
+*Note:* The *do-portal* is deprecated and succeeded by *tuency*.
 
 A contact portal with organizational hierarchies, role functionality and network objects based on RIPE, allows self-administration by the contacts.
 Can be queried from IntelMQ and integrates the stats-portal.
