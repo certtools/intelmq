@@ -2736,7 +2736,7 @@ With the example parameter values given above, this means that:
 
 .. _intelmq.bots.experts.ripe.expert:
 
-Ripe
+RIPE
 ^^^^
 
 Online RIPE Abuse Contact and Geolocation Finder for IP addresses and Autonomous Systems.

@@ -137,6 +137,7 @@ Update allowed classification fields to version 1.3 (2021-05-18) (fixes #1409, #
 - Added TimescaleDB for time-series documentation (PR#1990 by Sebastian Waldbauer).
 - Improved n6 interoperability documentation by adding more graphs and illustrations (PR#1991 by Sebastian Wagner).
 - Feed documentation generation: fix and simplify formatting of parameters of types lists, non-string values have been ill-treated (by Sebastian Wagner).
+- Added documentation on abuse-contact look-ups (PR#2021 by Sebastian Waldbauer and Sebastian Wagner).
 
 ### Packaging
 - Docker images tagged with `certat/intelmq-full:develop` are built and published on every push to the develop branch (PR#1753 by Sebastian Waldbauer).
