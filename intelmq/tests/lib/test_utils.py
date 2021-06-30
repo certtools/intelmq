@@ -25,6 +25,7 @@ import cerberus
 import json
 
 import termstyle
+from ruamel.yaml.scanner import ScannerError
 
 from intelmq.tests.test_conf import CerberusTests
 import intelmq.lib.utils as utils
@@ -186,7 +187,7 @@ class TestUtils(unittest.TestCase):
         line = ("Feb 22 10:17:10 host malware-domain-list-collector: ERROR "
                 "Something went wrong")
         thread = ("Feb 22 10:17:10 host malware-domain-list-collector.4: ERROR "
-                "Something went wrong")
+                  "Something went wrong")
 
         actual = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
         self.assertEqual({'bot_id': 'malware-domain-list-collector',
@@ -319,6 +320,36 @@ class TestUtils(unittest.TestCase):
             defaults = utils.get_global_settings()
         self.assertEqual(defaults['http_proxy'], 'http://localhost:8080')
         self.assertEqual(defaults['https_proxy'], 'http://localhost:8080')
+
+    def test_load_configuration_json(self):
+        """ Test load_configuration with a JSON file containing space whitespace """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/foobar.json')
+        self.assertEqual(utils.load_configuration(filename), {'foo': 'bar'})
+
+    def test_load_configuration_json_tabs(self):
+        """ Test load_configuration with a JSON file containing tab whitespace """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/tab-whitespace.json')
+        self.assertEqual(utils.load_configuration(filename), {'foo': 'bar'})
+
+    def test_load_configuration_yaml(self):
+        """ Test load_configuration with a YAML file """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/example.yaml')
+        self.assertEqual(utils.load_configuration(filename),
+                         {
+                            'some_string': 'Hello World!',
+                            'other_string': 'with a : in it',
+                            'now more': ['values', 'in', 'a', 'list'],
+                            'types': -4,
+                            'other': True,
+                            'final': 0.5,
+                        }
+                        )
+
+    def test_load_configuration_yaml_invalid(self):
+        """ Test load_configuration with an invalid YAML file """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/example-invalid.yaml')
+        with self.assertRaises(ScannerError):
+            utils.load_configuration(filename)
 
 
 if __name__ == '__main__':  # pragma: no cover
