@@ -119,7 +119,6 @@ EXAMPLE_EVENTS = [{
     'source.ip': '224.0.5.8',
     'source.port': 33587,
     'time.source': '2021-04-07T10:59:32+00:00',
-    'tlp': 'GREEN',
     'source.geolocation.cc': 'AT',
     },
     {
