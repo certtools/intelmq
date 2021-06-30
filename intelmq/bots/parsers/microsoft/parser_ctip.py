@@ -265,6 +265,8 @@ class MicrosoftCTIPParserBot(ParserBot):
                     # continue unpacking in next loop
                 except json.decoder.JSONDecodeError:
                     line[key] = utils.base64_decode(value)
+            elif key == 'TLP' and value.lower() == 'unknown':
+                del line[key]
             if isinstance(value, dict):
                 for subkey, subvalue in value.items():
                     line['%s.%s' % (key, subkey)] = subvalue
