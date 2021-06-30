@@ -45,6 +45,7 @@ import dateutil.parser
 from dateutil.relativedelta import relativedelta
 from termstyle import red
 from ruamel.yaml import YAML
+from ruamel.yaml.scanner import ScannerError
 
 import intelmq
 from intelmq.lib.exceptions import DecodingError
@@ -213,7 +214,13 @@ def load_configuration(configuration_filepath: str) -> dict:
     """
     if os.path.exists(configuration_filepath):
         with open(configuration_filepath, 'r') as fpconfig:
-            config = yaml.load(fpconfig)
+            try:
+                config = yaml.load(fpconfig)
+            except ScannerError as exc:
+                if "found character '\\t' that cannot start any token" in exc.problem:
+                    fpconfig.seek(0)
+                    return json.load(fpconfig)
+                raise
     else:
         raise ValueError('File not found: %r.' % configuration_filepath)
     return config
