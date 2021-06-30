@@ -58,6 +58,7 @@ Connecting with other systems
    user/MISP-Integrations
    user/n6-integrations
    user/eventdb
+   user/abuse-contacts
 
 
 Getting involved
