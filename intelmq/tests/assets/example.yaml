@@ -1,0 +1,10 @@
+some_string: Hello World!
+other_string: "with a : in it"
+now more:
+  - values
+  - in
+  - a
+  - list
+other: true
+types: -4
+final: 0.5
