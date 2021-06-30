@@ -1,5 +1,5 @@
 .. 
-   SPDX-FileCopyrightText: 2020 Birger Schacht
+   SPDX-FileCopyrightText: 2020-2021 Birger Schacht, Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 
 ###########
