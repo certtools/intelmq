@@ -3216,7 +3216,7 @@ Tuency
 **Configuration Parameters**
 
 - `url`: Tuency instance URL. Without the API path.
-- `authentication_token`: The Bearer authentication token. Without the ``Bearer `` prefix.
+- `authentication_token`: The Bearer authentication token. Without the ``Bearer`` prefix.
 - `overwrite`: Boolean, if existing data in ``source.abuse_contact`` should be overwritten. Default: true
 
 **Description**
