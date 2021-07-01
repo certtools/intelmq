@@ -1816,7 +1816,7 @@ I. e.:
    0,30 * * * *   intelmqctl reload my-aggregate-bot
 
 
-For reloading/restarting please check the :ref:`intelmqctl` documentation.
+For reloading/restarting please check the :doc:`intelmqctl` documentation.
 
 .. _intelmq.bots.experts.asn_lookup.expert:
 
@@ -3211,7 +3211,7 @@ Tuency
 * `lookup:` yes
 * `public:` no
 * `cache (redis db):` none
-* `description:` Queries the `IntelMQ API<https://gitlab.com/intevation/tuency/tuency/-/blob/master/backend/docs/IntelMQ-API.md>`_ of a `Tuency Contact Database<https://gitlab.com/intevation/tuency/tuency/>`_ instance.
+* `description:` Queries the `IntelMQ API <https://gitlab.com/intevation/tuency/tuency/-/blob/master/backend/docs/IntelMQ-API.md>`_ of a `Tuency Contact Database <https://gitlab.com/intevation/tuency/tuency/>`_ instance.
 
 **Configuration Parameters**
 
@@ -3224,17 +3224,21 @@ Tuency
 *tuency* is a contact management database addressing the needs of CERTs.
 Users of *tuency* can configure contact addresses and delivery settings for IP objects (addresses, netblocks), Autonomous Systems, and (sub-)domains.
 This expert queries the information for ``source.ip`` and ``source.fqdn`` using the following other fields:
+
 - ``classification.taxonomy``
 - ``classification.type``
 - ``feed.provider``
 - ``feed.name``
+
 These fields therefore need to exist, otherwise the message is skipped.
 
 The API parameter "feed_status" is currently set to "production" constantly, until IntelMQ supports this field.
 
 The API answer is processed as following. For the notification interval:
+
 - If *suppress* is true, then ``extra.notify`` is set to false.
 - Otherwise:
+
   - If the interval is *immediate*, then ``extra.ttl`` is set to 0.
   - Otherwise the interval is converted into seconds and saved in ``extra.ttl``.
 

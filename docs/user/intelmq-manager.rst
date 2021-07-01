@@ -68,7 +68,7 @@ Never ever run intelmq-manager on a public webserver without SSL and proper auth
 The way the current version is written, anyone can send a POST request and change intelmq's configuration files via sending HTTP POST requests.
 Intelmq-manager will reject non JSON data but nevertheless, we don't want anyone to be able to reconfigure an intelmq installation.
 
-Therefore you will need authentication and SSL. Authentication can be handled by the :ref:`intelmq-api`.
+Therefore you will need authentication and SSL. Authentication can be handled by the :doc:`intelmq-api`.
 Please refer to its documentation on how to enable authentication and setup accounts.
 
 Never ever allow unencrypted, unauthenticated access to intelmq-manager!
