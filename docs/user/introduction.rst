@@ -66,7 +66,7 @@ Usage
 Various approaches of installing `intelmq`  are described in :doc:`installation`.
 
 The :doc:`configuration-management` gives an overview how a `intelmq` installation is set up and how to configure and maintain the setup.
-There is also a list of available :doc:`Feeds` as well as a detailed description of the different :doc:`bots` intelmq brings with it.
+There is also a list of available :doc:`feeds` as well as a detailed description of the different :doc:`bots` intelmq brings with it.
 
 If you know additional feeds and how to parse them, please contribute your code or your configuration (by issues or the mailing lists).
 
@@ -84,4 +84,4 @@ Contribute
 - Subscribe to the |intelmq-developers-list-link|
 - IRC: server: irc.freenode.net, channel: \#intelmq
 - Via `GitHub issues <github.com/certtools/intelmq/issues/>`_
-- Via `Pull requests <github.com/certtools/intelmq/pulls>`_ (please have a look at the :doc:`guide` first)
+- Via `Pull requests <github.com/certtools/intelmq/pulls>`_ (please have a look at the :doc:`/dev/guide` first)

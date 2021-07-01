@@ -287,7 +287,7 @@ Destination queues are defined using a dictionary with a name as key and a list 
 
 In this case, bot will be able to send the message to one of defined paths. The path ``"_default"`` is used if none is specified by the bot itself.
 In case of errors during processing, and the optional path ``"_on_error"`` is specified, the message will be sent to the pipelines given given as on-error.
-Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the :ref:`filter expert` and the :ref:`sieve expert`.
+Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the :ref:`intelmq.bots.experts.filter.expert` expert and the :ref:`intelmq.bots.experts.sieve.expert` expert.
 The named queues need to be explicitly addressed by the bot (e.g. filtering) or the core (``_on_error``) to be used. Setting arbitrary paths has no effect.
 
 AMQP (Beta)

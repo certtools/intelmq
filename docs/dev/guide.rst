@@ -563,6 +563,7 @@ Format:
    <timestamp> - <bot id> - <log level> - <log message>
 
 Rules:
+
 * the Log message MUST follow the common rules of a sentence, beginning with uppercase and ending with period.
 * the sentence MUST describe the problem or has useful information to give to an inexperienced user a context. Pure stack traces without any further explanation are not helpful.
 
