@@ -84,7 +84,8 @@ contact-management features of the portal.
 Authentication is based on keycloak, which enables the re-use of the user
 accounts in the portal.
 The integrated API enables IntelMQ to query the portal for the right abuse
-contact and notification settings.
+contact and notification settings with the
+:ref:`intelmq.bots.experts.tuency.expert` expert.
 
 → `Repository: tuency <https://gitlab.com/Intevation/tuency/tuency>`_
 
