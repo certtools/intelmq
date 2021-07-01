@@ -1203,6 +1203,7 @@ ESET
 **Description**
 
 Supported collections:
+
 * "ei.urls (json)"
 * "ei.domains v2 (json)"
 
@@ -1222,6 +1223,7 @@ Cymru CAP Program
 **Description**
 
 There are two different feeds available:
+
  * `infected_$date.txt` ("old")
  * `$certname_$date.txt` ("new")
 
@@ -1477,6 +1479,7 @@ If decoding works, the contained fields are saved as `extra.payload.*`, otherwis
 
 MISP
 ^^^^
+
 * `name:` intelmq.bots.parsers.misp.parser
 * `public:` no
 * `cache (redis db):` none

@@ -97,7 +97,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild 
         for feed, feed_info in sorted(feeds.items(), key=lambda x: x[0]):
 
             output += f"{feed}\n"
-            output += "^"*len(feed) + "\n"
+            output += "^"*len(feed) + "\n\n"
 
             output += info("public", "yes") if feed_info.get('public') else info("public", "no")
 
