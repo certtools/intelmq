@@ -32,7 +32,7 @@ Installation using pip
 ^^^^^^^^^^^^^^^^^^^^^^
 
 For installation via pip, the situation is more complex.
-The packages install the HTML files in ``${PREFIX}/usr/share/intelmq-manager/html``.
+``pip3 install intelmq-manager`` installs the HTML files in ``${PREFIX}/usr/share/intelmq-manager/html``.
 The value of ``${PREFIX}`` depends on your environment and is something like ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version).
 You can either move the files to ``/usr/share/intelmq-manager/html`` or adapt the path in the webserver configuration, see below.
 
