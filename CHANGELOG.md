@@ -31,6 +31,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Replace calls to deprecated/undocumented `logging.warn` with `logging.warning` (by Sebastian Wagner, fixes #2013).
 
 ### Tools
 
