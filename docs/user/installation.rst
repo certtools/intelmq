@@ -26,7 +26,7 @@ Supported and recommended operating systems are:
 * Ubuntu: 18.04, 20.04
 * Docker Engine: 18.x and higher
 
-Other distributions which are (most probably) supported include CentOS 8, RHEL, Fedora and openSUSE Tumbleweed.
+Other distributions which are (most probably) supported include RHEL, Fedora, openSUSE Tumbleweed and FreeBSD 12.
 
 A short guide on hardware requirements can be found on the page :doc:`hardware-requirements`.
 
