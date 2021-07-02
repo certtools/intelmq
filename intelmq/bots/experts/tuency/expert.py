@@ -36,6 +36,7 @@ class TuencyExpertBot(Bot):
         event = self.receive_message()
         if not ("source.ip" in event or "source.fqdn" in event):
             self.send_message(event)
+            self.acknowledge_message()
             return
 
         try:
@@ -49,6 +50,7 @@ class TuencyExpertBot(Bot):
         except KeyError as exc:
             self.logger.debug('Skipping event because of missing field: %s.', exc)
             self.send_message(event)
+            self.acknowledge_message()
             return
         try:
             params["ip"] = event["source.ip"]
@@ -68,6 +70,8 @@ class TuencyExpertBot(Bot):
             if 'interval' not in response:
                 # empty response
                 self.send_message(event)
+                self.acknowledge_message()
+                return
             elif response['interval']['unit'] == 'immediate':
                 event["extra.ttl"] = 0
             else:
@@ -78,6 +82,7 @@ class TuencyExpertBot(Bot):
         event.add('source.abuse_contact', ','.join(contacts), overwrite=self.overwrite)
 
         self.send_message(event)
+        self.acknowledge_message()
 
 
 BOT = TuencyExpertBot
