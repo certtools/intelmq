@@ -99,6 +99,9 @@ class RDAPExpertBot(Bot, CacheMixin):
 
                     if resp.status_code < 200 or resp.status_code > 299:
                         if resp.status_code == 404:
+                            self.logger.debug('Treating server response 404 as no data.')
+                            self.send_message(event)
+                            self.acknowledge_message()
                             return
                         self.logger.debug("RDAP Server '%s' responded with '%d' for domain '%s'.", service['url'], resp.status_code, url)
                         raise ValueError(f"Unable to process server's response, the returned status-code was {resp.status_code}. Enable debug logging to see more details.")
