@@ -113,7 +113,7 @@ class RDAPExpertBot(Bot, CacheMixin):
                         raise ValueError("Unable to parse server response as JSON. Enable debug logging to see more details.")
                     for entity in resp['entities']:
                         if not isinstance(entity, dict):
-                            self.logger.warn("Invalid type '%s' in entities of response for domain '%s' found.", type(entity), url)
+                            self.logger.warning("Invalid type '%s' in entities of response for domain '%s' found.", type(entity), url)
                             continue
 
                         if 'removed' in entity['roles']:
@@ -123,7 +123,7 @@ class RDAPExpertBot(Bot, CacheMixin):
                             if 'entities' in entity:
                                 for subentity in entity['entities']:
                                     if not isinstance(subentity, dict):
-                                        self.logger.warn("Invalid type '%s' in entities of response for domain '%s' found.", type(subentity), url)
+                                        self.logger.warning("Invalid type '%s' in entities of response for domain '%s' found.", type(subentity), url)
                                         continue
 
                                     for subentrole in subentity['roles']:

@@ -60,7 +60,7 @@ class TCPOutputBot(Bot):
                     response = self.con.recv(2)
                     if response == b"Ok":
                         break
-                    self.logger.warn("Message not delivered, retrying.")
+                    self.logger.warning("Message not delivered, retrying.")
                     time.sleep(1)
                 else:
                     break
