@@ -684,6 +684,7 @@ UPGRADES = OrderedDict([
     ((2, 3, 2), ()),
     ((2, 3, 3), (v233_feodotracker_browse, )),
     ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, v300_pipeline_file_removal, ))
+    ((3, 0, 1), ()),
 ])
 
 ALWAYS = (harmonization, )
