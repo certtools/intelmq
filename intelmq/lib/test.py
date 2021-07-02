@@ -323,6 +323,12 @@ class BotTestCase(object):
                          'You probably need to increase the number of '
                          'iterations of `run_bot`.')
 
+        internal_queue_size = len(self.get_input_internal_queue())
+        self.assertEqual(internal_queue_size, 0,
+                         'The internal input queue is not empty, but has '
+                         f'{internal_queue_size} element(s). '
+                         'The bot did not acknowledge all messages.')
+
         """ Test if report has required fields. """
         if self.bot_type == 'collector':
             for report_json in self.get_output_queue():
@@ -380,6 +386,14 @@ class BotTestCase(object):
            with fixture data in setUp()"""
         if self.pipe:
             return self.pipe.state["%s-input" % self.bot_id]
+        else:
+            return []
+
+    def get_input_internal_queue(self):
+        """Returns the internal input queue of this bot which can be filled
+           with fixture data in setUp()"""
+        if self.pipe:
+            return self.pipe.state["%s-input-internal" % self.bot_id]
         else:
             return []
 
