@@ -54,14 +54,15 @@ class TestRDAPExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = RDAPExpertBot
-        self.sysconfig = {
+    def set_bot(cls):
+        cls.bot_reference = RDAPExpertBot
+        cls.sysconfig = {
             'rdap_bootstrapped_servers': {
                 'com': 'http://localhost/rdap/v1/',
                 'versicherung': 'http://localhost/rdap/v1/',
             }
         }
+        cls.use_cache = True
 
     def test(self, mocker):
         prepare_mocker(mocker)
