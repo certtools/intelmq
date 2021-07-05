@@ -52,7 +52,7 @@ CHANGELOG
 
 ### Core
 - `intelmq.lib.harmonization`:
-  - New class `ClassificationTaxonomy` with fixed list of taxonomies and sanitiation
+  - New class `ClassificationTaxonomy` with fixed list of taxonomies and sanitiation (by Sebastian Wagner).
 - `intelmq.lib.bot`:
   - Handle `InvalidValue` exceptions upon message retrieval by dumping the message instead of repeating endlessly (#1765, PR#1766 by Filip Pokorný).
   - Rewrite of the parameter loading and handling, getting rid of the `parameters` member (PR#1729 by Birger Schacht).
@@ -61,7 +61,7 @@ CHANGELOG
   - `InvalidValue`: Add optional parameter `object` (PR#1766 by Filip Pokorný).
 - `intelmq.lib.utils`:
   - New function `list_all_bots` to list all available/installed bots as replacement for the BOTS file (#368, #552, #644, #757, #1069, #1750, PR#1751 by Sebastian Waldbauer).
-  - New function `get_bots_settings` to return the effective bot parameters, with global parameters applied.
+  - New function `get_bots_settings` to return the effective bot parameters, with global parameters applied (PR#1928 by Sebastian Wagner, #1927).
   - Removed deprecated function `create_request_session_from_bot` (PR#1997 by Sebastian Wagner, #1404).
   - `parse_relative`: Add support for parsing minutes and seconds (PR#1857 by Sebastian Wagner).
 - `intelmq.lib.bot_debugger`:
@@ -70,13 +70,13 @@ CHANGELOG
   - Do not rely on the runtime configuration's `group` setting of bots to determine the required message type of messages given on the command line (PR#1949 by Sebastian Wagner).
 
 ### Development
-- `rewrite_config_files.py`: Removed obsolete BOTS-file-related rewriting functionality.
-- A Github action that checks for [reuse compliance](https://reuse.software) of all the license and copyright headers was added.
+- `rewrite_config_files.py`: Removed obsolete BOTS-file-related rewriting functionality (by Sebastian Wagner, #1543).
+- A GitHub Action that checks for [reuse compliance](https://reuse.software) of all the license and copyright headers was added (PR#1976 by Birger Schacht).
 - PyYAML is no longer a required dependency for development environments, all calls to it have been replaced by ruamel.yaml (by Sebastian Wagner).
 
 ### Data Format
 The IntelMQ Data Harmonization ("DHO") is renamed to IntelMQ Data Format ("IDF"). Internal files remain and work the same as before (PR#1818 by Sebastian Waldbauer, fixes 1810).
-Update allowed classification fields to version 1.3 (2021-05-18) (fixes #1409, #1476).
+Update allowed classification fields to version 1.3 (2021-05-18) (by Sebastian Wagner, fixes #1409, #1476).
 - The taxonomy `abusive content` has been renamed to `abusive-content`.
 - The taxonomy `information content security` has been renamed to `information-content-security`.
   - The validation of type `unauthorised-information-access` has been fixed, a bug prevented the use of it.
@@ -107,7 +107,7 @@ Update allowed classification fields to version 1.3 (2021-05-18) (fixes #1409, #
 
 #### Collectors
 - Remove `intelmq.bots.collectors.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
-  users mailinglist, the bot is not used by anyone. (https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html, PR#1761, closes #1614)
+  users mailinglist, the bot is not used by anyone. (https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html, PR#1761 by Birger Schacht, closes #1614).
 - `intelmq.bots.collectors.mail._lib`: Added parameter `mail_starttls` for STARTTLS in all mail collector bots (PR#1831 by Marius Karotkis, fixes #1128).
 - Added `intelmq.bots.collectors.fireeye`: A bot that collects indicators from Fireeye MAS appliances (PR#1745 by Christopher Schappelwein).
 - `intelmq.bots.collectors.api.collector_api` (PR#1987 by Mikk Margus Möll, fixes #1986):
@@ -128,9 +128,9 @@ Update allowed classification fields to version 1.3 (2021-05-18) (fixes #1409, #
   - Added `--update-database` option to update domain suffix database (by Sebastian Wagner).
   - Fix `check` method: load database with UTF-8 encoding explicitly (by Sebastian Wagner).
 - Added `intelmq.bots.experts.http.expert_status`: A bot that fetches the HTTP Status for a given URI and adds it to the message (PR#1789 by Birger Schacht, fixes #1047 partly).
-- Added `intelmq.bots.experts.http.expert_content`: A bot that fetches an HTTP resource and checks if it contains a specific string.
+- Added `intelmq.bots.experts.http.expert_content`: A bot that fetches an HTTP resource and checks if it contains a specific string (PR#1811 by Birger Schacht).
 - Added `intelmq.bots.experts.lookyloo.expert`: A bot that sends requests to a lookyloo instance & adds `screenshot_url` to the event (PR#1844 by Sebastian Waldbauer, fixes #1048).
-- Added `intelmq.bots.experts.rdap.expert`: A bot that checks the rdap protocol for an abuse contact for a given domain.
+- Added `intelmq.bots.experts.rdap.expert`: A bot that checks the rdap protocol for an abuse contact for a given domain (PR#1881 by Sebastian Waldbauer and Sebastian Wagner).
 - `intelmq.bots.experts.sieve.expert`:
   - Add operators for comparing lists and sets (PR#1895 by Mikk Margus Möll):
     - `:equals`
@@ -154,12 +154,12 @@ Update allowed classification fields to version 1.3 (2021-05-18) (fixes #1409, #
 - Removed deprecated `intelmq.bots.experts.ripencc_abuse_contact.expert`. It was replaced by `intelmq.bots.experts.ripe.expert` and marked as deprecated in 2.0.0.beta1 (PR#1997 by Sebastian Wagner, #1404).
 - `intelmq.bots.experts.modify.expert`:
   - Removed compatibility with deprecated configuration format before 1.0.0.dev7 (PR#1997 by Sebastian Wagner, #1404).
-- Added `intelmq.bots.experts.aggregate`: A bot that aggregate events based upon given fields & a timespan. (PR#1959 by Sebastian Waldbauer)
+- Added `intelmq.bots.experts.aggregate`: A bot that aggregate events based upon given fields & a timespan (PR#1959 by Sebastian Waldbauer).
 - Added `intelmq.bots.experts.tuency`: A bot that queries the IntelMQ API of a tuency instance (PR#1857 by Sebastian Wagner, fixes #1856).
 
 #### Outputs
 - Remove `intelmq.bots.outputs.xmpp`: one of the dependencies of the bot was deprecated and according to a short survey on the IntelMQ
-  users mailinglist, the bot is not used by anyone. (https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html, PR#1761, closes #1614)
+  users mailinglist, the bot is not used by anyone. (https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html, PR#1761 by Birger Schacht, closes #1614)
 - `intelmq.bots.outputs.smtp`: Add more debug logging (PR#1949 by Sebastian Wagner).
 - Added new bot `intelmq.bots.outputs.templated_smtp` (PR#1901 by Karl-Johan Karlsson).
 
@@ -167,7 +167,7 @@ Update allowed classification fields to version 1.3 (2021-05-18) (fixes #1409, #
 - Updated user and developer documentation to reflect the removal of the BOTS file (PR#1780 by Birger Schacht).
 - Bots documentation:
   - Added anchors to all bot sections derived from the module names for easier linking (PR#1943 by Sebastian Wagner fixes part of certtools/intelmq-api#4).
-- License and copyright information was added to all the bots.
+- License and copyright information was added to all the bots (PR#1976 by Birger Schacht).
 - Added documentation on the EventDB (PR#1955 by Birger Schacht, PR#1985 by Sebastian Wagner).
 - Added TimescaleDB for time-series documentation (PR#1990 by Sebastian Waldbauer).
 - Improved n6 interoperability documentation by adding more graphs and illustrations (PR#1991 by Sebastian Wagner).
