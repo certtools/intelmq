@@ -29,6 +29,7 @@ class DummyOutputBot(OutputBot):
     def process(self):
         event = self.receive_message()
         self.result = self.export_event(event, return_type=self.return_type)
+        self.acknowledge_message()
 
 
 class TestDummyOutputBot(BotTestCase, TestCase):

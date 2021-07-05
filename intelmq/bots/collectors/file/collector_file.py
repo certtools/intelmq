@@ -47,8 +47,8 @@ class FileCollectorBot(CollectorBot):
                                              expected="directory")
 
         if not self.postfix:
-            self.logger.warn("No file extension was set. The collector will"
-                             " read all files in %s.", self.path)
+            self.logger.warning("No file extension was set. The collector will"
+                                " read all files in %s.", self.path)
             if self.delete_file:
                 self.logger.error("This configuration would delete all files"
                                   " in %s. I'm stopping now....",

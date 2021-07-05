@@ -60,10 +60,10 @@ class MicrosoftBingMurlsParserBot(ParserBot):
                     if value[0] != '??':
                         event.add('source.geolocation.cc', value[0])
                     continue
-                self.logger.warn("Field 'Tags' does not have expected "
-                                 "length 1, but %r. Saving as %r, but "
-                                 "please report this as bug with samples."
-                                 "" % (len(value), MAPPING[key]))
+                self.logger.warning("Field 'Tags' does not have expected "
+                                    "length 1, but %r. Saving as %r, but "
+                                    "please report this as bug with samples."
+                                    "" % (len(value), MAPPING[key]))
             event[MAPPING[key]] = value
         event.add('classification.type', 'blacklist')
         event.add('raw', raw)

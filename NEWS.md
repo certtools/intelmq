@@ -9,8 +9,9 @@ NEWS
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 Please refer to the changelog for a full list of changes.
 
-3.0.0 Bugfix release (unreleased)
---------------------------------
+3.0.1 Maintenance release (unreleased)
+--------------------------------------
+
 
 ### Requirements
 
@@ -25,7 +26,7 @@ Please refer to the changelog for a full list of changes.
 ### Postgres databases
 
 
-3.0.0 Major release (unreleased)
+3.0.0 Major release (2021-07-02)
 --------------------------------
 
 ### Requirements
@@ -120,8 +121,6 @@ The `runtime.conf` file was replaced by a `runtime.yaml` file. IntelMQ moves the
 - Modify expert: Compatibility with the deprecated configuration format (before 1.0.0.dev7) was removed.
 - RT collector: compatibility with the deprecated parameter `unzip_attachment` (removed in 2.1.0) was removed.
 
-
-### Libraries
 
 ### Postgres databases
 The following statements optionally update existing data for the harmonization classification changes:

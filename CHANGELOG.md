@@ -6,7 +6,6 @@
 CHANGELOG
 ==========
 
-
 3.0.1 (unreleased)
 ------------------
 
@@ -32,6 +31,8 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Replace calls to deprecated/undocumented `logging.warn` with `logging.warning` (by Sebastian Wagner, fixes #2013).
+- `intelmq.tests.bots.experts.rdap.test_expert`: Declare cache use, fixes build failures (by Sebastian Wagner, fixes #2014).
 
 ### Tools
 
@@ -40,7 +41,7 @@ CHANGELOG
 ### Known issues
 
 
-3.0.0 (unreleased)
+3.0.0 (2021-07-02)
 ------------------
 
 ### Configuration
@@ -204,7 +205,6 @@ Update allowed classification fields to version 1.3 (2021-05-18) (fixes #1409, #
 ### Known issues
 - ParserBot: erroneous raw line recovery in error handling (#1850).
 - ruamel.yaml loader and dumper: human readability bug / support for comments (#2003).
-- load_configuration does not support JSON files with tab whitespace because of ruamel loader (#1999).
 
 
 2.3.3 (2021-05-31)

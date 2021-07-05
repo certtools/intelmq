@@ -24,12 +24,29 @@ Check before
 Documentation
 *************
 
+These apply to all projects:
+
  * CHANGELOG.MD and
  * NEWS.MD: Update the latest header, fix the order, remove empty sections and (re)group the entries if necessary.
- * `intelmq/version.py`: Update the version.
- * `debian/changelog`: Insert a new section for the new version with the tool `dch`.
+ * ``debian/changelog``: Insert a new section for the new version with the tool ``dch`` or update the version of the existing last item if yet unreleased.
+
+IntelMQ
+^^^^^^^
+
+ * ``intelmq/version.py``: Update the version.
 
 Eventually adapt the default log levels if necessary. Should be INFO for stable releases. See older releases.
+
+IntelMQ API
+^^^^^^^^^^^
+
+ * ``intelmq_api/version.py``: Update the version.
+
+IntelMQ Manager
+^^^^^^^^^^^^^^^
+
+ * ``intelmq_manager/version.py``: Update the version.
+ * ``intelmq_manager/static/js/about.js``: Update the version.
 
 ******************************
 Commit, push, review and merge
@@ -99,7 +116,12 @@ Increase the version in `intelmq/version.py` and declare it as alpha version.
 Add the new version in `intelmq/lib/upgrades.py`.
 Add a new entry in `debian/changelog` with `dch -v [version] -c debian/changelog`.
 
-Add new entries to `CHANGELOG.md` and `NEWS.md`. For `CHANGELOG.md`:
+Add new entries to `CHANGELOG.md` and `NEWS.md`.
+
+IntelMQ
+^^^^^^^
+
+For ``CHANGELOG.md``:
 
 .. code-block:: markdown
 
@@ -132,7 +154,7 @@ Add new entries to `CHANGELOG.md` and `NEWS.md`. For `CHANGELOG.md`:
 
    ### Known issues
 
-And for `NEWS.md`:
+And for ``NEWS.md``:
 
 .. code-block:: markdown
 
@@ -147,3 +169,37 @@ And for `NEWS.md`:
    ### Libraries
 
    ### Postgres databases
+
+IntelMQ API
+^^^^^^^^^^^
+
+An empty section of ``CHANGELOG.rst``.
+
+IntelMQ Manager
+^^^^^^^^^^^^^^^
+
+For ``CHANGELOG.md``:
+
+.. code-block:: markdown
+
+   ### Pages
+
+   #### Landing page
+
+   #### Configuration
+
+   #### Management
+
+   #### Monitor
+
+   #### Check
+
+   ### Documentation
+
+   ### Third-party libraries
+
+   ### Packaging
+
+   ### Known issues
+
+And an empty section in the ``NEWS.md`` file.
