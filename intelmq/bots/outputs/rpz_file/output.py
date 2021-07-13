@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import datetime
 from datetime import datetime
 import os
 from collections import defaultdict
@@ -11,7 +10,7 @@ RPZ_INDICATOR_MAP = {
     "source.fqdn": "Intel::DOMAIN"
 }
 
-now = datetime.now()
+now = datetime.now() # for timestamp
 
 
 class RpzFileOutputBot(OutputBot):
@@ -49,7 +48,6 @@ class RpzFileOutputBot(OutputBot):
         self.set_rpz_header()
 
         self.logger.debug("Opening %r file.", self.file)
-        self.format_filename = getattr(self, 'format_filename', False)
         self.errors = getattr(self, 'encoding_errors_mode', 'strict')
         if not self.format_filename:
             self.open_file(self.file)
@@ -91,17 +89,17 @@ class RpzFileOutputBot(OutputBot):
             ev.update(event)
             if 'time.observation' in ev:
                 try:
-                    ev['time.observation'] = datetime.datetime.strptime(ev['time.observation'],
+                    ev['time.observation'] = datetime.strptime(ev['time.observation'],
                                                                         '%Y-%m-%dT%H:%M:%S+00:00')
                 except ValueError:
-                    ev['time.observation'] = datetime.datetime.strptime(ev['time.observation'],
+                    ev['time.observation'] = datetime.strptime(ev['time.observation'],
                                                                         '%Y-%m-%dT%H:%M:%S.%f+00:00')
             if 'time.source' in ev:
                 try:
-                    ev['time.source'] = datetime.datetime.strptime(ev['time.source'],
+                    ev['time.source'] = datetime.strptime(ev['time.source'],
                                                                    '%Y-%m-%dT%H:%M:%S+00:00')
                 except ValueError:
-                    ev['time.source'] = datetime.datetime.strptime(ev['time.source'],
+                    ev['time.source'] = datetime.strptime(ev['time.source'],
                                                                    '%Y-%m-%dT%H:%M:%S.%f+00:00')
             filename = self.file.format(event=ev)
             if not self.file or filename != self._file.name:
