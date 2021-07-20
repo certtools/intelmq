@@ -65,12 +65,12 @@ class ShodanStreamCollectorBot(CollectorBot):
                 ReadTimeoutError,
                 APIError) as exc:
             self.__error_count += 1
-            if (self.__error_count > self.parameters.error_max_retries):
+            if (self.__error_count > self.error_max_retries):
                 self.__error_count = 0
                 raise
             else:
                 self.logger.info('Got exception %r, retrying (consecutive error count %d <= %d).',
-                                 exc, self.__error_count, self.parameters.error_max_retries)
+                                 exc, self.__error_count, self.error_max_retries)
 
 
 BOT = ShodanStreamCollectorBot
