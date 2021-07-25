@@ -60,7 +60,7 @@ class MailAttachCollectorBot(MailCollectorBot):
                     raw_reports = unzip(attach['content'].read(), self.extract_files,
                                         return_names=True, logger=self.logger)
                 else:
-                    raw_reports = ((None, attach['content'].read()), )
+                    raw_reports = ((attach_filename, attach['content'].read()), )
 
                 for file_name, raw_report in raw_reports:
                     report = self.new_report()
