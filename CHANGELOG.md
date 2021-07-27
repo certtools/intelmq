@@ -19,6 +19,7 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.shodan.collector_stream`: Fix access to parameters, the bot wrongly used `self.parameters` (PR#2020 by Mikk Margus Möll).
 
 #### Parsers
 
