@@ -15,7 +15,7 @@ import intelmq.lib.test as test
 from intelmq.bots.collectors.mail.collector_mail_attach import MailAttachCollectorBot
 from intelmq.lib.utils import base64_encode
 if os.getenv('INTELMQ_TEST_EXOTIC'):
-    from .lib import MockedZipImbox, MockedBadAttachmentImbox
+    from .lib import MockedZipImbox, MockedBadAttachmentImbox, MockedTextAttachmentImbox
 
 REPORT_FOOBARZIP = {
                     '__type': 'Report',
@@ -28,6 +28,8 @@ REPORT_FOOBARZIP = {
                     'raw': base64_encode('bar text\n'),
                     'extra.file_name': 'foobar',
                     }
+REPORT_FOOBARTXT = REPORT_FOOBARZIP.copy()
+REPORT_FOOBARTXT['extra.file_name'] = 'foobar.txt'
 
 
 @test.skip_exotic()
@@ -66,6 +68,15 @@ class TestMailAttachCollectorBot(test.BotTestCase, unittest.TestCase):
         with mock.patch('imbox.Imbox', new=MockedBadAttachmentImbox):
             self.run_bot()
         self.assertOutputQueueLen(0)
+
+    def test_text_attachment(self):
+        """
+        https://github.com/certtools/intelmq/pull/2021
+        """
+        with mock.patch('imbox.Imbox', new=MockedTextAttachmentImbox):
+            self.run_bot(parameters={'attach_regex': '.*.txt$',
+                                     'extract_files': False})
+        self.assertMessageEqual(0, REPORT_FOOBARTXT)
 
 
 if __name__ == '__main__':  # pragma: no cover

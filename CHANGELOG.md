@@ -36,6 +36,7 @@ CHANGELOG
 ### Tests
 - Replace calls to deprecated/undocumented `logging.warn` with `logging.warning` (by Sebastian Wagner, fixes #2013).
 - `intelmq.tests.bots.experts.rdap.test_expert`: Declare cache use, fixes build failures (by Sebastian Wagner, fixes #2014).
+- `intelmq.tests.bots.collectors.mail.test_collector_attach`: Test text attachment (by Sebastian Wagner).
 
 ### Tools
 
