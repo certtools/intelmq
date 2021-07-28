@@ -20,6 +20,7 @@ CHANGELOG
 ### Bots
 #### Collectors
 - `intelmq.bots.collectors.shodan.collector_stream`: Fix access to parameters, the bot wrongly used `self.parameters` (PR#2020 by Mikk Margus Möll).
+- `intelmq.bots.collectors.mail.collector_mail_attach`: Add attachment file name as `extra.file_name` also if the attachment is not compressed (PR#2021 by Alex Kaplan).
 
 #### Parsers
 
