@@ -67,7 +67,7 @@ New features:
 
 The [sieve bot documentation](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#intelmq-bots-experts-sieve-expert) has been updated to reflect on these new changes.
 
-### Harmonization
+### Data format
 The classification scheme has been updated to better match the [Reference Security Incident Taxonomy (RSIT)](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed, deleted or merged into others:
 
 | old taxonomy name | old type name | new taxonomy name | new type name |
@@ -104,9 +104,9 @@ See the section "Postgres databases" below for instructions to update existing d
 #### "Malware"
 
 The previously existing classification type "malware" under the taxonomy "malicious code" was removed, as this type does not exist in the RSIT.
-Most of the usages were wrong anyway, and should have been infected-device, malware-distribution or something else anyway.
+Most of the usages were wrong anyway, and should have been infected-device, malware-distribution or something else.
 There is only one usage in IntelMQ, which can not be changed.
-And that one is really about malware itself (or: the hashes of samples). For this purpose, the new type "malware" under the taxonomy "other" was created, *slightly* deviating from the RSIT in this respect, but "other" can be freely extended.
+And that one is really about malware itself (or: the hashes of samples). For this purpose, the new type "malware" under the taxonomy "other" was created, *slightly* deviating from the RSIT in this respect, but the "other" taxonomy can be freely extended.
 
 ### Configuration
 

@@ -19,6 +19,8 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
   - `sbilly: Awesome Security <https://github.com/sbilly/awesome-security#threat-intelligence>`_
   - `pannoniait: Backlists <https://doku.pannoniait.at/doku.php?id=know-how:blacklists>`_
   - `hslatman: awesome-threat-intelligence <https://github.com/hslatman/awesome-threat-intelligence>`_
+  - `Zeek Intelligence Feeds <https://github.com/CriticalPathSecurity/Zeek-Intelligence-Feeds>`_
+  - `imuledx OSING feeds <https://github.com/imuledx/OSINT_sources>`_
 
 - Some third party intelmq bots: `NRDCS' IntelMQ fork <https://github.com/NRDCS/intelmq/tree/certlt/intelmq/bots>`_
 
