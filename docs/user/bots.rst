@@ -2093,17 +2093,18 @@ The filter bot is capable of filtering specific events.
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
-* `description:` filter messages (drop or pass messages) FIXME
+* `description:` A simple filter for messages (drop or pass) based on a exact string comparison or regular expression
 
 **Configuration Parameters**
 
 *Parameters for filtering with key/value attributes*
 
-* `filter_key` - key from data format
-* `filter_value` - value for the key
-* `filter_action` - action when a message match to the criteria (possible actions: keep/drop)
-* `filter_regex` - attribute determines if the `filter_value` shall be treated as regular expression or not.
-   If this attribute is not empty, the bot uses python's "search" function to evaluate the filter.
+* ``filter_key`` - key from data format
+* ``filter_value`` - value for the key
+* ``filter_action`` - action when a message match to the criteria (possible actions: keep/drop)
+* ``filter_regex`` - attribute determines if the ``filter_value`` shall be treated as regular expression or not.
+   If this attribute is not empty (can be ``true``, ``yes`` or whatever), the bot uses python's ```re.search`` <https://docs.python.org/3/library/re.html#re.search>`_ function to evaluate the filter with regular expressions.
+   If this attribute is empty or evaluates to false, an exact string comparison is performed. A check on string *inequality* can be achieved with the usage of *Paths* described below.
 
 *Parameters for time based filtering*
 
