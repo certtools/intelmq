@@ -626,7 +626,7 @@ class Bot(object):
             self.__destination_pipeline.send(raw_message, path=path,
                                              path_permissive=path_permissive)
 
-    def receive_message(self):
+    def receive_message(self) -> libmessage.Message:
         """
 
 
