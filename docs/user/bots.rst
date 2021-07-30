@@ -1993,6 +1993,11 @@ Deduplicator
   * "blacklist" configuration: all keys except those in `filter_keys` will be considered to verify if an event is duplicated or not.
 * `filter_keys`: string with multiple keys separated by comma. Please note that `time.observation` key will not be considered even if defined, because the system always ignore that key.
 
+When using a whitelist field pattern and a small number of fields (keys), it becomes more important, that these fields exist in the events themselves.
+If a field does not exist, but is part of the hashing/deduplication, this field will be ignored.
+If such events should not get deduplicated, you need to filter them out before the deduplication process, e.g. using a sieve expert.
+See also `this discussion thread <https://lists.cert.at/pipermail/intelmq-users/2021-July/000370.html>`_ on the mailing-list.
+
 **Parameters Configuration Example**
 
 *Example 1*
