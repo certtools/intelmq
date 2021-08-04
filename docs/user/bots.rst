@@ -3654,6 +3654,50 @@ REST API
 
 .. _intelmq.bots.outputs.smtp.output:
 
+RPZ
+^^^^^^^^
+
+**Information**
+
+* `name:` `intelmq.bots.outputs.rpz_file.output`
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Generate RPZ file
+
+**Configuration Parameters**
+
+* `cname`: example rpz.yourdomain.eu
+* `organization_name`: Your organisation name
+* `rpz_domain`: Information website about RPZ
+* `hostmaster_rpz_domain`: Technical website
+* `rpz_email`: Contact email
+* `ttl`: Time to live
+* `ncachttl`: DNS negative cache
+* `serial`: Time stamp or another numbering
+* `refresh`: Refresh time
+* `retry`: Retry time
+* `expire`: Expiration time
+* `test_domain`: For test domain, it's added in first rpz file (after header)
+
+Header example:
+```
+$TTL 3600
+@ SOA rpz.yourdomain.eu. hostmaster.rpz.yourdomain.eu. 2105260601 60 60 432000 60
+NS localhost.
+;
+; yourdomain.eu. CERT.XX Response Policy Zones (RPZ)
+; Last updated: 2021-05-26 06:01:41 (UTC)
+;
+; Terms Of Use: https://rpz.yourdomain.eu
+; For questions please contact rpz [at] yourdomain.eu
+;
+*.maliciousdomain.com CNAME rpz.yourdomain.eu.
+*.secondmaliciousdomain.com CNAME rpz.yourdomain.eu.
+```
+
+.. _intelmq.bots.outputs.rpz_file.output:
+
 SMTP Output Bot
 ^^^^^^^^^^^^^^^
 
