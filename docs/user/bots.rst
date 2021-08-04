@@ -1858,7 +1858,7 @@ Cut from string
 * `field_for_cut`: example field 'source.fqdn'
 
 **Description**
-Remove `www.` from domains.
+Remove string part from string, example: `www.` from domains.
 
 .. _intelmq.bots.experts.domain_suffix.expert:
 
