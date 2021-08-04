@@ -16,12 +16,7 @@ now = datetime.now() # for timestamp
 class RpzFileOutputBot(OutputBot):
     _file = None
     format_filename: bool = False
-    hierarchical_output: bool = False
-    keep_raw_field: bool = False
-    message_jsondict_as_string: bool = False
-    message_with_type: bool = False
-    single_key: bool = False
-    is_multithreadable = False
+    __Bot_is_multithreadable = False
 
     encoding_errors_mode = 'strict'
     file: str = "/opt/intelmq/var/lib/bots/file-output/rpz"
@@ -31,16 +26,15 @@ class RpzFileOutputBot(OutputBot):
     rpz_domain: str = ''
     hostmaster_rpz_domain: str = ''
     rpz_email: str = ''
-    ttl: str = '3600'
-    generate_time: str = now.strftime("%Y-%m-%d %H:%M:%S")
-    ncachttl: str = '60'
+    ttl: int = 3600
+    ncachttl: int = 60
     serial: str = now.strftime("%y%m%d%H%M")
-    refresh: str = '60'
-    retry: str = '60'
-    expire: str = '432000'
+    refresh: int = 60
+    retry: int = 60
+    expire: int = 432000
     test_domain: str = ''
 
-    rpz_header = ""
+    _rpz_header = ""
 
     def init(self):
         self._file = None
@@ -54,9 +48,10 @@ class RpzFileOutputBot(OutputBot):
         self.logger.info("File %r is open.", self.file)
 
     def set_rpz_header(self):
-        self.rpz_header = "$TTL " + str(self.ttl) + "\n@ SOA " + self.rpz_domain + ". " + self.hostmaster_rpz_domain + ". " + str(self.serial) + " " + str(self.refresh) + " " + str(self.retry) + " " + str(self.expire) + " " + str(self.ncachttl) + "\n NS localhost.\n;\n; " + self.organization_name + " Response Policy Zones (RPZ)\n; Last updated: " + str(self.generate_time) + " (UTC)\n;\n; Terms Of Use: https://" + self.rpz_domain + "\n; For questions please contact " + self.rpz_email + "\n;\n"
+        generate_time: str = now.strftime("%Y-%m-%d %H:%M:%S")
+        self._rpz_header = "$TTL " + str(self.ttl) + "\n@ SOA " + self.rpz_domain + ". " + self.hostmaster_rpz_domain + ". " + str(self.serial) + " " + str(self.refresh) + " " + str(self.retry) + " " + str(self.expire) + " " + str(self.ncachttl) + "\n NS localhost.\n;\n; " + self.organization_name + " Response Policy Zones (RPZ)\n; Last updated: " + str(self.generate_time) + " (UTC)\n;\n; Terms Of Use: https://" + self.rpz_domain + "\n; For questions please contact " + self.rpz_email + "\n;\n"
         if self.test_domain:
-            self.rpz_header = self.rpz_header + self.test_domain + " CNAME " + self.cname + ".\n"  # for test
+            self._rpz_header = self._rpz_header + self.test_domain + " CNAME " + self.cname + ".\n"  # for test
 
     def open_file(self, filename: str = None):
         if self._file is not None:
@@ -78,8 +73,8 @@ class RpzFileOutputBot(OutputBot):
 
     def add_rpz_header(self):
         self._file.seek(0)
-        if self._file.read() != self.rpz_header and not os.stat(self._file.name).st_size:
-            self._file.write(self.rpz_header)
+        if not (len(self._file.read())):
+            self._file.write(self._rpz_header)
             self._file.flush()
 
     def process(self):
