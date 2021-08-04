@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Testing string cut by delimiter bot
+Testing truncate by delimiter bot
 """
 import unittest
 import intelmq.lib.test as test
-from intelmq.bots.experts.string_cut_delimiter.expert import StringCutDelimiterExpertBot
+from intelmq.bots.experts.truncate_by_delimiter.expert import TruncateByDelimiterExpertBot
 
 EXAMPLE_INPUT = {
     '__type': 'Event',
@@ -49,14 +49,14 @@ EXAMPLE_OUTPUT_2 = {
     'extra.elastic_id': 'VwVnSnUBXjJtaqsUSw8T'}
 
 
-class TestStringCutDelimiterExpertBot(test.BotTestCase, unittest.TestCase):
+class TestTruncateByDelimiterExpertBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for TestStringCutDelimiterExpertBot.
+    A TestCase for TestTruncateByDelimiterExpertBot.
     """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = StringCutDelimiterExpertBot
+        cls.bot_reference = TruncateByDelimiterExpertBot
 
     def test_event_cut(self):
         self.input_message = EXAMPLE_INPUT
