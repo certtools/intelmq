@@ -6,25 +6,33 @@ from intelmq.lib.bot import Bot
 
 
 class CutFromStringExpertBot(Bot):
-    string_from_start: bool = True  # True - from start, False - from end
-    string_for_cut: str = 'www.'
+    remove_prefix: bool = True  # True - from start, False - from end
+    affix: str = 'www.'
     field: str = 'source.fqdn'
 
     def process(self):
         event = self.receive_message()
 
         if self.field in event:
-            field_string = event[self.field]
-            if self.string_from_start and field_string.startswith(self.string_for_cut):
-                field_string = field_string[len(self.string_for_cut):]
-                event.change(self.field, field_string)
-
-            if not self.string_from_start and field_string.endswith(self.string_for_cut):
-                field_string = field_string[:-len(self.string_for_cut)]
-                event.change(self.field, field_string)
+            if self.remove_prefix:
+                event.change(self.field, self.removeprefix(event[self.field], self.affix))
+            else:
+                event.change(self.field, self.removesuffix(event[self.field], self.affix))
 
         self.send_message(event)
         self.acknowledge_message()
+
+    def removeprefix(self, field: str, prefix: str, /) -> str:
+        if field.startswith(prefix):
+            return field[len(prefix):]
+        else:
+            return field[:]
+
+    def removesuffix(self, field: str, suffix: str, /) -> str:
+        if suffix and field.endswith(suffix):
+            return field[:-len(suffix)]
+        else:
+            return field[:]
 
 
 BOT = CutFromStringExpertBot

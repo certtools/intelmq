@@ -81,7 +81,7 @@ class TestCutFromStringExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_event_cut_end(self):
         self.input_message = EXAMPLE_INPUT
-        self.run_bot(parameters={"string_from_start": 0, "string_for_cut": ".lt"})
+        self.run_bot(parameters={"remove_prefix": False, "affix": ".lt"})
         self.assertMessageEqual(0, EXAMPLE_OUTPUT1)
 
 

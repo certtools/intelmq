@@ -1853,12 +1853,12 @@ Cut from string
 
 **Configuration Parameters**
 
-* `string_from_start`: True - cut from start, False - cut from end
-* `string_for_cut`: example 'www.'
-* `field_for_cut`: example field 'source.fqdn'
+* `remove_prefix`: True - cut from start, False - cut from end
+* `affix`: example 'www.'
+* `field`: example field 'source.fqdn'
 
 **Description**
-Remove string part from string, example: `www.` from domains.
+Remove part of string from string, example: `www.` from domains.
 
 .. _intelmq.bots.experts.domain_suffix.expert:
 
