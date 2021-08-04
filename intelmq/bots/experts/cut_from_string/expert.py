@@ -15,11 +15,11 @@ class CutFromStringExpertBot(Bot):
 
         if self.field in event:
             field_string = event[self.field]
-            if self.string_from_start == 1 and field_string.startswith(self.string_for_cut):
+            if self.string_from_start and field_string.startswith(self.string_for_cut):
                 field_string = field_string[len(self.string_for_cut):]
                 event.change(self.field, field_string)
 
-            if self.string_from_start == 0 and field_string.endswith(self.string_for_cut):
+            if not self.string_from_start and field_string.endswith(self.string_for_cut):
                 field_string = field_string[:-len(self.string_for_cut)]
                 event.change(self.field, field_string)
 
