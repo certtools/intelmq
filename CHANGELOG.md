@@ -32,6 +32,7 @@ CHANGELOG
 - `intelmq.bots.outputs.misp.output_api`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).
 
 ### Documentation
+- Various formatting fixes (by Sebastian Wagner).
 
 ### Packaging
 - intelmq-update-database crontab: Add missing `recordedfuture_iprisk` update call (by Sebastian Wagner).
