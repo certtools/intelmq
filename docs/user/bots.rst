@@ -3271,6 +3271,27 @@ The IntelMQ fields used by this bot may change in the next IntelMQ release, as s
 
 .. _intelmq.bots.experts.url2fqdn.expert:
 
+Truncate By Delimiter
+^^^^^^^^^
+
+**Information**
+
+* `name:` `intelmq.bots.experts.truncate_by_delimiter.expert`
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Cut string if length is bigger than max
+
+**Configuration Parameters**
+
+* `delimiter`: example . or ;
+* `max_length`: max string length
+* `field`: string field
+
+Example: Cut through a long domain with a dot.
+
+.. _intelmq.bots.experts.truncate_by_delimiter.expert:
+
 Url2FQDN
 ^^^^^^^^
 
