@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Time based filtering
+"""
 from datetime import datetime, timedelta
 from dateutil import parser
 from intelmq.lib.utils import get_timedelta

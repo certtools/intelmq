@@ -3097,6 +3097,24 @@ Please note: Even if a message is sent, any further identical messages are dropp
 
 .. _intelmq.bots.experts.tor_nodes.expert:
 
+Time Filter
+^^^^^^^^^
+
+**Information**
+
+* `name:` `intelmq.bots.experts.time_filter.expert`
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Time based filtering
+
+**Configuration Parameters**
+
+* `field`: `time.source`
+* `timespan`: `1d`
+
+.. _intelmq.bots.experts.time_filter.expert:
+
 Tor Nodes
 ^^^^^^^^^
 
