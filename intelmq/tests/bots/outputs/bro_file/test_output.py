@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Bro file output
+
+SPDX-FileCopyrightText: 2021 Marius Karotkis <marius.karotkis@gmail.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+"""
+
 import os
 import tempfile
 import unittest

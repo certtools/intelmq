@@ -3301,6 +3301,27 @@ This output bot discards all incoming messages.
 
 .. _intelmq.bots.outputs.elasticsearch.output:
 
+Bro file
+^^^^^^^^^
+
+**Information**
+
+* `name`: `intelmq.bots.outputs.bro_file.output`
+* `lookup`: no
+* `public`: yes
+* `cache`: no
+* `description`: BRO (zeek) file output
+
+**Description**
+File example:
+```
+#fields    indicator    indicator_type    meta.desc    meta.cif_confidence    meta.source
+xxx.xxx.xxx.xxx    Intel::ADDR    phishing    100    MISP XXX
+www.testdomain.com    Intel::DOMAIN    apt    85    CERT
+```
+
+.. _intelmq.bots.outputs.bro_file.output:
+
 Elasticsearch Output Bot
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
