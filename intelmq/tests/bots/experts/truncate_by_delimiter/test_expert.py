@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Testing truncate by delimiter bot
+
+SPDX-FileCopyrightText: 2021 Marius Karotkis <marius.karotkis@gmail.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
 """
 import unittest
 import intelmq.lib.test as test

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Cut string if length is bigger than max
+
+SPDX-FileCopyrightText: 2021 Marius Karotkis <marius.karotkis@gmail.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
 """
 from intelmq.lib.bot import Bot
 
