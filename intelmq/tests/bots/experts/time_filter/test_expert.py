@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Time based filtering
+
+SPDX-FileCopyrightText: 2021 Marius Karotkis <marius.karotkis@gmail.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+"""
 
 import unittest
 from freezegun import freeze_time

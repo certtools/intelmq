@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 Time based filtering
+
+SPDX-FileCopyrightText: 2021 Marius Karotkis <marius.karotkis@gmail.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
 """
+
 from datetime import datetime, timedelta
 from dateutil import parser
 from intelmq.lib.utils import get_timedelta
