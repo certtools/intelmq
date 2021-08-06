@@ -314,6 +314,7 @@ Generic Mail Attachment Fetcher
 * `ssl_ca_certificate`: Optional string of path to trusted CA certificate. Applies only to IMAP connections, not HTTP. If the provided certificate is not found, the IMAP connection will fail on handshake. By default, no certificate is used.
 
 The resulting reports contains the following special fields:
+
 * `extra.email_date`: The content of the email's `Date` header
 * `extra.email_subject`: The subject of the email
 * `extra.email_from`: The email's from address
@@ -353,6 +354,7 @@ Generic Mail Body Fetcher
   - `string`, e.g. `'plain'`
 
 The resulting reports contains the following special fields:
+
 * `extra.email_date`: The content of the email's `Date` header
 * `extra.email_subject`: The subject of the email
 * `extra.email_from`: The email's from address
@@ -545,6 +547,7 @@ MISP Generic
 * `misp_tag_processed`: MISP tag for processed events, optional
 
 Generic parameters used in this bot:
+
 * `http_verify_cert`: Verify the TLS certificate of the server, boolean (default: `true`)
 
 **Workflow**
@@ -1788,6 +1791,7 @@ Aggregate
 **Configuration Parameters**
 
 * **Cache parameters** (see in section :ref:`common-parameters`)
+
   * TTL is not used, using it would result in data loss.
 * **fields** Given fields which are used to aggregate like `classification.type, classification.identifier`
 * **threshold** If the aggregated event is lower than the given threshold after the timespan, the event will get dropped.
@@ -1989,9 +1993,15 @@ Deduplicator
 **Parameters for "fine-grained" deduplication**
 
 * `filter_type`: type of the filtering which can be "blacklist" or "whitelist". The filter type will be used to define how Deduplicator bot will interpret the parameter `filter_keys` in order to decide whether an event has already been seen or not, i.e., duplicated event or a completely new event.
+
   * "whitelist" configuration: only the keys listed in `filter_keys` will be considered to verify if an event is duplicated or not.
   * "blacklist" configuration: all keys except those in `filter_keys` will be considered to verify if an event is duplicated or not.
 * `filter_keys`: string with multiple keys separated by comma. Please note that `time.observation` key will not be considered even if defined, because the system always ignore that key.
+
+When using a whitelist field pattern and a small number of fields (keys), it becomes more important, that these fields exist in the events themselves.
+If a field does not exist, but is part of the hashing/deduplication, this field will be ignored.
+If such events should not get deduplicated, you need to filter them out before the deduplication process, e.g. using a sieve expert.
+See also `this discussion thread <https://lists.cert.at/pipermail/intelmq-users/2021-July/000370.html>`_ on the mailing-list.
 
 **Parameters Configuration Example**
 
@@ -2049,6 +2059,7 @@ DO Portal Expert Bot
 * `description:` The DO portal retrieves the contact information from a DO portal instance: http://github.com/certat/do-portal/
 
 **Configuration Parameters**
+
 * `mode` - Either `replace` or `append` the new abuse contacts in case there are existing ones.
 * `portal_url` - The URL to the portal, without the API-path. The used URL is `$portal_url + '/api/1.0/ripe/contact?cidr=%s'`.
 * `portal_api_key` - The API key of the user to be used. Must have sufficient privileges.
@@ -2068,6 +2079,7 @@ Field Reducer Bot
 * `description:` The field reducer bot is capable of removing fields from events.
 
 **Configuration Parameters**
+
 * `type` - either `"whitelist"` or `"blacklist"`
 * `keys` - Can be a JSON-list of field names (`["raw", "source.account"]`) or a string with a comma-separated list of field names (`"raw,source.account"`).
 
@@ -2093,17 +2105,18 @@ The filter bot is capable of filtering specific events.
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
-* `description:` filter messages (drop or pass messages) FIXME
+* `description:` A simple filter for messages (drop or pass) based on a exact string comparison or regular expression
 
 **Configuration Parameters**
 
 *Parameters for filtering with key/value attributes*
 
-* `filter_key` - key from data format
-* `filter_value` - value for the key
-* `filter_action` - action when a message match to the criteria (possible actions: keep/drop)
-* `filter_regex` - attribute determines if the `filter_value` shall be treated as regular expression or not.
-   If this attribute is not empty, the bot uses python's "search" function to evaluate the filter.
+* ``filter_key`` - key from data format
+* ``filter_value`` - value for the key
+* ``filter_action`` - action when a message match to the criteria (possible actions: keep/drop)
+* ``filter_regex`` - attribute determines if the ``filter_value`` shall be treated as regular expression or not.
+   If this attribute is not empty (can be ``true``, ``yes`` or whatever), the bot uses python's ```re.search`` <https://docs.python.org/3/library/re.html#re.search>`_ function to evaluate the filter with regular expressions.
+   If this attribute is empty or evaluates to false, an exact string comparison is performed. A check on string *inequality* can be achieved with the usage of *Paths* described below.
 
 *Parameters for time based filtering*
 
@@ -2175,17 +2188,19 @@ Format Field
 
    .. code-block:: json
 
-   "columns": "malware.name,extra.tags"
+      "columns": "malware.name,extra.tags"
 
-* `strip_chars` -  a set of characters to remove as leading/trailing characters(default: ` ` or whitespace)
+* `strip_chars` -  a set of characters to remove as leading/trailing characters(default: space)
 
 *Parameters for replacing chars*
+
 * `replace_column` - key from data format
 * `old_value` - the string to search for
 * `new_value` - the string to replace the old value with
 * `replace_count` - number specifying how many occurrences of the old value you want to replace(default: `1`)
 
 *Parameters for splitting string to list of string*
+
 * `split_column` - key from data format
 * `split_separator` - specifies the separator to use when splitting the string(default: `,`)
 
@@ -2725,6 +2740,7 @@ Sources:
 **Configuration Parameters**
 
 * `fields`: string, comma-separated list of fields e.g. `destination.ip,source.asn,source.url`. Supported fields are:
+
   * `destination.asn` & `source.asn`
   * `destination.fqdn` & `source.fqdn`
   * `destination.ip` & `source.ip`
@@ -2732,6 +2748,7 @@ Sources:
 * `policy`: string, comma-separated list of policies, e.g. `del,drop,drop`. `drop` will cause that the the entire event to be removed if the field is , `del` causes the field to be removed.
 
 With the example parameter values given above, this means that:
+
 * If a `destination.ip` value is part of a reserved network block, the field will be removed (policy "del").
 * If a `source.asn` value is in the range of reserved AS numbers, the event will be removed altogether (policy "drop).
 * If a `source.url` value contains a host with either an IP address part of a reserved network block, or a reserved domain name (or with a reserved TLD), the event will be dropped (policy "drop")
@@ -3150,6 +3167,7 @@ Threshold
 **Limitations**
 
 This bot has certain limitations and is not a true threshold filter (yet). It works like this:
+
 1. Every incoming message is hashed according to the `filter_*` parameters.
 2. The hash is looked up in the cache and the count is incremented by 1, and the TTL of the key is (re-)set to the timeout.
 3. If the new count matches the threshold exactly, the message is forwarded. Otherwise it is dropped.
@@ -3319,6 +3337,7 @@ Events without `source.url`, `source.fqdn`, `source.ip`, or `source.asn`, are ig
 only contains the domain. uWhoisd will automatically strip the subdomain part if it is present in the request.
 
 Example: `https://www.theguardian.co.uk`
+
 * TLD: `co.uk` (uWhoisd uses the `Mozilla public suffix list <https://publicsuffix.org/list/>`_ as a reference)
 * Domain: `theguardian.co.uk`
 * Subdomain: `www`
@@ -3877,6 +3896,7 @@ The parameters marked with 'PostgreSQL' will be sent to libpq via psycopg2. Chec
 **PostgreSQL**
 
 You have two basic choices to run PostgreSQL:
+
 1. on the same machine as intelmq, then you could use Unix sockets if available on your platform
 2. on a different machine. In which case you would need to use a TCP connection and make sure you give the right connection parameters to each psql or client call.
 

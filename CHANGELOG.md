@@ -21,14 +21,18 @@ CHANGELOG
 #### Collectors
 - `intelmq.bots.collectors.shodan.collector_stream`: Fix access to parameters, the bot wrongly used `self.parameters` (PR#2020 by Mikk Margus Möll).
 - `intelmq.bots.collectors.mail.collector_mail_attach`: Add attachment file name as `extra.file_name` also if the attachment is not compressed (PR#2021 by Alex Kaplan).
+- `intelmq.bots.collectors.http.collector_http_stream`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).
 
 #### Parsers
 
 #### Experts
 
 #### Outputs
+- `intelmq.bots.outputs.mcafee.output_esm_ip`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).
+- `intelmq.bots.outputs.misp.output_api`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).
 
 ### Documentation
+- Various formatting fixes (by Sebastian Wagner).
 
 ### Packaging
 - intelmq-update-database crontab: Add missing `recordedfuture_iprisk` update call (by Sebastian Wagner).
