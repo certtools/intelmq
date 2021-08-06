@@ -3288,7 +3288,12 @@ Truncate By Delimiter
 * `max_length`: max string length
 * `field`: string field
 
-Example: Cut through a long domain with a dot.
+Example: Cut through a long domain with a dot. Truncated until the domain not exceeds the maximum length.
+
+input domain = www.subdomain.web.secondsubomain.test.domain.com
+delimiter = '.'
+max_length = 20
+results = test.domain.com
 
 .. _intelmq.bots.experts.truncate_by_delimiter.expert:
 
