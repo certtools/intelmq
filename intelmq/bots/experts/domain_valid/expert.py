@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Domain validator
+
+SPDX-FileCopyrightText: 2021 Marius Karotkis <marius.karotkis@gmail.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+"""
+
 import validators
 import os.path
 from intelmq.lib.bot import Bot

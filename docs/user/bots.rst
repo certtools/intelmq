@@ -1908,6 +1908,26 @@ Use this command to create/update the database and reload the bot:
 
 .. _intelmq.bots.experts.deduplicator.expert:
 
+Domain valid
+^^^^^^^^^^^^
+
+**Information**
+
+* `name:` `intelmq.bots.experts.domain_valid.expert`
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Valid first level domain from TLD list `tlds-alpha-by-domain.txt`. Latest list: https://data.iana.org/TLD/
+
+**Configuration Parameters**
+   * `domain_field`- event domain field
+   * `tlds_domains_list` - local file location '/opt/intelmq/var/lib/bots/domain_valid/tlds-alpha-by-domain.txt'
+
+**Description**
+Bot validating domain in event, if domain is not valid than event is dropped.
+
+.. _intelmq.bots.experts.domain_valid.expert:
+
 Deduplicator
 ^^^^^^^^^^^^
 
