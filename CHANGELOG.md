@@ -26,6 +26,7 @@ CHANGELOG
 #### Parsers
 
 #### Experts
+- `intelmq.bots.experts.truncate_by_delimiter.expert`: Cut string if its length is higher than a maximum length (PR#1967 by Marius Karotkis).
 
 #### Outputs
 - `intelmq.bots.outputs.mcafee.output_esm_ip`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).
