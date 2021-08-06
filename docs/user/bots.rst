@@ -3680,7 +3680,7 @@ RPZ
 * `expire`: Expiration time
 * `test_domain`: For test domain, it's added in first rpz file (after header)
 
-Header example:
+File example:
 ```
 $TTL 3600
 @ SOA rpz.yourdomain.eu. hostmaster.rpz.yourdomain.eu. 2105260601 60 60 432000 60

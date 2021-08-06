@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+
+"""
+RPZ file output
+
+SPDX-FileCopyrightText: 2021 Marius Karotkis <marius.karotkis@gmail.com>
+SPDX-License-Identifier: AGPL-3.0-or-later
+"""
+
 from datetime import datetime
 import os
 from collections import defaultdict
@@ -10,7 +18,7 @@ RPZ_INDICATOR_MAP = {
     "source.fqdn": "Intel::DOMAIN"
 }
 
-now = datetime.now() # for timestamp
+now = datetime.now()  # for timestamp
 
 
 class RpzFileOutputBot(OutputBot):
@@ -95,17 +103,17 @@ class RpzFileOutputBot(OutputBot):
             if 'time.observation' in ev:
                 try:
                     ev['time.observation'] = datetime.strptime(ev['time.observation'],
-                                                                        '%Y-%m-%dT%H:%M:%S+00:00')
+                                                               '%Y-%m-%dT%H:%M:%S+00:00')
                 except ValueError:
                     ev['time.observation'] = datetime.strptime(ev['time.observation'],
-                                                                        '%Y-%m-%dT%H:%M:%S.%f+00:00')
+                                                               '%Y-%m-%dT%H:%M:%S.%f+00:00')
             if 'time.source' in ev:
                 try:
                     ev['time.source'] = datetime.strptime(ev['time.source'],
-                                                                   '%Y-%m-%dT%H:%M:%S+00:00')
+                                                          '%Y-%m-%dT%H:%M:%S+00:00')
                 except ValueError:
                     ev['time.source'] = datetime.strptime(ev['time.source'],
-                                                                   '%Y-%m-%dT%H:%M:%S.%f+00:00')
+                                                          '%Y-%m-%dT%H:%M:%S.%f+00:00')
             filename = self.file.format(event=ev)
             if not self.file or filename != self._file.name:
                 self.open_file(filename)
