@@ -28,7 +28,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
 - List of potentially interesting data sources:
 
   - `Abuse.ch SSL Blacklists <https://sslbl.abuse.ch/blacklist/>`_
-  - `Adblock Plus Malwaredomains <https://easylist-msie.adblockplus.org/malwaredomains_full.tpl>`_
+  - `Adblock Plus <https://adblockplus.org/en/subscriptions>`_
   - `apivoid IP Reputation API <https://www.apivoid.com/api/ip-reputation/>`_
   - `Anomali Limo Free Intel Feed <https://www.anomali.com/resources/limo>`_
   - `APWG's ecrimex <https://www.ecrimex.net>`_
@@ -37,6 +37,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
   - `Bot Invaders Realtime tracker <http://www.marc-blanchard.com/BotInvaders/index.php>`_
   - `Botherder Targetedthreats <https://github.com/botherder/targetedthreats/>`_
   - `Botscout Last Caught <http://botscout.com/last_caught_cache.htm>`_
+  - `botvrij <https://www.botvrij.eu/>`_
   - `Carbon Black Feeds <https://github.com/carbonblack/cbfeeds>`_
   - `CERT.pl Phishing Warning List <http://hole.cert.pl/domains/>`_
   - `Chaos Reigns <http://www.chaosreigns.com/spam/>`_
@@ -78,6 +79,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
   - `Multiproxy <http://multiproxy.org/txt_all/proxy.txt>`_
   - `Neo23x0 signature-base <https://github.com/Neo23x0/signature-base/tree/master/iocs>`_
   - `OpenBugBounty <https://www.openbugbounty.org/>`_
+  - `Phishing Army <https://phishing.army/>`_
   - `Project Honeypot (#284) <http://www.projecthoneypot.org/list_of_ips.php?rss=1>`_
   - `RST Threat Feed <https://rstcloud.net/>`_ (offers a free and a commercial feed)
   - `SANS ISC <https://isc.sans.edu/api/>`_
