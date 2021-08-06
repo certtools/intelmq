@@ -3269,10 +3269,10 @@ For both fields *ip* and *domain*, the *destinations* objects are iterated and i
 The IntelMQ fields used by this bot may change in the next IntelMQ release, as soon as better suited fields are available.
 
 
-.. _intelmq.bots.experts.url2fqdn.expert:
+.. _intelmq.bots.experts.truncate_by_delimiter.expert:
 
 Truncate By Delimiter
-^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
 
 **Information**
 
@@ -3280,22 +3280,25 @@ Truncate By Delimiter
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` Cut string if length is bigger than max
+* `description:` Cut string if length is bigger than maximum length
 
 **Configuration Parameters**
 
-* `delimiter`: example . or ;
-* `max_length`: max string length
-* `field`: string field
+* `delimiter`: The delimiter to be used for truncating, for example ``.`` or ``;``
+* `max_length`: The maximum string length.
+* `field`: The field to be truncated, e.g. ``source.fqdn``
 
-Example: Cut through a long domain with a dot. Truncated until the domain not exceeds the maximum length.
+The given field is truncated step-by-step using the delimiter from the beginning, until the field is shorter than `max_length`.
 
-input domain = www.subdomain.web.secondsubomain.test.domain.com
-delimiter = '.'
-max_length = 20
-results = test.domain.com
+Example: Cut through a long domain with a dot. The string is truncated until the domain does not exceed the configured maximum length.
 
-.. _intelmq.bots.experts.truncate_by_delimiter.expert:
+- input domain (e.g. ``source.fqdn``): ``www.subdomain.web.secondsubomain.test.domain.com``
+- delimiter: ``.``
+- ``max_length``: 20
+- Resulting value ``test.domain.com`` (length: 15 characters)
+
+
+.. _intelmq.bots.experts.url2fqdn.expert:
 
 Url2FQDN
 ^^^^^^^^

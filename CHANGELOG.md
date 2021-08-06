@@ -23,6 +23,7 @@ CHANGELOG
 #### Parsers
 
 #### Experts
+- `intelmq.bots.experts.truncate_by_delimiter.expert`: Cut string if its length is higher than a maximum length (PR#1967 by Marius Karotkis).
 
 #### Outputs
 
