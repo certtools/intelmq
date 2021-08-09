@@ -109,7 +109,7 @@ class BotDebugger:
             if self.instance.group == "Output":
                 self.outputappend("Output bots can't send message.")
                 return
-            if not bool(self.instance._Bot__destination_queues):
+            if not bool(self.instance.destination_queues):
                 self.outputappend("Bot has no destination queues.")
                 return
             if msg:
