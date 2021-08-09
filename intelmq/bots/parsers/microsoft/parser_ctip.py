@@ -139,7 +139,7 @@ AZURE = {
     "Payload.port": "extra.payload.port",
     "Payload.serverIp": "extra.payload.server.ip",
     "Payload.serverPort": "extra.payload.server.port",
-    "Payload.domain": "extra.payload.domain",
+    "Payload.domain": "destination.fqdn",
     "Payload.family": "extra.payload.family",
     "Payload.malware": "extra.payload.malware",
     "Payload.response": "extra.payload.response",

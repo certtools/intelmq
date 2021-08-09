@@ -28,6 +28,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
 - List of potentially interesting data sources:
 
   - `Abuse.ch SSL Blacklists <https://sslbl.abuse.ch/blacklist/>`_
+  - `AbuseIPDB <https://www.abuseipdb.com/pricing>`_
   - `Adblock Plus <https://adblockplus.org/en/subscriptions>`_
   - `apivoid IP Reputation API <https://www.apivoid.com/api/ip-reputation/>`_
   - `Anomali Limo Free Intel Feed <https://www.anomali.com/resources/limo>`_
@@ -80,6 +81,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
   - `Neo23x0 signature-base <https://github.com/Neo23x0/signature-base/tree/master/iocs>`_
   - `OpenBugBounty <https://www.openbugbounty.org/>`_
   - `Phishing Army <https://phishing.army/>`_
+  - `Phishstats <https://phishstats.info/>`_, offers JSON ("API) and CSV download.
   - `Project Honeypot (#284) <http://www.projecthoneypot.org/list_of_ips.php?rss=1>`_
   - `RST Threat Feed <https://rstcloud.net/>`_ (offers a free and a commercial feed)
   - `SANS ISC <https://isc.sans.edu/api/>`_

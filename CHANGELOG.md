@@ -12,6 +12,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.bot_debugger`: Fix accessing the bot's destination queues (PR#2027 by Mikk Margus Möll).
+- `intelmq.lib.pipeline`: Fix handling of `load_balance` paramter (PR#2027 by Mikk Margus Möll).
 
 ### Development
 
@@ -24,6 +26,7 @@ CHANGELOG
 - `intelmq.bots.collectors.http.collector_http_stream`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).
 
 #### Parsers
+- `intelmq.bots.parsers.microsoft.parser_ctip`: Map `Payload.domain` to `destination.fqdn` instead of `extra.payload.domain` as it matches to `destination.ip` from `DestinationIp` (PR#2023 by Sebastian Wagner).
 
 #### Experts
 - `intelmq.bots.experts.truncate_by_delimiter.expert`: Cut string if its length is higher than a maximum length (PR#1967 by Marius Karotkis).
