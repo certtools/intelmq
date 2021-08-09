@@ -121,7 +121,7 @@ These are the operating systems which are currently supported by packages:
 * **Fedora 33**
 * **Fedora 34**
 * **openSUSE Leap 15.2**
-* **openSUSE Leap 15.3**
+* **openSUSE Leap 15.3** (make sure the ``openSUSE:Backports:SLE-15-SP3`` repository is enabled)
 * **openSUSE Tumbleweed**
 * **Ubuntu 18.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ bionic main` first)
 * **Ubuntu 20.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ focal main` first)
