@@ -29,15 +29,21 @@ except ImportError:
 class PipelineFactory(object):
 
     @staticmethod
-    def create(logger, broker=None, direction=None, queues=None, pipeline_args={}, load_balance=False, is_multithreaded=False):
+    def create(logger, broker=None, direction=None, queues=None, pipeline_args=None, load_balance=False, is_multithreaded=False):
         """
         direction: "source" or "destination", optional, needed for queues
         queues: needs direction to be set, calls set_queues
         bot: Bot instance
         """
+        if pipeline_args is None:
+            pipeline_args = {}
+
         if direction not in [None, "source", "destination"]:
             raise exceptions.InvalidArgument("direction", got=direction,
                                              expected=["destination", "source"])
+
+        if 'load_balance' not in pipeline_args:
+            pipeline_args['load_balance'] = load_balance
 
         if direction == 'source' and 'source_pipeline_broker' in pipeline_args:
             broker = pipeline_args['source_pipeline_broker'].title()
@@ -96,10 +102,7 @@ class Pipeline(object):
         """
         if queues_type == "source":
             self.source_queue = queues
-            if queues is not None:
-                self.internal_queue = queues + "-internal"
-            else:
-                self.internal_queue = None
+            self.internal_queue = None if queues is None else f'{queues}-internal'
 
         elif queues_type == "destination":
             type_ = type(queues)
@@ -109,8 +112,7 @@ class Pipeline(object):
                 q = {"_default": queues.split()}
             elif type_ is dict:
                 q = queues
-                for key, val in queues.items():
-                    q[key] = val if type(val) is list else val.split()
+                q.update({key: (val if isinstance(val, list) else val.split()) for key, val in queues.items()})
             else:
                 raise exceptions.InvalidArgument(
                     'queues', got=queues,
@@ -187,15 +189,12 @@ class Redis(Pipeline):
     destination_pipeline_password = None
 
     def load_configurations(self, queues_type):
-        self.host = self.pipeline_args.get("{}_pipeline_host".format(queues_type),
-                                           "127.0.0.1")
-        self.port = self.pipeline_args.get("{}_pipeline_port".format(queues_type), "6379")
-        self.db = self.pipeline_args.get("{}_pipeline_db".format(queues_type), 2)
-        self.password = self.pipeline_args.get("{}_pipeline_password".format(queues_type),
-                                               None)
+        self.host = self.pipeline_args.get(f"{queues_type}_pipeline_host", "127.0.0.1")
+        self.port = self.pipeline_args.get(f"{queues_type}_pipeline_port", "6379")
+        self.db = self.pipeline_args.get(f"{queues_type}_pipeline_db", 2)
+        self.password = self.pipeline_args.get(f"{queues_type}_pipeline_password", None)
         #  socket_timeout is None by default, which means no timeout
-        self.socket_timeout = self.pipeline_args.get("{}_pipeline_socket_timeout".format(queues_type),
-                                                     None)
+        self.socket_timeout = self.pipeline_args.get(f"{queues_type}_pipeline_socket_timeout", None)
         self.load_balance = self.pipeline_args.get("load_balance", False)
         self.load_balance_iterator = 0
 
@@ -241,8 +240,7 @@ class Redis(Pipeline):
         if self.load_balance:
             queues = [queues[self.load_balance_iterator]]
             self.load_balance_iterator += 1
-            if self.load_balance_iterator == len(self.destination_queues[path]):
-                self.load_balance_iterator = 0
+            self.load_balance_iterator %= len(self.destination_queues[path])
 
         for destination_queue in queues:
             try:
@@ -559,8 +557,7 @@ class Amqp(Pipeline):
         if self.load_balance:
             queues = [queues[self.load_balance_iterator]]
             self.load_balance_iterator += 1
-            if self.load_balance_iterator == len(self.destination_queues[path]):
-                self.load_balance_iterator = 0
+            self.load_balance_iterator %= len(self.destination_queues[path])
 
         for destination_queue in queues:
             self._send(destination_queue, message)
