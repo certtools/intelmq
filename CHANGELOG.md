@@ -12,6 +12,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.bot_debugger`: Fix accessing the bot's destination queues (PR#2027 by Mikk Margus Möll).
+- `intelmq.lib.pipeline`: Fix handling of `load_balance` paramter (PR#2027 by Mikk Margus Möll).
 
 ### Development
 
