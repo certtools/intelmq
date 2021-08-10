@@ -223,14 +223,14 @@ This configuration is used by each bot to load its specific (runtime) parameters
 
 .. code-block:: yaml
 
-   malware-domain-list-collector:
+   blocklistde-apache-collector:
      group: Collector
-     name: Malware Domain List
+     name: Blocklist.de Apache List
      module: intelmq.bots.collectors.http.collector_http
-     description: Malware Domain List Collector is the bot responsible to get the report from source of information.
+     description: Blocklist.de Apache Collector fetches all IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.
      parameters:
-       http_url: http://www.malwaredomainlist.com/updatescsv.php
-       feed: Malware Domain List
+       http_url: https://lists.blocklist.de/lists/apache.txt
+       name: Blocklist.de Apache
        rate_limit: 3600
 
 More examples can be found in the ``intelmq/etc/runtime.conf`` directory. See :doc:`bots` for more details.
@@ -239,16 +239,16 @@ By default, all of the bots are started when you start the whole botnet, however
 
 .. code-block:: yaml
 
-    malware-domain-list-collector:
-      group: Collector
-      name: Malware Domain List
-      module: intelmq.bots.collectors.http.collector_http
-      description: Malware Domain List Collector is the bot responsible to get the report from source of information.
-      enabled: false,
-      parameters:
-        http_url: http://www.malwaredomainlist.com/updatescsv.php
-        feed: Malware Domain List
-        rate_limit: 3600
+   blocklistde-apache-collector:
+     group: Collector
+     name: Blocklist.de Apache List
+     module: intelmq.bots.collectors.http.collector_http
+     description: Blocklist.de Apache Collector fetches all IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.
+     enabled: false
+     parameters:
+       http_url: https://lists.blocklist.de/lists/apache.txt
+       name: Blocklist.de Apache
+       rate_limit: 3600
 
 Pipeline Configuration
 ======================
