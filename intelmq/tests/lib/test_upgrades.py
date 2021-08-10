@@ -489,7 +489,19 @@ V233_FEODOTRACKER_BROWSE_OUT = {
     }
 }
 }
-
+V301_MALWAREDOMAINS_IN = {
+"malwaredomains-parser": {
+    "module": "intelmq.bots.parsers.malwaredomains.parser",
+    "parameters": {
+    }
+},
+"malwaredomains-collector": {
+    "module": "intelmq.bots.collectors.http.collector",
+    "parameters": {
+        "http_url": "http://mirror1.malwaredomains.com/files/domains.txt"
+        }
+    }
+}
 def generate_function(function):
     def test_function(self):
         """ Test if no errors happen for upgrade function %s. """ % function.__name__
@@ -677,6 +689,15 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertTrue(result[0])
         self.assertEqual(V233_FEODOTRACKER_BROWSE_OUT, result[2])
 
+    def test_v301_feed_changes(self):
+        """ Test v301_feed_changes """
+        result = upgrades.v301_deprecations({}, V301_MALWAREDOMAINS_IN, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual('A discontinued bot "Malware Domains Parser" has been found as bot '
+                         'malwaredomains-parser. A discontinued bot "Malware Domains Collector" '
+                         'has been found as bot malwaredomains-collector. Remove affected bots yourself.',
+                         result[0])
+        self.assertEqual(V301_MALWAREDOMAINS_IN, result[2])
 
 for name in upgrades.__all__:
     setattr(TestUpgradeLib, 'test_function_%s' % name,

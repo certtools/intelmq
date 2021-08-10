@@ -96,24 +96,6 @@ providers:
       revision: 2018-01-20
       documentation: https://www.malwarepatrol.net/non-commercial/
       public: false
-  Malware Domains:
-    Malicious:
-      description: Malware Prevention through Domain Blocking (Black Hole DNS Sinkhole)
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://mirror1.malwaredomains.com/files/domains.txt
-            rate_limit: 172800
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.malwaredomains.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://www.malwaredomains.com/
-      public: true
   ZoneH:
     Defacements:
       description: all the information contained in Zone-H's cybercrime archive were

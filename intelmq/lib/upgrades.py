@@ -35,7 +35,8 @@ __all__ = ['v100_dev7_modify_syntax',
            'v233_feodotracker_browse',
            'v300_bots_file_removal',
            'v300_defaults_file_removal',
-           'v300_pipeline_file_removal'
+           'v300_pipeline_file_removal',
+           'v301_deprecations',
            ]
 
 
@@ -662,6 +663,32 @@ def v300_pipeline_file_removal(defaults, runtime, harmonization, dry_run):
     return messages if messages else changed, defaults, runtime, harmonization
 
 
+def v301_deprecations(defaults, runtime, harmonization, dry_run):
+    """
+    Deprecate malwaredomains parser and collector
+    """
+    found_malwaredomainsparser = []
+    found_malwaredomainscollector = []
+    changed = None
+    messages = []
+    for bot_id, bot in runtime.items():
+        if bot["module"] == "intelmq.bots.parsers.malwaredomains.parser":
+            found_malwaredomainsparser.append(bot_id)
+        if bot["module"] == "intelmq.bots.collectors.http.collector":
+            if "http_url" not in bot["parameters"]:
+                continue
+            if bot["parameters"]["http_url"] == 'http://mirror1.malwaredomains.com/files/domains.txt':
+                found_malwaredomainscollector.append(bot_id)
+    if found_malwaredomainsparser:
+        messages.append('A discontinued bot "Malware Domains Parser" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_malwaredomainsparser)))
+    if found_malwaredomainscollector:
+        messages.append('A discontinued bot "Malware Domains Collector" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_malwaredomainscollector)))
+    messages = ' '.join(messages)
+    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -684,7 +711,7 @@ UPGRADES = OrderedDict([
     ((2, 3, 2), ()),
     ((2, 3, 3), (v233_feodotracker_browse, )),
     ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, v300_pipeline_file_removal, )),
-    ((3, 0, 1), ()),
+    ((3, 0, 1), (v301_deprecations, )),
 ])
 
 ALWAYS = (harmonization, )
