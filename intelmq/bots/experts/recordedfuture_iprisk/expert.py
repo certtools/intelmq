@@ -58,7 +58,7 @@ class RecordedFutureIPRiskExpertBot(Bot):
             parsed_args = cls._create_argparser().parse_args()
 
         if parsed_args.update_database:
-            cls.update_database()
+            cls.update_database(verbose=parsed_args.verbose)
 
         else:
             super().run(parsed_args=parsed_args)
@@ -67,10 +67,11 @@ class RecordedFutureIPRiskExpertBot(Bot):
     def _create_argparser(cls):
         argparser = super()._create_argparser()
         argparser.add_argument("--update-database", action='store_true', help='downloads latest database data')
+        argparser.add_argument("--verbose", action='store_true', help='be verbose')
         return argparser
 
     @classmethod
-    def update_database(cls):
+    def update_database(cls, verbose=False):
         bots = {}
         api_token = None
         runtime_conf = get_bots_settings()
@@ -84,11 +85,13 @@ class RecordedFutureIPRiskExpertBot(Bot):
             sys.exit("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
 
         if not bots:
-            print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
+            if verbose:
+                print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
             sys.exit(0)
 
         try:
-            print("Downloading the latest database update...")
+            if verbose:
+                print("Downloading the latest database update...")
             session = create_request_session()
             response = session.get("https://api.recordedfuture.com/v2/ip/risklist",
                                    params={
@@ -127,7 +130,8 @@ class RecordedFutureIPRiskExpertBot(Bot):
             with open(database_path, "w") as database:
                 database.write(database_data)
 
-        print("Database updated. Reloading affected bots.")
+        if verbose:
+            print("Database updated. Reloading affected bots.")
 
         ctl = IntelMQController()
         for bot in bots.keys():

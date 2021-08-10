@@ -78,7 +78,7 @@ class ASNLookupExpertBot(Bot):
             parsed_args = cls._create_argparser().parse_args()
 
         if parsed_args.update_database:
-            cls.update_database()
+            cls.update_database(verbose=parsed_args.verbose)
 
         else:
             super().run(parsed_args=parsed_args)
@@ -87,10 +87,11 @@ class ASNLookupExpertBot(Bot):
     def _create_argparser(cls):
         argparser = super()._create_argparser()
         argparser.add_argument("--update-database", action='store_true', help='downloads latest database data')
+        argparser.add_argument("--verbose", action='store_true', help='be verbose')
         return argparser
 
     @classmethod
-    def update_database(cls):
+    def update_database(cls, verbose=False):
         bots = {}
         runtime_conf = get_bots_settings()
         try:
@@ -102,7 +103,8 @@ class ASNLookupExpertBot(Bot):
             sys.exit("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
 
         if not bots:
-            print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
+            if verbose:
+                print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
             sys.exit(0)
 
         # we only need to import now. If there are no asn_lookup bots, this dependency does not need to be installed
@@ -110,7 +112,8 @@ class ASNLookupExpertBot(Bot):
             raise MissingDependencyError("pyasn")
 
         try:
-            print("Searching for the latest database update...")
+            if verbose:
+                print("Searching for the latest database update...")
             session = create_request_session()
             url = "http://archive.routeviews.org/route-views4/bgpdata/"
             response = session.get(url)
@@ -130,7 +133,8 @@ class ASNLookupExpertBot(Bot):
             if not days:
                 sys.exit("Database update failed. Couldn't find the latest database update.")
 
-            print("Downloading the latest database update...")
+            if verbose:
+                print("Downloading the latest database update...")
             url += days[0]
             response = session.get(url)
 
@@ -142,7 +146,8 @@ class ASNLookupExpertBot(Bot):
             sys.exit("Database update failed. Connection Error: {0}".format(e))
 
         with bz2.open(io.BytesIO(response.content)) as archive:
-            print("Parsing the latest database update...")
+            if verbose:
+                print("Parsing the latest database update...")
             prefixes = pyasn.mrtx.parse_mrt_file(archive, print_progress=False, skip_record_on_error=True)
 
         for database_path in set(bots.values()):
@@ -150,7 +155,8 @@ class ASNLookupExpertBot(Bot):
             database_dir.mkdir(parents=True, exist_ok=True)
             pyasn.mrtx.dump_prefixes_to_file(prefixes, database_path)
 
-        print("Database updated. Reloading affected bots.")
+        if verbose:
+            print("Database updated. Reloading affected bots.")
 
         ctl = IntelMQController()
         for bot in bots.keys():
