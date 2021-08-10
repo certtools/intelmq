@@ -203,7 +203,7 @@ After this it is possible to manage bots like before with ``intelmqctl`` command
 Runtime Configuration
 *********************
 
-This configuration is used by each bot to load its specific (runtime) parameters. You can use the output of ``intelmqctl --type json list bots`` to write the ``runtime.conf``. Also, the IntelMQ Manager generates this configuration. You may edit it manually as well. Be sure to re-load the bot (see the :doc:`intelmqctl`).
+This configuration is used by each bot to load its specific (runtime) parameters. The IntelMQ Manager can generate this configuration for you. You may edit it manually as well. Be sure to re-load the bot (see the :doc:`intelmqctl`).
 
 **Template:**
 
