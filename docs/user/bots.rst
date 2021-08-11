@@ -1906,7 +1906,7 @@ Use this command to create/update the database and reload the bot:
    intelmq.bots.experts.domain_suffix.expert --update-database
 
 
-.. _intelmq.bots.experts.deduplicator.expert:
+.. _intelmq.bots.experts.domain_valid.expert:
 
 Domain valid
 ^^^^^^^^^^^^
@@ -1917,16 +1917,23 @@ Domain valid
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` Valid first level domain from TLD list `tlds-alpha-by-domain.txt`. Latest list: https://data.iana.org/TLD/
+* `description:` Checks if a domain is valid by performing multiple validity checks (see below).
 
 **Configuration Parameters**
-   * `domain_field`- event domain field
+
+   * `domain_field`- The name of the field to be validated.
    * `tlds_domains_list` - local file location '/opt/intelmq/var/lib/bots/domain_valid/tlds-alpha-by-domain.txt'
 
 **Description**
-Bot validating domain in event, if domain is not valid than event is dropped.
 
-.. _intelmq.bots.experts.domain_valid.expert:
+If the field given in `domain_field` does not exist in the event, the event is dropped.
+If the domain contains underscores (``_``), the event is dropped.
+If the domain is not valid according to the `validators library <https://pypi.org/project/validators/>`_, the event is dropped.
+If the domain's last part (the TLD) is not in the TLD-list configured by parameter ``tlds_domains_list``, the field is dropped.
+Latest TLD list: https://data.iana.org/TLD/
+
+
+.. _intelmq.bots.experts.deduplicator.expert:
 
 Deduplicator
 ^^^^^^^^^^^^

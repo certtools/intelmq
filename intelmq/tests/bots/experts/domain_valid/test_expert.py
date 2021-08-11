@@ -60,6 +60,7 @@ EXAMPLE_INPUT_PASS_2 = {
 }
 
 
+@test.skip_exotic()
 class TestDomainValidExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for DomainValidExpertBot handling Reports.
@@ -90,11 +91,13 @@ class TestDomainValidExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EXAMPLE_INPUT_PASS
         self.run_bot()
         self.assertOutputQueueLen(1)
+        self.assertMessageEqual(0, EXAMPLE_INPUT_PASS)
 
     def test_expert_pass_2(self):
         self.input_message = EXAMPLE_INPUT_PASS_2
         self.run_bot()
         self.assertOutputQueueLen(1)
+        self.assertMessageEqual(0, EXAMPLE_INPUT_PASS_2)
 
 
 if __name__ == '__main__':  # pragma: no cover
