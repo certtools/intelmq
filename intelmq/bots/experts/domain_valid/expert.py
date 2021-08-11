@@ -48,9 +48,9 @@ class DomainValidExpertBot(Bot):
         if os.path.isfile(self.tlds_domains_list):
             with open(self.tlds_domains_list) as file:
                 first_line = file.readline()
-                lines = [line.strip().lower() for line in file]
+                lines = {line.strip().lower() for line in file}
         else:
-            self.logger.debug(f"Tld domain list file not found {self.tlds_domains_list} .")
+            self.logger.debug(f"TLD domain list file not found at {self.tlds_domains_list!r}.")
         return lines
 
     @classmethod
