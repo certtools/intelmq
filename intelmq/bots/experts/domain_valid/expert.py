@@ -15,7 +15,7 @@ import sys
 import requests.exceptions
 
 from intelmq.lib.bot import Bot
-from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.exceptions import MissingDependencyError, ConfigurationError
 from intelmq.lib.utils import get_bots_settings, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
 
@@ -49,7 +49,7 @@ class DomainValidExpertBot(Bot):
                 next(file)
                 lines = {line.strip().lower() for line in file}
         else:
-            self.logger.debug(f"TLD domain list file not found at {self.tlds_domains_list!r}.")
+            raise ConfigurationError("File", f"TLD domain list file not found at {self.tlds_domains_list!r}.")
         return lines
 
     @classmethod
