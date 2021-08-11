@@ -43,10 +43,8 @@ class DomainValidExpertBot(Bot):
         if is_valid:
             self.send_message(event)
         self.acknowledge_message()
-        return
 
     def get_tlds_domain_list(self):
-        lines = []
         if os.path.isfile(self.tlds_domains_list):
             with open(self.tlds_domains_list) as file:
                 first_line = file.readline()
