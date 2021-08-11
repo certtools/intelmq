@@ -15,6 +15,7 @@ import sys
 import requests.exceptions
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.utils import get_bots_settings, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
 
@@ -23,19 +24,20 @@ class DomainValidExpertBot(Bot):
     domain_field: str = 'source.fqdn'
     tlds_domains_list: str = '/opt/intelmq/var/lib/bots/domain_valid/tlds-alpha-by-domain.txt'
 
+    def init(self):
+        if validators is None:
+            raise MissingDependencyError("validators")
+        self.tlds_list = self.get_tlds_domain_list()
+
     def process(self):
         event = self.receive_message()
-
-        tlds_list = self.get_tlds_domain_list()
-
         is_valid = False
         if self.domain_field in event:
-            if validators.domain(event[self.domain_field]) and event[self.domain_field].find('_') == -1 and \
-                    event[self.domain_field].split('.')[-2:][1] in tlds_list:
+            if validators.domain(event[self.domain_field]) and '_' not in event[self.domain_field] and \
+                    event[self.domain_field].split('.')[-1] in self.tlds_list:
                 is_valid = True
             else:
-                self.logger.debug(
-                    f"Filtered out event with search field {self.domain_field} and event time {event[self.domain_field]} .")
+                self.logger.debug(f"Filtered out event with search field {self.domain_field!r}.")
 
         if is_valid:
             self.send_message(event)
