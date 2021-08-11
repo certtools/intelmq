@@ -1921,8 +1921,8 @@ Domain valid
 
 **Configuration Parameters**
 
-   * `domain_field`- The name of the field to be validated.
-   * `tlds_domains_list` - local file location '/opt/intelmq/var/lib/bots/domain_valid/tlds-alpha-by-domain.txt'
+   * `domain_field`: The name of the field to be validated.
+   * `tlds_domains_list`: local file with all valid TLDs, default location ``/opt/intelmq/var/lib/bots/domain_valid/tlds-alpha-by-domain.txt``
 
 **Description**
 
