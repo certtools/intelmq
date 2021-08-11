@@ -563,6 +563,7 @@ class Bot(object):
                                                             load_balance=self.load_balance,
                                                             is_multithreaded=self.is_multithreaded)
 
+            self.__source_pipeline.load_configurations('source')
             self.__source_pipeline.connect()
             self.__current_message = None
             self.logger.debug("Connected to source queue.")
@@ -576,6 +577,7 @@ class Bot(object):
                                                                  load_balance=self.load_balance,
                                                                  is_multithreaded=self.is_multithreaded)
 
+            self.__destination_pipeline.load_configurations('destination')
             self.__destination_pipeline.connect()
             self.logger.debug("Connected to destination queues.")
         else:

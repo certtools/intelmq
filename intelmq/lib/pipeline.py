@@ -177,6 +177,9 @@ class Pipeline(object):
     def _reject_message(self):
         raise NotImplementedError
 
+    def load_configurations(self, queues_type):
+        raise NotImplementedError
+
 
 class Redis(Pipeline):
     has_internal_queues = True
@@ -405,6 +408,11 @@ class Pythonlist(Pipeline):
         """
         No-op because of the internal queue
         """
+
+    def load_configurations(self, queues_type):
+        '''
+        Nothing to load
+        '''
 
 
 class Amqp(Pipeline):
