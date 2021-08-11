@@ -21,10 +21,7 @@ from intelmq.bin.intelmqctl import IntelMQController
 
 class DomainValidExpertBot(Bot):
     domain_field: str = 'source.fqdn'
-    tlds_domains_list = '/opt/intelmq/var/lib/bots/domain_valid/tlds-alpha-by-domain.txt'
-
-    def init(self):
-        pass
+    tlds_domains_list: str = '/opt/intelmq/var/lib/bots/domain_valid/tlds-alpha-by-domain.txt'
 
     def process(self):
         event = self.receive_message()
@@ -47,7 +44,7 @@ class DomainValidExpertBot(Bot):
     def get_tlds_domain_list(self):
         if os.path.isfile(self.tlds_domains_list):
             with open(self.tlds_domains_list) as file:
-                first_line = file.readline()
+                next(file)
                 lines = {line.strip().lower() for line in file}
         else:
             self.logger.debug(f"TLD domain list file not found at {self.tlds_domains_list!r}.")
