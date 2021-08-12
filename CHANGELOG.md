@@ -31,6 +31,7 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver.config`:
   - Add support for feed "Vulnerable SMTP Server" (PR#2037 by Mikk Margus Möll).
   - Fix differentiation between feeds "Accessible HTTP" and "Vulnerable HTTP" (PR#2037 by Mikk Margus Möll, fixes #1984).
+  - Add support for the new feeds *Microsoft Sinkhole Events Report*, *Microsoft Sinkhole HTTP Events Report* (PR#2036 by Birger Schacht).
 
 #### Experts
 

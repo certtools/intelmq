@@ -1627,6 +1627,8 @@ These are the supported feed name and their corresponding file name for automati
    HTTP-Scanners                             `hp_http_scan`
    ICS-Scanners                              `hp_ics_scan`
    IP-Spoofer-Events                         `event4_ip_spoofer`
+   Microsoft-Sinkhole-Events IPv4            `event4_microsoft_sinkhole`
+   Microsoft-Sinkhole-Events-HTTP IPv4       `event4_microsoft_sinkhole_http`
    NTP-Monitor                               `scan_ntpmonitor`
    NTP-Version                               `scan_ntp`
    Open-Chargen                              `scan_chargen`
