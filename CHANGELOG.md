@@ -62,6 +62,8 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.microsoft.parser_ctip`: Map `Payload.domain` to `destination.fqdn` instead of `extra.payload.domain` as it matches to `destination.ip` from `DestinationIp` (PR#2023 by Sebastian Wagner).
 - Removed `intelmq.bots.parsers.malwaredomains` because the upstream data source (malwaredomains.com) does not exist anymore (PR#2026 by Birger Schacht, fixes #2024).
+- `intelmq.bots.parsers.shadowserver._config`:
+  - Add support for the new feeds *Microsoft Sinkhole Events Report*, *Microsoft Sinkhole HTTP Events Report* (PR#2036 by Birger Schacht).
 
 #### Experts
 - `intelmq.bots.experts.truncate_by_delimiter.expert`: Cut string if its length is higher than a maximum length (PR#1967 by Marius Karotkis).
