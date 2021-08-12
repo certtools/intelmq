@@ -2849,6 +2849,8 @@ mapping = (
     ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
     ('IP-Spoofer-Events', 'event4_ip_spoofer', event4_ip_spoofer),
     ('Microsoft-Sinkhole', 'microsoft_sinkhole', microsoft_sinkhole),  # legacy (replaced by event46_sinkhole_http)
+    ('Microsoft-Sinkhole-Events IPv4', 'event4_microsoft_sinkhole', event46_sinkhole),
+    ('Microsoft-Sinkhole-Events-HTTP IPv4', 'event4_microsoft_sinkhole_http', event46_sinkhole_http),
     ('NTP-Monitor', 'scan_ntpmonitor', ntp_monitor),
     ('NTP-Version', 'scan_ntp', ntp_version),
     ('Open-Chargen', 'scan_chargen', open_chargen),
