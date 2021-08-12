@@ -2787,6 +2787,32 @@ event46_sinkhole_http_referer = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-smtp-report/
+vulnerable_smtp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'banner', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'vulnerable-smtp',
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'protocol.application': 'smtp',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2864,6 +2890,7 @@ mapping = (
     ('Vulnerable-ISAKMP', 'scan_isakmp', vulnerable_isakmp),
     ('Vulnerable-HTTP', 'scan_http', accessible_vulnerable_http),
     ('Vulnerable-Exchange-Server', 'scan_exchange', scan_exchange),
+    ('Vulnerable-SMTP', 'scan_smtp', vulnerable_smtp),
 )
 
 feedname_mapping = {feedname: function for feedname, filename, function in mapping}
