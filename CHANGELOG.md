@@ -23,6 +23,7 @@ CHANGELOG
 #### Parsers
 
 #### Experts
+- `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).
 
 #### Outputs
 
