@@ -28,6 +28,9 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.microsoft.parser_ctip`: Map `Payload.domain` to `destination.fqdn` instead of `extra.payload.domain` as it matches to `destination.ip` from `DestinationIp` (PR#2023 by Sebastian Wagner).
 - Removed `intelmq.bots.parsers.malwaredomains` because the upstream data source (malwaredomains.com) does not exist anymore (PR#2026 by Birger Schacht, fixes #2024).
+- `intelmq.bots.parsers.shadowserver.config`:
+  - Add support for feed "Vulnerable SMTP Server" (PR#2037 by Mikk Margus Möll).
+  - Fix differentiation between feeds "Accessible HTTP" and "Vulnerable HTTP" (PR#2037 by Mikk Margus Möll, fixes #1984).
 
 #### Experts
 
