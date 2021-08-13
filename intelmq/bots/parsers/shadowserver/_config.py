@@ -2888,7 +2888,7 @@ mapping = (
     ('Sinkhole-Events-HTTP-Referer IPv6', 'event6_sinkhole_http_referer', event46_sinkhole_http_referer),
     ('Spam-URL', 'spam_url', spam_url),
     ('Vulnerable-ISAKMP', 'scan_isakmp', vulnerable_isakmp),
-    ('Vulnerable-HTTP', 'scan_http', accessible_vulnerable_http),
+    ('Vulnerable-HTTP', 'scan_http_vulnerable', accessible_vulnerable_http),
     ('Vulnerable-Exchange-Server', 'scan_exchange', scan_exchange),
     ('Vulnerable-SMTP', 'scan_smtp_vulnerable', vulnerable_smtp),
 )
