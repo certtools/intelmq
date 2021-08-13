@@ -2890,7 +2890,7 @@ mapping = (
     ('Vulnerable-ISAKMP', 'scan_isakmp', vulnerable_isakmp),
     ('Vulnerable-HTTP', 'scan_http', accessible_vulnerable_http),
     ('Vulnerable-Exchange-Server', 'scan_exchange', scan_exchange),
-    ('Vulnerable-SMTP', 'scan_smtp', vulnerable_smtp),
+    ('Vulnerable-SMTP', 'scan_smtp_vulnerable', vulnerable_smtp),
 )
 
 feedname_mapping = {feedname: function for feedname, filename, function in mapping}
