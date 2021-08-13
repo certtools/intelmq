@@ -1,4 +1,10 @@
-intelmq (3.0.1~alpha1-1) UNRELEASED; urgency=medium
+intelmq (3.1.0~alpha1-1) UNRELEASED; urgency=medium
+
+  * Start 3.1.0 development.
+
+ -- Sebastian Wagner <wagner@cert.at>  Fri, 13 Aug 2021 11:09:58 +0200
+
+intelmq (3.0.1~beta1-1) UNRELEASED; urgency=medium
 
   * 3.0.1
 

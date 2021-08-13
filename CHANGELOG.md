@@ -6,6 +6,39 @@
 CHANGELOG
 ==========
 
+3.1.0 (unreleased)
+------------------
+
+### Configuration
+
+### Core
+
+### Development
+
+### Data Format
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
 3.0.1 (unreleased)
 ------------------
 
