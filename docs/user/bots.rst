@@ -1666,6 +1666,7 @@ These are the supported feed name and their corresponding file name for automati
    Vulnerable-Exchange-Server `*`            `scan_exchange`
    Vulnerable-ISAKMP                         `scan_isakmp`
    Vulnerable-HTTP                           `scan_http`
+   Vulnerable-SMTP                           `scan_smtp_vulnerable`
   =======================================   =========================
 
 `*` This report can also contain data on active webshells (column `tag` is `exchange;webshell`), and are therefore not only vulnerable but also actively infected.
