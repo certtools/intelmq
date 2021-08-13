@@ -12,7 +12,7 @@ import intelmq.lib.utils as utils
 from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 
 with open(os.path.join(os.path.dirname(__file__),
-                       'testdata/scan_smtp.csv')) as handle:
+                       'testdata/scan_smtp_vulnerable.csv')) as handle:
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
@@ -20,7 +20,7 @@ EXAMPLE_REPORT = {'feed.name': 'Vulnerable SMTP',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2021-07-08T00:00:00+00:00",
-                  "extra.file_name": "2021-07-08-scan_smtp-test-test.csv",
+                  "extra.file_name": "2021-07-08-scan_smtp_vulnerable-test-test.csv",
                   }
 
 EVENTS = [{'__type': 'Event',
