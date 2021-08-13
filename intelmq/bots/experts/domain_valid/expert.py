@@ -6,7 +6,10 @@ SPDX-FileCopyrightText: 2021 Marius Karotkis <marius.karotkis@gmail.com>
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import validators
+try:
+    import validators
+except ImportError:
+    validators = None
 
 import os.path
 import pathlib
@@ -46,8 +49,7 @@ class DomainValidExpertBot(Bot):
     def get_tlds_domain_list(self):
         if os.path.isfile(self.tlds_domains_list):
             with open(self.tlds_domains_list) as file:
-                next(file)
-                lines = {line.strip().lower() for line in file}
+                lines = {line.strip().lower() for line in file if not line.startswith('#')}
         else:
             raise ConfigurationError("File", f"TLD domain list file not found at {self.tlds_domains_list!r}.")
         return lines
@@ -58,8 +60,7 @@ class DomainValidExpertBot(Bot):
             parsed_args = cls._create_argparser().parse_args()
 
         if parsed_args.update_database:
-            cls.update_database()
-
+            cls.update_database(verbose=parsed_args.verbose)
         else:
             super().run(parsed_args=parsed_args)
 
@@ -67,28 +68,31 @@ class DomainValidExpertBot(Bot):
     def _create_argparser(cls):
         argparser = super()._create_argparser()
         argparser.add_argument("--update-database", action='store_true', help='downloads latest database data')
+        argparser.add_argument("--verbose", action='store_true', help='be verbose')
         return argparser
 
     @classmethod
-    def update_database(cls):
+    def update_database(cls, verbose=False):
         bots = {}
         runtime_conf = get_bots_settings()
         try:
             for bot in runtime_conf:
                 if runtime_conf[bot]["module"] == __name__:
-                    bots[bot] = runtime_conf[bot]["parameters"]["suffix_file"]
+                    bots[bot] = runtime_conf[bot]["parameters"]["tlds_domains_list"]
 
         except KeyError as e:
             sys.exit("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
 
         if not bots:
-            print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
+            if verbose:
+                print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
             sys.exit(0)
 
         try:
             session = create_request_session()
             url = "https://data.iana.org/TLD/tlds-alpha-by-domain.txt"
-            print("Downloading the latest database update...")
+            if verbose:
+                print("Downloading the latest database update...")
             response = session.get(url)
 
             if not response.ok:
@@ -104,7 +108,8 @@ class DomainValidExpertBot(Bot):
             with open(database_path, "wb") as database:
                 database.write(response.content)
 
-        print("Database updated. Reloading affected bots.")
+        if verbose:
+            print("Database updated. Reloading affected bots.")
 
         ctl = IntelMQController()
         for bot in bots.keys():
