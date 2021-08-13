@@ -1,0 +1,3 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","http","http_code","http_reason","content_type","connection","www_authenticate","set_cookie","server","content_length","transfer_encoding","http_date"
+"2021-08-01 07:00:24","210.181.42.1","tcp",8000,,"basic-auth,http",1234,"EE","TARTUMAA","TARTU",,,"HTTP/1.1",401,"Unauthorized","text/html; charset=%s","close","Basic realm=""Managed Switch""",,"mini_httpd/1.28 04Feb2018",,,"Sat, 25 Nov 2000 20:21:50 GMT"
+"2021-08-01 07:02:32","22.23.35.23","tcp",8000,"host.invalid","basic-auth,http",5678,"EE","HARJUMAA","TALLINN",,,"HTTP/1.1",401,"Unauthorized","text/html; charset=ISO-8859-1","close","Basic realm=""streaming_server""",,"Web Server",,,"Thu, 01 Aug 2021 10:02:39 GMT"
