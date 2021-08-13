@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Edvard Rejthar
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Utilities for debugging intelmq bots.
@@ -105,7 +109,7 @@ class BotDebugger:
             if self.instance.group == "Output":
                 self.outputappend("Output bots can't send message.")
                 return
-            if not bool(self.instance._Bot__destination_queues):
+            if not bool(self.instance.destination_queues):
                 self.outputappend("Bot has no destination queues.")
                 return
             if msg:

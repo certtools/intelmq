@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 jgedeon120
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """ IntelMQ parser for Netlab 360 data feeds. """
 

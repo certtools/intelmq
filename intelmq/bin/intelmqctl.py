@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import argparse
 import datetime
@@ -1327,7 +1331,10 @@ Get some debugging output on the settings and the environment (to be extended):
             for bot_id, info in self._pipeline_configuration().items():
                 return_dict[bot_id] = {}
 
-                if 'source_queue' in info:
+                # Do not report source queues for collectors
+                if 'source_queue' in info and not (
+                        self.runtime_configuration[bot_id].get('group', None) == 'Collector' or
+                        self.runtime_configuration[bot_id].get('groupname', None) == 'collectors'):
                     return_dict[bot_id]['source_queue'] = (
                         info['source_queue'], counters[info['source_queue']])
                     if pipeline.has_internal_queues:
@@ -1642,6 +1649,12 @@ Get some debugging output on the settings and the environment (to be extended):
             self.logger.info('Successfully wrote initial state file.')
 
         runtime = utils.load_configuration(RUNTIME_CONF_FILE)
+        try:
+            # remove global defaults, handled by 'defaults'
+            del runtime['global']
+        except KeyError:
+            # no global parameters is ok
+            pass
         defaults = utils.get_global_settings()
         harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
         if dry_run:

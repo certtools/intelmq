@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- encoding: utf-8 -*-
 """
 Testing the pipeline functions of intelmq.
@@ -24,9 +28,6 @@ SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
            'badencoding': b'foo\xc9bar',
            }
 
-
-class Parameters(object):
-    pass
 
 
 class TestPipeline(unittest.TestCase):
@@ -136,16 +137,18 @@ class TestRedis(unittest.TestCase):
     """
 
     def setUp(self):
-        params = Parameters()
-        setattr(params, 'source_pipeline_host', os.getenv('INTELMQ_PIPELINE_HOST', 'localhost'))
-        setattr(params, 'source_pipeline_password', os.getenv('INTELMQ_TEST_REDIS_PASSWORD'))
-        setattr(params, 'source_pipeline_db', 4)
-        setattr(params, 'destination_pipeline_host', os.getenv('INTELMQ_PIPELINE_HOST', 'localhost'))
-        setattr(params, 'destination_pipeline_password', os.getenv('INTELMQ_TEST_REDIS_PASSWORD'))
-        setattr(params, 'destination_pipeline_db', 4)
+        params = {}
+        params['source_pipeline_host'] = os.getenv('INTELMQ_PIPELINE_HOST', 'localhost')
+        params['source_pipeline_password'] = os.getenv('INTELMQ_TEST_REDIS_PASSWORD')
+        params['source_pipeline_db'] = 4
+        params['destination_pipeline_host'] = os.getenv('INTELMQ_PIPELINE_HOST', 'localhost')
+        params['destination_pipeline_password'] = os.getenv('INTELMQ_TEST_REDIS_PASSWORD')
+        params['destination_pipeline_db'] = 4
         logger = logging.getLogger('foo')
         logger.addHandler(logging.NullHandler())
-        self.pipe = pipeline.PipelineFactory.create(logger, broker='Redis', pipeline_args=params.__dict__)
+        self.pipe = pipeline.PipelineFactory.create(logger, broker='Redis', pipeline_args=params)
+        self.pipe.source_pipeline_host = '10.0.0.1'  # force fail if load_configuration is ineffective (#1875)
+        self.pipe.load_configurations('source')
         self.pipe.set_queues('test', 'source')
         self.pipe.set_queues('test', 'destination')
         self.pipe.connect()
@@ -212,7 +215,12 @@ class TestAmqp(unittest.TestCase):
     def setUp(self):
         logger = logging.getLogger('foo')
         logger.addHandler(logging.NullHandler())
-        self.pipe = pipeline.PipelineFactory.create(logger=logger, broker='Amqp')
+
+        self.pipe = pipeline.PipelineFactory.create(logger=logger, broker='Amqp',
+                                                    pipeline_args={'source_pipeline_host': '127.0.0.1',
+                                                                   'destination_pipeline_host': '127.0.0.1'})
+        self.pipe.source_pipeline_host = '10.0.0.1'  # force fail if load_configuration is ineffective (#1875)
+        self.pipe.load_configurations('source')
         self.pipe.set_queues('test', 'source')
         self.pipe.set_queues('test', 'destination')
         self.pipe.connect()

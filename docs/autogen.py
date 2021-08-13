@@ -11,9 +11,12 @@ import json
 import os.path
 import textwrap
 
-import yaml
+from ruamel.yaml import YAML
 
 import intelmq.lib.harmonization
+
+
+yaml = YAML(typ="safe", pure=True)
 
 
 HEADER = """#########################
@@ -73,7 +76,7 @@ def info(key, value=""):
 
 def feeds_docs():
     with codecs.open(os.path.join(BASEDIR, 'intelmq/etc/feeds.yaml'), encoding='utf-8') as fhandle:
-        config = yaml.safe_load(fhandle.read())
+        config = yaml.load(fhandle.read())
 
     output = """Feeds
 ======
@@ -94,7 +97,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild 
         for feed, feed_info in sorted(feeds.items(), key=lambda x: x[0]):
 
             output += f"{feed}\n"
-            output += "^"*len(feed) + "\n"
+            output += "^"*len(feed) + "\n\n"
 
             output += info("public", "yes") if feed_info.get('public') else info("public", "no")
 
@@ -129,7 +132,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild 
                         # format non-empty lists with double-quotes
                         # single quotes are not conform JSON and not correctly detected/transformed by the manager
                         if isinstance(value, (list, tuple)) and value:
-                            value = '["%s"]' % '", "'.join(value)
+                            value = json.dumps(value)
 
                         output += "   * `%s`: `%s`\n" % (key, value)
 

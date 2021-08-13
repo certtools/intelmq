@@ -1,3 +1,7 @@
+..
+   SPDX-FileCopyrightText: 2014 Tomás Lima <synchroack@gmail.com>, 2016-2021 Sebastian Wagner <wagner@cert.at>
+   SPDX-License-Identifier: AGPL-3.0-or-later
+
 Frequently asked questions
 ==========================
 
@@ -102,6 +106,8 @@ To remove the raw data for a events table of a PostgreSQL database, you can use 
    UPDATE events SET raw = NULL WHERE "time.source" < '2018-07-01';
 
 If the database is big, make sure only update small parts of the database by using an appropriate ``WHERE`` clause. If you do not see any negative performance impact, you can increase the size of the chunks, otherwise the events in the output bot may queue up. The ``id`` column can also be used instead of the source's time.
+
+Another way of reducing the ``raw``-data from the database is described in the EventDB documentation: :ref:`eventdb_raws_table`
 
 My bot(s) died on startup with no errors logged
 -------------------------------------------------------------------

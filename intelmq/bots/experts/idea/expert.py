@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Pavel Kácha
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 IDEA classification: https://idea.cesnet.cz/en/classifications
@@ -31,26 +35,21 @@ class IdeaExpertBot(Bot):
         "ddos": "Availability.DDoS",
         "spam": "Abusive.Spam",
         "scanner": "Recon.Scanning",
-        "dropzone": "Information.UnauthorizedAccess",
         "infected-system": "Malware",
         "malware-configuration": "Malware",
         "c2-server": "Intrusion.Botnet",
         "exploit": "Attempt.Exploit",
         "brute-force": "Attempt.Login",
         "ids-alert": "Attempt.Exploit",
-        "defacement": "Intrusion.AppCompromise",
-        "compromised": "Intrusion.AdminCompromise",
-        "backdoor": "Intrusion.AdminCompromise",
+        "system-compromise": "Intrusion.AdminCompromise",
         "blacklist": "Other",
-        "dga domain": "Anomaly.Behaviour",
+        "dga-domain": "Anomaly.Behaviour",
         "proxy": "Vulnerable.Config",
         "data-leak": "Information",
         "tor": "Other",
         "other": "Other",
         "undetermined": "Other",
         "test": "Test",
-        "unauthorized-command": "Intrusion.AdminCompromise",
-        "unauthorized-login": "Intrusion.AdminCompromise",
         "violence": "Abusive.Violence",
         "data-loss": "Information",
         "burglary": "Intrusion",
@@ -75,7 +74,6 @@ class IdeaExpertBot(Bot):
         "ddos-amplifier": "Intrusion.Botnet",
         "copyright": "Fraud.Copyright",
         "misconfiguration": "Availability.Outage",  # outage includes human error
-        "undetermined": "Other",
         "malware": "Malware",
     }
 
@@ -83,10 +81,9 @@ class IdeaExpertBot(Bot):
         # Added nonstandard Dropzone, MalwareConf, DGA, will consider adding to Idea spec
 
         "phishing": "Phishing",
-        "dropzone": "Dropzone",
         "malware-configuration": "MalwareConf",
         "c2-server": "CC",
-        "dga domain": "DGA",
+        "dga-domain": "DGA",
         "proxy": "Proxy",
         "tor": "Tor",
         "malware-distribution": "Malware"

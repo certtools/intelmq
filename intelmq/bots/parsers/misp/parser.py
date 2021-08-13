@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 kralca
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import json
 from datetime import datetime
@@ -17,7 +21,7 @@ class MISPParserBot(Bot):
         'ecsirt:availability="ddos"': 'ddos',
         'ecsirt:abusive-content="spam"': 'spam',
         'ecsirt:information-gathering="scanner"': 'scanner',
-        'ecsirt:information-content-security="dropzone"': 'dropzone',
+        'ecsirt:information-content-security="dropzone"': 'other',
         'ecsirt:malicious-code="malware"': 'infected-system',
         'ecsirt:malicious-code="botnet-drone"': 'infected-system',
         'ecsirt:malicious-code="ransomware"': 'infected-system',
@@ -26,9 +30,9 @@ class MISPParserBot(Bot):
         'ecsirt:intrusion-attempts="exploit"': 'exploit',
         'ecsirt:intrusion-attempts="brute-force"': 'brute-force',
         'ecsirt:intrusion-attempts="ids-alert"': 'ids-alert',
-        'ecsirt:intrusions="defacement"': 'defacement',
-        'ecsirt:intrusions="compromised"': 'compromised',
-        'ecsirt:intrusions="backdoor"': 'backdoor',
+        'ecsirt:intrusions="defacement"': 'unauthorised-information-modification',
+        'ecsirt:intrusions="compromised"': 'system-compromise',
+        'ecsirt:intrusions="backdoor"': 'system-compromise',
         'ecsirt:vulnerable="vulnerable-service"': 'vulnerable-system',
         'ecsirt:other="blacklist"': 'blacklist',
         'ecsirt:other="unknown"': 'undetermined',
@@ -62,8 +66,11 @@ class MISPParserBot(Bot):
 
         # Set the classifier based on the ecsirt tag
         classifier = None
+        identifier = None
         if misp_event.get('Tag'):
             for tag in misp_event['Tag']:
+                if tag['name'] == 'dropzone':
+                    identifier = 'dropzone'
                 if tag['name'] in self.MISP_TAXONOMY_MAPPING:
                     classifier = self.MISP_TAXONOMY_MAPPING[tag['name']]
                     break
@@ -112,6 +119,7 @@ class MISPParserBot(Bot):
                 event.add('event_description.url', misp_event_url)
                 event.add('malware.name', malware_variant, raise_failure=False)
                 event.add('classification.type', classifier)
+                event.add('classification.identifier', identifier)
                 event.add('time.source', '{} UTC'.format(
                           datetime.utcfromtimestamp(float(timestamp))))
                 self.send_message(event)

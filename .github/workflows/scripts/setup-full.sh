@@ -21,6 +21,12 @@ for file in intelmq/bots/*/*/REQUIREMENTS.txt; do
 	pip install -r $file;
 done
 
+# Test specific dependencies not used for production
+for file in intelmq/tests/bots/*/*/REQUIREMENTS.txt; do
+	echo $file;
+	pip install -r $file;
+done
+
 # Setup sudo and install intelmq
 sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers
 sudo pip install .

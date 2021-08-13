@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import unittest
@@ -6,7 +10,7 @@ import intelmq.lib.test as test
 from intelmq.bots.experts.filter.expert import FilterExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
-                 "classification.type": "defacement",
+                 "classification.type": "unauthorised-information-modification",
                  "time.source": "2005-01-01T00:00:00+00:00",
                  "source.asn": 123,
                  "extra.test1": True,
@@ -25,7 +29,7 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = FilterExpertBot
         cls.input_message = EXAMPLE_INPUT
         cls.sysconfig = {'filter_key': 'classification.type',
-                         'filter_value': "defacement",
+                         'filter_value': "unauthorised-information-modification",
                          'filter_action': 'drop'}
 
     def test_extra_filter_drop(self):

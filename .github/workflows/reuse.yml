@@ -1,0 +1,27 @@
+#Github Workflow reuse licensecheck
+#
+#SPDX-FileCopyrightText: 2021 Birger Schacht
+#SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: "ReUse License Check"
+
+on:
+  push:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  license:
+    name: Check license compliance
+    runs-on: ubuntu-latest
+    # This should not fail the whole workflow run
+    continue-on-error: true
+
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: REUSE compliance check
+      uses: fsfe/reuse-action@v1

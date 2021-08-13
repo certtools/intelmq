@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Sebastian Waldbauer
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 from intelmq.lib.bot import Bot
 from intelmq.lib.utils import create_request_session
@@ -95,6 +99,9 @@ class RDAPExpertBot(Bot, CacheMixin):
 
                     if resp.status_code < 200 or resp.status_code > 299:
                         if resp.status_code == 404:
+                            self.logger.debug('Treating server response 404 as no data.')
+                            self.send_message(event)
+                            self.acknowledge_message()
                             return
                         self.logger.debug("RDAP Server '%s' responded with '%d' for domain '%s'.", service['url'], resp.status_code, url)
                         raise ValueError(f"Unable to process server's response, the returned status-code was {resp.status_code}. Enable debug logging to see more details.")
@@ -106,7 +113,7 @@ class RDAPExpertBot(Bot, CacheMixin):
                         raise ValueError("Unable to parse server response as JSON. Enable debug logging to see more details.")
                     for entity in resp['entities']:
                         if not isinstance(entity, dict):
-                            self.logger.warn("Invalid type '%s' in entities of response for domain '%s' found.", type(entity), url)
+                            self.logger.warning("Invalid type '%s' in entities of response for domain '%s' found.", type(entity), url)
                             continue
 
                         if 'removed' in entity['roles']:
@@ -116,7 +123,7 @@ class RDAPExpertBot(Bot, CacheMixin):
                             if 'entities' in entity:
                                 for subentity in entity['entities']:
                                     if not isinstance(subentity, dict):
-                                        self.logger.warn("Invalid type '%s' in entities of response for domain '%s' found.", type(subentity), url)
+                                        self.logger.warning("Invalid type '%s' in entities of response for domain '%s' found.", type(subentity), url)
                                         continue
 
                                     for subentrole in subentity['roles']:

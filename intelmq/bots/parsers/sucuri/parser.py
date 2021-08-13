@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 dargen3
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Only parses hidden iframes and conditional redirections, not Encoded javascript.

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 robcza
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 """
@@ -11,7 +15,7 @@ TYPES = {
     'PHISHING': 'phishing',
     'MALWARE': 'malware-distribution',
     'EXPLOIT_KIT': 'exploit',
-    'BACKDOOR': 'backdoor',
+    'BACKDOOR': 'system-compromise',
     'TOR_IP': 'proxy',
     'C_AND_C': 'c2-server'
 }

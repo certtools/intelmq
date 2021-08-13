@@ -1,3 +1,7 @@
+..
+   SPDX-FileCopyrightText: 2017 Sebastian Wagner
+   SPDX-License-Identifier: AGPL-3.0-or-later
+
 Installation
 ============
 
@@ -18,11 +22,11 @@ Supported and recommended operating systems are:
 
 * CentOS 7 and 8
 * Debian 10
-* openSUSE Leap 15.2
+* openSUSE Leap 15.2, 15.13
 * Ubuntu: 18.04, 20.04
 * Docker Engine: 18.x and higher
 
-Other distributions which are (most probably) supported include CentOS 8, RHEL, Fedora and openSUSE Tumbleweed.
+Other distributions which are (most probably) supported include RHEL, Fedora, openSUSE Tumbleweed and FreeBSD 12.
 
 A short guide on hardware requirements can be found on the page :doc:`hardware-requirements`.
 
@@ -71,7 +75,7 @@ Optional dependencies:
     dnf install bash-completion jq
     dnf install python3-psycopg2 python3-pymongo
 
-openSUSE 15.1 / 15.2
+openSUSE 15.2 / 15.3
 ^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash
@@ -114,11 +118,10 @@ These are the operating systems which are currently supported by packages:
 * **CentOS 7** (run `yum install epel-release` first)
 * **CentOS 8** (run `dnf install epel-release` first)
 * **Debian 10**
-* **Fedora 30**
-* **Fedora 31**
-* **Fedora 32**
-* **openSUSE Leap 15.1**
+* **Fedora 33**
+* **Fedora 34**
 * **openSUSE Leap 15.2**
+* **openSUSE Leap 15.3** (make sure the ``openSUSE:Backports:SLE-15-SP3`` repository is enabled)
 * **openSUSE Tumbleweed**
 * **Ubuntu 18.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ bionic main` first)
 * **Ubuntu 20.04** (enable the universe repositories by appending `universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ focal main` first)

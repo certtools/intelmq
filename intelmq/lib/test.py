@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Utilities for testing intelmq bots.
@@ -68,15 +72,7 @@ def mocked_config(bot_id='test-bot', sysconfig={}, group=None, module=None):
 
 
 def mocked_get_global_settings():
-    return {"destination_pipeline_broker": "pythonlist",
-            "redis_cache_host": os.getenv('INTELMQ_PIPELINE_HOST', 'localhost'),
-            "redis_cache_port": 6379,
-            "redis_cache_db": 4,
-            "redis_cache_ttl": 10,
-            "redis_cache_password": os.environ.get('INTELMQ_TEST_REDIS_PASSWORD'),
-            "source_pipeline_broker": "pythonlist",
-            "testing": True,
-            }
+    return BOT_CONFIG
 
 
 def skip_database():
@@ -101,6 +97,11 @@ def skip_exotic():
 
 def skip_ci():
     return unittest.skipIf(os.getenv('CI') == 'true', 'Test disabled on CI.')
+
+
+def skip_build_environment():
+    # For test that regularly fail in build environments like local or public Open Build Service builds
+    return unittest.skipIf(os.getenv('USER') == 'abuild', 'Test disabled in Build Service.')
 
 
 class BotTestCase(object):
@@ -205,7 +206,8 @@ class BotTestCase(object):
                                                                 queue_name.strip('_'))
                                   for queue_name in destination_queues}
 
-        config = self.sysconfig.copy()
+        config = BOT_CONFIG.copy()
+        config.update(self.sysconfig)
         config.update(parameters)
         config['destination_queues'] = destination_queues
         self.mocked_config = mocked_config(self.bot_id,
@@ -214,14 +216,10 @@ class BotTestCase(object):
                                            module=self.bot_reference.__module__,
                                            )
 
-        self.resulting_config = BOT_CONFIG.copy()
-        self.resulting_config.update(self.sysconfig)
-        self.resulting_config.update(parameters)
-
         self.logger = utils.log(self.bot_id,
                                 log_path=False, stream=self.log_stream,
                                 log_format_stream=utils.LOG_FORMAT,
-                                log_level=self.resulting_config['logging_level'])
+                                log_level=config['logging_level'])
         self.logger_handlers_backup = self.logger.handlers
 
         parameters = Parameters()
@@ -240,6 +238,9 @@ class BotTestCase(object):
         self.pipe.set_queues(parameters.source_queue, "source")
         self.pipe.set_queues(parameters.destination_queues, "destination")
 
+        self.prepare_source_queue()
+
+    def prepare_source_queue(self):
         if self.input_message is not None:
             if not isinstance(self.input_message, (list, tuple)):
                 self.input_message = [self.input_message]
@@ -286,7 +287,8 @@ class BotTestCase(object):
     def run_bot(self, iterations: int = 1, error_on_pipeline: bool = False,
                 prepare=True, parameters={},
                 allowed_error_count=0,
-                allowed_warning_count=0):
+                allowed_warning_count=0,
+                stop_bot: bool = True):
         """
         Call this method for actually doing a test run for the specified bot.
 
@@ -295,6 +297,7 @@ class BotTestCase(object):
             parameters: passed to prepare_bot
             allowed_error_count: maximum number allow allowed errors in the logs
             allowed_warning_count: maximum number allow allowed warnings in the logs
+            bot_stop: If the bot should be stopped/shut down after running it. Set to False, if you are calling this method again afterwards, as the bot shutdown destroys structures (pipeline, etc.)
         """
         if prepare:
             self.prepare_bot(parameters=parameters)
@@ -309,7 +312,8 @@ class BotTestCase(object):
                     self.bot.start(error_on_pipeline=error_on_pipeline,
                                    source_pipeline=self.pipe,
                                    destination_pipeline=self.pipe)
-                self.bot.stop(exitcode=0)
+                if stop_bot:
+                    self.bot.stop(exitcode=0)
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
 
@@ -318,6 +322,12 @@ class BotTestCase(object):
                          'Not all input messages have been processed. '
                          'You probably need to increase the number of '
                          'iterations of `run_bot`.')
+
+        internal_queue_size = len(self.get_input_internal_queue())
+        self.assertEqual(internal_queue_size, 0,
+                         'The internal input queue is not empty, but has '
+                         f'{internal_queue_size} element(s). '
+                         'The bot did not acknowledge all messages.')
 
         """ Test if report has required fields. """
         if self.bot_type == 'collector':
@@ -344,7 +354,8 @@ class BotTestCase(object):
                                      "".format(self.bot_name,
                                                self.bot_id), "INFO")
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
-        self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
+        if stop_bot:
+            self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
 
         allowed_error_count = max(allowed_error_count, self.allowed_error_count)
         self.assertLessEqual(len(re.findall(' - ERROR - ', self.loglines_buffer)), allowed_error_count)
@@ -375,6 +386,14 @@ class BotTestCase(object):
            with fixture data in setUp()"""
         if self.pipe:
             return self.pipe.state["%s-input" % self.bot_id]
+        else:
+            return []
+
+    def get_input_internal_queue(self):
+        """Returns the internal input queue of this bot which can be filled
+           with fixture data in setUp()"""
+        if self.pipe:
+            return self.pipe.state["%s-input-internal" % self.bot_id]
         else:
             return []
 
@@ -535,6 +554,10 @@ class BotTestCase(object):
             del event_dict['time.observation']
         if 'time.observation' in expected:
             del expected['time.observation']
+        if 'output' in event_dict:
+            event_dict['output'] = json.loads(event_dict['output'])
+        if 'output' in expected:
+            expected['output'] = json.loads(expected['output'])
 
         self.assertDictEqual(expected, event_dict)
 

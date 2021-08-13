@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2014 Tomás Lima
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 The bot library has the base classes for all bots.
@@ -199,6 +203,9 @@ class Bot(object):
             self.__load_harmonization_configuration()
 
             self._parse_common_parameters()
+
+            super().__init__()
+            self.__connect_pipelines()
             self.init()
 
             if not self.__instance_id:
@@ -224,7 +231,6 @@ class Bot(object):
             self.stop()
             raise
         self.logger.info("Bot initialization completed.")
-        super().__init__()
 
         self.__stats_cache = cache.Cache(host=self.statistics_host,
                                          port=self.statistics_port,
@@ -267,7 +273,6 @@ class Bot(object):
         self.logger.handlers = []  # remove all existing handlers
         self.__sighup.clear()
         self.__init__(self.__bot_id_full, sighup_event=self.__sighup)
-        self.__connect_pipelines()
 
     def init(self):
         pass
@@ -621,7 +626,7 @@ class Bot(object):
             self.__destination_pipeline.send(raw_message, path=path,
                                              path_permissive=path_permissive)
 
-    def receive_message(self):
+    def receive_message(self) -> libmessage.Message:
         """
 
 
@@ -920,8 +925,8 @@ class Bot(object):
 class ParserBot(Bot):
     _csv_params = {}
     _ignore_lines_starting = []
-    handle = None
-    current_line = None
+    _handle = None
+    _current_line = None
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
@@ -942,9 +947,9 @@ class ParserBot(Bot):
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
                                                 in self._ignore_lines_starting])])
-        self.handle = RewindableFileHandle(io.StringIO(raw_report))
-        for line in csv.reader(self.handle, **self._csv_params):
-            self.current_line = self.handle.current_line
+        self._handle = RewindableFileHandle(io.StringIO(raw_report))
+        for line in csv.reader(self._handle, **self._csv_params):
+            self._current_line = self._handle.current_line
             yield line
 
     def parse_csv_dict(self, report: libmessage.Report):
@@ -957,15 +962,15 @@ class ParserBot(Bot):
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
                                                 in self._ignore_lines_starting])])
-        self.handle = RewindableFileHandle(io.StringIO(raw_report))
+        self._handle = RewindableFileHandle(io.StringIO(raw_report))
 
-        csv_reader = csv.DictReader(self.handle, **self._csv_params)
+        csv_reader = csv.DictReader(self._handle, **self._csv_params)
         # create an array of fieldnames,
         # those were automagically created by the dictreader
         self.csv_fieldnames = csv_reader.fieldnames
 
         for line in csv_reader:
-            self.current_line = self.handle.current_line
+            self._current_line = self._handle.current_line
             yield line
 
     def parse_json(self, report: libmessage.Report):
@@ -982,7 +987,7 @@ class ParserBot(Bot):
         """
         raw_report: str = utils.base64_decode(report.get("raw"))
         for line in raw_report.splitlines():
-            self.current_line = line
+            self._current_line = line
             yield json.loads(line)
 
     def parse(self, report: libmessage.Report):
@@ -1072,14 +1077,14 @@ class ParserBot(Bot):
         ----------
         line : Optional[str], optional
             The currently process line which should be transferred into it's
-            original appearance. As fallback, "self.current_line" is used if
+            original appearance. As fallback, "self._current_line" is used if
             available (depending on self.parse).
             The default is None.
 
         Raises
         ------
         ValueError
-            If neither the parameter "line" nor the member "self.current_line"
+            If neither the parameter "line" nor the member "self._current_line"
             is available.
 
         Returns
@@ -1088,14 +1093,14 @@ class ParserBot(Bot):
             The reconstructed raw data.
 
         """
-        if self.handle and self.handle.first_line and not self.tempdata:
-            tempdata = [self.handle.first_line.strip()]
+        if self._handle and self._handle.first_line and not self.tempdata:
+            tempdata = [self._handle.first_line.strip()]
         else:
             tempdata = self.tempdata
-        if not line and not self.current_line:
+        if not line and not self._current_line:
             raise ValueError('Parameter "line" is not given and '
-                             '"self.current_line" is also None. Please give one of them.')
-        line = line if line else self.current_line
+                             '"self._current_line" is also None. Please give one of them.')
+        line = line if line else self._current_line
         return '\n'.join(tempdata + [line])
 
     def recover_line_csv(self, line: str) -> str:
@@ -1112,7 +1117,7 @@ class ParserBot(Bot):
         out = io.StringIO()
         writer = csv.DictWriter(out, self.csv_fieldnames, **self._csv_params)
         writer.writeheader()
-        out.write(self.current_line)
+        out.write(self._current_line)
 
         return out.getvalue().strip()
 
@@ -1137,7 +1142,7 @@ class ParserBot(Bot):
         str
             unparsed JSON line.
         """
-        return self.current_line
+        return self._current_line
 
 
 class CollectorBot(Bot):

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 This product includes GeoLite2 data created by MaxMind, available from
@@ -90,7 +94,7 @@ class GeoIPExpertBot(Bot):
             parsed_args = cls._create_argparser().parse_args()
 
         if parsed_args.update_database:
-            cls.update_database()
+            cls.update_database(verbose=parsed_args.verbose)
 
         else:
             super().run(parsed_args=parsed_args)
@@ -99,10 +103,11 @@ class GeoIPExpertBot(Bot):
     def _create_argparser(cls):
         argparser = super()._create_argparser()
         argparser.add_argument("--update-database", action='store_true', help='downloads latest database data')
+        argparser.add_argument("--verbose", action='store_true', help='be verbose')
         return argparser
 
     @classmethod
-    def update_database(cls):
+    def update_database(cls, verbose=False):
         bots = {}
         license_key = None
         runtime_conf = get_bots_settings()
@@ -123,7 +128,8 @@ class GeoIPExpertBot(Bot):
                 sys.exit(error)
 
         if not bots:
-            print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
+            if verbose:
+                print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
             sys.exit(0)
 
         # we only need to import now, if there are no maxmind_geoip bots, this dependency does not need to be installed
@@ -135,7 +141,8 @@ class GeoIPExpertBot(Bot):
                                                          "is a dependency for the required geoip2 package.")
 
         try:
-            print("Downloading the latest database update...")
+            if verbose:
+                print("Downloading the latest database update...")
             session = create_request_session()
             response = session.get("https://download.maxmind.com/app/geoip_download",
                                    params={
@@ -175,7 +182,8 @@ class GeoIPExpertBot(Bot):
             with open(database_path, "wb") as database:
                 database.write(database_data._buffer)
 
-        print("Database updated. Reloading affected bots.")
+        if verbose:
+            print("Database updated. Reloading affected bots.")
 
         ctl = IntelMQController()
         for bot in bots.keys():

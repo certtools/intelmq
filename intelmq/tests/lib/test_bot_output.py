@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Test OutputBot specifics
@@ -25,6 +29,7 @@ class DummyOutputBot(OutputBot):
     def process(self):
         event = self.receive_message()
         self.result = self.export_event(event, return_type=self.return_type)
+        self.acknowledge_message()
 
 
 class TestDummyOutputBot(BotTestCase, TestCase):

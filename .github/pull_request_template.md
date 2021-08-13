@@ -1,6 +1,3 @@
-..
-   SPDX-License-Identifier: AGPL-3.0-or-later
-
 # Please read the notes below and replace them with the description of you pull request
 
 Make sure you follow the instructions in the [Developer Guide](https://intelmq.readthedocs.io/en/latest/dev/guide.html) - it describes how to run the test suite and which coding rules to follow.

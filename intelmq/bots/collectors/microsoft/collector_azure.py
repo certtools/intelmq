@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Uses the azure.storage.blob module. Tested with version 12.13.1
@@ -32,7 +36,7 @@ class MicrosoftAzureCollectorBot(CollectorBot, CacheMixin):
 
     def init(self):
         if ContainerClient is None or create_configuration is None:
-            raise MissingDependencyError("azure.storage")
+            raise MissingDependencyError("azure.storage", version='>=12.0.0')
 
         self.config = create_configuration(storage_sdk='blob')
         if hasattr(self, 'https_proxy'):

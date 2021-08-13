@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2017 Sebastian Wagner
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # Bash Completion for intelmq
 
 It completes (sub-)commands and parameters (bots and pipeline names, log levels).

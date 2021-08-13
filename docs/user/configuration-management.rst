@@ -1,3 +1,7 @@
+..
+   SPDX-FileCopyrightText: 2015 Aaron Kaplan <aaron@lo-res.org>, 2015-2021 Sebastian Wagner, 2020-2021 Birger Schacht
+   SPDX-License-Identifier: AGPL-3.0-or-later
+
 ############################
 Configuration and Management
 ############################
@@ -48,12 +52,15 @@ Overview
 ========
 
 The main configuration file is formatted in the YAML format since IntelMQ 3.0 (before it was JSON, which had some downsides).
-For new installations a default setup with some examples is provided by the `intelmqsetup` tool. If this is not the case, make sure the program was run (see installation instructions).
+Although, comments in YAML are currently not preserved by IntelMQ (known bug `#2003 <https://github.com/certtools/intelmq/issues/2003>`_).
+For new installations a default setup with some examples is provided by the `intelmqsetup` tool. If this is not the case, make sure the program was run (see :doc:`installation` instructions).
 
 
 * ``runtime.yaml``: Configuration for the individual bots. See :doc:`bots` for more details.
+* ``harmonization.conf``: Configuration of the internal data format, see :doc:`/dev/data-format` and :doc:`/dev/harmonization-fields`.
 
-To configure a new bot, you need to define and configure it in ``runtime.yaml``. You can base your configuration on the output of ``intelmqctl list bots``.
+To configure a new bot, you need to define and configure it in ``runtime.yaml``.
+You can base your configuration on the output of ``intelmqctl list bots`` and the :doc:`feeds` documentation page.
 Use the IntelMQ Manager mentioned above to generate the configuration files if unsure.
 
 In the shipped examples 4 collectors and parsers, 6 common experts and one output are configured. The default collector and the parser handle data from malware domain list, the file output bot writes all data to ``/opt/intelmq/var/lib/bots/file-output/events.txt``/``/var/lib/intelmq/bots/file-output/events.txt``.
@@ -216,14 +223,14 @@ This configuration is used by each bot to load its specific (runtime) parameters
 
 .. code-block:: yaml
 
-   malware-domain-list-collector:
+   blocklistde-apache-collector:
      group: Collector
-     name: Malware Domain List
+     name: Blocklist.de Apache List
      module: intelmq.bots.collectors.http.collector_http
-     description: Malware Domain List Collector is the bot responsible to get the report from source of information.
+     description: Blocklist.de Apache Collector fetches all IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.
      parameters:
-       http_url: http://www.malwaredomainlist.com/updatescsv.php
-       feed: Malware Domain List
+       http_url: https://lists.blocklist.de/lists/apache.txt
+       name: Blocklist.de Apache
        rate_limit: 3600
 
 More examples can be found in the ``intelmq/etc/runtime.conf`` directory. See :doc:`bots` for more details.
@@ -232,16 +239,16 @@ By default, all of the bots are started when you start the whole botnet, however
 
 .. code-block:: yaml
 
-    malware-domain-list-collector:
-      group: Collector
-      name: Malware Domain List
-      module: intelmq.bots.collectors.http.collector_http
-      description: Malware Domain List Collector is the bot responsible to get the report from source of information.
-      enabled: false,
-      parameters:
-        http_url: http://www.malwaredomainlist.com/updatescsv.php
-        feed: Malware Domain List
-        rate_limit: 3600
+   blocklistde-apache-collector:
+     group: Collector
+     name: Blocklist.de Apache List
+     module: intelmq.bots.collectors.http.collector_http
+     description: Blocklist.de Apache Collector fetches all IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.
+     enabled: false
+     parameters:
+       http_url: https://lists.blocklist.de/lists/apache.txt
+       name: Blocklist.de Apache
+       rate_limit: 3600
 
 Pipeline Configuration
 ======================
@@ -280,7 +287,7 @@ Destination queues are defined using a dictionary with a name as key and a list 
 
 In this case, bot will be able to send the message to one of defined paths. The path ``"_default"`` is used if none is specified by the bot itself.
 In case of errors during processing, and the optional path ``"_on_error"`` is specified, the message will be sent to the pipelines given given as on-error.
-Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the :ref:`filter expert` and the :ref:`sieve expert`.
+Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the :ref:`intelmq.bots.experts.filter.expert` expert and the :ref:`intelmq.bots.experts.sieve.expert` expert.
 The named queues need to be explicitly addressed by the bot (e.g. filtering) or the core (``_on_error``) to be used. Setting arbitrary paths has no effect.
 
 AMQP (Beta)
@@ -578,9 +585,9 @@ When bots are failing due to bad input data or programming errors, they can dump
      > a modify-expert-queue
      All messages in the opened file will be recovered to the stored or given
      queue and removed from the file.
-   - e, Delete entries by IDs
-     > e id{,id}
-     > e 3,5
+   - d, Delete entries by IDs
+     > d id{,id}
+     > d 3,5
      The entries will be deleted from the dump file.
    - d, Delete file
      > d
@@ -590,10 +597,10 @@ When bots are failing due to bad input data or programming errors, they can dump
      > s 0,4,5
      Show the selected IP in a readable format. It's still a raw format from
      repr, but with newlines for message and traceback.
-   - v, Edit by ID
-     > v id
-     > v 0
-     > v 1,2
+   - e, Edit by ID
+     > e id
+     > e 0
+     > e 1,2
      Opens an editor (by calling `sensible-editor`) on the message. The modified message is then saved in the dump.
    - q, Quit
      > q
@@ -612,7 +619,7 @@ When bots are failing due to bad input data or programming errors, they can dump
    Processing dragon-research-group-ssh-parser: 2 dumps
      0: 2015-09-03T13:13:22.159014 InvalidValue: invalid value u'NA' (<type 'unicode'>) for key u'source.asn'
      1: 2015-09-01T14:40:20.973743 InvalidValue: invalid value u'NA' (<type 'unicode'>) for key u'source.asn'
-   recover (a)ll, delete (e)ntries, (d)elete file, (q)uit, (s)how by ids, (r)ecover by ids? d
+   (r)ecover by ids, recover (a)ll, delete (e)ntries, (d)elete file, (s)how by ids, (q)uit, edit id (v)? d
    Deleted file /opt/intelmq/var/log/dragon-research-group-ssh-parser.dump
 
 Bots and the intelmqdump tool use file locks to prevent writing to already opened files. Bots are trying to lock the file for up to 60 seconds if the dump file is locked already by another process (intelmqdump) and then give up. Intelmqdump does not wait and instead only shows an error message.

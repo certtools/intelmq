@@ -95,7 +95,7 @@ class MISPAPIOutputBot(OutputBot):
     misp_url: str = None
     significant_fields: list = []
 
-    __is_multithreadable = False
+    _Bot__is_multithreadable = False
 
     def init(self):
         if pymisp is None and import_fail_reason == 'syntax':
@@ -108,14 +108,12 @@ class MISPAPIOutputBot(OutputBot):
         elif pymisp is None:
             raise MissingDependencyError('pymisp', version='>=2.4.120')
 
-        self.logger.info('Significant fields are {}.'.format(
-            self.parameters.significant_fields))
+        self.logger.info(f'Significant fields are {self.significant_fields!r}.')
 
-        self.logger.info('Connecting to MISP instance at {}.'.format(
-            self.parameters.misp_url))
-        self.misp = pymisp.api.PyMISP(self.parameters.misp_url,
-                                      self.parameters.misp_key,
-                                      self.parameters.http_verify_cert)
+        self.logger.info(f'Connecting to MISP instance at {self.misp_url!r}.')
+        self.misp = pymisp.api.PyMISP(self.misp_url,
+                                      self.misp_key,
+                                      self.http_verify_cert)
 
         self.misp.toggle_global_pythonify()
 
@@ -124,7 +122,7 @@ class MISPAPIOutputBot(OutputBot):
 
         # search for existing events that have all values that are significant
         values_to_search_for = []
-        for sig_field in self.parameters.significant_fields:
+        for sig_field in self.significant_fields:
             if sig_field in intelmq_event and intelmq_event[sig_field]:
                 values_to_search_for.append(intelmq_event[sig_field])
 
@@ -138,7 +136,7 @@ class MISPAPIOutputBot(OutputBot):
             # limit=20 is a safeguard against searches that'll find too much,
             # as the returning python objects can take up much time and memory
             # and because there should only be one matching MISPEvent
-            r = self.misp.search(tags=self.parameters.misp_tag_for_bot,
+            r = self.misp.search(tags=self.misp_tag_for_bot,
                                  value=vquery, limit=20)
             if len(r) > 0:
                 msg = 'Found MISP events matching {}: {} -> not inserting.'
@@ -157,7 +155,7 @@ class MISPAPIOutputBot(OutputBot):
         misp_o = misp_event.get_objects_by_name(MISPOBJECT_NAME)[0]
 
         all_found = True
-        for field in ['feed.provider'] + self.parameters.significant_fields:
+        for field in ['feed.provider'] + self.significant_fields:
             attributes = misp_o.get_attributes_by_relation(field)
             value = attributes[0].value if len(attributes) > 0 else None
             if not (value == intelmq_event.get(field)):
@@ -181,29 +179,29 @@ class MISPAPIOutputBot(OutputBot):
             new_misp_event.info = 'via IntelMQ'
 
         # set the tags
-        new_misp_event.add_tag(self.parameters.misp_tag_for_bot)
+        new_misp_event.add_tag(self.misp_tag_for_bot)
 
-        if (self.parameters.add_feed_provider_as_tag and
+        if (self.add_feed_provider_as_tag and
                 'feed.provider' in intelmq_event):
             new_tag = 'IntelMQ:feed.provider="{}"'.format(
                 intelmq_event['feed.provider'])
             new_misp_event.add_tag(new_tag)
 
-        if (self.parameters.add_feed_name_as_tag and
+        if (self.add_feed_name_as_tag and
                 'feed.name' in intelmq_event):
             new_tag = 'IntelMQ:feed.name="{}"'.format(
                 intelmq_event['feed.name'])
             new_misp_event.add_tag(new_tag)
 
-        for new_tag in self.parameters.misp_additional_tags:
+        for new_tag in self.misp_additional_tags:
             new_misp_event.add_tag(new_tag)
 
         # build the MISPObject and its attributes
         obj = new_misp_event.add_object(name=MISPOBJECT_NAME)
 
         fields_to_correlate = (
-            self.parameters.significant_fields +
-            self.parameters.misp_additional_correlation_fields
+            self.significant_fields +
+            self.misp_additional_correlation_fields
         )
 
         for object_relation, value in intelmq_event.items():
@@ -213,15 +211,14 @@ class MISPAPIOutputBot(OutputBot):
                     value=value,
                     disable_correlation=(
                         object_relation not in fields_to_correlate),
-                    to_ids=(
-                        object_relation in self.parameters.misp_to_ids_fields)
+                    to_ids=(object_relation in self.misp_to_ids_fields)
                 )
             except pymisp.NewAttributeError:
                 msg = 'Ignoring "{}":"{}" as not in object template.'
                 self.logger.debug(msg.format(object_relation, value))
 
         misp_event = self.misp.add_event(new_misp_event)
-        if self.parameters.misp_publish:
+        if self.misp_publish:
             self.misp.publish(misp_event)
         self.logger.info(
             'Inserted new MISP event with id: {}'.format(misp_event.id))

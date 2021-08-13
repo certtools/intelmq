@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 robcza
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
@@ -28,12 +32,6 @@ class ReverseDnsExpertBot(Bot, CacheMixin):
     redis_cache_password: str = None
     redis_cache_port: int = 6379
     redis_cache_ttl: int = 86400
-
-    def init(self):
-        if not hasattr(self, 'overwrite'):
-            self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
-                                "Please set it explicitly, default will change to "
-                                "'False' in version 3.0.0'.")
 
     def process(self):
         event = self.receive_message()

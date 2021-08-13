@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Created on Tue Sep 10 17:10:54 2019
@@ -15,6 +19,8 @@ if os.getenv('INTELMQ_TEST_EXOTIC'):
         EMAIL_TXT_FOOBAR = parse_email(handle.read())
     with open(os.path.join(os.path.dirname(__file__), 'fake_attachment.eml')) as handle:
         EMAIL_FAKE_ATTACHMENT = parse_email(handle.read())
+    with open(os.path.join(os.path.dirname(__file__), 'text_attachment.eml')) as handle:
+        EMAIL_TEXT_ATTACHMENT = parse_email(handle.read())
 
 
 class MockedImbox():
@@ -46,3 +52,8 @@ class MockedTxtImbox(MockedImbox):
 class MockedBadAttachmentImbox(MockedImbox):
     def messages(self, *args, **kwargs):
         yield 0, deepcopy(EMAIL_FAKE_ATTACHMENT)
+
+
+class MockedTextAttachmentImbox(MockedImbox):
+    def messages(self, *args, **kwargs):
+        yield 0, deepcopy(EMAIL_TEXT_ATTACHMENT)

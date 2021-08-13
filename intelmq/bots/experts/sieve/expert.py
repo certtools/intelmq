@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Antoine Neuenschwander
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 SieveExpertBot filters and modifies events based on a specification language similar to mail sieve.

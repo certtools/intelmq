@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Chris Horsley
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 ZoneH CSV defacement report parser
@@ -17,10 +21,10 @@ class ZoneHParserBot(ParserBot):
         parsed_url = urlparse(row["domain"])
 
         event.add('classification.identifier', "compromised-website")
-        event.add('classification.type', 'compromised')
+        event.add('classification.type', 'unauthorised-information-modification')
         event.add('event_description.text', 'defacement')
         event.add('time.source', row["add_date"] + ' UTC')
-        event.add('raw', self.recover_line(self.current_line))
+        event.add('raw', self.recover_line())
         event.add('source.ip', row["ip_address"], raise_failure=False)
         event.add('source.fqdn', parsed_url.netloc, raise_failure=False)
         event.add('source.geolocation.cc', row["country_code"],

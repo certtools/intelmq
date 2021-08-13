@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 gethvi
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 import unittest
 import sys
 
@@ -36,7 +40,7 @@ INPUT = """[
 
 OUTPUT_0 = {
     '__type': 'Event',
-    'classification.type': 'unauthorized-command',
+    'classification.type': 'system-compromise',
     'protocol.transport': 'tcp',
     'protocol.application': 'ssh',
     'destination.port': 22,
@@ -65,7 +69,7 @@ OUTPUT_1 = {
 
 OUTPUT_2 = {
     '__type': 'Event',
-    'classification.type': 'unauthorized-login',
+    'classification.type': 'system-compromise',
     'protocol.transport': 'tcp',
     'protocol.application': 'ssh',
     'destination.port': 22,

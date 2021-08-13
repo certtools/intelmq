@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import re
 
@@ -139,13 +143,13 @@ class CymruCAPProgramParserBot(ParserBot):
             raise NotImplementedError('Report %r not implemented, format is unknown.' % report_type)
         elif report_type == 'defacement':  # TODO: verify
             # defacement|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<URL> [<ZONE-H ID>]|ASNAME
-            event['classification.type'] = 'compromised'
+            event['classification.type'] = 'unauthorised-information-modification'
             event['classification.identifier'] = report_type
             event['source.url'] = comment_split[0]
             event['extra.zoneh.id'] = comment_split[1]
         elif report_type == 'fastflux':  # TODO: verify
             # fastflux|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<DOMAIN>]|ASNAME
-            event['classification.type'] = 'compromised'
+            event['classification.type'] = 'system-compromise'
             event['classification.identifier'] = report_type
             if comments:
                 event['source.reverse_dns'] = comments
@@ -172,7 +176,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event['extra.request'] = comments
         elif report_type == 'routers':  # TODO: verify
             # routers|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<DEVICE TYPE>]|ASNAME
-            event['classification.type'] = 'compromised'
+            event['classification.type'] = 'system-compromise'
             if comments:
                 event['classification.identifier'] = comments
         elif report_type == 'scanners':  # TODO: verify

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -20,7 +24,7 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer Compromised Website",
 EVENTS = [{'__type': 'Event',
            'feed.name': 'ShadowServer Compromised Website',
            'classification.taxonomy': 'intrusions',
-           'classification.type': 'compromised',
+           'classification.type': 'system-compromise',
            'classification.identifier': 'compromised-website',
            'extra.server': 'Microsoft-IIS/7.5',
            'extra.system': 'WINNT',
@@ -46,7 +50,7 @@ EVENTS = [{'__type': 'Event',
                                                  EXAMPLE_LINES[2]])),
            'classification.identifier': 'compromised-website',
            'classification.taxonomy': 'intrusions',
-           'classification.type': 'compromised',
+           'classification.type': 'system-compromise',
            'event_description.text': 'phishing',
            'feed.name': 'ShadowServer Compromised Website',
            'malware.name': 'phishing',

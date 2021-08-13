@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 robcza
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os
 import unittest
@@ -75,6 +79,11 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
         self.assertMessageEqual(1, EXAMPLE_EVENT2)
+
+    def test_time_format_empty_string(self):
+        """ Test if empty string value for parameter time_format is handled correctly. """
+        self.run_bot(parameters={'time_format': ''})
+        self.assertMessageEqual(0, EXAMPLE_EVENT)
 
     def test_strcol(self):
         self.run_bot(parameters={"columns": "time.source, __IGNORE__,"

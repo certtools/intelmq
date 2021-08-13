@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2014 Tomás Lima
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 from .version import __version__, __version_info__  # noqa: F401
 import os
 import pathlib

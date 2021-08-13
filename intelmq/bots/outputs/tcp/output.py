@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 For intelmq collectors on the other side we can expect the "ok" sent back.
@@ -56,7 +60,7 @@ class TCPOutputBot(Bot):
                     response = self.con.recv(2)
                     if response == b"Ok":
                         break
-                    self.logger.warn("Message not delivered, retrying.")
+                    self.logger.warning("Message not delivered, retrying.")
                     time.sleep(1)
                 else:
                     break

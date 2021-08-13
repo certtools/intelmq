@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 gethvi
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import dateutil.parser
 
@@ -25,10 +29,10 @@ class CZNICHaasParserBot(ParserBot):
             event.add("source.geolocation.cc", line["country"])
 
         if line["login_successful"] and line["commands"]:
-            event.add('classification.type', 'unauthorized-command')
+            event.add('classification.type', 'system-compromise')
 
         elif line["login_successful"] and not line["commands"]:
-            event.add('classification.type', 'unauthorized-login')
+            event.add('classification.type', 'system-compromise')
 
         else:
             event.add('classification.type', 'brute-force')

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Testing harmonization classes
@@ -510,6 +514,18 @@ class TestHarmonization(unittest.TestCase):
                                                    sanitize=True))
         self.assertTrue(harmonization.ClassificationType.is_valid('infected system ',
                                                    sanitize=True))
+        self.assertEqual(harmonization.ClassificationType.sanitize('dga domain'),
+                         'dga-domain')
+        self.assertEqual(harmonization.ClassificationType.sanitize('unauthorized-command'),
+                         'system-compromise')
+        self.assertEqual(harmonization.ClassificationType.sanitize('unauthorized-login'),
+                         'system-compromise')
+        self.assertEqual(harmonization.ClassificationType.sanitize('compromised'),
+                         'system-compromise')
+        self.assertEqual(harmonization.ClassificationType.sanitize('defacement'),
+                         'unauthorised-information-modification')
+        self.assertEqual(harmonization.ClassificationType.sanitize('backdoor'),
+                         'system-compromise')
 
     def test_classification_type_sanitize_invalid(self):
         """ Test ClassificationType.is_valid with invalid arguments. """

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 The library publicsuffixlist will be used if installed,
@@ -51,7 +55,7 @@ class DomainSuffixExpertBot(Bot):
         if not os.path.exists(parameters.get('suffix_file', '')):
             return [["error", "File given as parameter 'suffix_file' does not exist."]]
         try:
-            with open(parameters['suffix_file']) as database:
+            with codecs.open(parameters['suffix_file'], encoding='UTF-8') as database:
                 PublicSuffixList(source=database, only_icann=True)
         except Exception as exc:
             return [["error", "Error reading database: %r." % exc]]
@@ -62,7 +66,7 @@ class DomainSuffixExpertBot(Bot):
             parsed_args = cls._create_argparser().parse_args()
 
         if parsed_args.update_database:
-            cls.update_database()
+            cls.update_database(verbose=parsed_args.verbose)
 
         else:
             super().run(parsed_args=parsed_args)
@@ -71,10 +75,11 @@ class DomainSuffixExpertBot(Bot):
     def _create_argparser(cls):
         argparser = super()._create_argparser()
         argparser.add_argument("--update-database", action='store_true', help='downloads latest database data')
+        argparser.add_argument("--verbose", action='store_true', help='be verbose')
         return argparser
 
     @classmethod
-    def update_database(cls):
+    def update_database(cls, verbose=False):
         bots = {}
         runtime_conf = get_bots_settings()
         try:
@@ -94,7 +99,8 @@ class DomainSuffixExpertBot(Bot):
         try:
             session = create_request_session()
             url = "https://publicsuffix.org/list/public_suffix_list.dat"
-            print("Downloading the latest database update...")
+            if verbose:
+                print("Downloading the latest database update...")
             response = session.get(url)
 
             if not response.ok:
@@ -110,7 +116,8 @@ class DomainSuffixExpertBot(Bot):
             with open(database_path, "wb") as database:
                 database.write(response.content)
 
-        print("Database updated. Reloading affected bots.")
+        if verbose:
+            print("Database updated. Reloading affected bots.")
 
         ctl = IntelMQController()
         for bot in bots.keys():
