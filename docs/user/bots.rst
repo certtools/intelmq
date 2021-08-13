@@ -1972,6 +1972,33 @@ Use this command to create/update the database and reload the bot:
    intelmq.bots.experts.domain_suffix.expert --update-database
 
 
+.. _intelmq.bots.experts.domain_valid.expert:
+
+Domain valid
+^^^^^^^^^^^^
+
+**Information**
+
+* `name:` `intelmq.bots.experts.domain_valid.expert`
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Checks if a domain is valid by performing multiple validity checks (see below).
+
+**Configuration Parameters**
+
+   * `domain_field`: The name of the field to be validated.
+   * `tlds_domains_list`: local file with all valid TLDs, default location ``/opt/intelmq/var/lib/bots/domain_valid/tlds-alpha-by-domain.txt``
+
+**Description**
+
+If the field given in `domain_field` does not exist in the event, the event is dropped.
+If the domain contains underscores (``_``), the event is dropped.
+If the domain is not valid according to the `validators library <https://pypi.org/project/validators/>`_, the event is dropped.
+If the domain's last part (the TLD) is not in the TLD-list configured by parameter ``tlds_domains_list``, the field is dropped.
+Latest TLD list: https://data.iana.org/TLD/
+
+
 .. _intelmq.bots.experts.deduplicator.expert:
 
 Deduplicator
