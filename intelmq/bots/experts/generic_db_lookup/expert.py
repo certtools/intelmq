@@ -7,11 +7,11 @@
 Generic DB Lookup
 """
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.mixins import SQLMixin
 
 
-class GenericDBLookupExpertBot(Bot, SQLMixin):
+class GenericDBLookupExpertBot(ExpertBot, SQLMixin):
     """Fetche data from a database"""
     database: str = "intelmq"
     engine: str = "<postgresql OR sqlite>"

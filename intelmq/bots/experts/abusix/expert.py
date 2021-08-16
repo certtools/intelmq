@@ -8,7 +8,7 @@ Reference: https://abusix.com/contactdb.html
 RIPE abuse contacts resolving through DNS TXT queries
 '''
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 from ._lib import Abusix
 
@@ -18,7 +18,7 @@ except ImportError:
     querycontacts = None
 
 
-class AbusixExpertBot(Bot):
+class AbusixExpertBot(ExpertBot):
     """Add abuse contact information from the Abusix online service for source and destination IP address"""
 
     def init(self):

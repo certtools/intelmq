@@ -14,12 +14,12 @@ import tarfile
 import pathlib
 import requests
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import get_bots_settings, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
 
 
-class RecordedFutureIPRiskExpertBot(Bot):
+class RecordedFutureIPRiskExpertBot(ExpertBot):
     """Adds the Risk Score from RecordedFuture IPRisk associated with source.ip or destination.ip with a local database"""
     api_token: str = "<insert Recorded Future IPRisk API token>"
     database: str = "/opt/intelmq/var/lib/bots/recordedfuture_iprisk/rfiprisk.dat"  # TODO: should be pathlib.Path

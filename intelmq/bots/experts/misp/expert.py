@@ -13,7 +13,7 @@ Parameters:
 """
 import sys
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -22,7 +22,7 @@ except ImportError:
     ExpandedPyMISP = None
 
 
-class MISPExpertBot(Bot):
+class MISPExpertBot(ExpertBot):
     """Looking up the IP address in MISP instance and retrieve attribute and event UUIDs"""
     misp_key: str = "<insert MISP Authkey>"
     misp_url: str = "<insert url of MISP server (with trailing '/')>"

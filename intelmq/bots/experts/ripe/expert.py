@@ -13,7 +13,7 @@ import json
 import warnings
 
 import intelmq.lib.utils as utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.mixins import CacheMixin
 
@@ -41,7 +41,7 @@ def clean_geo(geo_data):
     return geo_data
 
 
-class RIPEExpertBot(Bot, CacheMixin):
+class RIPEExpertBot(ExpertBot, CacheMixin):
     """Fetch abuse contact and/or geolocation information for the source and/or destination IP addresses and/or ASNs of the events"""
     mode: str = "append"
     query_ripe_db_asn: bool = True

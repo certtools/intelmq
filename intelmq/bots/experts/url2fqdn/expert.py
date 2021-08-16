@@ -5,10 +5,10 @@
 # -*- coding: utf-8 -*-
 from urllib.parse import urlparse
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 
-class Url2fqdnExpertBot(Bot):
+class Url2fqdnExpertBot(ExpertBot):
     """Parse the FQDN from the URL"""
     overwrite = False
 

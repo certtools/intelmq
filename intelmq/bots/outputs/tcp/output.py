@@ -14,10 +14,10 @@ import struct
 import time
 
 import intelmq.lib.utils as utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 
 
-class TCPOutputBot(Bot):
+class TCPOutputBot(OutputBot):
     """Send events to a TCP server as Splunk, ElasticSearch or another IntelMQ etc"""
     counterpart_is_intelmq: bool = True
     hierarchical_output: bool = False

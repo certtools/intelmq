@@ -7,10 +7,10 @@ import csv
 import io
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class PhishTankParserBot(Bot):
+class PhishTankParserBot(ParserBot):
     """Parse the PhishTank feed"""
 
     def process(self):

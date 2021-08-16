@@ -4,7 +4,7 @@
 
 # -*- coding: utf-8 -*-
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -13,7 +13,7 @@ except ImportError:
     pylookyloo = None
 
 
-class LookyLooExpertBot(Bot):
+class LookyLooExpertBot(ExpertBot):
     """ LookyLoo expert bot for automated website screenshots """
     instance_url: str = "http://localhost:5100/"
 

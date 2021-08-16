@@ -8,12 +8,12 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 from datetime import datetime, timedelta
 import time
 import json
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import parse_relative
 from intelmq.lib.mixins import CacheMixin
 
 
-class AggregateExpertBot(Bot, CacheMixin):
+class AggregateExpertBot(ExpertBot, CacheMixin):
     """Aggregation expert bot"""
 
     fields: str = "classification.type, classification.identifier"

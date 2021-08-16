@@ -7,10 +7,10 @@
 import socket
 from urllib.parse import urlparse
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 
-class UniversalWhoisExpertBot(Bot):
+class UniversalWhoisExpertBot(ExpertBot):
     """ Universal Whois expert bot get the whois entry related an a domain,
     hostname, IP address, or ASN from a centralised uWhoisd instance """
     server: str = 'localhost'

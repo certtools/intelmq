@@ -12,10 +12,10 @@ import time
 
 import redis
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 
-class WaitExpertBot(Bot):
+class WaitExpertBot(ExpertBot):
     """Wait for a some time or until a queue size is lower than a given number"""
     queue_db: int = 2
     queue_host: str = "localhost"

@@ -10,10 +10,10 @@ the ctime did not change in some cases.
 import os
 import time
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 
 
-class TouchOutputBot(Bot):
+class TouchOutputBot(OutputBot):
     """Touch a file for every event received"""
     path = None
 

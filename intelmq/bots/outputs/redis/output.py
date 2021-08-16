@@ -6,10 +6,10 @@
 
 import redis
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 
 
-class RedisOutputBot(Bot):
+class RedisOutputBot(OutputBot):
     """Send events to a Redis database"""
     hierarchical_output = False
     redis_db: int = 2

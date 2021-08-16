@@ -14,7 +14,7 @@ import pathlib
 import requests
 import tarfile
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.utils import get_bots_settings, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
@@ -25,7 +25,7 @@ except ImportError:
     geoip2 = None
 
 
-class GeoIPExpertBot(Bot):
+class GeoIPExpertBot(ExpertBot):
     """Add geolocation information from a local MaxMind database to events (country, city, longitude, latitude)"""
     database: str = "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"  # TODO: should be pathlib.Path
     license_key: str = "<insert Maxmind license key>"

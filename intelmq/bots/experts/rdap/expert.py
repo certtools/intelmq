@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import create_request_session
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.mixins import CacheMixin
@@ -14,7 +14,7 @@ except ImportError:
     requests = None
 
 
-class RDAPExpertBot(Bot, CacheMixin):
+class RDAPExpertBot(ExpertBot, CacheMixin):
     """ Get RDAP data"""
     rdap_order: list = ['abuse', 'technical', 'administrative', 'registrant', 'registrar']
     rdap_bootstrapped_servers: dict = {}

@@ -8,7 +8,7 @@ Uses
 https://pypi.org/project/geolib/
 https://github.com/joyanujoy/geolib
 '''
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 try:
     from geolib import geohash
@@ -16,7 +16,7 @@ except ImportError:
     geohash = None
 
 
-class GeohashExpertBot(Bot):
+class GeohashExpertBot(ExpertBot):
     """Compute the geohash from longitude/latitude information, save it to extra.(source|destination)"""
     overwrite: bool = False
     precision: int = 7

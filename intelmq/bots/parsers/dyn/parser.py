@@ -12,10 +12,10 @@ ponmocup-malware-IP ponmocup-malware-domain ponmocup-malware-URI-path ponmocup-h
 import dateutil.parser
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class DynParserBot(Bot):
+class DynParserBot(ParserBot):
     """Parse the DynDNS ponmocup feed"""
 
     def init(self):

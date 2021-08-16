@@ -65,12 +65,12 @@ except ImportError:
     requests = None
 
 import intelmq.lib.utils as utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError, ConfigurationError
 import time
 
 
-class SplunkSavedSearchBot(Bot):
+class SplunkSavedSearchBot(ExpertBot):
     """Enrich an event from Splunk search results"""
     auth_token: str = None
     multiple_result_handling = ["warn", "use_first", "send"]

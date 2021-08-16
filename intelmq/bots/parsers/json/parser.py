@@ -9,12 +9,12 @@ event.
 Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
 """
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.utils import base64_decode
 
 
-class JSONParserBot(Bot):
+class JSONParserBot(ParserBot):
     """Parse IntelMQ-JSON data"""
     splitlines = False
 

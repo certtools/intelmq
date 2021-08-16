@@ -7,10 +7,10 @@ import csv
 import io
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class TurrisGreylistParserBot(Bot):
+class TurrisGreylistParserBot(ParserBot):
     """Parse the Turris Greylist feed"""
 
     def process(self):

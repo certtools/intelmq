@@ -19,10 +19,10 @@ import json
 
 import intelmq.lib.utils as utils
 # imports for additional libraries and intelmq
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class ATDParserBot(Bot):
+class ATDParserBot(ParserBot):
     """Parse IoCs from McAfee Advanced Threat Defense reports (hash, IP, URL)"""
     verdict_severity: int = 4
 

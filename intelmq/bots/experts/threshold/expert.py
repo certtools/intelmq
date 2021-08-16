@@ -49,12 +49,12 @@ Parameters:
 """
 from typing import Iterable, Optional
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import ConfigurationError
 from intelmq.lib.mixins import CacheMixin
 
 
-class ThresholdExpertBot(Bot, CacheMixin):
+class ThresholdExpertBot(ExpertBot, CacheMixin):
     """Check if the number of similar messages during a specified time interval exceeds a set value"""
     add_keys: dict = {"comment": "Threshold reached"}
     filter_keys: Iterable = ["raw", "time.observation"]

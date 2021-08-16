@@ -26,11 +26,11 @@ Parameters:
                  system because system will always ignore this key.
 """
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.mixins import CacheMixin
 
 
-class DeduplicatorExpertBot(Bot, CacheMixin):
+class DeduplicatorExpertBot(ExpertBot, CacheMixin):
     """Detection and drop exact duplicate messages. Message hashes are cached in the Redis database"""
     filter_keys: str = "raw,time.observation"  # TODO: could be List[str]
     filter_type: str = "blacklist"

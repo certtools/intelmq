@@ -9,7 +9,7 @@
 import json
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 TYPES = {
     'PHISHING': 'phishing',
@@ -21,7 +21,7 @@ TYPES = {
 }
 
 
-class BluelivCrimeserverParserBot(Bot):
+class BluelivCrimeserverParserBot(ParserBot):
     """Parse data from the Blueliv Crimeserver API"""
 
     def process(self):

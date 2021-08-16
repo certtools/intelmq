@@ -11,11 +11,11 @@ except ImportError:
     requests = None
 
 import intelmq.lib.utils as utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 
-class RestAPIOutputBot(Bot):
+class RestAPIOutputBot(OutputBot):
     """Send events to a REST API listener through HTTP POST"""
     auth_token_name: str = None
     auth_token: str = None

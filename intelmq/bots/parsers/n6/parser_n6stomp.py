@@ -11,7 +11,7 @@ import json
 import re
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib.exceptions import InvalidValue
 
@@ -69,7 +69,7 @@ mapping['other']        = {"taxonomy": "other",
                            "type": "other", "identifier": "other"}
 
 
-class N6StompParserBot(Bot):
+class N6StompParserBot(ParserBot):
     """Parse CERT.pl's n6 feed"""
 
     def process(self):
