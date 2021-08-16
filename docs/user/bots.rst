@@ -3225,7 +3225,12 @@ Trusted Introducer Lookup Expert
 
 **Configuration Parameters**
 
-* **order**: Possible values are 'domain', 'asn'
+* **order**: Possible values are 'domain', 'asn'. You can set multiple values, so first match wins.
+* If 'domain' is set, it will lookup the `source.fqdn` field. It will go from high-order to low-order, i.e. 1337.super.example.com -> super.example.com -> example.com -> `.com`
+* If 'asn' is set, it will lookup `source.asn`.
+
+After a match, the abuse contact will be fetched from the trusted introducer teams list and will be stored in the event as `source.abuse_contact`.
+If there is no match, the event will not be enriched and will be sent to the next configured step.
 
 
 .. _intelmq.bots.experts.tuency.expert:
