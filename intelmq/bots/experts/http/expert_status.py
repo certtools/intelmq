@@ -6,11 +6,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 """
 from typing import List
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import create_request_session
 
 
-class HttpStatusExpertBot(Bot):
+class HttpStatusExpertBot(ExpertBot):
     """
     Fetch the HTTP Status for a given URL
 

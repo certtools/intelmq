@@ -27,10 +27,10 @@
 import dateutil
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class DshieldBlockParserBot(Bot):
+class DshieldBlockParserBot(ParserBot):
     """Parse the DShield Block feed"""
 
     def process(self):

@@ -24,11 +24,11 @@ except ImportError:
     MarClient = None
 
 # imports for additional libraries and intelmq
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 
-class MARExpertBot(Bot):
+class MARExpertBot(ExpertBot):
     """Query connections to IP addresses to the given destination within the local environment using McAfee Active Response queries"""
     dxl_config_file: str = "<insert /path/to/dxlclient.config>"  # TODO: should be pathlib.Path
     lookup_type: str = "<Hash|DestSocket|DestIP|DestFQDN>"

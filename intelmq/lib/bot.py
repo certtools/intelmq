@@ -39,8 +39,9 @@ from intelmq import (DEFAULT_LOGGING_PATH,
 from intelmq.lib import cache, exceptions, utils
 from intelmq.lib.pipeline import PipelineFactory, Pipeline
 from intelmq.lib.utils import RewindableFileHandle, base64_decode
+from intelmq.lib.datatypes import *
 
-__all__ = ['Bot', 'CollectorBot', 'ParserBot', 'OutputBot']
+__all__ = ['Bot', 'CollectorBot', 'ParserBot', 'OutputBot', 'ExpertBot']
 
 
 class Bot(object):
@@ -924,6 +925,7 @@ class Bot(object):
 
 
 class ParserBot(Bot):
+    bottype = BotType.PARSER
     _csv_params = {}
     _ignore_lines_starting = []
     _handle = None
@@ -1153,6 +1155,7 @@ class CollectorBot(Bot):
     Does some sanity checks on message sending.
     """
 
+    bottype = BotType.COLLECTOR
     __is_multithreadable: bool = False
     name: Optional[str] = None
     accuracy: int = 100
@@ -1214,10 +1217,22 @@ class CollectorBot(Bot):
         return libmessage.Report()
 
 
+class ExpertBot(Bot):
+    """
+    Base class for expert bots.
+    """
+    bottype = BotType.EXPERT
+
+    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
+                 disable_multithreading: bool = None):
+        super().__init__(bot_id=bot_id)
+
+
 class OutputBot(Bot):
     """
     Base class for outputs.
     """
+    bottype = BotType.OUTPUT
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
@@ -1231,7 +1246,10 @@ class OutputBot(Bot):
         self.hierarchical: bool = getattr(self, "hierarchical_output",  # file and files
                                           getattr(self, "message_hierarchical",  # stomp and amqp code
                                                   getattr(self, "message_hierarchical_output", False)))  # stomp and amqp docs
-        self.with_type: bool = getattr(self, "message_with_type", False)
+        # some bots use the attribute `message_with_type`, others use `with_type`
+        # this should be harmonized at some point
+        self.with_type: bool = getattr(self, "message_with_type", getattr(self, "with_type", False))
+
         self.jsondict_as_string: bool = getattr(self, "message_jsondict_as_string", False)
 
         self.single_key: Optional[str] = getattr(self, 'single_key', None)

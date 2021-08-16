@@ -11,12 +11,12 @@ import sys
 import pathlib
 import requests
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import get_bots_settings, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
 
 
-class TorExpertBot(Bot):
+class TorExpertBot(ExpertBot):
     """Check if the IP address is a Tor Exit Node based on a local database of TOR nodes"""
     database: str = "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"  # TODO: pathlib.Path
     overwrite: bool = False

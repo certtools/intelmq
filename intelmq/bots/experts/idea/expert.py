@@ -11,7 +11,7 @@ from collections.abc import Mapping, Sequence
 from urllib.parse import quote_plus
 from uuid import uuid4
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 
 def quot(s):
@@ -26,7 +26,7 @@ def addr6(s):
     return s if ":" in s else None
 
 
-class IdeaExpertBot(Bot):
+class IdeaExpertBot(ExpertBot):
     """Convert events into the IDEA format"""
     test_mode: bool = False
 

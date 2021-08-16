@@ -11,7 +11,7 @@ import bz2
 import pathlib
 import requests
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.utils import get_bots_settings, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
@@ -23,7 +23,7 @@ except ImportError:
     pyasn = None
 
 
-class ASNLookupExpertBot(Bot):
+class ASNLookupExpertBot(ExpertBot):
     """Add ASN and netmask information from a local BGP dump"""
     database = None  # TODO: should be pathlib.Path
 

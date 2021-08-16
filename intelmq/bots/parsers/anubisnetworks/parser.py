@@ -15,7 +15,7 @@ Migration to ParserBot does not make sense, as there's only one event per report
 import json
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import DateTime
 
 MAP_geo_env_remote_addr = {"country_code": 'source.geolocation.cc',
@@ -29,7 +29,7 @@ MAP_geo_env_remote_addr = {"country_code": 'source.geolocation.cc',
                            }
 
 
-class AnubisNetworksParserBot(Bot):
+class AnubisNetworksParserBot(ParserBot):
     """Parse single JSON-events from AnubisNetworks Cyberfeed stream"""
     use_malware_familiy_as_classification_identifier = True
 

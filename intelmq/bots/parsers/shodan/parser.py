@@ -8,7 +8,7 @@ Copyright (C) 2018 by nic.at GmbH
 """
 import json
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.utils import base64_decode
 
 MAPPING = {
@@ -586,7 +586,7 @@ CONVERSIONS = {
 }
 
 
-class ShodanParserBot(Bot):
+class ShodanParserBot(ParserBot):
     """Parse Shodan data collected via the Shodan API"""
     ignore_errors = True
     minimal_mode = False

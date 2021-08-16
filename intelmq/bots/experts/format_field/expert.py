@@ -3,10 +3,10 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 
-class FormatFieldExpertBot(Bot):
+class FormatFieldExpertBot(ExpertBot):
     """Perform string method operations on column values"""
     new_value       = ""
     old_value       = ""

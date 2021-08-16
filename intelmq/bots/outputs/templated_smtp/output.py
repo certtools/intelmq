@@ -89,12 +89,12 @@ try:
 except:
     Template = None
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import ConfigurationError
 from intelmq.lib.exceptions import MissingDependencyError
 
 
-class TemplatedSMTPOutputBot(Bot):
+class TemplatedSMTPOutputBot(OutputBot):
     smtp_host: str = "localhost"
     smtp_port: int = 25
     ssl: bool = False

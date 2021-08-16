@@ -5,12 +5,12 @@ Trusted Introducer Expert
 SPDX-FileCopyrightText: 2021 Intelmq Team <intelmq-team@cert.at>
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.mixins import HttpMixin
 
 
-class TrustedIntroducerLookupExpertBot(Bot, HttpMixin):
+class TrustedIntroducerLookupExpertBot(ExpertBot, HttpMixin):
     """ Get trusted introducer lookup data"""
     order: str = 'domain, asn'
     overwrite: bool = True

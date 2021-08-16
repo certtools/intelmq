@@ -4,10 +4,10 @@
 
 # -*- coding: utf-8 -*-
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class SurblParserBot(Bot):
+class SurblParserBot(ParserBot):
     """Parse the Surbl feed"""
     def process(self):
         report = self.receive_message()

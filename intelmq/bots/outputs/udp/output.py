@@ -7,10 +7,10 @@ import socket
 import unicodedata
 
 import intelmq.lib.utils as utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 
 
-class UDPOutputBot(Bot):
+class UDPOutputBot(OutputBot):
     """Send events to a UDP server, e.g. a syslog daemon"""
     field_delimiter: str = "|"
     format: str = None

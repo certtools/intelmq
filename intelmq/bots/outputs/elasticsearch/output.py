@@ -14,7 +14,7 @@ from collections.abc import Mapping
 from datetime import datetime
 from json import loads
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -55,7 +55,7 @@ def get_event_date(event_dict: dict) -> datetime.date:
     return event_date
 
 
-class ElasticsearchOutputBot(Bot):
+class ElasticsearchOutputBot(OutputBot):
     """Send events to an Elasticsearch database server"""
     elastic_host: str = '127.0.0.1'  # TODO: could be ipadd
     elastic_index: str = 'intelmq'

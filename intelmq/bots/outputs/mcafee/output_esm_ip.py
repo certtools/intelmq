@@ -15,7 +15,7 @@ field: field from IntelMQ message to extract (e.g. destination.ip)
 
 """
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -24,7 +24,7 @@ except ImportError:
     ESM = None
 
 
-class ESMIPOutputBot(Bot):
+class ESMIPOutputBot(OutputBot):
     """
     Write events to the McAfee Enterprise Security Manager (ESM)
 

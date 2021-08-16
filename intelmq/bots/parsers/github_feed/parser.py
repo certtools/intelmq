@@ -16,7 +16,7 @@ try:
 except ImportError:
     validators = None
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.utils import base64_decode
 from intelmq.lib.exceptions import MissingDependencyError
 
@@ -27,7 +27,7 @@ HASH_VALIDATORS = {
 }
 
 
-class GithubFeedParserBot(Bot):
+class GithubFeedParserBot(ParserBot):
     """Parse known GitHub feeds"""
 
     def init(self):

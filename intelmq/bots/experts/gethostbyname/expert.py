@@ -24,12 +24,12 @@ permanent failure (default).
 """
 import socket
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.harmonization import URL
 from intelmq.lib.exceptions import InvalidArgument
 
 
-class GethostbynameExpertBot(Bot):
+class GethostbynameExpertBot(ExpertBot):
     """Resolve the IP address for the FQDN"""
     fallback_to_url: bool = True
     gaierrors_to_ignore = ()

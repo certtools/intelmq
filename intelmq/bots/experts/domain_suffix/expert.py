@@ -14,7 +14,7 @@ import sys
 
 import requests.exceptions
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.utils import get_bots_settings, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
@@ -28,7 +28,7 @@ except ImportError:
 ALLOWED_FIELDS = ['fqdn', 'reverse_dns']
 
 
-class DomainSuffixExpertBot(Bot):
+class DomainSuffixExpertBot(ExpertBot):
     """Extract the domain suffix from a domain and save it in the the domain_suffix field. Requires a local file with valid domain suffixes"""
     field: str = None
     suffix_file: str = None  # TODO: should be pathlib.Path

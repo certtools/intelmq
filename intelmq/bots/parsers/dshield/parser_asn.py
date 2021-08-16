@@ -18,10 +18,10 @@
 """
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class DShieldASNParserBot(Bot):
+class DShieldASNParserBot(ParserBot):
     """Parse the DShield AS"""
 
     def process(self):

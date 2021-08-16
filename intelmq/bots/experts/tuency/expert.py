@@ -17,11 +17,11 @@ Example response:
 {"ip":{"destinations":[{"source":"portal","name":"Thurner","contacts":[{"email":"test@example.vom"}]}]},"domain":{"destinations":[{"source":"portal","name":"Thurner","contacts":[{"email":"abuse@example.at"}]}]},"suppress":true,"interval":{"unit":"immediate","length":1}}
 """
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import create_request_session, parse_relative
 
 
-class TuencyExpertBot(Bot):
+class TuencyExpertBot(ExpertBot):
     url: str  # Path to the tuency instance
     authentication_token: str
     overwrite: bool = True

@@ -10,11 +10,11 @@ from datetime import datetime, timedelta
 import pytz
 from dateutil import parser
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import parse_relative, TIMESPANS
 
 
-class FilterExpertBot(Bot):
+class FilterExpertBot(ExpertBot):
     """Filter events, supports named paths for splitting the message flow"""
 
     _message_processed_verb = 'Forwarded'

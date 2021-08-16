@@ -6,7 +6,7 @@
 from html.parser import HTMLParser
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
 class MyHTMLParser(HTMLParser):
@@ -27,7 +27,7 @@ class MyHTMLParser(HTMLParser):
 parser = MyHTMLParser()
 
 
-class ThreatminerParserBot(Bot):
+class ThreatminerParserBot(ParserBot):
     """Parse the Threatminer feed"""
     def process(self):
         report = self.receive_message()

@@ -5,10 +5,10 @@
 # -*- coding: utf-8 -*-
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class OpenPhishParserBot(Bot):
+class OpenPhishParserBot(ParserBot):
     """Parse the OpenPhish feed"""
 
     def process(self):
