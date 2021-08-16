@@ -138,74 +138,79 @@ class TestRedis(unittest.TestCase):
 
     def setUp(self):
         params = {}
+        params['source_pipeline_broker'] = 'redis'
         params['source_pipeline_host'] = os.getenv('INTELMQ_PIPELINE_HOST', 'localhost')
         params['source_pipeline_password'] = os.getenv('INTELMQ_TEST_REDIS_PASSWORD')
         params['source_pipeline_db'] = 4
+        params['destination_pipeline_broker'] = 'redis'
         params['destination_pipeline_host'] = os.getenv('INTELMQ_PIPELINE_HOST', 'localhost')
         params['destination_pipeline_password'] = os.getenv('INTELMQ_TEST_REDIS_PASSWORD')
         params['destination_pipeline_db'] = 4
         logger = logging.getLogger('foo')
         logger.addHandler(logging.NullHandler())
-        self.pipe = pipeline.PipelineFactory.create(logger, broker='Redis', pipeline_args=params)
-        self.pipe.source_pipeline_host = '10.0.0.1'  # force fail if load_configuration is ineffective (#1875)
-        self.pipe.load_configurations('source')
-        self.pipe.set_queues('test', 'source')
-        self.pipe.set_queues('test', 'destination')
-        self.pipe.connect()
+        self.source_pipe = pipeline.PipelineFactory.create(logger=logger, direction='source',
+                                                           queues='test',
+                                                           pipeline_args=params)
+        self.dest_pipe = pipeline.PipelineFactory.create(logger=logger, direction='destination',
+                                                         queues='test',
+                                                         pipeline_args=params)
+        self.source_pipe.connect()
+        self.dest_pipe.connect()
 
     def clear(self):
-        self.pipe.clear_queue(self.pipe.internal_queue)
-        self.pipe.clear_queue(self.pipe.source_queue)
+        self.source_pipe.clear_queue(self.source_pipe.internal_queue)
+        self.source_pipe.clear_queue(self.source_pipe.source_queue)
 
     def test_send_receive(self):
         """ Sending bytest and receiving unicode. """
         self.clear()
-        self.pipe.send(SAMPLES['normal'][0])
-        self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
+        self.dest_pipe.send(SAMPLES['normal'][0])
+        self.assertEqual(SAMPLES['normal'][1], self.source_pipe.receive())
 
     def test_send_receive_unicode(self):
         self.clear()
-        self.pipe.send(SAMPLES['unicode'][1])
-        self.assertEqual(SAMPLES['unicode'][1], self.pipe.receive())
+        self.dest_pipe.send(SAMPLES['unicode'][1])
+        self.assertEqual(SAMPLES['unicode'][1], self.source_pipe.receive())
 
     def test_count(self):
         self.clear()
-        self.pipe.send(SAMPLES['normal'][0])
-        self.pipe.send(SAMPLES['normal'][1])
-        self.pipe.send(SAMPLES['unicode'][0])
-        self.assertEqual(self.pipe.count_queued_messages('test'), {'test': 3})
+        self.dest_pipe.send(SAMPLES['normal'][0])
+        self.dest_pipe.send(SAMPLES['normal'][1])
+        self.dest_pipe.send(SAMPLES['unicode'][0])
+        self.assertEqual(self.source_pipe.count_queued_messages('test'), {'test': 3})
 
     def test_has_message(self):
-        self.assertFalse(self.pipe._has_message)
-        self.pipe.send(SAMPLES['normal'][0])
-        self.pipe.receive()
-        self.assertTrue(self.pipe._has_message)
+        self.assertFalse(self.source_pipe._has_message)
+        self.dest_pipe.send(SAMPLES['normal'][0])
+        self.source_pipe.receive()
+        self.assertTrue(self.source_pipe._has_message)
 
     def test_reject(self):
-        self.pipe.send(SAMPLES['normal'][0])
-        self.pipe.receive()
-        self.pipe.reject_message()
-        self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
+        self.dest_pipe.send(SAMPLES['normal'][0])
+        self.source_pipe.receive()
+        self.source_pipe.reject_message()
+        self.assertEqual(SAMPLES['normal'][1], self.source_pipe.receive())
 
     def test_acknowledge(self):
-        self.pipe.send(SAMPLES['normal'][0])
-        self.pipe.receive()
-        self.pipe.acknowledge()
-        self.assertEqual(self.pipe.count_queued_messages('test')['test'], 0)
-        self.assertEqual(self.pipe.count_queued_messages('test-internal')['test-internal'], 0)
+        self.dest_pipe.send(SAMPLES['normal'][0])
+        self.source_pipe.receive()
+        self.source_pipe.acknowledge()
+        self.assertEqual(self.source_pipe.count_queued_messages('test')['test'], 0)
+        self.assertEqual(self.source_pipe.count_queued_messages('test-internal')['test-internal'], 0)
 
     def test_bad_encoding_and_pop(self):
-        self.pipe.send(SAMPLES['badencoding'])
+        self.dest_pipe.send(SAMPLES['badencoding'])
         try:
-            self.pipe.receive()
+            self.source_pipe.receive()
         except exceptions.DecodingError:
             pass
-        self.pipe.acknowledge()
-        self.assertEqual(self.pipe.count_queued_messages('test-bot-input')['test-bot-input'], 0)
-        self.assertEqual(self.pipe.count_queued_messages('test-bot-input-internal')['test-bot-input-internal'], 0)
+        self.source_pipe.acknowledge()
+        self.assertEqual(self.source_pipe.count_queued_messages('test')['test'], 0)
+        self.assertEqual(self.source_pipe.count_queued_messages('test-internal')['test-internal'], 0)
 
     def tearDown(self):
-        self.pipe.disconnect()
+        self.source_pipe.disconnect()
+        self.dest_pipe.disconnect()
         self.clear()
 
 
