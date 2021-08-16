@@ -3245,7 +3245,9 @@ Trusted Introducer Lookup Expert
 
 **Configuration Parameters**
 
-* **order**: Possible values are 'domain', 'asn'
+* **order**: Possible values are 'domain', 'asn'. You can set multiple values, so first match wins.
+  * If 'domain' is set, it will lookup the `source.fqdn` field. It will go from high-order to low-order, i.e. 1337.super.example.com -> super.example.com -> example.com -> *.com
+  * If 'asn' is set, it will lookup `source.asn`.
 
 
 .. _intelmq.bots.experts.tuency.expert:
