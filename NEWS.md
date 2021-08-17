@@ -35,6 +35,7 @@ Please refer to the changelog for a full list of changes.
 
 ### Bots
 The malwardomains parser bot was removed. The malwaredomains.com website is offline, therefore the parser can not be used anymore. The `intelmqctl upgrade-config` command warns if you have the feed and the bot in use.
+The postgresql output bot was removed. The bot was marked as deprecated in 2019 and announced to be removed in version 3.
 
 ### Data Format
 

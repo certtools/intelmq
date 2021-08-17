@@ -8,7 +8,6 @@ import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.outputs.sql.output import SQLOutputBot
-from intelmq.bots.outputs.postgresql.output import PostgreSQLOutputBot
 
 if os.environ.get('INTELMQ_TEST_DATABASES'):
     import psycopg2
@@ -92,9 +91,10 @@ class TestPostgreSQLOutputBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = PostgreSQLOutputBot
+        cls.bot_reference = SQLOutputBot
         cls.default_input_message = INPUT1
-        cls.sysconfig = {"host": "localhost",
+        cls.sysconfig = {"engine": "postgresql",
+                         "host": "localhost",
                          "port": 5432,
                          "database": "intelmq",
                          "user": "intelmq",
