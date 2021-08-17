@@ -1162,6 +1162,7 @@ drone = {
         # classification.identifier will be set to (harmonized) malware name by modify expert
     },
 }
+
 drone_spam = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2611,6 +2612,8 @@ event4_honeypot_darknet = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/microsoft-sinkhole-events-report/
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-events-report/
 event46_sinkhole = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2652,6 +2655,8 @@ event46_sinkhole = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/microsoft-sinkhole-http-events-report/
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-http-events-report/
 event46_sinkhole_http = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2720,6 +2725,7 @@ def scan_exchange_identifier(field):
     return 'vulnerable-exchange-server'
 
 
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-exchange-server-report/
 scan_exchange = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
