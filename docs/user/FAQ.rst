@@ -131,3 +131,29 @@ Multithreading is not available for some bots and AMQP broker is necessary. Poss
  * Some bots' operations are not thread safe. Look a the bot's documentation for more information.
 
 If you think this mapping is wrong, please report a bug.
+
+.. _docker security headers:
+Docker: Security Headers
+-------------------------------------------------------------------
+
+If you run our docker image in production, we recommend you to set security headers.
+You can do this by creating a new file called ``example_config/nginx/security.conf`` in the cloned ``intelmq-docker`` repository.
+
+Write the following inside the configuration file, and change the ``http(s)://<your-domain>`` to your domain name.
+
+.. code-block:: bash
+
+   server_tokens off; # turn off server_token, instead of nginx/13.2 now it will only show nginx
+   add_header X-Frame-Options SAMEORIGIN; # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+   add_header X-Content-Type-Options nosniff; # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+   add_header X-XSS-Protection "1; mode=block"; # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+   add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' http(s)://<your-domain>; frame-src 'self' http(s)://<your-domain>; object-src 'self' http(s)://<your-domain>"; # https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+
+After you created the file, edit the ``docker-compose.yml`` and mount it to the ``nginx`` with
+
+.. code-block:: bash
+
+   volumes:
+   - ./example_config/nginx/security.conf:/etc/nginx/conf.d/security.conf
+
+**IMPORTANT** Mount the exact name & not the directory, because otherwise you would overwrite the whole directory and the other files would be gone inside the container.

@@ -150,13 +150,25 @@ Docker **with** docker-compose (recommended)
 
 Navigate to your preferred installation directory and run the following commands.
 
+**NOTE** If not already installed, please install `Docker <https://docs.docker.com/get-docker/>`_
+
+Before you start using docker-compose or any docker related tools, make sure docker is running
+
+.. code-block:: bash
+
+   # To start the docker daemon
+   systemctl start docker.service
+
+   # To enable the docker daemon for the future
+   systemctl enable docker.service
+
 .. code-block:: bash
 
    git clone https://github.com/certat/intelmq-docker.git --recursive
 
-   sudo docker-compose pull
-
    cd intelmq-docker
+
+   sudo docker-compose pull
 
    sudo docker-compose up
 
@@ -166,6 +178,8 @@ NOTE: If you get an `Permission denied`, you should use `chown -R $USER:$USER ex
 
 Docker without docker-compose
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**NOTE** If not already installed, please install `Docker <https://docs.docker.com/get-docker/>`_
 
 Navigate to your preferred installation directory and run ``git clone https://github.com/certat/intelmq-docker.git --recursive``.
 
