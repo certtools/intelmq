@@ -2887,6 +2887,7 @@ mapping = (
     ('SSL-POODLE-Vulnerable-Servers', 'scan_ssl_poodle', ssl_poodle_vulnerable_servers),
     ('Sandbox-URL', 'cwsandbox_url', sandbox_url),
     ('Sinkhole-DNS', 'sinkhole_dns', sinkhole_dns),
+    ('Sinkhole-Events', 'event4_sinkhole', event46_sinkhole),
     ('Sinkhole-Events IPv4', 'event4_sinkhole', event46_sinkhole),
     ('Sinkhole-Events IPv6', 'event6_sinkhole', event46_sinkhole),
     ('Sinkhole-Events-HTTP IPv4', 'event4_sinkhole_http', event46_sinkhole_http),
