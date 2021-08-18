@@ -521,10 +521,6 @@ class Bot(object):
         if self.logger:
             self.logger.info("Bot stopped.")
             logging.shutdown()
-            # Bots using threads that do not exit properly, see #970
-            if self.__class__.__name__ in ['XMPPCollectorBot', 'XMPPOutputBot']:
-                proc = psutil.Process(os.getpid())
-                proc.send_signal(signal.SIGTERM)
         else:
             self.__log_buffer.append(('info', 'Bot stopped.'))
             self.__print_log_buffer()
