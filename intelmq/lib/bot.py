@@ -108,6 +108,8 @@ class Bot(object):
     # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
     __collector_empty_process: bool = False
 
+    _harmonization: dict = {}
+
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
 
@@ -240,6 +242,10 @@ class Bot(object):
                                          )
         if start:
             self.start()
+
+    @property
+    def harmonization(self):
+        return self._harmonization
 
     def __handle_sigterm_signal(self, signum: int, stack: Optional[object]):
         """
@@ -815,7 +821,7 @@ class Bot(object):
 
     def __load_harmonization_configuration(self):
         self.logger.debug("Loading Harmonization configuration from %r.", HARMONIZATION_CONF_FILE)
-        self.harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
+        self._harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
     def new_event(self, *args, **kwargs):
         return libmessage.Event(*args, harmonization=self.harmonization, **kwargs)
