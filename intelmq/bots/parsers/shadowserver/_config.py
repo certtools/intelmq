@@ -2890,9 +2890,11 @@ mapping = (
     ('Sinkhole-Events', 'event4_sinkhole', event46_sinkhole),
     ('Sinkhole-Events IPv4', 'event4_sinkhole', event46_sinkhole),
     ('Sinkhole-Events IPv6', 'event6_sinkhole', event46_sinkhole),
+    ('Sinkhole-Events-HTTP', 'event4_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-Events-HTTP IPv4', 'event4_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-Events-HTTP IPv6', 'event6_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
+    ('Sinkhole-Events-HTTP-Referer', 'event4_sinkhole_http_referer', event46_sinkhole_http_referer),
     ('Sinkhole-Events-HTTP-Referer IPv4', 'event4_sinkhole_http_referer', event46_sinkhole_http_referer),
     ('Sinkhole-Events-HTTP-Referer IPv6', 'event6_sinkhole_http_referer', event46_sinkhole_http_referer),
     ('Spam-URL', 'spam_url', spam_url),
