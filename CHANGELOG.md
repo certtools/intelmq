@@ -17,6 +17,7 @@ CHANGELOG
   - Pass version history as parameter to upgrade functions (PR#2058 by Sebastian Wagner).
 - `intelmq.lib.message`:
   - Fix and pre-compile the regular expression for harmonization key names and also check keys in the `extra.` namespace (PR#2059 by Sebastian Wagner, fixes #1807).
+- `intelmq.lib.bot.SQLBot` was replaced by an SQLMixin in `intelmq.lib.mixins.SQLMixin`. The Generic DB Lookup Expert bot and the SQLOutput bot were updated accordingly.
 
 ### Development
 
