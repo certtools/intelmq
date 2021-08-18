@@ -1162,6 +1162,7 @@ drone = {
         # classification.identifier will be set to (harmonized) malware name by modify expert
     },
 }
+
 drone_spam = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2611,6 +2612,8 @@ event4_honeypot_darknet = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/microsoft-sinkhole-events-report/
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-events-report/
 event46_sinkhole = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2652,6 +2655,8 @@ event46_sinkhole = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/microsoft-sinkhole-http-events-report/
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-http-events-report/
 event46_sinkhole_http = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2720,6 +2725,7 @@ def scan_exchange_identifier(field):
     return 'vulnerable-exchange-server'
 
 
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-exchange-server-report/
 scan_exchange = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2882,10 +2888,13 @@ mapping = (
     ('Sandbox-URL', 'cwsandbox_url', sandbox_url),
     ('Sinkhole-DNS', 'sinkhole_dns', sinkhole_dns),
     ('Sinkhole-Events', 'event4_sinkhole', event46_sinkhole),
-    ('Sinkhole-Events', 'event6_sinkhole', event46_sinkhole),
+    ('Sinkhole-Events IPv4', 'event4_sinkhole', event46_sinkhole),
+    ('Sinkhole-Events IPv6', 'event6_sinkhole', event46_sinkhole),
+    ('Sinkhole-Events-HTTP', 'event4_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-Events-HTTP IPv4', 'event4_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-Events-HTTP IPv6', 'event6_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
+    ('Sinkhole-Events-HTTP-Referer', 'event4_sinkhole_http_referer', event46_sinkhole_http_referer),
     ('Sinkhole-Events-HTTP-Referer IPv4', 'event4_sinkhole_http_referer', event46_sinkhole_http_referer),
     ('Sinkhole-Events-HTTP-Referer IPv6', 'event6_sinkhole_http_referer', event46_sinkhole_http_referer),
     ('Spam-URL', 'spam_url', spam_url),

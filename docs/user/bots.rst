@@ -1658,8 +1658,14 @@ These are the supported feed name and their corresponding file name for automati
    Sandbox-URL                               `cwsandbox_url`
    Sinkhole-DNS                              `sinkhole_dns`
    Sinkhole-Events                           `event4_sinkhole`/`event6_sinkhole`
+   Sinkhole-Events IPv4                      `event4_sinkhole`
+   Sinkhole-Events IPv6                      `event6_sinkhole`
    Sinkhole-HTTP-Events                      `event4_sinkhole_http`/`event6_sinkhole_http`
+   Sinkhole-HTTP-Events IPv4                 `event4_sinkhole_http`
+   Sinkhole-HTTP-Events IPv6                 `event6_sinkhole_http`
    Sinkhole-Events-HTTP-Referer              `event4_sinkhole_http_referer`/`event6_sinkhole_http_referer`
+   Sinkhole-Events-HTTP-Referer IPv4         `event4_sinkhole_http_referer`
+   Sinkhole-Events-HTTP-Referer IPv6         `event6_sinkhole_http_referer`
    Spam-URL                                  `spam_url`
    SSL-FREAK-Vulnerable-Servers              `scan_ssl_freak`
    SSL-POODLE-Vulnerable-Servers             `scan_ssl_poodle`
