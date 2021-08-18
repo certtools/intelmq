@@ -51,6 +51,9 @@ class TestSMTPOutputBot(test.BotTestCase, unittest.TestCase):
 ''')
         self.assertEqual({'from_addr': 'myself', 'to_addrs': ['you', 'yourself']},
                          SENT_MESSAGE[1])
+        # https://github.com/certtools/intelmq/issues/2018
+        self.assertIn(('Content-Disposition', 'attachment; filename="events.csv"'),
+                      SENT_MESSAGE[0].get_payload()[1]._headers)
 
     def test_multiple_recipients_event(self):
         """

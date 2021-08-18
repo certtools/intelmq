@@ -41,6 +41,7 @@ CHANGELOG
 #### Outputs
 - `intelmq.bots.outputs.mcafee.output_esm_ip`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).
 - `intelmq.bots.outputs.misp.output_api`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).
+- `intelmq.bots.outputs.smtp.output`: Add `Content-Disposition`-header to the attachment, fixing the display in Mail Clients as actual attachment (PR#2052 by Sebastian Wagner, fixes #2018).
 
 ### Documentation
 - Various formatting fixes (by Sebastian Wagner).
