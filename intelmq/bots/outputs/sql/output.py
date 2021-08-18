@@ -13,10 +13,11 @@ and thus temporary. We don't want to catch too much, like programming errors
 (missing fields etc).
 """
 
-from intelmq.lib.bot import SQLBot
+from intelmq.lib.bot import OutputBot
+from intelmq.lib.mixins import SQLMixin
 
 
-class SQLOutputBot(SQLBot):
+class SQLOutputBot(OutputBot, SQLMixin):
     """Send events to a PostgreSQL or SQLite database"""
     autocommit = True
     database = "intelmq-events"
