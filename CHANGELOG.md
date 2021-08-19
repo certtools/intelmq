@@ -14,6 +14,7 @@ CHANGELOG
 ### Core
 - `intelmq.lib.bot_debugger`: Fix accessing the bot's destination queues (PR#2027 by Mikk Margus Möll).
 - `intelmq.lib.pipeline`: Fix handling of `load_balance` parameter (PR#2027 by Mikk Margus Möll).
+- `intelmq.lib.utils`: YAML configuration loader: Use ruamel's `*unsafe* loader to enable backwards-compatibility with JSON, preserve comments and dump files in a readable format (PR#2041 by Birger Schacht, fixes #2003).
 
 ### Development
 
