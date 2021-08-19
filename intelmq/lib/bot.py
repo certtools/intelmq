@@ -64,7 +64,7 @@ class Bot(object):
     destination_pipeline_host: str = "127.0.0.1"
     destination_pipeline_password: Optional[str] = None
     destination_pipeline_port: int = 6379
-    destination_queues: Optional[dict] = None
+    destination_queues: dict = {}
     error_dump_message: bool = True
     error_log_exception: bool = True
     error_log_message: bool = False
@@ -389,7 +389,7 @@ class Bot(object):
                                 warnings.warn("Message will be removed from the pipeline and not dumped to the disk. "
                                               "Set `error_dump_message` to true to save the message on disk. "
                                               "This warning is only shown once in the runtime of a bot.")
-                            if self.destination_queues and '_on_error' in self.destination_queues:
+                            if '_on_error' in self.destination_queues:
                                 self.send_message(self.__current_message, path='_on_error')
 
                             if message_to_dump or self.__current_message:
@@ -563,7 +563,7 @@ class Bot(object):
             self.__current_message = None
             self.logger.debug("Connected to source queue.")
 
-        if self.destination_queues is not None:
+        if self.destination_queues:
             self.logger.debug("Loading destination pipeline and queues %r.", self.destination_queues)
             self.__destination_pipeline = PipelineFactory.create(logger=self.logger,
                                                                  direction="destination",

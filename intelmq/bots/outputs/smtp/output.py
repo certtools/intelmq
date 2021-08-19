@@ -70,7 +70,9 @@ class SMTPOutputBot(Bot):
             if self.text is not None:
                 msg.attach(MIMEText(self.text.format(ev=event)))
             if self.fieldnames:
-                msg.attach(MIMEText(attachment, 'csv'))
+                mime_attachment = MIMEText(attachment, 'csv')
+                mime_attachment.add_header("Content-Disposition", "attachment", filename="events.csv")
+                msg.attach(mime_attachment)
             msg['Subject'] = self.subject.format(ev=event)
             msg['From'] = self.mail_from.format(ev=event)
             msg['To'] = self.mail_to.format(ev=event)
