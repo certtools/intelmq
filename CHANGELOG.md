@@ -25,6 +25,8 @@ CHANGELOG
   They now reside in `intelmq.lib.processmanager` which also contains an interface definition the processmanager implementations must adhere to.
   Both the processmanagers and the `intelmqctl` script were cleaned up a bit.
   The `LogLevel` and `ReturnType` Enums were added to `intelmq.lib.datatypes`.
+- `intelmq.lib.bot`:
+  - Enhance behaviour if an unconfigured bot is started (PR#2054 by Sebastian Wagner).
 
 ### Development
 
