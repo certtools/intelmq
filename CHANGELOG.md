@@ -14,6 +14,7 @@ CHANGELOG
 ### Core
 - `intelmq.lib.upgrades`:
   - Refactor upgrade functions global configuration handling removing the old-style defaults configuration (PR#2058 by Sebastian Wagner).
+  - Pass version history as parameter to upgrade functions (PR#2058 by Sebastian Wagner).
 
 ### Development
 
