@@ -8,20 +8,28 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 from datetime import datetime, timedelta
 from dateutil import parser
-from intelmq.lib.utils import get_timedelta
 from intelmq.lib.bot import Bot
 from datetime import timezone
+from intelmq.lib.exceptions import MissingDependencyError
+
+try:
+    from intelmq.lib.utils import get_timedelta
+except ImportError:
+    get_timedelta = None
 
 
 class TimeFilterExpertBot(Bot):
     """ Time based filtering """
     field: str = 'time.source'
-    timespan: str  = '1d'
+    timespan: str = '1d'
 
     __delta = None
 
     def init(self):
         if self.field:
+            if get_timedelta is None:
+                raise MissingDependencyError("get_timedelta")
+
             timedelta_params = get_timedelta(self.timespan)
             self.__delta = datetime.now(tz=timezone.utc) - timedelta(**timedelta_params)
 
@@ -51,8 +59,8 @@ class TimeFilterExpertBot(Bot):
             self.send_message(event)
         else:
             self.logger.debug(f"Filtered out event with search field {self.field} and event time {event_time} .")
-            
+
         self.acknowledge_message()
-            
+
 
 BOT = TimeFilterExpertBot

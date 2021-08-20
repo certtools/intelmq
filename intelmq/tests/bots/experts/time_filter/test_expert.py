@@ -7,10 +7,15 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
 import unittest
-from freezegun import freeze_time
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.time_filter.expert import TimeFilterExpertBot
+from intelmq.lib.exceptions import MissingDependencyError
+
+try:
+    from freezegun import freeze_time
+except ImportError:
+    freeze_time = None
 
 EXAMPLE_INPUT_DROP = {
     "__type": "Event",
@@ -70,10 +75,16 @@ EXAMPLE_INPUT_PASS_3 = {
 }
 
 
+@test.skip_exotic()
 class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for TimeFilterExpertBot handling Reports.
     """
+
+    @classmethod
+    def init(cls):
+        if freeze_time is None:
+            raise MissingDependencyError("freeze_time")
 
     @classmethod
     def set_bot(cls):

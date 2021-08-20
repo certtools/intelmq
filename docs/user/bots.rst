@@ -3095,7 +3095,7 @@ This bot has certain limitations and is not a true threshold filter (yet). It wo
 Please note: Even if a message is sent, any further identical messages are dropped, if the time difference to the last message is less than the timeout! The counter is not reset if the threshold is reached.
 
 
-.. _intelmq.bots.experts.tor_nodes.expert:
+.. _intelmq.bots.experts.time_filter.expert:
 
 Time Filter
 ^^^^^^^^^
@@ -3113,7 +3113,8 @@ Time Filter
 * `field`: `time.source`
 * `timespan`: `1d`
 
-.. _intelmq.bots.experts.time_filter.expert:
+
+.. _intelmq.bots.experts.tor_nodes.expert:
 
 Tor Nodes
 ^^^^^^^^^
