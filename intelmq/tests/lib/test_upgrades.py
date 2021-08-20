@@ -525,7 +525,8 @@ V301_MALWAREDOMAINS_IN = {
 def generate_function(function):
     def test_function(self):
         """ Test if no errors happen for upgrade function %s. """ % function.__name__
-        function({'global': {}}, {}, dry_run=True)
+        function({'global': {}}, {}, dry_run=True,
+                 version_history=())
     return test_function
 
 

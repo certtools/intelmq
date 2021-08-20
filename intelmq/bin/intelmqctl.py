@@ -1671,7 +1671,8 @@ Get some debugging output on the settings and the environment (to be extended):
                 return 1, 'error'
             try:
                 retval, runtime_new, harmonization_new = getattr(
-                    upgrades, function)(runtime, harmonization, dry_run)
+                    upgrades, function)(runtime, harmonization, dry_run,
+                                        version_history=state['version_history'])
                 # Handle changed configurations
                 if retval is True and not dry_run:
                     utils.write_configuration(RUNTIME_CONF_FILE, runtime_new,
@@ -1777,7 +1778,8 @@ Get some debugging output on the settings and the environment (to be extended):
                               "time": datetime.datetime.now().isoformat()
                               }
                     try:
-                        retval, runtime, harmonization = function(runtime, harmonization, dry_run)
+                        retval, runtime, harmonization = function(runtime, harmonization, dry_run,
+                                                                  version_history=state['version_history'])
                     except Exception:
                         self.logger.exception('%s: Upgrade failed, please report this bug '
                                               'with the traceback.', docstring)
