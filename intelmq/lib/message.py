@@ -328,8 +328,10 @@ class Message(dict):
             class_name, subitem = self.__get_type_config(key)
         except KeyError:
             return False
-        if key in self.harmonization_config or key == '__type' or subitem:
+        if key in self.harmonization_config or key == '__type':
             return True
+        if subitem:
+            return HARMONIZATION_KEY_FORMAT.match(key)
         return False
 
     def __is_valid_value(self, key: str, value: str):
