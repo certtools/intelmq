@@ -38,6 +38,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Add GitHub Action to run regexploit on all Python, JSON and YAML files (PR#2059 by Sebastian Wagner).
 
 ### Tools
 
