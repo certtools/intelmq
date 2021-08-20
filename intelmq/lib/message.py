@@ -22,6 +22,8 @@ from intelmq.lib import utils
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
 VALID_MESSSAGE_TYPES = ('Event', 'Message', 'Report')
+# '_' needs to be allowed at the beginning currently because of '__type'. Can be removed with IEP04 implemented.
+HARMONIZATION_KEY_FORMAT = re.compile(r'^[a-z_][a-z_0-9]+(\.[a-z_0-9]+)*$')
 
 
 class MessageFactory(object):
@@ -116,7 +118,7 @@ class Message(dict):
                           "This assumption will be removed in version 3.0.", DeprecationWarning)
             self.harmonization_config['extra']['type'] = 'JSONDict'
         for harm_key in self.harmonization_config.keys():
-            if not re.match('^[a-z_](.[a-z_0-9]+)*$', harm_key) and harm_key != '__type':
+            if not HARMONIZATION_KEY_FORMAT.match(harm_key) and harm_key != '__type':
                 raise exceptions.InvalidKey("Harmonization key %r is invalid." % harm_key)
 
         super().__init__()
