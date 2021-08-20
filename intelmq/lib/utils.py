@@ -850,7 +850,8 @@ def list_all_bots() -> dict:
 
     base_path = resource_filename('intelmq', 'bots')
 
-    botfiles = [botfile for botfile in pathlib.Path(base_path).glob('**/*.py') if botfile.is_file() and botfile.name != '__init__.py']
+    botfiles = [botfile for botfile in pathlib.Path(base_path).glob('**/*.py') if
+                botfile.is_file() and botfile.name != '__init__.py']
     for file in botfiles:
         file = Path(file.as_posix().replace(base_path, 'intelmq/bots'))
         mod = importlib.import_module('.'.join(file.with_suffix('').parts))
@@ -870,7 +871,8 @@ def list_all_bots() -> dict:
 
             bots[file.parts[2].capitalize()[:-1]][name] = {
                 "module": mod.__name__,
-                "description": "Missing description" if not getattr(mod.BOT, '__doc__', None) else textwrap.dedent(mod.BOT.__doc__),
+                "description": "Missing description" if not getattr(mod.BOT, '__doc__', None) else textwrap.dedent(
+                    mod.BOT.__doc__),
                 "parameters": keys,
             }
     return bots
@@ -910,6 +912,7 @@ def get_bots_settings(bot_id: str = None) -> dict:
     if 'global' in runtime_conf:
         del runtime_conf['global']
     return runtime_conf
+
 
 def get_timedelta(search_last):
     m = re.search('(?P<number>^[1-9]+[0-9]*)(?P<map>[dmh])$', search_last)
