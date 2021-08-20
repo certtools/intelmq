@@ -1533,7 +1533,7 @@ Get some debugging output on the settings and the environment (to be extended):
         if extra_type != 'JSONDict':
             check_logger.warning("'extra' field needs to be of type 'JSONDict'.")
             retval = 1
-        if upgrades.harmonization({}, {}, files[HARMONIZATION_CONF_FILE],
+        if upgrades.harmonization({}, files[HARMONIZATION_CONF_FILE],
                                   dry_run=True)[0]:
             check_logger.warning("Harmonization needs an upgrade, call "
                                  "intelmqctl upgrade-config.")
@@ -1649,13 +1649,8 @@ Get some debugging output on the settings and the environment (to be extended):
             self.logger.info('Successfully wrote initial state file.')
 
         runtime = utils.load_configuration(RUNTIME_CONF_FILE)
-        try:
-            # remove global defaults, handled by 'defaults'
-            del runtime['global']
-        except KeyError:
-            # no global parameters is ok
-            pass
-        defaults = utils.get_global_settings()
+        if 'global' not in runtime:
+            runtime['global'] = {}
         harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
         if dry_run:
             self.logger.info('Doing a dry run, not writing anything now.')
@@ -1675,11 +1670,10 @@ Get some debugging output on the settings and the environment (to be extended):
                                   ', '.join(upgrades.__all__))
                 return 1, 'error'
             try:
-                retval, defaults_new, runtime_new, harmonization_new = getattr(
-                    upgrades, function)(defaults, runtime, harmonization, dry_run)
+                retval, runtime_new, harmonization_new = getattr(
+                    upgrades, function)(runtime, harmonization, dry_run)
                 # Handle changed configurations
                 if retval is True and not dry_run:
-                    runtime_new['global'] = defaults_new
                     utils.write_configuration(RUNTIME_CONF_FILE, runtime_new,
                                               backup=not no_backup)
                     utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization_new,
@@ -1783,7 +1777,7 @@ Get some debugging output on the settings and the environment (to be extended):
                               "time": datetime.datetime.now().isoformat()
                               }
                     try:
-                        retval, defaults, runtime, harmonization = function(defaults, runtime, harmonization, dry_run)
+                        retval, runtime, harmonization = function(runtime, harmonization, dry_run)
                     except Exception:
                         self.logger.exception('%s: Upgrade failed, please report this bug '
                                               'with the traceback.', docstring)
@@ -1838,7 +1832,6 @@ Get some debugging output on the settings and the environment (to be extended):
 
             try:
                 if not dry_run:
-                    runtime['global'] = defaults
                     utils.write_configuration(RUNTIME_CONF_FILE, runtime,
                                               backup=not no_backup)
                     utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization,
