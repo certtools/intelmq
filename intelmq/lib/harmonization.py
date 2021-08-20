@@ -270,12 +270,13 @@ class ClassificationType(String):
     Allowed values are:
      * """
 
-    allowed_values = ['application-compromise',
+    allowed_values = ('application-compromise',
                       'blacklist',
                       'brute-force',
                       'burglary',
                       'c2-server',
                       'copyright',
+                      'data-leak',
                       'data-loss',
                       'ddos',
                       'ddos-amplifier',
@@ -286,7 +287,6 @@ class ClassificationType(String):
                       'ids-alert',
                       'infected-system',
                       'information-disclosure',
-                      'data-leak',
                       'malware',
                       'malware-configuration',
                       'malware-distribution',
@@ -308,14 +308,13 @@ class ClassificationType(String):
                       'tor',
                       'unauthorised-information-access',
                       'unauthorised-information-modification',
-                      'system-compromise',
                       'unauthorized-use-of-resources',
+                      'undetermined',
                       'unprivileged-account-compromise',
                       'violence',
                       'vulnerable-system',
                       'weak-crypto',
-                      'undetermined',
-                      ]
+                      )
 
     __doc__ += '\n     * '.join(allowed_values)
 
