@@ -59,7 +59,7 @@ class AlienVaultOTXParserBot(ParserBot):
 
                 # CVE
                 elif indicator["type"] in ['CVE']:
-                    additional_indicator['CVE'] = indicator["indicator"]
+                    additional_indicator['cve'] = indicator["indicator"]
                     # TODO: Process these IoCs: FilePath, Mutex
                 else:
                     event.add('source.fqdn', indicator["indicator"])
@@ -86,7 +86,7 @@ class AlienVaultOTXParserBot(ParserBot):
 
             # CVE
             elif indicator["type"] in ['CVE']:
-                additional_indicator['CVE'] = indicator["indicator"]
+                additional_indicator['cve'] = indicator["indicator"]
                 # TODO: Process these IoCs: FilePath, Mutex
             else:
                 continue

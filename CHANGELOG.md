@@ -27,6 +27,8 @@ CHANGELOG
 - `intelmq.bots.collectors.mail._lib`: Add support for unverified SSL/STARTTLS connections (PR#2055 by Sebastian Wagner).
 
 #### Parsers
+- `intelmq.bots.parsers.alienvault.parser_otx`: Save CVE data in `extra.cve` instead of `extra.CVE` due to the field name restriction on lower-case characters  (PR#2059 by Sebastian Wagner).
+- `intelmq.bots.parsers.anubisnetworks.parser`: Changed field name format from `extra.communication.http.x_forwarded_for_#1` to `extra.communication.http.x_forwarded_for_1` due to the field name restriction on alphanumeric characters (PR#2059 by Sebastian Wagner).
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).

@@ -195,8 +195,9 @@ class AnubisNetworksParserBot(Bot):
                     raise ValueError('_geo_tracking_last_ip.path is not \'comm.http.host\' (%r).'
                                      ''  % subvalue)
             elif key.startswith('_geo_comm_http_x_forwarded_for_'):
+                key = key.replace('#', '')
                 event = self.parse_geo(event, value,
-                                       'extra.communication.http.%s' % key[15:],
+                                       'communication.http.%s' % key[15:],
                                        raw_report, '_geo_comm_http_x_forwarded_for_')
             elif key in ["_origin", "_provider", "pattern_verified"]:
                 event['extra.%s' % key] = value
