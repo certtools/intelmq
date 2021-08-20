@@ -10,12 +10,7 @@ from datetime import datetime, timedelta
 from dateutil import parser
 from intelmq.lib.bot import Bot
 from datetime import timezone
-from intelmq.lib.exceptions import MissingDependencyError
-
-try:
-    from intelmq.lib.utils import get_timedelta
-except ImportError:
-    get_timedelta = None
+from intelmq.lib.utils import get_timedelta
 
 
 class TimeFilterExpertBot(Bot):
@@ -27,9 +22,6 @@ class TimeFilterExpertBot(Bot):
 
     def init(self):
         if self.field:
-            if get_timedelta is None:
-                raise MissingDependencyError("get_timedelta")
-
             timedelta_params = get_timedelta(self.timespan)
             self.__delta = datetime.now(tz=timezone.utc) - timedelta(**timedelta_params)
 
