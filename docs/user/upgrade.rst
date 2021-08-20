@@ -120,7 +120,11 @@ Check your installation and configuration to detect any problems:
    intelmqctl upgrade-config
    intelmqctl check
 
-## Start IntelMQ
+``intelmqctl upgrade-config`` supports upgrades from one IntelMQ version to the succeeding.
+If you skip one or more IntelMQ versions, some automatic upgrades *may not* work and manual intervention *may* be necessary.
+
+Start IntelMQ
+-------------
 
 .. code-block:: bash
 
