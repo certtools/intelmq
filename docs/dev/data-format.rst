@@ -27,7 +27,11 @@ An `IOC <https://en.wikipedia.org/wiki/Indicator_of_compromise>`_ (Indicator of 
 Rules for keys
 ==============
 
-The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`. Thus, keys must match `^[a-z_](.[a-z0-9_]+)*$`.
+The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`.
+
+Only the lower-case alphabet, numbers and the underscore are allowed. Further, the field name must not begin with a number.
+Thus, keys must match ``^[a-z_][a-z_0-9]+(\.[a-z_0-9]+)*$``.
+These rules also apply for the otherwise unregulated ``extra.`` namespace.
 
 
 Sections
