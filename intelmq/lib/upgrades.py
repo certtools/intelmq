@@ -40,73 +40,77 @@ __all__ = ['v100_dev7_modify_syntax',
            ]
 
 
-def v200_defaults_statistics(defaults, runtime, harmonization, dry_run):
+def v200_defaults_statistics(configuration, harmonization, dry_run, **kwargs):
     """
     Inserting `statistics_*` parameters into defaults configuration file
     """
     values = {"statistics_database": 3,
               "statistics_host": "127.0.0.1",
-              "statistics_password": defaults.get('source_pipeline_password', None),
+              "statistics_password": configuration['global'].get('source_pipeline_password', None),
               "statistics_port": 6379
               }
     changed = None
     for key, value in values.items():
-        if key not in defaults:
-            defaults[key] = value
+        if key not in configuration['global']:
+            configuration['global'][key] = value
             changed = True
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v200_defaults_broker(defaults, runtime, harmonization, dry_run):
+def v200_defaults_broker(configuration, harmonization, dry_run, **kwargs):
     """
     Inserting `*_pipeline_broker` and deleting broker into/from defaults configuration
     """
     changed = None
-    values = {"destination_pipeline_broker": defaults.get("broker", "redis"),
-              "source_pipeline_broker": defaults.get("broker", "redis"),
+    values = {"destination_pipeline_broker": configuration['global'].get("broker", "redis"),
+              "source_pipeline_broker": configuration['global'].get("broker", "redis"),
               }
     for key, value in values.items():
-        if key not in defaults:
-            defaults[key] = value
+        if key not in configuration['global']:
+            configuration['global'][key] = value
             changed = True
-    if "broker" in defaults:
-        del defaults["broker"]
+    if "broker" in configuration['global']:
+        del configuration['global']["broker"]
         changed = True
 
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v112_feodo_tracker_ips(defaults, runtime, harmonization, dry_run):
+def v112_feodo_tracker_ips(configuration, harmonization, dry_run, **kwargs):
     """
     Fix URL of feodotracker IPs feed in runtime configuration
     """
     changed = None
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["parameters"].get("http_url") == "https://feodotracker.abuse.ch/blocklist/?download=ipblocklist":
             bot["parameters"]["http_url"] = "https://feodotracker.abuse.ch/downloads/ipblocklist.csv"
             changed = True
 
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v112_feodo_tracker_domains(defaults, runtime, harmonization, dry_run):
+def v112_feodo_tracker_domains(configuration, harmonization, dry_run, **kwargs):
     """
     Search for discontinued feodotracker domains feed
     """
     found = False
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["parameters"].get("http_url") == "https://feodotracker.abuse.ch/blocklist/?download=domainblocklist":
             found = bot_id
 
     if not found:
-        return None, defaults, runtime, harmonization
+        return None, configuration, harmonization
     else:
         return ('The discontinued feed "Feodo Tracker Domains" has been found '
                 'as bot %r. Remove it yourself please.' % found,
-                defaults, runtime, harmonization)
+                configuration, harmonization)
 
 
-def v110_shadowserver_feednames(defaults, runtime, harmonization, dry_run):
+def v110_shadowserver_feednames(configuration, harmonization, dry_run, **kwargs):
     """
     Replace deprecated Shadowserver feednames
     """
@@ -118,16 +122,18 @@ def v110_shadowserver_feednames(defaults, runtime, harmonization, dry_run):
         "Ssl-Scan": "SSL-POODLE-Vulnerable-Servers",
     }
     changed = None
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.parsers.shadowserver.parser":
             if bot["parameters"]["feedname"] in mapping:
                 changed = True
                 bot["parameters"]["feedname"] = mapping[bot["parameters"]["feedname"]]
 
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v110_deprecations(defaults, runtime, harmonization, dry_run):
+def v110_deprecations(configuration, harmonization, dry_run, **kwargs):
     """
     Checking for deprecated runtime configurations (stomp collector, cymru parser, ripe expert, collector feed parameter)
     """
@@ -136,7 +142,9 @@ def v110_deprecations(defaults, runtime, harmonization, dry_run):
         "intelmq.bots.parsers.cymru_full_bogons.parser": "intelmq.bots.parsers.cymru.parser_full_bogons",
     }
     changed = None
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] in mapping:
             bot["module"] = mapping[bot["module"]]
             changed = True
@@ -160,7 +168,7 @@ def v110_deprecations(defaults, runtime, harmonization, dry_run):
             else:
                 changed = True
 
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
 def modify_expert_convert_config(old):
@@ -176,12 +184,14 @@ def modify_expert_convert_config(old):
     return config
 
 
-def v100_dev7_modify_syntax(defaults, runtime, harmonization, dry_run):
+def v100_dev7_modify_syntax(configuration, harmonization, dry_run, **kwargs):
     """
     Migrate modify bot configuration format
     """
     changed = None
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.experts.modify.expert":
             if "configuration_path" in bot["parameters"]:
                 config = load_configuration(bot["parameters"]["configuration_path"])
@@ -199,49 +209,51 @@ def v100_dev7_modify_syntax(defaults, runtime, harmonization, dry_run):
                                             new_config)
                     except PermissionError:
                         return ('Can\'t update %s\'s configuration: Permission denied.' % bot_id,
-                                defaults, runtime, harmonization)
+                                configuration, harmonization)
 
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v200_defaults_ssl_ca_certificate(defaults, runtime, harmonization, dry_run):
+def v200_defaults_ssl_ca_certificate(configuration, harmonization, dry_run, **kwargs):
     """
     Add ssl_ca_certificate to defaults
     """
-    if "ssl_ca_certificate" not in defaults:
-        defaults["ssl_ca_certificate"] = None
-        return True, defaults, runtime, harmonization
+    if "ssl_ca_certificate" not in configuration['global']:
+        configuration['global']["ssl_ca_certificate"] = None
+        return True, configuration, harmonization
     else:
-        return None, defaults, runtime, harmonization
+        return None, configuration, harmonization
 
 
-def v111_defaults_process_manager(defaults, runtime, harmonization, dry_run):
+def v111_defaults_process_manager(configuration, harmonization, dry_run, **kwargs):
     """
     Fix typo in proccess_manager parameter
     """
     changed = None
-    if "proccess_manager" in defaults:
-        if "process_manager" in defaults:
-            del defaults["proccess_manager"]
-        elif "process_manager" not in defaults:
-            defaults["process_manager"] = defaults["proccess_manager"]
-            del defaults["proccess_manager"]
+    if "proccess_manager" in configuration['global']:
+        if "process_manager" in configuration['global']:
+            del configuration['global']["proccess_manager"]
+        elif "process_manager" not in configuration['global']:
+            configuration['global']["process_manager"] = configuration['global']["proccess_manager"]
+            del configuration['global']["proccess_manager"]
         changed = True
     else:
-        if "process_manager" not in defaults:
-            defaults["process_manager"] = "intelmq"
+        if "process_manager" not in configuration['global']:
+            configuration['global']["process_manager"] = "intelmq"
             changed = True
 
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v202_fixes(defaults, runtime, harmonization, dry_run):
+def v202_fixes(configuration, harmonization, dry_run, **kwargs):
     """
     Migrate Collector parameter `feed` to `name`. RIPE expert set `query_ripe_stat_ip` with `query_ripe_stat_asn` as default.
     Set cymru whois expert `overwrite` to true.
     """
     changed = None
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["group"] == 'Collector' and bot["parameters"].get("feed"):
             try:
                 bot["parameters"]["name"] = bot["parameters"]["feed"]
@@ -262,15 +274,17 @@ def v202_fixes(defaults, runtime, harmonization, dry_run):
                 bot["parameters"]["overwrite"] = True
                 changed = True
 
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v210_deprecations(defaults, runtime, harmonization, dry_run):
+def v210_deprecations(configuration, harmonization, dry_run, **kwargs):
     """
     Migrating configuration
     """
     changed = None
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.collectors.rt.collector_rt":
             # from 29c4b2c42b126ef51ac7287edc1a9fee28ab27fd to ce96e6d995d420e117a49a22d3bfdea762d899ec
             if "extract_files" in bot["parameters"]:
@@ -291,16 +305,18 @@ def v210_deprecations(defaults, runtime, harmonization, dry_run):
             if bot["module"] == "intelmq.bots.outputs.postgresql.output":
                 bot["module"] = "intelmq.bots.outputs.sql.output"
                 changed = True
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v213_deprecations(defaults, runtime, harmonization, dry_run):
+def v213_deprecations(configuration, harmonization, dry_run, **kwargs):
     """
     migrate attach_unzip to extract_files for mail attachment collector
 
     """
     changed = None
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.collectors.mail.collector_mail_attach":
             if "attach_unzip" not in bot["parameters"]:
                 continue
@@ -311,44 +327,48 @@ def v213_deprecations(defaults, runtime, harmonization, dry_run):
                 bot["parameters"]["extract_files"] = bot["parameters"]["attach_unzip"]
                 del bot["parameters"]["attach_unzip"]
                 changed = True
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v220_configuration(defaults, runtime, harmonization, dry_run):
+def v220_configuration(configuration, harmonization, dry_run, **kwargs):
     """
     Migrating configuration
     """
     changed = None
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.collectors.misp.collector":
             if "misp_verify" not in bot["parameters"]:
                 continue
-            if bot["parameters"]["misp_verify"] != defaults["http_verify_cert"]:
+            if bot["parameters"]["misp_verify"] != configuration['global']["http_verify_cert"]:
                 bot["parameters"]["http_verify_cert"] = bot["parameters"]["misp_verify"]
             del bot["parameters"]["misp_verify"]
             changed = True
         elif bot["module"] == "intelmq.bots.outputs.elasticsearch.output":
             if "elastic_doctype" in bot["parameters"]:
                 del bot["parameters"]["elastic_doctype"]
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v220_azure_collector(defaults, runtime, harmonization, dry_run):
+def v220_azure_collector(configuration, harmonization, dry_run, **kwargs):
     """
     Checking for the Microsoft Azure collector
     """
     changed = None
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.collectors.microsoft.collector_azure":
             if "connection_string" not in bot["parameters"]:
                 changed = ("The Microsoft Azure collector changed backwards-"
                            "incompatible in IntelMQ 2.2.0. Look at the bot's "
                            "documentation and NEWS file to adapt the "
                            "configuration.")
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def harmonization(defaults, runtime, harmonization, dry_run):
+def harmonization(configuration, harmonization, dry_run, **kwargs):
     """
     Checks if all harmonization fields and types are correct
     """
@@ -378,10 +398,10 @@ def harmonization(defaults, runtime, harmonization, dry_run):
             if original_regex and original_regex != installed_regex:
                 harmonization[msg_type][fieldname]['iregex'] = original[msg_type][fieldname]['iregex']
                 changed = True
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v213_feed_changes(defaults, runtime, harmonization, dry_run):
+def v213_feed_changes(configuration, harmonization, dry_run, **kwargs):
     """
     Migrates feed configuration for changed feed parameters.
     """
@@ -394,7 +414,9 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
     found_nothink_parser = []
     changed = None
     messages = []
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.collectors.http.collector_http":
             if "http_url" not in bot["parameters"]:
                 continue
@@ -445,18 +467,19 @@ def v213_feed_changes(defaults, runtime, harmonization, dry_run):
         messages.append('The Nothink Parser has been removed, '
                         'affected bots are %s.' % ', '.join(sorted(found_nothink_parser)))
     messages = ' '.join(messages)
-    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
+    return messages + ' Remove affected bots yourself.' if messages else changed, configuration, harmonization
 
 
-def v220_feed_changes(defaults, runtime, harmonization, dry_run):
+def v220_feed_changes(configuration, harmonization, dry_run, **kwargs):
     """
     Migrates feed configuration for changed feed parameters.
     """
     found_urlvir_feed = []
     found_urlvir_parser = []
-    changed = None
     messages = []
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.collectors.http.collector_http":
             if "http_url" not in bot["parameters"]:
                 continue
@@ -471,10 +494,10 @@ def v220_feed_changes(defaults, runtime, harmonization, dry_run):
         messages.append('The removed parser "URLVir" has been found '
                         'as bot %s.' % ', '.join(sorted(found_urlvir_parser)))
     messages = ' '.join(messages)
-    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
+    return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
 
 
-def v221_feed_changes(defaults, runtime, harmonization, dry_run):
+def v221_feed_changes(configuration, harmonization, dry_run, **kwargs):
     """
     Migrates feeds' configuration for changed/fixed parameters. Deprecation of HP Hosts file feed & parser.
     """
@@ -484,7 +507,9 @@ def v221_feed_changes(defaults, runtime, harmonization, dry_run):
     ULRHAUS_OLD = ['time.source', 'source.url', 'status', 'extra.urlhaus.threat_type', 'source.fqdn', 'source.ip', 'source.asn', 'source.geolocation.cc']
     URLHAUS_NEW = ['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc']
     changed = None
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.collectors.http.collector_http":
             if bot["parameters"].get("http_url", None) == "http://hosts-file.net/download/hosts.txt":
                 found_hphosts_collector.append(bot_id)
@@ -508,28 +533,32 @@ def v221_feed_changes(defaults, runtime, harmonization, dry_run):
         messages.append('The removed parser "HP Hosts" has been found '
                         'as bot %s.' % ', '.join(sorted(found_hphosts_parser)))
     messages = ' '.join(messages)
-    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
+    return messages + ' Remove affected bots yourself.' if messages else changed, configuration, harmonization
 
 
-def v222_feed_changes(defaults, runtime, harmonization, dry_run):
+def v222_feed_changes(configuration, harmonization, dry_run, **kwargs):
     """
     Migrate Shadowserver feed name
     """
     changed = None
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.parsers.shadowserver.parser":
             if bot["parameters"].get("feedname", None) == "Blacklisted-IP":
                 bot["parameters"]["feedname"] = "Blocklist"
                 changed = True
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v230_csv_parser_parameter_fix(defaults, runtime, harmonization, dry_run):
+def v230_csv_parser_parameter_fix(configuration, harmonization, dry_run, **kwargs):
     """
     Fix CSV parser parameter misspelling
     """
     changed = None
-    for bot in runtime.values():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.parsers.generic.parser_csv":
             if "delimeter" in bot["parameters"] and "delimiter" in bot["parameters"]:
                 del bot["parameters"]["delimeter"]
@@ -538,34 +567,36 @@ def v230_csv_parser_parameter_fix(defaults, runtime, harmonization, dry_run):
                 bot["parameters"]["delimiter"] = bot["parameters"]["delimeter"]
                 del bot["parameters"]["delimeter"]
                 changed = True
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v230_deprecations(defaults, runtime, harmonization, dry_run):
+def v230_deprecations(configuration, harmonization, dry_run, **kwargs):
     """
     Deprecate malwaredomainlist parser
     """
     found_malwaredomainlistparser = []
-    changed = None
     messages = []
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.parsers.malwaredomainlist.parser":
             found_malwaredomainlistparser.append(bot_id)
     if found_malwaredomainlistparser:
         messages.append('A discontinued bot "Malware Domain List Parser" has been found '
                         'as bot %s.' % ', '.join(sorted(found_malwaredomainlistparser)))
     messages = ' '.join(messages)
-    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
+    return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
 
 
-def v230_feed_changes(defaults, runtime, harmonization, dry_run):
+def v230_feed_changes(configuration, harmonization, dry_run, **kwargs):
     """
     Migrates feeds' configuration for changed/fixed parameter
     """
     found_malwaredomainlist = []
-    changed = None
     messages = []
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.collectors.http.collector_http":
             if "http_url" not in bot["parameters"]:
                 continue
@@ -575,10 +606,10 @@ def v230_feed_changes(defaults, runtime, harmonization, dry_run):
         messages.append('A discontinued feed "Malware Domain List" has been found '
                         'as bot %s.' % ', '.join(sorted(found_malwaredomainlist)))
     messages = ' '.join(messages)
-    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
+    return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
 
 
-def v300_bots_file_removal(defaults, runtime, harmonization, dry_run):
+def v300_bots_file_removal(configuration, harmonization, dry_run, **kwargs):
     """
     Remove BOTS file
     """
@@ -592,10 +623,10 @@ def v300_bots_file_removal(defaults, runtime, harmonization, dry_run):
             bots_file.unlink()
             changed = True
     messages = ' '.join(messages)
-    return messages if messages else changed, defaults, runtime, harmonization
+    return messages if messages else changed, configuration, harmonization
 
 
-def v300_defaults_file_removal(defaults, runtime, harmonization, dry_run):
+def v300_defaults_file_removal(configuration, harmonization, dry_run, **kwargs):
     """
     Remove the defaults.conf file
     """
@@ -606,21 +637,23 @@ def v300_defaults_file_removal(defaults, runtime, harmonization, dry_run):
         if dry_run:
             print(f'Would now remove file {defaults_file!r}.')
         else:
-            defaults = load_configuration(defaults_file)
+            configuration['global'] = load_configuration(defaults_file)
             defaults_file.unlink()
             changed = True
     messages = ' '.join(messages)
-    return messages if messages else changed, defaults, runtime, harmonization
+    return messages if messages else changed, configuration, harmonization
 
 
-def v233_feodotracker_browse(defaults, runtime, harmonization, dry_run):
+def v233_feodotracker_browse(configuration, harmonization, dry_run, **kwargs):
     """
     Migrate Abuse.ch Feodotracker Browser feed parsing parameters
     """
     changed = None
     old_feodo_columns = 'time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc'
     old_ignore_values = ',,,,Not listed,,'
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         # The parameters can be given as string or list of strings
         if (bot["module"] == "intelmq.bots.parsers.html_table.parser" and 'feodo' in bot_id.lower() and
                 "columns" in bot["parameters"] and "ignore_values" in bot["parameters"] and
@@ -629,10 +662,10 @@ def v233_feodotracker_browse(defaults, runtime, harmonization, dry_run):
             bot["parameters"]["columns"] = 'time.source,source.ip,malware.name,status,source.as_name,source.geolocation.cc'
             bot["parameters"]['ignore_values'] = ',,,,,'
             changed = True
-    return changed, defaults, runtime, harmonization
+    return changed, configuration, harmonization
 
 
-def v300_pipeline_file_removal(defaults, runtime, harmonization, dry_run):
+def v300_pipeline_file_removal(configuration, harmonization, dry_run, **kwargs):
     """
     Remove the pipeline.conf file
     """
@@ -641,29 +674,31 @@ def v300_pipeline_file_removal(defaults, runtime, harmonization, dry_run):
     pipeline_file = Path(CONFIG_DIR) / "pipeline.conf"
     if pipeline_file.exists():
         pipelines = load_configuration(pipeline_file)
-        for bot in runtime:
+        for bot in configuration:
+            if bot_id == 'global':
+                continue
             if bot in pipelines:
                 if 'destination-queues' in pipelines[bot]:
                     destination_queues = pipelines[bot]['destination-queues']
                     if isinstance(destination_queues, dict):
-                        runtime[bot]['parameters']['destination_queues'] = destination_queues
+                        configuration[bot]['parameters']['destination_queues'] = destination_queues
                     if isinstance(destination_queues, list):
-                        runtime[bot]['parameters']['destination_queues'] = {'_default': destination_queues}
+                        configuration[bot]['parameters']['destination_queues'] = {'_default': destination_queues}
                     if isinstance(destination_queues, str):
-                        runtime[bot]['parameters']['destination_queues'] = {'_default': [destination_queues]}
+                        configuration[bot]['parameters']['destination_queues'] = {'_default': [destination_queues]}
                 if 'source-queue' in pipelines[bot]:
                     if pipelines[bot]['source-queue'] != f"{bot}-queue":
-                        runtime[bot]['parameters']['source_queue'] = pipelines[bot]['source-queue']
+                        configuration[bot]['parameters']['source_queue'] = pipelines[bot]['source-queue']
         if dry_run:
             print(f'Would now remove file {pipeline_file!r}.')
         else:
             pipeline_file.unlink()
         changed = True
     messages = ' '.join(messages)
-    return messages if messages else changed, defaults, runtime, harmonization
+    return messages if messages else changed, configuration, harmonization
 
 
-def v301_deprecations(defaults, runtime, harmonization, dry_run):
+def v301_deprecations(configuration, harmonization, dry_run, **kwargs):
     """
     Deprecate malwaredomains parser and collector
     """
@@ -671,7 +706,9 @@ def v301_deprecations(defaults, runtime, harmonization, dry_run):
     found_malwaredomainscollector = []
     changed = None
     messages = []
-    for bot_id, bot in runtime.items():
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
         if bot["module"] == "intelmq.bots.parsers.malwaredomains.parser":
             found_malwaredomainsparser.append(bot_id)
         if bot["module"] == "intelmq.bots.collectors.http.collector":
@@ -686,7 +723,7 @@ def v301_deprecations(defaults, runtime, harmonization, dry_run):
         messages.append('A discontinued bot "Malware Domains Collector" has been found '
                         'as bot %s.' % ', '.join(sorted(found_malwaredomainscollector)))
     messages = ' '.join(messages)
-    return messages + ' Remove affected bots yourself.' if messages else changed, defaults, runtime, harmonization
+    return messages + ' Remove affected bots yourself.' if messages else changed, configuration, harmonization
 
 
 UPGRADES = OrderedDict([
