@@ -17,6 +17,10 @@ Please refer to the changelog for a full list of changes.
 ### Tools
 
 ### Data Format
+#### Field name checks
+The field names for all data added to messages must match a pre-defined format.
+The check which ensures this, was ineffective prior to this version and is effective again starting with version 3.1.0.
+The [Data format documentation](https://intelmq.readthedocs.io/en/maintenance/dev/data-format.html#rules-for-keys) describes the required format.
 
 ### Configuration
 
