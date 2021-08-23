@@ -1624,6 +1624,7 @@ These are the supported feed name and their corresponding file name for automati
    Honeypot-Amplification-DDoS-Events        `event4_honeypot_ddos_amp`
    Honeypot-Brute-Force-Events               `event4_honeypot_brute_force`
    Honeypot-Darknet                          `event4_honeypot_darknet`
+   Honeypot-HTTP-Scan                        `event4_honeypot_http_scan`
    HTTP-Scanners                             `hp_http_scan`
    ICS-Scanners                              `hp_ics_scan`
    IP-Spoofer-Events                         `event4_ip_spoofer`
