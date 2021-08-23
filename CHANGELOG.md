@@ -75,6 +75,7 @@ CHANGELOG
   - Add support for the new feeds *Microsoft Sinkhole Events Report*, *Microsoft Sinkhole HTTP Events Report* (PR#2036 by Birger Schacht).
   - Complement feed mappings and documentation for feeds with IPv4 and IPv6 variants (PR#2046 by Mikk Margus Möll and Sebastian Wagner).
    - Feed names with and without the optional IPv4/IPv6 postfix can be used now consistently.
+  - Add support for feed "Honeypot HTTP Scan" (PR#2047 by Mikk Margus Möll).
 
 #### Experts
 
