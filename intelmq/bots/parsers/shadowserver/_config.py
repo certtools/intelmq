@@ -1583,7 +1583,7 @@ accessible_rdp_eudp = {
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
-        'classification.identifier': 'open-rdp',
+        'classification.identifier': 'open-rdpeudp',
         'protocol.transport': 'tcp',
         'protocol.application': 'rdp',
     },
