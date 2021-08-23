@@ -451,6 +451,8 @@ Bot Developer Guide
 
 There's a dummy bot including tests at `intelmq/tests/lib/test_parser_bot.py`.
 
+Please use the correct bot type as parent class for your bot. The `intelmq.lib.bot` module contains the classes `CollectorBot`, `ParserBot`, `ExpertBot` and `OutputBot`.
+
 You can always start any bot directly from command line by calling the executable.
 The executable will be created during installation a directory for binaries. After adding new bots to the code, install IntelMQ to get the files created.
 Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
@@ -482,10 +484,10 @@ Please adjust the doc strings accordingly and remove the in-line comments (`#`).
    import sys
 
    # imports for additional libraries and intelmq
-   from intelmq.lib.bot import Bot
+   from intelmq.lib.bot import ParserBot
 
 
-   class ExampleParserBot(Bot):
+   class ExampleParserBot(ParserBot):
 
        option1: str = "defaultvalue"
        option2: bool = False
@@ -531,13 +533,40 @@ For common settings and methods you can use mixins from :code:`intelmq.lib.mixin
 
    class HTTPCollectorBot(CollectorBot, HttpMixin):
 
-At the moment there is a HttpMixin that you can use for common http requests.
-It provides the HTTP attributes described in :ref:`common-parameters` and the following methods:
+The following mixins are available:
+
+* `HttpMixin`
+* `SqlMixin`
+* `CacheMixin`
+
+The `HttpMixin` provides the HTTP attributes described in :ref:`common-parameters` and the following methods:
 
 * :code:`http_get` takes an URL as argument. Any other arguments get passed to the :code:`request.Session.get` method. :code:`http_get` returns a :code:`reqests.Response`.
 
 * :code:`http_session` can be used if you ever want to work with the session object directly. It takes no arguments and returns the bots request.Session.
 
+The `SqlMixin` provides methods to connect to SQL servers. Inherit this Mixin so that it handles DB connection for you.
+You do not have to bother:
+
+* connecting database in the :code:`self.init()` method, self.cur will be set in the :code:`__init__()`
+* catching exceptions, just call :code:`self.execute()` instead of :code:`self.cur.execute()`
+* :code:`self.format_char` will be set to '%s' in PostgreSQL and to '?' in SQLite
+
+The `CacheMixin` provides methods to cache values for bots in a Redis database. It uses the following attributes:
+
+* :code:`redis_cache_host: str = "127.0.0.1"`
+* :code:`redis_cache_port: int = 6379`
+* :code:`redis_cache_db: int = 9`
+* :code:`redis_cache_ttl: int = 15`
+* :code:`redis_cache_password: Optional[str] = None`
+
+and provides the methods:
+
+* :code:`cache_exists`
+* :code:`cache_get`
+* :code:`cache_set`
+* :code:`cache_flush`
+* :code:`cache_get_redis_instance`
 
 Pipeline interactions
 =====================
