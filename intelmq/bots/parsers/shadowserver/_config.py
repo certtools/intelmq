@@ -1561,6 +1561,7 @@ accessible_rdp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ms-rdpeudp/
 accessible_rdp_eudp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
