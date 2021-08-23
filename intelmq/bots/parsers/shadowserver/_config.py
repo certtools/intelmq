@@ -78,6 +78,8 @@ TODOs:
 
 """
 import re
+import base64
+import binascii
 from typing import Optional, Dict, Tuple, Any
 
 import intelmq.lib.harmonization as harmonization
@@ -202,6 +204,23 @@ def convert_date_utc(value: str) -> Optional[str]:
     Not the same as add_UTC_to_timestamp, as convert_date_utc also does the sanitiation
     """
     return harmonization.DateTime.sanitize(value + '+00:00')
+
+
+def force_base64(value: Optional[str]) -> Optional[str]:
+    """
+    Takes input strings that may be either base64-encoded bytestrings or plaintext string,
+    and leaves the base64-encoded values untouched while encoding the non-encoded values,
+    uniformly converting the data in the field to be base64-encoded
+    """
+    if not value:
+        return None
+
+    try:
+        base64.b64decode(value, validate=True)  # return value intentionally ignored
+    except binascii.Error:
+        return base64.b64encode(value.encode()).decode()
+    else:
+        return value
 
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-DB2
@@ -2819,6 +2838,71 @@ vulnerable_smtp = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-http-scanner-events/
+honeypot_http_scan = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip', validate_ip),
+        ('source.port', 'src_port'),
+    ],
+    'optional_fields': [
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', invalidate_zero),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port'),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('extra.', 'pattern', validate_to_none),
+        ('destination.url', 'http_url', convert_http_host_and_url, True),
+        ('user_agent', 'http_agent', validate_to_none),
+        ('extra.method', 'http_request_method', validate_to_none),
+        ('extra.', 'url_scheme', validate_to_none),
+        ('extra.', 'session_tags', validate_to_none),
+        ('extra.', 'vulnerability_enum', validate_to_none),
+        ('extra.', 'vulnerability_id', validate_to_none),
+        ('extra.', 'vulnerability_class', validate_to_none),
+        ('extra.', 'vulnerability_score', validate_to_none),
+        ('extra.', 'vulnerability_severity', validate_to_none),
+        ('extra.', 'vulnerability_version', validate_to_none),
+        ('extra.', 'threat_framework', validate_to_none),
+        ('extra.', 'threat_tactic_id', validate_to_none),
+        ('extra.', 'threat_technique_id', validate_to_none),
+        ('extra.', 'target_vendor', validate_to_none),
+        ('extra.', 'target_product', validate_to_none),
+        ('extra.', 'target_class', validate_to_none),
+        ('extra.', 'file_md5', validate_to_none),
+        ('extra.', 'file_sha256', validate_to_none),
+        ('extra.', 'request_raw', force_base64),
+        ('extra.', 'body_raw', force_base64),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'honeypot-http-scan',
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+        'protocol.application': 'http',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2851,6 +2935,7 @@ mapping = (
     ('Honeypot-Amplification-DDoS-Events', 'event4_honeypot_ddos_amp', honeypot_ddos_amp),
     ('Honeypot-Brute-Force-Events', 'event4_honeypot_brute_force', honeypot_brute_force),
     ('Honeypot-Darknet', 'event4_honeypot_darknet', event4_honeypot_darknet),
+    ('Honeypot-HTTP-Scan', 'event4_honeypot_http_scan', honeypot_http_scan),
     ('ICS-Scanners', 'hp_ics_scan', ics_scanners),
     ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
     ('IP-Spoofer-Events', 'event4_ip_spoofer', event4_ip_spoofer),
