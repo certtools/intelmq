@@ -29,7 +29,7 @@ jobs:
     - name: Checkout ansible scripts
       uses: actions/checkout@v2
       with:
-        repository: schacht-certat/intelmq-vagrant
+        repository: certtools/intelmq-vagrant
         path: ./src/intelmq-vagrant
 
     - name: Run ansible tests
