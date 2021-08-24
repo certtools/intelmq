@@ -430,7 +430,7 @@ class Message(dict):
             jsondict_as_string:
                 If False (default) treat values in JSONDict fields just as normal ones
                 If True, save such fields as JSON-encoded string. This is the old behavior
-                    before version 1.1.
+                before version 1.1.
 
         Returns:
             new_dict: A dictionary as copy of itself modified according

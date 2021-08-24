@@ -115,21 +115,16 @@ class MissingDependencyError(IntelMQException):
                  installed: Optional[str] = None,
                  additional_text: Optional[str] = None):
         """
-        Parameters
-        ----------
-        dependency : str
-            The dependency name.
-        version : Optional[str], optional
-            The required version. The default is None.
-        installed : Optional[str], optional
-            The currently installed version. Requires 'version' to be given The default is None.
-        additional_text : Optional[str], optional
-            Arbitrary additional text to show. The default is None.
+        Parameters:
+            dependency (str): The dependency name.
+            version (Optional[str], optional): The required version. The default is None.
+            installed (Optional[str], optional)
+                The currently installed version. Requires 'version' to be given The default is None.
+            additional_text (Optional[str], optional):
+                Arbitrary additional text to show. The default is None.
 
-        Returns
-        -------
-        IntelMQException: with prepared text
-
+        Returns:
+            IntelMQException: with prepared text
         """
         appendix = ""
         if version:

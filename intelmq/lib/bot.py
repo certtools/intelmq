@@ -1089,24 +1089,21 @@ class ParserBot(Bot):
         concatenating all strings in "self.tempdata" with "line" with LF
         newlines. Works fine for most text files.
 
-        Parameters
-        ----------
-        line : Optional[str], optional
-            The currently process line which should be transferred into it's
-            original appearance. As fallback, "self._current_line" is used if
-            available (depending on self.parse).
-            The default is None.
+        Parameters:
+            line (Optional[str], optional):
+                The currently process line which should be transferred into it's
+                original appearance. As fallback, "self._current_line" is used if
+                available (depending on self.parse).
+                The default is None.
 
-        Raises
-        ------
-        ValueError
-            If neither the parameter "line" nor the member "self._current_line"
-            is available.
+        Raises:
+            ValueError:
+                If neither the parameter "line" nor the member "self._current_line"
+                is available.
 
-        Returns
-        -------
-        str
-            The reconstructed raw data.
+        Returns:
+            str
+                The reconstructed raw data.
 
         """
         if self._handle and self._handle.first_line and not self.tempdata:
@@ -1149,14 +1146,11 @@ class ParserBot(Bot):
         """
         recover_line for json streams, just returns the current line, unparsed.
 
-        Parameters
-        ----------
-        line : None, not required, only for compatibility with other recover_line methods
+        Parameters:
+            line: None, not required, only for compatibility with other recover_line methods
 
-        Returns
-        -------
-        str
-            unparsed JSON line.
+        Returns:
+            str: unparsed JSON line.
         """
         return self._current_line
 

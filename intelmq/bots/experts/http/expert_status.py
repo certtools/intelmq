@@ -14,15 +14,14 @@ class HttpStatusExpertBot(ExpertBot):
     """
     Fetch the HTTP Status for a given URL
 
-    Parameters
-    ----------
-    field: str
-        The name of the field containing the URL to be checked (defaults to 'source.url').
-    success_status_codes: List
-        A list of success status codes. If this parameter is omitted or the list is empty,
-        successful status codes are the ones between 200 and 400.
-    overwrite:
-        Specifies if an existing 'status' value should be overwritten.
+    Parameters:
+        field (str):
+            The name of the field containing the URL to be checked (defaults to 'source.url').
+        success_status_codes (List):
+            A list of success status codes. If this parameter is omitted or the list is empty,
+            successful status codes are the ones between 200 and 400.
+        overwrite (bool):
+            Specifies if an existing 'status' value should be overwritten.
     """
     field: str = "source.url"  # The field containing the URL
     success_status_codes: List[int] = []  # A list of status codes for success

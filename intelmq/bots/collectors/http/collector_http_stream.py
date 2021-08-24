@@ -7,15 +7,15 @@
 HTTP collector bot
 
 Parameters:
-http_url: string
-http_header: dictionary
-    default: {}
-http_verify_cert: boolean
-    default: True
-http_username, http_password: string
-http_proxy, https_proxy: string
-strip_lines: boolean
-http_timeout_sec: tuple of two floats or float
+    http_url: string
+    http_header: dictionary
+        default: {}
+    http_verify_cert: boolean
+        default: True
+    http_username, http_password: string
+    http_proxy, https_proxy: string
+    strip_lines: boolean
+    http_timeout_sec: tuple of two floats or float
 """
 
 from http.client import IncompleteRead
