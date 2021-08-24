@@ -95,23 +95,27 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
             'search_from': "1d"
         }
 
+    @test.skip_exotic()
     @freeze_time("2021-05-05")
     def test_expert_drop(self):
         self.run_bot()
         self.assertOutputQueueLen(0)
 
+    @test.skip_exotic()
     @freeze_time("2020-09-09")
     def test_expert_pass(self):
         self.input_message = EXAMPLE_INPUT_PASS
         self.run_bot()
         self.assertOutputQueueLen(1)
 
+    @test.skip_exotic()
     @freeze_time("2020-09-09")
     def test_expert_pass_2(self):
         self.input_message = EXAMPLE_INPUT_PASS_2
         self.run_bot()
         self.assertOutputQueueLen(1)
 
+    @test.skip_exotic()
     @freeze_time("2020-09-09")
     def test_expert_pass_3(self):
         self.input_message = EXAMPLE_INPUT_PASS_3
