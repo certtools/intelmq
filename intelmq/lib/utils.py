@@ -922,7 +922,8 @@ def get_bots_settings(bot_id: str = None) -> dict:
 
 def get_timedelta(search_last):
     m = re.search('(?P<number>^[1-9]+[0-9]*)(?P<map>[dmh])$', search_last)
-    if not m: raise ValueError(f"ERROR: Incorrect search_last {search_last} parameter. Example 14h, 166d, 15m")
+    if not m:
+        raise ValueError(f"ERROR: Incorrect search_last {search_last} parameter. Example 14h, 166d, 15m")
     date_mapping = {
         "d": "days",
         "h": "hours",
