@@ -24,16 +24,12 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
     """
     Connects to the Shadowserver API, requests a list of all the reports for a specific country and processes the ones that are new
 
-    Parameters
-    ----------
-    api_key: str
-        Your Shadowserver API key
-    secret: str
-        Your Shadowserver API secret
-    country: str
-        The country you want to download reports for (i.e. 'austria')
-    types: list
-        A list of strings or a string of comma-separated values with the names of reporttypes you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
+    Parameters:
+        api_key (str): Your Shadowserver API key
+        secret (str): Your Shadowserver API secret
+        country (str): The country you want to download reports for (i.e. 'austria')
+        types (list):
+            A list of strings or a string of comma-separated values with the names of reporttypes you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
     """
 
     country = None

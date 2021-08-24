@@ -9,53 +9,58 @@ Parses CTIP data in JSON format.
 Key indicatorexpirationdatetime is ignored, meaning is unknown.
 
 There are two different variants of data
-1. Interflow format: JSON format, MAPPING
-2. Azure format: JSON stream format, a short example structure:
-  "DataFeed": "CTIP-Infected",
-  "SourcedFrom": "SinkHoleMessage|SensorMessage"",
-  "DateTimeReceivedUtc": nt time
-  "DateTimeReceivedUtcTxt": human readable
-  "Malware":
-  "ThreatCode": "B67-SS-TINBA",
-  "ThreatConfidence": "High|Medium|Low|Informational", -> 100/50/20/10
-  "TotalEncounters": 3,
-  "TLP": "Amber",
-  "SourceIp":
-  "SourcePort":
-  "DestinationIp":
-  "DestinationPort":
-  "TargetIp": Deprecated, so we gonne ignore it
-  "TargetPort": Deprecated, so we gonne ignore it
-  "SourceIpInfo": {
-    "SourceIpAsnNumber":
-    "SourceIpAsnOrgName":
-    "SourceIpCountryCode":
-    "SourceIpRegion":
-    "SourceIpCity"
-    "SourceIpPostalCode"
-    "SourceIpLatitude"
-    "SourceIpLongitude"
-    "SourceIpMetroCode"
-    "SourceIpAreaCode"
-    "SourceIpConnectionType"
-  },
-  "HttpInfo": {
-    "HttpHost": "",
-    "HttpRequest": "",
-    "HttpMethod": "",
-    "HttpReferrer": "",
-    "HttpUserAgent": "",
-    "HttpVersion": ""
-  },
-  "CustomInfo": {
-    "CustomField1": "",
-    "CustomField2": "",
-    "CustomField3": "",
-    "CustomField4": "",
-    "CustomField5": ""
-  },
-  "Payload": base64 encoded json
-}
+
+* Interflow format: JSON format, MAPPING
+* Azure format: JSON stream format, a short example structure:
+
+    .. code-block:: json
+
+       {
+         "DataFeed": "CTIP-Infected",
+         "SourcedFrom": "SinkHoleMessage|SensorMessage"",
+         "DateTimeReceivedUtc": nt time
+         "DateTimeReceivedUtcTxt": human readable
+         "Malware":
+         "ThreatCode": "B67-SS-TINBA",
+         "ThreatConfidence": "High|Medium|Low|Informational", -> 100/50/20/10
+         "TotalEncounters": 3,
+         "TLP": "Amber",
+         "SourceIp":
+         "SourcePort":
+         "DestinationIp":
+         "DestinationPort":
+         "TargetIp": Deprecated, so we gonne ignore it
+         "TargetPort": Deprecated, so we gonne ignore it
+         "SourceIpInfo": {
+           "SourceIpAsnNumber":
+           "SourceIpAsnOrgName":
+           "SourceIpCountryCode":
+           "SourceIpRegion":
+           "SourceIpCity"
+           "SourceIpPostalCode"
+           "SourceIpLatitude"
+           "SourceIpLongitude"
+           "SourceIpMetroCode"
+           "SourceIpAreaCode"
+           "SourceIpConnectionType"
+         },
+         "HttpInfo": {
+           "HttpHost": "",
+           "HttpRequest": "",
+           "HttpMethod": "",
+           "HttpReferrer": "",
+           "HttpUserAgent": "",
+           "HttpVersion": ""
+         },
+         "CustomInfo": {
+           "CustomField1": "",
+           "CustomField2": "",
+           "CustomField3": "",
+           "CustomField4": "",
+           "CustomField5": ""
+         },
+         "Payload": base64 encoded json
+       }
 
 """
 import json

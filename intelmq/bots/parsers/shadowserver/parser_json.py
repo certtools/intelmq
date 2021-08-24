@@ -17,11 +17,8 @@ class ShadowserverJSONParserBot(ParserBot):
     """Parse all Shadowserver feeds in JSON format (data coming from the reports API)
     Shadowserver JSON Parser
 
-    Parameters
-    ----------
-    feedname: str
-        The name of the feed
-
+    Parameters:
+        feedname (str): The name of the feed
     """
     __is_filename_regex = re.compile(r'^(?:\d{4}-\d{2}-\d{2}-)?(\w+)(-\w+)*\.json$')
     feedname = None

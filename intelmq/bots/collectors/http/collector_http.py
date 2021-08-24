@@ -7,24 +7,24 @@
 HTTP collector bot
 
 Parameters:
-http_url: string
-http_header: dictionary
-    default: {}
-http_verify_cert: boolean
-    default: True
-extract_files: value used to extract files from downloaded compressed file
-    default: None
-    all: True; some: string with file names separated by ,
-http_url_formatting: bool|json to turn on time formatting (and to specify delta to current time)
-http_username, http_password: string
-http_proxy, https_proxy: string
-http_timeout_sec: tuple of two floats or float
-http_timeout_max_tries: an integer depicting how often a connection attempt is retried
-verify_pgp_signatures: whether to download and check file signatures
-    default: False
-signature_url: string
-signature_url_formatting: the same as http_url_formatting
-gpg_keyring: none (defaults to user's GPG keyring) or string (path to keyring file)
+    http_url (string)
+    http_header (dictionary): default: {}
+    http_verify_cert (boolean): default: True
+    extract_files: value used to extract files from downloaded compressed file
+        default: None
+        all: True; some: string with file names separated by ,
+    http_url_formatting (bool|json): to turn on time formatting (and to specify delta to current time)
+    http_username (string)
+    http_password (string)
+    http_proxy (string)
+    https_proxy (string)
+    http_timeout_sec: tuple of two floats or float
+    http_timeout_max_tries (int): an integer depicting how often a connection attempt is retried
+    verify_pgp_signatures (bool): whether to download and check file signatures
+        default: False
+    signature_url (string)
+    signature_url_formatting: the same as http_url_formatting
+    gpg_keyring: none (defaults to user's GPG keyring) or string (path to keyring file)
 """
 from datetime import datetime, timedelta
 

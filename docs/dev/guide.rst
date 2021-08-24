@@ -295,7 +295,7 @@ Class name of the bot (ex: PhishTank Parser) must correspond to the type of the 
 
 
 IntelMQ Data Format Rules
-========================
+=========================
 
 Any component of IntelMQ MUST respect the IntelMQ Data Format.
 

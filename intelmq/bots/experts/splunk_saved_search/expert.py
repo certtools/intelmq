@@ -44,8 +44,7 @@ Parameters:
                               search returns more than one result. All
                               specified actions are performed. Any
                               reasonable combination of:
-                              limit: limit the search so that duplicates
-                                     are impossible
+                              limit: limit the search so that duplicates are impossible
                               warn: log a warning message
                               use_first: use the first search result
                               ignore: do not modify the event

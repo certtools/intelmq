@@ -29,7 +29,7 @@ When using distribution packages, the webserver configuration (which is also sho
 The webinterface is then available at ``http://localhost/intelmq-manager``.
 
 Installation using pip
-^^^^^^^^^^^^^^^^^^^^^^
+======================
 
 For installation via pip, the situation is more complex.
 ``pip3 install intelmq-manager`` installs the HTML files in ``${PREFIX}/usr/share/intelmq-manager/html``.
@@ -80,7 +80,7 @@ Configuration
 In the file ``/usr/share/intelmq-manager/html/js/vars.js`` set ``ROOT`` to the URL of your ``intelmq-api`` installation- by default that's on the same host as ``intelmq-manager``.
 
 CSP Headers
-==========
+===========
 
 It is recommended to set these two headers for all requests:
 

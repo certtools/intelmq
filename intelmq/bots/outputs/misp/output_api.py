@@ -5,7 +5,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 Funding: of initial version by SUNET
 Author(s):
-  * Bernhard Reiter <bernhard@intevation.de>
+* Bernhard Reiter <bernhard@intevation.de>
 
 A shortened copy of this documentation is kept at `docs/user/bots.rst`, please
 keep it current, when changing something.

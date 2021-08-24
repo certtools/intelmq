@@ -977,29 +977,32 @@ Get some debugging output on the settings and the environment (to be extended):
             state_file: location of the state file
             no_backup: Do not create backups of state and configuration files
 
-        state file:
+        state_file:
 
-            version_history = [..., [2, 0, 0], [2, 0, 1]]
-            upgrades = {
-                "v112_feodo_tracker_domains": true,
-                "v112_feodo_tracker_ips": false,
-                "v200beta1_ripe_expert": false
-                }
-            results = [
-                {"function": "v112_feodo_tracker_domains",
-                 "success": true,
-                 "retval": null,
-                 "time": "..."},
-                {"function": "v112_feodo_tracker_domains",
-                 "success": false,
-                 "retval": "fix it manually",
-                 "message": "fix it manually",
-                 "time": "..."},
-                {"function": "v200beta1_ripe_expert",
-                 "success": false,
-                 "traceback": "...",
-                 "time": "..."}
-                ]
+            .. code-block:: json
+
+               version_history = [..., [2, 0, 0], [2, 0, 1]]
+               upgrades = {
+                   "v112_feodo_tracker_domains": true,
+                   "v112_feodo_tracker_ips": false,
+                   "v200beta1_ripe_expert": false
+                   }
+               results = [
+                   {"function": "v112_feodo_tracker_domains",
+                    "success": true,
+                    "retval": null,
+                    "time": "..."},
+                   {"function": "v112_feodo_tracker_domains",
+                    "success": false,
+                    "retval": "fix it manually",
+                    "message": "fix it manually",
+                    "time": "..."},
+                   {"function": "v200beta1_ripe_expert",
+                    "success": false,
+                    "traceback": "...",
+                    "time": "..."}
+                   ]
+
         """
         if os.path.isfile(state_file):
             if not os.access(state_file, os.W_OK) and not dry_run:
@@ -1223,8 +1226,6 @@ Get some debugging output on the settings and the environment (to be extended):
     def debug(self, sections=None):
         """
         Give debugging output
-        get_paths:
-            print path information
         """
 
         output = {}

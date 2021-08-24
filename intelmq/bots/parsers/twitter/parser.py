@@ -16,8 +16,7 @@ Parameters:
 
     substitutions : semicolon separated list of pairs
                     substitutions that will be made in the text,
-                    for example " .com,.com" enables parsing of one fuzzy format
-                                "[.];." enables the parsing of another fuzzy format
+                    for example " .com,.com" enables parsing of one fuzzy format "[.];." enables the parsing of another fuzzy format
 
     classification_type : string with a valid classificationtype
 """

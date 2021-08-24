@@ -6,8 +6,8 @@
 """
 The ES-connection can't be closed explicitly.
 
-TODO:
-    * Support client_cert and client_key parameters, see https://github.com/certtools/intelmq/pull/1406
+TODO
+* Support client_cert and client_key parameters, see https://github.com/certtools/intelmq/pull/1406
 """
 
 from collections.abc import Mapping

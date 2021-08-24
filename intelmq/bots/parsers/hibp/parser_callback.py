@@ -6,8 +6,8 @@
 """
 There are two different Formats: Breaches and Pastes
 For Breaches, there are again two different Variants:
-    * Callback Test: has field 'Email', Breach is a list of dictionaries
-    * Real: has NO field 'Email', Breach is a dictionary
+* Callback Test: has field 'Email', Breach is a list of dictionaries
+* Real: has NO field 'Email', Breach is a dictionary
 """
 import json
 

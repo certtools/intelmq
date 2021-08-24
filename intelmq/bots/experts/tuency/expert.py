@@ -9,8 +9,8 @@ Example query:
 > curl -s -H "Authorization: Bearer XXX"\
     'https://tuency-demo1.example.com/intelmq/lookup?classification_taxonomy=availability&classification_type=backdoor\
      &feed_provider=Team+Cymru&feed_name=FTP&feed_status=production&ip=123.123.123.23'
-     same for domain=
-     a query can contain both ip address and domain
+same for domain=
+a query can contain both ip address and domain
 
 Example response:
 {"ip":{"destinations":[{"source":"portal","name":"Thurner","contacts":[{"email":"test@example.com"}]}]},"suppress":true,"interval":{"unit":"days","length":1}}
