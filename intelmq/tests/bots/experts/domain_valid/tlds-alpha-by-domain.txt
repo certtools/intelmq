@@ -1,0 +1,7 @@
+# Version 2021080500, Last Updated Thu Aug  5 07:07:02 2021 UTC  # it is example file - Latest TLD list: https://data.iana.org/TLD/
+AAA
+CH
+DIGITAL
+INFO
+XN--8Y0A063A
+ZW

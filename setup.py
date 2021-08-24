@@ -45,14 +45,12 @@ setup(
     install_requires=REQUIRES,
     tests_require=[
         'Cerberus!=1.3',
-        'pyyaml',
         'requests_mock',
     ],
     test_suite='intelmq.tests',
     extras_require={
         'development': [
             'Cerberus',
-            'pyyaml',
         ],
     },
     packages=find_packages(),
@@ -91,10 +89,6 @@ setup(
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
             'intelmq.bots.experts.sieve.validator = intelmq.bots.experts.sieve.validator:main',
             'intelmqsetup = intelmq.bin.intelmqsetup:main',
-            'update-asn-data = intelmq.bots.experts.asn_lookup.expert:BOT.update_database',
-            'update-geoip-data = intelmq.bots.experts.maxmind_geoip.expert:BOT.update_database',
-            'update-rfiprisk-data = intelmq.bots.experts.recordedfuture_iprisk.expert:BOT.update_database',
-            'update-tor-nodes = intelmq.bots.experts.tor_nodes.expert:BOT.update_database',
         ] + BOTS,
     },
 )

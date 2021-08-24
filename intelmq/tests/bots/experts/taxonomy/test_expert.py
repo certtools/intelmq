@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import unittest
@@ -8,12 +12,12 @@ from intelmq.lib.harmonization import ClassificationType, ClassificationTaxonomy
 
 
 EXAMPLE_INPUT1 = {"__type": "Event",
-                 "classification.type": "defacement",
+                 "classification.type": "unauthorised-information-modification",
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 EXAMPLE_OUTPUT1 = {"__type": "Event",
-                  "classification.type": "defacement",
-                  "classification.taxonomy": "intrusions",
+                  "classification.type": "unauthorised-information-modification",
+                  "classification.taxonomy": "information-content-security",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT2 = {"__type": "Event",

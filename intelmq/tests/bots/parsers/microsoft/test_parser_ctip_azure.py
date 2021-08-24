@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import json
 import os
@@ -48,7 +52,7 @@ EXAMPLE_EVENTS = [{
     "extra.payload.port" :65116,
     "extra.payload.server.ip": "198.18.185.162",
     "extra.payload.server.port": 80,
-    "extra.payload.domain": "example.com",
+    "destination.fqdn": "example.com",
     "extra.payload.family":"tinba",
     "extra.payload.response":"Response",
     "extra.payload.handler":"tinba",
@@ -115,7 +119,6 @@ EXAMPLE_EVENTS = [{
     'source.ip': '224.0.5.8',
     'source.port': 33587,
     'time.source': '2021-04-07T10:59:32+00:00',
-    'tlp': 'GREEN',
     'source.geolocation.cc': 'AT',
     },
     {
@@ -126,7 +129,7 @@ EXAMPLE_EVENTS = [{
         'event_description.text': 'Microsoft.DCU.CTIP.Sinkhole',
         'extra.custom_field1': 'andromeda210',
         'extra.malware': 'Avalanche',
-        'extra.payload.domain': 'example.com',
+        'destination.fqdn': 'example.com',
         'extra.payload.family': 'andromeda',
         'extra.payload.handler': 'handler1',
         'extra.payload.ip': '224.0.5.8',

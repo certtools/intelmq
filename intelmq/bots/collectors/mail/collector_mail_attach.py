@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 In Version 0.9.5 the attachment filename is no longer surrounded by double quotes, see for the discussion:
@@ -56,7 +60,7 @@ class MailAttachCollectorBot(MailCollectorBot):
                     raw_reports = unzip(attach['content'].read(), self.extract_files,
                                         return_names=True, logger=self.logger)
                 else:
-                    raw_reports = ((None, attach['content'].read()), )
+                    raw_reports = ((attach_filename, attach['content'].read()), )
 
                 for file_name, raw_report in raw_reports:
                     report = self.new_report()

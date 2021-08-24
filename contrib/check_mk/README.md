@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2019 Sebastian Wagner
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # Monitoring scripts for check_mk
 
 Some scripts to integrate IntelMQ into a [Check_MK](https://mathias-kettner.com/) instance:

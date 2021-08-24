@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2016 Sebastian Wagner
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # logcheck ruleset
 
 logcheck is a simple and effective log monitoring tool checking for known and

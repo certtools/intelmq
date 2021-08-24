@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2014 Tomás Lima
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Common utility functions for intelmq.
@@ -41,12 +45,13 @@ import dateutil.parser
 from dateutil.relativedelta import relativedelta
 from termstyle import red
 from ruamel.yaml import YAML
+from ruamel.yaml.scanner import ScannerError
 
 import intelmq
 from intelmq.lib.exceptions import DecodingError
 from intelmq import RUNTIME_CONF_FILE
 
-yaml = YAML(typ="safe", pure=True)
+yaml = YAML(typ="unsafe", pure=True)
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
@@ -209,7 +214,13 @@ def load_configuration(configuration_filepath: str) -> dict:
     """
     if os.path.exists(configuration_filepath):
         with open(configuration_filepath, 'r') as fpconfig:
-            config = yaml.load(fpconfig)
+            try:
+                config = yaml.load(fpconfig)
+            except ScannerError as exc:
+                if "found character '\\t' that cannot start any token" in exc.problem:
+                    fpconfig.seek(0)
+                    return json.load(fpconfig)
+                raise
     else:
         raise ValueError('File not found: %r.' % configuration_filepath)
     return config
@@ -241,7 +252,8 @@ def write_configuration(configuration_filepath: str,
         if content == old_content:
             return None
     if not new and backup:
-        shutil.copy2(configuration_filepath, configuration_filepath + '.bak')
+        config = pathlib.Path(configuration_filepath)
+        pathlib.Path(configuration_filepath + '.bak').write_text(config.read_text())
     with open(configuration_filepath, 'w') as handle:
         if useyaml:
             yaml.dump(content, handle)
@@ -476,7 +488,8 @@ def error_message_from_exc(exc: Exception) -> str:
 
 
 # number of minutes in time units
-TIMESPANS = {'hour': 60, 'day': 24 * 60, 'week': 7 * 24 * 60,
+TIMESPANS = {'second': 1 / 60, 'minute': 1,
+             'hour': 60, 'day': 24 * 60, 'week': 7 * 24 * 60,
              'month': 30 * 24 * 60, 'year': 365 * 24 * 60}
 
 
@@ -737,13 +750,6 @@ class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
     def send(self, *args, **kwargs):
         kwargs['timeout'] = self.timeout
         return super().send(*args, **kwargs)
-
-
-def create_request_session_from_bot(bot: type) -> requests.Session:
-    warnings.warn("This function is deprecated in favor of create_request_session"
-                  " and will be removed in version 3.0.0.",
-                  DeprecationWarning)
-    return create_request_session(bot)
 
 
 def create_request_session(bot: type = None) -> requests.Session:

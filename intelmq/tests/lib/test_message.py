@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Testing the Message classes of intelmq.
@@ -758,6 +762,12 @@ class TestMessageFactory(unittest.TestCase):
             message.Event(harmonization={'event': {'foo..bar': {}}})
         with self.assertRaises(exceptions.InvalidKey):
             message.Event(harmonization={'event': {'foo.bar.': {}}})
+
+    def test_invalid_extra_key_name(self):
+        """ Test if error is raised if an extra field name is invalid. """
+        event = message.Event(harmonization=HARM)
+        with self.assertRaises(exceptions.InvalidKey):
+            event.add('extra.foo-', 'bar')
 
 
 class TestReport(unittest.TestCase):

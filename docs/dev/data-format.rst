@@ -1,3 +1,7 @@
+..
+   SPDX-FileCopyrightText: 2015 Aaron Kaplan <aaron@lo-res.org>
+   SPDX-License-Identifier: AGPL-3.0-or-later
+
 ##################
 Data Format
 ##################
@@ -23,7 +27,11 @@ An `IOC <https://en.wikipedia.org/wiki/Indicator_of_compromise>`_ (Indicator of 
 Rules for keys
 ==============
 
-The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`. Thus, keys must match `^[a-z_](.[a-z0-9_]+)*$`.
+The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`.
+
+Only the lower-case alphabet, numbers and the underscore are allowed. Further, the field name must not begin with a number.
+Thus, keys must match ``^[a-z_][a-z_0-9]+(\.[a-z_0-9]+)*$``.
+These rules also apply for the otherwise unregulated ``extra.`` namespace.
 
 
 Sections
@@ -112,32 +120,27 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
    fraud                         masquerade                                  Type of attack in which one entity illegitimately impersonates the identity of another in order to benefit from it.
    fraud                         phishing                                    Masquerading as another entity in order to persuade the user to reveal private credentials.
    fraud                         unauthorized-use-of-resources               Using resources for unauthorized purposes including profit-making ventures, e.g. the use of e-mail to participate in illegal profit chain letters or pyramid schemes.
-   information content security  data-leak                                   Leaked confidential information like credentials or personal data.
-   information content security  data-loss                                   Loss of data, e.g. caused by harddisk failure or physical theft.
-   information content security  dropzone                                    This IOC refers to place where the compromised machines store the stolen user data. Not in ENISA eCSIRT-II taxonomy.
-   information content security  unauthorised-information-access             Unauthorized access to information, e.g. by abusing stolen login credentials for a system or application, intercepting traffic or gaining access to physical documents.
-   information content security  unauthorised-information-modification       Unauthorised modification of information, e.g. by an attacker abusing stolen login credentials for a system or application or a ransomware encrypting data.
-   information gathering         scanner                                     Attacks that send requests to a system to discover weaknesses. This also includes testing processes to gather information on hosts, services and accounts. Examples: fingerd, DNS querying, ICMP, SMTP (EXPN, RCPT, ...), port scanning.
+   information-content-security  data-leak                                   Leaked confidential information like credentials or personal data.
+   information-content-security  data-loss                                   Loss of data, e.g. caused by harddisk failure or physical theft.
+   information-content-security  unauthorised-information-access             Unauthorized access to information, e.g. by abusing stolen login credentials for a system or application, intercepting traffic or gaining access to physical documents.
+   information-content-security  unauthorised-information-modification       Unauthorised modification of information, e.g. by an attacker abusing stolen login credentials for a system or application or a ransomware encrypting data.
+   information-gathering         scanner                                     Attacks that send requests to a system to discover weaknesses. This also includes testing processes to gather information on hosts, services and accounts. Examples: fingerd, DNS querying, ICMP, SMTP (EXPN, RCPT, ...), port scanning.
    information-gathering         sniffing                                    Observing and recording of network traffic (wiretapping).
    information-gathering         social-engineering                          Gathering information from a human being in a non-technical way (e.g. lies, tricks, bribes, or threats). This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol.
    intrusion-attempts            brute-force                                 Multiple login attempts (Guessing / cracking of passwords, brute force).
    intrusion-attempts            exploit                                     An attack using an unknown exploit.
    intrusion-attempts            ids-alert                                   IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.
    intrusions                    application-compromise                      Compromise of an application by exploiting (un)known software vulnerabilities, e.g. SQL injection.
-   intrusions                    backdoor                                    This refers to hosts, which have been compromised and backdoored with a remote administration software or Trojan in the traditional sense. Not in ENISA eCSIRT-II taxonomy.
    intrusions                    burglary                                    Physical intrusion, e.g. into corporate building or data center.
-   intrusions                    compromised                                 This IOC refers to compromised system. Not in ENISA eCSIRT-II taxonomy.
-   intrusions                    defacement                                  This IOC refers to hacktivism related activity. Not in ENISA eCSIRT-II taxonomy.
    intrusions                    privileged-account-compromise               Compromise of a system where the attacker gained administrative privileges.
-   intrusions                    unauthorized-command                        The possibly infected device sent unauthorized commands to a remote device with malicious intent. Not in ENISA eCSIRT-II taxonomy.
-   intrusions                    unauthorized-login                          A possibly infected device logged in to a remote device without authorization. Not in ENISA eCSIRT-II taxonomy.
+   intrusions                    system-compromise                           Compromise of a system, e.g. unauthorised logins or commands. This includes compromising attempts on honeypot systems.
    intrusions                    unprivileged-account-compromise             Compromise of a system using an unprivileged (user/service) account.
    malicious-code                c2-server                                   This is a command and control server in charge of a given number of botnet drones.
-   malicious-code                dga domain                                  DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers. Not in ENISA eCSIRT-II taxonomy.
    malicious-code                infected-system                             This is a compromised machine, which has been observed to make a connection to a command and control server.
    malicious-code                malware-configuration                       This is a resource which updates botnet drones with a new configuration.
    malicious-code                malware-distribution                        URI used for malware distribution, e.g. a download URL included in fake invoice malware spam.
    other                         blacklist                                   Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another. Not in RSIT.
+   other                         dga-domain                                  DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers. Not in RSIT.
    other                         other                                       All incidents which don't fit in one of the given categories should be put into this class.
    other                         malware                                     An IoC referring to a malware (sample) itself. Not in RSIT.
    other                         proxy                                       This refers to the use of proxies from inside your network. Not in RSIT.
@@ -159,14 +162,11 @@ Meaning of source, destination and local values for each classification type and
 =======================  ================================================  ==========================  ===========================
  Type                     Source                                            Destination                 Possible identifiers
 =======================  ================================================  ==========================  ===========================
- backdoor                 *backdoored device*
  blacklist                *blacklisted device*
  brute-force              *attacker*                                        target
  c2-server                *(sinkholed) c&c server*                                                      zeus, palevo, feodo
- compromised              *server*
  ddos                     *attacker*                                        target
- defacement               *defaced website*
- dga domain               *infected device*
+ dga-domain               *infected device*
  dropzone                 *server hosting stolen data*
  exploit                  *hosting server*
  ids-alert                *triggering device*
@@ -178,6 +178,7 @@ Meaning of source, destination and local values for each classification type and
  proxy                    *server allowing policy and security bypass*
  scanner                  *scanning device*                                 scanned device              http,modbus,wordpress
  spam                     *infected device*                                 targeted server
+ system-compromise        *server*
  vulnerable-system        *vulnerable device*                                                           heartbleed, openresolver, snmp, wpad
 =======================  ================================================  ==========================  ===========================
 

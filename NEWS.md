@@ -1,6 +1,7 @@
-..
+<!-- comment
    SPDX-FileCopyrightText: 2015-2021 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 
 NEWS
 ====
@@ -8,13 +9,66 @@ NEWS
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 Please refer to the changelog for a full list of changes.
 
-3.0.0 Major release (unreleased)
+3.1.0 Feature release (unreleased)
+----------------------------------
+
+### Requirements
+
+### Tools
+
+### Data Format
+#### Field name checks
+The field names for all data added to messages must match a pre-defined format.
+The check which ensures this, was ineffective prior to this version and is effective again starting with version 3.1.0.
+The [Data format documentation](https://intelmq.readthedocs.io/en/maintenance/dev/data-format.html#rules-for-keys) describes the required format.
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
+3.0.1 Maintenance release (unreleased)
+--------------------------------------
+
+
+### Requirements
+
+### Tools
+
+### Bots
+The malwardomains parser bot was removed. The malwaredomains.com website is offline, therefore the parser can not be used anymore. The `intelmqctl upgrade-config` command warns if you have the feed and the bot in use.
+The postgresql output bot was removed. The bot was marked as deprecated in 2019 and announced to be removed in version 3.
+
+### Data Format
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
+3.0.0 Major release (2021-07-02)
 --------------------------------
 
 ### Requirements
 IntelMQ now uses YAML for the runtime configuration and therefore needs the `ruamel.yaml` library.
 
 ### Tools
+
+#### intelmqdump
+The command `e` for deleting single entries by given IDs has been merged into the command `d` ("delete"), which can now delete either entries by ID or the whole file.
+The command `v` for editing entries has been renamed to `e` ("edit").
+
+#### Cronjobs
+The deprecated shell scripts
+- `update-asn-data`
+- `update-geoip-data`
+- `update-tor-nodes`
+- `update-rfiprisk-data`
+have been removed in favor of the built-in update-mechanisms (see the bots' documentation). A crontab file for calling all new update command can be found in `contrib/cron-jobs/intelmq-update-database`.
 
 ### Bots
 
@@ -37,19 +91,26 @@ New features:
 
 The [sieve bot documentation](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#intelmq-bots-experts-sieve-expert) has been updated to reflect on these new changes.
 
-### Harmonization
-The classification scheme has been updated to better match the [Reference Security Incident Taxonomy (RSIT)](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed:
+### Data format
+The classification scheme has been updated to better match the [Reference Security Incident Taxonomy (RSIT)](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed, deleted or merged into others:
 
 | old taxonomy name | old type name | new taxonomy name | new type name |
 |-|-|-|-|
 | abusive content              |                    | abusive-content              |                                        |
 | information content security |                    | information-content-security |                                        |
 | information content security | leak               | information-content-security | data-leak                              |
+| information content security | dropzone           | other                        | other (identifier: ``dropzone``)       |
 | intrusion attempts           |                    | intrusion-attempts           |                                        |
 | information gathering        |                    | information-gathering        |                                        |
+| intrusions                   | backdoor           | intrusions                   | system-compromise                      |
+| intrusions                   | compromised        | intrusions                   | system-compromise                      |
+| intrusions                   | defacement         | information-content-security | unauthorised-information-modification  |
+| intrusions                   | unauthorized-login | intrusions                   | system-compromise                      |
+| intrusions                   | unauthorized-command | intrusions                 | system-compromise                      |
 | malicious code               |                    | malicious-code               |                                        |
 | malicious code               | c2server           | malicious-code               | c2-server                              |
 | malicious code               | malware            | malicious-code               | infected-system / malware-distribution |
+| malicious code               | dga domain         | other                        | dga-domain                             |
 | malicious code               | malware            | other                        | malware                                |
 | malicious code               | ransomware         | malicious-code               | infected-system                        |
 | vulnerable                   | vulnerable client  | vulnerable                   | vulnerable-system                      |
@@ -57,16 +118,19 @@ The classification scheme has been updated to better match the [Reference Securi
 | other                        | unknown            | other                        | undetermined                           |
 
 - For the taxonomy 'availability', the type `misconfiguration` is new.
+- For the taxonomy 'intrusions', the type `system-compromise` is new.
 - For the taxonomy 'other', the types `malware` and `undetermined` are new.
 
-The old names can still be used in code, and they are automatically converted to the new names.
+The old `classification.type` names can still be used in code, and they are automatically converted to the new names.
+Existing data in databases and alike are *not* changed automatically.
+See the section "Postgres databases" below for instructions to update existing data in databases.
 
 #### "Malware"
 
 The previously existing classification type "malware" under the taxonomy "malicious code" was removed, as this type does not exist in the RSIT.
-Most of the usages were wrong anyway, and should have been infected-device, malware-distribution or something else anyway.
+Most of the usages were wrong anyway, and should have been infected-device, malware-distribution or something else.
 There is only one usage in IntelMQ, which can not be changed.
-And that one is really about malware itself (or: the hashes of samples). For this purpose, the new type "malware" under the taxonomy "other" was created, *slightly* deviating from the RSIT in this respect, but "other" can be freely extended.
+And that one is really about malware itself (or: the hashes of samples). For this purpose, the new type "malware" under the taxonomy "other" was created, *slightly* deviating from the RSIT in this respect, but the "other" taxonomy can be freely extended.
 
 ### Configuration
 
@@ -76,7 +140,11 @@ The `pipeline.conf` file was removed. The source- and destination-queues of the 
 The `intelmqctl upgrade-config` command migrates the existing configuration from the `pipeline.conf` file to the individual bot configurations in the `runtime.conf` configuration file.
 The `runtime.conf` file was replaced by a `runtime.yaml` file. IntelMQ moves the file for you if it does not find a runtime.conf but a runtime.yaml file. When IntelMQ changes the file, it now writes YAML syntax.
 
-### Libraries
+#### Removal of deprecated bots and behaviour
+- The bot `intelmq.bots.experts.ripencc_abuse_contact.expert` has been removed. It was replaced by `intelmq.bots.experts.ripe.expert` and marked as deprecated in 2.0.0.beta1.
+- Modify expert: Compatibility with the deprecated configuration format (before 1.0.0.dev7) was removed.
+- RT collector: compatibility with the deprecated parameter `unzip_attachment` (removed in 2.1.0) was removed.
+
 
 ### Postgres databases
 The following statements optionally update existing data for the harmonization classification changes:
@@ -97,11 +165,20 @@ UPDATE events
    SET "classification.taxonomy" = 'information-gathering'
    WHERE "classification.taxonomy" = 'information gathering';
 UPDATE events
+   SET "classification.type" = 'system-compromise'
+   WHERE "classification.type" IN ('backdoor', 'compromised', 'unauthorized-login', 'unauthorized-command');
+UPDATE events
+   SET "classification.taxonomy" = 'information-content-security', "classification.type" = 'unauthorised-information-modification'
+   WHERE "classification.taxonomy" = 'intrusions', "classification.type" = 'defacement'
+UPDATE events
    SET "classification.taxonomy" = 'malicious-code'
    WHERE "classification.taxonomy" = 'malicious code';
 UPDATE events
    SET "classification.type" = 'c2-server'
    WHERE "classification.taxonomy" = 'malicious-code' AND "classification.type" = 'c2server';
+UPDATE events
+   SET "classification.taxonomy" = 'other', "classification.type" = 'dga-domain'
+   WHERE "classification.taxonomy" = 'malicious-code' AND "classification.type" = 'dga domain';
 UPDATE events
    SET "classification.type" = 'vulnerable-system'
    WHERE "classification.taxonomy" = 'vulnerable' AND ("classification.type" = 'vulnerable service' OR "classification.type" = 'vulnerable client');
@@ -129,16 +206,8 @@ UPDATE events
 ```
 
 
-2.3.3 Bugfix release (unreleased)
+2.3.3 Bugfix release (2021-05-31)
 ---------------------------------
-
-### Requirements
-
-### Tools
-
-### Bots
-
-### Harmonization
 
 ### Configuration
 
@@ -163,10 +232,6 @@ The `intelmqctl upgrade-config` command automatically fixes a configuration if t
 Shadowserver changed some of their feeds, for more information see [Changes in Sinkhole and Honeypot Report Types and Formats](https://www.shadowserver.org/news/changes-in-sinkhole-and-honeypot-report-types-and-formats/). Support for the legacy feeds has not been removed yet.
 
 The [Shadowserver Parser Bot documentation](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#shadowserver-supported-reports) lists the supported feeds, as well as the legacy feeds.
-
-### Libraries
-
-### Postgres databases
 
 
 2.3.2 Bugfix release (2021-04-27)

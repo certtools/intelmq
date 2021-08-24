@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 root
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 openDXL Collector Bot
 Connects to a openDXL fabric and subscribes to ATD topic

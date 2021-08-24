@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Pierre Dumont
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 CERT-EU parser
 
@@ -18,16 +22,16 @@ class CertEUCSVParserBot(ParserBot):
     """Parse CSV data of the CERT-EU feed"""
 
     ABUSE_TO_INTELMQ = defaultdict(lambda: "other", {
-        "backdoor": "backdoor",
+        "backdoor": "system-compromise",
         "blacklist": "blacklist",
         "botnet drone": "infected-system",
         "brute-force": "brute-force",
         "c2server": "c2-server",
-        "compromised server": "compromised",
+        "compromised server": "system-compromise",
         "ddos infrastructure": "ddos",
         "ddos target": "ddos",
-        "defacement": "defacement",
-        "dropzone": "dropzone",
+        "defacement": "unauthorised-information-modification",
+        "dropzone": "other",
         "exploit url": "exploit",
         "ids alert": "ids-alert",
         "malware-configuration": "malware-configuration",
@@ -61,6 +65,8 @@ class CertEUCSVParserBot(ParserBot):
         event.add("tlp", line["tlp"])
         event.add("event_description.text", line["description"])
         event.add("classification.type", self.ABUSE_TO_INTELMQ[line["type"]])
+        if line['type'] == 'dropzone':
+            event.add("classification.identifier", 'dropzone')
         if line["count"]:
             event["extra.count"] = int(line["count"])
         event.add("time.source", line["source time"])

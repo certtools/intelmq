@@ -1,0 +1,4 @@
+# SPDX-FileCopyrightText: 2021 Linköping University <https://liu.se/>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+jinja2>=2.11,<3

@@ -1,0 +1,7 @@
+{
+  "@timestamp": {% if msg['time.source'] %}{{ msg['time.source'] }}{% else %}{{ msg['time.observation'] }}{% endif %},
+{%- set fields = { 'event.provider': 'feed.provider', 'server.ip': 'source.ip', 'server.domain': 'source.fqdn', 'event.dataset': 'feed.name' } -%}
+{% for key, value in fields.items() %}
+{% if msg[value] %}  "{{ key }}": {{ msg[value] }}{% if not loop.last %},{% endif %}{% endif %}
+{%- endfor %}
+}

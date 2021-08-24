@@ -1,14 +1,44 @@
-intelmq (3.0.0~alpha1-1) UNRELEASED; urgency=medium
+intelmq (3.1.0~alpha1-1) UNRELEASED; urgency=medium
+
+  * Start 3.1.0 development.
+
+ -- Sebastian Wagner <wagner@cert.at>  Fri, 13 Aug 2021 11:09:58 +0200
+
+intelmq (3.0.1~beta1-1) UNRELEASED; urgency=medium
+
+  * Update to 3.0.1.
+
+ -- Sebastian Wagner <wagner@cert.at>  Fri, 02 Jul 2021 18:46:36 +0200
+
+intelmq (3.0.0-1) stable; urgency=medium
+
+  * Update to version 3.0.0.
+
+ -- Sebastian Wagner <wagner@cert.at>  Fri, 02 Jul 2021 17:35:56 +0200
+
+intelmq (3.0.0~rc1-1) stable; urgency=low
+
+  * Update to 3.0.0 Release candidate 1.
+
+ -- Sebastian Wagner <wagner@cert.at>  Sat, 26 Jun 2021 12:19:51 +0200
+
+intelmq (3.0.0~beta1-1) unstable; urgency=low
+
+  * Update to 3.0.0 Beta 1.
+
+ -- Sebastian Wagner <wagner@cert.at>  Mon, 21 Jun 2021 10:54:43 +0200
+
+intelmq (3.0.0~alpha1-1) unstable; urgency=low
 
   * Update to 3.0.0 Alpha 1.
 
  -- Sebastian Wagner <wagner@cert.at>  Fri, 19 Feb 2021 20:31:40 +0100
 
-intelmq (2.3.3~alpha1-1) UNRELEASED; urgency=medium
+intelmq (2.3.3-1) stable; urgency=medium
 
   * Update to 2.3.3.
 
- -- Sebastian Wagner <wagner@cert.at>  Tue, 27 Apr 2021 15:54:32 +0200
+ -- Sebastian Wagner <wagner@cert.at>  Mon, 31 May 2021 21:18:07 +0200
 
 intelmq (2.3.2-1) stable; urgency=medium
 

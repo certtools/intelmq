@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2016-2018 by Bundesamt für Sicherheit in der Informationstechnik (BSI)
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # -*- coding: utf-8 -*-
 """
 Copyright (c)2016-2018 by Bundesamt für Sicherheit in der Informationstechnik (BSI)
@@ -75,60 +78,50 @@ TODOs:
 
 """
 import re
+import base64
+import binascii
+from typing import Optional, Dict, Tuple, Any
 
 import intelmq.lib.harmonization as harmonization
 
 
-def get_feed_by_feedname(given_feedname):
-    for feedname, filename, function in mapping:
-        if given_feedname == feedname:
-            return function
-    else:
-        return None
+def get_feed_by_feedname(given_feedname: str) -> Optional[Dict[str, Any]]:
+    return feedname_mapping.get(given_feedname, None)
 
 
-def get_feed_by_filename(given_filename):
-    for feedname, filename, function in mapping:
-        if given_filename == filename:
-            return feedname, function
-    else:
-        return None
+def get_feed_by_filename(given_filename: str) -> Optional[Tuple[str, Dict[str, Any]]]:
+    return filename_mapping.get(given_filename, None)
 
 
-def add_UTC_to_timestamp(value):
+def add_UTC_to_timestamp(value: str) -> str:
     return value + ' UTC'
 
 
-def convert_bool(value):
-    if value.lower() in ('y', 'yes', 'true', 'enabled', '1'):
+def convert_bool(value: str) -> Optional[bool]:
+    value = value.lower()
+    if value in {'y', 'yes', 'true', 'enabled', '1'}:
         return True
-    elif value.lower() in ('n', 'no', 'false', 'disabled', '0'):
+    elif value in {'n', 'no', 'false', 'disabled', '0'}:
         return False
 
-
-def validate_to_none(value):
-    if not len(value) or value in ('0', 'unknown'):
-        return None
-    return value
+    return None
 
 
-def convert_int(value):
+def validate_to_none(value: str) -> Optional[str]:
+    return None if (not value or value in {'0', 'unknown'}) else value
+
+
+def convert_int(value: str) -> Optional[int]:
     """ Returns an int or None for empty strings. """
-    if not value:
-        return None
-    else:
-        return int(value)
+    return int(value) if value else None
 
 
-def convert_float(value):
+def convert_float(value: str) -> Optional[float]:
     """ Returns an float or None for empty strings. """
-    if not value:
-        return None
-    else:
-        return float(value)
+    return float(value) if value else None
 
 
-def convert_http_host_and_url(value, row):
+def convert_http_host_and_url(value: str, row: Dict[str, str]) -> str:
     """
     URLs are split into hostname and path. The column names differ in reports.
     Compromised-Website: http_host, url
@@ -157,69 +150,77 @@ def convert_http_host_and_url(value, row):
         path = re.sub(r'^[^/]*', '', path)
         path = re.sub(r'\s.*$', '', path)
 
-        application = "http"
-        if "application" in row:
-            if row['application'] in ['http', 'https']:
-                application = row['application']
+        if "application" in row and row['application'] in {'http', 'https'}:
+            application = row['application']
+        else:
+            application = 'http'
 
         return application + "://" + hostname + path
 
     return value
 
 
-def invalidate_zero(value):
+def invalidate_zero(value: str) -> Optional[int]:
     """ Returns an int or None for empty strings or '0'. """
-    if not value:
-        return None
-    elif int(value) != 0:
-        return int(value)
+    return int(value) if value and int(value) != 0 else None
 
 
 # TODO this function is a wild guess...
-def set_tor_node(value):
-    if value:
-        return True
-    else:
-        return None
+def set_tor_node(value: str) -> Optional[bool]:
+    return True if value else None
 
 
-def validate_ip(value):
+def validate_ip(value: str) -> Optional[str]:
     """Remove "invalid" IP."""
-    if value == '0.0.0.0':
-        return None
-
     # FIX: https://github.com/certtools/intelmq/issues/1720 # TODO: Find better fix
-    if '/' in value:
-        return None
-
-    if harmonization.IPAddress.is_valid(value, sanitize=True):
+    if not (value == '0.0.0.0' or '/' in value) and harmonization.IPAddress.is_valid(value, sanitize=True):
         return value
 
+    return None
 
-def validate_network(value):
+
+def validate_network(value: str) -> Optional[str]:
     # FIX: https://github.com/certtools/intelmq/issues/1720 # TODO: Find better fix
-    if '/' not in value:
-        return None
-
-    if harmonization.IPNetwork.is_valid(value, sanitize=True):
+    if '/' in value and harmonization.IPNetwork.is_valid(value, sanitize=True):
         return value
 
+    return None
 
-def validate_fqdn(value):
+
+def validate_fqdn(value: str) -> Optional[str]:
     if value and harmonization.FQDN.is_valid(value, sanitize=True):
         return value
 
+    return None
 
-def convert_date(value):
+
+def convert_date(value: str) -> Optional[str]:
     return harmonization.DateTime.sanitize(value)
 
 
-def convert_date_utc(value):
+def convert_date_utc(value: str) -> Optional[str]:
     """
     Parses a datetime from the value and assumes UTC by appending the TZ to the value.
     Not the same as add_UTC_to_timestamp, as convert_date_utc also does the sanitiation
     """
     return harmonization.DateTime.sanitize(value + '+00:00')
+
+
+def force_base64(value: Optional[str]) -> Optional[str]:
+    """
+    Takes input strings that may be either base64-encoded bytestrings or plaintext string,
+    and leaves the base64-encoded values untouched while encoding the non-encoded values,
+    uniformly converting the data in the field to be base64-encoded
+    """
+    if not value:
+        return None
+
+    try:
+        base64.b64decode(value, validate=True)  # return value intentionally ignored
+    except binascii.Error:
+        return base64.b64encode(value.encode()).decode()
+    else:
+        return value
 
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-DB2
@@ -1180,6 +1181,7 @@ drone = {
         # classification.identifier will be set to (harmonized) malware name by modify expert
     },
 }
+
 drone_spam = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1284,7 +1286,7 @@ compromised_website = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'intrusions',
-        'classification.type': 'compromised',
+        'classification.type': 'system-compromise',
         'classification.identifier': 'compromised-website',
     },
 }
@@ -2629,7 +2631,9 @@ event4_honeypot_darknet = {
     },
 }
 
-event4_sinkhole = {
+# https://www.shadowserver.org/what-we-do/network-reporting/microsoft-sinkhole-events-report/
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-events-report/
+event46_sinkhole = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'src_ip'),
@@ -2670,6 +2674,8 @@ event4_sinkhole = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/microsoft-sinkhole-http-events-report/
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-http-events-report/
 event46_sinkhole_http = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2718,6 +2724,185 @@ event46_sinkhole_http = {
     },
 }
 
+
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-exchange-server-report/
+def scan_exchange_taxonomy(field):
+    if field == 'exchange;webshell':
+        return 'intrusions'
+    return 'vulnerable'
+
+
+def scan_exchange_type(field):
+    if field == 'exchange;webshell':
+        return 'system-compromise'
+    return 'infected-system'
+
+
+def scan_exchange_identifier(field):
+    if field == 'exchange;webshell':
+        return 'exchange-server-webshell'
+    return 'vulnerable-exchange-server'
+
+
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-exchange-server-report/
+scan_exchange = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', convert_int),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'servername', validate_to_none),
+        ('classification.taxonomy', 'tag', scan_exchange_taxonomy),
+        ('classification.type', 'tag', scan_exchange_type),
+        ('classification.identifier', 'tag', scan_exchange_identifier),
+    ],
+    'constant_fields': {
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-http-referer-events-report/
+event46_sinkhole_http_referer = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port'),
+    ],
+    'optional_fields': [
+        ('extra.', 'http_referer_ip', validate_ip),
+        ('extra.', 'http_referer_asn', convert_int),
+        ('extra.', 'http_referer_geo', validate_to_none),
+        ('extra.', 'http_referer_region', validate_to_none),
+        ('extra.', 'http_referer_city', validate_to_none),
+        ('extra.', 'http_referer_hostname', validate_to_none),
+        ('extra.', 'http_referer_naics', invalidate_zero),
+        ('extra.', 'http_referer_sector', validate_to_none),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('destination.url', 'http_url', convert_http_host_and_url, True),
+        ('destination.fqdn', 'http_host', validate_fqdn),
+        ('extra.', 'http_referer', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'sinkhole-http-referer',
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+    }
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-smtp-report/
+vulnerable_smtp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'banner', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'vulnerable-smtp',
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'protocol.application': 'smtp',
+    }
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-http-scanner-events/
+honeypot_http_scan = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip', validate_ip),
+        ('source.port', 'src_port'),
+    ],
+    'optional_fields': [
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', invalidate_zero),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port'),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('extra.', 'pattern', validate_to_none),
+        ('destination.url', 'http_url', convert_http_host_and_url, True),
+        ('user_agent', 'http_agent', validate_to_none),
+        ('extra.method', 'http_request_method', validate_to_none),
+        ('extra.', 'url_scheme', validate_to_none),
+        ('extra.', 'session_tags', validate_to_none),
+        ('extra.', 'vulnerability_enum', validate_to_none),
+        ('extra.', 'vulnerability_id', validate_to_none),
+        ('extra.', 'vulnerability_class', validate_to_none),
+        ('extra.', 'vulnerability_score', validate_to_none),
+        ('extra.', 'vulnerability_severity', validate_to_none),
+        ('extra.', 'vulnerability_version', validate_to_none),
+        ('extra.', 'threat_framework', validate_to_none),
+        ('extra.', 'threat_tactic_id', validate_to_none),
+        ('extra.', 'threat_technique_id', validate_to_none),
+        ('extra.', 'target_vendor', validate_to_none),
+        ('extra.', 'target_product', validate_to_none),
+        ('extra.', 'target_class', validate_to_none),
+        ('extra.', 'file_md5', validate_to_none),
+        ('extra.', 'file_sha256', validate_to_none),
+        ('extra.', 'request_raw', force_base64),
+        ('extra.', 'body_raw', force_base64),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'honeypot-http-scan',
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+        'protocol.application': 'http',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2750,10 +2935,13 @@ mapping = (
     ('Honeypot-Amplification-DDoS-Events', 'event4_honeypot_ddos_amp', honeypot_ddos_amp),
     ('Honeypot-Brute-Force-Events', 'event4_honeypot_brute_force', honeypot_brute_force),
     ('Honeypot-Darknet', 'event4_honeypot_darknet', event4_honeypot_darknet),
+    ('Honeypot-HTTP-Scan', 'event4_honeypot_http_scan', honeypot_http_scan),
     ('ICS-Scanners', 'hp_ics_scan', ics_scanners),
     ('IPv6-Sinkhole-HTTP-Drone', 'sinkhole6_http', ipv6_sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
     ('IP-Spoofer-Events', 'event4_ip_spoofer', event4_ip_spoofer),
     ('Microsoft-Sinkhole', 'microsoft_sinkhole', microsoft_sinkhole),  # legacy (replaced by event46_sinkhole_http)
+    ('Microsoft-Sinkhole-Events IPv4', 'event4_microsoft_sinkhole', event46_sinkhole),
+    ('Microsoft-Sinkhole-Events-HTTP IPv4', 'event4_microsoft_sinkhole_http', event46_sinkhole_http),
     ('NTP-Monitor', 'scan_ntpmonitor', ntp_monitor),
     ('NTP-Version', 'scan_ntp', ntp_version),
     ('Open-Chargen', 'scan_chargen', open_chargen),
@@ -2784,11 +2972,22 @@ mapping = (
     ('SSL-POODLE-Vulnerable-Servers', 'scan_ssl_poodle', ssl_poodle_vulnerable_servers),
     ('Sandbox-URL', 'cwsandbox_url', sandbox_url),
     ('Sinkhole-DNS', 'sinkhole_dns', sinkhole_dns),
-    ('Sinkhole-Events', 'event4_sinkhole', event4_sinkhole),
+    ('Sinkhole-Events', 'event4_sinkhole', event46_sinkhole),
+    ('Sinkhole-Events IPv4', 'event4_sinkhole', event46_sinkhole),
+    ('Sinkhole-Events IPv6', 'event6_sinkhole', event46_sinkhole),
+    ('Sinkhole-Events-HTTP', 'event4_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-Events-HTTP IPv4', 'event4_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-Events-HTTP IPv6', 'event6_sinkhole_http', event46_sinkhole_http),
     ('Sinkhole-HTTP-Drone', 'sinkhole_http_drone', sinkhole_http_drone),  # legacy (replaced by event46_sinkhole_http)
+    ('Sinkhole-Events-HTTP-Referer', 'event4_sinkhole_http_referer', event46_sinkhole_http_referer),
+    ('Sinkhole-Events-HTTP-Referer IPv4', 'event4_sinkhole_http_referer', event46_sinkhole_http_referer),
+    ('Sinkhole-Events-HTTP-Referer IPv6', 'event6_sinkhole_http_referer', event46_sinkhole_http_referer),
     ('Spam-URL', 'spam_url', spam_url),
     ('Vulnerable-ISAKMP', 'scan_isakmp', vulnerable_isakmp),
-    ('Vulnerable-HTTP', 'scan_http', accessible_vulnerable_http),
+    ('Vulnerable-HTTP', 'scan_http_vulnerable', accessible_vulnerable_http),
+    ('Vulnerable-Exchange-Server', 'scan_exchange', scan_exchange),
+    ('Vulnerable-SMTP', 'scan_smtp_vulnerable', vulnerable_smtp),
 )
+
+feedname_mapping = {feedname: function for feedname, filename, function in mapping}
+filename_mapping = {filename: (feedname, function) for feedname, filename, function in mapping}

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import unittest
@@ -6,7 +10,7 @@ import intelmq.lib.test as test
 from intelmq.bots.experts.filter.expert import FilterExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
-                 "classification.type": "defacement",
+                 "classification.type": "unauthorised-information-modification",
                  "time.source": "2005-01-01T00:00:00+00:00",
                  "source.asn": 123,
                  "extra.test1": True,

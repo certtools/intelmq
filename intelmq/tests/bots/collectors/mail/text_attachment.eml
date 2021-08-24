@@ -1,0 +1,34 @@
+To: cert@example.com
+From: Sebastian Wagner <wagner@cert.at>
+Subject: foobar zip
+Message-ID: <07ce0153-060b-f48d-73d9-d92a20b3b3aa@cert.at>
+Date: Tue, 3 Sep 2019 16:57:40 +0200
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="------------1D845FBEEAAC1F68B4B45905"
+Content-Language: en-US
+
+This is a multi-part message in MIME format.
+--------------1D845FBEEAAC1F68B4B45905
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+<html>
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body text="#000000" bgcolor="#FFFFFF">
+    Please look at the attachment<br>
+  </body>
+</html>
+
+--------------1D845FBEEAAC1F68B4B45905
+Content-Type: text/plain; charset=UTF-8;
+ name="foobar.txt"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="foobar.txt"
+
+YmFyIHRleHQK
+--------------1D845FBEEAAC1F68B4B45905--

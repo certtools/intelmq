@@ -10,3 +10,7 @@
 5 */2 * * *     intelmq   intelmq.bots.experts.asn_lookup.expert --update-database
 # Update database for domain_suffix bot, updated daily:
 45 1 * * *     intelmq   intelmq.bots.experts.domain_suffix.expert --update-database
+# Update database for recordedfuture_iprisk bot, update frequency is unknown:
+27 1 * * *      intelmq  intelmq.bots.experts.recordedfuture_iprisk.expert --update-database
+# Update database for domain_valid bot, updated daily:
+50 1 * * *     intelmq   intelmq.bots.experts.domain_valid.expert --update-database

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 from collections import OrderedDict
 from datetime import datetime
 from xml.etree import ElementTree

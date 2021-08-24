@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2018 by nic.at GmbH
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """
 Shodan Stream Parser
 

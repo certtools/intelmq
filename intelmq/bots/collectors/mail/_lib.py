@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Sebastian Waldbauer
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import imaplib
 import re
@@ -25,6 +29,7 @@ class MailCollectorBot(CollectorBot):
     sent_to = None
     sent_from = None
     subject_regex = None
+    http_verify_cert: bool = True
 
     def init(self):
         if imbox is None:
@@ -37,8 +42,11 @@ class MailCollectorBot(CollectorBot):
 
     def connect_mailbox(self):
         self.logger.debug("Connecting to %s.", self.mail_host)
-        ca_file = self.ssl_ca_certificate
-        ssl_custom_context = ssl.create_default_context(cafile=ca_file)
+        if self.http_verify_cert is True:
+            ca_file = self.ssl_ca_certificate
+            ssl_custom_context = ssl.create_default_context(cafile=ca_file)
+        else:
+            ssl_custom_context = ssl._create_unverified_context()
         mailbox = imbox.Imbox(self.mail_host,
                               self.mail_user,
                               self.mail_password,

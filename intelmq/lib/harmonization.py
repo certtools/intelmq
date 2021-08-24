@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Dognaedis
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 The following types are implemented with sanitize() and is_valid() functions:
@@ -266,27 +270,23 @@ class ClassificationType(String):
     Allowed values are:
      * """
 
-    allowed_values = ['application-compromise',
-                      'backdoor',
+    allowed_values = ('application-compromise',
                       'blacklist',
                       'brute-force',
                       'burglary',
                       'c2-server',
-                      'compromised',
                       'copyright',
+                      'data-leak',
                       'data-loss',
                       'ddos',
                       'ddos-amplifier',
-                      'defacement',
-                      'dga domain',
+                      'dga-domain',
                       'dos',
-                      'dropzone',
                       'exploit',
                       'harmful-speech',
                       'ids-alert',
                       'infected-system',
                       'information-disclosure',
-                      'data-leak',
                       'malware',
                       'malware-configuration',
                       'malware-distribution',
@@ -303,19 +303,18 @@ class ClassificationType(String):
                       'sniffing',
                       'social-engineering',
                       'spam',
+                      'system-compromise',
                       'test',
                       'tor',
                       'unauthorised-information-access',
                       'unauthorised-information-modification',
-                      'unauthorized-command',
-                      'unauthorized-login',
                       'unauthorized-use-of-resources',
+                      'undetermined',
                       'unprivileged-account-compromise',
                       'violence',
                       'vulnerable-system',
                       'weak-crypto',
-                      'undetermined',
-                      ]
+                      )
 
     __doc__ += '\n     * '.join(allowed_values)
 
@@ -367,6 +366,20 @@ class ClassificationType(String):
             value = 'infected-system'
         elif value == 'unknown':
             value = 'undetermined'
+        elif value == 'dga domain':
+            value = 'dga-domain'
+        elif value == 'unauthorized-login':
+            value = 'system-compromise'
+        elif value == 'unauthorized-command':
+            value = 'system-compromise'
+        elif value == 'compromised':
+            value = 'system-compromise'
+        elif value == 'defacement':
+            value = 'unauthorised-information-modification'
+        elif value == 'backdoor':
+            value = 'system-compromise'
+        elif value == 'dropzone':
+            value = 'other'
         return GenericType().sanitize(value)
 
 
@@ -1146,7 +1159,7 @@ class TLP(UppercaseString):
     Accepted for sanitation are different cases and the prefix 'tlp:'.
     """
     enum = ['WHITE', 'GREEN', 'AMBER', 'RED']
-    prefix_pattern = re.compile(r'^(TLP:?)?\s*', flags=re.IGNORECASE)
+    prefix_pattern = re.compile(r'^(TLP:?)?\s*')
 
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
@@ -1166,6 +1179,6 @@ class TLP(UppercaseString):
         value = UppercaseString.sanitize(value)
         if value:
             value = TLP.prefix_pattern.sub('', value)
-            if value.lower() == 'yellow':
+            if value == 'YELLOW':
                 value = 'AMBER'
             return value

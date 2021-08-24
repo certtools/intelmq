@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Modify Expert bot let's you manipulate all fields with a config file.
@@ -7,7 +11,6 @@ import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.utils import load_configuration
-from intelmq.lib.upgrades import modify_expert_convert_config
 
 
 def is_re_pattern(value):
@@ -43,11 +46,6 @@ class ModifyExpertBot(Bot):
 
     def init(self):
         config = load_configuration(self.configuration_path)
-        if type(config) is dict:
-            self.logger.warning('Support for dict-based configuration will be '
-                                'removed in version 3.0. Have a look at the '
-                                'NEWS file section 1.0.0.dev7.')
-            config = modify_expert_convert_config(config)
 
         if self.case_sensitive:
             self.re_kwargs = {}

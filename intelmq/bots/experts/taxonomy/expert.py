@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 The mapping follows
@@ -28,7 +32,6 @@ TAXONOMY = {
     "unauthorised-information-access": "information-content-security",
     "unauthorised-information-modification": "information-content-security",
     "data-loss": "information-content-security",
-    "dropzone": "information-content-security",  # not in ENISA eCSIRT-II taxonomy
     "data-leak": "information-content-security",
     "scanner": "information-gathering",
     "sniffing": "information-gathering",
@@ -37,16 +40,12 @@ TAXONOMY = {
     "exploit": "intrusion-attempts",
     "ids-alert": "intrusion-attempts",
     "application-compromise": "intrusions",
-    "backdoor": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "burglary": "intrusions",
-    "compromised": "intrusions",  # not in ENISA eCSIRT-II taxonomy,
-    "defacement": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "privileged-account-compromise": "intrusions",
-    "unauthorized-command": "intrusions",  # not in ENISA eCSIRT-II taxonomy
-    "unauthorized-login": "intrusions",  # not in ENISA eCSIRT-II taxonomy
+    "system-compromise": "intrusions",
     "unprivileged-account-compromise": "intrusions",
     "c2-server": "malicious-code",
-    "dga domain": "malicious-code",  # not in ENISA eCSIRT-II taxonomy
+    "dga-domain": "other",  # intentionally not in RSIT, see #1409, #1613 and https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/pull/32
     "infected-system": "malicious-code",
     "malware-configuration": "malicious-code",
     "malware-distribution": "malicious-code",

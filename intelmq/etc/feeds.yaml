@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 SYNchroACK
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ---
 providers:
   ViriBack:
@@ -21,7 +25,7 @@ providers:
             html_parser: lxml
       revision: 2018-06-27
       documentation: https://viriback.com/
-      public: yes
+      public: true
   WebInspektor:
     Unsafe sites:
       description: Latest detected unsafe sites.
@@ -39,7 +43,7 @@ providers:
           parameters:
       revision: 2018-03-09
       documentation:
-      public: yes
+      public: true
   Sucuri:
     Hidden IFrames:
       description: Latest hidden iframes identified on compromised web sites.
@@ -57,7 +61,7 @@ providers:
           parameters:
       revision: 2018-01-28
       documentation: http://labs.sucuri.net/?malware
-      public: yes
+      public: true
   Surbl:
     Malicious Domains:
       description: Detected malicious domains. Note that you have to opened up Sponsored Datafeed Service (SDS) access to the SURBL data via rsync for your IP address.
@@ -73,7 +77,7 @@ providers:
           parameters:
       revision: 2018-09-04
       documentation:
-      public: no
+      public: false
   MalwarePatrol:
     DansGuardian:
       description: Malware block list with URLs
@@ -91,25 +95,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.malwarepatrol.net/non-commercial/
-      public: no
-  Malware Domains:
-    Malicious:
-      description: Malware Prevention through Domain Blocking (Black Hole DNS Sinkhole)
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://mirror1.malwaredomains.com/files/domains.txt
-            rate_limit: 172800
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.malwaredomains.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://www.malwaredomains.com/
-      public: yes
+      public: false
   ZoneH:
     Defacements:
       description: all the information contained in Zone-H's cybercrime archive were
@@ -137,7 +123,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://zone-h.org/
-      public: no
+      public: false
   OpenPhish:
     Public feed:
       description: OpenPhish is a fully automated self-contained platform for phishing
@@ -158,7 +144,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.openphish.com/
-      public: yes
+      public: true
     Premium Feed:
       description: OpenPhish is a fully automated self-contained platform for phishing
         intelligence. It identifies phishing sites and performs intelligence analysis
@@ -180,7 +166,7 @@ providers:
           parameters:
       revision: 2018-02-06
       documentation: https://www.openphish.com/phishing_feeds.html
-      public: no
+      public: false
   Netlab 360:
     Mirai Scanner:
       description: 'This feed provides IP addresses which actively scan for vulnerable
@@ -199,7 +185,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://data.netlab.360.com/mirai-scanner/
-      public: yes
+      public: true
     Magnitude EK:
       description: 'This feed lists FQDN and possibly the URL used by Magnitude Exploit
         Kit. Information also includes the IP address used for the domain and last
@@ -218,7 +204,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://data.netlab.360.com/ek
-      public: yes
+      public: true
     DGA:
       description: 'This feed lists DGA family, Domain, Start and end of valid time(UTC)
         of a number of DGA families.'
@@ -236,7 +222,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://data.netlab.360.com/dga
-      public: yes
+      public: true
     Hajime Scanner:
       description: 'This feed lists IP address for know Hajime bots network. These IPs data are obtained by joining the DHT network and interacting with the Hajime node'
       additional_information:
@@ -253,7 +239,7 @@ providers:
           parameters:
       revision: 2019-08-01
       documentation: https://data.netlab.360.com/hajime/
-      public: yes
+      public: true
   Abuse.ch:
     Feodo Tracker IPs:
       description: 'List of botnet Command&Control servers (C&Cs) tracked by Feodo Tracker,
@@ -273,7 +259,7 @@ providers:
           parameters:
       revision: 2019-03-25
       documentation: https://feodotracker.abuse.ch/
-      public: yes
+      public: true
     URLhaus:
       description: URLhaus is a project from abuse.ch with the goal of sharing malicious
         URLs that are being used for malware distribution. URLhaus offers a country, ASN
@@ -308,7 +294,7 @@ providers:
               - source.geolocation.cc
       revision: 2020-07-07
       documentation: https://urlhaus.abuse.ch/feeds/
-      public: yes
+      public: true
     Feodo Tracker Browse:
       description: ''
       additional_information:
@@ -329,7 +315,7 @@ providers:
             type: c2-server
       revision: 2019-03-19
       documentation: https://feodotracker.abuse.ch/browse
-      public: yes
+      public: true
   Blueliv:
     CrimeServer:
       description: Blueliv Crimeserver Collector is the bot responsible to get the
@@ -362,7 +348,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.blueliv.com/
-      public: no
+      public: false
   Team Cymru:
     CAP:
       description: Team Cymru provides daily lists of compromised or abused devices
@@ -391,7 +377,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.team-cymru.com/CSIRT-AP.html https://www.cymru.com/$certname/report_info.txt
-      public: no
+      public: false
     Full Bogons IPv4:
       description: Fullbogons are a larger set which also includes IP space that has
         been allocated to an RIR, but not assigned by that RIR to an actual ISP or
@@ -414,7 +400,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.team-cymru.com/bogon-reference-http.html
-      public: yes
+      public: true
     Full Bogons IPv6:
       description: Fullbogons are a larger set which also includes IP space that has
         been allocated to an RIR, but not assigned by that RIR to an actual ISP or
@@ -437,7 +423,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.team-cymru.com/bogon-reference-http.html
-      public: yes
+      public: true
   Taichung:
     Netflow Recent:
       description: "Abnormal flows detected: Attacking (DoS, Brute-Force, Scanners) and malicious hosts (C&C servers, hosting malware)"
@@ -454,7 +440,7 @@ providers:
           module: intelmq.bots.parsers.taichung.parser
       revision: 2018-01-20
       documentation: https://www.tc.edu.tw/net/netflow/lkout/recent/
-      public: yes
+      public: true
   Dataplane:
     SSH Client Connection:
       description: Entries below consist of fields with identifying characteristics
@@ -476,7 +462,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://dataplane.org/
-      public: yes
+      public: true
     SSH Password Authentication:
       description: Entries below consist of fields with identifying characteristics
         of a source IP address that has been seen attempting to remotely login to
@@ -497,7 +483,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://dataplane.org/
-      public: yes
+      public: true
     SIP Query:
       description: Entries consist of fields with identifying characteristics of a
         source IP address that has been seen initiating a SIP OPTIONS query to a remote
@@ -518,7 +504,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://dataplane.org/
-      public: yes
+      public: true
     SIP Registration:
       description: Entries consist of fields with identifying characteristics of a
         source IP address that has been seen initiating a SIP REGISTER operation to
@@ -539,7 +525,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://dataplane.org/
-      public: yes
+      public: true
   Turris:
     Greylist:
       description: The data are processed and classified every week and behaviour of
@@ -562,7 +548,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://project.turris.cz/en/greylist
-      public: yes
+      public: true
     Greylist with PGP signature verification:
       description: |
         The data are processed and classified every week and behaviour of
@@ -627,7 +613,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://project.turris.cz/en/greylist
-      public: yes
+      public: true
   Malc0de:
     Bind Format:
       description: This feed includes FQDN's of malicious hosts, the file format is
@@ -646,7 +632,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://malc0de.com/dashboard/
-      public: yes
+      public: true
     Windows Format:
       description: This feed includes FQDN's of malicious hosts, the file format is
         in Windows Hosts file format.
@@ -664,7 +650,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://malc0de.com/dashboard/
-      public: yes
+      public: true
     IP Blacklist:
       description: This feed includes IP Addresses of malicious hosts.
       additional_information:
@@ -681,7 +667,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://malc0de.com/dashboard/
-      public: yes
+      public: true
   University of Toulouse:
     Blacklist:
       description: Various blacklist feeds
@@ -703,7 +689,7 @@ providers:
             columns: "{depends on a collection}"
       revision: 2018-01-20
       documentation: https://dsi.ut-capitole.fr/blacklists/
-      public: yes
+      public: true
   Autoshun:
     Shunlist:
       description: You need to register in order to use the list.
@@ -721,7 +707,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.autoshun.org/
-      public: no
+      public: false
   Danger Rulez:
     Bruteforce Blocker:
       description: Its main purpose is to block SSH bruteforce attacks via firewall.
@@ -739,7 +725,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://danger.rulez.sk/index.php/bruteforceblocker/
-      public: yes
+      public: true
   Spamhaus:
     Drop:
       description: The DROP list will not include any IP address space under the control
@@ -761,7 +747,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.spamhaus.org/drop/
-      public: yes
+      public: true
     ASN Drop:
       description: ASN-DROP contains a list of Autonomous System Numbers controlled
         by spammers or cyber criminals, as well as "hijacked" ASNs. ASN-DROP can be
@@ -780,7 +766,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.spamhaus.org/drop/
-      public: yes
+      public: true
     Dropv6:
       description: The DROPv6 list includes IPv6 ranges allocated to spammers or cyber
         criminals. DROPv6 will only include IPv6 netblocks allocated directly by an
@@ -800,7 +786,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.spamhaus.org/drop/
-      public: yes
+      public: true
     CERT:
       description: Spamhaus CERT Insight Portal. Access limited to CERTs and CSIRTs
         with national or regional responsibility.
@@ -819,7 +805,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.spamhaus.org/news/article/705/spamhaus-launches-cert-insight-portal
-      public: no
+      public: false
     EDrop:
       description: EDROP is an extension of the DROP list that includes sub-allocated
         netblocks controlled by spammers or cyber criminals. EDROP is meant to be
@@ -838,7 +824,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.spamhaus.org/drop/
-      public: yes
+      public: true
   PhishTank:
     Online:
       description: PhishTank is a collaborative clearing house for data and information
@@ -857,7 +843,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.phishtank.com/developer_info.php
-      public: no
+      public: false
   CINS Army:
     CINS Army List:
       description: 'The CINS Army (CIArmy.com) list is a subset of the CINS Active Threat Intelligence
@@ -879,7 +865,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://cinsscore.com/#list
-      public: yes
+      public: true
   Blocklist.de:
     IRC Bots:
       description: No description provided by feed provider.
@@ -897,7 +883,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
-      public: yes
+      public: true
     Strong IPs:
       description: Blocklist.DE Strong IPs Collector is the bot responsible to get
         the report from source of information. All IPs which are older then 2 month
@@ -916,7 +902,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
-      public: yes
+      public: true
     Mail:
       description: Blocklist.DE Mail Collector is the bot responsible to get the report
         from source of information. All IP addresses which have been reported within
@@ -935,7 +921,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
-      public: yes
+      public: true
     Apache:
       description: Blocklist.DE Apache Collector is the bot responsible to get the
         report from source of information. All IP addresses which have been reported
@@ -955,7 +941,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
-      public: yes
+      public: true
     FTP:
       description: Blocklist.DE FTP Collector is the bot responsible to get the report
         from source of information. All IP addresses which have been reported within
@@ -974,7 +960,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
-      public: yes
+      public: true
     SSH:
       description: Blocklist.DE SSH Collector is the bot responsible to get the report
         from source of information. All IP addresses which have been reported within
@@ -993,7 +979,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
-      public: yes
+      public: true
     Brute-force Logins:
       description: Blocklist.DE Brute-force Login Collector is the bot responsible
         to get the report from source of information. All IPs which attacks Joomlas,
@@ -1012,7 +998,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
-      public: yes
+      public: true
     Bots:
       description: Blocklist.DE Bots Collector is the bot responsible to get the report
         from source of information. All IP addresses which have been reported within
@@ -1033,7 +1019,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
-      public: yes
+      public: true
     IMAP:
       description: Blocklist.DE IMAP Collector is the bot responsible to get the report
         from source of information. All IP addresses which have been reported within
@@ -1052,7 +1038,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
-      public: yes
+      public: true
     SIP:
       description: Blocklist.DE SIP Collector is the bot responsible to get the report
         from source of information. All IP addresses that tried to login in a SIP-,
@@ -1072,7 +1058,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://www.blocklist.de/en/export.html
-      public: yes
+      public: true
   CERT-Bund:
     CB-Report Malware infections via IMAP:
       description: CERT-Bund sends reports for the malware-infected hosts.
@@ -1116,7 +1102,7 @@ providers:
             type: infected-system
       revision: 2020-08-20
       documentation:
-      public: no
+      public: false
   CERT.PL:
     N6 Stomp Stream:
       description: N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface.
@@ -1142,7 +1128,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://n6.cert.pl/en/
-      public: no
+      public: false
   AlienVault:
     OTX:
       description: AlienVault OTX Collector is the bot responsible to get the report
@@ -1160,7 +1146,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://otx.alienvault.com/
-      public: no
+      public: false
     Reputation List:
       description: List of malicious IPs.
       additional_information:
@@ -1177,7 +1163,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation:
-      public: yes
+      public: true
   CleanMX:
     Virus:
       description: In order to download the CleanMX feed you need to use a custom
@@ -1198,7 +1184,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://clean-mx.de/
-      public: no
+      public: false
     Phishing:
       description: In order to download the CleanMX feed you need to use a custom
         user agent and register that user agent.
@@ -1218,7 +1204,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://clean-mx.de/
-      public: no
+      public: false
   AnubisNetworks:
     Cyberfeed Stream:
       description: Fetches and parsers the Cyberfeed data stream.
@@ -1237,7 +1223,7 @@ providers:
             use_malware_familiy_as_classification_identifier: true
       revision: 2020-06-15
       documentation: https://www.anubisnetworks.com/ https://www.bitsight.com/
-      public: no
+      public: false
   Bambenek:
     C2 Domains:
       description: 'Master Feed of known, active and non-sinkholed C&Cs domain
@@ -1258,7 +1244,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://osint.bambenekconsulting.com/feeds/
-      public: no
+      public: false
     C2 IPs:
       description: 'Master Feed of known, active and non-sinkholed C&Cs IP addresses.
         Requires access credentials.'
@@ -1278,7 +1264,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://osint.bambenekconsulting.com/feeds/
-      public: no
+      public: false
     DGA Domains:
       description: Domain feed of known DGA domains from -2 to +3 days
       additional_information: 'License: https://osint.bambenekconsulting.com/license.txt'
@@ -1295,7 +1281,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://osint.bambenekconsulting.com/feeds/
-      public: yes
+      public: true
   cAPTure:
     Ponmocup Domains CIF Format:
       description: List of ponmocup malware redirection domains and infected web-servers from cAPTure.
@@ -1316,7 +1302,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://security-research.dyndns.org/pub/malware-feeds/
-      public: yes
+      public: true
     Ponmocup Domains Shadowserver Format:
       description: List of ponmocup malware redirection domains and infected web-servers from cAPTure.
         See also http://security-research.dyndns.org/pub/botnet-links.htm
@@ -1350,7 +1336,7 @@ providers:
             type: malware-distribution
       revision: 2020-07-08
       documentation: http://security-research.dyndns.org/pub/malware-feeds/
-      public: yes
+      public: true
   DShield:
     Suspicious Domains:
       description: There are many suspicious domains on the internet. In an effort
@@ -1371,7 +1357,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.dshield.org/reports.html
-      public: yes
+      public: true
     Block:
       description: This list summarizes the top 20 attacking class C (/24) subnets
         over the last three days. The number of 'attacks' indicates the number of
@@ -1390,7 +1376,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.dshield.org/reports.html
-      public: yes
+      public: true
     AS Details:
       description: No description provided by feed provider.
       additional_information:
@@ -1407,7 +1393,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.dshield.org/reports.html
-      public: yes
+      public: true
   VXVault:
     URLs:
       description: This feed provides IP addresses hosting Malware.
@@ -1425,7 +1411,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: http://vxvault.net/ViriList.php
-      public: yes
+      public: true
   Shadowserver:
     Via IMAP:
       description: Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
@@ -1450,7 +1436,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.shadowserver.org/what-we-do/network-reporting/
-      public: no
+      public: false
     Via Request Tracker:
       description: Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
       additional_information: The configuration retrieves the data from a RT/RTIR ticketing instance via the attachment or an download.
@@ -1482,7 +1468,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.shadowserver.org/what-we-do/network-reporting/
-      public: no
+      public: false
     Via API:
       description: Shadowserver sends out a variety of reports to subscribers, see documentation.
       additional_information: This configuration fetches user-configurable reports from the Shadowserver Reports API. For a list of reports, have a look at the Shadowserver collector and parser documentation.
@@ -1504,7 +1490,7 @@ providers:
           parameters:
       revision: 2020-01-08
       documentation: https://www.shadowserver.org/what-we-do/network-reporting/api-documentation/
-      public: no
+      public: false
   Fraunhofer:
     DGA Archive:
       description: Fraunhofer DGA collector fetches data from Fraunhofer's domain
@@ -1525,7 +1511,7 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://dgarchive.caad.fkie.fraunhofer.de/welcome/
-      public: no
+      public: false
   MalwareURL:
     Latest malicious activity:
       description: Latest malicious domains/IPs.
@@ -1543,7 +1529,7 @@ providers:
           parameters:
       revision: 2018-02-05
       documentation: https://www.malwareurl.com/
-      public: yes
+      public: true
   Microsoft:
     BingMURLs via Interflow:
       description: Collects Malicious URLs detected by Bing from the Interflow API. The feed is available via Microsoft’s Government Security Program (GSP).
@@ -1564,10 +1550,10 @@ providers:
           parameters:
       revision: 2018-05-29
       documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
-      public: no
-    CTIP via Interflow:
+      public: false
+    CTIP Infected via Interflow:
       description: Collects the CTIP Infected feed (Sinkhole data for your country) files from the Interflow API.The feed is available via Microsoft’s Government Security Program (GSP).
-      additional_information: Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector. As many IPs occur very often in the data, you may want to use a deduplicator specifically for the feed.
+      additional_information: Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector. As many IPs occur very often in the data, you may want to use a deduplicator specifically for the feed. More information about the feed can be found on www.dcuctip.com after login with your GSP account.
       bots:
         collector:
           module: intelmq.bots.collectors.microsoft.collector_interflow
@@ -1583,11 +1569,11 @@ providers:
           module: intelmq.bots.parsers.microsoft.parser_ctip
           parameters:
       revision: 2018-03-06
-      documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
-      public: no
+      documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange http://www.dcuctip.com/
+      public: false
     CTIP Infected via Azure:
       description: Collects the CTIP (Sinkhole data) from a shared Azure Storage. The feed is available via Microsoft’s Government Security Program (GSP).
-      additional_information: The cache is needed for memorizing which files have already been processed, the TTL should be higher than the oldest file available in the storage (currently the last three days are available). The connection string contains endpoint as well as authentication information.
+      additional_information: The cache is needed for memorizing which files have already been processed, the TTL should be higher than the oldest file available in the storage (currently the last three days are available). The connection string contains endpoint as well as authentication information. As many IPs occur very often in the data, you may want to use a deduplicator specifically for the feed. More information about the feed can be found on www.dcuctip.com after login with your GSP account.
       bots:
         collector:
           module: intelmq.bots.collectors.microsoft.collector_azure
@@ -1605,8 +1591,8 @@ providers:
           module: intelmq.bots.parsers.microsoft.parser_ctip
           parameters:
       revision: 2020-05-29
-      documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
-      public: no
+      documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange http://www.dcuctip.com/
+      public: false
     CTIP C2 via Azure:
       description: Collects the CTIP C2 feed from a shared Azure Storage. The feed is available via Microsoft’s Government Security Program (GSP).
       additional_information: The cache is needed for memorizing which files have already been processed, the TTL should be higher than the oldest file available in the storage (currently the last three days are available). The connection string contains endpoint as well as authentication information.
@@ -1628,7 +1614,7 @@ providers:
           parameters:
       revision: 2020-05-29
       documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange
-      public: no
+      public: false
   Threatminer:
     Recent domains:
       description: Latest malicious domains.
@@ -1646,7 +1632,7 @@ providers:
           parameters:
       revision: 2018-02-06
       documentation: https://www.threatminer.org/
-      public: yes
+      public: true
   Calidog:
     CertStream:
       description: HTTP Websocket Stream from certstream.calidog.io providing data from Certificate Transparency Logs.
@@ -1662,7 +1648,7 @@ providers:
           parameters:
       revision: 2018-06-15
       documentation: https://medium.com/cali-dog-security/introducing-certstream-3fc13bb98067
-      public: yes
+      public: true
   McAfee Advanced Threat Defense:
     Sandbox Reports:
       description: Processes reports from McAfee's sandboxing solution via the openDXL API.
@@ -1679,7 +1665,7 @@ providers:
             verdict_severity: 4
       revision: 2018-07-05
       documentation: https://www.mcafee.com/enterprise/en-us/products/advanced-threat-defense.html
-      public: no
+      public: false
   CyberCrime Tracker:
     Latest:
       description: C2 servers
@@ -1699,10 +1685,9 @@ providers:
             skip_table_head: true
             default_url_protocol: http://
             type: c2-server
-            type: c2server
       revision: 2019-03-19
       documentation: https://cybercrime-tracker.net/index.php
-      public: yes
+      public: true
   PrecisionSec:
     Agent Tesla:
       description: Agent Tesla IoCs, URLs where the malware is hosted.
@@ -1724,7 +1709,7 @@ providers:
             type: malware-distribution
       revision: 2019-04-02
       documentation: https://precisionsec.com/threat-intelligence-feeds/agent-tesla/
-      public: yes
+      public: true
   Have I Been Pwned:
     Enterprise Callback:
       description: With the Enterprise Subscription of 'Have I Been Pwned' you are able to provide a callback URL and any new leak data is submitted to it. It is recommended to put a webserver with Authorization check, TLS etc. in front of the API collector.
@@ -1762,7 +1747,7 @@ providers:
           parameters:
       revision: 2019-09-11
       documentation: https://haveibeenpwned.com/EnterpriseSubscriber/
-      public: no
+      public: false
   Strangereal Intel:
     DailyIOC:
       description: Daily IOC from tweets and articles
@@ -1781,7 +1766,7 @@ providers:
           parameters:
       revision: 2019-12-05
       documentation: https://github.com/StrangerealIntel/DailyIOC
-      public: yes
+      public: true
   CZ.NIC:
     HaaS:
       description: SSH attackers against HaaS (Honeypot as a Service) provided by CZ.NIC, z.s.p.o. The dump is published once a day.
@@ -1799,7 +1784,7 @@ providers:
           parameters:
       revision: 2020-07-22
       documentation: https://haas.nic.cz/
-      public: yes
+      public: true
     Proki:
       description: Aggregation of various sources on malicious IP addresses (malware spreaders or C&C servers).
       bots:
@@ -1817,7 +1802,7 @@ providers:
           parameters:
       revision: 2020-08-17
       documentation: https://csirt.cz/en/proki/
-      public: no
+      public: false
   ESET:
     ETI Domains:
       description: Domain data from ESET's TAXII API.
@@ -1836,7 +1821,7 @@ providers:
           parameters:
       revision: 2020-06-30
       documentation: https://www.eset.com/int/business/services/threat-intelligence/
-      public: no
+      public: false
     ETI URLs:
       description: URL data from ESET's TAXII API.
       additional_information:
@@ -1854,7 +1839,7 @@ providers:
           parameters:
       revision: 2020-06-30
       documentation: https://www.eset.com/int/business/services/threat-intelligence/
-      public: no
+      public: false
   Shodan:
     Country Stream:
       description: Collects the Shodan stream for one or multiple countries from the Shodan API.
@@ -1876,12 +1861,12 @@ providers:
             minimal_mode: false
       revision: 2021-03-22
       documentation: https://developer.shodan.io/api/stream
-      public: no
+      public: false
   Fireeye:
     Malware Analysis System:
       description: Process data from Fireeye mail and file analysis appliances. SHA1 and MD5 malware hashes are extracted and if there is network communication, also URLs and domains.
       documentation: https://www.fireeye.com/products/malware-analysis.html
-      public: no
+      public: false
       revision: 2021-05-03
       additional_information:
       bots:
@@ -1894,3 +1879,34 @@ providers:
             http_password: <your password>
         parser:
           module: intelmq.bots.parsers.fireeye.parser
+  Benkow:
+    Malware Panels Tracker:
+      description: "Benkow Panels tracker is a list of fresh panel from various malware. The feed is available on the webpage: http://benkow.cc/passwords.php"
+      public: true
+      revision: 2021-06-21
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: http://benkow.cc/export.php
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.generic.parser_csv
+          parameters:
+            type: c2-server
+            delimiter: ";"
+            skip_header: True
+            columns:
+              - __IGNORE__
+              - malware.name
+              - destination.url
+              - destination.fqdn|destination.ip
+              - time.source
+            columns_required:
+              - false
+              - true
+              - true
+              - false
+              - true

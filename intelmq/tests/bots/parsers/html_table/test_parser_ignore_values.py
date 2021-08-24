@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Brajneesh Kumar
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os
 import unittest
@@ -45,7 +49,7 @@ EXAMPLE_EVENT = {"feed.name": "Feodo Tracker Browse",
                  }
 
 EXAMPLE_EVENT2 = EXAMPLE_EVENT.copy()
-EXAMPLE_EVENT2['extra.SBL'] = "Not listed"
+EXAMPLE_EVENT2['extra.sbl'] = "Not listed"
 
 EXAMPLE_EVENT3 = {"feed.name": "Feodo Tracker Browse",
                  "feed.url": "https://feodotracker.abuse.ch/browse",
@@ -56,7 +60,7 @@ EXAMPLE_EVENT3 = {"feed.name": "Feodo Tracker Browse",
                  "source.ip": "179.33.30.194",
                  "status": "Offline",
                  "time.observation": "2019-01-01T00:00:00+00:00",
-                 "extra.SBL": "SBL426579",
+                 "extra.sbl": "SBL426579",
                  'source.as_name': 'AS3816 COLOMBIA TELECOMUNICACIONES S.A. ESP',
                  'source.geolocation.cc': 'CO',
 
@@ -78,7 +82,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
     def test_event_with_ignore(self):
         """ Test if correct Event has been produced. """
         self.sysconfig = {"columns": ["time.source", "source.ip",
-                                      "malware.name", "status", "extra.SBL",
+                                      "malware.name", "status", "extra.sbl",
                                       "source.as_name", "source.geolocation.cc"],
                           "ignore_values": ["", "", "", "", "Not listed", "", ""],
                           "skip_head": True,
@@ -90,7 +94,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
     def test_event_without_ignore(self):
         """ Test if correct Event has been produced. """
         self.sysconfig = {"columns": ["time.source", "source.ip",
-                                      "malware.name", "status", "extra.SBL",
+                                      "malware.name", "status", "extra.sbl",
                                       "source.as_name", "source.geolocation.cc"],
                           "skip_head": True,
                           "type": "malware-distribution"}

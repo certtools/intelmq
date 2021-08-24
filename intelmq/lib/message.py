@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2014 Mauro Silva
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Messages are the information packages in pipelines.
@@ -18,6 +22,8 @@ from intelmq.lib import utils
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
 VALID_MESSSAGE_TYPES = ('Event', 'Message', 'Report')
+# '_' needs to be allowed at the beginning currently because of '__type'. Can be removed with IEP04 implemented.
+HARMONIZATION_KEY_FORMAT = re.compile(r'^[a-z_][a-z_0-9]+(\.[a-z_0-9]+)*$')
 
 
 class MessageFactory(object):
@@ -112,7 +118,7 @@ class Message(dict):
                           "This assumption will be removed in version 3.0.", DeprecationWarning)
             self.harmonization_config['extra']['type'] = 'JSONDict'
         for harm_key in self.harmonization_config.keys():
-            if not re.match('^[a-z_](.[a-z_0-9]+)*$', harm_key) and harm_key != '__type':
+            if not HARMONIZATION_KEY_FORMAT.match(harm_key) and harm_key != '__type':
                 raise exceptions.InvalidKey("Harmonization key %r is invalid." % harm_key)
 
         super().__init__()
@@ -322,8 +328,10 @@ class Message(dict):
             class_name, subitem = self.__get_type_config(key)
         except KeyError:
             return False
-        if key in self.harmonization_config or key == '__type' or subitem:
+        if key in self.harmonization_config or key == '__type':
             return True
+        if subitem:
+            return HARMONIZATION_KEY_FORMAT.match(key)
         return False
 
     def __is_valid_value(self, key: str, value: str):

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 """
@@ -58,7 +62,6 @@ class TestRTCollectorBot(test.BotTestCase, unittest.TestCase):
                          'search_status': 'new',
                          'attachment_regex': '.*.zip',
                          'url_regex': None,
-                         'unzip_attachment': True,
                          'name': 'Example feed',
                          'extract_attachment': True,
                          }
@@ -69,7 +72,6 @@ class TestRTCollectorBot(test.BotTestCase, unittest.TestCase):
         """
         Test a zipped attachment
         """
-        self.allowed_warning_count = 2
         self.run_bot(iterations=1)
         self.assertMessageEqual(0, REPORT)
 
@@ -79,7 +81,6 @@ class TestRTCollectorBot(test.BotTestCase, unittest.TestCase):
         """
         Test a gzipped attachment
         """
-        self.allowed_warning_count = 2
         self.prepare_bot(parameters={'attachment_regex': r'.*\.gz'})
         self.run_bot(iterations=1, prepare=False)
         self.assertMessageEqual(0, REPORT)
@@ -90,7 +91,6 @@ class TestRTCollectorBot(test.BotTestCase, unittest.TestCase):
         """
         Test a zipped URL
         """
-        self.allowed_warning_count = 2
         self.prepare_bot(parameters={'attachment_regex': None,
                                      'url_regex': r'http://localhost/.*\.zip',
                                      'extract_download': True})

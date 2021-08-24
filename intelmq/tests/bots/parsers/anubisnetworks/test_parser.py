@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os.path
 import unittest
@@ -169,17 +173,17 @@ EXAMPLE_EVENT3  = {"classification.taxonomy": "malicious-code",
                    'extra.communication.http.host.geolocation.latitude': 37.751,
                    'extra.communication.http.host.geolocation.longitude': -97.822,
                    'extra.communication.http.host.network': '203.0.113.4/21',
-                   "extra.communication.http.x_forwarded_for_#1.network": "10.26.116.22/24",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.cc": "AT",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.country": "Austria",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.region": "Salzburg",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.region_code": "05",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.city": "Salzburg",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.postal_code": "5020",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.latitude": 47.8007,
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.longitude": 13.0442,
-                   "extra.communication.http.x_forwarded_for_#1.asn": 1901,
-                   "extra.communication.http.x_forwarded_for_#1.as_name": "Example AS",
+                   "extra.communication.http.x_forwarded_for_1.network": "10.26.116.22/24",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.cc": "AT",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.country": "Austria",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.region": "Salzburg",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.region_code": "05",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.city": "Salzburg",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.postal_code": "5020",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.latitude": 47.8007,
+                   "extra.communication.http.x_forwarded_for_1.geolocation.longitude": 13.0442,
+                   "extra.communication.http.x_forwarded_for_1.asn": 1901,
+                   "extra.communication.http.x_forwarded_for_1.as_name": "Example AS",
                    }
 
 
