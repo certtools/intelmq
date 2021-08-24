@@ -13,9 +13,9 @@ from intelmq.bots.experts.time_filter.expert import TimeFilterExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
-    from freezegun import freeze_time
+    import time_machine
 except ImportError:
-    freeze_time = None
+    time_machine = None
 
 EXAMPLE_INPUT_DROP = {
     "__type": "Event",
@@ -82,12 +82,10 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def init(cls):
-        if freeze_time is None:
-            raise MissingDependencyError("freeze_time")
-
-    @classmethod
     def set_bot(cls):
+        if time_machine is None:
+            raise MissingDependencyError("time_machine")
+
         cls.bot_reference = TimeFilterExpertBot
         cls.input_message = EXAMPLE_INPUT_DROP
         cls.sysconfig = {
@@ -95,28 +93,24 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
             'search_from': "1d"
         }
 
-    @test.skip_exotic()
-    @freeze_time("2021-05-05")
+    @time_machine.travel("2021-05-05")
     def test_expert_drop(self):
         self.run_bot()
         self.assertOutputQueueLen(0)
 
-    @test.skip_exotic()
-    @freeze_time("2020-09-09")
+    @time_machine.travel("2020-09-09")
     def test_expert_pass(self):
         self.input_message = EXAMPLE_INPUT_PASS
         self.run_bot()
         self.assertOutputQueueLen(1)
 
-    @test.skip_exotic()
-    @freeze_time("2020-09-09")
+    @time_machine.travel("2020-09-09")
     def test_expert_pass_2(self):
         self.input_message = EXAMPLE_INPUT_PASS_2
         self.run_bot()
         self.assertOutputQueueLen(1)
 
-    @test.skip_exotic()
-    @freeze_time("2020-09-09")
+    @time_machine.travel("2020-09-09")
     def test_expert_pass_3(self):
         self.input_message = EXAMPLE_INPUT_PASS_3
         self.run_bot()
