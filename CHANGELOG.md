@@ -47,6 +47,7 @@ CHANGELOG
 ### Documentation
 - Various formatting fixes (by Sebastian Wagner).
 - Removed the malwaredomains feed from the feeds list because the upstream data source (malwaredomains.com) does not exist anymore (PR#2026 by Birger Schacht, fixes #2024).
+- Update Docker installation instructions (PR#2035 by Sebastian Waldbauer).
 
 ### Packaging
 - intelmq-update-database crontab: Add missing `recordedfuture_iprisk` update call (by Sebastian Wagner).
