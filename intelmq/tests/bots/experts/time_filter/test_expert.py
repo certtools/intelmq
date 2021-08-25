@@ -93,28 +93,29 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
             'search_from': "1d"
         }
 
-    @time_machine.travel("2021-05-05")
-    def test_expert_drop(self):
-        self.run_bot()
-        self.assertOutputQueueLen(0)
+    if time_machine:
+        @time_machine.travel("2021-05-05")
+        def test_expert_drop(self):
+            self.run_bot()
+            self.assertOutputQueueLen(0)
 
-    @time_machine.travel("2020-09-09")
-    def test_expert_pass(self):
-        self.input_message = EXAMPLE_INPUT_PASS
-        self.run_bot()
-        self.assertOutputQueueLen(1)
+        @time_machine.travel("2020-09-09")
+        def test_expert_pass(self):
+            self.input_message = EXAMPLE_INPUT_PASS
+            self.run_bot()
+            self.assertOutputQueueLen(1)
 
-    @time_machine.travel("2020-09-09")
-    def test_expert_pass_2(self):
-        self.input_message = EXAMPLE_INPUT_PASS_2
-        self.run_bot()
-        self.assertOutputQueueLen(1)
+        @time_machine.travel("2020-09-09")
+        def test_expert_pass_2(self):
+            self.input_message = EXAMPLE_INPUT_PASS_2
+            self.run_bot()
+            self.assertOutputQueueLen(1)
 
-    @time_machine.travel("2020-09-09")
-    def test_expert_pass_3(self):
-        self.input_message = EXAMPLE_INPUT_PASS_3
-        self.run_bot()
-        self.assertOutputQueueLen(1)
+        @time_machine.travel("2020-09-09")
+        def test_expert_pass_3(self):
+            self.input_message = EXAMPLE_INPUT_PASS_3
+            self.run_bot()
+            self.assertOutputQueueLen(1)
 
 
 if __name__ == '__main__':  # pragma: no cover
