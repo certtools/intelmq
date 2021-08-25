@@ -65,7 +65,7 @@ class TestBroFileOutputBot(test.BotTestCase, unittest.TestCase):
     def test_event_did_not_have_bro_indicators(self):
         self.input_message = INPUT1
         self.run_bot()
-        self.assertLoglineEqual(line_no=35, message="source.ipEvent did not have Bro indicator types.",
+        self.assertLoglineEqual(line_no=40, message="source.ipEvent did not have Bro indicator types.",
                                 levelname="DEBUG")
 
     @classmethod
