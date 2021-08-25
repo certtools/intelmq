@@ -83,9 +83,6 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod
     def set_bot(cls):
-        if time_machine is None:
-            raise MissingDependencyError("time_machine")
-
         cls.bot_reference = TimeFilterExpertBot
         cls.input_message = EXAMPLE_INPUT_DROP
         cls.sysconfig = {
