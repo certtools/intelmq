@@ -98,6 +98,7 @@ CHANGELOG
 ### Documentation
 - Various formatting fixes (by Sebastian Wagner).
 - Removed the malwaredomains feed from the feeds list because the upstream data source (malwaredomains.com) does not exist anymore (PR#2026 by Birger Schacht, fixes #2024).
+- Update Docker installation instructions (PR#2035 by Sebastian Waldbauer).
 
 ### Packaging
 - intelmq-update-database crontab: Add missing `recordedfuture_iprisk` update call (by Sebastian Wagner).
@@ -108,6 +109,7 @@ CHANGELOG
 - `intelmq.tests.bots.collectors.mail.test_collector_attach`: Test text attachment (by Sebastian Wagner).
 
 ### Tools
+- `intelmqctl`: Also honour parameters from environment variables (PR#2068 by Sebastian Wagner, fixes #2063).
 
 ### Contrib
 

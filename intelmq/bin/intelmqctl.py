@@ -1017,14 +1017,20 @@ Get some debugging output on the settings and the environment (to be extended):
         for option, value in utils.get_global_settings().items():
             setattr(self.parameters, option, value)
 
-        # TODO: Rewrite variables with env. variables ( CURRENT IMPLEMENTATION NOT FINAL )
-        # "destination_pipeline_host": "127.0.0.1",
-        # "source_pipeline_host": "127.0.0.1",
-        if os.getenv('INTELMQ_IS_DOCKER', None):
-            pipeline_host = os.getenv('INTELMQ_PIPELINE_HOST')
-            if pipeline_host:
-                setattr(self.parameters, 'destination_pipeline_host', pipeline_host)
-                setattr(self.parameters, 'source_pipeline_host', pipeline_host)
+        # copied from intelmq.lib.bot, should be refactored to e.g. intelmq.lib.config
+        intelmq_environment = [elem for elem in os.environ if elem.startswith('INTELMQ_')]
+        for elem in intelmq_environment:
+            option = elem[8:].lower()
+            value = os.environ[elem]
+            # do some conversions:
+            if value == 'True':
+                value = True
+            elif value == 'False':
+                value = False
+            elif value.isnumeric():
+                value = int(value)
+
+            setattr(self.parameters, option, value)
 
     def run(self):
         results = None
