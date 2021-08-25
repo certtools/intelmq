@@ -57,16 +57,16 @@ class RpzFileOutputBot(OutputBot):
 
     def set_rpz_header(self):
         generate_time: str = now.strftime("%Y-%m-%d %H:%M:%S")
-        self._rpz_header = f"""$TTL " + str(self.ttl) + "\n
-                @ SOA " + self.rpz_domain + ". " + self.hostmaster_rpz_domain + ". " + str(self.serial) + " " + str(self.refresh) + " " + str(self.retry) + " " + str(self.expire) + " " + str(self.ncachttl) + "\n
-                NS localhost.\n
-                ;\n
-                ; " + self.organization_name + " Response Policy Zones (RPZ)\n
-                ; Last updated: " + str(self.generate_time) + " (UTC)\n
-                ;\n
-                ; Terms Of Use: https://" + self.rpz_domain + "\n
-                ; For questions please contact " + self.rpz_email + "\n
-                ;\n"""
+        self._rpz_header = f"""$TTL """ + str(self.ttl) + """
+@ SOA """ + self.rpz_domain + """. """ + self.hostmaster_rpz_domain + """. """ + str(self.serial) + """ """ + str(self.refresh) + """ """ + str(self.retry) + """ """ + str(self.expire) + """ """ + str(self.ncachttl) + """
+ NS localhost.
+;
+; """ + self.organization_name + """ Response Policy Zones (RPZ)
+; Last updated: """ + str(generate_time) + """ (UTC)
+;
+; Terms Of Use: https://""" + self.rpz_domain + """
+; For questions please contact """ + self.rpz_email + """
+;\n"""
 
         if self.test_domain:
             self._rpz_header = self._rpz_header + self.test_domain + " CNAME " + self.cname + ".\n"  # for test

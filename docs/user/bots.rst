@@ -3652,7 +3652,7 @@ REST API
 * `use_json`: boolean
 
 
-.. _intelmq.bots.outputs.smtp.output:
+.. _intelmq.bots.outputs.rpz_file.output:
 
 RPZ
 ^^^^^^^^
@@ -3696,7 +3696,7 @@ NS localhost.
 *.secondmaliciousdomain.com CNAME rpz.yourdomain.eu.
 ```
 
-.. _intelmq.bots.outputs.rpz_file.output:
+.. _intelmq.bots.outputs.smtp.output:
 
 SMTP Output Bot
 ^^^^^^^^^^^^^^^
