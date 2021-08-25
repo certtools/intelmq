@@ -174,6 +174,9 @@ Before you start using docker-compose or any docker related tools, make sure doc
    sudo docker-compose up
 
 Your installation should be successful now. You're now able to visit ``http://127.0.0.1:1337/`` to access the intelmq-manager.
+You have to login with the username ``intelmq`` and the password ``intelmq``, if you want to change the username or password,
+you can do this by adding the environment variables ``INTELMQ_API_USER`` for the username and ``INTELMQ_API_PASS`` for the
+password.
 
 NOTE: If you get an `Permission denied`, you should use `chown -R $USER:$USER example_config`
 
@@ -211,16 +214,28 @@ In order to work with your current infrastructure, you need to specify some envi
                    certat/intelmq-nginx:latest
 
    sudo docker run -e INTELMQ_IS_DOCKER="true" \
-                   -e INTELMQ_PIPELINE_DRIVER="redis" \
-                   -e INTELMQ_PIPELINE_HOST=redis_host \
-                   -e INTELMQ_REDIS_CACHE_HOST=redis_host \
-                   -v ~/intelmq/example_config/intelmq/etc/:/opt/intelmq/etc/ \
-                   -v ~/intelmq/example_config/intelmq-api:/opt/intelmq-api/config \
-                   -v /var/log/intelmq:/opt/intelmq/var/log \
-                   -v ~/intelmq/lib:/opt/intelmq/var/lib \
+                   -e INTELMQ_SOURCE_PIPELINE_BROKER: "redis" \
+                   -e INTELMQ_PIPELINE_BROKER: "redis" \
+                   -e INTELMQ_DESTIONATION_PIPELINE_BROKER: "redis" \
+                   -e INTELMQ_PIPELINE_HOST: redis \
+                   -e INTELMQ_SOURCE_PIPELINE_HOST: redis \
+                   -e INTELMQ_DESTINATION_PIPELINE_HOST: redis \
+                   -e INTELMQ_REDIS_CACHE_HOST: redis \
+                   -v $(pwd)/example_config/intelmq/etc/:/etc/intelmq/etc/ \
+                   -v $(pwd)/example_config/intelmq-api/config.json:/etc/intelmq/api-config.json \
+                   -v $(pwd)/intelmq_logs:/etc/intelmq/var/log \
+                   -v $(pwd)/intelmq_output:/etc/intelmq/var/lib/bots \
+                   -v ~/intelmq/lib:/etc/intelmq/var/lib \
                    --network intelmq-internal \
                    --name intelmq \
-                   certat/intelmq-full:1.0
+                   certat/intelmq-full:latest
+
+If you want to use another username and password for the intelmq-manager / api login, additionally add two new environment variables.
+
+.. code-block:: bash
+
+   -e INTELMQ_API_USER: "your username"
+   -e INTELMQ_API_PASS: "your password"
 
 Additional Information
 ^^^^^^^^^^^^^^^^^^^^^^
