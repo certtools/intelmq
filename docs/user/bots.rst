@@ -3299,7 +3299,7 @@ This output bot discards all incoming messages.
 * `description`: discards messages
 
 
-.. _intelmq.bots.outputs.elasticsearch.output:
+.. _intelmq.bots.outputs.bro_file.output:
 
 Bro file
 ^^^^^^^^^
@@ -3320,7 +3320,7 @@ xxx.xxx.xxx.xxx    Intel::ADDR    phishing    100    MISP XXX
 www.testdomain.com    Intel::DOMAIN    apt    85    CERT
 ```
 
-.. _intelmq.bots.outputs.bro_file.output:
+.. _intelmq.bots.outputs.elasticsearch.output:
 
 Elasticsearch Output Bot
 ^^^^^^^^^^^^^^^^^^^^^^^^
