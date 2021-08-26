@@ -3657,6 +3657,8 @@ REST API
 RPZ
 ^^^^^^^^
 
+The DNS RPZ functionality is "DNS firewall". Bot generate a blocklist.
+
 **Information**
 
 * `name:` `intelmq.bots.outputs.rpz_file.output`
@@ -3695,6 +3697,12 @@ NS localhost.
 *.maliciousdomain.com CNAME rpz.yourdomain.eu.
 *.secondmaliciousdomain.com CNAME rpz.yourdomain.eu.
 ```
+
+**Description**
+
+The prime motivation for creating this feature was to protect users from badness on the Internet related to known-malicious global identifiers such as host names, domain names, IP addresses, or nameservers.
+More information: https://dnsrpz.info
+
 
 .. _intelmq.bots.outputs.smtp.output:
 
