@@ -62,12 +62,10 @@ class TestBroFileOutputBot(test.BotTestCase, unittest.TestCase):
         self.assertEqual(3, len(file_lines))
         filepointer.close()
 
-### TO DO  refactor test
-    # def test_event_did_not_have_bro_indicators(self):
-    #     self.input_message = INPUT1
-    #     self.run_bot()
-    #     self.assertLoglineEqual(line_no=47, message="source.ipEvent did not have Bro indicator types.",
-    #                             levelname="DEBUG")
+    def test_event_did_not_have_bro_indicators(self):
+        self.input_message = INPUT1
+        self.run_bot()
+        self.assertLogMatches(pattern="source.ipEvent did not have Bro indicator types.", levelname="DEBUG")
 
     @classmethod
     def tearDownClass(cls):
