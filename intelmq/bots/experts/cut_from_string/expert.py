@@ -25,13 +25,13 @@ class CutFromStringExpertBot(Bot):
         self.send_message(event)
         self.acknowledge_message()
 
-    def removeprefix(self, field: str, prefix: str, /) -> str:
+    def removeprefix(self, field: str, prefix: str) -> str:
         if field.startswith(prefix):
             return field[len(prefix):]
         else:
             return field[:]
 
-    def removesuffix(self, field: str, suffix: str, /) -> str:
+    def removesuffix(self, field: str, suffix: str) -> str:
         if suffix and field.endswith(suffix):
             return field[:-len(suffix)]
         else:
