@@ -2452,31 +2452,7 @@ caida = {
     }
 }
 
-# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ms-rdpeudp/
-accessible_msrdpeudp = {
-    'required_fields': [
-        ('time.source', 'timestamp', add_UTC_to_timestamp),
-        ('source.ip', 'ip', validate_ip),
-        ('source.port', 'port', convert_int)
-    ],
-    'optional_fields': [
-        ('protocol.transport', 'protocol'),
-        ('source.asn', 'asn', convert_int),
-        ('source.geolocation.cc', 'geo'),
-        ('source.geolocation.region', 'region'),
-        ('source.geolocation.city', 'city'),
-        ('source.reverse_dns', 'hostname'),
-        ('extra.', 'tag'),
-        ('extra.', 'naics', convert_int),
-        ('extra.', 'sic', convert_int),
-        ('extra.', 'sessionid'),
-    ],
-    'constant_fields': {
-        'classification.identifier': 'accessible-msrdpeudp',
-        'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable-system',
-    }
-}
+
 
 # https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-dns-report/
 sinkhole_dns = {
@@ -2959,7 +2935,6 @@ mapping = (
     ('Accessible-FTP', 'scan_ftp', accessible_ftp),
     ('Accessible-HTTP', 'scan_http', accessible_vulnerable_http),
     ('Accessible-Hadoop', 'scan_hadoop', accessible_hadoop),
-    ('Accessible-MS-RDPEUDP', 'scan_msrdpeudp', accessible_msrdpeudp),
     ('Accessible-Radmin', 'scan_radmin', accessible_radmin),
     ('Accessible-RDP', 'scan_rdp', accessible_rdp),
     ('Accessible-RDPEUDP', 'scan_rdpeudp', accessible_rdp_eudp),
