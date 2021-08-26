@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+import json
 from intelmq.lib.bot import Bot
 
 
@@ -28,7 +29,7 @@ class ECSExpertBot(Bot):
         if 'feed.name' in msg:
             ecs['event.dataset'] = msg['feed.name']
 
-        msg.add("output", str(ecs))
+        msg.add("output", json.dumps(ecs))
 
         self.send_message(msg)
         self.acknowledge_message()
