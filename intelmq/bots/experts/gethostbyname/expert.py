@@ -24,6 +24,7 @@ permanent failure (default).
 """
 import socket
 
+from typing import Tuple
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import URL
 from intelmq.lib.exceptions import InvalidArgument
@@ -32,7 +33,7 @@ from intelmq.lib.exceptions import InvalidArgument
 class GethostbynameExpertBot(Bot):
     """Resolve the IP address for the FQDN"""
     fallback_to_url: bool = True
-    gaierrors_to_ignore = ()
+    gaierrors_to_ignore: Tuple[int] = ()
     overwrite: bool = False
 
     def init(self):
@@ -40,8 +41,9 @@ class GethostbynameExpertBot(Bot):
         if not ignore:  # for null/None/empty lists or strings
             ignore = ()
         elif not isinstance(ignore, (list, tuple)):
-            ignore = ignore.split(',')
-        # otherwise a string
+            # convert to str to support int-input, e.g. a single value
+            ignore = str(ignore).split(',')
+        # otherwise an iterable (list)
         ignore = tuple(x.strip() for x in ignore)
         # check if every element is an integer:
         for x in ignore:

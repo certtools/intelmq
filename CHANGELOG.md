@@ -39,6 +39,7 @@ CHANGELOG
   - Update filename mapping for changed filename of feed "Accessible-MSRDPUDP" (PR#2060 by abr4xc).
 
 #### Experts
+- `intelmq.bots.experts.gethostbyname.expert`: Handle numeric values for the `gaierrors_to_ignore` parameter (PR#2073 by Sebastian Wagner, fixes #2072).
 
 #### Outputs
 - `intelmq.bots.outputs.mcafee.output_esm_ip`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).

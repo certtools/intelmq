@@ -95,6 +95,12 @@ class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(parameters={'overwrite': True})
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
+    def test_gaierrors_int(self):
+        """ Test an int value of gaierrors_to_ignore, as the manager automatically converts a single value to int. """
+        self.input_message = EXAMPLE_INPUT
+        self.run_bot(parameters={'gaierrors_to_ignore': -3})
+        # We only need to check for no errors
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
