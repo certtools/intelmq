@@ -25,7 +25,7 @@ class OpenPhishParserBot(ParserBot):
             event = self.new_event(report)
 
             event.add('classification.type', 'phishing')
-            event.add('source.url', row)
+            event.add('destination.url', row)
             event.add('raw', row)
 
             self.send_message(event)
