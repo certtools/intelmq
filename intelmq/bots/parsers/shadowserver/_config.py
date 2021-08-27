@@ -2914,7 +2914,8 @@ mapping = (
     ('Accessible-FTP', 'scan_ftp', accessible_ftp),
     ('Accessible-HTTP', 'scan_http', accessible_vulnerable_http),
     ('Accessible-Hadoop', 'scan_hadoop', accessible_hadoop),
-    ('Accessible-MS-RDPEUDP', 'scan_msrdpeudp', accessible_msrdpeudp),
+    ('Accessible-MS-RDPEUDP', 'scan_msrdpeudp', accessible_msrdpeudp),  # not used by shadowserver, see line below
+    ('Accessible-RDPEUDP', 'scan_rdpeudp', accessible_msrdpeudp),
     ('Accessible-Radmin', 'scan_radmin', accessible_radmin),
     ('Accessible-RDP', 'scan_rdp', accessible_rdp),
     ('Accessible-Rsync', 'scan_rsync', accessible_rsync),
