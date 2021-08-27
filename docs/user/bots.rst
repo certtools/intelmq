@@ -3205,7 +3205,6 @@ Threshold
 
 **Information**
 
-
 * **Cache parameters** (see section :ref:`common-parameters`)
 * `name`: `intelmq.bots.experts.threshold.expert`
 * `lookup`: redis cache
@@ -3244,6 +3243,8 @@ Please note: Even if a message is sent, any further identical messages are dropp
 Time Filter
 ^^^^^^^^^
 
+Filtering records that do not exceed the specified deadline.
+
 **Information**
 
 * `name:` `intelmq.bots.experts.time_filter.expert`
@@ -3254,8 +3255,12 @@ Time Filter
 
 **Configuration Parameters**
 
-* `field`: `time.source`
-* `timespan`: `1d`
+* `field`: the event field which should be filtered on. Needs to be in ISO 8601 formatted. Default: `time.source`
+* `timespan`: time interval for filtering records. Default: `1d`
+
+**Description**
+
+The bot filters new records, for example when only records from the last 2 days are needed. Also allows entries without a date.
 
 
 .. _intelmq.bots.experts.tor_nodes.expert:
