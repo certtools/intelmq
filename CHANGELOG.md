@@ -40,6 +40,7 @@ CHANGELOG
 
 #### Experts
 - `intelmq.bots.experts.gethostbyname.expert`: Handle numeric values for the `gaierrors_to_ignore` parameter (PR#2073 by Sebastian Wagner, fixes #2072).
+- `intelmq.bots.experts.filter.expert`: Fix handling of empty-string parameters `not_after` and `not_before` (PR#2075 by Sebastian Wagner, fixes #2074).
 
 #### Outputs
 - `intelmq.bots.outputs.mcafee.output_esm_ip`: Fix access to parameters, the bot wrongly used `self.parameters` (by Sebastian Wagner).

@@ -43,9 +43,9 @@ class FilterExpertBot(Bot):
             return absolute
 
     def init(self):
-        if self.not_after is not None:
+        if self.not_after:
             self.not_after = self.parse_timeattr(self.not_after)
-        if self.not_before is not None:
+        if self.not_before:
             self.not_before = self.parse_timeattr(self.not_before)
 
         self.filter = True
