@@ -10,20 +10,19 @@ from datetime import datetime, timedelta
 from dateutil import parser
 from intelmq.lib.bot import Bot
 from datetime import timezone
-from intelmq.lib.utils import get_timedelta
+from intelmq.lib.utils import parse_relative
 
 
 class TimeFilterExpertBot(Bot):
     """ Time based filtering """
     field: str = 'time.source'
-    timespan: str = '1d'
+    timespan: str = '24 hours'
 
     __delta = None
 
     def init(self):
         if self.field:
-            timedelta_params = get_timedelta(self.timespan)
-            self.__delta = datetime.now(tz=timezone.utc) - timedelta(**timedelta_params)
+            self.__delta = datetime.now(tz=timezone.utc) - timedelta(minutes=parse_relative(self.timespan))
 
     def process(self):
         event = self.receive_message()

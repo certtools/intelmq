@@ -87,7 +87,7 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
         cls.input_message = EXAMPLE_INPUT_DROP
         cls.sysconfig = {
             'search_field': 'extra.lastonline',
-            'search_from': "1d"
+            'search_from': "72 hours"
         }
 
     if time_machine:

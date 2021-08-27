@@ -3256,11 +3256,11 @@ Filtering records that do not exceed the specified deadline.
 **Configuration Parameters**
 
 * `field`: the event field which should be filtered on. Needs to be in ISO 8601 formatted. Default: `time.source`
-* `timespan`: time interval for filtering records. Default: `1d`
+* `timespan`: time interval for filtering records. Default: `24 hours`
 
 **Description**
 
-The bot filters new records, for example when only records from the last 2 days are needed. Also allows entries without a date.
+The bot filters new records, for example when only records from the last 2 days (48 hours) are needed. Also allows entries without a date.
 
 
 .. _intelmq.bots.experts.tor_nodes.expert:
