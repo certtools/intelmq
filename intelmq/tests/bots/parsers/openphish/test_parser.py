@@ -15,12 +15,12 @@ with open(os.path.join(os.path.dirname(__file__), 'feed.txt'), 'rb') as fh:
 
 OUTPUT1 = {'__type': 'Event',
            'classification.type': 'phishing',
-           'raw': 'aHR0cDovL3d3dy4uZXhhbXBsZS5jb20vcGhpc2hpbmc=',
-           'source.url': 'http://www..example.com/phishing'}
+           'destination.url': 'http://www..example.com/phishing',
+           'raw': 'aHR0cDovL3d3dy4uZXhhbXBsZS5jb20vcGhpc2hpbmc='}
 OUTPUT2 = {'__type': 'Event',
            'classification.type': 'phishing',
-           'raw': 'aHR0cDovL3d3dy4uZXhhbXBsZS5pbnZhbGlkL3BoaXNoaW5n',
-           'source.url': 'http://www..example.invalid/phishing'}
+           'destination.url': 'http://www..example.invalid/phishing',
+           'raw': 'aHR0cDovL3d3dy4uZXhhbXBsZS5pbnZhbGlkL3BoaXNoaW5n'}
 
 
 class TestOpenPhishParserBot(test.BotTestCase, unittest.TestCase):
