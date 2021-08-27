@@ -122,7 +122,7 @@ class BotDebugger:
             self.outputappend("Collector bots have no input queue.")
         elif message_action_kind == "get":
             self.outputappend("Waiting for a message to get...")
-            if not bool(self.instance._Bot__source_queues):
+            if not self.instance.source_queue:
                 self.outputappend("Bot has no source queue.")
                 return
 
