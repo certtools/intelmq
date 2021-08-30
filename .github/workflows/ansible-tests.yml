@@ -11,8 +11,6 @@ on:
       - '.github/**'
   pull_request:
     branches: [develop, maintenance]
-    paths-ignore:
-      - '.github/**'
 
 jobs:
   build:
