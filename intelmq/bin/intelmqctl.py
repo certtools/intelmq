@@ -421,7 +421,7 @@ Get some debugging output on the settings and the environment (to be extended):
         retval, results = args.func(**args_dict)
 
         if self._returntype is ReturnType.JSON:
-            print(json.dumps(results))
+            print(json.dumps(results, indent=4))
 
         return retval
 
