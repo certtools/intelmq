@@ -21,6 +21,10 @@ CHANGELOG
 - Added an ExpertBot class - it should be used by all expert bots as a parent class
 - Introduced a module for IntelMQ related datatypes `intelmq.lib.datatypes` which for now only contains an Enum listing the four bot types
 - Added a `bottype` attribute to CollectorBot, ParserBot, ExpertBot, OutputBot
+- Introduces a module for IntelMQ processmanagers. The processmanagers were up until now part of the intelmqct script.
+  They now reside in `intelmq.lib.processmanager` which also contains an interface definition the processmanager implementations must adhere to.
+  Both the processmanagers and the `intelmqctl` script were cleaned up a bit.
+  The `LogLevel` and `ReturnType` Enums were added to `intelmq.lib.datatypes`.
 
 ### Development
 
