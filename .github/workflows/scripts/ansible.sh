@@ -4,4 +4,5 @@
 #
 apt-get update -qq
 apt-get install ansible python python3-apt -y
-ansible-playbook --connection=local -i /src/intelmq-vagrant/ansible/inventory.yml /src/intelmq/.github/workflows/scripts/ansible-playbook.yml
+cp /src/intelmq/.github/workflows/scripts/ansible-playbook.yml /src/intelmq-vagrant/ansible/playbook.yml
+ansible-playbook --connection=local -i /src/intelmq-vagrant/ansible/inventory.yml /src/intelmq-vagrant/ansible/playbook.yml
