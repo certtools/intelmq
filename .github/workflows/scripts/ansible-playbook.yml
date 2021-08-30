@@ -44,10 +44,25 @@
         owner: intelmq
         group: intelmq
 
+    - name: Delete shipped runtime.yaml
+      file:
+        path: '/opt/intelmq/etc/runtime.yaml'
+        state: absent
+
     - name: Copy runtime.conf
       copy:
-        src: '/src/intelmq/.github/workflows/scripts/ansible-runtime.yaml'
-        dest: '/opt/intelmq/etc/runtime.yaml'
+        src: 'assets/runtime.conf'
+        dest: '/opt/intelmq/etc/runtime.conf'
+        owner: intelmq
+        group: intelmq
+        mode: '0664'
+    - name: Copy pipeline.conf
+      copy:
+        src: 'assets/pipeline.conf'
+        dest: '/opt/intelmq/etc/pipeline.conf'
+        owner: intelmq
+        group: intelmq
+        mode: '0664'
     - name: Make sure redis is running
       service:
         state: started
@@ -70,6 +85,11 @@
     - name: Print version
       debug:
         msg: IntelMQ Version {{ intelmq_version }} and IntelMQ Major Version {{ intelmq_major_version }}
+
+    - name: Run configuration upgrade
+      command: intelmqctl upgrade-config -u v300_pipeline_file_removal -f
+      when:
+        intelmq_major_version == '3'
 
     - name: Run CLI tests
       include: "{{ item }}"
