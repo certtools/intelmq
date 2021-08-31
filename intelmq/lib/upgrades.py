@@ -675,7 +675,7 @@ def v300_pipeline_file_removal(configuration, harmonization, dry_run, **kwargs):
     if pipeline_file.exists():
         pipelines = load_configuration(pipeline_file)
         for bot in configuration:
-            if bot_id == 'global':
+            if bot == 'global':
                 continue
             if bot in pipelines:
                 if 'destination-queues' in pipelines[bot]:
