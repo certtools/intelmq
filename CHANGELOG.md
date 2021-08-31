@@ -61,7 +61,9 @@ CHANGELOG
 - `intelmq.tests.bots.collectors.mail.test_collector_attach`: Test text attachment (by Sebastian Wagner).
 
 ### Tools
-- `intelmqctl`: Also honour parameters from environment variables (PR#2068 by Sebastian Wagner, fixes #2063).
+- `intelmqctl`:
+  - Also honour parameters from environment variables (PR#2068 by Sebastian Wagner, fixes #2063).
+  - Fix management actions (start/stop/status/reload/restart) for groups (PR#2086 by Sebastian Wagner, fixes #2085).
 
 ### Contrib
 

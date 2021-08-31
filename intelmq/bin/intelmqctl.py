@@ -1138,7 +1138,7 @@ Get some debugging output on the settings and the environment (to be extended):
 
     def _configured_bots_list(self, group=None):
         if group is not None:
-            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
+            bots = sorted(k_v[0] for k_v in filter(lambda bot: bot[0] != 'global' and bot[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
         else:
             bots = sorted(self.runtime_configuration.keys())
         if 'global' in bots:
