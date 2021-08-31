@@ -392,7 +392,7 @@ Get some debugging output on the settings and the environment (to be extended):
             elif value.isnumeric():
                 value = int(value)
 
-            setattr(self.parameters, option, value)
+            setattr(self._parameters, option, value)
 
     def run(self):
         results = None
