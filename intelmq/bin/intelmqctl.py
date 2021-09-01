@@ -704,7 +704,7 @@ class IntelMQController():
 
         # set default values for the logging handler
         self.parameters.logging_handler = 'file'
-        self.parameters.logging_path = '/opt/intelmq/var/log'
+        self.parameters.logging_path = DEFAULT_LOGGING_PATH
 
         # Try to get logging_level from defaults configuration, else use default (defined above)
         defaults_loading_exc = None

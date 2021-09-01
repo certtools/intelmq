@@ -64,6 +64,7 @@ CHANGELOG
 - `intelmqctl`:
   - Also honour parameters from environment variables (PR#2068 by Sebastian Wagner, fixes #2063).
   - Fix management actions (start/stop/status/reload/restart) for groups (PR#2086 by Sebastian Wagner, fixes #2085).
+  - Do not use hardcoded logging path in `/opt/intelmq`, use the internal default instead (PR#2092 by Sebastian Wagner, fixes #2091).
 
 ### Contrib
 
