@@ -85,7 +85,7 @@ class IntelMQController():
 
         # set default values for the logging handler
         self._parameters.logging_handler = 'file'
-        self._parameters.logging_path = '/opt/intelmq/var/log'
+        self._parameters.logging_path = DEFAULT_LOGGING_PATH
 
         # Try to get logging_level from defaults configuration, else use default (defined above)
         defaults_loading_exc = None
@@ -512,7 +512,7 @@ Get some debugging output on the settings and the environment (to be extended):
 
     def _configured_bots_list(self, group=None):
         if group is not None:
-            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self._runtime_configuration.items()))
+            bots = sorted(k_v[0] for k_v in filter(lambda bot: bot[0] != 'global' and bot[1]["group"] == BOT_GROUP[group], self._runtime_configuration.items()))
         else:
             bots = sorted(self._runtime_configuration.keys())
         if 'global' in bots:
