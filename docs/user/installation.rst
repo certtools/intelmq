@@ -21,7 +21,7 @@ The following instructions assume the following requirements. Python versions >=
 Supported and recommended operating systems are:
 
 * CentOS 7 and 8
-* Debian 10
+* Debian 10 Buster and 11 Bullseye
 * openSUSE Leap 15.2, 15.13
 * Ubuntu: 18.04, 20.04
 * Docker Engine: 18.x and higher
@@ -117,7 +117,8 @@ These are the operating systems which are currently supported by packages:
 
 * **CentOS 7** (run `yum install epel-release` first)
 * **CentOS 8** (run `dnf install epel-release` first)
-* **Debian 10**
+* **Debian 10** Buster
+* **Debian 11** Bullseye
 * **Fedora 33**
 * **Fedora 34**
 * **openSUSE Leap 15.2**

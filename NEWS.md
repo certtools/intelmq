@@ -29,25 +29,12 @@ The [Data format documentation](https://intelmq.readthedocs.io/en/maintenance/de
 ### Postgres databases
 
 
-3.0.1 Maintenance release (unreleased)
+3.0.1 Maintenance release (2021-09-02)
 --------------------------------------
-
-
-### Requirements
-
-### Tools
 
 ### Bots
 The malwardomains parser bot was removed. The malwaredomains.com website is offline, therefore the parser can not be used anymore. The `intelmqctl upgrade-config` command warns if you have the feed and the bot in use.
 The postgresql output bot was removed. The bot was marked as deprecated in 2019 and announced to be removed in version 3.
-
-### Data Format
-
-### Configuration
-
-### Libraries
-
-### Postgres databases
 
 
 3.0.0 Major release (2021-07-02)
