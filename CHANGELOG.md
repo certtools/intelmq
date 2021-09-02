@@ -6,7 +6,7 @@
 CHANGELOG
 ==========
 
-3.0.1 (unreleased)
+3.0.1 (2021-09-02)
 ------------------
 
 ### Configuration
@@ -15,10 +15,6 @@ CHANGELOG
 - `intelmq.lib.bot_debugger`: Fix accessing the bot's destination queues (PR#2027 by Mikk Margus Möll).
 - `intelmq.lib.pipeline`: Fix handling of `load_balance` parameter (PR#2027 by Mikk Margus Möll).
 - `intelmq.lib.bot`: Fix handling of parameter `destination_queues` if value is an empty dictionary (PR#2051 by Sebastian Wagner, fixes #2034).
-
-### Development
-
-### Data Format
 
 ### Bots
 #### Collectors
@@ -66,9 +62,9 @@ CHANGELOG
   - Fix management actions (start/stop/status/reload/restart) for groups (PR#2086 by Sebastian Wagner, fixes #2085).
   - Do not use hardcoded logging path in `/opt/intelmq`, use the internal default instead (PR#2092 by Sebastian Wagner, fixes #2091).
 
-### Contrib
-
 ### Known issues
+See [open bug reports](https://github.com/certtools/intelmq/issues?q=is%3Aissue+is%3Aopen+label%3Abug) for a more detailed list.
+- ParserBot: erroneous raw line recovery in error handling (#1850).
 
 
 3.0.0 (2021-07-02)

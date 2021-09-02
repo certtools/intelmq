@@ -9,24 +9,11 @@ NEWS
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 Please refer to the changelog for a full list of changes.
 
-3.0.1 Maintenance release (unreleased)
+3.0.1 Maintenance release (2021-09-02)
 --------------------------------------
-
-
-### Requirements
-
-### Tools
 
 ### Bots
 The malwardomains parser bot was removed. The malwaredomains.com website is offline, therefore the parser can not be used anymore. The `intelmqctl upgrade-config` command warns if you have the feed and the bot in use.
-
-### Data Format
-
-### Configuration
-
-### Libraries
-
-### Postgres databases
 
 
 3.0.0 Major release (2021-07-02)
