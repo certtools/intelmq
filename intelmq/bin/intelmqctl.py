@@ -767,7 +767,7 @@ Get some debugging output on the settings and the environment (to be extended):
             bot_log_path = os.path.join(self._parameters.logging_path,
                                         bot_id + '.log')
             if not os.path.isfile(bot_log_path):
-                message = {'date': datetime.datetime.now().isoformat(), "bot_id": bot_id, "log_level": "INFO", "message": 'No log file exists (yet)'}
+                message = {'date': datetime.datetime.now().isoformat(), "bot_id": bot_id, "log_level": "INFO", "message": 'No log file exists (yet).'}
                 self.log_log_messages([message])
                 return 0, [message]
         elif self._parameters.logging_handler == 'syslog':
