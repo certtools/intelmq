@@ -22,6 +22,28 @@ The malwardomains parser bot was removed. The malwaredomains.com website is offl
 ### Requirements
 IntelMQ now uses YAML for the runtime configuration and therefore needs the `ruamel.yaml` library.
 
+### Configuration
+The `defaults.conf` file was removed. Settings that should effect all the bots are not part of the runtime.conf file and are configured in the `global` section in that file.
+The `intelmqctl upgrade-config` command migrates the existing values from the `defaults.conf` file to the `runtime.conf` file under the `global` section and then deletes the `defaults.conf` file.
+The `pipeline.conf` file was removed. The source- and destination-queues of the bots are now configured in the bot configuration itself, thus in the `runtime.conf` file.
+The `intelmqctl upgrade-config` command migrates the existing configuration from the `pipeline.conf` file to the individual bot configurations in the `runtime.conf` configuration file.
+The `runtime.conf` file was replaced by a `runtime.yaml` file. IntelMQ moves the file for you if it does not find a runtime.conf but a runtime.yaml file. When IntelMQ changes the file, it now writes YAML syntax.
+
+#### When using the official deb/rpm-packages or the official Docker image
+Unfortunately, the automatic upgrade procedures has a flaw.
+The packages provide a default runtime configuration, but only for new installations if there is no previously existing installation.
+But as the runtime configuration was renamed from `/etc/intelmq/runtime.conf` to `/etc/intelmq/runtime.yaml`, this check comes to nothing, and the `/etc/intelmq/runtime.yaml` get installed.
+But only the new filename is considered by IntelMQ itself, so the configuration *appears* to be lost.
+To fix this:
+- remove the newly provided `runtime.yaml`
+- make sure that the `runtime.conf` is the correct file with your correct configuration
+- IntelMQ will rename and convert the configuration automatically, but we need to trigger the migration of the `pipeline.conf` and `defaults.conf`:
+  ```
+  sudo -u intelmq intelmqctl upgrade-config -f -u v300_pipeline_file_removal
+  sudo -u intelmq intelmqctl upgrade-config -f -u v300_defaults_file_removal
+  sudo -u intelmq intelmqctl upgrade-config -f -u v301_deprecations
+  ```
+
 ### Tools
 
 #### intelmqdump
@@ -98,13 +120,6 @@ Most of the usages were wrong anyway, and should have been infected-device, malw
 There is only one usage in IntelMQ, which can not be changed.
 And that one is really about malware itself (or: the hashes of samples). For this purpose, the new type "malware" under the taxonomy "other" was created, *slightly* deviating from the RSIT in this respect, but the "other" taxonomy can be freely extended.
 
-### Configuration
-
-The `defaults.conf` file was removed. Settings that should effect all the bots are not part of the runtime.conf file and are configured in the `global` section in that file.
-The `intelmqctl upgrade-config` command migrates the existing values from the `defaults.conf` file to the `runtime.conf` file under the `global` section and then deletes the `defaults.conf` file.
-The `pipeline.conf` file was removed. The source- and destination-queues of the bots are now configured in the bot configuration itself, thus in the `runtime.conf` file.
-The `intelmqctl upgrade-config` command migrates the existing configuration from the `pipeline.conf` file to the individual bot configurations in the `runtime.conf` configuration file.
-The `runtime.conf` file was replaced by a `runtime.yaml` file. IntelMQ moves the file for you if it does not find a runtime.conf but a runtime.yaml file. When IntelMQ changes the file, it now writes YAML syntax.
 
 #### Removal of deprecated bots and behaviour
 - The bot `intelmq.bots.experts.ripencc_abuse_contact.expert` has been removed. It was replaced by `intelmq.bots.experts.ripe.expert` and marked as deprecated in 2.0.0.beta1.
