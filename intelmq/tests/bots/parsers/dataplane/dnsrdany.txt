@@ -1,0 +1,65 @@
+# DataPlane.org - for operators, by operators
+# dnsrdany
+# 2021-08-27 11:00 - 2021-09-03 11:00
+#
+# The dnsrdany report is free for non-commercial use ONLY.  If you wish
+# to discuss commercial use of this service, please contact us at
+# info@dataplane.org.  Redistribution of the dnsrdany report in whole or
+# in part without the express permission of DataPlane is expressly
+# prohibited.
+#
+# This report is made possible through the generous support of people
+# like you.  Sensor, processing, and distribution systems require
+# non-free resources to setup and maintain.  We are always looking for
+# financial contributions to help pay the bills and hosting to increase
+# visibility.  If you find what we do useful, please consider supporting
+# us.
+#
+# This report is informational.  It is not a block list, but some may
+# choose to use it to actively protect their networks and systems.  The
+# report is provided on an as-is basis with no expressed warranty or
+# guarantee of accuracy.  Use of this data is at your own risk.  If you
+# have questions about this report do not hesitate to contact us.
+#
+# Entries below are records of source IP addresses that have been
+# identified as sending recursive DNS IN ANY queries.
+# Each entry is sorted according to a route originating ASN.  An entry
+# for the IP address is listed only once even if there are multiple
+# origin AS (MOAS) announcements for the covering prefix.  We use the
+# PyASN IP address to ASN mapping service to construct an origin AS
+# number and name.  For details about PyASN, see:
+#
+#   <https://pypi.org/project/pyasn/>.
+#
+# The report format is as follows:
+#
+# ASN  |  ASname  |  ipaddr  |  lastseen  |  category
+#
+# Each field is described below.  Please note any special formatting
+# rules to aid in processing this file with automated tools and scripts.
+# Blank lines may be present to improve the visual display of this file.
+# Lines beginning with a hash ('#') character are comment lines.  All
+# other lines are report entries.  Each field is separated by a pipe
+# symbol ('|') and at least two whitespace characters on either side.
+#
+#   ASN        Autonomous system number originating a route for the
+#              entry IP address. Note, 4-byte ASNs are supported and
+#              will be displayed as a 32-bit integer.  NA is shown if
+#              an origin ASN cannot be found.
+#
+#   ASname     A descriptive network name for the associated ASN.  The
+#              name is truncated to 30 characters.  NA is shown if an
+#              AS name cannot be found.
+#
+#   ipaddr     The IPv4 address that is being reported.
+#
+#   lastseen   A last seen timestamp formatted as YYYY-mm-dd HH:MM:SS
+#              in UTC time.
+#
+#   category   Descriptive tag name for this entry.  For this report,
+#              the text dnsrdany will appear.
+#
+# A commented footer section shows an aggregate count of ASNs and
+# addresses seen in the current report.
+#
+209          |  CENTURYLINK-US-LEGACY-QWEST     |  63.224.250.215   |  2021-08-30 07:08:00  |  dnsrdany
