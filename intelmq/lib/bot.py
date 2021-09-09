@@ -1210,7 +1210,7 @@ class CollectorBot(Bot):
         super().send_message(*messages, path=path)
 
     def new_report(self):
-        return libmessage.Report()
+        return libmessage.Report(harmonization=self.harmonization)
 
 
 class SQLBot(Bot):
