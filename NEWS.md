@@ -9,6 +9,11 @@ NEWS
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 Please refer to the changelog for a full list of changes.
 
+3.0.2 Maintenance release (2021-09-10)
+--------------------------------------
+
+
+
 3.0.1 Maintenance release (2021-09-02)
 --------------------------------------
 

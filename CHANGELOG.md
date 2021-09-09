@@ -6,32 +6,18 @@
 CHANGELOG
 ==========
 
-3.0.2 (2021-09-09)
+3.0.2 (2021-09-10)
 ------------------
 
-### Configuration
-
 ### Core
-- `intelmq.lib.bot.CollectorBot`: Fixed an issue with within the `new_report` function, which re-loads the harmonization file after a new incoming dataset, which leads to cpu drain and decreased performance (PR#2106 by Sebastian Sebastian, fixes #2098).
-
-### Bots
-#### Collectors
-
-#### Parsers
-
-#### Experts
-
-#### Outputs
+- `intelmq.lib.bot.CollectorBot`: Fixed an issue with within the `new_report` function, which re-loads the harmonization file after a new incoming dataset, which leads to CPU drain and decreased performance (PR#2106 by Sebastian Waldbauer, fixes #2098).
 
 ### Documentation
-
-### Packaging
-
-### Tests
-
-### Tools
+- Add configuration upgrade steps for 3.0 to NEWS (PR#2101 by Sebastian Wagner).
 
 ### Known issues
+See [open bug reports](https://github.com/certtools/intelmq/issues?q=is%3Aissue+is%3Aopen+label%3Abug) for a more detailed list.
+- ParserBot: erroneous raw line recovery in error handling (#1850).
 
 
 3.0.1 (2021-09-02)
