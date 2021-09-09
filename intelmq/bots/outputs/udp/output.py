@@ -19,7 +19,7 @@ class UDPOutputBot(Bot):
     udp_host: str = "localhost"
     udp_port: int = None
 
-    __is_multithreadable = False
+    _is_multithreadable = False
 
     def init(self):
         self.delimiter = self.field_delimiter

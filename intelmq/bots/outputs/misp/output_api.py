@@ -95,7 +95,7 @@ class MISPAPIOutputBot(OutputBot):
     misp_url: str = None
     significant_fields: list = []
 
-    _Bot__is_multithreadable = False
+    _is_multithreadable = False
 
     def init(self):
         if pymisp is None and import_fail_reason == 'syntax':

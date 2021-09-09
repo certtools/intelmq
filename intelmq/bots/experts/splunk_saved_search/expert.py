@@ -82,7 +82,7 @@ class SplunkSavedSearchBot(Bot):
     search_parameters = {"event field": "search parameter"}
     url: str = None
 
-    __is_multithreadable = False
+    _is_multithreadable = False
 
     def init(self):
         if requests is None:
