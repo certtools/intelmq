@@ -12,6 +12,10 @@ CHANGELOG
 ### Core
 - `intelmq.lib.bot.CollectorBot`: Fixed an issue with within the `new_report` function, which re-loads the harmonization file after a new incoming dataset, which leads to CPU drain and decreased performance (PR#2106 by Sebastian Waldbauer, fixes #2098).
 
+### Bots
+#### Experts
+- `intelmq.bots.experts.domain_suffix.expert`: Only print skipped database update message if verbose mode is active (PR# by Sebastian Wagner, fixes #2016).
+
 ### Documentation
 - Add configuration upgrade steps for 3.0 to NEWS (PR#2101 by Sebastian Wagner).
 
