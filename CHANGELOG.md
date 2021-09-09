@@ -6,6 +6,34 @@
 CHANGELOG
 ==========
 
+3.0.2 (2021-09-09)
+------------------
+
+### Configuration
+
+### Core
+- `intelmq.lib.bot.CollectorBot`: Fixed an issue with within the `new_report` function, which re-loads the harmonization file after a new incoming dataset, which leads to cpu drain and decreased performance (PR#2106 by Sebastian Sebastian, fixes #2098).
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Known issues
+
+
 3.0.1 (2021-09-02)
 ------------------
 
