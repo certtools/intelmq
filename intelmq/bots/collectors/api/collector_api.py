@@ -37,9 +37,9 @@ class APICollectorBot(CollectorBot):
     """Collect data by exposing a HTTP API interface"""
     name: str = "API"
     port: int = 5000
-    __collector_empty_process: bool = True
+    _collector_empty_process: bool = True
     provider: str = "APICollector"
-    __is_multithreadable: bool = False
+    _is_multithreadable: bool = False
     use_socket = False
     socket_path = '/tmp/imq_api_default_socket'
     _server: Optional['HTTPServer'] = None
