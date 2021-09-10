@@ -11,7 +11,10 @@ Please refer to the changelog for a full list of changes.
 
 3.0.2 Maintenance release (2021-09-10)
 --------------------------------------
+Two performance issues were fixed. One affected all collectors which processed high volumes of data and the other issue affected some bots which used threading.
+See the changelog for more details.
 
+The section on 3.0.0 in this file now contains more details for the upgrade to 3.0.0 in regards to the configuration.
 
 
 3.0.1 Maintenance release (2021-09-02)
