@@ -22,10 +22,11 @@ CHANGELOG
   - `intelmq.bots.outputs.misp.output_feed`
   - `intelmq.bots.outputs.tcp.output`
   - `intelmq.bots.outputs.udp.output`
+- `intelmq.lib.cache`: Do not create the Cache class if the host is null, allows deactivating the bot statistics (PR#2104 by Sebastian Waldbauer, fixes #2103).
 
 ### Bots
 #### Experts
-- `intelmq.bots.experts.domain_suffix.expert`: Only print skipped database update message if verbose mode is active (PR# by Sebastian Wagner, fixes #2016).
+- `intelmq.bots.experts.domain_suffix.expert`: Only print skipped database update message if verbose mode is active (PR#2107 by Sebastian Wagner, fixes #2016).
 
 ### Documentation
 - Add configuration upgrade steps for 3.0 to NEWS (PR#2101 by Sebastian Wagner).
