@@ -109,9 +109,9 @@ class Bot(object):
     # True for (non-main) threads of a bot instance
     is_multithreaded: bool = False
     # True if the bot is thread-safe and it makes sense
-    __is_multithreadable: bool = True
+    _is_multithreadable: bool = True
     # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
-    __collector_empty_process: bool = False
+    _collector_empty_process: bool = False
 
     _harmonization: dict = {}
 
@@ -165,11 +165,11 @@ class Bot(object):
 
             broker = self.source_pipeline_broker.title()
             if broker != 'Amqp':
-                self.__is_multithreadable = False
+                self._is_multithreadable = False
 
             """ Multithreading """
             if (self.instances_threads > 1 and not self.is_multithreaded and
-               self.__is_multithreadable and not disable_multithreading):
+               self._is_multithreadable and not disable_multithreading):
                 self.logger.handlers = []
                 num_instances = int(self.instances_threads)
                 instances = []
@@ -196,7 +196,7 @@ class Bot(object):
                     thread.join()
                 return
             elif (getattr(self, 'instances_threads', 1) > 1 and
-                  not self.__is_multithreadable):
+                  not self._is_multithreadable):
                 self.logger.error('Multithreading is configured, but is not '
                                   'available for this bot. Look at the FAQ '
                                   'for a list of reasons for this. '
@@ -446,7 +446,7 @@ class Bot(object):
                 if do_rate_limit:
                     if self.rate_limit and self.run_mode != 'scheduled':
                         self.__sleep()
-                    if self.__collector_empty_process and self.run_mode != 'scheduled':
+                    if self._collector_empty_process and self.run_mode != 'scheduled':
                         self.__sleep(1, log=False)
 
             self.__stats()
@@ -1163,7 +1163,7 @@ class CollectorBot(Bot):
     """
 
     bottype = BotType.COLLECTOR
-    __is_multithreadable: bool = False
+    _is_multithreadable: bool = False
     name: Optional[str] = None
     accuracy: int = 100
     code: Optional[str] = None
@@ -1221,7 +1221,7 @@ class CollectorBot(Bot):
         super().send_message(*messages, path=path)
 
     def new_report(self):
-        return libmessage.Report()
+        return libmessage.Report(harmonization=self.harmonization)
 
 
 class ExpertBot(Bot):

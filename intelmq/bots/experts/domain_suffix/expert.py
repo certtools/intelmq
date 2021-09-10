@@ -91,7 +91,8 @@ class DomainSuffixExpertBot(ExpertBot):
             sys.exit("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
 
         if not bots:
-            print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
+            if verbose:
+                print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
             sys.exit(0)
 
         # we only need to import now. If there are no asn_lookup bots, this dependency does not need to be installed

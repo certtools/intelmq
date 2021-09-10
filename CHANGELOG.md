@@ -63,6 +63,36 @@ CHANGELOG
 ### Known issues
 
 
+3.0.2 (2021-09-10)
+------------------
+
+### Core
+- `intelmq.lib.bot.CollectorBot`: Fixed an issue with within the `new_report` function, which re-loads the harmonization file after a new incoming dataset, which leads to CPU drain and decreased performance (PR#2106 by Sebastian Waldbauer, fixes #2098).
+- `intelmq.lib.bot.Bot`: Make private members `__is_multithreadable` and `__collector_empty_process` protected members `_is_multithreadable` and `_collector_empty_process` to make them easily modifiable by Bot classes (PR#2109 by Sebastian Wagner, fixes #2108).
+  Also affected and adapted bots by this change are:
+  - `intelmq.bots.collectors.api.collector_api`
+  - `intelmq.bots.collectors.stomp.collector`
+  - `intelmq.bots.experts.splunk_saved_search.expert`
+  - `intelmq.bots.experts.threshold.expert`
+  - `intelmq.bots.outputs.file.output`
+  - `intelmq.bots.outputs.misp.output_api`
+  - `intelmq.bots.outputs.misp.output_feed`
+  - `intelmq.bots.outputs.tcp.output`
+  - `intelmq.bots.outputs.udp.output`
+- `intelmq.lib.cache`: Do not create the Cache class if the host is null, allows deactivating the bot statistics (PR#2104 by Sebastian Waldbauer, fixes #2103).
+
+### Bots
+#### Experts
+- `intelmq.bots.experts.domain_suffix.expert`: Only print skipped database update message if verbose mode is active (PR#2107 by Sebastian Wagner, fixes #2016).
+
+### Documentation
+- Add configuration upgrade steps for 3.0 to NEWS (PR#2101 by Sebastian Wagner).
+
+### Known issues
+See [open bug reports](https://github.com/certtools/intelmq/issues?q=is%3Aissue+is%3Aopen+label%3Abug) for a more detailed list.
+- ParserBot: erroneous raw line recovery in error handling (#1850).
+
+
 3.0.1 (2021-09-02)
 ------------------
 

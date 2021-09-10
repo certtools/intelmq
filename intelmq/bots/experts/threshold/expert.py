@@ -68,7 +68,7 @@ class ThresholdExpertBot(ExpertBot, CacheMixin):
 
     _message_processed_verb = 'Forwarded'
 
-    __is_multithreadable = False
+    _is_multithreadable = False
     bypass = False
 
     def init(self):

@@ -69,7 +69,7 @@ class StompCollectorBot(CollectorBot):
     ssl_client_certificate_key: str = 'client.key'  # TODO pathlib.Path
     heartbeat: int = 6000
 
-    __collector_empty_process: bool = True
+    _collector_empty_process: bool = True
     __conn = False  # define here so shutdown method can check for it
 
     def init(self):
