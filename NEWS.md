@@ -22,6 +22,14 @@ The field names for all data added to messages must match a pre-defined format.
 The check which ensures this, was ineffective prior to this version and is effective again starting with version 3.1.0.
 The [Data format documentation](https://intelmq.readthedocs.io/en/maintenance/dev/data-format.html#rules-for-keys) describes the required format.
 
+### Logrotate
+The packaged configuration for logrotate falsely contained options applying to other programs' log files. This caused wrong ownerships of log files.
+This issues is corrected, but the ownership of affected log files may need to be changed manually.
+To find affected files, you may use:
+```bash
+sudo find /var/log/ -user intelmq ! -path \*intelmq\*
+```
+
 ### Configuration
 
 ### Libraries
