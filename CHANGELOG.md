@@ -59,6 +59,7 @@ CHANGELOG
 ### Tools
 
 ### Contrib
+- logrotate: Move compress and ownership rules to the IntelMQ-blocks to prevent that they apply to other files (PR#2111 by Sebastian Wagner, fixes #2110).
 
 ### Known issues
 
