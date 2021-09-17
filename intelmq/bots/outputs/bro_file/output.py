@@ -41,7 +41,6 @@ class BroFileOutputBot(OutputBot):
 
         self.logger.debug("Opening %r file.", self.file)
         self.format_filename = getattr(self, 'format_filename', False)
-        self.errors = getattr(self, 'encoding_errors_mode', 'strict')
         if not self.format_filename:
             self.open_file(self.file)
         self.logger.info("File %r is open.", self.file)
