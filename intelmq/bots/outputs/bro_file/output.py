@@ -48,7 +48,7 @@ class BroFileOutputBot(OutputBot):
         if self._file is not None:
             self._file.close()
         try:
-            self._file = open(filename, mode='a+t', encoding='utf-8', errors=self.errors)
+            self._file = open(filename, mode='a+t', encoding='utf-8', errors=self.encoding_errors_mode)
             self.add_bro_header()
         except FileNotFoundError:  # directory does not exist
             path = Path(os.path.dirname(filename))
