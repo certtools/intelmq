@@ -41,6 +41,15 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.alienvault.parser_otx`: Save CVE data in `extra.cve` instead of `extra.CVE` due to the field name restriction on lower-case characters  (PR#2059 by Sebastian Wagner).
 - `intelmq.bots.parsers.anubisnetworks.parser`: Changed field name format from `extra.communication.http.x_forwarded_for_#1` to `extra.communication.http.x_forwarded_for_1` due to the field name restriction on alphanumeric characters (PR#2059 by Sebastian Wagner).
+- `intelmq.bots.parsers.dataplane.parser`: Add support for additional feeds (PR#2102 by Mikk Margus Möll).
+  - DNS Recursion Desired
+  - DNS Recursion Desired ANY
+  - DNS Version
+  - Protocol 41
+  - SMTP Greet
+  - SMTP Data
+  - Telnet Login
+  - VNC/RFB Login
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).
@@ -50,6 +59,7 @@ CHANGELOG
 - Removed `intelmq.bots.outputs.postgresql`: this bot was marked as deprecated in 2019 announced to be removed in version 3 of IntelMQ (PR#2045 by Birger Schacht).
 
 ### Documentation
+- Feeds: Add documentation for newly supported dataplane feeds, see above (PR#2102 by Mikk Margus Möll).
 
 ### Packaging
 
