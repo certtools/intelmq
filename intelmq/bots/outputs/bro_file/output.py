@@ -40,7 +40,6 @@ class BroFileOutputBot(OutputBot):
         self._file = None
 
         self.logger.debug("Opening %r file.", self.file)
-        self.format_filename = getattr(self, 'format_filename', False)
         if not self.format_filename:
             self.open_file(self.file)
         self.logger.info("File %r is open.", self.file)
