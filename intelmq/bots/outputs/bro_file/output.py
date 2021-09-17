@@ -58,7 +58,7 @@ class BroFileOutputBot(OutputBot):
                 self.logger.exception('Directory %r could not be created.', path)
                 self.stop()
             else:
-                self._file = open(filename, mode='a+t', encoding='utf-8', errors=self.errors)
+                self._file = open(filename, mode='a+t', encoding='utf-8', errors=self.encoding_errors_mode)
                 self.add_bro_header()
 
     def add_bro_header(self):
