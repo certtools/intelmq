@@ -24,7 +24,7 @@ now = datetime.now()  # for timestamp
 class RpzFileOutputBot(OutputBot):
     _file = None
     format_filename: bool = False
-    __Bot_is_multithreadable = False
+    _is_multithreadable = False
 
     encoding_errors_mode = 'strict'
     file: str = "/opt/intelmq/var/lib/bots/file-output/rpz"
