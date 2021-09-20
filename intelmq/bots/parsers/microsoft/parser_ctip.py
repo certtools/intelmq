@@ -205,6 +205,7 @@ CONFIDENCE = {
 
 class MicrosoftCTIPParserBot(ParserBot):
     """Parse JSON data from Microsoft's CTIP program"""
+    overwrite: bool = True  # overwrite existing fields
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
@@ -288,11 +289,13 @@ class MicrosoftCTIPParserBot(ParserBot):
             elif key == 'Payload.Protocol':
                 payload_protocol = value[:value.find('/')]
                 if payload_protocol:
+                    # needs to overwrite a field previously parsed and written
                     event.add('protocol.application', payload_protocol, overwrite=True)  # "HTTP/1.1", save additionally
             elif not value:
                 continue
             if AZURE[key] != '__IGNORE__':
-                event.add(AZURE[key], value, overwrite=True)
+                # feed.accuracy is calculated newly and always needs to be overwritten
+                event.add(AZURE[key], value, overwrite=self.overwrite or AZURE[key] == "feed.accuracy")
         event.add('classification.type', 'infected-system')
         event.add('raw', raw)
         yield event

@@ -20,6 +20,7 @@ EXAMPLE_PARSED = [json.loads(EXAMPLE_LINES[0]), json.loads(EXAMPLE_LINES[1])]
 
 EXAMPLE_REPORT = {
     "__type": "Report",
+    "feed.name": "ctip",
     "feed.accuracy": 100.0,
     "time.observation": "2016-06-15T09:25:26+00:00",
     "raw": base64_encode(EXAMPLE_DATA)
@@ -173,6 +174,14 @@ class TestMicrosoftCTIPParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         for i in range(4):
             self.assertMessageEqual(i, EXAMPLE_EVENTS[i])
+
+    def test_not_overwrite(self):
+        """ Test with overwrite=False """
+        self.run_bot(parameters={'overwrite': False})
+        for i, event in enumerate(EXAMPLE_EVENTS):
+            tmp = event.copy()
+            tmp["feed.name"] = "ctip"
+            self.assertMessageEqual(i, tmp)
 
 
 if __name__ == '__main__':  # pragma: no cover

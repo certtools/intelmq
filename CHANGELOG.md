@@ -50,6 +50,7 @@ CHANGELOG
   - SMTP Data
   - Telnet Login
   - VNC/RFB Login
+- `intelmq.bots.parsers.microsoft.parser_ctip`: New parameter `overwrite` (PR#2112 by Sebastian Wagner, fixes #2022).
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).

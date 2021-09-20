@@ -1464,6 +1464,12 @@ Microsoft CTIP Parser
 * `cache (redis db)`: none
 * `description`: Parses data from the Microsoft CTIP Feed
 
+ * `overwrite`: If an existing `feed.name` should be overwritten (only relevant for the azure data source).
+
+**Configuration Parameters**
+
+* ``overwrite``: Overwrite an existing field ``feed.name`` with ``DataFeed`` of the source.
+
 **Description**
 
 Can parse the JSON format provided by the Interflow interface (lists of dictionaries) as well as the format provided by the Azure interface (one dictionary per line).
@@ -1911,7 +1917,7 @@ Public documentation: https://www.team-cymru.com/IP-ASN-mapping.html#dns
 **Configuration Parameters**
 
 * **Cache parameters** (see in section :ref:`common-parameters`)
-* `overwrite`: Overwrite existing fields. Default: `True` if not given (for backwards compatibility, will change in version 3.0.0)
+* ``: Overwrite existing fields. Default: `True` if not given (for backwards compatibility, will change in version 3.0.0)
 
 
 .. _intelmq.bots.experts.domain_suffix.expert:
