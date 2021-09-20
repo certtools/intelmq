@@ -36,6 +36,8 @@ You need to enable and start Redis if not already done. Using systemd it can be 
 Configuration
 *************
 
+.. _configuration-paths:
+
 /opt and LSB paths
 ==================
 
