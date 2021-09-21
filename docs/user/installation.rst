@@ -61,6 +61,7 @@ These are the operating systems which are currently supported by packages:
 Get the installation instructions for your operating system here: `Installation Native Packages <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq>`_.
 The instructions show how to add the repository and install the `intelmq` package. You can also install the `intelmq-manager` package to get the `Web-Frontend IntelMQ Manager <https://github.com/certtools/intelmq-manager/>`_.
 
+.. _installation_docker:
 
 Docker
 ------
