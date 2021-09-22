@@ -1838,14 +1838,14 @@ Public documentation: https://www.team-cymru.com/IP-ASN-mapping.html#dns
 * `overwrite`: Overwrite existing fields. Default: `True` if not given (for backwards compatibility, will change in version 3.0.0)
 
 
-.. _intelmq.bots.experts.cut_from_string.expert:
+.. _intelmq.bots.experts.remove_affix.expert:
 
-Cut from string
+RemoveAffix
 ^^^^^^^^^^^
 
 **Information**
 
-* `name:` `intelmq.bots.experts.cut_from_string.expert`
+* `name:` `intelmq.bots.experts.remove_affix.expert`
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none

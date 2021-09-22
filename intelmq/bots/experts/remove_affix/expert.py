@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Cut from string
+Remove Affix
 
 SPDX-FileCopyrightText: 2021 Marius Karotkis <marius.karotkis@gmail.com>
 SPDX-License-Identifier: AGPL-3.0-or-later
@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 from intelmq.lib.bot import Bot
 
 
-class CutFromStringExpertBot(Bot):
+class RemoveAffixExpertBot(Bot):
     remove_prefix: bool = True  # True - from start, False - from end
     affix: str = 'www.'
     field: str = 'source.fqdn'
@@ -38,4 +38,4 @@ class CutFromStringExpertBot(Bot):
             return field[:]
 
 
-BOT = CutFromStringExpertBot
+BOT = RemoveAffixExpertBot

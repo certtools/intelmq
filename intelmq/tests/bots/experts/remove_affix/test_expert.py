@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 import unittest
 import intelmq.lib.test as test
-from intelmq.bots.experts.cut_from_string.expert import CutFromStringExpertBot
+from intelmq.bots.experts.remove_affix.expert import RemoveAffixExpertBot
 
 EXAMPLE_INPUT = {
     '__type': 'Event',
@@ -64,14 +64,14 @@ EXAMPLE_OUTPUT_2 = {
     'extra.elastic_id': 'VwVnSnUBXjJtaqsUSw8T'}
 
 
-class TestCutFromStringExpertBot(test.BotTestCase, unittest.TestCase):
+class TestRemoveAffixExpertBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for TestCutFromStringExpertBot.
+    A TestCase for TestRemoveAffixExpertBot.
     """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = CutFromStringExpertBot
+        cls.bot_reference = RemoveAffixExpertBot
 
     def test_event_cut_start(self):
         self.input_message = EXAMPLE_INPUT
