@@ -4048,7 +4048,7 @@ SQL
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` SQL is the bot responsible to send events to a PostgreSQL or SQLite Database
+* `description:` SQL is the bot responsible to send events to a PostgreSQL or SQLite Database, e.g. the IntelMQ :doc:`eventdb`
 * `notes`: When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit
 
 **Configuration Parameters**
