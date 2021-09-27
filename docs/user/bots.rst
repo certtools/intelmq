@@ -502,29 +502,6 @@ Requires the `kafka python library <https://pypi.org/project/kafka/>`_.
 * `ssl_ca_certificate`: Optional string of path to trusted CA certificate. Only used by some bots.
 
 
-.. _intelmq.bots.collectors.rsync.collector_rsync:
-
-Rsync
-^^^^^
-
-Requires the rsync executable
-
-**Information**
-
-* `name:` intelmq.bots.collectors.rsync.collector_rsync
-* `lookup:` yes
-* `public:` yes
-* `cache (redis db):` none
-* `description:` Bot download file by rsync and then load data from downloaded file. Downloaded file is located in `var/lib/bots/rsync_collector.`
-
-**Configuration Parameters**
-
-* **Feed parameters** (see above)
-* `file`: Name of downloaded file.
-* `rsync_path`: Path to file. It can be "/home/username/directory" or "username@remote_host:/home/username/directory"
-* `temp_directory`: Path of a temporary state directory to use for rsync'd files. Optional. Default: `/opt/intelmq/var/run/rsync_collector/`.
-
-
 .. _intelmq.bots.collectors.misp.collector:
 
 MISP Generic
@@ -645,21 +622,23 @@ Relative must be in this format: `[number] [timespan]s`, e.g. `3 days`. `timespa
 Rsync
 ^^^^^
 
-**Information**
+Requires the rsync executable
 
+**Information**
 
 * `name:` intelmq.bots.collectors.rsync.collector_rsync
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` Syncs a file via rsync and reads the file.
+* `description:` Bot downloads a file by rsync and then load data from downloaded file. Downloaded file is located in `var/lib/bots/rsync_collector.`
 
 **Configuration Parameters**
 
 * **Feed parameters** (see above)
-* `file`: The filename to process, combine with `rsync_path`.
-* `temp_directory`: The temporary directory for rsync, by default `$VAR_STATE_PATH/rsync_collector`. `$VAR_STATE_PATH` is `/var/run/intelmq/` or `/opt/intelmq/var/run/`.
-* `rsync_path`: The path of the file to process
+* `file`: Name of downloaded file.
+* `file`: The filename to process, combined with `rsync_path`.
+* `rsync_path`: Path to file. It can be "/home/username/directory" or "username@remote_host:/home/username/directory"
+* `temp_directory`: The temporary directory for rsync to use for rsync'd files. Optional. Default: `$VAR_STATE_PATH/rsync_collector`. `$VAR_STATE_PATH` is `/var/run/intelmq/` or `/opt/intelmq/var/run/`.
 
 
 .. _intelmq.bots.collectors.shadowserver.collector_reports_api:
@@ -2528,30 +2507,6 @@ Generic parameters used in this bot:
 
 .. _intelmq.bots.experts.mcafee.expert_mar:
 
-McAfee Active Response Hash lookup
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-**Information**
-
-* `name:` intelmq.bots.experts.mcafee.expert_mar
-* `lookup:` yes
-* `public:` no
-* `cache (redis db):` none
-* `description:` Queries occurrences of hashes within local environment
-
-**Configuration Parameters**
-
-* **Feed parameters** (see above)
-* `dxl_config_file`: location of file containing required information to connect to DXL bus
-* `lookup_type`: One of:
-  - `Hash`: looks up `malware.hash.md5`, `malware.hash.sha1` and `malware.hash.sha256`
-  - `DestSocket`: looks up `destination.ip` and `destination.port`
-  - `DestIP`: looks up `destination.ip`
-  - `DestFQDN`: looks up in `destination.fqdn`
-
-
-.. _intelmq.bots.experts.mcafee.expert_mar:
-
 McAfee Active Response lookup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -2565,9 +2520,12 @@ McAfee Active Response lookup
 
 **Configuration Parameters**
 
-* **Feed parameters** (see above)
 * `dxl_config_file`: location of file containing required information to connect to DXL bus
-* `lookup_type`: One of <Hash|DestSocket|DestIP|DestFQDN>
+* `lookup_type`: One of:
+  - `Hash`: looks up `malware.hash.md5`, `malware.hash.sha1` and `malware.hash.sha256`
+  - `DestSocket`: looks up `destination.ip` and `destination.port`
+  - `DestIP`: looks up `destination.ip`
+  - `DestFQDN`: looks up in `destination.fqdn`
 
 
 .. _intelmq.bots.experts.modify.expert:

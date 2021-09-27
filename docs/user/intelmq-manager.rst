@@ -46,6 +46,7 @@ The intelmq-manager package does not contain ready-to-use files, they need to be
 First, lets install the Manager itself:
 
 .. code-block::
+
    pip3 install intelmq-manager
 
 If your system uses wheel-packages, not the source distribution, you can use the ``intelmqsetup`` tool.
