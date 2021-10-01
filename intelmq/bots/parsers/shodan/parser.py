@@ -8,8 +8,12 @@ Copyright (C) 2018 by nic.at GmbH
 """
 import json
 
+from typing import Dict, Tuple, List, Callable, Any, Optional
+
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.utils import base64_decode
+import intelmq.lib.harmonization as harmonization
+
 
 MAPPING = {
     'hash': 'extra.shodan.event_hash',
@@ -29,140 +33,7 @@ MAPPING = {
     'version': 'extra.version',
     'vulns': 'extra.vulns',
     "ftp": {
-            "features": {
-                "AUTH": {
-                    "parameters": "extra.ftp.auth.parameters",
-                },
-                "AVBL": {
-                    "parameters": "extra.ftp.avbl.parameters",
-                },
-                "CCC": {
-                    "parameters": "extra.ftp.ccc.parameters",
-                },
-                "COMB": {
-                    "parameters": "extra.ftp.comb.parameters",
-                },
-                "CSID": {
-                    "parameters": "extra.ftp.csid.parameters",
-                },
-                "DSIZ": {
-                    "parameters": "extra.ftp.dsiz.parameters",
-                },
-                "EPRT": {
-                    "parameters": "extra.ftp.eprt.parameters",
-                },
-                "EPSV": {
-                    "parameters": "extra.ftp.epsv.parameters",
-                },
-                "ESTA": {
-                    "parameters": "extra.ftp.esta.parameters",
-                },
-                "ESTP": {
-                    "parameters": "extra.ftp.estp.parameters",
-                },
-                "HELP": {
-                    "parameters": "extra.ftp.help.parameters",
-                },
-                "HOST": {
-                    "parameters": "extra.ftp.host.parameters",
-                },
-                "IDLE": {
-                    "parameters": "extra.ftp.idle.parameters",
-                },
-                "LANG": {
-                    "parameters": "extra.ftp.lang.parameters",
-                },
-                "MFCT": {
-                    "parameters": "extra.ftp.mfct.parameters",
-                },
-                "MFF": {
-                    "parameters": "extra.ftp.mff.parameters",
-                },
-                "MODE": {
-                    "parameters": "extra.ftp.mode.parameters",
-                },
-                "OPTS": {
-                    "parameters": "extra.ftp.opts.parameters",
-                },
-                "PASV": {
-                    "parameters": "extra.ftp.pasv.parameters",
-                },
-                "PBSZ": {
-                    "parameters": "extra.ftp.pbsz.parameters",
-                },
-                "PRET": {
-                    "parameters": "extra.ftp.pret.parameters",
-                },
-                "PROT": {
-                    "parameters": "extra.ftp.prot.parameters",
-                },
-                "RANG": {
-                    "parameters": "extra.ftp.rang.parameters",
-                },
-                "RMDA": {
-                    "parameters": "extra.ftp.rmda.parameters",
-                },
-                "SITE": {
-                    "parameters": "extra.ftp.site.parameters",
-                },
-                "SPSV": {
-                    "parameters": "extra.ftp.spsv.parameters",
-                },
-                "SSCN": {
-                    "parameters": "extra.ftp.sscn.parameters",
-                },
-                "STAT": {
-                    "parameters": "extra.ftp.stat.parameters",
-                },
-                "STORD": {
-                    "parameters": "extra.ftp.stord.parameters",
-                },
-                "THMB": {
-                    "parameters": "extra.ftp.thmb.parameters",
-                },
-                "TVFS": {
-                    "parameters": "extra.ftp.tvfs.parameters",
-                },
-                "XCRC": {
-                    "parameters": "extra.ftp.xcrc.parameters",
-                },
-                "XMD5": {
-                    "parameters": "extra.ftp.xmd5.parameters",
-                },
-                "XSHA1": {
-                    "parameters": "extra.ftp.xsha1.parameters",
-                },
-                "XSHA256": {
-                    "parameters": "extra.ftp.xsha256.parameters",
-                },
-                "XSHA512": {
-                    "parameters": "extra.ftp.xsha512.parameters",
-                },
-                "MLST": {
-                    "parameters": 'extra.ftp.features.mlst',
-                },
-                "UTF8": {
-                    "parameters": 'extra.ftp.utf8.parameters',
-                },
-                "REST": {
-                    "parameters": 'extra.ftp.rest.parameters',
-                },
-                "CLNT": {
-                    "parameters": 'extra.ftp.clnt.parameters',
-                },
-                "MLSD": {
-                    "parameters": 'extra.ftp.mlsd.parameters',
-                },
-                "MFMT": {
-                    "parameters": 'extra.ftp.mfmt.parameters',
-                },
-                "MDTM": {
-                    "parameters": 'extra.ftp.mdtm.parameters',
-                },
-                "SIZE": {
-                    "parameters": 'extra.ftp.size.parameters',
-                }
-            },
+        "features": "extra.ftp.features",
         "anonymous": 'extra.ftp.anonymous',
         # "features_hash": '__IGNORE__',
     },
@@ -424,6 +295,9 @@ MAPPING = {
             'tcp_port': 'extra.redis.server.tcp_port',
         },
     },
+    'rsync': {
+        'modules': 'extra.rsync.modules',
+    },
     'smb': {
         'anonymous': 'extra.smb.anonymous',
         'capabilities': 'extra.smb.capabilities',
@@ -563,26 +437,102 @@ PROTOCOLS = {
 }
 
 
-def _keys_conversion(x):
-    return list(x.keys())
+class NoValueException(Exception):
+    '''
+    Raised in a conversion function in case the value cannot be used,
+    e.g when trying to get the first item of an empty list
+    '''
+    msg: Optional[str]
+
+    def __init__(self, msg: Optional[str] = None) -> None:
+        self.msg = msg
+
+    def __repr__(self) -> str:
+        return f'NoValueException({self.msg!r})'
+
+    __str__ = __repr__
+
+
+_common_keys = {  # not indicative of type
+    '_id', '_shodan', 'asn', 'data', 'device', 'devicetype', 'domains', 'hash',
+    'hostnames', 'html', 'ip', 'ip_str', 'isp', 'location', 'opts', 'org',
+    'os', 'port', 'tags', 'timestamp', 'transport',
+}
+
+
+def _keys_conversion(x: Dict[str, Any]) -> List[str]:
+    '''
+    extracts object keys to a list, for cases where the values they map to are empty/irrelevant
+    '''
+    try:
+        return list(x.keys())
+    except AttributeError:
+        raise NoValueException(f'non-dict {x!r} passed to _keys_conversion')
 
 
 # in case item can be either T or List[T]
-def _maybe_single_to_list(x):
-    if isinstance(x, list):
-        return x
-    return [x]
+def _maybe_single_to_list(x: Any) -> List[Any]:
+    '''
+    converts non-list objects to lists with a single item and leaves lists as-is,
+    used to harmonize fields which avoid lists when a single value is given
+    '''
+    return x if isinstance(x, list) else [x]
 
 
-CONVERSIONS = {
+def _dict_dict_to_obj_list(x: Dict[str, Dict[str, Any]], identifier: str = 'identifier') -> List[Dict[str, Any]]:
+    '''
+    convert e.g
+    {'OuterKey1': {'InnerKey1': 'Value1'}, 'OuterKey2': {'InnerKey2': 'Value2'}}
+    to
+    [{'identifier': 'OuterKey1', 'InnerKey': 'Value1}, {'identifier': 'OuterKey2', 'InnerKey': 'Value2'}}]
+    '''
+    out = []
+    for k, v in x.items():
+        if not isinstance(v, dict):
+            raise NoValueException(f'expected dict, got {v!r} in _dict_dict_to_obj_list')
+
+        v[identifier] = k
+        out.append(v)
+
+    return out
+
+
+def _get_first(l: List[Any]) -> Any:
+    '''
+    get first element from list, if the list has any; raise NoValueException otherwise
+    '''
+    try:
+        return l[0]
+    except IndexError:
+        raise NoValueException(f'empty list passed to _get_first')
+
+
+def _get_first_hostname(l: List[str]) -> str:
+    '''
+    get first valid FQDN from a list of strings
+    '''
+    valid_fqdns = (hostname for hostname in l if harmonization.FQDN.is_valid(hostname, sanitize=True))
+    first = next(valid_fqdns, None)
+    if first is None:
+        raise NoValueException(f'no valid FQDN in {l!r} passed to _get_first_hostname')
+
+    return first
+
+
+CONVERSIONS: Dict[str, Callable[[Any], Any]] = {
+    'ftp.features': _dict_dict_to_obj_list,
     'timestamp': lambda x: x + '+00',
-    'hostnames': lambda x: x[0],
-    'domains': lambda x: x[0],
+    'hostnames': _get_first_hostname,
+    'domains': _get_first,
     'coap.resources': _keys_conversion,
     'http.components': _keys_conversion,
     'mac': _keys_conversion,
     'opts.ldap.supportedControl': _maybe_single_to_list,
     'opts.ldap.supportedLDAPVersion': _maybe_single_to_list,
+    'rsync.modules': _keys_conversion,
+    'ssl.cert.serial': str,
+    'ssl.dhparams.generator': str,
+    'vulns': _dict_dict_to_obj_list,
 }
 
 
@@ -591,34 +541,31 @@ class ShodanParserBot(ParserBot):
     ignore_errors = True
     minimal_mode = False
 
-    _common_keys = {  # not indicative of type
-        '_id', '_shodan', 'asn', 'data', 'device', 'devicetype', 'domains', 'hash',
-        'hostnames', 'html', 'ip', 'ip_str', 'isp', 'location', 'opts', 'org',
-        'os', 'port', 'tags', 'timestamp', 'transport',
-    }
-
-    def apply_mapping(self, mapping, data, key_path=()):
-        self.logger.debug('Applying mapping %r to data %r.', mapping, data)
+    def apply_mapping(self, mapping: Dict[str, Any], data: Dict[str, Any], key_path: Tuple[str, ...] = ()) -> Dict[str, Any]:
+        self.logger.debug(f'Applying mapping {mapping!r} to data {data!r}.')
         event = {}
-        for key, value in data.items():
+        for key in data.keys() & mapping.keys():
+            value = data[key]
+            if value is None:  # or mapping[key] == '__IGNORE__':  # (all commented out)
+                continue
+
             current_key_path = key_path + (key,)
-            conversion_key = '.'.join(current_key_path)
-            try:
-                if value and mapping[key] != '__IGNORE__':
-                    if isinstance(mapping[key], dict):
-                        update = self.apply_mapping(mapping[key], value, current_key_path)
-                        if update:
-                            event.update(update)
-                    else:
-                        if conversion_key in CONVERSIONS:
-                            value = CONVERSIONS[conversion_key](value)
-                        event[mapping[key]] = value
-            except KeyError:
-                if not self.ignore_errors:
-                    raise
+            mapping_v = mapping[key]
+
+            if isinstance(mapping_v, dict):
+                event.update(self.apply_mapping(mapping_v, value, current_key_path))
+            else:
+                conversion_key = '.'.join(current_key_path)
+                try:
+                    if conversion_key in CONVERSIONS:
+                        value = CONVERSIONS[conversion_key](value)
+                    event[mapping_v] = value
+                except NoValueException as e:  # conversion failed, ignore this field
+                    self.logger.debug(f'Error converting data under {conversion_key}: {e} .')
+
         return event
 
-    def process(self):
+    def process(self) -> None:
         report = self.receive_message()
         raw = base64_decode(report['raw'])
         decoded = json.loads(raw)
@@ -646,14 +593,15 @@ class ShodanParserBot(ParserBot):
             event.add('classification.type', 'other')
             event.add('classification.identifier', 'shodan-scan')
 
-            uncommon_keys = decoded.keys() - self._common_keys
+            uncommon_keys = decoded.keys() - _common_keys
             event.add('extra.shodan.unique_keys', sorted(uncommon_keys))
             decoded_protocols = PROTOCOLS & uncommon_keys
             if decoded_protocols:
                 event.add('protocol.application', decoded_protocols.pop())
 
-            if event.get('extra.vulns', []):
-                event.add('extra.verified_vulns', [k for k, v in decoded['vulns'].items() if v['verified']])
+            vulns = event.get('extra.vulns', None)
+            if vulns is not None:
+                event.add('extra.verified_vulns', [vuln['identifier'] for vuln in vulns if vuln['verified']])
 
         self.send_message(event)
         self.acknowledge_message()
