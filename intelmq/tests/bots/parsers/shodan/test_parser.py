@@ -46,8 +46,16 @@ EVENTS = [{'__type': 'Event',
                          ' CLNT\n'
                          ' MFMT\n'
                          '211 End',
-           'extra.ftp.features.mlst': ['type', 'size', 'modify'],
-           'extra.ftp.rest.parameters': ['STREAM'],
+           'extra.ftp.anonymous': False,
+           'extra.ftp.features': [{'identifier': 'MLST',
+                                   'parameters': ['type', 'size', 'modify']},
+                                  {'identifier': 'UTF8', 'parameters': []},
+                                  {'identifier': 'REST', 'parameters': ['STREAM']},
+                                  {'identifier': 'CLNT', 'parameters': []},
+                                  {'identifier': 'MLSD', 'parameters': []},
+                                  {'identifier': 'MFMT', 'parameters': []},
+                                  {'identifier': 'MDTM', 'parameters': []},
+                                  {'identifier': 'SIZE', 'parameters': []}],
            'feed.name': 'Test feed',
            'protocol.transport': 'tcp',
            'raw': RAWS[0],
@@ -73,6 +81,7 @@ EVENTS = [{'__type': 'Event',
            'extra.http.host': '203.0.113.58',
            'extra.http.location': '/',
            'extra.isp': 'Example ISP',
+           'extra.shodan.event_hash': 0,
            'extra.shodan.unique_keys': ['http'],
            'feed.name': 'Test feed',
            'protocol.application': 'http',
@@ -103,6 +112,9 @@ EVENTS = [{'__type': 'Event',
                          '    Authentication: False\n'
                          'Message ID: 00000000\n'
                          'Length: 40',
+           'extra.isakmp.authentication': False,
+           'extra.isakmp.commit': False,
+           'extra.isakmp.encryption': False,
            'extra.isakmp.exchange_type': 5,
            'extra.isakmp.initiator_spi': '092384023480dab023340',
            'extra.isakmp.length': 40,
@@ -263,6 +275,74 @@ EVENTS = [{'__type': 'Event',
            'time.source': '2021-01-22T07:55:42.888074+00:00',
            'raw': RAWS[5]
            },
+           {'__type': 'Event',
+           'classification.identifier': 'shodan-scan',
+           'classification.type': 'other',
+           'event_description.target': 'Amazon Technologies Inc.',
+           'extra.data': 'SSH-2.0-OpenSSH_7.4',
+           'extra.info': 'protocol 2.0',
+           'extra.isp': 'Amazon.com, Inc.',
+           'extra.product': 'OpenSSH',
+           'extra.region_code': 'VA',
+           'extra.shodan.event_hash': 29865539,
+           'extra.shodan.unique_keys': ['cloud',
+                                        'cpe',
+                                        'cpe23',
+                                        'info',
+                                        'product',
+                                        'ssh',
+                                        'version',
+                                        'vulns'],
+           'extra.ssh.cipher': 'aes128-ctr',
+           'extra.ssh.fingerprint': 'af:98:a3:a8:97:6e:8c:42:86:96:8b:4f:7e:a0:9d:b7',
+           'extra.ssh.mac': 'hmac-sha2-256',
+           'extra.ssh.type': 'ssh-rsa',
+           'extra.tags': ['cloud'],
+           'extra.verified_vulns': [],
+           'extra.version': '7.4',
+           'extra.vulns': [{'cvss': '5.0',
+                            'identifier': 'CVE-2017-15906',
+                            'references': ['http://www.securityfocus.com/bid/101552',
+                                           'https://access.redhat.com/errata/RHSA-2018:0980',
+                                           'https://github.com/openbsd/src/commit/a6981567e8e215acc1ef690c8dbb30f2d9b00a19',
+                                           'https://lists.debian.org/debian-lts-announce/2018/09/msg00010.html',
+                                           'https://security.gentoo.org/glsa/201801-05',
+                                           'https://security.netapp.com/advisory/ntap-20180423-0004/',
+                                           'https://www.openssh.com/txt/release-7.6'],
+                            'summary': 'The process_open function in sftp-server.c in '
+                                       'OpenSSH before 7.6 does not properly prevent '
+                                       'write operations in readonly mode, which allows '
+                                       'attackers to create zero-length files.',
+                            'verified': False},
+                           {'cvss': '5.0',
+                            'identifier': 'CVE-2018-15919',
+                            'references': ['http://seclists.org/oss-sec/2018/q3/180',
+                                           'http://www.securityfocus.com/bid/105163',
+                                           'https://security.netapp.com/advisory/ntap-20181221-0001/'],
+                            'summary': 'Remotely observable behaviour in auth-gss2.c in '
+                                       'OpenSSH through 7.8 could be used by remote '
+                                       'attackers to detect existence of users on a '
+                                       'target system when GSS2 is in use. NOTE: the '
+                                       "discoverer states 'We understand that the "
+                                       'OpenSSH developers do not want to treat such a '
+                                       'username enumeration (or "oracle") as a '
+                                       "vulnerability.'",
+                            'verified': False}],
+           'feed.name': 'Test feed',
+           'protocol.application': 'ssh',
+           'protocol.transport': 'tcp',
+           'source.asn': 14618,
+           'source.fqdn': 'amazonaws.com',
+           'source.geolocation.cc': 'US',
+           'source.geolocation.city': 'Ashburn',
+           'source.geolocation.latitude': 39.04372,
+           'source.geolocation.longitude': -77.48749,
+           'source.ip': '123.45.6.7',
+           'source.port': 22,
+           'source.reverse_dns': 'ec2-fake.amazonaws.com',
+           'time.source': '2021-10-01T09:15:50.511189+00:00',
+           'raw': RAWS[6],
+           },
           ]
 MINIMAL = [{'__type': 'Event',
             'classification.type': 'other',
@@ -344,6 +424,9 @@ class TestShodanParserBot(test.BotTestCase, unittest.TestCase):
     def test_maybe_single_to_list(self):
         # first has a single string for opts.ldap.supportedControl, second has a list of strings
         _test(self, [4, 5])
+
+    def test_dict_dict_to_obj_list(self):
+        _test(self, [6])
 
 
 class TestShodanParserBot_minimal(test.BotTestCase, unittest.TestCase):
