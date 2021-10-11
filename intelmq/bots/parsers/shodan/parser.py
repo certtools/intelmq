@@ -507,14 +507,14 @@ def _get_first(l: List[Any]) -> Any:
         raise NoValueException(f'empty list passed to _get_first')
 
 
-def _get_first_hostname(l: List[str]) -> str:
+def _get_first_fqdn(l: List[str]) -> str:
     '''
     get first valid FQDN from a list of strings
     '''
     valid_fqdns = (hostname for hostname in l if harmonization.FQDN.is_valid(hostname, sanitize=True))
     first = next(valid_fqdns, None)
     if first is None:
-        raise NoValueException(f'no valid FQDN in {l!r} passed to _get_first_hostname')
+        raise NoValueException(f'no valid FQDN in {l!r} passed to _get_first_fqdn')
 
     return first
 
@@ -522,8 +522,8 @@ def _get_first_hostname(l: List[str]) -> str:
 CONVERSIONS: Dict[str, Callable[[Any], Any]] = {
     'ftp.features': _dict_dict_to_obj_list,
     'timestamp': lambda x: x + '+00',
-    'hostnames': _get_first_hostname,
-    'domains': _get_first,
+    'hostnames': _get_first_fqdn,
+    'domains': _get_first_fqdn,
     'coap.resources': _keys_conversion,
     'http.components': _keys_conversion,
     'mac': _keys_conversion,
