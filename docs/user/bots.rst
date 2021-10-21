@@ -4226,6 +4226,17 @@ Templates are in Jinja2 format with the event provided in the variable "event". 
 
 See the Jinja2 documentation at https://jinja.palletsprojects.com/ .
 
+As an extension to the Jinja2 environment, the function "from_json" is
+available for parsing JSON strings into Python structures. This is
+useful if you want to handle complicated structures in the "output"
+field of an event. In that case, you would start your template with a
+line like::
+
+   {%- set output = from_json(event['output']) %}
+
+and can then use "output" as a regular Python object in the rest of
+the template.
+
 Attachments are template strings, especially useful for sending
 structured data. E.g. to send a JSON document including "malware.name"
 and all other fields starting with "source."::
