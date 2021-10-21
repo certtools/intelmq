@@ -131,6 +131,57 @@ System: destination.example.com""")
         self.assertEqual({"from_addr": "myself", "to_addrs": ["one@example.com", "two@example.com"]},
                          SENT_MESSAGE[1])
 
+    def test_json_parsing(self):
+        event = EVENT.copy()
+        event["output"] = json.dumps(
+            {
+                "title": "Test title",
+                "lines": [
+                    {
+                        "time": "2021-10-11 12:13Z",
+                        "log": "An event occurred"
+                    },
+                    {
+                        "time": "2021-10-14 15:16Z",
+                        "log": "Another event occurred"
+                    }
+                ]
+            }
+        )
+        self.input_message = event
+        with unittest.mock.patch("smtplib.SMTP.send_message", new=send_message), \
+             unittest.mock.patch("smtplib.SMTP.connect", return_value=(220, "Mock server")), \
+             unittest.mock.patch("smtplib.SMTP.close"):
+            self.run_bot(parameters={"body": """
+{%- set output = from_json(event['output']) %}
+{{ output['title'] }}
+
+{% for line in output['lines'] -%}
+{{ line['time'] }} : {{ line['log'] }}
+{% endfor -%}
+"""})
+        self.assertEqual(SENT_MESSAGE[0].get_payload()[0].get_payload(), """
+Test title
+
+2021-10-11 12:13Z : An event occurred
+2021-10-14 15:16Z : Another event occurred
+""")
+
+    def test_malformed_json(self):
+        event = EVENT.copy()
+        event["output"] = "{ malformed"
+        self.input_message = event
+        with unittest.mock.patch("smtplib.SMTP.send_message", new=send_message), \
+             unittest.mock.patch("smtplib.SMTP.connect", return_value=(220, "Mock server")), \
+             unittest.mock.patch("smtplib.SMTP.close"):
+            self.run_bot(parameters={"body": """
+{%- set output = from_json(event['output']) %}
+A{{ output }}B
+"""})
+        self.assertEqual(SENT_MESSAGE[0].get_payload()[0].get_payload(), """
+A{ malformedB
+""")
+
 
 @test.skip_exotic()
 class TestDefaultTemplatedSMTPOutputBot(test.BotTestCase, unittest.TestCase):
