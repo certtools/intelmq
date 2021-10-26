@@ -3912,6 +3912,49 @@ xxx.xxx.xxx.xxx    Intel::ADDR    phishing    100    MISP XXX
 www.testdomain.com    Intel::DOMAIN    apt    85    CERT
 ```
 
+
+.. _intelmq.bots.outputs.defender_comment.output:
+
+Defender comment
+^^^^^^^^^^^^^^^^
+
+**Information**
+
+* `name`: `intelmq.bots.outputs.defender_comment.output`
+* `lookup`: no
+* `public`: yes
+* `cache`: no
+* `description`: Adds a comment to an alert in Microsoft Defender ATP.
+
+**Configuration parameters**
+
+* `api_region`: Optional, string. Default: None. Cloud region for API
+  calls. Either None (for worldwide) or one of "us", "eu", or "uk".
+* `tenant_id`: String, your Office 365 tenant ID.
+* `client_id`: String, the client ID you created for this application.
+* `client_secret`: String, the secret you created for this application.
+* `comment_field`: String, the field in the IntelMQ event containing the
+  comment text to be added.
+
+**Description**
+
+Adds a comment to an alert in Microsoft Defender ATP.
+
+Requires credentials as described in
+https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/exposed-apis-create-app-webapp?view=o365-worldwide
+for an app with permissions to at least Read all alerts and Run
+advanced queries.
+
+Defender wants to include quite a lot of information that doesn't fit
+in IntelMQ's default harmonisation, so it abuses the "extra" namespace
+to store its information.
+
+The Defender alert ID is read from the event field
+"extra.defender_id", which is filled in by the Defender parser.
+
+The comment is read verbatim from the specified field.
+
+
 .. _intelmq.bots.outputs.elasticsearch.output:
 
 Elasticsearch Output Bot
