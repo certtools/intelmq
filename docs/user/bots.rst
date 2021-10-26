@@ -1275,6 +1275,104 @@ http://www.team-cymru.com/bogon-reference.html
 * `description:` Parses data from full bogons feed.
 
 
+.. _intelmq.bots.parsers.defender.parser:
+
+Defender
+^^^^^^^^
+
+**Information**
+
+* `name:` intelmq.bots.parsers.defender.parser
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses security alerts from Microsoft Defender ATP.
+
+**Configuration Parameters**
+
+* `queue_map`: map of strings to lists of strings, saying for each
+  output queue which categories of alerts it receives. Matching is
+  case insensitive. Multiple matches are allowed, and result in one
+  copy of the alert getting sent to each matching output queue.
+
+  Default::
+
+    {
+        "_default": [ "malware", "unwantedsoftware", "ransomware", "exploit", "credentialaccess" ]
+    }
+
+* `classification_map`: map of strings to lists of strings, saying for
+  each IntelMQ classification which categories of alerts get mapped to
+  it. Alerts not matching any entry are classified as `undetermined`.
+  Matching is case insensitive.
+
+  Default::
+
+    {
+        "infected-system": ["malware", "unwantedsoftware", "ransomware"],
+        "exploit": ["exploit"],
+        "compromised": ["credentialaccess"],
+    }
+
+* `invalid_path`: string, default `invalid`, the IntelMQ destination queue
+  handling alerts with invalid categories.
+
+**Description**
+
+Defender wants to include quite a lot of information that doesn't fit
+in IntelMQ's default harmonisation, so it abuses the "extra" namespace
+to store its information.
+
+Output structure::
+
+   "extra.defender_id": "Defender incident ID",
+   "extra.evidence": [
+      List of "evidence" structures. The format is fixed, but contains
+      the union of all fields ever used. Hence, most fields are null,
+      and which fields contain useful data depends on the type of
+      evidence, which is stored in the "entityType" field.
+
+      Structure:
+      {
+         "aadUserId": "",
+         "accountName": "",
+         "detectionStatus": "",
+         "domainName": "",
+         "entityType": "",
+         "evidenceCreationTime": "Timestamp",
+         "fileName": "",
+         "filePath": "",
+         "ipAddress": "",
+         "parentProcessCreationTime": "",
+         "parentProcessFileName": "",
+         "parentProcessFilePath": "",
+         "parentProcessId": "",
+         "processCommandLine": "",
+         "processCreationTime": "",
+         "processId": "",
+         "registryHive": "",
+         "registryKey": "",
+         "registryValue": "",
+         "registryValueType": "",
+         "sha1": "",
+         "sha256": "",
+         "url": "",
+         "userPrincipalName": "",
+         "userSid": ""
+      }
+   ]
+
+   "extra.incident.status": "Defender's incident status",
+   "extra.malware.category": "Malware category",
+   "extra.malware.severity": "Malware severity",
+   "extra.time.resolved": "Timestamp when Defender considered this incident resolved",
+   "malware.name": "Malware name, if known",
+   "source.fqdn": "Hostname of computer generating alert",
+   "time.source": "Timestamp of the first event in this Defender incident"
+   "source.account": "Account running the malware"
+   "extra.machineid": "Defender ID of the machine running the malware"
+   "extra.title": "Defender's title for this alert, somewhat suitable for use as ticket title"
+
+
 .. _intelmq.bots.parsers.github_feed.parser:
 
 Github Feed
