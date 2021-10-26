@@ -2238,6 +2238,28 @@ Requires `tenacity`, tested with version 7::
    pip3 install -r intelmq/bots/experts/defender_file/REQUIREMENTS.txt
 
 
+.. _intelmq.bots.experts.defender_to_text.expert:
+
+Defender to text
+^^^^^^^^^^^^^^^^
+
+**Information**
+
+* `name:` intelmq.bots.experts.defender_to_text.expert
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Format Microsoft Defender alerts to text.
+
+**Description**
+
+Reformats Microsoft Defender alerts to a format that looks good in
+text, suitable for e.g. sending by e-mail.
+
+The emitted event has an "output" field suitable for directly showing
+to a human.
+
+
 .. _intelmq.bots.experts.remove_affix.expert:
 
 RemoveAffix
