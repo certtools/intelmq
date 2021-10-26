@@ -168,6 +168,47 @@ The API is available at `/intelmq/push` if the HTTP interface is used (default).
 The `tornado` library is required.
 
 
+.. _intelmq.bots.collectors.defender.collector_defender:
+
+Defender
+^^^^^^^^
+
+**Information**
+
+* `name:` intelmq.bots.collectors.defender.collector_defender
+* `lookup:` Microsoft Defender ATP
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Fetches security alerts from Microsoft Defender ATP.
+
+**Configuration Parameters**
+
+* **Feed parameters** (see above)
+* `api_region`: Optional, string. Default: None. Cloud region for API
+  calls. Either None (for worldwide) or one of "us", "eu", or "uk".
+* `tenant_id`: String, your Office 365 tenant ID.
+* `client_id`: String, the client ID you created for this application.
+* `client_secret`: String, the secret you created for this application.
+* `lookback`: Integer, default ``rate_limit``, get events for the last
+  this many seconds on every run. Setting this higher than rate_limit
+  will yield duplicate events in the overlapping time slice, and
+  setting it lower will lose events between runs.
+* `rate_limit`: Integer, default 60, number of seconds to sleep
+  between runs. Must be >= 2, since the API defaults to throttling
+  clients connecting more than 100 times/minute.
+
+**Description**
+
+Fetches alerts from Microsoft Defender ATP.
+
+**Requirements**
+
+Requires credentials as described in
+https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/exposed-apis-create-app-webapp?view=o365-worldwide
+for an app with permissions to at least Read all alerts and Run
+advanced queries.
+
+
 .. _intelmq.bots.collectors.http.collector_http:
 
 Generic URL Fetcher
