@@ -2118,6 +2118,126 @@ Requires `jinja2`::
    pip3 install -r intelmq/bots/experts/defender_advanced_hunting/REQUIREMENTS.txt
 
 
+.. _intelmq.bots.experts.defender_file.expert:
+
+Defender file
+^^^^^^^^^^^^^
+
+**Information**
+
+* `name:` intelmq.bots.experts.defender_file.expert
+* `lookup:` Microsoft Defender ATP
+* `public:` yes
+* `description:` Fetches file information from Microsoft Defender ATP.
+
+
+**Configuration Parameters**
+* `api_region`: Optional, string. Default: None. Cloud region for API
+  calls. Either None (for worldwide) or one of "us", "eu", or "uk".
+* `tenant_id`: String, your Office 365 tenant ID.
+* `client_id`: String, the client ID you created for this application.
+* `client_secret`: String, the secret you created for this application.
+* `retries`: int, default 5, number of times to retry after receiving
+  a "file not found" error.
+* `min_wait`: int, default 30, minimum number of seconds to wait
+  between retry attempts.
+* `max_wait`: int, default 60, maximum number of seconds to wait
+  between retry attempts.
+
+**Description**
+
+Defender wants to include quite a lot of information that doesn't fit
+in IntelMQ's default harmonisation, so it abuses the "extra" namespace
+to store its information.
+
+There is a race condition in the Defender cloud service, where a file
+information structure may not be ready for retrieval even though an
+alert has been fired recently. To guard against this, any file not
+found errors result in retries a maximum of `retries` times, with a
+random delay of between `min_wait` and `max_wait` seconds between each
+attempt.
+
+Input structure::
+
+   "extra.evidence": [
+      List of "evidence" structures. The format is fixed, but contains
+      the union of all fields ever used. Hence, most fields are null,
+      and which fields contain useful data depends on the type of
+      evidence, which is stored in the "entityType" field.
+
+      Structure:
+      {
+         "aadUserId": "",
+         "accountName": "",
+         "detectionStatus": "",
+         "domainName": "",
+         "entityType": "",
+         "evidenceCreationTime": "Timestamp",
+         "fileName": "",
+         "filePath": "",
+         "ipAddress": "",
+         "parentProcessCreationTime": "",
+         "parentProcessFileName": "",
+         "parentProcessFilePath": "",
+         "parentProcessId": "",
+         "processCommandLine": "",
+         "processCreationTime": "",
+         "processId": "",
+         "registryHive": "",
+         "registryKey": "",
+         "registryValue": "",
+         "registryValueType": "",
+         "sha1": "",
+         "sha256": "",
+         "url": "",
+         "userPrincipalName": "",
+         "userSid": ""
+      }
+   ]
+
+Output structure::
+
+   "extra.fileinfo": [
+
+      List of "fileinfo" structures, one for each evidence object of
+      type "File". These are linked to the evidence structures through
+      the sha1 and sha256 hash values.
+
+      Structure:
+      {
+         "@odata.context": "https://api-eu.securitycenter.windows.com/api/$metadata#Files/$entity",
+         "determinationType": "",
+         "determinationValue": "Malware name, if known",
+         "fileProductName": "",
+         "filePublisher": "",
+         "fileType": "",
+         "globalFirstObserved": "Timestamp",
+         "globalLastObserved": "Timestamp",
+         "globalPrevalence": Integer,
+         "isPeFile": Boolean,
+         "isValidCertificate": "",
+         "issuer": "",
+         "md5": "Hash",
+         "sha1": "Hash",
+         "sha256": "Hash",
+         "signer": "",
+         "signerHash": "",
+         "size": Integer
+      }
+   ]
+
+**Requirements**
+
+Requires credentials as described in
+https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/exposed-apis-create-app-webapp?view=o365-worldwide
+for an app with permissions to at least Read all alerts and Run
+advanced queries.
+
+Requires `tenacity`, tested with version 7::
+
+   pip3 install -r intelmq/bots/experts/defender_file/REQUIREMENTS.txt
+
+
 .. _intelmq.bots.experts.remove_affix.expert:
 
 RemoveAffix
