@@ -2038,6 +2038,86 @@ Public documentation: https://www.team-cymru.com/IP-ASN-mapping.html#dns
 * ``: Overwrite existing fields. Default: `True` if not given (for backwards compatibility, will change in version 3.0.0)
 
 
+.. _intelmq.bots.experts.defender_advanced_hunting.expert:
+
+Defender advanced hunting
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Information**
+
+* `name:` intelmq.bots.experts.defender_advanced_hunting.expert
+* `lookup:` Microsoft Defender ATP
+* `public:` yes
+* `description:` Fetches information by running queries against the
+  Microsoft Defender ATP advanced hunting API.
+
+**Configuration Parameters**
+* `api_region`: Optional, string. Default: None. Cloud region for API
+  calls. Either None (for worldwide) or one of "us", "eu", or "uk".
+* `tenant_id`: String, your Office 365 tenant ID.
+* `client_id`: String, the client ID you created for this application.
+* `client_secret`: String, the secret you created for this application.
+* `query`: string, the query to run, in Jinja2 format with the incoming
+  event supplied as the variable named "event". E.g.::
+
+    query: DeviceEvents | where DeviceId == "{{ event["extra.machineid"] }}" and ActionType == "AntivirusDetection"
+
+* `result_fields`: map string->string, optional, default {}, query result
+  fields to IntelMQ event fields. Example:
+
+  .. code-block:: json
+
+    {
+      "InitiatingProcessAccountName": "source.account"
+    }
+
+* `not_found`: list of strings, default ``[ "warn", "send" ]``, what
+  to do if the search returns zero results. All specified actions are
+  performed. Any reasonable combination of:
+
+  * `warn`: log a warning message
+  * `send`: send the event on unmodified
+  * `drop`: drop the message
+
+    * `send` and `drop` are mutually exclusive
+
+* `multiple_result_handling`: List of strings, default ``[ "warn",
+  "use_first", "send" ]``, what to do if the search returns more than
+  one result. All specified actions are performed. Valid values are:
+
+  * `limit`: limit the search so that duplicates are impossible
+  * `warn`: log a warning message
+  * `use_first`: use the first search result
+  * `ignore`: do not modify the event
+  * `send`: send the event on
+  * `drop`: drop the message
+
+    * `limit` cannot be combined with any other value
+    * `send` and `drop` are mutually exclusive
+    * `ignore` and `use_first` are mutually exclusive
+
+* `overwrite`: Boolean or null, optional, default null, whether search
+  results overwrite values already in the message or not. If null,
+  attempting to add a field that already exists raises
+  intelmq.exceptions.KeyExists.
+
+**Description**
+
+Fetches information by running queries against the Microsoft Defender
+ATP advanced hunting API.
+
+**Requirements**
+
+Requires credentials as described in
+https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/exposed-apis-create-app-webapp?view=o365-worldwide
+for an app with permissions to at least Read all alerts and Run
+advanced queries.
+
+Requires `jinja2`::
+
+   pip3 install -r intelmq/bots/experts/defender_advanced_hunting/REQUIREMENTS.txt
+
+
 .. _intelmq.bots.experts.remove_affix.expert:
 
 RemoveAffix
