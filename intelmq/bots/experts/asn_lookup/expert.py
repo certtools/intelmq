@@ -107,8 +107,8 @@ class ASNLookupExpertBot(Bot):
         try:
             print("Searching for the latest database update...")
             session = create_request_session()
-            url = "http://archive.routeviews.org/route-views4/bgpdata/"
-            response = session.get(url)
+            base_url = "http://archive.routeviews.org/route-views4/bgpdata/"
+            response = session.get(base_url)
             pattern = re.compile(r"href=\"(\d{4}\.\d{2})/\"")
             months = pattern.findall(response.text)
             months.sort(reverse=True)
@@ -116,11 +116,17 @@ class ASNLookupExpertBot(Bot):
             if not months:
                 sys.exit("Database update failed. Couldn't find the latest database update.")
 
-            url += str(months[0]) + "/RIBS/"
-            response = session.get(url)
-            pattern = re.compile(r"href=\"(rib\.\d{8}\.\d{4}\.bz2)\"")
-            days = pattern.findall(response.text)
-            days.sort(reverse=True)
+            # routeviews website creates next month's directory on 28th of the current month
+            # therefore on 28th, 29th, 30th, 31st it's necessary to find the second highest month directory
+            for i in range(2):
+                url = base_url + str(months[i]) + "/RIBS/"
+                response = session.get(url)
+                pattern = re.compile(r"href=\"(rib\.\d{8}\.\d{4}\.bz2)\"")
+                days = pattern.findall(response.text)
+                days.sort(reverse=True)
+                print(url)
+                if days:
+                    break
 
             if not days:
                 sys.exit("Database update failed. Couldn't find the latest database update.")
