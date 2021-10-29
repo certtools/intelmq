@@ -72,6 +72,7 @@ CHANGELOG
 - Removed `intelmq.bots.outputs.postgresql`: this bot was marked as deprecated in 2019 announced to be removed in version 3 of IntelMQ (PR#2045 by Birger Schacht).
 - Added `intelmq.bots.outputs.rpz_file.output` to create RPZ files (PR#1962 by Marius Karotkis).
 - Added `intelmq.bots.outputs.bro_file.output` to create Bro intel formatted files (PR#1963 by Marius Karotkis).
+- `intelmq.bots.outputs.templated_smtp.output`: Add new function `from_json()` (which just calls `json.loads()` in the standard Python environment), meaning the Templated SMTP output bot can take strings containing JSON documents and do the formatting itself (PR#2120 by Karl-Johan Karlsson).
 
 ### Documentation
 - Feeds: Add documentation for newly supported dataplane feeds, see above (PR#2102 by Mikk Margus Möll).
