@@ -82,6 +82,8 @@ CHANGELOG
 
 ### Tests
 - Add GitHub Action to run regexploit on all Python, JSON and YAML files (PR#2059 by Sebastian Wagner).
+- `intelmq.lib.test`:
+  - Decorator `skip_ci` also detects `dpkg-buildpackage` environments by checking the environment variable `DEB_BUILD_ARCH` (PR#2123 by Sebastian Wagner).
 
 ### Tools
 

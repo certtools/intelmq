@@ -96,7 +96,8 @@ def skip_exotic():
 
 
 def skip_ci():
-    return unittest.skipIf(os.getenv('CI') == 'true', 'Test disabled on CI.')
+    return unittest.skipIf(os.getenv('CI') == 'true' or os.environ.get('DEB_BUILD_ARCH'),
+                           'Test disabled on CI.')
 
 
 def skip_build_environment():
