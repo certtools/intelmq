@@ -51,6 +51,17 @@ CHANGELOG
   - Telnet Login
   - VNC/RFB Login
 - `intelmq.bots.parsers.microsoft.parser_ctip`: New parameter `overwrite` (PR#2112 by Sebastian Wagner, fixes #2022).
+- `intelmq.bot.parsers.shodan.parser` (PR#2117 by Mikk Margus Möll):
+  - Instead of keeping track of `extra.ftp.<something>.parameters`, FTP parameters are collected together into `extra.ftp.features` as a list of said features, reducing field count.
+  - Shodan field `rsync.modules` is collected.
+  - Conversion functions can raise `NoValueException` with a string argument to signify that the conversion would not succeed, such as in the case of a single IP address being given in hostnames, which would then be passed into `source.reverse_dns and` fail to validate as a FQDN.
+  - Variable `_common_keys` is moved out of the class.
+  - `_dict_dict_to_obj_list` is introduced, for converting a string-to-dict mapping into a list of dicts with the previous key as an attribute of the dict; this can be useful for preventing issues where, when feeding the data into aggregating tools, you'd end up with many more fields than necessary, e.g `vulns.CVE-2010-0001.cvss`, `CVE-2010-0002.cvss` etc.
+  - `_get_first` to get the first item from a list, with `NoValueException` raised on empty lists.
+  - `_get_first_hostname` to handle the first valid FQDN from a list of hostnames for hostnames in the Shodan banner, if there is one, and gives `NoValueException` otherwise.
+  - `ssl.cert.serial` and `ssl.dhparams.generator`, which may return both integers and strings, are converted to strings.
+  - Changes to method `apply_mapping`, such as reducing needless loop iterations, removing a big try-except, and adding the `NoValueException` handling described above.
+  - Stops falsy values (False, 0) besides None from being filtered out.
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).
