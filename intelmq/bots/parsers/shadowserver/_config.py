@@ -2971,6 +2971,8 @@ mapping = (
     ('Outdated-DNSSEC-Key-IPv6', 'outdated_dnssec_key_v6', outdated_dnssec_key),
     ('SSL-FREAK-Vulnerable-Servers', 'scan_ssl_freak', ssl_freak_vulnerable_servers),
     ('SSL-POODLE-Vulnerable-Servers', 'scan_ssl_poodle', ssl_poodle_vulnerable_servers),
+    ('SSL-POODLE-Vulnerable-Servers IPv4', 'scan_ssl_poodle', ssl_poodle_vulnerable_servers),
+    ('SSL-POODLE-Vulnerable-Servers IPv6', 'scan6_ssl_poodle', ssl_poodle_vulnerable_servers),
     ('Sandbox-URL', 'cwsandbox_url', sandbox_url),
     ('Sinkhole-DNS', 'sinkhole_dns', sinkhole_dns),
     ('Sinkhole-Events', 'event4_sinkhole', event46_sinkhole),
