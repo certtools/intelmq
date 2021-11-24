@@ -2921,6 +2921,8 @@ mapping = (
     ('Accessible-Rsync', 'scan_rsync', accessible_rsync),
     ('Accessible-SMB', 'scan_smb', accessible_smb),
     ('Accessible-Telnet', 'scan_telnet', accessible_telnet),
+    ('Accessible-Telnet IPv4', 'scan_telnet', accessible_telnet),
+    ('Accessible-Telnet IPv6', 'scan6_telnet', accessible_telnet),
     ('Accessible-Ubiquiti-Discovery-Service', 'scan_ubiquiti', accessible_ubiquiti_discovery_service),
     ('Accessible-VNC', 'scan_vnc', accessible_vnc),
     ('Amplification-DDoS-Victim', 'ddos_amplification', amplification_ddos_victim),   # legacy (replaced by honeypot-ddos-amp)
