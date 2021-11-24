@@ -678,7 +678,7 @@ open_ssdp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # always set to 'open-ssdp' in constant_fields
+        ('extra.', 'tag'),
         ('extra.', 'header', validate_to_none),
         ('source.asn', 'asn', invalidate_zero),
         ('source.geolocation.cc', 'geo'),
@@ -941,7 +941,7 @@ ssl_freak_vulnerable_servers = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # always set to 'ssl-freak' in constant_fields
+        ('extra.', 'tag'),
         ('extra.', 'handshake', validate_to_none),
         ('source.asn', 'asn', invalidate_zero),
         ('source.geolocation.cc', 'geo'),
@@ -1024,7 +1024,7 @@ ssl_poodle_vulnerable_servers = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # always set to 'ssl-poodle' in constant_fields
+        ('extra.', 'tag'),
         ('extra.', 'handshake', validate_to_none),
         ('source.asn', 'asn', invalidate_zero),
         ('source.geolocation.cc', 'geo'),
@@ -1648,7 +1648,7 @@ accessible_telnet = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # always set to 'open-telnet' in constant_fields
+        ('extra.', 'tag'),
         ('source.asn', 'asn', invalidate_zero),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1675,7 +1675,7 @@ accessible_cwmp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # always set to 'open-cwmp' in constant_fields
+        ('extra.', 'tag'),
         ('source.asn', 'asn', invalidate_zero),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -2151,7 +2151,7 @@ accessible_ftp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # always set to 'accessible-ftp' in constant_fields
+        ('extra.', 'tag'),
         ('source.asn', 'asn', invalidate_zero),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),

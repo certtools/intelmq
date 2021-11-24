@@ -62,7 +62,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         Test a report which does not have an optional field.
         """
         self.input_message = REPORT2
-        self.run_bot(allowed_warning_count=54)
+        self.run_bot(allowed_warning_count=55)
         self.assertLogMatches(pattern="Detected report's file name: 'scan_ftp'.",
                               levelname="DEBUG")
         self.assertLogMatches(pattern="Optional key 'protocol' not found in feed 'Accessible-FTP'. Possible change in data format or misconfiguration.",
