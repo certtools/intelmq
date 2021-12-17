@@ -51,6 +51,11 @@ It follows the following basic meta-guidelines:
 -  Code readability: test with unexperienced programmers
 -  Communicate clearly
 
+============
+Getting Help
+============
+
+IntelMQ's documentation is available at `intelmq.readthedocs.io <https://intelmq.readthedocs.io/>`_.
 
 For support questions please reach out on the `the intelmq-users mailing list <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users>`_
 
