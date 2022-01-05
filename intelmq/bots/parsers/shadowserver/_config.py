@@ -2941,7 +2941,7 @@ accessible_amqp = {
     }
 }
 
-# https://www.shadowserver.org/what-we-do/network-reporting/accessible-amqp-report/
+# https://www.shadowserver.org/what-we-do/network-reporting/device-identification-report/
 device_id = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
