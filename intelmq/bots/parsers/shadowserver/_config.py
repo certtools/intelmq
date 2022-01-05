@@ -2935,8 +2935,8 @@ accessible_amqp = {
         ('extra.', 'locales', validate_to_none),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'other',
-        'classification.type': 'other',
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
         'classification.identifier': 'accessible-amqp',
     }
 }
