@@ -2965,7 +2965,7 @@ device_id = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'other',
-        'classification.type': 'other',
+        'classification.type': 'undetermined',
         'classification.identifier': 'device-id',
     }
 }
