@@ -1015,8 +1015,8 @@ ssl_freak_vulnerable_servers = {
     },
 }
 
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Ssl-Scan
-ssl_poodle_vulnerable_servers = {
+# https://www.shadowserver.org/what-we-do/network-reporting/ssl-poodle-report/
+ssl_poodle46_vulnerable_servers = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -2903,10 +2903,78 @@ honeypot_http_scan = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-amqp-report/
+accessible_amqp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'tag'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'channel', convert_int),
+        ('extra.', 'message_length', convert_int),
+        ('extra.', 'class', convert_int),
+        ('extra.', 'method', convert_int),
+        ('extra.', 'version_major', validate_to_none),
+        ('extra.', 'version_minor', validate_to_none),
+        ('extra.', 'capabilities', validate_to_none),
+        ('extra.', 'cluster_name', validate_to_none),
+        ('extra.', 'platform', validate_to_none),
+        ('extra.', 'product', validate_to_none),
+        ('extra.', 'product_version', validate_to_none),
+        ('extra.', 'mechanisms', validate_to_none),
+        ('extra.', 'locales', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'accessible-amqp',
+    }
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/device-identification-report/
+device_id = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'tag'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'other',
+        'classification.type': 'undetermined',
+        'classification.identifier': 'device-id',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
     ('Accessible-AFP', 'scan_afp', accessible_afp),
+    ('Accessible-AMQP', 'scan_amqp', accessible_amqp),
     ('Accessible-ARD', 'scan_ard', accessible_ard),
     ('Accessible-CoAP', 'scan_coap', accessible_coap),
     ('Accessible-CWMP', 'scan_cwmp', accessible_cwmp),
@@ -2930,6 +2998,8 @@ mapping = (
     ('Compromised-Website', 'compromised_website', compromised_website),
     ('DNS-Open-Resolvers', 'scan_dns', dns_open_resolvers),
     ('Darknet', 'darknet', darknet),  # legacy (replaced by event4_honeypot_darknet)
+    ('Device-Identification IPv4', 'device_id', device_id),
+    ('Device-Identification IPv6', 'device_id6', device_id),
     ('Drone', 'botnet_drone', drone),  # legacy (replaced by event4_sinkhole, event4_honeypot_darknet and event46_sinkhole_http)
     ('Drone-Brute-Force', 'drone_brute_force', drone_brute_force),  # legacy (replaced by honeypot_brute_force)
     ('HTTP-Scanners', 'hp_http_scan', http_scanners),
@@ -2970,7 +3040,8 @@ mapping = (
     ('Outdated-DNSSEC-Key', 'outdated_dnssec_key', outdated_dnssec_key),
     ('Outdated-DNSSEC-Key-IPv6', 'outdated_dnssec_key_v6', outdated_dnssec_key),
     ('SSL-FREAK-Vulnerable-Servers', 'scan_ssl_freak', ssl_freak_vulnerable_servers),
-    ('SSL-POODLE-Vulnerable-Servers', 'scan_ssl_poodle', ssl_poodle_vulnerable_servers),
+    ('SSL-POODLE-Vulnerable-Servers IPv4', 'scan_ssl_poodle', ssl_poodle46_vulnerable_servers),
+    ('SSL-POODLE-Vulnerable-Servers IPv6', 'scan6_ssl_poodle', ssl_poodle46_vulnerable_servers),
     ('Sandbox-URL', 'cwsandbox_url', sandbox_url),
     ('Sinkhole-DNS', 'sinkhole_dns', sinkhole_dns),
     ('Sinkhole-Events', 'event4_sinkhole', event46_sinkhole),
