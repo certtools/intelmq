@@ -62,6 +62,9 @@ CHANGELOG
   - `ssl.cert.serial` and `ssl.dhparams.generator`, which may return both integers and strings, are converted to strings.
   - Changes to method `apply_mapping`, such as reducing needless loop iterations, removing a big try-except, and adding the `NoValueException` handling described above.
   - Stops falsy values (False, 0) besides None from being filtered out.
+- `intelmq.bots.parsers.shadowserver._config`:
+  - Added support for `Accessible AMQP`, `Device Identification Report` (IPv4 and IPv6) (PR#2134 by Mateo Durante).
+  - Added file name mapping for `SSL-POODLE-Vulnerable-Servers IPv6` (file name `scan6_ssl_poodle`) (PR#2134 by Mateo Durante).
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).

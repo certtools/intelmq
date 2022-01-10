@@ -1587,6 +1587,7 @@ These are the supported feed name and their corresponding file name for automati
   =======================================   =========================
    Accessible-ADB                            `scan_adb`
    Accessible-AFP                            `scan_afp`
+   Accessible-AMQP                           `scan_amqp`
    Accessible-ARD                            `scan_ard`
    Accessible-Cisco-Smart-Install            `cisco_smart_install`
    Accessible-CoAP                           `scan_coap`
@@ -1605,6 +1606,7 @@ These are the supported feed name and their corresponding file name for automati
    Blacklisted-IP (deprecated)               `blacklist`
    Blocklist                                 `blocklist`
    Compromised-Website                       `compromised_website`
+   Device-Identification IPv4 / IPv6         `device_id`/`device_id6`
    DNS-Open-Resolvers                        `scan_dns`
    Honeypot-Amplification-DDoS-Events        `event4_honeypot_ddos_amp`
    Honeypot-Brute-Force-Events               `event4_honeypot_brute_force`
@@ -1654,7 +1656,7 @@ These are the supported feed name and their corresponding file name for automati
    Sinkhole-Events-HTTP-Referer IPv6         `event6_sinkhole_http_referer`
    Spam-URL                                  `spam_url`
    SSL-FREAK-Vulnerable-Servers              `scan_ssl_freak`
-   SSL-POODLE-Vulnerable-Servers             `scan_ssl_poodle`
+   SSL-POODLE-Vulnerable-Servers             `scan_ssl_poodle`/`scan6_ssl_poodle`
    Vulnerable-Exchange-Server `*`            `scan_exchange`
    Vulnerable-ISAKMP                         `scan_isakmp`
    Vulnerable-HTTP                           `scan_http`
