@@ -64,7 +64,7 @@ class TCPOutputBot(OutputBot):
                     time.sleep(1)
                 else:
                     break
-        except socket.error as e:
+        except OSError as e:
             self.logger.exception("Reconnecting, %s", e)
             self.con.close()
             self.connect()

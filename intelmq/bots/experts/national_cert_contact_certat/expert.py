@@ -66,7 +66,7 @@ class NationalCERTContactCertATExpertBot(ExpertBot):
                     continue
                 response = req.text.strip().split(';')
 
-                ccfield = '{}.geolocation.cc'.format(section)
+                ccfield = f'{section}.geolocation.cc'
                 if self.overwrite_cc or ccfield not in event:
                     event.add(ccfield, response[1])
 

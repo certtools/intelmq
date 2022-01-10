@@ -39,7 +39,7 @@ except ImportError:
     psutil = None
 
 
-class Parameters(object):
+class Parameters:
     pass
 
 
@@ -206,7 +206,7 @@ Get some debugging output on the settings and the environment (to be extended):
         try:
             self._runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
-            self.abort('Error loading %r: %s' % (RUNTIME_CONF_FILE, exc))
+            self.abort(f'Error loading {RUNTIME_CONF_FILE!r}: {exc}')
 
         self._processmanagertype = getattr(self._parameters, 'process_manager', 'intelmq')
         if self._processmanagertype not in process_managers():
@@ -828,13 +828,13 @@ Get some debugging output on the settings and the environment (to be extended):
         try:
             with open(HARMONIZATION_CONF_FILE) as file_handle:
                 files[HARMONIZATION_CONF_FILE] = json.load(file_handle)
-        except (IOError, ValueError) as exc:  # pragma: no cover
+        except (OSError, ValueError) as exc:  # pragma: no cover
             check_logger.error('Could not load %r: %s.', HARMONIZATION_CONF_FILE, exc)
             retval = 1
         try:
             with open(RUNTIME_CONF_FILE) as file_handle:
                 files[RUNTIME_CONF_FILE] = yaml.load(file_handle)
-        except (IOError, ValueError) as exc:
+        except (OSError, ValueError) as exc:
             check_logger.error('Could not load %r: %s.', RUNTIME_CONF_FILE, exc)
             retval = 1
         if retval:
@@ -933,7 +933,7 @@ Get some debugging output on the settings and the environment (to be extended):
                 bot_check = bot.check(bot_parameters)
                 if bot_check:
                     for log_line in bot_check:
-                        getattr(check_logger, log_line[0])("Bot %r: %s" % (bot_id, log_line[1]))
+                        getattr(check_logger, log_line[0])(f"Bot {bot_id!r}: {log_line[1]}")
         for group in utils.list_all_bots().values():
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
@@ -1026,7 +1026,7 @@ Get some debugging output on the settings and the environment (to be extended):
                 utils.write_configuration(state_file, state, new=True, useyaml=False)
             except Exception as exc:
                 self._logger.error('Error writing state file %r: %s.', state_file, exc)
-                return 1, 'Error writing state file %r: %s.' % (state_file, exc)
+                return 1, f'Error writing state file {state_file!r}: {exc}.'
             self._logger.info('Successfully wrote initial state file.')
 
         runtime = utils.load_configuration(RUNTIME_CONF_FILE)
@@ -1241,7 +1241,7 @@ Get some debugging output on the settings and the environment (to be extended):
                          'CONFIG_DIR', 'ROOT_DIR'):
                 output['paths'][path] = variables[path]
                 if self._returntype is ReturnType.TEXT:
-                    print('%s: %r' % (path, variables[path]))
+                    print(f'{path}: {variables[path]!r}')
         if sections is None or 'environment_variables' in sections:
             output['environment_variables'] = {}
             if self._returntype is ReturnType.TEXT:
@@ -1251,7 +1251,7 @@ Get some debugging output on the settings and the environment (to be extended):
                              'PATH'):
                 output['environment_variables'][variable] = os.getenv(variable)
                 if self._returntype is ReturnType.TEXT:
-                    print('%s: %r' % (variable, os.getenv(variable)))
+                    print(f'{variable}: {os.getenv(variable)!r}')
         return 0, output
 
     def log_bot_message(self, status, *args):

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 © 2019-2021 nic.at GmbH <intelmq-team@cert.at>
 

@@ -54,7 +54,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
         if isinstance(self.types, str):
             self.types = self.types.split(',')
 
-        self.preamble = '{{ "apikey": "{}" '.format(self.api_key)
+        self.preamble = f'{{ "apikey": "{self.api_key}" '
 
     def _headers(self, data):
         return {'HMAC2': hmac.new(self.secret.encode(), data.encode('utf-8'), digestmod=hashlib.sha256).hexdigest()}
@@ -76,8 +76,8 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
         dayafter = date + timedelta(1)
 
         data = self.preamble
-        data += ',"report": ["{}"] '.format(self.country)
-        data += ',"date": "{}:{}" '.format(daybefore.isoformat(), dayafter.isoformat())
+        data += f',"report": ["{self.country}"] '
+        data += f',"date": "{daybefore.isoformat()}:{dayafter.isoformat()}" '
         data += '}'
         self.logger.debug('Downloading report list with data: %s.', data)
 
@@ -101,7 +101,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
         Download one report from the shadowserver API via the reports/download endpoint
         """
         data = self.preamble
-        data += ',"id": "{}"}}'.format(reportid)
+        data += f',"id": "{reportid}"}}'
         self.logger.debug('Downloading report with data: %s.', data)
 
         response = self.http_session().post(APIROOT + 'reports/download', data=data, headers=self._headers(data))

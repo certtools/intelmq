@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Templated SMTP output bot
 
 SPDX-FileCopyrightText: 2021 Linköping University <https://liu.se/>

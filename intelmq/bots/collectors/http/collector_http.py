@@ -40,7 +40,7 @@ except ImportError:
     gnupg = None
 
 
-class Time(object):
+class Time:
     def __init__(self, delta=None):
         """ Delta is a datetime.timedelta JSON string, ex: '{"days"=-1}'. """
         self.time = datetime.now()
@@ -105,7 +105,7 @@ class HTTPCollectorBot(CollectorBot, HttpMixin):
                 return
 
             if result.trust_level < 1:
-                self.logger.debug("Trust level not defined for key {}.".format(result.key_id))
+                self.logger.debug(f"Trust level not defined for key {result.key_id}.")
             elif result.trust_level < 3:
                 self.logger.debug("Low trust level for key {0.key_id}: {0.trust_level}.".format(result))
 
@@ -165,11 +165,11 @@ class HTTPCollectorBot(CollectorBot, HttpMixin):
             http_url = self.signature_url
 
         # download signature file
-        self.logger.info("Downloading PGP signature from {}.".format(http_url))
+        self.logger.info(f"Downloading PGP signature from {http_url}.")
 
         resp = self.http_get(http_url)
         if resp.status_code // 100 != 2:
-            raise ValueError("Could not download PGP signature for report: {}.".format(resp.status_code))
+            raise ValueError(f"Could not download PGP signature for report: {resp.status_code}.")
 
         self.logger.info("PGP signature downloaded.")
 

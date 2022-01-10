@@ -31,6 +31,6 @@ with open('/var/lib/check_mk_agent/spool/70_intelmq-statistics.txt', 'w') as han
             value = '0'
         else:
             value = value.decode()
-        stats.append("%s=%s" % (key.decode(), value))
+        stats.append(f"{key.decode()}={value}")
     handle.write("|".join(stats))
     handle.write('\n')

@@ -36,7 +36,7 @@ class RecordedFutureIPRiskExpertBot(ExpertBot):
                 for row in rfreader:
                     self._database[row['Name']] = int(row['Risk'])
 
-        except IOError:
+        except OSError:
             raise ValueError("Recorded future risklist not defined or failed on open.")
 
     def process(self):
@@ -82,11 +82,11 @@ class RecordedFutureIPRiskExpertBot(ExpertBot):
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
         except KeyError as e:
-            sys.exit("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
+            sys.exit(f"Database update failed. Your configuration of {bot} is missing key {e}.")
 
         if not bots:
             if verbose:
-                print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
+                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf.")
             sys.exit(0)
 
         try:
@@ -104,14 +104,14 @@ class RecordedFutureIPRiskExpertBot(ExpertBot):
                                    })
 
         except requests.exceptions.RequestException as e:
-            sys.exit("Database update failed. Connection Error: {0}".format(e))
+            sys.exit(f"Database update failed. Connection Error: {e}")
 
         if response.status_code == 401:
             sys.exit("Database update failed. Your API token is invalid.")
 
         if response.status_code != 200:
-            sys.exit("Database update failed. Server responded: {0}.\n"
-                     "URL: {1}".format(response.status_code, response.url))
+            sys.exit("Database update failed. Server responded: {}.\n"
+                     "URL: {}".format(response.status_code, response.url))
 
         database_data = None
 

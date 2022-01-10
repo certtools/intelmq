@@ -537,8 +537,8 @@ class TestUpgradeLib(unittest.TestCase):
         self.mapping_list = []
         self.mapping_list_name = []
         for values in upgrades.UPGRADES.values():
-            self.mapping_list.extend((x for x in values))
-            self.mapping_list_name.extend((x.__name__ for x in values))
+            self.mapping_list.extend(x for x in values)
+            self.mapping_list_name.extend(x.__name__ for x in values)
 
     def test_all_functions_used(self):
         self.assertEqual(len(self.mapping_list_name),
