@@ -1,12 +1,19 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Testing harmonization classes
 """
+import datetime
 import ipaddress
+import time
 import unittest
 
 import intelmq.lib.harmonization as harmonization
 import intelmq.lib.test as test
+import pytz
 
 
 class TestHarmonization(unittest.TestCase):
@@ -17,7 +24,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.Boolean.is_valid(False))
 
     def test_boolean_valid_other(self):
-        """ Test Boolean.is_valid with otehr invalid values. """
+        """ Test Boolean.is_valid with other invalid values. """
         self.assertFalse(harmonization.Boolean.is_valid(None,))
         self.assertFalse(harmonization.Boolean.is_valid('True'))
         self.assertFalse(harmonization.Boolean.is_valid(0))
@@ -70,7 +77,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.Integer.is_valid('b13', sanitize=True))
 
     def test_float_valid_flaot(self):
-        """ Test Float.is_valid with flaot and integer values. """
+        """ Test Float.is_valid with float and integer values. """
         self.assertTrue(harmonization.Float.is_valid(-4532, sanitize=False))
         self.assertTrue(harmonization.Float.is_valid(1337, sanitize=False))
         self.assertTrue(harmonization.Float.is_valid(1337.2354,
@@ -113,7 +120,7 @@ class TestHarmonization(unittest.TestCase):
                                                          sanitize=False))
 
     def test_ipaddress_valid_invalid(self):
-        """ Test IPAddress.is_valid with invalid arguments. """
+        """ Test IPAddress.is_valid with invEqual arguments. """
         self.assertFalse(harmonization.IPAddress.is_valid('192.0.2.1/24',
                                                           sanitize=False))
         self.assertFalse(harmonization.IPAddress.is_valid('2001:DB8::/32',
@@ -125,7 +132,8 @@ class TestHarmonization(unittest.TestCase):
 
     def test_ipaddress_sanitize(self):
         """ Test IPAddress.is_valid and sanitize with valid arguments. """
-        self.assertTrue(harmonization.IPAddress.sanitize(' 192.0.2.1\r\n'))
+        self.assertEqual(harmonization.IPAddress.sanitize(' 192.0.2.1\r\n'),
+                         '192.0.2.1')
         self.assertTrue(harmonization.IPAddress.is_valid(' 192.0.2.1\r\n',
                                                          sanitize=True))
         self.assertTrue(harmonization.IPAddress.is_valid(b'2001:DB8::1',
@@ -134,9 +142,13 @@ class TestHarmonization(unittest.TestCase):
                                                          sanitize=True))
         self.assertTrue(harmonization.IPAddress.is_valid('fe80::1c41:b16d:ff5e:689d%bnep0',
                                                           sanitize=True))
+        self.assertEqual(harmonization.IPAddress.sanitize('2130706433'),
+                         '127.0.0.1')
+        self.assertEqual(harmonization.IPAddress.sanitize(2130706433),
+                         '127.0.0.1')
 
     def test_ipaddress_sanitize_invalid(self):
-        """ Test IPAddress.is_valid ans sanitize with invalid arguments. """
+        """ Test IPAddress.is_valid and sanitize with invalid arguments. """
         self.assertFalse(harmonization.IPAddress.is_valid(' 192.0.2.0/24\r\n',
                                                           sanitize=True))
         self.assertFalse(harmonization.IPAddress.is_valid(b'2001:DB8::1/32',
@@ -189,6 +201,8 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.DateTime.is_valid(
             '2015-08-31T36:16:10+00:00'
         ))
+        # This is a telephone number. dateutil.parser.parse will throw OverflowError here
+        self.assertFalse(harmonization.DateTime.is_valid('0018005550199'))
 
     def test_datetime_from_epoch_millis(self):
         """ Test DateTime.from_epoch_millis method. """
@@ -235,6 +249,7 @@ class TestHarmonization(unittest.TestCase):
         with self.assertRaises(TypeError):
             harmonization.DateTime.from_timestamp('1441008970')
 
+    @unittest.skipIf(time.timezone != 0, 'Test only works with UTC')
     def test_datetime_convert(self):
         self.assertEqual('2019-07-01T15:15:15+00:00',
                          harmonization.DateTime.convert('15 15 15 07 01 2019',
@@ -245,6 +260,24 @@ class TestHarmonization(unittest.TestCase):
         self.assertEqual('2011-02-01T02:43:11.572760+00:00',
                          harmonization.DateTime.convert(129410017915727600,
                                                         'windows_nt'))
+
+    def test_datetime_parse_utc_isoformat(self):
+        """ Test DateTime.parse_utc_isoformat """
+        self.assertEqual('2020-12-31T12:00:00+00:00',
+                         harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00+00:00'))
+        self.assertEqual('2020-12-31T12:00:00.001+00:00',
+                         harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00.001+00:00'))
+        self.assertEqual(datetime.datetime(year=2020, month=12, day=31, hour=12, tzinfo=pytz.utc),
+                         harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00+00:00',
+                                                                    return_datetime=True))
+
+    def test_datetime_convert_fuzzy(self):
+        """ Test DateTime.convert_fuzzy """
+        self.assertEqual('2020-12-31T12:00:00+00:00',
+                         harmonization.DateTime.convert_fuzzy('2020-12-31T12:00:00+00:00'))
+        self.assertEqual('2020-12-31T12:00:00+00:00',
+                         harmonization.DateTime.convert_fuzzy('31st December 2020 12:00'))
+
 
     def test_fqdn_valid(self):
         """ Test FQDN.is_valid with valid arguments. """
@@ -461,6 +494,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.TLP.is_valid('tlp amber ', sanitize=True))
         self.assertEqual(harmonization.TLP.sanitize('tlp:amber'), 'AMBER')
         self.assertEqual(harmonization.TLP.sanitize('tlp amber'), 'AMBER')
+        self.assertEqual(harmonization.TLP.sanitize('YELLOW'), 'AMBER')
 
     def test_tlp_sanitize_invalid(self):
         """ Test TLP.is_valid with invalid arguments. """
@@ -480,11 +514,35 @@ class TestHarmonization(unittest.TestCase):
                                                    sanitize=True))
         self.assertTrue(harmonization.ClassificationType.is_valid('infected system ',
                                                    sanitize=True))
+        self.assertEqual(harmonization.ClassificationType.sanitize('dga domain'),
+                         'dga-domain')
+        self.assertEqual(harmonization.ClassificationType.sanitize('unauthorized-command'),
+                         'system-compromise')
+        self.assertEqual(harmonization.ClassificationType.sanitize('unauthorized-login'),
+                         'system-compromise')
+        self.assertEqual(harmonization.ClassificationType.sanitize('compromised'),
+                         'system-compromise')
+        self.assertEqual(harmonization.ClassificationType.sanitize('defacement'),
+                         'unauthorised-information-modification')
+        self.assertEqual(harmonization.ClassificationType.sanitize('backdoor'),
+                         'system-compromise')
 
     def test_classification_type_sanitize_invalid(self):
         """ Test ClassificationType.is_valid with invalid arguments. """
         self.assertFalse(harmonization.ClassificationType.is_valid('botnet-drone'))
         self.assertFalse(harmonization.ClassificationType.is_valid('botnet drone'))
+
+    def test_classification_taxonomy_valid(self):
+        """ Test ClassificationTaxonomy.is_valid with valid arguments. """
+        self.assertTrue(harmonization.ClassificationTaxonomy.is_valid('abusive-content'))
+
+    def test_classification_taxonomy_invalid(self):
+        """ Test ClassificationTaxonomy.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.ClassificationTaxonomy.is_valid('abusive content'))
+
+    def test_classification_taxonomy_sanitize(self):
+        """ Test ClassificationTaxonomy.sanitize with valid arguments. """
+        self.assertTrue(harmonization.ClassificationTaxonomy.sanitize('abusive content'))
 
 
 def generate_nonetest_function(typeclassname):

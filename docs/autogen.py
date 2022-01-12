@@ -1,33 +1,37 @@
-# -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: 2020 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 # This script generates the files
 # `guides/Harmonization-fields.md`
 # and `guides/Feeds.md`
 
+import codecs
 import json
 import os.path
 import textwrap
 
-import yaml
+from ruamel.yaml import YAML
 
 import intelmq.lib.harmonization
 
 
-HEADER = """
-Harmonization field names
-=========================
+yaml = YAML(typ="safe", pure=True)
 
-|Section|Name|Type|Description|
-|:------|:---|:---|:----------|
+
+HEADER = """#########################
+Harmonization field names
+#########################
+
+=========================== =================================== ============================= ===========
+Section                     Name                                Type                          Description
+=========================== =================================== ============================= ===========
 """
 HEADER_1 = """
+=========================== =================================== ============================= ===========
 
 Harmonization types
 -------------------
-
-"""
-TYPE_SECTION = """### {}
-{}
 
 """
 BASEDIR = os.path.join(os.path.dirname(__file__), '../')
@@ -36,14 +40,14 @@ BASEDIR = os.path.join(os.path.dirname(__file__), '../')
 def harm_docs():
     output = HEADER
 
-    with open(os.path.join(BASEDIR, 'intelmq/etc/harmonization.conf')) as fhandle:
+    with codecs.open(os.path.join(BASEDIR, 'intelmq/etc/harmonization.conf'), encoding='utf-8') as fhandle:
         HARM = json.load(fhandle)['event']
 
     for key, value in sorted(HARM.items()):
         section = ' '.join([sec.title() for sec in key.split('.')[:-1]])
-        output += '|{}|{}|[{}](#{})|{}|\n'.format(' ' if not section else section,  # needed for GitHub
-                                                  key, value['type'],
-                                                  value['type'].lower(),
+        output += '{:27} {:35} {:29} {}\n'.format('|' if not section else section,  # needed for GitHub
+                                                  key,
+                                                  ':ref:`'+value['type'].lower()+'`',
                                                   value['description'])
 
     output += HEADER_1
@@ -59,7 +63,7 @@ def harm_docs():
                     doc = ''
                 else:
                     doc = textwrap.dedent(doc)
-                output += TYPE_SECTION.format(value, doc)
+                output += ".. _{}:\n\n{}\n{}\n{}\n\n".format(value.lower(),value,'-'*len(value),doc)
         except TypeError:
             pass
 
@@ -71,42 +75,31 @@ def info(key, value=""):
 
 
 def feeds_docs():
-    with open(os.path.join(BASEDIR, 'intelmq/etc/feeds.yaml')) as fhandle:
-        config = yaml.safe_load(fhandle.read())
+    with codecs.open(os.path.join(BASEDIR, 'intelmq/etc/feeds.yaml'), encoding='utf-8') as fhandle:
+        config = yaml.load(fhandle.read())
 
-    toc = ""
-    for provider in sorted(config['providers'].keys()):
-        provider_link = provider.replace('.', '')
-        provider_link = provider_link.replace(' ', '-')
-        toc += "- [%s](#%s)\n" % (provider, provider_link.lower())
-
-    output = """# Available Feeds
+    output = """Feeds
+======
 
 The available feeds are grouped by the provider of the feeds.
 For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.
-To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
-`intelmq/bin/intelmq_gen_feeds_docs.py` to generate the new content of this file.
+To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild the documentation.
 
-<!-- TOC depthFrom:2 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
+.. contents ::
 
-%s
-
-<!-- /TOC -->\n
-
-""" % toc
+"""
 
     for provider, feeds in sorted(config['providers'].items(), key=lambda x: x[0]):
 
-        output += "## %s\n\n" % provider
+        output += f"{provider}\n"
+        output += "-"*len(provider) + "\n"
 
         for feed, feed_info in sorted(feeds.items(), key=lambda x: x[0]):
 
-            output += "### %s\n\n" % feed
+            output += f"{feed}\n"
+            output += "^"*len(feed) + "\n\n"
 
-            if feed_info.get('public'):
-                output += info("public", "yes" if feed_info['public'] else "no")
-            else:
-                output += info("public", "unknown")
+            output += info("public", "yes") if feed_info.get('public') else info("public", "no")
 
             output += info("revision", feed_info['revision'])
 
@@ -122,7 +115,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 
             for bot, bot_info in sorted(feed_info['bots'].items(), key=lambda x: x[0]):
 
-                output += "#### %s\n\n" % bot.title()
+                output += "**%s**\n\n" % bot.title()
 
                 output += info("Module", bot_info['module'])
                 output += info("Configuration Parameters")
@@ -139,12 +132,19 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
                         # format non-empty lists with double-quotes
                         # single quotes are not conform JSON and not correctly detected/transformed by the manager
                         if isinstance(value, (list, tuple)) and value:
-                            value = '["%s"]' % '", "'.join(value)
+                            value = json.dumps(value)
 
-                        output += "*  * `%s`: `%s`\n" % (key, value)
+                        output += "   * `%s`: `%s`\n" % (key, value)
 
                 output += '\n'
 
             output += '\n'
 
     return output
+
+
+if __name__ == '__main__':  # pragma: no cover
+    with codecs.open('dev/harmonization-fields.rst', 'w', encoding='utf-8') as handle:
+        handle.write(harm_docs())
+    with codecs.open('user/feeds.rst', 'w', encoding='utf-8') as handle:
+        handle.write(feeds_docs())

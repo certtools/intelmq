@@ -1,22 +1,32 @@
+# SPDX-FileCopyrightText: 2016 pedromreis
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import redis
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 
 
-class RedisOutputBot(Bot):
+class RedisOutputBot(OutputBot):
+    """Send events to a Redis database"""
+    hierarchical_output = False
+    redis_db: int = 2
+    redis_password: str = None
+    redis_queue: str = None
+    redis_server_ip = "127.0.0.1"
+    redis_server_port = 6379
+    redis_timeout = 5000
+    with_type = True
 
     def init(self):
-        self.host = self.parameters.redis_server_ip
-        self.port = int(self.parameters.redis_server_port)
-        self.db = int(self.parameters.redis_db)
-        self.queue = self.parameters.redis_queue
-        self.password = self.parameters.redis_password
-        self.timeout = int(self.parameters.redis_timeout)
-        self.hierarchical_output = getattr(self.parameters,
-                                           "hierarchical_output", False)
-        self.with_type = getattr(self.parameters, "with_type", True)  # backwards compat
+        self.host = self.redis_server_ip
+        self.port = int(self.redis_server_port)
+        self.db = int(self.redis_db)
+        self.queue = self.redis_queue
+        self.password = self.redis_password
+        self.timeout = int(self.redis_timeout)
 
         redis_version = tuple(int(x) for x in redis.__version__.split('.'))
         if redis_version >= (3, 0, 0):

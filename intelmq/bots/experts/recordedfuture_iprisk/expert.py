@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 olekristoffer
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 See README for database download.
@@ -10,29 +14,30 @@ import tarfile
 import pathlib
 import requests
 
-from intelmq.lib.bot import Bot
-from intelmq import RUNTIME_CONF_FILE
-from intelmq.lib.utils import load_configuration, create_request_session
+from intelmq.lib.bot import ExpertBot
+from intelmq.lib.utils import get_bots_settings, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
 
 
-class RecordedFutureIPRiskExpertBot(Bot):
+class RecordedFutureIPRiskExpertBot(ExpertBot):
+    """Adds the Risk Score from RecordedFuture IPRisk associated with source.ip or destination.ip with a local database"""
+    api_token: str = "<insert Recorded Future IPRisk API token>"
+    database: str = "/opt/intelmq/var/lib/bots/recordedfuture_iprisk/rfiprisk.dat"  # TODO: should be pathlib.Path
+    overwrite: bool = False
 
-    database = dict()
+    _database = dict()
 
     def init(self):
         self.logger.info("Loading recorded future risk list.")
 
         try:
-            with open(self.parameters.database) as fp:
+            with open(self.database) as fp:
                 rfreader = csv.DictReader(fp)
                 for row in rfreader:
-                    self.database[row['Name']] = int(row['Risk'])
+                    self._database[row['Name']] = int(row['Risk'])
 
         except IOError:
             raise ValueError("Recorded future risklist not defined or failed on open.")
-
-        self.overwrite = getattr(self.parameters, 'overwrite', False)
 
     def process(self):
         event = self.receive_message()
@@ -40,9 +45,9 @@ class RecordedFutureIPRiskExpertBot(Bot):
         for key in ["source", "destination"]:
             if key + '.ip' in event:
                 if "extra.rf_iprisk." + key not in event:
-                    event.add("extra.rf_iprisk." + key, self.database.get(event.get(key + '.ip'), 0))
+                    event.add("extra.rf_iprisk." + key, self._database.get(event.get(key + '.ip'), 0))
                 elif "extra.rf_iprisk." + key in event and self.overwrite:
-                    event.change("extra.rf_iprisk." + key, self.database.get(event.get(key + '.ip'), 0))
+                    event.change("extra.rf_iprisk." + key, self._database.get(event.get(key + '.ip'), 0))
 
         self.send_message(event)
         self.acknowledge_message()
@@ -53,7 +58,7 @@ class RecordedFutureIPRiskExpertBot(Bot):
             parsed_args = cls._create_argparser().parse_args()
 
         if parsed_args.update_database:
-            cls.update_database()
+            cls.update_database(verbose=parsed_args.verbose)
 
         else:
             super().run(parsed_args=parsed_args)
@@ -62,13 +67,14 @@ class RecordedFutureIPRiskExpertBot(Bot):
     def _create_argparser(cls):
         argparser = super()._create_argparser()
         argparser.add_argument("--update-database", action='store_true', help='downloads latest database data')
+        argparser.add_argument("--verbose", action='store_true', help='be verbose')
         return argparser
 
     @classmethod
-    def update_database(cls):
+    def update_database(cls, verbose=False):
         bots = {}
         api_token = None
-        runtime_conf = load_configuration(RUNTIME_CONF_FILE)
+        runtime_conf = get_bots_settings()
         try:
             for bot in runtime_conf:
                 if runtime_conf[bot]["module"] == __name__:
@@ -79,11 +85,13 @@ class RecordedFutureIPRiskExpertBot(Bot):
             sys.exit("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
 
         if not bots:
-            print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
+            if verbose:
+                print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
             sys.exit(0)
 
         try:
-            print("Downloading the latest database update...")
+            if verbose:
+                print("Downloading the latest database update...")
             session = create_request_session()
             response = session.get("https://api.recordedfuture.com/v2/ip/risklist",
                                    params={
@@ -122,7 +130,8 @@ class RecordedFutureIPRiskExpertBot(Bot):
             with open(database_path, "w") as database:
                 database.write(database_data)
 
-        print("Database updated. Reloading affected bots.")
+        if verbose:
+            print("Database updated. Reloading affected bots.")
 
         ctl = IntelMQController()
         for bot in bots.keys():

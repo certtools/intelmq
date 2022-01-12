@@ -1,0 +1,287 @@
+[
+    {
+        "official_name": "Austrian Energy CERT",
+        "short_name": "AEC",
+        "country": {
+            "code": "AT",
+            "name": "Austria"
+        },
+        "established": "2016-11-01",
+        "host_organisation": "nic.at GmbH",
+        "classification": {
+            "code": "c",
+            "name": "Certified",
+            "since": "2020-06-30"
+        },
+        "postal_address": "nic.at GmbH\nAustrian Energy CERT\nKarlsplatz 1/2/9\n1010 Vienna\nAustria",
+        "constituency": {
+            "types": [
+                "CIIP"
+            ],
+            "asns": [],
+            "domains": [],
+            "ipranges": [],
+            "countries": [
+                {
+                    "code": "AT",
+                    "name": "Austria"
+                }
+            ]
+        },
+        "business_hours": "08:00 to 18:00 Monday to Friday (excluding public holidays)",
+        "business_hours_timezone": "Europe/Berlin",
+        "pgp_keys": [
+            {
+                "fingerprint": "945C 2808 4340 505C 36CC FA6B CA51 9536 60F3 B29B",
+                "expires": "2022-03-19"
+            }
+        ],
+        "phones": [
+            {
+                "usage": [
+                    "voice"
+                ],
+                "number": "+43 1 505 6416 92",
+                "timezone": "Europe/Berlin"
+            },
+            {
+                "usage": [
+                    "voice",
+                    "emergency"
+                ],
+                "number": "+43 1 505 6416 92",
+                "timezone": "Europe/Berlin"
+            },
+            {
+                "usage": [
+                    "fax"
+                ],
+                "number": "+43 1 505 6416 93",
+                "timezone": "Europe/Berlin"
+            }
+        ],
+        "emails": [
+            {
+                "address": "team@energy-cert.at",
+                "usage": [
+                    "contact"
+                ]
+            }
+        ]
+    },
+    {
+        "official_name": "ACOnet-CERT",
+        "short_name": "ACOnet-CERT",
+        "country": {
+            "code": "AT",
+            "name": "Austria"
+        },
+        "established": "2003-01-01",
+        "host_organisation": "University of Vienna",
+        "classification": {
+            "code": "a",
+            "name": "Accredited",
+            "since": "2003-03-28"
+        },
+        "postal_address": "Zentraler Informatikdienst\nUniversitaet Wien\nUniversitaetsstrasse 7\nA-1010 Wien\nAustria",
+        "constituency": {
+            "types": [
+                "Research & Education"
+            ],
+            "asns": [
+                679,
+                760
+            ],
+            "domains": [
+                "*.ac.at"
+            ],
+            "ipranges": [
+                "103.0.0.0/16",
+                "103.1.0.0/22",
+                "103.1.4.0/24"
+            ],
+            "countries": [
+                {
+                    "code": "AT",
+                    "name": "Austria"
+                }
+            ]
+        },
+        "business_hours": "09:00 to 17:00 Monday to Friday except public holidays",
+        "business_hours_timezone": "Europe/Berlin",
+        "pgp_keys": [
+            {
+                "fingerprint": "2A78 AD32 4920 2E1D 240E AA71 354D B7B6 C8AF D18A",
+                "expires": "2022-03-14"
+            },
+            {
+                "fingerprint": "2BFA BEEF 491D B930 B4A5 043A 333D 7020 A637 7AE1",
+                "expires": "2022-03-12"
+            }
+        ],
+        "phones": [
+            {
+                "usage": [
+                    "voice"
+                ],
+                "number": "+43 1 427714045",
+                "timezone": "Europe/Berlin"
+            },
+            {
+                "usage": [
+                    "voice",
+                    "emergency"
+                ],
+                "number": "+43 1 427714045",
+                "timezone": "Europe/Berlin"
+            },
+            {
+                "usage": [
+                    "fax"
+                ],
+                "number": "+43 1 42779140",
+                "timezone": "Europe/Berlin",
+                "comments": "This is not a secure fax"
+            }
+        ],
+        "emails": [
+            {
+                "address": "cert@aco.net",
+                "usage": [
+                    "contact"
+                ]
+            }
+        ]
+    },
+    {
+        "official_name": "Accenture Iberia CSIRT",
+        "short_name": "ACN IBE CSIRT",
+        "country": {
+            "code": "ES",
+            "name": "Spain"
+        },
+        "established": "2018-01-01",
+        "host_organisation": "Accenture",
+        "classification": {
+            "code": "l",
+            "name": "Listed",
+            "since": "2021-04-16"
+        },
+        "postal_address": "Parque Empresarial La Finca, Paseo Club Deportivo, 1 edificio 2\n28223 Pozuelo de Alarcon, Madrid\nSpain",
+        "constituency": {
+            "types": [
+                "Commercial Organisation",
+                "Service Provider Customer Base"
+            ],
+            "asns": [],
+            "domains": [],
+            "ipranges": [],
+            "countries": []
+        },
+        "business_hours": "09:00 - 18:00",
+        "business_hours_timezone": "Europe/Berlin",
+        "pgp_keys": [
+            {
+                "fingerprint": "F5CE C5D1 435E BC81 2B35 6BA9 2F85 472A 76B8 D375",
+                "expires": "2022-10-20"
+            }
+        ],
+        "phones": [
+            {
+                "usage": [
+                    "voice"
+                ],
+                "number": "+34 605 251873",
+                "timezone": "Europe/Berlin"
+            },
+            {
+                "usage": [
+                    "voice",
+                    "emergency"
+                ],
+                "number": "+34 610 769724",
+                "timezone": "Europe/Berlin"
+            }
+        ],
+        "emails": [
+            {
+                "address": "CSIRT_Spain@accenture.com",
+                "usage": [
+                    "contact"
+                ]
+            }
+        ]
+    },
+    {
+        "official_name": "Computer Emergency Response Team Austria",
+        "short_name": "CERT.at",
+        "country": {
+            "code": "AT",
+            "name": "Austria"
+        },
+        "established": "2008-01-01",
+        "host_organisation": "nic.at, the Austrian domain registry.",
+        "classification": {
+            "code": "c",
+            "name": "Certified",
+            "since": "2018-02-05"
+        },
+        "postal_address": "CERT Team nic.at\nKarlsplatz 1/3\nA-1010 Wien\nAustria",
+        "constituency": {
+            "types": [
+                "National"
+            ],
+            "asns": [],
+            "domains": [
+                "*.at",
+                "*.wien",
+                "*.tirol",
+                "*.versicherung"
+            ],
+            "ipranges": [],
+            "countries": [
+                {
+                    "code": "AT",
+                    "name": "Austria"
+                }
+            ]
+        },
+        "business_hours": "08:00 to 18:00 Monday to Friday",
+        "business_hours_timezone": "Europe/Berlin",
+        "pgp_keys": [
+            {
+                "fingerprint": "0381 BEF5 6694 B532 5BF0 4DDC A1DA C3ED FF4D FFB7",
+                "expires": "2024-02-24"
+            }
+        ],
+        "phones": [
+            {
+                "usage": [
+                    "voice"
+                ],
+                "number": "+43 1 5056416 78",
+                "timezone": "Europe/Berlin"
+            },
+            {
+                "usage": [
+                    "fax"
+                ],
+                "number": "+43 1 5056416 79",
+                "timezone": "Europe/Berlin"
+            }
+        ],
+        "emails": [
+            {
+                "address": "team@cert.at",
+                "usage": [
+                    "contact"
+                ]
+            }
+        ],
+        "misp": {
+            "org_uuid": "5694da62-6314-4565-9c4d-1298538826be",
+            "org_name": "CERT.at",
+            "org_email": "team@cert.at"
+        }
+    }
+]

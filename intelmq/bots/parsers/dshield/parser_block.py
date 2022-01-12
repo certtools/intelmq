@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 #   primary URL: https://feeds.dshield.org/block.txt
@@ -23,10 +27,11 @@
 import dateutil
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class DshieldBlockParserBot(Bot):
+class DshieldBlockParserBot(ParserBot):
+    """Parse the DShield Block feed"""
 
     def process(self):
         report = self.receive_message()

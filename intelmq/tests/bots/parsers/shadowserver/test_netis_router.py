@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os
 import unittest
@@ -18,7 +22,7 @@ EXAMPLE_REPORT = {"raw": utils.base64_encode(EXAMPLE_FILE),
 EVENTS = [{'__type': 'Event',
            'classification.identifier': 'open-netis',
            'classification.taxonomy': 'vulnerable',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'extra.response': 'Login:',
            'extra.sector': 'Information Technology',
            'extra.tag': 'netis_vulnerability',

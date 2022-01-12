@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Tests the Bot class itself.
@@ -40,7 +44,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = test_parser_bot.EXAMPLE_SHORT
         self.run_bot(parameters={'raise_warning': True},
                      allowed_warning_count=1)
-        self.assertLogMatches(levelname='WARNING', pattern='.*intelmq/tests/lib/test_parser_bot\.py\:[0-9]+\: UserWarning: This is a warning test.')
+        self.assertLogMatches(levelname='WARNING', pattern=r'.*intelmq/tests/lib/test_parser_bot\.py\:[0-9]+\: UserWarning: This is a warning test.')
 
     def test_bot_group(self):
         """
@@ -50,18 +54,26 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.prepare_bot()
         self.assertEqual(self.bot.group, 'Parser')
 
-    def test_invalid_input_message(self):
+    def test_encoding_error_on_input_message(self):
         """
         Test if the bot is dumping / not retrying a message which is impossible to parse.
         https://github.com/certtools/intelmq/issues/1494
         """
         self.input_message = b'foo\xc9bar'
         self.run_bot(iterations=1, allowed_error_count=1)
-        self.assertLogMatches('.*intelmq\.lib\.exceptions\.DecodingError:.*')
-        self.assertLogMatches(pattern='Dumping message to dump file.',
-                              levelname='INFO')
-        # raise ValueError(self.loglines)
-        # raise ValueError(self.input_queue)
+        self.assertLogMatches(r'.*intelmq\.lib\.exceptions\.DecodingError:.*')
+        self.assertEqual(self.pipe.state['test-bot-input-internal'], [])
+        self.assertEqual(self.pipe.state['test-bot-input'], [])
+        self.assertEqual(self.pipe.state['test-bot-output'], [])
+
+    def test_invalid_value_on_input_message(self):
+        """
+        Test if the bot is dumping / not retrying a message which is impossible to parse.
+        https://github.com/certtools/intelmq/issues/1765
+        """
+        self.input_message = b'{"source.asn": 0, "__type": "Event"}'
+        self.run_bot(iterations=1, allowed_error_count=1)
+        self.assertLogMatches(r'.*intelmq\.lib\.exceptions\.InvalidValue:.*')
         self.assertEqual(self.pipe.state['test-bot-input-internal'], [])
         self.assertEqual(self.pipe.state['test-bot-input'], [])
         self.assertEqual(self.pipe.state['test-bot-output'], [])

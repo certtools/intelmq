@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 This product includes GeoLite2 data created by MaxMind, available from
@@ -10,10 +14,9 @@ import pathlib
 import requests
 import tarfile
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
-from intelmq import RUNTIME_CONF_FILE
-from intelmq.lib.utils import load_configuration, create_request_session
+from intelmq.lib.utils import get_bots_settings, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
 
 try:
@@ -22,23 +25,27 @@ except ImportError:
     geoip2 = None
 
 
-class GeoIPExpertBot(Bot):
+class GeoIPExpertBot(ExpertBot):
+    """Add geolocation information from a local MaxMind database to events (country, city, longitude, latitude)"""
+    database: str = "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"  # TODO: should be pathlib.Path
+    license_key: str = "<insert Maxmind license key>"
+    overwrite: bool = False
+    use_registered: bool = False
 
     def init(self):
         if geoip2 is None:
             raise MissingDependencyError("geoip2")
 
         try:
-            self.database = geoip2.database.Reader(self.parameters.database)
+            self.database = geoip2.database.Reader(self.database)
         except IOError:
             self.logger.exception("GeoIP Database does not exist or could not "
                                   "be accessed in %r.",
-                                  self.parameters.database)
+                                  self.database)
             self.logger.error("Read 'bots/experts/geoip/README' and follow the"
                               " procedure.")
             self.stop()
-        self.overwrite = getattr(self.parameters, 'overwrite', False)
-        self.registered = getattr(self.parameters, 'use_registered', False)
+        self.registered = self.use_registered
 
     def process(self):
         event = self.receive_message()
@@ -57,23 +64,23 @@ class GeoIPExpertBot(Bot):
                 if self.registered:
                     if info.registered_country.iso_code:
                         event.add(geo_key % "cc", info.registered_country.iso_code,
-                                  overwrite=self.parameters)
+                                  overwrite=self.overwrite)
                 else:
                     if info.country.iso_code:
                         event.add(geo_key % "cc", info.country.iso_code,
-                                  overwrite=self.parameters)
+                                  overwrite=self.overwrite)
 
                 if info.location.latitude:
                     event.add(geo_key % "latitude", info.location.latitude,
-                              overwrite=self.parameters)
+                              overwrite=self.overwrite)
 
                 if info.location.longitude:
                     event.add(geo_key % "longitude", info.location.longitude,
-                              overwrite=self.parameters)
+                              overwrite=self.overwrite)
 
                 if info.city.name:
                     event.add(geo_key % "city", info.city.name,
-                              overwrite=self.parameters)
+                              overwrite=self.overwrite)
 
             except geoip2.errors.AddressNotFoundError:
                 pass
@@ -87,7 +94,7 @@ class GeoIPExpertBot(Bot):
             parsed_args = cls._create_argparser().parse_args()
 
         if parsed_args.update_database:
-            cls.update_database()
+            cls.update_database(verbose=parsed_args.verbose)
 
         else:
             super().run(parsed_args=parsed_args)
@@ -96,13 +103,14 @@ class GeoIPExpertBot(Bot):
     def _create_argparser(cls):
         argparser = super()._create_argparser()
         argparser.add_argument("--update-database", action='store_true', help='downloads latest database data')
+        argparser.add_argument("--verbose", action='store_true', help='be verbose')
         return argparser
 
     @classmethod
-    def update_database(cls):
+    def update_database(cls, verbose=False):
         bots = {}
         license_key = None
-        runtime_conf = load_configuration(RUNTIME_CONF_FILE)
+        runtime_conf = get_bots_settings()
         try:
             for bot in runtime_conf:
                 if runtime_conf[bot]["module"] == __name__:
@@ -120,7 +128,8 @@ class GeoIPExpertBot(Bot):
                 sys.exit(error)
 
         if not bots:
-            print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
+            if verbose:
+                print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
             sys.exit(0)
 
         # we only need to import now, if there are no maxmind_geoip bots, this dependency does not need to be installed
@@ -129,10 +138,11 @@ class GeoIPExpertBot(Bot):
         except ImportError:
             raise MissingDependencyError('maxminddb',
                                          additional_text="Package maxminddb should be present because it "
-                                                         "is a dependecy for the required geoip2 package.")
+                                                         "is a dependency for the required geoip2 package.")
 
         try:
-            print("Downloading the latest database update...")
+            if verbose:
+                print("Downloading the latest database update...")
             session = create_request_session()
             response = session.get("https://download.maxmind.com/app/geoip_download",
                                    params={
@@ -172,7 +182,8 @@ class GeoIPExpertBot(Bot):
             with open(database_path, "wb") as database:
                 database.write(database_data._buffer)
 
-        print("Database updated. Reloading affected bots.")
+        if verbose:
+            print("Database updated. Reloading affected bots.")
 
         ctl = IntelMQController()
         for bot in bots.keys():

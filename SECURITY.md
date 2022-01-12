@@ -1,3 +1,8 @@
+<!-- comment
+   SPDX-FileCopyrightText: 2015-2021 Sebastian Wagner
+   SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 IntelMQ Security Notes
 ======================
 

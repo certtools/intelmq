@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 """
@@ -24,8 +28,8 @@ import intelmq.lib.exceptions as exceptions
 import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
-                     PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
+from intelmq import (DEFAULT_LOGGING_PATH,
+                     RUNTIME_CONF_FILE,
                      DEFAULT_LOGGING_LEVEL)
 
 APPNAME = "intelmqdump"
@@ -47,9 +51,9 @@ Interactive actions after a file has been selected:
   > a modify-expert-queue
   All messages in the opened file will be recovered to the stored or given
   queue and removed from the file.
-- e, Delete entries by IDs
-  > e id{,id}
-  > e 3,5
+- d, Delete entries by IDs
+  > d id{,id}
+  > d 3,5
   The entries will be deleted from the dump file.
 - d, Delete file
   > d
@@ -59,10 +63,10 @@ Interactive actions after a file has been selected:
   > s 0,4,5
   Show the selected IP in a readable format. It's still a raw format from
   repr, but with newlines for message and traceback.
-- v, Edit by ID
-  > v id
-  > v 0
-  > v 1,2
+- e, Edit by ID
+  > e id
+  > e 0
+  > e 1,2
   Opens an editor (by calling `sensible-editor`) on the message. The modified message is then saved in the dump.
 - q, Quit
   > q
@@ -73,11 +77,10 @@ USAGE = '''
 # shortcut: description, takes ids, available for corrupted files
 ACTIONS = {'r': ('(r)ecover by ids', True, False),
            'a': ('recover (a)ll', False, False),
-           'e': ('delete (e)ntries', True, False),
-           'd': ('(d)elete file', False, True),
+           'd': ('(d)elete file or entries by id', True, False),
            's': ('(s)how by ids', True, False),
            'q': ('(q)uit', False, True),
-           'v': ('edit id (v)', True, False),
+           'e': ('(e)dit by id', True, False),
            }
 AVAILABLE_IDS = [key for key, value in ACTIONS.items() if value[1]]
 
@@ -188,12 +191,14 @@ def main():
 
     # Try to get log_level from defaults_configuration, else use default
     try:
-        log_level = utils.load_configuration(DEFAULTS_CONF_FILE)['logging_level']
+        defaults = utils.get_global_settings()
     except Exception:
         log_level = DEFAULT_LOGGING_LEVEL
 
     try:
-        logger = utils.log('intelmqdump', log_level=log_level)
+        logger = utils.log('intelmqdump', log_level=defaults.get('logging_level', DEFAULT_LOGGING_LEVEL),
+                           log_max_size=defaults.get("logging_max_size", 0),
+                           log_max_copies=defaults.get("logging_max_copies", None))
     except (FileNotFoundError, PermissionError) as exc:
         logger = utils.log('intelmqdump', log_level=log_level, log_path=False)
         logger.error('Not logging to file: %s', exc)
@@ -202,10 +207,11 @@ def main():
     readline.parse_and_bind("tab: complete")
     readline.set_completer_delims('')
 
-    pipeline_config = utils.load_configuration(PIPELINE_CONF_FILE)
+    defaults = utils.get_global_settings()
+    runtime_config = utils.load_configuration(RUNTIME_CONF_FILE)
     pipeline_pipes = {}
-    for bot, pipes in pipeline_config.items():
-        pipeline_pipes[pipes.get('source-queue', '')] = bot
+    for bot, parameters in runtime_config.items():
+        pipeline_pipes[parameters.get('source_queue', f"{bot}-queue")] = bot
 
     if args.botid is None:
         filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
@@ -266,7 +272,7 @@ def main():
                 print('Restricted actions.')
             else:
                 # don't display list after 'show', 'recover' & edit commands
-                if not (answer and isinstance(answer, list) and answer[0] in ['s', 'r', 'v']):
+                if not (answer and isinstance(answer, list) and answer[0] in ['s', 'r', 'e']):
                     content = json.load(handle)
                     handle.seek(0)
                     content = OrderedDict(sorted(content.items(), key=lambda t: t[0]))  # sort by key here, #1280
@@ -318,17 +324,11 @@ def main():
                     queue_name = answer[1]
             if answer[0] == 'q':
                 break
-            elif answer[0] == 'e':
-                # Delete entries
-                for entry in ids:
-                    del content[meta[entry][0]]
-                save_file(handle, content)
             elif answer[0] == 'r':
                 # recover entries
-                default = utils.load_configuration(DEFAULTS_CONF_FILE)
-                runtime = utils.load_configuration(RUNTIME_CONF_FILE)
-                params = utils.load_parameters(default, runtime)
-                pipe = pipeline.PipelineFactory.create(params, logger)
+                params = defaults.copy()
+                params.update(runtime_config[botid].get("parameters", {}))
+                pipe = pipeline.PipelineFactory.create(logger=logger, pipeline_args=params)
                 try:
                     for i, (key, entry) in enumerate([item for (count, item)
                                                       in enumerate(content.items()) if count in ids]):
@@ -347,7 +347,7 @@ def main():
                             else:
                                 queue_name = entry['source_queue']
                         if queue_name in pipeline_pipes:
-                            if runtime[pipeline_pipes[queue_name]]['group'] == 'Parser' and json.loads(msg)['__type'] == 'Event':
+                            if runtime_config[pipeline_pipes[queue_name]]['group'] == 'Parser' and json.loads(msg)['__type'] == 'Event':
                                 print('Event converted to Report automatically.')
                                 msg = message.Report(message.MessageFactory.unserialize(msg)).serialize()
                         else:
@@ -370,10 +370,17 @@ def main():
                     print('Deleting empty file {}'.format(fname))
                     break
             elif answer[0] == 'd':
-                # delete dumpfile
-                delete_file = True
-                print('Deleting empty file {}'.format(fname))
-                break
+                # Delete entries or file
+                if ids:
+                    # delete entries
+                    for entry in ids:
+                        del content[meta[entry][0]]
+                    save_file(handle, content)
+                else:
+                    # delete dumpfile
+                    delete_file = True
+                    print('Deleting file {}'.format(fname))
+                    break
             elif answer[0] == 's':
                 # Show entries by id
                 for count, (key, orig_value) in enumerate(content.items()):
@@ -395,7 +402,7 @@ def main():
                     if type(value['traceback']) is not list:
                         value['traceback'] = value['traceback'].splitlines()
                     pprint.pprint(value)
-            elif answer[0] == 'v':
+            elif answer[0] == 'e':
                 # edit given id
                 if not ids:
                     print(red('Edit mode needs an id'))
@@ -427,7 +434,7 @@ def main():
                             utils.write_configuration(configuration_filepath=filename,
                                                       content=json.loads(content[meta[entry][0]]['message']),
                                                       new=True,
-                                                      backup=False)
+                                                      backup=False, useyaml=False)
                             proc = subprocess.run(['sensible-editor', filename])
                             if proc.returncode != 0:
                                 print(red('Calling editor failed with exitcode %r.' % proc.returncode))

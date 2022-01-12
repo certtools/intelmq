@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Brajneesh Kumar
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 '''
 Reference:
@@ -9,9 +13,9 @@ import json
 import warnings
 
 import intelmq.lib.utils as utils
-from intelmq.lib.bot import Bot
-from intelmq.lib.cache import Cache
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.mixins import CacheMixin
 
 try:
     import requests
@@ -37,7 +41,20 @@ def clean_geo(geo_data):
     return geo_data
 
 
-class RIPEExpertBot(Bot):
+class RIPEExpertBot(ExpertBot, CacheMixin):
+    """Fetch abuse contact and/or geolocation information for the source and/or destination IP addresses and/or ASNs of the events"""
+    mode: str = "append"
+    query_ripe_db_asn: bool = True
+    query_ripe_db_ip: bool = True
+    query_ripe_stat_asn: bool = True
+    query_ripe_stat_geolocation: bool = True
+    query_ripe_stat_ip: bool = True
+    redis_cache_db: int = 10
+    redis_cache_host: str = "127.0.0.1"  # TODO: should be ipaddress
+    redis_cache_password: str = None
+    redis_cache_port: int = 6379
+    redis_cache_ttl: int = 86400
+
     QUERY = {
         'db_ip': 'https://rest.db.ripe.net/abuse-contact/{}.json',
         'db_asn': 'https://rest.db.ripe.net/abuse-contact/as{}.json',
@@ -63,36 +80,25 @@ class RIPEExpertBot(Bot):
         if requests is None:
             raise MissingDependencyError("requests")
 
-        self.__mode = getattr(self.parameters, 'mode', 'append')
         self.__query = {
-            "db_asn": getattr(self.parameters, 'query_ripe_db_asn', True),
-            "db_ip": getattr(self.parameters, 'query_ripe_db_ip', True),
-            "stat_asn": getattr(self.parameters, 'query_ripe_stat_asn', True),
-            "stat_ip": getattr(self.parameters, 'query_ripe_stat_ip', True),
-            "stat_geo": getattr(self.parameters, 'query_ripe_stat_geolocation', True)
+            "db_asn": self.query_ripe_db_asn,
+            "db_ip": self.query_ripe_db_ip,
+            "stat_asn": self.query_ripe_stat_asn,
+            "stat_ip": self.query_ripe_stat_ip,
+            "stat_geo": self.query_ripe_stat_geolocation,
         }
 
         self.__initialize_http_session()
-        self.__initialize_cache()
 
     def __initialize_http_session(self):
         self.set_request_parameters()
         self.http_session = utils.create_request_session(self)
 
-    def __initialize_cache(self):
-        cache_host = getattr(self.parameters, 'redis_cache_host')
-        cache_port = getattr(self.parameters, 'redis_cache_port')
-        cache_db = getattr(self.parameters, 'redis_cache_db')
-        cache_ttl = getattr(self.parameters, 'redis_cache_ttl')
-        if cache_host and cache_port and cache_db and cache_ttl:
-            self.__cache = Cache(cache_host, cache_port, cache_db, cache_ttl,
-                                 getattr(self.parameters, "redis_cache_password", None))
-
     def process(self):
         event = self.receive_message()
         for target in {'source.', 'destination.'}:
             abuse_key = target + "abuse_contact"
-            abuse = set(event.get(abuse_key).split(',')) if self.__mode == 'append' and abuse_key in event else set()
+            abuse = set(event.get(abuse_key).split(',')) if self.mode == 'append' and abuse_key in event else set()
 
             asn = event.get(target + "asn", None)
             if asn:
@@ -110,7 +116,7 @@ class RIPEExpertBot(Bot):
                 if self.__query['stat_geo']:
                     info = self.__perform_cached_query('stat_geolocation', ip)
 
-                    should_overwrite = self.__mode == 'replace'
+                    should_overwrite = self.mode == 'replace'
 
                     for local_key, ripe_key in self.GEOLOCATION_REPLY_TO_INTERNAL:
                         if ripe_key in info:
@@ -121,7 +127,7 @@ class RIPEExpertBot(Bot):
         self.acknowledge_message()
 
     def __perform_cached_query(self, type, resource):
-        cached_value = self.__cache.get('{}:{}'.format(type, resource))
+        cached_value = self.cache_get('{}:{}'.format(type, resource))
         if cached_value:
             if cached_value == CACHE_NO_VALUE:
                 return {}
@@ -136,7 +142,7 @@ class RIPEExpertBot(Bot):
                     """ If no abuse contact could be found, a 404 is given. """
                     try:
                         if response.json()['message'].startswith('No abuse contact found for '):
-                            self.__cache.set('{}:{}'.format(type, resource), CACHE_NO_VALUE)
+                            self.cache_set('{}:{}'.format(type, resource), CACHE_NO_VALUE)
                             return {}
                     except ValueError:
                         pass
@@ -153,11 +159,11 @@ class RIPEExpertBot(Bot):
                                   '' % (type, status))
 
                 data = self.REPLY_TO_DATA[type](response_data)
-                self.__cache.set('{}:{}'.format(type, resource),
-                                 (json.dumps(list(data) if isinstance(data, set) else data) if data else CACHE_NO_VALUE))
+                self.cache_set('{}:{}'.format(type, resource),
+                               (json.dumps(list(data) if isinstance(data, set) else data) if data else CACHE_NO_VALUE))
                 return data
             except (KeyError, IndexError):
-                self.__cache.set('{}:{}'.format(type, resource), CACHE_NO_VALUE)
+                self.cache_set('{}:{}'.format(type, resource), CACHE_NO_VALUE)
 
             return {}
 

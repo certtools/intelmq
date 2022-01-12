@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -22,7 +26,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Accessible Telnet',
            "classification.identifier": "open-telnet",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.banner": "|MikroTik v6.5|Login:",
            "extra.tag": "telnet-alt",
            "protocol.application": "telnet",
@@ -43,7 +47,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Accessible Telnet',
            "classification.identifier": "open-telnet",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.banner": "|MikroTik v6.45.3 (stable)|Login:",
            "extra.tag": "telnet-alt",
            "protocol.application": "telnet",

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 robcza
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
@@ -6,9 +10,9 @@ import dns.exception
 import dns.resolver
 import dns.reversename
 
-from intelmq.lib.bot import Bot
-from intelmq.lib.cache import Cache
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.harmonization import IPAddress
+from intelmq.lib.mixins import CacheMixin
 
 MINIMUM_BGP_PREFIX_IPV4 = 24
 MINIMUM_BGP_PREFIX_IPV6 = 128
@@ -19,22 +23,15 @@ class InvalidPTRResult(ValueError):
     pass
 
 
-class ReverseDnsExpertBot(Bot):
-
-    def init(self):
-        self.cache = Cache(self.parameters.redis_cache_host,
-                           self.parameters.redis_cache_port,
-                           self.parameters.redis_cache_db,
-                           self.parameters.redis_cache_ttl,
-                           getattr(self.parameters, "redis_cache_password",
-                                   None)
-                           )
-
-        if not hasattr(self.parameters, 'overwrite'):
-            self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
-                                "Please set it explicitly, default will change to "
-                                "'False' in version 3.0.0'.")
-        self.overwrite = getattr(self.parameters, 'overwrite', True)
+class ReverseDnsExpertBot(ExpertBot, CacheMixin):
+    """Get the correspondent domain name for source and destination IP address"""
+    cache_ttl_invalid_response: int = 60
+    overwrite: bool = False
+    redis_cache_db: int = 7
+    redis_cache_host: str = "127.0.0.1"  # TODO: should be ipaddress
+    redis_cache_password: str = None
+    redis_cache_port: int = 6379
+    redis_cache_ttl: int = 86400
 
     def process(self):
         event = self.receive_message()
@@ -60,7 +57,7 @@ class ReverseDnsExpertBot(Bot):
                 minimum = MINIMUM_BGP_PREFIX_IPV6
 
             cache_key = bin(ip_integer)[2: minimum + 2]
-            cachevalue = self.cache.get(cache_key)
+            cachevalue = self.cache_get(cache_key)
 
             result = None
             if cachevalue == DNS_EXCEPTION_VALUE:
@@ -80,15 +77,13 @@ class ReverseDnsExpertBot(Bot):
                         raise InvalidPTRResult
                 except (dns.exception.DNSException, InvalidPTRResult) as e:
                     # Set default TTL for 'DNS query name does not exist' error
-                    ttl = None if isinstance(e, dns.resolver.NXDOMAIN) else \
-                        getattr(self.parameters, "cache_ttl_invalid_response",
-                                60)
-                    self.cache.set(cache_key, DNS_EXCEPTION_VALUE, ttl)
+                    ttl = None if isinstance(e, dns.resolver.NXDOMAIN) else self.cache_ttl_invalid_response
+                    self.cache_set(cache_key, DNS_EXCEPTION_VALUE, ttl)
                     result = None
 
                 else:
                     ttl = datetime.fromtimestamp(expiration) - datetime.now()
-                    self.cache.set(cache_key, str(result),
+                    self.cache_set(cache_key, str(result),
                                    ttl=int(ttl.total_seconds()))
 
             if result is not None:

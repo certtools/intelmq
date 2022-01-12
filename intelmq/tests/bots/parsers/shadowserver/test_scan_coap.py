@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 Thomas Hungenberg
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Accessible-CoAP',
            "classification.identifier": "accessible-coap",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            'extra.naics': 518210,
            "extra.response": "</api>,</api/v1>,</.well-known/core>",
            "extra.tag": "coap",

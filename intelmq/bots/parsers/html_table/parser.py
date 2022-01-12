@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Brajneesh Kumar
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 HTML Table parser
@@ -18,7 +22,7 @@ type: string
 """
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib.exceptions import MissingDependencyError
@@ -30,50 +34,56 @@ except ImportError:
     bs = None
 
 
-class HTMLTableParserBot(Bot):
+class HTMLTableParserBot(ParserBot):
+    """Parse HTML table data"""
+    attribute_name = ""
+    attribute_value = ""
+    columns = ["", "source.fqdn"]
+    default_url_protocol = 'http://'
+    ignore_values = None
+    skip_table_head = True
+    split_column = ""
+    split_index = 0
+    split_separator = None
+    table_index = 0
+    time_format = None
+    type = "c2-server"
+    _parser = 'html.parser'
 
     def init(self):
         if bs is None:
             raise MissingDependencyError("beautifulsoup4")
 
-        self.columns = self.parameters.columns
         # convert columns to an array
         if type(self.columns) is str:
             self.columns = [column.strip() for column in self.columns.split(",")]
-        self.ignore_values = getattr(self.parameters, "ignore_values", len(self.columns) * [''])
+        if self.ignore_values is None:
+            self.ignore_values = len(self.columns) * ['']
         if type(self.ignore_values) is str:
             self.ignore_values = [value.strip() for value in self.ignore_values.split(",")]
 
         if len(self.columns) != len(self.ignore_values):
             raise ValueError("Length of parameters 'columns' and 'ignore_values' is not equal.")
 
-        self.table_index = getattr(self.parameters, "table_index", 0)
-        self.attr_name = getattr(self.parameters, "attribute_name", None)
-        self.attr_value = getattr(self.parameters, "attribute_value", None)
-        self.skip_head = getattr(self.parameters, "skip_table_head", True)
+        self.attr_name = self.attribute_name
+        self.attr_value = self.attribute_value
+        self.skip_head = self.skip_table_head
         self.skip_row = 1 if self.skip_head else 0
-        self.split_column = getattr(self.parameters, "split_column", None)
-        self.split_separator = getattr(self.parameters, "split_separator", None)
-        self.split_index = getattr(self.parameters, "split_index", 0)
 
-        self.time_format = getattr(self.parameters, "time_format", None)
         if self.time_format and self.time_format.split('|')[0] not in DateTime.TIME_CONVERSIONS.keys():
             raise InvalidArgument('time_format', got=self.time_format,
                                   expected=list(DateTime.TIME_CONVERSIONS.keys()),
-                                  docs='docs/Bots.md')
-        self.default_url_protocol = getattr(self.parameters, 'default_url_protocol', 'http://')
-
-        self.parser = getattr(self.parameters, 'html_parser', 'html.parser')
+                                  docs='https://intelmq.readthedocs.io/en/latest/guides/Bots.html#html-table-parser')
 
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])
 
-        soup = bs(raw_report, self.parser)
+        soup = bs(raw_report, self._parser)
         if self.attr_name:
             table = soup.find_all('table', attrs={self.attr_name: self.attr_value})
             self.logger.debug('Found %d table(s) by attribute %r: %r.',
-                              (len(table), self.attr_name, self.attr_value))
+                              len(table), self.attr_name, self.attr_value)
         else:
             table = soup.find_all('table')
             self.logger.debug('Found %d table(s).', len(table))
@@ -127,9 +137,8 @@ class HTMLTableParserBot(Bot):
             if not data_added:
                 # we added nothing from this row, so skip it
                 continue
-            if hasattr(self.parameters, 'type')\
-                    and "classification.type" not in event:
-                event.add('classification.type', self.parameters.type)
+            if self.type is not None and "classification.type" not in event:
+                event.add('classification.type', self.type)
             event.add('raw', feed)
             self.send_message(event)
 

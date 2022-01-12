@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Edvard Rejthar
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import socket
@@ -7,9 +11,12 @@ from intelmq.lib.bot import CollectorBot
 
 
 class TCPCollectorBot(CollectorBot):
+    """Receive events by opening a TCP port (ex: from TCP Output of another IntelMQ instance)"""
+    ip: str = "<ip>"
+    port: int = "<port>"
 
     def init(self):
-        self.address = (self.parameters.ip, int(self.parameters.port))
+        self.address = (self.ip, int(self.port))
         self.connect()
 
     def recvall(self, conn, n):

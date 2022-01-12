@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Testing asn_lookup with a faked local database

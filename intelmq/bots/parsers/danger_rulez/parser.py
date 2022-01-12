@@ -1,14 +1,19 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import re
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 REGEX_IP = "^[^ \t]+"
 REGEX_TIMESTAMP = "# ([^ \t]+ [^ \t]+)"
 
 
-class BruteForceBlockerParserBot(Bot):
+class BruteForceBlockerParserBot(ParserBot):
+    """Parse the Danger Rulez feed"""
 
     def process(self):
         report = self.receive_message()

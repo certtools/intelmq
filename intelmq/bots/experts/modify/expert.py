@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Modify Expert bot let's you manipulate all fields with a config file.
@@ -5,9 +9,8 @@ Modify Expert bot let's you manipulate all fields with a config file.
 import re
 import sys
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import load_configuration
-from intelmq.lib.upgrades import modify_expert_convert_config
 
 
 def is_re_pattern(value):
@@ -34,26 +37,20 @@ class MatchGroupMapping:
         return self.match.group(key)
 
 
-class ModifyExpertBot(Bot):
+class ModifyExpertBot(ExpertBot):
+    """Perform arbitrary changes to event's fields based on regular-expression-based rules on different values. See the bot's documentation for some examples"""
+    case_sensitive: bool = True
+    configuration_path: str = "/opt/intelmq/var/lib/bots/modify/modify.conf"  # TODO: should be pathlib.Path
+    maximum_matches = None
+    overwrite: bool = True
 
     def init(self):
-        config = load_configuration(self.parameters.configuration_path)
-        if type(config) is dict:
-            self.logger.warning('Support for dict-based configuration will be '
-                                'removed in version 3.0. Have a look at the '
-                                'NEWS file section 1.0.0.dev7.')
-            config = modify_expert_convert_config(config)
+        config = load_configuration(self.configuration_path)
 
-        if getattr(self.parameters, 'case_sensitive', True):
+        if self.case_sensitive:
             self.re_kwargs = {}
         else:
             self.re_kwargs = {'flags': re.IGNORECASE}
-
-        if not hasattr(self.parameters, 'overwrite'):
-            self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
-                                "Please set it explicitly, default will change to "
-                                "'False' in version 3.0.0'.")
-        self.overwrite = getattr(self.parameters, 'overwrite', True)
 
         # regex compilation
         self.config = []
@@ -62,8 +59,6 @@ class ModifyExpertBot(Bot):
             for field, expression in rule["if"].items():
                 if isinstance(expression, str) and expression != '':
                     self.config[-1]["if"][field] = re.compile(expression, **self.re_kwargs)
-
-        self.maximum_matches = getattr(self.parameters, 'maximum_matches', None)
 
     def matches(self, identifier, event, condition):
         matches = {}

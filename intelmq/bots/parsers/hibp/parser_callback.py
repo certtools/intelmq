@@ -1,9 +1,13 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 There are two different Formats: Breaches and Pastes
 For Breaches, there are again two different Variants:
-    * Callback Test: has field 'Email', Breach is a list of dictionaries
-    * Real: has NO field 'Email', Breach is a dictionary
+* Callback Test: has field 'Email', Breach is a list of dictionaries
+* Real: has NO field 'Email', Breach is a dictionary
 """
 import json
 
@@ -12,6 +16,7 @@ from intelmq.lib.utils import base64_decode
 
 
 class HIBPCallbackParserBot(ParserBot):
+    """Parse reports of the 'Have I Been Pwned' Callback for Enterprise Subscribers"""
     def recover_line(self, line):
         return json.dumps(line, sort_keys=True)
 
@@ -41,8 +46,8 @@ class HIBPCallbackParserBot(ParserBot):
         except KeyError:
             pass
 
-        event['classification.taxonomy'] = 'information content security'
-        event['classification.type'] = 'leak'
+        event['classification.taxonomy'] = 'information-content-security'
+        event['classification.type'] = 'data-leak'
 
         for email in sorted(filter(bool, set([request.get('Email')] + request["DomainEmails"]))):
             if not email:

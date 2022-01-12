@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'ShadowServer Open-DB2-Discovery-Service',
            'classification.identifier': 'open-db2-discovery-service',
            'classification.taxonomy': 'vulnerable',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'extra.size': 298,
            'extra.servername': 'server1',
            'extra.tag': 'db2',
@@ -41,7 +45,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'ShadowServer Open-DB2-Discovery-Service',
            'classification.identifier': 'open-db2-discovery-service',
            'classification.taxonomy': 'vulnerable',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'extra.naics': 541690,
            'extra.sic': 874899,
            'extra.size': 298,

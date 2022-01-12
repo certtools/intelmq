@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Parses CTIP data in JSON format.
@@ -5,54 +9,58 @@ Parses CTIP data in JSON format.
 Key indicatorexpirationdatetime is ignored, meaning is unknown.
 
 There are two different variants of data
-1. Interflow format: JSON format, MAPPING
-2. Azure format: JSON stream format, TODO
 
-  "DataFeed": "CTIP-Infected",
-  "SourcedFrom": "SinkHoleMessage|SensorMessage"",
-  "DateTimeReceivedUtc": nt time
-  "DateTimeReceivedUtcTxt": human readable
-  "Malware":
-  "ThreatCode": "B67-SS-TINBA",
-  "ThreatConfidence": "High|Medium|Low|Informational", -> 100/50/20/10
-  "TotalEncounters": 3,
-  "TLP": "Amber",
-  "SourceIp":
-  "SourcePort":
-  "DestinationIp":
-  "DestinationPort":
-  "TargetIp": Deprecated, so we gonne ignore it
-  "TargetPort": Deprecated, so we gonne ignore it
-  "SourceIpInfo": {
-    "SourceIpAsnNumber":
-    "SourceIpAsnOrgName":
-    "SourceIpCountryCode":
-    "SourceIpRegion":
-    "SourceIpCity"
-    "SourceIpPostalCode"
-    "SourceIpLatitude"
-    "SourceIpLongitude"
-    "SourceIpMetroCode"
-    "SourceIpAreaCode"
-    "SourceIpConnectionType"
-  },
-  "HttpInfo": {
-    "HttpHost": "",
-    "HttpRequest": "",
-    "HttpMethod": "",
-    "HttpReferrer": "",
-    "HttpUserAgent": "",
-    "HttpVersion": ""
-  },
-  "CustomInfo": {
-    "CustomField1": "",
-    "CustomField2": "",
-    "CustomField3": "",
-    "CustomField4": "",
-    "CustomField5": ""
-  },
-  "Payload": base64 encoded json
-}
+* Interflow format: JSON format, MAPPING
+* Azure format: JSON stream format, a short example structure:
+
+    .. code-block:: json
+
+       {
+         "DataFeed": "CTIP-Infected",
+         "SourcedFrom": "SinkHoleMessage|SensorMessage"",
+         "DateTimeReceivedUtc": nt time
+         "DateTimeReceivedUtcTxt": human readable
+         "Malware":
+         "ThreatCode": "B67-SS-TINBA",
+         "ThreatConfidence": "High|Medium|Low|Informational", -> 100/50/20/10
+         "TotalEncounters": 3,
+         "TLP": "Amber",
+         "SourceIp":
+         "SourcePort":
+         "DestinationIp":
+         "DestinationPort":
+         "TargetIp": Deprecated, so we gonne ignore it
+         "TargetPort": Deprecated, so we gonne ignore it
+         "SourceIpInfo": {
+           "SourceIpAsnNumber":
+           "SourceIpAsnOrgName":
+           "SourceIpCountryCode":
+           "SourceIpRegion":
+           "SourceIpCity"
+           "SourceIpPostalCode"
+           "SourceIpLatitude"
+           "SourceIpLongitude"
+           "SourceIpMetroCode"
+           "SourceIpAreaCode"
+           "SourceIpConnectionType"
+         },
+         "HttpInfo": {
+           "HttpHost": "",
+           "HttpRequest": "",
+           "HttpMethod": "",
+           "HttpReferrer": "",
+           "HttpUserAgent": "",
+           "HttpVersion": ""
+         },
+         "CustomInfo": {
+           "CustomField1": "",
+           "CustomField2": "",
+           "CustomField3": "",
+           "CustomField4": "",
+           "CustomField5": ""
+         },
+         "Payload": base64 encoded json
+       }
 
 """
 import json
@@ -91,9 +99,23 @@ AZURE = {
     "SourceIp": "source.ip",
     "SourcePort": "source.port",
     "DestinationIp": "destination.ip",
+    # DestinationIpInfo.* fields are used in the ctip-c2 feed
+    "DestinationIpInfo.DestinationIpAsnNumber": "destination.asn",
+    "DestinationIpInfo.DestinationIpAsnOrgName": "destination.as_name",
+    "DestinationIpInfo.DestinationIpCountryCode": "destination.geolocation.cc",
+    "DestinationIpInfo.DestinationIpRegion": "destination.geolocation.region",
+    "DestinationIpInfo.DestinationIpCity": "destination.geolocation.city",
+    "DestinationIpInfo.DestinationIpPostalCode": "extra.destination.geolocation.postal_code",
+    "DestinationIpInfo.DestinationIpLatitude": "destination.geolocation.latitude",
+    "DestinationIpInfo.DestinationIpLongitude": "destination.geolocation.longitude",
+    "DestinationIpInfo.DestinationIpMetroCode": "extra.destination.geolocation.metro_code",
+    "DestinationIpInfo.DestinationIpAreaCode": "extra.destination.geolocation.area_code",
+    "DestinationIpInfo.DestinationIpConnectionType": "extra.destination.connection_type",
+    "DestinationIpInfo.DestinationIpv4Int": "__IGNORE__",
     "DestinationPort": "destination.port",
     "TargetIp": "__IGNORE__",
     "TargetPort": "__IGNORE__",
+    "Signatures.Sha256": "extra.signatures.sha256",
     "SourceIpInfo.SourceIpAsnNumber": "source.asn",
     "SourceIpInfo.SourceIpAsnOrgName": "source.as_name",
     "SourceIpInfo.SourceIpCountryCode": "source.geolocation.cc",
@@ -104,7 +126,8 @@ AZURE = {
     "SourceIpInfo.SourceIpLongitude": "source.geolocation.longitude",
     "SourceIpInfo.SourceIpMetroCode": "extra.source.geolocation.metro_code",
     "SourceIpInfo.SourceIpAreaCode": "extra.source.geolocation.area_code",
-    "SourceIpInfo.SourceIpConnectionType": "protocol.application",
+    "SourceIpInfo.SourceIpConnectionType": "extra.source.connection_type",
+    "SourceIpInfo.SourceIpv4Int": "__IGNORE__",  # Duplicate of SourceIP
     "HttpInfo.HttpHost": "extra.http.host",
     "HttpInfo.HttpRequest": "extra.http.request",
     "HttpInfo.HttpMethod": "extra.http.method",
@@ -121,13 +144,13 @@ AZURE = {
     "Payload.port": "extra.payload.port",
     "Payload.serverIp": "extra.payload.server.ip",
     "Payload.serverPort": "extra.payload.server.port",
-    "Payload.domain": "extra.payload.domain",
+    "Payload.domain": "destination.fqdn",
     "Payload.family": "extra.payload.family",
     "Payload.malware": "extra.payload.malware",
     "Payload.response": "extra.payload.response",
     "Payload.handler": "extra.payload.handler",
     "Payload.type": "protocol.application",
-    "Payload": "extra.payload",
+    "Payload": "extra.payload.text",
     "Payload.Time": "extra.payload.time",
     "Payload.SourceIP": "extra.payload.source.ip",
     "Payload.DestIP": "extra.payload.destination.ip",
@@ -142,11 +165,35 @@ AZURE = {
     "Payload.UserAgent": "extra.user_agent",
     "Payload.RequestMethod": "extra.http.method",
     "Payload.HTTPHost": "extra.http.host",
+    "Payload.http_host": "extra.payload.http_host",
     "Payload.Custom1": "extra.payload.custom_field1",
     "Payload.Custom2": "extra.payload.custom_field2",
     "Payload.Custom3": "extra.payload.custom_field3",
     "Payload.Custom4": "extra.payload.custom_field4",
     "Payload.Custom5": "extra.payload.custom_field5",
+    "Payload.timestamp": "extra.payload.timestamp",
+    "Payload.timestamp_utc": "extra.payload.timestamp_utc",
+    "Payload.source_ip": "extra.payload.source.ip",
+    "Payload.source_port": "extra.payload.source.port",
+    "Payload.src_port": "extra.payload.source.port",
+    "Payload.destination_ip": "extra.payload.destination.ip",
+    "Payload.dst_ip": "extra.payload.destination.ip",
+    "Payload.destination_port": "extra.payload.destination.port",
+    "Payload.dst_port": "extra.payload.destination.port",
+    "Payload.computer_name": "extra.payload.computer_name",
+    "Payload.bot_id": "extra.payload.bot_id",
+    "Payload.asn": "extra.payload.source.asn",
+    "Payload.dst_asn": "extra.payload.destination.asn",
+    "Payload.geo": "extra.payload.source.geolocation.cc",
+    "Payload.dst_geo": "extra.payload.destination.geolocation.cc",
+    "Payload.url": "extra.request_raw",
+    "Payload.http_agent": "extra.http_agent",
+    "Payload.p0f_genre": "extra.os.name",
+    "Payload.p0f_detail": "extra.os.version",
+    "Payload.http_post": "extra.payload.http_post",
+    "Payload.naics": "extra.naics",
+    "Payload.sector": "extra.sector",
+    "Payload.ssl_cipher": "extra.ssl_cipher",
 }
 CONFIDENCE = {
     "High": 100,
@@ -157,6 +204,8 @@ CONFIDENCE = {
 
 
 class MicrosoftCTIPParserBot(ParserBot):
+    """Parse JSON data from Microsoft's CTIP program"""
+    overwrite: bool = True  # overwrite existing fields
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
@@ -222,6 +271,8 @@ class MicrosoftCTIPParserBot(ParserBot):
                     # continue unpacking in next loop
                 except json.decoder.JSONDecodeError:
                     line[key] = utils.base64_decode(value)
+            elif key == 'TLP' and value.lower() == 'unknown':
+                del line[key]
             if isinstance(value, dict):
                 for subkey, subvalue in value.items():
                     line['%s.%s' % (key, subkey)] = subvalue
@@ -236,11 +287,15 @@ class MicrosoftCTIPParserBot(ParserBot):
             elif key == 'Payload.ts':
                 value = DateTime.from_timestamp(value)
             elif key == 'Payload.Protocol':
-                event.add('protocol.application', value[:value.find('/')])  # "HTTP/1.1", save additionally
+                payload_protocol = value[:value.find('/')]
+                if payload_protocol:
+                    # needs to overwrite a field previously parsed and written
+                    event.add('protocol.application', payload_protocol, overwrite=True)  # "HTTP/1.1", save additionally
             elif not value:
                 continue
             if AZURE[key] != '__IGNORE__':
-                event.add(AZURE[key], value, overwrite=True)
+                # feed.accuracy is calculated newly and always needs to be overwritten
+                event.add(AZURE[key], value, overwrite=self.overwrite or AZURE[key] == "feed.accuracy")
         event.add('classification.type', 'infected-system')
         event.add('raw', raw)
         yield event

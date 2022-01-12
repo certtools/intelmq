@@ -1,11 +1,16 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 '''
 Reference: https://abusix.com/contactdb.html
 RIPE abuse contacts resolving through DNS TXT queries
 '''
 
-from intelmq.bots.experts.abusix.lib import Abusix
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
+
+from ._lib import Abusix
 
 try:
     import querycontacts
@@ -13,7 +18,8 @@ except ImportError:
     querycontacts = None
 
 
-class AbusixExpertBot(Bot):
+class AbusixExpertBot(ExpertBot):
+    """Add abuse contact information from the Abusix online service for source and destination IP address"""
 
     def init(self):
         if querycontacts:
@@ -28,7 +34,7 @@ class AbusixExpertBot(Bot):
         for key in ['source.', 'destination.']:
             ip_key = key + "ip"
             abuse_contact_key = key + "abuse_contact"
-            if abuse_contact_key in event and not self.parameters.overwrite:
+            if abuse_contact_key in event and not self.overwrite:
                 continue
             if ip_key in event:
                 ip = event.get(ip_key)

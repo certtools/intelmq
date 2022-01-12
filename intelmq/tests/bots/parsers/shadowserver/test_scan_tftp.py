@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -23,7 +27,7 @@ EVENTS = [{
             'feed.name': 'Open TFTP',
             "classification.identifier": "open-tftp",
             "classification.taxonomy": "vulnerable",
-            "classification.type": "vulnerable service",
+            "classification.type": "vulnerable-system",
             "extra.error": "Illegal TFTP operation",
             "extra.errorcode": "4",
             "extra.errormessage": "Illegal TFTP operation",
@@ -50,7 +54,7 @@ EVENTS = [{
             'feed.name': 'Open TFTP',
             "classification.identifier": "open-tftp",
             "classification.taxonomy": "vulnerable",
-            "classification.type": "vulnerable service",
+            "classification.type": "vulnerable-system",
             "extra.error": "Illegal TFTP operation",
             "extra.errorcode": "4",
             "extra.errormessage": "Illegal TFTP operation",

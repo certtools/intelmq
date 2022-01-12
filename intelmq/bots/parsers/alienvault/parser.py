@@ -1,19 +1,24 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 from intelmq.lib.bot import ParserBot
 
 CLASSIFICATION = {
-    "c2server": "c2server",
+    "c2server": "c2-server",
     "scanning host": "scanner",
-    "malicious host": "malware",
+    "malicious host": "infected-system",
     "spamming": "spam",
-    "malware domain": "malware",
-    "malware ip": "malware",
-    "malware distribution": "malware",
+    "malware domain": "malware-distribution",
+    "malware ip": "malware-distribution",
+    "malware distribution": "malware-distribution",
 }
 
 
 class AlienVaultParserBot(ParserBot):
+    """Parse data from the AlienVault API"""
 
     def parse_line(self, row, report):
         values = row.split("#")
@@ -33,7 +38,7 @@ class AlienVaultParserBot(ParserBot):
                 event.add('classification.type',
                           CLASSIFICATION[ctype.lower()])
             else:
-                event.add('classification.type', "unknown")
+                event.add('classification.type', "undetermined")
 
             if len(values[6].strip()) > 0:
                 geo_coordinates = values[6].strip().split(",")

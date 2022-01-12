@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EXAMPLE_REPORT = {'feed.name': 'Accessible SMB',
 EVENTS = [{'__type': 'Event',
            'feed.name': 'Accessible SMB',
            'classification.taxonomy': 'vulnerable',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'classification.identifier': 'open-smb',
            'extra.smb_implant': False,
            'protocol.application': 'smb',
@@ -39,7 +43,7 @@ EVENTS = [{'__type': 'Event',
           {'__type': 'Event',
            'feed.name': 'Accessible SMB',
            'classification.taxonomy': 'vulnerable',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'extra.smb_implant': True,
            'extra.arch': 'x86',
            'extra.key': '0xcb68e558',

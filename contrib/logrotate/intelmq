@@ -1,14 +1,12 @@
-compress
-delaycompress
-copytruncate
-create 640 intelmq intelmq
-
 /opt/intelmq/var/log/*.log {
     su intelmq intelmq
     daily
     maxsize 10M
     rotate 60
     notifempty
+    compress
+    delaycompress
+    create 644 intelmq intelmq
     sharedscripts
     postrotate
         sudo -u intelmq /usr/local/bin/intelmqctl --quiet reload
@@ -21,6 +19,9 @@ create 640 intelmq intelmq
     maxsize 10M
     rotate 60
     notifempty
+    compress
+    delaycompress
+    create 644 intelmq intelmq
     sharedscripts
     postrotate
         sudo -u intelmq /usr/local/bin/intelmqctl --quiet reload file-output

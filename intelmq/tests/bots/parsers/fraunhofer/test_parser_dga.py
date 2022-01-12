@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import unittest
@@ -19,7 +23,7 @@ EXAMPLE_REPORT = {"feed.url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
 EVENT_TEMPL = {"feed.url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
                "feed.name": "Fraunhofer DGA",
                "__type": "Event",
-               "classification.type": "c2server",
+               "classification.type": "c2-server",
                'malware.name': 'banjori',
                "time.observation": "2015-01-01T00:00:00+00:00",
                }

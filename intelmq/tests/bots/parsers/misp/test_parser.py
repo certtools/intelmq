@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 kralca
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -11,7 +15,7 @@ with open(os.path.join(os.path.dirname(__file__), 'misp_event.json')) as handle:
     EXAMPLE_MISP_EVENT = handle.read()
 
 with open(os.path.join(os.path.dirname(__file__), 'misp_attribute.json')) as handle:
-    EXAMPLE_MISP_ATTR = handle.read()
+    EXAMPLE_MISP_ATTR = handle.read().strip()
 
 EXAMPLE_REPORT = {
     "__type": "Report",
@@ -32,7 +36,7 @@ EXAMPLE_EVENT = {
     "source.url": "http://fake.example.com/malware/is/here",
     "event_description.text": "Payload delivery",
     "event_description.url": "http://192.168.56.102/events/view/2",
-    "classification.type": "ransomware",
+    "classification.type": "infected-system",
     "malware.name": "locky",
     'misp.attribute_uuid': '575c8598-f1f0-4c16-a94a-0612c0a83866',
     'misp.event_uuid': '5758ebf5-c898-48e6-9fe9-5665c0a83866',

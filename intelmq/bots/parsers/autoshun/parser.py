@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import html
 
@@ -15,13 +19,14 @@ TAXONOMY = {
 
 
 class AutoshunParserBot(ParserBot):
+    """Parse the Autoshun feed"""
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
-        splitted = raw_report.split("</tr>")
-        self.tempdata = ['</tr>'.join(splitted[:2])]
+        split = raw_report.split("</tr>")
+        self.tempdata = ['</tr>'.join(split[:2])]
         # TODO: save ending line
-        for line in splitted[2:]:
+        for line in split[2:]:
             yield line.strip()
 
     def parse_line(self, line, report):
@@ -46,7 +51,7 @@ class AutoshunParserBot(ParserBot):
                     break
 
         if "classification.type" not in event:
-            event.add("classification.type", 'unknown')
+            event.add("classification.type", 'undetermined')
 
         event.add("time.source", last_seen)
         event.add("source.ip", ip)

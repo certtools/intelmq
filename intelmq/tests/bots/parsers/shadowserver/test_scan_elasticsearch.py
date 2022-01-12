@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open Elasticsearch',
            'classification.identifier': 'open-elasticsearch',
            'classification.taxonomy': 'vulnerable',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
                                                  EXAMPLE_LINES[1]])),
            'time.observation': '2015-01-01T00:00:00+00:00',
@@ -48,7 +52,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open Elasticsearch',
            'classification.identifier': 'open-elasticsearch',
            'classification.taxonomy': 'vulnerable',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
                                                  EXAMPLE_LINES[2]])),
            'time.observation': '2015-01-01T00:00:00+00:00',

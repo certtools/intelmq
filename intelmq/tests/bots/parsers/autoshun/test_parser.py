@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os
 import unittest
@@ -30,7 +34,7 @@ EXAMPLE_EVENT0 = {
 EXAMPLE_EVENT1 = {
     "__type": "Event",
     "feed.name": "Autoshun",
-    "classification.type": "unknown",
+    "classification.type": "undetermined",
     "feed.url": "https://www.autoshun.org/files/shunlist.html",
     "raw": "PHRyPjx0ZD4xOTguNTEuMTAwLjg2PC90ZD48dGQ+MjAxNi0wNS0xOCAxNDowMTowNjwvdGQ+PHRkPk1TIFRlcm1pbmFsIFNlcnZlciBTaW5nbGUgQ2hhcmFjdGVyIExvZ2luLCBwb3NzaWJsZSBNb3J0byBpbmJvdW5kPC90ZD48L3RyPg==",
     "event_description.text": "MS Terminal Server Single Character Login, possible Morto inbound",

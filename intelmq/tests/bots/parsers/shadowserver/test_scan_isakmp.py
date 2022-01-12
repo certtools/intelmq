@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Vulnerable ISAKMP',
            "classification.identifier": "open-ike",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.domain_of_interpretation": 0,
            "extra.exchange_type": 5,
            "extra.flags": 0,
@@ -52,7 +56,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Vulnerable ISAKMP',
            "classification.identifier": "open-ike",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.domain_of_interpretation": 0,
            "extra.exchange_type": 5,
            "extra.flags": 0,

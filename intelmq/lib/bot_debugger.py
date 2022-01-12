@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Edvard Rejthar
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Utilities for debugging intelmq bots.
@@ -19,7 +23,9 @@ from os.path import exists
 
 import time
 
+from intelmq import RUNTIME_CONF_FILE
 from intelmq.lib import utils
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import Pipeline
 from intelmq.lib.utils import StreamHandler, error_message_from_exc
@@ -31,10 +37,19 @@ class BotDebugger:
 
     load_configuration = utils.load_configuration
     logging_level = None
+    output = []
+    instance = None
 
     def __init__(self, runtime_configuration, bot_id, run_subcommand=None, console_type=None,
                  message_kind=None, dryrun=None, msg=None, show=None, loglevel=None):
         self.runtime_configuration = runtime_configuration
+        self.bot_id = bot_id
+        self.run_subcommand = run_subcommand
+        self.console_type = console_type
+        self.message_kind = message_kind
+        self.dryrun = dryrun
+        self.msg = msg
+        self.show = show
         module = import_module(self.runtime_configuration['module'])
 
         if loglevel:
@@ -45,21 +60,28 @@ class BotDebugger:
         bot = getattr(module, 'BOT')
         if run_subcommand == "message":
             bot.init = lambda *args, **kwargs: None
+
+        if self.logging_level:
+            # Set's the bot's default and initial value for the logging_level to the value we want
+            bot.logging_level = self.logging_level
+
         self.instance = bot(bot_id, disable_multithreading=True)
 
-        if not run_subcommand:
+    def run(self) -> str:
+        if not self.run_subcommand:
             self.instance.start()
         else:
             self.instance._Bot__connect_pipelines()
-            if run_subcommand == "console":
-                self._console(console_type)
-            elif run_subcommand == "message":
-                self._message(message_kind, msg)
-                return
-            elif run_subcommand == "process":
-                self._process(dryrun, msg, show)
+            if self.run_subcommand == "console":
+                self._console(self.console_type)
+            elif self.run_subcommand == "message":
+                self._message(self.message_kind, self.msg)
+            elif self.run_subcommand == "process":
+                self._process(self.dryrun, self.msg, self.show)
             else:
-                print("Subcommand {} not known.".format(run_subcommand))
+                self.outputappend("Subcommand {} not known.".format(self.run_subcommand))
+
+        return '\n'.join(self.output) or ""
 
     def _console(self, console_type):
         consoles = [console_type, "ipdb", "pudb", "pdb"]
@@ -85,24 +107,23 @@ class BotDebugger:
     def _message(self, message_action_kind, msg):
         if message_action_kind == "send":
             if self.instance.group == "Output":
-                self.instance.logger.warning("Output bots can't send messages.")
+                self.outputappend("Output bots can't send message.")
                 return
-
-            if not bool(self.instance._Bot__destination_queues):
-                self.instance.logger.warning("Bot has no destination queues.")
+            if not bool(self.instance.destination_queues):
+                self.outputappend("Bot has no destination queues.")
                 return
             if msg:
                 msg = self.arg2msg(msg)
                 self.instance.send_message(msg)
-                self.instance.logger.info("Message sent to output pipelines.")
+                self.outputappend("Message sent to output pipelines.")
             else:
                 self.messageWizzard("Message missing!")
         elif self.instance.group == "Collector":
-            self.instance.logger.warning("Collector bots have no input queue.")
+            self.outputappend("Collector bots have no input queue.")
         elif message_action_kind == "get":
-            self.instance.logger.info("Waiting for a message to get...")
-            if not bool(self.instance._Bot__source_queues):
-                self.instance.logger.warning("Bot has no source queue.")
+            self.outputappend("Waiting for a message to get...")
+            if not self.instance.source_queue:
+                self.outputappend("Bot has no source queue.")
                 return
 
             # Never pops from source to internal queue, thx to disabling brpoplpush operation.
@@ -111,10 +132,10 @@ class BotDebugger:
             pl.pipe.brpoplpush = lambda source_q, inter_q, i: pl.pipe.lindex(source_q, -1)
             while not (pl.pipe.llen(pl.source_queue) or pl.pipe.llen(pl.internal_queue)):
                 time.sleep(1)
-            self.pprint(self.instance.receive_message())
+            self.outputappend(self.pprint(self.instance.receive_message()))
         elif message_action_kind == "pop":
             self.instance.logger.info("Waiting for a message to pop...")
-            self.pprint(self.instance.receive_message())
+            self.outputappend(self.pprint(self.instance.receive_message()))
             self.instance.acknowledge_message()
 
     def _process(self, dryrun, msg, show):
@@ -125,27 +146,29 @@ class BotDebugger:
                 self.instance._Bot__source_pipeline = Pipeline(None)
             self.instance._Bot__source_pipeline.receive = lambda *args, **kwargs: msg
             self.instance._Bot__source_pipeline.acknowledge = lambda *args, **kwargs: None
-            self.instance.logger.info(" * Message from cli will be used when processing.")
+            self.outputappend(" * Message from cli will be used when processing.")
 
         if dryrun:
-            self.instance.send_message = lambda *args, **kwargs: self.instance.logger.info(
-                "DRYRUN: Message would be sent now to %r!",
-                kwargs.get('path', "_default"))
-            self.instance.acknowledge_message = lambda *args, **kwargs: self.instance.logger.info(
+            self.instance.send_message = lambda *args, **kwargs: self.outputappend(
+                "DRYRUN: Message would be sent now to %r!" % kwargs.get('path', "_default"))
+            self.instance.acknowledge_message = lambda *args, **kwargs: self.outputappend(
                 "DRYRUN: Message would be acknowledged now!")
-            self.instance.logger.info(" * Dryrun only, no message will be really sent through.")
+            self.outputappend(" * Dryrun only, no message will be really sent through.")
 
         if show:
             fn = self.instance.send_message
-            self.instance.send_message = lambda *args, **kwargs: [self.pprint(args or "No message generated"),
+            self.instance.send_message = lambda *args, **kwargs: [self.outputappend(self.pprint(args or "No message generated")),
                                                                   fn(*args, **kwargs)]
 
-        self.instance.logger.info("Processing...")
+        self.outputappend("Processing...")
         self.instance.process()
 
+    def outputappend(self, msg):
+        self.output.append(msg)
+
     def arg2msg(self, msg):
+        default_type = "Report" if (self.runtime_configuration.get("group", None) == "Parser" or isinstance(self.instance, ParserBot)) else "Event"
         try:
-            default_type = "Report" if self.runtime_configuration["group"] == "Parser" else "Event"
             msg = MessageFactory.unserialize(msg, default_type=default_type)
         except (Exception, KeyError, TypeError, ValueError) as exc:
             if exists(msg):
@@ -157,27 +180,40 @@ class BotDebugger:
 
     def leverageLogger(self, level):
         utils.load_configuration = BotDebugger.load_configuration_patch
-        BotDebugger.logging_level = level
-        if hasattr(self, "instance"):
+        self.logging_level = level
+        if self.instance:
             self.instance.logger.setLevel(level)
             for h in self.instance.logger.handlers:
                 if isinstance(h, StreamHandler):
                     h.setLevel(level)
 
     @staticmethod
-    def load_configuration_patch(*args, **kwargs):
-        d = BotDebugger.load_configuration(*args, **kwargs)
-        if "logging_level" in d and BotDebugger.logging_level:
-            d["logging_level"] = BotDebugger.logging_level
-        return d
+    def load_configuration_patch(configuration_filepath: str, *args, **kwargs) -> dict:
+        """
+        Mock function for utils.load_configuration which ensures the logging level parameter is set to the value we want.
+        If Runtime configuration is detected, the logging_level parameter is
+        - inserted in all bot's parameters. bot_id is not accessible here, hence we add it everywhere
+        - inserted in the global parameters (ex-defaults).
+        Maybe not everything is necessary, but we can make sure the logging_level is just everywhere where it might be relevant, also in the future.
+        """
+        config = BotDebugger.load_configuration(configuration_filepath=configuration_filepath, *args, **kwargs)
+        if BotDebugger.logging_level and configuration_filepath == RUNTIME_CONF_FILE:
+            for bot_id in config.keys():
+                if bot_id == "global":
+                    config[bot_id]["logging_level"] = BotDebugger.logging_level
+                else:
+                    config[bot_id]['parameters']["logging_level"] = BotDebugger.logging_level
+            if "global" not in config:
+                config["global"] = {"logging_level": BotDebugger.logging_level}
+        return config
 
     def messageWizzard(self, msg):
         self.instance.logger.error(msg)
         print(self.EXAMPLE)
         if input("Do you want to display current harmonization (available fields)? y/[n]: ") == "y":
-            self.pprint(self.instance.harmonization)
+            print(self.pprint(self.instance.harmonization))
 
     @staticmethod
-    def pprint(msg):
+    def pprint(msg) -> str:
         """ We can't use standard pprint as JSON standard asks for double quotes. """
-        print(json.dumps(msg, indent=4, sort_keys=True))
+        return json.dumps(msg, indent=4, sort_keys=True)

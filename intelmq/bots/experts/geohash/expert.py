@@ -1,10 +1,14 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 '''
 Uses
 https://pypi.org/project/geolib/
 https://github.com/joyanujoy/geolib
 '''
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 try:
     from geolib import geohash
@@ -12,7 +16,10 @@ except ImportError:
     geohash = None
 
 
-class GeohashExpertBot(Bot):
+class GeohashExpertBot(ExpertBot):
+    """Compute the geohash from longitude/latitude information, save it to extra.(source|destination)"""
+    overwrite: bool = False
+    precision: int = 7
 
     def init(self):
         if not geohash:
@@ -30,8 +37,8 @@ class GeohashExpertBot(Bot):
             event.add(geohash_key,
                       geohash.encode(event[latitude_key],
                                      event[longitude_key],
-                                     precision=self.parameters.precision),
-                      overwrite=self.parameters.overwrite)
+                                     precision=self.precision),
+                      overwrite=self.overwrite)
 
         self.send_message(event)
         self.acknowledge_message()

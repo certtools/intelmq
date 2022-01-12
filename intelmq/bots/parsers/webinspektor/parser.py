@@ -1,8 +1,12 @@
+# SPDX-FileCopyrightText: 2018 dargen3
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 from html.parser import HTMLParser
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
 class MyHTMLParser(HTMLParser):
@@ -21,7 +25,8 @@ class MyHTMLParser(HTMLParser):
 parser = MyHTMLParser()
 
 
-class WebinspektorParserBot(Bot):
+class WebinspektorParserBot(ParserBot):
+    """Parse the Web Inspektor"""
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])

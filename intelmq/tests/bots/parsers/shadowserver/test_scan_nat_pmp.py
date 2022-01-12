@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open NATPMP',
            "classification.identifier": "open-natpmp",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.external_ip": "198.51.100.66",
            "extra.opcode": "128",
            "extra.tag": "nat-pmp",
@@ -44,7 +48,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open NATPMP',
            "classification.identifier": "open-natpmp",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.external_ip": "198.51.100.156",
            "extra.opcode": "128",
            "extra.tag": "nat-pmp",

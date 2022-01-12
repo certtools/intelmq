@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EXAMPLE_REPORT = {'feed.name': 'Accessible Rsync',
 EVENTS = [{'__type': 'Event',
            'classification.identifier': 'accessible-rsync',
            'classification.taxonomy': 'vulnerable',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'extra.module': 'Public;foo;bar;',
            'extra.password': False,
            'extra.tag': 'rsync',
@@ -45,7 +49,7 @@ EVENTS = [{'__type': 'Event',
                                                  EXAMPLE_LINES[2]])),
            'classification.identifier': 'accessible-rsync',
            'classification.taxonomy': 'vulnerable',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'extra.module': 'Shared folder;',
            'extra.password': False,
            'extra.tag': 'rsync',

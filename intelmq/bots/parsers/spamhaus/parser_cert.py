@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # -*- coding: utf-8 -*-
 """
 Header of the File:
@@ -30,6 +33,7 @@ __all__ = ['SpamhausCERTParserBot']
 
 
 class SpamhausCERTParserBot(ParserBot):
+    """Parse the Spamhaus CERT feed"""
 
     def parse_line(self, row, report):
         if not len(row) or row.startswith(';'):
@@ -49,7 +53,7 @@ class SpamhausCERTParserBot(ParserBot):
 
             malware = row_splitted[4].lower()
             if malware == 'openrelay':
-                event.add('classification.type', 'vulnerable service')
+                event.add('classification.type', 'vulnerable-system')
                 event.add('classification.identifier', 'openrelay')
                 event.add('protocol.application', 'smtp')
             elif malware == 'sshauth':
@@ -105,21 +109,21 @@ class SpamhausCERTParserBot(ParserBot):
             elif malware == 'proxyget':
                 event.add('classification.type', 'other')
                 event.add('classification.identifier', malware)
-                event.add('event_description.text', 'The malicous client used a honeypot as proxy.')
+                event.add('event_description.text', 'The malicious client used a honeypot as proxy.')
             elif malware == 'iotlogin':
-                event.add('classification.type', 'unauthorized-login')
+                event.add('classification.type', 'system-compromise')
                 event.add('classification.identifier', 'iot')
                 event.add('event_description.text', 'The infected iot device logged in to a honeypot.')
             elif malware == 'iotcmd':
-                event.add('classification.type', 'unauthorized-command')
+                event.add('classification.type', 'system-compromise')
                 event.add('classification.identifier', 'iot')
-                event.add('event_description.text', 'The infected iot device logged in to a honeypot and issued malicous commands.')
+                event.add('event_description.text', 'The infected iot device logged in to a honeypot and issued malicious commands.')
             elif malware == 'iotmirai':
                 event.add('classification.type', 'infected-system')
                 event.add('classification.identifier', 'mirai')
                 event.add('malware.name', 'mirai')
             elif malware == 'ioturl':
-                event.add('classification.type', 'c2server')
+                event.add('classification.type', 'c2-server')
                 event.add('classification.identifier', 'malware-generic')
             elif malware == 'automatedtest':
                 event.add('classification.type', 'brute-force')

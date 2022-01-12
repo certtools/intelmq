@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Testing GethostbynameExpertBot.
@@ -32,6 +36,13 @@ EXAMPLE_URL_OUTPUT = {"__type": "Event",
                       "source.url": "http://example.com",
                       "source.ip": "93.184.216.34",
                       }
+EXISITNG_INPUT = {"__type": "Event",
+                  "source.fqdn": "example.com",
+                  "destination.fqdn": "example.org",
+                  "source.ip": "10.0.0.1",
+                  "destination.ip": "10.0.0.2",
+                  "time.observation": "2015-01-01T00:00:00+00:00"
+                  }
 
 @test.skip_internet()
 class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
@@ -45,9 +56,19 @@ class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
         cls.sysconfig = {'gaierrors_to_ignore': '-8,-9'}
 
     def test_existing(self):
+        """
+        Test bot with domains which exists
+        """
         self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
+
+    def test_gaierrors_to_ignore_none(self):
+        """
+        Test parameter gaierrors_to_ignore with value none
+        """
+        self.input_message = EXAMPLE_INPUT
+        self.run_bot(parameters={'gaierrors_to_ignore': None})
 
     def test_non_existing(self):
         self.input_message = NONEXISTING_INPUT
@@ -63,6 +84,23 @@ class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EXAMPLE_URL_INPUT
         self.run_bot(parameters={"fallback_to_url": True})
         self.assertMessageEqual(0, EXAMPLE_URL_OUTPUT)
+
+    def test_existing_no_overwrite(self):
+        self.input_message = EXISITNG_INPUT
+        self.run_bot()
+        self.assertMessageEqual(0, EXISITNG_INPUT)
+
+    def test_existing_overwrite(self):
+        self.input_message = EXISITNG_INPUT
+        self.run_bot(parameters={'overwrite': True})
+        self.assertMessageEqual(0, EXAMPLE_OUTPUT)
+
+    def test_gaierrors_int(self):
+        """ Test an int value of gaierrors_to_ignore, as the manager automatically converts a single value to int. """
+        self.input_message = EXAMPLE_INPUT
+        self.run_bot(parameters={'gaierrors_to_ignore': -3})
+        # We only need to check for no errors
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

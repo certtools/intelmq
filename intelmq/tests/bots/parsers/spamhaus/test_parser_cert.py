@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os
 import unittest
@@ -77,7 +81,7 @@ EXAMPLE_EVENTS_PARTS = [{'source.ip': '109.126.64.2',
                         {'source.ip': '198.51.100.54',
                          'source.asn': 8559,
                          'time.source': '2018-03-03T13:41:36+00:00',
-                         'classification.type': 'vulnerable service',
+                         'classification.type': 'vulnerable-system',
                          'classification.identifier': 'openrelay',
                          'protocol.application': 'smtp',
                          'destination.port': 25,
@@ -183,7 +187,7 @@ EXAMPLE_EVENTS_PARTS = [{'source.ip': '109.126.64.2',
                          'source.geolocation.cc': 'AT',
                          'protocol.transport': 'tcp',
                          'extra.source.local_port': 40625,
-                         'event_description.text': 'The malicous client used a honeypot as proxy.',
+                         'event_description.text': 'The malicious client used a honeypot as proxy.',
                          },
                         {'source.ip': '10.56.59.94',
                          'source.asn': 65551,

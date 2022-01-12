@@ -1,5 +1,2 @@
 /etc/intelmq/harmonization.conf
-/etc/intelmq/BOTS
-/etc/intelmq/pipeline.conf
-/etc/intelmq/defaults.conf
-/etc/intelmq/runtime.conf
+/etc/intelmq/runtime.yaml

@@ -1,0 +1,36 @@
+#Github Workflow to run ansible tests
+#
+#SPDX-FileCopyrightText: 2021 Birger Schacht <schacht@cert.at>
+#SPDX-License-Identifier: AGPL-3.0-or-later
+#
+name: "Run ansible tests"
+on:
+  push:
+    branches: [develop, maintenance, master]
+    paths-ignore:
+      - '.github/**'
+  pull_request:
+    branches: [develop, maintenance]
+    paths-ignore:
+      - '.github/**'
+
+jobs:
+  build:
+    # temporary fix for https://github.com/actions/virtual-environments/issues/3080
+    runs-on: ubuntu-18.04
+    name: Run ansible tests
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        path: ./src/intelmq
+
+    - name: Checkout ansible scripts
+      uses: actions/checkout@v2
+      with:
+        repository: certtools/intelmq-vagrant
+        path: ./src/intelmq-vagrant
+
+    - name: Run ansible tests
+      run: podman run -e CI=${CI} -v ${GITHUB_WORKSPACE}/src:/src docker.io/debian:buster-slim /src/intelmq/.github/workflows/scripts/ansible.sh

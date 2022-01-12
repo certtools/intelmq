@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2020 Birger Schacht
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -10,6 +13,8 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import datetime
+import codecs
 import os
 import subprocess
 import sys
@@ -20,41 +25,25 @@ sys.path.insert(0, os.path.abspath('./'))
 
 import autogen
 
-# This class translates tries to work around a bug in commonmark:
-# commonmark removes the extension from all links ending in .md, even if
-# they are not pointing to a local file built by sphinx
-# See also this TODO in recommonmark.
-# https://github.com/readthedocs/recommonmark/blob/ddd56e7717e9745f11300059e4268e204138a6b1/recommonmark/parser.py#L152-L155
-# This class checks if a link is relative and then replaces the target
-# with an URL built from the github URL and the link text
-# That means we have to use the file extension in the link text for
-# now
-
-class GithubURLDomain(Domain):
-    """
-    Resolve certain links in markdown files to github source.
-    """
-
-    ROOT = "https://github.com/certtools/intelmq/blob/master/"
-
-    def resolve_any_xref(self, env, fromdocname, builder, target, node, contnode):
-        if contnode["refuri"].startswith("../"):
-            print(f"Replacing {contnode['refuri']} with {self.ROOT}{contnode.rawsource}")
-            contnode["refuri"] = self.ROOT + contnode.rawsource
-            return [("githuburl:any", contnode)]
-        else:
-            return []
-
 # -- Project information -----------------------------------------------------
 
+year = datetime.date.today().year
+exec(open(os.path.join(os.path.dirname(__file__), '../intelmq/version.py')).read())  # defines __version__
+
 project = 'intelmq'
-copyright = '2020, cert.at'
+copyright = f'{year}, cert.at'
 author = 'IntelMQ Community'
+# for compatibility with Sphinx < 2.0 as the old versions default to 'contents'
+master_doc = 'index'
 
 # The full version, including alpha/beta/rc tags
-release = '2.3.0'
+release = __version__
 
-
+rst_prolog = """
+.. |intelmq-users-list-link| replace:: `IntelMQ Users Mailinglist <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users>`__
+.. |intelmq-developers-list-link| replace:: `IntelMQ Developers Mailinglist <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev>`__
+.. |intelmq-manager-github-link| replace:: `IntelMQ Manager <https://github.com/certtools/intelmq-manager>`__
+"""
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -62,8 +51,7 @@ release = '2.3.0'
 # ones.
 extensions = [
         'sphinx.ext.autodoc',
-        'recommonmark',
-        'sphinx_markdown_tables',
+        'sphinx.ext.extlinks',
         'sphinx.ext.napoleon'
 ]
 
@@ -80,6 +68,9 @@ napoleon_include_private_with_doc = True
 #napoleon_use_ivar = False
 #napoleon_use_param = True
 #napoleon_use_rtype = True
+
+
+extlinks = {'issue': ('https://github.com/certtools/intelmq/issues/%s', 'issue ')}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -112,17 +103,16 @@ html_theme_options = {
         }
 
 def run_apidoc(_):
-    subprocess.check_call("sphinx-apidoc -o source ../intelmq", shell=True)
+    subprocess.check_call("sphinx-apidoc --implicit-namespaces -o source ../intelmq", shell=True)
 
 
 def run_autogen(_):
-    with open('guides/Harmonization-fields.md', 'w') as handle:
+    with codecs.open('dev/harmonization-fields.rst', 'w', encoding='utf-8') as handle:
         handle.write(autogen.harm_docs())
-    with open('guides/Feeds.md', 'w') as handle:
+    with codecs.open('user/feeds.rst', 'w', encoding='utf-8') as handle:
         handle.write(autogen.feeds_docs())
 
 
 def setup(app):
-    app.add_domain(GithubURLDomain)
     app.connect("builder-inited", run_apidoc)
     app.connect("builder-inited", run_autogen)

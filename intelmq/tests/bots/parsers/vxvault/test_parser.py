@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import unittest
@@ -16,7 +20,7 @@ EXAMPLE_REPORT = {"feed.name": "VxVault",
 EXAMPLE_EVENT = {"feed.name": "VxVault",
                  "feed.url": "http://vxvault.siri-urz.net/URL_List.php",
                  "source.url": "http://example.com/bad/program.exe",
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "__type": "Event",
                  "raw": "aHR0cDovL2V4YW1wbGUuY29tL2JhZC9wcm9ncmFtLmV4ZQ==",
                  "source.fqdn": "example.com",

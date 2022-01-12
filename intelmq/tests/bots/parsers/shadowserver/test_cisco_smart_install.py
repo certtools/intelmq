@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -20,7 +24,7 @@ EXAMPLE_REPORT = {'feed.name': 'Accessible Cisco Smart Install',
 EVENTS = [{'__type': 'Event',
            'feed.name': 'Accessible Cisco Smart Install',
            'classification.identifier': 'accessible-cisco-smart-install',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'classification.taxonomy': 'vulnerable',
            'protocol.application': 'cisco-smart-install',
            'protocol.transport': 'tcp',
@@ -39,7 +43,7 @@ EVENTS = [{'__type': 'Event',
           {'__type': 'Event',
            'feed.name': 'Accessible Cisco Smart Install',
            'classification.identifier': 'accessible-cisco-smart-install',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'classification.taxonomy': 'vulnerable',
            'protocol.application': 'cisco-smart-install',
            'protocol.transport': 'tcp',

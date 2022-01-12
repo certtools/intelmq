@@ -1,9 +1,14 @@
+# SPDX-FileCopyrightText: 2015 Dognaedis
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 The following types are implemented with sanitize() and is_valid() functions:
 
  - Base64
  - Boolean
+ - ClassificationTaxonomy
  - ClassificationType
  - DateTime
  - FQDN
@@ -38,12 +43,13 @@ import pytz
 
 import intelmq.lib.utils as utils
 
-from typing import Optional
+from typing import Optional, Union
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
            'Integer', 'JSON', 'JSONDict', 'LowercaseString', 'Registry',
            'String', 'URL', 'ASN', 'UppercaseString', 'TLP',
+           'ClassificationTaxonomy',
            ]
 
 
@@ -170,6 +176,70 @@ class Boolean(GenericType):
         return None
 
 
+class ClassificationTaxonomy(String):
+    """
+    `classification.taxonomy` type.
+
+    The mapping follows
+    Reference Security Incident Taxonomy Working Group – RSIT WG
+    https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
+
+    These old values are automatically mapped to the new ones:
+        'abusive content' -> 'abusive-content'
+        'information gathering' -> 'information-gathering'
+        'intrusion attempts' -> 'intrusion-attempts'
+        'malicious code' -> 'malicious-code'
+
+    Allowed values are:
+     * """
+
+    allowed_values = ['abusive-content',
+                      'availability',
+                      'fraud',
+                      'information-content-security',
+                      'information-gathering',
+                      'intrusion-attempts',
+                      'intrusions',
+                      'malicious-code',
+                      'other',
+                      'test',
+                      'vulnerable',
+                      ]
+
+    __doc__ += '\n     * '.join(allowed_values)
+
+    @staticmethod
+    def is_valid(value: str, sanitize: bool = False) -> bool:
+        if sanitize:
+            value = ClassificationTaxonomy().sanitize(value)
+
+        if not GenericType().is_valid(value):
+            return False
+
+        if not isinstance(value, str):
+            return False
+
+        if value not in ClassificationTaxonomy().allowed_values:
+            return False
+
+        return True
+
+    @staticmethod
+    def sanitize(value: str) -> Optional[str]:
+        value = LowercaseString.sanitize(value)
+        if not value:
+            return None
+        if value == 'abusive content':
+            value = 'abusive-content'
+        elif value == 'information gathering':
+            value = 'information-gathering'
+        elif value == 'intrusion attempts':
+            value = 'intrusion-attempts'
+        elif value == 'malicious code':
+            value = 'malicious-code'
+        return GenericType().sanitize(value)
+
+
 class ClassificationType(String):
     """
     `classification.type` type.
@@ -182,65 +252,69 @@ class ClassificationType(String):
     These old values are automatically mapped to the new ones:
         'botnet drone' -> 'infected-system'
         'ids alert' -> 'ids-alert'
-        'c&c' -> 'c2server'
+        'c&c' -> 'c2-server'
+        'c2server' -> 'c2-server'
         'infected system' -> 'infected-system'
         'malware configuration' -> 'malware-configuration'
+        'Unauthorised-information-access' -> 'unauthorised-information-access'
+        'leak' -> 'data-leak'
+        'vulnerable client' -> 'vulnerable-system'
+        'vulnerable service' -> 'vulnerable-system'
+        'ransomware' -> 'infected-system'
+        'unknown' -> 'undetermined'
+
+    These values changed their taxonomy:
+        'malware': In terms of the taxonomy 'malicious-code' they can be either 'infected-system' or 'malware-distribution'
+            but in terms of malware actually, it is now taxonomy 'other'
 
     Allowed values are:
      * """
 
-    allowed_values = ["application-compromise",
-                      'backdoor',
+    allowed_values = ('application-compromise',
                       'blacklist',
                       'brute-force',
-                      "burglary",
-                      'c2server',
-                      'compromised',
-                      "copyright",
-                      "data-loss",
+                      'burglary',
+                      'c2-server',
+                      'copyright',
+                      'data-leak',
+                      'data-loss',
                       'ddos',
-                      "ddos-amplifier",
-                      'defacement',
-                      'dga domain',
-                      "dos",
-                      'dropzone',
+                      'ddos-amplifier',
+                      'dga-domain',
+                      'dos',
                       'exploit',
                       'harmful-speech',
                       'ids-alert',
                       'infected-system',
-                      "information-disclosure",
-                      'leak',
+                      'information-disclosure',
                       'malware',
                       'malware-configuration',
                       'malware-distribution',
-                      "masquerade",
+                      'masquerade',
+                      'misconfiguration',
                       'other',
                       'outage',
                       'phishing',
-                      "potentially-unwanted-accessible",
-                      "privileged-account-compromise",
+                      'potentially-unwanted-accessible',
+                      'privileged-account-compromise',
                       'proxy',
-                      'ransomware',
                       'sabotage',
                       'scanner',
                       'sniffing',
                       'social-engineering',
                       'spam',
+                      'system-compromise',
                       'test',
                       'tor',
-                      "Unauthorised-information-access",
-                      "Unauthorised-information-modification",
-                      'unauthorized-command',
-                      'unauthorized-login',
-                      "unauthorized-use-of-resources",
-                      'unknown',
-                      "unprivileged-account-compromise",
+                      'unauthorised-information-access',
+                      'unauthorised-information-modification',
+                      'unauthorized-use-of-resources',
+                      'undetermined',
+                      'unprivileged-account-compromise',
                       'violence',
-                      'vulnerable client',
-                      'vulnerable service',
-                      "vulnerable-system",
-                      "weak-crypto",
-                      ]
+                      'vulnerable-system',
+                      'weak-crypto',
+                      )
 
     __doc__ += '\n     * '.join(allowed_values)
 
@@ -270,11 +344,42 @@ class ClassificationType(String):
         elif value == 'ids alert':
             value = 'ids-alert'
         elif value == 'c&c':
-            value = 'c2server'
+            value = 'c2-server'
+        elif value == 'c2server':
+            value = 'c2-server'
         elif value == 'infected system':
             value = 'infected-system'
         elif value == 'malware configuration':
             value = 'malware-configuration'
+        # RSIT 2020-01-28
+        # https://github.com/certtools/intelmq/pull/1476/files
+        elif value == 'Unauthorised-information-access':
+            value = 'unauthorised-information-access'
+        elif value == 'vulnerable client':
+            value = 'vulnerable-system'
+        elif value == 'vulnerable service':
+            value = 'vulnerable-system'
+        # https://github.com/certtools/intelmq/issues/1409
+        elif value == 'leak':
+            value = 'data-leak'
+        elif value == 'ransomware':
+            value = 'infected-system'
+        elif value == 'unknown':
+            value = 'undetermined'
+        elif value == 'dga domain':
+            value = 'dga-domain'
+        elif value == 'unauthorized-login':
+            value = 'system-compromise'
+        elif value == 'unauthorized-command':
+            value = 'system-compromise'
+        elif value == 'compromised':
+            value = 'system-compromise'
+        elif value == 'defacement':
+            value = 'unauthorised-information-modification'
+        elif value == 'backdoor':
+            value = 'system-compromise'
+        elif value == 'dropzone':
+            value = 'other'
         return GenericType().sanitize(value)
 
 
@@ -316,31 +421,40 @@ class DateTime(String):
     @staticmethod
     def __parse(value: str) -> Optional[str]:
         try:
-            return utils.decode(DateTime.parse_utc_isoformat(value))
+            DateTime.parse_utc_isoformat(value)
         except ValueError:
             pass
+        else:
+            return utils.decode(value)
 
         try:
             value = dateutil.parser.parse(value, fuzzy=True)
             value = value.astimezone(pytz.utc)
             value = value.isoformat()
-        except ValueError:
+        except (ValueError, OverflowError):
             return None
         return utils.decode(value)
 
     @staticmethod
-    def parse_utc_isoformat(value: str) -> Optional[datetime.datetime]:
+    def parse_utc_isoformat(value: str, return_datetime: bool = False) -> Union[datetime.datetime, str]:
         """
         Parse format generated by datetime.isoformat() method with UTC timezone.
         It is much faster than universal dateutil parser.
+        Can be used for parsing DateTime fields which are already parsed.
+
+        Returns a string with ISO format.
+        If return_datetime is True, the return value is a datetime.datetime object.
         """
         try:
-            datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S+00:00')
+            dtvalue = datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S+00:00')
         except ValueError:
             # With microseconds
-            datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f+00:00')
+            dtvalue = datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f+00:00')
 
-        return value
+        if return_datetime:
+            return pytz.utc.localize(dtvalue)
+        else:
+            return value
 
     @staticmethod
     def from_epoch_millis(tstamp: str, tzone='UTC') -> datetime.datetime:
@@ -358,7 +472,7 @@ class DateTime(String):
             return DateTime.from_timestamp(int_tstamp // 1000, tzone)
 
     @staticmethod
-    def from_timestamp(tstamp: str, tzone='UTC') -> str:
+    def from_timestamp(tstamp: int, tzone='UTC') -> str:
         """
         Returns ISO formatted datetime from given timestamp.
         You can give timezone for given timestamp, UTC by default.
@@ -425,10 +539,14 @@ class DateTime(String):
     def convert_fuzzy(value) -> str:
         value = dateutil.parser.parse(value, fuzzy=True)
         if not value.tzinfo and sys.version_info <= (3, 6):
-            value = pytz.utc.localize(value)
+            value = pytz.utc.localize(value)  # pragma: no cover
         elif not value.tzinfo:
             value.astimezone(pytz.utc)
-        return value.isoformat()
+        iso = value.isoformat()
+        if '+' not in iso:
+            return iso + '+00:00'
+        else:
+            return iso
 
     @staticmethod
     def convert(value, format='fuzzy') -> str:
@@ -459,7 +577,7 @@ DateTime.TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
                              'epoch_millis': DateTime.from_epoch_millis,
                              'from_format': DateTime.convert_from_format,
                              'from_format_midnight': DateTime.convert_from_format_midnight,
-                             'utc_isoformat': 'parse_utc_isoformat',
+                             'utc_isoformat': DateTime.parse_utc_isoformat,
                              'fuzzy': DateTime.convert_fuzzy,
                              None: DateTime.convert_fuzzy,
                              }
@@ -661,7 +779,7 @@ class IPAddress(String):
     """
     Type for IP addresses, all families. Uses the ipaddress module.
 
-    Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv6Address.
+    Sanitation accepts integers, strings and objects of ipaddress.IPv4Address and ipaddress.IPv6Address.
 
     Valid values are only strings. 0.0.0.0 is explicitly not allowed.
     """
@@ -690,12 +808,28 @@ class IPAddress(String):
         return True
 
     @staticmethod
-    def sanitize(value: str) -> Optional[str]:
+    def sanitize(value: Union[int, str]) -> Optional[str]:
+        if not isinstance(value, int):  # can be str/bytes or ipaddress.ip_address object
+            try:
+                value = GenericType().sanitize(value)
+            except ValueError:
+                return None
 
+        # support for integer IP-address which are given as string
         try:
-            value = GenericType().sanitize(value)
-        except ValueError:
-            return None
+            if (str(value) == str(int(value))):
+                value = int(value)
+        except (ValueError, TypeError):
+            pass
+        # Convert integers to strings
+        # either from the conversion above, or the value is already given as int
+        if isinstance(value, int):
+            try:
+                value = ipaddress.ip_address(value)
+            except ValueError:
+                return None
+            # we don't need the specialized checks below, return early
+            return GenericType().sanitize(value)
 
         try:
             # Remove the scope ID if it's detected.
@@ -1025,7 +1159,7 @@ class TLP(UppercaseString):
     Accepted for sanitation are different cases and the prefix 'tlp:'.
     """
     enum = ['WHITE', 'GREEN', 'AMBER', 'RED']
-    prefix_pattern = re.compile(r'^(TLP:?)?\s*', flags=re.IGNORECASE)
+    prefix_pattern = re.compile(r'^(TLP:?)?\s*')
 
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
@@ -1045,4 +1179,6 @@ class TLP(UppercaseString):
         value = UppercaseString.sanitize(value)
         if value:
             value = TLP.prefix_pattern.sub('', value)
+            if value == 'YELLOW':
+                value = 'AMBER'
             return value

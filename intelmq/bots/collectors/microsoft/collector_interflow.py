@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 https://interflow.portal.azure-api.net/
@@ -36,21 +40,26 @@ import pytz
 from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.cache import Cache
-from intelmq.lib.utils import parse_relative, create_request_session
+from intelmq.lib.mixins import HttpMixin, CacheMixin
+from intelmq.lib.utils import parse_relative
 from intelmq.lib.exceptions import MissingDependencyError
-
-try:
-    import requests
-except ImportError:
-    requests = None
-
 
 URL_LIST = 'https://interflow.azure-api.net/file/api/file/listsharedfiles'
 URL_DOWNLOAD = 'https://interflow.azure-api.net/file/api/file/download?fileName=%s'
 
 
-class MicrosoftInterflowCollectorBot(CollectorBot):
+class MicrosoftInterflowCollectorBot(CollectorBot, HttpMixin, CacheMixin):
+    "Fetch data from the Microsoft Interflow API"
+    api_key: str = ""
+    file_match = None  # TODO type
+    http_timeout_sec: int = 300
+    not_older_than: str = "2 days"
+    rate_limit: int = 3600
+    redis_cache_db: str = "5"  # TODO type: int?
+    redis_cache_host: str = "127.0.0.1"  # TODO type ipadress
+    redis_cache_password: str = None
+    redis_cache_port: int = 6379
+    redis_cache_ttl: int = 604800
 
     def check_ttl_time(self):
         """
@@ -60,59 +69,40 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
         """
         if isinstance(self.time_match, datetime):  # absolute
             now = datetime.now(tz=pytz.timezone('UTC'))
-            if now - timedelta(seconds=self.parameters.redis_cache_ttl) > self.time_match:
+            if now - timedelta(seconds=self.redis_cache_ttl) > self.time_match:
                 raise ValueError("The cache's TTL must be higher than 'not_older_than', "
                                  "otherwise the bot is processing the same data over and over again.")
 
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
-
-        self.set_request_parameters()
-
-        self.http_header['Ocp-Apim-Subscription-Key'] = self.parameters.api_key
-        if self.parameters.file_match:
-            self.file_match = re.compile(self.parameters.file_match)
+        self.http_header['Ocp-Apim-Subscription-Key'] = self.api_key
+        if self.file_match:
+            self.file_match = re.compile(self.file_match)
         else:
             self.file_match = None
 
-        if self.parameters.not_older_than:
+        if self.not_older_than:
             try:
-                self.time_match = timedelta(minutes=parse_relative(self.parameters.not_older_than))
+                self.time_match = timedelta(minutes=parse_relative(self.not_older_than))
             except ValueError:
-                if sys.version_info >= (3, 6):
-                    self.time_match = parser.parse(self.parameters.not_older_than).astimezone(pytz.utc)
-                else:  # "astimezone() cannot be applied to a naive datetime" otherwise
-                    if '+' not in self.parameters.not_older_than:
-                        self.parameters.not_older_than += '+00:00'
-                    self.time_match = parser.parse(self.parameters.not_older_than)
+                self.time_match = parser.parse(self.not_older_than).astimezone(pytz.utc)
                 self.logger.info("Filtering files absolute %r.", self.time_match)
                 self.check_ttl_time()
             else:
                 self.logger.info("Filtering files relative %r.", self.time_match)
-                if timedelta(seconds=self.parameters.redis_cache_ttl) < self.time_match:
+                if timedelta(seconds=self.redis_cache_ttl) < self.time_match:
                     raise ValueError("The cache's TTL must be higher than 'not_older_than', "
                                      "otherwise the bot is processing the same data over and over again.")
         else:
             self.time_match = None
-        self.session = create_request_session(self)
-
-        self.cache = Cache(self.parameters.redis_cache_host,
-                           self.parameters.redis_cache_port,
-                           self.parameters.redis_cache_db,
-                           self.parameters.redis_cache_ttl,
-                           getattr(self.parameters, "redis_cache_password",
-                                   None)
-                           )
 
     def process(self):
         self.check_ttl_time()
         self.logger.debug('Downloading file list.')
-        files = self.session.get(URL_LIST)
+        files = self.http_get(URL_LIST)
         files.raise_for_status()
         self.logger.debug('Downloaded file list, %s entries.', len(files.json()))
         for file in files.json():
-            if self.cache.get(file['Name']):
+            if self.cache_get(file['Name']):
                 self.logger.debug('Processed file %s already.', file['Name'])
                 continue
             if self.file_match and not self.file_match.match(file['Name']):
@@ -130,7 +120,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
 
             self.logger.debug('Processing file %r.', file['Name'])
             download_url = URL_DOWNLOAD % file['Name']
-            download = self.session.get(download_url)
+            download = self.http_get(download_url)
             download.raise_for_status()
             if download_url.endswith('.gz'):
                 raw = gzip.open(io.BytesIO(download.content)).read().decode()
@@ -141,12 +131,12 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
             report.add('raw', raw)
             self.send_message(report)
             # redis-py >= 3.0.0 does no longer support boolean values, cast to string explicitly, also for backwards compatibility
-            self.cache.set(file['Name'], "True")
+            self.cache_set(file['Name'], "True")
 
     def print_filelist(self):
         """ Can be called from the debugger for example. """
         self.logger.debug('Downloading file list.')
-        files = self.session.get(URL_LIST)
+        files = self.http_get(URL_LIST)
         files.raise_for_status()
         self.logger.debug('Downloaded file list, %s entries.', len(files.json()))
         print(files.text)

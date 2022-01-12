@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import posixpath
 from urllib.parse import urlparse
@@ -68,6 +72,7 @@ MAPPING = {
 
 
 class BlockListDEParserBot(ParserBot):
+    "Parse the Blocklist.DE feeds"
 
     def parse_line(self, line, report):
         path = urlparse(report['feed.url']).path

@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: 2016 by Bundesamt für Sicherheit in der Informationstechnik
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 File Collector Bot
 
@@ -28,37 +32,40 @@ from intelmq.lib.splitreports import generate_reports
 
 
 class FileCollectorBot(CollectorBot):
+    """Fetch data from the file system"""
+    chunk_replicate_header: bool = True
+    chunk_size: int = None
+    delete_file: bool = False
+    path: str = "/tmp/"  # TODO pathlib.Path
+    postfix: str = ".csv"
+    rate_limit: int = 300
 
     def init(self):
         # Test if path is a directory
-        if not os.path.isdir(self.parameters.path):
-            raise exceptions.InvalidArgument('path', got=self.parameters.path,
+        if not os.path.isdir(self.path):
+            raise exceptions.InvalidArgument('path', got=self.path,
                                              expected="directory")
 
-        if not self.parameters.postfix:
-            self.logger.warn("No file extension was set. The collector will"
-                             " read all files in %s.", self.parameters.path)
-            if self.parameters.delete_file:
+        if not self.postfix:
+            self.logger.warning("No file extension was set. The collector will"
+                                " read all files in %s.", self.path)
+            if self.delete_file:
                 self.logger.error("This configuration would delete all files"
                                   " in %s. I'm stopping now....",
-                                  self.parameters.path)
+                                  self.path)
                 self.stop()
-
-        self.chunk_size = getattr(self.parameters, 'chunk_size', None)
-        self.chunk_replicate_header = getattr(self.parameters,
-                                              'chunk_replicate_header', None)
 
     def process(self):
         self.logger.debug("Started looking for files.")
 
-        if os.path.isdir(self.parameters.path):
-            p = os.path.abspath(self.parameters.path)
+        if os.path.isdir(self.path):
+            p = os.path.abspath(self.path)
 
             # iterate over all files in dir
             for f in os.listdir(p):
                 filename = os.path.join(p, f)
                 if os.path.isfile(filename):
-                    if fnmatch.fnmatch(f, '*' + self.parameters.postfix):
+                    if fnmatch.fnmatch(f, '*' + self.postfix):
                         self.logger.info("Processing file %r.", filename)
 
                         template = self.new_report()
@@ -70,7 +77,7 @@ class FileCollectorBot(CollectorBot):
                                                            self.chunk_replicate_header):
                                 self.send_message(report)
 
-                        if self.parameters.delete_file:
+                        if self.delete_file:
                             try:
                                 os.remove(filename)
                                 self.logger.debug("Deleted file: %r.", filename)

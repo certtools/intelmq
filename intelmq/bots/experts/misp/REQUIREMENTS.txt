@@ -1,1 +1,4 @@
+# SPDX-FileCopyrightText: 2019 Raphaël Vinot
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 pymisp>=2.4.117.3

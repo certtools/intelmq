@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 For intelmq collectors on the other side we can expect the "ok" sent back.
@@ -10,18 +14,24 @@ import struct
 import time
 
 import intelmq.lib.utils as utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 
 
-class TCPOutputBot(Bot):
+class TCPOutputBot(OutputBot):
+    """Send events to a TCP server as Splunk, ElasticSearch or another IntelMQ etc"""
+    counterpart_is_intelmq: bool = True
+    hierarchical_output: bool = False
+    ip: str = None  # TODO: could ip ipaddress type
+    port: int = None
+    separator: str = None
 
-    is_multithreadable = False
+    _is_multithreadable = False
 
     def init(self):
-        self.to_intelmq = getattr(self.parameters, "counterpart_is_intelmq", False)
+        self.to_intelmq = self.counterpart_is_intelmq
 
-        self.address = (self.parameters.ip, int(self.parameters.port))
-        self.separator = utils.encode(self.parameters.separator) if (hasattr(self.parameters, "separator")) else None
+        self.address = (self.ip, int(self.port))
+        self.separator = utils.encode(self.separator) if self.separator is not None else None
         self.connect()
 
     def recvall(self, conn, n):
@@ -37,7 +47,7 @@ class TCPOutputBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        data = event.to_json(hierarchical=self.parameters.hierarchical_output)
+        data = event.to_json(hierarchical=self.hierarchical_output)
         try:
             while True:
                 if self.separator:
@@ -50,7 +60,7 @@ class TCPOutputBot(Bot):
                     response = self.con.recv(2)
                     if response == b"Ok":
                         break
-                    self.logger.warn("Message not delivered, retrying.")
+                    self.logger.warning("Message not delivered, retrying.")
                     time.sleep(1)
                 else:
                     break

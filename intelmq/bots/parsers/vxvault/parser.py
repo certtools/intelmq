@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2014 Tomás Lima
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 from urllib.parse import urlparse
 
@@ -6,6 +10,7 @@ from intelmq.lib.bot import ParserBot
 
 
 class VXVaultParserBot(ParserBot):
+    """Parse the VXVault feed"""
 
     def parse(self, report):
         report_split = utils.base64_decode(report["raw"]).strip().splitlines()
@@ -31,7 +36,7 @@ class VXVaultParserBot(ParserBot):
         if not event.add("source.ip", hostname, raise_failure=False):
             event.add("source.fqdn", hostname)
 
-        event.add('classification.type', 'malware')
+        event.add('classification.type', 'malware-distribution')
         event.add("source.url", url)
         if port:
             event.add("source.port", port)

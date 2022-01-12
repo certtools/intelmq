@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- encoding: utf-8 -*-
 """
 Testing the pipeline functions of intelmq.
@@ -25,18 +29,13 @@ SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
            }
 
 
-class Parameters(object):
-    pass
-
 
 class TestPipeline(unittest.TestCase):
 
     def setUp(self):
-        params = Parameters()
         logger = logging.getLogger('foo')
         logger.addHandler(logging.NullHandler())
-        self.pipe = pipeline.PipelineFactory.create(params,
-                                                    logger=logger)
+        self.pipe = pipeline.PipelineFactory.create(logger=logger)
         self.pipe.set_queues('test-bot-input', 'source')
 
     def test_creation_from_string(self):
@@ -60,12 +59,9 @@ class TestPipeline(unittest.TestCase):
 class TestPythonlist(unittest.TestCase):
 
     def setUp(self):
-        params = Parameters()
-        params.broker = 'Pythonlist'
         logger = logging.getLogger('foo')
         logger.addHandler(logging.NullHandler())
-        self.pipe = pipeline.PipelineFactory.create(params,
-                                                    logger=logger)
+        self.pipe = pipeline.PipelineFactory.create(logger=logger, broker='Pythonlist')
         self.pipe.set_queues('test-bot-input', 'source')
         self.pipe.set_queues('test-bot-output', 'destination')
 
@@ -141,16 +137,18 @@ class TestRedis(unittest.TestCase):
     """
 
     def setUp(self):
-        params = Parameters()
-        params.broker = 'Redis'
-        setattr(params, 'source_pipeline_password', os.getenv('INTELMQ_TEST_REDIS_PASSWORD'))
-        setattr(params, 'source_pipeline_db', 4)
-        setattr(params, 'destination_pipeline_password', os.getenv('INTELMQ_TEST_REDIS_PASSWORD'))
-        setattr(params, 'destination_pipeline_db', 4)
+        params = {}
+        params['source_pipeline_host'] = os.getenv('INTELMQ_PIPELINE_HOST', 'localhost')
+        params['source_pipeline_password'] = os.getenv('INTELMQ_TEST_REDIS_PASSWORD')
+        params['source_pipeline_db'] = 4
+        params['destination_pipeline_host'] = os.getenv('INTELMQ_PIPELINE_HOST', 'localhost')
+        params['destination_pipeline_password'] = os.getenv('INTELMQ_TEST_REDIS_PASSWORD')
+        params['destination_pipeline_db'] = 4
         logger = logging.getLogger('foo')
         logger.addHandler(logging.NullHandler())
-        self.pipe = pipeline.PipelineFactory.create(params,
-                                                    logger)
+        self.pipe = pipeline.PipelineFactory.create(logger, broker='Redis', pipeline_args=params)
+        self.pipe.source_pipeline_host = '10.0.0.1'  # force fail if load_configuration is ineffective (#1875)
+        self.pipe.load_configurations('source')
         self.pipe.set_queues('test', 'source')
         self.pipe.set_queues('test', 'destination')
         self.pipe.connect()
@@ -215,12 +213,14 @@ class TestRedis(unittest.TestCase):
 class TestAmqp(unittest.TestCase):
 
     def setUp(self):
-        params = Parameters()
-        params.broker = 'Amqp'
         logger = logging.getLogger('foo')
         logger.addHandler(logging.NullHandler())
-        self.pipe = pipeline.PipelineFactory.create(params,
-                                                    logger=logger)
+
+        self.pipe = pipeline.PipelineFactory.create(logger=logger, broker='Amqp',
+                                                    pipeline_args={'source_pipeline_host': '127.0.0.1',
+                                                                   'destination_pipeline_host': '127.0.0.1'})
+        self.pipe.source_pipeline_host = '10.0.0.1'  # force fail if load_configuration is ineffective (#1875)
+        self.pipe.load_configurations('source')
         self.pipe.set_queues('test', 'source')
         self.pipe.set_queues('test', 'destination')
         self.pipe.connect()
@@ -266,9 +266,8 @@ class TestAmqp(unittest.TestCase):
         self.pipe.reject_message()
         self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
 
-    @unittest.skipIf(os.getenv('TRAVIS') == 'true' and os.getenv('CI') == 'true'
-                     and sys.version_info[:2] == (3, 8),
-                     'Fails on Travis with Python 3.8')
+    @unittest.skipIf(os.getenv('CI') == 'true' and sys.version_info[:2] == (3, 8),
+                     'Fails on CI with Python 3.8')
     def test_acknowledge(self):
         self.pipe.send(SAMPLES['normal'][0])
         self.pipe.receive()

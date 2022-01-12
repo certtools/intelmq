@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -19,7 +23,7 @@ EXAMPLE_REPORT = {"feed.name": "ATD",
 
 EXAMPLE_EVENT = {"feed.name": "ATD",
                  "time.observation": "2015-11-02T13:11:44+00:00",
-                 "classification.taxonomy": "malicious code",
+                 "classification.taxonomy": "malicious-code",
                  "classification.type": "infected-system",
                  "raw": utils.base64_encode(EXAMPLE_FILE),
                  'malware.hash.md5': '6C3F06652A4868E005EB42DAAF1CEE43',

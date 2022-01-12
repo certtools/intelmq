@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 unmapped:
@@ -15,14 +19,14 @@ CLASSIFICATION = {
                     "office 365 attack", "sip attack", "ssh attack",
                     "ssh密碼猜測攻擊",  # Password Guess Attack
                     ],
-    "c2server": ["c&c server", "attack controller"],
+    "c2-server": ["c&c server", "attack controller"],
     "infected-system": ["irc-botnet"],
-    "malware": ["malware provider", "malware website", '\u60e1\u610f', "worm", "malware proxy"],
+    "malware-distribution": ["malware provider", "malware website", '\u60e1\u610f', "worm", "malware proxy"],
     "scanner": ["scan"],
     "exploit": ["bash", "php-cgi", "phpmyadmin"],
     "ddos": ["ddos"],
     "application-compromise": ["injection"],  # apache vulns, sql
-    "ids-alert": ["backdoor"],  # ids-alert is exploitation of known vulnerability
+    "ids-alert": ["ids-alert"],  # ids-alert is exploitation of known vulnerability
     "dos": ["dns", "dos",  # must be after ddos
             "超量連線",  # google: "Excess connection"
             ],
@@ -30,6 +34,7 @@ CLASSIFICATION = {
 
 
 class TaichungNetflowRecentParserBot(ParserBot):
+    """Parse the Taichung feed"""
 
     def get_type(self, value):
         value = value.lower()
@@ -39,7 +44,7 @@ class TaichungNetflowRecentParserBot(ParserBot):
                     return event_type
         warnings.warn("Unknown classification: %r. Please report this as bug."
                       "" % value)
-        return "unknown"
+        return "undetermined"
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))

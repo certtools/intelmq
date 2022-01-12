@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2016 by Bundesamt für Sicherheit in der Informationstechnik
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # -*- coding: utf-8 -*-
 """
 Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
@@ -6,7 +9,7 @@ Software engineering by Intevation GmbH
 This is an "all-in-one" parser for a lot of shadowserver feeds.
 It depends on the configuration in the file "config.py"
 which holds information on how to treat certain shadowserverfeeds.
-It uses the report field extra.file_name to determine wich config should apply,
+It uses the report field extra.file_name to determine which config should apply,
 so this field is required.
 
 This parser will only work with csv files named like
@@ -20,44 +23,38 @@ Optional parameters:
 import copy
 import re
 
-import intelmq.bots.parsers.shadowserver.config as config
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidKey, InvalidValue
+import intelmq.bots.parsers.shadowserver._config as config
 
 
 class ShadowserverParserBot(ParserBot):
+    """Parse all ShadowServer feeds"""
 
     recover_line = ParserBot.recover_line_csv_dict
-    csv_params = {'dialect': 'unix'}
+    _csv_params = {'dialect': 'unix'}
     __is_filename_regex = re.compile(r'^(?:\d{4}-\d{2}-\d{2}-)?(\w+)(-\w+)*\.csv$')
-    sparser_config = None
+    _sparser_config = None
     feedname = None
-    mode = None
+    _mode = None
+    overwrite = False
 
     def init(self):
-        if getattr(self.parameters, 'feedname', None):
-            self.feedname = self.parameters.feedname
-            self.sparser_config = config.get_feed_by_feedname(self.feedname)
-            if self.sparser_config:
+        if self.feedname is not None:
+            self._sparser_config = config.get_feed_by_feedname(self.feedname)
+            if self._sparser_config:
                 self.logger.info('Using fixed feed name %r for parsing reports.' % self.feedname)
-                self.mode = 'fixed'
+                self._mode = 'fixed'
             else:
                 self.logger.info('Could not determine the feed by the feed name %r given by parameter. '
                                  'Will determine the feed from the file names.',
                                  self.feedname)
-                self.mode = 'detect'
+                self._mode = 'detect'
         else:
-            self.mode = 'detect'
-
-        # Set a switch if the parser shall reset the feed.name,
-        #  for this event
-        self.overwrite = False
-        if hasattr(self.parameters, 'overwrite'):
-            if self.parameters.overwrite:
-                self.overwrite = True
+            self._mode = 'detect'
 
     def parse(self, report):
-        if self.mode == 'fixed':
+        if self._mode == 'fixed':
             return self.parse_csv_dict(report)
 
         # Set config to parse report
@@ -79,14 +76,14 @@ class ShadowserverParserBot(ParserBot):
             if not retval:
                 raise ValueError('Could not get a config for {!r}, check the documentation.'
                                  ''.format(self.report_name))
-            self.feedname, self.sparser_config = retval
+            self.feedname, self._sparser_config = retval
 
         # Set default csv parse function
         return self.parse_csv_dict(report)
 
     def parse_line(self, row, report):
 
-        conf = self.sparser_config
+        conf = self._sparser_config
 
         # https://github.com/certtools/intelmq/issues/1271
         if conf == config.drone and row.get('infection') == 'spam':

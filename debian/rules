@@ -17,33 +17,26 @@ BOTDOCS := $(foreach bot,$(BOTS),$(wildcard $(bot)/*.md))
 # Wed, 23 Mar 2016 17:49:26 +0000
 export PYBUILD_NAME=intelmq
 %:
-	dh $@ --with python3 --without python2 --buildsystem=pybuild --with quilt --with systemd
+	dh $@ --with python3,sphinxdoc --without python2 --buildsystem=pybuild --with quilt --with systemd
 
 build:
 	if [ $(CODENAME) = 'xenial' ] || [ $(CODENAME) = 'jessie' ]; then\
 		patch -p1 setup.py debian/patches/fix-dnspython-name.patch;\
 	fi
-	dh build --with python3 --without python2 --buildsystem=pybuild --with quilt --with systemd
-	# This tests frequently failes on ubuntu and debian systems.
+	dh build --with python3,sphinxdoc --without python2 --buildsystem=pybuild --with quilt --with systemd
+	# These tests frequently fail on Ubuntu and Debian systems.
 	# On some systems this command will be executed twice, so -f
 	rm -rf intelmq/tests/bots/collectors/tcp/
 
 override_dh_auto_build:
+	dh_auto_build
+	$(MAKE) -C docs html
 
 override_dh_auto_install: $(BOTDOCS)
 	rm intelmq/bin/rewrite_config_files.py
 	sed -i -e '/#!\/usr\/bin\//d' intelmq/bin/*.py
-	sed -i -f debian/sedfile intelmq/bots/BOTS intelmq/etc/* docs/guides/intelmqctl.md docs/guides/Bots.md setup.py contrib/logrotate/intelmq
+	sed -i -f debian/sedfile intelmq/etc/* docs/user/intelmqctl.rst docs/user/bots.rst setup.py contrib/logrotate/intelmq contrib/logcheck/logcheck.logfiles
 	python3 setup.py install --root=debian/intelmq --prefix=/usr
-	# these are already in /usr/bin/
-	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/maxmind_geoip/update-geoip-data
-	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/asn_lookup/update-asn-data
-	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/tor_nodes/update-tor-nodes
-	# and rename those in /usr/bin
-	mv debian/intelmq/usr/bin/update-geoip-data debian/intelmq/usr/bin/intelmq-update-geoip-data
-	mv debian/intelmq/usr/bin/update-asn-data debian/intelmq/usr/bin/intelmq-update-asn-data
-	mv debian/intelmq/usr/bin/update-tor-nodes debian/intelmq/usr/bin/intelmq-update-tor-nodes
-	mv debian/intelmq/usr/bin/update-rfiprisk-data debian/intelmq/usr/bin/intelmq-update-rfiprisk-data
 	# create directories
 	mkdir -p debian/intelmq/var/log/intelmq
 	mkdir -p debian/intelmq/var/lib/intelmq/bots/file-output
@@ -59,7 +52,7 @@ override_dh_auto_install: $(BOTDOCS)
 	# remove program not needed for packages
 	rm debian/intelmq/usr/bin/intelmqsetup
 	# create directory layout and empty state file
-	ROOT_DIR=debian/intelmq/ PYTHONPATH=. python3 intelmq/bin/intelmqsetup.py --skip-ownership --state-file debian/intelmq/var/lib/intelmq/state.json
+	ROOT_DIR=debian/intelmq/ PYTHONPATH=. python3 intelmq/bin/intelmqsetup.py --skip-ownership --state-file debian/intelmq/var/lib/intelmq/state.json --skip-api --skip-manager
 
 override_dh_install:
 	dh_install

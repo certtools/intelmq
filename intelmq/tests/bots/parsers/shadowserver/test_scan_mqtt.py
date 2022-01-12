@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 Thomas Hungenberg
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open-MQTT',
            "classification.identifier": "open-mqtt",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.anonymous_access": True,
            "extra.code": "Connection Accepted",
            "extra.hex_code": "00",
@@ -46,7 +50,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open-MQTT',
            "classification.identifier": "open-mqtt",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.anonymous_access": False,
            "extra.code": "Connection Refused, Server unavailable",
            "extra.hex_code": "03",

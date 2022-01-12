@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 gethvi
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 import unittest
 import sys
 
@@ -36,7 +40,7 @@ INPUT = """[
 
 OUTPUT_0 = {
     '__type': 'Event',
-    'classification.type': 'unauthorized-command',
+    'classification.type': 'system-compromise',
     'protocol.transport': 'tcp',
     'protocol.application': 'ssh',
     'destination.port': 22,
@@ -65,7 +69,7 @@ OUTPUT_1 = {
 
 OUTPUT_2 = {
     '__type': 'Event',
-    'classification.type': 'unauthorized-login',
+    'classification.type': 'system-compromise',
     'protocol.transport': 'tcp',
     'protocol.application': 'ssh',
     'destination.port': 22,
@@ -87,9 +91,6 @@ class TestCZNICHaasParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = CZNICHaasParserBot
         cls.default_input_message = {'__type': 'Report', 'raw': utils.base64_encode(INPUT)}
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Dict ordering in Python 3.5 '
-                                                'is not consistent, skipping '
-                                                'this test.')
     def test_event(self):
         self.run_bot()
         self.assertMessageEqual(0, OUTPUT_0)

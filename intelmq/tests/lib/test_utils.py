@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- encoding: utf-8 -*-
 """
 Testing the utility functions of intelmq.
@@ -12,10 +16,18 @@ import io
 import os
 import tempfile
 import unittest
+import unittest.mock
 import requests
+import pkg_resources
+import pprint
+
+import cerberus
+import json
 
 import termstyle
+from ruamel.yaml.scanner import ScannerError
 
+from intelmq.tests.test_conf import CerberusTests
 import intelmq.lib.utils as utils
 
 LINES = {'spare': ['Lorem', 'ipsum', 'dolor'],
@@ -29,6 +41,16 @@ SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
                       'Lorem ipsum dolor sit amet'],
            'unicode': [b'\xc2\xa9\xc2\xab\xc2\xbb \xc2\xa4\xc2\xbc',
                        '©«» ¤¼']}
+
+
+def new_get_runtime() -> dict:
+    runtime_conf = utils.load_configuration(pkg_resources.resource_filename('intelmq', 'etc/runtime.yaml'))
+    if 'global' not in runtime_conf:
+        runtime_conf['global'] = {}
+    runtime_conf['global']['http_proxy'] = 'http://localhost:8080'
+    runtime_conf['global']['https_proxy'] = 'http://localhost:8080'
+    runtime_conf['cymru-whois-expert']['parameters']['http_proxy'] = 'http://localhost:8081'
+    return runtime_conf
 
 
 class TestUtils(unittest.TestCase):
@@ -165,7 +187,7 @@ class TestUtils(unittest.TestCase):
         line = ("Feb 22 10:17:10 host malware-domain-list-collector: ERROR "
                 "Something went wrong")
         thread = ("Feb 22 10:17:10 host malware-domain-list-collector.4: ERROR "
-                "Something went wrong")
+                  "Something went wrong")
 
         actual = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
         self.assertEqual({'bot_id': 'malware-domain-list-collector',
@@ -189,13 +211,15 @@ class TestUtils(unittest.TestCase):
         """Tests if parse_reltive returns the correct timespan."""
         self.assertEqual(utils.parse_relative('1 hour'), 60)
         self.assertEqual(utils.parse_relative('2\tyears'), 1051200)
+        self.assertEqual(utils.parse_relative('5 minutes'), 5)
+        self.assertEqual(utils.parse_relative('10 seconds'), 1 / 60 * 10)
 
     def test_parse_relative_raises(self):
         """Tests if parse_reltive correctly raises ValueError."""
         with self.assertRaises(ValueError):
             utils.parse_relative('1 hou')
         with self.assertRaises(ValueError):
-            utils.parse_relative('1 minute')
+            utils.parse_relative('1 µs')
 
     def test_seconds_to_human(self):
         """ Test seconds_to_human """
@@ -264,6 +288,68 @@ class TestUtils(unittest.TestCase):
         response.headers['Content-Disposition'] = 'attachment; filename=2019-09-09-drone_brute_force-austria-geo.csv'
         self.assertEqual(utils.file_name_from_response(response),
                          '2019-09-09-drone_brute_force-austria-geo.csv')
+
+    def test_list_all_bots(self):
+        """ test list_all_bots """
+        bots_list = utils.list_all_bots()
+        test = CerberusTests()
+        with open(os.path.join(os.path.dirname(__file__), '../assets/bots.schema.json')) as handle:
+            schema = json.loads(test.convert_cerberus_schema(handle.read()))
+
+        v = cerberus.Validator(schema)
+
+        self.assertTrue(v.validate(bots_list),
+                        msg='Invalid BOTS list:\n%s' % pprint.pformat(v.errors))
+
+    def test_get_bots_settings(self):
+        with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
+            runtime = utils.get_bots_settings()
+        self.assertEqual(runtime['cymru-whois-expert']['parameters']['http_proxy'], 'http://localhost:8081')
+        self.assertEqual(runtime['deduplicator-expert']['parameters']['http_proxy'], 'http://localhost:8080')
+
+        with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
+            cymru = utils.get_bots_settings('cymru-whois-expert')
+        self.assertEqual(cymru['parameters']['http_proxy'], 'http://localhost:8081')
+
+        with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
+            deduplicator = utils.get_bots_settings('deduplicator-expert')
+        self.assertEqual(deduplicator['parameters']['http_proxy'], 'http://localhost:8080')
+
+    def test_get_global_settings(self):
+        with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
+            defaults = utils.get_global_settings()
+        self.assertEqual(defaults['http_proxy'], 'http://localhost:8080')
+        self.assertEqual(defaults['https_proxy'], 'http://localhost:8080')
+
+    def test_load_configuration_json(self):
+        """ Test load_configuration with a JSON file containing space whitespace """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/foobar.json')
+        self.assertEqual(utils.load_configuration(filename), {'foo': 'bar'})
+
+    def test_load_configuration_json_tabs(self):
+        """ Test load_configuration with a JSON file containing tab whitespace """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/tab-whitespace.json')
+        self.assertEqual(utils.load_configuration(filename), {'foo': 'bar'})
+
+    def test_load_configuration_yaml(self):
+        """ Test load_configuration with a YAML file """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/example.yaml')
+        self.assertEqual(utils.load_configuration(filename),
+                         {
+                            'some_string': 'Hello World!',
+                            'other_string': 'with a : in it',
+                            'now more': ['values', 'in', 'a', 'list'],
+                            'types': -4,
+                            'other': True,
+                            'final': 0.5,
+                        }
+                        )
+
+    def test_load_configuration_yaml_invalid(self):
+        """ Test load_configuration with an invalid YAML file """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/example-invalid.yaml')
+        with self.assertRaises(ScannerError):
+            utils.load_configuration(filename)
 
 
 if __name__ == '__main__':  # pragma: no cover

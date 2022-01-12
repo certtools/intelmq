@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 TODO: Test on wrong credentials
@@ -50,7 +54,6 @@ EMPTY_OUTPUT = {"__type": "Event",
 
 
 @test.skip_internet()
-@test.skip_travis()
 @unittest.skipUnless(os.environ.get('DO_PORTAL_KEY'),
                      'No DO portal key provided.')
 @unittest.skipUnless(os.environ.get('DO_PORTAL_URL'),

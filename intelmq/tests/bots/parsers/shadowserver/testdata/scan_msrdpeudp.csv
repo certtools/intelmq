@@ -1,0 +1,3 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","sessionid"
+"2021-01-20 13:18:51","198.51.100.39","udp",3389,"198-51-100-39.example.net","rdpeudp",20473,"US","ILLINOIS","ELK GROVE VILLAGE",518210,,"05d459c3"
+"2021-01-20 13:18:52","198.51.100.141","udp",1234,,"rdpeudp",38365,"CN","ZHEJIANG SHENG","LISHUI",518210,,"055f5d9a"

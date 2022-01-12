@@ -1,20 +1,283 @@
+<!-- comment
+   SPDX-FileCopyrightText: 2015-2021 Sebastian Wagner
+   SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 NEWS
 ====
 
-See the changelog for a full list of changes.
+This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
+Please refer to the changelog for a full list of changes.
 
-2.3.0 Bugfix release (unreleased)
+3.1.0 Feature release (unreleased)
 ----------------------------------
-
-The documentation is now available at [intelmq.readthedocs.io](https://intelmq.readthedocs.io/) (FIXME: Link to stable version?).
 
 ### Requirements
 
 ### Tools
 
-#### Bot option `--updata-database`
+### Data Format
+#### Field name checks
+The field names for all data added to messages must match a pre-defined format.
+The check which ensures this, was ineffective prior to this version and is effective again starting with version 3.1.0.
+The [Data format documentation](https://intelmq.readthedocs.io/en/maintenance/dev/data-format.html#rules-for-keys) describes the required format.
+
+### Logrotate
+The packaged configuration for logrotate falsely contained options applying to other programs' log files. This caused wrong ownerships of log files.
+This issues is corrected, but the ownership of affected log files may need to be changed manually.
+To find affected files, you may use:
+```bash
+sudo find /var/log/ -user intelmq ! -path \*intelmq\*
+```
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
+3.0.2 Maintenance release (2021-09-10)
+--------------------------------------
+Two performance issues were fixed. One affected all collectors which processed high volumes of data and the other issue affected some bots which used threading.
+See the changelog for more details.
+
+The section on 3.0.0 in this file now contains more details for the upgrade to 3.0.0 in regards to the configuration.
+
+
+3.0.1 Maintenance release (2021-09-02)
+--------------------------------------
+
+### Bots
+The malwardomains parser bot was removed. The malwaredomains.com website is offline, therefore the parser can not be used anymore. The `intelmqctl upgrade-config` command warns if you have the feed and the bot in use.
+The postgresql output bot was removed. The bot was marked as deprecated in 2019 and announced to be removed in version 3.
+
+
+3.0.0 Major release (2021-07-02)
+--------------------------------
+
+### Requirements
+IntelMQ now uses YAML for the runtime configuration and therefore needs the `ruamel.yaml` library.
+
+### Configuration
+The `defaults.conf` file was removed. Settings that should effect all the bots are not part of the runtime.conf file and are configured in the `global` section in that file.
+The `intelmqctl upgrade-config` command migrates the existing values from the `defaults.conf` file to the `runtime.conf` file under the `global` section and then deletes the `defaults.conf` file.
+The `pipeline.conf` file was removed. The source- and destination-queues of the bots are now configured in the bot configuration itself, thus in the `runtime.conf` file.
+The `intelmqctl upgrade-config` command migrates the existing configuration from the `pipeline.conf` file to the individual bot configurations in the `runtime.conf` configuration file.
+The `runtime.conf` file was replaced by a `runtime.yaml` file. IntelMQ moves the file for you if it does not find a runtime.conf but a runtime.yaml file. When IntelMQ changes the file, it now writes YAML syntax.
+
+#### When using the official deb/rpm-packages or the official Docker image
+Unfortunately, the automatic upgrade procedures has a flaw.
+The packages provide a default runtime configuration, but only for new installations if there is no previously existing installation.
+But as the runtime configuration was renamed from `/etc/intelmq/runtime.conf` to `/etc/intelmq/runtime.yaml`, this check comes to nothing, and the `/etc/intelmq/runtime.yaml` get installed.
+But only the new filename is considered by IntelMQ itself, so the configuration *appears* to be lost.
+To fix this:
+- remove the newly provided `runtime.yaml`
+- make sure that the `runtime.conf` is the correct file with your correct configuration
+- IntelMQ will rename and convert the configuration automatically, but we need to trigger the migration of the `pipeline.conf` and `defaults.conf`:
+  ```
+  sudo -u intelmq intelmqctl upgrade-config -f -u v300_pipeline_file_removal
+  sudo -u intelmq intelmqctl upgrade-config -f -u v300_defaults_file_removal
+  sudo -u intelmq intelmqctl upgrade-config -f -u v301_deprecations
+  ```
+
+### Tools
+
+#### intelmqdump
+The command `e` for deleting single entries by given IDs has been merged into the command `d` ("delete"), which can now delete either entries by ID or the whole file.
+The command `v` for editing entries has been renamed to `e` ("edit").
+
+#### Cronjobs
+The deprecated shell scripts
+- `update-asn-data`
+- `update-geoip-data`
+- `update-tor-nodes`
+- `update-rfiprisk-data`
+have been removed in favor of the built-in update-mechanisms (see the bots' documentation). A crontab file for calling all new update command can be found in `contrib/cron-jobs/intelmq-update-database`.
+
+### Bots
+
+Both the XMPP collector bot and the XMPP output bot were removed. This [was evaluated on the mailinglist](https://lists.cert.at/pipermail/intelmq-users/2020-October/000177.html)
+and the XMPP bots were deprecated in 391d625.
+
+#### Sieve expert
+The Sieve expert bot has had major updates to its syntax. Breaking new changes:
+* the removal of the `:notcontains` operator, which can be replaced using the newly added
+ expression negation, e.g `! foo :contains ['.mx', '.zz']` rather than `foo :notcontains ['.mx', '.zz']`. 
+* changed operators for comparisons against lists of values, e.g `source.ip :in ['127.0.0.5', '192.168.1.2']` rather than `source.ip == ['127.0.0.5', '192.168.1.2']`
+  The "old" syntax with `==` on lists is no longer valid and raises an error.
+
+New features:
+* arbitrary nesting of if clauses + mixed conditionals and actions in the same level of nesting
+* new matches on fields containing list values and boolean values
+* new list-based actions
+* negation of arbitrary expressions and expression groups separated by brackets through a prepended `!`, e.g `! src.port :in [80, 443]`
+* non-string values accepted by `add`/`add!`/`update`
+
+The [sieve bot documentation](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#intelmq-bots-experts-sieve-expert) has been updated to reflect on these new changes.
+
+### Data format
+The classification scheme has been updated to better match the [Reference Security Incident Taxonomy (RSIT)](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed, deleted or merged into others:
+
+| old taxonomy name | old type name | new taxonomy name | new type name |
+|-|-|-|-|
+| abusive content              |                    | abusive-content              |                                        |
+| information content security |                    | information-content-security |                                        |
+| information content security | leak               | information-content-security | data-leak                              |
+| information content security | dropzone           | other                        | other (identifier: ``dropzone``)       |
+| intrusion attempts           |                    | intrusion-attempts           |                                        |
+| information gathering        |                    | information-gathering        |                                        |
+| intrusions                   | backdoor           | intrusions                   | system-compromise                      |
+| intrusions                   | compromised        | intrusions                   | system-compromise                      |
+| intrusions                   | defacement         | information-content-security | unauthorised-information-modification  |
+| intrusions                   | unauthorized-login | intrusions                   | system-compromise                      |
+| intrusions                   | unauthorized-command | intrusions                 | system-compromise                      |
+| malicious code               |                    | malicious-code               |                                        |
+| malicious code               | c2server           | malicious-code               | c2-server                              |
+| malicious code               | malware            | malicious-code               | infected-system / malware-distribution |
+| malicious code               | dga domain         | other                        | dga-domain                             |
+| malicious code               | malware            | other                        | malware                                |
+| malicious code               | ransomware         | malicious-code               | infected-system                        |
+| vulnerable                   | vulnerable client  | vulnerable                   | vulnerable-system                      |
+| vulnerable                   | vulnerable service | vulnerable                   | vulnerable-system                      |
+| other                        | unknown            | other                        | undetermined                           |
+
+- For the taxonomy 'availability', the type `misconfiguration` is new.
+- For the taxonomy 'intrusions', the type `system-compromise` is new.
+- For the taxonomy 'other', the types `malware` and `undetermined` are new.
+
+The old `classification.type` names can still be used in code, and they are automatically converted to the new names.
+Existing data in databases and alike are *not* changed automatically.
+See the section "Postgres databases" below for instructions to update existing data in databases.
+
+#### "Malware"
+
+The previously existing classification type "malware" under the taxonomy "malicious code" was removed, as this type does not exist in the RSIT.
+Most of the usages were wrong anyway, and should have been infected-device, malware-distribution or something else.
+There is only one usage in IntelMQ, which can not be changed.
+And that one is really about malware itself (or: the hashes of samples). For this purpose, the new type "malware" under the taxonomy "other" was created, *slightly* deviating from the RSIT in this respect, but the "other" taxonomy can be freely extended.
+
+
+#### Removal of deprecated bots and behaviour
+- The bot `intelmq.bots.experts.ripencc_abuse_contact.expert` has been removed. It was replaced by `intelmq.bots.experts.ripe.expert` and marked as deprecated in 2.0.0.beta1.
+- Modify expert: Compatibility with the deprecated configuration format (before 1.0.0.dev7) was removed.
+- RT collector: compatibility with the deprecated parameter `unzip_attachment` (removed in 2.1.0) was removed.
+
+
+### Postgres databases
+The following statements optionally update existing data for the harmonization classification changes:
+```SQL
+UPDATE events
+   SET "classification.taxonomy" = 'abusive-content'
+   WHERE "classification.taxonomy" = 'abusive content';
+UPDATE events
+   SET "classification.taxonomy" = 'information-content-security'
+   WHERE "classification.taxonomy" = 'information content security';
+UPDATE events
+   SET "classification.type" = 'data-leak'
+   WHERE "classification.type" = 'leak' AND "classification.taxonomy" = 'information-content-security';
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion-attempts'
+   WHERE "classification.taxonomy" = 'intrusion attempts';
+UPDATE events
+   SET "classification.taxonomy" = 'information-gathering'
+   WHERE "classification.taxonomy" = 'information gathering';
+UPDATE events
+   SET "classification.type" = 'system-compromise'
+   WHERE "classification.type" IN ('backdoor', 'compromised', 'unauthorized-login', 'unauthorized-command');
+UPDATE events
+   SET "classification.taxonomy" = 'information-content-security', "classification.type" = 'unauthorised-information-modification'
+   WHERE "classification.taxonomy" = 'intrusions', "classification.type" = 'defacement'
+UPDATE events
+   SET "classification.taxonomy" = 'malicious-code'
+   WHERE "classification.taxonomy" = 'malicious code';
+UPDATE events
+   SET "classification.type" = 'c2-server'
+   WHERE "classification.taxonomy" = 'malicious-code' AND "classification.type" = 'c2server';
+UPDATE events
+   SET "classification.taxonomy" = 'other', "classification.type" = 'dga-domain'
+   WHERE "classification.taxonomy" = 'malicious-code' AND "classification.type" = 'dga domain';
+UPDATE events
+   SET "classification.type" = 'vulnerable-system'
+   WHERE "classification.taxonomy" = 'vulnerable' AND ("classification.type" = 'vulnerable service' OR "classification.type" = 'vulnerable client');
+UPDATE events
+   SET "classification.type" = 'undetermined'
+   WHERE "classification.taxonomy" = 'other' AND "classification.type" = 'unknown';
+```
+Depending on the data (e.g. feed), the correct statement for the `malware` type deprecation may be either this:
+```sql
+UPDATE events
+   SET "classification.type" = 'infected-system'
+   WHERE "classification.taxonomy" = 'malicious-code' AND ("classification.type" = 'malware' OR "classification.type" = 'ransomware');
+```
+or this:
+```sql
+UPDATE events
+   SET "classification.type" = 'malware-distribution'
+   WHERE "classification.taxonomy" = 'malicious-code' AND ("classification.type" = 'malware' OR "classification.type" = 'ransomware');
+```
+or this:
+```sql
+UPDATE events
+   SET "classification.taxonomy" = 'other'
+   WHERE "classification.type" = 'malware';
+```
+
+
+2.3.3 Bugfix release (2021-05-31)
+---------------------------------
+
+### Configuration
+
+#### Feodotracker Browse
+The parameters required to parse the Abuse.ch Feodotracker Browse feed with the HTML Table parser have changed.
+Old parameters:
+- `columns`: `time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc`
+- `ignore_values`: `,,,,Not listed,,`
+New parameters:
+- `columns`: `time.source,source.ip,malware.name,status,source.as_name,source.geolocation.cc`
+- `ignore_values`: `,,,,,`
+The column with the SBL number has been removed.
+These parameters remain unchanged:
+- `skip_table_head`: `true`
+- `type`: `c2server`
+
+Please adapt the configuration of your configured bots.
+The `intelmqctl upgrade-config` command automatically fixes a configuration if the parser for this feed is detected by the bot ID (name contains "feodo") and its parameters.
+
+#### Shadowserver
+
+Shadowserver changed some of their feeds, for more information see [Changes in Sinkhole and Honeypot Report Types and Formats](https://www.shadowserver.org/news/changes-in-sinkhole-and-honeypot-report-types-and-formats/). Support for the legacy feeds has not been removed yet.
+
+The [Shadowserver Parser Bot documentation](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#shadowserver-supported-reports) lists the supported feeds, as well as the legacy feeds.
+
+
+2.3.2 Bugfix release (2021-04-27)
+---------------------------------
+
+No changes are required by administrators.
+
+
+2.3.1 Bugfix release (2021-03-25)
+---------------------------------
+
+No changes are required by administrators.
+
+
+2.3.0 Feature release (2021-03-04)
+---------------------------------
+
+The documentation is now available at [intelmq.readthedocs.io](https://intelmq.readthedocs.io/).
+
+### Requirements
+IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the minimum supported Python version is 3.6.
+CentOS 7 (with EPEL) provides both Python 3.4 and Python 3.6. If IntelMQ was installed manually with Python 3.4, the code needs to be re-installed with Python 3.6 and removed for Python 3.4. Application data is compatible. To install the Python 3.6 packages, use: `yum install python36 python36-devel python36-requests`.
+
+### Bots
+
+#### Bot option `--update-database`
 - Bots that require a database file (such as `maxmind_geoip`, `asn_lookup`, `tor_nodes` and `recordedfuture_iprisk`)
-  have new command line option `--update-database`. It is not necessary to specify a
+  have a new command line option `--update-database`. It is not necessary to specify a
   bot ID, the function automatically updates the database for all the bots of the same
   type and reloads them afterwards. Removes any external dependencies (such as curl or wget).
   This is a replacement for shell scripts such as `update-tor-nodes`, `update-asn-data`,
@@ -28,17 +291,77 @@ The documentation is now available at [intelmq.readthedocs.io](https://intelmq.r
   intelmq.bots.experts.tor_nodes.expert --update-database
   ```
   The provided shell scripts use these new commands, however they are now deprecated and will be removed in version 3.0.
+- `intelmqctl list queues` is now able to sum events over all queues with the `--sum`, `--count` or simple `-s` flag.
 
-### Harmonization
+#### XMPP Bots
+Both the XMPP output bot and the XMPP collector bot are deprecated.
+The bots need to be migrate to another XMPP library (see [#1614](https://github.com/certtools/intelmq/issues/1614) for details) and a survey on the mailing listed revealed no users.
+If you depend on this bot, please reach out to us via the mailing list or GitHub.
+The bots are logging a deprecation warning now and the current plan is to remove them in IntelMQ version 3.0.
+
+#### Shadowserver Bots
+The Shadowserver Collector is now able to collect data from the [Shadowserver Reports API](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#shadowserver-reports-api). Moreover the Shadowserver Parser now supports the JSON format used by the Reports API.
+
+#### Sieve Expert
+Sieve-Expert is now capable of basic math operations & you can do actions without any `if` statements.
+
+1. How to use basic math in sieve, only with DateTimes currently:
+```
+add time.observation += '1 hour'
+add time.observation -= '10 hours'
+```
+2. Actions can now be used without an `if` statement, just write the following into a `.sieve` file:
+```
+add comment = "Adding this to all computed events"
+```
+More details can be found in our [documentation](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#sieve).
+
+#### Kafka Collector
+Now you're able to fetch data from Kafka with the [Kafka Collector](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#kafka).
 
 ### Configuration
+#### Abuse.ch URLHaus feed
+The feed template for the URLHaus feed contained a spelling error:
+The correct name for the parameter "delimeter" is "delimiter". Please fix your configured bots.
+The `intelmqctl upgrade-config` command automatically fixes a configuration if the misspelling is detected.
 
-### Libraries
+#### IntelMQ-Manager -> IntelMQ-API
+`IntelMQ-Manager` PHP backend is getting replaced by the newly developed `IntelMQ-API`. The `IntelMQ-Manager` release only contains the files for the web frontend. The `IntelMQ-Manager` packages now depend or recommend the installation of the `IntelMQ-API` package, therefore a normal upgrade should pull in the API. Follow the instructions in our [documentation](https://intelmq.readthedocs.io/en/maintenance/user/intelmq-api.html) to configure the API. It uses its own authentication backend now, how to setup users is described in the [documentation](https://intelmq.readthedocs.io/en/maintenance/user/intelmq-api.html#adding-a-user).
 
 ### Postgres databases
+There was a spelling error in the Spamhaus CERT Parser's "event_description.text" texts.
+The following statements optionally update existing data.
+Please check if you did use these feed names and eventually adapt them for your setup!
+```sql
+UPDATE events
+   SET "event_description.text" = 'The malicious client used a honeypot as proxy.'
+   WHERE "event_description.text" = 'The malicous client used a honeypot as proxy.' AND "classification.taxonomy" = 'other' AND "classification.type" = 'other' AND "classification.identifier" = 'proxyget' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "event_description.text" = 'The infected iot device logged in to a honeypot and issued malicious commands.'
+   WHERE "event_description.text" = 'The infected iot device logged in to a honeypot and issued malicous commands.' AND "classification.taxonomy" = 'intrusions' AND "classification.type" = 'unauthorized-command' AND "classification.identifier" = 'iot' AND "feed.name" = 'Spamhaus CERT';
+```
 
+2.2.3 Bugfix release (2020-12-23)
+---------------------------------
 
-2.2.2 Bugfix release (unreleased)
+### Harmonization
+A bug in the taxonomy expert did set the Taxonomy for the type `scanning` to `information gathering`
+whereas for the type `sniffing` and `social-engineering`, the taxonomy was correctly set to `information-gathering`.
+This inconsistency for the taxonomy `information-gathering` is now fixed, but the data eventually needs to fixed in data output (databases) as well.
+
+There are still some inconsistencies in the naming of the classification taxonomies and types,
+more fixes will come in version 3.0.0. See [issue #1409](https://github.com/certtools/intelmq/issues/1409).
+
+### Postgres databases
+The following statements optionally update existing data.
+Please check if you did use these feed names and eventually adapt them for your setup!
+```SQL
+UPDATE events
+   SET "classification.taxonomy" = 'information-gathering'
+   WHERE "classification.taxonomy" = 'information gathering';
+```
+
+2.2.2 Bugfix release (2020-10-28)
 ---------------------------------
 
 ### Bots
@@ -46,19 +369,9 @@ The documentation is now available at [intelmq.readthedocs.io](https://intelmq.r
 The cache key calculation has been fixed. It previously led to duplicate keys for different IP addresses and therefore wrong results in rare cases. The cache key calculation is intentionally not backwards-compatible. Therefore, this bot may take longer processing events than usual after applying this update.
 More details can be found in [issue #1592](https://github.com/certtools/intelmq/issues/1592).
 
-### Requirements
-
-### Tools
-
 ### Harmonization
 #### Shadowserver Feed/Parser
 The feed "Blacklisted-IP" has been renamed by ShadowServer to "Blocklist". In IntelMQ, the old name can still be used in IntelMQ until version 3.0.
-
-### Configuration
-
-### Libraries
-
-### Postgres databases
 
 
 2.2.1 Bugfix release (2020-07-30)
@@ -389,7 +702,7 @@ You may want to update your harmonization configuration
 Some bots depend on the three new harmonization fields.
 
 ### Configuration
-A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field. The change is backwards compatibile and the change is not yet necessary, IntelMQ 1.x.x works with the old configuration too.
+A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field. The change is backwards compatible and the change is not yet necessary, IntelMQ 1.x.x works with the old configuration too.
 
 The feed names in the shadowserver parser have been adapted to the current subjects. Old subjects will still work in IntelMQ 1.x.x. Change your configuration accordingly:
 * `Botnet-Drone-Hadoop` to `Drone`
@@ -516,7 +829,7 @@ UPDATE events
 ---------------------------------
 
 ### Libraries
-- Some optional dependencies do not support Python 3.3 anymore. If your are still using this unsuported version consider upgrading. IntelMQ 1.0.x itself is compatible with Python 3.3.
+- Some optional dependencies do not support Python 3.3 anymore. If your are still using this unsupported version consider upgrading. IntelMQ 1.0.x itself is compatible with Python 3.3.
 
 ### Postgres databases
 Use the following statement carefully to upgrade your database.
@@ -526,7 +839,7 @@ UPDATE events
    SET "classification.taxonomy" = 'abusive content', "classification.type" = 'spam', "classification.identifier" = 'spamlink', "malware.name" = NULL, "event_description.text" = 'The URL appeared in a spam email sent by extra.spam_ip.', "source.url" = "destination.ip", "destination.ip" = NULL
    WHERE "malware.name" = 'l_spamlink' AND "feed.name" = 'Spamhaus CERT';
 UPDATE events
-   SET "classification.taxonomy" = 'other', "classification.type" = 'other', "classification.identifier" = 'proxyget', "malware.name" = NULL, "event_description.text" = 'The malicous client used a honeypot as proxy.'
+   SET "classification.taxonomy" = 'other', "classification.type" = 'other', "classification.identifier" = 'proxyget', "malware.name" = NULL, "event_description.text" = 'The malicious client used a honeypot as proxy.'
    WHERE "malware.name" = 'proxyget' AND "feed.name" = 'Spamhaus CERT';
 ```
 
@@ -594,7 +907,7 @@ UPDATE events
 | dns-query         | other      | other  | ignore me  | other          | other   | dns-query  |
 | proxy             | vulnerable | proxy  | open proxy | other          | proxy   | openproxy  |
 | sandbox-url       | ignore     | ignore | ignore me  | malicious code | malware | sandboxurl | As this previous taxonomy did not exist, these events have been rejected |
-| other             | vulnerable | unknow | unknown    | other          | other   | other      |
+| other             | vulnerable | unknown| unknown    | other          | other   | other      |
 
 ### Postgres databases
 Use the following statement carefully to upgrade your database.

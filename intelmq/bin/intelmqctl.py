@@ -1,38 +1,37 @@
+# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import argparse
 import datetime
-import distutils.version
-import getpass
-import http.client
 import importlib
 import json
 import logging
 import os
 import re
-import signal
-import socket
 import subprocess
 import sys
 import textwrap
 import traceback
 import time
-import xmlrpc.client
 from collections import OrderedDict
 
 import pkg_resources
-from termstyle import green
+from ruamel.yaml import YAML
 
-from intelmq import (BOTS_FILE, DEFAULT_LOGGING_LEVEL, DEFAULTS_CONF_FILE,  # noqa: F401
-                     HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
+from intelmq import (DEFAULT_LOGGING_LEVEL,  # noqa: F401
+                     HARMONIZATION_CONF_FILE,
                      RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
                      DEFAULT_LOGGING_PATH, __version_info__,
                      CONFIG_DIR, ROOT_DIR)
 from intelmq.lib import utils
-from intelmq.lib.bot_debugger import BotDebugger
-from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.datatypes import ReturnType, MESSAGES, LogLevel
+from intelmq.lib.processmanager import *
 from intelmq.lib.pipeline import PipelineFactory
 import intelmq.lib.upgrades as upgrades
-from typing import Union, Iterable
+
+yaml = YAML(typ="safe", pure=True)
 
 try:
     import psutil
@@ -51,673 +50,72 @@ STATUSES = {
     'stopped': 3,
 }
 
-MESSAGES = {
-    'enabled': 'Bot %s is enabled.',
-    'disabled': 'Bot %s is disabled.',
-    'starting': 'Starting %s...',
-    'running': green('Bot %s is running.'),
-    'stopped': 'Bot %s is stopped.',
-    'stopping': 'Stopping bot %s...',
-    'reloading': 'Reloading bot %s ...',
-    'enabling': 'Enabling %s.',
-    'disabling': 'Disabling %s.',
-    'reloaded': 'Bot %s is reloaded.',
-    'restarting': 'Restarting %s...',
-}
-
-ERROR_MESSAGES = {
-    'starting': 'Bot %s failed to START.',
-    'running': 'Bot %s is still running.',
-    'stopped': 'Bot %s was NOT RUNNING.',
-    'stopping': 'Bot %s failed to STOP.',
-    'not found': ('Bot %s FAILED to start because the executable cannot be found. '
-                  'Check your PATH variable and your the installation.'),
-    'access denied': 'Bot %s failed to %s because of missing permissions.',
-    'unknown': 'Status of Bot %s is unknown: %r.',
-}
-
-LOG_LEVEL = OrderedDict([
-    ('DEBUG', 0),
-    ('INFO', 1),
-    ('WARNING', 2),
-    ('ERROR', 3),
-    ('CRITICAL', 4),
-])
-
-RETURN_TYPES = ['text', 'json']
-RETURN_TYPE = None
-QUIET = False
-
 BOT_GROUP = {"collectors": "Collector", "parsers": "Parser", "experts": "Expert", "outputs": "Output"}
 
 
-def log_bot_error(status, *args):
-    if RETURN_TYPE == 'text':
-        logger.error(ERROR_MESSAGES[status], *args)
-
-
-def log_bot_message(status, *args):
-    if QUIET:
-        return
-    if RETURN_TYPE == 'text':
-        logger.info(MESSAGES[status], *args)
-
-
-def log_botnet_error(status, group=None):
-    if RETURN_TYPE == 'text':
-        logger.error(ERROR_MESSAGES[status], BOT_GROUP[group] + (" group" if group else ""))
-
-
-def log_botnet_message(status, group=None):
-    if QUIET:
-        return
-    if RETURN_TYPE == 'text':
-        if group:
-            logger.info(MESSAGES[status], BOT_GROUP[group] + " group")
-        else:
-            logger.info(MESSAGES[status], 'Botnet')
-
-
-def log_log_messages(messages):
-    if RETURN_TYPE == 'text':
-        for message in messages:
-            print(' - '.join([message['date'], message['bot_id'],
-                              message['log_level'], message['message']]))
-            try:
-                print(message['extended_message'])
-            except KeyError:
-                pass
-
-
-class IntelMQProcessManager:
-    PIDDIR = VAR_RUN_PATH
-    PIDFILE = os.path.join(PIDDIR, "{}.pid")
-
-    def __init__(self, runtime_configuration, logger, controller):
-        self.__runtime_configuration = runtime_configuration
-        self.logger = logger
-        self.controller = controller
-
-        if psutil is None:
-            raise MissingDependencyError('psutil')
-
-        if not os.path.exists(self.PIDDIR):
-            try:
-                os.makedirs(self.PIDDIR)
-            except PermissionError as exc:  # pragma: no cover
-                self.logger.error('Directory %s does not exist and cannot be '
-                                  'created: %s.', self.PIDDIR, exc)
-
-    def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None,
-                show_sent=None, loglevel=None):
-        pid = self.__check_pid(bot_id)
-        module = self.__runtime_configuration[bot_id]['module']
-        status = self.__status_process(pid, module, bot_id) if pid else False
-        if pid and status is True:
-            self.logger.info("Main instance of the bot is running in the background and will be stopped; "
-                             "when finished, we try to relaunch it again. "
-                             "You may want to launch: 'intelmqctl stop {}' to prevent this message."
-                             .format(bot_id))
-            paused = True
-            self.bot_stop(bot_id)
-        elif status is False:
-            paused = False
-        else:
-            self.logger.error(status)
-            return 1
-
-        log_bot_message('starting', bot_id)
-        filename = self.PIDFILE.format(bot_id)
-        with open(filename, 'w') as fp:
-            fp.write(str(os.getpid()))
-
-        try:
-            BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
-                        console_type, message_action_kind, dryrun, msg, show_sent,
-                        loglevel=loglevel)
-            retval = 0
-        except KeyboardInterrupt:
-            print('Keyboard interrupt.')
-            retval = 0
-        except SystemExit as exc:
-            print('Bot exited with code %s.' % exc.code)
-            retval = exc.code
-
-        self.__remove_pidfile(bot_id)
-        if paused:
-            self.bot_start(bot_id)
-        return retval
-
-    def bot_start(self, bot_id, getstatus=True):
-        pid = self.__check_pid(bot_id)
-        module = self.__runtime_configuration[bot_id]['module']
-        if pid:
-            status = self.__status_process(pid, module, bot_id)
-            if status is True:
-                log_bot_message('running', bot_id)
-                return 'running'
-            elif status is False:
-                self.__remove_pidfile(bot_id)
-            else:
-                self.logger.error(status)
-                return 1
-
-        log_bot_message('starting', bot_id)
-        module = self.__runtime_configuration[bot_id]['module']
-        cmdargs = [module, bot_id]
-        try:
-            proc = psutil.Popen(cmdargs, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except FileNotFoundError:
-            log_bot_error("not found", bot_id)
-            return 'stopped'
-        else:
-            filename = self.PIDFILE.format(bot_id)
-            with open(filename, 'w') as fp:
-                fp.write(str(proc.pid))
-
-        if getstatus:
-            time.sleep(0.5)
-            return self.bot_status(bot_id, proc=proc)
-
-    def bot_stop(self, bot_id, getstatus=True):
-        pid = self.__check_pid(bot_id)
-        module = self.__runtime_configuration[bot_id]['module']
-        if not pid:
-            if self.controller._is_enabled(bot_id):
-                log_bot_error('stopped', bot_id)
-                return 'stopped'
-            else:
-                log_bot_message('disabled', bot_id)
-                return 'disabled'
-        status = self.__status_process(pid, module, bot_id)
-        if status is False:
-            self.__remove_pidfile(bot_id)
-            log_bot_error('stopped', bot_id)
-            return 'stopped'
-        elif status is not True:
-            log_bot_error('unknown', bot_id, status)
-            return 'unknown'
-        log_bot_message('stopping', bot_id)
-        proc = psutil.Process(int(pid))
-        try:
-            proc.send_signal(signal.SIGTERM)
-        except psutil.AccessDenied:
-            log_bot_error('access denied', bot_id, 'STOP')
-            return 'running'
-        else:
-            if getstatus:
-                # Wait for up to 2 seconds until the bot stops, #1434
-                starttime = time.time()
-                remaining = 2
-                status = self.__status_process(pid, module, bot_id)
-                while status is True and remaining > 0:
-                    status = self.__status_process(pid, module, bot_id)
-                    time.sleep(0.1)
-                    remaining = 2 - (time.time() - starttime)
-
-                if status is True:
-                    log_bot_error('running', bot_id)
-                    return 'running'
-                elif status is not False:
-                    log_bot_error('unknown', bot_id, status)
-                    return 'unknown'
-                try:
-                    self.__remove_pidfile(bot_id)
-                except FileNotFoundError:  # Bot was running interactively and file has been removed already
-                    pass
-                log_bot_message('stopped', bot_id)
-                return 'stopped'
-
-    def bot_reload(self, bot_id, getstatus=True):
-        pid = self.__check_pid(bot_id)
-        module = self.__runtime_configuration[bot_id]['module']
-        if not pid:
-            if self.controller._is_enabled(bot_id):
-                log_bot_error('stopped', bot_id)
-                return 'stopped'
-            else:
-                log_bot_message('disabled', bot_id)
-                return 'disabled'
-        status = self.__status_process(pid, module, bot_id)
-        if status is False:
-            self.__remove_pidfile(bot_id)
-            log_bot_error('stopped', bot_id)
-            return 'stopped'
-        elif status is not True:
-            log_bot_error('unknown', bot_id, status)
-            return 'unknown'
-        log_bot_message('reloading', bot_id)
-        proc = psutil.Process(int(pid))
-        try:
-            proc.send_signal(signal.SIGHUP)
-        except psutil.AccessDenied:
-            log_bot_error('access denied', bot_id, 'RELOAD')
-            return 'running'
-        else:
-            if getstatus:
-                time.sleep(0.5)
-                status = self.__status_process(pid, module, bot_id)
-                if status is True:
-                    log_bot_message('running', bot_id)
-                    return 'running'
-                elif status is False:
-                    log_bot_error('stopped', bot_id)
-                    return 'stopped'
-                else:
-                    log_bot_error('unknown', bot_id, status)
-                    return 'unknown'
-
-    def bot_status(self, bot_id, *, proc=None):
-        if proc:
-            if proc.status() not in [psutil.STATUS_STOPPED, psutil.STATUS_DEAD, psutil.STATUS_ZOMBIE]:
-                log_bot_message('running', bot_id)
-                return 'running'
-        else:
-            pid = self.__check_pid(bot_id)
-            module = self.__runtime_configuration[bot_id]['module']
-            status = self.__status_process(pid, module, bot_id) if pid else False
-            if pid and status is True:
-                log_bot_message('running', bot_id)
-                return 'running'
-            elif status is not False:
-                log_bot_error('unknown', bot_id, status)
-                return 'unknown'
-
-        if self.controller._is_enabled(bot_id):
-            if not proc and pid:
-                self.__remove_pidfile(bot_id)
-            log_bot_message('stopped', bot_id)
-            if proc and RETURN_TYPE == 'text':
-                log = proc.stderr.read().decode()
-                if not log:  # if nothing in stderr, print stdout
-                    log = proc.stdout.read().decode()
-                print(log.strip(), file=sys.stderr)
-            return 'stopped'
-        else:
-            log_bot_message('disabled', bot_id)
-            return 'disabled'
-
-    def __check_pid(self, bot_id):
-        filename = self.PIDFILE.format(bot_id)
-        if os.path.isfile(filename):
-            with open(filename, 'r') as fp:
-                pid = fp.read()
-            try:
-                return int(pid.strip())
-            except ValueError:
-                return None
-        return None
-
-    def __remove_pidfile(self, bot_id):
-        filename = self.PIDFILE.format(bot_id)
-        os.remove(filename)
-
-    @staticmethod
-    def _interpret_commandline(pid: int, cmdline: Iterable[str],
-                               module: str, bot_id: str) -> Union[bool, str]:
-        """
-        Separate function to allow easy testing
-
-        Parameters
-        ----------
-        pid : int
-            Process ID, used for return values (error messages) only.
-        cmdline : Iterable[str]
-            The command line of the process.
-        module : str
-            The module of the bot.
-        bot_id : str
-            The ID of the bot.
-
-        Returns
-        -------
-        Union[bool, str]
-            DESCRIPTION.
-        """
-        if len(cmdline) > 2 and cmdline[1].endswith('/%s' % module):
-            if cmdline[2] == bot_id:
-                return True
-            else:
-                return False
-        elif (len(cmdline) > 3 and cmdline[1].endswith('/intelmqctl') and
-              cmdline[2] == 'run'):
-            if cmdline[3] == bot_id:
-                return True
-            else:
-                return False
-        elif len(cmdline) > 1:
-            return 'Commandline of the process %d with commandline %r could not be interpreted.' % (pid, cmdline)
-        else:
-            return 'Unhandled error checking the process %d with commandline %r.' % (pid, cmdline)
-
-    def __status_process(self, pid, module, bot_id):
-        try:
-            proc = psutil.Process(int(pid))
-            cmdline = proc.cmdline()
-            return IntelMQProcessManager._interpret_commandline(pid, cmdline, module, bot_id)
-        except psutil.NoSuchProcess:
-            return False
-        except psutil.AccessDenied:
-            return 'Could not get status of process: Access denied.'
-        # let every other exception pass
-
-
-class SupervisorProcessManager:
-    class RpcFaults:
-        UNKNOWN_METHOD = 1
-        INCORRECT_PARAMETERS = 2
-        BAD_ARGUMENTS = 3
-        SIGNATURE_UNSUPPORTED = 4
-        SHUTDOWN_STATE = 6
-        BAD_NAME = 10
-        BAD_SIGNAL = 11
-        NO_FILE = 20
-        NOT_EXECUTABLE = 21
-        FAILED = 30
-        ABNORMAL_TERMINATION = 40
-        SPAWN_ERROR = 50
-        ALREADY_STARTED = 60
-        NOT_RUNNING = 70
-        SUCCESS = 80
-        ALREADY_ADDED = 90
-        STILL_RUNNING = 91
-        CANT_REREAD = 92
-
-    class ProcessState:
-        STOPPED = 0
-        STARTING = 10
-        RUNNING = 20
-        BACKOFF = 30
-        STOPPING = 40
-        EXITED = 100
-        FATAL = 200
-        UNKNOWN = 1000
-
-        @staticmethod
-        def is_running(state: int) -> bool:
-            return state in (
-                SupervisorProcessManager.ProcessState.STARTING,
-                SupervisorProcessManager.ProcessState.RUNNING,
-                SupervisorProcessManager.ProcessState.BACKOFF)
-
-    DEFAULT_SOCKET_PATH = "/var/run/supervisor.sock"
-    SUPERVISOR_GROUP = "intelmq"
-    __supervisor_xmlrpc = None
-
-    def __init__(self, runtime_configuration: dict, logger: logging.Logger, controller) -> None:
-        self.__runtime_configuration = runtime_configuration
-        self.__logger = logger
-        self.__controller = controller
-
-    def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None,
-                show_sent=None, loglevel=None):
-        paused = False
-        state = self._get_process_state(bot_id)
-        if state in (self.ProcessState.STARTING, self.ProcessState.RUNNING, self.ProcessState.BACKOFF):
-            self.__logger.warning("Main instance of the bot is running in the background and will be stopped; "
-                                  "when finished, we try to relaunch it again. "
-                                  "You may want to launch: 'intelmqctl stop {}' to prevent this message."
-                                  .format(bot_id))
-            paused = True
-            self.bot_stop(bot_id)
-
-        log_bot_message("starting", bot_id)
-
-        try:
-            BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
-                        console_type, message_action_kind, dryrun, msg, show_sent,
-                        loglevel=loglevel)
-            retval = 0
-        except KeyboardInterrupt:
-            print("Keyboard interrupt.")
-            retval = 0
-        except SystemExit as exc:
-            print("Bot exited with code %s." % exc.code)
-            retval = exc.code
-
-        if paused:
-            self.bot_start(bot_id)
-
-        return retval
-
-    def bot_start(self, bot_id: str, getstatus: bool = True):
-        state = self._get_process_state(bot_id)
-        if state is not None:
-            if state == self.ProcessState.RUNNING:
-                log_bot_message("running", bot_id)
-                return "running"
-
-            elif not self.ProcessState.is_running(state):
-                self._remove_bot(bot_id)
-
-        log_bot_message("starting", bot_id)
-        self._create_and_start_bot(bot_id)
-
-        if getstatus:
-            return self.bot_status(bot_id)
-
-    def bot_stop(self, bot_id: str, getstatus: bool = True):
-        state = self._get_process_state(bot_id)
-        if state is None:
-            if not self.__controller._is_enabled(bot_id):
-                log_bot_message("disabled", bot_id)
-                return "disabled"
-            else:
-                log_bot_error("stopped", bot_id)
-                return "stopped"
-
-        if not self.ProcessState.is_running(state):
-            self._remove_bot(bot_id)
-            log_bot_error("stopped", bot_id)
-            return "stopped"
-
-        log_bot_message("stopping", bot_id)
-
-        self._get_supervisor().supervisor.stopProcess(self._process_name(bot_id))
-        self._remove_bot(bot_id)
-
-        if getstatus:
-            return self.bot_status(bot_id)
-
-    def bot_reload(self, bot_id: str, getstatus: bool = True):
-        state = self._get_process_state(bot_id)
-        if state is None:
-            if not self.__controller._is_enabled(bot_id):
-                log_bot_message("disabled", bot_id)
-                return "disabled"
-            else:
-                log_bot_error("stopped", bot_id)
-                return "stopped"
-
-        if not self.ProcessState.is_running(state):
-            self._remove_bot(bot_id)
-            log_bot_error("stopped", bot_id)
-            return "stopped"
-
-        log_bot_message("reloading", bot_id)
-
-        try:
-            self._get_supervisor().supervisor.signalProcess(self._process_name(bot_id), "HUP")
-        except xmlrpc.client.Fault as e:
-            if e.faultCode == self.RpcFaults.UNKNOWN_METHOD:
-                self._abort("Supervisor does not support signalProcess method, that was added in supervisor 3.2.0. "
-                            "Reloading bots will not work.")
-            else:
-                raise e
-
-        if getstatus:
-            return self.bot_status(bot_id)
-
-    def bot_status(self, bot_id: str) -> str:
-        state = self._get_process_state(bot_id)
-        if state is None:
-            if not self.__controller._is_enabled(bot_id):
-                log_bot_message("disabled", bot_id)
-                return "disabled"
-            else:
-                log_bot_message("stopped", bot_id)
-                return "stopped"
-
-        if state == self.ProcessState.STARTING:
-            # If process is still starting, try check it later
-            time.sleep(0.1)
-            return self.bot_status(bot_id)
-
-        elif state == self.ProcessState.RUNNING:
-            log_bot_message("running", bot_id)
-            return "running"
-
-        elif state == self.ProcessState.STOPPING:
-            log_bot_error("stopping", bot_id)
-            return "stopping"
-
-        else:
-            log_bot_message("stopped", bot_id)
-            return "stopped"
-
-    def _create_and_start_bot(self, bot_id: str) -> None:
-        module = self.__runtime_configuration[bot_id]["module"]
-        cmdargs = (module, bot_id)
-
-        self._get_supervisor().twiddler.addProgramToGroup(self.SUPERVISOR_GROUP, bot_id, {
-            "command": " ".join(cmdargs),
-            "stopsignal": "INT",
-        })
-
-    def _remove_bot(self, bot_id: str) -> None:
-        self._get_supervisor().twiddler.removeProcessFromGroup(self.SUPERVISOR_GROUP, bot_id)
-
-    def _get_process_state(self, bot_id: str):
-        try:
-            return self._get_supervisor().supervisor.getProcessInfo(self._process_name(bot_id))["state"]
-        except xmlrpc.client.Fault as e:
-            if e.faultCode == self.RpcFaults.BAD_NAME:  # Process does not exists
-                return None
-            raise
-
-    def _get_supervisor(self) -> xmlrpc.client.ServerProxy:
-        class UnixStreamHTTPConnection(http.client.HTTPConnection):
-            def connect(self):
-                self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-                self.sock.connect(self.host)
-
-        class UnixStreamTransport(xmlrpc.client.Transport, object):
-            def __init__(self, socket_path):
-                self.socket_path = socket_path
-                super(UnixStreamTransport, self).__init__()
-
-            def make_connection(self, host):
-                return UnixStreamHTTPConnection(self.socket_path)
-
-        if not self.__supervisor_xmlrpc:
-            socket_path = os.environ.get("SUPERVISOR_SOCKET", self.DEFAULT_SOCKET_PATH)
-
-            if not os.path.exists(socket_path):
-                self._abort("Socket '{}' does not exists. Is supervisor running?".format(socket_path))
-
-            if not os.access(socket_path, os.W_OK):
-                current_user = getpass.getuser()
-                self._abort("Socket '{}' is not writable. "
-                            "Has user '{}' write permission?".format(socket_path, current_user))
-
-            self.__supervisor_xmlrpc = xmlrpc.client.ServerProxy(
-                "http://none",
-                transport=UnixStreamTransport(socket_path)
-            )
-
-            supervisor_version = self.__supervisor_xmlrpc.supervisor.getSupervisorVersion()
-            self.__logger.debug("Connected to supervisor {} named '{}' (API version {})".format(
-                supervisor_version,
-                self.__supervisor_xmlrpc.supervisor.getIdentification(),
-                self.__supervisor_xmlrpc.supervisor.getAPIVersion()
-            ))
-
-            if distutils.version.StrictVersion(supervisor_version) < distutils.version.StrictVersion("3.2.0"):
-                self.__logger.warning("Current supervisor version is supported, but reloading bots will not work. "
-                                      "Please upgrade supervisor to version 3.2.0 or higher.")
-
-            supervisor_state = self.__supervisor_xmlrpc.supervisor.getState()["statename"]
-            if supervisor_state != "RUNNING":
-                raise Exception("Unexpected supervisor state {}".format(supervisor_state))
-
-            try:
-                self.__supervisor_xmlrpc.twiddler.getAPIVersion()
-            except xmlrpc.client.Fault as e:
-                if e.faultCode == self.RpcFaults.UNKNOWN_METHOD:
-                    self._abort("Twiddler is not supported. Is Twiddler for supervisor installed and enabled?")
-                else:
-                    raise e
-
-            if self.SUPERVISOR_GROUP not in self.__supervisor_xmlrpc.twiddler.getGroupNames():
-                self._abort("Supervisor`s process group '{}' is not defined. "
-                            "It must be created manually in supervisor config.".format(self.SUPERVISOR_GROUP))
-
-        return self.__supervisor_xmlrpc
-
-    def _process_name(self, bot_id: str) -> str:
-        return "{}:{}".format(self.SUPERVISOR_GROUP, bot_id)
-
-    def _abort(self, message: str):
-        self.__controller.abort(message)
-
-
-PROCESS_MANAGER = {'intelmq': IntelMQProcessManager, 'supervisor': SupervisorProcessManager}
-
-
 class IntelMQController():
+    _returntype: ReturnType = ReturnType.PYTHON
+    _quiet: bool = False
+    _logger: logging.Logger
+    _processmanagertype = "intelmq"
+    _processmanager = None
+    _interactive = False
+    _logging_level = DEFAULT_LOGGING_LEVEL
+    _parameters = Parameters()
+    _runtime_configuration: dict = {}
 
-    def __init__(self, interactive: bool = False, return_type: str = "python", quiet: bool = False,
+    def __init__(self, interactive: bool = False, returntype: ReturnType = ReturnType.PYTHON, quiet: bool = False,
                  no_file_logging: bool = False, drop_privileges: bool = True) -> None:
         """
         Initializes intelmqctl.
 
         Parameters:
             interactive: for cli-interface true, functions can exits, parameters are used
-            return_type: 'python': no special treatment, can be used for use by other
-                python code
-                'text': user-friendly output for cli, default for interactive use
-                'json': machine-readable output for managers
+            return_type:
+            * ReturnType.PYTHON: no special treatment, can be used for use by other python code
+            * ReturnType.TEXT: user-friendly output for cli, default for interactive use
+            * ReturnType.JSON: machine-readable output for managers
             quiet: False by default, can be activated for cron jobs etc.
             no_file_logging: do not log to the log file
             drop_privileges: Drop privileges and fail if it did not work.
         """
-        self.interactive = interactive
-        global RETURN_TYPE
-        RETURN_TYPE = return_type
-        global logger
-        global QUIET
-        QUIET = quiet
-        self.parameters = Parameters()
+        self._interactive = interactive
+        self._returntype = returntype
+        self._quiet = quiet
 
-        # Try to get log_level from defaults_configuration, else use default
+        # set default values for the logging handler
+        self._parameters.logging_handler = 'file'
+        self._parameters.logging_path = DEFAULT_LOGGING_PATH
+
+        # Try to get logging_level from defaults configuration, else use default (defined above)
         defaults_loading_exc = None
         try:
             self.load_defaults_configuration()
         except Exception as exc:
             defaults_loading_exc = exc
-            log_level = DEFAULT_LOGGING_LEVEL
             logging_level_stream = 'DEBUG'
         else:
-            log_level = self.parameters.logging_level.upper()
+            self._logging_level = getattr(self, 'logging_level', DEFAULT_LOGGING_LEVEL).upper()
         # make sure that logging_level_stream is always at least INFO or more verbose
         # otherwise the output on stdout/stderr is less than the user expects
-        logging_level_stream = log_level if log_level == 'DEBUG' else 'INFO'
+        logging_level_stream = self._logging_level if self._logging_level == 'DEBUG' else 'INFO'
 
         try:
             if no_file_logging:
-                raise FileNotFoundError
-            logger = utils.log('intelmqctl', log_level=log_level,
-                               log_format_stream=utils.LOG_FORMAT_SIMPLE,
-                               logging_level_stream=logging_level_stream)
+                raise FileNotFoundError('Logging to file disabled.')
+            self._logger = utils.log('intelmqctl', log_level=self._logging_level,
+                                     log_format_stream=utils.LOG_FORMAT_SIMPLE,
+                                     logging_level_stream=logging_level_stream,
+                                     log_max_size=getattr(self._parameters, "logging_max_size", 0),
+                                     log_max_copies=getattr(self._parameters, "logging_max_copies", None))
         except (FileNotFoundError, PermissionError) as exc:
-            logger = utils.log('intelmqctl', log_level=log_level, log_path=False,
-                               log_format_stream=utils.LOG_FORMAT_SIMPLE,
-                               logging_level_stream=logging_level_stream)
-            logger.error('Not logging to file: %s', exc)
-        self.logger = logger
+            self._logger = utils.log('intelmqctl', log_level=self._logging_level, log_path=False,
+                                     log_format_stream=utils.LOG_FORMAT_SIMPLE,
+                                     logging_level_stream=logging_level_stream)
+            if not isinstance(exc, FileNotFoundError) and exc.args[0] != 'Logging to file disabled.':
+                self._logger.error('Not logging to file: %s', exc)
         if defaults_loading_exc:
-            self.logger.exception('Loading the defaults configuration failed!',
-                                  exc_info=defaults_loading_exc)
+            self._logger.exception('Loading the defaults configuration failed!', exc_info=defaults_loading_exc)
 
         if drop_privileges and not utils.drop_privileges():
             self.abort('IntelMQ must not run as root. Dropping privileges did not work.')
@@ -727,7 +125,7 @@ class IntelMQController():
             VERSION = pkg_resources.get_distribution("intelmq").version
         except pkg_resources.DistributionNotFound:  # pragma: no cover
             # can only happen in interactive mode
-            self.logger.error('No valid IntelMQ installation found: DistributionNotFound')
+            self._logger.error('No valid IntelMQ installation found: DistributionNotFound')
             sys.exit(1)
         DESCRIPTION = """
         description: intelmqctl is the tool to control intelmq system.
@@ -800,34 +198,21 @@ Upgrade from a previous version:
     intelmqctl upgrade-config
 Make a backup of your configuration first, also including bot's configuration files.
 
-Get some debugging output on the settings and the enviroment (to be extended):
+Get some debugging output on the settings and the environment (to be extended):
     intelmqctl debug --get-paths
     intelmqctl debug --get-environment-variables
 '''
 
-        # stolen functions from the bot file
-        # this will not work with various instances of REDIS
         try:
-            self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
-        except ValueError as exc:  # pragma: no cover
-            self.abort('Error loading %r: %s' % (PIPELINE_CONF_FILE, exc))
-
-        try:
-            self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
+            self._runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
             self.abort('Error loading %r: %s' % (RUNTIME_CONF_FILE, exc))
 
-        process_manager = getattr(self.parameters, 'process_manager', 'intelmq')
-        if process_manager not in PROCESS_MANAGER:
-            self.abort('Invalid process manager given: %r, should be one of %r.'
-                       '' % (process_manager, list(PROCESS_MANAGER.keys())))
-        self.bot_process_manager = PROCESS_MANAGER[process_manager](
-            self.runtime_configuration,
-            logger,
-            self
-        )
+        self._processmanagertype = getattr(self._parameters, 'process_manager', 'intelmq')
+        if self._processmanagertype not in process_managers():
+            self.abort('Invalid process manager given: %r, should be one of %r.' '' % (self._processmanagertype, list(process_managers().keys())))
 
-        if self.interactive:
+        if self._interactive:
             parser = argparse.ArgumentParser(
                 prog=APPNAME,
                 description=DESCRIPTION,
@@ -835,16 +220,9 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 formatter_class=argparse.RawDescriptionHelpFormatter,
             )
 
-            parser.add_argument('-v', '--version',
-                                action='version', version=VERSION)
-            parser.add_argument('--type', '-t', choices=RETURN_TYPES,
-                                default=RETURN_TYPES[0],
-                                help='choose if it should return regular text '
-                                     'or other machine-readable')
-
-            parser.add_argument('--quiet', '-q', action='store_true',
-                                help='Quiet mode, useful for reloads initiated '
-                                     'scripts like logrotate')
+            parser.add_argument('--version', '-v', action='version', version=VERSION)
+            parser.add_argument('--type', '-t', choices=[i.name.lower() for i in ReturnType], default='text', help='choose if it should return regular text or other machine-readable')
+            parser.add_argument('--quiet', '-q', action='store_true', help='Quiet mode, useful for reloads initiated scripts like logrotate')
 
             subparsers = parser.add_subparsers(title='subcommands')
 
@@ -857,6 +235,8 @@ Get some debugging output on the settings and the enviroment (to be extended):
                                      help='Only show the total '
                                           'number of messages in queues. '
                                           'Only valid for listing queues.')
+            parser_list.add_argument('--configured', '-c', action='store_true',
+                                     help='Only show configured bots')
             parser_list.set_defaults(func=self.list)
 
             parser_clear = subparsers.add_parser('clear', help='Clear a queue')
@@ -864,19 +244,15 @@ Get some debugging output on the settings and the enviroment (to be extended):
             parser_clear.set_defaults(func=self.clear_queue)
 
             parser_log = subparsers.add_parser('log', help='Get last log lines of a bot')
-            parser_log.add_argument('bot_id', help='bot id')
+            parser_log.add_argument('bot_id', help='bot id', choices=self._configured_bots_list())
             parser_log.add_argument('number_of_lines', help='number of lines',
                                     default=10, type=int, nargs='?')
-            parser_log.add_argument('log_level', help='logging level',
-                                    choices=LOG_LEVEL.keys(), default='INFO', nargs='?')
+            parser_log.add_argument('log_level', help='logging level', choices=[i.name for i in LogLevel], default='INFO', nargs='?')
             parser_log.set_defaults(func=self.read_bot_log)
 
             parser_run = subparsers.add_parser('run', help='Run a bot interactively')
-            parser_run.add_argument('bot_id',
-                                    choices=self.runtime_configuration.keys())
-            parser_run.add_argument('--loglevel', '-l',
-                                    nargs='?', default=None,
-                                    choices=LOG_LEVEL.keys())
+            parser_run.add_argument('bot_id', choices=self._configured_bots_list())
+            parser_run.add_argument('--loglevel', '-l', nargs='?', default=None, choices=[i.name for i in LogLevel])
             parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')
 
             parser_run_console = parser_run_subparsers.add_parser('console', help='Get a ipdb live console.')
@@ -923,47 +299,47 @@ Get some debugging output on the settings and the enviroment (to be extended):
 
             parser_start = subparsers.add_parser('start', help='Start a bot or botnet')
             parser_start.add_argument('bot_id', nargs='?',
-                                      choices=self.runtime_configuration.keys())
+                                      choices=self._configured_bots_list())
             parser_start.add_argument('--group', help='Start a group of bots',
                                       choices=BOT_GROUP.keys())
             parser_start.set_defaults(func=self.bot_start)
 
             parser_stop = subparsers.add_parser('stop', help='Stop a bot or botnet')
             parser_stop.add_argument('bot_id', nargs='?',
-                                     choices=self.runtime_configuration.keys())
+                                     choices=self._configured_bots_list())
             parser_stop.add_argument('--group', help='Stop a group of bots',
                                      choices=BOT_GROUP.keys())
             parser_stop.set_defaults(func=self.bot_stop)
 
             parser_restart = subparsers.add_parser('restart', help='Restart a bot or botnet')
             parser_restart.add_argument('bot_id', nargs='?',
-                                        choices=self.runtime_configuration.keys())
+                                        choices=self._configured_bots_list())
             parser_restart.add_argument('--group', help='Restart a group of bots',
                                         choices=BOT_GROUP.keys())
             parser_restart.set_defaults(func=self.bot_restart)
 
             parser_reload = subparsers.add_parser('reload', help='Reload a bot or botnet')
             parser_reload.add_argument('bot_id', nargs='?',
-                                       choices=self.runtime_configuration.keys())
+                                       choices=self._configured_bots_list())
             parser_reload.add_argument('--group', help='Reload a group of bots',
                                        choices=BOT_GROUP.keys())
             parser_reload.set_defaults(func=self.bot_reload)
 
             parser_status = subparsers.add_parser('status', help='Status of a bot or botnet')
             parser_status.add_argument('bot_id', nargs='?',
-                                       choices=self.runtime_configuration.keys())
+                                       choices=self._configured_bots_list())
             parser_status.add_argument('--group', help='Get status of a group of bots',
                                        choices=BOT_GROUP.keys())
             parser_status.set_defaults(func=self.bot_status)
 
             parser_status = subparsers.add_parser('enable', help='Enable a bot')
             parser_status.add_argument('bot_id',
-                                       choices=self.runtime_configuration.keys())
+                                       choices=self._configured_bots_list())
             parser_status.set_defaults(func=self.bot_enable)
 
             parser_status = subparsers.add_parser('disable', help='Disable a bot')
             parser_status.add_argument('bot_id',
-                                       choices=self.runtime_configuration.keys())
+                                       choices=self._configured_bots_list())
             parser_status.set_defaults(func=self.bot_disable)
 
             parser_upgrade_conf = subparsers.add_parser('upgrade-config',
@@ -1000,14 +376,23 @@ Get some debugging output on the settings and the enviroment (to be extended):
             self.parser = parser
 
     def load_defaults_configuration(self, silent=False):
-        # Load defaults configuration
-        try:
-            config = utils.load_configuration(DEFAULTS_CONF_FILE)
-        except ValueError as exc:  # pragma: no cover
-            if not silent:
-                self.abort('Error loading %r: %s' % (DEFAULTS_CONF_FILE, exc))
-        for option, value in config.items():
-            setattr(self.parameters, option, value)
+        for option, value in utils.get_global_settings().items():
+            setattr(self._parameters, option, value)
+
+        # copied from intelmq.lib.bot, should be refactored to e.g. intelmq.lib.config
+        intelmq_environment = [elem for elem in os.environ if elem.startswith('INTELMQ_')]
+        for elem in intelmq_environment:
+            option = elem[8:].lower()
+            value = os.environ[elem]
+            # do some conversions:
+            if value == 'True':
+                value = True
+            elif value == 'False':
+                value = False
+            elif value.isnumeric():
+                value = int(value)
+
+            setattr(self._parameters, option, value)
 
     def run(self):
         results = None
@@ -1016,26 +401,43 @@ Get some debugging output on the settings and the enviroment (to be extended):
             sys.exit(self.parser.print_help())
         args_dict = vars(args).copy()
 
-        global RETURN_TYPE, QUIET
-        RETURN_TYPE, QUIET = args.type, args.quiet
+        self._quiet = args.quiet
+        self._returntype = ReturnType[args.type.upper()]
         del args_dict['type'], args_dict['quiet'], args_dict['func']
-        self.logging_level = 'WARNING' if QUIET else 'INFO'
-        self.logger.setLevel(self.logging_level)
+
+        self._logging_level = 'WARNING' if self._quiet else 'INFO'
+        self._logger.setLevel(self._logging_level)
+
+        # initialize the processmanager
+        # this has to happen *after* we set `_quiet` and `_returntype` using values from argv
+        self._processmanager = process_managers()[self._processmanagertype](
+            self._interactive,
+            self._runtime_configuration,
+            self._logger,
+            self._returntype,
+            self._quiet
+        )
 
         retval, results = args.func(**args_dict)
 
-        if RETURN_TYPE == 'json':
-            print(json.dumps(results))
+        if self._returntype is ReturnType.JSON:
+            print(json.dumps(results, indent=4))
+
         return retval
 
     def bot_run(self, **kwargs):
-        return self.bot_process_manager.bot_run(**kwargs), None
+        # the bot_run method is special in that it mixes plain text
+        # and json in its output, therefore it is printed here
+        # and not in the calling `run` method.
+        retval, results = self._processmanager.bot_run(**kwargs)
+        print(results)
+        return retval, None
 
     def bot_start(self, bot_id, getstatus=True, group=None):
         if bot_id is None:
             return self.botnet_start(group=group)
         else:
-            status = self.bot_process_manager.bot_start(bot_id, getstatus)
+            status = self._processmanager.bot_start(bot_id, getstatus)
             if status in ['running']:
                 return 0, status
             else:
@@ -1045,7 +447,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
         if bot_id is None:
             return self.botnet_stop(group=group)
         else:
-            status = self.bot_process_manager.bot_stop(bot_id, getstatus)
+            status = self._processmanager.bot_stop(bot_id, getstatus)
             if status in ['stopped', 'disabled']:
                 return 0, status
             else:
@@ -1055,9 +457,9 @@ Get some debugging output on the settings and the enviroment (to be extended):
         if bot_id is None:
             return self.botnet_reload(group=group)
         else:
-            if self.bot_process_manager.bot_status(bot_id) == 'disabled':
+            if self._processmanager.bot_status(bot_id) == 'disabled':
                 return 0, 'disabled'
-            status = self.bot_process_manager.bot_reload(bot_id, getstatus)
+            status = self._processmanager.bot_reload(bot_id, getstatus)
             if status in ['running', 'disabled']:
                 return 0, status
             else:
@@ -1079,7 +481,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
         if bot_id is None:
             return self.botnet_status(group=group)
         else:
-            status = self.bot_process_manager.bot_status(bot_id)
+            status = self._processmanager.bot_status(bot_id)
             if status in ['running', 'disabled']:
                 return 0, status
             else:
@@ -1087,10 +489,10 @@ Get some debugging output on the settings and the enviroment (to be extended):
 
     def bot_enable(self, bot_id):
         if self._is_enabled(bot_id):
-            log_bot_message('enabled', bot_id)
+            self.log_bot_message('enabled', bot_id)
         else:
-            log_bot_message('enabling', bot_id)
-            self.runtime_configuration[bot_id]['enabled'] = True
+            self.log_bot_message('enabling', bot_id)
+            self._runtime_configuration[bot_id]['enabled'] = True
             self.write_updated_runtime_config()
         return self.bot_status(bot_id)
 
@@ -1100,50 +502,55 @@ Get some debugging output on the settings and the enviroment (to be extended):
         printed by the wrapping function already.
         """
         if self._is_enabled(bot_id):
-            log_bot_message('disabling', bot_id)
-            self.runtime_configuration[bot_id]['enabled'] = False
+            self.log_bot_message('disabling', bot_id)
+            self._runtime_configuration[bot_id]['enabled'] = False
             self.write_updated_runtime_config()
         return self.bot_status(bot_id)
 
     def _is_enabled(self, bot_id):
-        return self.runtime_configuration[bot_id].get('enabled', True)
+        return self._runtime_configuration[bot_id].get('enabled', True)
+
+    def _configured_bots_list(self, group=None):
+        if group is not None:
+            bots = sorted(k_v[0] for k_v in filter(lambda bot: bot[0] != 'global' and bot[1]["group"] == BOT_GROUP[group], self._runtime_configuration.items()))
+        else:
+            bots = sorted(self._runtime_configuration.keys())
+        if 'global' in bots:
+            bots.remove('global')
+        return bots
 
     def botnet_start(self, group=None):
         botnet_status = {}
-        log_botnet_message('starting', group)
+        self.log_botnet_message('starting', group)
 
-        if group:
-            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
-        else:
-            bots = sorted(self.runtime_configuration.keys())
+        bots = self._configured_bots_list(group=group)
+
         for bot_id in bots:
-            if self.runtime_configuration[bot_id].get('enabled', True):
+            if self._runtime_configuration[bot_id].get('enabled', True):
                 self.bot_start(bot_id, getstatus=False)
             else:
-                log_bot_message('disabled', bot_id)
+                self.log_bot_message('disabled', bot_id)
                 botnet_status[bot_id] = 'disabled'
 
         retval = 0
         time.sleep(0.75)
         for bot_id in bots:
-            if self.runtime_configuration[bot_id].get('enabled', True):
+            if self._runtime_configuration[bot_id].get('enabled', True):
                 botnet_status[bot_id] = self.bot_status(bot_id)[1]
                 if botnet_status[bot_id] not in ['running', 'disabled']:
                     retval = 1
-                    if RETURN_TYPE == 'text':
+                    if self._returntype is ReturnType.TEXT:
                         print(bot_id, botnet_status[bot_id])
 
-        log_botnet_message('running', group)
+        self.log_botnet_message('running', group)
         return retval, botnet_status
 
     def botnet_stop(self, group=None):
         botnet_status = {}
-        log_botnet_message('stopping', group)
+        self.log_botnet_message('stopping', group)
 
-        if group:
-            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
-        else:
-            bots = sorted(self.runtime_configuration.keys())
+        bots = self._configured_bots_list(group=group)
+
         for bot_id in bots:
             self.bot_stop(bot_id, getstatus=False)
 
@@ -1154,17 +561,14 @@ Get some debugging output on the settings and the enviroment (to be extended):
             if botnet_status[bot_id] not in ['stopped', 'disabled']:
                 retval = 1
 
-        log_botnet_message('stopped', group)
+        self.log_botnet_message('stopped', group)
         return retval, botnet_status
 
     def botnet_reload(self, group=None):
         botnet_status = {}
-        log_botnet_message('reloading', group)
+        self.log_botnet_message('reloading', group)
 
-        if group:
-            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
-        else:
-            bots = sorted(self.runtime_configuration.keys())
+        bots = sorted(self._configured_bots_list(group=group))
         for bot_id in bots:
             self.bot_reload(bot_id, getstatus=False)
 
@@ -1174,11 +578,11 @@ Get some debugging output on the settings and the enviroment (to be extended):
             botnet_status[bot_id] = self.bot_status(bot_id)[1]
             if botnet_status[bot_id] not in ['running', 'disabled']:
                 retval = 1
-        log_botnet_message('reloaded', group)
+        self.log_botnet_message('reloaded', group)
         return retval, botnet_status
 
     def botnet_restart(self, group=None):
-        log_botnet_message('restarting')
+        self.log_botnet_message('restarting')
         retval_stop, _ = self.botnet_stop(group=group)
         retval_start, status = self.botnet_start(group=group)
         if retval_stop > retval_start:  # In case the stop operation was not successful, exit 1
@@ -1188,58 +592,77 @@ Get some debugging output on the settings and the enviroment (to be extended):
     def botnet_status(self, group=None):
         retval = 0
         botnet_status = {}
-        if group:
-            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
-        else:
-            bots = sorted(self.runtime_configuration.keys())
+        bots = sorted(self._configured_bots_list(group=group))
         for bot_id in bots:
             botnet_status[bot_id] = self.bot_status(bot_id)[1]
             if botnet_status[bot_id] not in ['running', 'disabled']:
                 retval = 1
         return retval, botnet_status
 
-    def list(self, kind=None, non_zero=False, count=False):
+    def list(self, kind=None, non_zero=False, count=False, configured=False):
         if kind == 'queues':
             return self.list_queues(non_zero=non_zero, count=count)
         elif kind == 'bots':
-            return self.list_bots(non_zero=non_zero)
+            return self.list_bots(non_zero=non_zero, configured=configured)
         elif kind == 'queues-and-status':
             q = self.list_queues()
             b = self.botnet_status()
             return q[0] | b[0], [q[1], b[1]]
 
     def abort(self, message):
-        if self.interactive:
+        if self._interactive:
             sys.exit(message)
         else:
             raise ValueError(message)
 
     def write_updated_runtime_config(self, filename=RUNTIME_CONF_FILE):
         try:
-            utils.write_configuration(filename, self.runtime_configuration)
+            utils.write_configuration(filename, self._runtime_configuration)
         except PermissionError:
             self.abort('Can\'t update runtime configuration: Permission denied.')
         return True
 
-    def list_bots(self, non_zero=False):
+    def list_bots(self, non_zero=False, configured=False):
         """
-        Lists all configured bots from runtime.conf with bot id and
-        description.
+        Lists all (configured) bots from runtime.conf or generated on demand
+        with bot id/module and description and parameters.
 
         If description is not set, None is used instead.
         """
-        if RETURN_TYPE == 'text':
-            for bot_id in sorted(self.runtime_configuration.keys(), key=str.lower):
-                if non_zero and not self.runtime_configuration[bot_id].get('enabled'):
-                    continue
-                if QUIET:
-                    print(bot_id)
-                else:
-                    print("Bot ID: {}\nDescription: {}"
-                          "".format(bot_id, self.runtime_configuration[bot_id].get('description')))
-        return 0, [{'id': bot_id,
-                    'description': self.runtime_configuration[bot_id].get('description')}
-                   for bot_id in sorted(self.runtime_configuration.keys())]
+        if configured:
+            if self._returntype is ReturnType.TEXT:
+                for bot_id in self._configured_bots_list():
+                    if non_zero and not self._runtime_configuration[bot_id].get('enabled'):
+                        continue
+                    if self._quiet:
+                        print(bot_id)
+                    else:
+                        print("Bot ID: {}\nDescription: {}"
+                              "".format(bot_id, self._runtime_configuration[bot_id].get('description')))
+            return 0, [{'id': bot_id,
+                        'description': self._runtime_configuration[bot_id].get('description')}
+                       for bot_id in sorted(self._configured_bots_list())]
+        else:
+            bots = utils.list_all_bots()
+            if self._returntype is ReturnType.TEXT:
+                for bot_type in bots:
+                    print(f"\n======== {bot_type} ========\n")
+                    for bot in bots[bot_type]:
+                        print("Bot ID: {}\nDescription: {}"
+                              "".format(bot, bots[bot_type][bot].get('description')))
+            return 0, bots
+
+    def _pipeline_configuration(self):
+        pipeline_configuration = {}
+        for botid, botconfig in self._runtime_configuration.items():
+            if botid != 'global':
+                pipeline_configuration[botid] = {"source_queue": f"{botid}-queue", "destination_queues": []}
+                if 'parameters' in botconfig:
+                    if 'source_queue' in botconfig['parameters']:
+                        pipeline_configuration[botid]['source_queue'] = botconfig['parameters']['source_queue']
+                    if 'destination_queues' in botconfig['parameters']:
+                        pipeline_configuration[botid]['destination_queues'] = botconfig['parameters']['destination_queues']
+        return pipeline_configuration
 
     def get_queues(self, with_internal_queues=False):
         """
@@ -1252,21 +675,21 @@ Get some debugging output on the settings and the enviroment (to be extended):
         destination_queues = set()
         internal_queues = set()
 
-        for botid, value in self.pipeline_configuration.items():
-            if 'source-queue' in value:
-                source_queues.add(value['source-queue'])
+        for botid, value in self._pipeline_configuration().items():
+            if 'source_queue' in value:
+                source_queues.add(value['source_queue'])
                 if with_internal_queues:
-                    internal_queues.add(value['source-queue'] + '-internal')
-            if 'destination-queues' in value:
+                    internal_queues.add(value['source_queue'] + '-internal')
+            if 'destination_queues' in value:
                 # flattens ["one", "two"] → {"one", "two"}, {"_default": "one", "other": ["two", "three"]} → {"one", "two", "three"}
-                destination_queues.update(utils.flatten_queues(value['destination-queues']))
+                destination_queues.update(utils.flatten_queues(value['destination_queues']))
 
         all_queues = source_queues.union(destination_queues).union(internal_queues)
 
         return source_queues, destination_queues, internal_queues, all_queues
 
     def list_queues(self, non_zero=False, count=False):
-        pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
+        pipeline = PipelineFactory.create(logger=self._logger, pipeline_args=self._parameters.__dict__)
         pipeline.set_queues(None, "source")
         pipeline.connect()
         source_queues, destination_queues, internal_queues,\
@@ -1274,29 +697,32 @@ Get some debugging output on the settings and the enviroment (to be extended):
 
         counters = pipeline.count_queued_messages(*all_queues)
         pipeline.disconnect()
-        if RETURN_TYPE == 'text':
+        if self._returntype is ReturnType.TEXT:
             for queue, counter in sorted(counters.items(), key=lambda x: str.lower(x[0])):
                 if (counter or not non_zero) and not count:
-                    logger.info("%s - %s", queue, counter)
+                    self._logger.info("%s - %s", queue, counter)
             if count:
-                logger.info("%s", sum(counters.values()))
+                self._logger.info("%s", sum(counters.values()))
 
         return_dict = {}
         if count:
             return_dict = {'total-messages': sum(counters.values())}
         else:
-            for bot_id, info in self.pipeline_configuration.items():
+            for bot_id, info in self._pipeline_configuration().items():
                 return_dict[bot_id] = {}
 
-                if 'source-queue' in info:
+                # Do not report source queues for collectors
+                if 'source_queue' in info and not (
+                        self._runtime_configuration[bot_id].get('group', None) == 'Collector' or
+                        self._runtime_configuration[bot_id].get('groupname', None) == 'collectors'):
                     return_dict[bot_id]['source_queue'] = (
-                        info['source-queue'], counters[info['source-queue']])
+                        info['source_queue'], counters[info['source_queue']])
                     if pipeline.has_internal_queues:
-                        return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
+                        return_dict[bot_id]['internal_queue'] = counters[info['source_queue'] + '-internal']
 
-                if 'destination-queues' in info:
+                if 'destination_queues' in info:
                     return_dict[bot_id]['destination_queues'] = []
-                    for dest_queue in utils.flatten_queues(info['destination-queues']):
+                    for dest_queue in utils.flatten_queues(info['destination_queues']):
                         return_dict[bot_id]['destination_queues'].append((dest_queue, counters[dest_queue]))
 
         return 0, return_dict
@@ -1307,50 +733,50 @@ Get some debugging output on the settings and the enviroment (to be extended):
 
         First checks if the queue does exist in the pipeline configuration.
         """
-        pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
+        pipeline = PipelineFactory.create(logger=self._logger, pipeline_args=self._parameters.__dict__)
         pipeline.set_queues(None, "source")
         pipeline.connect()
 
-        if RETURN_TYPE == 'text':
-            logger.info("Clearing queue %s.", queue)
+        if self._returntype is ReturnType.TEXT:
+            self._logger.info("Clearing queue %s.", queue)
         queues = set()
-        for key, value in self.pipeline_configuration.items():
-            if 'source-queue' in value:
-                queues.add(value['source-queue'])
+        for key, value in self._pipeline_configuration().items():
+            if 'source_queue' in value:
+                queues.add(value['source_queue'])
                 if pipeline.has_internal_queues:
-                    queues.add(value['source-queue'] + '-internal')
-            if 'destination-queues' in value:
-                queues.update(value['destination-queues'])
+                    queues.add(value['source_queue'] + '-internal')
+            if 'destination_queues' in value:
+                queues.update(value['destination_queues'])
 
         if queue not in queues:
-            if RETURN_TYPE == 'text':
-                logger.error("Queue %s does not exist!", queue)
+            if self._returntype is ReturnType.TEXT:
+                self._logger.error("Queue %s does not exist!", queue)
             return 2, 'not-found'
 
         try:
             pipeline.clear_queue(queue)
-            if RETURN_TYPE == 'text':
-                logger.info("Successfully cleared queue %s.", queue)
+            if self._returntype is ReturnType.TEXT:
+                self._logger.info("Successfully cleared queue %s.", queue)
             return 0, 'success'
         except Exception:  # pragma: no cover
-            logger.exception("Error while clearing queue %s.",
-                             queue)
+            self._logger.exception("Error while clearing queue %s.", queue)
             return 1, 'error'
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
-        if self.parameters.logging_handler == 'file':
-            bot_log_path = os.path.join(self.parameters.logging_path,
+        if self._parameters.logging_handler == 'file':
+            bot_log_path = os.path.join(self._parameters.logging_path,
                                         bot_id + '.log')
             if not os.path.isfile(bot_log_path):
-                logger.error("Log path not found: %s", bot_log_path)
-                return 2, []
-        elif self.parameters.logging_handler == 'syslog':
+                message = {'date': datetime.datetime.now().isoformat(), "bot_id": bot_id, "log_level": "INFO", "message": 'No log file exists (yet).'}
+                self.log_log_messages([message])
+                return 0, [message]
+        elif self._parameters.logging_handler == 'syslog':
             bot_log_path = '/var/log/syslog'
         else:
-            self.abort("Unknow logging handler %r" % self.parameters.logging_handler)
+            self.abort("Unknown logging handler %r" % self._parameters.logging_handler)
 
         if not os.access(bot_log_path, os.R_OK):
-            self.logger.error('File %r is not readable.', bot_log_path)
+            self._logger.error('File %r is not readable.', bot_log_path)
             return 1, 'error'
 
         messages = []
@@ -1359,25 +785,25 @@ Get some debugging output on the settings and the enviroment (to be extended):
         message_count = 0
 
         for line in utils.reverse_readline(bot_log_path):
-            if self.parameters.logging_handler == 'file':
+            if self._parameters.logging_handler == 'file':
                 log_message = utils.parse_logline(line)
-            if self.parameters.logging_handler == 'syslog':
+            if self._parameters.logging_handler == 'syslog':
                 log_message = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
 
             if type(log_message) is not dict:
-                if self.parameters.logging_handler == 'file':
+                if self._parameters.logging_handler == 'file':
                     message_overflow = '\n'.join([line, message_overflow])
                 continue
             if log_message['bot_id'] != bot_id:
                 continue
-            if LOG_LEVEL[log_message['log_level']] < LOG_LEVEL[log_level]:
+            if LogLevel[log_message['log_level']].value > LogLevel[log_level].value:
                 continue
 
             if message_overflow:
                 log_message['extended_message'] = message_overflow
                 message_overflow = ''
 
-            if self.parameters.logging_handler == 'syslog':
+            if self._parameters.logging_handler == 'syslog':
                 log_message['message'] = log_message['message'].replace('#012', '\n')
 
             message_count += 1
@@ -1386,58 +812,43 @@ Get some debugging output on the settings and the enviroment (to be extended):
             if message_count >= number_of_lines and number_of_lines != -1:
                 break
 
-        log_log_messages(messages[::-1])
+        self.log_log_messages(messages[::-1])
         return 0, messages[::-1]
 
     def check(self, no_connections=False):
         retval = 0
-        if RETURN_TYPE == 'json':
-            check_logger, list_handler = utils.setup_list_logging(name='check',
-                                                                  logging_level=self.logging_level)
+        if self._returntype is ReturnType.JSON:
+            check_logger, list_handler = utils.setup_list_logging(name='check', logging_level=self._logging_level)
         else:
-            check_logger = self.logger
+            check_logger = self._logger
 
         # loading files and syntax check
-        files = {DEFAULTS_CONF_FILE: None, PIPELINE_CONF_FILE: None,
-                 RUNTIME_CONF_FILE: None, BOTS_FILE: None,
-                 HARMONIZATION_CONF_FILE: None}
+        files = {RUNTIME_CONF_FILE: None, HARMONIZATION_CONF_FILE: None}
         check_logger.info('Reading configuration files.')
-        for filename in files:
-            try:
-                with open(filename) as file_handle:
-                    files[filename] = json.load(file_handle)
-            except (IOError, ValueError) as exc:  # pragma: no cover
-                check_logger.error('Could not load %r: %s.', filename, exc)
-                retval = 1
+        try:
+            with open(HARMONIZATION_CONF_FILE) as file_handle:
+                files[HARMONIZATION_CONF_FILE] = json.load(file_handle)
+        except (IOError, ValueError) as exc:  # pragma: no cover
+            check_logger.error('Could not load %r: %s.', HARMONIZATION_CONF_FILE, exc)
+            retval = 1
+        try:
+            with open(RUNTIME_CONF_FILE) as file_handle:
+                files[RUNTIME_CONF_FILE] = yaml.load(file_handle)
+        except (IOError, ValueError) as exc:
+            check_logger.error('Could not load %r: %s.', RUNTIME_CONF_FILE, exc)
+            retval = 1
         if retval:
-            if RETURN_TYPE == 'json':
+            if self._returntype is ReturnType.JSON:
                 return 1, {'status': 'error', 'lines': list_handler.buffer}
             else:
-                self.logger.error('Fatal errors occurred.')
+                self._logger.error('Fatal errors occurred.')
                 return 1, retval
-
-        check_logger.info('Checking defaults configuration.')
-        try:
-            with open(pkg_resources.resource_filename('intelmq', 'etc/defaults.conf')) as fh:
-                defaults = json.load(fh)
-        except FileNotFoundError:
-            pass
-        else:
-            keys = set(defaults.keys()) - set(files[DEFAULTS_CONF_FILE].keys())
-            if keys:
-                check_logger.error("Keys missing in your 'defaults.conf' file: %r", keys)
-
-        check_logger.info('Checking runtime configuration.')
-        http_proxy = files[DEFAULTS_CONF_FILE].get('http_proxy')
-        https_proxy = files[DEFAULTS_CONF_FILE].get('https_proxy')
-        # Either both are given or both are not given
-        if (not http_proxy or not https_proxy) and not (http_proxy == https_proxy):
-            check_logger.warning('Incomplete configuration: Both http and https proxies must be set.')
-            retval = 1
 
         check_logger.info('Checking runtime and pipeline configuration.')
         all_queues = set()
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
+            if bot_id == 'global':
+                continue
             # pipeline keys
             for field in ['description', 'group', 'module', 'name', 'enabled']:
                 if field not in bot_config:
@@ -1447,37 +858,26 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 message = "Bot %r has invalid `run_mode` %r. Must be 'continuous' or 'scheduled'."
                 check_logger.warning(message, bot_id, bot_config['run_mode'])
                 retval = 1
-            if bot_id not in files[PIPELINE_CONF_FILE] and bot_config.get('enabled', True):
-                check_logger.error('Misconfiguration: No pipeline configuration found for %r.', bot_id)
-                retval = 1
-            elif bot_id not in files[PIPELINE_CONF_FILE] and not bot_config.get('enabled', True):
-                check_logger.warning('Misconfiguration: No pipeline configuration found for %r.', bot_id)
-            elif bot_id in files[PIPELINE_CONF_FILE]:
-                if ('group' in bot_config and
-                        bot_config['group'] in ['Collector', 'Parser', 'Expert']):
-                    if ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
-                            (isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) and
-                             len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1) or
-                            (isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], dict) and
-                             '_default' not in files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])):
-                        check_logger.error('Misconfiguration: No (default) destination queue for %r.', bot_id)
-                        retval = 1
-                    else:
-                        all_queues = all_queues.union(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])
-                if ('group' in bot_config and
-                        bot_config['group'] in ['Parser', 'Expert', 'Output']):
-                    if ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
-                            not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str)):
-                        check_logger.error('Misconfiguration: No source queue for %r.', bot_id)
-                        retval = 1
-                    else:
-                        all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'])
-                        all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'] + '-internal')
+            if ('group' in bot_config and bot_config['group'] in ['Collector', 'Parser', 'Expert']):
+                if ('parameters' not in bot_config or 'destination_queues' not in bot_config['parameters'] or
+                   (isinstance(bot_config['parameters']['destination_queues'], list) and len(bot_config['parameters']['destination_queues']) < 1) or
+                   (isinstance(bot_config['parameters']['destination_queues'], dict) and '_default' not in bot_config['parameters']['destination_queues'])):
+                    check_logger.error('Misconfiguration: No (default) destination queue for %r.', bot_id)
+                    retval = 1
+                else:
+                    all_queues = all_queues.union(bot_config['parameters']['destination_queues'])
+            if ('group' in bot_config and bot_config['group'] in ['Parser', 'Expert', 'Output']):
+                if ('parameters' in bot_config and 'source_queue' in bot_config['parameters'] and isinstance(bot_config['parameters']['source_queue'], str)):
+                    all_queues.add(bot_config['parameters']['source_queue'])
+                    all_queues.add(f"{bot_config['parameters']['source_queue']}-internal")
+                else:
+                    all_queues.add(f"{bot_id}-queue")
+                    all_queues.add(f"{bot_id}-queue-internal")
         # ignore allowed orphaned queues
-        allowed_orphan_queues = set(getattr(self.parameters, 'intelmqctl_check_orphaned_queues_ignore', ()))
+        allowed_orphan_queues = set(getattr(self._parameters, 'intelmqctl_check_orphaned_queues_ignore', ()))
         if not no_connections:
             try:
-                pipeline = PipelineFactory.create(self.parameters, logger=self.logger)
+                pipeline = PipelineFactory.create(logger=self._logger, pipeline_args=self._parameters.__dict__)
                 pipeline.set_queues(None, "source")
                 pipeline.connect()
                 orphan_queues = "', '".join(pipeline.nonempty_queues() - all_queues - allowed_orphan_queues)
@@ -1489,7 +889,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 if orphan_queues:
                     check_logger.warning("Orphaned queues found: '%s'. Possible leftover from past reconfigurations "
                                          "without cleanup. Have a look at the FAQ at "
-                                         "https://github.com/certtools/intelmq/blob/master/docs/intelmqctl.md"
+                                         "https://intelmq.readthedocs.io/en/latest/guides/intelmqctl.html"
                                          "#orphaned-queues", orphan_queues)
 
         check_logger.info('Checking harmonization configuration.')
@@ -1512,28 +912,29 @@ Get some debugging output on the settings and the enviroment (to be extended):
         if extra_type != 'JSONDict':
             check_logger.warning("'extra' field needs to be of type 'JSONDict'.")
             retval = 1
-        if upgrades.harmonization({}, {}, files[HARMONIZATION_CONF_FILE],
+        if upgrades.harmonization({}, files[HARMONIZATION_CONF_FILE],
                                   dry_run=True)[0]:
             check_logger.warning("Harmonization needs an upgrade, call "
                                  "intelmqctl upgrade-config.")
 
         check_logger.info('Checking for bots.')
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
-            # importable module
-            try:
-                bot_module = importlib.import_module(bot_config['module'])
-            except ImportError as exc:
-                check_logger.error('Incomplete installation: Bot %r not importable: %r.', bot_id, exc)
-                retval = 1
-                continue
-            bot = getattr(bot_module, 'BOT')
-            bot_parameters = files[DEFAULTS_CONF_FILE].copy()
-            bot_parameters.update(bot_config['parameters'])
-            bot_check = bot.check(bot_parameters)
-            if bot_check:
-                for log_line in bot_check:
-                    getattr(check_logger, log_line[0])("Bot %r: %s" % (bot_id, log_line[1]))
-        for group in files[BOTS_FILE].values():
+            if bot_id != 'global':
+                # importable module
+                try:
+                    bot_module = importlib.import_module(bot_config['module'])
+                except ImportError as exc:
+                    check_logger.error('Incomplete installation: Bot %r not importable: %r.', bot_id, exc)
+                    retval = 1
+                    continue
+                bot = getattr(bot_module, 'BOT')
+                bot_parameters = utils.get_global_settings()
+                bot_parameters.update(bot_config.get('parameters', {}))  # the parameters field may not exist
+                bot_check = bot.check(bot_parameters)
+                if bot_check:
+                    for log_line in bot_check:
+                        getattr(check_logger, log_line[0])("Bot %r: %s" % (bot_id, log_line[1]))
+        for group in utils.list_all_bots().values():
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
                                    stderr=subprocess.DEVNULL):
@@ -1551,17 +952,17 @@ Get some debugging output on the settings and the enviroment (to be extended):
         else:
             check_logger.error("No state file found. Please call 'intelmqctl upgrade-config'.")
 
-        if RETURN_TYPE == 'json':
+        if self._returntype is ReturnType.JSON:
             if retval:
                 return 1, {'status': 'error', 'lines': list_handler.buffer}
             else:
                 return 0, {'status': 'success', 'lines': list_handler.buffer}
         else:
             if retval:
-                self.logger.error('Some issues have been found, please check the above output.')
+                self._logger.error('Some issues have been found, please check the above output.')
                 return retval, 'error'
             else:
-                self.logger.info('No issues found.')
+                self._logger.info('No issues found.')
                 return retval, 'success'
 
     def upgrade_conf(self, previous=None, dry_run=None, function=None,
@@ -1577,33 +978,36 @@ Get some debugging output on the settings and the enviroment (to be extended):
             state_file: location of the state file
             no_backup: Do not create backups of state and configuration files
 
-        state file:
+        state_file:
 
-            version_history = [..., [2, 0, 0], [2, 0, 1]]
-            upgrades = {
-                "v112_feodo_tracker_domains": true,
-                "v112_feodo_tracker_ips": false,
-                "v200beta1_ripe_expert": false
-                }
-            results = [
-                {"function": "v112_feodo_tracker_domains",
-                 "success": true,
-                 "retval": null,
-                 "time": "..."},
-                {"function": "v112_feodo_tracker_domains",
-                 "success": false,
-                 "retval": "fix it manually",
-                 "message": "fix it manually",
-                 "time": "..."},
-                {"function": "v200beta1_ripe_expert",
-                 "success": false,
-                 "traceback": "...",
-                 "time": "..."}
-                ]
+            .. code-block:: json
+
+               version_history = [..., [2, 0, 0], [2, 0, 1]]
+               upgrades = {
+                   "v112_feodo_tracker_domains": true,
+                   "v112_feodo_tracker_ips": false,
+                   "v200beta1_ripe_expert": false
+                   }
+               results = [
+                   {"function": "v112_feodo_tracker_domains",
+                    "success": true,
+                    "retval": null,
+                    "time": "..."},
+                   {"function": "v112_feodo_tracker_domains",
+                    "success": false,
+                    "retval": "fix it manually",
+                    "message": "fix it manually",
+                    "time": "..."},
+                   {"function": "v200beta1_ripe_expert",
+                    "success": false,
+                    "traceback": "...",
+                    "time": "..."}
+                   ]
+
         """
         if os.path.isfile(state_file):
             if not os.access(state_file, os.W_OK) and not dry_run:
-                self.logger.error("State file %r is not writable.", state_file)
+                self._logger.error("State file %r is not writable.", state_file)
                 return 1, "State file %r is not writable." % state_file
             state = utils.load_configuration(state_file)
         else:
@@ -1611,74 +1015,66 @@ Get some debugging output on the settings and the enviroment (to be extended):
             We create the state file directly before any upgrade function.
             Otherwise we might run into the situation, that we can't write the state but we already upgraded.
             """
-            self.logger.info('Writing intial state file.')
+            self._logger.info('Writing initial state file.')
             state = {"version_history": [],
                      "upgrades": {},
                      "results": []}
             if dry_run:
-                self.logger.info('Would create state file now at %r.',
-                                 state_file)
+                self._logger.info('Would create state file now at %r.', state_file)
                 return 0, 'success'
             try:
-                utils.write_configuration(state_file, state, new=True)
+                utils.write_configuration(state_file, state, new=True, useyaml=False)
             except Exception as exc:
-                self.logger.error('Error writing state file %r: %s.', state_file, exc)
+                self._logger.error('Error writing state file %r: %s.', state_file, exc)
                 return 1, 'Error writing state file %r: %s.' % (state_file, exc)
-            self.logger.info('Successfully wrote initial state file.')
+            self._logger.info('Successfully wrote initial state file.')
 
-        defaults = utils.load_configuration(DEFAULTS_CONF_FILE)
         runtime = utils.load_configuration(RUNTIME_CONF_FILE)
+        if 'global' not in runtime:
+            runtime['global'] = {}
         harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
         if dry_run:
-            self.logger.info('Doing a dry run, not writing anything now.')
+            self._logger.info('Doing a dry run, not writing anything now.')
 
         if function:
             if not force and state['upgrades'].get(function, False):
                 # already performed
-                self.logger.info('This upgrade has been performed previously successfully already. Force with -f.')
+                self._logger.info('This upgrade has been performed previously successfully already. Force with -f.')
                 return 0, 'success'
 
             result = {"function": function,
                       "time": datetime.datetime.now().isoformat()
                       }
             if not hasattr(upgrades, function):
-                self.logger.error('This function does not exist. '
-                                  'Available functions are %s',
-                                  ', '.join(upgrades.__all__))
+                self._logger.error('This function does not exist. Available functions are %s', ', '.join(upgrades.__all__))
                 return 1, 'error'
             try:
-                retval, defaults_new, runtime_new, harmonization_new = getattr(
-                    upgrades, function)(defaults, runtime, harmonization, dry_run)
+                retval, runtime_new, harmonization_new = getattr(
+                    upgrades, function)(runtime, harmonization, dry_run,
+                                        version_history=state['version_history'])
                 # Handle changed configurations
                 if retval is True and not dry_run:
-                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults_new,
-                                              backup=not no_backup)
                     utils.write_configuration(RUNTIME_CONF_FILE, runtime_new,
                                               backup=not no_backup)
                     utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization_new,
-                                              backup=not no_backup)
+                                              backup=not no_backup, useyaml=False)
             except Exception:
-                self.logger.exception('Upgrade %r failed, please report this bug '
-                                      'with the shown traceback.',
-                                      function)
+                self._logger.exception('Upgrade %r failed, please report this bug with the shown traceback.', function)
                 result['traceback'] = traceback.format_exc()
                 result['success'] = False
             else:
                 if type(retval) is str:
-                    self.logger.error('Upgrade %r failed: %s', function, retval)
+                    self._logger.error('Upgrade %r failed: %s', function, retval)
                     result['message'] = retval
                     result['success'] = False
                 elif retval is None:
-                    self.logger.info('Upgrade %r successful: Nothing to do.',
-                                     function)
+                    self._logger.info('Upgrade %r successful: Nothing to do.', function)
                     result['success'] = True
                 elif retval is True:
-                    self.logger.info('Upgrade %r successful.', function)
+                    self._logger.info('Upgrade %r successful.', function)
                     result['success'] = True
                 else:
-                    self.logger.error('Unknown return value %r for %r. '
-                                      'Please report this as bug.',
-                                      retval, function)
+                    self._logger.error('Unknown return value %r for %r. Please report this as bug.', retval, function)
                     result['success'] = False
 
                 result['retval'] = retval
@@ -1687,7 +1083,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
             state['upgrades'][function] = result['success']
             if not dry_run:
                 utils.write_configuration(state_file, state,
-                                          backup=not no_backup)
+                                          backup=not no_backup, useyaml=False)
 
             if result['success']:
                 return 0, 'success'
@@ -1696,16 +1092,14 @@ Get some debugging output on the settings and the enviroment (to be extended):
 
         if previous:
             previous = tuple(utils.lazy_int(v) for v in previous.split('.'))
-            self.logger.info("Using previous version %r from parameter.",
-                             '.'.join(str(x) for x in previous))
+            self._logger.info("Using previous version %r from parameter.", '.'.join(str(x) for x in previous))
 
         if __version_info__ in state["version_history"] and not force:
             return 0, "Nothing to do."
         else:
             if state["version_history"] and not previous and not force:
                 previous = state["version_history"][-1]
-                self.logger.info("Found previous version %s in state file.",
-                                 '.'.join(str(x) for x in previous))
+                self._logger.info("Found previous version %s in state file.", '.'.join(str(x) for x in previous))
             if previous:
                 todo = []
                 for version, functions in upgrades.UPGRADES.items():
@@ -1716,13 +1110,12 @@ Get some debugging output on the settings and the enviroment (to be extended):
                         for function in functions:
                             fname = function.__name__
                             if not state['upgrades'].get(fname, False):
-                                self.logger.info("Catch up function %s from version %s.",
-                                                 fname, '.'.join(str(x) for x in version))
+                                self._logger.info("Catch up function %s from version %s.", fname, '.'.join(str(x) for x in version))
                                 funcs.append(function)
                         if funcs:
                             todo.append((version, funcs, False))
             else:
-                self.logger.info("Found no previous version or forced, doing all upgrades.")
+                self._logger.info("Found no previous version or forced, doing all upgrades.")
                 todo = [(version, bunch, True) for version, bunch in upgrades.UPGRADES.items()]
 
             todo.extend([(None, (function, ), False)
@@ -1743,8 +1136,7 @@ Get some debugging output on the settings and the enviroment (to be extended):
             error = False
             for version, bunch, version_new in todo:
                 if version and version_new:
-                    self.logger.info('Upgrading to version %s.',
-                                     '.'.join(map(str, version)))
+                    self._logger.info('Upgrading to version %s.', '.'.join(map(str, version)))
                 for function in bunch:
                     if not force and state['upgrades'].get(function.__name__, False):
                         # already performed
@@ -1756,26 +1148,25 @@ Get some debugging output on the settings and the enviroment (to be extended):
                               "time": datetime.datetime.now().isoformat()
                               }
                     try:
-                        retval, defaults, runtime, harmonization = function(defaults, runtime, harmonization, dry_run)
+                        retval, runtime, harmonization = function(runtime, harmonization, dry_run,
+                                                                  version_history=state['version_history'])
                     except Exception:
-                        self.logger.exception('%s: Upgrade failed, please report this bug '
-                                              'with the traceback.', docstring)
+                        self._logger.exception('%s: Upgrade failed, please report this bug with the traceback.', docstring)
                         result['traceback'] = traceback.format_exc()
                         result['success'] = False
                     else:
                         if type(retval) is str:
-                            self.logger.error('%s: Upgrade failed: %s', docstring, retval)
+                            self._logger.error('%s: Upgrade failed: %s', docstring, retval)
                             result['message'] = retval
                             result['success'] = False
                         elif retval is None:
-                            self.logger.info('%s: Nothing to do.', docstring)
+                            self._logger.info('%s: Nothing to do.', docstring)
                             result['success'] = True
                         elif retval is True:
-                            self.logger.info('%s: Upgrade successful.', docstring)
+                            self._logger.info('%s: Upgrade successful.', docstring)
                             result['success'] = True
                         else:
-                            self.logger.error('%s: Unknown return value %r. Please report this '
-                                              'as bug.', docstring, retval)
+                            self._logger.error('%s: Unknown return value %r. Please report this as bug.', docstring, retval)
                             result['success'] = False
                         result['retval'] = retval
 
@@ -1803,36 +1194,30 @@ Get some debugging output on the settings and the enviroment (to be extended):
                 # some upgrade function had a problem
                 if not dry_run:
                     utils.write_configuration(state_file, state,
-                                              backup=not no_backup)
-                self.logger.error('Some migration did not succeed or '
-                                  'manual intervention is needed. Look at '
-                                  'the output above. Afterwards, re-run '
-                                  'this program.')
+                                              backup=not no_backup, useyaml=False)
+                self._logger.error('Some migration did not succeed or manual intervention is needed. '
+                                   'Look at the output above. Afterwards, re-run this program.')
 
             try:
                 if not dry_run:
-                    utils.write_configuration(DEFAULTS_CONF_FILE, defaults,
-                                              backup=not no_backup)
                     utils.write_configuration(RUNTIME_CONF_FILE, runtime,
                                               backup=not no_backup)
                     utils.write_configuration(HARMONIZATION_CONF_FILE, harmonization,
-                                              backup=not no_backup)
+                                              backup=not no_backup, useyaml=False)
             except Exception as exc:
-                self.logger.error('Writing defaults or runtime configuration '
-                                  'did not succeed: %s\nFix the problem and '
-                                  'afterwards, re-run this program.',
-                                  exc)
+                self._logger.error('Writing runtime configuration did not succeed: %s\nFix the '
+                                   'problem and afterwards, re-run this program.', exc)
                 return 1, 'error'
 
             if not error:
                 if todo:
-                    self.logger.info('Configuration upgrade successful!')
+                    self._logger.info('Configuration upgrade successful!')
                 else:
-                    self.logger.info('Nothing to do!')
+                    self._logger.info('Nothing to do!')
 
             if not dry_run:
                 utils.write_configuration(state_file, state,
-                                          backup=not no_backup)
+                                          backup=not no_backup, useyaml=False)
 
         if error:
             return 1, 'error'
@@ -1842,35 +1227,53 @@ Get some debugging output on the settings and the enviroment (to be extended):
     def debug(self, sections=None):
         """
         Give debugging output
-        get_paths:
-            print path information
         """
 
         output = {}
         if sections is None or 'paths' in sections:
             output['paths'] = {}
             variables = globals()
-            if RETURN_TYPE == 'text':
+            if self._returntype is ReturnType.TEXT:
                 print('Paths:')
-            for path in ('BOTS_FILE', 'DEFAULTS_CONF_FILE',
-                         'HARMONIZATION_CONF_FILE', 'PIPELINE_CONF_FILE',
+            for path in ('HARMONIZATION_CONF_FILE',
                          'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
                          'DEFAULT_LOGGING_PATH', '__file__',
                          'CONFIG_DIR', 'ROOT_DIR'):
                 output['paths'][path] = variables[path]
-                if RETURN_TYPE == 'text':
+                if self._returntype is ReturnType.TEXT:
                     print('%s: %r' % (path, variables[path]))
         if sections is None or 'environment_variables' in sections:
             output['environment_variables'] = {}
-            if RETURN_TYPE == 'text':
+            if self._returntype is ReturnType.TEXT:
                 print('Environment variables:')
             for variable in ('INTELMQ_ROOT_DIR', 'INTELMQ_PATHS_NO_OPT',
                              'INTELMQ_PATHS_OPT', 'INTELMQ_MANAGER_CONTROLLER_CMD',
                              'PATH'):
                 output['environment_variables'][variable] = os.getenv(variable)
-                if RETURN_TYPE == 'text':
+                if self._returntype is ReturnType.TEXT:
                     print('%s: %r' % (variable, os.getenv(variable)))
         return 0, output
+
+    def log_bot_message(self, status, *args):
+        if self._returntype is ReturnType.TEXT and not self._quiet:
+            self._logger.info(MESSAGES[status], *args)
+
+    def log_botnet_message(self, status, group=None):
+        if self._returntype is ReturnType.TEXT and not self._quiet:
+            if group:
+                self._logger.info(MESSAGES[status], BOT_GROUP[group] + " group")
+            else:
+                self._logger.info(MESSAGES[status], 'Botnet')
+
+    def log_log_messages(self, messages):
+        if self._returntype is ReturnType.TEXT:
+            for message in messages:
+                print(' - '.join([message['date'], message['bot_id'],
+                                  message['log_level'], message['message']]))
+                try:
+                    print(message['extended_message'])
+                except KeyError:
+                    pass
 
 
 def main():  # pragma: no cover

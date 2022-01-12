@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import re
 
@@ -6,10 +10,9 @@ from intelmq.lib.bot import ParserBot
 
 MAPPING_STATIC = {'bot': {
     'classification.type': 'infected-system'},
-    'bruteforce': {
-    'classification.type': 'brute-force'},
+    'bruteforce': {'classification.type': 'brute-force'},
     'controller': {
-    'classification.type': 'c2server'},
+    'classification.type': 'c2-server'},
     'darknet': {'classification.type': 'scanner',
                 'classification.identifier': 'darknet'},
     'phishing': {'classification.type': 'phishing',
@@ -17,11 +20,11 @@ MAPPING_STATIC = {'bot': {
     'proxy': {'classification.type': 'proxy',
               'classification.identifier': 'openproxy'},
     'honeypot': {'classification.type': 'scanner'},
-    'openresolvers': {'classification.type': 'vulnerable service',
+    'openresolvers': {'classification.type': 'vulnerable-system',
                       'classification.identifier': 'dns-open-resolver',
                       'protocol.application': 'dns',
                       },
-    'openresolver': {'classification.type': 'vulnerable service',
+    'openresolver': {'classification.type': 'vulnerable-system',
                      'classification.identifier': 'dns-open-resolver',
                      'protocol.application': 'dns',
                      },
@@ -33,19 +36,20 @@ MAPPING_STATIC = {'bot': {
                   'classification.identifier': 'conficker',
                   'malware.name': 'conficker'},
 }
-MAPPING_COMMENT = {'bruteforce': ('classification.identifier', 'protocol.application'),
-                   'phishing': ('source.url', )}
-PROTOCOL_MAPPING = {  # TODO: use getent in harmonization
+PROTOCOL_MAPPING = {  # TODO: use `getent protocols <number>`, maybe in harmonization
     '1': 'icmp',
     '6': 'tcp',
     '11': 'nvp-ii',
     '17': 'udp',
+    '47': 'gre',
+    '59': 'ipv6-nonxt',
 }
 BOGUS_HOSTNAME_PORT = re.compile('hostname: ([^:]+)port: ([0-9]+)')
 DESTINATION_PORT_NUMBERS_TOTAL = re.compile(r' \(total_count:\d+\)$')
 
 
 class CymruCAPProgramParserBot(ParserBot):
+    """Parse the Cymru CAP Program feed"""
 
     def parse(self, report):
         lines = utils.base64_decode(report.get("raw")).splitlines()
@@ -103,7 +107,7 @@ class CymruCAPProgramParserBot(ParserBot):
         event.add('raw', self.recover_line(line))
         if report_type == 'beagle':  # TODO: verify
             # beagle|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<GET REQUEST>] [srcport <PORT>]|ASNAME
-            event.add('classification.type', 'malware')
+            event.add('classification.type', 'infected-system')
             event.add('classification.identifier', 'beagle')
             event.add('malware.name', 'beagle')
             if len(comments):
@@ -120,7 +124,7 @@ class CymruCAPProgramParserBot(ParserBot):
             # phatbot|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS||ASNAME
             # sinit|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS||ASNAME
             # slammer|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS||ASNAME
-            event.add('classification.type', 'malware')
+            event.add('classification.type', 'infected-system')
             event.add('classification.identifier', report_type)
             event.add('malware.name', report_type)
         elif report_type == 'bots':
@@ -137,31 +141,26 @@ class CymruCAPProgramParserBot(ParserBot):
             # ddosreport|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<PROTOCOL> <PORT>] [category: <CATEGORY>]
             # [servpass: <PASSWORD>] [SSL] [url: <URL>]|ASNAME
             raise NotImplementedError('Report %r not implemented, format is unknown.' % report_type)
-            event['classification.type'] = 'c2server'
-            event['protocol.application'] = comment_split[0]
-            event['source.port'] = comment_split[1]
-            # TODO: category? password? ssl?
-            event['source.url'] = comment_split[-1]
         elif report_type == 'defacement':  # TODO: verify
             # defacement|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<URL> [<ZONE-H ID>]|ASNAME
-            event['classification.type'] = 'compromised'
+            event['classification.type'] = 'unauthorised-information-modification'
             event['classification.identifier'] = report_type
             event['source.url'] = comment_split[0]
             event['extra.zoneh.id'] = comment_split[1]
         elif report_type == 'fastflux':  # TODO: verify
             # fastflux|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<DOMAIN>]|ASNAME
-            event['classification.type'] = 'compromised'
+            event['classification.type'] = 'system-compromise'
             event['classification.identifier'] = report_type
             if comments:
                 event['source.reverse_dns'] = comments
         elif report_type == 'malwareurl':  # TODO: verify
             # malwareurl|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<URL> <SCAN-ID>|ASNAME
             event['source.url'] = comment_split[0]
-            event.add('classification.type', 'malware')
+            event.add('classification.type', 'malware-distribution')
             event.add('classification.identifier', 'malwareurl')
         elif report_type == 'openresolvers':
             # openresolvers|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS||ASNAME
-            event['classification.type'] = 'vulnerable service'
+            event['classification.type'] = 'vulnerable-system'
             event['classification.identifier'] = 'dns-open-resolver'
             event['protocol.application'] = 'dns'
         elif report_type == 'phishing':
@@ -177,7 +176,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event['extra.request'] = comments
         elif report_type == 'routers':  # TODO: verify
             # routers|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<DEVICE TYPE>]|ASNAME
-            event['classification.type'] = 'compromised'
+            event['classification.type'] = 'system-compromise'
             if comments:
                 event['classification.identifier'] = comments
         elif report_type == 'scanners':  # TODO: verify
@@ -188,7 +187,7 @@ class CymruCAPProgramParserBot(ParserBot):
             try:
                 port = int(comments)
             except ValueError:
-                # TODO: How are ports splitted?
+                # TODO: How are ports split?
                 raise NotImplementedError("Can't properly parse report %r, format for multiple ports is unknown."
                                           "" % report_type)
             else:
@@ -206,7 +205,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event.add('source.url', comment_split[0])
             if len(comment_split == 2):
                 event.add('malware.hash.md5', comment_split[1])
-            event.add('classification.type', 'malware')
+            event.add('classification.type', 'malware-distribution')
             event.add('classification.identifier', 'spreader')
         elif report_type == 'stormworm':  # TODO: verify
             # stormworm|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|confidence:<NUMBER> [legacy|crypto] [srcport <SOURCE PORT>]|ASNAME
@@ -231,6 +230,24 @@ class CymruCAPProgramParserBot(ParserBot):
         yield event
 
     def parse_line_new(self, line, report):
+        """
+        The format is two following:
+        category|address|asn|timestamp|optional_information|asninfo
+        Therefore very similar to CSV, just with the pipe as separator
+        category: the type (resulting in classification.*) and optional_information needs to be parsed differently per category
+        address: source.ip
+        asn: source.asn
+        timestamp: time.source
+        optional_information: needs special care.
+            For some categories it needs parsing, as it contains a mapping of keys to values, whereas the meaning of the keys can differ between the categories
+            For categories in MAPING_COMMENT, this field only contains one value.
+            For the category 'bruteforce' *both* situations apply.
+            Previously, the bruteforce events only had the protocol in the comment,
+            while most other categories had a mapping. Now, the bruteforce categories also uses
+            the type-value syntax. So we need to support both formats, the old and the new.
+            See also https://github.com/certtools/intelmq/issues/1794
+        asninfo: source.as_name
+        """
         category, ip, asn, timestamp, notes, asninfo = line.split('|')
 
         # to detect bogous lines like 'hostname: sub.example.comport: 80'
@@ -254,11 +271,6 @@ class CymruCAPProgramParserBot(ParserBot):
         event.add('time.source', timestamp + ' GMT')
         event.add('source.as_name', ', '.join(asninfo_split[:-1]))  # contains CC at the end
         event.add('source.geolocation.cc', asninfo_split[-1])
-        if category in MAPPING_COMMENT:
-            # if the comment is missing, we can't add that information
-            if comment_split:
-                for field in MAPPING_COMMENT[category]:
-                    event.add(field, comment_split[0])
 
         try:
             for key, value in MAPPING_STATIC[category].items():
@@ -268,11 +280,16 @@ class CymruCAPProgramParserBot(ParserBot):
         destination_ports = []
 
         for comment in comment_split:
-            if category in MAPPING_COMMENT:
-                break
-            if ': ' not in comment:
+            if ':' not in comment or comment.startswith('http'):
                 if category == 'proxy':
                     comment = 'proxy_type: %s' % comment
+                elif category == 'bruteforce':  # optional_information can just be 'ssh;'
+                    event.add('classification.identifier', comment)
+                    event.add('protocol.application', comment)
+                    break
+                elif category == 'phishing':
+                    event.add('source.url', comment)
+                    break
                 else:
                     if category == 'bot':
                         try:
@@ -283,7 +300,7 @@ class CymruCAPProgramParserBot(ParserBot):
                         else:
                             break
                     raise ValueError('Unable to parse comment %r of category %r. Please report this.' % (comment, category))
-            key, value = comment.split(': ')
+            key, value = comment.split(':', 1)
             key = key.strip()
             value = value.strip()
             if key == 'family':
@@ -318,6 +335,8 @@ class CymruCAPProgramParserBot(ParserBot):
                 event['source.port'] = value
             elif key == 'username':
                 event['source.account'] = value
+            elif key == 'additional_asns':
+                event['extra.source.asns'] = [event['source.asn']] + list(map(int, value.split(',')))
             else:
                 raise ValueError('Unknown key %r in comment of category %r. Please report this.' % (key, category))
         for destination_port in destination_ports:

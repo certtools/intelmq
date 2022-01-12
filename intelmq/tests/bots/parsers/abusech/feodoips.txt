@@ -1,12 +1,12 @@
 ################################################################
 # abuse.ch Feodo Tracker Botnet C2 IP Blocklist (CSV)          #
-# Last updated: 2019-03-05 22:10:24 UTC                        #
+# Last updated: 2021-02-10 13:34:57 UTC                        #
 #                                                              #
 # Terms Of Use: https://feodotracker.abuse.ch/blocklist/       #
 # For questions please contact feodotracker [at] abuse.ch      #
 ################################################################
 #
-# Firstseen,DstIP,DstPort,LastOnline,Malware
-2019-03-04 22:10:24,110.93.230.101,990,2019-03-05,Heodo
-2017-12-18 23:36:45,192.155.88.196,8080,,Heodo
+"first_seen_utc","dst_ip","dst_port","c2_status","last_online","malware"
+"2021-01-17 07:30:05","10.213.75.205","443","online","2021-02-10","Dridex"
+"2021-01-17 07:44:46","192.16.238.101","443","online","2021-02-10","Dridex"
 # END (2) entries

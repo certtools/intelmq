@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 sinus-x
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import json
 
@@ -6,6 +10,7 @@ from intelmq.lib.bot import ParserBot
 
 
 class CZNICProkiParserBot(ParserBot):
+    """Parse the feed from malicious IP addresses on Czech networks"""
 
     recover_line = ParserBot.recover_line_json
 
@@ -14,7 +19,7 @@ class CZNICProkiParserBot(ParserBot):
         report = json.loads(raw_report)
 
         if isinstance(report, dict) and "data" in report:
-            # extract event list from recieved JSON
+            # extract event list from received JSON
             report = report.get("data")
 
         for line in report:

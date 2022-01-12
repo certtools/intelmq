@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import unittest
 import sys
@@ -6,7 +10,7 @@ from tempfile import TemporaryDirectory
 import intelmq.lib.test as test
 from intelmq.bots.outputs.misp.output_feed import MISPFeedOutputBot
 
-EXAMPLE_EVENT = {"classification.type": "malware",
+EXAMPLE_EVENT = {"classification.type": "infected-system",
                  "destination.port": 9796,
                  "feed.accuracy": 100.0,
                  "destination.ip": "52.18.196.169",
@@ -32,8 +36,6 @@ EXAMPLE_EVENT = {"classification.type": "malware",
 
 
 @test.skip_exotic()
-@unittest.skipIf(sys.version_info < (3, 6),
-                 'The MISP Feed Output Bot does require Python >= 3.6.')
 class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod

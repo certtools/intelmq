@@ -1,10 +1,15 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class OpenPhishParserBot(Bot):
+class OpenPhishParserBot(ParserBot):
+    """Parse the OpenPhish feed"""
 
     def process(self):
         report = self.receive_message()

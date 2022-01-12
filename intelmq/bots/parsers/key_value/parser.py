@@ -39,14 +39,16 @@ from dateutil.parser import parse
 
 
 class KeyValueParserBot(ParserBot):
+    """Parse key=value strings"""
+    keys = {}
+    kv_separator = '='
+    pair_separator = ' '
+    strip_quotes = True
+    timestamp_key = None  # TODO: that seems to be legacy
 
     def init(self):
-        self.pair_separator = getattr(self.parameters, 'pair_separator', ' ')
-        self.kv_separator = getattr(self.parameters, 'kv_separator', '=')
-        self.keys = getattr(self.parameters, 'keys', {})
         if not self.keys:
             raise ConfigurationError('Key extraction', 'No keys specified.')
-        self.strip_quotes = getattr(self.parameters, "strip_quotes", True)
 
     def parse_line(self, row, report):
         event = self.new_event(report)
@@ -64,8 +66,8 @@ class KeyValueParserBot(ParserBot):
                         value = parse(value, fuzzy=True).isoformat() + " UTC"
                 except ValueError:
                     value = None  # Will be ignored by event.add()
-                    self.logger.warn("Could not parse key %r for 'time.source'."
-                                     " Ignoring this key in line %r.", (value, row))
+                    self.logger.warning("Could not parse key %r for 'time.source'."
+                                        " Ignoring this key in line %r.", (value, row))
             if key in self.keys:
                 event.add(self.keys[key], value, raise_failure=False)
         event.add("raw", self.recover_line(row))

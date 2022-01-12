@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Tomas Bellus
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 GITHUB contents API Collector bot
@@ -12,7 +16,7 @@ PARAMETERS:
 import re
 
 from intelmq.lib.exceptions import InvalidArgument
-from intelmq.bots.collectors.github_api.collector_github_api import GithubAPICollectorBot
+from intelmq.bots.collectors.github_api._collector_github_api import GithubAPICollectorBot
 
 try:
     import requests
@@ -21,24 +25,29 @@ except ImportError:
 
 
 class GithubContentsAPICollectorBot(GithubAPICollectorBot):
+    "Collect files from a GitHub repository via the API. Optionally with GitHub credentials."
+    regex: str = None  # TODO: could be re
+    repository: str = None
+    extra_fields = None
 
     def init(self):
         super().init()
-        if hasattr(self.parameters, 'repository'):
-            self.__base_api_url = 'https://api.github.com/repos/{}/contents'.format(
-                getattr(self.parameters, 'repository'))
-        if hasattr(self.parameters, 'regex'):
+        if self.repository is not None:
+            self.__base_api_url = 'https://api.github.com/repos/{}/contents'.format(self.repository)
+        else:
+            raise InvalidArgument('repository', expected='string')
+
+        if self.regex is not None:
             try:
-                re.compile(getattr(self.parameters, 'regex'))
+                re.compile(self.regex)
             except Exception:
-                raise InvalidArgument('regex', expected='string', got=getattr(self.parameters, 'regex'))
+                raise InvalidArgument('regex', expected='string', got=self.regex)
         else:
             raise InvalidArgument('regex', expected='string', got=None)
-        if not hasattr(self.parameters, 'repository'):
-            raise InvalidArgument('repository', expected='string')
-        if hasattr(self.parameters, 'extra_fields'):
+
+        if self.extra_fields is not None:
             try:
-                self.__extra_fields = [x.strip() for x in getattr(self.parameters, 'extra_fields').split(',')]
+                self.__extra_fields = [x.strip() for x in self.extra_fields.split(',')]
             except Exception:
                 raise InvalidArgument('extra_fields', expected='comma-separated list')
         else:
@@ -63,8 +72,7 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
         for github_file in data:
             if github_file['type'] == 'dir':
                 extracted_github_files = self.__recurse_repository_files(github_file['url'], extracted_github_files)
-            elif github_file['type'] == 'file' and bool(re.search(getattr(self.parameters, 'regex', '.*.json'),
-                                                                  github_file['name'])):
+            elif github_file['type'] == 'file' and bool(re.search(self.regex, github_file['name'])):
                 extracted_github_file_data = {
                     'download_url': github_file['download_url'],
                     'content': requests.get(github_file['download_url']).content,

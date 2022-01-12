@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 In Version 0.9.5 the attachment filename is no longer surrounded by double quotes, see for the discussion:
@@ -10,14 +14,24 @@ import re
 from intelmq.lib.utils import unzip
 from intelmq.lib.exceptions import InvalidArgument
 
-from .lib import MailCollectorBot
+from ._lib import MailCollectorBot
 
 
 class MailAttachCollectorBot(MailCollectorBot):
+    """Monitor IMAP mailboxes and retrieve mail attachments"""
+    attach_regex: str = "csv.zip"
+    extract_files: bool = True
+    folder: str = "INBOX"
+    mail_host: str = "<host>"
+    mail_password: str = "<password>"
+    mail_ssl: bool = True
+    mail_user: str = "<user>"
+    rate_limit: int = 60
+    subject_regex: str = "<subject>"
 
     def init(self):
         super().init()
-        if not getattr(self.parameters, 'attach_regex', None):
+        if self.attach_regex is None:
             raise InvalidArgument('attach_regex', expected='string')
 
     def process_message(self, uid, message):
@@ -36,7 +50,7 @@ class MailAttachCollectorBot(MailCollectorBot):
             if attach_filename.startswith('"'):  # for imbox versions older than 0.9.5, see also above
                 attach_filename = attach_filename[1:-1]
 
-            if re.search(self.parameters.attach_regex, attach_filename):
+            if re.search(self.attach_regex, attach_filename):
 
                 self.logger.debug("Found suitable attachment %s.", attach_filename)
 
@@ -46,7 +60,7 @@ class MailAttachCollectorBot(MailCollectorBot):
                     raw_reports = unzip(attach['content'].read(), self.extract_files,
                                         return_names=True, logger=self.logger)
                 else:
-                    raw_reports = ((None, attach['content'].read()), )
+                    raw_reports = ((attach_filename, attach['content'].read()), )
 
                 for file_name, raw_report in raw_reports:
                     report = self.new_report()
@@ -56,6 +70,7 @@ class MailAttachCollectorBot(MailCollectorBot):
                     report["extra.email_subject"] = message.subject
                     report["extra.email_from"] = ','.join(x['email'] for x in message.sent_from)
                     report["extra.email_message_id"] = message.message_id
+                    report["extra.email_date"] = message.date
                     self.send_message(report)
 
                 # Only mark read if message relevant to this instance,

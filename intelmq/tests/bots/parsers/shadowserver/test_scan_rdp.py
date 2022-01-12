@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Accessible RDP',
            "classification.identifier": "open-rdp",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.bluekeep_vulnerable": False,
            "extra.cert_expiration_date": "2019-10-29 02:22:06",
            "extra.cert_issue_date": "2019-04-29 02:22:06",
@@ -57,7 +61,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Accessible RDP',
            "classification.identifier": "open-rdp",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.bluekeep_vulnerable": False,
            "extra.cert_expiration_date": "2019-10-16 06:15:20",
            "extra.cert_issue_date": "2019-04-16 06:15:20",

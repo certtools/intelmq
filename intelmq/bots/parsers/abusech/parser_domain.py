@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 robcza
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Parses simple newline separated list of domains.
@@ -20,19 +24,20 @@ SOURCE_FEEDS = {'https://feodotracker.abuse.ch/blocklist/?download=domainblockli
 
 
 class AbusechDomainParserBot(ParserBot):
-    lastgenerated = None
+    """Parse Abuse.ch domain feeds"""
+    _lastgenerated = None
 
     def parse_line(self, line, report):
         if line.startswith('#'):
             self.tempdata.append(line)
             if 'Generated on' in line:
                 row = line.strip('# ')[13:]
-                self.lastgenerated = dateutil.parser.parse(row).isoformat()
+                self._lastgenerated = dateutil.parser.parse(row).isoformat()
         else:
             event = self.new_event(report)
-            event.add('time.source', self.lastgenerated)
-            event.add('classification.taxonomy', 'malicious code')
-            event.add('classification.type', 'c2server')
+            event.add('time.source', self._lastgenerated)
+            event.add('classification.taxonomy', 'malicious-code')
+            event.add('classification.type', 'c2-server')
             event.add('source.fqdn', line)
             event.add("raw", line)
             event.add("malware.name", SOURCE_FEEDS[report["feed.url"]])

@@ -1,8 +1,13 @@
+# SPDX-FileCopyrightText: 2020 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Testing the IntelMQ-specific exceptions
 """
 import unittest
+import sys
 
 import intelmq.lib.exceptions as excs
 
@@ -19,7 +24,10 @@ class TestUtils(unittest.TestCase):
                 raise excs.PipelineError(exc)
         except excs.PipelineError as exc:
             exception = exc
-        self.assertEqual(exception.args, ('pipeline failed - ValueError(%r)' % message, ))
+        if sys.version_info < (3, 7):
+            self.assertEqual(exception.args, ('pipeline failed - ValueError(%r,)' % message, ))
+        else:
+            self.assertEqual(exception.args, ('pipeline failed - ValueError(%r)' % message, ))
 
         message = 'some error'
         notanexception = excs.PipelineError(message)

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 A bot to parse certstream data.
 @author: Christoph Giese (Telekom Security, CDR)
@@ -10,6 +14,7 @@ from intelmq.lib.utils import base64_decode
 
 
 class CertStreamParserBot(ParserBot):
+    """Parse the CertStream feed"""
 
     def parse(self, report):
         raw = base64_decode(report['raw'])

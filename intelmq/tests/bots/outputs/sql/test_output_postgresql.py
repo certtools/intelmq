@@ -1,10 +1,13 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.outputs.sql.output import SQLOutputBot
-from intelmq.bots.outputs.postgresql.output import PostgreSQLOutputBot
 
 if os.environ.get('INTELMQ_TEST_DATABASES'):
     import psycopg2
@@ -21,7 +24,7 @@ INPUT1 = {"__type": "Event",
 OUTPUT1 = INPUT1.copy()
 del OUTPUT1['__type']
 INPUT_EXTRA = {"__type": "Event",
-               "classification.type": "vulnerable service",
+               "classification.type": "vulnerable-system",
                "extra.asn": 64496,
                "extra.ip": "192.0.2.1",
                }
@@ -69,7 +72,7 @@ class TestSQLOutputBot(test.BotTestCase, unittest.TestCase):
         """
         self.input_message = INPUT_EXTRA
         self.run_bot()
-        self.cur.execute('SELECT "extra" FROM tests WHERE "classification.type" = \'vulnerable service\'')
+        self.cur.execute('SELECT "extra" FROM tests WHERE "classification.type" = \'vulnerable-system\'')
         self.assertEqual(self.cur.rowcount, 1)
         from_db = {k: v for k, v in self.cur.fetchone().items() if v is not None}
         self.assertEqual(from_db['extra'], {"asn": 64496, "ip": "192.0.2.1"})
@@ -88,9 +91,10 @@ class TestPostgreSQLOutputBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = PostgreSQLOutputBot
+        cls.bot_reference = SQLOutputBot
         cls.default_input_message = INPUT1
-        cls.sysconfig = {"host": "localhost",
+        cls.sysconfig = {"engine": "postgresql",
+                         "host": "localhost",
                          "port": 5432,
                          "database": "intelmq",
                          "user": "intelmq",

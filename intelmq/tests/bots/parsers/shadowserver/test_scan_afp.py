@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -24,7 +28,7 @@ EVENTS = [{
     'feed.name': 'Accessible AFP',
     "classification.identifier": "accessible-afp",
     "classification.taxonomy": "vulnerable",
-    "classification.type": "vulnerable service",
+    "classification.type": "vulnerable-system",
     "extra.afp_versions": "AFP3.3,AFP3.2,AFP3.1",
     "extra.flags": "SupportsCopyFile,SupportsChgPwd,SupportsServerMessages,SupportsServerSignature,SupportsTCP/IP,SupportsSrvrNotifications,SupportsReconnect,SupportsOpenDirectory,SupportsUTF8Servername,SupportsUUIDs,SupportsSuperClient",
     "extra.machine_type": "TimeCapsule8,119",
@@ -54,7 +58,7 @@ EVENTS = [{
     'feed.name': 'Accessible AFP',
     "classification.identifier": "accessible-afp",
     "classification.taxonomy": "vulnerable",
-    "classification.type": "vulnerable service",
+    "classification.type": "vulnerable-system",
     "extra.afp_versions": "AFP3.3,AFP3.2,AFP3.1",
     "extra.flags": "SupportsCopyFile,SupportsChgPwd,SupportsServerMessages,SupportsServerSignature,SupportsTCP/IP,SupportsSrvrNotifications,SupportsReconnect,SupportsOpenDirectory,SupportsUTF8Servername,SupportsUUIDs,SupportsSuperClient",
     "extra.machine_type": "TimeCapsule8,119",

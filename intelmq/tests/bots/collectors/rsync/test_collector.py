@@ -1,7 +1,12 @@
+# SPDX-FileCopyrightText: 2018 dargen3
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import tempfile
 import os
 import unittest
+import shutil
 
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
@@ -17,7 +22,7 @@ OUTPUT = {"__type": "Report",
           "raw": utils.base64_encode(EXAMPLE_FILE),
           }
 
-
+@unittest.skipIf(shutil.which("rsync") is None, "RSync is not installed")
 class TestRsyncCollectorBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):

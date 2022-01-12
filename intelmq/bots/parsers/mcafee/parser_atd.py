@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 tux78
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 ATDParserBot parses McAfee Advanced Threat Defense reports.
@@ -7,18 +11,19 @@ This bot generates one message per identified IOC:
 - FQDNs the sample tries to connect to
 
 Parameter:
-verdict_severity: defines the minimum severity of reports to be parsed
-                  severity ranges from 1 to 5
+verdict_severity: defines the minimum severity of reports to be parsed severity ranges from 1 to 5
 
 """
 import json
 
 import intelmq.lib.utils as utils
 # imports for additional libraries and intelmq
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class ATDParserBot(Bot):
+class ATDParserBot(ParserBot):
+    """Parse IoCs from McAfee Advanced Threat Defense reports (hash, IP, URL)"""
+    verdict_severity: int = 4
 
     ATD_TYPE_MAPPING = {
         'domain': 'source.fqdn',
@@ -43,11 +48,11 @@ class ATDParserBot(Bot):
         subject_sha256 = atd_event['Summary']['Subject']['sha-256']
         verdict_severity = int(atd_event['Summary']['Verdict']['Severity'])
 
-        if (verdict_severity >= int(self.parameters.verdict_severity)):
+        if (verdict_severity >= int(self.verdict_severity)):
 
             # forward initial sample hashes
             event = self.new_event(report)
-            event.add("classification.taxonomy", "malicious code")
+            event.add("classification.taxonomy", "malicious-code")
             event.add("classification.type", 'infected-system')
             event.add("raw", raw_report)
 
@@ -62,7 +67,7 @@ class ATDParserBot(Bot):
             try:
                 for entry in atd_event['Summary']['Files']:
                     event = self.new_event(report)
-                    event.add("classification.taxonomy", "malicious code")
+                    event.add("classification.taxonomy", "malicious-code")
                     event.add("classification.type", 'infected-system')
                     event.add("raw", raw_report)
                     for key, value in entry.items():
@@ -76,7 +81,7 @@ class ATDParserBot(Bot):
             try:
                 for entry in atd_event['Summary']['Ips']:
                     event = self.new_event(report)
-                    event.add("classification.taxonomy", "malicious code")
+                    event.add("classification.taxonomy", "malicious-code")
                     event.add("classification.type", 'infected-system')
                     event.add("raw", raw_report)
 
@@ -97,7 +102,7 @@ class ATDParserBot(Bot):
             try:
                 for entry in atd_event['Summary']['Urls']:
                     event = self.new_event(report)
-                    event.add("classification.taxonomy", "malicious code")
+                    event.add("classification.taxonomy", "malicious-code")
                     event.add("classification.type", 'infected-system')
                     event.add("raw", raw_report)
 

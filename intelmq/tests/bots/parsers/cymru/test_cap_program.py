@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os.path
 import unittest
@@ -30,7 +34,7 @@ EVENT0 = {'__type': 'Event',
 EVENT1 = {'__type': 'Event',
           'time.observation': '2015-11-01T00:01:45+00:05',
           'classification.identifier': 'dns-open-resolver',
-          'classification.type': 'vulnerable service',
+          'classification.type': 'vulnerable-system',
           'protocol.application': 'dns',
           'source.as_name': 'Example AS Name',
           'source.asn': 64496,

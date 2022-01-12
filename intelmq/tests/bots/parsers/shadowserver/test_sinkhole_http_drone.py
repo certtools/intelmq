@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -20,7 +24,7 @@ EXAMPLE_REPORT = {'feed.name': 'Sinkhole HTTP Drone',
                   }
 EVENTS = [{'__type': 'Event',
            'feed.name': 'Sinkhole HTTP Drone',
-           "classification.taxonomy": "malicious code",
+           "classification.taxonomy": "malicious-code",
            "classification.type": "infected-system",
            "destination.asn": 393667,
            "destination.geolocation.cc": "US",
@@ -45,7 +49,7 @@ EVENTS = [{'__type': 'Event',
            },
           {'__type': 'Event',
            'feed.name': 'Sinkhole HTTP Drone',
-           "classification.taxonomy": "malicious code",
+           "classification.taxonomy": "malicious-code",
            "classification.type": "infected-system",
            "destination.asn": 6939,
            "destination.fqdn": "198-51-100-74.example.net",

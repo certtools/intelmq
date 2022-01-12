@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'NTP Monitor',
            "classification.identifier": "ntp-monitor",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.naics": 541690,
            "extra.packets": 1,
            "extra.sic": 874899,
@@ -44,7 +48,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'NTP Monitor',
            "classification.identifier": "ntp-monitor",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.naics": 541690,
            "extra.packets": 1,
            "extra.sic": 874899,

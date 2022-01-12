@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'ShadowServer ICS-Scanners',
            'feed.name': 'ShadowServer ICS-Scanners',
            'classification.identifier': 'ics',
-           'classification.taxonomy': 'information gathering',
+           'classification.taxonomy': 'information-gathering',
            'classification.type': 'scanner',
            'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
                                                  EXAMPLE_LINES[1]])),
@@ -57,7 +61,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'ShadowServer ICS-Scanners',
            'feed.name': 'ShadowServer ICS-Scanners',
            'classification.identifier': 'ics',
-           'classification.taxonomy': 'information gathering',
+           'classification.taxonomy': 'information-gathering',
            'classification.type': 'scanner',
            'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
                                                  EXAMPLE_LINES[2]])),

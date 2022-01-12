@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -19,7 +23,7 @@ EXAMPLE_REPORT = {'feed.name': 'Drone Brute Force',
                   }
 EVENTS = [{'__type': 'Event',
            'classification.identifier': 'ssh',
-           'classification.taxonomy': 'intrusion attempts',
+           'classification.taxonomy': 'intrusion-attempts',
            'classification.type': 'brute-force',
            'extra.client_version': 'SSH-2.0-libssh2_1.7.0',
            'destination.asn': 65536,
@@ -29,7 +33,7 @@ EVENTS = [{'__type': 'Event',
            'extra.destination.naics': 518210,
            'extra.destination.sector': 'Information Technology',
            'extra.destination.sic': 737401,
-           'extra.end_time': '2018-04-07T03:02:19.143501Z',
+           'extra.end_time': '2018-04-07T03:02:19.143501+00:00',
            'extra.password': 'password',
            'extra.public_source': 'SISSDEN',
            'extra.start_time': '2018-04-07T03:02:15.951205Z',

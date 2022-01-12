@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 root
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 openDXL Collector Bot
 Connects to a openDXL fabric and subscribes to ATD topic
@@ -22,6 +26,9 @@ except ImportError:
 
 
 class openDXLCollectorBot(CollectorBot):
+    "Listen to  McAfee openDXL fabric"
+    dxl_config_file: str = None  # TODO: use pathlib.Path
+    dxl_topic: str = "/mcafee/event/atd/file/report"
 
     def init(self):
         if DxlClient is None:
@@ -31,7 +38,7 @@ class openDXLCollectorBot(CollectorBot):
     def process(self):
 
         if self.dxlclient is None:
-            self.dxlclient = openDXLListener(self.parameters.dxl_config_file, self.parameters.dxl_topic,
+            self.dxlclient = openDXLListener(self.dxl_config_file, self.dxl_topic,
                                              self.new_report, self.send_message, self.logger)
         self.logger.info('Starting DXL Client.')
         self.dxlclient.start()  # blocks

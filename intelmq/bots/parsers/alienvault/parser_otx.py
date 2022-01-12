@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 robcza
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Events are gathered based on user subscriptions in AlienVault OTX
@@ -19,6 +23,7 @@ HASHES = {
 
 
 class AlienVaultOTXParserBot(ParserBot):
+    """Parse data from the AlienVault OTX API"""
     parse = ParserBot.parse_json
     recover_line = ParserBot.recover_line_json
 
@@ -54,7 +59,7 @@ class AlienVaultOTXParserBot(ParserBot):
 
                 # CVE
                 elif indicator["type"] in ['CVE']:
-                    additional_indicator['CVE'] = indicator["indicator"]
+                    additional_indicator['cve'] = indicator["indicator"]
                     # TODO: Process these IoCs: FilePath, Mutex
                 else:
                     event.add('source.fqdn', indicator["indicator"])
@@ -81,7 +86,7 @@ class AlienVaultOTXParserBot(ParserBot):
 
             # CVE
             elif indicator["type"] in ['CVE']:
-                additional_indicator['CVE'] = indicator["indicator"]
+                additional_indicator['cve'] = indicator["indicator"]
                 # TODO: Process these IoCs: FilePath, Mutex
             else:
                 continue

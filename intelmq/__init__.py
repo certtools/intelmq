@@ -1,5 +1,11 @@
+# SPDX-FileCopyrightText: 2014 Tomás Lima
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 from .version import __version__, __version_info__  # noqa: F401
 import os
+import pathlib
+import sys
 
 
 path = "opt"
@@ -24,10 +30,10 @@ elif path == "opt":
 
 
 DEFAULT_LOGGING_LEVEL = "INFO"
-DEFAULTS_CONF_FILE = os.path.join(CONFIG_DIR, "defaults.conf")
 HARMONIZATION_CONF_FILE = os.path.join(CONFIG_DIR, "harmonization.conf")
-PIPELINE_CONF_FILE = os.path.join(CONFIG_DIR, "pipeline.conf")
-RUNTIME_CONF_FILE = os.path.join(CONFIG_DIR, "runtime.conf")
-BOTS_FILE = os.path.join(CONFIG_DIR, "BOTS")
-STATE_FILE_PATH = path = os.path.abspath(os.path.join(VAR_STATE_PATH,
-                                                      '../state.json'))
+RUNTIME_CONF_FILE = os.path.join(CONFIG_DIR, "runtime.yaml")
+old_runtime_conf_file = pathlib.Path(RUNTIME_CONF_FILE).with_suffix('.conf')
+if not pathlib.Path(RUNTIME_CONF_FILE).exists() and old_runtime_conf_file.exists():
+    old_runtime_conf_file.rename(RUNTIME_CONF_FILE)
+STATE_FILE_PATH = os.path.abspath(os.path.join(VAR_STATE_PATH,
+                                               '../state.json'))

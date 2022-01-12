@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 KRYSTOF
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import json
@@ -10,7 +14,7 @@ import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.outputs.redis.output import RedisOutputBot
 
-EXAMPLE_EVENT = {"classification.type": "malware",
+EXAMPLE_EVENT = {"classification.type": "infected-system",
                  "destination.port": 9796,
                  "feed.accuracy": 100.0,
                  "destination.ip": "52.18.196.169",
@@ -52,7 +56,7 @@ EXAMPLE_EVENT_JSON = {
                     "NjExMDc3NjgsIl9nZW9fZW52X3JlbW90ZV9hZGRyIjp7ImNvd"
                     "W50cnlfbmFtZSI6IkRvbWluaWNhbiBSZXB1YmxpYyJ9fQ==",
                     "classification": {
-                            "type": "malware"
+                            "type": "infected-system"
                     },
                     "destination": {
                             "port": 9796,
@@ -80,7 +84,7 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = RedisOutputBot
         cls.default_input_message = EXAMPLE_EVENT
-        cls.sysconfig = {"redis_server_ip": "127.0.0.1",
+        cls.sysconfig = {"redis_server_ip": os.getenv('INTELMQ_PIPELINE_HOST', 'localhost'),
                          "redis_server_port": 6379,
                          "redis_db": 4,
                          "redis_queue": "test-redis-output-queue",

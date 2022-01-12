@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open LDAP',
            "classification.identifier": "open-ldap",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.configuration_naming_context": "CN=Configuration,DC=rodwil,DC=com",
            "extra.current_time": "20190904054426.0Z",
            "extra.default_naming_context": "DC=rodwil,DC=com",
@@ -64,7 +68,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open LDAP',
            "classification.identifier": "open-ldap",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.configuration_naming_context": "CN=Configuration,DC=TAC02",
            "extra.current_time": "20190904083835.0Z",
            "extra.default_naming_context": "DC=TAC02",

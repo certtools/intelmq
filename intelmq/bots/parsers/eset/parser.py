@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 Mikk Margus Möll
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 import json
 
 from intelmq.lib.bot import ParserBot
@@ -12,6 +16,7 @@ message_taxonomy_map = {
 
 
 class ESETParserBot(ParserBot):
+    """Parse data collected from ESET's TAXII API"""
     def init(self):
         self.f_map = {
             'ei.urls (json)': self.urls_parse,

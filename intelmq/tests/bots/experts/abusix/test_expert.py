@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import unittest
 
@@ -33,7 +37,7 @@ EXAMPLE_EXISTING = {"__type": "Event",
 
 
 @test.skip_internet()
-@test.skip_travis()
+@test.skip_ci()
 class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'ShadowServer HTTP-Scanners',
            'feed.name': 'ShadowServer HTTP-Scanners',
            'classification.identifier': 'http',
-           'classification.taxonomy': 'information gathering',
+           'classification.taxonomy': 'information-gathering',
            'classification.type': 'scanner',
            'protocol.application': 'http',
            'protocol.transport': 'tcp',
@@ -58,7 +62,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'ShadowServer HTTP-Scanners',
            'feed.name': 'ShadowServer HTTP-Scanners',
            'classification.identifier': 'http',
-           'classification.taxonomy': 'information gathering',
+           'classification.taxonomy': 'information-gathering',
            'classification.type': 'scanner',
            'protocol.application': 'http',
            'protocol.transport': 'tcp',

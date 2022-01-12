@@ -1,16 +1,20 @@
+# SPDX-FileCopyrightText: 2017 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 The ES-connection can't be closed explicitly.
 
-TODO:
-    * Support client_cert and client_key parameters, see https://github.com/certtools/intelmq/pull/1406
+TODO
+* Support client_cert and client_key parameters, see https://github.com/certtools/intelmq/pull/1406
 """
 
 from collections.abc import Mapping
 from datetime import datetime
 from json import loads
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -51,30 +55,25 @@ def get_event_date(event_dict: dict) -> datetime.date:
     return event_date
 
 
-class ElasticsearchOutputBot(Bot):
+class ElasticsearchOutputBot(OutputBot):
+    """Send events to an Elasticsearch database server"""
+    elastic_host: str = '127.0.0.1'  # TODO: could be ipadd
+    elastic_index: str = 'intelmq'
+    elastic_port: int = 9200
+    flatten_fields = ['extra']
+    http_password: str = None
+    http_username: str = None
+    http_verify_cert: bool = False
+    replacement_char = None
+    rotate_index: str = 'never'
+    ssl_ca_certificate: str = None  # TODO: could be pathlib.Path
+    ssl_show_warnings: bool = True
+    use_ssl: bool = False
 
     def init(self):
         if Elasticsearch is None:
-            raise MissingDependencyError('elasticsearch', version='>=5.0.0,<6.0.0')
+            raise MissingDependencyError('elasticsearch', version='>=7.0.0,<8.0.0')
 
-        self.elastic_host = getattr(self.parameters,
-                                    'elastic_host', '127.0.0.1')
-        self.elastic_port = getattr(self.parameters,
-                                    'elastic_port', '9200')
-        self.elastic_index = getattr(self.parameters,
-                                     'elastic_index', 'intelmq')
-        self.rotate_index = getattr(self.parameters,
-                                    'rotate_index', False)
-        self.use_ssl = getattr(self.parameters,
-                               'use_ssl', False)
-        self.ssl_ca_certificate = getattr(self.parameters,
-                                          'ssl_ca_certificate', None)
-        self.ssl_show_warnings = getattr(self.parameters,
-                                         'ssl_show_warnings', True)
-        self.replacement_char = getattr(self.parameters,
-                                        'replacement_char', None)
-        self.flatten_fields = getattr(self.parameters,
-                                      'flatten_fields', ['extra'])
         if isinstance(self.flatten_fields, str):
             self.flatten_fields = self.flatten_fields.split(',')
 

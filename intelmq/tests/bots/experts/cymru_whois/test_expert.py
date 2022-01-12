@@ -1,21 +1,26 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
+import json
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.cymru_whois.expert import CymruExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
-                 "source.ip": "93.184.216.34",  # example.com
+                 "source.ip": "78.104.144.2",  # example.com
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
-                  "source.ip": "93.184.216.34",
-                  "source.geolocation.cc": "EU",
+                  "source.ip": "78.104.144.2",
+                  "source.geolocation.cc": "AT",
                   "source.registry": "RIPE",
-                  "source.network": "93.184.216.0/24",
-                  "source.allocated": "2008-06-02T00:00:00+00:00",
-                  "source.asn": 15133,
-                  "source.as_name": "EDGECAST, US",
+                  "source.network": "78.104.0.0/16",
+                  "source.allocated": "2007-06-07T00:00:00+00:00",
+                  "source.asn": 1853,
+                  "source.as_name": "ACONET ACOnet Backbone, AT",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
@@ -40,35 +45,21 @@ EXAMPLE_6TO4_INPUT = {"__type": "Event",
                  "source.ip": "2002:3ee0:3972:0001::1",
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
-EXAMPLE_6TO4_OUTPUT = {"__type": "Event",
-                  "source.ip": "2002:3ee0:3972:0001::1",
-                  "source.network": "2002::/16",
-                  "source.asn": 1103,
-                  "source.as_name": "SURFNET-NL SURFnet, The Netherlands, NL",
-                  "time.observation": "2015-01-01T00:00:00+00:00",
-                  }
-EXAMPLE_6TO4_OUTPUT_1 = {"__type": "Event",
-                  "source.ip": "2002:3ee0:3972:0001::1",
-                  "source.network": "2002::/16",
-                  "source.asn": 6939,
-                  "source.as_name": "HURRICANE, US",
-                  "time.observation": "2015-01-01T00:00:00+00:00",
-                  }
 OVERWRITE_OUT = {"__type": "Event",
-                  "source.ip": "93.184.216.34",
+                  "source.ip": "78.104.144.2",
                   "source.geolocation.cc": "AA",
                   "source.registry": "LACNIC",
-                  "source.network": "93.184.216.0/24",
-                  "source.allocated": "2008-06-02T00:00:00+00:00",
-                  "source.asn": 15133,
-                  "source.as_name": "EDGECAST, US",
+                  "source.network": "78.104.0.0/16",
+                  "source.allocated": "2007-06-07T00:00:00+00:00",
+                  "source.asn": 1853,
+                  "source.as_name": "ACONET ACOnet Backbone, AT",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 
 
 @test.skip_redis()
 @test.skip_internet()
-@test.skip_travis()
+@test.skip_ci()
 class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.
@@ -98,20 +89,21 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     def test_6to4_result(self):
         """
         Test the whois for an IPv6 to IPv4 network range.
-        The result can vary, so we test for two possible expected results.
+        The result can vary, so we only tests if values exist.
         """
         self.input_message = EXAMPLE_6TO4_INPUT
         self.run_bot()
-        try:
-            self.assertMessageEqual(0, EXAMPLE_6TO4_OUTPUT)
-        except AssertionError:
-            self.assertMessageEqual(0, EXAMPLE_6TO4_OUTPUT_1)
+        actual = json.loads(self.get_output_queue()[0])
+        self.assertDictContainsSubset(EXAMPLE_6TO4_INPUT, actual)
+        self.assertIn("source.asn", actual)
+        self.assertIn("source.as_name", actual)
+        self.assertIn("source.network", actual)
 
     def test_overwrite(self):
         self.input_message = EXAMPLE_INPUT.copy()
         self.input_message["source.geolocation.cc"] = "AA"
         self.input_message["source.registry"] = "LACNIC"
-        self.run_bot(parameters={'overwrite' : False})
+        self.run_bot(parameters={'overwrite': False})
         self.assertMessageEqual(0, OVERWRITE_OUT)
 
 

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 Tomas Bellus
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -24,7 +28,7 @@ EVENTS = [{
     'feed.name': 'Accessible ARD',
     "classification.identifier": "accessible-ard",
     "classification.taxonomy": "vulnerable",
-    "classification.type": "vulnerable service",
+    "classification.type": "vulnerable-system",
     "extra.machine_name": "LPG2.ucmerced.edu",
     "extra.naics": 611310,
     "extra.sic": 822101,
@@ -48,7 +52,7 @@ EVENTS = [{
     'feed.name': 'Accessible ARD',
     "classification.identifier": "accessible-ard",
     "classification.taxonomy": "vulnerable",
-    "classification.type": "vulnerable service",
+    "classification.type": "vulnerable-system",
     "extra.machine_name": "Surveillance System - Greenlea",
     "extra.naics": 517312,
     "extra.sic": 737415,

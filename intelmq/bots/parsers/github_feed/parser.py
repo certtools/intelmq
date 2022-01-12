@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Tomas Bellus
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 Github IOC feeds' parser
 """
@@ -12,7 +16,7 @@ try:
 except ImportError:
     validators = None
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.utils import base64_decode
 from intelmq.lib.exceptions import MissingDependencyError
 
@@ -23,7 +27,8 @@ HASH_VALIDATORS = {
 }
 
 
-class GithubFeedParserBot(Bot):
+class GithubFeedParserBot(ParserBot):
+    """Parse known GitHub feeds"""
 
     def init(self):
         if validators is None:
@@ -78,7 +83,7 @@ class GithubFeedParserBot(Bot):
             for ioc in json_content:
                 event = clean_event.copy()
                 event.add('raw', str(ioc))
-                event.add('classification.type', 'unknown')
+                event.add('classification.type', 'malware')
                 event.add('classification.taxonomy', 'other')
                 event.add('event_description.text', ioc['Description'])
 
@@ -128,7 +133,7 @@ def parse_domain_indicator(event, ioc_indicator: str):
 
 def parse_hash_indicator(event, ioc_indicator: str, hash_type: str):
     event.add('malware.hash.{}'.format(hash_type), ioc_indicator)
-    event.change('classification.taxonomy', 'malicious code')
+    event.change('classification.taxonomy', 'other')
     event.change('classification.type', 'malware')
     return event
 

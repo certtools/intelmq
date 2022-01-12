@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -22,7 +26,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'SSL FREAK Vulnerable Servers',
            "classification.identifier": "ssl-freak",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.browser_error": "x509: unknown error",
            "extra.browser_trusted": False,
            "extra.cert_expiration_date": "2032-05-05 00:01:19",
@@ -67,7 +71,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'SSL FREAK Vulnerable Servers',
            "classification.identifier": "ssl-freak",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.browser_error": "x509: unknown error",
            "extra.browser_trusted": False,
            "extra.cert_expiration_date": "2029-12-27 00:00:53",

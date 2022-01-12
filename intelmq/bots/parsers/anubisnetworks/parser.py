@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 AnubisNetworks Cyberfeed Stream parser
@@ -11,7 +15,7 @@ Migration to ParserBot does not make sense, as there's only one event per report
 import json
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import DateTime
 
 MAP_geo_env_remote_addr = {"country_code": 'source.geolocation.cc',
@@ -25,12 +29,12 @@ MAP_geo_env_remote_addr = {"country_code": 'source.geolocation.cc',
                            }
 
 
-class AnubisNetworksParserBot(Bot):
+class AnubisNetworksParserBot(ParserBot):
+    """Parse single JSON-events from AnubisNetworks Cyberfeed stream"""
+    use_malware_familiy_as_classification_identifier = True
 
     def init(self):
-        self.malware_as_identifier = getattr(self.parameters,
-                                             'use_malware_familiy_as_classification_identifier',
-                                             True)
+        self.malware_as_identifier = self.use_malware_familiy_as_classification_identifier
 
     def process(self):
         report = self.receive_message()
@@ -43,8 +47,8 @@ class AnubisNetworksParserBot(Bot):
         event = self.new_event(report)
         event.change("feed.url", event["feed.url"].split("?key=")[0])
         event.add("raw", report.get('raw'), sanitize=False)
-        event.add('classification.type', 'malware')
-        event.add('classification.taxonomy', 'malicious code')
+        event.add('classification.type', 'infected-system')
+        event.add('classification.taxonomy', 'malicious-code')
         event.add('event_description.text', 'Sinkhole attempted connection')
 
         for key, value in raw_report.items():
@@ -191,8 +195,9 @@ class AnubisNetworksParserBot(Bot):
                     raise ValueError('_geo_tracking_last_ip.path is not \'comm.http.host\' (%r).'
                                      ''  % subvalue)
             elif key.startswith('_geo_comm_http_x_forwarded_for_'):
+                key = key.replace('#', '')
                 event = self.parse_geo(event, value,
-                                       'extra.communication.http.%s' % key[15:],
+                                       'communication.http.%s' % key[15:],
                                        raw_report, '_geo_comm_http_x_forwarded_for_')
             elif key in ["_origin", "_provider", "pattern_verified"]:
                 event['extra.%s' % key] = value

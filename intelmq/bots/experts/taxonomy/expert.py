@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 The mapping follows
@@ -6,68 +10,62 @@ https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
 with extensions.
 """
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 # FIXME: this dict should be on a separated file
 
 TAXONOMY = {
     # type       # taxonomy
     # sorted!
-    "spam": "abusive content",
+    "spam": "abusive-content",
     "harmful-speech": "abusive-content",
     "violence": "abusive-content",
     "ddos": "availability",
     "dos": "availability",
     "outage": "availability",
     "sabotage": "availability",
+    "misconfiguration": "availability",
     "copyright": "fraud",
     "masquerade": "fraud",
     "phishing": "fraud",
     "unauthorized-use-of-resources": "fraud",
-    "Unauthorised-information-access": "information content security",
-    "Unauthorised-information-modification": "information content security",
-    "data-loss": "information content security",
-    "dropzone": "information content security",  # not in ENISA eCSIRT-II taxonomy
-    "leak": "information content security",  # not in ENISA eCSIRT-II taxonomy
-    "scanner": "information gathering",
+    "unauthorised-information-access": "information-content-security",
+    "unauthorised-information-modification": "information-content-security",
+    "data-loss": "information-content-security",
+    "data-leak": "information-content-security",
+    "scanner": "information-gathering",
     "sniffing": "information-gathering",
     "social-engineering": "information-gathering",
-    "brute-force": "intrusion attempts",
-    "exploit": "intrusion attempts",
-    "ids-alert": "intrusion attempts",
+    "brute-force": "intrusion-attempts",
+    "exploit": "intrusion-attempts",
+    "ids-alert": "intrusion-attempts",
     "application-compromise": "intrusions",
-    "backdoor": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "burglary": "intrusions",
-    "compromised": "intrusions",  # not in ENISA eCSIRT-II taxonomy,
-    "defacement": "intrusions",  # not in ENISA eCSIRT-II taxonomy
     "privileged-account-compromise": "intrusions",
-    "unauthorized-command": "intrusions",  # not in ENISA eCSIRT-II taxonomy
-    "unauthorized-login": "intrusions",  # not in ENISA eCSIRT-II taxonomy
+    "system-compromise": "intrusions",
     "unprivileged-account-compromise": "intrusions",
-    "c2server": "malicious code",  # ENISA eCSIRT-II taxonomy: 'c2server'
-    "dga domain": "malicious code",  # not in ENISA eCSIRT-II taxonomy
-    "infected-system": "malicious code",  # ENISA eCSIRT-II taxonomy: 'infected-system'
-    "malware": "malicious code",  # not in ENISA eCSIRT-II taxonomy
-    "malware-configuration": "malicious code",  # ENISA eCSIRT-II taxonomy: 'malware-configuration'
-    "malware-distribution": "malicious code",
-    "ransomware": "malicious code",  # not in ENISA eCSIRT-II taxonomy
-    "blacklist": "other",
-    "other": "other",  # not in ENISA eCSIRT-II taxonomy
-    "proxy": "other",  # not in ENISA eCSIRT-II taxonomy
-    "tor": "other",  # not in ENISA eCSIRT-II taxonomy
-    "unknown": "other",  # not in ENISA eCSIRT-II taxonomy
+    "c2-server": "malicious-code",
+    "dga-domain": "other",  # intentionally not in RSIT, see #1409, #1613 and https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/pull/32
+    "infected-system": "malicious-code",
+    "malware-configuration": "malicious-code",
+    "malware-distribution": "malicious-code",
+    "blacklist": "other",  # intentionally not in RSIT
+    "other": "other",
+    "undetermined": "other",
+    "malware": "other",  # intentionally not in RSIT
+    "proxy": "other",  # intentionally not in RSIT
+    "tor": "other",  # intentionally not in RSIT
     "test": "test",
     "ddos-amplifier": "vulnerable",
     "information-disclosure": "vulnerable",
     "potentially-unwanted-accessible": "vulnerable",
-    "vulnerable client": "vulnerable",  # not in ENISA eCSIRT-II taxonomy
-    "vulnerable service": "vulnerable",  # not in ENISA eCSIRT-II taxonomy
     "vulnerable-system": "vulnerable",
     "weak-crypto": "vulnerable",
 }
 
 
-class TaxonomyExpertBot(Bot):
+class TaxonomyExpertBot(ExpertBot):
+    """Apply the eCSIRT Taxonomy to all events"""
 
     def process(self):
         event = self.receive_message()
@@ -79,9 +77,9 @@ class TaxonomyExpertBot(Bot):
             event.add("classification.taxonomy", taxonomy)
         elif "classification.taxonomy" not in event and "classification.type" not in event:
             event.add("classification.taxonomy", 'other')
-            event.add("classification.type", 'unknown')
+            event.add("classification.type", 'undetermined')
         elif "classification.taxonomy" in event and "classification.type" not in event:
-            event.add("classification.type", 'unknown')
+            event.add("classification.type", 'undetermined')
         else:
             # classification given, type given... don't change it
             pass

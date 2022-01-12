@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # *- coding: utf-8 -*-
 """
 RFC 1918 Will Drop Local IP from a given record and a bit more.
@@ -24,7 +28,7 @@ https://en.wikipedia.org/wiki/Autonomous_system_(Internet)
 import ipaddress
 from urllib.parse import urlparse
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 NETWORKS = ("10.0.0.0/8", "100.64.0.0/10", "127.0.0.0/8",
             "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.0.2.0/24",
@@ -40,14 +44,17 @@ ASN32 = tuple(range(65536, 65552))
 ASNS = ASN16 + ASN32
 
 
-class RFC1918ExpertBot(Bot):
+class RFC1918ExpertBot(ExpertBot):
+    """Removes fields or discard events if an IP address or domain is invalid as defined in standards like RFC 1918 (invalid, local, reserved, documentation). IP address, FQDN and URL fields are supported"""
+    fields: str = "destination.ip,source.ip,source.url"  # TODO: could be List[str]
+    policy: str = "del,drop,drop"  # TODO: detto
 
     def init(self):
-        self.fields = self.parameters.fields.lower().strip().split(",")
-        self.policy = self.parameters.policy.lower().strip().split(",")
+        self.fields = self.fields.lower().strip().split(",")
+        self.policy = self.policy.lower().strip().split(",")
 
         if len(self.fields) != len(self.policy):
-            raise ValueError("Lenght of parameters 'fields' (%d) and 'policy' (%d) is unequal."
+            raise ValueError("Length of parameters 'fields' (%d) and 'policy' (%d) is unequal."
                              "" % (len(self.fields), len(self.policy)))
 
         self.ip_networks = [ipaddress.ip_network(iprange) for iprange in NETWORKS]
@@ -58,7 +65,7 @@ class RFC1918ExpertBot(Bot):
         policy = len(parameters.get("policy", "").split(","))
         if fields != policy:
             return [["error",
-                     "Lenght of parameters 'fields' (%d) and 'policy' (%d) is unequal."
+                     "Length of parameters 'fields' (%d) and 'policy' (%d) is unequal."
                      "" % (fields, policy)]]
 
     def is_in_net(self, ip):

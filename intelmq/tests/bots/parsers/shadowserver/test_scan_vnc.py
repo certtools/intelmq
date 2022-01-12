@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -22,7 +26,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Accessible VNC',
            "classification.identifier": "open-vnc",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.banner": "RFB 003.889",
            "extra.product": "Apple remote desktop vnc",
            "protocol.application": "vnc",
@@ -42,7 +46,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Accessible VNC',
            "classification.identifier": "open-vnc",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.banner": "RFB 005.000",
            "extra.naics": 517311,
            "extra.product": "RealVNC Enterprise v5.3 or later",

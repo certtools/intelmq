@@ -1,7 +1,13 @@
 #!/usr/bin/python3
+#
+# SPDX-FileCopyrightText: 2014-2021 Tomás Lima, Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # -*- coding: utf-8 -*-
 import json
 import os
+import sys
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
@@ -13,16 +19,19 @@ REQUIRES = [
     'pytz>=2012c',
     'redis>=2.10',
     'requests>=2.2.0',
+    'ruamel.yaml',
 ]
 
 exec(open(os.path.join(os.path.dirname(__file__),
                        'intelmq/version.py')).read())  # defines __version__
 BOTS = []
-bots = json.load(open(os.path.join(os.path.dirname(__file__), 'intelmq/bots/BOTS')))
-for bot_type, bots in bots.items():
-    for bot_name, bot in bots.items():
-        module = bot['module']
-        BOTS.append('{0} = {0}:BOT.run'.format(module))
+
+base_path = Path(__file__).parent / 'intelmq/bots'
+botfiles = [botfile for botfile in Path(base_path).glob('**/*.py') if botfile.is_file() and not botfile.name.startswith('_')]
+for file in botfiles:
+    file = Path(str(file).replace(str(base_path), 'intelmq/bots'))
+    module = '.'.join(file.with_suffix('').parts)
+    BOTS.append('{0} = {0}:BOT.run'.format(module))
 
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as handle:
     README = handle.read()
@@ -31,27 +40,24 @@ setup(
     name='intelmq',
     version=__version__,  # noqa: F821
     maintainer='Sebastian Wagner',
-    maintainer_email='wagner@cert.at',
-    python_requires='>=3.5',
+    maintainer_email='intelmq-dev@lists.cert.at',
+    python_requires='>=3.6',
     install_requires=REQUIRES,
     tests_require=[
         'Cerberus!=1.3',
-        'pyyaml',
         'requests_mock',
     ],
     test_suite='intelmq.tests',
     extras_require={
         'development': [
             'Cerberus',
-            'pyyaml',
         ],
     },
     packages=find_packages(),
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
     project_urls={
-        'Travis CI': 'https://travis-ci.org/certtools/intelmq',
-        'Documentation': 'https://github.com/certtools/intelmq/blob/master/docs/',
+        'Documentation': 'https://intelmq.readthedocs.io/',
         'Source and Issue Tracker': 'https://github.com/certtools/intelmq/',
     },
     license='AGPLv3',
@@ -68,7 +74,6 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -84,10 +89,6 @@ setup(
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
             'intelmq.bots.experts.sieve.validator = intelmq.bots.experts.sieve.validator:main',
             'intelmqsetup = intelmq.bin.intelmqsetup:main',
-            'update-asn-data = intelmq.bots.experts.asn_lookup.expert:BOT.update_database',
-            'update-geoip-data = intelmq.bots.experts.maxmind_geoip.expert:BOT.update_database',
-            'update-rfiprisk-data = intelmq.bots.experts.recordedfuture_iprisk.expert:BOT.update_database',
-            'update-tor-nodes = intelmq.bots.experts.tor_nodes.expert:BOT.update_database',
         ] + BOTS,
     },
 )

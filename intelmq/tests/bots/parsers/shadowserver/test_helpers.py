@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Created on Thu Aug  9 15:18:24 2018
@@ -6,7 +10,7 @@ Created on Thu Aug  9 15:18:24 2018
 """
 
 import unittest
-from intelmq.bots.parsers.shadowserver.config import validate_to_none, convert_bool
+from intelmq.bots.parsers.shadowserver._config import validate_to_none, convert_bool
 
 
 class TestShadowserverHelpers(unittest.TestCase):

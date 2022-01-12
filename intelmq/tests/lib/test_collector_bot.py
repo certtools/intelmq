@@ -1,7 +1,9 @@
+# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
-
-
 Test with reports
 """
 import unittest
@@ -26,7 +28,7 @@ class DummyCollectorBot(bot.CollectorBot):
 
     def process(self):
         report = self.new_report()
-        if self.parameters.raw:
+        if self.raw:  # noqa: Set as parameter
             report['raw'] = 'test'
         self.send_message(report)
 

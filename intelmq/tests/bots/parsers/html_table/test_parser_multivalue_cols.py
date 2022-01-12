@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Brajneesh Kumar
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os
 import unittest
@@ -18,7 +22,7 @@ EXAMPLE_REPORT = {"feed.name": "Precisionsec Agent Tesla IOC Feed",
 EXAMPLE_EVENT = {"feed.name": "Precisionsec Agent Tesla IOC Feed",
                  "__type": "Event",
                  "time.source": "2018-11-22T00:30:06+00:00",
-                 "classification.type": "malware",
+                 "classification.type": "malware-distribution",
                  "source.url": "http://www.ryanmotors.co/banners/obm/obm.exe",
                  "time.observation": "2019-01-01T00:00:00+00:00",
                  "raw": "PHRyPgo8dGQgc3R5bGU9InRleHQtYWxpZ246IGxlZnQ7IHdvcmQtd3JhcDpicmVhay13b3JkO"
@@ -29,7 +33,7 @@ EXAMPLE_EVENT = {"feed.name": "Precisionsec Agent Tesla IOC Feed",
 EXAMPLE_EVENT1 = {"feed.name": "Precisionsec Agent Tesla IOC Feed",
                   "__type": "Event",
                   "time.source": "2018-11-19T10:50:41+00:00",
-                  "classification.type": "malware",
+                  "classification.type": "malware-distribution",
                   "source.ip": "192.185.143.150",
                   "time.observation": "2019-01-01T00:00:00+00:00",
                   "raw": "PHRyPgo8dGQgc3R5bGU9InRleHQtYWxpZ246IGxlZnQ7IHdvcmQtd3JhcDpicmVhay13b3JkOy"
@@ -49,7 +53,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = HTMLTableParserBot
         cls.default_input_message = EXAMPLE_REPORT
         cls.sysconfig = {"columns": ["source.ip|source.url", "time.source"],
-                         "type": "malware"}
+                         "type": "malware-distribution"}
 
     def test_event(self):
         """

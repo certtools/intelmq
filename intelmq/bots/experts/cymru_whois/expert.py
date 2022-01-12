@@ -1,30 +1,27 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import json
 
-from intelmq.bots.experts.cymru_whois.lib import Cymru
-from intelmq.lib.bot import Bot
-from intelmq.lib.cache import Cache
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.harmonization import IPAddress
+from intelmq.lib.mixins import CacheMixin
+
+from ._lib import Cymru
 
 CACHE_KEY = "%d_%s"
 
 
-class CymruExpertBot(Bot):
-
-    def init(self):
-        self.cache = Cache(self.parameters.redis_cache_host,
-                           self.parameters.redis_cache_port,
-                           self.parameters.redis_cache_db,
-                           self.parameters.redis_cache_ttl,
-                           getattr(self.parameters, "redis_cache_password",
-                                   None)
-                           )
-
-        if not hasattr(self.parameters, 'overwrite'):
-            self.logger.warning("Parameter 'overwrite' is not given, assuming 'True'. "
-                                "Please set it explicitly, default will change to "
-                                "'False' in version 3.0.0'.")
-        self.overwrite = getattr(self.parameters, 'overwrite', True)
+class CymruExpertBot(ExpertBot, CacheMixin):
+    """Add ASN, netmask, AS name, country, registry and allocation time from the Cymru Whois DNS service"""
+    overwrite = False
+    redis_cache_db: int = 5
+    redis_cache_host: str = "127.0.0.1"  # TODO: could be ipaddress
+    redis_cache_password: str = None
+    redis_cache_port: int = 6379
+    redis_cache_ttl: int = 86400
 
     def process(self):
         event = self.receive_message()
@@ -39,7 +36,7 @@ class CymruExpertBot(Bot):
 
             address = event.get(ip_key)
             cache_key = CACHE_KEY % (IPAddress.version(address), address)
-            result_json = self.cache.get(cache_key)
+            result_json = self.cache_get(cache_key)
 
             if result_json:
                 result = json.loads(result_json)
@@ -49,7 +46,7 @@ class CymruExpertBot(Bot):
                     self.logger.info('Got no result from Cymru for IP address %r.',
                                      address)
                 result_json = json.dumps(result)
-                self.cache.set(cache_key, result_json)
+                self.cache_set(cache_key, result_json)
 
             if not result:
                 continue

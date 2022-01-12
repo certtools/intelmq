@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Created on Thu Mar 28 09:52:19 2019
 
 @author: sebastian
 """
-from intelmq import DEFAULTS_CONF_FILE
-from intelmq.lib.utils import load_configuration
+from intelmq.lib.utils import get_global_settings
 
 import redis
 
-config = load_configuration(DEFAULTS_CONF_FILE)
+config = get_global_settings()
 
 db = redis.Redis(host=config.get('statistics_host', '127.0.0.1'),
                  port=config.get("statistics_port", 6379),

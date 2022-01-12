@@ -1,0 +1,76 @@
+# SPDX-FileCopyrightText: 2021 Birger Schacht
+#
+# SPDX-License-Identifier: CC0-1.0
+#
+- hosts: all
+  become: yes
+  tasks:
+    - name: Prepare Debian and Ubuntu
+      include: /src/intelmq-vagrant/ansible/debian_based.yml
+      when: ansible_facts['distribution'] == "Debian" or ansible_facts['distribution'] == "Ubuntu"
+    - name: Install git
+      package:
+        name: "{{ item }}"
+      with_items:
+      - git
+      - python3-pip
+      - python3-setuptools
+      - python3-virtualenv
+      - python-setuptools
+      - apache2
+      - redis
+    - name: Setup intelmq
+      pip:
+        #name: git+http://github.com/certtools/intelmq
+        name: /src/intelmq
+        executable: pip3
+    - name: intelmq user
+      user:
+        name: intelmq
+    - name: intelmq group
+      group:
+        name: intelmq
+    - name: add www-data to intelmq group
+      user:
+        name: www-data
+        groups: intelmq
+
+    - name: Run intelmqsetup
+      command: intelmqsetup
+    - name: Create /var/lib/intelmq
+      file:
+        path: /var/lib/intelmq
+        state: directory
+        owner: intelmq
+        group: intelmq
+
+    - name: Delete shipped runtime.yaml
+      file:
+        path: '/opt/intelmq/etc/runtime.yaml'
+        state: absent
+
+    - name: Copy runtime.conf
+      copy:
+        src: 'assets/runtime.conf'
+        dest: '/opt/intelmq/etc/runtime.conf'
+        owner: intelmq
+        group: intelmq
+        mode: '0664'
+    - name: Copy pipeline.conf
+      copy:
+        src: 'assets/pipeline.conf'
+        dest: '/opt/intelmq/etc/pipeline.conf'
+        owner: intelmq
+        group: intelmq
+        mode: '0664'
+    - name: Make sure redis is running
+      service:
+        state: started
+        name: redis-server
+    - name: Make sure webserver is running
+      service:
+        state: started
+        name: "{{webserver}}"
+
+    - name: Run tasks
+      include: "tasks.yml"

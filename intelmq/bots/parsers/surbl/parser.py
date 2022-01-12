@@ -1,9 +1,14 @@
+# SPDX-FileCopyrightText: 2018 dargen3
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class SurblParserBot(Bot):
+class SurblParserBot(ParserBot):
+    """Parse the Surbl feed"""
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])  # decoding
@@ -12,7 +17,7 @@ class SurblParserBot(Bot):
             if line[0] == ":":
                 attributes = line.split()[-3][1:-2].split("][")
                 if "mw" in attributes:
-                    attribute = "malware"
+                    attribute = "malware-distribution"
                 elif "ph" in attributes:
                     attribute = "phishing"
                 else:

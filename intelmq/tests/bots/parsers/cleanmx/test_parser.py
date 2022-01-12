@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os
 import unittest
@@ -98,7 +102,7 @@ VIRUS_REPORT = {"feed.url": "http://support.clean-mx.de/clean-mx/xmlviruses?resp
 VIRUSES_EVENTS = [{
                     'malware.name': 'js.agent.uo.2',
                     'feed.url': 'http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=',
-                    'classification.type': 'malware',
+                    'classification.type': 'malware-distribution',
                     'status': 'online',
                     'extra.descr': 'Cloudflare, Inc. CLOUD14 101 Townsend Street San Francisco CA 94107',
                     'source.url': 'http://quotescar.typepad.com/24wer.html',
@@ -128,7 +132,7 @@ VIRUSES_EVENTS = [{
                 {
                     'malware.name': 'phishing.html.doc',
                     'feed.url': 'http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=',
-                    'classification.type': 'malware',
+                    'classification.type': 'malware-distribution',
                     'status': 'online',
                     'extra.descr': 'Netregistry Pty LtdDIT route',
                     'source.url': 'http://nickhookphotography.com/tem/zee/e3cad48b778d59a6613ca12d42547c33/login.php?cmd=login_submit&id=a2e2b7deac4fd185743a14a92f23b617a2e2b7deac4fd185743a14a92f23b617&session=a2e2b7deac4fd185743a14a92f23b617a2e2b7deac4fd185743a14a92f23b617',

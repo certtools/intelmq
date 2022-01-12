@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -24,7 +28,7 @@ EVENTS = [{'__type': 'Event',
            'time.observation': '2018-07-30T00:00:00+00:00',
            'time.source': '2018-07-26T02:07:16+00:00',
            'classification.taxonomy': 'vulnerable',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'classification.identifier': 'accessible-adb',
            'protocol.application': 'adb',
            'protocol.transport': 'tcp',
@@ -49,7 +53,7 @@ EVENTS = [{'__type': 'Event',
            'time.observation': '2018-07-30T00:00:00+00:00',
            'time.source': '2018-07-26T02:07:16+00:00',
            'classification.taxonomy': 'vulnerable',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'classification.identifier': 'accessible-adb',
            'protocol.application': 'adb',
            'protocol.transport': 'tcp',

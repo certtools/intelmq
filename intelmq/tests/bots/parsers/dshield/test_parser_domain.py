@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -22,7 +26,7 @@ EVENTS = [{"feed.name": "DShield Suspicious Domains",
            "__type": "Event",
            "time.source": "2015-12-22T04:10:10+00:00",
            "source.fqdn": "example.com",
-           "classification.type": "malware",
+           "classification.type": "malware-distribution",
            "time.observation": "2015-01-01T00:00:00+00:00",
            "raw": "ZXhhbXBsZS5jb20J",
            },
@@ -31,7 +35,7 @@ EVENTS = [{"feed.name": "DShield Suspicious Domains",
            "__type": "Event",
            "time.source": "2015-12-22T04:10:10+00:00",
            "source.fqdn": "example.org",
-           "classification.type": "malware",
+           "classification.type": "malware-distribution",
            "time.observation": "2015-01-01T00:00:00+00:00",
            "raw": "ZXhhbXBsZS5vcmcJ",
            }]

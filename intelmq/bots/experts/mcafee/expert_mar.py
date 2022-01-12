@@ -1,7 +1,11 @@
+# SPDX-FileCopyrightText: 2018 tux78
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 
-MARExpertBot queries environment for occurences of IOCs via McAfee Active Response.
+MARExpertBot queries environment for occurrences of IOCs via McAfee Active Response.
 
 Parameter:
 dxl_config_file: string
@@ -20,13 +24,16 @@ except ImportError:
     MarClient = None
 
 # imports for additional libraries and intelmq
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 
-class MARExpertBot(Bot):
+class MARExpertBot(ExpertBot):
+    """Query connections to IP addresses to the given destination within the local environment using McAfee Active Response queries"""
+    dxl_config_file: str = "<insert /path/to/dxlclient.config>"  # TODO: should be pathlib.Path
+    lookup_type: str = "<Hash|DestSocket|DestIP|DestFQDN>"
 
-    query = {
+    QUERY = {
         'Hash':
             [
                 {
@@ -89,13 +96,13 @@ class MARExpertBot(Bot):
         if MarClient is None:
             raise MissingDependencyError('dxlmarclient')
 
-        self.config = DxlClientConfig.create_dxl_config_from_file(self.parameters.dxl_config_file)
+        self.config = DxlClientConfig.create_dxl_config_from_file(self.dxl_config_file)
 
     def process(self):
         report = self.receive_message()
 
         try:
-            mar_search_str = self.query[self.parameters.lookup_type] % report
+            mar_search_str = self.QUERY[self.lookup_type] % report
             for ip_address in self.MAR_Query(mar_search_str):
                 event = self.new_event(report)
                 event.add('source.ip', ip_address)

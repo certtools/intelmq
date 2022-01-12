@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """ Single IntelMQ parser for Spamhaus drop feeds """
 
@@ -7,6 +11,7 @@ from intelmq.lib.bot import ParserBot
 
 
 class SpamhausDropParserBot(ParserBot):
+    """Parse the Spamhaus DROP, EDROP, DROPv6, and ASN-DROP feeds"""
     """ Spamhaus Drop Parser Bot """
 
     NETWORK_DROP_URLS = {'https://www.spamhaus.org/drop/edrop.txt',
@@ -15,20 +20,20 @@ class SpamhausDropParserBot(ParserBot):
                          'https://www.spamhaus.org/drop/drop.lasso'}
 
     ASN_DROP_URLS = {'https://www.spamhaus.org/drop/asndrop.txt'}
-    lastgenerated = None
+    _lastgenerated = None
 
     def parse_line(self, line, report):
 
         if line.startswith(';') or len(line) == 0:
             self.tempdata.append(line)
             if 'Last-Modified:' in line:
-                self.lastgenerated = line.strip('; ')[15:]
-                self.lastgenerated = dateutil.parser.parse(self.lastgenerated).isoformat()
+                self._lastgenerated = line.strip('; ')[15:]
+                self._lastgenerated = dateutil.parser.parse(self._lastgenerated).isoformat()
 
         else:
             event = self.new_event(report)
-            if self.lastgenerated:
-                event.add('time.source', self.lastgenerated)
+            if self._lastgenerated:
+                event.add('time.source', self._lastgenerated)
             event.add('classification.type', 'spam')
             event.add('raw', line)
 

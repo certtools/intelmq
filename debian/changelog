@@ -1,14 +1,98 @@
-intelmq (2.3.0~alpha1-1) UNRELEASED; urgency=medium
+intelmq (3.1.0~alpha1-1) UNRELEASED; urgency=medium
+
+  * Start 3.1.0 development.
+
+ -- Sebastian Wagner <wagner@cert.at>  Fri, 13 Aug 2021 11:09:58 +0200
+
+intelmq (3.0.2-1) stable; urgency=medium
+
+  * Update to 3.0.2.
+
+ -- Sebastian Wagner <wagner@cert.at>  Fri, 10 Sep 2021 08:53:47 +0200
+
+intelmq (3.0.1-1) stable; urgency=medium
+
+  * Update to 3.0.1.
+
+ -- Sebastian Wagner <wagner@cert.at>  Thu, 02 Sep 2021 10:17:30 +0200
+
+intelmq (3.0.0-1) stable; urgency=medium
+
+  * Update to version 3.0.0.
+
+ -- Sebastian Wagner <wagner@cert.at>  Fri, 02 Jul 2021 17:35:56 +0200
+
+intelmq (3.0.0~rc1-1) stable; urgency=low
+
+  * Update to 3.0.0 Release candidate 1.
+
+ -- Sebastian Wagner <wagner@cert.at>  Sat, 26 Jun 2021 12:19:51 +0200
+
+intelmq (3.0.0~beta1-1) unstable; urgency=low
+
+  * Update to 3.0.0 Beta 1.
+
+ -- Sebastian Wagner <wagner@cert.at>  Mon, 21 Jun 2021 10:54:43 +0200
+
+intelmq (3.0.0~alpha1-1) unstable; urgency=low
+
+  * Update to 3.0.0 Alpha 1.
+
+ -- Sebastian Wagner <wagner@cert.at>  Fri, 19 Feb 2021 20:31:40 +0100
+
+intelmq (2.3.3-1) stable; urgency=medium
+
+  * Update to 2.3.3.
+
+ -- Sebastian Wagner <wagner@cert.at>  Mon, 31 May 2021 21:18:07 +0200
+
+intelmq (2.3.2-1) stable; urgency=medium
+
+  * Update to 2.3.2.
+
+ -- Sebastian Wagner <wagner@cert.at>  Tue, 27 Apr 2021 11:16:04 +0200
+
+intelmq (2.3.1-1) stable; urgency=medium
+
+  * Update to 2.3.1.
+
+ -- Sebastian Wagner <wagner@cert.at>  Thu, 25 Mar 2021 15:18:19 +0100
+
+intelmq (2.3.0-1) stable; urgency=medium
+
+  * Update to 2.3.0 stable version.
+
+ -- Sebastian Wagner <wagner@cert.at>  Wed, 03 Mar 2021 20:51:15 +0100
+
+intelmq (2.3.0~rc1-1) unstable; urgency=medium
+
+  * Update to 2.3.0 Release candidate 1.
+
+ -- Sebastian Wagner <wagner@cert.at>  Fri, 19 Feb 2021 16:43:54 +0100
+
+intelmq (2.3.0~alpha2-1) unstable; urgency=medium
+
+  * Update to 2.3.0 Alpha 2
+
+ -- Sebastian Wagner <wagner@cert.at>  Tue, 05 Jan 2021 17:09:09 +0100
+
+intelmq (2.3.0~alpha1-1) unstable; urgency=medium
 
   * Update to 2.3.0 Alpha 1
 
  -- Sebastian Wagner <wagner@cert.at>  Thu, 18 Jun 2020 10:34:50 +0200
 
-intelmq (2.2.2~alpha1-1) UNRELEASED; urgency=medium
+intelmq (2.2.3-1) stable; urgency=medium
 
-  * Update to 2.2.2 Alpha.
+  * Update to 2.2.3.
 
- -- Sebastian Wagner <wagner@cert.at>  Mon, 03 Aug 2020 12:59:51 +0200
+ -- Sebastian Wagner <wagner@cert.at>  Wed, 23 Dec 2020 15:40:58 +0100
+
+intelmq (2.2.2-1) stable; urgency=medium
+
+  * Update to 2.2.2.
+
+ -- Sebastian Wagner <wagner@cert.at>  Tue, 27 Oct 2020 17:50:36 +0100
 
 intelmq (2.2.1-1) stable; urgency=medium
 
@@ -116,7 +200,7 @@ intelmq (1.2.0~alpha2-1) unstable; urgency=low
 
   * Update to version 1.2.0 alpha 2
 
- -- sebastianw <sebastianw@localhost>  Sat, 24 Nov 2018 22:40:21 +0100
+ -- sebastianw <wagner@cert.at>  Sat, 24 Nov 2018 22:40:21 +0100
 
 intelmq (1.2.0~alpha1-1) unstable; urgency=low
 
@@ -224,11 +308,13 @@ intelmq (1.0.0.rc1-2) UNRELEASED; urgency=medium
 
   * remove python3-requests from dependencies and add it to recommended packages
 
- -- Sebastian Wagner <sebastian@linux-7nbu.substi>  Tue, 18 Jul 2017 16:23:43 +0200
+ -- Sebastian Wagner <wagner@cert.at>  Tue, 18 Jul 2017 16:23:43 +0200
 
 intelmq (1.0.0.rc1-1) experimental; urgency=medium
 
   * update to version 1.0.0.rc1
+
+ -- Sebastian Wagner <wagner@cert.at>  Wed, 20 Jun 2017 16:05:00 +0200
 
 intelmq (1.0.0.dev8-2) experimental; urgency=medium
 
@@ -302,7 +388,7 @@ intelmq (1.0.0~dev4~beta2) experimental; urgency=low
 
   * Added package recommends for python3-imbox, python3-pyasn,
     python3-stomp.py.  WARNING: these packages are currently not public
-    available (we propably will make them available later), but they are
+    available (we probably will make them available later), but they are
     needed by some bots.
 
  -- Sascha Wilde <wilde@intevation.de>  Fri, 01 Apr 2016 11:02:14 +0200

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Testing Mail Attach collector
@@ -11,18 +15,21 @@ import intelmq.lib.test as test
 from intelmq.bots.collectors.mail.collector_mail_attach import MailAttachCollectorBot
 from intelmq.lib.utils import base64_encode
 if os.getenv('INTELMQ_TEST_EXOTIC'):
-    from .lib import MockedZipImbox, MockedBadAttachmentImbox
+    from .lib import MockedZipImbox, MockedBadAttachmentImbox, MockedTextAttachmentImbox
 
 REPORT_FOOBARZIP = {
                     '__type': 'Report',
                     'extra.email_from': 'wagner@cert.at',
                     'extra.email_message_id': '<07ce0153-060b-f48d-73d9-d92a20b3b3aa@cert.at>',
                     'extra.email_subject': 'foobar zip',
+                    'extra.email_date': 'Tue, 3 Sep 2019 16:57:40 +0200',
                     'feed.accuracy': 100.0,
                     'feed.name': 'IMAP Feed',
                     'raw': base64_encode('bar text\n'),
                     'extra.file_name': 'foobar',
                     }
+REPORT_FOOBARTXT = REPORT_FOOBARZIP.copy()
+REPORT_FOOBARTXT['extra.file_name'] = 'foobar.txt'
 
 
 @test.skip_exotic()
@@ -61,6 +68,15 @@ class TestMailAttachCollectorBot(test.BotTestCase, unittest.TestCase):
         with mock.patch('imbox.Imbox', new=MockedBadAttachmentImbox):
             self.run_bot()
         self.assertOutputQueueLen(0)
+
+    def test_text_attachment(self):
+        """
+        https://github.com/certtools/intelmq/pull/2021
+        """
+        with mock.patch('imbox.Imbox', new=MockedTextAttachmentImbox):
+            self.run_bot(parameters={'attach_regex': '.*.txt$',
+                                     'extract_files': False})
+        self.assertMessageEqual(0, REPORT_FOOBARTXT)
 
 
 if __name__ == '__main__':  # pragma: no cover

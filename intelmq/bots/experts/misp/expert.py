@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Raphaël Vinot
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 An expert to for looking up values in MISP.
@@ -9,28 +13,28 @@ Parameters:
 """
 import sys
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
-    if sys.version_info >= (3, 6):
-        from pymisp import ExpandedPyMISP
+    from pymisp import ExpandedPyMISP
 except ImportError:
     ExpandedPyMISP = None
 
 
-class MISPExpertBot(Bot):
+class MISPExpertBot(ExpertBot):
+    """Looking up the IP address in MISP instance and retrieve attribute and event UUIDs"""
+    misp_key: str = "<insert MISP Authkey>"
+    misp_url: str = "<insert url of MISP server (with trailing '/')>"
 
     def init(self):
-        if sys.version_info < (3, 6):
-            raise ValueError('This bot requires Python >= 3.6.')
         if ExpandedPyMISP is None:
             raise MissingDependencyError('pymisp', '>=2.4.117.3')
 
         # Initialize MISP connection
-        self.misp = ExpandedPyMISP(self.parameters.misp_url,
-                                   self.parameters.misp_key,
-                                   self.parameters.http_verify_cert)
+        self.misp = ExpandedPyMISP(self.misp_url,
+                                   self.misp_key,
+                                   self.http_verify_cert)
 
     def process(self):
         event = self.receive_message()

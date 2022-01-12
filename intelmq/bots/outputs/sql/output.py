@@ -1,23 +1,37 @@
+# SPDX-FileCopyrightText: 2019 Edvard Rejthar
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 SQL output bot.
 
-See Readme.md for installation and configuration.
+See :ref:`bot sql` bot documentation for installation and configuration.
 
 In case of errors, the bot tries to reconnect if the error is of operational
 and thus temporary. We don't want to catch too much, like programming errors
 (missing fields etc).
 """
 
-from intelmq.lib.bot import SQLBot
+from intelmq.lib.bot import OutputBot
+from intelmq.lib.mixins import SQLMixin
 
 
-class SQLOutputBot(SQLBot):
+class SQLOutputBot(OutputBot, SQLMixin):
+    """Send events to a PostgreSQL or SQLite database"""
+    autocommit = True
+    database = "intelmq-events"
+    engine = None
+    host = "localhost"
+    jsondict_as_string = True
+    password = None
+    port = "5432"
+    sslmode = "require"
+    table = 'events'
+    user = "intelmq"
 
     def init(self):
         super().init()
-        self.table = self.parameters.table
-        self.jsondict_as_string = getattr(self.parameters, 'jsondict_as_string', True)
 
     def process(self):
         event = self.receive_message().to_dict(jsondict_as_string=self.jsondict_as_string)

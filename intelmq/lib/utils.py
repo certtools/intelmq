@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2014 Tomás Lima
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Common utility functions for intelmq.
@@ -30,20 +34,31 @@ import traceback
 import warnings
 import zipfile
 from typing import Any, Dict, Generator, Iterator, Optional, Sequence, Union
+from pathlib import Path
+import importlib
+import inspect
+import pathlib
+import textwrap
+from pkg_resources import resource_filename
 
 import dateutil.parser
 from dateutil.relativedelta import relativedelta
 from termstyle import red
+from ruamel.yaml import YAML
+from ruamel.yaml.scanner import ScannerError
 
 import intelmq
 from intelmq.lib.exceptions import DecodingError
-from intelmq import DEFAULTS_CONF_FILE
+from intelmq import RUNTIME_CONF_FILE
+
+yaml = YAML(typ="unsafe", pure=True)
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
            'reverse_readline', 'error_message_from_exc', 'parse_relative',
            'RewindableFileHandle',
            'file_name_from_response',
+           'list_all_bots', 'get_global_settings',
            ]
 
 # Used loglines format
@@ -186,10 +201,10 @@ def flatten_queues(queues: Union[list, Dict]) -> Iterator[str]:
 
 def load_configuration(configuration_filepath: str) -> dict:
     """
-    Load JSON configuration file.
+    Load JSON or YAML configuration file.
 
     Parameters:
-        configuration_filepath: Path to JSON file to load.
+        configuration_filepath: Path to file to load.
 
     Returns:
         config: Parsed configuration
@@ -199,7 +214,13 @@ def load_configuration(configuration_filepath: str) -> dict:
     """
     if os.path.exists(configuration_filepath):
         with open(configuration_filepath, 'r') as fpconfig:
-            config = json.load(fpconfig)
+            try:
+                config = yaml.load(fpconfig)
+            except ScannerError as exc:
+                if "found character '\\t' that cannot start any token" in exc.problem:
+                    fpconfig.seek(0)
+                    return json.load(fpconfig)
+                raise
     else:
         raise ValueError('File not found: %r.' % configuration_filepath)
     return config
@@ -207,7 +228,7 @@ def load_configuration(configuration_filepath: str) -> dict:
 
 def write_configuration(configuration_filepath: str,
                         content: dict, backup: bool = True,
-                        new=False) -> bool:
+                        new=False, useyaml=True) -> Optional[bool]:
     """
     Writes a configuration to the file, optionally with making a backup.
     Checks if the file needs to be written at all.
@@ -231,12 +252,16 @@ def write_configuration(configuration_filepath: str,
         if content == old_content:
             return None
     if not new and backup:
-        shutil.copy2(configuration_filepath, configuration_filepath + '.bak')
+        config = pathlib.Path(configuration_filepath)
+        pathlib.Path(configuration_filepath + '.bak').write_text(config.read_text())
     with open(configuration_filepath, 'w') as handle:
-        json.dump(content, fp=handle, indent=4,
-                  sort_keys=True,
-                  separators=(',', ': '))
-        handle.write('\n')
+        if useyaml:
+            yaml.dump(content, handle)
+        else:
+            json.dump(content, fp=handle, indent=4,
+                      sort_keys=True,
+                      separators=(',', ': '))
+            handle.write('\n')
 
 
 def load_parameters(*configs: dict) -> Parameters:
@@ -256,7 +281,7 @@ def load_parameters(*configs: dict) -> Parameters:
     return parameters
 
 
-class FileHandler(logging.FileHandler):
+class RotatingFileHandler(logging.handlers.RotatingFileHandler):
     shell_color_pattern = re.compile(r'\x1b\[\d+m')
 
     def emit_print(self, record):
@@ -307,7 +332,8 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH,
         log_level: str = intelmq.DEFAULT_LOGGING_LEVEL,
         stream: Optional[object] = None, syslog: Union[bool, str, list, tuple] = None,
         log_format_stream: str = LOG_FORMAT_STREAM,
-        logging_level_stream: Optional[str] = None):
+        logging_level_stream: Optional[str] = None,
+        log_max_size: Optional[int] = 0, log_max_copies: Optional[int] = None):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
     The warnings module will log to the same handlers.
@@ -329,6 +355,10 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH,
         logging_level_stream:
             The logging level for stream (console) output.
             By default the same as log_level.
+        log_max_size:
+            The maximum size of the logfile. 0 means no restriction.
+        log_max_copies:
+            Maximum number of logfiles to keep.
 
     Returns:
         logger: An instance of logging.Logger
@@ -350,7 +380,9 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH,
         logging_level_stream = log_level
 
     if log_path and not syslog:
-        handler = FileHandler("%s/%s.log" % (log_path, name))
+        handler = RotatingFileHandler("%s/%s.log" % (log_path, name),
+                                      maxBytes=log_max_size if log_max_size else 0,
+                                      backupCount=log_max_copies)
         handler.setLevel(log_level)
         handler.setFormatter(logging.Formatter(LOG_FORMAT))
     elif syslog:
@@ -456,7 +488,8 @@ def error_message_from_exc(exc: Exception) -> str:
 
 
 # number of minutes in time units
-TIMESPANS = {'hour': 60, 'day': 24 * 60, 'week': 7 * 24 * 60,
+TIMESPANS = {'second': 1 / 60, 'minute': 1,
+             'hour': 60, 'day': 24 * 60, 'week': 7 * 24 * 60,
              'month': 30 * 24 * 60, 'year': 365 * 24 * 60}
 
 
@@ -591,8 +624,8 @@ class RewindableFileHandle(object):
 
     def __init__(self, f):
         self.f = f
-        self.current_line = None
-        self.first_line = None
+        self.current_line: Optional[str] = None
+        self.first_line: Optional[str] = None
 
     def __iter__(self):
         return self
@@ -697,7 +730,7 @@ def version_smaller(version1: tuple, version2: tuple) -> Optional[bool]:
 
 def lazy_int(value: Any) -> Optional[Any]:
     """
-    Tries to conver the value to int if possible. Original value otherwise
+    Tries to convert the value to int if possible. Original value otherwise
     """
     try:
         return int(value)
@@ -712,18 +745,11 @@ class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
 
     def __init__(self, *args, timeout=None, **kwargs):
         self.timeout = timeout
-        return super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def send(self, *args, **kwargs):
         kwargs['timeout'] = self.timeout
         return super().send(*args, **kwargs)
-
-
-def create_request_session_from_bot(bot: type) -> requests.Session:
-    warnings.warn("This function is deprecated in favor of create_request_session"
-                  " and will be removed in version 3.0.0.",
-                  DeprecationWarning)
-    return create_request_session(bot)
 
 
 def create_request_session(bot: type = None) -> requests.Session:
@@ -739,14 +765,14 @@ def create_request_session(bot: type = None) -> requests.Session:
     Returns:
         session: A preconfigured instance of requests.Session
     """
-    defaults = load_configuration(DEFAULTS_CONF_FILE)
+    defaults = get_global_settings()
     session = requests.Session()
 
     # tls settings
     if bot and hasattr(bot, 'http_verify_cert'):
         session.verify = bot.http_verify_cert
     else:
-        defaults.get('http_verify_cert', True)
+        session.verify = defaults.get('http_verify_cert', True)
 
     # tls certificate settings
     if bot and hasattr(bot, 'ssl_client_cert'):
@@ -805,3 +831,88 @@ def file_name_from_response(response: requests.Response) -> str:
     except KeyError:
         file_name = response.url.split("/")[-1]
     return file_name
+
+
+def list_all_bots() -> dict:
+    """
+    Compile a dictionary with all bots and their parameters.
+
+    Includes
+    * the bots' names
+    * the description from the docstring
+    * parameters including default values.
+
+    For the parameters, parameters of the Bot class are excluded if they have the same value.
+    """
+    bots = {
+        'Collector': {},
+        'Parser': {},
+        'Expert': {},
+        'Output': {},
+    }
+
+    from intelmq.lib.bot import Bot  # noqa: prevents circular import
+    bot_parameters = dir(Bot)
+
+    base_path = resource_filename('intelmq', 'bots')
+
+    botfiles = [botfile for botfile in pathlib.Path(base_path).glob('**/*.py') if botfile.is_file() and botfile.name != '__init__.py']
+    for file in botfiles:
+        file = Path(file.as_posix().replace(base_path, 'intelmq/bots'))
+        mod = importlib.import_module('.'.join(file.with_suffix('').parts))
+        if hasattr(mod, 'BOT'):
+            name = mod.BOT.__name__
+            keys = {}
+            variables = sorted((key) for key in dir(mod.BOT) if not key.isupper() and not key.startswith('_'))
+            for variable in variables:
+                value = getattr(mod.BOT, variable)
+                if (not inspect.ismethod(value) and not inspect.isfunction(value) and
+                        not inspect.isclass(value) and not inspect.isroutine(value) and
+                        not (variable in bot_parameters and getattr(Bot, variable) == value)):
+                    keys[variable] = value
+
+            for bot_type in ['CollectorBot', 'ParserBot', 'ExpertBot', 'OutputBot', 'Bot']:
+                name = name.replace(bot_type, '')
+
+            bots[file.parts[2].capitalize()[:-1]][name] = {
+                "module": mod.__name__,
+                "description": "Missing description" if not getattr(mod.BOT, '__doc__', None) else textwrap.dedent(mod.BOT.__doc__).strip(),
+                "parameters": keys,
+            }
+    return bots
+
+
+def get_runtime() -> dict:
+    return load_configuration(RUNTIME_CONF_FILE)
+
+
+def get_global_settings() -> dict:
+    runtime_conf = get_runtime()
+    return runtime_conf.get('global', {})
+
+
+def set_runtime(runtime: dict) -> dict:
+    write_configuration(configuration_filepath=RUNTIME_CONF_FILE, content=runtime)
+    return get_runtime()
+
+
+def get_bots_settings(bot_id: str = None) -> dict:
+    """
+    Returns the settings for configured bots.
+    Global default values are merged into the bots' parameters.
+
+    If bot_id is given, only the settings for this bot_id are returned
+    """
+    runtime_conf = get_runtime()
+    for bot in runtime_conf:
+        if bot_id and bot_id != bot:  # Skip merging parameters if we don't need to do so
+            continue
+        # bot's parameters take precedence
+        runtime_conf[bot]['parameters'] = {**runtime_conf.get('global', {}), **runtime_conf[bot].get('parameters', {})}
+
+    if bot_id:
+        return runtime_conf[bot_id]
+
+    if 'global' in runtime_conf:
+        del runtime_conf['global']
+    return runtime_conf

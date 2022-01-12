@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open IPMI',
            "classification.identifier": "open-ipmi",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.anon_login": False,
            "extra.defaultkg": "-",
            "extra.ipmi_version": "1.5",
@@ -54,7 +58,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open IPMI',
            "classification.identifier": "open-ipmi",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.anon_login": False,
            "extra.defaultkg": "default",
            "extra.ipmi_version": "2.0",

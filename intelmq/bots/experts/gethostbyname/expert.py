@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 These are all possible gaierrors according to the source:
@@ -20,23 +24,26 @@ permanent failure (default).
 """
 import socket
 
-from intelmq.lib.bot import Bot
+from typing import Tuple
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.harmonization import URL
 from intelmq.lib.exceptions import InvalidArgument
 
 
-class GethostbynameExpertBot(Bot):
+class GethostbynameExpertBot(ExpertBot):
+    """Resolve the IP address for the FQDN"""
+    fallback_to_url: bool = True
+    gaierrors_to_ignore: Tuple[int] = ()
+    overwrite: bool = False
 
     def init(self):
-        # although True is the default value, we leave False here for backwards compatibility
-        self.fallback_to_url = getattr(self.parameters, 'fallback_to_url', False)
-
-        ignore = getattr(self.parameters, 'gaierrors_to_ignore', ())
-        if not isinstance(ignore, (list, tuple)):
-            ignore = ignore.split(',')
-        elif not ignore:  # for null/None
+        ignore = self.gaierrors_to_ignore
+        if not ignore:  # for null/None/empty lists or strings
             ignore = ()
-        # otherwise a string
+        elif not isinstance(ignore, (list, tuple)):
+            # convert to str to support int-input, e.g. a single value
+            ignore = str(ignore).split(',')
+        # otherwise an iterable (list)
         ignore = tuple(x.strip() for x in ignore)
         # check if every element is an integer:
         for x in ignore:
@@ -55,7 +62,7 @@ class GethostbynameExpertBot(Bot):
         for target in ("source.", "destination."):
             fqdn, url, ip = (event.get(target + k) for k in ("fqdn", "url", "ip"))
 
-            if ip:
+            if ip and not self.overwrite:
                 continue
             if not fqdn and self.fallback_to_url and url:
                 fqdn = URL.to_domain_name(url)
@@ -71,7 +78,7 @@ class GethostbynameExpertBot(Bot):
                 else:
                     raise
             else:
-                event.add(target + "ip", ip, raise_failure=False)
+                event.add(target + "ip", ip, raise_failure=False, overwrite=self.overwrite)
 
         self.send_message(event)
         self.acknowledge_message()

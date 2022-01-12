@@ -1,7 +1,11 @@
+# SPDX-FileCopyrightText: 2014 Tomás Lima
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import time
 from itertools import chain
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
 import ssl
 
 import redis
@@ -25,30 +29,35 @@ except ImportError:
 class PipelineFactory(object):
 
     @staticmethod
-    def create(parameters: object, logger: object,
-               direction: Optional[str] = None,
-               queues: Optional[Union[str, list, dict]] = None,
-               bot=None):
+    def create(logger, broker=None, direction=None, queues=None, pipeline_args=None, load_balance=False, is_multithreaded=False):
         """
-        parameters: Parameters object
         direction: "source" or "destination", optional, needed for queues
         queues: needs direction to be set, calls set_queues
         bot: Bot instance
         """
+        if pipeline_args is None:
+            pipeline_args = {}
+
         if direction not in [None, "source", "destination"]:
             raise exceptions.InvalidArgument("direction", got=direction,
                                              expected=["destination", "source"])
-        if direction and hasattr(parameters, "%s_pipeline_broker" % direction):
-            broker = getattr(parameters, "%s_pipeline_broker" % direction).title()
-        elif (getattr(parameters, "source_pipeline_broker", None) == getattr(parameters, "destination_pipeline_broker", None) and
-              getattr(parameters, "source_pipeline_broker", None) is not None):
-            broker = getattr(parameters, "source_pipeline_broker").title()
+
+        if 'load_balance' not in pipeline_args:
+            pipeline_args['load_balance'] = load_balance
+
+        if direction == 'source' and 'source_pipeline_broker' in pipeline_args:
+            broker = pipeline_args['source_pipeline_broker'].title()
+        if direction == 'destination' and 'destination_pipeline_broker' in pipeline_args:
+            broker = pipeline_args['destination_pipeline_broker'].title()
+        elif (pipeline_args.get('source_pipeline_broker', None) == pipeline_args.get('destination_pipeline_broker', None) and
+              pipeline_args.get('source_pipeline_broker', None) is not None):
+            broker = pipeline_args['source_pipeline_broker'].title()
         else:
-            if hasattr(parameters, 'broker'):
-                broker = parameters.broker.title()
+            if broker is not None:
+                broker = broker.title()
             else:
                 broker = "Redis"
-        pipe = getattr(intelmq.lib.pipeline, broker)(parameters, logger, bot)
+        pipe = getattr(intelmq.lib.pipeline, broker)(logger=logger, pipeline_args=pipeline_args, load_balance=load_balance, is_multithreaded=is_multithreaded)
         if queues and not direction:
             raise ValueError("Parameter 'direction' must be given when using "
                              "the queues parameter.")
@@ -63,13 +72,17 @@ class Pipeline(object):
     # If the class currently holds a message, restricts the actions
     _has_message = False
 
-    def __init__(self, parameters, logger, bot):
-        self.parameters = parameters
+    def __init__(self, logger, pipeline_args: dict = None, load_balance=False, is_multithreaded=False):
+        if pipeline_args:
+            self.pipeline_args = pipeline_args
+        else:
+            self.pipeline_args = {}
         self.destination_queues = {}  # type: dict[str, list]
         self.internal_queue = None
         self.source_queue = None
         self.logger = logger
-        self.bot = bot
+        self.load_balance = load_balance
+        self.is_multithreaded = is_multithreaded
 
     def connect(self):
         raise NotImplementedError
@@ -89,10 +102,7 @@ class Pipeline(object):
         """
         if queues_type == "source":
             self.source_queue = queues
-            if queues is not None:
-                self.internal_queue = queues + "-internal"
-            else:
-                self.internal_queue = None
+            self.internal_queue = None if queues is None else f'{queues}-internal'
 
         elif queues_type == "destination":
             type_ = type(queues)
@@ -100,15 +110,14 @@ class Pipeline(object):
                 q = {"_default": queues}
             elif type_ is str:
                 q = {"_default": queues.split()}
-            elif type_ is dict:
+            elif isinstance(queues, dict):
                 q = queues
-                for key, val in queues.items():
-                    q[key] = val if type(val) is list else val.split()
+                q.update({key: (val if isinstance(val, list) else val.split()) for key, val in queues.items()})
             else:
                 raise exceptions.InvalidArgument(
                     'queues', got=queues,
                     expected=["None", "list of strings", "dict (of strings or lists that should have the _default key)"])
-            self.destination_queues = q
+            self.destination_queues = dict(q)
         else:
             raise exceptions.InvalidArgument('queues_type', got=queues_type, expected=['source', 'destination'])
 
@@ -132,18 +141,13 @@ class Pipeline(object):
         """
         Acknowledge/delete the current message from the source queue
 
-        Parameters
-        ----------
+        Parameters:
 
-        Raises
-        ------
-        exceptions
-            exceptions.PipelineError: If no message is held
+        Raises:
+            exceptions: exceptions.PipelineError: If no message is held
 
-        Returns
-        -------
-        None.
-
+        Returns:
+            None
         """
         if not self._has_message:
             raise exceptions.PipelineError("No message to acknowledge.")
@@ -172,24 +176,21 @@ class Pipeline(object):
 class Redis(Pipeline):
     has_internal_queues = True
     pipe = None
+    source_pipeline_host = '127.0.0.1'
+    destination_pipeline_host = '127.0.0.1'
+    source_pipeline_db = 2
+    destination_pipeline_db = 2
+    source_pipeline_password = None
+    destination_pipeline_password = None
 
     def load_configurations(self, queues_type):
-        self.host = getattr(self.parameters,
-                            "{}_pipeline_host".format(queues_type),
-                            "127.0.0.1")
-        self.port = getattr(self.parameters,
-                            "{}_pipeline_port".format(queues_type), "6379")
-        self.db = getattr(self.parameters,
-                          "{}_pipeline_db".format(queues_type), 2)
-        self.password = getattr(self.parameters,
-                                "{}_pipeline_password".format(queues_type),
-                                None)
+        self.host = self.pipeline_args.get(f"{queues_type}_pipeline_host", "127.0.0.1")
+        self.port = self.pipeline_args.get(f"{queues_type}_pipeline_port", "6379")
+        self.db = self.pipeline_args.get(f"{queues_type}_pipeline_db", 2)
+        self.password = self.pipeline_args.get(f"{queues_type}_pipeline_password", None)
         #  socket_timeout is None by default, which means no timeout
-        self.socket_timeout = getattr(self.parameters,
-                                      "{}_pipeline_socket_timeout".format(
-                                          queues_type),
-                                      None)
-        self.load_balance = getattr(self.parameters, "load_balance", False)
+        self.socket_timeout = self.pipeline_args.get(f"{queues_type}_pipeline_socket_timeout", None)
+        self.load_balance = self.pipeline_args.get("load_balance", False)
         self.load_balance_iterator = 0
 
     def connect(self):
@@ -207,7 +208,7 @@ class Redis(Pipeline):
                 "port": int(self.port),
                 "socket_timeout": self.socket_timeout,
             }
-        if self.bot and self.bot.is_multithreaded and redis_version >= (3, 3):
+        if self.is_multithreaded and redis_version >= (3, 3):
             # Should give a small performance increase, but is not thread-safe.
             kwargs['single_connection_client'] = True
 
@@ -234,8 +235,7 @@ class Redis(Pipeline):
         if self.load_balance:
             queues = [queues[self.load_balance_iterator]]
             self.load_balance_iterator += 1
-            if self.load_balance_iterator == len(self.destination_queues[path]):
-                self.load_balance_iterator = 0
+            self.load_balance_iterator %= len(self.destination_queues[path])
 
         for destination_queue in queues:
             try:
@@ -331,8 +331,11 @@ class Pythonlist(Pipeline):
     state = {}  # type: Dict[str, list]
 
     def connect(self):
-        if self.parameters.raise_on_connect:
-            raise exceptions.PipelineError('Connect failed as requested')
+        try:
+            if self.parameters.raise_on_connect:
+                raise exceptions.PipelineError('Connect failed as requested')
+        except AttributeError:
+            pass
 
     def disconnect(self):
         pass
@@ -401,40 +404,43 @@ class Pythonlist(Pipeline):
 
 class Amqp(Pipeline):
     queue_args = {'x-queue-mode': 'lazy'}
+    source_pipeline_host = '127.0.0.1'
+    destination_pipeline_host = '127.0.0.1'
+    source_pipeline_db = 2
+    destination_pipeline_db = 2
+    source_pipeline_username = None
+    destination_pipeline_username = None
+    source_pipeline_password = None
+    destination_pipeline_password = None
+    source_pipeline_socket_timeout = None
+    destination_pipeline_socket_timeout = None
+    source_pipeline_amqp_virtual_host = '/'
+    destination_pipeline_amqp_virtual_host = '/'
+    source_pipeline_ssl = False
+    destination_pipeline_ssl = False
+    source_pipeline_amqp_exchange = ""
+    destination_pipeline_amqp_exchange = ""
+    intelmqctl_rabbitmq_monitoring_url = None
 
-    def __init__(self, parameters, logger, bot):
-        super(Amqp, self).__init__(parameters, logger, bot)
+    def __init__(self, logger, pipeline_args: dict = None, load_balance=False, is_multithreaded=False):
+        super(Amqp, self).__init__(logger, pipeline_args, load_balance, is_multithreaded)
         if pika is None:
             raise ValueError("To use AMQP you must install the 'pika' library.")
         self.properties = pika.BasicProperties(delivery_mode=2)  # message persistence
 
     def load_configurations(self, queues_type):
-        self.host = getattr(self.parameters,
-                            "{}_pipeline_host".format(queues_type),
-                            "127.0.0.1")
-        self.port = getattr(self.parameters,
-                            "{}_pipeline_port".format(queues_type), 5672)
-        self.username = getattr(self.parameters,
-                                "{}_pipeline_username".format(queues_type),
-                                None)
-        self.password = getattr(self.parameters,
-                                "{}_pipeline_password".format(queues_type),
-                                None)
+        self.host = self.pipeline_args.get("{}_pipeline_host".format(queues_type), "10.0.0.1")
+        self.port = self.pipeline_args.get("{}_pipeline_port".format(queues_type), 5672)
+        self.username = self.pipeline_args.get("{}_pipeline_username".format(queues_type), None)
+        self.password = self.pipeline_args.get("{}_pipeline_password".format(queues_type), None)
         #  socket_timeout is None by default, which means no timeout
-        self.socket_timeout = getattr(self.parameters,
-                                      "{}_pipeline_socket_timeout".format(
-                                          queues_type),
-                                      None)
-        self.load_balance = getattr(self.parameters, "load_balance", False)
-        self.virtual_host = getattr(self.parameters,
-                                    "{}_pipeline_amqp_virtual_host".format(queues_type),
-                                    '/')
-        self.ssl = getattr(self.parameters,
-                           "{}_pipeline_ssl".format(queues_type),
-                           False)
-        self.exchange = getattr(self.parameters,
-                                "{}_pipeline_amqp_exchange".format(queues_type),
-                                "")
+        self.socket_timeout = self.pipeline_args.get("{}_pipeline_socket_timeout".format(queues_type),
+                                                     None)
+        self.load_balance = self.pipeline_args.get("load_balance", False)
+        self.virtual_host = self.pipeline_args.get("{}_pipeline_amqp_virtual_host".format(queues_type),
+                                                   '/')
+        self.ssl = self.pipeline_args.get("{}_pipeline_ssl".format(queues_type), False)
+        self.exchange = self.pipeline_args.get("{}_pipeline_amqp_exchange".format(queues_type), "")
         self.load_balance_iterator = 0
         self.kwargs = {}
         if self.username and self.password:
@@ -452,9 +458,11 @@ class Amqp(Pipeline):
         else:
             self.publish_raises_nack = True
 
-        self.monitoring_url = getattr(self.parameters,
-                                      'intelmqctl_rabbitmq_monitoring_url',
-                                      'http://%s:15672/' % self.host)
+        if self.intelmqctl_rabbitmq_monitoring_url is not None:
+            self.monitoring_url = self.intelmqctl_rabbitmq_monitoring_url
+        else:
+            self.monitoring_url = 'http://%s:15672/' % self.host
+
         if not self.monitoring_url.endswith('/'):
             self.monitoring_url = "%s/" % self.monitoring_url
 
@@ -531,7 +539,7 @@ class Amqp(Pipeline):
              path_permissive: bool = False):
         """
         In principle we could use AMQP's exchanges here but that architecture is incompatible
-        to the format of our pipeline.conf file.
+        to the format of our pipeline configuration.
         """
         if path not in self.destination_queues and path_permissive:
             return
@@ -544,8 +552,7 @@ class Amqp(Pipeline):
         if self.load_balance:
             queues = [queues[self.load_balance_iterator]]
             self.load_balance_iterator += 1
-            if self.load_balance_iterator == len(self.destination_queues[path]):
-                self.load_balance_iterator = 0
+            self.load_balance_iterator %= len(self.destination_queues[path])
 
         for destination_queue in queues:
             self._send(destination_queue, message)
@@ -595,7 +602,7 @@ class Amqp(Pipeline):
         elif response.status_code != 200:
             raise ValueError("Unknown error %r.", response.text)
         try:
-            return {x['name']: x.get('messages', 0) for x in response.json()}
+            return {queue['name']: queue.get('messages', 0) for queue in response.json() if queue['vhost'] == self.virtual_host}
         except SyntaxError:
             self.logger.error("Unable to parse response from server as JSON: %r.", response.text)
             return {}

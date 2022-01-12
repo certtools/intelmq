@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 dargen3
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Only parses hidden iframes and conditional redirections, not Encoded javascript.
@@ -6,7 +10,7 @@ import re
 from html.parser import HTMLParser
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
 class MyHTMLParser(HTMLParser):
@@ -21,7 +25,8 @@ parser = MyHTMLParser()
 remove_comments = re.compile(r"<!--(.|\s|\n)*?-->")
 
 
-class SucuriParserBot(Bot):
+class SucuriParserBot(ParserBot):
+    """Parse the Sucuri Malware Hidden Iframes and Conditional redirections feeds"""
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])  # decoding

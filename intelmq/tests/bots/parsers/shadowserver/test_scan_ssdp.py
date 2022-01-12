@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -22,7 +26,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open SSDP',
            "classification.identifier": "open-ssdp",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.cache_control": "max-age=1800",
            "extra.header": "HTTP/1.1 200 OK",
            "extra.location": "http://198.123.245.1:52869/gatedesc.xml",
@@ -49,7 +53,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open SSDP',
            "classification.identifier": "open-ssdp",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.cache_control": "max-age=1800",
            "extra.header": "HTTP/1.1 200 OK",
            "extra.location": "http://198.123.245.1:52869/gatedesc.xml",

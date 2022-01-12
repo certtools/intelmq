@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Dognaedis
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 '''
     IntelMQ Exception Class
@@ -74,10 +78,11 @@ class IntelMQHarmonizationException(IntelMQException):
 
 class InvalidValue(IntelMQHarmonizationException):
 
-    def __init__(self, key: str, value: str, reason: Any = None):
+    def __init__(self, key: str, value: str, reason: Any = None, object: bytes = None):
         message = ("invalid value {value!r} ({type}) for key {key!r}{reason}"
                    "".format(value=value, type=type(value), key=key,
                              reason=': ' + reason if reason else ''))
+        self.object = object
         super().__init__(message)
 
 
@@ -110,21 +115,16 @@ class MissingDependencyError(IntelMQException):
                  installed: Optional[str] = None,
                  additional_text: Optional[str] = None):
         """
-        Parameters
-        ----------
-        dependency : str
-            The dependency name.
-        version : Optional[str], optional
-            The required version. The default is None.
-        installed : Optional[str], optional
-            The currently installed version. Requires 'version' to be given The default is None.
-        additional_text : Optional[str], optional
-            Arbitrary additional text to show. The default is None.
+        Parameters:
+            dependency (str): The dependency name.
+            version (Optional[str], optional): The required version. The default is None.
+            installed (Optional[str], optional)
+                The currently installed version. Requires 'version' to be given The default is None.
+            additional_text (Optional[str], optional):
+                Arbitrary additional text to show. The default is None.
 
-        Returns
-        -------
-        IntelMQException: with prepared text
-
+        Returns:
+            IntelMQException: with prepared text
         """
         appendix = ""
         if version:

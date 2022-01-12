@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 sinus-x
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 import os
 import unittest
 
@@ -23,7 +27,7 @@ EVENTS = [
         "feed.name": "Accessible Radmin",
         "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
-        "classification.type": "vulnerable service",
+        "classification.type": "vulnerable-system",
         "extra.naics": 517312,
         "extra.tag": "radmin",
         "extra.version": "Radmin (Details Unknown)",
@@ -45,7 +49,7 @@ EVENTS = [
         "feed.name": "Accessible Radmin",
         "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
-        "classification.type": "vulnerable service",
+        "classification.type": "vulnerable-system",
         "extra.naics": 0,
         "extra.tag": "radmin",
         "extra.version": "Radmin v3.X Radmin Authentication",
@@ -67,7 +71,7 @@ EVENTS = [
         "feed.name": "Accessible Radmin",
         "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
-        "classification.type": "vulnerable service",
+        "classification.type": "vulnerable-system",
         "extra.naics": 517311,
         "extra.tag": "radmin",
         "extra.version": "Radmin (Details Unknown)",
@@ -88,7 +92,7 @@ EVENTS = [
         "feed.name": "Accessible Radmin",
         "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
-        "classification.type": "vulnerable service",
+        "classification.type": "vulnerable-system",
         "extra.naics": 517311,
         "extra.tag": "radmin",
         "extra.version": "Radmin v3.X Radmin Authentication",
@@ -109,7 +113,7 @@ EVENTS = [
         "feed.name": "Accessible Radmin",
         "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
-        "classification.type": "vulnerable service",
+        "classification.type": "vulnerable-system",
         "extra.naics": 517311,
         "extra.tag": "radmin",
         "extra.version": "Radmin v3.X Radmin Authentication",
@@ -130,7 +134,7 @@ EVENTS = [
         "feed.name": "Accessible Radmin",
         "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
-        "classification.type": "vulnerable service",
+        "classification.type": "vulnerable-system",
         "extra.naics": 517312,
         "extra.tag": "radmin",
         "extra.version": "Radmin v3.X Radmin Authentication",
@@ -151,7 +155,7 @@ EVENTS = [
         "feed.name": "Accessible Radmin",
         "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
-        "classification.type": "vulnerable service",
+        "classification.type": "vulnerable-system",
         "extra.naics": 0,
         "extra.tag": "radmin",
         "extra.version": "Radmin v3.X Radmin Authentication",
@@ -172,7 +176,7 @@ EVENTS = [
         "feed.name": "Accessible Radmin",
         "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
-        "classification.type": "vulnerable service",
+        "classification.type": "vulnerable-system",
         "extra.naics": 517311,
         "extra.tag": "radmin",
         "extra.version": "Radmin v3.X Radmin Authentication",
@@ -194,7 +198,7 @@ EVENTS = [
         "feed.name": "Accessible Radmin",
         "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
-        "classification.type": "vulnerable service",
+        "classification.type": "vulnerable-system",
         "extra.naics": 517312,
         "extra.tag": "radmin",
         "extra.version": "Radmin v3.X Radmin Authentication",

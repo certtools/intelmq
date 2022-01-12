@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open Portmapper',
            "classification.identifier": "open-portmapper",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.programs": "100000 4 111/udp; 100000 3 111/udp; 100000 2 111/udp; 100000 4 111/udp; 100000 3 111/udp; 100000 2 111/udp; 100024 1 34213/udp; 100024 1 35984/udp;",
            "extra.tag": "portmapper",
            "protocol.application": "portmapper",
@@ -42,7 +46,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open Portmapper',
            "classification.identifier": "open-portmapper",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.programs": "100000 4 111/udp; 100000 3 111/udp; 100000 2 111/udp; 100000 4 111/udp; 100000 3 111/udp; 100000 2 111/udp; 100024 1 33353/udp; 100024 1 42594/udp;",
            "extra.tag": "portmapper",
            "protocol.application": "portmapper",

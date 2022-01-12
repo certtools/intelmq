@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 robcza
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 """
@@ -5,19 +9,20 @@
 import json
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 TYPES = {
     'PHISHING': 'phishing',
-    'MALWARE': 'malware',
+    'MALWARE': 'malware-distribution',
     'EXPLOIT_KIT': 'exploit',
-    'BACKDOOR': 'backdoor',
+    'BACKDOOR': 'system-compromise',
     'TOR_IP': 'proxy',
-    'C_AND_C': 'c2server'
+    'C_AND_C': 'c2-server'
 }
 
 
-class BluelivCrimeserverParserBot(Bot):
+class BluelivCrimeserverParserBot(ParserBot):
+    """Parse data from the Blueliv Crimeserver API"""
 
     def process(self):
         report = self.receive_message()

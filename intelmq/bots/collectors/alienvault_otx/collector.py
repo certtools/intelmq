@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 robcza
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import datetime
 import json
@@ -12,19 +16,23 @@ except ImportError:
 
 
 class AlienVaultOTXCollectorBot(CollectorBot):
+    "Collect reports from the AlienVault OTX Collector API. Report varies according to subscriptions."
+    api_key: str = "<insert your api key>"
+    interval: int = 24
+    modified_pulses_only: bool = False
+    rate_limit: int = 3600
 
     def init(self):
         if OTXv2 is None:
             raise MissingDependencyError("OTXv2")
 
         self.modified_pulses_only = False
-        if hasattr(self.parameters, 'modified_pulses_only'):
-            self.modified_pulses_only = self.parameters.modified_pulses_only
-            self.interval = getattr(self.parameters, 'interval', 24)
+        if hasattr(self, 'modified_pulses_only'):
+            self.modified_pulses_only = self.modified_pulses_only
 
     def process(self):
         self.logger.info("Downloading report through API.")
-        otx = OTXv2(self.parameters.api_key, proxy=self.parameters.https_proxy)
+        otx = OTXv2(self.api_key, proxy=self.https_proxy)
         if self.modified_pulses_only:
             self.logger.info("Fetching only modified pulses.")
             interval = (datetime.datetime.now() -

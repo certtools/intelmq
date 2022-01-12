@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import dateutil
 
@@ -6,6 +10,7 @@ from intelmq.lib.bot import ParserBot
 
 
 class CymruFullBogonsParserBot(ParserBot):
+    """Parse the Cymru Full Bogons feed"""
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw")).strip()

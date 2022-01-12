@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Testing modify expert bot.
@@ -9,13 +13,13 @@ from pkg_resources import resource_filename
 
 import intelmq.lib.test as test
 from intelmq.lib.utils import load_configuration
-from intelmq.bots.experts.modify.expert import ModifyExpertBot, modify_expert_convert_config
+from intelmq.bots.experts.modify.expert import ModifyExpertBot
 
 EVENT_TEMPL = {"__type": "Event",
                "feed.name": "Spamhaus Cert",
                "feed.url": "https://portal.spamhaus.org/cert/api.php?cert="
                            "<CERTNAME>&key=<APIKEY>",
-               "classification.taxonomy": "malicious code",
+               "classification.taxonomy": "malicious-code",
                "classification.type": "infected-system",
                "time.observation": "2015-01-01T00:00:00+00:00",
                }
@@ -48,7 +52,7 @@ OUTPUT = [{'classification.identifier': 'feodo'},
           {'classification.identifier': 'someexample-value'},
           {'classification.identifier': 'anyvalue'},  # 5
           {'protocol.application': 'http', 'protocol.transport': 'tcp', 'classification.identifier': 'dga'},
-          {'classification.type': 'vulnerable service'},
+          {'classification.type': 'vulnerable-system'},
           {'event_description.text': 'This is a TOR node.'},
           {'event_description.text': 'This is not a TOR node.'},
           {'event_description.text': 'We don\'t know if this is a TOR node.'},  # 10
@@ -87,17 +91,6 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
 
         for position, event_out in enumerate(OUTPUT[:7]):
             self.assertMessageEqual(position, event_out)
-
-    def test_conversion(self):
-        """ Test if the conversion from old dict-based config to new list based is correct. """
-        old_path = resource_filename('intelmq',
-                                     'tests/bots/experts/modify/old_format.conf')
-        old_config = load_configuration(old_path)
-        new_path = resource_filename('intelmq',
-                                     'tests/bots/experts/modify/new_format.conf')
-        new_config = load_configuration(new_path)
-        self.assertDictEqual(modify_expert_convert_config(old_config)[0],
-                             new_config[0])
 
     def test_types(self):
         """
@@ -141,12 +134,12 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
         inp.update(INPUT[6])
         self.input_message = inp
         self.run_bot(parameters={'overwrite': True, 'logging_level': 'DEBUG'})
-        self.assertLogMatches('.*Apply rule Fraunhofer DGA\.$', 'DEBUG')
+        self.assertLogMatches(r'.*Apply rule Fraunhofer DGA\.$', 'DEBUG')
         self.assertMessageEqual(0, OUTPUT[6])
 
         self.input_message = inp
         self.run_bot(parameters={'maximum_matches': 1, 'overwrite': True, 'logging_level': 'DEBUG'})
-        self.assertLogMatches('Reached maximum number of matches, breaking\.$', 'DEBUG')
+        self.assertLogMatches(r'Reached maximum number of matches, breaking\.$', 'DEBUG')
         out = OUTPUT[6].copy()
         del out['classification.identifier']
         self.assertMessageEqual(0, out)

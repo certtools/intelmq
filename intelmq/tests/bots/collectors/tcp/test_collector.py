@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Edvard Rejthar
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 Testing TCP collector
 """
@@ -18,8 +22,8 @@ from intelmq.lib.utils import base64_decode
 
 PORT = 5011
 SEPARATOR = '\n'
-INPUT1 = {'classification.taxonomy': 'malicious code',
-          'classification.type': 'c2server',
+INPUT1 = {'classification.taxonomy': 'malicious-code',
+          'classification.type': 'c2-server',
           'feed.name': 'Example feed',
           'feed.accuracy': 100.0,
           'feed.url': 'http://localhost/two_files.tar.gz',
@@ -36,6 +40,7 @@ INPUT2 = {'feed.name': 'Example feed 2',
           'feed.url': 'http://localhost/two_files.tar.gz',
           'raw': utils.base64_encode('foo text\n')}
 ORIGINAL_DATA = ('some random input{}another line').format(SEPARATOR)
+
 
 class Client:
     """ You find here an example of a non-intelmq client that might connect to the bot. """
@@ -60,6 +65,7 @@ class Client:
         connection.close()
 
 
+@test.skip_build_environment()
 class TestTCPOutputBot(test.BotTestCase, unittest.TestCase):
     """ Instance of TCPOutput bot might help to simulate a real world situation with reconnecting etc. """
 
@@ -78,6 +84,7 @@ class TestTCPOutputBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(iterations=len(self.input_message))
 
 
+@test.skip_build_environment()
 class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for TCPCollectorBot.
@@ -133,7 +140,7 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
 
         def chunked_process_replacement(self):
             event = self.receive_message()
-            data = event.to_json(hierarchical=self.parameters.hierarchical_output)
+            data = event.to_json(hierarchical=self.hierarchical_output)
             d = utils.encode(data)
             msg = struct.pack('>I', len(d)) + d
             chunk_length = 40

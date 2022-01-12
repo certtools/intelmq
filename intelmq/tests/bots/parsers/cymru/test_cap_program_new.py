@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os.path
 import unittest
@@ -43,13 +47,13 @@ EVENTS = [{'time.source': '2019-03-22T11:18:52+00:00',
            },
           {'classification.identifier': 'stealrat',
            'malware.name': 'stealrat',
-           'classification.type': 'c2server',
+           'classification.type': 'c2-server',
            'time.source': '2019-03-25T17:47:40+00:00',
            'protocol.transport': 'tcp',
            },
           {'classification.identifier': 'http_post',
            'malware.name': 'http_post',
-           'classification.type': 'c2server',
+           'classification.type': 'c2-server',
            'source.fqdn': 'www.example.com',
            'time.source': '2019-03-25T05:01:47+00:00',
            },
@@ -94,12 +98,12 @@ EVENTS = [{'time.source': '2019-03-22T11:18:52+00:00',
            'protocol.application': 'socks4',
            },
           {'time.source': '2019-03-25T06:29:38+00:00',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'classification.identifier': 'dns-open-resolver',
            'protocol.application': 'dns',
            },
           {'time.source': '2020-06-08T18:28:35+00:00',
-           'classification.type': 'vulnerable service',
+           'classification.type': 'vulnerable-system',
            'classification.identifier': 'dns-open-resolver',
            'protocol.application': 'dns',
            },
@@ -160,7 +164,7 @@ EVENTS = [{'time.source': '2019-03-22T11:18:52+00:00',
            'time.source': '2019-09-22T05:39:38+00:00',
            'classification.identifier': 'http_post',
            'malware.name': 'http_post',
-           'classification.type': 'c2server',
+           'classification.type': 'c2-server',
            },
           {'classification.type': 'scanner',
            'classification.identifier': 'scanner',
@@ -203,11 +207,35 @@ EVENTS = [{'time.source': '2019-03-22T11:18:52+00:00',
            'time.source': '2020-07-09T03:40:15+00:00',
            'source.account': 'pm',
            },
+          {'classification.type': 'scanner',
+           'classification.identifier': 'darknet',
+           'time.source': '2020-10-08T02:21:26+00:00',
+           'protocol.transport': 'gre',
+           },
+          {'classification.type': 'scanner',
+           'classification.identifier': 'darknet',
+           'time.source': '2020-10-15T09:22:10+00:00',
+           'protocol.transport': 'ipv6-nonxt',
+           },
+          {
+           'classification.type': 'proxy',
+           'classification.identifier': 'openproxy',
+           'time.source': '2020-12-14T08:28:01+00:00',
+           'extra.source.asns': [64496, 212682],
+           'protocol.application': 'httpconnect',
+           'source.port': 51915,
+           },
+          {'classification.type': 'brute-force',
+           'protocol.transport': 'tcp',
+           'destination.port': 22,
+           'source.port': 16794,
+           'time.source': '2021-03-09T00:11:21+00:00',
+           },
           ]
 
 # The number of events a single line in the raw data produces
-NUM_EVENTS = [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              1, 1, 10, 1, 1, 1, 1, 1]
+NUM_EVENTS = (1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+              1, 1, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 RAWS = []
 for i, line in enumerate(RAW_LINES[3:]):
     for count in range(NUM_EVENTS[i]):

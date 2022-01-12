@@ -1,12 +1,17 @@
+# SPDX-FileCopyrightText: 2018 Filip Pokorný
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import json
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class OpenPhishCommercialParserBot(Bot):
+class OpenPhishCommercialParserBot(ParserBot):
+    """Parse the OpenPhish feed"""
 
     def process(self):
         report = self.receive_message()

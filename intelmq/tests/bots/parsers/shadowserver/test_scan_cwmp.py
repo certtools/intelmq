@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -24,7 +28,7 @@ EVENTS = [{
     'feed.name': 'Accessible CWMP',
     "classification.identifier": "open-cwmp",
     "classification.taxonomy": "vulnerable",
-    "classification.type": "vulnerable service",
+    "classification.type": "vulnerable-system",
     "extra.connection": "keep-alive",
     "extra.content_length": 5678,
     "extra.content_type": "text/html",
@@ -53,7 +57,7 @@ EVENTS = [{
     'feed.name': 'Accessible CWMP',
     "classification.identifier": "open-cwmp",
     "classification.taxonomy": "vulnerable",
-    "classification.type": "vulnerable service",
+    "classification.type": "vulnerable-system",
     "extra.content_type": "text/html",
     "extra.http": "HTTP/1.1",
     "extra.http_code": 404,

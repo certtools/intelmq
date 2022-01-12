@@ -1,37 +1,37 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 HTTP collector bot
 
 Parameters:
-http_url: string
-http_header: dictionary
-    default: {}
-http_verify_cert: boolean
-    default: True
-extract_files: value used to extract files from downloaded compressed file
-    default: None
-    all: True; some: string with file names separated by ,
-http_url_formatting: bool|json to turn on time formatting (and to specify delta to current time)
-http_username, http_password: string
-http_proxy, https_proxy: string
-http_timeout_sec: tuple of two floats or float
-http_timeout_max_tries: an integer depicting how often a connection attempt is retried
-verify_pgp_signatures: whether to download and check file signatures
-    default: False
-signature_url: string
-signature_url_formatting: the same as http_url_formatting
-gpg_keyring: none (defaults to user's GPG keyring) or string (path to keyring file)
+    http_url (string)
+    http_header (dictionary): default: {}
+    http_verify_cert (boolean): default: True
+    extract_files: value used to extract files from downloaded compressed file
+        default: None
+        all: True; some: string with file names separated by ,
+    http_url_formatting (bool|json): to turn on time formatting (and to specify delta to current time)
+    http_username (string)
+    http_password (string)
+    http_proxy (string)
+    https_proxy (string)
+    http_timeout_sec: tuple of two floats or float
+    http_timeout_max_tries (int): an integer depicting how often a connection attempt is retried
+    verify_pgp_signatures (bool): whether to download and check file signatures
+        default: False
+    signature_url (string)
+    signature_url_formatting: the same as http_url_formatting
+    gpg_keyring: none (defaults to user's GPG keyring) or string (path to keyring file)
 """
 from datetime import datetime, timedelta
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import unzip, create_request_session
+from intelmq.lib.mixins import HttpMixin
+from intelmq.lib.utils import unzip
 from intelmq.lib.exceptions import MissingDependencyError
-
-try:
-    import requests
-except ImportError:
-    requests = None
 
 try:
     import gnupg
@@ -42,7 +42,7 @@ except ImportError:
 
 class Time(object):
     def __init__(self, delta=None):
-        """ Delta is a datetime.timedelta JSON string, ex: '{days=-1}'. """
+        """ Delta is a datetime.timedelta JSON string, ex: '{"days"=-1}'. """
         self.time = datetime.now()
         if not isinstance(delta, bool):
             self.time += timedelta(**delta)
@@ -51,31 +51,37 @@ class Time(object):
         return self.time.strftime(timeformat)
 
 
-class HTTPCollectorBot(CollectorBot):
+class HTTPCollectorBot(CollectorBot, HttpMixin):
+    """Fetch reports from an URL"""
+    extract_files: bool = False
+    gpg_keyring: str = None  # TODO: pathlib.Path
+    http_password: str = None
+    http_url: str = "<insert url of feed>"
+    http_url_formatting: bool = False
+    http_username: str = None
+    rate_limit: int = 3600
+    signature_url: str = None
+    signature_url_formatting: bool = False
+    ssl_client_certificate: str = None  # TODO: pathlib.Path
+    verify_pgp_signatures: bool = False
+
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
-
-        self.set_request_parameters()
-
-        self.session = create_request_session(self)
-
-        self.use_gpg = getattr(self.parameters, "verify_pgp_signatures", False)
+        self.use_gpg = self.verify_pgp_signatures
         if self.use_gpg and gnupg is None:
             raise MissingDependencyError("gnupg")
         else:
             self.logger.info('PGP signature verification is active.')
 
     def process(self):
-        formatting = getattr(self.parameters, 'http_url_formatting', False)
+        formatting = self.http_url_formatting
         if formatting:
-            http_url = self.format_url(self.parameters.http_url, formatting)
+            http_url = self.format_url(self.http_url, formatting)
         else:
-            http_url = self.parameters.http_url
+            http_url = self.http_url
 
         self.logger.info("Downloading report from %r.", http_url)
 
-        resp = self.session.get(url=http_url)
+        resp = self.http_get(http_url)
 
         if resp.status_code // 100 != 2:
             self.logger.debug('Request headers: %r.', resp.request.headers)
@@ -133,7 +139,7 @@ class HTTPCollectorBot(CollectorBot):
 
     def format_url(self, url: str, formatting) -> str:
         try:
-            return self.parameters.http_url.format(time=Time(formatting))
+            return self.http_url.format(time=Time(formatting))
         except TypeError:
             self.logger.error(
                 "Wrong formatting parameter: %s. Should be boolean or a time-delta JSON.",
@@ -143,7 +149,7 @@ class HTTPCollectorBot(CollectorBot):
         except KeyError:
             self.logger.error(
                 "Wrongly formatted url parameter: %s. Possible misspell with 'time' variable.",
-                self.parameters.http_url
+                self.http_url
             )
             raise
 
@@ -152,16 +158,16 @@ class HTTPCollectorBot(CollectorBot):
         Download signature file and verify the report data.
         """
         # get PGP parameters
-        formatting = getattr(self.parameters, 'signature_url_formatting', False)
+        formatting = self.signature_url_formatting
         if formatting:
-            http_url = self.format_url(self.parameters.signature_url, formatting)
+            http_url = self.format_url(self.signature_url, formatting)
         else:
-            http_url = self.parameters.signature_url
+            http_url = self.signature_url
 
         # download signature file
         self.logger.info("Downloading PGP signature from {}.".format(http_url))
 
-        resp = self.session.get(url=http_url)
+        resp = self.http_get(http_url)
         if resp.status_code // 100 != 2:
             raise ValueError("Could not download PGP signature for report: {}.".format(resp.status_code))
 
@@ -173,7 +179,7 @@ class HTTPCollectorBot(CollectorBot):
         sign.flush()
 
         # check signature
-        keyring = getattr(self.parameters, "gpg_keyring", None)
+        keyring = self.gpg_keyring
         gpg = gnupg.GPG(keyring=keyring)
         verified = gpg.verify_data(sign.name, data)
 

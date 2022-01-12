@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 tux78
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 ESMOutputBot connects to McAfee Enterprise Security Manager, and updates IP based watchlists
@@ -11,7 +15,7 @@ field: field from IntelMQ message to extract (e.g. destination.ip)
 
 """
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -20,7 +24,18 @@ except ImportError:
     ESM = None
 
 
-class ESMIPOutputBot(Bot):
+class ESMIPOutputBot(OutputBot):
+    """
+    Write events to the McAfee Enterprise Security Manager (ESM)
+
+
+    IntelMQ-Bot-Name: McAfee ESM IP
+    """
+    esm_ip: str = "1.2.3.4"  # TODO: should be ipaddress
+    esm_password: str = None
+    esm_user: str = "NGCP"
+    esm_watchlist: str = None
+    field: str = "source.ip"
 
     def init(self):
         if ESM is None:
@@ -28,7 +43,7 @@ class ESMIPOutputBot(Bot):
 
         self.esm = ESM()
         try:
-            self.esm.login(self.parameters.esm_ip, self.parameters.esm_user, self.parameters.esm_password)
+            self.esm.login(self.esm_ip, self.esm_user, self.esm_password)
         except Exception:
             raise ValueError('Could not Login to ESM.')
 
@@ -38,7 +53,7 @@ class ESMIPOutputBot(Bot):
             retVal = self.esm.post('sysGetWatchlists?hidden=false&dynamic=false&writeOnly=false&indexedOnly=false',
                                    watchlist_filter)
             for WL in retVal:
-                if (WL['name'] == self.parameters.esm_watchlist):
+                if (WL['name'] == self.esm_watchlist):
                     self.watchlist_id = WL['id']
         except TypeError:
             self.logger.error('Watchlist not found. Please verify name of the watchlist.')
@@ -49,7 +64,7 @@ class ESMIPOutputBot(Bot):
         self.logger.info('Message received.')
         try:
             self.esm.post('sysAddWatchlistValues', {'watchlist': {'value': self.watchlist_id},
-                                                    'values': '["' + event.get(self.parameters.field) + '"]'},
+                                                    'values': '["' + event.get(self.field) + '"]'},
                           raw=True)
             self.logger.info('ESM Watchlist updated')
             self.acknowledge_message()

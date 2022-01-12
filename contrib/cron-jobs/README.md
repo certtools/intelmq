@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2017 Sebastian Wagner
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # Common cron jobs for IntelMQ
 
 Downloads the latest database files for commonly used bots.

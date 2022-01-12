@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open mDNS',
            "classification.identifier": "open-mdns",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.services": "_workstation.examplehostname.local.;",
            "extra.tag": "mdns",
            "extra.workstation_info": "[00:00:00:00:00:00]",
@@ -45,7 +49,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open mDNS',
            "classification.identifier": "open-mdns",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.services": "_workstation.examplehostname.local.;",
            "extra.tag": "mdns",
            "extra.workstation_info": "[00:00:00:00:00:00]",

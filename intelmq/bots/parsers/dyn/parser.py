@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 format:
@@ -8,10 +12,11 @@ ponmocup-malware-IP ponmocup-malware-domain ponmocup-malware-URI-path ponmocup-h
 import dateutil.parser
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class DynParserBot(Bot):
+class DynParserBot(ParserBot):
+    """Parse the DynDNS ponmocup feed"""
 
     def init(self):
         self.TZOFFSETS = {'PST': -8 * 60 * 60,
@@ -35,7 +40,7 @@ class DynParserBot(Bot):
 
             event_infected = self.new_event(report)
             event_infected.add('time.source', source_time)
-            event_infected.add('classification.type', 'malware')
+            event_infected.add('classification.type', 'malware-distribution')
             if row_split[0] != '/':
                 event_infected.add('source.ip', row_split[0])
             event_infected.add('source.fqdn', row_split[1])
@@ -50,7 +55,7 @@ class DynParserBot(Bot):
 
             event_compromised = self.new_event(report)
             event_compromised.add('time.source', source_time)
-            event_compromised.add('classification.type', 'compromised')
+            event_compromised.add('classification.type', 'system-compromise')
             if row_split[0] != '/':
                 event_compromised.add('destination.ip', row_split[0])
             event_compromised.add('destination.fqdn', row_split[1])

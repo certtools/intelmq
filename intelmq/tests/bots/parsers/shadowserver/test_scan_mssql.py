@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open MSSQL',
            "classification.identifier": "open-mssql",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.amplification": 18.49,
            "extra.instance_name": "MSSQLSERVER",
            "extra.named_pipe": "\\\\EXAMPLEURL",
@@ -48,7 +52,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open MSSQL',
            "classification.identifier": "open-mssql",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.amplification": 10.27,
            "extra.instance_name": "ACT7",
            "extra.named_pipe": "\\\\EXAMPLEURL",

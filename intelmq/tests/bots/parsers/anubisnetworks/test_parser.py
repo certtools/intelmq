@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os.path
 import unittest
@@ -27,8 +31,9 @@ EXAMPLE_REPORT = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a4
                   "raw": utils.base64_encode(EXAMPLE_RAW),
                   "time.observation": "2016-04-19T23:16:08+00:00"
                   }
-EXAMPLE_EVENT  = {"classification.taxonomy": "malicious code",
-                  "classification.type": "malware",
+
+EXAMPLE_EVENT  = {"classification.taxonomy": "malicious-code",
+                  "classification.type": "infected-system",
                   "destination.port": 80,
                   "feed.accuracy": 100.0,
                   "malware.name": "nivdort",
@@ -63,7 +68,7 @@ EXAMPLE_REPORT2 = {"feed.name": "AnubisNetworks",
                    "time.observation":
                    "2016-04-19T23:16:10+00:00"
                    }
-EXAMPLE_EVENT2  = {"classification.taxonomy": "malicious code",
+EXAMPLE_EVENT2  = {"classification.taxonomy": "malicious-code",
                    "feed.name": "AnubisNetworks",
                    "malware.name": "spyapp",
                    "destination.fqdn": "example.net",
@@ -79,7 +84,7 @@ EXAMPLE_EVENT2  = {"classification.taxonomy": "malicious code",
                    "destination.port": 80,
                    "feed.accuracy": 100.0,
                    "raw": EXAMPLE_REPORT2['raw'],
-                   "classification.type": "malware",
+                   "classification.type": "infected-system",
                    "event_description.text": "Sinkhole attempted connection"
                    }
 
@@ -88,7 +93,7 @@ EXAMPLE_REPORT3 = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a
                    "__type": "Report",
                    "time.observation": "2016-04-19T23:16:10+00:00"
                    }
-EXAMPLE_EVENT3  = {"classification.taxonomy": "malicious code",
+EXAMPLE_EVENT3  = {"classification.taxonomy": "malicious-code",
                    "malware.name": "malwname",
                    "source.ip": "203.0.113.2",
                    "source.port": 59645,
@@ -99,7 +104,7 @@ EXAMPLE_EVENT3  = {"classification.taxonomy": "malicious code",
                    "destination.ip": "203.0.113.1",
                    "destination.port": 80,
                    "raw": EXAMPLE_REPORT3['raw'],
-                   "classification.type": "malware",
+                   "classification.type": "infected-system",
                    "event_description.text": "Sinkhole attempted connection",
                    "extra.metadata.flowbits": [
                            "_mt_s",
@@ -168,17 +173,17 @@ EXAMPLE_EVENT3  = {"classification.taxonomy": "malicious code",
                    'extra.communication.http.host.geolocation.latitude': 37.751,
                    'extra.communication.http.host.geolocation.longitude': -97.822,
                    'extra.communication.http.host.network': '203.0.113.4/21',
-                   "extra.communication.http.x_forwarded_for_#1.network": "10.26.116.22/24",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.cc": "AT",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.country": "Austria",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.region": "Salzburg",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.region_code": "05",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.city": "Salzburg",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.postal_code": "5020",
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.latitude": 47.8007,
-                   "extra.communication.http.x_forwarded_for_#1.geolocation.longitude": 13.0442,
-                   "extra.communication.http.x_forwarded_for_#1.asn": 1901,
-                   "extra.communication.http.x_forwarded_for_#1.as_name": "Example AS",
+                   "extra.communication.http.x_forwarded_for_1.network": "10.26.116.22/24",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.cc": "AT",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.country": "Austria",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.region": "Salzburg",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.region_code": "05",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.city": "Salzburg",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.postal_code": "5020",
+                   "extra.communication.http.x_forwarded_for_1.geolocation.latitude": 47.8007,
+                   "extra.communication.http.x_forwarded_for_1.geolocation.longitude": 13.0442,
+                   "extra.communication.http.x_forwarded_for_1.asn": 1901,
+                   "extra.communication.http.x_forwarded_for_1.as_name": "Example AS",
                    }
 
 
@@ -187,7 +192,7 @@ EXAMPLE_REPORT_DNS = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29
                       "__type": "Report",
                       "time.observation": "2016-04-19T23:16:10+00:00"
                       }
-EXAMPLE_EVENT_DNS  = {"classification.taxonomy": "malicious code",
+EXAMPLE_EVENT_DNS  = {"classification.taxonomy": "malicious-code",
                       "malware.name": "malware name dns",
                       "source.ip": "203.0.113.2",
                       "source.port": 11138,
@@ -198,7 +203,7 @@ EXAMPLE_EVENT_DNS  = {"classification.taxonomy": "malicious code",
                       "destination.ip": "203.0.113.1",
                       "destination.port": 53,
                       "raw": EXAMPLE_REPORT_DNS['raw'],
-                      "classification.type": "malware",
+                      "classification.type": "infected-system",
                       "classification.identifier": "Malware name DNS",
                       "event_description.text": "Sinkhole attempted connection",
                       "protocol.application": "dns",
@@ -241,8 +246,8 @@ EXAMPLE_REPORT_COMM_HTTP_HOST_NOT_DST_IP_RAW = {
 EXAMPLE_EVENT_COMM_HTTP_HOST_NOT_DST_IP = {
     "__type": "Event",
     'classification.identifier': 'BHProxies',
-    'classification.taxonomy': 'malicious code',
-    'classification.type': 'malware',
+    'classification.taxonomy': 'malicious-code',
+    'classification.type': 'infected-system',
     'destination.ip': '198.18.0.1',
     'destination.port': 2532,
     'destination.url': 'http://192.168.0.1/',

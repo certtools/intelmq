@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Testing Mail URL collector
@@ -15,11 +19,11 @@ if os.getenv('INTELMQ_TEST_EXOTIC'):
     from .lib import MockedTxtImbox
 
 
-REPORT_FOOBARTXT = {
-                    '__type': 'Report',
+REPORT_FOOBARTXT = {'__type': 'Report',
                     'extra.email_from': 'wagner@cert.at',
                     'extra.email_message_id': '<07ce0153-060b-f48d-73d9-d92a20b3b3aa@cert.at>',
                     'extra.email_subject': 'foobar txt',
+                    'extra.email_date': 'Tue, 3 Sep 2019 16:57:40 +0200',
                     'feed.accuracy': 100.0,
                     'feed.name': 'IMAP Feed',
                     'extra.file_name': 'foobar.txt',
@@ -42,7 +46,7 @@ class TestMailURLCollectorBot(test.BotTestCase, unittest.TestCase):
                          'mail_ssl': None,
                          'folder': None,
                          'subject_regex': None,
-                         'url_regex': 'http://localhost/.*\.txt',
+                         'url_regex': r'http://localhost/.*\.txt',
                          'name': 'IMAP Feed',
                          }
 

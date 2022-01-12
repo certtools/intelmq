@@ -1,8 +1,12 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 """
     A Bot to collect data from the Certificate Transparency Log (CTL)
-    This bot works based on certstream libary (https://github.com/CaliDog/certstream-python)
+    This bot works based on certstream library (https://github.com/CaliDog/certstream-python)
     @author: Florian Krenn, Christoph Giese (Telekom Security)
     No parameters necessary.
 
@@ -19,6 +23,8 @@ except ImportError:
 
 
 class CertstreamCollectorBot(CollectorBot):
+    """Collect information from CertStream certificate transparency logs"""
+
     def init(self):
         if CertStreamClient is None:
             raise MissingDependencyError("certstream")

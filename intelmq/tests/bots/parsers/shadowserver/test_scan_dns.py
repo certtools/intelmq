@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -23,7 +27,7 @@ EVENTS = [{
     'feed.name': 'DNS Open Resolvers',
     "classification.identifier": "dns-open-resolver",
     "classification.taxonomy": "vulnerable",
-    "classification.type": "vulnerable service",
+    "classification.type": "vulnerable-system",
     "extra.dns_version": "dnsmasq-2.66",
     "extra.min_amplification": 4.619,
     "extra.tag": "openresolver",
@@ -46,7 +50,7 @@ EVENTS = [{
     'feed.name': 'DNS Open Resolvers',
     "classification.identifier": "dns-open-resolver",
     "classification.taxonomy": "vulnerable",
-    "classification.type": "vulnerable service",
+    "classification.type": "vulnerable-system",
     "extra.dns_version": "dnsmasq-2.51",
     "extra.min_amplification": 4.619,
     "extra.tag": "openresolver",

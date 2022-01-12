@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import base64
 import os
@@ -17,7 +21,7 @@ OUTPUT1 = {'__type': 'Event',
            'source.geolocation.cc': 'PL',
            'time.source': '2019-10-29T05:18:47+00:00'}
 OUTPUT2 = {'__type': 'Event',
-           'classification.type': 'malware',
+           'classification.type': 'malware-distribution',
            'event_description.text': '惡意程式儲存FTP站',
            'raw': 'PHRkPjEyMzc8L3RkPjx0ZD48aW1nIHNyYz0iL2ltYWdlcy9mbGFncy9mci5naWYiIGFsdD0iIj48c3BhbiBzdHlsZT0iY29sb3I6IGJsYWNrOyI+MTkyLjAuMC41PC9zcGFuPjwvdGQ+PHRkPuaDoeaEj+eoi+W8j+WEsuWtmEZUUOermTwvdGQ+CiAgICAgICAgPHRkPuaJi+WLleioreWumjwvdGQ+PHRkPjIwMTMtMDQtMjQgMDA6MDE6NTk8L3RkPjx0ZD4yNTI3LjA0PC90ZD4KICAgICAgICA8dGQgc3R5bGU9ImNvbG9yOnJlZDsiPuWwgemOljwvdGQ+PC90cj4gICAgICAgIA==',
            'source.ip': '192.0.0.5',

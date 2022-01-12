@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 jgedeon120
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """ IntelMQ parser for Bambenek DGA, Domain, and IP feeds """
 
@@ -49,19 +53,19 @@ class BambenekParserBot(ParserBot):
             if report['feed.url'] in BambenekParserBot.IPMASTERLIST:
                 event.add('source.ip', value[0])
                 event.add('time.source', value[2] + ' UTC')
-                event.add('classification.type', 'c2server')
+                event.add('classification.type', 'c2-server')
                 event.add('status', 'online')
 
             elif report['feed.url'] in BambenekParserBot.DOMMASTERLIST:
                 event.add('source.fqdn', value[0])
                 event.add('time.source', value[2] + ' UTC')
-                event.add('classification.type', 'c2server')
+                event.add('classification.type', 'c2-server')
                 event.add('status', 'online')
 
             elif report['feed.url'] in BambenekParserBot.DGA_FEED:
                 event.add('source.fqdn', value[0])
                 event.add('time.source', value[2] + ' 00:00 UTC')
-                event.add('classification.type', 'dga domain')
+                event.add('classification.type', 'dga-domain')
 
             else:
                 raise ValueError('Unknown data feed %s.' % report['feed.url'])

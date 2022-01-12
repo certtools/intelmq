@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -41,7 +45,7 @@ EVENTS = [{'__type': 'Event',
            'extra.bytes': 2220,
            'extra.sensor_geo': 'RU',
            'extra.sector': 'IT1',
-           'extra.end_time': '2018-10-09 06:10:01',
+           'extra.end_time': '2018-10-09T06:10:01+00:00',
            'extra.public_source': 'SSS',
            },
            {'__type': 'Event',
@@ -68,7 +72,7 @@ EVENTS = [{'__type': 'Event',
            'extra.bytes': 2700,
            'extra.sensor_geo': 'RU',
            'extra.sector': 'IT2',
-           'extra.end_time': '2018-10-09 10:14:59',
+           'extra.end_time': '2018-10-09T10:14:59+00:00',
            'extra.public_source': 'SSS',
            },
           ]

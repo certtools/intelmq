@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 jgedeon120
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -32,7 +36,7 @@ BOOT_EVENT = [{'feed.name': 'Windows Format',
                'raw': 'UFJJTUFSWSBleGFtcGxlLmNvbSBibG9ja2VkZG9tYWluLmhvc3Rz',
                'source.fqdn': 'example.com',
                'event_description.url': 'http://malc0de.com/database/index.php?search=example.com',
-               'classification.type': 'malware'
+               'classification.type': 'malware-distribution'
               },
               {'feed.name': 'Windows Format',
                'feed.url': 'http://malc0de.com/bl/BOOT',
@@ -42,7 +46,7 @@ BOOT_EVENT = [{'feed.name': 'Windows Format',
                'raw': 'UFJJTUFSWSBleGFtcGxlLm9yZyBibG9ja2VkZG9tYWluLmhvc3Rz',
                'source.fqdn': 'example.org',
                'event_description.url': 'http://malc0de.com/database/index.php?search=example.org',
-               'classification.type': 'malware'
+               'classification.type': 'malware-distribution'
               }]
 
 ZONE_REPORT = {'feed.name': 'Bind Format',
@@ -60,7 +64,7 @@ ZONE_EVENT = [{'feed.name': 'Bind Format',
                'raw': 'em9uZSAiZXhhbXBsZS5jb20iICB7dHlwZSBtYXN0ZXI7IGZpbGUgIi9ldGMvbmFtZWRiL2Jsb2NrZWRkb21haW4uaG9zdHMiO307',
                'source.fqdn': 'example.com',
                'event_description.url': 'http://malc0de.com/database/index.php?search=example.com',
-               'classification.type': 'malware'
+               'classification.type': 'malware-distribution'
               },
               {'feed.name': 'Bind Format',
                'feed.url': 'http://malc0de.com/bl/ZONES',
@@ -70,7 +74,7 @@ ZONE_EVENT = [{'feed.name': 'Bind Format',
                'raw': 'em9uZSAiZXhhbXBsZS5vcmciICB7dHlwZSBtYXN0ZXI7IGZpbGUgIi9ldGMvbmFtZWRiL2Jsb2NrZWRkb21haW4uaG9zdHMiO307',
                'source.fqdn': 'example.org',
                'event_description.url': 'http://malc0de.com/database/index.php?search=example.org',
-               'classification.type': 'malware'
+               'classification.type': 'malware-distribution'
               }]
 
 IP_BLACKLIST_REPORT = {'feed.name': 'IP Blacklist',
@@ -88,7 +92,7 @@ IP_BLACKLIST_EVENT = [{'feed.name': 'IP Blacklist',
                        'raw': 'MTkyLjg4Ljk5LjQ=',
                        'source.ip': '192.88.99.4',
                        'event_description.url': 'http://malc0de.com/database/index.php?search=192.88.99.4',
-                       'classification.type': 'malware'
+                       'classification.type': 'malware-distribution'
                       },
                       {'feed.name': 'IP Blacklist',
                        'feed.url': 'http://malc0de.com/bl/IP_Blacklist.txt',
@@ -98,7 +102,7 @@ IP_BLACKLIST_EVENT = [{'feed.name': 'IP Blacklist',
                        'raw': 'MTkyLjAuMC41',
                        'source.ip': '192.0.0.5',
                        'event_description.url': 'http://malc0de.com/database/index.php?search=192.0.0.5',
-                       'classification.type': 'malware'
+                       'classification.type': 'malware-distribution'
                       }]
 
 

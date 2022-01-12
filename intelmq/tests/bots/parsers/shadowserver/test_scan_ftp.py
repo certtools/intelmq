@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -24,7 +28,7 @@ EVENTS = [{
             'time.observation': '2019-03-25T00:00:00+00:00',
             'time.source': '2019-03-06T06:37:00+00:00',
             'classification.taxonomy': 'vulnerable',
-            'classification.type': 'vulnerable service',
+            'classification.type': 'vulnerable-system',
             'classification.identifier': 'accessible-ftp',
             'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
                                                  EXAMPLE_LINES[1]])),
@@ -74,7 +78,7 @@ EVENTS = [{
             'time.observation': '2019-03-25T00:00:00+00:00',
             'time.source': '2019-03-06T06:37:00+00:00',
             'classification.taxonomy': 'vulnerable',
-            'classification.type': 'vulnerable service',
+            'classification.type': 'vulnerable-system',
             'classification.identifier': 'accessible-ftp',
             'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
                                                  EXAMPLE_LINES[2]])),

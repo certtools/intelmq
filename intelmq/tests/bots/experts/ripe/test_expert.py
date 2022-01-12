@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Brajneesh Kumar
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Testing RIPE Expert
@@ -8,7 +12,7 @@ import unittest
 import requests_mock
 
 import intelmq.lib.test as test
-from intelmq.bots.experts.ripencc_abuse_contact.expert import RIPEExpertBot
+from intelmq.bots.experts.ripe.expert import RIPEExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com

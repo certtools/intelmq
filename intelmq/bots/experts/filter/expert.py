@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import re
@@ -6,17 +10,24 @@ from datetime import datetime, timedelta
 import pytz
 from dateutil import parser
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import parse_relative, TIMESPANS
 
 
-class FilterExpertBot(Bot):
+class FilterExpertBot(ExpertBot):
+    """Filter events, supports named paths for splitting the message flow"""
 
     _message_processed_verb = 'Forwarded'
+    not_after = None
+    not_before = None
+    filter_action: str = None
+    filter_key: str = None
+    filter_regex: str = None  # TODO: could be re
+    filter_value: str = None
 
     def parse_timeattr(self, time_attr):
         """
-        Parses relative or absoute time specification, decides how to parse by
+        Parses relative or absolute time specification, decides how to parse by
         checking if the string contains any timespan identifier.
 
         See also https://github.com/certtools/intelmq/issues/1523
@@ -32,33 +43,30 @@ class FilterExpertBot(Bot):
             return absolute
 
     def init(self):
-        self.not_after = None
-        self.not_before = None
-
-        if hasattr(self.parameters, 'not_after'):
-            self.not_after = self.parse_timeattr(self.parameters.not_after)
-        if hasattr(self.parameters, 'not_before'):
-            self.not_before = self.parse_timeattr(self.parameters.not_before)
+        if self.not_after:
+            self.not_after = self.parse_timeattr(self.not_after)
+        if self.not_before:
+            self.not_before = self.parse_timeattr(self.not_before)
 
         self.filter = True
-        if not (hasattr(self.parameters, 'filter_key')):
+        if self.filter_key is None:
             self.logger.info("No filter_key parameter found.")
             self.filter = False
-        elif not (hasattr(self.parameters, 'filter_value')):
+        elif self.filter_value is None:
             self.logger.info("No filter_value parameter found.")
             self.filter = False
-        elif not (hasattr(self.parameters, 'filter_action')):
+        elif self.filter_action is None:
             self.logger.info("No filter_action parameter found.")
             self.filter = False
-        elif hasattr(self.parameters, 'filter_action') and not \
-            (self.parameters.filter_action == "drop" or
-             self.parameters.filter_action == "keep"):
+        elif self.filter_action is not None and not \
+            (self.filter_action == "drop" or
+             self.filter_action == "keep"):
             self.logger.info("Filter_action parameter definition unknown.")
             self.filter = False
 
         self.regex = False
-        if hasattr(self.parameters, 'filter_regex') and self.parameters.filter_regex:
-            self.regex = re.compile(self.parameters.filter_value)
+        if self.filter_regex is not None:
+            self.regex = re.compile(self.filter_value)
 
         self.time_filter = self.not_after is not None or self.not_before is not None
 
@@ -95,9 +103,9 @@ class FilterExpertBot(Bot):
                     return
 
         # key/value based filtering
-        if self.filter and self.parameters.filter_action == "drop":
-            if self.doFilter(event, self.parameters.filter_key,
-                             self.parameters.filter_value):
+        if self.filter and self.filter_action == "drop":
+            if self.doFilter(event, self.filter_key,
+                             self.filter_value):
                 # action == drop, filter matches
                 self.send_message(event, path='action_other',
                                   path_permissive=True)
@@ -113,9 +121,9 @@ class FilterExpertBot(Bot):
                 self.acknowledge_message()
                 return
 
-        if self.filter and self.parameters.filter_action == "keep":
-            if self.doFilter(event, self.parameters.filter_key,
-                             self.parameters.filter_value):
+        if self.filter and self.filter_action == "keep":
+            if self.doFilter(event, self.filter_key,
+                             self.filter_value):
                 # action == keep, filter matches
                 self.send_message(event, path='filter_match',
                                   path_permissive=True)

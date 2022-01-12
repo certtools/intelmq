@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Collecting from a (remote) AMQP Server and fetching either intelmq or any other messages.
@@ -17,9 +21,19 @@ except ImportError:
 
 class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
     """
+    Collect data from an AMQP Server and fetch either intelmq or any other messages. Requires the pika python library.
     Inheriting from AMQPTopicOutputBot for connect_server method
     """
-    exchange = False
+    connection_attempts: int = 3
+    connection_heartbeat: int = 3600
+    connection_host: str = "127.0.0.1"  # TODO should be ipaddress
+    connection_port: int = 5672
+    connection_vhost: str = None
+    expect_intelmq_message: bool = False
+    password: str = None
+    queue_name: str = None
+    use_ssl: bool = False
+    username: str = None
 
     def init(self):
         if pika is None:
@@ -34,28 +48,21 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
                                          installed=pika.__version__)
 
         self.kwargs = {}
-        self.kwargs['heartbeat'] = self.parameters.connection_heartbeat
+        self.kwargs['heartbeat'] = self.connection_heartbeat
 
-        self.connection_host = self.parameters.connection_host
-        self.connection_port = self.parameters.connection_port
-        self.connection_vhost = self.parameters.connection_vhost
-        if self.parameters.username and self.parameters.password:
-            self.kwargs['credentials'] = pika.PlainCredentials(self.parameters.username,
-                                                               self.parameters.password)
+        if self.username and self.password:
+            self.kwargs['credentials'] = pika.PlainCredentials(self.username,
+                                                               self.password)
 
-        if getattr(self.parameters, 'use_ssl', False):
+        if self.use_ssl:
             self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.create_default_context(ssl.Purpose.CLIENT_AUTH))
 
         self.connection_parameters = pika.ConnectionParameters(
             host=self.connection_host,
             port=self.connection_port,
             virtual_host=self.connection_vhost,
-            connection_attempts=self.parameters.connection_attempts,
+            connection_attempts=self.connection_attempts,
             **self.kwargs)
-
-        self.queue_name = self.parameters.queue_name
-        self.expect_intelmq_message = getattr(self.parameters, 'expect_intelmq_message',
-                                              False)
 
         self.connect_server()
 

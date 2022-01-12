@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -18,7 +22,7 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer IPv6 Sinkhole HTTP Drone",
                   "extra.file_name": "2019-01-01-sinkhole6_http-test-geo.csv",
                   }
 EVENTS = [{'__type': 'Event',
-           'classification.taxonomy': 'malicious code',
+           'classification.taxonomy': 'malicious-code',
            'classification.type': 'infected-system',
            'destination.asn': 64511,
            'destination.fqdn': '198-51-100-38.example.net',
@@ -37,7 +41,7 @@ EVENTS = [{'__type': 'Event',
            'source.port': 36738,
            'time.source': '2018-04-08T09:17:36+00:00'},
           {'__type': 'Event',
-           'classification.taxonomy': 'malicious code',
+           'classification.taxonomy': 'malicious-code',
            'classification.type': 'infected-system',
            'destination.asn': 64511,
            'destination.fqdn': '198-51-100-38.example.net',
@@ -57,7 +61,7 @@ EVENTS = [{'__type': 'Event',
            'source.port': 33306,
            'time.source': '2018-04-08T15:03:03+00:00'},
           {'__type': 'Event',
-           'classification.taxonomy': 'malicious code',
+           'classification.taxonomy': 'malicious-code',
            'classification.type': 'infected-system',
            'destination.asn': 64511,
            'destination.fqdn': '198-51-100-38.example.net',

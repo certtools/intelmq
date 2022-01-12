@@ -1,21 +1,18 @@
-Description: Fix paths in logroate config to match obey FHS
-Author: Gernot Schulz <gernot@intevation.de>, Seastian Wagner <wagner@cert.at>
-Last-Update: 2020-03-17
+Description: Fix paths in logrotate configuration to obey FHS
+Author: Gernot Schulz <gernot@intevation.de>, Sebastian Wagner <wagner@cert.at>
+Last-Update: 2021-09-14
 ---
 This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
---- a/contrib/logrotate/intelmq	2019-05-14 12:28:51.834183000 +0200
-+++ b/contrib/logrotate/intelmq	2020-03-17 11:40:48.391615177 +0100
-@@ -3,7 +3,7 @@
- copytruncate
- create 640 intelmq intelmq
- 
+--- a/contrib/logrotate/intelmq
++++ b/contrib/logrotate/intelmq
+@@ -1,4 +1,4 @@
 -/opt/intelmq/var/log/*.log {
 +/var/log/intelmq/*.log {
      su intelmq intelmq
      daily
      maxsize 10M
-@@ -11,11 +11,11 @@
-     notifempty
+@@ -9,11 +9,11 @@
+     create 644 intelmq intelmq
      sharedscripts
      postrotate
 -        sudo -u intelmq /usr/local/bin/intelmqctl --quiet reload
@@ -28,8 +25,8 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
      su intelmq intelmq
      daily
      maxsize 10M
-@@ -23,6 +23,6 @@
-     notifempty
+@@ -24,6 +24,6 @@
+     create 644 intelmq intelmq
      sharedscripts
      postrotate
 -        sudo -u intelmq /usr/local/bin/intelmqctl --quiet reload file-output

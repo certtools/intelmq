@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2019 Tomas Bellus
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 import json
 import os
@@ -25,7 +27,7 @@ EXAMPLE_STRANGEREALINTEL_EVENT = {
     "feed.name": "Strangereal Intel DailyIOC",
     "time.observation": "2019-03-01T01:01:01+00:00",
     "classification.taxonomy": "other",
-    "classification.type": "unknown",
+    "classification.type": "malware",
     "__type": "Event"
 }
 
@@ -72,7 +74,7 @@ class TestGithubFeedParserBot(test.BotTestCase, unittest.TestCase):
         sha256_event = EXAMPLE_STRANGEREALINTEL_EVENT.copy()
         sha256_event['malware.hash.sha256'] = EXAMPLE_STRANGERINTEL_FILE_JSON[0]['Indicator']
         sha256_event['event_description.text'] = EXAMPLE_STRANGERINTEL_FILE_JSON[0]['Description']
-        sha256_event['classification.taxonomy'] = 'malicious code'
+        sha256_event['classification.taxonomy'] = 'other'
         sha256_event['classification.type'] = 'malware'
         sha256_event['raw'] = utils.base64_encode(str(EXAMPLE_STRANGERINTEL_FILE_JSON[0]))
         self.assertMessageEqual(0, sha256_event)
@@ -80,7 +82,7 @@ class TestGithubFeedParserBot(test.BotTestCase, unittest.TestCase):
         md5_event = EXAMPLE_STRANGEREALINTEL_EVENT.copy()
         md5_event['malware.hash.md5'] = EXAMPLE_STRANGERINTEL_FILE_JSON[1]['Indicator']
         md5_event['event_description.text'] = EXAMPLE_STRANGERINTEL_FILE_JSON[1]['Description']
-        md5_event['classification.taxonomy'] = 'malicious code'
+        md5_event['classification.taxonomy'] = 'other'
         md5_event['classification.type'] = 'malware'
         md5_event['raw'] = utils.base64_encode(str(EXAMPLE_STRANGERINTEL_FILE_JSON[1]))
         self.assertMessageEqual(1, md5_event)

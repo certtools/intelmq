@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 Generates a SQL command file with commands to create the events table.
@@ -37,7 +41,7 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
         if value['type'] in ('String', 'Base64', 'URL', 'FQDN',
                              'MalwareName', 'ClassificationType',
                              'LowercaseString', 'UppercaseString', 'Registry',
-                             'TLP',
+                             'TLP', 'ClassificationTaxonomy',
                              ):
             if 'length' in value:
                 dbtype = 'varchar({})'.format(value['length'])

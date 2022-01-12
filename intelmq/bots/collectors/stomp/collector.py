@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2017 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 import os.path
 
@@ -35,9 +39,9 @@ else:
             report = self.stompbot.new_report()
             report.add("raw", message.rstrip())
             report.add("feed.url", "stomp://" +
-                       self.stompbot.parameters.server +
-                       ":" + str(self.stompbot.parameters.port) +
-                       "/" + self.stompbot.parameters.exchange)
+                       self.stompbot.server +
+                       ":" + str(self.stompbot.port) +
+                       "/" + self.stompbot.exchange)
             self.stompbot.send_message(report)
 
         def on_disconnected(self):
@@ -55,10 +59,18 @@ def connect_and_subscribe(conn, logger, destination, start=False):
 
 
 class StompCollectorBot(CollectorBot):
+    """Collect data from a STOMP Interface"""
     """ main class for the STOMP protocol collector """
+    exchange: str = ''
+    port: int = 61614
+    server: str = "n6stream.cert.pl"
+    ssl_ca_certificate: str = 'ca.pem'  # TODO pathlib.Path
+    ssl_client_certificate: str = 'client.pem'  # TODO pathlib.Path
+    ssl_client_certificate_key: str = 'client.key'  # TODO pathlib.Path
+    heartbeat: int = 6000
 
-    collector_empty_process = True
-    conn = False  # define here so shutdown method can check for it
+    _collector_empty_process: bool = True
+    __conn = False  # define here so shutdown method can check for it
 
     def init(self):
         if stomp is None:
@@ -67,19 +79,9 @@ class StompCollectorBot(CollectorBot):
             raise MissingDependencyError("stomp", version="4.1.8",
                                          installed=stomp.__version__)
 
-        self.server = getattr(self.parameters, 'server', 'n6stream.cert.pl')
-        self.port = getattr(self.parameters, 'port', 61614)
-        self.exchange = getattr(self.parameters, 'exchange', '')
-        self.heartbeat = getattr(self.parameters, 'heartbeat', 60000)
-        self.ssl_ca_cert = getattr(self.parameters, 'ssl_ca_certificate',
-                                   'ca.pem')
-        self.ssl_cl_cert = getattr(self.parameters, 'ssl_client_certificate',
-                                   'client.pem')
-        self.ssl_cl_cert_key = getattr(self.parameters,
-                                       'ssl_client_certificate_key',
-                                       'client.key')
-        self.http_verify_cert = getattr(self.parameters,
-                                        'http_verify_cert', True)
+        self.ssl_ca_cert = self.ssl_ca_certificate
+        self.ssl_cl_cert = self.ssl_client_certificate
+        self.ssl_cl_cert_key = self.ssl_client_certificate_key
 
         # check if certificates exist
         for f in [self.ssl_ca_cert, self.ssl_cl_cert, self.ssl_cl_cert_key]:
@@ -87,22 +89,22 @@ class StompCollectorBot(CollectorBot):
                 raise ValueError("Could not open file %r." % f)
 
         _host = [(self.server, self.port)]
-        self.conn = stomp.Connection(host_and_ports=_host, use_ssl=True,
-                                     ssl_key_file=self.ssl_cl_cert_key,
-                                     ssl_cert_file=self.ssl_cl_cert,
-                                     ssl_ca_certs=self.ssl_ca_cert,
-                                     heartbeats=(self.heartbeat,
-                                                 self.heartbeat))
+        self.__conn = stomp.Connection(host_and_ports=_host, use_ssl=True,
+                                       ssl_key_file=self.ssl_cl_cert_key,
+                                       ssl_cert_file=self.ssl_cl_cert,
+                                       ssl_ca_certs=self.ssl_ca_cert,
+                                       heartbeats=(self.heartbeat,
+                                                   self.heartbeat))
 
-        self.conn.set_listener('', StompListener(self, self.conn, self.exchange))
-        connect_and_subscribe(self.conn, self.logger, self.exchange,
+        self.__conn.set_listener('', StompListener(self, self.__conn, self.exchange))
+        connect_and_subscribe(self.__conn, self.logger, self.exchange,
                               start=stomp.__version__ < (4, 1, 20))
 
     def shutdown(self):
-        if not stomp or not self.conn:
+        if not stomp or not self.__conn:
             return
         try:
-            self.conn.disconnect()
+            self.__conn.disconnect()
         except stomp.exception.NotConnectedException:
             pass
 

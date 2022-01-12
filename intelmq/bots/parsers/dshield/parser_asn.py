@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2015 National CyberSecurity Center
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 """
 # created: Tue, 22 Dec 2015 12:19:03 +0000#
@@ -14,10 +18,11 @@
 """
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class DShieldASNParserBot(Bot):
+class DShieldASNParserBot(ParserBot):
+    """Parse the DShield AS"""
 
     def process(self):
         report = self.receive_message()

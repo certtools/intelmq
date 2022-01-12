@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 from collections import OrderedDict
 from datetime import datetime
 from xml.etree import ElementTree
@@ -69,6 +73,7 @@ VIRUS = OrderedDict([
 
 
 class CleanMXParserBot(ParserBot):
+    """Parse the CleanMX feeds"""
 
     def get_mapping_and_type(self, url):
 
@@ -76,7 +81,7 @@ class CleanMXParserBot(ParserBot):
             return PHISHING, 'phishing'
 
         elif 'xmlviruses' in url:
-            return VIRUS, 'malware'
+            return VIRUS, 'malware-distribution'
 
         else:
             raise ValueError('Unknown report.')

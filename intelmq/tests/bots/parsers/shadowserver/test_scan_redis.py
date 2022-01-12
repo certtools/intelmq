@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -21,7 +25,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open Redis',
            "classification.identifier": "open-redis",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.build_id": "26069fb482f6334b",
            "extra.connected_clients": "50",
            "extra.gcc_version": "4.7.2",
@@ -53,7 +57,7 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'Open Redis',
            "classification.identifier": "open-redis",
            "classification.taxonomy": "vulnerable",
-           "classification.type": "vulnerable service",
+           "classification.type": "vulnerable-system",
            "extra.build_id": "e41bf84a0cecf09d",
            "extra.connected_clients": "25376",
            "extra.gcc_version": "4.8.4",
