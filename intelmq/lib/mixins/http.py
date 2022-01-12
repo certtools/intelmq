@@ -69,9 +69,9 @@ class HttpMixin:
             self.__auth = (self.http_username, self.http_password)
         self.__session.auth = self.__auth
         # headers settings
-        if self.http_header is not None:
+        if not self.http_header:
             self.__session.headers.update(self.http_header)
-        elif self.http_user_agent is not None:
+        if self.http_user_agent:
             self.__session.headers.update({"User-Agent": self.http_user_agent})
 
         # proxy settings
