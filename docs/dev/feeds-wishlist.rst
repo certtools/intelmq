@@ -33,6 +33,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
   - `apivoid IP Reputation API <https://www.apivoid.com/api/ip-reputation/>`_
   - `Anomali Limo Free Intel Feed <https://www.anomali.com/resources/limo>`_
   - `APWG's ecrimex <https://www.ecrimex.net>`_
+  - `Avast Threat Intel IoCs of dark matter repository <https://github.com/avast/ioc>`_
   - `Berkeley <https://security.berkeley.edu/aggressive_ips/ips>`_
   - `Binary Defense <https://www.binarydefense.com/>`_
   - `Bot Invaders Realtime tracker <http://www.marc-blanchard.com/BotInvaders/index.php>`_
