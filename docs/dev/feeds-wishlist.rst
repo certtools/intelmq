@@ -76,6 +76,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
   - `Marc Blanchard DGA Domains <http://www.marc-blanchard.com/BotInvaders/index.php>`_
   - `MaxMind Proxies <https://www.maxmind.com/en/anonymous_proxies>`_
   - `mIRC Servers <http://www.mirc.com/servers.ini>`_
+  - `MISP Warning Lists <https://github.com/MISP/misp-warninglists>`_
   - `Monzymerza <https://github.com/monzymerza/parthenon>`_
   - `Multiproxy <http://multiproxy.org/txt_all/proxy.txt>`_
   - `Neo23x0 signature-base <https://github.com/Neo23x0/signature-base/tree/master/iocs>`_
