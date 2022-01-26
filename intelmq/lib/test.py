@@ -46,7 +46,7 @@ BOT_CONFIG = {"destination_pipeline_broker": "pythonlist",
               }
 
 
-class Parameters:
+class Parameters(object):
     pass
 
 
@@ -63,7 +63,7 @@ def mocked_config(bot_id='test-bot', sysconfig={}, group=None, module=None):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
                                                     confname)
-            with open(fname) as fpconfig:
+            with open(fname, 'rt') as fpconfig:
                 return json.load(fpconfig)
         else:
             return utils.load_configuration(conf_file)
@@ -105,7 +105,7 @@ def skip_build_environment():
     return unittest.skipIf(os.getenv('USER') == 'abuild', 'Test disabled in Build Service.')
 
 
-class BotTestCase:
+class BotTestCase(object):
     """
     Provides common tests and assert methods for bot testing.
     """
@@ -199,11 +199,12 @@ class BotTestCase:
         """
         self.log_stream = io.StringIO()
 
-        src_name = f"{self.bot_id}-input"
+        src_name = "{}-input".format(self.bot_id)
         if not destination_queues:
-            destination_queues = {"_default": f"{self.bot_id}-output"}
+            destination_queues = {"_default": "{}-output".format(self.bot_id)}
         else:
-            destination_queues = {queue_name: f"{self.bot_id}-{queue_name.strip('_')}-output"
+            destination_queues = {queue_name: "%s-%s-output" % (self.bot_id,
+                                                                queue_name.strip('_'))
                                   for queue_name in destination_queues}
 
         config = BOT_CONFIG.copy()
@@ -282,7 +283,7 @@ class BotTestCase:
             self.assertNotEqual(check[0].upper(), 'ERROR',
                                 '%s.check returned the error %r.'
                                 '' % (self.bot_name, check[1]))
-        raise ValueError(f'checks is {checks!r}')
+        raise ValueError('checks is %r' % (checks, ))
 
     def run_bot(self, iterations: int = 1, error_on_pipeline: bool = False,
                 prepare=True, parameters={},
@@ -349,7 +350,7 @@ class BotTestCase:
 
         """ Test if bot log messages are correctly formatted. """
         self.assertLoglineMatches(0, "{} initialized with id {} and intelmq [0-9a-z.]* and python"
-                                     r" [0-9a-z.]{{5,8}}\+? \(.+?\)( \[GCC.*?\])?"
+                                     r" [0-9a-z.]{{5,8}}\+? \([a-zA-Z0-9,:. ]+\)( \[GCC\])?"
                                      r" as process [0-9]+\."
                                      "".format(self.bot_name,
                                                self.bot_id), "INFO")
@@ -423,7 +424,7 @@ class BotTestCase:
         for type_name, type_match in self.bot_types.items():
             try:
                 self.assertRegex(self.bot_name,
-                                 fr'\A[a-zA-Z0-9]+{type_match}\Z')
+                                 r'\A[a-zA-Z0-9]+{}\Z'.format(type_match))
             except AssertionError:
                 counter += 1
         if counter != len(self.bot_types) - 1:

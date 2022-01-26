@@ -1,0 +1,4 @@
+"timestamp","ip","asn","geo","md5","url","user_agent","host","method"
+"2022-01-10 00:01:13","23.196.47.89",20940,"US","37514b54e679a5313334e830ad780ec7","http://www.msftncsi.com/ncsi.txt","Microsoft NCSI","www.msftncsi.com","GET"
+"2022-01-10 00:01:28","72.21.81.240",15133,"US","37514b54e679a5313334e830ad780ec7","http://www.download.windowsupdate.com/msdownload/update/v3/static/trustedr/en/authrootstl.cab","Microsoft-CryptoAPI/6.1","www.download.windowsupdate.com","GET"
+"2022-01-10 00:08:24","23.56.4.57",20940,"US","e97ea2820c0d79f3f3ca241d4dcd1060","http://crl.microsoft.com/pki/crl/products/MicTimStaPCA_2010-07-01.crl","Microsoft-CryptoAPI/6.1","crl.microsoft.com","GET"
