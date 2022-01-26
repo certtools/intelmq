@@ -1,0 +1,2 @@
+"timestamp","ip","port","hostname","tag","response","asn","geo","region","city","naics","sic","sector"
+"2019-08-04 01:36:49","198.51.100.77",53413,,"netis_vulnerability","Login:",64511,"DE","BERLIN","BERLIN",0,0,"Information Technology"

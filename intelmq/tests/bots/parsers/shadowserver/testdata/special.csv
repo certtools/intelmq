@@ -1,0 +1,4 @@
+"timestamp","ip","port","protocol","asn","geo","region","city","hostname","naics","sector","tag","public_source","status","method"
+"2021-12-16 19:23:43","185.36.0.0",80,"tcp",48715,"IR","TEHRAN","TEHRAN",,,,"cve-2021-44228","alphastrike.io","vulnerable","dns"
+"2021-12-16 19:23:44","58.213.0.0",80,"tcp",134756,"CN","JIANGSU SHENG","NANJING",,517311,,"cve-2021-44228","alphastrike.io","vulnerable","dns"
+"2021-12-16 19:23:44","36.156.0.0",80,"tcp",56046,"CN","FUJIAN SHENG","FUZHOU",,517312,,"cve-2021-44228","alphastrike.io","vulnerable","dns"

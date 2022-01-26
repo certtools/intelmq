@@ -1,0 +1,4 @@
+"timestamp","protocol","src_ip","src_port","src_asn","src_geo","src_region","src_city","src_hostname","src_naics","src_sector","device_vendor","device_type","device_model","infection","family","tag","query_type","query","count"
+"2022-01-06 00:00:02","udp","217.110.0.0",29614,8220,"DE","HESSEN","FRANKFURT AM MAIN",,518210,"Communications, Service Provider, and Hosting Service",,,,"calypso","calypso","msexchange","A","YolkIsh.COM",1
+"2022-01-06 00:00:02","udp","209.66.0.0",46189,40934,"US","VIRGINIA","ASHBURN",,518210,,,,,"orcus","orcus","rat","A","verble.rocks",1
+"2022-01-06 00:00:02","udp","217.110.0.0",3590,8220,"DE","HESSEN","FRANKFURT AM MAIN",,518210,"Communications, Service Provider, and Hosting Service",,,,"calypso","calypso","msexchange","A","RAwFuNS.COM",1
