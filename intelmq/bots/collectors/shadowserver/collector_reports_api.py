@@ -5,6 +5,7 @@ SPDX-FileCopyrightText: 2020 Intelmq Team <intelmq-team@cert.at>
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
 from datetime import datetime, timedelta
+import json
 import hashlib
 import hmac
 import re
@@ -22,12 +23,14 @@ FILENAME_PATTERN = re.compile(r'\.csv$')
 
 class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
     """
-    Connects to the Shadowserver API, requests a list of all the reports for a specific country and processes the ones that are new
+    Connects to the Shadowserver API, requests a list of all the reports for an organization and processes the ones that are new
 
     Parameters:
         api_key (str): Your Shadowserver API key
         secret (str): Your Shadowserver API secret
-        country (str): The country you want to download reports for (i.e. 'austria')
+        country (str): DEPRECIATED The mailing list you want to download reports for (i.e. 'austria')
+        reports (list):
+            A list of strings or a comma-separated list of the mailing lists you want to process.
         types (list):
             A list of strings or a string of comma-separated values with the names of reporttypes you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
     """
@@ -36,6 +39,8 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
     api_key = None
     secret = None
     types = None
+    reports = None
+    report_list = []
     rate_limit: int = 86400
     redis_cache_db: int = 12
     redis_cache_host: str = "127.0.0.1"  # TODO: type could be ipadress
@@ -48,11 +53,12 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
             raise ValueError('No api_key provided.')
         if self.secret is None:
             raise ValueError('No secret provided.')
-        if self.country is None:
-            raise ValueError('No country provided.')
 
-        if isinstance(self.types, str):
-            self.types = self.types.split(',')
+        if isinstance(self.reports, str):
+            self.report_list = self.reports.split(',')
+
+        if self.country is not None and self.country not in self.report_list:
+            self.report_list.append(self.country)
 
         self.preamble = '{{ "apikey": "{}" '.format(self.api_key)
 
@@ -61,7 +67,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
 
     def _reports_list(self, date=None):
         """
-        Get a list of all the reports shadowserver has for a specific country
+        Get a list of all the reports shadowserver has for an organization
         via the reports/list endpoint. If a list of types is set in the
         parameters, we only process reports with those types.
         To be on the safe side regarding different calculations of timestamps,
@@ -76,8 +82,9 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
         dayafter = date + timedelta(1)
 
         data = self.preamble
-        data += ',"report": ["{}"] '.format(self.country)
         data += ',"date": "{}:{}" '.format(daybefore.isoformat(), dayafter.isoformat())
+        if len(self.report_list) > 0:
+            data += ',"reports": {}'.format(json.dumps(self.report_list))
         data += '}'
         self.logger.debug('Downloading report list with data: %s.', data)
 
