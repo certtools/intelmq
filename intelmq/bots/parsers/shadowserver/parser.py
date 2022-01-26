@@ -85,10 +85,6 @@ class ShadowserverParserBot(ParserBot):
 
         conf = self._sparser_config
 
-        # https://github.com/certtools/intelmq/issues/1271
-        if conf == config.drone and row.get('infection') == 'spam':
-            conf = config.drone_spam
-
         # we need to copy here...
         fields = copy.copy(self.csv_fieldnames)
         # We will use this variable later.
@@ -197,7 +193,7 @@ class ShadowserverParserBot(ParserBot):
         # Now add additional constant fields.
         event.update(conf.get('constant_fields', {}))
 
-        event.add('raw', self.recover_line())
+        event.add('raw', self.recover_line(row))
 
         # Add everything which could not be resolved to extra.
         for f in fields:

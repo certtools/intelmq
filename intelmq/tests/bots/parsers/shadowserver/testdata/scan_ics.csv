@@ -1,0 +1,4 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","sector","device_vendor","device_type","device_model","device_version","device_id","response_length","raw_response"
+2022-03-02 00:34:22,192.168.0.1,tcp,502,host1.example.net,modbus,64512,ZZ,REGION,CITY,0,0,Sector,Vendor 1,device_type,device_model,device_version,0,5,dGVzdDE=
+2022-03-02 00:34:22,192.168.0.2,tcp,502,host2.example.net,modbus,64513,ZZ,REGION,CITY,0,0,Sector,Vendor 2,device_type,device_model,device_version,0,5,dGVzdDI=
+2022-03-02 00:34:22,192.168.0.3,tcp,502,host3.example.net,modbus,64514,ZZ,REGION,CITY,0,0,Sector,Vendor 3,device_type,device_model,device_version,0,5,dGVzdDM=

@@ -1,0 +1,4 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","sector","device_vendor","device_type","device_model"
+"2022-01-10 00:01:42","88.84.0.0","tcp",10443,,"ssl,vpn",2116,"NO","TROMS OG FINNMARK","TROMVIK",517311,,,"Fortinet","firewall","FortiGate"
+"2022-01-10 00:01:42","170.231.0.0","tcp",10443,,"ssl,vpn",27843,"PE","METROPOLITANA DE LIMA","LIMA",,,,"Fortinet","firewall","FortiGate"
+"2022-01-10 00:01:42","96.60.0.0","tcp",10443,"96-60-66-218.example.com","ssl,vpn",4181,"US","WISCONSIN","MILWAUKEE",517311,,,"Fortinet","firewall","FortiGate"
