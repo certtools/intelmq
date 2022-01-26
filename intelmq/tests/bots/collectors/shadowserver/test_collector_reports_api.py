@@ -49,11 +49,11 @@ class TestShadowServerAPICollectorBot(test.BotTestCase, unittest.TestCase):
         self.assertEqual(str(exception), 'No secret provided.')
 
     def test_faulty_config_1(self, mocker):
-        parameters = {'api_key': RANDSTR, 'secret': RANDSTR}
+        parameters = {'secret': RANDSTR}
         with self.assertRaises(ValueError) as context:
             self.run_bot(iterations=1, parameters=parameters)
         exception = context.exception
-        self.assertEqual(str(exception), 'No country provided.')
+        self.assertEqual(str(exception), 'No api_key provided.')
 
     def test_empty_response(self, mocker):
         mocker.post('https://transform.shadowserver.org/api2/reports/list', text='{}')

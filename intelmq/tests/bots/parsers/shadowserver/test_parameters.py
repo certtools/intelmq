@@ -25,7 +25,7 @@ EXAMPLE_REPORT = {"raw": utils.base64_encode(EXAMPLE_FILE),
 EVENTS = [{
     '__type': 'Event',
     'feed.name': 'report feedname',
-    "classification.identifier": "dns-open-resolver",
+    "classification.identifier": "scan-dns",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable-system",
     "extra.dns_version": "dnsmasq-2.66",
@@ -70,7 +70,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(prepare=False)
         for i, EVENT in enumerate(EVENTS):
             event = EVENT.copy()
-            event['feed.name'] = 'DNS-Open-Resolvers'
+            event['feed.name'] = 'DNS Open Resolvers'
             self.assertMessageEqual(i, event)
 
 

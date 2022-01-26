@@ -1,4 +1,4 @@
-"timestamp","ip","protocol","port","hostname","sysdesc","sysname","asn","geo","region","city","version","naics","sic","sector"
+"timestamp","ip","protocol","port","hostname","sysdesc","sysname","asn","geo","region","city","version","naics","sic","sector","device_model","device_sector","device_type","device_vendor","device_version"
 "2014-03-16 03:45:50","129.113.21.93","udp",161,"doesnotexist.utpa.edu","Hardware: x86 Family 6 Model 8 Stepping 6 AT/AT COMPATIBLE - Software: Windows 2000 Version 5.0 (Build 2195 Uniprocessor Free)","ORSONKA",22864,"US","TEXAS","EDINBURG",2,0,0,
 "2014-03-16 03:45:51","79.2.242.16","udp",17080,"host16-242-dynamic.2-79-r.retail.telecomitalia.it","ADSL Modem","tc",3269,"IT","EMILIA-ROMAGNA","RAVENNA",2,0,0,
 "2014-03-16 03:45:51","95.109.21.127","udp",161,"ip6-127.skekraft.riksnet.se",,,34610,"SE","VASTERBOTTENS LAN","UMEA",2,0,0,
