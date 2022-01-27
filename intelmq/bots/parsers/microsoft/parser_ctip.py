@@ -67,7 +67,7 @@ import json
 
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.harmonization import DateTime
+from intelmq.lib.harmonization import DateTime, FQDN
 
 INTERFLOW = {"additionalmetadata": "extra.additionalmetadata",
              "description": "event_description.text",
@@ -291,6 +291,9 @@ class MicrosoftCTIPParserBot(ParserBot):
                 if payload_protocol:
                     # needs to overwrite a field previously parsed and written
                     event.add('protocol.application', payload_protocol, overwrite=True)  # "HTTP/1.1", save additionally
+            elif key == 'Payload.domain':
+                if not FQDN.is_valid(value):
+                    continue
             elif not value:
                 continue
             if AZURE[key] != '__IGNORE__':
