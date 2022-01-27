@@ -292,7 +292,8 @@ class MicrosoftCTIPParserBot(ParserBot):
                     # needs to overwrite a field previously parsed and written
                     event.add('protocol.application', payload_protocol, overwrite=True)  # "HTTP/1.1", save additionally
             elif key == 'Payload.domain':
-                if not FQDN.is_valid(value):
+                # Sometimes the destination address is also given as domain, ignore it here as we already save it as destination.ip (see https://github.com/certtools/intelmq/pull/2144)
+                if not FQDN.is_valid(value) and value == line.get('Payload.serverIp'):
                     continue
             elif not value:
                 continue
