@@ -41,6 +41,7 @@ EXAMPLE_OUTPUT3 = {"__type": "Event",
                   }
 
 
+@test.skip_exotic()
 class TestJinjaExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for JinjaExpertBot.
