@@ -33,7 +33,7 @@ class ASNLookupExpertBot(ExpertBot):
 
         try:
             self._database = pyasn.pyasn(self.database)
-        except IOError:
+        except OSError:
             self.logger.error("pyasn data file does not exist or could not be "
                               "accessed in %r.", self.database)
             self.logger.error("Read 'bots/experts/asn_lookup/README' and "
@@ -100,11 +100,11 @@ class ASNLookupExpertBot(ExpertBot):
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
         except KeyError as e:
-            sys.exit("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
+            sys.exit(f"Database update failed. Your configuration of {bot} is missing key {e}.")
 
         if not bots:
             if verbose:
-                print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
+                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf.")
             sys.exit(0)
 
         # we only need to import now. If there are no asn_lookup bots, this dependency does not need to be installed
@@ -145,11 +145,11 @@ class ASNLookupExpertBot(ExpertBot):
             response = session.get(url)
 
             if response.status_code != 200:
-                sys.exit("Database update failed. Server responded: {0}.\n"
-                         "URL: {1}".format(response.status_code, response.url))
+                sys.exit("Database update failed. Server responded: {}.\n"
+                         "URL: {}".format(response.status_code, response.url))
 
         except requests.exceptions.RequestException as e:
-            sys.exit("Database update failed. Connection Error: {0}".format(e))
+            sys.exit(f"Database update failed. Connection Error: {e}")
 
         with bz2.open(io.BytesIO(response.content)) as archive:
             if verbose:

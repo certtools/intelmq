@@ -46,7 +46,7 @@ BOT_CONFIG = {"destination_pipeline_broker": "pythonlist",
               }
 
 
-class Parameters(object):
+class Parameters:
     pass
 
 
@@ -63,7 +63,7 @@ def mocked_config(bot_id='test-bot', sysconfig={}, group=None, module=None):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
                                                     confname)
-            with open(fname, 'rt') as fpconfig:
+            with open(fname) as fpconfig:
                 return json.load(fpconfig)
         else:
             return utils.load_configuration(conf_file)
@@ -105,7 +105,7 @@ def skip_build_environment():
     return unittest.skipIf(os.getenv('USER') == 'abuild', 'Test disabled in Build Service.')
 
 
-class BotTestCase(object):
+class BotTestCase:
     """
     Provides common tests and assert methods for bot testing.
     """
@@ -199,12 +199,11 @@ class BotTestCase(object):
         """
         self.log_stream = io.StringIO()
 
-        src_name = "{}-input".format(self.bot_id)
+        src_name = f"{self.bot_id}-input"
         if not destination_queues:
-            destination_queues = {"_default": "{}-output".format(self.bot_id)}
+            destination_queues = {"_default": f"{self.bot_id}-output"}
         else:
-            destination_queues = {queue_name: "%s-%s-output" % (self.bot_id,
-                                                                queue_name.strip('_'))
+            destination_queues = {queue_name: f"{self.bot_id}-{queue_name.strip('_')}-output"
                                   for queue_name in destination_queues}
 
         config = BOT_CONFIG.copy()
@@ -283,7 +282,7 @@ class BotTestCase(object):
             self.assertNotEqual(check[0].upper(), 'ERROR',
                                 '%s.check returned the error %r.'
                                 '' % (self.bot_name, check[1]))
-        raise ValueError('checks is %r' % (checks, ))
+        raise ValueError(f'checks is {checks!r}')
 
     def run_bot(self, iterations: int = 1, error_on_pipeline: bool = False,
                 prepare=True, parameters={},
@@ -424,7 +423,7 @@ class BotTestCase(object):
         for type_name, type_match in self.bot_types.items():
             try:
                 self.assertRegex(self.bot_name,
-                                 r'\A[a-zA-Z0-9]+{}\Z'.format(type_match))
+                                 fr'\A[a-zA-Z0-9]+{type_match}\Z')
             except AssertionError:
                 counter += 1
         if counter != len(self.bot_types) - 1:

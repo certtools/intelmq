@@ -33,7 +33,7 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
     def init(self):
         super().init()
         if self.repository is not None:
-            self.__base_api_url = 'https://api.github.com/repos/{}/contents'.format(self.repository)
+            self.__base_api_url = f'https://api.github.com/repos/{self.repository}/contents'
         else:
             raise InvalidArgument('repository', expected='string')
 
@@ -82,7 +82,7 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
                     if field_name in github_file:
                         extracted_github_file_data['extra'][field_name] = github_file[field_name]
                     else:
-                        self.logger.warning("Field '{}' does not exist in the Github file data.".format(field_name))
+                        self.logger.warning(f"Field '{field_name}' does not exist in the Github file data.")
                 extracted_github_files.append(extracted_github_file_data)
 
         return extracted_github_files

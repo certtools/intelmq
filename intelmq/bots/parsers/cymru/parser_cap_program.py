@@ -90,7 +90,7 @@ class CymruCAPProgramParserBot(ParserBot):
             elif kind in ('destaddr', 'dstaddr'):
                 event['destination.ip'] = value
             else:
-                raise ValueError('Unknown value in comment %r for report %r.' % (kind, report_type))
+                raise ValueError(f'Unknown value in comment {kind!r} for report {report_type!r}.')
         if event_comment:
             event.add('event_description.text', ' '.join(event_comment))
 
@@ -255,10 +255,7 @@ class CymruCAPProgramParserBot(ParserBot):
         if bogus:
             span = bogus.span()
             groups = bogus.groups()
-            notes = '%shostname: %s; port: %s%s' % (notes[:span[0]],
-                                                    groups[0],
-                                                    groups[1],
-                                                    notes[span[1]:])
+            notes = f'{notes[:span[0]]}hostname: {groups[0]}; port: {groups[1]}{notes[span[1]:]}'
 
         comment_split = list(filter(lambda x: x, notes.split(';')))
         asninfo_split = asninfo.split(', ')
@@ -299,7 +296,7 @@ class CymruCAPProgramParserBot(ParserBot):
                             pass
                         else:
                             break
-                    raise ValueError('Unable to parse comment %r of category %r. Please report this.' % (comment, category))
+                    raise ValueError(f'Unable to parse comment {comment!r} of category {category!r}. Please report this.')
             key, value = comment.split(':', 1)
             key = key.strip()
             value = value.strip()
@@ -338,7 +335,7 @@ class CymruCAPProgramParserBot(ParserBot):
             elif key == 'additional_asns':
                 event['extra.source.asns'] = [event['source.asn']] + list(map(int, value.split(',')))
             else:
-                raise ValueError('Unknown key %r in comment of category %r. Please report this.' % (key, category))
+                raise ValueError(f'Unknown key {key!r} in comment of category {category!r}. Please report this.')
         for destination_port in destination_ports:
             ev = self.new_event(event)
             ev['destination.port'] = destination_port

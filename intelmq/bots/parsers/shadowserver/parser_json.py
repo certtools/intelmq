@@ -47,7 +47,7 @@ class ShadowserverJSONParserBot(ParserBot):
         filename_search = self.__is_filename_regex.search(report_name)
 
         if not filename_search:
-            raise ValueError("Report's 'extra.file_name' {!r} is not valid.".format(report_name))
+            raise ValueError(f"Report's 'extra.file_name' {report_name!r} is not valid.")
         report_name = filename_search.group(1)
 
         self.logger.debug("Detected report's file name: %s.", report_name)

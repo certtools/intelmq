@@ -26,7 +26,7 @@ VALID_MESSSAGE_TYPES = ('Event', 'Message', 'Report')
 HARMONIZATION_KEY_FORMAT = re.compile(r'^[a-z_][a-z_0-9]+(\.[a-z_0-9]+)*$')
 
 
-class MessageFactory(object):
+class MessageFactory:
     """
     unserialize: JSON encoded message to object
     serialize: object to JSON encoded object
@@ -275,7 +275,7 @@ class Message(dict):
                         continue
                 if key != 'extra' and extravalue in self._IGNORED_VALUES:
                     continue
-                super().__setitem__('{}.{}'.format(key, extrakey),
+                super().__setitem__(f'{key}.{extrakey}',
                                     extravalue)
         else:
             super().__setitem__(key, value)

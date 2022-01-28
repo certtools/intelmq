@@ -1,5 +1,5 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2021 Sebastian Wagner
+   SPDX-FileCopyrightText: 2015-2022 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -8,6 +8,8 @@ CHANGELOG
 
 3.1.0 (unreleased)
 ------------------
+
+- Upgraded syntax to Python 3.6 (mostly Format-Strings) using pyuprade (PR#2136 by Sebastian Wagner).
 
 ### Configuration
 

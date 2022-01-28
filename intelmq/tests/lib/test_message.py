@@ -583,7 +583,7 @@ class TestMessageFactory(unittest.TestCase):
         event_type = type(message.MessageFactory.from_dict(event,
                                                            harmonization=HARM))
         self.assertTrue(event_type is message.Event,
-                        msg='Type is {} instead of Event.'.format(event_type))
+                        msg=f'Type is {event_type} instead of Event.')
 
     def test_event_init_check(self):
         """ Test if initialization method checks fields. """

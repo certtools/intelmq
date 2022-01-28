@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Threshold value expert bot
 
 SPDX-FileCopyrightText: 2020 Linköping University <https://liu.se/>

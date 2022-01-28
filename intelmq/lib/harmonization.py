@@ -53,7 +53,7 @@ __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            ]
 
 
-class GenericType(object):
+class GenericType:
 
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
@@ -856,10 +856,10 @@ class IPAddress(String):
     def to_int(value: str) -> Optional[int]:
         try:
             ip_integer = socket.inet_pton(socket.AF_INET, value)
-        except socket.error:
+        except OSError:
             try:
                 ip_integer = socket.inet_pton(socket.AF_INET6, value)
-            except socket.error:
+            except OSError:
                 return None
 
         ip_integer = int(binascii.hexlify(ip_integer), 16)

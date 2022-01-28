@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Splunk saved search enrichment export bot
 
 SPDX-FileCopyrightText: 2020 Linköping University <https://liu.se/>
@@ -106,14 +105,14 @@ class SplunkSavedSearchBot(ExpertBot):
 
         self.set_request_parameters()
 
-        self.http_header.update({"Authorization": "Bearer {}".format(self.auth_token)})
+        self.http_header.update({"Authorization": f"Bearer {self.auth_token}"})
 
         self.session = utils.create_request_session(self)
         self.session.keep_alive = False
 
     def update_event(self, event, search_result):
         self.logger.info("Updating event: %s",
-                         dict([(field, search_result[field]) for field in self.result_fields]))
+                         {field: search_result[field] for field in self.result_fields})
         for result, field in self.result_fields.items():
             event.add(field, search_result[result], overwrite=self.overwrite)
 
@@ -128,11 +127,11 @@ class SplunkSavedSearchBot(ExpertBot):
                 return
 
         self.logger.debug("Received event, searching for %s",
-                          dict([(parameter, event[field]) for field, parameter in self.search_parameters.items()]))
+                          {parameter: event[field] for field, parameter in self.search_parameters.items()})
 
-        query = '|savedsearch "{saved_search}"'.format(saved_search=self.saved_search)
+        query = f'|savedsearch "{self.saved_search}"'
         for field, parameter in self.search_parameters.items():
-            query += ' "{parameter}"="{field}"'.format(parameter=parameter, field=event[field])
+            query += f' "{parameter}"="{event[field]}"'
         if "limit" in self.multiple_result_handling:
             query += " | head 1"
 

@@ -275,7 +275,7 @@ class MicrosoftCTIPParserBot(ParserBot):
                 del line[key]
             if isinstance(value, dict):
                 for subkey, subvalue in value.items():
-                    line['%s.%s' % (key, subkey)] = subvalue
+                    line[f'{key}.{subkey}'] = subvalue
                 del line[key]
         for key, value in line.items():
             if key == 'ThreatConfidence':
