@@ -350,7 +350,7 @@ class BotTestCase(object):
 
         """ Test if bot log messages are correctly formatted. """
         self.assertLoglineMatches(0, "{} initialized with id {} and intelmq [0-9a-z.]* and python"
-                                     r" [0-9a-z.]{{5,8}}\+? \([a-zA-Z0-9,:. ]+\)( \[GCC\])?"
+                                     r" [0-9a-z.]{{5,8}}\+? \(.+?\)( \[GCC.*?\])?"
                                      r" as process [0-9]+\."
                                      "".format(self.bot_name,
                                                self.bot_id), "INFO")
