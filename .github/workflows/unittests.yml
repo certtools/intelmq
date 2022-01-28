@@ -65,7 +65,7 @@ jobs:
       run: bash .github/workflows/scripts/setup-full.sh
 
     - name: Install test dependencies
-      run: pip install pytest-cov Cerberus requests_mock coverage codecov
+      run: pip install pytest-cov Cerberus requests_mock coverage
 
     - name: Install dependencies
       if: ${{ matrix.type == 'basic' }}
@@ -81,4 +81,6 @@ jobs:
 
     - name: Run codecov
       if: ${{ matrix.type == 'full' }}
-      run: codecov
+      uses: codecov/codecov-action@v2
+      with:
+        fail_ci_if_error: true
