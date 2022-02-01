@@ -22,7 +22,7 @@ class MyHTMLParser(HTMLParser):
 
 
 parser = MyHTMLParser()
-remove_comments = re.compile(r"<!--(.|\s|\n)*?-->")
+remove_comments = re.compile(r"<!--.*?-->", re.DOTALL)
 
 
 class SucuriParserBot(ParserBot):
