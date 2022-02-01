@@ -142,13 +142,13 @@ Run the tests
 All changes have to be tested and new contributions should be accompanied by according unit tests.
 Please do not run the tests as root just like any other IntelMQ component for security reasons. Any other unprivileged user is possible.
 
-You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
+You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `pytest`:
 
 .. code-block:: bash
 
    cd /opt/dev_intelmq
    sudo -u intelmq python3 -m unittest {discover|filename}  # or
-   sudo -u intelmq nosetests3 [filename]  # alternatively nosetests or nosetests-3.8 depending on your installation, or
+   sudo -u intelmq pytest [filename]
    sudo -u intelmq python3 setup.py test  # uses a build environment (no external dependencies)
 
 Some bots need local databases to succeed. If you only want to test one explicit test file, give the file path as argument.
@@ -160,7 +160,7 @@ Environment variables
 
 There are a bunch of environment variables which switch on/off some tests:
 
-* `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default. Set this environment variable to 1 to test those bots. These tests need preparation, e.g. running databases with users and certain passwords etc. Have a look at the `.github/workflows/nosetests.yml` and the corresponding `.github/workflows/scripts/setup-full.sh` in IntelMQ's repository for steps to set databases up.
+* `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default. Set this environment variable to 1 to test those bots. These tests need preparation, e.g. running databases with users and certain passwords etc. Have a look at the `.github/workflows/unittests.yml` and the corresponding `.github/workflows/scripts/setup-full.sh` in IntelMQ's repository for steps to set databases up.
 * `INTELMQ_SKIP_INTERNET`: tests requiring internet connection will be skipped if this is set to 1.
 * `INTELMQ_SKIP_REDIS`: redis-related tests are ran by default, set this to 1 to skip those.
 * `INTELMQ_TEST_EXOTIC`: some bots and tests require libraries which may not be available, those are skipped by default. To run them, set this to 1.
@@ -171,7 +171,7 @@ For example, to run all tests you can use:
 
 .. code-block:: bash
 
-   INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_EXOTIC=1 nosetests3
+   INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_EXOTIC=1 pytest intelmq/tests/
 
 Configuration test files
 ------------------------
