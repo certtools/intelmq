@@ -222,6 +222,7 @@ def force_base64(value: Optional[str]) -> Optional[str]:
     else:
         return value
 
+
 def scan_exchange_taxonomy(field):
     if field == 'exchange;webshell':
         return 'intrusions'
@@ -240,7 +241,7 @@ def scan_exchange_identifier(field):
     return 'vulnerable-exchange-server'
 
 
-## BEGIN CONFGEN
+# BEGIN CONFGEN
 
 blocklist = {
     'required_fields': [
@@ -3168,7 +3169,7 @@ mapping = (
     ('Spam URL', 'spam_url', spam_url),
     ('Special', 'special', special),
 )
-## END CONFGEN
+# END CONFGEN
 
 feedname_mapping = {feedname: function for feedname, filename, function in mapping}
 filename_mapping = {filename: (feedname, function) for feedname, filename, function in mapping}
