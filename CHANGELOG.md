@@ -29,6 +29,8 @@ CHANGELOG
   The `LogLevel` and `ReturnType` Enums were added to `intelmq.lib.datatypes`.
 - `intelmq.lib.bot`:
   - Enhance behaviour if an unconfigured bot is started (PR#2054 by Sebastian Wagner).
+- `intelmq.lib.pipeline`:
+  - Changed `BRPOPLPUSH` to `BLMOVE`, because `BRPOPLPUSH` has been marked as deprecated by redis in favor of `BLMOVE` (PR#2149 by Sebastian Waldbauer, fixes #1827)
 
 ### Development
 
