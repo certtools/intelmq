@@ -1,0 +1,4 @@
+"timestamp","ip","port","protocol","asn","geo","region","city","hostname","naics","sector","tag","public_source","status","method"
+"2021-12-13 13:58:00",198.51.100.147,80,tcp,41881,IR,TEHRAN,TEHRAN,,,,cve-2021-44228,alphastrike.io,vulnerable,dns
+"2021-12-13 13:58:00",198.51.100.147,443,tcp,14618,US,VIRGINIA,ASHBURN,198-51-100-147.example.net,454110,"Retail Trade",cve-2021-44228,alphastrike.io,vulnerable,dns
+"2021-12-13 13:58:00",198.51.100.147,8080,tcp,14618,US,VIRGINIA,ASHBURN,198-51-100-147.example.net,454110,"Retail Trade",cve-2021-44228,alphastrike.io,vulnerable,dns

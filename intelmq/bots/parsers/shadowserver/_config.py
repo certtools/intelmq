@@ -2970,6 +2970,33 @@ device_id = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-log4j-servers-special-report/
+vulnerable_log4shell = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('extra.', 'status', validate_to_none),
+        ('extra.', 'method', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'log4shell',
+    }
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -3059,6 +3086,7 @@ mapping = (
     ('Vulnerable-HTTP', 'scan_http_vulnerable', accessible_vulnerable_http),
     ('Vulnerable-Exchange-Server', 'scan_exchange', scan_exchange),
     ('Vulnerable-SMTP', 'scan_smtp_vulnerable', vulnerable_smtp),
+    ('Vulnerable-Log4J', 'scan_log4shell_vulnerable', vulnerable_log4shell),
 )
 
 feedname_mapping = {feedname: function for feedname, filename, function in mapping}

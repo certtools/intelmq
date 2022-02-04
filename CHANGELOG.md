@@ -69,6 +69,7 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver._config`:
   - Added support for `Accessible AMQP`, `Device Identification Report` (IPv4 and IPv6) (PR#2134 by Mateo Durante).
   - Added file name mapping for `SSL-POODLE-Vulnerable-Servers IPv6` (file name `scan6_ssl_poodle`) (PR#2134 by Mateo Durante).
+  - Added support for `Vulnerable Log4J` (PR#2152 by Sebastian Waldbauer)
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).
