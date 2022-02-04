@@ -14,17 +14,14 @@ PARAMETERS:
     'regex': file regex (DEFAULT = '*.json')
 """
 import re
+from requests import exceptions
 
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.bots.collectors.github_api._collector_github_api import GithubAPICollectorBot
-
-try:
-    import requests
-except ImportError:
-    requests = None
+from intelmq.lib.mixins import HttpMixin
 
 
-class GithubContentsAPICollectorBot(GithubAPICollectorBot):
+class GithubContentsAPICollectorBot(GithubAPICollectorBot, HttpMixin):
     "Collect files from a GitHub repository via the API. Optionally with GitHub credentials."
     regex: str = None  # TODO: could be re
     repository: str = None
@@ -62,7 +59,7 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
                 if item['extra'] != {}:
                     report.add('extra.file_metadata', item['extra'])
                 self.send_message(report)
-        except requests.RequestException as e:
+        except exceptions.RequestException as e:
             raise ConnectionError(e)
 
     def __recurse_repository_files(self, base_api_url: str, extracted_github_files: list = None) -> list:
@@ -75,7 +72,7 @@ class GithubContentsAPICollectorBot(GithubAPICollectorBot):
             elif github_file['type'] == 'file' and bool(re.search(self.regex, github_file['name'])):
                 extracted_github_file_data = {
                     'download_url': github_file['download_url'],
-                    'content': requests.get(github_file['download_url']).content,
+                    'content': self.http_get(github_file['download_url']).content,
                     'extra': {}
                 }
                 for field_name in self.__extra_fields:

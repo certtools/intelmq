@@ -4,18 +4,13 @@
 
 # -*- coding: utf-8 -*-
 from typing import Iterable
+from requests import exceptions
 
-try:
-    import requests
-except ImportError:
-    requests = None
-
-import intelmq.lib.utils as utils
+from intelmq.lib.mixins.http import HttpMixin
 from intelmq.lib.bot import OutputBot
-from intelmq.lib.exceptions import MissingDependencyError
 
 
-class RestAPIOutputBot(OutputBot):
+class RestAPIOutputBot(OutputBot, HttpMixin):
     """Send events to a REST API listener through HTTP POST"""
     auth_token_name: str = None
     auth_token: str = None
@@ -27,10 +22,7 @@ class RestAPIOutputBot(OutputBot):
     _auth: Iterable[str] = None
 
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
-
-        self.set_request_parameters()
+        self.session = self.http_session()
 
         if self.auth_token_name and self.auth_token:
             if self.auth_type == 'http_header':
@@ -40,8 +32,6 @@ class RestAPIOutputBot(OutputBot):
                 self.auth = self.auth_token_name, self.auth_token
         self.http_header.update({"Content-Type":
                                  "application/json; charset=utf-8"})
-
-        self.session = utils.create_request_session(self)
         self.session.keep_alive = False
 
     def process(self):
@@ -58,7 +48,7 @@ class RestAPIOutputBot(OutputBot):
                 req = self.session.post(self.host,
                                         timeout=self.http_timeout_sec,
                                         **kwargs)
-            except requests.exceptions.Timeout:
+            except exceptions.Timeout:
                 timeoutretries += 1
 
         if req is None and timeoutretries >= self.http_timeout_max_tries:

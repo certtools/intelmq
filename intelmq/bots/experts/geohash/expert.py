@@ -9,6 +9,7 @@ https://pypi.org/project/geolib/
 https://github.com/joyanujoy/geolib
 '''
 from intelmq.lib.bot import ExpertBot
+from intelmq.lib.exceptions import MissingDependencyError
 
 try:
     from geolib import geohash
@@ -23,7 +24,7 @@ class GeohashExpertBot(ExpertBot):
 
     def init(self):
         if not geohash:
-            raise ValueError("Library 'geolib' is required, please install it.")
+            raise MissingDependencyError("geolib")
 
     def process(self):
         event = self.receive_message()

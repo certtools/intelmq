@@ -22,6 +22,7 @@ def request_callback(expected):
     return callback
 
 
+@requests_mock.Mocker()
 class TestRestAPIOutputBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod
@@ -36,26 +37,24 @@ class TestRestAPIOutputBot(test.BotTestCase, unittest.TestCase):
         cls.default_input_message = {'__type': 'Event',
                                      'source.ip': '10.0.0.1'}
 
-    @requests_mock.Mocker()
     def test_event(self, mocker):
         """
         Test if data is posted correctly to webserver.
         """
         mocker.post('http://localhost/',
                     text=request_callback({'source': {'ip': '10.0.0.1'}}),
-                    request_headers={'Authorization': 'Basic dXNlcm5hbWU6cGFzc3dvcmQ=',
-                                     'Content-Type': 'application/json; charset=utf-8'})
+                    headers={'Authorization': 'Basic dXNlcm5hbWU6cGFzc3dvcmQ=',
+                             'Content-Type': 'application/json; charset=utf-8'})
         self.run_bot()
 
-    @requests_mock.Mocker()
     def test_status_check(self, mocker):
         """
         Test if response from webserver is correctly validated.
         """
         mocker.post('http://localhost/',
-                    status_code=500,
-                    request_headers={'Authorization': 'Basic dXNlcm5hbWU6cGFzc3dvcmQ=',
-                                     'Content-Type': 'application/json; charset=utf-8'})
+                     status_code=500,
+                     headers={'Authorization': 'Basic dXNlcm5hbWU6cGFzc3dvcmQ=',
+                              'Content-Type': 'application/json; charset=utf-8'})
         self.run_bot(allowed_error_count=1)
         self.assertLogMatches('requests.exceptions.HTTPError: 500 Server Error: None for url: http://localhost/',
                               'ERROR')

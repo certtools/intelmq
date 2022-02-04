@@ -7,10 +7,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 from typing import List
 
 from intelmq.lib.bot import ExpertBot
-from intelmq.lib.utils import create_request_session
+from intelmq.lib.mixins import HttpMixin
 
 
-class HttpContentExpertBot(ExpertBot):
+class HttpContentExpertBot(ExpertBot, HttpMixin):
     """
     Test if a given string is part of the content for a given URL
 
@@ -29,8 +29,7 @@ class HttpContentExpertBot(ExpertBot):
     __session = None
 
     def init(self):
-        self.set_request_parameters()
-        self.__session = create_request_session(self)
+        self.__session = self.http_session()
 
     def process(self):
         event = self.receive_message()

@@ -7,13 +7,10 @@
 GITHUB API Collector bot
 """
 import base64
+from requests import exceptions
 
 from intelmq.lib.bot import CollectorBot
-
-try:
-    import requests
-except ImportError:
-    requests = None
+from intelmq.lib.mixins import HttpMixin
 
 static_params = {
     'headers': {
@@ -22,14 +19,11 @@ static_params = {
 }
 
 
-class GithubAPICollectorBot(CollectorBot):
+class GithubAPICollectorBot(CollectorBot, HttpMixin):
     basic_auth_username = None
     basic_auth_password = None
 
     def init(self):
-        if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
-
         self.__user_headers = static_params['headers']
         if self.basic_auth_username is not None and self.basic_auth_password is not None:
             self.__user_headers.update(self.__produce_auth_header(self.basic_auth_username, self.basic_auth_password))
@@ -47,13 +41,13 @@ class GithubAPICollectorBot(CollectorBot):
 
     def github_api(self, api_path: str, **kwargs) -> dict:
         try:
-            response = requests.get(f"{api_path}", params=kwargs, headers=self.__user_headers)
+            response = self.http_get(api_path, headers=self.__user_headers, params=kwargs)
             if response.status_code == 401:
                 # bad credentials
                 raise ValueError(response.json()['message'])
             else:
                 return response.json()
-        except requests.RequestException:
+        except exceptions.RequestException:
             raise ValueError(f"Unknown repository {api_path!r}.")
 
     @staticmethod

@@ -7,12 +7,8 @@ Based on `create_request_session` in intelmq.lib.utils and
 `set_request_parameters` in intelmq.lib.bot.Bot
 """
 
-from intelmq.lib.exceptions import MissingDependencyError
-
-try:
-    import requests
-except ImportError:
-    requests = None
+import requests
+from typing import Optional
 
 
 class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
@@ -41,12 +37,12 @@ class HttpMixin:
     http_header: dict = {}
     http_user_agent: str = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
     http_verify_cert: bool = True
-    http_proxy = None
-    https_proxy = None
+    http_proxy: Optional[str] = None
+    https_proxy: Optional[str] = None
     http_timeout_max_tries: int = 3
     http_timeout_sec: int = 30
-    http_username = None
-    http_password = None
+    http_username: str = None
+    http_password: str = None
 
     def __init__(self, **kwargs):
         self.logger.debug("Running HTTP Mixin initialization.")
@@ -55,9 +51,6 @@ class HttpMixin:
 
     def setup(self):
         self.logger.debug("Setting up HTTP Mixin.")
-        if requests is None:
-            raise MissingDependencyError("requests")
-
         self.__session = requests.Session()
 
         # tls settings

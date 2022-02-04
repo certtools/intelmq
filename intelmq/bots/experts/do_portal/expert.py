@@ -8,27 +8,18 @@ As the frontend reverse-proxies the (backend) API
 a "502 Bad Gateway" status code is treated the same as a timeout,
 i.e. will be retried instead of a fail.
 """
-try:
-    import requests
-except ImportError:
-    requests = None
-
+from intelmq.lib.mixins import HttpMixin
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import ExpertBot
 
 
-class DoPortalExpertBot(ExpertBot):
+class DoPortalExpertBot(ExpertBot, HttpMixin):
     """Retrieve abuse contact information for the source IP address from a do-portal instance"""
     mode: str = "append"
     portal_api_key: str = None
     portal_url: str = None
 
     def init(self):
-        if requests is None:
-            raise ValueError("Library 'requests' could not be loaded. Please install it.")
-
-        self.set_request_parameters()
-
         self.url = self.portal_url + '/api/1.0/ripe/contact?cidr=%s'
         self.http_header.update({
             "Content-Type": "application/json",
@@ -36,12 +27,7 @@ class DoPortalExpertBot(ExpertBot):
             "API-Authorization": self.portal_api_key
         })
 
-        self.session = utils.create_request_session(self)
-        retries = requests.urllib3.Retry.from_int(self.http_timeout_max_tries)
-        retries.status_forcelist = [502]
-        adapter = requests.adapters.HTTPAdapter(max_retries=retries)
-        self.session.mount('http://', adapter)
-        self.session.mount('https://', adapter)
+        self.session = self.http_session()
 
     def process(self):
         event = self.receive_message()

@@ -20,30 +20,22 @@ Options:
 """
 
 from intelmq.lib.bot import ExpertBot
+from intelmq.lib.mixins import HttpMixin
 from intelmq.lib.utils import create_request_session
 from intelmq.lib.exceptions import MissingDependencyError
-
-try:
-    import requests
-except ImportError:
-    requests = None
 
 
 URL = 'https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl'
 
 
-class NationalCERTContactCertATExpertBot(ExpertBot):
+class NationalCERTContactCertATExpertBot(ExpertBot, HttpMixin):
     """Add country and abuse contact information from the CERT.at national CERT Contact Database. Set filter to true if you want to filter out events for Austria. Set overwrite_cc to true if you want to overwrite an existing country code value"""
     filter: bool = False
     http_verify_cert: bool = True
     overwrite_cc: bool = False
 
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
-
-        self.set_request_parameters()
-        self.session = create_request_session(self)
+        self.session = self.http_session()
 
     def process(self):
         event = self.receive_message()

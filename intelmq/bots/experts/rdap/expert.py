@@ -3,18 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
+import requests
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import create_request_session
-from intelmq.lib.exceptions import MissingDependencyError
-from intelmq.lib.mixins import CacheMixin
-
-try:
-    import requests
-except ImportError:
-    requests = None
+from intelmq.lib.mixins import CacheMixin, HttpMixin
 
 
-class RDAPExpertBot(ExpertBot, CacheMixin):
+class RDAPExpertBot(ExpertBot, CacheMixin, HttpMixin):
     """ Get RDAP data"""
     rdap_order: list = ['abuse', 'technical', 'administrative', 'registrant', 'registrar']
     rdap_bootstrapped_servers: dict = {}
@@ -30,11 +25,7 @@ class RDAPExpertBot(ExpertBot, CacheMixin):
     __session: requests.Session
 
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
-
-        self.set_request_parameters()
-        self.__session = create_request_session(self)
+        self.__session = self.http_session()
 
         # get overall rdap data from iana
         resp = self.__session.get('https://data.iana.org/rdap/dns.json')
@@ -73,7 +64,7 @@ class RDAPExpertBot(ExpertBot, CacheMixin):
             if result:
                 event.add('source.abuse_contact', result, overwrite=self.overwrite)
             else:
-                self.__session = create_request_session(self)
+                self.__session = self.http_session()
                 domain_parts = url.split('.')
                 domain_suffix = None
                 while domain_suffix is None:

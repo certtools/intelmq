@@ -19,6 +19,7 @@ from requests.exceptions import ChunkedEncodingError, ConnectionError
 from typing import List
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.mixins import HttpMixin
 
 try:
     import shodan
@@ -27,7 +28,7 @@ except ImportError:
     shodan = None
 
 
-class ShodanStreamCollectorBot(CollectorBot):
+class ShodanStreamCollectorBot(CollectorBot, HttpMixin):
     "Collect the Shodan stream from the Shodan API"
     api_key: str = "<INSERT your API key>"
     countries: List[str] = []
@@ -36,7 +37,7 @@ class ShodanStreamCollectorBot(CollectorBot):
         if shodan is None:
             raise ValueError("Library 'shodan' is needed but not installed.")
 
-        self.set_request_parameters()
+        self.setup()
         if tuple(int(v) for v in pkg_resources.get_distribution("shodan").version.split('.')) <= (1, 8, 1):
             if self.proxy:
                 raise ValueError('Proxies are given but shodan-python > 1.8.1 is needed for proxy support.')

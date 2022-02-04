@@ -6,10 +6,11 @@
 """
 Testing Github API Collectors
 """
+from cgitb import text
 import json
 import os
 from unittest import TestCase, main as unittest_main
-from unittest.mock import MagicMock, patch
+import requests_mock
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.test as test
@@ -78,24 +79,7 @@ SHOULD_FAIL_WITH_BAD_CREDENTIALS = {
 }
 
 
-def print_requests_get_parameters(url, *args, **kwargs):
-    if 'headers' in kwargs and kwargs['headers']['Accept'] == 'application/vnd.github.v3.text-match+json':
-        """
-        mocking of Github API requests
-        """
-        main_mock = MagicMock()
-        main_mock.return_value.json = MagicMock()
-        main_mock.return_value = RAW_CONTENTS
-        main_mock.json.return_value = JSON_CONTENTS
-        return main_mock
-    else:
-        """
-        mocking of basic GET request
-        """
-        main_mock = MagicMock(content=EXAMPLE_CONTENT_STR)
-        return main_mock
-
-
+@requests_mock.Mocker()
 class TestGithubContentsAPICollectorBot(test.BotTestCase, TestCase):
     """
     A TestCase for GithubContentsAPICollectorBot.
@@ -105,9 +89,9 @@ class TestGithubContentsAPICollectorBot(test.BotTestCase, TestCase):
     def set_bot(cls):
         cls.bot_reference = collector_github_contents_api.GithubContentsAPICollectorBot
 
-    @patch('intelmq.bots.collectors.github_api.collector_github_contents_api.requests.get')
-    def test_message_queue_should_contain_the_right_fields(self, requests_get_mock):
-        requests_get_mock.side_effect = print_requests_get_parameters
+    def test_message_queue_should_contain_the_right_fields(self, mocker):
+        mocker.get("https://api.github.com/repos/{0}/contents".format(SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST['CONFIG']['repository']), status_code=200, json=JSON_CONTENTS)
+        mocker.get("https://a_download.url/contents.txt", status_code=200, text=EXAMPLE_CONTENT_STR)
 
         self.run_bot(parameters=SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST['CONFIG'], prepare=True)
 
@@ -115,27 +99,23 @@ class TestGithubContentsAPICollectorBot(test.BotTestCase, TestCase):
         for i in range(len(self.get_output_queue())):
             self.assertMessageEqual(i, SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST['EXPECTED_REPORTS'][i])
 
-    @patch('intelmq.bots.collectors.github_api.collector_github_contents_api.requests.get')
-    def test_collector_should_fail_with_bad_repository_error(self, requests_get_mock):
-        import requests
-        requests_get_mock.side_effect = requests.RequestException()
+    def test_collector_should_fail_with_bad_repository_error(self, mocker):
+        mocker.get("https://api.github.com/repos/{0}/contents".format(SHOULD_FAIL_BECAUSE_REPOSITORY_IS_NOT_VALID_CONFIG['CONFIG']['repository']))
 
         self.allowed_error_count = 1  # allow only single and final Error to be raised
         self.run_bot(parameters=SHOULD_FAIL_BECAUSE_REPOSITORY_IS_NOT_VALID_CONFIG['CONFIG'], prepare=True)
         self.assertRegexpMatchesLog(pattern=".*Unknown repository.*")  # assert the expected ValueError msg
 
-    @patch('intelmq.bots.collectors.github_api.collector_github_contents_api.requests.get')
-    def test_collector_should_fail_with_bad_credentials(self, requests_get_mock):
-        requests_get_mock.return_value.json = MagicMock(return_value={'message': 'Bad Credentials'})
-        requests_get_mock.return_value.configure_mock(status_code=401)
+    def test_collector_should_fail_with_bad_credentials(self, mocker):
+        mocker.get("https://api.github.com/repos/{0}/contents".format(SHOULD_FAIL_WITH_BAD_CREDENTIALS['CONFIG']['repository']), status_code=401, json={'message': 'Bad Credentials'})
 
         self.allowed_error_count = 1
         self.run_bot(parameters=SHOULD_FAIL_WITH_BAD_CREDENTIALS['CONFIG'], prepare=True)
         self.assertRegexpMatchesLog(pattern=".*Bad Credentials.*")
 
-    @patch('intelmq.bots.collectors.github_api.collector_github_contents_api.requests.get')
-    def test_adding_extra_fields_should_warn(self, requests_get_mock):
-        requests_get_mock.side_effect = print_requests_get_parameters
+    def test_adding_extra_fields_should_warn(self, mocker):
+        mocker.get("https://api.github.com/repos/{0}/contents".format(SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST['CONFIG']['repository']), status_code=200, json=JSON_CONTENTS)
+        mocker.get("https://a_download.url/contents.txt", status_code=200, text=EXAMPLE_CONTENT_STR)
 
         custom_config = SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST['CONFIG'].copy()
         custom_config['extra_fields'] = 'aaa,bbb'
@@ -153,7 +133,9 @@ class TestGithubContentsAPICollectorBot(test.BotTestCase, TestCase):
             "raw": utils.base64_encode(EXAMPLE_CONTENT_STR)
         })
 
-    def test_collector_init_should_fail_with_invalid_argument(self):
+    def test_collector_init_should_fail_with_invalid_argument(self, mocker):
+        mocker.get("https://api.github.com/repos/{0}/contents".format(SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST['CONFIG']['repository']))
+
         custom_config = SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST['CONFIG'].copy()
 
         config_with_wrong_regex = custom_config.copy()

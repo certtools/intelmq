@@ -16,6 +16,7 @@ from json import loads
 
 from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.mixins import HttpMixin
 
 try:
     from elasticsearch import Elasticsearch
@@ -55,7 +56,7 @@ def get_event_date(event_dict: dict) -> datetime.date:
     return event_date
 
 
-class ElasticsearchOutputBot(OutputBot):
+class ElasticsearchOutputBot(OutputBot, HttpMixin):
     """Send events to an Elasticsearch database server"""
     elastic_host: str = '127.0.0.1'  # TODO: could be ipadd
     elastic_index: str = 'intelmq'
@@ -77,7 +78,11 @@ class ElasticsearchOutputBot(OutputBot):
         if isinstance(self.flatten_fields, str):
             self.flatten_fields = self.flatten_fields.split(',')
 
-        self.set_request_parameters()  # Not all parameters set here are used by the ES client
+        self.auth = None
+        if self.http_password and self.http_username:
+            self.auth = (self.http_username, self.http_password)
+
+        self.setup()  # Not all parameters set here are used by the ES client
 
         self.es = Elasticsearch([{'host': self.elastic_host, 'port': self.elastic_port}],
                                 http_auth=self.auth,
