@@ -9,6 +9,7 @@
 *.*~
 *.mmdb
 *.profile
+.vscode/
 .profile
 intelmq.egg-info
 build
@@ -23,6 +24,7 @@ htmlcov/
 *.key
 src/
 .eggs
+.secrets
 
 # sphinx
 docs/source
