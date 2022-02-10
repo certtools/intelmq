@@ -25,7 +25,7 @@ EXAMPLE_REPORT = {'feed.name': 'Accessible QUIC Report',
 EVENTS = [
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-quic',
+   'classification.identifier' : 'open-quic',
    'classification.taxonomy' : 'other',
    'classification.type' : 'other',
    'extra.source.naics' : 517311,
@@ -48,7 +48,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-quic',
+   'classification.identifier' : 'open-quic',
    'classification.taxonomy' : 'other',
    'classification.type' : 'other',
    'extra.source.naics' : 517311,
@@ -70,7 +70,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-quic',
+   'classification.identifier' : 'open-quic',
    'classification.taxonomy' : 'other',
    'classification.type' : 'other',
    'extra.source.naics' : 517919,

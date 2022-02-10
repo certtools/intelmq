@@ -25,7 +25,7 @@ EXAMPLE_REPORT = {'feed.name': 'Open Anonymous MQTT',
 EVENTS = [
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-mqtt-anon',
+   'classification.identifier' : 'open-mqtt-anon',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.cert_expiration_date' : '2030-05-06 08:07:05',
@@ -68,7 +68,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-mqtt-anon',
+   'classification.identifier' : 'open-mqtt-anon',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.cert_expiration_date' : '2022-03-06 13:48:03',
@@ -107,7 +107,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-mqtt-anon',
+   'classification.identifier' : 'open-mqtt-anon',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.cert_expiration_date' : '2030-08-05 16:51:57',

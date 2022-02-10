@@ -26,7 +26,7 @@ EXAMPLE_REPORT = {'feed.name': 'Vulnerable SMTP',
 EVENTS = [
         {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-smtp-vulnerable',
+   'classification.identifier' : 'vulnerable-smtp',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.banner' : '220 smtp-server.invalid ESMTP Exim 4.80 Wed, 11 Jun 2021 10:00:00 +0300|',
@@ -47,7 +47,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-smtp-vulnerable',
+   'classification.identifier' : 'vulnerable-smtp',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.banner' : '220 smtp-out.invalid, ESMTP EXIM 4.86_2|',

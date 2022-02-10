@@ -25,7 +25,7 @@ EXAMPLE_REPORT = {'feed.name': 'Accessible SSH',
 EVENTS = [
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-ssh',
+   'classification.identifier' : 'open-ssh',
    'classification.taxonomy' : 'other',
    'classification.type' : 'other',
    'extra.algorithm' : 'ecdsa-sha2-nistp256',
@@ -73,7 +73,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-ssh',
+   'classification.identifier' : 'open-ssh',
    'classification.taxonomy' : 'other',
    'classification.type' : 'other',
    'extra.algorithm' : 'ssh-rsa',
@@ -114,7 +114,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-ssh',
+   'classification.identifier' : 'open-ssh',
    'classification.taxonomy' : 'other',
    'classification.type' : 'other',
    'extra.algorithm' : 'ssh-rsa',

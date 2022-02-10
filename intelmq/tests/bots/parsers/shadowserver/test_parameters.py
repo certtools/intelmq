@@ -25,7 +25,7 @@ EXAMPLE_REPORT = {"raw": utils.base64_encode(EXAMPLE_FILE),
 EVENTS = [{
     '__type': 'Event',
     'feed.name': 'report feedname',
-    "classification.identifier": "scan-dns",
+    "classification.identifier": "open-dns",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable-system",
     "extra.dns_version": "dnsmasq-2.66",

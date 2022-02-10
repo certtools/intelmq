@@ -23,7 +23,7 @@ EXAMPLE_REPORT = {'feed.name': 'SSL POODLE Vulnerable Servers',
                   }
 EVENTS = [{'classification.taxonomy': 'vulnerable',
            'classification.type': 'vulnerable-system',
-           'classification.identifier': 'scan-ssl-poodle',
+           'classification.identifier': 'ssl-poodle',
            'extra.browser_error': 'x509: unknown error',
            'extra.browser_trusted': False,
            'extra.cert_expiration_date': '2034-06-20 00:00:42',

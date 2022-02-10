@@ -25,7 +25,7 @@ EXAMPLE_REPORT = {'feed.name': 'Open TFTP',
 EVENTS = [{
             '__type': 'Event',
             'feed.name': 'Open TFTP',
-            "classification.identifier": "scan-tftp",
+            "classification.identifier": "open-tftp",
             "classification.taxonomy": "vulnerable",
             "classification.type": "vulnerable-system",
             "extra.error": "Illegal TFTP operation",
@@ -52,7 +52,7 @@ EVENTS = [{
           {
             '__type': 'Event',
             'feed.name': 'Open TFTP',
-            "classification.identifier": "scan-tftp",
+            "classification.identifier": "open-tftp",
             "classification.taxonomy": "vulnerable",
             "classification.type": "vulnerable-system",
             "extra.error": "Illegal TFTP operation",

@@ -22,7 +22,7 @@ EXAMPLE_REPORT = {'feed.name': 'Drone Brute Force',
                   "extra.file_name": "2019-01-01-event4_honeypot_brute_force.csv"
                   }
 EVENTS = [{'__type': 'Event',
-           'classification.identifier': 'event-honeypot-brute-force',
+           'classification.identifier': 'honeypot-brute-force',
            'classification.taxonomy': 'intrusion-attempts',
            'classification.type': 'brute-force',
            'extra.client_version': "b'SSH-2.0-Go'",

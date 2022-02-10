@@ -25,7 +25,7 @@ EXAMPLE_REPORT = {'feed.name': 'DNS Open Resolvers',
 EVENTS = [{
     '__type': 'Event',
     'feed.name': 'DNS Open Resolvers',
-    "classification.identifier": "scan-dns",
+    "classification.identifier": "open-dns",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable-system",
     "extra.dns_version": "dnsmasq-2.66",
@@ -48,7 +48,7 @@ EVENTS = [{
 {
     '__type': 'Event',
     'feed.name': 'DNS Open Resolvers',
-    "classification.identifier": "scan-dns",
+    "classification.identifier": "open-dns",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable-system",
     "extra.dns_version": "dnsmasq-2.51",

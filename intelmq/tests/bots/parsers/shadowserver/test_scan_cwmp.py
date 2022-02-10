@@ -26,7 +26,7 @@ EXAMPLE_REPORT = {'feed.name': 'Accessible CWMP',
 EVENTS = [{
     '__type': 'Event',
     'feed.name': 'Accessible CWMP',
-    "classification.identifier": "scan-cwmp",
+    "classification.identifier": "open-cwmp",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable-system",
     "extra.connection": "keep-alive",
@@ -55,7 +55,7 @@ EVENTS = [{
 {
     '__type': 'Event',
     'feed.name': 'Accessible CWMP',
-    "classification.identifier": "scan-cwmp",
+    "classification.identifier": "open-cwmp",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable-system",
     "extra.content_type": "text/html",

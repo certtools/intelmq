@@ -63,8 +63,8 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(allowed_warning_count=62)
         self.assertLogMatches(pattern="Detected report's file name: 'scan_ftp'.",
                               levelname="DEBUG")
-        #self.assertLogMatches(pattern="Optional key 'protocol' not found in feed 'Accessible FTP'. Possible change in data format or misconfiguration.",
-        #                      levelname="WARNING")
+        self.assertLogMatches(pattern="Optional key 'jarm' not found in feed 'Accessible FTP Service'.",
+                              levelname="WARNING")
         self.assertLogMatches(pattern=r"Sent 1 events and found 0 problem\(s\)\.",
                               levelname="INFO")
 

@@ -25,7 +25,7 @@ EXAMPLE_REPORT = {'feed.name': 'Accessible AMQP',
 EVENTS = [
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-amqp',
+   'classification.identifier' : 'open-amqp',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.capabilities' : 'publisher_confirms,exchange_exchange_bindings,basic.nack,consumer_cancel_notify,connection.blocked,consumer_priorities,authentication_failure_close,per_consumer_qos',
@@ -56,7 +56,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-amqp',
+   'classification.identifier' : 'open-amqp',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.capabilities' : 'publisher_confirms,exchange_exchange_bindings,basic.nack,consumer_cancel_notify,connection.blocked,consumer_priorities,authentication_failure_close,per_consumer_qos,direct_reply_to',
@@ -87,7 +87,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-amqp',
+   'classification.identifier' : 'open-amqp',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.capabilities' : 'publisher_confirms,exchange_exchange_bindings,basic.nack,consumer_cancel_notify,connection.blocked,consumer_priorities,authentication_failure_close,per_consumer_qos,direct_reply_to',

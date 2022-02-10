@@ -20,7 +20,7 @@ EXAMPLE_REPORT = {"raw": utils.base64_encode(EXAMPLE_FILE),
                   "extra.file_name": "2019-01-01-scan_netis_router-test-geo.csv",
                   }
 EVENTS = [{'__type': 'Event',
-           'classification.identifier': 'scan-netis-router',
+           'classification.identifier': 'open-netis-router',
            'classification.taxonomy': 'vulnerable',
            'classification.type': 'vulnerable-system',
            'extra.response': 'Login:',

@@ -23,7 +23,7 @@ EXAMPLE_REPORT = {'feed.name': 'Open-IPP',
                   }
 EVENTS = [{'__type': 'Event',
            'feed.name': 'Open-IPP',
-           "classification.identifier": "scan-ipp",
+           "classification.identifier": "open-ipp",
            "classification.taxonomy": "vulnerable",
            "classification.type": "vulnerable-system",
            "extra.source.naics": 517311,

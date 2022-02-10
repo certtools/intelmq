@@ -25,7 +25,7 @@ EXAMPLE_REPORT = {'feed.name': 'Accessible SSL',
 EVENTS = [
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-ssl',
+   'classification.identifier' : 'open-ssl',
    'classification.taxonomy' : 'other',
    'classification.type' : 'other',
    'extra.browser_error' : 'x509: unknown error',
@@ -85,7 +85,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-ssl',
+   'classification.identifier' : 'open-ssl',
    'classification.taxonomy' : 'other',
    'classification.type' : 'other',
    'extra.browser_error' : 'x509: unknown error',
@@ -136,7 +136,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-ssl',
+   'classification.identifier' : 'open-ssl',
    'classification.taxonomy' : 'other',
    'classification.type' : 'other',
    'extra.browser_trusted' : 'Y',

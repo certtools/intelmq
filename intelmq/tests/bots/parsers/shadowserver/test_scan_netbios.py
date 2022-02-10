@@ -25,7 +25,7 @@ EXAMPLE_REPORT = {'feed.name': 'Netbios',
 EVENTS = [
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-netbios',
+   'classification.identifier' : 'open-netbios',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.mac_address' : '00-00-00-00-00-00',
@@ -51,7 +51,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-netbios',
+   'classification.identifier' : 'open-netbios',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.mac_address' : '00-1B-C6-41-35-F5',
@@ -74,7 +74,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'scan-netbios',
+   'classification.identifier' : 'open-netbios',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.mac_address' : '00-00-00-00-00-00',

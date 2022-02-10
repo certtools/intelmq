@@ -28,7 +28,7 @@ EVENTS = [
    'classification.identifier' : 'sandbox-conn',
    'classification.taxonomy' : 'malicious-code',
    'classification.type' : 'malware-distribution',
-   'extra.host' : 'time.windows.com',
+   'destination.fqdn' : 'time.windows.com',
    'feed.name' : 'Sandbox Connections',
    'malware.hash.md5' : 'b575ce6dcce6502a8431db5610135c25',
    'protocol.transport' : 'udp',

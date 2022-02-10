@@ -44,7 +44,7 @@ EVENTS = [
         "protocol.transport": 'tcp',
         "malware.name": 'ip-spoofer',
 
-        "classification.identifier": "event-ip-spoofer",
+        "classification.identifier": "ip-spoofer",
         "classification.taxonomy": "fraud",
         "classification.type": "masquerade",
 
@@ -71,7 +71,7 @@ EVENTS = [
         "protocol.transport": 'tcp',
         "malware.name": 'ip-spoofer',
 
-        "classification.identifier": "event-ip-spoofer",
+        "classification.identifier": "ip-spoofer",
         "classification.taxonomy": "fraud",
         "classification.type": "masquerade",
 
@@ -98,7 +98,7 @@ EVENTS = [
         "protocol.transport": 'tcp',
         "malware.name": 'ip-spoofer',
 
-        "classification.identifier": "event-ip-spoofer",
+        "classification.identifier": "ip-spoofer",
         "classification.taxonomy": "fraud",
         "classification.type": "masquerade",
 
@@ -125,7 +125,7 @@ EVENTS = [
         "protocol.transport": 'tcp',
         "malware.name": 'ip-spoofer',
 
-        "classification.identifier": "event-ip-spoofer",
+        "classification.identifier": "ip-spoofer",
         "classification.taxonomy": "fraud",
         "classification.type": "masquerade",
 
@@ -153,7 +153,7 @@ EVENTS = [
         "protocol.transport": 'tcp',
         "malware.name": 'ip-spoofer',
 
-        "classification.identifier": "event-ip-spoofer",
+        "classification.identifier": "ip-spoofer",
         "classification.taxonomy": "fraud",
         "classification.type": "masquerade",
 
