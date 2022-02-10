@@ -40,13 +40,13 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
     secret = None
     types = None
     reports = None
-    report_list = []
     rate_limit: int = 86400
     redis_cache_db: int = 12
     redis_cache_host: str = "127.0.0.1"  # TODO: type could be ipadress
     redis_cache_port: int = 6379
     redis_cache_ttl: int = 864000  # 10 days
     redis_cache_password: Optional[str] = None
+    _report_list = []
 
     def init(self):
         if self.api_key is None:
@@ -55,10 +55,12 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
             raise ValueError('No secret provided.')
 
         if isinstance(self.reports, str):
-            self.report_list = self.reports.split(',')
+            self._report_list = self.reports.split(',')
+        elif isinstance(self.reports, list):
+            self._report_list = self.reports
 
-        if self.country is not None and self.country not in self.report_list:
-            self.report_list.append(self.country)
+        if self.country is not None and self.country not in self._report_list:
+            self._report_list.append(self.country)
 
         self.preamble = '{{ "apikey": "{}" '.format(self.api_key)
 
@@ -83,8 +85,8 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
 
         data = self.preamble
         data += ',"date": "{}:{}" '.format(daybefore.isoformat(), dayafter.isoformat())
-        if len(self.report_list) > 0:
-            data += ',"reports": {}'.format(json.dumps(self.report_list))
+        if len(self._report_list) > 0:
+            data += ',"reports": {}'.format(json.dumps(self._report_list))
         data += '}'
         self.logger.debug('Downloading report list with data: %s.', data)
 
