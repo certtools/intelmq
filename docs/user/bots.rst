@@ -655,9 +655,9 @@ The Cache is required to memorize which files have already been processed (TTL n
 
 **Configuration Parameters**
 
-* `country`: The country you want to download the reports for
 * `apikey`: Your Shadowserver API key
 * `secret`: Your Shadowserver API secret
+* `reports`: A list of strings or a comma-separated list of the mailing lists you want to process.
 * `types`: A list of strings or a string of comma-separated values with the names of report types you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined'). The possible report types are equivalent to the file names given in the section :ref:`Supported Reports <shadowserver-supported-reports>` of the Shadowserver parser.
 * **Cache parameters** (see in section :ref:`common-parameters`, the default TTL is set to 10 days)
 
