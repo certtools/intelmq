@@ -9,6 +9,65 @@ NEWS
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 Please refer to the changelog for a full list of changes.
 
+TBD Shadowserver updates
+------------------------
+
+### intelmq/bots/collectors/shadowserver
+
+The _ShadowServerAPICollectorBot_ has been updated to match the API.
+
+The misleading `country` parameter has been depreciated and a `reports` parameter has been added:
+
+```
+  Parameters:
+        api_key (str): Your Shadowserver API key
+        secret (str): Your Shadowserver API secret
+        country (str): DEPRECIATED The mailing list you want to download reports for (i.e. 'austria')
+        reports (list):
+            A list of strings or a comma-separated list of the mailing lists you want to process.
+        types (list):
+            A list of strings or a string of comma-separated values with the names of reporttypes you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
+```
+
+### intelmq/bots/parsers/shadowserver
+
+A number of the _classification.identifier_ values have been updated to follow a common naming convention based on their cannonical report name.
+
+| previous | updated |
+| --- | --- |
+| accessible-adb | open-adb |
+| accessible-afp | open-afp |
+| accessible-amqp | open-amqp |
+| accessible-ard | open-ard |
+| accessible-cisco-smart-install | open-cisco-smart-install |
+| accessible-coap | open-coap |
+| accessible-ftp | open-ftp |
+| accessible-hadoop | open-hadoop |
+| accessible-http | open-http |
+| accessible-msrdpeudp | open-rdpeudp |
+| accessible-radmin | open-radmin |
+| accessible-rsync | open-rsync |
+| accessible-ubiquiti-discovery-service | open-ubiquiti |
+| amplification-ddos-victim | honeypot-ddos-amp |
+| blacklisted-ip | blocklist |
+| dns-open-resolver | open-dns |
+| honeypot-http-scan | honeypot-http-scan |
+| ics | honeypot-ics-scan |
+| ntp-monitor | open-ntpmonitor |
+| ntp-version | open-ntp |
+| open-chargen | open-chargen |
+| open-cwmp | open-cwmp |
+| open-db2-discovery-service | open-db2 |
+| open-ike | open-isakmp |
+| open-ldap | open-ldap-tcp |
+| open-natpmp | open-nat-pmp |
+| open-netbios-nameservice | open-netbios |
+| open-netis | open-netis-router |
+| sinkholedns | sinkhole-dns |
+
+The previous release used a mix of _extra.naics_ and _extra.source.naics_.  The parser has been updated to use the more specific term.
+
+
 3.1.0 Feature release (unreleased)
 ----------------------------------
 
