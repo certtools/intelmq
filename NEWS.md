@@ -55,8 +55,6 @@ A number of the _classification.identifier_ values have been updated to follow a
 | ics | honeypot-ics-scan |
 | ntp-monitor | open-ntpmonitor |
 | ntp-version | open-ntp |
-| open-chargen | open-chargen |
-| open-cwmp | open-cwmp |
 | open-db2-discovery-service | open-db2 |
 | open-ike | open-isakmp |
 | open-ldap | open-ldap-tcp |
