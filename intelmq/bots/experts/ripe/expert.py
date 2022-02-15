@@ -15,12 +15,7 @@ import warnings
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
-from intelmq.lib.mixins import CacheMixin
-
-try:
-    import requests
-except ImportError:
-    requests = None
+from intelmq.lib.mixins import CacheMixin, HttpMixin
 
 
 STATUS_CODE_ERROR = 'HTTP status code was {}. Possible problem at the connection endpoint or network issue.'
@@ -41,7 +36,7 @@ def clean_geo(geo_data):
     return geo_data
 
 
-class RIPEExpertBot(ExpertBot, CacheMixin):
+class RIPEExpertBot(ExpertBot, CacheMixin, HttpMixin):
     """Fetch abuse contact and/or geolocation information for the source and/or destination IP addresses and/or ASNs of the events"""
     mode: str = "append"
     query_ripe_db_asn: bool = True
@@ -77,9 +72,6 @@ class RIPEExpertBot(ExpertBot, CacheMixin):
     }
 
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
-
         self.__query = {
             "db_asn": self.query_ripe_db_asn,
             "db_ip": self.query_ripe_db_ip,
@@ -87,12 +79,7 @@ class RIPEExpertBot(ExpertBot, CacheMixin):
             "stat_ip": self.query_ripe_stat_ip,
             "stat_geo": self.query_ripe_stat_geolocation,
         }
-
-        self.__initialize_http_session()
-
-    def __initialize_http_session(self):
-        self.set_request_parameters()
-        self.http_session = utils.create_request_session(self)
+        self.session = self.http_session()
 
     def process(self):
         event = self.receive_message()
@@ -134,8 +121,8 @@ class RIPEExpertBot(ExpertBot, CacheMixin):
             else:
                 return json.loads(cached_value)
         else:
-            response = self.http_session.get(self.QUERY[type].format(resource),
-                                             data="", timeout=self.http_timeout_sec)
+            response = self.session.get(self.QUERY[type].format(resource),
+                                        data="", timeout=self.http_timeout_sec)
 
             if response.status_code != 200:
                 if type == 'db_asn' and response.status_code == 404:

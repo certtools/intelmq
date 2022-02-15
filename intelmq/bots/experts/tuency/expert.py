@@ -17,18 +17,18 @@ Example response:
 {"ip":{"destinations":[{"source":"portal","name":"Thurner","contacts":[{"email":"test@example.vom"}]}]},"domain":{"destinations":[{"source":"portal","name":"Thurner","contacts":[{"email":"abuse@example.at"}]}]},"suppress":true,"interval":{"unit":"immediate","length":1}}
 """
 
+from intelmq.lib.mixins import HttpMixin
 from intelmq.lib.bot import ExpertBot
-from intelmq.lib.utils import create_request_session, parse_relative
+from intelmq.lib.utils import parse_relative
 
 
-class TuencyExpertBot(ExpertBot):
+class TuencyExpertBot(ExpertBot, HttpMixin):
     url: str  # Path to the tuency instance
     authentication_token: str
     overwrite: bool = True
 
     def init(self):
-        self.set_request_parameters()
-        self.session = create_request_session(self)
+        self.session = self.http_session()
         self.session.headers["Authorization"] = f"Bearer {self.authentication_token}"
         self.url = f"{self.url}intelmq/lookup"
 

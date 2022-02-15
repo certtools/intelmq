@@ -76,12 +76,6 @@ class Bot:
     error_max_retries: int = 3
     error_procedure: str = "pass"
     error_retry_delay: int = 15
-    http_proxy: Optional[str] = None
-    http_timeout_max_tries: int = 3
-    http_timeout_sec: int = 30
-    http_user_agent: str = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
-    http_verify_cert: Union[bool, str] = True
-    https_proxy: Optional[str] = None
     instances_threads: int = 0
     load_balance: bool = False
     log_processed_messages_count: int = 500
@@ -851,37 +845,6 @@ class Bot:
         instance = cls(parsed_args.bot_id)
         if not instance.is_multithreaded:
             instance.start()
-
-    def set_request_parameters(self):
-        self.http_header: dict = getattr(self, 'http_header', {})
-        self.http_verify_cert: bool = getattr(self, 'http_verify_cert', True)
-        self.ssl_client_cert: Optional[str] = getattr(self, 'ssl_client_certificate', None)
-
-        if (hasattr(self, 'http_username') and
-                hasattr(self, 'http_password') and
-                self.http_username):
-            self.auth = (self.http_username,
-                         self.http_password)
-        else:
-            self.auth = None
-
-        if self.http_proxy and self.https_proxy:
-            self.proxy = {'http': self.http_proxy,
-                          'https': self.https_proxy}
-        elif self.http_proxy or self.https_proxy:
-            self.logger.warning('Only %s_proxy seems to be set.'
-                                'Both http and https proxies must be set.',
-                                'http' if self.http_proxy else 'https')
-            self.proxy = {}
-        else:
-            self.proxy = {}
-
-        self.http_timeout_sec: Optional[int] = getattr(self, 'http_timeout_sec', None)
-        self.http_timeout_max_tries: int = getattr(self, 'http_timeout_max_tries', 1)
-        # Be sure this is always at least 1
-        self.http_timeout_max_tries = self.http_timeout_max_tries if self.http_timeout_max_tries >= 1 else 1
-
-        self.http_header['User-agent'] = self.http_user_agent
 
     @staticmethod
     def check(parameters: dict) -> Optional[List[List[str]]]:

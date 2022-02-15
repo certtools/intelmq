@@ -8,9 +8,10 @@ from typing import List
 
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import create_request_session
+from intelmq.lib.mixins import HttpMixin
 
 
-class HttpStatusExpertBot(ExpertBot):
+class HttpStatusExpertBot(ExpertBot, HttpMixin):
     """
     Fetch the HTTP Status for a given URL
 
@@ -31,8 +32,7 @@ class HttpStatusExpertBot(ExpertBot):
         event = self.receive_message()
 
         if self.field in event:
-            self.set_request_parameters()
-            session = create_request_session(self)
+            session = self.http_session()
 
             try:
                 response = session.get(event[self.field])

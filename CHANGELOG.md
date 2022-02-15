@@ -29,6 +29,12 @@ CHANGELOG
   The `LogLevel` and `ReturnType` Enums were added to `intelmq.lib.datatypes`.
 - `intelmq.lib.bot`:
   - Enhance behaviour if an unconfigured bot is started (PR#2054 by Sebastian Wagner).
+  - Remove `http_*` variables and moved them into HTTPMixin (PR#2151 by Sebastian Waldbauer, fixes #2150).
+  - Remove `set_request_parameters` in favor of HTTPMixin (PR#2151 by Sebastian Waldbauer).
+- `intelmq.lib.mixins.http`:
+  - Added missing variables types and simplified code (PR#2151 by Sebastian Waldbauer).
+- `intelmq.lib.pipeline`:
+  - Removed trying to import requests, its a core library specified in setup.py (PR#2151 by Sebastian Waldbauer).
 
 ### Development
 
@@ -39,6 +45,10 @@ CHANGELOG
 
 #### Collectors
 - `intelmq.bots.collectors.mail._lib`: Add support for unverified SSL/STARTTLS connections (PR#2055 by Sebastian Wagner).
+- `intelmq.bots.collectors.github_api`: Removed requests dependency in favor of HttpMixin (PR#2151 by Sebastian Waldbauer).
+- `intelmq.bots.collectors.collector_azure`: Added HttpMixin (PR#2151 by Sebastian Waldbauer).
+- `intelmq.bots.collectors.shodan.collector_stream`: Removed `set_request_paramters()` in favor of HttpMixin (PR#2151 by Sebastian Waldbauer).
+
 
 #### Parsers
 - `intelmq.bots.parsers.alienvault.parser_otx`: Save CVE data in `extra.cve` instead of `extra.CVE` due to the field name restriction on lower-case characters  (PR#2059 by Sebastian Wagner).
@@ -75,12 +85,21 @@ CHANGELOG
 - `intelmq.bots.experts.truncate_by_delimiter.expert`: Cut string if its length is higher than a maximum length (PR#1967 by Marius Karotkis).
 - `intelmq.bots.experts.remove_affix`: Remove prefix or postfix strings from a field (PR#1965 by Marius Karotkis).
 - `intelmq.bots.experts.asn_lookup.expert`: Fixes update-database script on the last few days of a month (PR#2121 by Filip Pokorný, fixes #2088).
+- `intelmq.bots.experts.do_portal`: Removed requests dependency in favor of HTTPMixin (PR#2151 by Sebastian Waldbauer).
+- `intelmq.bots.experts.http.*`: Using HTTPMixin instead of `create_request_session` (PR#2151 by Sebastian Waldbauer).
+- `intelmq.bots.experts.national_cert_contact_certat`: Using HttpMixin instead of `requests` library (PR#2151 by Sebastian Waldbauer).
+- `intelmq.bots.experts.rdap`: Removed requests dependency & `create_request_session` in favor of HTTPMixin (PR#2151 by Sebastian Waldbauer).
+- `intelmq.bots.experts.ripe`: Simplified code & uses HTTPMixin (PR#2151 by Sebastian Waldbauer).
+- `intelmq.bots.experts.splunk_saved_search`: Simplified & uses HTTPMixin (PR#2151 by Sebastian Waldbauer).
+- `intelmq.bots.experts.tuency`: Removed `create_request_session` in favor of HTTPMixin (PR#2151 by Sebastian Waldbauer).
 
 #### Outputs
 - Removed `intelmq.bots.outputs.postgresql`: this bot was marked as deprecated in 2019 announced to be removed in version 3 of IntelMQ (PR#2045 by Birger Schacht).
 - Added `intelmq.bots.outputs.rpz_file.output` to create RPZ files (PR#1962 by Marius Karotkis).
 - Added `intelmq.bots.outputs.bro_file.output` to create Bro intel formatted files (PR#1963 by Marius Karotkis).
 - `intelmq.bots.outputs.templated_smtp.output`: Add new function `from_json()` (which just calls `json.loads()` in the standard Python environment), meaning the Templated SMTP output bot can take strings containing JSON documents and do the formatting itself (PR#2120 by Karl-Johan Karlsson).
+- `intelmq.bots.outputs.elasticsearch`: Uses HttpMixin (PR#2151 by Sebastian Waldbauer).
+- `intelmq.bots.outputs.restapi`: Using HttpMixin instead of importing `requests` (PR#2151 by Sebastian Waldbauer).
 
 ### Documentation
 - Feeds: Add documentation for newly supported dataplane feeds, see above (PR#2102 by Mikk Margus Möll).
@@ -95,6 +114,7 @@ CHANGELOG
 - Also test on Python 3.10 (PR#2140 by Sebastian Wagner).
 - Switch from nosetests to pytest, as the former does not support Python 3.10 (PR#2140 by Sebastian Wagner).
 - CodeQL Github Actions `exponential backtracking on strings` fixed. (PR#2148 by Sebastian Waldbauer, fixes #2138)
+- Replaced `MagicMock` & `patch` with `requests_mock` (PR#2151 by Sebastian Waldbauer).
 
 ### Tools
 

@@ -7,6 +7,7 @@ import time
 from itertools import chain
 from typing import Dict, Optional
 import ssl
+import requests
 
 import redis
 
@@ -18,10 +19,6 @@ __all__ = ['Pipeline', 'PipelineFactory', 'Redis', 'Pythonlist', 'Amqp']
 
 try:
     import pika
-    try:
-        import requests
-    except ImportError:
-        requests = None
 except ImportError:
     pika = None
 
@@ -588,9 +585,6 @@ class Amqp(Pipeline):
             auth = (self.username, self.password)
         else:
             auth = ('guest', 'guest')
-        if requests is None:
-            self.logger.error("Library 'requests' is needed to get queue status. Please install it.")
-            return {}
         response = requests.get(self.monitoring_url + 'api/queues', auth=auth,
                                 timeout=5)
         if response.status_code == 401:

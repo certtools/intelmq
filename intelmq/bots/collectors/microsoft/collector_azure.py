@@ -11,7 +11,7 @@ import io
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.exceptions import MissingDependencyError
-from intelmq.lib.mixins import CacheMixin
+from intelmq.lib.mixins import CacheMixin, HttpMixin
 
 try:
     from azure.storage.blob import ContainerClient
@@ -23,7 +23,7 @@ except ImportError:
     create_configuration = None  # noqa
 
 
-class MicrosoftAzureCollectorBot(CollectorBot, CacheMixin):
+class MicrosoftAzureCollectorBot(CollectorBot, CacheMixin, HttpMixin):
     "Fetch data blobs from a Microsoft Azure container"
     connection_string: str = "<insert your connection string here>"
     container_name: str = "<insert the container name>"

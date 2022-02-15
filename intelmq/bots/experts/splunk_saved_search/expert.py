@@ -56,19 +56,13 @@ Parameters:
                intelmq.exceptions.KeyExists.
 
 """
-
-try:
-    import requests
-except ImportError:
-    requests = None
-
-import intelmq.lib.utils as utils
+from intelmq.lib.mixins import HttpMixin
 from intelmq.lib.bot import ExpertBot
-from intelmq.lib.exceptions import MissingDependencyError, ConfigurationError
+from intelmq.lib.exceptions import ConfigurationError
 import time
 
 
-class SplunkSavedSearchBot(ExpertBot):
+class SplunkSavedSearchBot(ExpertBot, HttpMixin):
     """Enrich an event from Splunk search results"""
     auth_token: str = None
     multiple_result_handling = ["warn", "use_first", "send"]
@@ -83,9 +77,6 @@ class SplunkSavedSearchBot(ExpertBot):
     _is_multithreadable = False
 
     def init(self):
-        if requests is None:
-            raise MissingDependencyError("requests")
-
         if self.url is None:
             raise ConfigurationError("Connection", "No Splunk API URL specified")
         if self.auth_token is None:
@@ -103,11 +94,9 @@ class SplunkSavedSearchBot(ExpertBot):
         if "ignore" in self.multiple_result_handling and "use_first" in self.multiple_result_handling:
             raise ConfigurationError("Processing", "Cannot both ignore and use multiple search results")
 
-        self.set_request_parameters()
-
         self.http_header.update({"Authorization": f"Bearer {self.auth_token}"})
 
-        self.session = utils.create_request_session(self)
+        self.session = self.http_session()
         self.session.keep_alive = False
 
     def update_event(self, event, search_result):

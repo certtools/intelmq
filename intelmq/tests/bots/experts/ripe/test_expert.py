@@ -70,10 +70,10 @@ GEOLOCA_OUTPUT3 = {"__type": "Event",
                    "source.geolocation.city": "Lansing",
                    "source.geolocation.latitude": 42.7348,
                    "source.geolocation.longitude": -84.6245
-                   }
+                  }
 INDEX_ERROR = {"__type": "Event",
                "source.ip": "228.66.141.189",
-               }
+              }
 
 @test.skip_internet()
 class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
@@ -83,7 +83,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
 
     def tearDown(self):
         if self.bot is not None:
-            self.bot.http_session.close()
+            pass
 
     @classmethod
     def set_bot(cls):
@@ -94,7 +94,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
                          'query_ripe_stat_asn': False,
                          'redis_cache_db': 4,
                          'query_ripe_stat_geolocation': False,
-                         }
+                        }
         cls.use_cache = True
 
     def test_db_ipv4_lookup(self):
@@ -128,7 +128,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
                       'query_ripe_stat_asn': True,
                       'query_ripe_stat_ip': True,
                       'query_ripe_stat_geolocation': False,
-                      }
+                     }
         self.input_message = EMPTY_INPUT
         self.prepare_bot(parameters=parameters)
         old = self.bot.QUERY['stat']
@@ -186,11 +186,11 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         """ Test RIPE DB IP for errors. """
         self.input_message = EXAMPLE_INPUT
         self.prepare_bot(parameters={'query_ripe_db_asn': False,
-                                      'query_ripe_db_ip': True,
-                                      'query_ripe_stat_ip': False,
-                                      'query_ripe_stat_asn': False,
-                                      'query_ripe_stat_geolocation': False,
-                                      })
+                                     'query_ripe_db_ip': True,
+                                     'query_ripe_stat_ip': False,
+                                     'query_ripe_stat_asn': False,
+                                     'query_ripe_stat_geolocation': False,
+                                    })
         old = self.bot.QUERY['db_ip']
         self.bot.QUERY['db_ip'] = 'http://localhost/{}'
         mocker.get('/93.184.216.34', status_code=404)
@@ -211,7 +211,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
                                   'query_ripe_stat_ip': True,
                                   'query_ripe_stat_asn': False,
                                   'query_ripe_stat_geolocation': False,
-                                  })
+                                })
         self.assertMessageEqual(0, EMPTY_REPLACED)
         self.assertEqual(self.cache.get('stat:127.0.0.1'), b'__no_contact')
         self.cache.flushdb()  # collides with test_ripe_stat_errors
@@ -224,7 +224,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
                                   'query_ripe_stat_ip': False,
                                   'query_ripe_stat_asn': False,
                                   'query_ripe_stat_geolocation': False,
-                                  })
+                                })
         self.assertMessageEqual(0, DB_404_AS)
 
     @unittest.expectedFailure
@@ -234,7 +234,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
                                   'query_ripe_db_ip': False,
                                   'query_ripe_stat_ip': False,
                                   'query_ripe_stat_asn': True,
-                                  })
+                                })
         self.assertMessageEqual(0, GEOLOCA_OUTPUT1)
 
     @unittest.expectedFailure
@@ -245,7 +245,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
                                   'query_ripe_db_ip': False,
                                   'query_ripe_stat_ip': False,
                                   'query_ripe_stat_asn': True,
-                                  })
+                                })
         self.assertMessageEqual(0, GEOLOCA_OUTPUT1)
 
     @unittest.expectedFailure
@@ -255,7 +255,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
                                   'query_ripe_db_ip': False,
                                   'query_ripe_stat_ip': False,
                                   'query_ripe_stat_asn': True,
-                                  })
+                                })
         self.assertMessageEqual(0, GEOLOCA_OUTPUT3)
 
     def test_index_error(self):

@@ -8,6 +8,7 @@ Uses the common mail iteration method from the lib file.
 """
 import io
 import re
+from requests import exceptions
 
 from intelmq.lib.mixins import HttpMixin
 from intelmq.lib.splitreports import generate_reports
@@ -50,7 +51,7 @@ class MailURLCollectorBot(MailCollectorBot, HttpMixin):
                 self.logger.info("Downloading report from %r.", url)
                 try:
                     resp = self.http_get(url)
-                except requests.exceptions.Timeout:
+                except exceptions.Timeout:
                     self.logger.error("Request timed out %i times in a row." %
                                       self.http_timeout_max_tries)
                     erroneous = True
