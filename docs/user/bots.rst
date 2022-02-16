@@ -3206,7 +3206,6 @@ Threshold
 
 * `filter_keys`: String, comma-separated list of field names to consider or ignore when determining which messages are similar.
 * `filter_type`: String, `whitelist` (consider only the fields in `filter_keys`) or `blacklist` (consider everything but the fields in `filter_keys`).
-* `timeout`: Integer, number of seconds before threshold counter is reset.
 * `threshold`: Integer, number of messages required before propagating one. In forwarded messages, the threshold is saved in the message as `extra.count`.
 * `add_keys`: Array of string->string, optional, fields and values to add (or update) to propagated messages. Example:
 
