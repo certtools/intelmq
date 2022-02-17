@@ -9,31 +9,24 @@ NEWS
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 Please refer to the changelog for a full list of changes.
 
-TBD Shadowserver updates
-------------------------
 
-### intelmq/bots/collectors/shadowserver
+3.1.0 Feature release (unreleased)
+----------------------------------
 
-The _ShadowServerAPICollectorBot_ has been updated to match the API.
+### Requirements
 
-The misleading `country` parameter has been depreciated and a `reports` parameter has been added:
+### Bots
+#### ShadowServer Reports API collector
+The misleading `country` parameter has been depreciated and a `reports` parameter has been added.
+The backwards-compatibility will be removed in IntelMQ version 4.0.0.
+See the [Shadowserver Reports API bot's documentation](https://intelmq.readthedocs.io/en/latest/user/bots.html#shadowserver-reports-api).
 
-```
-  Parameters:
-        api_key (str): Your Shadowserver API key
-        secret (str): Your Shadowserver API secret
-        country (str): DEPRECIATED The mailing list you want to download reports for (i.e. 'austria')
-        reports (list):
-            A list of strings or a comma-separated list of the mailing lists you want to process.
-        types (list):
-            A list of strings or a string of comma-separated values with the names of reporttypes you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
-```
+#### ShadowServer parser
+Previously, mappings used a mix of `extra.naics` and `extra.source.naics`. The parser has been updated to use the more specific term (`extra.source.naics`).
 
-### intelmq/bots/parsers/shadowserver
+A number of the _classification.identifier_ values have been updated to follow a common naming convention based on their canonical report name:
 
-A number of the _classification.identifier_ values have been updated to follow a common naming convention based on their cannonical report name.
-
-| previous | updated |
+| before IntelMQ 3.1.0 | in IntelMQ 3.1.0 and higher |
 | --- | --- |
 | accessible-adb | open-adb |
 | accessible-afp | open-afp |
@@ -63,14 +56,6 @@ A number of the _classification.identifier_ values have been updated to follow a
 | open-netis | open-netis-router |
 | sinkholedns | sinkhole-dns |
 
-The previous release used a mix of _extra.naics_ and _extra.source.naics_.  The parser has been updated to use the more specific term.
-
-
-3.1.0 Feature release (unreleased)
-----------------------------------
-
-### Requirements
-
 ### Tools
 
 ### Data Format
@@ -92,6 +77,90 @@ sudo find /var/log/ -user intelmq ! -path \*intelmq\*
 ### Libraries
 
 ### Postgres databases
+The following statements optionally update existing data for the harmonization classification changes:
+```sql
+UPDATE events
+   SET "classification.identifier" = 'open-adb'
+   WHERE "classification.identifier" = 'accessible-adb';
+UPDATE events
+   SET "classification.identifier" = 'open-afp'
+   WHERE "classification.identifier" = 'accessible-afp';
+UPDATE events
+   SET "classification.identifier" = 'open-amqp'
+   WHERE "classification.identifier" = 'accessible-amqp';
+UPDATE events
+   SET "classification.identifier" = 'open-ard'
+   WHERE "classification.identifier" = 'accessible-ard';
+UPDATE events
+   SET "classification.identifier" = 'open-cisco-smart-install'
+   WHERE "classification.identifier" = 'accessible-cisco-smart-install';
+UPDATE events
+   SET "classification.identifier" = 'open-coap'
+   WHERE "classification.identifier" = 'accessible-coap';
+UPDATE events
+   SET "classification.identifier" = 'open-ftp'
+   WHERE "classification.identifier" = 'accessible-ftp';
+UPDATE events
+   SET "classification.identifier" = 'open-hadoop'
+   WHERE "classification.identifier" = 'accessible-hadoop';
+UPDATE events
+   SET "classification.identifier" = 'open-http'
+   WHERE "classification.identifier" = 'accessible-http';
+UPDATE events
+   SET "classification.identifier" = 'open-rdpeudp'
+   WHERE "classification.identifier" = 'accessible-msrdpeudp';
+UPDATE events
+   SET "classification.identifier" = 'open-radmin'
+   WHERE "classification.identifier" = 'accessible-radmin';
+UPDATE events
+   SET "classification.identifier" = 'open-rsync'
+   WHERE "classification.identifier" = 'accessible-rsync';
+UPDATE events
+   SET "classification.identifier" = 'open-ubiquiti'
+   WHERE "classification.identifier" = 'accessible-ubiquiti-discovery-service';
+UPDATE events
+   SET "classification.identifier" = 'honeypot-ddos-amp'
+   WHERE "classification.identifier" = 'amplification-ddos-victim';
+UPDATE events
+   SET "classification.identifier" = 'blocklist'
+   WHERE "classification.identifier" = 'blacklisted-ip';
+UPDATE events
+   SET "classification.identifier" = 'open-dns'
+   WHERE "classification.identifier" = 'dns-open-resolver';
+UPDATE events
+   SET "classification.identifier" = 'honeypot-http-scan'
+   WHERE "classification.identifier" = 'honeypot-http-scan';
+UPDATE events
+   SET "classification.identifier" = 'honeypot-ics-scan'
+   WHERE "classification.identifier" = 'ics';
+UPDATE events
+   SET "classification.identifier" = 'open-ntpmonitor'
+   WHERE "classification.identifier" = 'ntp-monitor';
+UPDATE events
+   SET "classification.identifier" = 'open-ntp'
+   WHERE "classification.identifier" = 'ntp-version';
+UPDATE events
+   SET "classification.identifier" = 'open-db2'
+   WHERE "classification.identifier" = 'open-db2-discovery-service';
+UPDATE events
+   SET "classification.identifier" = 'open-isakmp'
+   WHERE "classification.identifier" = 'open-ike';
+UPDATE events
+   SET "classification.identifier" = 'open-ldap-tcp'
+   WHERE "classification.identifier" = 'open-ldap';
+UPDATE events
+   SET "classification.identifier" = 'open-nat-pmp'
+   WHERE "classification.identifier" = 'open-natpmp';
+UPDATE events
+   SET "classification.identifier" = 'open-netbios'
+   WHERE "classification.identifier" = 'open-netbios-nameservice';
+UPDATE events
+   SET "classification.identifier" = 'open-netis-router'
+   WHERE "classification.identifier" = 'open-netis';
+UPDATE events
+   SET "classification.identifier" = 'sinkhole-dns'
+   WHERE "classification.identifier" = 'sinkholedns';
+```
 
 
 3.0.2 Maintenance release (2021-09-10)
