@@ -42,7 +42,7 @@ EVENTS = [
         "extra.source.naics": 517311,
         "extra.version": 'ipv4',
         "protocol.transport": 'tcp',
-        "malware.name": 'ip-spoofer',
+        "extra.infection": 'ip-spoofer',
 
         "classification.identifier": "ip-spoofer",
         "classification.taxonomy": "fraud",
@@ -69,7 +69,7 @@ EVENTS = [
         "extra.public_source": "caida",
         "extra.version": 'ipv4',
         "protocol.transport": 'tcp',
-        "malware.name": 'ip-spoofer',
+        "extra.infection": 'ip-spoofer',
 
         "classification.identifier": "ip-spoofer",
         "classification.taxonomy": "fraud",
@@ -96,7 +96,7 @@ EVENTS = [
         "extra.public_source": "caida",
         "extra.version": 'ipv4',
         "protocol.transport": 'tcp',
-        "malware.name": 'ip-spoofer',
+        "extra.infection": 'ip-spoofer',
 
         "classification.identifier": "ip-spoofer",
         "classification.taxonomy": "fraud",
@@ -123,7 +123,7 @@ EVENTS = [
         "extra.public_source": "caida",
         "extra.version": 'ipv4',
         "protocol.transport": 'tcp',
-        "malware.name": 'ip-spoofer',
+        "extra.infection": 'ip-spoofer',
 
         "classification.identifier": "ip-spoofer",
         "classification.taxonomy": "fraud",
@@ -151,7 +151,7 @@ EVENTS = [
         "extra.public_source": "caida",
         "extra.version": 'ipv4',
         "protocol.transport": 'tcp',
-        "malware.name": 'ip-spoofer',
+        "extra.infection": 'ip-spoofer',
 
         "classification.identifier": "ip-spoofer",
         "classification.taxonomy": "fraud",
