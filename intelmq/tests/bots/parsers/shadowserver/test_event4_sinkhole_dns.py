@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 Sebastian Wagner
+# SPDX-FileCopyrightText: 2022 Shadowserver Foundation
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -39,7 +39,8 @@ EVENTS = [
    'malware.name' : 'calypso',
    'protocol.application' : 'dns',
    'protocol.transport' : 'udp',
-   'raw' : 'InRpbWVzdGFtcCIsInByb3RvY29sIiwic3JjX2lwIiwic3JjX3BvcnQiLCJzcmNfYXNuIiwic3JjX2dlbyIsInNyY19yZWdpb24iLCJzcmNfY2l0eSIsInNyY19ob3N0bmFtZSIsInNyY19uYWljcyIsInNyY19zZWN0b3IiLCJkZXZpY2VfdmVuZG9yIiwiZGV2aWNlX3R5cGUiLCJkZXZpY2VfbW9kZWwiLCJpbmZlY3Rpb24iLCJmYW1pbHkiLCJ0YWciLCJxdWVyeV90eXBlIiwicXVlcnkiLCJjb3VudCIKIjIwMjItMDEtMDYgMDA6MDA6MDIiLCJ1ZHAiLCIyMTcuMTEwLjAuMCIsMjk2MTQsODIyMCwiREUiLCJIRVNTRU4iLCJGUkFOS0ZVUlQgQU0gTUFJTiIsLDUxODIxMCwiQ29tbXVuaWNhdGlvbnMsIFNlcnZpY2UgUHJvdmlkZXIsIGFuZCBIb3N0aW5nIFNlcnZpY2UiLCwsLCJjYWx5cHNvIiwiY2FseXBzbyIsIm1zZXhjaGFuZ2UiLCJBIiwiWW9sa0lzaC5DT00iLDE=',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[1]])),
    'source.asn' : 8220,
    'source.geolocation.cc' : 'DE',
    'source.geolocation.city' : 'FRANKFURT AM MAIN',
@@ -65,7 +66,8 @@ EVENTS = [
    'malware.name' : 'orcus',
    'protocol.application' : 'dns',
    'protocol.transport' : 'udp',
-   'raw' : 'InRpbWVzdGFtcCIsInByb3RvY29sIiwic3JjX2lwIiwic3JjX3BvcnQiLCJzcmNfYXNuIiwic3JjX2dlbyIsInNyY19yZWdpb24iLCJzcmNfY2l0eSIsInNyY19ob3N0bmFtZSIsInNyY19uYWljcyIsInNyY19zZWN0b3IiLCJkZXZpY2VfdmVuZG9yIiwiZGV2aWNlX3R5cGUiLCJkZXZpY2VfbW9kZWwiLCJpbmZlY3Rpb24iLCJmYW1pbHkiLCJ0YWciLCJxdWVyeV90eXBlIiwicXVlcnkiLCJjb3VudCIKIjIwMjItMDEtMDYgMDA6MDA6MDIiLCJ1ZHAiLCIyMDkuNjYuMC4wIiw0NjE4OSw0MDkzNCwiVVMiLCJWSVJHSU5JQSIsIkFTSEJVUk4iLCw1MTgyMTAsLCwsLCJvcmN1cyIsIm9yY3VzIiwicmF0IiwiQSIsInZlcmJsZS5yb2NrcyIsMQ==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[2]])),
    'source.asn' : 40934,
    'source.geolocation.cc' : 'US',
    'source.geolocation.city' : 'ASHBURN',
@@ -91,7 +93,8 @@ EVENTS = [
    'malware.name' : 'calypso',
    'protocol.application' : 'dns',
    'protocol.transport' : 'udp',
-   'raw' : 'InRpbWVzdGFtcCIsInByb3RvY29sIiwic3JjX2lwIiwic3JjX3BvcnQiLCJzcmNfYXNuIiwic3JjX2dlbyIsInNyY19yZWdpb24iLCJzcmNfY2l0eSIsInNyY19ob3N0bmFtZSIsInNyY19uYWljcyIsInNyY19zZWN0b3IiLCJkZXZpY2VfdmVuZG9yIiwiZGV2aWNlX3R5cGUiLCJkZXZpY2VfbW9kZWwiLCJpbmZlY3Rpb24iLCJmYW1pbHkiLCJ0YWciLCJxdWVyeV90eXBlIiwicXVlcnkiLCJjb3VudCIKIjIwMjItMDEtMDYgMDA6MDA6MDIiLCJ1ZHAiLCIyMTcuMTEwLjAuMCIsMzU5MCw4MjIwLCJERSIsIkhFU1NFTiIsIkZSQU5LRlVSVCBBTSBNQUlOIiwsNTE4MjEwLCJDb21tdW5pY2F0aW9ucywgU2VydmljZSBQcm92aWRlciwgYW5kIEhvc3RpbmcgU2VydmljZSIsLCwsImNhbHlwc28iLCJjYWx5cHNvIiwibXNleGNoYW5nZSIsIkEiLCJSQXdGdU5TLkNPTSIsMQ==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[3]])),
    'source.asn' : 8220,
    'source.geolocation.cc' : 'DE',
    'source.geolocation.city' : 'FRANKFURT AM MAIN',

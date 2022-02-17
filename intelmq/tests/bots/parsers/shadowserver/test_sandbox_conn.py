@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 Shadowserver Foundation
+# SPDX-FileCopyrightText: 2022 Shadowserver Foundation
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -32,7 +32,8 @@ EVENTS = [
    'feed.name' : 'Sandbox Connections',
    'malware.hash.md5' : 'b575ce6dcce6502a8431db5610135c25',
    'protocol.transport' : 'udp',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwiYXNuIiwiZ2VvIiwibWQ1IiwicHJvdG9jb2wiLCJwb3J0IiwiaG9zdCIsImJ5dGVzX2luIiwiYnl0ZXNfb3V0IgoiMjAyMi0wMS0xMCAwMDowMDowMyIsIjQwLjExOS42LjIyOCIsODA3NSwiVVMiLCJiNTc1Y2U2ZGNjZTY1MDJhODQzMWRiNTYxMDEzNWMyNSIsInVkcCIsMTIzLCJ0aW1lLndpbmRvd3MuY29tIiwwLDA=',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[1]])),
    'source.asn' : 8075,
    'source.geolocation.cc' : 'US',
    'source.ip' : '40.119.6.228',
@@ -48,7 +49,8 @@ EVENTS = [
    'feed.name' : 'Sandbox Connections',
    'malware.hash.md5' : 'c0d947f9a8685b0d9f3efdba966389c2',
    'protocol.transport' : 'tcp',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwiYXNuIiwiZ2VvIiwibWQ1IiwicHJvdG9jb2wiLCJwb3J0IiwiaG9zdCIsImJ5dGVzX2luIiwiYnl0ZXNfb3V0IgoiMjAyMi0wMS0xMCAwMDowMDowMyIsIjguMjUyLjcwLjEyNiIsMzM1NiwiVVMiLCJjMGQ5NDdmOWE4Njg1YjBkOWYzZWZkYmE5NjYzODljMiIsInRjcCIsODAsLDAsMA==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[2]])),
    'source.asn' : 3356,
    'source.geolocation.cc' : 'US',
    'source.ip' : '8.252.70.126',
@@ -64,7 +66,8 @@ EVENTS = [
    'feed.name' : 'Sandbox Connections',
    'malware.hash.md5' : 'c0d947f9a8685b0d9f3efdba966389c2',
    'protocol.transport' : 'tcp',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwiYXNuIiwiZ2VvIiwibWQ1IiwicHJvdG9jb2wiLCJwb3J0IiwiaG9zdCIsImJ5dGVzX2luIiwiYnl0ZXNfb3V0IgoiMjAyMi0wMS0xMCAwMDowMDowMyIsIjUyLjEwOS44LjIyIiw4MDc1LCJVUyIsImMwZDk0N2Y5YTg2ODViMGQ5ZjNlZmRiYTk2NjM4OWMyIiwidGNwIiw0NDMsLDAsMA==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[3]])),
    'source.asn' : 8075,
    'source.geolocation.cc' : 'US',
    'source.ip' : '52.109.8.22',

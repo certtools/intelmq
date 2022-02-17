@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+# SPDX-FileCopyrightText: 2022 Shadowserver Foundation
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -44,7 +44,8 @@ EVENTS = [
    'feed.name' : 'Accessible AMQP',
    'protocol.application' : 'amqp',
    'protocol.transport' : 'tcp',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwicHJvdG9jb2wiLCJwb3J0IiwiaG9zdG5hbWUiLCJ0YWciLCJhc24iLCJnZW8iLCJyZWdpb24iLCJjaXR5IiwibmFpY3MiLCJzaWMiLCJjaGFubmVsIiwibWVzc2FnZV9sZW5ndGgiLCJjbGFzcyIsIm1ldGhvZCIsInZlcnNpb25fbWFqb3IiLCJ2ZXJzaW9uX21pbm9yIiwiY2FwYWJpbGl0aWVzIiwiY2x1c3Rlcl9uYW1lIiwicGxhdGZvcm0iLCJwcm9kdWN0IiwicHJvZHVjdF92ZXJzaW9uIiwibWVjaGFuaXNtcyIsImxvY2FsZXMiCiIyMDIyLTAxLTEwIDA0OjMyOjEzIiwiNDcuMTAzLjAuMCIsInRjcCIsNTY3MiwsImFtcXAiLDM3OTYzLCJDTiIsIlNIQU5HSEFJIFNISSIsIlNIQU5HSEFJIiw1MTgyMTAsLDAsNTA5LDEwLDEwLDAsOSwicHVibGlzaGVyX2NvbmZpcm1zLGV4Y2hhbmdlX2V4Y2hhbmdlX2JpbmRpbmdzLGJhc2ljLm5hY2ssY29uc3VtZXJfY2FuY2VsX25vdGlmeSxjb25uZWN0aW9uLmJsb2NrZWQsY29uc3VtZXJfcHJpb3JpdGllcyxhdXRoZW50aWNhdGlvbl9mYWlsdXJlX2Nsb3NlLHBlcl9jb25zdW1lcl9xb3MiLCJyYWJiaXRAaVp1ZjYzbTBubnE5YndmN2xoanhya1oiLCJFcmxhbmcvT1RQIiwiUmFiYml0TVEiLCIzLjMuNSIsIlBMQUlOIEFNUVBMQUlOIiwiZW5fVVMi',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[1]])),
    'source.asn' : 37963,
    'source.geolocation.cc' : 'CN',
    'source.geolocation.city' : 'SHANGHAI',
@@ -75,7 +76,8 @@ EVENTS = [
    'feed.name' : 'Accessible AMQP',
    'protocol.application' : 'amqp',
    'protocol.transport' : 'tcp',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwicHJvdG9jb2wiLCJwb3J0IiwiaG9zdG5hbWUiLCJ0YWciLCJhc24iLCJnZW8iLCJyZWdpb24iLCJjaXR5IiwibmFpY3MiLCJzaWMiLCJjaGFubmVsIiwibWVzc2FnZV9sZW5ndGgiLCJjbGFzcyIsIm1ldGhvZCIsInZlcnNpb25fbWFqb3IiLCJ2ZXJzaW9uX21pbm9yIiwiY2FwYWJpbGl0aWVzIiwiY2x1c3Rlcl9uYW1lIiwicGxhdGZvcm0iLCJwcm9kdWN0IiwicHJvZHVjdF92ZXJzaW9uIiwibWVjaGFuaXNtcyIsImxvY2FsZXMiCiIyMDIyLTAxLTEwIDA0OjMyOjEzIiwiMTQxLjk1LjAuMCIsInRjcCIsNTY3MiwsImFtcXAiLDE2Mjc2LCJERSIsIlNBQVJMQU5EIiwiU0FBUkJSVUNLRU4iLDUxODIxMCwsMCw1MDksMTAsMTAsMCw5LCJwdWJsaXNoZXJfY29uZmlybXMsZXhjaGFuZ2VfZXhjaGFuZ2VfYmluZGluZ3MsYmFzaWMubmFjayxjb25zdW1lcl9jYW5jZWxfbm90aWZ5LGNvbm5lY3Rpb24uYmxvY2tlZCxjb25zdW1lcl9wcmlvcml0aWVzLGF1dGhlbnRpY2F0aW9uX2ZhaWx1cmVfY2xvc2UscGVyX2NvbnN1bWVyX3FvcyxkaXJlY3RfcmVwbHlfdG8iLCJyYWJiaXRAbXRrLWJyZWl6aCIsIkVybGFuZy9PVFAgMjQuMC4zIiwiUmFiYml0TVEiLCIzLjguMTkiLCJBTVFQTEFJTiBQTEFJTiIsImVuX1VTIg==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[2]])),
    'source.asn' : 16276,
    'source.geolocation.cc' : 'DE',
    'source.geolocation.city' : 'SAARBRUCKEN',
@@ -106,7 +108,8 @@ EVENTS = [
    'feed.name' : 'Accessible AMQP',
    'protocol.application' : 'amqp',
    'protocol.transport' : 'tcp',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwicHJvdG9jb2wiLCJwb3J0IiwiaG9zdG5hbWUiLCJ0YWciLCJhc24iLCJnZW8iLCJyZWdpb24iLCJjaXR5IiwibmFpY3MiLCJzaWMiLCJjaGFubmVsIiwibWVzc2FnZV9sZW5ndGgiLCJjbGFzcyIsIm1ldGhvZCIsInZlcnNpb25fbWFqb3IiLCJ2ZXJzaW9uX21pbm9yIiwiY2FwYWJpbGl0aWVzIiwiY2x1c3Rlcl9uYW1lIiwicGxhdGZvcm0iLCJwcm9kdWN0IiwicHJvZHVjdF92ZXJzaW9uIiwibWVjaGFuaXNtcyIsImxvY2FsZXMiCiIyMDIyLTAxLTEwIDA0OjMyOjEzIiwiNTQuMjM0LjAuMCIsInRjcCIsNTY3MiwiZWMyLTU0LjIzNC4wLjAuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20iLCJhbXFwIiwxNDYxOCwiVVMiLCJWSVJHSU5JQSIsIkFTSEJVUk4iLDQ1NDExMCwsMCw1MDksMTAsMTAsMCw5LCJwdWJsaXNoZXJfY29uZmlybXMsZXhjaGFuZ2VfZXhjaGFuZ2VfYmluZGluZ3MsYmFzaWMubmFjayxjb25zdW1lcl9jYW5jZWxfbm90aWZ5LGNvbm5lY3Rpb24uYmxvY2tlZCxjb25zdW1lcl9wcmlvcml0aWVzLGF1dGhlbnRpY2F0aW9uX2ZhaWx1cmVfY2xvc2UscGVyX2NvbnN1bWVyX3FvcyxkaXJlY3RfcmVwbHlfdG8iLCJyYWJiaXRAMTM5N2EwZTk2MjliIiwiRXJsYW5nL09UUCAyNC4yIiwiUmFiYml0TVEiLCIzLjkuMTEiLCJQTEFJTiBBTVFQTEFJTiIsImVuX1VTIg==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[3]])),
    'source.asn' : 14618,
    'source.geolocation.cc' : 'US',
    'source.geolocation.city' : 'ASHBURN',

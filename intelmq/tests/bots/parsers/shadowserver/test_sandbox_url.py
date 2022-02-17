@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+# SPDX-FileCopyrightText: 2022 Shadowserver Foundation
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -34,7 +34,8 @@ EVENTS = [
    'extra.user_agent' : 'Microsoft NCSI',
    'feed.name' : 'Sandbox URL',
    'malware.hash.md5' : '37514b54e679a5313334e830ad780ec7',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwiYXNuIiwiZ2VvIiwibWQ1IiwidXJsIiwidXNlcl9hZ2VudCIsImhvc3QiLCJtZXRob2QiCiIyMDIyLTAxLTEwIDAwOjAxOjEzIiwiMjMuMTk2LjQ3Ljg5IiwyMDk0MCwiVVMiLCIzNzUxNGI1NGU2NzlhNTMxMzMzNGU4MzBhZDc4MGVjNyIsImh0dHA6Ly93d3cubXNmdG5jc2kuY29tL25jc2kudHh0IiwiTWljcm9zb2Z0IE5DU0kiLCJ3d3cubXNmdG5jc2kuY29tIiwiR0VUIg==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[1]])),
    'source.asn' : 20940,
    'source.geolocation.cc' : 'US',
    'source.ip' : '23.196.47.89',
@@ -52,7 +53,8 @@ EVENTS = [
    'extra.user_agent' : 'Microsoft-CryptoAPI/6.1',
    'feed.name' : 'Sandbox URL',
    'malware.hash.md5' : '37514b54e679a5313334e830ad780ec7',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwiYXNuIiwiZ2VvIiwibWQ1IiwidXJsIiwidXNlcl9hZ2VudCIsImhvc3QiLCJtZXRob2QiCiIyMDIyLTAxLTEwIDAwOjAxOjI4IiwiNzIuMjEuODEuMjQwIiwxNTEzMywiVVMiLCIzNzUxNGI1NGU2NzlhNTMxMzMzNGU4MzBhZDc4MGVjNyIsImh0dHA6Ly93d3cuZG93bmxvYWQud2luZG93c3VwZGF0ZS5jb20vbXNkb3dubG9hZC91cGRhdGUvdjMvc3RhdGljL3RydXN0ZWRyL2VuL2F1dGhyb290c3RsLmNhYiIsIk1pY3Jvc29mdC1DcnlwdG9BUEkvNi4xIiwid3d3LmRvd25sb2FkLndpbmRvd3N1cGRhdGUuY29tIiwiR0VUIg==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[2]])),
    'source.asn' : 15133,
    'source.geolocation.cc' : 'US',
    'source.ip' : '72.21.81.240',
@@ -70,7 +72,8 @@ EVENTS = [
    'extra.user_agent' : 'Microsoft-CryptoAPI/6.1',
    'feed.name' : 'Sandbox URL',
    'malware.hash.md5' : 'e97ea2820c0d79f3f3ca241d4dcd1060',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwiYXNuIiwiZ2VvIiwibWQ1IiwidXJsIiwidXNlcl9hZ2VudCIsImhvc3QiLCJtZXRob2QiCiIyMDIyLTAxLTEwIDAwOjA4OjI0IiwiMjMuNTYuNC41NyIsMjA5NDAsIlVTIiwiZTk3ZWEyODIwYzBkNzlmM2YzY2EyNDFkNGRjZDEwNjAiLCJodHRwOi8vY3JsLm1pY3Jvc29mdC5jb20vcGtpL2NybC9wcm9kdWN0cy9NaWNUaW1TdGFQQ0FfMjAxMC0wNy0wMS5jcmwiLCJNaWNyb3NvZnQtQ3J5cHRvQVBJLzYuMSIsImNybC5taWNyb3NvZnQuY29tIiwiR0VUIg==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[3]])),
    'source.asn' : 20940,
    'source.geolocation.cc' : 'US',
    'source.ip' : '23.56.4.57',

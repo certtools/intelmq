@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+# SPDX-FileCopyrightText: 2022 Shadowserver Foundation
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -38,7 +38,8 @@ EVENTS = [
    'feed.name' : 'Netbios',
    'protocol.application' : 'netbios-nameservice',
    'protocol.transport' : 'udp',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwicHJvdG9jb2wiLCJwb3J0IiwiaG9zdG5hbWUiLCJ0YWciLCJtYWNfYWRkcmVzcyIsImFzbiIsImdlbyIsInJlZ2lvbiIsImNpdHkiLCJ3b3JrZ3JvdXAiLCJtYWNoaW5lX25hbWUiLCJ1c2VybmFtZSIsIm5haWNzIiwic2ljIiwic2VjdG9yIgoiMjAxNi0wNy0yNCAwMDoxMDo1MCIsIjE5OC41MS4xMDAuNCIsInVkcCIsMTM3LCIxOTgtNTEtMTAwLTQuZXhhbXBsZS5uZXQiLCJuZXRiaW9zIiwiMDAtMDAtMDAtMDAtMDAtMDAiLDMzMjAsIkRFIiwiQkFERU4tV1VSVFRFTUJFUkciLCJTSU5ERUxGSU5HRU4iLCJBUkJFSVRTR1JVUFBFIiwiRVhBTVBMRU1BQ0hJTkUiLCJERVYiLDU0MTY5MCw4NzQ4OTks',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[1]])),
    'source.asn' : 3320,
    'source.geolocation.cc' : 'DE',
    'source.geolocation.city' : 'SINDELFINGEN',
@@ -61,7 +62,8 @@ EVENTS = [
    'feed.name' : 'Netbios',
    'protocol.application' : 'netbios-nameservice',
    'protocol.transport' : 'udp',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwicHJvdG9jb2wiLCJwb3J0IiwiaG9zdG5hbWUiLCJ0YWciLCJtYWNfYWRkcmVzcyIsImFzbiIsImdlbyIsInJlZ2lvbiIsImNpdHkiLCJ3b3JrZ3JvdXAiLCJtYWNoaW5lX25hbWUiLCJ1c2VybmFtZSIsIm5haWNzIiwic2ljIiwic2VjdG9yIgoiMjAxNi0wNy0yNCAwMDoxMDo1MCIsIjE5OC41MS4xMDAuMTgyIiwidWRwIiwxMzcsIjE5OC01MS0xMDAtMTgyLmV4YW1wbGUubmV0IiwibmV0YmlvcyIsIjAwLTFCLUM2LTQxLTM1LUY1Iiw2NzI0LCJERSIsIkJFUkxJTiIsIkJFUkxJTiIsIlNUUkFUT1NFUlZFUiIsIkVYQU1QTEVNQUNISU5FIiwsMCwwLA==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[2]])),
    'source.asn' : 6724,
    'source.geolocation.cc' : 'DE',
    'source.geolocation.city' : 'BERLIN',
@@ -85,7 +87,8 @@ EVENTS = [
    'feed.name' : 'Netbios',
    'protocol.application' : 'netbios-nameservice',
    'protocol.transport' : 'udp',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwicHJvdG9jb2wiLCJwb3J0IiwiaG9zdG5hbWUiLCJ0YWciLCJtYWNfYWRkcmVzcyIsImFzbiIsImdlbyIsInJlZ2lvbiIsImNpdHkiLCJ3b3JrZ3JvdXAiLCJtYWNoaW5lX25hbWUiLCJ1c2VybmFtZSIsIm5haWNzIiwic2ljIiwic2VjdG9yIgoiMjAxNi0wNy0yNCAwMDoxMDo1MCIsIjE5OC41MS4xMDAuMTc2IiwidWRwIiwxMzcsIjE5OC01MS0xMDAtMjIxLmV4YW1wbGUubmV0IiwibmV0YmlvcyIsIjAwLTAwLTAwLTAwLTAwLTAwIiwyNDk0MCwiREUiLCJCQVlFUk4iLCJHVU5aRU5IQVVTRU4iLCJXT1JLR1JPVVAiLCJFWEFNUExFTUFDSElORSIsIkRFViIsMCwwLA==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[3]])),
    'source.asn' : 24940,
    'source.geolocation.cc' : 'DE',
    'source.geolocation.city' : 'GUNZENHAUSEN',

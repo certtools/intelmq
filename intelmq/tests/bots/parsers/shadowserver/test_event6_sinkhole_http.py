@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+# SPDX-FileCopyrightText: 2022 Shadowserver Foundation
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -40,7 +40,8 @@ EVENTS = [
    'feed.name' : 'ShadowServer IPv6 Sinkhole HTTP Drone',
    'protocol.application' : 'http',
    'protocol.transport' : 'tcp',
-   'raw' : 'InRpbWVzdGFtcCIsInByb3RvY29sIiwic3JjX2lwIiwic3JjX3BvcnQiLCJzcmNfYXNuIiwic3JjX2dlbyIsInNyY19yZWdpb24iLCJzcmNfY2l0eSIsInNyY19ob3N0bmFtZSIsInNyY19uYWljcyIsInNyY19zZWN0b3IiLCJkZXZpY2VfdmVuZG9yIiwiZGV2aWNlX3R5cGUiLCJkZXZpY2VfbW9kZWwiLCJkc3RfaXAiLCJkc3RfcG9ydCIsImRzdF9hc24iLCJkc3RfZ2VvIiwiZHN0X3JlZ2lvbiIsImRzdF9jaXR5IiwiZHN0X2hvc3RuYW1lIiwiZHN0X25haWNzIiwiZHN0X3NlY3RvciIsInB1YmxpY19zb3VyY2UiLCJpbmZlY3Rpb24iLCJmYW1pbHkiLCJ0YWciLCJhcHBsaWNhdGlvbiIsInZlcnNpb24iLCJldmVudF9pZCIsImh0dHBfdXJsIiwiaHR0cF9ob3N0IiwiaHR0cF9hZ2VudCIsImZvcndhcmRlZF9ieSIsInNzbF9jaXBoZXIiLCJodHRwX3JlZmVyZXIiCiIyMDIyLTAxLTA2IDAwOjAwOjAwIiwidGNwIiwiODA2OjAzZTo4OmM2MDo5Zjg6ZDhmOjBkNjo2MjQiLDU2MzU5LDgxNTEsIk1YIiwiSkFMSVNDTyIsIlpBUE9QQU4iLCwsLCwsLCIyMDE6NzA6MTozMzI6OmVmIiw4MCw2OTM5LCJVUyIsIkNBTElGT1JOSUEiLCJGUkVNT05UIiwsNTE4MjEwLCJDb21tdW5pY2F0aW9ucywgU2VydmljZSBQcm92aWRlciwgYW5kIEhvc3RpbmcgU2VydmljZSIsLCwsLCwsLCJHRVQgL3BhbmVsL3VwbG9hZC93YXp0bi5jbXAgSFRUUC8xLjEiLCJzZXJwaWVudGVzeWVzY2FsZXJhcy50b3AiLCwsLA==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[1]])),
    'source.asn' : 8151,
    'source.geolocation.cc' : 'MX',
    'source.geolocation.city' : 'ZAPOPAN',
@@ -73,7 +74,8 @@ EVENTS = [
    'malware.name' : 'tsifiri',
    'protocol.application' : 'http',
    'protocol.transport' : 'tcp',
-   'raw' : 'InRpbWVzdGFtcCIsInByb3RvY29sIiwic3JjX2lwIiwic3JjX3BvcnQiLCJzcmNfYXNuIiwic3JjX2dlbyIsInNyY19yZWdpb24iLCJzcmNfY2l0eSIsInNyY19ob3N0bmFtZSIsInNyY19uYWljcyIsInNyY19zZWN0b3IiLCJkZXZpY2VfdmVuZG9yIiwiZGV2aWNlX3R5cGUiLCJkZXZpY2VfbW9kZWwiLCJkc3RfaXAiLCJkc3RfcG9ydCIsImRzdF9hc24iLCJkc3RfZ2VvIiwiZHN0X3JlZ2lvbiIsImRzdF9jaXR5IiwiZHN0X2hvc3RuYW1lIiwiZHN0X25haWNzIiwiZHN0X3NlY3RvciIsInB1YmxpY19zb3VyY2UiLCJpbmZlY3Rpb24iLCJmYW1pbHkiLCJ0YWciLCJhcHBsaWNhdGlvbiIsInZlcnNpb24iLCJldmVudF9pZCIsImh0dHBfdXJsIiwiaHR0cF9ob3N0IiwiaHR0cF9hZ2VudCIsImZvcndhcmRlZF9ieSIsInNzbF9jaXBoZXIiLCJodHRwX3JlZmVyZXIiCiIyMDIyLTAxLTA2IDAwOjAwOjAwIiwidGNwIiwiNDAyOjAwOjNhNjpmYTY6NTk4OmIzNTplNzE6MjU4Iiw1MjMzMiw3NTUyLCJWTiIsIkhPIENISSBNSU5IIiwiVEhBTkggUEhPIEhPIENISSBNSU5IIiwsNTE3MzEyLCJDb21tdW5pY2F0aW9ucywgU2VydmljZSBQcm92aWRlciwgYW5kIEhvc3RpbmcgU2VydmljZSIsLCwsIjIwMTo3MDoxOjMzMjo6ZWYiLDgwLDY5MzksIlVTIiwiQ0FMSUZPUk5JQSIsIkZSRU1PTlQiLCw1MTgyMTAsIkNvbW11bmljYXRpb25zLCBTZXJ2aWNlIFByb3ZpZGVyLCBhbmQgSG9zdGluZyBTZXJ2aWNlIiwsInRzaWZpcmkiLCJ0c2lmaXJpIiwsLCwsIkdFVCAvREFUQSBIVFRQLzEuMSIsIjAtMC0wLTAtMC0wLTAtMC0wLTAtMC0wLTAtNS0wLTAtMC0wLTAtMC0wLTAtMC0wLTAtMC0wLmluZm8iLCJNb3ppbGxhLzQuMCAoY29tcGF0aWJsZTsgTVNJRSA3LjA7IFdpbmRvd3MgTlQgNi4yOyBXT1c2NDsgVHJpZGVudC83LjA7IC5ORVQ0LjBDOyAuTkVUNC4wRTsgLk5FVCBDTFIgMi4wLjUwNzI3OyAuTkVUIENMUiAzLjAuMzA3Mjk7IC5ORVQgQ0xSIDMuNS4zMDcyOTsgSW5mb1BhdGguMzsgWm9vbSAzLjYuMCkiLCws',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[2]])),
    'source.asn' : 7552,
    'source.geolocation.cc' : 'VN',
    'source.geolocation.city' : 'THANH PHO HO CHI MINH',
@@ -105,7 +107,8 @@ EVENTS = [
    'malware.name' : 'phorpiex',
    'protocol.application' : 'http',
    'protocol.transport' : 'tcp',
-   'raw' : 'InRpbWVzdGFtcCIsInByb3RvY29sIiwic3JjX2lwIiwic3JjX3BvcnQiLCJzcmNfYXNuIiwic3JjX2dlbyIsInNyY19yZWdpb24iLCJzcmNfY2l0eSIsInNyY19ob3N0bmFtZSIsInNyY19uYWljcyIsInNyY19zZWN0b3IiLCJkZXZpY2VfdmVuZG9yIiwiZGV2aWNlX3R5cGUiLCJkZXZpY2VfbW9kZWwiLCJkc3RfaXAiLCJkc3RfcG9ydCIsImRzdF9hc24iLCJkc3RfZ2VvIiwiZHN0X3JlZ2lvbiIsImRzdF9jaXR5IiwiZHN0X2hvc3RuYW1lIiwiZHN0X25haWNzIiwiZHN0X3NlY3RvciIsInB1YmxpY19zb3VyY2UiLCJpbmZlY3Rpb24iLCJmYW1pbHkiLCJ0YWciLCJhcHBsaWNhdGlvbiIsInZlcnNpb24iLCJldmVudF9pZCIsImh0dHBfdXJsIiwiaHR0cF9ob3N0IiwiaHR0cF9hZ2VudCIsImZvcndhcmRlZF9ieSIsInNzbF9jaXBoZXIiLCJodHRwX3JlZmVyZXIiCiIyMDIyLTAxLTA2IDAwOjAwOjAwIiwidGNwIiwiMDAxOmIxOjRiOjQ5OjVlZDpkYzA6MTA1OjgyMyIsNTM0NDUsMTc1NTIsIlRIIiwiVUJPTiBSQVRDSEFUSEFOSSIsIldBUklOIENIQU1SQVAiLCwsLCwsLCIyMDE6NzA6MTozMzI6OmVmIiw4MCw2OTM5LCJVUyIsIkNBTElGT1JOSUEiLCJGUkVNT05UIiwsNTE4MjEwLCJDb21tdW5pY2F0aW9ucywgU2VydmljZSBQcm92aWRlciwgYW5kIEhvc3RpbmcgU2VydmljZSIsLCJwaG9ycGlleCIsInBob3JwaWV4IiwidHJpayxwaG9ycGlleCIsLCwsIkdFVCAvNyBIVFRQLzEuMSIsImdhZ2hwYWhlaWFmaGplZmlqcy50b3AiLCJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0OyBydjo2Ny4wKSBHZWNrby8yMDEwMDEwMSBGaXJlZm94LzY3LjAiLCws',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[3]])),
    'source.asn' : 17552,
    'source.geolocation.cc' : 'TH',
    'source.geolocation.city' : 'WARIN CHAMRAP',

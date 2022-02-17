@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+# SPDX-FileCopyrightText: 2022 Shadowserver Foundation
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -34,7 +34,8 @@ EVENTS = [
    'feed.name' : 'Special',
    'malware.name' : 'cve-2021-44228',
    'protocol.transport' : 'tcp',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwicG9ydCIsInByb3RvY29sIiwiYXNuIiwiZ2VvIiwicmVnaW9uIiwiY2l0eSIsImhvc3RuYW1lIiwibmFpY3MiLCJzZWN0b3IiLCJ0YWciLCJwdWJsaWNfc291cmNlIiwic3RhdHVzIiwibWV0aG9kIgoiMjAyMS0xMi0xNiAxOToyMzo0MyIsIjE4NS4zNi4wLjAiLDgwLCJ0Y3AiLDQ4NzE1LCJJUiIsIlRFSFJBTiIsIlRFSFJBTiIsLCwsImN2ZS0yMDIxLTQ0MjI4IiwiYWxwaGFzdHJpa2UuaW8iLCJ2dWxuZXJhYmxlIiwiZG5zIg==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[1]])),
    'source.asn' : 48715,
    'source.geolocation.cc' : 'IR',
    'source.geolocation.city' : 'TEHRAN',
@@ -56,7 +57,8 @@ EVENTS = [
    'feed.name' : 'Special',
    'malware.name' : 'cve-2021-44228',
    'protocol.transport' : 'tcp',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwicG9ydCIsInByb3RvY29sIiwiYXNuIiwiZ2VvIiwicmVnaW9uIiwiY2l0eSIsImhvc3RuYW1lIiwibmFpY3MiLCJzZWN0b3IiLCJ0YWciLCJwdWJsaWNfc291cmNlIiwic3RhdHVzIiwibWV0aG9kIgoiMjAyMS0xMi0xNiAxOToyMzo0NCIsIjU4LjIxMy4wLjAiLDgwLCJ0Y3AiLDEzNDc1NiwiQ04iLCJKSUFOR1NVIFNIRU5HIiwiTkFOSklORyIsLDUxNzMxMSwsImN2ZS0yMDIxLTQ0MjI4IiwiYWxwaGFzdHJpa2UuaW8iLCJ2dWxuZXJhYmxlIiwiZG5zIg==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[2]])),
    'source.asn' : 134756,
    'source.geolocation.cc' : 'CN',
    'source.geolocation.city' : 'NANJING',
@@ -78,7 +80,8 @@ EVENTS = [
    'feed.name' : 'Special',
    'malware.name' : 'cve-2021-44228',
    'protocol.transport' : 'tcp',
-   'raw' : 'InRpbWVzdGFtcCIsImlwIiwicG9ydCIsInByb3RvY29sIiwiYXNuIiwiZ2VvIiwicmVnaW9uIiwiY2l0eSIsImhvc3RuYW1lIiwibmFpY3MiLCJzZWN0b3IiLCJ0YWciLCJwdWJsaWNfc291cmNlIiwic3RhdHVzIiwibWV0aG9kIgoiMjAyMS0xMi0xNiAxOToyMzo0NCIsIjM2LjE1Ni4wLjAiLDgwLCJ0Y3AiLDU2MDQ2LCJDTiIsIkZVSklBTiBTSEVORyIsIkZVWkhPVSIsLDUxNzMxMiwsImN2ZS0yMDIxLTQ0MjI4IiwiYWxwaGFzdHJpa2UuaW8iLCJ2dWxuZXJhYmxlIiwiZG5zIg==',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[3]])),
    'source.asn' : 56046,
    'source.geolocation.cc' : 'CN',
    'source.geolocation.city' : 'FUZHOU',

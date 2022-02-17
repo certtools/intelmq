@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2019 Guillermo Rodriguez
+# SPDX-FileCopyrightText: 2022 Shadowserver Foundation
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -34,7 +34,8 @@ EVENTS = [
    'feed.name' : 'Sandbox DNS',
    'malware.hash.md5' : 'b575ce6dcce6502a8431db5610135c25',
    'protocol.application' : 'dns',
-   'raw' : 'InRpbWVzdGFtcCIsIm1kNWhhc2giLCJyZXF1ZXN0IiwidHlwZSIsInJlc3BvbnNlIiwiZmFtaWx5IiwidGFnIiwic291cmNlIgoiMjAyMi0wMS0xMCAwMDowMDowMiIsImI1NzVjZTZkY2NlNjUwMmE4NDMxZGI1NjEwMTM1YzI1IiwidGltZS53aW5kb3dzLmNvbSIsIkEiLCI0MC4xMTkuNi4yMjgiLCws',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[1]])),
    'time.observation' : '2022-01-07T00:00:00+00:00',
    'time.source' : '2022-01-10T00:00:02+00:00'
 },
@@ -49,7 +50,8 @@ EVENTS = [
    'feed.name' : 'Sandbox DNS',
    'malware.hash.md5' : '807679198a39c80d3ca07e60fd51b581',
    'protocol.application' : 'dns',
-   'raw' : 'InRpbWVzdGFtcCIsIm1kNWhhc2giLCJyZXF1ZXN0IiwidHlwZSIsInJlc3BvbnNlIiwiZmFtaWx5IiwidGFnIiwic291cmNlIgoiMjAyMi0wMS0xMCAwMDowMDowOCIsIjgwNzY3OTE5OGEzOWM4MGQzY2EwN2U2MGZkNTFiNTgxIiwidGltZS53aW5kb3dzLmNvbSIsIkEiLCI0MC4xMTkuNi4yMjgiLCws',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[2]])),
    'time.observation' : '2022-01-07T00:00:00+00:00',
    'time.source' : '2022-01-10T00:00:08+00:00'
 },
@@ -64,7 +66,8 @@ EVENTS = [
    'feed.name' : 'Sandbox DNS',
    'malware.hash.md5' : 'd97e973b9bf073bd3a217425259cea26',
    'protocol.application' : 'dns',
-   'raw' : 'InRpbWVzdGFtcCIsIm1kNWhhc2giLCJyZXF1ZXN0IiwidHlwZSIsInJlc3BvbnNlIiwiZmFtaWx5IiwidGFnIiwic291cmNlIgoiMjAyMi0wMS0xMCAwMDowMDoyMCIsImQ5N2U5NzNiOWJmMDczYmQzYTIxNzQyNTI1OWNlYTI2IiwiY2xpZW50LW9mZmljZTM2NS10YXMubXNlZGdlLm5ldCIsIkEiLCIxMy4xMDcuNS44OCIsLCw=',
+   'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                     EXAMPLE_LINES[3]])),
    'time.observation' : '2022-01-07T00:00:00+00:00',
    'time.source' : '2022-01-10T00:00:20+00:00'
 }
