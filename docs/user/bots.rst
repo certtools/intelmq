@@ -655,6 +655,7 @@ The Cache is required to memorize which files have already been processed (TTL n
 
 **Configuration Parameters**
 
+* `country`: **Deprecated:** The country you want to download the reports for. Will be removed in IntelMQ version 4.0.0, use *reports* instead.
 * `apikey`: Your Shadowserver API key
 * `secret`: Your Shadowserver API secret
 * `reports`: A list of strings or a comma-separated list of the mailing lists you want to process.
