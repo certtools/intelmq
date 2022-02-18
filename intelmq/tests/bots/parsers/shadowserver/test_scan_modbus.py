@@ -26,8 +26,8 @@ EVENTS = [
 {
    '__type' : 'Event',
    'classification.identifier' : 'open-modbus',
-   'classification.taxonomy' : 'other',
-   'classification.type' : 'other',
+   'classification.taxonomy' : 'vulnerable',
+   'classification.type' : 'vulnerable-system',
    'extra.conformity_level' : '1',
    'extra.function_code' : '43',
    'extra.object_count' : '3',
@@ -55,8 +55,8 @@ EVENTS = [
 {
    '__type' : 'Event',
    'classification.identifier' : 'open-modbus',
-   'classification.taxonomy' : 'other',
-   'classification.type' : 'other',
+   'classification.taxonomy' : 'vulnerable',
+   'classification.type' : 'vulnerable-system',
    'extra.conformity_level' : '1',
    'extra.function_code' : '43',
    'extra.object_count' : '3',
@@ -84,8 +84,8 @@ EVENTS = [
 {
    '__type' : 'Event',
    'classification.identifier' : 'open-modbus',
-   'classification.taxonomy' : 'other',
-   'classification.type' : 'other',
+   'classification.taxonomy' : 'vulnerable',
+   'classification.type' : 'vulnerable-system',
    'extra.conformity_level' : '129',
    'extra.function_code' : '43',
    'extra.object_count' : '3',
