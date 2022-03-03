@@ -1493,6 +1493,38 @@ scan_http_vulnerable = {
     },
 }
 
+scan_ics = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.application', 'tag'),
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('extra.', 'device_version', validate_to_none),
+        ('extra.', 'device_id', validate_to_none),
+        ('extra.', 'response_length', convert_int),
+        ('extra.', 'raw_response', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-ics',
+    },
+}
+
 scan_ipmi = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1786,41 +1818,6 @@ scan_memcached = {
         'classification.type': 'vulnerable-system',
         'protocol.application': 'memcached',
         'classification.identifier': 'open-memcached',
-    },
-}
-
-scan_modbus = {
-    'required_fields': [
-        ('time.source', 'timestamp', add_UTC_to_timestamp),
-        ('source.ip', 'ip', validate_ip),
-        ('source.port', 'port', convert_int),
-    ],
-    'optional_fields': [
-        ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
-        ('extra.', 'tag', validate_to_none),
-        ('source.asn', 'asn', invalidate_zero),
-        ('source.geolocation.cc', 'geo'),
-        ('source.geolocation.region', 'region'),
-        ('source.geolocation.city', 'city'),
-        ('extra.source.naics', 'naics', invalidate_zero),
-        ('extra.source.sic', 'sic', invalidate_zero),
-        ('extra.', 'unit_id', validate_to_none),
-        ('extra.', 'vendor', validate_to_none),
-        ('extra.', 'revision', validate_to_none),
-        ('extra.', 'product_code', validate_to_none),
-        ('extra.', 'function_code', validate_to_none),
-        ('extra.', 'conformity_level', validate_to_none),
-        ('extra.', 'object_count', validate_to_none),
-        ('extra.', 'response_length', convert_int),
-        ('extra.', 'raw_response', validate_to_none),
-        ('extra.source.sector', 'sector', validate_to_none),
-    ],
-    'constant_fields': {
-        'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable-system',
-        'protocol.application': 'modbus',
-        'classification.identifier': 'open-modbus',
     },
 }
 
@@ -3244,6 +3241,7 @@ mapping = (
     ('Accessible Hadoop Service', 'scan_hadoop', scan_hadoop),
     ('Accessible HTTP', 'scan_http', scan_http),
     ('Vulnerable HTTP', 'scan_http_vulnerable', scan_http_vulnerable),
+    ('Accessible ICS', 'scan_ics', scan_ics),
     ('IPMI', 'scan_ipmi', scan_ipmi),
     ('Open IPP', 'scan_ipp', scan_ipp),
     ('ISAKMP Vulnerability Scan', 'scan_isakmp', scan_isakmp),
@@ -3251,7 +3249,6 @@ mapping = (
     ('Open LDAP Services', 'scan_ldap_udp', scan_ldap_udp),
     ('Open mDNS Servers', 'scan_mdns', scan_mdns),
     ('Open Memcached Server', 'scan_memcached', scan_memcached),
-    ('Accessible Modbus', 'scan_modbus', scan_modbus),
     ('Accessible/Open MongoDB Service', 'scan_mongodb', scan_mongodb),
     ('Open MQTT', 'scan_mqtt', scan_mqtt),
     ('Open Anonymous MQTT', 'scan_mqtt_anon', scan_mqtt_anon),
