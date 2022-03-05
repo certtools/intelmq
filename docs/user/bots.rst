@@ -3194,8 +3194,6 @@ Threshold
 
 **Information**
 
-
-* **Cache parameters** (see section :ref:`common-parameters`)
 * `name`: `intelmq.bots.experts.threshold.expert`
 * `lookup`: redis cache
 * `public`: no
@@ -3204,6 +3202,7 @@ Threshold
 
 **Configuration Parameters**
 
+* **Cache parameters** (see section :ref:`common-parameters`), especially ``redis_cache_ttl`` as number of seconds before threshold counter is reset. Since version 3.1 (until 3.1 `timeout` was used).
 * `filter_keys`: String, comma-separated list of field names to consider or ignore when determining which messages are similar.
 * `filter_type`: String, `whitelist` (consider only the fields in `filter_keys`) or `blacklist` (consider everything but the fields in `filter_keys`).
 * `threshold`: Integer, number of messages required before propagating one. In forwarded messages, the threshold is saved in the message as `extra.count`.

@@ -1,5 +1,5 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2021 Sebastian Wagner
+   SPDX-FileCopyrightText: 2015-2022 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -31,6 +31,8 @@ sudo find /var/log/ -user intelmq ! -path \*intelmq\*
 ```
 
 ### Configuration
+#### Threshold Expert
+The parameter `timeout` has been merged into `redis_cache_ttl`.
 
 ### Libraries
 
