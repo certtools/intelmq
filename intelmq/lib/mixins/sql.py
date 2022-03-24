@@ -19,6 +19,7 @@ class SQLMixin:
 
     POSTGRESQL = "postgresql"
     SQLITE = "sqlite"
+    MSSQL = "mssql"
     _default_engine = "postgresql"
     engine = None
     # overwrite the default value from the OutputBot
@@ -33,7 +34,8 @@ class SQLMixin:
         self.logger.debug("Running SQL Mixin initialization.")
         self._engine_name = getattr(self, 'engine', self._default_engine).lower()
         engines = {SQLMixin.POSTGRESQL: (self._init_postgresql, "%s"),
-                   SQLMixin.SQLITE: (self._init_sqlite, "?")}
+                   SQLMixin.SQLITE: (self._init_sqlite, "?"),
+                   SQLMixin.MSSQL: (self._init_mssql, "%s")}
         for key, val in engines.items():
             if self._engine_name == key:
                 val[0]()
@@ -48,7 +50,7 @@ class SQLMixin:
 
         try:
             self.con = self._engine.connect(**connect_args)
-            if autocommitable:  # psycopg2 has it, sqlite3 has not
+            if autocommitable:  # psycopg2 and mssql has it, sqlite3 has not
                 self.con.autocommit = getattr(self, 'autocommit', True)  # True prevents deadlocks
             self.cur = self.con.cursor()
         except (self._engine.Error, Exception):
@@ -85,6 +87,23 @@ class SQLMixin:
                        "timeout": getattr(self, 'connect_timeout', 5)
                        }
                       )
+
+    def _init_mssql(self):
+        try:
+            import pymssql
+        except ImportError:
+            raise exceptions.MissingDependencyError("pymssql")
+
+        self._connect(pymssql,
+                      {"server": self.host,
+                       "user": self.user,
+                       "password": self.password,
+                       "database": self.database,
+                       "login_timeout": getattr(self, 'connect_timeout', 5),
+                       "port": self.port,
+                       "as_dict": True
+                       },
+                      autocommitable=True)
 
     def execute(self, query: str, values: tuple, rollback=False):
         try:
