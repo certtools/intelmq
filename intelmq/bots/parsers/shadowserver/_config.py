@@ -2970,6 +2970,82 @@ device_id = {
     }
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-socks4-5-proxy-report/
+accessible_socks = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'accessible-socks',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/open-dvr-dhcpdiscover-report/
+open_dvr_dhcpdiscover = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('extra.', 'device_version', validate_to_none),
+        ('extra.', 'device_id', validate_to_none),
+        ('extra.', 'device_serial', validate_to_none),
+        ('extra.', 'machine_name', validate_to_none),
+        ('extra.', 'manufacturer', validate_to_none),
+        ('extra.', 'method', validate_to_none),
+        ('extra.', 'http_port', validate_to_none),
+        ('extra.', 'internal_port', validate_to_none),
+        ('extra.', 'video_input_channels', validate_to_none),
+        ('extra.', 'alarm_input_channels', validate_to_none),
+        ('extra.', 'video_output_channels', validate_to_none),
+        ('extra.', 'alarm_output_channels', validate_to_none),
+        ('extra.', 'remote_video_input_channels', validate_to_none),
+        ('extra.', 'mac_address', validate_to_none),
+        ('extra.', 'ipv4_address', validate_to_none),
+        ('extra.', 'ipv4_gateway', validate_to_none),
+        ('extra.', 'ipv4_subnet_mask', validate_to_none),
+        ('extra.', 'ipv4_dhcp_enable', validate_to_none),
+        ('extra.', 'ipv6_address', validate_to_none),
+        ('extra.', 'ipv6_link_local', validate_to_none),
+        ('extra.', 'ipv6_gateway', validate_to_none),
+        ('extra.', 'ipv6_dhcp_enable', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-dvr-dhcpdiscover',
+    },
+}
+
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
@@ -2988,6 +3064,7 @@ mapping = (
     ('Accessible-RDP', 'scan_rdp', accessible_rdp),
     ('Accessible-Rsync', 'scan_rsync', accessible_rsync),
     ('Accessible-SMB', 'scan_smb', accessible_smb),
+    ('Accessible-Socks', 'scan_socks', accessible_socks),
     ('Accessible-Telnet', 'scan_telnet', accessible_telnet),
     ('Accessible-Ubiquiti-Discovery-Service', 'scan_ubiquiti', accessible_ubiquiti_discovery_service),
     ('Accessible-VNC', 'scan_vnc', accessible_vnc),
@@ -3017,6 +3094,7 @@ mapping = (
     ('NTP-Version', 'scan_ntp', ntp_version),
     ('Open-Chargen', 'scan_chargen', open_chargen),
     ('Open-DB2-Discovery-Service', 'scan_db2', open_db2_discovery_service),
+    ('Open-DVR-DHCPDiscover', 'scan_dvr_dhcpdiscover', open_dvr_dhcpdiscover),
     ('Open-Elasticsearch', 'scan_elasticsearch', open_elasticsearch),
     ('Open-IPMI', 'scan_ipmi', open_ipmi),
     ('Open-IPP', 'scan_ipp', open_ipp),
