@@ -1357,6 +1357,35 @@ scan_db2 = {
     },
 }
 
+scan_ddos_middlebox = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.application', 'tag'),
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'source_port', validate_to_none),
+        ('extra.', 'bytes', convert_int),
+        ('extra.', 'amplification', convert_float),
+        ('extra.', 'method', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-ddos-middlebox',
+    },
+}
+
 scan_dns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1971,6 +2000,10 @@ scan_mdns = {
         ('extra.', 'http_info', validate_to_none),
         ('extra.', 'http_target', validate_to_none),
         ('extra.', 'http_port', convert_int),
+        ('extra.', 'spotify_name', validate_to_none),
+        ('extra.', 'spotify_ipv4', validate_to_none),
+        ('extra.', 'spotify_ipv6', validate_to_none),
+        ('extra.', 'opc_ua_discovery', validate_to_none),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -2642,6 +2675,11 @@ scan_smb = {
         ('extra.source.sic', 'sic', invalidate_zero),
         ('extra.', 'arch', validate_to_none),
         ('extra.', 'key', validate_to_none),
+        ('extra.', 'smbv1_support', validate_to_none),
+        ('extra.', 'smb_major_number', validate_to_none),
+        ('extra.', 'smb_minor_number', validate_to_none),
+        ('extra.', 'smb_revision', validate_to_none),
+        ('extra.', 'smb_version_string', validate_to_none),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -3399,6 +3437,7 @@ special = {
         ('extra.', 'public_source', validate_to_none),
         ('extra.', 'status', validate_to_none),
         ('extra.', 'method', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -3453,6 +3492,7 @@ mapping = (
     ('Accessible CoAP', 'scan_coap', scan_coap),
     ('Accessible CWMP', 'scan_cwmp', scan_cwmp),
     ('Open DB2 Discovery Service', 'scan_db2', scan_db2),
+    ('Vulnerable DDoS Middlebox', 'scan_ddos_middlebox', scan_ddos_middlebox),
     ('DNS Open Resolvers', 'scan_dns', scan_dns),
     ('Accessible DVR DHCPDiscover', 'scan_dvr_dhcpdiscover', scan_dvr_dhcpdiscover),
     ('Open Elasticsearch Server', 'scan_elasticsearch', scan_elasticsearch),
@@ -3490,7 +3530,7 @@ mapping = (
     ('Accessible SMTP', 'scan_smtp', scan_smtp),
     ('Vulnerable SMTP', 'scan_smtp_vulnerable', scan_smtp_vulnerable),
     ('SNMP', 'scan_snmp', scan_snmp),
-    ('Open SOCKS4/5 proxy', 'scan_socks', scan_socks),
+    ('Accessible SOCKS4/5 Proxy', 'scan_socks', scan_socks),
     ('SSDP', 'scan_ssdp', scan_ssdp),
     ('Accessible SSH', 'scan_ssh', scan_ssh),
     ('Accessible SSL', 'scan_ssl', scan_ssl),
