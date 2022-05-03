@@ -52,7 +52,7 @@ class GenericCsvParserBot(ParserBot):
     time_format = None
     type: Optional[str] = None
     type_translation = {}
-    skip_header: bool = False
+    skip_header: Union[bool, int] = False
 
     def init(self):
         # convert columns to an array
@@ -98,9 +98,16 @@ class GenericCsvParserBot(ParserBot):
         # ignore lines having mix of spaces and tabs only
         raw_report = re.sub(r'(?m)^[ \t]*\n?', '', raw_report)
         # skip header
-        if self.skip_header:
-            self.tempdata.append(raw_report[:raw_report.find('\n')])
-            raw_report = raw_report[raw_report.find('\n') + 1:]
+        if bool(self.skip_header):
+            if isinstance(self.skip_header, int):
+                raw_report_splitted = raw_report.splitlines()
+                header = raw_report_splitted[:abs(self.skip_header)]
+                self.tempdata.append("\r\n".join(header))
+                raw_report_content = raw_report_splitted[abs(self.skip_header):]
+                raw_report = "\r\n".join(raw_report_content)
+            else:
+                self.tempdata.append(raw_report[:raw_report.find('\n')])
+                raw_report = raw_report[raw_report.find('\n') + 1:]
         for row in csv.reader(io.StringIO(raw_report),
                               delimiter=str(self.delimiter)):
 
