@@ -52,6 +52,8 @@ CHANGELOG
   - SMTP Data
   - Telnet Login
   - VNC/RFB Login
+- `intelmq.bots.parsers.generic.parser_csv`:
+  - Added enhancement for skipping header. `skip_header`is now able to get boolean or integer, to skip N number of lines (PR#2171 by Tamás Gutsohn, fixes #2164).
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - New parameter `overwrite` (PR#2112 by Sebastian Wagner, fixes #2022).
   - Fix handling of field `Payload.domain` if it contains the same IP address as `Payload.serverIp` (PR#2144 by Mikk Margus Möll and Sebastian Wagner).
