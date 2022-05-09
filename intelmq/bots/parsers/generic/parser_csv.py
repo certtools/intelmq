@@ -99,13 +99,13 @@ class GenericCsvParserBot(ParserBot):
         raw_report = re.sub(r'(?m)^[ \t]*\n?', '', raw_report)
         # skip header
         if bool(self.skip_header):
-            splitted = raw_report.splitlines()
+            split = raw_report.splitlines()
             if isinstance(self.skip_header, int):
-                self.tempdata.append("\r\n".join(splitted[:abs(self.skip_header)]))
-                raw_report = "\r\n".join(splitted[abs(self.skip_header):])
+                self.tempdata.append("\r\n".join(split[:abs(self.skip_header)]))
+                raw_report = "\r\n".join(split[abs(self.skip_header):])
             else:
-                self.tempdata.append("\r\n".join(splitted[:1]))
-                raw_report = "\r\n".join(splitted[1:])
+                self.tempdata.append("\r\n".join(split[:1]))
+                raw_report = "\r\n".join(split[1:])
         for row in csv.reader(io.StringIO(raw_report),
                               delimiter=str(self.delimiter)):
 
