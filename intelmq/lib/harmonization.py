@@ -428,7 +428,7 @@ class DateTime(String):
             return utils.decode(value)
 
         try:
-            value = dateutil.parser.parse(value, fuzzy=True)
+            value = dateutil.parser.parse(value, fuzzy=True, dayfirst=True)
             value = value.astimezone(pytz.utc)
             value = value.isoformat()
         except (ValueError, OverflowError):
@@ -537,7 +537,7 @@ class DateTime(String):
 
     @staticmethod
     def convert_fuzzy(value) -> str:
-        value = dateutil.parser.parse(value, fuzzy=True)
+        value = dateutil.parser.parse(value, fuzzy=True, dayfirst=True)
         if not value.tzinfo and sys.version_info <= (3, 6):
             value = pytz.utc.localize(value)  # pragma: no cover
         elif not value.tzinfo:

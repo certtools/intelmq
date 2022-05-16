@@ -27,12 +27,12 @@ from dateutil.parser import parse
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidArgument, InvalidValue
-from intelmq.lib.harmonization import DateTime
+from intelmq.lib.harmonization import TIME_CONVERSIONS
 
-TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
-                    'windows_nt': DateTime.from_windows_nt,
-                    'epoch_millis': DateTime.from_epoch_millis,
-                    None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
+# TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
+#                     'windows_nt': DateTime.from_windows_nt,
+#                     'epoch_millis': DateTime.from_epoch_millis,
+#                     None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
 
 DATA_CONVERSIONS = {'json': lambda data: json.loads(data)}
 DOCS = "https://intelmq.readthedocs.io/en/latest/guides/Bots.html#generic-csv-parser"
