@@ -17,6 +17,9 @@ SAMPLE_SPLIT = SAMPLE_FILE.splitlines()
 with open(os.path.join(os.path.dirname(__file__), 'compose_fields.csv')) as handle:
     COMPOSE_FILE = handle.read()
 COMPOSE_SPLIT = COMPOSE_FILE.splitlines()
+with open(os.path.join(os.path.dirname(__file__), 'custom_date_format.csv')) as handle:
+    CUSTOM_DATE_FILE = handle.read()
+CUSTOM_DATE_SPLIT = CUSTOM_DATE_FILE.splitlines()
 
 EXAMPLE_REPORT = {"feed.name": "Sample CSV Feed",
                   "feed.url": "http://www.samplecsvthreatfeed.com/list",
@@ -55,6 +58,27 @@ COMPOSE_EVENT = {"feed.name": "Sample CSV Feed",
                  "raw": utils.base64_encode(COMPOSE_SPLIT[1]+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
+CUSTOM_DATE_REPORT = {"feed.name": "Sample CSV Feed",
+                      "feed.url": "http://www.samplecsvthreatfeed.com/list",
+                      "raw": utils.base64_encode(CUSTOM_DATE_FILE),
+                      "__type": "Report",
+                      "time.observation": "2022-05-18T04:19:00+00:00",
+                      }
+CUSTOM_DATE_EVENT = {"feed.name": "Sample CSV Feed",
+                     "feed.url": "http://www.samplecsvthreatfeed.com/list",
+                     "__type": "Event",
+                     "time.source": "2022-05-18T04:19:00+00:00",
+                     "source.url": "http://www.cennoworld.com/Payment_Confirmation/"
+                                   "Payment_Confirmation.zip",
+                     "source.ip": "198.105.221.5",
+                     "source.fqdn": "mail5.bulls.unisonplatform.com",
+                     "event_description.text": "Really bad actor site comment",
+                     "classification.type": "malware-distribution",
+                     "raw": utils.base64_encode(CUSTOM_DATE_SPLIT[10].replace('\t', ',')+'\r\n'),
+                     "time.observation": "2022-05-18T04:19:00+00:00",
+                     }
+CUSTOM_DATE_EVENT_MIDNIGHT = CUSTOM_DATE_EVENT.copy()
+CUSTOM_DATE_EVENT_MIDNIGHT['time.source'] = "2022-05-18T00:00:00+00:00"
 
 
 class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
@@ -104,6 +128,18 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                                  'compose_fields': {"source.url": "http://{0}{1}"},
                                  'delimiter': ','})
         self.assertMessageEqual(0, COMPOSE_EVENT)
+
+    def test_custom_date_format(self):
+        """ Test if custom date value for parameter time_format is handled correctly. """
+        self.input_message = CUSTOM_DATE_REPORT
+        self.run_bot(parameters={'time_format': 'from_format|%d-%m-%Y %H:%M:%S'})
+        self.assertMessageEqual(0, CUSTOM_DATE_EVENT)
+
+    def test_custom_date_format_midnight(self):
+        """ Test if custom date value for parameter time_format is handled correctly. """
+        self.input_message = CUSTOM_DATE_REPORT
+        self.run_bot(parameters={'time_format': 'from_format_midnight|%d-%m-%Y %H:%M:%S'})
+        self.assertMessageEqual(0, CUSTOM_DATE_EVENT_MIDNIGHT)
 
 
 if __name__ == '__main__':  # pragma: no cover
