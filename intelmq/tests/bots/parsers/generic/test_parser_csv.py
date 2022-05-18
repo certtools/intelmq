@@ -62,7 +62,7 @@ CUSTOM_DATE_REPORT = {"feed.name": "Sample CSV Feed",
                       "feed.url": "http://www.samplecsvthreatfeed.com/list",
                       "raw": utils.base64_encode(CUSTOM_DATE_FILE),
                       "__type": "Report",
-                      "time.observation": "2022-05-18T04:19:00+00:00",
+                      "time.observation": "2022-05-18T06:19:00+00:00",
                       }
 CUSTOM_DATE_EVENT = {"feed.name": "Sample CSV Feed",
                      "feed.url": "http://www.samplecsvthreatfeed.com/list",
@@ -75,7 +75,7 @@ CUSTOM_DATE_EVENT = {"feed.name": "Sample CSV Feed",
                      "event_description.text": "Really bad actor site comment",
                      "classification.type": "malware-distribution",
                      "raw": utils.base64_encode(CUSTOM_DATE_SPLIT[10].replace('\t', ',')+'\r\n'),
-                     "time.observation": "2022-05-18T04:19:00+00:00",
+                     "time.observation": "2022-05-18T06:19:00+00:00",
                      }
 CUSTOM_DATE_EVENT_MIDNIGHT = CUSTOM_DATE_EVENT.copy()
 CUSTOM_DATE_EVENT_MIDNIGHT['time.source'] = "2022-05-18T00:00:00+00:00"
