@@ -67,7 +67,7 @@ CUSTOM_DATE_REPORT = {"feed.name": "Sample CSV Feed",
 CUSTOM_DATE_EVENT = {"feed.name": "Sample CSV Feed",
                      "feed.url": "http://www.samplecsvthreatfeed.com/list",
                      "__type": "Event",
-                     "time.source": "2022-05-18T04:19:00+00:00",
+                     "time.source": "2022-05-18T06:19:00+00:00",
                      "source.url": "http://www.cennoworld.com/Payment_Confirmation/"
                                    "Payment_Confirmation.zip",
                      "source.ip": "198.105.221.5",
