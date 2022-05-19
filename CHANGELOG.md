@@ -53,6 +53,9 @@ CHANGELOG
   - SMTP Data
   - Telnet Login
   - VNC/RFB Login
+- `intelmq.bots.parsers.generic.parser_csv`:
+  - Added enhancement to parameter `time_format`. It handles specific time formats given with different format codes. 
+  Usage e.g. `time_format: 'from_format|%d-%m-%Y %H:%M:%S'` (PR#2179 by Tamas Gutsohn, fixes #2105).
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - New parameter `overwrite` (PR#2112 by Sebastian Wagner, fixes #2022).
   - Fix handling of field `Payload.domain` if it contains the same IP address as `Payload.serverIp` (PR#2144 by Mikk Margus Möll and Sebastian Wagner).
