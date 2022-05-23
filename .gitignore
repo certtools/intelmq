@@ -18,6 +18,7 @@ dist
 .vagrant/
 *~
 .coverage
+coverage.xml
 .idea/
 htmlcov/
 *.pem
