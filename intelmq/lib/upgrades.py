@@ -725,6 +725,24 @@ def v301_deprecations(configuration, harmonization, dry_run, **kwargs):
     return messages + ' Remove affected bots yourself.' if messages else changed, configuration, harmonization
 
 
+def v310_deprecations(configuration, harmonization, dry_run, **kwargs):
+    """
+    Deprecate malc0de parser
+    """
+    found_malc0deparser = []
+    messages = []
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
+        if bot["module"] == "intelmq.bots.parsers.malc0de.parser":
+            found_malc0deparser.append(bot_id)
+    if found_malc0deparser:
+        messages.append('A discontinued bot "Malc0de Parser" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_malc0deparser)))
+    messages = ' '.join(messages)
+    return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -749,7 +767,7 @@ UPGRADES = OrderedDict([
     ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, v300_pipeline_file_removal, )),
     ((3, 0, 1), (v301_deprecations, )),
     ((3, 0, 2), ()),
-    ((3, 1, 0), ()),
+    ((3, 1, 0), (v310_deprecations, )),
 ])
 
 ALWAYS = (harmonization, )
