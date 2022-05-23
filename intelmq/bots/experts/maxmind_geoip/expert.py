@@ -31,6 +31,7 @@ class GeoIPExpertBot(ExpertBot):
     license_key: str = "<insert Maxmind license key>"
     overwrite: bool = False
     use_registered: bool = False
+    autoupdate_cached_database: bool = True  # Activate/deactivate update-database functionality
 
     def init(self):
         if geoip2 is None:
@@ -113,7 +114,7 @@ class GeoIPExpertBot(ExpertBot):
         runtime_conf = get_bots_settings()
         try:
             for bot in runtime_conf:
-                if runtime_conf[bot]["module"] == __name__:
+                if runtime_conf[bot]["module"] == __name__ and runtime_conf[bot]['parameters'].get('autoupdate_cached_database', True):
                     license_key = runtime_conf[bot]["parameters"]["license_key"]
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
@@ -129,7 +130,7 @@ class GeoIPExpertBot(ExpertBot):
 
         if not bots:
             if verbose:
-                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf.")
+                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf or database update disabled with parameter 'autoupdate_cached_database'.")
             sys.exit(0)
 
         # we only need to import now, if there are no maxmind_geoip bots, this dependency does not need to be installed

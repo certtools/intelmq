@@ -80,6 +80,7 @@ CHANGELOG
 - `intelmq.bots.experts.asn_lookup.expert`: Fixes update-database script on the last few days of a month (PR#2121 by Filip Pokorný, fixes #2088).
 - `intelmq.bots.experts.threshold.expert`: Correctly use the standard parameter `redis_cache_ttl` instead of the previously used parameter `timeout` (PR#2155 by Karl-Johan Karlsson).
 - `intelmq.bots.experts.jinja2.expert`: Lift restriction on requirement jinja2 < 3 (PR#2158 by Sebastian Wagner).
+- `intelmq.bots.experts.asn_lookup.expert`, `intelmq.bots.experts.domain_suffix.expert`, `intelmq.bots.experts.maxmind_geoip.expert`, `intelmq.bots.experts.recordedfuture_iprisk.expert`, `intelmq.bots.experts.tor_nodes.expert`: New parameter `autoupdate_cached_database` to disable automatic updates (downloads) of cached databases (PR#2180 by Sebastian Wagner).
 
 #### Outputs
 - Removed `intelmq.bots.outputs.postgresql`: this bot was marked as deprecated in 2019 announced to be removed in version 3 of IntelMQ (PR#2045 by Birger Schacht).
