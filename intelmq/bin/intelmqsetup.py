@@ -288,7 +288,7 @@ def intelmqsetup_manager_generate():
 
     if not src_dir.as_posix().startswith('/usr/'):
         # Paths differ in editable installations
-        print(red("Detected an editable (egg-link) pip-installation of intelmq-manager. Some feature of this program may not work."))
+        print(red("Detected an editable (egg-link) pip-installation of intelmq-manager. Some features of this program may not work."))
 
     intelmq_manager.build.buildhtml(html_dir_destination)
 
