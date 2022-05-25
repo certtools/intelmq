@@ -53,6 +53,7 @@ CHANGELOG
   - SMTP Data
   - Telnet Login
   - VNC/RFB Login
+- Removed `intelmq.bots.parsers.malc0de`: this bot was marked as deprecated and removed from feed due to offline status (PR#2184 by Tamas Gutsohn, FIX#2178).
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - New parameter `overwrite` (PR#2112 by Sebastian Wagner, fixes #2022).
   - Fix handling of field `Payload.domain` if it contains the same IP address as `Payload.serverIp` (PR#2144 by Mikk Margus Möll and Sebastian Wagner).
