@@ -38,7 +38,9 @@ CHANGELOG
 - Set the parent class of all bots to the correct bot class
 
 #### Collectors
-- `intelmq.bots.collectors.mail._lib`: Add support for unverified SSL/STARTTLS connections (PR#2055 by Sebastian Wagner).
+- `intelmq.bots.collectors.mail._lib`:
+  - Add support for unverified SSL/STARTTLS connections (PR#2055 by Sebastian Wagner).
+  - Fix exception handling for aborted IMAP connections (PR#2187 by Sebastian Wagner).
 - `intelmq.bots.collectors.blueliv`: Fix Blueliv collector requirements (PR#2161 by Gethvi).
 
 #### Parsers
