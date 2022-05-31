@@ -102,6 +102,7 @@ CHANGELOG
 - CodeQL Github Actions `exponential backtracking on strings` fixed. (PR#2148 by Sebastian Waldbauer, fixes #2138)
 
 ### Tools
+- `intelmqctl`: fix process manager initialization if run non-interactively, as intelmqdump does it (PR#2189 by Sebastian Wagner, fixes 2188).
 
 ### Contrib
 - logrotate: Move compress and ownership rules to the IntelMQ-blocks to prevent that they apply to other files (PR#2111 by Sebastian Wagner, fixes #2110).
