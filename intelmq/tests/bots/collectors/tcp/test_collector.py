@@ -96,7 +96,8 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
         cls.sysconfig = {'http_url': 'http://localhost/two_files.tar.gz', 'extract_files': True,
                          'name': 'Example feed',
                          'ip': 'localhost',
-                         'port': PORT
+                         'port': PORT,
+                         "use_packer": "json"
                          }
 
     def test_random_input(self):
@@ -105,7 +106,7 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
         thread.start()
         self.run_bot()
         self.assertOutputQueueLen(2)
-        generated_report = MessageFactory.unserialize(self.get_output_queue()[1], harmonization=self.harmonization,
+        generated_report = MessageFactory.deserialize(self.get_output_queue()[1], harmonization=self.harmonization,
                                                       default_type='Event')
         self.assertEqual(base64_decode(generated_report['raw']), ORIGINAL_DATA.split(SEPARATOR)[1])
 
@@ -124,12 +125,11 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
         self.assertOutputQueueLen(msg_count)
 
         for i, msg in enumerate(self.get_output_queue()):
-            report = MessageFactory.unserialize(msg, harmonization=self.harmonization, default_type='Event')
+            report = MessageFactory.deserialize(msg, harmonization=self.harmonization, default_type='Event')
 
-            output = MessageFactory.unserialize(utils.base64_decode(report["raw"]),
+            output = MessageFactory.deserialize(utils.base64_decode(report["raw"]),
                                                 harmonization=self.harmonization,
-                                                default_type='Event',
-                                                use_packer="json")
+                                                default_type='Event')
             self.assertDictEqual(output, INPUT1)
 
             del report['time.observation']

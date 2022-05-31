@@ -6,8 +6,6 @@
 import base64
 import os
 import unittest
-import json
-import msgpack
 
 import intelmq.lib.test as test
 from intelmq.bots.parsers.json.parser import JSONParserBot

@@ -36,11 +36,7 @@ class MicrosoftAzureCollectorBot(CollectorBot, CacheMixin):
 
     def init(self):
         if ContainerClient is None or create_configuration is None:
-<<<<<<< HEAD
             raise MissingDependencyError("azure-storage-blob", version='>=12.0.0')
-=======
-            raise MissingDependencyError("azure.storage", version='>=12.0.0')
->>>>>>> c78494bb6 (DOC: azure collector: document minimum azure version)
 
         self.config = create_configuration(storage_sdk='blob')
         if hasattr(self, 'https_proxy'):

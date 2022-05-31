@@ -66,6 +66,10 @@ class TestUtils(unittest.TestCase):
         exc = str(excs.MissingDependencyError(depname, additional_text=additional))
         self.assertIn(repr(depname), exc)
         self.assertTrue(exc.endswith(" %s" % additional))
+        
+    def test_MissingPackerError(self):
+        exc = str(excs.MissingPackerError('non_existing_packer'))
+        self.assertIn(repr('non_existing_packer'), exc)
 
 
 if __name__ == '__main__':  # pragma: no cover

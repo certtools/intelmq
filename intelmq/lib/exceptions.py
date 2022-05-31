@@ -169,10 +169,24 @@ class DecodingError(IntelMQException, ValueError):
         super().__init__("Could not decode string%s." % suffix)
 
 
-class UnserializationError(IntelMQException, ValueError):
+class DeserializationError(IntelMQException, ValueError):
     """
-    Unrecoverable error during message unserialization
+    Unrecoverable error during message deserialization
     """
     def __init__(self, exception: Exception = None, object: bytes = None):
         self.object = object
-        super().__init__("Could not unserialize message%s." % exception)
+        super().__init__("Could not deserialize message, %s." % exception)
+
+
+class SerializationError(IntelMQException, ValueError):
+    """
+    Unrecoverable error during message serialization
+    """
+    def __init__(self, exception: Exception = None, object: bytes = None):
+        self.object = object
+        super().__init__("Could not serialize message, %s." % exception)
+
+
+class MissingPackerError(IntelMQException):
+    def __init__(self, packer: str):
+        super().__init__(f"Could not load '{packer}' as packer, please check intelmq.lib.packers.{packer.lower()} and documentation")

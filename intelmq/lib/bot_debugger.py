@@ -169,7 +169,7 @@ class BotDebugger:
     def arg2msg(self, msg):
         default_type = "Report" if (self.runtime_configuration.get("group", None) == "Parser" or isinstance(self.instance, ParserBot)) else "Event"
         try:
-            msg = MessageFactory.unserialize(msg, default_type=default_type)
+            msg = MessageFactory.deserialize(msg, default_type=default_type)
         except (Exception, KeyError, TypeError, ValueError) as exc:
             if exists(msg):
                 with open(msg) as f:

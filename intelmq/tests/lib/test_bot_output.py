@@ -35,23 +35,23 @@ class DummyOutputBot(OutputBot):
 class TestDummyOutputBot(BotTestCase, TestCase):
     @classmethod
     def set_bot(cls):
-        cls.sysconfig = {"return_type": None}
+        cls.sysconfig = {"return_type": None, "use_packer": "json"}
         cls.bot_reference = DummyOutputBot
         cls.default_input_message = RAW
         cls.allowed_error_count = 1
 
     def test_export_raw(self):
-        self.run_bot(parameters={"single_key": "raw"})
+        self.run_bot(parameters={"single_key": "raw", "use_packer": "json"})
         self.assertEqual(self.bot.result, "\n")
 
     def test_export_output_dict(self):
         self.input_message = OUTPUT_DICT
-        self.run_bot(parameters={"single_key": "output"})
+        self.run_bot(parameters={"single_key": "output", "use_packer": "json"})
         self.assertEqual(self.bot.result, DICT)
 
     def test_export_output_dict_string(self):
         self.input_message = OUTPUT_DICT
-        self.run_bot(parameters={"single_key": "output", "return_type": str})
+        self.run_bot(parameters={"single_key": "output", "return_type": str, "use_packer": "json"})
         self.assertEqual(self.bot.result, OUTPUT_DICT['output'])
 
     def test_export_output_string(self):
@@ -61,17 +61,17 @@ class TestDummyOutputBot(BotTestCase, TestCase):
 
     def test_export_output_string_string(self):
         self.input_message = OUTPUT_STRING
-        self.run_bot(parameters={"single_key": "output", "return_type": str})
+        self.run_bot(parameters={"single_key": "output", "return_type": str, "use_packer": "json"})
         self.assertEqual(self.bot.result, STRING)
 
     def test_export_output_int(self):
         self.input_message = OUTPUT_INT
-        self.run_bot(parameters={"single_key": "output"})
+        self.run_bot(parameters={"single_key": "output", "use_packer": "json"})
         self.assertEqual(self.bot.result, INT)
 
     def test_export_output_int_string(self):
         self.input_message = OUTPUT_INT
-        self.run_bot(parameters={"single_key": "output", "return_type": str})
+        self.run_bot(parameters={"single_key": "output", "return_type": str, "use_packer": "json"})
         self.assertEqual(self.bot.result, OUTPUT_INT['output'])
 
     def test_export_keep_raw_hierarchical(self):
@@ -79,6 +79,7 @@ class TestDummyOutputBot(BotTestCase, TestCase):
         self.run_bot(parameters={"keep_raw_field": True,
                                  "message_hierarchical": True,
                                  "message_with_type": False,
+                                 "use_packer": "json",
                                  })
         self.assertEqual(self.bot.result, RAW_HIERARCHICAL)
 
@@ -88,6 +89,7 @@ class TestDummyOutputBot(BotTestCase, TestCase):
                                  "message_hierarchical": True,
                                  "message_with_type": False,
                                  "return_type": str,
+                                 "use_packer": "json",
                                  })
         self.assertEqual(self.bot.result, dumps(RAW_HIERARCHICAL,
                                                 sort_keys=True))
@@ -96,5 +98,6 @@ class TestDummyOutputBot(BotTestCase, TestCase):
         self.input_message = INPUT
         self.run_bot(parameters={"keep_raw_field": False,
                                  "message_with_type": True,
+                                 "use_packer": "json"
                                  })
         self.assertEqual(self.bot.result, NO_RAW_TYPE)

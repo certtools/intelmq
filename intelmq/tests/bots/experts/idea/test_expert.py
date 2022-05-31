@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
+import os
 import unittest
 import json
-import msgpack
 
 import intelmq.lib.test as test
 from intelmq.lib.message import MessageFactory
@@ -89,7 +89,7 @@ class TestIdeaExpertBot(test.BotTestCase, unittest.TestCase):
         # the data from the "output" field and compare after removing ID's
         event = self.get_output_queue()[0]
         self.assertIsInstance(event, bytes)
-        event_dict = MessageFactory.unserialize(event)
+        event_dict = MessageFactory.deserialize(event, use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack'))
         self.assertIsInstance(event_dict, dict)
         self.assertTrue(b"output" in event_dict)
         idea_event = json.loads(event_dict["output"])

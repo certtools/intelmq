@@ -50,7 +50,9 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
                          "redis_db": 4,
                          "redis_queue": "test-redis-output-queue",
                          "redis_password": os.getenv('INTELMQ_TEST_REDIS_PASSWORD'),
-                         "redis_timeout": "50000"}
+                         "redis_timeout": "50000",
+                         "use_packer": 'json',
+                         }
 
     @test.skip_redis()
     def test_event(self):

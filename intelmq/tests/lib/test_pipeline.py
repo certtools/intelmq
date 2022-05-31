@@ -68,7 +68,7 @@ class TestPythonlist(unittest.TestCase):
 
     def test_receive(self):
         self.pipe.state['test-bot-input'] = [SAMPLES['normal'][0]]
-        self.assertEqual(SAMPLES['normal'][1], utils.decode(self.pipe.receive()))
+        self.assertEqual(SAMPLES['normal'][0], self.pipe.receive())
 
     def test_send(self):
         self.pipe.send(SAMPLES['normal'][1])
@@ -77,7 +77,7 @@ class TestPythonlist(unittest.TestCase):
 
     def test_receive_unicode(self):
         self.pipe.state['test-bot-input'] = [SAMPLES['unicode'][0]]
-        self.assertEqual(SAMPLES['unicode'][1], utils.decode(self.pipe.receive()))
+        self.assertEqual(SAMPLES['unicode'][0], self.pipe.receive())
 
     def test_send_unicode(self):
         self.pipe.send(SAMPLES['unicode'][1])
@@ -108,7 +108,7 @@ class TestPythonlist(unittest.TestCase):
         self.pipe.state['test-bot-input'] = [SAMPLES['normal'][0]]
         self.pipe.receive()
         self.pipe.reject_message()
-        self.assertEqual(SAMPLES['normal'][1], utils.decode(self.pipe.receive()))
+        self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
 
     def test_acknowledge(self):
         self.pipe.state['test-bot-input'] = [SAMPLES['normal'][0]]

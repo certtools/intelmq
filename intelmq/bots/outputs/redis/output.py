@@ -41,9 +41,7 @@ class RedisOutputBot(OutputBot):
         event = self.receive_message()
 
         try:
-            self.output.lpush(self.queue,
-                              event.to_json(hierarchical=self.hierarchical_output,
-                                            with_type=self.with_type))
+            self.output.lpush(self.queue, event.to_pack(use_packer=self.use_packer, hierarchical=self.hierarchical, with_type=self.with_type))
         except Exception:
             self.logger.exception('Failed to send message. Reconnecting.')
             self.connect()

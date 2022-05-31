@@ -61,7 +61,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         """
         self.input_message = b'foo\xc9bar'
         self.run_bot(iterations=1, allowed_error_count=1)
-        self.assertLogMatches(r'.*intelmq\.lib\.exceptions\.UnserializationError:.*')
+        self.assertLogMatches(r'.*intelmq\.lib\.exceptions\.DeserializationError:.*')
         self.assertEqual(self.pipe.state['test-bot-input-internal'], [])
         self.assertEqual(self.pipe.state['test-bot-input'], [])
         self.assertEqual(self.pipe.state['test-bot-output'], [])

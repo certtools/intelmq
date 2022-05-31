@@ -26,7 +26,7 @@ class JSONParserBot(ParserBot):
             lines = [base64_decode(report['raw'])]
 
         for line in lines:
-            new_event = MessageFactory.unserialize(line,
+            new_event = MessageFactory.deserialize(line,
                                                    harmonization=self.harmonization,
                                                    default_type='Event',
                                                    use_packer="json")
