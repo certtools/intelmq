@@ -257,7 +257,7 @@ class MicrosoftCTIPParserBot(ParserBot):
         yield event
 
     def parse_azure(self, line, report):
-        raw = self.recover_line(line)
+        raw = self.recover_line()
 
         event = self.new_event(report)
 
