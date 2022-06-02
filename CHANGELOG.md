@@ -58,6 +58,7 @@ CHANGELOG
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - New parameter `overwrite` (PR#2112 by Sebastian Wagner, fixes #2022).
   - Fix handling of field `Payload.domain` if it contains the same IP address as `Payload.serverIp` (PR#2144 by Mikk Margus Möll and Sebastian Wagner).
+  - Handle Payload field with non-base64-encoded JSON content and numbered dictionaries (PR#2193 by Sebastian Wagner)
 - `intelmq.bot.parsers.shodan.parser` (PR#2117 by Mikk Margus Möll):
   - Instead of keeping track of `extra.ftp.<something>.parameters`, FTP parameters are collected together into `extra.ftp.features` as a list of said features, reducing field count.
   - Shodan field `rsync.modules` is collected.

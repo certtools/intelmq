@@ -59,7 +59,7 @@ There are two different variants of data
            "CustomField4": "",
            "CustomField5": ""
          },
-         "Payload": base64 encoded json
+         "Payload": base64 encoded json with meaningful dictionary keys or JSON-string with numbered dictionary keys
        }
 
 """
@@ -263,14 +263,23 @@ class MicrosoftCTIPParserBot(ParserBot):
 
         for key, value in line.copy().items():
             if key == 'Payload':
+                # empty
                 if value == 'AA==':  # NULL
                     del line[key]
                     continue
-                try:
-                    value = json.loads(utils.base64_decode(value))
-                    # continue unpacking in next loop
-                except json.decoder.JSONDecodeError:
-                    line[key] = utils.base64_decode(value)
+
+                # JSON string
+                if value.startswith('{'):
+                    for payload_key, payload_value in json.loads(value).items():
+                        event[f'extra.payload.{payload_key}'] = payload_value
+                    del line[key]
+                else:
+                    # base64-encoded JSON
+                    try:
+                        value = json.loads(utils.base64_decode(value))
+                        # continue unpacking in next loop
+                    except json.decoder.JSONDecodeError:
+                        line[key] = utils.base64_decode(value)
             elif key == 'TLP' and value.lower() == 'unknown':
                 del line[key]
             if isinstance(value, dict):
