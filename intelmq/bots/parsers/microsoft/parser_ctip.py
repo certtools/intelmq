@@ -210,11 +210,15 @@ class MicrosoftCTIPParserBot(ParserBot):
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
         if raw_report.startswith('['):
+            # Interflow
             self.recover_line = self.recover_line_json
             yield from self.parse_json(report)
         elif raw_report.startswith('{'):
+            # Azure
             self.recover_line = self.recover_line_json_stream
             yield from self.parse_json_stream(report)
+        else:
+            raise ValueError("Can't parse the received message. It is neither a JSON list nor a JSON dictionary. Please report this bug.")
 
     def parse_line(self, line, report):
         if line.get('version', None) == 1.5:
