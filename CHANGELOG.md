@@ -29,6 +29,8 @@ CHANGELOG
   The `LogLevel` and `ReturnType` Enums were added to `intelmq.lib.datatypes`.
 - `intelmq.lib.bot`:
   - Enhance behaviour if an unconfigured bot is started (PR#2054 by Sebastian Wagner).
+  - Fix line recovery and message dumping of the `ParserBot` (PR#2192 by Sebastian Wagner).
+    - Previously the dumped message was always the last message of a report if the report contained muliple lines leading to data-loss.
 
 ### Development
 
