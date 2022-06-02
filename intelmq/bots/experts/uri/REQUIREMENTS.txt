@@ -1,0 +1,4 @@
+# SPDX-FileCopyrightText: 2020 Sebastian Wagner
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+rfc3986=='2.0.0'
