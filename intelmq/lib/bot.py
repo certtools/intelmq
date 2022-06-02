@@ -30,8 +30,6 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Any, List, Optional, Union
 
-import psutil
-
 import intelmq.lib.message as libmessage
 from intelmq import (DEFAULT_LOGGING_PATH,
                      HARMONIZATION_CONF_FILE,
@@ -942,7 +940,7 @@ class ParserBot(Bot):
     _csv_params = {}
     _ignore_lines_starting = []
     _handle = None
-    _current_line = None
+    _current_line: Optional[str] = None
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
@@ -956,6 +954,7 @@ class ParserBot(Bot):
     def parse_csv(self, report: libmessage.Report):
         """
         A basic CSV parser.
+        The resulting lines are lists.
         """
         raw_report: str = utils.base64_decode(report.get("raw")).strip()
         raw_report = raw_report.translate({0: None})
@@ -971,6 +970,7 @@ class ParserBot(Bot):
     def parse_csv_dict(self, report: libmessage.Report):
         """
         A basic CSV Dictionary parser.
+        The resulting lines are dictionaries with the column names as keys.
         """
         raw_report: str = utils.base64_decode(report.get("raw")).strip()
         raw_report: str = raw_report.translate({0: None})

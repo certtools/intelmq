@@ -115,7 +115,7 @@ class GenericCsvParserBot(ParserBot):
             else:
                 yield row
 
-    def parse_line(self, row, report):
+    def parse_line(self, row: list, report):
         event = self.new_event(report)
 
         for keygroup, value, required in zip(self.columns, row, self.columns_required):

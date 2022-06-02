@@ -222,7 +222,7 @@ class MicrosoftCTIPParserBot(ParserBot):
         else:
             yield from self.parse_azure(line, report)
 
-    def parse_interflow(self, line, report):
+    def parse_interflow(self, line: dict, report):
         raw = self.recover_line(line)
         if line['indicatorthreattype'] != 'Botnet':
             raise ValueError('Unknown indicatorthreattype %r, only Botnet is supported.' % line['indicatorthreattype'])
