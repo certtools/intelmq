@@ -4,7 +4,7 @@
 
 # -*- coding: utf-8 -*-
 
-from rfc3986 import uri_reference, validators
+from rfc3986 import uri_reference, validators, exceptions
 from intelmq.lib.bot import ExpertBot
 
 
@@ -31,24 +31,26 @@ class URIExpertBot(ExpertBot):
             if key_fqdn in event and not self.overwrite:
                 continue
 
-            uri_validator.validate(uri_reference(event.get(key_url)))
-            scheme = uri_reference(event.get(key_url)).scheme
-            path = uri_reference(event.get(key_url)).path
-            userinfo = uri_reference(event.get(key_url)).userinfo
-            host = uri_reference(event.get(key_url)).host
-            port = uri_reference(event.get(key_url)).port
-            query = uri_reference(event.get(key_url)).query
+            try:
+                uri_validator.validate(uri_reference(event.get(key_url)))
+            except exceptions.MissingComponentError:
+                raise ValueError('Oooops happened') from None
 
-            if not event.add(key_fqdn, host, overwrite=self.overwrite,
+            uri_information = {
+                key_scheme: uri_reference(event.get(key_url)).scheme,
+                key_path: uri_reference(event.get(key_url)).path,
+                key_userinfo: uri_reference(event.get(key_url)).userinfo,
+                key_port: uri_reference(event.get(key_url)).port,
+                key_query: uri_reference(event.get(key_url)).query
+            }
+
+            if not event.add(key_fqdn, uri_reference(event.get(key_url)).host, overwrite=self.overwrite,
                              raise_failure=False):
-                event.add(key_ip, host, overwrite=self.overwrite,
-                          raise_failure=False)
+                event.add(key_ip, uri_reference(event.get(key_url)).host, overwrite=self.overwrite, raise_failure=False)
 
-            event.add(key_scheme, scheme, overwrite=self.overwrite, raise_failure=False)
-            event.add(key_path, path, overwrite=self.overwrite, raise_failure=False)
-            event.add(key_userinfo, userinfo, overwrite=self.overwrite, raise_failure=False)
-            event.add(key_port, port, overwrite=self.overwrite, raise_failure=False)
-            event.add(key_query, query, overwrite=self.overwrite, raise_failure=False)
+            for uri_key, uri_value in uri_information.items():
+                if uri_value is not None:
+                    event.add(uri_key, uri_value, overwrite=self.overwrite, raise_failure=False)
 
         self.send_message(event)
         self.acknowledge_message()

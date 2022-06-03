@@ -74,9 +74,10 @@ class TestURIExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, IP_OUTPUT)
 
     # def test_invalid_uri(self):
-    #     self.input_message = EXAMPLE_INPUT.copy()
-    #     self.input_message['source.url'] = '//example.net'
+    #
     #     with self.assertRaises(exceptions.MissingComponentError):
+    #         self.input_message = EXAMPLE_INPUT.copy()
+    #         self.input_message['source.url'] = '//example.net'
     #         self.run_bot()
 
 
