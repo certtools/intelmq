@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-import rfc3986.exceptions
-from rfc3986 import uri_reference, validators
+
+from rfc3986 import uri_reference, validators, exceptions
 from intelmq.lib.bot import ExpertBot
 
 
@@ -33,7 +33,7 @@ class URIExpertBot(ExpertBot):
 
             try:
                 uri_validator.validate(uri_reference(event.get(key_url)))
-            except rfc3986.exceptions.MissingComponentError:
+            except exceptions.MissingComponentError:
                 raise ValueError('Invalid URI: The format of the URI could not be determined.')
 
             uri = uri_reference(event.get(key_url))
