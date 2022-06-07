@@ -8,7 +8,6 @@ Testing uri.
 """
 
 import unittest
-from rfc3986 import exceptions
 import intelmq.lib.test as test
 from intelmq.bots.experts.uri.expert import URIExpertBot
 
@@ -73,12 +72,11 @@ class TestURIExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, IP_OUTPUT)
 
-    # def test_invalid_uri(self):
-    #
-    #     with self.assertRaises(exceptions.MissingComponentError):
-    #         self.input_message = EXAMPLE_INPUT.copy()
-    #         self.input_message['source.url'] = '//example.net'
-    #         self.run_bot()
+    def test_invalid_uri(self):
+        self.allowed_error_count = 1
+        self.input_message = EXAMPLE_INPUT.copy()
+        self.input_message['source.url'] = '//example.net/'
+        self.run_bot()
 
 
 if __name__ == '__main__':  # pragma: no cover

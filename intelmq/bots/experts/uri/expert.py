@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-
-from rfc3986 import uri_reference, validators, exceptions
+import rfc3986.exceptions
+from rfc3986 import uri_reference, validators
 from intelmq.lib.bot import ExpertBot
 
 
@@ -14,7 +14,7 @@ class URIExpertBot(ExpertBot):
 
     def process(self):
         event = self.receive_message()
-        uri_validator = validators.Validator().require_presence_of('scheme', 'path')
+        uri_validator = validators.Validator().require_presence_of('scheme')
 
         for key in ["source.", "destination."]:
             key_url = "{}{}".format(key, "url")
@@ -33,20 +33,21 @@ class URIExpertBot(ExpertBot):
 
             try:
                 uri_validator.validate(uri_reference(event.get(key_url)))
-            except exceptions.MissingComponentError:
-                raise ValueError('Oooops happened') from None
+            except rfc3986.exceptions.MissingComponentError:
+                raise ValueError('Invalid URI: The format of the URI could not be determined.')
 
+            uri = uri_reference(event.get(key_url))
             uri_information = {
-                key_scheme: uri_reference(event.get(key_url)).scheme,
-                key_path: uri_reference(event.get(key_url)).path,
-                key_userinfo: uri_reference(event.get(key_url)).userinfo,
-                key_port: uri_reference(event.get(key_url)).port,
-                key_query: uri_reference(event.get(key_url)).query
+                key_scheme: uri.scheme,
+                key_path: uri.path,
+                key_userinfo: uri.userinfo,
+                key_port: uri.port,
+                key_query: uri.query
             }
 
-            if not event.add(key_fqdn, uri_reference(event.get(key_url)).host, overwrite=self.overwrite,
+            if not event.add(key_fqdn, uri.host, overwrite=self.overwrite,
                              raise_failure=False):
-                event.add(key_ip, uri_reference(event.get(key_url)).host, overwrite=self.overwrite, raise_failure=False)
+                event.add(key_ip, uri.host, overwrite=self.overwrite, raise_failure=False)
 
             for uri_key, uri_value in uri_information.items():
                 if uri_value is not None:
