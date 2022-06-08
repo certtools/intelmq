@@ -9,7 +9,9 @@ Testing uri.
 
 import unittest
 import intelmq.lib.test as test
-from intelmq.bots.experts.uri.expert import URIExpertBot
+import os
+if os.getenv('INTELMQ_TEST_EXOTIC'):
+    from intelmq.bots.experts.uri.expert import URIExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.url": "http://example.com/something/index.php",
