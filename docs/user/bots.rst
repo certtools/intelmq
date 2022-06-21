@@ -4025,6 +4025,7 @@ The parameters marked with 'PostgreSQL' will be sent to libpq via psycopg2. Chec
 * `sslmode`: Database sslmode, can be `'disable'`, `'allow'`, `'prefer'` (default), `'require'`, `'verify-ca'` or `'verify-full'`. See postgresql docs: https://www.postgresql.org/docs/current/static/libpq-connect.html#libpq-connect-sslmode
 * `table`: name of the database table into which events are to be inserted
 * `fields`: list of fields to read from the event. If None, read all fields
+* `reconnect_delay`: number of seconds to wait before reconnecting in case of an error
 
 **PostgreSQL**
 

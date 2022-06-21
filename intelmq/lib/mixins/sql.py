@@ -7,6 +7,8 @@ Based on the former SQLBot base class
 """
 from intelmq.lib import exceptions
 
+from time import sleep
+
 
 class SQLMixin:
     """
@@ -24,6 +26,7 @@ class SQLMixin:
     engine = None
     # overwrite the default value from the OutputBot
     message_jsondict_as_string = True
+    reconnect_delay = 0
 
     def __init__(self, *args, **kwargs):
         self._init_sql()
@@ -121,13 +124,19 @@ class SQLMixin:
                 except self._engine.OperationalError:
                     self.logger.exception('Executed rollback command '
                                           'after failed query execution.')
+                    if self.reconnect_delay > 0:
+                        sleep(self.reconnect_delay)
                     self._init_sql()
                 except Exception:
                     self.logger.exception('Cursor has been closed, connecting '
                                           'again.')
+                    if self.reconnect_delay > 0:
+                        sleep(self.reconnect_delay)
                     self._init_sql()
             else:
                 self.logger.exception('Database connection problem, connecting again.')
+                if self.reconnect_delay > 0:
+                    sleep(self.reconnect_delay)
                 self._init_sql()
         else:
             return True
