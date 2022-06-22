@@ -1355,10 +1355,8 @@ open6_smtp = {
     },
 }
 
-
-
-
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NetBIOS
+
 open_netbios_nameservice = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3279,6 +3277,7 @@ event46_sinkhole_http = {
 
 
 # https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-exchange-server-report/
+
 def scan_exchange_taxonomy(field):
     if field == 'exchange;webshell':
         return 'intrusions'
@@ -3298,6 +3297,7 @@ def scan_exchange_identifier(field):
 
 
 # https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-exchange-server-report/
+
 scan_exchange = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3325,6 +3325,7 @@ scan_exchange = {
 }
 
 # https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-http-referer-events-report/
+
 event46_sinkhole_http_referer = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3366,6 +3367,7 @@ event46_sinkhole_http_referer = {
 }
 
 # https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-smtp-report/
+
 vulnerable_smtp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3392,6 +3394,7 @@ vulnerable_smtp = {
 }
 
 # https://www.shadowserver.org/what-we-do/network-reporting/honeypot-http-scanner-events/
+
 honeypot_http_scan = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
