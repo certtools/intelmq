@@ -19,36 +19,34 @@ class SQLMixin:
 
     POSTGRESQL = "postgresql"
     SQLITE = "sqlite"
-    default_engine = "postgresql"
+    _default_engine = "postgresql"
     engine = None
     # overwrite the default value from the OutputBot
     message_jsondict_as_string = True
 
     def __init__(self, *args, **kwargs):
         self.logger.debug("Running SQL Mixin initialization.")
-        self.engine_name = getattr(self, 'engine', self.default_engine).lower()
+        self._engine_name = getattr(self, 'engine', self._default_engine).lower()
         engines = {SQLMixin.POSTGRESQL: (self._init_postgresql, "%s"),
                    SQLMixin.SQLITE: (self._init_sqlite, "?")}
         for key, val in engines.items():
-            if self.engine_name == key:
+            if self._engine_name == key:
                 val[0]()
                 self.format_char = val[1]
                 break
         else:
-            raise ValueError(f"Wrong parameter 'engine' {self.engine_name!r}, possible values are {engines}")
-
-        super().__init__()
+            raise ValueError(f"Wrong parameter 'engine' {self._engine_name!r}, possible values are {engines}")
 
     def _connect(self, engine, connect_args: dict, autocommitable: bool = False):
-        self.engine = engine  # imported external library that connects to the DB
+        self._engine = engine  # imported external library that connects to the DB
         self.logger.debug(f"Connecting to database with connect_args: {connect_args}.")
 
         try:
-            self.con = self.engine.connect(**connect_args)
+            self.con = self._engine.connect(**connect_args)
             if autocommitable:  # psycopg2 has it, sqlite3 has not
                 self.con.autocommit = getattr(self, 'autocommit', True)  # True prevents deadlocks
             self.cur = self.con.cursor()
-        except (self.engine.Error, Exception):
+        except (self._engine.Error, Exception):
             self.logger.exception('Failed to connect to database.')
             self.stop()
         self.logger.info("Connected to database.")
@@ -89,14 +87,14 @@ class SQLMixin:
             # note: this assumes, the DB was created with UTF-8 support!
             self.cur.execute(query, values)
             self.logger.debug('Done.')
-        except (self.engine.InterfaceError, self.engine.InternalError,
-                self.engine.OperationalError, AttributeError):
+        except (self._engine.InterfaceError, self._engine.InternalError,
+                self._engine.OperationalError, AttributeError):
             if rollback:
                 try:
                     self.con.rollback()
                     self.logger.exception('Executed rollback command '
                                           'after failed query execution.')
-                except self.engine.OperationalError:
+                except self._engine.OperationalError:
                     self.logger.exception('Executed rollback command '
                                           'after failed query execution.')
                     self.init()
