@@ -805,7 +805,729 @@ open_mongodb = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-telnet-report/
+open6_telnet = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-telnet',
+        'protocol.application': 'telnet',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-amqp-report/
+open_amqp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-amqp',
+        'protocol.application': 'amqp',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-ddos-middlebox-report/
+open_scan_ddos_middlebox = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-scan-ddos-middlebox',
+        'protocol.application': 'scan_ddos_middlebox',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/open-dvr-dhcpdiscover-report/
+open_scan_dvr_dhcpdiscover = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-scan-dvr-dhcpdiscover',
+        'protocol.application': 'scan_dvr_dhcpdiscover',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-erlang-port-mapper-report-daemon/
+scan_epmd = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-scan-epmd',
+        'protocol.application': 'scan_epmd',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/ssl-poodle-report/
+ssl_poodle46_vulnerable_servers = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'ssl-poodle' in constant_fields
+        ('extra.', 'handshake', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'cipher_suite', validate_to_none),
+        ('extra.', 'ssl_poodle', convert_bool),
+        ('extra.', 'cert_length', validate_to_none),
+        ('extra.', 'subject_common_name', validate_to_none),
+        ('extra.', 'issuer_common_name', validate_to_none),
+        ('extra.', 'cert_issue_date', validate_to_none),
+        ('extra.', 'cert_expiration_date', validate_to_none),
+        ('extra.', 'sha1_fingerprint', validate_to_none),
+        ('extra.', 'cert_serial_number', validate_to_none),
+        ('extra.', 'ssl_version', validate_to_none),
+        ('extra.', 'signature_algorithm', validate_to_none),
+        ('extra.', 'key_algorithm', validate_to_none),
+        ('extra.', 'subject_organization_name', validate_to_none),
+        ('extra.', 'subject_organization_unit_name', validate_to_none),
+        ('extra.', 'subject_country', validate_to_none),
+        ('extra.', 'subject_state_or_province_name', validate_to_none),
+        ('extra.', 'subject_locality_name', validate_to_none),
+        ('extra.', 'subject_street_address', validate_to_none),
+        ('extra.', 'subject_postal_code', validate_to_none),
+        ('extra.', 'subject_surname', validate_to_none),
+        ('extra.', 'subject_given_name', validate_to_none),
+        ('extra.', 'subject_email_address', validate_to_none),
+        ('extra.', 'subject_business_category', validate_to_none),
+        ('extra.', 'subject_serial_number', validate_to_none),
+        ('extra.', 'issuer_organization_name', validate_to_none),
+        ('extra.', 'issuer_organization_unit_name', validate_to_none),
+        ('extra.', 'issuer_country', validate_to_none),
+        ('extra.', 'issuer_state_or_province_name', validate_to_none),
+        ('extra.', 'issuer_locality_name', validate_to_none),
+        ('extra.', 'issuer_street_address', validate_to_none),
+        ('extra.', 'issuer_postal_code', validate_to_none),
+        ('extra.', 'issuer_surname', validate_to_none),
+        ('extra.', 'issuer_given_name', validate_to_none),
+        ('extra.', 'issuer_email_address', validate_to_none),
+        ('extra.', 'issuer_business_category', validate_to_none),
+        ('extra.', 'issuer_serial_number', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'sha256_fingerprint', validate_to_none),
+        ('extra.', 'sha512_fingerprint', validate_to_none),
+        ('extra.', 'md5_fingerprint', validate_to_none),
+        ('extra.', 'http_response_type', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'http_connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server_type', validate_to_none),
+        ('extra.', 'content_length', validate_to_none),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+        ('extra.', 'cert_valid', convert_bool),
+        ('extra.', 'self_signed', convert_bool),
+        ('extra.', 'cert_expired', convert_bool),
+        ('extra.', 'browser_trusted', convert_bool),
+        ('extra.', 'validation_level', validate_to_none),
+        ('extra.', 'browser_error', validate_to_none),
+        ('extra.', 'tlsv13_support', validate_to_none),
+        ('extra.', 'tlsv13_cipher', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'ssl-poodle',
+        'protocol.application': 'https',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ics-report/
+scan_ics = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-ics',
+        'protocol.application': 'scan_ics',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-kubernetes-api-server-report/
+scan_kubernetes = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-kubernetes',
+        'protocol.application': 'scan_kubernetes',
+    },
+}
+
+scan_quic = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-quic',
+        'protocol.application': 'scan_quic',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-socks4-5-proxy-report/
+scan_socks = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-socks',
+        'protocol.application': 'scan_socks',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ssh-report/
+scan_ssh = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-ssh',
+        'protocol.application': 'scan_ssh',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/device-identification-report/
+accessible_ssl = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'ssl-freak' in constant_fields
+        ('extra.', 'handshake', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'cipher_suite', validate_to_none),
+        ('extra.', 'cert_length', validate_to_none),
+        ('extra.', 'subject_common_name', validate_to_none),
+        ('extra.', 'issuer_common_name', validate_to_none),
+        ('extra.', 'cert_issue_date', validate_to_none),
+        ('extra.', 'cert_expiration_date', validate_to_none),
+        ('extra.', 'sha1_fingerprint', validate_to_none),
+        ('extra.', 'cert_serial_number', validate_to_none),
+        ('extra.', 'signature_algorithm', validate_to_none),
+        ('extra.', 'key_algorithm', validate_to_none),
+        ('extra.', 'subject_organization_name', validate_to_none),
+        ('extra.', 'subject_organization_unit_name', validate_to_none),
+        ('extra.', 'subject_country', validate_to_none),
+        ('extra.', 'subject_state_or_province_name', validate_to_none),
+        ('extra.', 'subject_locality_name', validate_to_none),
+        ('extra.', 'subject_street_address', validate_to_none),
+        ('extra.', 'subject_postal_code', validate_to_none),
+        ('extra.', 'subject_surname', validate_to_none),
+        ('extra.', 'subject_given_name', validate_to_none),
+        ('extra.', 'subject_email_address', validate_to_none),
+        ('extra.', 'subject_business_category', validate_to_none),
+        ('extra.', 'subject_serial_number', validate_to_none),
+        ('extra.', 'issuer_organization_name', validate_to_none),
+        ('extra.', 'issuer_organization_unit_name', validate_to_none),
+        ('extra.', 'issuer_country', validate_to_none),
+        ('extra.', 'issuer_state_or_province_name', validate_to_none),
+        ('extra.', 'issuer_locality_name', validate_to_none),
+        ('extra.', 'issuer_street_address', validate_to_none),
+        ('extra.', 'issuer_postal_code', validate_to_none),
+        ('extra.', 'issuer_surname', validate_to_none),
+        ('extra.', 'issuer_given_name', validate_to_none),
+        ('extra.', 'issuer_email_address', validate_to_none),
+        ('extra.', 'issuer_business_category', validate_to_none),
+        ('extra.', 'issuer_serial_number', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'sha256_fingerprint', validate_to_none),
+        ('extra.', 'sha512_fingerprint', validate_to_none),
+        ('extra.', 'md5_fingerprint', validate_to_none),
+        ('extra.', 'http_response_type', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'http_connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server_type', validate_to_none),
+        ('extra.', 'content_length', validate_to_none),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+        ('extra.', 'cert_valid', convert_bool),
+        ('extra.', 'self_signed', convert_bool),
+        ('extra.', 'cert_expired', convert_bool),
+        ('extra.', 'browser_trusted', convert_bool),
+        ('extra.', 'validation_level', validate_to_none),
+        ('extra.', 'browser_error', validate_to_none),
+        ('extra.', 'tlsv13_support', validate_to_none),
+        ('extra.', 'tlsv13_cipher', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'accessible-ssl',
+        'protocol.application': 'https',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/device-identification-report/
+device_id = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-device-id',
+        'protocol.application': 'device_id',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-mysql-server-report/
+open_mysql = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-mysql' in constant_fields
+        ('extra.', 'version', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('source.local_hostname', 'server_name'),
+        ('extra.', 'instance_name', validate_to_none),
+        ('extra.', 'tcp_port', convert_int),
+        ('extra.', 'named_pipe', validate_to_none),
+        ('extra.', 'response_length', convert_int),
+        ('extra.', 'amplification', convert_float),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-mysql',
+        'protocol.application': 'mysql',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ssh-report/
+open6_ssl = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-ssl',
+        'protocol.application': 'ssl',
+    },
+}
+
+
+open6_ssh = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-ssh',
+        'protocol.application': 'ssh',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/ssl-poodle-report/
+ssl_poodle46_vulnerable_servers = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'ssl-poodle' in constant_fields
+        ('extra.', 'handshake', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'cipher_suite', validate_to_none),
+        ('extra.', 'ssl_poodle', convert_bool),
+        ('extra.', 'cert_length', validate_to_none),
+        ('extra.', 'subject_common_name', validate_to_none),
+        ('extra.', 'issuer_common_name', validate_to_none),
+        ('extra.', 'cert_issue_date', validate_to_none),
+        ('extra.', 'cert_expiration_date', validate_to_none),
+        ('extra.', 'sha1_fingerprint', validate_to_none),
+        ('extra.', 'cert_serial_number', validate_to_none),
+        ('extra.', 'ssl_version', validate_to_none),
+        ('extra.', 'signature_algorithm', validate_to_none),
+        ('extra.', 'key_algorithm', validate_to_none),
+        ('extra.', 'subject_organization_name', validate_to_none),
+        ('extra.', 'subject_organization_unit_name', validate_to_none),
+        ('extra.', 'subject_country', validate_to_none),
+        ('extra.', 'subject_state_or_province_name', validate_to_none),
+        ('extra.', 'subject_locality_name', validate_to_none),
+        ('extra.', 'subject_street_address', validate_to_none),
+        ('extra.', 'subject_postal_code', validate_to_none),
+        ('extra.', 'subject_surname', validate_to_none),
+        ('extra.', 'subject_given_name', validate_to_none),
+        ('extra.', 'subject_email_address', validate_to_none),
+        ('extra.', 'subject_business_category', validate_to_none),
+        ('extra.', 'subject_serial_number', validate_to_none),
+        ('extra.', 'issuer_organization_name', validate_to_none),
+        ('extra.', 'issuer_organization_unit_name', validate_to_none),
+        ('extra.', 'issuer_country', validate_to_none),
+        ('extra.', 'issuer_state_or_province_name', validate_to_none),
+        ('extra.', 'issuer_locality_name', validate_to_none),
+        ('extra.', 'issuer_street_address', validate_to_none),
+        ('extra.', 'issuer_postal_code', validate_to_none),
+        ('extra.', 'issuer_surname', validate_to_none),
+        ('extra.', 'issuer_given_name', validate_to_none),
+        ('extra.', 'issuer_email_address', validate_to_none),
+        ('extra.', 'issuer_business_category', validate_to_none),
+        ('extra.', 'issuer_serial_number', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'sha256_fingerprint', validate_to_none),
+        ('extra.', 'sha512_fingerprint', validate_to_none),
+        ('extra.', 'md5_fingerprint', validate_to_none),
+        ('extra.', 'http_response_type', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'http_connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server_type', validate_to_none),
+        ('extra.', 'content_length', validate_to_none),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+        ('extra.', 'cert_valid', convert_bool),
+        ('extra.', 'self_signed', convert_bool),
+        ('extra.', 'cert_expired', convert_bool),
+        ('extra.', 'browser_trusted', convert_bool),
+        ('extra.', 'validation_level', validate_to_none),
+        ('extra.', 'browser_error', validate_to_none),
+        ('extra.', 'tlsv13_support', validate_to_none),
+        ('extra.', 'tlsv13_cipher', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'ssl-poodle',
+        'protocol.application': 'https',
+    },
+}
+
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-smtp-report/
+open_smtp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-smtp',
+        'protocol.application': 'smtp',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-smtp-report/
+open6_smtp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'classification.identifier': 'open-smtp',
+        'protocol.application': 'smtp',
+    },
+}
+
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NetBIOS
+
 open_netbios_nameservice = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1015,8 +1737,8 @@ ssl_freak_vulnerable_servers = {
     },
 }
 
-# https://www.shadowserver.org/what-we-do/network-reporting/ssl-poodle-report/
-ssl_poodle46_vulnerable_servers = {
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Ssl-Scan
+ssl_poodle_vulnerable_servers = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -2726,6 +3448,7 @@ event46_sinkhole_http = {
 
 
 # https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-exchange-server-report/
+
 def scan_exchange_taxonomy(field):
     if field == 'exchange;webshell':
         return 'intrusions'
@@ -2745,6 +3468,7 @@ def scan_exchange_identifier(field):
 
 
 # https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-exchange-server-report/
+
 scan_exchange = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2772,6 +3496,7 @@ scan_exchange = {
 }
 
 # https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-http-referer-events-report/
+
 event46_sinkhole_http_referer = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2813,6 +3538,7 @@ event46_sinkhole_http_referer = {
 }
 
 # https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-smtp-report/
+
 vulnerable_smtp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2839,6 +3565,7 @@ vulnerable_smtp = {
 }
 
 # https://www.shadowserver.org/what-we-do/network-reporting/honeypot-http-scanner-events/
+
 honeypot_http_scan = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2903,78 +3630,10 @@ honeypot_http_scan = {
     }
 }
 
-# https://www.shadowserver.org/what-we-do/network-reporting/accessible-amqp-report/
-accessible_amqp = {
-    'required_fields': [
-        ('time.source', 'timestamp', add_UTC_to_timestamp),
-        ('source.ip', 'ip'),
-        ('source.port', 'port')
-    ],
-    'optional_fields': [
-        ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
-        ('source.asn', 'asn', invalidate_zero),
-        ('source.geolocation.cc', 'geo'),
-        ('source.geolocation.region', 'region'),
-        ('source.geolocation.city', 'city'),
-        ('extra.', 'tag'),
-        ('extra.', 'naics', invalidate_zero),
-        ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'channel', convert_int),
-        ('extra.', 'message_length', convert_int),
-        ('extra.', 'class', convert_int),
-        ('extra.', 'method', convert_int),
-        ('extra.', 'version_major', validate_to_none),
-        ('extra.', 'version_minor', validate_to_none),
-        ('extra.', 'capabilities', validate_to_none),
-        ('extra.', 'cluster_name', validate_to_none),
-        ('extra.', 'platform', validate_to_none),
-        ('extra.', 'product', validate_to_none),
-        ('extra.', 'product_version', validate_to_none),
-        ('extra.', 'mechanisms', validate_to_none),
-        ('extra.', 'locales', validate_to_none),
-    ],
-    'constant_fields': {
-        'classification.taxonomy': 'vulnerable',
-        'classification.type': 'vulnerable-system',
-        'classification.identifier': 'accessible-amqp',
-    }
-}
-
-# https://www.shadowserver.org/what-we-do/network-reporting/device-identification-report/
-device_id = {
-    'required_fields': [
-        ('time.source', 'timestamp', add_UTC_to_timestamp),
-        ('source.ip', 'ip'),
-        ('source.port', 'port')
-    ],
-    'optional_fields': [
-        ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
-        ('source.asn', 'asn', invalidate_zero),
-        ('source.geolocation.cc', 'geo'),
-        ('source.geolocation.region', 'region'),
-        ('source.geolocation.city', 'city'),
-        ('extra.', 'tag'),
-        ('extra.', 'naics', invalidate_zero),
-        ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'sector', validate_to_none),
-        ('extra.', 'device_vendor', validate_to_none),
-        ('extra.', 'device_type', validate_to_none),
-        ('extra.', 'device_model', validate_to_none),
-    ],
-    'constant_fields': {
-        'classification.taxonomy': 'other',
-        'classification.type': 'undetermined',
-        'classification.identifier': 'device-id',
-    }
-}
-
 mapping = (
     # feed name, file name, function
     ('Accessible-ADB', 'scan_adb', accessible_adb),
     ('Accessible-AFP', 'scan_afp', accessible_afp),
-    ('Accessible-AMQP', 'scan_amqp', accessible_amqp),
     ('Accessible-ARD', 'scan_ard', accessible_ard),
     ('Accessible-CoAP', 'scan_coap', accessible_coap),
     ('Accessible-CWMP', 'scan_cwmp', accessible_cwmp),
@@ -3024,6 +3683,23 @@ mapping = (
     ('Open-LDAP-TCP', 'scan_ldap_tcp', open_ldap),
     ('Open-MQTT', 'scan_mqtt', open_mqtt),
     ('Open-MSSQL', 'scan_mssql', open_mssql),
+    ('Open-SSH', 'scan_ssh', scan_ssh),
+    ('Open-MYSQL', 'scan_mysql', open_mysql),
+    ('Open-DEVICE-ID', 'device_id', device_id),
+    ('Accessible-SSL', 'scan_ssl', accessible_ssl),
+    ('Open-SOCKS', 'scan_socks', scan_socks),
+    ('Open-QUIC', 'scan_quic', scan_quic),
+    ('Open-KUBERNETES', 'scan_kubernetes', scan_kubernetes),
+    ('Open-ICS', 'scan_ics', scan_ics),
+    ('Open-SCAN-EPMD', 'scan_epmd', scan_epmd),
+    ('Open-SCAN_DVR_DHCPDISCOVER', 'scan_dvr_dhcpdiscover', open_scan_dvr_dhcpdiscover),
+    ('Open-SCAN-DDOS-MIDDLEBOX', 'scan_ddos_middlebox', open_scan_ddos_middlebox),
+    ('Open-AMQP', 'scan_amqp', open_amqp),
+    ('Open-SMTP', 'scan_smtp', open_smtp),
+    ('Open-SMTP', 'scan6_smtp', open6_smtp),
+    ('Open-SSL', 'scan6_ssl', open6_ssl),
+    ('Open-TELNET', 'scan6_telnet', open6_telnet),
+    ('Open-SSH', 'scan6_ssh', open6_ssh),
     ('Open-Memcached', 'scan_memcached', open_memcached),
     ('Open-MongoDB', 'scan_mongodb', open_mongodb),
     ('Open-NATPMP', 'scan_nat_pmp', open_natpmp),
@@ -3042,6 +3718,7 @@ mapping = (
     ('SSL-FREAK-Vulnerable-Servers', 'scan_ssl_freak', ssl_freak_vulnerable_servers),
     ('SSL-POODLE-Vulnerable-Servers IPv4', 'scan_ssl_poodle', ssl_poodle46_vulnerable_servers),
     ('SSL-POODLE-Vulnerable-Servers IPv6', 'scan6_ssl_poodle', ssl_poodle46_vulnerable_servers),
+    ('SSL-POODLE-Vulnerable-Servers', 'scan_ssl_poodle', ssl_poodle_vulnerable_servers),
     ('Sandbox-URL', 'cwsandbox_url', sandbox_url),
     ('Sinkhole-DNS', 'sinkhole_dns', sinkhole_dns),
     ('Sinkhole-Events', 'event4_sinkhole', event46_sinkhole),
@@ -3059,6 +3736,8 @@ mapping = (
     ('Vulnerable-HTTP', 'scan_http_vulnerable', accessible_vulnerable_http),
     ('Vulnerable-Exchange-Server', 'scan_exchange', scan_exchange),
     ('Vulnerable-SMTP', 'scan_smtp_vulnerable', vulnerable_smtp),
+
+
 )
 
 feedname_mapping = {feedname: function for feedname, filename, function in mapping}
