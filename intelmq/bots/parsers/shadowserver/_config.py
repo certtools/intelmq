@@ -243,6 +243,7 @@ def scan_exchange_identifier(field):
 
 # BEGIN CONFGEN
 
+# https://www.shadowserver.org/what-we-do/network-reporting/blocklist-report/
 blocklist = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -269,6 +270,7 @@ blocklist = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/compromised-website-report/
 compromised_website = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -303,6 +305,7 @@ compromised_website = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/device-identification-report/
 device_id = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -331,6 +334,7 @@ device_id = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/device-identification-report/
 device_id6 = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -359,6 +363,7 @@ device_id6 = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-brute-force-events-report/
 event_honeypot_brute_force = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -409,6 +414,7 @@ event_honeypot_brute_force = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-darknet-events-report/
 event_honeypot_darknet = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -452,6 +458,7 @@ event_honeypot_darknet = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-ddos-events/
 event_honeypot_ddos = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -523,6 +530,7 @@ event_honeypot_ddos = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-amplification-ddos-events-report/
 event_honeypot_ddos_amp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -572,6 +580,7 @@ event_honeypot_ddos_amp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-ddos-target-events-report/
 event_honeypot_ddos_target = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -643,6 +652,7 @@ event_honeypot_ddos_target = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-http-scanner-events/
 event_honeypot_http_scan = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -707,6 +717,7 @@ event_honeypot_http_scan = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-ics-scanner-events-report/
 event_honeypot_ics_scan = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -755,6 +766,7 @@ event_honeypot_ics_scan = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/ip-spoofer-events-report/
 event_ip_spoofer = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -801,6 +813,7 @@ event_ip_spoofer = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-events-report/
 event_sinkhole = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -843,6 +856,7 @@ event_sinkhole = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-dns-events-report/
 event_sinkhole_dns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -876,6 +890,7 @@ event_sinkhole_dns = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-http-events-report/
 event_sinkhole_http = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -925,6 +940,7 @@ event_sinkhole_http = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-http-referer-events-report/
 event_sinkhole_http_referer = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -967,6 +983,7 @@ event_sinkhole_http_referer = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/malware-url-report/
 malware_url = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -993,6 +1010,7 @@ malware_url = {
     },
 }
 
+# 
 phish_url = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1016,6 +1034,7 @@ phish_url = {
     },
 }
 
+# http://www.shadowserver.org/wiki/pmwiki.php/Services/Sandbox-Connection
 sandbox_conn = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1038,6 +1057,7 @@ sandbox_conn = {
     },
 }
 
+# 
 sandbox_dns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1059,6 +1079,7 @@ sandbox_dns = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/sandbox-url-report/
 sandbox_url = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1080,6 +1101,7 @@ sandbox_url = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-adb-report/
 scan_adb = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1114,6 +1136,7 @@ scan_adb = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-afp-report/
 scan_afp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1148,6 +1171,7 @@ scan_afp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-amqp-report/
 scan_amqp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1187,6 +1211,7 @@ scan_amqp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-apple-remote-desktop-ard-report/
 scan_ard = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1213,6 +1238,7 @@ scan_ard = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-chargen-report/
 scan_chargen = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1240,6 +1266,7 @@ scan_chargen = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-cisco-smart-install-report/
 scan_cisco_smart_install = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1265,6 +1292,7 @@ scan_cisco_smart_install = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-coap-report/
 scan_coap = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1292,6 +1320,7 @@ scan_coap = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-cwmp-report/
 scan_cwmp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1329,6 +1358,7 @@ scan_cwmp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-db2-discovery-service-report/
 scan_db2 = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1357,6 +1387,7 @@ scan_db2 = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-ddos-middlebox-report/
 scan_ddos_middlebox = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1386,6 +1417,7 @@ scan_ddos_middlebox = {
     },
 }
 
+# http://dnsscan.shadowserver.org
 scan_dns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1416,6 +1448,7 @@ scan_dns = {
     },
 }
 
+# 
 scan_docker = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1459,6 +1492,7 @@ scan_docker = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-dvr-dhcpdiscover-report/
 scan_dvr_dhcpdiscover = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1509,6 +1543,7 @@ scan_dvr_dhcpdiscover = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-elasticsearch-report/
 scan_elasticsearch = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1545,6 +1580,35 @@ scan_elasticsearch = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-erlang-port-mapper-report-daemon/
+scan_epmd = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'nodes', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+        'protocol.application': 'Erlang Port Mapper Daemon',
+        'classification.identifier': 'open-epmd',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-exchange-server-report/
 scan_exchange = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1573,6 +1637,7 @@ scan_exchange = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ftp-report/
 scan_ftp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1652,6 +1717,7 @@ scan_ftp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-hadoop-report/
 scan_hadoop = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1685,6 +1751,7 @@ scan_hadoop = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-http-report/
 scan_http = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1721,6 +1788,7 @@ scan_http = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-http-report/
 scan_http_vulnerable = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1757,6 +1825,7 @@ scan_http_vulnerable = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ics-report/
 scan_ics = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1789,6 +1858,7 @@ scan_ics = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-ipmi-report/
 scan_ipmi = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1836,6 +1906,7 @@ scan_ipmi = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-ipp-report/
 scan_ipp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1880,6 +1951,7 @@ scan_ipp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-isakmp-report/
 scan_isakmp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1916,6 +1988,7 @@ scan_isakmp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-kubernetes-api-server-report/
 scan_kubernetes = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2005,6 +2078,7 @@ scan_kubernetes = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-ldap-tcp-report/
 scan_ldap_tcp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2053,6 +2127,7 @@ scan_ldap_tcp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-ldap-tcp-report/
 scan_ldap_udp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2101,6 +2176,7 @@ scan_ldap_udp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-mdns-report/
 scan_mdns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2145,6 +2221,7 @@ scan_mdns = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-memcached-report/
 scan_memcached = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2178,6 +2255,7 @@ scan_memcached = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-mongodb-report/
 scan_mongodb = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2214,6 +2292,7 @@ scan_mongodb = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-mqtt-report/
 scan_mqtt = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2281,6 +2360,7 @@ scan_mqtt = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-mqtt-report/
 scan_mqtt_anon = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2347,6 +2427,7 @@ scan_mqtt_anon = {
     },
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-MSSQL
 scan_mssql = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2380,6 +2461,7 @@ scan_mssql = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-mysql-server-report/
 scan_mysql = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2484,6 +2566,7 @@ scan_mysql = {
     },
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NATPMP
 scan_nat_pmp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2514,6 +2597,7 @@ scan_nat_pmp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-netbios-report/
 scan_netbios = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2544,6 +2628,7 @@ scan_netbios = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/netcore-netis-router-vulnerability-scan-report/
 scan_netis_router = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2570,6 +2655,7 @@ scan_netis_router = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/ntp-version-report/
 scan_ntp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2621,6 +2707,7 @@ scan_ntp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/ntp-monitor-report/
 scan_ntpmonitor = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2648,6 +2735,7 @@ scan_ntpmonitor = {
     },
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Portmapper
 scan_portmapper = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2677,6 +2765,7 @@ scan_portmapper = {
     },
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-QOTD
 scan_qotd = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2704,6 +2793,7 @@ scan_qotd = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-quic-report/
 scan_quic = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2732,6 +2822,7 @@ scan_quic = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-radmin-report/
 scan_radmin = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2757,6 +2848,7 @@ scan_radmin = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-rdp-report/
 scan_rdp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2803,6 +2895,7 @@ scan_rdp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ms-rdpeudp/
 scan_rdpeudp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2828,6 +2921,7 @@ scan_rdpeudp = {
     },
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Redis
 scan_redis = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2867,6 +2961,7 @@ scan_redis = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-rsync-report/
 scan_rsync = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2895,6 +2990,7 @@ scan_rsync = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-smb-report/
 scan_smb = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2928,6 +3024,7 @@ scan_smb = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-smtp-report/
 scan_smtp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2954,6 +3051,7 @@ scan_smtp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-smtp-report/
 scan_smtp_vulnerable = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2980,6 +3078,7 @@ scan_smtp_vulnerable = {
     },
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SNMP
 scan_snmp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3015,6 +3114,7 @@ scan_snmp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-socks4-5-proxy-report/
 scan_socks = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3040,6 +3140,7 @@ scan_socks = {
     },
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SSDP
 scan_ssdp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3082,6 +3183,7 @@ scan_ssdp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ssh-report/
 scan_ssh = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3178,6 +3280,7 @@ scan_ssh = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ssl-report/
 scan_ssl = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3265,6 +3368,7 @@ scan_ssl = {
     },
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Ssl-Freak-Scan
 scan_ssl_freak = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3358,6 +3462,7 @@ scan_ssl_freak = {
     },
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Ssl-Scan
 scan_ssl_poodle = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3451,6 +3556,7 @@ scan_ssl_poodle = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/synful-scan-report/
 scan_synfulknock = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3482,6 +3588,7 @@ scan_synfulknock = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-telnet-report/
 scan_telnet = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3508,6 +3615,7 @@ scan_telnet = {
     },
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-TFTP
 scan_tftp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3538,6 +3646,7 @@ scan_tftp = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/open-ubiquiti-report/
 scan_ubiquiti = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3569,6 +3678,7 @@ scan_ubiquiti = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-vnc-report/
 scan_vnc = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3596,6 +3706,7 @@ scan_vnc = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-xdmcp-service-report/
 scan_xdmcp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3625,6 +3736,7 @@ scan_xdmcp = {
     },
 }
 
+# http://www.shadowserver.org/wiki/pmwiki.php/Services/Spam-URL
 spam_url = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3658,6 +3770,7 @@ spam_url = {
     },
 }
 
+# 
 special = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3714,6 +3827,7 @@ mapping = (
     ('Sandbox Connections', 'sandbox_conn', sandbox_conn),
     ('Sandbox DNS', 'sandbox_dns', sandbox_dns),
     ('Sandbox URL', 'sandbox_url', sandbox_url),
+    ('IPv6 Accessible FTP Service', 'scan6_ftp', scan_ftp),
     ('IPv6 Accessible HTTP', 'scan6_http', scan_http),
     ('IPv6 Vulnerable HTTP', 'scan6_http_vulnerable', scan_http_vulnerable),
     ('IPv6 Accessible MySQL Server', 'scan6_mysql', scan_mysql),
@@ -3738,6 +3852,7 @@ mapping = (
     ('Accessible Docker Service', 'scan_docker', scan_docker),
     ('Accessible DVR DHCPDiscover', 'scan_dvr_dhcpdiscover', scan_dvr_dhcpdiscover),
     ('Open Elasticsearch Server', 'scan_elasticsearch', scan_elasticsearch),
+    ('Accessible Erlang Port Mapper Daemon', 'scan_epmd', scan_epmd),
     ('Vulnerable Exchange Server', 'scan_exchange', scan_exchange),
     ('Accessible FTP Service', 'scan_ftp', scan_ftp),
     ('Accessible Hadoop Service', 'scan_hadoop', scan_hadoop),
