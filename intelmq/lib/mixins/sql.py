@@ -1,6 +1,6 @@
 """ SQLMixin for IntelMQ
 
-SPDX-FileCopyrightText: 2021 Birger Schacht
+SPDX-FileCopyrightText: 2021 Birger Schacht, 2022 Intevation GmbH
 SPDX-License-Identifier: AGPL-3.0-or-later
 
 Based on the former SQLBot base class
@@ -25,6 +25,11 @@ class SQLMixin:
     message_jsondict_as_string = True
 
     def __init__(self, *args, **kwargs):
+        self._init_sql()
+
+        super().__init__(*args, **kwargs)
+
+    def _init_sql(self):
         self.logger.debug("Running SQL Mixin initialization.")
         self._engine_name = getattr(self, 'engine', self._default_engine).lower()
         engines = {SQLMixin.POSTGRESQL: (self._init_postgresql, "%s"),
@@ -97,14 +102,14 @@ class SQLMixin:
                 except self._engine.OperationalError:
                     self.logger.exception('Executed rollback command '
                                           'after failed query execution.')
-                    self.init()
+                    self._init_sql()
                 except Exception:
                     self.logger.exception('Cursor has been closed, connecting '
                                           'again.')
-                    self.init()
+                    self._init_sql()
             else:
                 self.logger.exception('Database connection problem, connecting again.')
-                self.init()
+                self._init_sql()
         else:
             return True
         return False
