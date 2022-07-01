@@ -1,0 +1,4 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","sector","nodes"
+"2010-02-10 00:00:00",192.168.0.1,tcp,4369,node01.example.com,epmd,64512,ZZ,Region,City,0,0,,"ns_1,21100"
+"2010-02-10 00:00:01",192.168.0.2,tcp,4369,node02.example.com,epmd,64512,ZZ,Region,City,0,0,"Retail Trade","rabbit,25672"
+"2010-02-10 00:00:02",192.168.0.3,tcp,4369,node03.example.com,epmd,64512,ZZ,Region,City,0,0,"Communications, Service Provider, and Hosting Service","vpnu-radius,36657"
