@@ -1320,6 +1320,42 @@ scan_coap = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-couchdb-report/
+scan_couchdb = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'server_version', validate_to_none),
+        ('extra.', 'couchdb_message', validate_to_none),
+        ('extra.', 'couchdb_version', validate_to_none),
+        ('extra.', 'git_sha', validate_to_none),
+        ('extra.', 'features', validate_to_none),
+        ('extra.', 'vendor', validate_to_none),
+        ('extra.', 'visible_databases', validate_to_none),
+        ('extra.', 'error', validate_to_none),
+        ('extra.', 'error_reason', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+        'protocol.application': 'CouchDB',
+        'classification.identifier': 'open-couchdb',
+    },
+}
+
 # https://www.shadowserver.org/what-we-do/network-reporting/open-cwmp-report/
 scan_cwmp = {
     'required_fields': [
@@ -3845,6 +3881,7 @@ mapping = (
     ('Chargen', 'scan_chargen', scan_chargen),
     ('Accessible Cisco Smart Install', 'scan_cisco_smart_install', scan_cisco_smart_install),
     ('Accessible CoAP', 'scan_coap', scan_coap),
+    ('Accessible CouchDB Server', 'scan_couchdb', scan_couchdb),
     ('Accessible CWMP', 'scan_cwmp', scan_cwmp),
     ('Open DB2 Discovery Service', 'scan_db2', scan_db2),
     ('Vulnerable DDoS Middlebox', 'scan_ddos_middlebox', scan_ddos_middlebox),
