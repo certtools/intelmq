@@ -193,7 +193,7 @@ class ShadowserverParserBot(ParserBot):
         # Now add additional constant fields.
         event.update(conf.get('constant_fields', {}))
 
-        event.add('raw', self.recover_line())
+        event.add('raw', self.recover_line(row))
 
         # Add everything which could not be resolved to extra.
         for f in fields:
