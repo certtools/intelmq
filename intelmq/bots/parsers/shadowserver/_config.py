@@ -1484,7 +1484,7 @@ scan_dns = {
     },
 }
 
-# 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-docker-service-report/
 scan_docker = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3867,6 +3867,7 @@ mapping = (
     ('IPv6 Accessible HTTP', 'scan6_http', scan_http),
     ('IPv6 Vulnerable HTTP', 'scan6_http_vulnerable', scan_http_vulnerable),
     ('IPv6 Accessible MySQL Server', 'scan6_mysql', scan_mysql),
+    ('IPv6 Accessible RDP Report', 'scan6_rdp', scan_rdp),
     ('IPv6 Accessible SMTP', 'scan6_smtp', scan_smtp),
     ('IPv6 Vulnerable SMTP', 'scan6_smtp_vulnerable', scan_smtp_vulnerable),
     ('IPv6 Accessible SSH', 'scan6_ssh', scan_ssh),
