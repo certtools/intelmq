@@ -112,6 +112,7 @@ CHANGELOG
 - CodeQL Github Actions `exponential backtracking on strings` fixed. (PR#2148 by Sebastian Waldbauer, fixes #2138)
 - Reverse DNS expert tests: remove outdated failing test `test_invalid_ptr` (PR#2208 by Sebastian Wagner, fixes #2206).
 - Add test dependency `requests_mock` to the `development` extra requirements in `setup.py` (PR#2210 by Sebastian Wagner).
+- Threshold Expert tests: Use environment variable `INTELMQ_PIPELINE_HOST` as redis host, analogous to other tests (PR#2209 by Sebastian Wagner, fixes #2207).
 
 ### Tools
 - `intelmqctl`: fix process manager initialization if run non-interactively, as intelmqdump does it (PR#2189 by Sebastian Wagner, fixes 2188).
