@@ -33,14 +33,6 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "source.reverse_dns": "iana.org",
                    "time.observation": "2015-01-01T00:00:00+00:00",
                    }
-INVALID_PTR_INP = {"__type": "Event",
-                   "source.ip": "31.210.115.39",  # PTR is '.'
-                   "time.observation": "2015-01-01T00:00:00+00:00",
-                   }
-INVALID_PTR_OUT = {"__type": "Event",
-                   "source.ip": "31.210.115.39",
-                   "time.observation": "2015-01-01T00:00:00+00:00",
-                   }
 INVALID_PTR_INP2 = {"__type": "Event",
                     "source.ip": "5.157.80.221",  # PTR is '5.157.80.221.' and 'aliancys.peopleinc.nl.'
                     "time.observation": "2015-01-01T00:00:00+00:00",
@@ -81,11 +73,6 @@ class TestReverseDnsExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EXAMPLE_INPUT6
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
-
-    def test_invalid_ptr(self):
-        self.input_message = INVALID_PTR_INP
-        self.run_bot()
-        self.assertMessageEqual(0, INVALID_PTR_OUT)
 
     def test_invalid_ptr2(self):
         self.input_message = INVALID_PTR_INP2
