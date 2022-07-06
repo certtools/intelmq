@@ -51,6 +51,7 @@ setup(
     extras_require={
         'development': [
             'Cerberus',
+            'requests_mock',
         ],
     },
     packages=find_packages(),
