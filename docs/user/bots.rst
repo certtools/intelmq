@@ -378,8 +378,7 @@ Github API
 **Configuration Parameters**
 
 * **Feed parameters** (see above)
-* `basic_auth_username:` GitHub account username (optional)
-* `basic_auth_password:` GitHub account password (optional)
+* `personal_access_token:` GitHub account personal access token [GitHub documentation: Creating a personal access token](https://developer.github.com/changes/2020-02-14-deprecating-password-auth/#removal)
 * `repository:` GitHub target repository (`<USER>/<REPOSITORY>`)
 * `regex:` Valid regular expression of target files within the repository (defaults to `.*.json`)
 * `extra_fields:` Comma-separated list of extra fields from `GitHub contents API <https://developer.github.com/v3/repos/contents/>`_.
