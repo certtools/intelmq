@@ -108,6 +108,7 @@ CHANGELOG
 
 ### Tools
 - `intelmqctl`: fix process manager initialization if run non-interactively, as intelmqdump does it (PR#2189 by Sebastian Wagner, fixes 2188).
+- `intelmqsetup`: Revised installation of manager by building the static files at setup, not build time, making it behave more meaningful. Requires intelmq-manager >= 3.1.0 (PR#2198 by Sebastian Wagner, fixes #2197).
 
 ### Contrib
 - logrotate: Move compress and ownership rules to the IntelMQ-blocks to prevent that they apply to other files (PR#2111 by Sebastian Wagner, fixes #2110).

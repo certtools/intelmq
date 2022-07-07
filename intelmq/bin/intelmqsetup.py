@@ -33,6 +33,7 @@ from typing import Optional
 
 try:
     import intelmq_api
+    import intelmq_api.version
 except ImportError:
     intelmq_api = None
 
@@ -320,7 +321,7 @@ def main():
     intelmqsetup_core(ownership=not args.skip_ownership,
                       state_file=args.state_file)
     if intelmq_api and not args.skip_api:
-        print(f'Running setup for intelmq-api (version {intelmq_api.version}).')
+        print(f'Running setup for intelmq-api (version {intelmq_api.version.__version__}).')
         intelmqsetup_api(ownership=not args.skip_ownership,
                          webserver_user=args.webserver_user)
         if not args.skip_webserver:
