@@ -20,6 +20,7 @@ class TorExpertBot(ExpertBot):
     """Check if the IP address is a Tor Exit Node based on a local database of TOR nodes"""
     database: str = "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"  # TODO: pathlib.Path
     overwrite: bool = False
+    autoupdate_cached_database: bool = True  # Activate/deactivate update-database functionality
 
     _database = set()
 
@@ -36,7 +37,7 @@ class TorExpertBot(ExpertBot):
 
                     self._database.add(line)
 
-        except IOError:
+        except OSError:
             raise ValueError("TOR rule not defined or failed on open.")
 
     def process(self):
@@ -78,15 +79,15 @@ class TorExpertBot(ExpertBot):
         runtime_conf = get_bots_settings()
         try:
             for bot in runtime_conf:
-                if runtime_conf[bot]["module"] == __name__:
+                if runtime_conf[bot]["module"] == __name__ and runtime_conf[bot]['parameters'].get('autoupdate_cached_database', True):
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
         except KeyError as e:
-            sys.exit("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
+            sys.exit(f"Database update failed. Your configuration of {bot} is missing key {e}.")
 
         if not bots:
             if verbose:
-                print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
+                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf or database update disabled with parameter 'autoupdate_cached_database'.")
             sys.exit(0)
 
         try:
@@ -95,11 +96,11 @@ class TorExpertBot(ExpertBot):
             session = create_request_session()
             response = session.get("https://check.torproject.org/exit-addresses")
         except requests.exceptions.RequestException as e:
-            sys.exit("Database update failed. Connection Error: {0}".format(e))
+            sys.exit(f"Database update failed. Connection Error: {e}")
 
         if response.status_code != 200:
-            sys.exit("Database update failed. Server responded: {0}.\n"
-                     "URL: {1}".format(response.status_code, response.url))
+            sys.exit("Database update failed. Server responded: {}.\n"
+                     "URL: {}".format(response.status_code, response.url))
 
         pattern = re.compile(r"ExitAddress ([^\s]+)")
         tor_exits = "\n".join(pattern.findall(response.text))

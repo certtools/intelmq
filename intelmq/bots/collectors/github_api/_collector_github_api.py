@@ -47,18 +47,18 @@ class GithubAPICollectorBot(CollectorBot):
 
     def github_api(self, api_path: str, **kwargs) -> dict:
         try:
-            response = requests.get("{}".format(api_path), params=kwargs, headers=self.__user_headers)
+            response = requests.get(f"{api_path}", params=kwargs, headers=self.__user_headers)
             if response.status_code == 401:
                 # bad credentials
                 raise ValueError(response.json()['message'])
             else:
                 return response.json()
         except requests.RequestException:
-            raise ValueError("Unknown repository {!r}.".format(api_path))
+            raise ValueError(f"Unknown repository {api_path!r}.")
 
     @staticmethod
     def __produce_auth_header(username: str, password: str) -> dict:
-        encoded_auth_bytes = base64.b64encode(bytes('{}:{}'.format(username, password), encoding='utf-8'))
+        encoded_auth_bytes = base64.b64encode(bytes(f'{username}:{password}', encoding='utf-8'))
         return {
             'Authorization': 'Basic {}'.format(encoded_auth_bytes.decode('utf-8'))
         }

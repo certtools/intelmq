@@ -28,9 +28,9 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
 
     try:
         print("INFO - Reading %s file" % harmonization_file)
-        with open(harmonization_file, 'r') as fp:
+        with open(harmonization_file) as fp:
             DATA = json.load(fp)['event']
-    except IOError:
+    except OSError:
         print("ERROR - Could not find %s" % harmonization_file)
         print("ERROR - Make sure that you have intelmq installed.")
         sys.exit(2)
@@ -69,7 +69,7 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
     initdb = """CREATE TABLE events (
     "id" BIGSERIAL UNIQUE PRIMARY KEY,"""
     for field, field_type in sorted(FIELDS.items()):
-        initdb += '\n    "{name}" {type},'.format(name=field, type=field_type)
+        initdb += f'\n    "{field}" {field_type},'
 
     initdb = initdb[:-1]  # remove last ','
     initdb += "\n);\n"
@@ -84,7 +84,7 @@ def main():
     fp = None
     try:
         if os.path.exists(OUTPUTFILE):
-            print('INFO - File {} exists, generating temporary file.'.format(OUTPUTFILE))
+            print(f'INFO - File {OUTPUTFILE} exists, generating temporary file.')
             os_fp, OUTPUTFILE = tempfile.mkstemp(suffix='.initdb.sql',
                                                  text=True)
             fp = os.fdopen(os_fp, 'wt')

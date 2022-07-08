@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Remove affix - String cut from string
 

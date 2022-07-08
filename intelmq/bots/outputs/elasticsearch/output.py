@@ -160,7 +160,7 @@ class ElasticsearchOutputBot(OutputBot):
 
             # If no time available in the event and no default date is given, use the default catchall string
             event_date = event_date.strftime(ROTATE_OPTIONS.get(self.rotate_index)) if event_date else default_string
-            return "{}-{}".format(self.elastic_index, event_date)
+            return f"{self.elastic_index}-{event_date}"
         else:
             # If the bot should NOT rotate indices, just use the index name
             return self.elastic_index

@@ -78,7 +78,7 @@ class MongoDBOutputBot(OutputBot):
                     db.authenticate(name=self.db_user,
                                     password=self.db_pass)
                 except pymongo.errors.OperationFailure:
-                    raise ValueError('Authentication to database {} failed'.format(self.database))
+                    raise ValueError(f'Authentication to database {self.database} failed')
             self._collection = db[self.collection]
             self.logger.info('Successfully connected to MongoDB server.')
 

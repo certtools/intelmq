@@ -296,7 +296,7 @@ class IntelMQProcessManager(ProcessManagerInterface):
     def __check_pid(self, bot_id):
         filename = self.PIDFILE.format(bot_id)
         if os.path.isfile(filename):
-            with open(filename, 'r') as fp:
+            with open(filename) as fp:
                 pid = fp.read()
             try:
                 return int(pid.strip())
@@ -554,10 +554,10 @@ class SupervisorProcessManager(ProcessManagerInterface):
                 self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
                 self.sock.connect(self.host)
 
-        class UnixStreamTransport(xmlrpc.client.Transport, object):
+        class UnixStreamTransport(xmlrpc.client.Transport):
             def __init__(self, socket_path):
                 self.socket_path = socket_path
-                super(UnixStreamTransport, self).__init__()
+                super().__init__()
 
             def make_connection(self, host):
                 return UnixStreamHTTPConnection(self.socket_path)
@@ -566,7 +566,7 @@ class SupervisorProcessManager(ProcessManagerInterface):
             socket_path = os.environ.get("SUPERVISOR_SOCKET", self.DEFAULT_SOCKET_PATH)
 
             if not os.path.exists(socket_path):
-                self._abort("Socket '{}' does not exists. Is supervisor running?".format(socket_path))
+                self._abort(f"Socket '{socket_path}' does not exists. Is supervisor running?")
 
             if not os.access(socket_path, os.W_OK):
                 current_user = getpass.getuser()
@@ -591,7 +591,7 @@ class SupervisorProcessManager(ProcessManagerInterface):
 
             supervisor_state = self.__supervisor_xmlrpc.supervisor.getState()["statename"]
             if supervisor_state != "RUNNING":
-                raise Exception("Unexpected supervisor state {}".format(supervisor_state))
+                raise Exception(f"Unexpected supervisor state {supervisor_state}")
 
             try:
                 self.__supervisor_xmlrpc.twiddler.getAPIVersion()
@@ -608,7 +608,7 @@ class SupervisorProcessManager(ProcessManagerInterface):
         return self.__supervisor_xmlrpc
 
     def _process_name(self, bot_id: str) -> str:
-        return "{}:{}".format(self.SUPERVISOR_GROUP, bot_id)
+        return f"{self.SUPERVISOR_GROUP}:{bot_id}"
 
     def _abort(self, message: str):
         if self._interactive:

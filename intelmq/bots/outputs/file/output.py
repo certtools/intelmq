@@ -44,7 +44,7 @@ class FileOutputBot(OutputBot):
             path = Path(os.path.dirname(filename))
             try:
                 path.mkdir(mode=0o755, parents=True, exist_ok=True)
-            except IOError:
+            except OSError:
                 self.logger.exception('Directory %r could not be created.', path)
                 self.stop()
             else:
@@ -98,7 +98,7 @@ class FileOutputBot(OutputBot):
             path = Path(dirname)
             try:
                 path.mkdir(mode=0o755, parents=True, exist_ok=True)
-            except IOError:
+            except OSError:
                 return [["error", "Directory (%r) of parameter 'file' does not exist and could not be created." % dirname]]
             else:
                 return [["info", "Directory (%r) of parameter 'file' did not exist, but has now been created." % dirname]]

@@ -43,6 +43,6 @@ if __name__ == '__main__':  # pragma: no cover
             with open(fn, 'r+') as f:
                 rewrite(f)
 
-    except IOError:
+    except OSError:
         traceback.print_exc()
         print('Could not open files. Wrong directory? Also see the --help.')

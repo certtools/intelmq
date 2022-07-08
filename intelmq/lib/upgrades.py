@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 © 2020 Sebastian Wagner <wagner@cert.at>
 

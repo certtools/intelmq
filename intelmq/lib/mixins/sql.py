@@ -34,7 +34,7 @@ class SQLMixin:
                 self.format_char = val[1]
                 break
         else:
-            raise ValueError("Wrong parameter 'engine' {0!r}, possible values are {1}".format(self.engine_name, engines))
+            raise ValueError(f"Wrong parameter 'engine' {self.engine_name!r}, possible values are {engines}")
 
         super().__init__()
 

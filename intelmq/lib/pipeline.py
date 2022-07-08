@@ -26,7 +26,7 @@ except ImportError:
     pika = None
 
 
-class PipelineFactory(object):
+class PipelineFactory:
 
     @staticmethod
     def create(logger, broker=None, direction=None, queues=None, pipeline_args=None, load_balance=False, is_multithreaded=False):
@@ -67,7 +67,7 @@ class PipelineFactory(object):
         return pipe
 
 
-class Pipeline(object):
+class Pipeline:
     has_internal_queues = False
     # If the class currently holds a message, restricts the actions
     _has_message = False
@@ -245,7 +245,7 @@ class Redis(Pipeline):
                         "OOM command not allowed when used memory > 'maxmemory'." in exc.args[0]:
                     raise MemoryError(exc.args[0])
                 elif 'Redis is configured to save RDB snapshots, but is currently not able to persist on disk' in exc.args[0]:
-                    raise IOError(28, 'No space left on device or in memory. Redis can\'t save its snapshots. '
+                    raise OSError(28, 'No space left on device or in memory. Redis can\'t save its snapshots. '
                                       'Look at redis\'s logs.')
                 raise exceptions.PipelineError(exc)
 
@@ -423,24 +423,24 @@ class Amqp(Pipeline):
     intelmqctl_rabbitmq_monitoring_url = None
 
     def __init__(self, logger, pipeline_args: dict = None, load_balance=False, is_multithreaded=False):
-        super(Amqp, self).__init__(logger, pipeline_args, load_balance, is_multithreaded)
+        super().__init__(logger, pipeline_args, load_balance, is_multithreaded)
         if pika is None:
             raise ValueError("To use AMQP you must install the 'pika' library.")
         self.properties = pika.BasicProperties(delivery_mode=2)  # message persistence
 
     def load_configurations(self, queues_type):
-        self.host = self.pipeline_args.get("{}_pipeline_host".format(queues_type), "10.0.0.1")
-        self.port = self.pipeline_args.get("{}_pipeline_port".format(queues_type), 5672)
-        self.username = self.pipeline_args.get("{}_pipeline_username".format(queues_type), None)
-        self.password = self.pipeline_args.get("{}_pipeline_password".format(queues_type), None)
+        self.host = self.pipeline_args.get(f"{queues_type}_pipeline_host", "10.0.0.1")
+        self.port = self.pipeline_args.get(f"{queues_type}_pipeline_port", 5672)
+        self.username = self.pipeline_args.get(f"{queues_type}_pipeline_username", None)
+        self.password = self.pipeline_args.get(f"{queues_type}_pipeline_password", None)
         #  socket_timeout is None by default, which means no timeout
-        self.socket_timeout = self.pipeline_args.get("{}_pipeline_socket_timeout".format(queues_type),
+        self.socket_timeout = self.pipeline_args.get(f"{queues_type}_pipeline_socket_timeout",
                                                      None)
         self.load_balance = self.pipeline_args.get("load_balance", False)
-        self.virtual_host = self.pipeline_args.get("{}_pipeline_amqp_virtual_host".format(queues_type),
+        self.virtual_host = self.pipeline_args.get(f"{queues_type}_pipeline_amqp_virtual_host",
                                                    '/')
-        self.ssl = self.pipeline_args.get("{}_pipeline_ssl".format(queues_type), False)
-        self.exchange = self.pipeline_args.get("{}_pipeline_amqp_exchange".format(queues_type), "")
+        self.ssl = self.pipeline_args.get(f"{queues_type}_pipeline_ssl", False)
+        self.exchange = self.pipeline_args.get(f"{queues_type}_pipeline_amqp_exchange", "")
         self.load_balance_iterator = 0
         self.kwargs = {}
         if self.username and self.password:
@@ -509,7 +509,7 @@ class Amqp(Pipeline):
 
     def set_queues(self, queues: dict, queues_type: str):
         self.load_configurations(queues_type)
-        super(Amqp, self).set_queues(queues, queues_type)
+        super().set_queues(queues, queues_type)
 
     def _send(self, destination_queue, message, reconnect=True):
         self.check_connection()
