@@ -1010,7 +1010,6 @@ malware_url = {
     },
 }
 
-# 
 phish_url = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1057,7 +1056,6 @@ sandbox_conn = {
     },
 }
 
-# 
 sandbox_dns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3806,7 +3804,6 @@ spam_url = {
     },
 }
 
-# 
 special = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
