@@ -25,7 +25,7 @@ EVENTS = [
     {
         "__type": "Event",
         "feed.name": "Accessible Radmin",
-        "classification.identifier": "open-radmin",
+        "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
         "classification.type": "vulnerable-system",
         "extra.source.naics": 517312,
@@ -47,7 +47,7 @@ EVENTS = [
     {
         "__type": "Event",
         "feed.name": "Accessible Radmin",
-        "classification.identifier": "open-radmin",
+        "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
         "classification.type": "vulnerable-system",
         "extra.tag": "radmin",
@@ -68,7 +68,7 @@ EVENTS = [
     {
         "__type": "Event",
         "feed.name": "Accessible Radmin",
-        "classification.identifier": "open-radmin",
+        "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
         "classification.type": "vulnerable-system",
         "extra.source.naics": 517311,
@@ -89,7 +89,7 @@ EVENTS = [
     {
         "__type": "Event",
         "feed.name": "Accessible Radmin",
-        "classification.identifier": "open-radmin",
+        "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
         "classification.type": "vulnerable-system",
         "extra.source.naics": 517311,
@@ -110,7 +110,7 @@ EVENTS = [
     {
         "__type": "Event",
         "feed.name": "Accessible Radmin",
-        "classification.identifier": "open-radmin",
+        "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
         "classification.type": "vulnerable-system",
         "extra.source.naics": 517311,
@@ -131,7 +131,7 @@ EVENTS = [
     {
         "__type": "Event",
         "feed.name": "Accessible Radmin",
-        "classification.identifier": "open-radmin",
+        "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
         "classification.type": "vulnerable-system",
         "extra.source.naics": 517312,
@@ -152,7 +152,7 @@ EVENTS = [
     {
         "__type": "Event",
         "feed.name": "Accessible Radmin",
-        "classification.identifier": "open-radmin",
+        "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
         "classification.type": "vulnerable-system",
         "extra.tag": "radmin",
@@ -172,7 +172,7 @@ EVENTS = [
     {
         "__type": "Event",
         "feed.name": "Accessible Radmin",
-        "classification.identifier": "open-radmin",
+        "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
         "classification.type": "vulnerable-system",
         "extra.source.naics": 517311,
@@ -194,7 +194,7 @@ EVENTS = [
     {
         "__type": "Event",
         "feed.name": "Accessible Radmin",
-        "classification.identifier": "open-radmin",
+        "classification.identifier": "accessible-radmin",
         "classification.taxonomy": "vulnerable",
         "classification.type": "vulnerable-system",
         "extra.source.naics": 517312,

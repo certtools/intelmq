@@ -51,7 +51,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.assertLogMatches(pattern="Detected report's file name: 'scan_http'.",
                               levelname="DEBUG")
         self.assertLogMatches(pattern="Failed to parse line.")
-        self.assertLogMatches(pattern="ValueError: Required column 'timestamp' not found in feed 'Accessible HTTP'. Possible change in data format or misconfiguration.")
+        self.assertLogMatches(pattern="ValueError: Required column 'timestamp' not found in feed 'Accessible-HTTP'. Possible change in data format or misconfiguration.")
         self.assertLogMatches(pattern=r"Sent 0 events and found 1 problem\(s\)\.",
                               levelname="INFO")
 
@@ -63,7 +63,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(allowed_warning_count=63)
         self.assertLogMatches(pattern="Detected report's file name: 'scan_ftp'.",
                               levelname="DEBUG")
-        self.assertLogMatches(pattern="Optional key 'jarm' not found in feed 'Accessible FTP Service'.",
+        self.assertLogMatches(pattern="Optional key 'jarm' not found in feed 'Accessible-FTP'.",
                               levelname="WARNING")
         self.assertLogMatches(pattern=r"Sent 1 events and found 0 problem\(s\)\.",
                               levelname="INFO")

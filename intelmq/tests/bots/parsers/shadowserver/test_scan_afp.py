@@ -26,7 +26,7 @@ EXAMPLE_REPORT = {'feed.name': 'Accessible AFP',
 EVENTS = [{
     '__type': 'Event',
     'feed.name': 'Accessible AFP',
-    "classification.identifier": "open-afp",
+    "classification.identifier": "accessible-afp",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable-system",
     "extra.afp_versions": "AFP3.3,AFP3.2,AFP3.1",
@@ -56,7 +56,7 @@ EVENTS = [{
 {
     '__type': 'Event',
     'feed.name': 'Accessible AFP',
-    "classification.identifier": "open-afp",
+    "classification.identifier": "accessible-afp",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable-system",
     "extra.afp_versions": "AFP3.3,AFP3.2,AFP3.1",

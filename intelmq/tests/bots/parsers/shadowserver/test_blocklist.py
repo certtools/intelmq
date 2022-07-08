@@ -25,7 +25,7 @@ EXAMPLE_REPORT = {
 EVENTS = [{
     '__type': 'Event',
     'feed.name': 'Block Listed IP Addresses',
-    "classification.identifier": "blocklist",
+    "classification.identifier": "blacklisted-ip",
     "classification.taxonomy": "other",
     "classification.type": "blacklist",
     "extra.source.naics": 517311,
@@ -45,7 +45,7 @@ EVENTS = [{
 {
     '__type': 'Event',
     'feed.name': 'Block Listed IP Addresses',
-    "classification.identifier": "blocklist",
+    "classification.identifier": "blacklisted-ip",
     "classification.taxonomy": "other",
     "classification.type": "blacklist",
     "extra.source.naics": 517311,
@@ -64,7 +64,7 @@ EVENTS = [{
 {
     '__type': 'Event',
     'feed.name': 'Block Listed IP Addresses',
-    "classification.identifier": "blocklist",
+    "classification.identifier": "blacklisted-ip",
     "classification.taxonomy": "other",
     "classification.type": "blacklist",
     "extra.source.naics": 517311,

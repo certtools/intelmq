@@ -25,7 +25,7 @@ EXAMPLE_REPORT = {"feed.name": "Sinkhole DNS",
 EVENTS = [
 {
    '__type' : 'Event',
-   'classification.identifier' : 'sinkhole-dns',
+   'classification.identifier' : 'sinkholedns',
    'extra.tag' : 'msexchange',
    'classification.taxonomy' : 'other',
    'classification.type' : 'other',
@@ -53,7 +53,7 @@ EVENTS = [
 
 {
    '__type' : 'Event',
-   'classification.identifier' : 'sinkhole-dns',
+   'classification.identifier' : 'sinkholedns',
    'extra.tag' : 'rat',
    'classification.taxonomy' : 'other',
    'classification.type' : 'other',
@@ -79,7 +79,7 @@ EVENTS = [
 },
 {
    '__type' : 'Event',
-   'classification.identifier' : 'sinkhole-dns',
+   'classification.identifier' : 'sinkholedns',
    'extra.tag' : 'msexchange',
    'classification.taxonomy' : 'other',
    'classification.type' : 'other',

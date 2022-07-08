@@ -23,7 +23,7 @@ EXAMPLE_REPORT = {'feed.name': 'Accessible-CoAP',
                   }
 EVENTS = [{'__type': 'Event',
            'feed.name': 'Accessible-CoAP',
-           "classification.identifier": "open-coap",
+           "classification.identifier": "accessible-coap",
            "classification.taxonomy": "vulnerable",
            "classification.type": "vulnerable-system",
            'extra.source.naics': 518210,

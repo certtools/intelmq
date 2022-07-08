@@ -250,6 +250,7 @@ blocklist = {
         ('source.ip', 'ip', validate_ip),
     ],
     'optional_fields': [
+        ('source.network', 'ip', validate_network),
         ('source.reverse_dns', 'hostname'),
         ('extra.', 'source', validate_to_none),
         ('extra.', 'reason', validate_to_none),
@@ -261,12 +262,11 @@ blocklist = {
         ('extra.source.sic', 'sic', invalidate_zero),
         ('extra.source.sector', 'sector', validate_to_none),
         ('malware.name', 'tag'),
-        ('source.network', 'ip', validate_network),
     ],
     'constant_fields': {
+        'classification.identifier': 'blacklisted-ip',
         'classification.taxonomy': 'other',
         'classification.type': 'blacklist',
-        'classification.identifier': 'blocklist',
     },
 }
 
@@ -371,6 +371,7 @@ event_honeypot_brute_force = {
         ('source.port', 'src_port', convert_int),
     ],
     'optional_fields': [
+        ('classification.identifier', 'application'),
         ('destination.account', 'username', validate_to_none),
         ('extra.', 'tag', validate_to_none),
         ('protocol.transport', 'protocol'),
@@ -410,7 +411,6 @@ event_honeypot_brute_force = {
     'constant_fields': {
         'classification.taxonomy': 'intrusion-attempts',
         'classification.type': 'brute-force',
-        'classification.identifier': 'honeypot-brute-force',
     },
 }
 
@@ -422,6 +422,7 @@ event_honeypot_darknet = {
         ('source.port', 'src_port', convert_int),
     ],
     'optional_fields': [
+        ('classification.identifier', 'tag'),
         ('extra.', 'tag', validate_to_none),
         ('protocol.transport', 'protocol'),
         ('source.asn', 'src_asn', invalidate_zero),
@@ -454,7 +455,6 @@ event_honeypot_darknet = {
     'constant_fields': {
         'classification.taxonomy': 'other',
         'classification.type': 'other',
-        'classification.identifier': 'honeypot-darknet',
     },
 }
 
@@ -574,9 +574,9 @@ event_honeypot_ddos_amp = {
         ('extra.', 'duration', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'amplification-ddos-victim',
         'classification.taxonomy': 'availability',
         'classification.type': 'ddos',
-        'classification.identifier': 'honeypot-ddos-amp',
     },
 }
 
@@ -760,9 +760,9 @@ event_honeypot_ics_scan = {
         ('extra.', 'response', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'ics',
         'classification.taxonomy': 'information-gathering',
         'classification.type': 'scanner',
-        'classification.identifier': 'honeypot-ics-scan',
     },
 }
 
@@ -821,6 +821,7 @@ event_sinkhole = {
         ('source.port', 'src_port', convert_int),
     ],
     'optional_fields': [
+        ('classification.identifier', 'family', validate_to_none),
         ('malware.name', 'family', validate_to_none),
         ('extra.', 'tag', validate_to_none),
         ('extra.', 'infection', validate_to_none),
@@ -852,7 +853,6 @@ event_sinkhole = {
     'constant_fields': {
         'classification.taxonomy': 'malicious-code',
         'classification.type': 'infected-system',
-        'classification.identifier': 'sinkhole',
     },
 }
 
@@ -883,10 +883,10 @@ event_sinkhole_dns = {
         ('extra.', 'count', convert_int),
     ],
     'constant_fields': {
+        'classification.identifier': 'sinkholedns',
         'classification.taxonomy': 'other',
         'classification.type': 'other',
         'protocol.application': 'dns',
-        'classification.identifier': 'sinkhole-dns',
     },
 }
 
@@ -898,6 +898,7 @@ event_sinkhole_http = {
         ('source.port', 'src_port', convert_int),
     ],
     'optional_fields': [
+        ('classification.identifier', 'family'),
         ('malware.name', 'family', validate_to_none),
         ('extra.', 'tag', validate_to_none),
         ('extra.', 'infection', validate_to_none),
@@ -936,7 +937,6 @@ event_sinkhole_http = {
         'classification.taxonomy': 'malicious-code',
         'classification.type': 'infected-system',
         'protocol.application': 'http',
-        'classification.identifier': 'sinkhole-http',
     },
 }
 
@@ -1129,10 +1129,10 @@ scan_adb = {
         ('extra.', 'device_sector', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-adb',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'adb',
-        'classification.identifier': 'open-adb',
     },
 }
 
@@ -1164,10 +1164,10 @@ scan_afp = {
         ('extra.', 'network_address', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-afp',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'afp',
-        'classification.identifier': 'open-afp',
     },
 }
 
@@ -1204,10 +1204,10 @@ scan_amqp = {
         ('extra.source.sector', 'sector', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-amqp',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'amqp',
-        'classification.identifier': 'open-amqp',
     },
 }
 
@@ -1232,9 +1232,9 @@ scan_ard = {
         ('extra.', 'response_size', convert_int),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-ard',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
-        'classification.identifier': 'open-ard',
     },
 }
 
@@ -1285,10 +1285,10 @@ scan_cisco_smart_install = {
         ('extra.source.sic', 'sic', invalidate_zero),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-cisco-smart-install',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'cisco-smart-install',
-        'classification.identifier': 'open-cisco-smart-install',
     },
 }
 
@@ -1313,10 +1313,10 @@ scan_coap = {
         ('extra.', 'response', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-coap',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'coap',
-        'classification.identifier': 'open-coap',
     },
 }
 
@@ -1416,10 +1416,10 @@ scan_db2 = {
         ('extra.', 'servername', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'open-db2-discovery-service',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'db2',
-        'classification.identifier': 'open-db2',
     },
 }
 
@@ -1477,10 +1477,10 @@ scan_dns = {
         ('extra.source.sector', 'sector', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'dns-open-resolver',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'dns',
-        'classification.identifier': 'open-dns',
     },
 }
 
@@ -1652,6 +1652,10 @@ scan_exchange = {
         ('source.port', 'port', convert_int),
     ],
     'optional_fields': [
+        ('classification.taxonomy', 'tag', scan_exchange_taxonomy),
+        ('classification.type', 'tag', scan_exchange_type),
+        ('classification.identifier', 'tag', scan_exchange_identifier),
+        ('extra.', 'tag', validate_to_none),
         ('source.reverse_dns', 'hostname'),
         ('extra.', 'tag', validate_to_none),
         ('source.asn', 'asn', invalidate_zero),
@@ -1664,10 +1668,6 @@ scan_exchange = {
         ('extra.', 'version', validate_to_none),
         ('extra.', 'servername', validate_to_none),
         ('extra.', 'url', validate_to_none),
-        ('classification.taxonomy', 'tag', scan_exchange_taxonomy),
-        ('classification.type', 'tag', scan_exchange_type),
-        ('classification.identifier', 'tag', scan_exchange_identifier),
-        ('extra.', 'tag', validate_to_none),
     ],
     'constant_fields': {
     },
@@ -1779,11 +1779,11 @@ scan_hadoop = {
         ('extra.', 'volumeinfo', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-hadoop',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'hadoop',
         'protocol.transport': 'tcp',
-        'classification.identifier': 'open-hadoop',
     },
 }
 
@@ -1854,10 +1854,10 @@ scan_http_vulnerable = {
         ('extra.', 'http_date', convert_date),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-http',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'http',
-        'classification.identifier': 'vulnerable-http',
     },
 }
 
@@ -2156,10 +2156,10 @@ scan_ldap_tcp = {
         ('extra.', 'supported_sasl_mechanisms', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'open-ldap',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'ldap',
-        'classification.identifier': 'open-ldap-tcp',
     },
 }
 
@@ -2205,10 +2205,10 @@ scan_ldap_udp = {
         ('extra.', 'supported_sasl_mechanisms', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'open-ldap',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'ldap',
-        'classification.identifier': 'open-ldap-udp',
     },
 }
 
@@ -2626,10 +2626,10 @@ scan_nat_pmp = {
         ('extra.source.sector', 'sector', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'open-natpmp',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'natpmp',
-        'classification.identifier': 'open-nat-pmp',
     },
 }
 
@@ -2657,10 +2657,10 @@ scan_netbios = {
         ('extra.source.sector', 'sector', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'open-netbios-nameservice',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'netbios-nameservice',
-        'classification.identifier': 'open-netbios',
     },
 }
 
@@ -2684,10 +2684,10 @@ scan_netis_router = {
         ('extra.source.sector', 'sector', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'open-netis',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.transport': 'udp',
-        'classification.identifier': 'open-netis-router',
     },
 }
 
@@ -2736,10 +2736,10 @@ scan_ntp = {
         ('extra.source.sector', 'sector', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'ntp-version',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'ntp',
-        'classification.identifier': 'open-ntp',
     },
 }
 
@@ -2764,10 +2764,10 @@ scan_ntpmonitor = {
         ('extra.source.sector', 'sector', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'ntp-monitor',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'ntp',
-        'classification.identifier': 'open-ntpmonitor',
     },
 }
 
@@ -2878,9 +2878,9 @@ scan_radmin = {
         ('extra.source.sic', 'sic', invalidate_zero),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-radmin',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
-        'classification.identifier': 'open-radmin',
     },
 }
 
@@ -2951,9 +2951,9 @@ scan_rdpeudp = {
         ('extra.', 'sessionid', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-msrdpeudp',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
-        'classification.identifier': 'open-rdpeudp',
     },
 }
 
@@ -3019,10 +3019,10 @@ scan_rsync = {
         ('extra.', 'motd', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-rsync',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'rsync',
-        'classification.identifier': 'open-rsync',
     },
 }
 
@@ -3708,9 +3708,9 @@ scan_ubiquiti = {
         ('extra.', 'modelfull', validate_to_none),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-ubiquiti-discovery-service',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
-        'classification.identifier': 'open-ubiquiti',
     },
 }
 
@@ -3837,110 +3837,114 @@ special = {
 
 mapping = (
     # feed name, file name, function
-    ('Block Listed IP Addresses', 'blocklist', blocklist),
-    ('Compromised Website', 'compromised_website', compromised_website),
-    ('Device Identification', 'device_id', device_id),
-    ('IPv6 Device Identification', 'device_id6', device_id6),
-    ('Honeypot Brute Force Events', 'event4_honeypot_brute_force', event_honeypot_brute_force),
-    ('Darknet Events', 'event4_honeypot_darknet', event_honeypot_darknet),
-    ('Honeypot DDoS Events', 'event4_honeypot_ddos', event_honeypot_ddos),
-    ('Honeypot DDoS Amplification Events', 'event4_honeypot_ddos_amp', event_honeypot_ddos_amp),
-    ('Honeypot DDoS Target Events', 'event4_honeypot_ddos_target', event_honeypot_ddos_target),
-    ('Honeypot HTTP Scanner Events', 'event4_honeypot_http_scan', event_honeypot_http_scan),
-    ('Honeypot ICS Scanner Events', 'event4_honeypot_ics_scan', event_honeypot_ics_scan),
-    ('IP Spoofer Events', 'event4_ip_spoofer', event_ip_spoofer),
-    ('Microsoft Sinkhole events', 'event4_microsoft_sinkhole', event_sinkhole),
-    ('Microsoft Sinkhole HTTP Events', 'event4_microsoft_sinkhole_http', event_sinkhole_http),
-    ('Sinkhole Events', 'event4_sinkhole', event_sinkhole),
-    ('Sinkhole DNS Events', 'event4_sinkhole_dns', event_sinkhole_dns),
-    ('Sinkhole HTTP Events', 'event4_sinkhole_http', event_sinkhole_http),
-    ('Sinkhole HTTP Referer Events', 'event4_sinkhole_http_referer', event_sinkhole_http_referer),
-    ('IPv6 Sinkhole Events', 'event6_sinkhole', event_sinkhole),
-    ('IPv6 Sinkhole HTTP Events', 'event6_sinkhole_http', event_sinkhole_http),
-    ('IPv6 Sinkhole HTTP Referer Events', 'event6_sinkhole_http_referer', event_sinkhole_http_referer),
-    ('Malware URL', 'malware_url', malware_url),
-    ('Phish URL', 'phish_url', phish_url),
-    ('Sandbox Connections', 'sandbox_conn', sandbox_conn),
-    ('Sandbox DNS', 'sandbox_dns', sandbox_dns),
-    ('Sandbox URL', 'sandbox_url', sandbox_url),
-    ('IPv6 Accessible FTP Service', 'scan6_ftp', scan_ftp),
-    ('IPv6 Accessible HTTP', 'scan6_http', scan_http),
-    ('IPv6 Vulnerable HTTP', 'scan6_http_vulnerable', scan_http_vulnerable),
-    ('IPv6 Accessible MySQL Server', 'scan6_mysql', scan_mysql),
-    ('IPv6 Accessible RDP Report', 'scan6_rdp', scan_rdp),
-    ('IPv6 Accessible SMTP', 'scan6_smtp', scan_smtp),
-    ('IPv6 Vulnerable SMTP', 'scan6_smtp_vulnerable', scan_smtp_vulnerable),
-    ('IPv6 Accessible SSH', 'scan6_ssh', scan_ssh),
-    ('IPv6 Accessible SSL', 'scan6_ssl', scan_ssl),
-    ('IPv6 SSL/Freak Vulnerable Servers', 'scan6_ssl_freak', scan_ssl_freak),
-    ('IPv6 SSLv3/Poodle Vulnerable Servers', 'scan6_ssl_poodle', scan_ssl_poodle),
-    ('IPv6 Accessible Telnet Service', 'scan6_telnet', scan_telnet),
-    ('Accessible Android Debug Bridge', 'scan_adb', scan_adb),
-    ('Accessible Apple Filing Protocol', 'scan_afp', scan_afp),
-    ('Accessible AMQP', 'scan_amqp', scan_amqp),
-    ('Accessible Apple Remote Desktop', 'scan_ard', scan_ard),
-    ('Chargen', 'scan_chargen', scan_chargen),
-    ('Accessible Cisco Smart Install', 'scan_cisco_smart_install', scan_cisco_smart_install),
-    ('Accessible CoAP', 'scan_coap', scan_coap),
-    ('Accessible CouchDB Server', 'scan_couchdb', scan_couchdb),
-    ('Accessible CWMP', 'scan_cwmp', scan_cwmp),
-    ('Open DB2 Discovery Service', 'scan_db2', scan_db2),
-    ('Vulnerable DDoS Middlebox', 'scan_ddos_middlebox', scan_ddos_middlebox),
-    ('DNS Open Resolvers', 'scan_dns', scan_dns),
-    ('Accessible Docker Service', 'scan_docker', scan_docker),
-    ('Accessible DVR DHCPDiscover', 'scan_dvr_dhcpdiscover', scan_dvr_dhcpdiscover),
-    ('Open Elasticsearch Server', 'scan_elasticsearch', scan_elasticsearch),
-    ('Accessible Erlang Port Mapper Daemon', 'scan_epmd', scan_epmd),
-    ('Vulnerable Exchange Server', 'scan_exchange', scan_exchange),
-    ('Accessible FTP Service', 'scan_ftp', scan_ftp),
-    ('Accessible Hadoop Service', 'scan_hadoop', scan_hadoop),
-    ('Accessible HTTP', 'scan_http', scan_http),
-    ('Vulnerable HTTP', 'scan_http_vulnerable', scan_http_vulnerable),
-    ('Accessible ICS', 'scan_ics', scan_ics),
-    ('Open IPMI Report', 'scan_ipmi', scan_ipmi),
-    ('Open IPP', 'scan_ipp', scan_ipp),
-    ('ISAKMP Vulnerability Scan', 'scan_isakmp', scan_isakmp),
-    ('Accessible Kubernetes API Server', 'scan_kubernetes', scan_kubernetes),
-    ('Open LDAP (TCP) Services', 'scan_ldap_tcp', scan_ldap_tcp),
-    ('Open LDAP Services', 'scan_ldap_udp', scan_ldap_udp),
-    ('Open mDNS Report', 'scan_mdns', scan_mdns),
-    ('Open Memcached Server', 'scan_memcached', scan_memcached),
-    ('Accessible/Open MongoDB Service', 'scan_mongodb', scan_mongodb),
-    ('Open MQTT', 'scan_mqtt', scan_mqtt),
-    ('Open Anonymous MQTT', 'scan_mqtt_anon', scan_mqtt_anon),
-    ('Open MS-SQL Server Resolution Service', 'scan_mssql', scan_mssql),
-    ('Accessible MySQL Server', 'scan_mysql', scan_mysql),
-    ('Vulnerable NAT-PMP Systems', 'scan_nat_pmp', scan_nat_pmp),
-    ('Netbios', 'scan_netbios', scan_netbios),
-    ('Netcore/Netis Router Vulnerability Scan', 'scan_netis_router', scan_netis_router),
-    ('NTP Version', 'scan_ntp', scan_ntp),
-    ('NTP Monitor', 'scan_ntpmonitor', scan_ntpmonitor),
-    ('Open Portmapper Scan', 'scan_portmapper', scan_portmapper),
-    ('QOTD', 'scan_qotd', scan_qotd),
-    ('Accessible QUIC Report', 'scan_quic', scan_quic),
-    ('Accessible Radmin', 'scan_radmin', scan_radmin),
-    ('Accessible RDP Report', 'scan_rdp', scan_rdp),
-    ('Accessible MS-RDPEUDP', 'scan_rdpeudp', scan_rdpeudp),
-    ('Open Redis Server', 'scan_redis', scan_redis),
-    ('Accessible Rsync Service', 'scan_rsync', scan_rsync),
-    ('Accessible SMB Service', 'scan_smb', scan_smb),
-    ('Accessible SMTP', 'scan_smtp', scan_smtp),
-    ('Vulnerable SMTP', 'scan_smtp_vulnerable', scan_smtp_vulnerable),
-    ('SNMP', 'scan_snmp', scan_snmp),
-    ('Accessible SOCKS4/5 Proxy', 'scan_socks', scan_socks),
-    ('SSDP', 'scan_ssdp', scan_ssdp),
-    ('Accessible SSH', 'scan_ssh', scan_ssh),
-    ('Accessible SSL', 'scan_ssl', scan_ssl),
-    ('SSL/Freak Vulnerable Servers', 'scan_ssl_freak', scan_ssl_freak),
-    ('SSLv3/Poodle Vulnerable Servers', 'scan_ssl_poodle', scan_ssl_poodle),
-    ('SYNful Knock', 'scan_synfulknock', scan_synfulknock),
-    ('Accessible Telnet Service', 'scan_telnet', scan_telnet),
-    ('Open TFTP Servers', 'scan_tftp', scan_tftp),
-    ('Accessible Ubiquiti Service Discovery', 'scan_ubiquiti', scan_ubiquiti),
-    ('Accessible VNC Service', 'scan_vnc', scan_vnc),
-    ('Accessible XDMCP Service', 'scan_xdmcp', scan_xdmcp),
-    ('Spam URL', 'spam_url', spam_url),
+    ('Blocklist', 'blocklist', blocklist),
+    ('Compromised-Website', 'compromised_website', compromised_website),
+    ('Device-Identification IPv4', 'device_id', device_id),
+    ('Device-Identification IPv6', 'device_id6', device_id6),
+    ('Honeypot-Brute-Force-Events', 'event4_honeypot_brute_force', event_honeypot_brute_force),
+    ('Honeypot-Darknet', 'event4_honeypot_darknet', event_honeypot_darknet),
+    ('Honeypot-DDoS', 'event4_honeypot_ddos', event_honeypot_ddos),
+    ('Honeypot-Amplification-DDoS-Events', 'event4_honeypot_ddos_amp', event_honeypot_ddos_amp),
+    ('Honeypot-DDoS-Target', 'event4_honeypot_ddos_target', event_honeypot_ddos_target),
+    ('Honeypot-HTTP-Scan', 'event4_honeypot_http_scan', event_honeypot_http_scan),
+    ('Honeypot-ICS-Scanner', 'event4_honeypot_ics_scan', event_honeypot_ics_scan),
+    ('IP-Spoofer-Events', 'event4_ip_spoofer', event_ip_spoofer),
+    ('Microsoft-Sinkhole-Events IPv4', 'event4_microsoft_sinkhole', event_sinkhole),
+    ('Microsoft-Sinkhole-Events-HTTP IPv4', 'event4_microsoft_sinkhole_http', event_sinkhole_http),
+    ('Sinkhole-Events IPv4', 'event4_sinkhole', event_sinkhole),
+    ('Sinkhole-DNS', 'event4_sinkhole_dns', event_sinkhole_dns),
+    ('Sinkhole-Events-HTTP IPv4', 'event4_sinkhole_http', event_sinkhole_http),
+    ('Sinkhole-Events-HTTP-Referer IPv4', 'event4_sinkhole_http_referer', event_sinkhole_http_referer),
+    ('Sinkhole-Events IPv6', 'event6_sinkhole', event_sinkhole),
+    ('Sinkhole-Events-HTTP IPv6', 'event6_sinkhole_http', event_sinkhole_http),
+    ('Sinkhole-Events-HTTP-Referer IPv6', 'event6_sinkhole_http_referer', event_sinkhole_http_referer),
+    ('Malware-URL', 'malware_url', malware_url),
+    ('Phish-URL', 'phish_url', phish_url),
+    ('Sandbox-Connections', 'sandbox_conn', sandbox_conn),
+    ('Sandbox-DNS', 'sandbox_dns', sandbox_dns),
+    ('Sandbox-URL', 'sandbox_url', sandbox_url),
+    ('IPv6-Accessible-FTP', 'scan6_ftp', scan_ftp),
+    ('IPv6-Accessible-HTTP', 'scan6_http', scan_http),
+    ('IPv6-Vulnerable-HTTP', 'scan6_http_vulnerable', scan_http_vulnerable),
+    ('IPv6-Accessible-MySQL', 'scan6_mysql', scan_mysql),
+    ('IPv6-Accessible-RDP', 'scan6_rdp', scan_rdp),
+    ('IPv6-Accessible-SMTP', 'scan6_smtp', scan_smtp),
+    ('IPv6-Vulnerable-SMTP', 'scan6_smtp_vulnerable', scan_smtp_vulnerable),
+    ('IPv6-Accessible-SSH', 'scan6_ssh', scan_ssh),
+    ('IPv6-Accessible-SSL', 'scan6_ssl', scan_ssl),
+    ('SSL-FREAK-Vulnerable-Servers IPv6', 'scan6_ssl_freak', scan_ssl_freak),
+    ('SSL-POODLE-Vulnerable-Servers IPv6', 'scan6_ssl_poodle', scan_ssl_poodle),
+    ('IPv6-Accessible-Telnet', 'scan6_telnet', scan_telnet),
+    ('Accessible-ADB', 'scan_adb', scan_adb),
+    ('Accessible-AFP', 'scan_afp', scan_afp),
+    ('Accessible-AMQP', 'scan_amqp', scan_amqp),
+    ('Accessible-ARD', 'scan_ard', scan_ard),
+    ('Open-Chargen', 'scan_chargen', scan_chargen),
+    ('Accessible-Cisco-Smart-Install', 'scan_cisco_smart_install', scan_cisco_smart_install),
+    ('Accessible-CoAP', 'scan_coap', scan_coap),
+    ('Accessible-CouchDB', 'scan_couchdb', scan_couchdb),
+    ('Accessible-CWMP', 'scan_cwmp', scan_cwmp),
+    ('Open-DB2-Discovery-Service', 'scan_db2', scan_db2),
+    ('Vulnerable-DDoS-Middlebox', 'scan_ddos_middlebox', scan_ddos_middlebox),
+    ('DNS-Open-Resolvers', 'scan_dns', scan_dns),
+    ('Accessible-Docker', 'scan_docker', scan_docker),
+    ('Accessible-DVR-DHCPDiscover', 'scan_dvr_dhcpdiscover', scan_dvr_dhcpdiscover),
+    ('Open-Elasticsearch', 'scan_elasticsearch', scan_elasticsearch),
+    ('Accessible-Erlang-Port-Mapper-Daemon', 'scan_epmd', scan_epmd),
+    ('Vulnerable-Exchange-Server', 'scan_exchange', scan_exchange),
+    ('Accessible-FTP', 'scan_ftp', scan_ftp),
+    ('Accessible-Hadoop', 'scan_hadoop', scan_hadoop),
+    ('Accessible-HTTP', 'scan_http', scan_http),
+    ('Vulnerable-HTTP', 'scan_http_vulnerable', scan_http_vulnerable),
+    ('Accessible-ICS', 'scan_ics', scan_ics),
+    ('Open-IPMI', 'scan_ipmi', scan_ipmi),
+    ('Open-IPP', 'scan_ipp', scan_ipp),
+    ('Vulnerable-ISAKMP', 'scan_isakmp', scan_isakmp),
+    ('Accessible-Kubernetes-API', 'scan_kubernetes', scan_kubernetes),
+    ('Open-LDAP-TCP', 'scan_ldap_tcp', scan_ldap_tcp),
+    ('Open-LDAP', 'scan_ldap_udp', scan_ldap_udp),
+    ('Open-mDNS', 'scan_mdns', scan_mdns),
+    ('Open-Memcached', 'scan_memcached', scan_memcached),
+    ('Open-MongoDB', 'scan_mongodb', scan_mongodb),
+    ('Open-MQTT', 'scan_mqtt', scan_mqtt),
+    ('Open-Anonymous-MQTT', 'scan_mqtt_anon', scan_mqtt_anon),
+    ('Open-MSSQL', 'scan_mssql', scan_mssql),
+    ('Accessible-MySQL', 'scan_mysql', scan_mysql),
+    ('Open-NATPMP', 'scan_nat_pmp', scan_nat_pmp),
+    ('Open-NetBIOS-Nameservice', 'scan_netbios', scan_netbios),
+    ('Open-Netis', 'scan_netis_router', scan_netis_router),
+    ('NTP-Version', 'scan_ntp', scan_ntp),
+    ('NTP-Monitor', 'scan_ntpmonitor', scan_ntpmonitor),
+    ('Open-Portmapper', 'scan_portmapper', scan_portmapper),
+    ('Open-QOTD', 'scan_qotd', scan_qotd),
+    ('Accessible-QUIC', 'scan_quic', scan_quic),
+    ('Accessible-Radmin', 'scan_radmin', scan_radmin),
+    ('Accessible-RDP', 'scan_rdp', scan_rdp),
+    ('Accessible-MS-RDPEUDP', 'scan_rdpeudp', scan_rdpeudp),
+    ('Open-Redis', 'scan_redis', scan_redis),
+    ('Accessible-Rsync', 'scan_rsync', scan_rsync),
+    ('Accessible-SMB', 'scan_smb', scan_smb),
+    ('Accessible-SMTP', 'scan_smtp', scan_smtp),
+    ('Vulnerable-SMTP', 'scan_smtp_vulnerable', scan_smtp_vulnerable),
+    ('Open-SNMP', 'scan_snmp', scan_snmp),
+    ('Accessible-SOCKS4/5-Proxy', 'scan_socks', scan_socks),
+    ('Open-SSDP', 'scan_ssdp', scan_ssdp),
+    ('Accessible-SSH', 'scan_ssh', scan_ssh),
+    ('Accessible-SSL', 'scan_ssl', scan_ssl),
+    ('SSL-FREAK-Vulnerable-Servers', 'scan_ssl_freak', scan_ssl_freak),
+    ('SSL-POODLE-Vulnerable-Servers IPv4', 'scan_ssl_poodle', scan_ssl_poodle),
+    ('SYNful-Knock', 'scan_synfulknock', scan_synfulknock),
+    ('Accessible-Telnet', 'scan_telnet', scan_telnet),
+    ('Open-TFTP', 'scan_tftp', scan_tftp),
+    ('Accessible-Ubiquiti-Discovery-Service', 'scan_ubiquiti', scan_ubiquiti),
+    ('Accessible-VNC', 'scan_vnc', scan_vnc),
+    ('Open-XDMCP', 'scan_xdmcp', scan_xdmcp),
+    ('Spam-URL', 'spam_url', spam_url),
     ('Special', 'special', special),
+    ('Accessible-RDPEUDP', 'scan_rdpeudp', scan_rdpeudp),
+    ('Sinkhole-Events', 'event4_sinkhole', event_sinkhole),
+    ('Sinkhole-Events-HTTP', 'event4_sinkhole_http', event_sinkhole_http),
+    ('Sinkhole-Events-HTTP-Referer', 'event4_sinkhole_http_referer', event_sinkhole_http_referer),
 )
 # END CONFGEN
 

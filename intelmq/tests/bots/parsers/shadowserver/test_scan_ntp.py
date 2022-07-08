@@ -24,7 +24,7 @@ EXAMPLE_REPORT = {'feed.name': 'NTP Version',
 EVENTS = [
         {
    '__type' : 'Event',
-   'classification.identifier' : 'open-ntp',
+   'classification.identifier' : 'ntp-version',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.clk_wander' : 0,
@@ -61,7 +61,7 @@ EVENTS = [
 
 {
    '__type' : 'Event',
-   'classification.identifier' : 'open-ntp',
+   'classification.identifier' : 'ntp-version',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.clk_wander' : 2.64,
@@ -99,7 +99,7 @@ EVENTS = [
 
 {
    '__type' : 'Event',
-   'classification.identifier' : 'open-ntp',
+   'classification.identifier' : 'ntp-version',
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.clock' : '0xE62E0CAD.BCF46BB4',

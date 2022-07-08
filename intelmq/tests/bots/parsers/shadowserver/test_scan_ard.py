@@ -26,7 +26,7 @@ EXAMPLE_REPORT = {'feed.name': 'Accessible ARD',
 EVENTS = [{
     '__type': 'Event',
     'feed.name': 'Accessible ARD',
-    "classification.identifier": "open-ard",
+    "classification.identifier": "accessible-ard",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable-system",
     "extra.machine_name": "LPG2.ucmerced.edu",
@@ -50,7 +50,7 @@ EVENTS = [{
 {
     '__type': 'Event',
     'feed.name': 'Accessible ARD',
-    "classification.identifier": "open-ard",
+    "classification.identifier": "accessible-ard",
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable-system",
     "extra.machine_name": "Surveillance System - Greenlea",
