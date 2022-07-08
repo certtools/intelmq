@@ -60,7 +60,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
             self._report_list = self.reports
 
         if self.country is not None and self.country not in self._report_list:
-            self.logger.warn("Deprectated parameter 'country' found. Please use 'reports' instead. The backwards-compatibility will be removed in IntelMQ version 4.0.0.")
+            self.logger.warn("Deprecated parameter 'country' found. Please use 'reports' instead. The backwards-compatibility will be removed in IntelMQ version 4.0.0.")
             self._report_list.append(self.country)
 
         self.preamble = '{{ "apikey": "{}" '.format(self.api_key)
