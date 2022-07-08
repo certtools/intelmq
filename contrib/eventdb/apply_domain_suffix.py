@@ -20,7 +20,7 @@ def eventdb_apply(host, port,
                   table, dry_run, where,
                   filename):
     if password:
-        password = input('Password for user %r on %r: ' % (username, host))
+        password = input(f'Password for user {username!r} on {host!r}: ')
     where = 'AND ' + where if where else ''
 
     con1 = psycopg2.connect(user=username,

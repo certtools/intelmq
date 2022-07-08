@@ -50,8 +50,6 @@ These are the operating systems which are currently supported by packages:
 * **CentOS 8** (run ``dnf install epel-release`` first)
 * **Debian 10** Buster
 * **Debian 11** Bullseye
-* **Fedora 33**
-* **Fedora 34**
 * **openSUSE Leap 15.2**
 * **openSUSE Leap 15.3** (make sure the ``openSUSE:Backports:SLE-15-SP3`` repository is enabled)
 * **openSUSE Tumbleweed**

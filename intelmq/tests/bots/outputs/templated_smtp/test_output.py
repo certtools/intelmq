@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # SPDX-FileCopyrightText: 2021 Linköping University <https://liu.se/>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -87,7 +86,7 @@ class TestCustomTemplatedSMTPOutputBot(test.BotTestCase, unittest.TestCase):
              unittest.mock.patch('smtplib.SMTP.close'):
             self.run_bot(allowed_error_count=1)
         self.sysconfig["attachments"] = saved_attachments
-        self.assertRegexpMatches(self.loglines_buffer,
+        self.assertRegex(self.loglines_buffer,
                                  "ERROR - Attachment does not have a text, ignoring:")
 
     def test_event(self):

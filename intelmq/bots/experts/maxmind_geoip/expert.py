@@ -31,6 +31,7 @@ class GeoIPExpertBot(ExpertBot):
     license_key: str = "<insert Maxmind license key>"
     overwrite: bool = False
     use_registered: bool = False
+    autoupdate_cached_database: bool = True  # Activate/deactivate update-database functionality
 
     def init(self):
         if geoip2 is None:
@@ -38,7 +39,7 @@ class GeoIPExpertBot(ExpertBot):
 
         try:
             self.database = geoip2.database.Reader(self.database)
-        except IOError:
+        except OSError:
             self.logger.exception("GeoIP Database does not exist or could not "
                                   "be accessed in %r.",
                                   self.database)
@@ -113,12 +114,12 @@ class GeoIPExpertBot(ExpertBot):
         runtime_conf = get_bots_settings()
         try:
             for bot in runtime_conf:
-                if runtime_conf[bot]["module"] == __name__:
+                if runtime_conf[bot]["module"] == __name__ and runtime_conf[bot]['parameters'].get('autoupdate_cached_database', True):
                     license_key = runtime_conf[bot]["parameters"]["license_key"]
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
         except KeyError as e:
-            error = "Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e)
+            error = f"Database update failed. Your configuration of {bot} is missing key {e}."
             if str(e) == "'license_key'":
                 error += "\n"
                 error += "Since December 30, 2019 you need to register for a free license key to access GeoLite2 database.\n"
@@ -129,7 +130,7 @@ class GeoIPExpertBot(ExpertBot):
 
         if not bots:
             if verbose:
-                print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
+                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf or database update disabled with parameter 'autoupdate_cached_database'.")
             sys.exit(0)
 
         # we only need to import now, if there are no maxmind_geoip bots, this dependency does not need to be installed
@@ -151,14 +152,14 @@ class GeoIPExpertBot(ExpertBot):
                                        "suffix": "tar.gz"
                                    })
         except requests.exceptions.RequestException as e:
-            sys.exit("Database update failed. Connection Error: {0}".format(e))
+            sys.exit(f"Database update failed. Connection Error: {e}")
 
         if response.status_code == 401:
             sys.exit("Database update failed. Your license key is invalid.")
 
         if response.status_code != 200:
-            sys.exit("Database update failed. Server responded: {0}.\n"
-                     "URL: {1}".format(response.status_code, response.url))
+            sys.exit("Database update failed. Server responded: {}.\n"
+                     "URL: {}".format(response.status_code, response.url))
 
         database_data = None
 

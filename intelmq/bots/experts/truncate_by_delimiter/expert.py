@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Cut string if length is bigger than max
 

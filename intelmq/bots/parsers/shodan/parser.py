@@ -497,24 +497,24 @@ def _dict_dict_to_obj_list(x: Dict[str, Dict[str, Any]], identifier: str = 'iden
     return out
 
 
-def _get_first(l: List[Any]) -> Any:
+def _get_first(variable: List[Any]) -> Any:
     '''
     get first element from list, if the list has any; raise NoValueException otherwise
     '''
     try:
-        return l[0]
+        return variable[0]
     except IndexError:
         raise NoValueException(f'empty list passed to _get_first')
 
 
-def _get_first_fqdn(l: List[str]) -> str:
+def _get_first_fqdn(variable: List[str]) -> str:
     '''
     get first valid FQDN from a list of strings
     '''
-    valid_fqdns = (hostname for hostname in l if harmonization.FQDN.is_valid(hostname, sanitize=True))
+    valid_fqdns = (hostname for hostname in variable if harmonization.FQDN.is_valid(hostname, sanitize=True))
     first = next(valid_fqdns, None)
     if first is None:
-        raise NoValueException(f'no valid FQDN in {l!r} passed to _get_first_fqdn')
+        raise NoValueException(f'no valid FQDN in {variable!r} passed to _get_first_fqdn')
 
     return first
 

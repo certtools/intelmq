@@ -10,7 +10,7 @@ the first representation.
 """
 
 
-class PublicSuffixList(object):
+class PublicSuffixList:
     def __init__(self, source, only_icann=None):
         self.suffixes = {}
         icann_section = False

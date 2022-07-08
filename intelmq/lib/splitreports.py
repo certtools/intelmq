@@ -111,8 +111,7 @@ def read_delimited_chunks(infile: BinaryIO, chunk_size: int) -> Generator[bytes,
         if chunks:
             leftover = chunks[-1]
             chunks = chunks[:-1]
-        for chunk in chunks:
-            yield chunk
+        yield from chunks
 
         if not new_chunk:
             if leftover:

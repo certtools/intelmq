@@ -11,7 +11,7 @@ import unittest
 import intelmq.lib.test as test
 from intelmq.bots.parsers.shodan.parser import ShodanParserBot
 
-with open(os.path.join(os.path.dirname(__file__), 'tests.json'), 'rt') as fh:
+with open(os.path.join(os.path.dirname(__file__), 'tests.json')) as fh:
     RAWS_UNENCODED = fh.read().splitlines()
     RAWS = [base64.b64encode(x.encode()).decode() for x in RAWS_UNENCODED]
 

@@ -1588,6 +1588,7 @@ These are the supported feed name and their corresponding file name for automati
   =======================================   =========================
    Accessible-ADB                            `scan_adb`
    Accessible-AFP                            `scan_afp`
+   Accessible-AMQP                           `scan_amqp`
    Accessible-ARD                            `scan_ard`
    Accessible-Cisco-Smart-Install            `cisco_smart_install`
    Accessible-CoAP                           `scan_coap`
@@ -1606,6 +1607,7 @@ These are the supported feed name and their corresponding file name for automati
    Blacklisted-IP (deprecated)               `blacklist`
    Blocklist                                 `blocklist`
    Compromised-Website                       `compromised_website`
+   Device-Identification IPv4 / IPv6         `device_id`/`device_id6`
    DNS-Open-Resolvers                        `scan_dns`
    Honeypot-Amplification-DDoS-Events        `event4_honeypot_ddos_amp`
    Honeypot-Brute-Force-Events               `event4_honeypot_brute_force`
@@ -1655,7 +1657,7 @@ These are the supported feed name and their corresponding file name for automati
    Sinkhole-Events-HTTP-Referer IPv6         `event6_sinkhole_http_referer`
    Spam-URL                                  `spam_url`
    SSL-FREAK-Vulnerable-Servers              `scan_ssl_freak`
-   SSL-POODLE-Vulnerable-Servers             `scan_ssl_poodle`
+   SSL-POODLE-Vulnerable-Servers             `scan_ssl_poodle`/`scan6_ssl_poodle`
    Vulnerable-Exchange-Server `*`            `scan_exchange`
    Vulnerable-ISAKMP                         `scan_isakmp`
    Vulnerable-HTTP                           `scan_http`
@@ -3193,8 +3195,6 @@ Threshold
 
 **Information**
 
-
-* **Cache parameters** (see section :ref:`common-parameters`)
 * `name`: `intelmq.bots.experts.threshold.expert`
 * `lookup`: redis cache
 * `public`: no
@@ -3203,9 +3203,9 @@ Threshold
 
 **Configuration Parameters**
 
+* **Cache parameters** (see section :ref:`common-parameters`), especially ``redis_cache_ttl`` as number of seconds before threshold counter is reset. Since version 3.1 (until 3.1 `timeout` was used).
 * `filter_keys`: String, comma-separated list of field names to consider or ignore when determining which messages are similar.
 * `filter_type`: String, `whitelist` (consider only the fields in `filter_keys`) or `blacklist` (consider everything but the fields in `filter_keys`).
-* `timeout`: Integer, number of seconds before threshold counter is reset.
 * `threshold`: Integer, number of messages required before propagating one. In forwarded messages, the threshold is saved in the message as `extra.count`.
 * `add_keys`: Array of string->string, optional, fields and values to add (or update) to propagated messages. Example:
 

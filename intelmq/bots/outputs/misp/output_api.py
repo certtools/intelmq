@@ -221,7 +221,7 @@ class MISPAPIOutputBot(OutputBot):
         if self.misp_publish:
             self.misp.publish(misp_event)
         self.logger.info(
-            'Inserted new MISP event with id: {}'.format(misp_event.id))
+            f'Inserted new MISP event with id: {misp_event.id}')
 
     @staticmethod
     def check(parameters):

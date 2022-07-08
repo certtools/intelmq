@@ -71,7 +71,7 @@ def harm_docs():
 
 
 def info(key, value=""):
-    return ("* **%s:** %s\n" % (key.title(), value)).strip() + '\n'
+    return (f"* **{key.title()}:** {value}\n").strip() + '\n'
 
 
 def feeds_docs():
@@ -134,7 +134,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild 
                         if isinstance(value, (list, tuple)) and value:
                             value = json.dumps(value)
 
-                        output += "   * `%s`: `%s`\n" % (key, value)
+                        output += f"   * `{key}`: `{value}`\n"
 
                 output += '\n'
 

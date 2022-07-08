@@ -47,7 +47,7 @@ ALLOWED_SYSTEM_PARAMETERS = {'enabled', 'run_mode', 'group', 'description', 'mod
 IGNORED_SYSTEM_PARAMETERS = {'groupname', 'bot_id', 'parameters'}
 
 
-class Bot(object):
+class Bot:
     """ Not to be reset when initialized again on reload. """
     __current_message: Optional[libmessage.Message] = None
     __message_counter_delay: timedelta = timedelta(seconds=2)
@@ -994,8 +994,7 @@ class ParserBot(Bot):
         A basic JSON parser. Assumes a *list* of objects as input to be yield.
         """
         raw_report: str = utils.base64_decode(report.get("raw"))
-        for line in json.loads(raw_report):
-            yield line
+        yield from json.loads(raw_report)
 
     def parse_json_stream(self, report: libmessage.Report):
         """
@@ -1309,5 +1308,5 @@ class OutputBot(Bot):
         return retval
 
 
-class Parameters(object):
+class Parameters:
     pass

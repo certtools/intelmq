@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Parse a string of key=value pairs.
 
 SPDX-FileCopyrightText: 2020 Linköping University <https://liu.se/>

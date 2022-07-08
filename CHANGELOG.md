@@ -1,5 +1,5 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2021 Sebastian Wagner
+   SPDX-FileCopyrightText: 2015-2022 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -8,6 +8,8 @@ CHANGELOG
 
 3.1.0 (unreleased)
 ------------------
+
+- Upgraded syntax to Python 3.6 (mostly Format-Strings) using pyuprade (PR#2136 by Sebastian Wagner).
 
 ### Configuration
 
@@ -36,7 +38,10 @@ CHANGELOG
 - Set the parent class of all bots to the correct bot class
 
 #### Collectors
-- `intelmq.bots.collectors.mail._lib`: Add support for unverified SSL/STARTTLS connections (PR#2055 by Sebastian Wagner).
+- `intelmq.bots.collectors.mail._lib`:
+  - Add support for unverified SSL/STARTTLS connections (PR#2055 by Sebastian Wagner).
+  - Fix exception handling for aborted IMAP connections (PR#2187 by Sebastian Wagner).
+- `intelmq.bots.collectors.blueliv`: Fix Blueliv collector requirements (PR#2161 by Gethvi).
 
 #### Parsers
 - `intelmq.bots.parsers.alienvault.parser_otx`: Save CVE data in `extra.cve` instead of `extra.CVE` due to the field name restriction on lower-case characters  (PR#2059 by Sebastian Wagner).
@@ -50,7 +55,9 @@ CHANGELOG
   - SMTP Data
   - Telnet Login
   - VNC/RFB Login
-- `intelmq.bots.parsers.microsoft.parser_ctip`: New parameter `overwrite` (PR#2112 by Sebastian Wagner, fixes #2022).
+- `intelmq.bots.parsers.microsoft.parser_ctip`:
+  - New parameter `overwrite` (PR#2112 by Sebastian Wagner, fixes #2022).
+  - Fix handling of field `Payload.domain` if it contains the same IP address as `Payload.serverIp` (PR#2144 by Mikk Margus Möll and Sebastian Wagner).
 - `intelmq.bot.parsers.shodan.parser` (PR#2117 by Mikk Margus Möll):
   - Instead of keeping track of `extra.ftp.<something>.parameters`, FTP parameters are collected together into `extra.ftp.features` as a list of said features, reducing field count.
   - Shodan field `rsync.modules` is collected.
@@ -62,18 +69,26 @@ CHANGELOG
   - `ssl.cert.serial` and `ssl.dhparams.generator`, which may return both integers and strings, are converted to strings.
   - Changes to method `apply_mapping`, such as reducing needless loop iterations, removing a big try-except, and adding the `NoValueException` handling described above.
   - Stops falsy values (False, 0) besides None from being filtered out.
+- `intelmq.bots.parsers.shadowserver._config`:
+  - Added support for `Accessible AMQP`, `Device Identification Report` (IPv4 and IPv6) (PR#2134 by Mateo Durante).
+  - Added file name mapping for `SSL-POODLE-Vulnerable-Servers IPv6` (file name `scan6_ssl_poodle`) (PR#2134 by Mateo Durante).
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).
 - `intelmq.bots.experts.truncate_by_delimiter.expert`: Cut string if its length is higher than a maximum length (PR#1967 by Marius Karotkis).
 - `intelmq.bots.experts.remove_affix`: Remove prefix or postfix strings from a field (PR#1965 by Marius Karotkis).
 - `intelmq.bots.experts.asn_lookup.expert`: Fixes update-database script on the last few days of a month (PR#2121 by Filip Pokorný, fixes #2088).
+- `intelmq.bots.experts.threshold.expert`: Correctly use the standard parameter `redis_cache_ttl` instead of the previously used parameter `timeout` (PR#2155 by Karl-Johan Karlsson).
+- `intelmq.bots.experts.jinja2.expert`: Lift restriction on requirement jinja2 < 3 (PR#2158 by Sebastian Wagner).
+- `intelmq.bots.experts.asn_lookup.expert`, `intelmq.bots.experts.domain_suffix.expert`, `intelmq.bots.experts.maxmind_geoip.expert`, `intelmq.bots.experts.recordedfuture_iprisk.expert`, `intelmq.bots.experts.tor_nodes.expert`: New parameter `autoupdate_cached_database` to disable automatic updates (downloads) of cached databases (PR#2180 by Sebastian Wagner).
 
 #### Outputs
 - Removed `intelmq.bots.outputs.postgresql`: this bot was marked as deprecated in 2019 announced to be removed in version 3 of IntelMQ (PR#2045 by Birger Schacht).
 - Added `intelmq.bots.outputs.rpz_file.output` to create RPZ files (PR#1962 by Marius Karotkis).
 - Added `intelmq.bots.outputs.bro_file.output` to create Bro intel formatted files (PR#1963 by Marius Karotkis).
-- `intelmq.bots.outputs.templated_smtp.output`: Add new function `from_json()` (which just calls `json.loads()` in the standard Python environment), meaning the Templated SMTP output bot can take strings containing JSON documents and do the formatting itself (PR#2120 by Karl-Johan Karlsson).
+- `intelmq.bots.outputs.templated_smtp.output`:
+  - Add new function `from_json()` (which just calls `json.loads()` in the standard Python environment), meaning the Templated SMTP output bot can take strings containing JSON documents and do the formatting itself (PR#2120 by Karl-Johan Karlsson).
+  - Lift restriction on requirement jinja2 < 3 (PR#2158 by Sebastian Wagner).
 
 ### Documentation
 - Feeds: Add documentation for newly supported dataplane feeds, see above (PR#2102 by Mikk Margus Möll).
@@ -85,8 +100,15 @@ CHANGELOG
 - Add GitHub Action to run regexploit on all Python, JSON and YAML files (PR#2059 by Sebastian Wagner).
 - `intelmq.lib.test`:
   - Decorator `skip_ci` also detects `dpkg-buildpackage` environments by checking the environment variable `DEB_BUILD_ARCH` (PR#2123 by Sebastian Wagner).
+- Also test on Python 3.10 (PR#2140 by Sebastian Wagner).
+- Switch from nosetests to pytest, as the former does not support Python 3.10 (PR#2140 by Sebastian Wagner).
+- CodeQL Github Actions `exponential backtracking on strings` fixed. (PR#2148 by Sebastian Waldbauer, fixes #2138)
+- Reverse DNS expert tests: remove outdated failing test `test_invalid_ptr` (PR#2208 by Sebastian Wagner, fixes #2206).
+- Add test dependency `requests_mock` to the `development` extra requirements in `setup.py` (PR#2210 by Sebastian Wagner).
 
 ### Tools
+- `intelmqctl`: fix process manager initialization if run non-interactively, as intelmqdump does it (PR#2189 by Sebastian Wagner, fixes 2188).
+- `intelmqsetup`: Revised installation of manager by building the static files at setup, not build time, making it behave more meaningful. Requires intelmq-manager >= 3.1.0 (PR#2198 by Sebastian Wagner, fixes #2197).
 
 ### Contrib
 - logrotate: Move compress and ownership rules to the IntelMQ-blocks to prevent that they apply to other files (PR#2111 by Sebastian Wagner, fixes #2110).

@@ -63,7 +63,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
             self.logger.warn("Deprecated parameter 'country' found. Please use 'reports' instead. The backwards-compatibility will be removed in IntelMQ version 4.0.0.")
             self._report_list.append(self.country)
 
-        self.preamble = '{{ "apikey": "{}" '.format(self.api_key)
+        self.preamble = f'{{ "apikey": "{self.api_key}" '
 
     def _headers(self, data):
         return {'HMAC2': hmac.new(self.secret.encode(), data.encode('utf-8'), digestmod=hashlib.sha256).hexdigest()}
@@ -111,7 +111,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
         Download one report from the shadowserver API via the reports/download endpoint
         """
         data = self.preamble
-        data += ',"id": "{}"}}'.format(reportid)
+        data += f',"id": "{reportid}"}}'
         self.logger.debug('Downloading report with data: %s.', data)
 
         response = self.http_session().post(APIROOT + 'reports/download', data=data, headers=self._headers(data))

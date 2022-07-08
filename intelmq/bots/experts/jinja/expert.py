@@ -32,7 +32,7 @@ class JinjaExpertBot(Bot):
 
     def init(self):
         if not Template:
-            raise MissingDependencyError("Library 'jinja2' is required, please install it.")
+            raise MissingDependencyError("jinja2")
 
         for field, template in self.fields.items():
             if template.startswith("file:///"):

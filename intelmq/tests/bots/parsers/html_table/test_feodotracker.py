@@ -19,7 +19,7 @@ REPORT = {"__type": "Report",
           }
 
 
-line1 = '%s/%s' % (REPORT_LINES[94][:-14], REPORT_LINES[94][-14:])
+line1 = f'{REPORT_LINES[94][:-14]}/{REPORT_LINES[94][-14:]}'
 EVENT1 = {"raw": utils.base64_encode(line1.strip()),
           "__type": "Event",
           "time.source": "2021-05-10T14:56:05+00:00",
@@ -30,7 +30,7 @@ EVENT1 = {"raw": utils.base64_encode(line1.strip()),
           "source.geolocation.cc": "GB",
           "status": "Online",
           }
-line2 = '%s/%s' % (REPORT_LINES[95][:-14], REPORT_LINES[95][-14:])
+line2 = f'{REPORT_LINES[95][:-14]}/{REPORT_LINES[95][-14:]}'
 EVENT2 = {"raw": utils.base64_encode(line2.strip()),
           "__type": "Event",
           "time.source": "2021-05-10T14:56:04+00:00",

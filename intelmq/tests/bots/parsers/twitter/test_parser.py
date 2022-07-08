@@ -71,9 +71,8 @@ class TestTwitterParserBot(test.BotTestCase, unittest.TestCase):
         cls.sysconfig = {"substitutions" : " .net;.net;[.];.;,;.",
                          "classification_type": "blacklist",
                          }
-        if sys.version_info >= (3, 6, 0):
-            # url-normalize 1.4.1 supporting this parameter is only available for 3.6
-            cls.sysconfig["default_scheme"] = "http"
+        # url-normalize 1.4.1 supporting this parameter is only available for 3.6
+        cls.sysconfig["default_scheme"] = "http"
 
     def test_parse(self):
         self.input_message = REPORT
