@@ -726,24 +726,25 @@ def v301_deprecations(configuration, harmonization, dry_run, **kwargs):
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else changed, configuration, harmonization
 
+
 def v310_shadowserver_feednames(configuration, harmonization, dry_run, **kwargs):
     """
     Remove legacy Shadowserver feednames
     """
     legacy = {
-            'Amplification-DDoS-Victim': 1,
-            'Blacklisted-IP': 1,
-            'CAIDA-IP-Spoofer': 1,
-            'Darknet': 1,
-            'Drone': 1,
-            'Drone-Brute-Force': 1,
-            'HTTP-Scanners': 1,
-            'ICS-Scanners': 1,
-            'IPv6-Sinkhole-HTTP-Drone': 1,
-            'Microsoft-Sinkhole': 1,
-            'Outdated-DNSSEC-Key': 1,
-            'Outdated-DNSSEC-Key-IPv6': 1,
-            'Sinkhole-HTTP-Drone': 1
+        'Amplification-DDoS-Victim': 1,
+        'Blacklisted-IP': 1,
+        'CAIDA-IP-Spoofer': 1,
+        'Darknet': 1,
+        'Drone': 1,
+        'Drone-Brute-Force': 1,
+        'HTTP-Scanners': 1,
+        'ICS-Scanners': 1,
+        'IPv6-Sinkhole-HTTP-Drone': 1,
+        'Microsoft-Sinkhole': 1,
+        'Outdated-DNSSEC-Key': 1,
+        'Outdated-DNSSEC-Key-IPv6': 1,
+        'Sinkhole-HTTP-Drone': 1
     }
     changed = None
     names = []
