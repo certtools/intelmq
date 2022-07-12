@@ -34,7 +34,7 @@ EXAMPLE_EVENT = {"__type": "Event",
                         "jE3MsKgPC90ZD4KPC90cj4=",
                  "source.ip": "81.177.135.172",
                  "source.url": "http://lingvaworld.ru/media/system/css/messg.jpg",
-                 "time.source": "%d-02-15T00:00:00+00:00" % THIS_YEAR}
+                 "time.source": f"{THIS_YEAR}-02-15T00:00:00+00:00"}
 
 EXAMPLE_EVENT1 = {"feed.name": "HTML Table Feed",
                   "__type": "Event",

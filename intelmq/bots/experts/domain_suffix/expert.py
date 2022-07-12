@@ -54,12 +54,12 @@ class DomainSuffixExpertBot(ExpertBot):
     @staticmethod
     def check(parameters):
         if not os.path.exists(parameters.get('suffix_file', '')):
-            return [["error", "File given as parameter 'suffix_file' does not exist."]]
+            return [['error', "File given as parameter 'suffix_file' does not exist."]]
         try:
             with codecs.open(parameters['suffix_file'], encoding='UTF-8') as database:
                 PublicSuffixList(source=database, only_icann=True)
         except Exception as exc:
-            return [["error", "Error reading database: %r." % exc]]
+            return [['error', f'Error reading database: {exc}.']]
 
     @classmethod
     def run(cls, parsed_args=None):
@@ -89,7 +89,7 @@ class DomainSuffixExpertBot(ExpertBot):
                     bots[bot] = runtime_conf[bot]["parameters"]["suffix_file"]
 
         except KeyError as e:
-            sys.exit(f"Database update failed. Your configuration of {bot} is missing key {e}.")
+            sys.exit(f'Database update failed. Your configuration of {bot} is missing key {e}.')
 
         if not bots:
             if verbose:
@@ -100,26 +100,26 @@ class DomainSuffixExpertBot(ExpertBot):
 
         try:
             session = create_request_session()
-            url = "https://publicsuffix.org/list/public_suffix_list.dat"
+            url = 'https://publicsuffix.org/list/public_suffix_list.dat'
             if verbose:
-                print("Downloading the latest database update...")
+                print('Downloading the latest database update...')
             response = session.get(url)
 
             if not response.ok:
-                sys.exit("Database update failed. Server responded: {}.\n"
-                         "URL: {}".format(response.status_code, response.url))
+                sys.exit(f'Database update failed. Server responded: {response.status_code}.\n'
+                         f'URL: {response.url}')
 
         except requests.exceptions.RequestException as e:
-            sys.exit(f"Database update failed. Connection Error: {e}")
+            sys.exit(f'Database update failed. Connection Error: {e}')
 
         for database_path in set(bots.values()):
             database_dir = pathlib.Path(database_path).parent
             database_dir.mkdir(parents=True, exist_ok=True)
-            with open(database_path, "wb") as database:
+            with open(database_path, 'wb') as database:
                 database.write(response.content)
 
         if verbose:
-            print("Database updated. Reloading affected bots.")
+            print('Database updated. Reloading affected bots.')
 
         ctl = IntelMQController()
         for bot in bots.keys():

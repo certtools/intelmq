@@ -774,6 +774,7 @@ class TestReport(unittest.TestCase):
     """
     Test the Report class.
     """
+
     def test_report_from_event(self):
         event = message.Event(harmonization=HARM)
         event.add('feed.code', 'adasd')
@@ -794,6 +795,7 @@ class TestEvent(unittest.TestCase):
     """
     Tests the Event class.
     """
+
     def test_event_no_default_value(self):
         event = message.Event(harmonization=HARM)
         with self.assertRaises(KeyError):

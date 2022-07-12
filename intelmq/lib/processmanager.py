@@ -109,8 +109,7 @@ class IntelMQProcessManager(ProcessManagerInterface):
         if pid and status is True:
             self._logger.info("Main instance of the bot is running in the background and will be stopped; "
                               "when finished, we try to relaunch it again. "
-                              "You may want to launch: 'intelmqctl stop {}' to prevent this message."
-                              .format(bot_id))
+                              f"You may want to launch: 'intelmqctl stop {bot_id}' to prevent this message.")
             paused = True
             self.bot_stop(bot_id)
         elif status is False:
@@ -135,7 +134,7 @@ class IntelMQProcessManager(ProcessManagerInterface):
             print('Keyboard interrupt.')
             retval = 0
         except SystemExit as exc:
-            print('Bot exited with code %s.' % exc.code)
+            print(f'Bot exited with code {exc.code}.')
             retval = exc.code
 
         self.__remove_pidfile(bot_id)
@@ -330,7 +329,7 @@ class IntelMQProcessManager(ProcessManagerInterface):
         Union[bool, str]
             DESCRIPTION.
         """
-        if len(cmdline) > 2 and cmdline[1].endswith('/%s' % module):
+        if len(cmdline) > 2 and cmdline[1].endswith(f'/{module}'):
             if cmdline[2] == bot_id:
                 return True
             else:
@@ -342,9 +341,9 @@ class IntelMQProcessManager(ProcessManagerInterface):
             else:
                 return False
         elif len(cmdline) > 1:
-            return 'Commandline of the process %d with commandline %r could not be interpreted.' % (pid, cmdline)
+            return f'Commandline of the process {pid} with commandline {cmdline} could not be interpreted.'
         else:
-            return 'Unhandled error checking the process %d with commandline %r.' % (pid, cmdline)
+            return f'Unhandled error checking the process {pid} with commandline {cmdline}.'
 
     def __status_process(self, pid, module, bot_id):
         try:
@@ -407,8 +406,7 @@ class SupervisorProcessManager(ProcessManagerInterface):
         if state in (self.ProcessState.STARTING, self.ProcessState.RUNNING, self.ProcessState.BACKOFF):
             self.__logger.warning("Main instance of the bot is running in the background and will be stopped; "
                                   "when finished, we try to relaunch it again. "
-                                  "You may want to launch: 'intelmqctl stop {}' to prevent this message."
-                                  .format(bot_id))
+                                  f"You may want to launch: 'intelmqctl stop {bot_id}' to prevent this message.")
             paused = True
             self.bot_stop(bot_id)
 
@@ -425,7 +423,7 @@ class SupervisorProcessManager(ProcessManagerInterface):
             print("Keyboard interrupt.")
             retval = 0
         except SystemExit as exc:
-            print("Bot exited with code %s." % exc.code)
+            print(f"Bot exited with code {exc.code}.")
             retval = exc.code
 
         if paused:
@@ -570,8 +568,8 @@ class SupervisorProcessManager(ProcessManagerInterface):
 
             if not os.access(socket_path, os.W_OK):
                 current_user = getpass.getuser()
-                self._abort("Socket '{}' is not writable. "
-                            "Has user '{}' write permission?".format(socket_path, current_user))
+                self._abort(f"Socket '{socket_path}' is not writable. "
+                            f"Has user '{current_user}' write permission?")
 
             self.__supervisor_xmlrpc = xmlrpc.client.ServerProxy(
                 "http://none",
@@ -579,11 +577,9 @@ class SupervisorProcessManager(ProcessManagerInterface):
             )
 
             supervisor_version = self.__supervisor_xmlrpc.supervisor.getSupervisorVersion()
-            self.__logger.debug("Connected to supervisor {} named '{}' (API version {})".format(
-                supervisor_version,
-                self.__supervisor_xmlrpc.supervisor.getIdentification(),
-                self.__supervisor_xmlrpc.supervisor.getAPIVersion()
-            ))
+            self.__logger.debug(f'Connected to supervisor {supervisor_version} named '
+                                f'{self.__supervisor_xmlrpc.supervisor.getIdentification()}'
+                                f'(API version {self.__supervisor_xmlrpc.supervisor.getAPIVersion()})')
 
             if distutils.version.StrictVersion(supervisor_version) < distutils.version.StrictVersion("3.2.0"):
                 self.__logger.warning("Current supervisor version is supported, but reloading bots will not work. "
@@ -602,8 +598,8 @@ class SupervisorProcessManager(ProcessManagerInterface):
                     raise e
 
             if self.SUPERVISOR_GROUP not in self.__supervisor_xmlrpc.twiddler.getGroupNames():
-                self._abort("Supervisor`s process group '{}' is not defined. "
-                            "It must be created manually in supervisor config.".format(self.SUPERVISOR_GROUP))
+                self._abort(f"Supervisor`s process group '{self.SUPERVISOR_GROUP}' is not defined. "
+                            "It must be created manually in supervisor config.")
 
         return self.__supervisor_xmlrpc
 

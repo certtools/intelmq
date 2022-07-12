@@ -40,10 +40,11 @@ EXAMPLE_EVENT = {"feed.url": "http://www.example.com/",
                  "feed.name": "Example",
                  "raw": utils.base64_encode('\n'.join(RAW_SPLIT[:2]))}
 
-EXPECTED_DUMP = [EXAMPLE_REPORT.copy(), EXAMPLE_REPORT.copy()]
-del EXPECTED_DUMP[0]['__type'], EXPECTED_DUMP[1]['__type']
-EXPECTED_DUMP[0]['raw'] = base64.b64encode('\n'.join((RAW_SPLIT[0], RAW_SPLIT[3], RAW_SPLIT[5])).encode()).decode()
-EXPECTED_DUMP[1]['raw'] = base64.b64encode('\n'.join((RAW_SPLIT[0], RAW_SPLIT[4], RAW_SPLIT[5])).encode()).decode()
+EXPECTED_DUMP = EXAMPLE_REPORT.copy()
+del EXPECTED_DUMP['__type']
+EXPECTED_DUMP['raw'] = base64.b64encode(b"""# ignore this
+2015/06/04 13:38 +00,example.org,19d2.0.2.3,reverse.example.net,example description,report@example.org,1
+#ending line""").decode()
 EXAMPLE_EMPTY_REPORT = {"feed.url": "http://www.example.com/",
                         "__type": "Report",
                         "feed.name": "Example"}
@@ -95,7 +96,7 @@ class DummyParserBot(bot.ParserBot):
             event['source.account'] = line[5]
             event['source.asn'] = line[6]
             event['classification.type'] = 'malware-distribution'
-            event['raw'] = '\n'.join(self.tempdata+[','.join(line)])
+            event['raw'] = '\n'.join(self.tempdata + [','.join(line)])
             yield event
 
     def recover_line(self, line):
@@ -188,8 +189,8 @@ class TestDummyCSVParserBot(test.BotTestCase, unittest.TestCase):
 
 
 EXAMPLE_JSON_STREAM_REPORT = {'__type': 'Report',
-                              'raw': utils.base64_encode('''{"a": 1}
-{"a": 2}''')}
+                              'raw': utils.base64_encode("""{"a": 1}
+{"a": 2}""")}
 EXAMPLE_JSON_STREAM_EVENTS = [{'__type': 'Event',
                                'raw': utils.base64_encode('{"a": 1}'),
                                'event_description.text': '1',

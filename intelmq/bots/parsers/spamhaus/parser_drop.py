@@ -50,7 +50,7 @@ class SpamhausDropParserBot(ParserBot):
                     event.add('source.geolocation.cc', value[1].strip())
 
             else:
-                raise ValueError('Unknown data feed %s.' % report['feed.url'])
+                raise ValueError(f'Unknown data feed {report["feed.url"]}.')
 
             yield event
 

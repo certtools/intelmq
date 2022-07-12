@@ -55,10 +55,10 @@ OUTPUT = [{'classification.identifier': 'feodo'},
           {'classification.type': 'vulnerable-system'},
           {'event_description.text': 'This is a TOR node.'},
           {'event_description.text': 'This is not a TOR node.'},
-          {'event_description.text': 'We don\'t know if this is a TOR node.'},  # 10
+          {'event_description.text': "We don't know if this is a TOR node."},  # 10
           {'event_description.text': 'Accuracy is 10% or lower.'},
           {'event_description.text': 'Accuracy is the highest.'},
-          {'extra.test': 1, 'event_description.text': 'We don\'t know if this is a TOR node.'},
+          {'extra.test': 1, 'event_description.text': "We don't know if this is a TOR node."},
           ]
 for index in range(len(INPUT)):
     copy1 = EVENT_TEMPL.copy()

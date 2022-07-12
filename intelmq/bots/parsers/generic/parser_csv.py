@@ -84,8 +84,8 @@ class GenericCsvParserBot(ParserBot):
         if self.columns_required is None:
             self.columns_required = [True for _ in self.columns]
         if len(self.columns) != len(self.columns_required):
-            raise ValueError("Length of parameters 'columns' (%d) and 'columns_required' (%d) "
-                             "needs to be equal." % (len(self.columns), len(self.columns_required)))
+            raise ValueError(f"Length of parameters 'columns' ({len(self.columns)}) and 'columns_required' ({len(self.columns_required)}) "
+                             "needs to be equal.")
 
         self.compose = self.compose_fields or {}
 

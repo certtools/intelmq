@@ -58,8 +58,7 @@ class MailURLCollectorBot(MailCollectorBot, HttpMixin):
                     continue
 
                 if resp.status_code // 100 != 2:
-                    self.logger.error('HTTP response status code was {}.'
-                                      ''.format(resp.status_code))
+                    self.logger.error(f'HTTP response status code was {resp.status_code}.')
                     erroneous = True
                     continue
 

@@ -131,8 +131,7 @@ class HTMLTableParserBot(ParserBot):
                         data_added = True
                         break
                 else:
-                    raise ValueError("Could not add value %r to %s, all invalid."
-                                     "" % (data, keys))
+                    raise ValueError(f"Could not add value {data} to {keys}, all invalid.")
 
             if not data_added:
                 # we added nothing from this row, so skip it

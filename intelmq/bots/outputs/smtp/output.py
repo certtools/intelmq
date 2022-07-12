@@ -58,7 +58,7 @@ class SMTPOutputBot(OutputBot):
 
         with self.smtp_class(self.smtp_host, self.smtp_port, **self.kwargs) as smtp:
             if self.starttls:
-                self.logger.debug("Issuing STARTTLS with{verify} certificate verification.".format(verify="" if self.http_verify_cert else "out"))
+                self.logger.debug(f'Issuing STARTTLS with{"" if self.http_verify_cert else "out"} certificate verification.')
                 if self.http_verify_cert:
                     smtp.starttls(context=ssl.create_default_context())
                 else:

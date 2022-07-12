@@ -134,10 +134,10 @@ class BroFileOutputBot(OutputBot):
                 path.mkdir(mode=0o755, parents=True, exist_ok=True)
             except OSError:
                 return [
-                    ["error", "Directory (%r) of parameter 'file' does not exist and could not be created." % dirname]]
+                    ["error", f"Directory ({dirname}) of parameter 'file' does not exist and could not be created."]]
             else:
                 return [
-                    ["info", "Directory (%r) of parameter 'file' did not exist, but has now been created." % dirname]]
+                    ["info", f"Directory ({dirname}) of parameter 'file' did not exist, but has now been created."]]
 
 
 BOT = BroFileOutputBot

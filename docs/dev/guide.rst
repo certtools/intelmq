@@ -654,7 +654,7 @@ Maybe it is necessary so setup a Cache instance or load a file into memory. Use 
                self.database = pyasn.pyasn(self.database)
            except IOError:
                self.logger.error("pyasn data file does not exist or could not be "
-                                 "accessed in '%s'." % self.database)
+                                 f"accessed in '%s{}'." % self.database)
                self.logger.error("Read 'bots/experts/asn_lookup/README.md' and "
                                  "follow the procedure.")
                self.stop()

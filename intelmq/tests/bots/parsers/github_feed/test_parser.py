@@ -51,7 +51,7 @@ class TestGithubFeedParserBot(test.BotTestCase, unittest.TestCase):
         self.allowed_error_count = 1
         self.run_bot()
 
-        self.assertRegexpMatchesLog("Unknown feed '{}'.".format(wrong_report['feed.url']))
+        self.assertRegexpMatchesLog(f"Unknown feed '{wrong_report['feed.url']}'.")
 
     def test_extra_fields_are_present_in_generated_event(self):
         custom_report = EXAMPLE_STRANGEREALINTEL_REPORT.copy()

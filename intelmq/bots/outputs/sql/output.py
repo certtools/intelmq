@@ -38,9 +38,8 @@ class SQLOutputBot(OutputBot, SQLMixin):
 
         keys = '", "'.join(event.keys())
         values = list(event.values())
-        fvalues = len(values) * f'{self.format_char}, '
-        query = ('INSERT INTO {table} ("{keys}") VALUES ({values})'
-                 ''.format(table=self.table, keys=keys, values=fvalues[:-2]))
+        fvalues = len(values) * f"{self.format_char}, "
+        query = (f'INSERT INTO {self.table} ("{keys}") VALUES ({fvalues[:-2]})')
 
         if self.execute(query, values, rollback=True):
             self.con.commit()

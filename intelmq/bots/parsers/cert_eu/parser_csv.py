@@ -50,12 +50,10 @@ class CertEUCSVParserBot(ParserBot):
     def parse_line(self, line, report):
         event = self.new_event(report)
         if line["version"] not in ("1.5", ''):
-            raise ValueError("Unknown version %r. Please report this with an example."
-                             "" % line["version"])
+            raise ValueError(f"Unknown version {line['version']}. Please report this with an example.")
         for unknown in self._unknown_fields:
             if line[unknown]:
-                raise ValueError("Unable to parse field %r. Please report this with an example"
-                                 "" % unknown)
+                raise ValueError(f"Unable to parse field {unknown}. Please report this with an example")
 
         event["extra.datasource"] = line["feed code"]
         event.add("source.ip", line["source ip"])

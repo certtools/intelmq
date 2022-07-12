@@ -17,11 +17,11 @@ from intelmq.lib.splitreports import generate_reports, read_delimited_chunks
 from .test_message import HARM
 
 csv_test_data = b"\n".join(b",".join(line) for line in
-                           [[bytes("header-%d" % (col,), "ascii")
-                             for col in range(10)]]
-                           + [[bytes("value-%d-%d" % (row, col), "ascii")
+                           [[bytes(f"header-{col}", "ascii")
+                             for col in range(10)]] +
+                           [[bytes(f"value-{row}-{col}", "ascii")
                                for col in range(10)]
-                              for row in range(1000)])
+                            for row in range(1000)])
 
 
 class TestSplitChunks(unittest.TestCase):

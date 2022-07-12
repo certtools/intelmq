@@ -33,8 +33,8 @@ class KafkaCollectorBot(CollectorBot):
         if kafka is None:
             raise MissingDependencyError("kafka")
 
-        self.logger.debug(f"Topic set to {self.topic}, bootstrap_servers set to {self.bootstrap_servers}")
-        self.logger.debug(f"ssl_cafile set to {self.ssl_cafile}, ssl_certfile set to {self.ssl_certfile}, ssl_check_hostname set to {self.ssl_check_hostname}")
+        self.logger.debug(f'Topic set to {self.topic}, bootstrap_servers set to {self.bootstrap_servers}')
+        self.logger.debug(f'ssl_cafile set to {self.ssl_cafile}, ssl_certfile set to {self.ssl_certfile}, ssl_check_hostname set to {self.ssl_check_hostname}')
 
     def process(self):
         " Fetch messages from the Kafka server and pass them on one by one "
@@ -42,7 +42,7 @@ class KafkaCollectorBot(CollectorBot):
         for msg in consumer:
             consumer.commit()
             report = self.new_report()
-            self.logger.debug(f"Received msg with offset {msg.offset} from kafka topic {msg.topic}: {msg.value.decode()}")
+            self.logger.debug(f'Received msg with offset {msg.offset} from kafka topic {msg.topic}: {msg.value.decode()}')
             if report.add('raw', msg.value.decode()):
                 self.send_message(report)
 

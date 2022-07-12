@@ -71,7 +71,7 @@ class ASNLookupExpertBot(ExpertBot):
         try:
             pyasn.pyasn(parameters['database'])
         except Exception as exc:
-            return [["error", "Error reading database: %r." % exc]]
+            return [["error", f'Error reading database: {exc}.']]
 
     @classmethod
     def run(cls, parsed_args=None):
@@ -101,7 +101,7 @@ class ASNLookupExpertBot(ExpertBot):
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
         except KeyError as e:
-            sys.exit(f"Database update failed. Your configuration of {bot} is missing key {e}.")
+            sys.exit(f'Database update failed. Your configuration of {bot} is missing key {e}.')
 
         if not bots:
             if verbose:
@@ -146,15 +146,15 @@ class ASNLookupExpertBot(ExpertBot):
             response = session.get(url)
 
             if response.status_code != 200:
-                sys.exit("Database update failed. Server responded: {}.\n"
-                         "URL: {}".format(response.status_code, response.url))
+                sys.exit(f'Database update failed. Server responded: {response.status_code}.\n'
+                         f'URL: {response.url}')
 
         except requests.exceptions.RequestException as e:
-            sys.exit(f"Database update failed. Connection Error: {e}")
+            sys.exit(f'Database update failed. Connection Error: {e}')
 
         with bz2.open(io.BytesIO(response.content)) as archive:
             if verbose:
-                print("Parsing the latest database update...")
+                print('Parsing the latest database update...')
             prefixes = pyasn.mrtx.parse_mrt_file(archive, print_progress=False, skip_record_on_error=True)
 
         for database_path in set(bots.values()):
@@ -163,7 +163,7 @@ class ASNLookupExpertBot(ExpertBot):
             pyasn.mrtx.dump_prefixes_to_file(prefixes, database_path)
 
         if verbose:
-            print("Database updated. Reloading affected bots.")
+            print('Database updated. Reloading affected bots.')
 
         ctl = IntelMQController()
         for bot in bots.keys():

@@ -68,7 +68,7 @@ class RDAPExpertBot(ExpertBot, CacheMixin):
 
         if 'source.fqdn' in event:
             url = event.get('source.fqdn')
-            cache_key = "rdap_%s" % (url)
+            cache_key = f"rdap_{url}"
             result = self.cache_get(cache_key)
             if result:
                 event.add('source.abuse_contact', result, overwrite=self.overwrite)
@@ -84,18 +84,18 @@ class RDAPExpertBot(ExpertBot, CacheMixin):
                             break
                         domain_parts.pop(0)
 
-                url_without_domain_suffix = url.replace(".%s" % (domain_suffix), "")
-                url = "{}.{}".format(url_without_domain_suffix.split(".")[-1], domain_suffix)
+                url_without_domain_suffix = url.replace(f'.{domain_suffix}', "")
+                url = f'{url_without_domain_suffix.split(".")[-1]}.{domain_suffix}'
 
                 if domain_suffix in self.__rdap_directory:
                     service = self.__rdap_directory[domain_suffix]
                     if 'auth' in service:
                         if service['auth']['type'] == 'jwt':
-                            self.__session.headers['Authorization'] = "Bearer %s" % (service['auth']['token'])
+                            self.__session.headers['Authorization'] = f'Bearer {service["auth"]["token"]}'
                         else:
-                            raise NotImplementedError("Authentication type {!r} (configured for service {!r}) is not implemented".format(service['auth'], domain_suffix))
+                            raise NotImplementedError(f'Authentication type {service["auth"]} (configured for service {domain_suffix}) is not implemented')
 
-                    resp = self.__session.get("{}domain/{}".format(service['url'], url))
+                    resp = self.__session.get(f'{service["url"]}domain/{url}')
 
                     if resp.status_code < 200 or resp.status_code > 299:
                         if resp.status_code == 404:

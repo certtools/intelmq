@@ -113,8 +113,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event.add('malware.name', 'beagle')
             if len(comments):
                 # TODO: what is the comment? One sample does not have a comment at all
-                raise NotImplementedError("Can't properly parse report %r, not know how to parse comment."
-                                          "" % report_type)
+                raise NotImplementedError(f"Can't properly parse report {report_type}, not know how to parse comment.")
         elif report_type in ['blaster', 'dameware', 'dipnet', 'mydoom', 'nachi', 'phatbot',
                              'sinit', 'slammer']:
             # blaster|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS||ASNAME
@@ -141,7 +140,7 @@ class CymruCAPProgramParserBot(ParserBot):
         elif report_type == 'ddosreport':  # TODO: verify
             # ddosreport|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<PROTOCOL> <PORT>] [category: <CATEGORY>]
             # [servpass: <PASSWORD>] [SSL] [url: <URL>]|ASNAME
-            raise NotImplementedError('Report %r not implemented, format is unknown.' % report_type)
+            raise NotImplementedError(f'Report {report_type} not implemented, format is unknown.')
         elif report_type == 'defacement':  # TODO: verify
             # defacement|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<URL> [<ZONE-H ID>]|ASNAME
             event['classification.type'] = 'unauthorised-information-modification'
@@ -189,8 +188,7 @@ class CymruCAPProgramParserBot(ParserBot):
                 port = int(comments)
             except ValueError:
                 # TODO: How are ports split?
-                raise NotImplementedError("Can't properly parse report %r, format for multiple ports is unknown."
-                                          "" % report_type)
+                raise NotImplementedError(f"Can't properly parse report {report_type}, format for multiple ports is unknown.")
             else:
                 event['source.port'] = port
         elif report_type == 'spam':
@@ -199,8 +197,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event['classification.identifier'] = 'spam'
             if len(comments):
                 # TODO: what is the comment? One sample does not have a comment at all
-                raise NotImplementedError("Can't properly parse report %r, not know how to parse comment."
-                                          "" % report_type)
+                raise NotImplementedError(f"Can't properly parse report {report_type}, not know how to parse comment.")
         elif report_type == 'spreaders':  # TODO: verify
             # spreaders|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<URL> [<MD5>]|ASNAME
             event.add('source.url', comment_split[0])
@@ -227,7 +224,7 @@ class CymruCAPProgramParserBot(ParserBot):
             event.add('malware.name', report_type)
             event['extra.source_port'] = int(comment_split[1])
         else:
-            raise ValueError('Unknown report %r.' % report_type)
+            raise ValueError(f'Unknown report {report_type}.')
         yield event
 
     def parse_line_new(self, line, report):
@@ -274,13 +271,13 @@ class CymruCAPProgramParserBot(ParserBot):
             for key, value in MAPPING_STATIC[category].items():
                 event.add(key, value)
         except KeyError:
-            raise ValueError('Unknown category %r.' % category)
+            raise ValueError(f'Unknown category {category}.')
         destination_ports = []
 
         for comment in comment_split:
             if ':' not in comment or comment.startswith('http'):
                 if category == 'proxy':
-                    comment = 'proxy_type: %s' % comment
+                    comment = f'proxy_type: {comment}'
                 elif category == 'bruteforce':  # optional_information can just be 'ssh;'
                     event.add('classification.identifier', comment)
                     event.add('protocol.application', comment)
@@ -318,8 +315,7 @@ class CymruCAPProgramParserBot(ParserBot):
                         # unassigned, experients, testing, reserved
                         event.add('extra.protocol.transport', int(value))
                     else:
-                        raise ValueError('Unknown protocol %r, please report a bug'
-                                         '' % value)
+                        raise ValueError(f'Unknown protocol {value}, please report a bug')
             elif key == 'hostname':
                 if not FQDN.is_valid(value=value) and value == ip:
                     continue

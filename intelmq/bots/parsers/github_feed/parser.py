@@ -61,7 +61,7 @@ class GithubFeedParserBot(ParserBot):
         for knonw_feed, feed_parser in self.__supported_feeds.items():
             if knonw_feed in report.get('feed.url'):
                 return feed_parser(self.logger).parse(event, json_content)
-        raise ValueError("Unknown feed '{}'.".format(report.get('feed.url')))
+        raise ValueError(f"Unknown feed '{report.get('feed.url')}'.")
 
     class StrangerealIntelDailyIOC:
         def __init__(self, logger):
@@ -113,7 +113,7 @@ class GithubFeedParserBot(ParserBot):
                     continue
 
                 # on default drop the event
-                self.logger.warning("IOC '{}' not in expected format.".format(ioc_indicator.replace('.', '[.]')))
+                self.logger.warning(f"IOC '{ioc_indicator.replace('.', '[.]')}' not in expected format.")
 
 
 def parse_url_indicator(event, ioc_indicator: str):

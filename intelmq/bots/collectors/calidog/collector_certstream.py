@@ -48,7 +48,7 @@ class CertstreamCollectorBot(CollectorBot):
             self.send_message(new_report)
 
         else:
-            raise ValueError('Unhandled message_type %r.' % message['message_type'])
+            raise ValueError(f'Unhandled message_type {message["message_type"]}.')
 
 
 BOT = CertstreamCollectorBot

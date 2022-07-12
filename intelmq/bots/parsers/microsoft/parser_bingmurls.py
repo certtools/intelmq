@@ -39,9 +39,9 @@ class MicrosoftBingMurlsParserBot(ParserBot):
     def parse_line(self, line, report):
         raw = self.recover_line(line)
         if line['Version'] != 1.5:
-            raise ValueError('Data is in unknown format %r, only version 1.5 is supported.' % line['version'])
+            raise ValueError(f'Data is in unknown format {line["version"]}, only version 1.5 is supported.')
         if line['IndicatorThreatType'] != 'MaliciousUrl':
-            raise ValueError('Unknown indicatorthreattype %r, only MaliciousUrl is supported.' % line['indicatorthreattype'])
+            raise ValueError(f'Unknown indicatorthreattype {line["indicatorthreattype"]}, only MaliciousUrl is supported.')
         event = self.new_event(report)
         for key, value in line.items():
             if key == "LastReportedDateTime" and value != line["FirstReportedDateTime"]:
@@ -61,9 +61,8 @@ class MicrosoftBingMurlsParserBot(ParserBot):
                         event.add('source.geolocation.cc', value[0])
                     continue
                 self.logger.warning("Field 'Tags' does not have expected "
-                                    "length 1, but %r. Saving as %r, but "
-                                    "please report this as bug with samples."
-                                    "" % (len(value), MAPPING[key]))
+                                    f"length 1, but {len(value)}. Saving as {MAPPING[key]}, but "
+                                    "please report this as bug with samples.")
             event[MAPPING[key]] = value
         event.add('classification.type', 'blacklist')
         event.add('raw', raw)

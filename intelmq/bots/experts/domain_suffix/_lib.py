@@ -41,7 +41,7 @@ class PublicSuffixList:
             if suffix in suffixes:
                 suffixes = suffixes[suffix]
                 suffix_path.append(suffix)
-            elif '*' in suffixes and not '!%s' % suffix in suffixes:
+            elif '*' in suffixes and f'!{suffix}' not in suffixes:
                 suffix_path.append(suffix)
                 suffixes = suffixes['*']
             else:

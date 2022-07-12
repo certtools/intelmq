@@ -106,7 +106,7 @@ class AMQPTopicOutputBot(OutputBot):
             self.channel.confirm_delivery()
 
     def process(self):
-        ''' Stop the Bot if cannot connect to AMQP Server after the defined connection attempts '''
+        """ Stop the Bot if cannot connect to AMQP Server after the defined connection attempts """
 
         # self._connection and self.channel can be None
         if getattr(self._connection, 'is_closed', None) or getattr(self.channel, 'is_closed', None):

@@ -90,7 +90,7 @@ class MISPParserBot(ParserBot):
                 malware_variant = attribute['value'].lower()
 
         # MISP event URL
-        url_path = 'events/view/{}'.format(misp_event['id'])
+        url_path = f'events/view/{misp_event["id"]}'
         misp_event_url = urljoin(report['feed.url'], url_path)
 
         # Process MISP event attributes as separate IntelMQ events
@@ -120,8 +120,7 @@ class MISPParserBot(ParserBot):
                 event.add('malware.name', malware_variant, raise_failure=False)
                 event.add('classification.type', classifier)
                 event.add('classification.identifier', identifier)
-                event.add('time.source', '{} UTC'.format(
-                          datetime.utcfromtimestamp(float(timestamp))))
+                event.add('time.source', f'{datetime.utcfromtimestamp(float(timestamp))} UTC')
                 self.send_message(event)
 
         self.acknowledge_message()

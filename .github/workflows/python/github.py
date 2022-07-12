@@ -27,24 +27,24 @@ class Github:
             raise AttributeError('GITHUB_TOKEN is not set.')
 
         self.session = requests.Session()
-        self.session.headers['Authorization'] = 'token %s' % self.github_token
+        self.session.headers['Authorization'] = f'token {self.github_token}'
 
     def get_reviews(self):
         """ Get a list of reviews on a Github pull request as json object """
-        reviews = self.session.get(self.api + 'repos/{}/pulls/{}/reviews'.format(self.github_repository, self.pr_id))
+        reviews = self.session.get(self.api + f'repos/{self.github_repository}/pulls/{self.pr_id}/reviews')
         reviews.raise_for_status()
         return reviews.json()
 
     def update_review(self, review_id, body):
         """ Update a review given by `review_id` and set its body to `body` """
         payload = {'body': body}
-        resp = self.session.put(self.api + 'repos/{}/pulls/{}/reviews/{}'.format(self.github_repository, self.pr_id, review_id), json=payload)
+        resp = self.session.put(self.api + f'repos/{self.github_repository}/pulls/{self.pr_id}/reviews/{review_id}', json=payload)
         resp.raise_for_status()
         return resp.json()
 
     def post_review(self, body):
         """ Post a pull request review containing `body` and requesting changes """
         payload = {'body': body, 'event': "REQUEST_CHANGES"}
-        resp = self.session.post(self.api + 'repos/{}/pulls/{}/reviews'.format(self.github_repository, self.pr_id), json=payload)
+        resp = self.session.post(self.api + 'repos/{self.github_repository}/pulls/{self.pr_id}/reviews', json=payload)
         resp.raise_for_status()
         return resp.json()

@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-'''
+"""
 Reference:
 https://stat.ripe.net/docs/data_api
 https://github.com/RIPE-NCC/whois/wiki/WHOIS-REST-API-abuse-contact
-'''
+"""
 
 import json
 import warnings
@@ -22,20 +22,18 @@ try:
 except ImportError:
     requests = None
 
-
-STATUS_CODE_ERROR = 'HTTP status code was {}. Possible problem at the connection endpoint or network issue.'
 CACHE_NO_VALUE = '__no_contact'
 
 
 def clean_string(s):
-    '''Clean RIPE reply specifics for splittable string replies'''
+    """Clean RIPE reply specifics for splittable string replies"""
     values = set(s.split(','))
     values.discard('')
     return values
 
 
 def clean_geo(geo_data):
-    '''Clean RIPE reply specifics for geolocation query'''
+    """Clean RIPE reply specifics for geolocation query"""
     if 'country' in geo_data and geo_data['country'] == '?':
         del geo_data['country']
     return geo_data
@@ -146,7 +144,7 @@ class RIPEExpertBot(ExpertBot, CacheMixin):
                             return {}
                     except ValueError:
                         pass
-                raise ValueError(STATUS_CODE_ERROR.format(response.status_code))
+                raise ValueError(f'HTTP status code was {response.status_code}. Possible problem at the connection endpoint or network issue.')
             try:
                 response_data = response.json()
 
@@ -154,9 +152,8 @@ class RIPEExpertBot(ExpertBot, CacheMixin):
                 # https://lists.cert.at/pipermail/intelmq-users/2020-March/000140.html
                 status = response_data.get('data_call_status', '')
                 if status.startswith('maintenance'):
-                    warnings.warn('The API call %s is currently under maintenance. '
-                                  'Response: %r. This warning is only given once per bot run.'
-                                  '' % (type, status))
+                    warnings.warn(f'The API call {type} is currently under maintenance. '
+                                  f'Response: {status}. This warning is only given once per bot run.')
 
                 data = self.REPLY_TO_DATA[type](response_data)
                 self.cache_set(f'{type}:{resource}',

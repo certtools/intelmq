@@ -28,6 +28,7 @@ from intelmq.lib.utils import lazy_int
 
 yaml = YAML(typ="safe", pure=True)
 
+
 def to_json(obj):
     """
     Transforms object into JSON with intelmq-style.
@@ -118,8 +119,7 @@ class CerberusTests(unittest.TestCase):
         v = cerberus.Validator(schema)
 
         self.assertTrue(v.validate(feeds),
-                        msg='Invalid feeds.yaml file:\n%s' % pprint.pformat(v.errors))
-
+                        msg=f'Invalid feeds.yaml file:\n{pprint.pformat(v.errors)}')
 
 
 if __name__ == '__main__':  # pragma: no cover

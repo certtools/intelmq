@@ -50,8 +50,7 @@ class HTTPStreamCollectorBot(CollectorBot, HttpMixin):
             self.logger.exception('Connection Failed.')
         else:
             if req.status_code // 100 != 2:
-                raise ValueError('HTTP response status code was {}.'
-                                 ''.format(req.status_code))
+                raise ValueError(f'HTTP response status code was {req.status_code}.')
 
             try:
                 for line in req.iter_lines():

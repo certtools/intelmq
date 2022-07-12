@@ -43,12 +43,11 @@ class ShadowserverParserBot(ParserBot):
         if self.feedname is not None:
             self._sparser_config = config.get_feed_by_feedname(self.feedname)
             if self._sparser_config:
-                self.logger.info('Using fixed feed name %r for parsing reports.' % self.feedname)
+                self.logger.info(f'Using fixed feed name {self.feedname} for parsing reports.')
                 self._mode = 'fixed'
             else:
-                self.logger.info('Could not determine the feed by the feed name %r given by parameter. '
-                                 'Will determine the feed from the file names.',
-                                 self.feedname)
+                self.logger.info(f'Could not determine the feed by the feed name {self.feedname} given by parameter. '
+                                 'Will determine the feed from the file names.')
                 self._mode = 'detect'
         else:
             self._mode = 'detect'
@@ -74,8 +73,7 @@ class ShadowserverParserBot(ParserBot):
             retval = config.get_feed_by_filename(self.report_name)
 
             if not retval:
-                raise ValueError('Could not get a config for {!r}, check the documentation.'
-                                 ''.format(self.report_name))
+                raise ValueError(f'Could not get a config for {self.report_name!r}, check the documentation.')
             self.feedname, self._sparser_config = retval
 
         # Set default csv parse function
@@ -114,8 +112,8 @@ class ShadowserverParserBot(ParserBot):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:
                 if not row.get(shadowkey):  # key does not exist in data (not even in the header)
-                    raise ValueError('Required column {!r} not found in feed {!r}. Possible change in data'
-                                     ' format or misconfiguration.'.format(shadowkey, self.feedname))
+                    raise ValueError(f'Required column {shadowkey!r} not found in feed {self.feedname!r}. Possible change in data'
+                                     ' format or misconfiguration.')
                 else:  # key is used twice
                     fields.append(shadowkey)
             if len(item) > 2:
@@ -144,8 +142,8 @@ class ShadowserverParserBot(ParserBot):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:
                 if not row.get(shadowkey):  # key does not exist in data (not even in the header)
-                    self.logger.warning('Optional key {!r} not found in feed {!r}. Possible change in data'
-                                        ' format or misconfiguration.'.format(shadowkey, self.feedname))
+                    self.logger.warning(f'Optional key {shadowkey!r} not found in feed {self.feedname!r}. Possible change in data'
+                                        ' format or misconfiguration.')
                     continue
                 else:  # key is used twice
                     fields.append(shadowkey)

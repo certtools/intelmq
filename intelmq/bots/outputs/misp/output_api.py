@@ -127,8 +127,7 @@ class MISPAPIOutputBot(OutputBot):
                 values_to_search_for.append(intelmq_event[sig_field])
 
         if values_to_search_for == []:
-            msg = 'All significant_fields empty -> skipping event (raw={}).'
-            self.logger.warning(msg.format(intelmq_event.get('raw')))
+            self.logger.warning(f"All significant_fields empty -> skipping event (raw={intelmq_event.get('raw')}).")
         else:
             vquery = self.misp.build_complex_query(
                 and_parameters=values_to_search_for
@@ -139,8 +138,7 @@ class MISPAPIOutputBot(OutputBot):
             r = self.misp.search(tags=self.misp_tag_for_bot,
                                  value=vquery, limit=20)
             if len(r) > 0:
-                msg = 'Found MISP events matching {}: {} -> not inserting.'
-                self.logger.info(msg.format(vquery, [event.id for event in r]))
+                self.logger.info(f'Found MISP events matching {vquery}: {[event.id for event in r]} -> not inserting.')
 
                 for misp_event in r:
                     self._update_misp_event(misp_event, intelmq_event)
@@ -165,16 +163,14 @@ class MISPAPIOutputBot(OutputBot):
         if all_found:
             misp_event.timestamp = datetime.datetime.now()
             self.misp.update_event(misp_event)
-            msg = 'Updated timestamp of MISP event with id: {}'
-            self.logger.info(msg.format(misp_event.id))
+            self.logger.info(f'Updated timestamp of MISP event with id: {misp_event.id}')
 
     def _insert_misp_event(self, intelmq_event):
         """Insert a new MISPEvent."""
         new_misp_event = pymisp.MISPEvent()
 
         if 'feed.provider' in intelmq_event:
-            new_misp_event.info = 'from {} via IntelMQ'.format(
-                intelmq_event['feed.provider'])
+            new_misp_event.info = f'from {intelmq_event["feed.provider"]} via IntelMQ'
         else:
             new_misp_event.info = 'via IntelMQ'
 
@@ -183,14 +179,12 @@ class MISPAPIOutputBot(OutputBot):
 
         if (self.add_feed_provider_as_tag and
                 'feed.provider' in intelmq_event):
-            new_tag = 'IntelMQ:feed.provider="{}"'.format(
-                intelmq_event['feed.provider'])
+            new_tag = f'IntelMQ:feed.provider="{intelmq_event["feed.provider"]}"'
             new_misp_event.add_tag(new_tag)
 
         if (self.add_feed_name_as_tag and
                 'feed.name' in intelmq_event):
-            new_tag = 'IntelMQ:feed.name="{}"'.format(
-                intelmq_event['feed.name'])
+            new_tag = f'IntelMQ:feed.name="{intelmq_event["feed.name"]}"'
             new_misp_event.add_tag(new_tag)
 
         for new_tag in self.misp_additional_tags:
@@ -215,13 +209,12 @@ class MISPAPIOutputBot(OutputBot):
                 )
             except pymisp.NewAttributeError:
                 msg = 'Ignoring "{}":"{}" as not in object template.'
-                self.logger.debug(msg.format(object_relation, value))
+                self.logger.debug(f'Ignoring "{object_relation}":"{value}" as not in object template.')
 
         misp_event = self.misp.add_event(new_misp_event)
         if self.misp_publish:
             self.misp.publish(misp_event)
-        self.logger.info(
-            f'Inserted new MISP event with id: {misp_event.id}')
+        self.logger.info(f'Inserted new MISP event with id: {misp_event.id}')
 
     @staticmethod
     def check(parameters):

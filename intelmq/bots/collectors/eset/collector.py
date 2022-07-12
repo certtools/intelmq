@@ -47,7 +47,7 @@ class ESETCollectorBot(CollectorBot):
                 continue  # skip empty items
 
             report = self.new_report()
-            report.add("feed.url", "https://%s/taxiiservice/discovery" % self.endpoint)
+            report.add('feed.url', f'https://{self.endpoint}/taxiiservice/discovery')
             report.add('extra.eset_feed', self.collection)
             report.add('raw', item.content)
             self.send_message(report)

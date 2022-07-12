@@ -47,7 +47,7 @@ class OpenPhishCommercialParserBot(ParserBot):
                             event.add(event_key, json_row[source_key])
                 else:
                     if json_row[source_key]:
-                        event['extra.%s' % source_key] = json_row[source_key]
+                        event[f'extra.{source_key}'] = json_row[source_key]
 
             event.add('raw', row)
             event.add('classification.type', 'phishing')

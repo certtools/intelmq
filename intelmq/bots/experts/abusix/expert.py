@@ -3,10 +3,10 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-'''
+"""
 Reference: https://abusix.com/contactdb.html
 RIPE abuse contacts resolving through DNS TXT queries
-'''
+"""
 
 from intelmq.lib.bot import ExpertBot
 

@@ -25,13 +25,13 @@ class TestUtils(unittest.TestCase):
         except excs.PipelineError as exc:
             exception = exc
         if sys.version_info < (3, 7):
-            self.assertEqual(exception.args, ('pipeline failed - ValueError(%r,)' % message, ))
+            self.assertEqual(exception.args, (f"pipeline failed - ValueError('{message}',)", ))
         else:
-            self.assertEqual(exception.args, ('pipeline failed - ValueError(%r)' % message, ))
+            self.assertEqual(exception.args, (f"pipeline failed - ValueError('{message}')", ))
 
         message = 'some error'
         notanexception = excs.PipelineError(message)
-        self.assertEqual(notanexception.args, ('pipeline failed - %r' % message, ))
+        self.assertEqual(notanexception.args, (f"pipeline failed - '{message}'", ))
 
     def test_MissingDependencyError(self):
         depname = 'libname'
@@ -65,7 +65,7 @@ class TestUtils(unittest.TestCase):
         # additional text at the end
         exc = str(excs.MissingDependencyError(depname, additional_text=additional))
         self.assertIn(repr(depname), exc)
-        self.assertTrue(exc.endswith(" %s" % additional))
+        self.assertTrue(exc.endswith(f" {additional}"))
 
 
 if __name__ == '__main__':  # pragma: no cover

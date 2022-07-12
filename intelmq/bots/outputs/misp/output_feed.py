@@ -93,9 +93,7 @@ class MISPFeedOutputBot(OutputBot):
             self.min_time_current = datetime.datetime.now()
             self.max_time_current = self.min_time_current + self.timedelta
             self.current_event = MISPEvent()
-            self.current_event.info = ('IntelMQ event {begin} - {end}'
-                                       ''.format(begin=self.min_time_current.isoformat(),
-                                                 end=self.max_time_current.isoformat()))
+            self.current_event.info = (f'IntelMQ event {self.min_time_current.isoformat()} - {self.max_time_current.isoformat()}')
             self.current_event.set_date(datetime.date.today())
             self.current_event.Orgc = self.misp_org
             self.current_event.uuid = str(uuid4())
@@ -129,12 +127,11 @@ class MISPFeedOutputBot(OutputBot):
             created = MISPFeedOutputBot.check_output_dir(parameters['output_dir'])
         except OSError:
             return [["error",
-                     "Directory %r of parameter 'output_dir' does not exist and could not be created." % parameters['output_dir']]]
+                     f"Directory {parameters['output_dir']} of parameter 'output_dir' does not exist and could not be created."]]
         else:
             if created:
                 return [["info",
-                         "Directory %r of parameter 'output_dir' did not exist, but has now been created."
-                         "" % parameters['output_dir']]]
+                         f"Directory {parameters['output_dir']} of parameter 'output_dir' did not exist, but has now been created."]]
 
 
 BOT = MISPFeedOutputBot

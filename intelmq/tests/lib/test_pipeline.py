@@ -29,7 +29,6 @@ SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
            }
 
 
-
 class TestPipeline(unittest.TestCase):
 
     def setUp(self):

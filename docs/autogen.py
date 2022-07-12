@@ -45,10 +45,7 @@ def harm_docs():
 
     for key, value in sorted(HARM.items()):
         section = ' '.join([sec.title() for sec in key.split('.')[:-1]])
-        output += '{:27} {:35} {:29} {}\n'.format('|' if not section else section,  # needed for GitHub
-                                                  key,
-                                                  ':ref:`'+value['type'].lower()+'`',
-                                                  value['description'])
+        output += f'{"|" if not section else section:27} {key:35} {":ref:`" + value["type"].lower() + "`":29} {value["description"]}\n'  # needed for GitHub
 
     output += HEADER_1
 
@@ -63,7 +60,7 @@ def harm_docs():
                     doc = ''
                 else:
                     doc = textwrap.dedent(doc)
-                output += ".. _{}:\n\n{}\n{}\n{}\n\n".format(value.lower(),value,'-'*len(value),doc)
+                output += f".. _{value.lower()}:\n\n{value}\n{'-'*len(value)}\n{doc}\n\n"
         except TypeError:
             pass
 
@@ -91,13 +88,13 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild 
 
     for provider, feeds in sorted(config['providers'].items(), key=lambda x: x[0]):
 
-        output += f"{provider}\n"
-        output += "-"*len(provider) + "\n"
+        output += f'{provider}\n'
+        output += "-" * len(provider) + "\n"
 
         for feed, feed_info in sorted(feeds.items(), key=lambda x: x[0]):
 
-            output += f"{feed}\n"
-            output += "^"*len(feed) + "\n\n"
+            output += f'{feed}\n'
+            output += "^" * len(feed) + "\n\n"
 
             output += info("public", "yes") if feed_info.get('public') else info("public", "no")
 
@@ -115,7 +112,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild 
 
             for bot, bot_info in sorted(feed_info['bots'].items(), key=lambda x: x[0]):
 
-                output += "**%s**\n\n" % bot.title()
+                output += f"**{bot.title()}**\n\n"
 
                 output += info("Module", bot_info['module'])
                 output += info("Configuration Parameters")
@@ -134,7 +131,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild 
                         if isinstance(value, (list, tuple)) and value:
                             value = json.dumps(value)
 
-                        output += f"   * `{key}`: `{value}`\n"
+                        output += f'   * `{key}`: `{value}`\n'
 
                 output += '\n'
 

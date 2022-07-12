@@ -126,11 +126,11 @@ class IntelMQController():
             # can only happen in interactive mode
             self._logger.error('No valid IntelMQ installation found: DistributionNotFound')
             sys.exit(1)
-        DESCRIPTION = """
+        DESCRIPTION = f"""
         description: intelmqctl is the tool to control intelmq system.
 
-        Outputs are logged to %s/intelmqctl.log""" % DEFAULT_LOGGING_PATH
-        EPILOG = '''
+        Outputs are logged to {DEFAULT_LOGGING_PATH}/intelmqctl.log"""
+        EPILOG = """
         intelmqctl [start|stop|restart|status|reload] --group [collectors|parsers|experts|outputs]
         intelmqctl [start|stop|restart|status|reload] bot-id
         intelmqctl [start|stop|restart|status|reload]
@@ -200,7 +200,7 @@ Make a backup of your configuration first, also including bot's configuration fi
 Get some debugging output on the settings and the environment (to be extended):
     intelmqctl debug --get-paths
     intelmqctl debug --get-environment-variables
-'''
+"""
 
         try:
             self._runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
@@ -209,7 +209,7 @@ Get some debugging output on the settings and the environment (to be extended):
 
         self._processmanagertype = getattr(self._parameters, 'process_manager', 'intelmq')
         if self._processmanagertype not in process_managers():
-            self.abort('Invalid process manager given: %r, should be one of %r.' '' % (self._processmanagertype, list(process_managers().keys())))
+            self.abort(f'Invalid process manager given: {self._processmanagertype}, should be one of {list(process_managers().keys())}.' '')
 
         if self._interactive:
             parser = argparse.ArgumentParser(
@@ -261,9 +261,9 @@ Get some debugging output on the settings and the environment (to be extended):
             parser_run_console.set_defaults(run_subcommand="console")
 
             parser_run_message = parser_run_subparsers.add_parser('message',
-                                                                  help='Debug bot\'s pipelines. Get the message in the'
+                                                                  help="Debug bot's pipelines. Get the message in the"
                                                                        ' input pipeline, pop it (cut it) and display it, or'
-                                                                       ' send the message directly to bot\'s output pipeline(s).')
+                                                                       " send the message directly to bot's output pipeline(s).")
             parser_run_message.add_argument('message_action_kind',
                                             choices=["get", "pop", "send"],
                                             help='get: show the next message in the source pipeline. '
@@ -272,7 +272,7 @@ Get some debugging output on the settings and the environment (to be extended):
             parser_run_message.add_argument('msg', nargs='?', help='If send was chosen, put here the message in JSON.')
             parser_run_message.set_defaults(run_subcommand="message")
 
-            parser_run_process = parser_run_subparsers.add_parser('process', help='Single run of bot\'s process() method.')
+            parser_run_process = parser_run_subparsers.add_parser('process', help="Single run of bot's process() method.")
             parser_run_process.add_argument('--show-sent', '-s', action='store_true',
                                             help='If message is sent through, displays it.')
             parser_run_process.add_argument('--dryrun', '-d', action='store_true',
@@ -626,7 +626,7 @@ Get some debugging output on the settings and the environment (to be extended):
         try:
             utils.write_configuration(filename, self._runtime_configuration)
         except PermissionError:
-            self.abort('Can\'t update runtime configuration: Permission denied.')
+            self.abort("Can't update runtime configuration: Permission denied.")
         return True
 
     def list_bots(self, non_zero=False, configured=False):
@@ -644,8 +644,7 @@ Get some debugging output on the settings and the environment (to be extended):
                     if self._quiet:
                         print(bot_id)
                     else:
-                        print("Bot ID: {}\nDescription: {}"
-                              "".format(bot_id, self._runtime_configuration[bot_id].get('description')))
+                        print(f'Bot ID: {bot_id}\nDescription: {self._runtime_configuration[bot_id].get("description")}')
             return 0, [{'id': bot_id,
                         'description': self._runtime_configuration[bot_id].get('description')}
                        for bot_id in sorted(self._configured_bots_list())]
@@ -653,17 +652,16 @@ Get some debugging output on the settings and the environment (to be extended):
             bots = utils.list_all_bots()
             if self._returntype is ReturnType.TEXT:
                 for bot_type in bots:
-                    print(f"\n======== {bot_type} ========\n")
+                    print(f'\n======== {bot_type} ========\n')
                     for bot in bots[bot_type]:
-                        print("Bot ID: {}\nDescription: {}"
-                              "".format(bot, bots[bot_type][bot].get('description')))
+                        print(f'Bot ID: {bot}\nDescription: {bots[bot_type][bot].get("description")}')
             return 0, bots
 
     def _pipeline_configuration(self):
         pipeline_configuration = {}
         for botid, botconfig in self._runtime_configuration.items():
             if botid != 'global':
-                pipeline_configuration[botid] = {"source_queue": f"{botid}-queue", "destination_queues": []}
+                pipeline_configuration[botid] = {"source_queue": f'{botid}-queue', "destination_queues": []}
                 if 'parameters' in botconfig:
                     if 'source_queue' in botconfig['parameters']:
                         pipeline_configuration[botid]['source_queue'] = botconfig['parameters']['source_queue']
@@ -780,7 +778,7 @@ Get some debugging output on the settings and the environment (to be extended):
         elif self._parameters.logging_handler == 'syslog':
             bot_log_path = '/var/log/syslog'
         else:
-            self.abort("Unknown logging handler %r" % self._parameters.logging_handler)
+            self.abort(f'Unknown logging handler {self._parameters.logging_handler}')
 
         if not os.access(bot_log_path, os.R_OK):
             self._logger.error('File %r is not readable.', bot_log_path)
@@ -876,10 +874,10 @@ Get some debugging output on the settings and the environment (to be extended):
             if ('group' in bot_config and bot_config['group'] in ['Parser', 'Expert', 'Output']):
                 if ('parameters' in bot_config and 'source_queue' in bot_config['parameters'] and isinstance(bot_config['parameters']['source_queue'], str)):
                     all_queues.add(bot_config['parameters']['source_queue'])
-                    all_queues.add(f"{bot_config['parameters']['source_queue']}-internal")
+                    all_queues.add(f'{bot_config["parameters"]["source_queue"]}-internal')
                 else:
-                    all_queues.add(f"{bot_id}-queue")
-                    all_queues.add(f"{bot_id}-queue-internal")
+                    all_queues.add(f'{bot_id}-queue')
+                    all_queues.add(f'{bot_id}-queue-internal')
         # ignore allowed orphaned queues
         allowed_orphan_queues = set(getattr(self._parameters, 'intelmqctl_check_orphaned_queues_ignore', ()))
         if not no_connections:
@@ -940,7 +938,7 @@ Get some debugging output on the settings and the environment (to be extended):
                 bot_check = bot.check(bot_parameters)
                 if bot_check:
                     for log_line in bot_check:
-                        getattr(check_logger, log_line[0])(f"Bot {bot_id!r}: {log_line[1]}")
+                        getattr(check_logger, log_line[0])(f'Bot {bot_id!r}: {log_line[1]}')
         for group in utils.list_all_bots().values():
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
@@ -1015,7 +1013,7 @@ Get some debugging output on the settings and the environment (to be extended):
         if os.path.isfile(state_file):
             if not os.access(state_file, os.W_OK) and not dry_run:
                 self._logger.error("State file %r is not writable.", state_file)
-                return 1, "State file %r is not writable." % state_file
+                return 1, f"State file {state_file} is not writable."
             state = utils.load_configuration(state_file)
         else:
             """

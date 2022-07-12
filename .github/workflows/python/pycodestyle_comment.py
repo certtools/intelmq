@@ -11,10 +11,10 @@ import subprocess
 import github
 
 INTROTEXT_IDENTIFIER = '<!-- Introtext. -->'
-INTROTEXT = INTROTEXT_IDENTIFIER + '''\nHi, thanks for your contribution :blush:!
+INTROTEXT = INTROTEXT_IDENTIFIER + """\nHi, thanks for your contribution :blush:!
 Unfortunately there are a couple of style problems that have to be fixed, before your contribution can be reviewed by humans :sweat_smile:.
-Below you\'ll find the output of the `pycodestyle` checker, please try to fix your contribution so that `pycodestyle` doesn't find any problems.
-You can also run the checker yourself using `pycodestyle intelmq/{bots,lib,bin}`. If you have any question don\'t hesitate to ask!\n\n'''
+Below you'll find the output of the `pycodestyle` checker, please try to fix your contribution so that `pycodestyle` doesn't find any problems.
+You can also run the checker yourself using `pycodestyle intelmq/{bots,lib,bin}`. If you have any question don't hesitate to ask!\n\n"""
 
 VOIDTEXT_IDENTIFIER = '<!-- Voidtext. -->'
 VOIDTEXT = VOIDTEXT_IDENTIFIER + '\n*Void due to subsequent changes.*'
@@ -34,7 +34,7 @@ def style_error_format(style_error_list) -> str:
     """ Format the list of pycodestyle errors and return them a one string. """
     ret = ''
     for error in style_error_list:
-        ret += '* {}\n'.format(error)
+        ret += f'* {error}\n'
     return ret
 
 
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         style_errors = list_style_errors()
 
         if style_errors:
-            print("Found {} errors.".format(len(style_errors)))
+            print(f'Found {len(style_errors)} errors.')
 
         gh = github.Github()
 

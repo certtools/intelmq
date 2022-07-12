@@ -32,7 +32,7 @@ class ESETParserBot(ParserBot):
         event['extra.eset_feed'] = report['extra.eset_feed']
         f = self.f_map.get(report['extra.eset_feed'], None)
         if not f:
-            raise ValueError('Unsupported feed %r' % report['extra.eset_feed'])
+            raise ValueError(f'Unsupported feed {report["extra.eset_feed"]}')
 
         f(event, line)
 

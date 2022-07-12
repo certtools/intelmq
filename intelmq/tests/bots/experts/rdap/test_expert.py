@@ -43,7 +43,7 @@ def prepare_mocker(mocker):
         mocker.get('https://data.iana.org/rdap/dns.json', content=f.read())
     for filename in os.listdir(os.path.join(os.path.dirname(__file__), 'test_data')):
         with open(os.path.join(os.path.dirname(__file__), 'test_data', filename), 'rb') as f:
-            mocker.get('http://localhost/rdap/v1/domain/%s' % filename.replace('.json', ''), content=f.read())
+            mocker.get(f'http://localhost/rdap/v1/domain/{filename.replace(".json", "")}', content=f.read())
     mocker.get('http://localhost/rdap/v1/domain/this-record-does-not-exist.versicherung', status_code=404)
 
 

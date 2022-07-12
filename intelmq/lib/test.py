@@ -195,7 +195,7 @@ class BotTestCase:
         Parameters:
             parameters: optional bot parameters for this run, as dict
             destination_queues: optional definition of destination queues
-                default: {"_default": "{}-output".format(self.bot_id)}
+                default: {"_default": f"{self.bot_id}-output"}
         """
         self.log_stream = io.StringIO()
 
@@ -272,16 +272,13 @@ class BotTestCase:
         self.assertIsInstance(checks, (list, tuple))
         for check in checks:
             self.assertIsInstance(check, (list, tuple),
-                                  '%s.check returned an invalid format. '
-                                  'Return value must be a sequence of sequences.'
-                                  '' % self.bot_name)
+                                  f'{self.bot_name!s}.check returned an invalid format. '
+                                  'Return value must be a sequence of sequences.')
             self.assertEqual(len(check), 2,
-                             '%s.check returned an invalid format. '
-                             'Return value\'s inner sequence must have a length of 2.'
-                             '' % self.bot_name)
+                             f'{self.bot_name!s}.check returned an invalid format. '
+                             "Return value's inner sequence must have a length of 2.")
             self.assertNotEqual(check[0].upper(), 'ERROR',
-                                '%s.check returned the error %r.'
-                                '' % (self.bot_name, check[1]))
+                                f'{self.bot_name!s}.check returned the error {check[1]!r}.')
         raise ValueError(f'checks is {checks!r}')
 
     def run_bot(self, iterations: int = 1, error_on_pipeline: bool = False,
@@ -348,11 +345,9 @@ class BotTestCase:
                 self.assertIn('raw', event)
 
         """ Test if bot log messages are correctly formatted. """
-        self.assertLoglineMatches(0, "{} initialized with id {} and intelmq [0-9a-z.]* and python"
-                                     r" [0-9a-z.]{{5,8}}\+? \(.+?\)( \[GCC.*?\])?"
-                                     r" as process [0-9]+\."
-                                     "".format(self.bot_name,
-                                               self.bot_id), "INFO")
+        self.assertLoglineMatches(0, f"{self.bot_name} initialized with id {self.bot_id} and intelmq [0-9a-z.]* and python"
+                                     fr" [0-9a-z.]{{5,8}}\+? \(.+?\)( \[GCC.*?\])?"
+                                     fr" as process [0-9]+\.", "INFO")
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
         if stop_bot:
             self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
@@ -370,11 +365,9 @@ class BotTestCase:
                     # Traceback
                     continue
                 self.assertTrue(fields['message'][-1] in '.:?!',
-                                msg='Logline {!r} does not end with .? or !.'
-                                    ''.format(fields['message']))
+                                msg=f"Logline {fields['message']!r} does not end with .? or !.")
                 self.assertTrue(fields['message'].upper() == fields['message'].upper(),
-                                msg='Logline {!r} does not begin with an upper case char.'
-                                    ''.format(fields['message']))
+                                msg=f"Logline {fields['message']!r} does not begin with an upper case char.")
 
     @classmethod
     def tearDownClass(cls):
@@ -385,7 +378,7 @@ class BotTestCase:
         """Returns the input queue of this bot which can be filled
            with fixture data in setUp()"""
         if self.pipe:
-            return self.pipe.state["%s-input" % self.bot_id]
+            return self.pipe.state[f"{self.bot_id}-input"]
         else:
             return []
 
@@ -393,14 +386,13 @@ class BotTestCase:
         """Returns the internal input queue of this bot which can be filled
            with fixture data in setUp()"""
         if self.pipe:
-            return self.pipe.state["%s-input-internal" % self.bot_id]
+            return self.pipe.state[f"{self.bot_id}-input-internal"]
         else:
             return []
 
     def set_input_queue(self, seq):
         """Setter for the input queue of this bot"""
-        self.pipe.state["%s-input" % self.bot_id] = [utils.encode(text) for
-                                                     text in seq]
+        self.pipe.state[f"{self.bot_id}-input"] = [utils.encode(text) for text in seq]
 
     input_queue = property(get_input_queue, set_input_queue)
 
@@ -427,8 +419,7 @@ class BotTestCase:
             except AssertionError:
                 counter += 1
         if counter != len(self.bot_types) - 1:
-            self.fail("Bot name {!r} does not match one of {!r}"
-                      "".format(self.bot_name, list(self.bot_types.values())))  # pragma: no cover
+            self.fail(f"Bot name {self.bot_name!r} does not match one of {list(self.bot_types.values())!r}")  # pragma: no cover
 
     def assertAnyLoglineEqual(self, message: str, levelname: str = "ERROR"):
         """
@@ -449,8 +440,7 @@ class BotTestCase:
             if levelname == fields["log_level"] and message == fields["message"]:
                 return
         else:
-            raise ValueError('Logline with level {!r} and message {!r} not found'
-                             ''.format(levelname, message))  # pragma: no cover
+            raise ValueError(f'Logline with level {levelname!r} and message {message!r} not found')  # pragma: no cover
 
     def assertLoglineEqual(self, line_no: int, message: str, levelname: str = "ERROR"):
         """
@@ -466,8 +456,7 @@ class BotTestCase:
         fields = utils.parse_logline(logline)
 
         self.assertEqual(self.bot_id, fields["bot_id"],
-                         "bot_id {!r} didn't match {!r}."
-                         "".format(self.bot_id, fields["bot_id"]))
+                         f"bot_id {self.bot_id!r} didn't match {fields['bot_id']!r}.")
 
         self.assertEqual(levelname, fields["log_level"])
         self.assertEqual(message, fields["message"])
@@ -487,8 +476,7 @@ class BotTestCase:
         fields = utils.parse_logline(logline)
 
         self.assertEqual(self.bot_id, fields["bot_id"],
-                         "bot_id {!r} didn't match {!r}."
-                         "".format(self.bot_id, fields["bot_id"]))
+                         f"bot_id {self.bot_id!r} didn't match {fields['bot_id']!r}.")
 
         self.assertEqual(levelname, fields["log_level"])
         self.assertRegex(fields["message"], pattern)

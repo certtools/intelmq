@@ -438,10 +438,10 @@ PROTOCOLS = {
 
 
 class NoValueException(Exception):
-    '''
+    """
     Raised in a conversion function in case the value cannot be used,
     e.g when trying to get the first item of an empty list
-    '''
+    """
     msg: Optional[str]
 
     def __init__(self, msg: Optional[str] = None) -> None:
@@ -461,9 +461,9 @@ _common_keys = {  # not indicative of type
 
 
 def _keys_conversion(x: Dict[str, Any]) -> List[str]:
-    '''
+    """
     extracts object keys to a list, for cases where the values they map to are empty/irrelevant
-    '''
+    """
     try:
         return list(x.keys())
     except AttributeError:
@@ -472,20 +472,20 @@ def _keys_conversion(x: Dict[str, Any]) -> List[str]:
 
 # in case item can be either T or List[T]
 def _maybe_single_to_list(x: Any) -> List[Any]:
-    '''
+    """
     converts non-list objects to lists with a single item and leaves lists as-is,
     used to harmonize fields which avoid lists when a single value is given
-    '''
+    """
     return x if isinstance(x, list) else [x]
 
 
 def _dict_dict_to_obj_list(x: Dict[str, Dict[str, Any]], identifier: str = 'identifier') -> List[Dict[str, Any]]:
-    '''
+    """
     convert e.g
     {'OuterKey1': {'InnerKey1': 'Value1'}, 'OuterKey2': {'InnerKey2': 'Value2'}}
     to
     [{'identifier': 'OuterKey1', 'InnerKey': 'Value1}, {'identifier': 'OuterKey2', 'InnerKey': 'Value2'}}]
-    '''
+    """
     out = []
     for k, v in x.items():
         if not isinstance(v, dict):
@@ -498,9 +498,9 @@ def _dict_dict_to_obj_list(x: Dict[str, Dict[str, Any]], identifier: str = 'iden
 
 
 def _get_first(variable: List[Any]) -> Any:
-    '''
+    """
     get first element from list, if the list has any; raise NoValueException otherwise
-    '''
+    """
     try:
         return variable[0]
     except IndexError:
@@ -508,9 +508,9 @@ def _get_first(variable: List[Any]) -> Any:
 
 
 def _get_first_fqdn(variable: List[str]) -> str:
-    '''
+    """
     get first valid FQDN from a list of strings
-    '''
+    """
     valid_fqdns = (hostname for hostname in variable if harmonization.FQDN.is_valid(hostname, sanitize=True))
     first = next(valid_fqdns, None)
     if first is None:

@@ -58,8 +58,8 @@ class TwitterParserBot(ParserBot):
             raise MissingDependencyError("url-normalize")
         url_version = pkg_resources.get_distribution("url-normalize").version
         if tuple(int(v) for v in url_version.split('.')) < (1, 4, 1) and self.default_scheme is not None:
-            raise ValueError("Parameter 'default_scheme' given but 'url-normalize' version %r does not support it. "
-                             "Get at least version '1.4.1'." % url_version)
+            raise ValueError(f"Parameter 'default_scheme' given but 'url-normalize' version {url_version} does not support it. "
+                             "Get at least version '1.4.1'.")
         if get_tld is None:
             raise MissingDependencyError("tld")
         try:

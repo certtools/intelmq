@@ -79,7 +79,7 @@ class AlienVaultOTXParserBot(ParserBot):
                     if indicator["type"] == 'URI':
                         event.add('source.urlpath', indicator["indicator"])
                     else:
-                        raise ValueError("Invalid value %r for URL hamonization type." % indicator["indicator"])
+                        raise ValueError(f'Invalid value {indicator["indicator"]} for URL hamonization type.')
             # CIDR
             elif indicator["type"] in ['CIDR']:
                 event.add('source.network', indicator["indicator"])

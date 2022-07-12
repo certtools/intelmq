@@ -71,15 +71,15 @@ class TestGenericDBLookupExpertBot(test.BotTestCase, unittest.TestCase):
                                    )
         cls.con.autocommit = True
         cls.cur = cls.con.cursor()
-        cls.cur.execute('''CREATE TABLE lookuptests
+        cls.cur.execute("""CREATE TABLE lookuptests
         ("asn" BIGSERIAL UNIQUE PRIMARY KEY,
         "contact" text,
         "note" text,
         "type" text
-        ) ''')
-        cls.cur.execute('''INSERT INTO lookuptests ("asn", "contact", "note") VALUES
+        ) """)
+        cls.cur.execute("""INSERT INTO lookuptests ("asn", "contact", "note") VALUES
         (64496, 'abuse@example.com', 'foo')
-        ''')
+        """)
 
     def test_lookup_found(self):
         self.input_message = INPUT1
@@ -94,9 +94,9 @@ class TestGenericDBLookupExpertBot(test.BotTestCase, unittest.TestCase):
     def test_multiple_search(self):
         self.sysconfig['match_fields'] = {"source.asn": "asn",
                                           "classification.type": "type"}
-        self.cur.execute('''INSERT INTO lookuptests ("asn", "contact", "note", "type") VALUES
+        self.cur.execute("""INSERT INTO lookuptests ("asn", "contact", "note", "type") VALUES
         (64497, 'abuse@example.com', 'bar', 'infected-system')
-        ''')
+        """)
         self.input_message = INPUT3
         self.run_bot()
         self.assertMessageEqual(0, OUTPUT3)

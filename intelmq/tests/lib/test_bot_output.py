@@ -24,6 +24,7 @@ INPUT = {"__type": "Event", "raw": "Cg==", "source.ip": "127.0.0.1"}
 RAW_HIERARCHICAL = {"raw": "Cg==", "source": {"ip": "127.0.0.1"}}
 NO_RAW_TYPE = {"__type": "Event", "source.ip": "127.0.0.1"}
 
+
 class DummyOutputBot(OutputBot):
 
     def process(self):

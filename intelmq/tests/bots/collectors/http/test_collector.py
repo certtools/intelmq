@@ -49,7 +49,7 @@ ASSET_PATH = os.path.join(os.path.dirname(__file__), '../../../assets/')
 def prepare_mocker(mocker):
     for filename in os.listdir(ASSET_PATH):
         with open(os.path.join(ASSET_PATH, filename), 'rb') as f:
-            mocker.get('http://localhost/%s' % filename, content=f.read())
+            mocker.get(f'http://localhost/{filename}', content=f.read())
 
 
 
@@ -80,7 +80,7 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
         """ Test formatting URLs. """
         self.input_message = None
         self.allowed_warning_count = 1  # message has empty raw
-        url = 'http://localhost/%s.txt' % datetime.datetime.now().year
+        url = f'http://localhost/{datetime.datetime.now().year}.txt'
         mocker.get(url, text='')
 
         self.run_bot(parameters={'http_url': 'http://localhost/{time[%Y]}.txt',
@@ -89,8 +89,7 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
                                  'http_url_formatting': True,
                                  },
                      iterations=1)
-        self.assertLogMatches('Downloading report from %r.' % url,
-                              'INFO')
+        self.assertLogMatches(f"Downloading report from '{url}'.", 'INFO')
 
     def test_gzip(self, mocker):
         """

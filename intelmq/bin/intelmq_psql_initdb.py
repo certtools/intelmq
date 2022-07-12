@@ -27,12 +27,12 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
     FIELDS = {}
 
     try:
-        print("INFO - Reading %s file" % harmonization_file)
+        print(f'INFO - Reading {harmonization_file} file')
         with open(harmonization_file) as fp:
             DATA = json.load(fp)['event']
     except OSError:
-        print("ERROR - Could not find %s" % harmonization_file)
-        print("ERROR - Make sure that you have intelmq installed.")
+        print(f'ERROR - Could not find {harmonization_file}')
+        print('ERROR - Make sure that you have intelmq installed.')
         sys.exit(2)
 
     for field in DATA.keys():
@@ -44,7 +44,7 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
                              'TLP', 'ClassificationTaxonomy',
                              ):
             if 'length' in value:
-                dbtype = 'varchar({})'.format(value['length'])
+                dbtype = f'varchar({value["length"]})'
             else:
                 dbtype = 'text'
         elif value['type'] in ('IPAddress', 'IPNetwork'):
@@ -62,7 +62,7 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
         elif value['type'] in ('JSON', 'JSONDict'):
             dbtype = 'json'
         else:
-            raise ValueError('Unknown type %r.' % value['type'])
+            raise ValueError(f'Unknown type {value["type"]}.')
 
         FIELDS[field] = dbtype
 
@@ -75,7 +75,7 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
     initdb += "\n);\n"
 
     for index in INDICES:
-        initdb += 'CREATE INDEX "idx_events_{0}" ON events USING btree ("{0}");\n'.format(index)
+        initdb += f'CREATE INDEX "idx_events_{index}" ON events USING btree ("{index}");\n'
     return initdb
 
 
@@ -91,7 +91,7 @@ def main():
         else:
             fp = open(OUTPUTFILE, 'wt')
         psql = generate()
-        print("INFO - Writing %s file" % OUTPUTFILE)
+        print(f'INFO - Writing {OUTPUTFILE} file')
         fp.write(psql)
     finally:
         if fp:

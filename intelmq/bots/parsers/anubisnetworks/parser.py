@@ -70,24 +70,24 @@ class AnubisNetworksParserBot(ParserBot):
                         event.add('destination.fqdn', subvalue,
                                   raise_failure=False)
                     elif subkey in ["request_method", "cookies", "path_info", "http_referer"]:
-                        event['extra.%s' % subkey] = subvalue
+                        event[f'extra.{subkey}'] = subvalue
                     else:
-                        raise ValueError("Unable to parse data field env.%r. Please report this as bug." % subkey)
+                        raise ValueError(f"Unable to parse data field env.{subkey}. Please report this as bug.")
             elif key == "src" or key == 'dst':
                 identity = 'source' if key == 'src' else 'destination'
                 for subkey, subvalue in value.items():
                     if subkey == "ip":
-                        event.add('%s.ip' % identity, subvalue)
+                        event.add(f'{identity}.ip', subvalue)
                     elif subkey == "port":
-                        event.add('%s.port' % identity, subvalue)
+                        event.add(f'{identity}.port', subvalue)
                     else:
-                        raise ValueError("Unable to parse data field env.%r. Please report this as bug." % subkey)
+                        raise ValueError(f"Unable to parse data field env.{subkey}. Please report this as bug.")
             elif key == "_geo_env_remote_addr":
                 for k, v in MAP_geo_env_remote_addr.items():
                     if k in value:
                         event[v] = value[k]
                 if "ip" in value and "netmask" in value:
-                    event.add('source.network', '{}/{}'.format(value["ip"], value["netmask"]))
+                    event.add('source.network', f'{value["ip"]}/{value["netmask"]}')
             elif key == 'qtype':
                 event['extra.dns_query_type'] = value
             elif key == 'app_proto':
@@ -109,9 +109,9 @@ class AnubisNetworksParserBot(ParserBot):
                     elif subkey == "categories":
                         event.add('extra.malware.categories', subvalue)
                     elif subkey in ["request_method", "cookies", "path_info", "http_referer"]:
-                        event['extra.%s' % subkey] = subvalue
+                        event[f'extra.{subkey}'] = subvalue
                     else:
-                        raise ValueError("Unable to parse data field malw.%r. Please report this as bug." % subkey)
+                        raise ValueError(f"Unable to parse data field malw.{subkey}. Please report this as bug.")
             elif key == 'comm':
                 for subkey, subvalue in value.items():
                     if subkey == "proto":
@@ -136,9 +136,9 @@ class AnubisNetworksParserBot(ParserBot):
                             elif subsubkey == 'more_headers':
                                 event.add('extra.communication.headers', subsubvalue)
                             elif subsubkey in ('cookies', 'unverified_domain', 'x_forwarded_for'):
-                                event.add('extra.communication.%s' % subsubkey, subsubvalue)
+                                event.add(f'extra.communication.{subsubkey}', subsubvalue)
                             else:
-                                raise ValueError("Unable to parse data field comm.http.%r. Please report this as bug." % subsubkey)
+                                raise ValueError(f"Unable to parse data field comm.http.{subsubkey}. Please report this as bug.")
                         try:
                             event.add('destination.url',
                                       f"{value['proto']}://{subvalue['host']}{subvalue['path']}")
@@ -151,13 +151,13 @@ class AnubisNetworksParserBot(ParserBot):
                             elif subsubkey == 'qtype':
                                 event['extra.dns_query_type'] = subsubvalue
                             else:
-                                raise ValueError("Unable to parse data field comm.dns.%r. Please report this as bug." % subsubkey)
+                                raise ValueError(f"Unable to parse data field comm.dns.{subsubkey}. Please report this as bug.")
                     elif subkey == "categories":
                         event.add('extra.malware.categories', subvalue)
                     elif subkey in ["request_method", "cookies", "path_info", "http_referer"]:
-                        event['extra.%s' % subkey] = subvalue
+                        event[f'extra.{subkey}'] = subvalue
                     else:
-                        raise ValueError("Unable to parse data field comm.%r. Please report this as bug." % subkey)
+                        raise ValueError(f"Unable to parse data field comm.{subkey}. Please report this as bug.")
             elif key == 'tracking':
                 for subkey, subvalue in value.items():
                     if subkey == "id":
@@ -179,31 +179,29 @@ class AnubisNetworksParserBot(ParserBot):
                     elif subkey == 'tr':
                         event.add('extra.tracking.tr', subvalue)
                     else:
-                        raise ValueError("Unable to parse data field tracking.%r. Please report this as bug." % subkey)
+                        raise ValueError(f"Unable to parse data field tracking.{subkey}. Please report this as bug.")
             elif key == '_geo_src_ip':
                 event  = self.parse_geo(event, value, 'source', raw_report, key)
             elif key == '_geo_tracking_last_ip':
                 event = self.parse_geo(event, value, 'tracking.last', raw_report, key)
                 if value["path"] != 'tracking.last_ip':
-                    raise ValueError('_geo_tracking_last_ip.path is not \'tracking.last_ip\' (%r).'
-                                     ''  % subvalue)
+                    raise ValueError(f"_geo_tracking_last_ip.path is not 'tracking.last_ip' ({subvalue}).")
             elif key == '_geo_comm_http_host':
                 event = self.parse_geo(event, value, 'communication.http.host', raw_report, key)
                 if value["path"] != 'comm.http.host':
-                    raise ValueError('_geo_tracking_last_ip.path is not \'comm.http.host\' (%r).'
-                                     ''  % subvalue)
+                    raise ValueError(f"_geo_tracking_last_ip.path is not 'comm.http.host' ({subvalue}).")
             elif key.startswith('_geo_comm_http_x_forwarded_for_'):
                 key = key.replace('#', '')
                 event = self.parse_geo(event, value,
-                                       'communication.http.%s' % key[15:],
+                                       f'communication.http.{key[15:]}',
                                        raw_report, '_geo_comm_http_x_forwarded_for_')
             elif key in ["_origin", "_provider", "pattern_verified"]:
-                event['extra.%s' % key] = value
+                event[f'extra.{key}'] = value
             elif key == "metadata":
                 for subkey, subvalue in value.items():
-                    event['extra.metadata.%s' % subkey] = subvalue
+                    event[f'extra.metadata.{subkey}'] = subvalue
             else:
-                raise ValueError("Unable to parse data field %r. Please report this as bug." % key)
+                raise ValueError(f"Unable to parse data field {key}. Please report this as bug.")
 
         if event.get("malware.name", None) != 'testsinkholingloss':
             # used for internal tests, should actually not be part of the feed
@@ -216,35 +214,29 @@ class AnubisNetworksParserBot(ParserBot):
             if subkey in ("ip", 'path'):
                 pass
             elif subkey == "netmask":
-                event = self.event_add_fallback(event,
-                                                '%s.network' % namespace,
-                                                '{}/{}'.format(value['ip'], subvalue))
+                event = self.event_add_fallback(event, f'{namespace}.network', f'{value["ip"]}/{subvalue}')
             elif subkey == 'country_code':
-                event = self.event_add_fallback(event,
-                                                '%s.geolocation.cc' % namespace,
-                                                subvalue)
+                event = self.event_add_fallback(event, f'{namespace}.geolocation.cc', subvalue)
             elif subkey == 'country_name':
-                event = self.event_add_fallback(event,
-                                                '%s.geolocation.country' % namespace,
-                                                subvalue)
+                event = self.event_add_fallback(event, f'{namespace}.geolocation.country', subvalue)
             elif subkey in ('region_code', 'postal_code', "region", "city",
                             "latitude", "longitude", "dma_code", "area_code",
                             "metro_code"):
                 event = self.event_add_fallback(event, f'{namespace}.geolocation.{subkey}', subvalue)
             elif subkey == 'asn':
-                event = self.event_add_fallback(event, '%s.asn' % namespace, subvalue)
+                event = self.event_add_fallback(event, f'{namespace}.asn', subvalue)
             elif subkey == 'asn_name':
-                event = self.event_add_fallback(event, '%s.as_name' % namespace, subvalue)
+                event = self.event_add_fallback(event, f'{namespace}.as_name', subvalue)
             else:
-                raise ValueError("Unable to parse data field '%s.%s'. "
-                                 "Please report this as bug." % (orig_name, subkey))
+                raise ValueError(f"Unable to parse data field '{orig_name}.{subkey}'. "
+                                 "Please report this as bug.")
         return event
 
     def event_add_fallback(self, event, key, value):
         try:
             event[key] = value
         except KeyError:
-            event['extra.%s' % key] = value
+            event[f'extra.{key}'] = value
         return event
 
 

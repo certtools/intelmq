@@ -62,17 +62,17 @@ class FireeyeMASCollectorBot(CollectorBot, HttpMixin):
 
         # create auth token
         self.session = self.http_session()
-        self.custom_auth_url = f"https://{self.host}/wsapis/v2.0.0/auth/login"
+        self.custom_auth_url = f'https://{self.host}/wsapis/v2.0.0/auth/login'
 
     def process(self):
         # get token for request
         resp = self.session.post(url=self.custom_auth_url, headers=self.http_header)
         if not resp.ok:
-            raise ValueError('Could not connect to appliance check User/PW. HTTP response status code was %i.' % resp.status_code)
+            raise ValueError(f'Could not connect to appliance check User/PW. HTTP response status code was {resp.status_code}.')
         # extract token and build auth header
         token = resp.headers['X-FeApi-Token']
         http_header = {'X-FeApi-Token': token, 'Accept': 'application/json'}
-        http_url = f"https://{self.host}/wsapis/v2.0.0/alerts?duration={self.request_duration}"
+        http_url = f'https://{self.host}/wsapis/v2.0.0/alerts?duration={self.request_duration}'
         self.logger.debug("Downloading report from %r.", http_url)
         resp = self.session.get(url=http_url, headers=http_header)
         self.logger.debug("Report downloaded.")

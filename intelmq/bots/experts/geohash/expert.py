@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-'''
+"""
 Uses
 https://pypi.org/project/geolib/
 https://github.com/joyanujoy/geolib
-'''
+"""
 from intelmq.lib.bot import ExpertBot
 
 try:

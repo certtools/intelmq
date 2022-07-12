@@ -229,7 +229,7 @@ class MicrosoftCTIPParserBot(ParserBot):
     def parse_interflow(self, line: dict, report):
         raw = self.recover_line(line)
         if line['indicatorthreattype'] != 'Botnet':
-            raise ValueError('Unknown indicatorthreattype %r, only Botnet is supported.' % line['indicatorthreattype'])
+            raise ValueError(f'Unknown indicatorthreattype {line["indicatorthreattype"]}, only Botnet is supported.')
         if 'additionalmetadata' in line and line['additionalmetadata'] in [[], [''], ['null'], [None]]:
             del line['additionalmetadata']
         event = self.new_event(report)

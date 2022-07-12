@@ -31,7 +31,7 @@ botfiles = [botfile for botfile in Path(base_path).glob('**/*.py') if botfile.is
 for file in botfiles:
     file = Path(str(file).replace(str(base_path), 'intelmq/bots'))
     module = '.'.join(file.with_suffix('').parts)
-    BOTS.append('{0} = {0}:BOT.run'.format(module))
+    BOTS.append(f'{module} = {module}:BOT.run')
 
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as handle:
     README = handle.read()

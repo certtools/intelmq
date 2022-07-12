@@ -141,7 +141,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.IPAddress.is_valid(ipaddress.ip_address('192.0.2.1'),
                                                          sanitize=True))
         self.assertTrue(harmonization.IPAddress.is_valid('fe80::1c41:b16d:ff5e:689d%bnep0',
-                                                          sanitize=True))
+                                                         sanitize=True))
         self.assertEqual(harmonization.IPAddress.sanitize('2130706433'),
                          '127.0.0.1')
         self.assertEqual(harmonization.IPAddress.sanitize(2130706433),
@@ -212,11 +212,11 @@ class TestHarmonization(unittest.TestCase):
                          harmonization.DateTime.from_epoch_millis("1441008970"))
         self.assertEqual('2015-08-31T07:16:10-01:00',
                          harmonization.DateTime.from_epoch_millis(144100897000,
-                                                                 'Etc/GMT+1'))
+                                                                  'Etc/GMT+1'))
         self.assertEqual('2015-08-31T04:16:10-04:00',
                          harmonization.DateTime.from_epoch_millis(1441008970000,
-                                                                     'America/'
-                                                                     'Guyana'))
+                                                                  'America/'
+                                                                  'Guyana'))
 
     def test_datetime_from_timestamp(self):
         """ Test DateTime.from_timestamp method. """
@@ -239,10 +239,10 @@ class TestHarmonization(unittest.TestCase):
         """ Test DateTime.sanitize method. """
         self.assertEqual('2016-07-19T04:40:01.617719+00:00',
                          harmonization.DateTime.sanitize(
-                         '2016-07-19 06:40:01.617719+02:00 UTC'))
+                             '2016-07-19 06:40:01.617719+02:00 UTC'))
         self.assertEqual('2016-07-19T13:08:38+00:00',
                          harmonization.DateTime.sanitize(
-                         '2016-07-19 13:08:38 UTC'))
+                             '2016-07-19 13:08:38 UTC'))
 
     def test_datetime_from_timestamp_invalid(self):
         """ Test DateTime.from_timestamp method with invalid inputs. """
@@ -253,7 +253,7 @@ class TestHarmonization(unittest.TestCase):
     def test_datetime_convert(self):
         self.assertEqual('2019-07-01T15:15:15+00:00',
                          harmonization.DateTime.convert('15 15 15 07 01 2019',
-                                               format='from_format|%M %H %S %m %d %Y'))
+                                                        format='from_format|%M %H %S %m %d %Y'))
         self.assertEqual('2019-07-01T00:00:00+00:00',
                          harmonization.DateTime.convert('07-01-2019',
                                                         'from_format_midnight|%m-%d-%Y'))
@@ -277,7 +277,6 @@ class TestHarmonization(unittest.TestCase):
                          harmonization.DateTime.convert_fuzzy('2020-12-31T12:00:00+00:00'))
         self.assertEqual('2020-12-31T12:00:00+00:00',
                          harmonization.DateTime.convert_fuzzy('31st December 2020 12:00'))
-
 
     def test_fqdn_valid(self):
         """ Test FQDN.is_valid with valid arguments. """
@@ -511,9 +510,9 @@ class TestHarmonization(unittest.TestCase):
     def test_classification_type_sanitize(self):
         """ Test ClassificationType.sanitize with valid arguments. """
         self.assertTrue(harmonization.ClassificationType.is_valid('Infected-system',
-                                                   sanitize=True))
+                                                                  sanitize=True))
         self.assertTrue(harmonization.ClassificationType.is_valid('infected system ',
-                                                   sanitize=True))
+                                                                  sanitize=True))
         self.assertEqual(harmonization.ClassificationType.sanitize('dga domain'),
                          'dga-domain')
         self.assertEqual(harmonization.ClassificationType.sanitize('unauthorized-command'),
@@ -547,15 +546,16 @@ class TestHarmonization(unittest.TestCase):
 
 def generate_nonetest_function(typeclassname):
     typeclass = getattr(harmonization, typeclassname)
+
     def test_type_none(self):
-        """ Test if None raises no error for type %s. """ % typeclass
+        f""" Test if None raises no error for type {typeclass}. """
         typeclass.is_valid(None, sanitize=False)
         typeclass.is_valid(None, sanitize=True)
     return test_type_none
 
 
 for typeclassname in harmonization.__all__:
-    setattr(TestHarmonization, 'test_%s_none' % typeclassname, generate_nonetest_function(typeclassname))
+    setattr(TestHarmonization, f'test_{typeclassname}_none', generate_nonetest_function(typeclassname))
 
 
 if __name__ == '__main__':  # pragma: no cover

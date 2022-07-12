@@ -67,7 +67,7 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
         self.connect_server()
 
     def process(self):
-        ''' Stop the Bot if cannot connect to AMQP Server after the defined connection attempts '''
+        """ Stop the Bot if cannot connect to AMQP Server after the defined connection attempts """
 
         # self.connection and self.channel can be None
         if getattr(self.connection, 'is_closed', None) or getattr(self.channel, 'is_closed', None):

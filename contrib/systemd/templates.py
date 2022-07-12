@@ -8,7 +8,7 @@ from string import Template
 __all__ = ['TIMER_TEMPLATE', 'SERVICE_TEMPLATE', 'POST_DOCS']
 
 
-SERVICE_TEMPLATE = Template('''[Unit]
+SERVICE_TEMPLATE = Template("""[Unit]
 Description=IntelMQ bot $bot Service Unit
 After=network.target
 RefuseManualStart=no
@@ -23,10 +23,10 @@ Group=$INTELMQ_GROUP
 
 [Install]
 WantedBy=multi-user.target
-''')
+""")
 
 
-TIMER_TEMPLATE = Template('''[Unit]
+TIMER_TEMPLATE = Template("""[Unit]
 Description=IntelMQ bot $bot Timer Unit
 After=network.target
 RefuseManualStart=no
@@ -42,10 +42,10 @@ Unit=$bot_service_name
 
 [Install]
 WantedBy=multi-user.target
-''')
+""")
 
 
-POST_DOCS = '''
+POST_DOCS = """
 TO INSTALL
 ==========
 cd /opt/intelmq/etc/systemd
@@ -78,4 +78,4 @@ ON DEBIAN8 GET SYSTEMD-230
 echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list.d/debian-backports.list
 apt-get update
 apt-get -t jessie-backports install systemd
-'''
+"""

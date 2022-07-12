@@ -45,8 +45,7 @@ class FilesOutputBot(OutputBot):
     def _get_new_name(self, fd=None):
         """ Creates unique filename (Maildir inspired) """
         (inode, device) = os.fstat(fd)[1:3] if fd else (0, 0)
-        return "%s.%d.%f.%d.%d%s" % (
-            self.hostname, self.pid, time.time(), device, inode, self.suffix)
+        return f"{self.hostname}.{self.pid}.{time.time()}.{device}.{inode}{self.suffix}"
 
     def create_unique_file(self):
         """ Safely creates machine-wide uniquely named file in tmp dir. """

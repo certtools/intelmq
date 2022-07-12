@@ -62,8 +62,7 @@ class RestAPIOutputBot(OutputBot):
                 timeoutretries += 1
 
         if req is None and timeoutretries >= self.http_timeout_max_tries:
-            raise ValueError("Request timed out %i times in a row."
-                             "" % timeoutretries)
+            raise ValueError(f"Request timed out {timeoutretries} times in a row.")
 
         if not req.ok:
             self.logger.debug("Error during message sending, response body: %r.",

@@ -41,7 +41,7 @@ class StompOutputBot(OutputBot):
         # check if certificates exist
         for f in [self.ssl_ca_cert, self.ssl_cl_cert, self.ssl_cl_cert_key]:
             if not os.path.isfile(f):
-                raise ValueError("Could not open SSL (certificate) file '%s'." % f)
+                raise ValueError(f"Could not open SSL (certificate) file '{f}'.")
 
         _host = [(self.server, self.port)]
         self._conn = stomp.Connection(host_and_ports=_host, use_ssl=True,

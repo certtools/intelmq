@@ -28,7 +28,7 @@ class UDPOutputBot(OutputBot):
         self.udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.format = self.format.lower()
         if self.format not in ['json', 'delimited']:
-            raise ValueError('Unknown format %r given. Check your configuration.' % self.format)
+            raise ValueError(f'Unknown format {self.format!r} given. Check your configuration.')
 
     def process(self):
         event = self.receive_message()

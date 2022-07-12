@@ -34,13 +34,9 @@ def eventdb_apply(host, port,
                             host=host, port=port)
     con2.autocommit = True
     cur2 = con2.cursor(cursor_factory=DictCursor)
-    cur1.execute('''
-                 SELECT id, "source.fqdn", "destination.fqdn"
-                 FROM {table}
-                 WHERE
-                 ("source.fqdn" IS NOT NULL OR "destination.fqdn" IS NOT NULL)
-                 {where}
-                 '''.format(table=table, where=where))
+    cur1.execute(f'SELECT id, "source.fqdn", "destination.fqdn" \
+                    FROM {table} \
+                    WHERE ("source.fqdn" IS NOT NULL OR "destination.fqdn" IS NOT NULL) {where}')
 
     psl = PublicSuffixList(only_icann=True)
 
@@ -48,12 +44,12 @@ def eventdb_apply(host, port,
     for row in cur1:
         counter += 1
         if row['source.fqdn']:
-            cur2.execute('update events set "source.domain_suffix" = %s where id = %s', (psl.publicsuffix(row['source.fqdn'].encode('idna').decode()), row['id']))
+            cur2.execute(f'UPDATE events SET "source.domain_suffix" = {psl.publicsuffix(row["source.fqdn"].encode("idna").decode())} WHERE id = {row["id"]}')
 
         if row['destination.fqdn']:
-            cur2.execute('update events set "destination.domain_suffix" = %s where id = %s', (psl.publicsuffix(row['destination.fqdn'].encode('idna').decode()), row['id']))
+            cur2.execute(f'UPDATE events SET "destination.domain_suffix" = {psl.publicsuffix(row["destination.fqdn"].encode("idna").decode())} WHERE id = {row["id"]}')
     con2.commit()
-    print("Changed %d rows" % counter)
+    print(f'Changed {counter} rows')
 
 
 def main():

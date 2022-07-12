@@ -54,8 +54,7 @@ class ShadowserverJSONParserBot(ParserBot):
         retval = config.get_feed_by_filename(report_name)
 
         if not retval:
-            raise ValueError('Could not get a config for {!r}, check the documentation.'
-                             ''.format(report_name))
+            raise ValueError(f'Could not get a config for {report_name!r}, check the documentation.')
         self.feedname, self._sparser_config = retval
 
         return self.parse_json(report)

@@ -54,7 +54,7 @@ class Malc0deParserBot(ParserBot):
                 event.add('event_description.url', 'http://malc0de.com/database/index.php?search=' + value)
 
             else:
-                raise ValueError('Unknown data feed %s.' % report['feed.url'])
+                raise ValueError(f'Unknown data feed {report["feed.url"]}.')
 
             yield event
 

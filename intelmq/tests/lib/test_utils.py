@@ -174,10 +174,10 @@ class TestUtils(unittest.TestCase):
 
     def test_parse_logline_invalid(self):
         """Tests if the parse_logline() function returns the line. """
-        line = ("    report = self.receive_message()\n  File"
-                " \"/usr/local/lib/python3.4/dist-packages/intelmq-1.0.0"
-                "-py3.4.egg/intelmq/lib/bot.py\", line 259, in"
-                " receive_message")
+        line = (f'    report = self.receive_message()\n  File'
+                f' "/usr/local/lib/python3.4/dist-packages/intelmq-1.0.0'
+                f'-py3.4.egg/intelmq/lib/bot.py", line 259, in'
+                f' receive_message')
 
         actual = utils.parse_logline(line)
         self.assertEqual(line, actual)
@@ -191,13 +191,13 @@ class TestUtils(unittest.TestCase):
 
         actual = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
         self.assertEqual({'bot_id': 'malware-domain-list-collector',
-                          'date': '%d-02-22T10:17:10' % datetime.datetime.now().year,
+                          'date': f'{datetime.datetime.now().year}-02-22T10:17:10',
                           'thread_id': None,
                           'log_level': 'ERROR',
                           'message': 'Something went wrong'}, actual)
         actual = utils.parse_logline(thread, regex=utils.SYSLOG_REGEX)
         self.assertEqual({'bot_id': 'malware-domain-list-collector',
-                          'date': '%d-02-22T10:17:10' % datetime.datetime.now().year,
+                          'date': f'{datetime.datetime.now().year}-02-22T10:17:10',
                           'thread_id': 4,
                           'log_level': 'ERROR',
                           'message': 'Something went wrong'}, actual)
@@ -299,7 +299,7 @@ class TestUtils(unittest.TestCase):
         v = cerberus.Validator(schema)
 
         self.assertTrue(v.validate(bots_list),
-                        msg='Invalid BOTS list:\n%s' % pprint.pformat(v.errors))
+                        msg=f'Invalid BOTS list:\n{pprint.pformat(v.errors)}')
 
     def test_get_bots_settings(self):
         with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
@@ -334,16 +334,14 @@ class TestUtils(unittest.TestCase):
     def test_load_configuration_yaml(self):
         """ Test load_configuration with a YAML file """
         filename = os.path.join(os.path.dirname(__file__), '../assets/example.yaml')
-        self.assertEqual(utils.load_configuration(filename),
-                         {
-                            'some_string': 'Hello World!',
-                            'other_string': 'with a : in it',
-                            'now more': ['values', 'in', 'a', 'list'],
-                            'types': -4,
-                            'other': True,
-                            'final': 0.5,
-                        }
-                        )
+        self.assertEqual(utils.load_configuration(filename), {
+                         'some_string': 'Hello World!',
+                         'other_string': 'with a : in it',
+                         'now more': ['values', 'in', 'a', 'list'],
+                         'types': -4,
+                         'other': True,
+                         'final': 0.5,
+                         })
 
     def test_load_configuration_yaml_invalid(self):
         """ Test load_configuration with an invalid YAML file """

@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-'''
+"""
     IntelMQ Exception Class
-'''
+"""
 from typing import Any, Optional, Union
 
 __all__ = ['InvalidArgument', 'ConfigurationError', 'IntelMQException',
@@ -21,9 +21,9 @@ class IntelMQException(Exception):
         super().__init__(message)
 
 
-'''
+"""
     IntelMQ Exception SubClasses
-'''
+"""
 
 
 class InvalidArgument(IntelMQException):
@@ -45,7 +45,7 @@ class InvalidArgument(IntelMQException):
 class PipelineError(IntelMQException):
 
     def __init__(self, argument: Union[str, Exception]):
-        message = "pipeline failed - %s" % repr(argument)
+        message = f"pipeline failed - {repr(argument)}"
         super().__init__(message)
 
 
@@ -60,9 +60,9 @@ class PipelineFactoryError(IntelMQException):
     pass
 
 
-'''
+"""
     IntelMQ Harmonization Exception Class
-'''
+"""
 
 
 class IntelMQHarmonizationException(IntelMQException):
@@ -71,17 +71,15 @@ class IntelMQHarmonizationException(IntelMQException):
         super().__init__(message)
 
 
-'''
+"""
     IntelMQ Harmonization Exception sub classes
-'''
+"""
 
 
 class InvalidValue(IntelMQHarmonizationException):
 
     def __init__(self, key: str, value: str, reason: Any = None, object: bytes = None):
-        message = ("invalid value {value!r} ({type}) for key {key!r}{reason}"
-                   "".format(value=value, type=type(value), key=key,
-                             reason=': ' + reason if reason else ''))
+        message = (f"invalid value {value!r} ({type(value)}) for key {key!r}{': ' + reason if reason else ''}")
         self.object = object
         super().__init__(message)
 
@@ -89,21 +87,21 @@ class InvalidValue(IntelMQHarmonizationException):
 class InvalidKey(IntelMQHarmonizationException, KeyError):
 
     def __init__(self, key: str):
-        message = "invalid key %s" % repr(key)
+        message = f"invalid key {repr(key)}"
         super().__init__(message)
 
 
 class KeyExists(IntelMQHarmonizationException):
 
     def __init__(self, key: str):
-        message = "key %s already exists" % repr(key)
+        message = f"key {repr(key)} already exists"
         super().__init__(message)
 
 
 class KeyNotExists(IntelMQHarmonizationException):
 
     def __init__(self, key: str):
-        message = "key %s not exists" % repr(key)
+        message = f"key {repr(key)} not exists"
         super().__init__(message)
 
 
@@ -129,23 +127,16 @@ class MissingDependencyError(IntelMQException):
         appendix = ""
         if version:
             higher = " or higher" if not any(x in version for x in '<>=') else ""
-            appendix = (" Please note that this bot requires "
-                        "{dependency} version {version}{higher}!"
-                        "".format(dependency=dependency,
-                                  version=version,
-                                  higher=higher))
+            appendix = (f" Please note that this bot requires {dependency} version {version}{higher}!")
             if installed:
                 if isinstance(installed, tuple):
                     installed = ".".join(map(str, installed))
-                appendix = appendix + (" Installed is version {installed!r}."
-                                       "".format(installed=installed))
+                appendix = appendix + (f" Installed is version {installed!r}.")
         if additional_text:
             appendix = f"{appendix} {additional_text}"
-        message = ("Could not load dependency {dependency!r}, please install it "
+        message = (f"Could not load dependency {dependency!r}, please install it "
                    "with apt/yum/dnf/zypper (possibly named "
-                   "python3-{dependency}) or pip3.{appendix}"
-                   "".format(dependency=dependency,
-                             appendix=appendix))
+                   f"python3-{dependency}) or pip3.{appendix}")
         super().__init__(message)
 
 
@@ -159,11 +150,9 @@ class DecodingError(IntelMQException, ValueError):
         self.object = object
         suffixes = []
         if encodings:
-            suffixes.append("with given encodings %r" % encodings)
+            suffixes.append(f"with given encodings {encodings}")
         if exception:
-            suffixes.append('at position %s with length %d (%r)'
-                            '' % (exception.start, exception.end,
-                                  exception.object[exception.start:exception.end]))
-            suffixes.append('with reason %r' % exception.reason)
+            suffixes.append(f'at position {exception.start} with length {exception.end} ({exception.object[exception.start:exception.end]})')
+            suffixes.append(f'with reason {exception.reason}')
         suffix = (' ' + ' '.join(suffixes)) if suffixes else ''
-        super().__init__("Could not decode string%s." % suffix)
+        super().__init__(f"Could not decode string{suffix}.")

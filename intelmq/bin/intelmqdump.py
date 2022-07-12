@@ -71,9 +71,9 @@ Interactive actions after a file has been selected:
 - q, Quit
   > q
 """
-USAGE = '''
+USAGE = """
     intelmqdump [botid]
-    intelmqdump [-h|--help]'''
+    intelmqdump [-h|--help]"""
 # shortcut: description, takes ids, available for corrupted files
 ACTIONS = {'r': ('(r)ecover by ids', True, False),
            'a': ('recover (a)ll', False, False),
@@ -107,9 +107,9 @@ def dump_info(fname, file_descriptor=None):
                 info = red(f'unable to load JSON: {exc!s}')
             else:
                 try:
-                    info = f"{len(content.keys())!s} dumps"
+                    info = f'{len(content.keys())!s} dumps'
                 except AttributeError as exc:
-                    info = red(f"unable to count dumps: {exc!s}")
+                    info = red(f'unable to count dumps: {exc!s}')
         finally:
             try:
                 if file_descriptor is None:
@@ -211,7 +211,7 @@ def main():
     runtime_config = utils.load_configuration(RUNTIME_CONF_FILE)
     pipeline_pipes = {}
     for bot, parameters in runtime_config.items():
-        pipeline_pipes[parameters.get('source_queue', f"{bot}-queue")] = bot
+        pipeline_pipes[parameters.get('source_queue', f'{bot}-queue')] = bot
 
     if args.botid is None:
         filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
@@ -287,7 +287,7 @@ def main():
                 bot_status = ctl.bot_status(botid)
                 if bot_status[1] == 'running':
                     print(red('This bot is currently running, the dump file is now locked and '
-                              'the bot can\'t write it.'))
+                              "the bot can't write it."))
             except KeyError:
                 bot_status = 'error'
                 print(red('Attention: This bot is not defined!'))
@@ -358,8 +358,7 @@ def main():
                             pipe.connect()
                             pipe.send(msg)
                         except exceptions.PipelineError:
-                            print(red('Could not reinject into queue {}: {}'
-                                      ''.format(queue_name, traceback.format_exc())))
+                            print(red(f'Could not reinject into queue {queue_name}: {traceback.format_exc()}'))
                         else:
                             del content[key]
                             print(green(f'Recovered dump {i}.'))
@@ -415,7 +414,7 @@ def main():
                             tmphandle.flush()
                             proc = subprocess.run(['sensible-editor', filename])
                             if proc.returncode != 0:
-                                print(red('Calling editor failed with exitcode %r.' % proc.returncode))
+                                print(red(f'Calling editor failed with exitcode {proc.returncode}.'))
                             else:
                                 tmphandle.seek(0)
                                 new_content = tmphandle.read()
@@ -437,7 +436,7 @@ def main():
                                                       backup=False, useyaml=False)
                             proc = subprocess.run(['sensible-editor', filename])
                             if proc.returncode != 0:
-                                print(red('Calling editor failed with exitcode %r.' % proc.returncode))
+                                print(red(f'Calling editor failed with exitcode {proc.returncode}.'))
                             else:
                                 tmphandle.seek(0)
                                 content[meta[entry][0]]['message'] = tmphandle.read()

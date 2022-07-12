@@ -135,12 +135,9 @@ class Bot:
         try:
             version_info = sys.version.splitlines()[0].strip()
             self.__log_buffer.append(('info',
-                                      '{bot} initialized with id {id} and intelmq {intelmq}'
-                                      ' and python {python} as process {pid}.'
-                                      ''.format(bot=self.__class__.__name__,
-                                                id=bot_id, python=version_info,
-                                                pid=os.getpid(), intelmq=__version__)))
-            self.__log_buffer.append(('debug', 'Library path: %r.' % __file__))
+                                      f'{self.__class__.__name__} initialized with id {bot_id} and intelmq {__version__}'
+                                      f' and python {version_info} as process {os.getpid()}.'))
+            self.__log_buffer.append(('debug', f'Library path: {__file__}.'))
             if not utils.drop_privileges():
                 raise ValueError('IntelMQ must not run as root. Dropping privileges did not work.')
 
@@ -182,7 +179,7 @@ class Bot:
 
                 for i in range(num_instances):
                     sighup_events.append(threading.Event())
-                    threadname = '%s.%d' % (bot_id, i)
+                    threadname = f'{bot_id}.{i}'
                     instances.append(threading.Thread(target=self.__class__,
                                                       kwargs={'bot_id': threadname,
                                                               'start': True,
@@ -350,7 +347,7 @@ class Bot:
             except Exception as exc:
                 # in case of serious system issues, exit immediately
                 if isinstance(exc, MemoryError):
-                    self.logger.exception('Out of memory. Exit immediately. Reason: %r.' % exc.args[0])
+                    self.logger.exception(f'Out of memory. Exit immediately. Reason: {exc.args[0]}.')
                     self.stop()
                 elif isinstance(exc, (IOError, OSError)) and exc.errno == 28:
                     self.logger.exception('Out of disk space. Exit immediately.')
@@ -498,8 +495,7 @@ class Bot:
 
         while remaining > 0:
             if log:
-                self.logger.info("Idling for {:.1f}s ({}) now.".format(remaining,
-                                                                       utils.seconds_to_human(remaining)))
+                self.logger.info(f"Idling for {remaining:.1f}s ({utils.seconds_to_human(remaining)}) now.")
             time.sleep(remaining)
             self.__handle_sighup()
             remaining = self.rate_limit - (time.time() - starttime)
@@ -517,12 +513,9 @@ class Bot:
 
         if self.__message_counter["since"]:
             if self.logger:
-                self.logger.info("%s %d messages since last logging.",
-                                 self._message_processed_verb,
-                                 self.__message_counter["since"])
+                self.logger.info(f'{self._message_processed_verb} {self.__message_counter["since"]} messages since last logging.')
             else:
-                print("%s %d messages since last logging." % (self._message_processed_verb,
-                                                              self.__message_counter["since"]))
+                print(f'{self._message_processed_verb} {self.__message_counter["since"]} messages since last logging.')
 
         self.__stats(force=True)
         self.__disconnect_pipelines()
@@ -621,9 +614,7 @@ class Bot:
                 self.__message_counter["start"] = datetime.now()
             if self.__message_counter["since"] % self.log_processed_messages_count == 0 or \
                     datetime.now() - self.__message_counter["start"] > self.__log_processed_messages_seconds:
-                self.logger.info("%s %d messages since last logging.",
-                                 self._message_processed_verb,
-                                 self.__message_counter["since"])
+                self.logger.info(f'{self._message_processed_verb} {self.__message_counter["since"]} messages since last logging.')
                 self.__message_counter["since"] = 0
                 self.__message_counter["start"] = datetime.now()
 
@@ -822,8 +813,7 @@ class Bot:
         if "password" in option or "token" in option:
             value = "HIDDEN"
 
-        message = "{} configuration: parameter {!r} loaded with value {!r}." \
-            .format(config_name.title(), option, value)
+        message = f"{config_name.title()} configuration: parameter {option!r} loaded with value {value!r}."
 
         if self.logger:
             self.logger.debug(message)
@@ -946,8 +936,8 @@ class ParserBot(Bot):
                  disable_multithreading: bool = None):
         super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'ParserBot':
-            self.logger.error('ParserBot can\'t be started itself. '
-                              'Possible Misconfiguration.')
+            self.logger.error("ParserBot can't be started itself. "
+                              "Possible Misconfiguration.")
             self.stop()
         self.group = 'Parser'
 
@@ -1196,8 +1186,8 @@ class CollectorBot(Bot):
                  disable_multithreading: bool = None):
         super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'CollectorBot':
-            self.logger.error('CollectorBot can\'t be started itself. '
-                              'Possible Misconfiguration.')
+            self.logger.error("CollectorBot can't be started itself. "
+                              "Possible Misconfiguration.")
             self.stop()
         self.group = 'Collector'
 
@@ -1267,8 +1257,8 @@ class OutputBot(Bot):
                  disable_multithreading: bool = None):
         super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'OutputBot':
-            self.logger.error('OutputBot can\'t be started itself. '
-                              'Possible Misconfiguration.')
+            self.logger.error("OutputBot can't be started itself. "
+                              "Possible Misconfiguration.")
             self.stop()
         self.group = 'Output'
 

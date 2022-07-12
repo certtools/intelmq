@@ -39,7 +39,7 @@ INPUT2 = {'feed.name': 'Example feed 2',
           'feed.accuracy': 100.0,
           'feed.url': 'http://localhost/two_files.tar.gz',
           'raw': utils.base64_encode('foo text\n')}
-ORIGINAL_DATA = ('some random input{}another line').format(SEPARATOR)
+ORIGINAL_DATA = (f'some random input{SEPARATOR}another line')
 
 
 class Client:
@@ -163,7 +163,6 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
         for _ in range(client_count):
             bot = TestTCPOutputBot()
             bot.setUpClass()
-            # bot.bot_id = "test-client-{}".format(_)
             bot.input_message = []
             for i in range(msg_count):
                 bot.input_message.append(Event(INPUT1, harmonization=self.harmonization))

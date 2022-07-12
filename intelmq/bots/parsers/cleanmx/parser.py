@@ -144,7 +144,7 @@ class CleanMXParserBot(ParserBot):
                     except TypeError as e:
                         self.logger.warning(
                             'No valid "first" field epoch time found, skipping '
-                            'timestamp. Got {} {}'.format(value, e))
+                            f'timestamp. Got {value} {e}')
                         continue
 
                 if key == "source.asn":

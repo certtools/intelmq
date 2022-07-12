@@ -111,8 +111,8 @@ class RecordedFutureIPRiskExpertBot(ExpertBot):
             sys.exit("Database update failed. Your API token is invalid.")
 
         if response.status_code != 200:
-            sys.exit("Database update failed. Server responded: {}.\n"
-                     "URL: {}".format(response.status_code, response.url))
+            sys.exit(f"Database update failed. Server responded: {response.status_code}.\n"
+                     f"URL: {response.url}")
 
         database_data = None
 

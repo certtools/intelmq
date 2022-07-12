@@ -24,15 +24,12 @@ class RsyncCollectorBot(CollectorBot):
             pass
 
     def process(self):
-        self.logger.info(f"Updating file {self.file}.")
+        self.logger.info(f'Updating file {self.file}.')
         process = run(["rsync", path.join(self.rsync_path, self.file),
                        self.temp_directory],
                       stderr=PIPE)
         if process.returncode != 0:
-            raise ValueError("Rsync on file {!r} failed with exitcode {} and stderr {!r}."
-                             "".format(self.file,
-                                       process.returncode,
-                                       process.stderr))
+            raise ValueError(f'Rsync on file {self.file} failed with exitcode {process.returncode} and stderr {process.stderr}.')
         report = self.new_report()
         with open(path.join(self.temp_directory, self.file)) as rsync_file:
             report.add("raw", rsync_file.read())

@@ -106,12 +106,7 @@ class IdeaExpertBot(ExpertBot):
             # extra - too informal, will consider based on real world data
 
             "Format": lambda s: "IDEA0",
-            "Description": lambda s: "{}: {}".format(
-                s["feed.name"],
-                s.get("event_description.text",
-                      s.get("comment",
-                            s.get("classification.type", "undetermined")))
-            ),
+            "Description": lambda s: f'{s["feed.name"]}: {s.get("event_description.text", s.get("comment", s.get("classification.type", "undetermined")))}',
             "Category": [
                 lambda s: self.TYPE_TO_CATEGORY[s.get("classification.type", "undetermined")],
                 lambda s: "Test" if self.test_mode else None

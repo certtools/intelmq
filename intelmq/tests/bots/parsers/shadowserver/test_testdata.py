@@ -47,7 +47,7 @@ for filename in testdata.glob('*.csv'):
 
 def generate_feed_function(feedname, reports):
     def test_feed(self):
-        """ Test if no errors happen for feed %s. """ % feedname
+        f""" Test if no errors happen for feed {feedname}. """
         self.input_message = reports[feedname]
         self.run_bot()
     return test_feed
@@ -72,9 +72,9 @@ class TestShadowserverJSONParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = ShadowserverJSONParserBot
 
 for key in CSVREPORTS:
-    setattr(TestShadowserverParserBot, 'test_feed_%s' % key, generate_feed_function(key, CSVREPORTS))
+    setattr(TestShadowserverParserBot, f'test_feed_{key}', generate_feed_function(key, CSVREPORTS))
 for key in JSONREPORTS:
-    setattr(TestShadowserverJSONParserBot, 'test_feed_%s' % key, generate_feed_function(key, JSONREPORTS))
+    setattr(TestShadowserverJSONParserBot, f'test_feed_{key}', generate_feed_function(key, JSONREPORTS))
 
 
 if __name__ == '__main__':  # pragma: no cover

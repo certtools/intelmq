@@ -152,8 +152,7 @@ def encode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8",),
             except ValueError:
                 pass
 
-    raise ValueError("Could not encode string with given encodings{!r}"
-                     ".".format(encodings))
+    raise ValueError(f"Could not encode string with given encodings{encodings!r}.")
 
 
 def base64_decode(value: Union[bytes, str]) -> str:
@@ -222,7 +221,7 @@ def load_configuration(configuration_filepath: str) -> dict:
                     return json.load(fpconfig)
                 raise
     else:
-        raise ValueError('File not found: %r.' % configuration_filepath)
+        raise ValueError(f'File not found: {configuration_filepath}.')
     return config
 
 
@@ -334,7 +333,7 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH,
         log_format_stream: str = LOG_FORMAT_STREAM,
         logging_level_stream: Optional[str] = None,
         log_max_size: Optional[int] = 0, log_max_copies: Optional[int] = None):
-    """
+    f"""
     Returns a logger instance logging to file and sys.stderr or other stream.
     The warnings module will log to the same handlers.
 
@@ -342,7 +341,7 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH,
         name: filename for logfile or string preceding lines in stream
         log_path: Path to log directory, defaults to DEFAULT_LOGGING_PATH
             If False, nothing is logged to files.
-        log_level: default is %r
+        log_level: default is {intelmq.DEFAULT_LOGGING_LEVEL}
         stream: By default (None), stdout and stderr will be used depending on the level.
             If False, stream output is not used.
             For everything else, the argument is used as stream output.
@@ -367,7 +366,7 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH,
         LOG_FORMAT: Default log format for file handler
         LOG_FORMAT_STREAM: Default log format for stream handler
         LOG_FORMAT_SYSLOG: Default log format for syslog
-    """ % intelmq.DEFAULT_LOGGING_LEVEL
+    """
     logging.captureWarnings(True)
     warnings_logger = logging.getLogger("py.warnings")
     # set the name of the warnings logger to the bot neme, see #1184
@@ -515,7 +514,7 @@ def parse_relative(relative_time: str) -> int:
     try:
         result = re.findall(r'^(\d+)\s+(\w+[^s])s?$', relative_time.strip(), re.UNICODE)
     except ValueError as e:
-        raise ValueError("Could not apply regex to attribute \"%s\" with exception %s.",
+        raise ValueError('Could not apply regex to attribute "%s" with exception %s.',
                          repr(relative_time), repr(e.args))
     if len(result) == 1 and len(result[0]) == 2 and result[0][1] in TIMESPANS:
         return int(result[0][0]) * TIMESPANS[result[0][1]]

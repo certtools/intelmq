@@ -88,7 +88,7 @@ class HTTPCollectorBot(CollectorBot, HttpMixin):
             self.logger.debug('Request body: %r.', resp.request.body)
             self.logger.debug('Response headers: %r.', resp.headers)
             self.logger.debug('Response body: %r.', resp.text)
-            raise ValueError('HTTP response status code was %i.' % resp.status_code)
+            raise ValueError(f'HTTP response status code was {resp.status_code}.')
 
         self.logger.info("Report downloaded.")
 
@@ -101,15 +101,15 @@ class HTTPCollectorBot(CollectorBot, HttpMixin):
                 return
 
             if not result.valid:
-                self.logger.error("Signature for key {0.key_id} is not valid: {0.status}. Report rejected.".format(result))
+                self.logger.error(f'Signature for key {result.key_id} is not valid: {result.status}. Report rejected.')
                 return
 
             if result.trust_level < 1:
-                self.logger.debug(f"Trust level not defined for key {result.key_id}.")
+                self.logger.debug(f'Trust level not defined for key {result.key_id}.')
             elif result.trust_level < 3:
-                self.logger.debug("Low trust level for key {0.key_id}: {0.trust_level}.".format(result))
+                self.logger.debug(f'Low trust level for key {result.key_id}: {result.trust_level}.')
 
-            self.logger.info("PGP signature checked with key {0.key_id}: {0.status}.".format(result))
+            self.logger.info(f'PGP signature checked with key {result.key_id}: {result.status}.')
 
         # process reports
         raw_reports = []
@@ -141,16 +141,10 @@ class HTTPCollectorBot(CollectorBot, HttpMixin):
         try:
             return self.http_url.format(time=Time(formatting))
         except TypeError:
-            self.logger.error(
-                "Wrong formatting parameter: %s. Should be boolean or a time-delta JSON.",
-                formatting
-            )
+            self.logger.error(f'Wrong formatting parameter: {formatting}. Should be boolean or a time-delta JSON.')
             raise
         except KeyError:
-            self.logger.error(
-                "Wrongly formatted url parameter: %s. Possible misspell with 'time' variable.",
-                self.http_url
-            )
+            self.logger.error(f"Wrongly formatted url parameter: {self.http_url}. Possible misspell with 'time' variable.")
             raise
 
     def verify_signature(self, data: bytes):
@@ -165,13 +159,13 @@ class HTTPCollectorBot(CollectorBot, HttpMixin):
             http_url = self.signature_url
 
         # download signature file
-        self.logger.info(f"Downloading PGP signature from {http_url}.")
+        self.logger.info(f'Downloading PGP signature from {http_url}.')
 
         resp = self.http_get(http_url)
         if resp.status_code // 100 != 2:
-            raise ValueError(f"Could not download PGP signature for report: {resp.status_code}.")
+            raise ValueError(f'Could not download PGP signature for report: {resp.status_code}.')
 
-        self.logger.info("PGP signature downloaded.")
+        self.logger.info('PGP signature downloaded.')
 
         # save signature to temporary file
         sign = tempfile.NamedTemporaryFile()

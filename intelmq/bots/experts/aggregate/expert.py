@@ -66,7 +66,7 @@ class AggregateExpertBot(ExpertBot, CacheMixin):
         self.cleanup()
 
         message_hash = event.hash(filter_keys=self.fields, filter_type="whitelist")
-        cache_id = f"aggregate.{message_hash}"
+        cache_id = f'aggregate.{message_hash}'
 
         if self.cache_exists(cache_id):
             # pipeline commands, because its faster to run them this way

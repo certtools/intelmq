@@ -68,7 +68,7 @@ class FileCollectorBot(CollectorBot):
                         self.logger.info("Processing file %r.", filename)
 
                         template = self.new_report()
-                        template.add("feed.url", "file://localhost%s" % filename)
+                        template.add("feed.url", f"file://localhost{filename}")
                         template.add("extra.file_name", f)
 
                         with open(filename, 'rb') as fh:

@@ -39,7 +39,7 @@ class DomainValidExpertBot(ExpertBot):
                     event[self.domain_field].split('.')[-1] in self.tlds_list:
                 is_valid = True
             else:
-                self.logger.debug(f"Filtered out event with search field {self.domain_field!r}.")
+                self.logger.debug(f'Filtered out event with search field {self.domain_field!r}.')
 
         if is_valid:
             self.send_message(event)
@@ -50,7 +50,7 @@ class DomainValidExpertBot(ExpertBot):
             with open(self.tlds_domains_list) as file:
                 lines = {line.strip().lower() for line in file if not line.startswith('#')}
         else:
-            raise ConfigurationError("File", f"TLD domain list file not found at {self.tlds_domains_list!r}.")
+            raise ConfigurationError('File', f'TLD domain list file not found at {self.tlds_domains_list!r}.')
         return lines
 
     @classmethod
@@ -80,35 +80,35 @@ class DomainValidExpertBot(ExpertBot):
                     bots[bot] = runtime_conf[bot]["parameters"]["tlds_domains_list"]
 
         except KeyError as e:
-            sys.exit(f"Database update failed. Your configuration of {bot} is missing key {e}.")
+            sys.exit(f'Database update failed. Your configuration of {bot} is missing key {e}.')
 
         if not bots:
             if verbose:
-                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf.")
+                print(f'Database update skipped. No bots of type {__name__} present in runtime.conf.')
             sys.exit(0)
 
         try:
             session = create_request_session()
-            url = "https://data.iana.org/TLD/tlds-alpha-by-domain.txt"
+            url = 'https://data.iana.org/TLD/tlds-alpha-by-domain.txt'
             if verbose:
-                print("Downloading the latest database update...")
+                print('Downloading the latest database update...')
             response = session.get(url)
 
             if not response.ok:
-                sys.exit("Database update failed. Server responded: {}.\n"
-                         "URL: {}".format(response.status_code, response.url))
+                sys.exit(f'Database update failed. Server responded: {response.status_code}.\n'
+                         f'URL: {response.url}')
 
         except requests.exceptions.RequestException as e:
-            sys.exit(f"Database update failed. Connection Error: {e}")
+            sys.exit(f'Database update failed. Connection Error: {e}')
 
         for database_path in set(bots.values()):
             database_dir = pathlib.Path(database_path).parent
             database_dir.mkdir(parents=True, exist_ok=True)
-            with open(database_path, "wb") as database:
+            with open(database_path, 'wb') as database:
                 database.write(response.content)
 
         if verbose:
-            print("Database updated. Reloading affected bots.")
+            print('Database updated. Reloading affected bots.')
 
         ctl = IntelMQController()
         for bot in bots.keys():

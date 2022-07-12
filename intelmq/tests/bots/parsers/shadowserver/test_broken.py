@@ -15,9 +15,9 @@ REPORT1 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
            "time.observation": "2015-01-01T00:00:00+00:00",
            "extra.file_name": "2019-01-01-scan_http-test-test.csv",
            }
-REPORT2 = {"raw": utils.base64_encode('''timestamp,ip,port
+REPORT2 = {"raw": utils.base64_encode("""timestamp,ip,port
 2018-08-01T00:00:00+00,127.0.0.1,80
-'''),
+"""),
            "__type": "Report",
            "time.observation": "2015-01-01T00:00:00+00:00",
            "extra.file_name": "2019-01-01-scan_ftp-test-test.csv",

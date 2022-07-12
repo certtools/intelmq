@@ -1255,7 +1255,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, expected)
 
     def test_bool_match(self):
-        ''' Test bool match '''
+        """ Test bool match """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_bool_match.sieve')
         base = EXAMPLE_INPUT.copy()
         base['extra.truthy'] = True
@@ -1339,7 +1339,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, expected)
 
     def test_typed_values(self):
-        ''' Test typed values '''
+        """ Test typed values """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_typed_values.sieve')
 
         # test with list of values of mixed types
@@ -1398,7 +1398,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
 
     def test_append(self):
-        ''' Test append action '''
+        """ Test append action """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_append.sieve')
 
         # positive test
@@ -1433,7 +1433,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, expected)
 
     def test_force_append(self):
-        ''' Test force append action '''
+        """ Test force append action """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_force_append.sieve')
 
         # positive test with list
@@ -1469,7 +1469,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, expected)
 
     def test_negation(self):
-        ''' Test expression negation '''
+        """ Test expression negation """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_negation.sieve')
 
         # positive test with single expression
@@ -1556,7 +1556,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, expected)
 
     def test_nested_if(self):
-        ''' Test nested if statements '''
+        """ Test nested if statements """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_nested_if.sieve')
 
         # match outer if and inner if
@@ -1656,7 +1656,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, expected)
 
     def test_mixed_if_and_actions(self):
-        ''' Test mixed if statements and actions '''
+        """ Test mixed if statements and actions """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_mixed_if.sieve')
 
         # pass unconditional and conditional statement

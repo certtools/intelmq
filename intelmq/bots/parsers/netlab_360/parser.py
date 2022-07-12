@@ -62,7 +62,7 @@ class Netlab360ParserBot(ParserBot):
                 event.add('classification.type', 'scanner')
                 event.add('classification.identifier', 'hajime', overwrite=True)
             else:
-                raise ValueError('Unknown data feed %s.' % report['feed.url'])
+                raise ValueError(f'Unknown data feed {report["feed.url"]}.')
 
             yield event
 

@@ -93,9 +93,8 @@ class BotDebugger:
             else:
                 if console_type and console != console_type:
                     print(f"Console {console_type} not available.")
-                print("*** Using console {}. Please use 'self' to access to the bot instance properties."
-                      "You may exit the console by 'c' command (like continue). ***"
-                      .format(module.__name__))
+                print(f"*** Using console {module.__name__}. Please use 'self' to access to the bot instance properties."
+                      "You may exit the console by 'c' command (like continue). ***")
                 break
         else:
             print("Can't run console.")
@@ -146,11 +145,11 @@ class BotDebugger:
                 self.instance._Bot__source_pipeline = Pipeline(None)
             self.instance._Bot__source_pipeline.receive = lambda *args, **kwargs: msg
             self.instance._Bot__source_pipeline.acknowledge = lambda *args, **kwargs: None
-            self.outputappend(" * Message from cli will be used when processing.")
+            self.outputappend(' * Message from cli will be used when processing.')
 
         if dryrun:
             self.instance.send_message = lambda *args, **kwargs: self.outputappend(
-                "DRYRUN: Message would be sent now to %r!" % kwargs.get('path', "_default"))
+                f'DRYRUN: Message would be sent now to {kwargs.get("path", "_default")!r}!')
             self.instance.acknowledge_message = lambda *args, **kwargs: self.outputappend(
                 "DRYRUN: Message would be acknowledged now!")
             self.outputappend(" * Dryrun only, no message will be really sent through.")
@@ -160,7 +159,7 @@ class BotDebugger:
             self.instance.send_message = lambda *args, **kwargs: [self.outputappend(self.pprint(args or "No message generated")),
                                                                   fn(*args, **kwargs)]
 
-        self.outputappend("Processing...")
+        self.outputappend('Processing...')
         self.instance.process()
 
     def outputappend(self, msg):
@@ -174,7 +173,7 @@ class BotDebugger:
             if exists(msg):
                 with open(msg) as f:
                     return self.arg2msg(f.read())
-            self.messageWizzard(f"Message can not be parsed from JSON: {error_message_from_exc(exc)}")
+            self.messageWizzard(f'Message can not be parsed from JSON: {error_message_from_exc(exc)}')
             sys.exit(1)
         return msg
 
@@ -199,18 +198,18 @@ class BotDebugger:
         config = BotDebugger.load_configuration(configuration_filepath=configuration_filepath, *args, **kwargs)
         if BotDebugger.logging_level and configuration_filepath == RUNTIME_CONF_FILE:
             for bot_id in config.keys():
-                if bot_id == "global":
-                    config[bot_id]["logging_level"] = BotDebugger.logging_level
+                if bot_id == 'global':
+                    config[bot_id]['logging_level'] = BotDebugger.logging_level
                 else:
-                    config[bot_id]['parameters']["logging_level"] = BotDebugger.logging_level
-            if "global" not in config:
-                config["global"] = {"logging_level": BotDebugger.logging_level}
+                    config[bot_id]['parameters']['logging_level'] = BotDebugger.logging_level
+            if 'global' not in config:
+                config['global'] = {'logging_level': BotDebugger.logging_level}
         return config
 
     def messageWizzard(self, msg):
         self.instance.logger.error(msg)
         print(self.EXAMPLE)
-        if input("Do you want to display current harmonization (available fields)? y/[n]: ") == "y":
+        if input('Do you want to display current harmonization (available fields)? y/[n]: ') == "y":
             print(self.pprint(self.instance.harmonization))
 
     @staticmethod

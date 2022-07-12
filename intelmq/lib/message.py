@@ -119,7 +119,7 @@ class Message(dict):
             self.harmonization_config['extra']['type'] = 'JSONDict'
         for harm_key in self.harmonization_config.keys():
             if not HARMONIZATION_KEY_FORMAT.match(harm_key) and harm_key != '__type':
-                raise exceptions.InvalidKey("Harmonization key %r is invalid." % harm_key)
+                raise exceptions.InvalidKey(f"Harmonization key {harm_key} is invalid.")
 
         super().__init__()
         if isinstance(message, dict):
@@ -348,8 +348,7 @@ class Message(dict):
         if 'length' in config:
             length = len(str(value))
             if not length <= config['length']:
-                return (False, 'too long: {} > {}.'.format(length,
-                                                           config['length']))
+                return (False, f'too long: {length} > {config["length"]}.')
         if 'regex' in config:
             if not re.search(config['regex'], str(value)):
                 return (False, 'regex did not match.')

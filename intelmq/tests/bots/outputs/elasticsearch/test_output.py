@@ -173,7 +173,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig = {"flatten_fields": "extra",
                           "elastic_index": "intelmq",
                           "rotate_index": "daily"}
-        expected_index_name = "{}-1869-12-02".format(self.sysconfig.get('elastic_index'))
+        expected_index_name = f"{self.sysconfig.get('elastic_index')}-1869-12-02"
         self.base_check_expected_index_created(INPUT_TIME_SOURCE, expected_index_name)
 
     def test_index_detected_from_time_observation(self):
@@ -184,7 +184,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig = {"flatten_fields": "extra",
                           "elastic_index": "intelmq",
                           "rotate_index": "daily"}
-        expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
+        expected_index_name = f"{self.sysconfig.get('elastic_index')}-2020-02-02"
         self.base_check_expected_index_created(INPUT_TIME_OBSERVATION, expected_index_name)
 
     def test_index_falls_back_to_default_date(self):
@@ -207,7 +207,7 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
             def today(cls):
                 return datetime.strptime('2018-09-09T01:23:45+00:00', '%Y-%m-%dT%H:%M:%S+00:00')
 
-        expected_index_name = "{}-{}".format(self.sysconfig.get('elastic_index'), "2018-09-09")
+        expected_index_name = f"{self.sysconfig.get('elastic_index')}-2018-09-09"
 
         # Patch datetime with FakeDateTime, run the bot, and check the created index.
         with mock.patch('intelmq.bots.outputs.elasticsearch.output.datetime', new=FakeDateTime):

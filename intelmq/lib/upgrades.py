@@ -105,7 +105,7 @@ def v112_feodo_tracker_domains(configuration, harmonization, dry_run, **kwargs):
         return None, configuration, harmonization
     else:
         return ('The discontinued feed "Feodo Tracker Domains" has been found '
-                'as bot %r. Remove it yourself please.' % found,
+                f'as bot {found}. Remove it yourself please.',
                 configuration, harmonization)
 
 
@@ -207,7 +207,7 @@ def v100_dev7_modify_syntax(configuration, harmonization, dry_run, **kwargs):
                         write_configuration(bot["parameters"]["configuration_path"],
                                             new_config)
                     except PermissionError:
-                        return ('Can\'t update %s\'s configuration: Permission denied.' % bot_id,
+                        return (f"Can't update {bot_id}'s configuration: Permission denied.",
                                 configuration, harmonization)
 
     return changed, configuration, harmonization
@@ -446,25 +446,25 @@ def v213_feed_changes(configuration, harmonization, dry_run, **kwargs):
             found_nothink_parser.append(bot_id)
     if found_zeus:
         messages.append('A discontinued feed "Zeus Tracker" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_zeus)))
+                        f'as bot {", ".join(sorted(found_zeus))}.')
     if found_bitcash:
         messages.append('The discontinued feed "Bitcash.cz" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_bitcash)))
+                        f'as bot {", ".join(sorted(found_bitcash))}.')
     if found_ddos_attack:
         messages.append('The discontinued feed "Fraunhofer DDos Attack" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_ddos_attack)))
+                        f'as bot {", ".join(sorted(found_ddos_attack))}.')
     if found_ransomware:
         messages.append('The discontinued feed "Abuse.ch Ransomware Tracker" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_ransomware)))
+                        f'as bot {", ".join(sorted(found_ransomware))}.')
     if found_bambenek:
         messages.append('Many Bambenek feeds now require a license, see https://osint.bambenekconsulting.com/feeds/'
-                        ' potentially affected bots are %s.' % ', '.join(sorted(found_bambenek)))
+                        f' potentially affected bots are {", ".join(sorted(found_bambenek))}.')
     if found_nothink:
         messages.append('All Nothink Honeypot feeds are discontinued, '
-                        'potentially affected bots are %s.' % ', '.join(sorted(found_nothink)))
+                        f'potentially affected bots are {", ".join(sorted(found_nothink))}.')
     if found_nothink_parser:
         messages.append('The Nothink Parser has been removed, '
-                        'affected bots are %s.' % ', '.join(sorted(found_nothink_parser)))
+                        f'affected bots are {", ".join(sorted(found_nothink_parser))}.')
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else changed, configuration, harmonization
 
@@ -488,10 +488,10 @@ def v220_feed_changes(configuration, harmonization, dry_run, **kwargs):
             found_urlvir_parser.append(bot_id)
     if found_urlvir_feed:
         messages.append('A discontinued feed "URLVir" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_urlvir_feed)))
+                        f'as bot {", ".join(sorted(found_urlvir_feed))}.')
     if found_urlvir_parser:
         messages.append('The removed parser "URLVir" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_urlvir_parser)))
+                        f'as bot {", ".join(sorted(found_urlvir_parser))}.')
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
 
@@ -527,10 +527,10 @@ def v221_feed_changes(configuration, harmonization, dry_run, **kwargs):
 
     if found_hphosts_collector:
         messages.append('A discontinued feed "HP Hosts File" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_hphosts_collector)))
+                        f'as bot {", ".join(sorted(found_hphosts_collector))}.')
     if found_hphosts_parser:
         messages.append('The removed parser "HP Hosts" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_hphosts_parser)))
+                        f'as bot {", ".join(sorted(found_hphosts_parser))}.')
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else changed, configuration, harmonization
 
@@ -582,7 +582,7 @@ def v230_deprecations(configuration, harmonization, dry_run, **kwargs):
             found_malwaredomainlistparser.append(bot_id)
     if found_malwaredomainlistparser:
         messages.append('A discontinued bot "Malware Domain List Parser" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_malwaredomainlistparser)))
+                        f'as bot {", ".join(sorted(found_malwaredomainlistparser))}.')
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
 
@@ -603,7 +603,7 @@ def v230_feed_changes(configuration, harmonization, dry_run, **kwargs):
                 found_malwaredomainlist.append(bot_id)
     if found_malwaredomainlist:
         messages.append('A discontinued feed "Malware Domain List" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_malwaredomainlist)))
+                        f'as bot {", ".join(sorted(found_malwaredomainlist))}.')
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
 
@@ -717,10 +717,10 @@ def v301_deprecations(configuration, harmonization, dry_run, **kwargs):
                 found_malwaredomainscollector.append(bot_id)
     if found_malwaredomainsparser:
         messages.append('A discontinued bot "Malware Domains Parser" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_malwaredomainsparser)))
+                        f'as bot {", ".join(sorted(found_malwaredomainsparser))}.')
     if found_malwaredomainscollector:
         messages.append('A discontinued bot "Malware Domains Collector" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_malwaredomainscollector)))
+                        f'as bot {", ".join(sorted(found_malwaredomainscollector))}.')
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else changed, configuration, harmonization
 

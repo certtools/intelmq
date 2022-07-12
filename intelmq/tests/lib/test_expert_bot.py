@@ -10,6 +10,7 @@ from intelmq.lib.bot import Bot
 EXAMPLE = {'feed.name': 'Test', "__type": "Report"}
 QUEUES = {"_default", "other-way", "two-way"}
 
+
 class DummyExpertBot(Bot):
 
     def process(self):

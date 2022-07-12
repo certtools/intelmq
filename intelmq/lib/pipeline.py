@@ -245,8 +245,8 @@ class Redis(Pipeline):
                         "OOM command not allowed when used memory > 'maxmemory'." in exc.args[0]:
                     raise MemoryError(exc.args[0])
                 elif 'Redis is configured to save RDB snapshots, but is currently not able to persist on disk' in exc.args[0]:
-                    raise OSError(28, 'No space left on device or in memory. Redis can\'t save its snapshots. '
-                                      'Look at redis\'s logs.')
+                    raise OSError(28, "No space left on device or in memory. Redis can't save its snapshots. "
+                                      "Look at redis's logs.")
                 raise exceptions.PipelineError(exc)
 
     def _receive(self) -> bytes:
@@ -276,8 +276,7 @@ class Redis(Pipeline):
         else:
             if not retval:
                 raise exceptions.PipelineError("Could not pop message from internal queue "
-                                               "for acknowledgement. Return value was %r."
-                                               "" % retval)
+                                               f"for acknowledgement. Return value was {retval}.")
 
     def count_queued_messages(self, *queues) -> dict:
         queue_dict = {}
@@ -298,7 +297,7 @@ class Redis(Pipeline):
         else:
             if retval not in (0, 1):
                 raise exceptions.PipelineError("Error on redis queue deletion: Return value"
-                                               " was not 0 or 1 but %r." % retval)
+                                               f" was not 0 or 1 but {retval}.")
 
     def nonempty_queues(self) -> set:
         """ Returns a list of all currently non-empty queues. """
@@ -461,10 +460,10 @@ class Amqp(Pipeline):
         if self.intelmqctl_rabbitmq_monitoring_url is not None:
             self.monitoring_url = self.intelmqctl_rabbitmq_monitoring_url
         else:
-            self.monitoring_url = 'http://%s:15672/' % self.host
+            self.monitoring_url = f'http://{self.host}:15672/'
 
         if not self.monitoring_url.endswith('/'):
-            self.monitoring_url = "%s/" % self.monitoring_url
+            self.monitoring_url = f"{self.monitoring_url}/"
 
     def connect(self):
         self.channel = None

@@ -54,8 +54,7 @@ class RFC1918ExpertBot(ExpertBot):
         self.policy = self.policy.lower().strip().split(",")
 
         if len(self.fields) != len(self.policy):
-            raise ValueError("Length of parameters 'fields' (%d) and 'policy' (%d) is unequal."
-                             "" % (len(self.fields), len(self.policy)))
+            raise ValueError(f"Length of parameters 'fields' ({len(self.fields)}) and 'policy' ({len(self.policy)}) is unequal.")
 
         self.ip_networks = [ipaddress.ip_network(iprange) for iprange in NETWORKS]
 
@@ -64,9 +63,7 @@ class RFC1918ExpertBot(ExpertBot):
         fields = len(parameters.get("fields", "").split(","))
         policy = len(parameters.get("policy", "").split(","))
         if fields != policy:
-            return [["error",
-                     "Length of parameters 'fields' (%d) and 'policy' (%d) is unequal."
-                     "" % (fields, policy)]]
+            return [["error", f"Length of parameters 'fields' ({fields}) and 'policy' ({policy}) is unequal."]]
 
     def is_in_net(self, ip):
         return any(ip in iprange for iprange in self.ip_networks)

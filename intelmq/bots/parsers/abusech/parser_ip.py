@@ -57,9 +57,7 @@ class AbusechIPParserBot(ParserBot):
         self.header_line = data_lines.pop(0)  # remove CSV header line
         fields = [self.__sanitize_csv_lines(f) for f in self.header_line.split(',')]  # First line is the CSV header file
         if len(fields) != len(FEEDS[feed]['format']):
-            self.logger.warning("Feed '{}' has not the expected fields: {} != {}".format(feed,
-                                                                                         len(fields),
-                                                                                         len(FEEDS[feed]['format'])))
+            self.logger.warning(f"Feed '{feed}' has not the expected fields: {len(fields)} != {len(FEEDS[feed]['format'])}")
             raise ValueError("Abusech ip parser is not up to date with the format online")
 
         for line in self.comments:

@@ -58,9 +58,9 @@ def eventdb_apply(malware_name_column, malware_family_column, host, port,
     db.autocommit = True
     cur = db.cursor(cursor_factory=DictCursor)
 
-    cur.execute('SELECT DISTINCT "classification.identifier", "malware.name" FROM {table} '
-                'WHERE "classification.taxonomy" = \'malicious-code\' {where}'
-                ''.format(table=table, where=where))
+    cur.execute(f'SELECT DISTINCT "classification.identifier", "malware.name" FROM {table} '
+                f'WHERE "classification.taxonomy" = "malicious-code" {where}')
+
     if dry_run:
         execute = lambda x, y: print(cur.mogrify(x, y).decode())  # noqa: E731
     else:
@@ -76,12 +76,10 @@ def eventdb_apply(malware_name_column, malware_family_column, host, port,
                     print('Correcting family for', malware_name, ':', identifier, '->', rule[1])
                 else:
                     print('Setting family for', malware_name, ':', rule[1])
-                execute('UPDATE {table} SET "classification.identifier" = %s '
-                        'WHERE "malware.name" = %s '
-                        'AND "classification.identifier" IS DISTINCT FROM %s AND '
-                        '"classification.taxonomy" = \'malicious-code\' {where}'
-                        ''.format(table=table, where=where),
-                        (rule[1], malware_name, rule[1]))
+                execute(f'UPDATE {table} SET "classification.identifier" = {rule[1]} '
+                        f'WHERE "malware.name" = {malware_name} '
+                        f'AND "classification.identifier" IS DISTINCT FROM {rule[1]} AND '
+                        f'"classification.taxonomy" = "malicious-code" {where}')
                 break
         else:
             print('missing mapping for', repr(malware_name))
