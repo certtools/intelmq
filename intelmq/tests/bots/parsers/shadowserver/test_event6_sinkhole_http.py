@@ -24,7 +24,7 @@ EXAMPLE_REPORT = {"feed.name": "Sinkhole-Events-HTTP IPv6",
 EVENTS = [
 {
    '__type' : 'Event',
-   'classification.identifier' : 'boaxxe',
+   'classification.identifier' : '3ve',
    'classification.taxonomy' : 'malicious-code',
    'classification.type' : 'infected-system',
    'destination.asn' : 6939,
@@ -57,7 +57,7 @@ EVENTS = [
 
 {
    '__type' : 'Event',
-   'classification.identifier' : 'boaxxe',
+   'classification.identifier' : '3ve',
    'classification.taxonomy' : 'malicious-code',
    'classification.type' : 'infected-system',
    'destination.asn' : 6939,
@@ -90,7 +90,7 @@ EVENTS = [
 
 {
    '__type' : 'Event',
-   'classification.identifier' : 'boaxxe',
+   'classification.identifier' : '3ve',
    'classification.taxonomy' : 'malicious-code',
    'classification.type' : 'infected-system',
    'destination.asn' : 6939,

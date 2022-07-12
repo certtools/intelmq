@@ -47,7 +47,7 @@ EVENTS = [
    'extra.sha256_fingerprint' : 'D2:D7:54:52:EB:86:4E:2D:34:4D:FC:CE:CD:CF:39:41:E1:06:5C:8B:B8:54:E6:0C:DF:FD:6E:E3:F1:B5:41:00',
    'extra.sha512_fingerprint' : '17:57:FB:88:9D:BE:A7:F0:29:A5:31:FC:79:DF:F7:8A:1C:D6:4A:DF:1B:4A:DC:BF:05:E7:E8:2F:79:9A:FA:FE:F7:E8:66:22:CB:B9:4C:72:F7:FB:6C:1D:59:8C:54:63:70:05:DE:7F:3C:2F:BA:B8:37:18:CE:29:6F:11:E8:AB',
    'extra.signature_algorithm' : 'sha256WithRSAEncryption',
-   'extra.source.naics' : 454110,
+   'extra.naics' : 454110,
    'extra.ssl_version' : 2,
    'extra.subject_common_name' : '*.tracesafe.io',
    'extra.tag' : 'mqtt',

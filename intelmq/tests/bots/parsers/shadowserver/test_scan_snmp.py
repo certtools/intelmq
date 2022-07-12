@@ -28,7 +28,7 @@ EVENTS = [
    'classification.taxonomy' : 'vulnerable',
    'classification.type' : 'vulnerable-system',
    'extra.community' : 'public',
-   'extra.source.sector' : 'Communications, Service Provider, and Hosting Service',
+   'extra.sector' : 'Communications, Service Provider, and Hosting Service',
    'extra.tag' : 'snmp',
    'extra.version' : 2,
    'feed.name' : 'Open SNMP',

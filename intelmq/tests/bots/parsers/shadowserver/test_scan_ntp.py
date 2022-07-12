@@ -114,7 +114,7 @@ EVENTS = [
    'extra.reftime' : '0xE62E08C0.6967CAFB',
    'extra.rootdelay' : 37.173,
    'extra.rootdispersion' : 69.399,
-   'extra.source.sector' : 'Communications, Service Provider, and Hosting Service',
+   'extra.sector' : 'Communications, Service Provider, and Hosting Service',
    'extra.stability' : '0.028',
    'extra.state' : '4',
    'extra.stratum' : 3,
