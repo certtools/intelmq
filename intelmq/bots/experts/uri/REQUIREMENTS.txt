@@ -1,4 +1,4 @@
 # SPDX-FileCopyrightText: 2022 gutsohnCERT
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-rfc3986>=2.0.0
+rfc3986==1.5.0
