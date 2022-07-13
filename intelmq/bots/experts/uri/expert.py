@@ -5,11 +5,13 @@
 # -*- coding: utf-8 -*-
 
 from intelmq.lib.bot import ExpertBot
+from intelmq.lib.exceptions import MissingDependencyError
+
 try:
+    import rfc3986
     from rfc3986 import uri_reference, validators, exceptions
 except ImportError:
     rfc3986 = None
-from intelmq.lib.exceptions import MissingDependencyError
 
 
 class URIExpertBot(ExpertBot):
