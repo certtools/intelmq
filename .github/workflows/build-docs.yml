@@ -1,6 +1,6 @@
 #Github Workflow to run test documentation built
 #
-#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+#SPDX-FileCopyrightText: 2022 CERT.at GmbH <intelmq-team@cert.at>
 #SPDX-License-Identifier: AGPL-3.0-or-later
 #
 name: "Build the documentation with sphinx"

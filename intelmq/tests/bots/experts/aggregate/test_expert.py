@@ -1,7 +1,7 @@
 """
 Testing event aggregation
 
-SPDX-FileCopyrightText: 2021 Intelmq Team <intelmq-team@cert.at>
+SPDX-FileCopyrightText: 2022 CERT.at GmbH <intelmq-team@cert.at>
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
 

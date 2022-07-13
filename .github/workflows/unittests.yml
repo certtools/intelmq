@@ -1,6 +1,6 @@
 #Github Workflow to run unit tests with pytest
 #
-#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>, 2022 Sebastian Wagner <sebix@sebix.at>
+#SPDX-FileCopyrightText: 2022 CERT.at GmbH <intelmq-team@cert.at>, 2022 Sebastian Wagner <sebix@sebix.at>
 #SPDX-License-Identifier: AGPL-3.0-or-later
 #
 name: "Unit tests"

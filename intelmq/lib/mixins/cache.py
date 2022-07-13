@@ -1,6 +1,6 @@
 """ CacheMixin for IntelMQ
 
-SPDX-FileCopyrightText: 2021 Sebastian Waldbauer
+SPDX-FileCopyrightText: 2021 Sebastian Waldbauer, 2022 CERT.at GmbH <intelmq-team@cert.at>
 SPDX-License-Identifier: AGPL-3.0-or-later
 
 CacheMixin is used for caching/storing data in redis.
