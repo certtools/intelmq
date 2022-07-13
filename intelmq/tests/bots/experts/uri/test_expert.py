@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 gutsohnCERT
+# SPDX-FileCopyrightText: 2022 CERT.at GmbH
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -9,9 +9,7 @@ Testing uri.
 
 import unittest
 import intelmq.lib.test as test
-import os
-if os.getenv('INTELMQ_TEST_EXOTIC'):
-    from intelmq.bots.experts.uri.expert import URIExpertBot
+from intelmq.bots.experts.uri.expert import URIExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.url": "http://example.com/something/index.php",
@@ -48,6 +46,7 @@ IP_OUTPUT = {"__type": "Event",
              }
 
 
+@test.skip_exotic()
 class TestURIExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for URIExpertBot.

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 gutsohnCERT
+# SPDX-FileCopyrightText: 2022 CERT.at GmbH
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 rfc3986==1.5.0
