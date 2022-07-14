@@ -115,6 +115,7 @@ CHANGELOG
 - Add GitHub Action to run regexploit on all Python, JSON and YAML files (PR#2059 by Sebastian Wagner).
 - `intelmq.lib.test`:
   - Decorator `skip_ci` also detects `dpkg-buildpackage` environments by checking the environment variable `DEB_BUILD_ARCH` (PR#2123 by Sebastian Wagner).
+  - Fixing regex to catchall after python version and process id (PR#2216 by Sebastian Waldbauer, fixes #2185)
 - Also test on Python 3.10 (PR#2140 by Sebastian Wagner).
 - Switch from nosetests to pytest, as the former does not support Python 3.10 (PR#2140 by Sebastian Wagner).
 - CodeQL Github Actions `exponential backtracking on strings` fixed. (PR#2148 by Sebastian Waldbauer, fixes #2138)
