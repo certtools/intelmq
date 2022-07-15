@@ -30,6 +30,7 @@ from intelmq.lib.processmanager import *
 from intelmq.lib.pipeline import PipelineFactory
 import intelmq.lib.upgrades as upgrades
 
+
 yaml = YAML(typ="safe", pure=True)
 
 try:
