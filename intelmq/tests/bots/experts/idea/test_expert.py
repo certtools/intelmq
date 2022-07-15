@@ -3,10 +3,12 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
+import os
 import unittest
 import json
 
 import intelmq.lib.test as test
+from intelmq.lib.message import MessageFactory
 from intelmq.bots.experts.idea.expert import IdeaExpertBot
 from intelmq.lib.harmonization import ClassificationType
 
@@ -86,10 +88,10 @@ class TestIdeaExpertBot(test.BotTestCase, unittest.TestCase):
         # The ID in the generated Idea event is random, so we have to extract
         # the data from the "output" field and compare after removing ID's
         event = self.get_output_queue()[0]
-        self.assertIsInstance(event, str)
-        event_dict = json.loads(event)
+        self.assertIsInstance(event, bytes)
+        event_dict = MessageFactory.deserialize(event, use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack'))
         self.assertIsInstance(event_dict, dict)
-        self.assertTrue("output" in event_dict)
+        self.assertTrue(b"output" in event_dict)
         idea_event = json.loads(event_dict["output"])
         self.assertIsInstance(idea_event, dict)
         del TEST_OUTPUT1["ID"]

@@ -79,7 +79,7 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
             self.logger.exception('Error receiving messages.')
         else:
             if self.expect_intelmq_message:
-                message = MessageFactory.unserialize(body.decode())
+                message = MessageFactory.deserialize(body.decode())
                 self.send_message(message, auto_add=False)
             else:
                 report = self.new_report()

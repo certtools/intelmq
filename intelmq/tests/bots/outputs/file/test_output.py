@@ -18,7 +18,9 @@ class TestFileOutputBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = FileOutputBot
         cls.os_fp, cls.filename = tempfile.mkstemp()
         cls.sysconfig = {"hierarchical_output": True,
-                         "file": cls.filename}
+                         "file": cls.filename,
+                         "use_packer": "json",
+                         }
 
     def test_event(self):
         self.run_bot()

@@ -125,14 +125,14 @@ class Pipeline:
              path_permissive: bool = False):
         raise NotImplementedError
 
-    def receive(self) -> str:
+    def receive(self) -> bytes:
         if self._has_message:
             raise exceptions.PipelineError("There's already a message, first "
                                            "acknowledge the existing one.")
 
         retval = self._receive()
         self._has_message = True
-        return utils.decode(retval)
+        return retval
 
     def _receive(self) -> bytes:
         raise NotImplementedError

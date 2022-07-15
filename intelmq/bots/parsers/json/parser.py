@@ -26,9 +26,11 @@ class JSONParserBot(ParserBot):
             lines = [base64_decode(report['raw'])]
 
         for line in lines:
-            new_event = MessageFactory.unserialize(line,
+            new_event = MessageFactory.deserialize(line,
                                                    harmonization=self.harmonization,
-                                                   default_type='Event')
+                                                   default_type='Event',
+                                                   use_packer="json")
+
             event = self.new_event(report)
             event.update(new_event)
             if 'raw' not in event:

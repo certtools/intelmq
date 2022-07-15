@@ -20,6 +20,7 @@ import sys
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.test as test
 import intelmq.lib.exceptions as exceptions
+import intelmq.lib.utils as utils
 
 SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
                       'Lorem ipsum dolor sit amet'],
@@ -67,7 +68,7 @@ class TestPythonlist(unittest.TestCase):
 
     def test_receive(self):
         self.pipe.state['test-bot-input'] = [SAMPLES['normal'][0]]
-        self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
+        self.assertEqual(SAMPLES['normal'][0], self.pipe.receive())
 
     def test_send(self):
         self.pipe.send(SAMPLES['normal'][1])
@@ -76,7 +77,7 @@ class TestPythonlist(unittest.TestCase):
 
     def test_receive_unicode(self):
         self.pipe.state['test-bot-input'] = [SAMPLES['unicode'][0]]
-        self.assertEqual(SAMPLES['unicode'][1], self.pipe.receive())
+        self.assertEqual(SAMPLES['unicode'][0], self.pipe.receive())
 
     def test_send_unicode(self):
         self.pipe.send(SAMPLES['unicode'][1])
@@ -161,12 +162,12 @@ class TestRedis(unittest.TestCase):
         """ Sending bytest and receiving unicode. """
         self.clear()
         self.pipe.send(SAMPLES['normal'][0])
-        self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
+        self.assertEqual(SAMPLES['normal'][1], utils.decode(self.pipe.receive()))
 
     def test_send_receive_unicode(self):
         self.clear()
         self.pipe.send(SAMPLES['unicode'][1])
-        self.assertEqual(SAMPLES['unicode'][1], self.pipe.receive())
+        self.assertEqual(SAMPLES['unicode'][1], utils.decode(self.pipe.receive()))
 
     def test_count(self):
         self.clear()
@@ -185,7 +186,7 @@ class TestRedis(unittest.TestCase):
         self.pipe.send(SAMPLES['normal'][0])
         self.pipe.receive()
         self.pipe.reject_message()
-        self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
+        self.assertEqual(SAMPLES['normal'][1], utils.decode(self.pipe.receive()))
 
     def test_acknowledge(self):
         self.pipe.send(SAMPLES['normal'][0])

@@ -110,7 +110,6 @@ def convert_bool(value: str) -> Optional[bool]:
 def validate_to_none(value: str) -> Optional[str]:
     return None if (not value or value in {'0', 'unknown'}) else value
 
-
 def convert_int(value: str) -> Optional[int]:
     """ Returns an int or None for empty strings. """
     return int(value) if value else None
@@ -2520,7 +2519,7 @@ honeypot_brute_force = {
         ('extra.', 'device_type', validate_to_none),
         ('extra.', 'device_model', validate_to_none),
         ('destination.ip', 'dst_ip', validate_ip),
-        ('destination.port', 'dst_port'),
+        ('destination.port', 'dst_port'), 
         ('destination.asn', 'dst_asn', invalidate_zero),
         ('destination.geolocation.cc', 'dst_geo'),
         ('destination.geolocation.region', 'dst_region'),
@@ -2967,6 +2966,183 @@ device_id = {
         'classification.taxonomy': 'other',
         'classification.type': 'undetermined',
         'classification.identifier': 'device-id',
+    }
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/honeypot-darknet-events-report/
+event4_honeypot_darknet = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+    ],
+    'optional_fields': [
+        ('source.port', 'src_port'),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', convert_int),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port', convert_int),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('classification.identifier', 'tag'),  # different values possible in this report
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('extra.', 'count', convert_int),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+    },
+}
+
+event46_sinkhole_http = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+        ('source.port', 'src_port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', convert_int),
+        ('extra.source.sector', 'src_sector', validate_to_none),
+        ('extra.', 'device_vendor', validate_to_none),
+        ('extra.', 'device_type', validate_to_none),
+        ('extra.', 'device_model', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port'),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('classification.identifier', 'tag'),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('destination.url', 'http_url', convert_http_host_and_url, True),
+        ('destination.fqdn', 'http_host', validate_fqdn),
+        ('extra.', 'http_agent', validate_to_none),
+        ('extra.', 'forwarded_by', validate_to_none),
+        ('extra.', 'ssl_cipher', validate_to_none),
+        ('extra.', 'http_referer', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'malicious code',
+        'classification.type': 'infected-system',
+        'protocol.application': 'http',
+    },
+}
+
+
+# https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-exchange-server-report/
+def scan_exchange_taxonomy(field):
+    if field == 'exchange;webshell':
+        return 'intrusions'
+    return 'vulnerable'
+
+
+def scan_exchange_type(field):
+    if field == 'exchange;webshell':
+        return 'system-compromise'
+    return 'infected-system'
+
+
+def scan_exchange_identifier(field):
+    if field == 'exchange;webshell':
+        return 'exchange-server-webshell'
+    return 'vulnerable-exchange-server'
+
+
+scan_exchange = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', convert_int),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'servername', validate_to_none),
+        ('classification.taxonomy', 'tag', scan_exchange_taxonomy),
+        ('classification.type', 'tag', scan_exchange_type),
+        ('classification.identifier', 'tag', scan_exchange_identifier),
+    ],
+    'constant_fields': {
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/sinkhole-http-referer-events-report/
+event46_sinkhole_http_referer = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port'),
+    ],
+    'optional_fields': [
+        ('extra.', 'http_referer_ip', validate_ip),
+        ('extra.', 'http_referer_asn', convert_int),
+        ('extra.', 'http_referer_geo', validate_to_none),
+        ('extra.', 'http_referer_region', validate_to_none),
+        ('extra.', 'http_referer_city', validate_to_none),
+        ('extra.', 'http_referer_hostname', validate_to_none),
+        ('extra.', 'http_referer_naics', invalidate_zero),
+        ('extra.', 'http_referer_sector', validate_to_none),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname'),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('destination.url', 'http_url', convert_http_host_and_url, True),
+        ('destination.fqdn', 'http_host', validate_fqdn),
+        ('extra.', 'http_referer', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'sinkhole-http-referer',
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
     }
 }
 

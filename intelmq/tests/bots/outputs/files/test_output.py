@@ -48,7 +48,9 @@ class TestFilesOutputBot(test.BotTestCase, unittest.TestCase):
                           "dir": self.incoming_path,
                           "tmp": self.tmp_path,
                           "single_key": None,
-                          "suffix": ""}
+                          "suffix": "",
+                          "use_packer": "json",
+                          }
         self.run_bot()
         name = os.listdir(self.incoming_path)[0]
         with open(pth.join(self.incoming_path, name), encoding="utf-8") as f:

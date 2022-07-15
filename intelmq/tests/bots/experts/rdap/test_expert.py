@@ -67,7 +67,11 @@ class TestRDAPExpertBot(test.BotTestCase, unittest.TestCase):
     def test(self, mocker):
         prepare_mocker(mocker)
         self.input_message = EXAMPLE_INPUT
-        self.run_bot()
+        self.run_bot(parameters={
+            'rdap_bootstrapped_servers': {
+                'versicherung': 'http://localhost/rdap/v1/',
+            }
+        })
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
     def test_object_validation(self, mocker):

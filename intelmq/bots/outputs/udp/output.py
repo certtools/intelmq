@@ -37,7 +37,7 @@ class UDPOutputBot(OutputBot):
             del event['raw']
 
         if self.format == 'json':
-            self.send(self.header + event.to_json())
+            self.send(self.header + event.to_pack(use_packer=self.format))
         elif self.format == 'delimited':
             self.send(self.delimited(event))
 

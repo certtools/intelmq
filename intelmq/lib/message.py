@@ -9,6 +9,8 @@ Messages are the information packages in pipelines.
 Use MessageFactory to get a Message object (types Report and Event).
 """
 import hashlib
+import importlib
+import inspect
 import json
 import re
 import warnings
@@ -19,6 +21,7 @@ import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
+from intelmq.lib.packers.packer import Packer
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
 VALID_MESSSAGE_TYPES = ('Event', 'Message', 'Report')
@@ -28,8 +31,8 @@ HARMONIZATION_KEY_FORMAT = re.compile(r'^[a-z_][a-z_0-9]+(\.[a-z_0-9]+)*$')
 
 class MessageFactory:
     """
-    unserialize: JSON encoded message to object
-    serialize: object to JSON encoded object
+    deserialize: packed message to object
+    serialize: object to packed
     """
 
     @staticmethod
@@ -44,7 +47,7 @@ class MessageFactory:
             default_type: If '__type' is not present in message, the given type will be used
 
         See also:
-            MessageFactory.unserialize
+            MessageFactory.deserialize
             MessageFactory.serialize
         """
         if default_type and "__type" not in message:
@@ -60,8 +63,8 @@ class MessageFactory:
         return class_reference(message, auto=True, harmonization=harmonization)
 
     @staticmethod
-    def unserialize(raw_message: str, harmonization: dict = None,
-                    default_type: Optional[str] = None) -> dict:
+    def deserialize(raw_message: bytes, harmonization: dict = None,
+                    default_type: Optional[str] = None, use_packer: str = "MsgPack", **kwargs) -> dict:
         """
         Takes JSON-encoded Message object, returns instance of correct class.
 
@@ -74,19 +77,18 @@ class MessageFactory:
             MessageFactory.from_dict
             MessageFactory.serialize
         """
-        message = Message.unserialize(raw_message)
+        message = Message.deserialize(raw_message, use_packer=use_packer, **kwargs)
         return MessageFactory.from_dict(message, harmonization=harmonization,
                                         default_type=default_type)
 
     @staticmethod
-    def serialize(message):
+    def serialize(message, use_packer: str = 'MsgPack', **kwargs) -> bytes:
         """
-        Takes instance of message-derived class and makes JSON-encoded Message.
+        Takes instance of message-derived class and makes packed Message.
 
         The class is saved in __type attribute.
         """
-        raw_message = Message.serialize(message)
-        return raw_message
+        return Message.serialize(message, use_packer=use_packer, **kwargs)
 
 
 class Message(dict):
@@ -127,7 +129,7 @@ class Message(dict):
         elif isinstance(message, tuple):
             self.iterable = dict(message)
         else:
-            raise ValueError("Type %r of message can't be handled, must be dict or tuple.", type(message))
+            raise ValueError("Type %r of message can't be handled, must be dict or tuple." % type(message))
         for key, value in self.iterable.items():
             if not self.add(key, value, sanitize=False, raise_failure=False):
                 self.add(key, value, sanitize=True)
@@ -306,22 +308,43 @@ class Message(dict):
         return retval
 
     def deep_copy(self):
-        return MessageFactory.unserialize(MessageFactory.serialize(self),
+        return MessageFactory.deserialize(MessageFactory.serialize(self),
                                           harmonization={self.__class__.__name__.lower(): self.harmonization_config})
 
     def __str__(self):
-        return self.serialize()
+        return self.serialize(use_packer="JSON")
 
-    def serialize(self):
-        self['__type'] = self.__class__.__name__
-        json_dump = utils.decode(json.dumps(self))
-        del self['__type']
-        return json_dump
+    def serialize(self, use_packer: str = "MsgPack", **kwargs):
+        delete_type = False
+        if '__type' not in self:
+            delete_type = True
+            self['__type'] = self.__class__.__name__
+
+        try:
+            packer: Packer = inspect.getmembers(importlib.import_module(f'intelmq.lib.packers.{use_packer.lower()}.packer'))[0][1]()
+        except:
+            raise exceptions.MissingPackerError(packer=use_packer)
+
+        try:
+            packed = packer.serialize(data=self, **kwargs)
+        except Exception as exc:
+            raise exceptions.SerializationError(exception=exc, object=self)
+
+        if delete_type:
+            del self['__type']
+        return packed
 
     @staticmethod
-    def unserialize(message_string: str):
-        message = json.loads(message_string)
-        return message
+    def deserialize(message: bytes, use_packer: str = "MsgPack", **kwargs):
+        try:
+            packer: Packer = inspect.getmembers(importlib.import_module(f'intelmq.lib.packers.{use_packer.lower()}.packer'))[0][1]()
+        except:
+            raise exceptions.MissingPackerError(packer=use_packer)
+
+        try:
+            return packer.deserialize(data=message, **kwargs)
+        except Exception as exc:
+            raise exceptions.DeserializationError(exception=exc, object=message)
 
     def __is_valid_key(self, key: str):
         try:
@@ -470,13 +493,21 @@ class Message(dict):
                 json_dict_fp = json_dict_fp[subkey]
 
         for key, value in jsondicts.items():
-            new_dict[key] = json.dumps(value, ensure_ascii=False)
+            new_dict[key] = json.dumps(value)
 
         return new_dict
 
-    def to_json(self, hierarchical=False, with_type=False, jsondict_as_string=False):
-        json_dict = self.to_dict(hierarchical=hierarchical, with_type=with_type)
-        return json.dumps(json_dict, ensure_ascii=False, sort_keys=True)
+    def to_pack(self, use_packer="MsgPack", hierarchical=False, with_type=False, **kwargs):
+        try:
+            packer: Packer = inspect.getmembers(importlib.import_module(f'intelmq.lib.packers.{use_packer.lower()}.packer'))[0][1]()
+        except:
+            raise exceptions.MissingPackerError(packer=use_packer)
+
+        try:
+            data = self.to_dict(hierarchical=hierarchical, with_type=with_type)
+            return packer.serialize(data, **kwargs)
+        except Exception as exc:
+            raise exceptions.SerializationError(exception=exc, object=self)
 
     def __eq__(self, other: dict) -> bool:
         """

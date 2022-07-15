@@ -233,8 +233,8 @@ class TestJSONStreamParserBot(test.BotTestCase, unittest.TestCase):
 
     def test_event(self):
         self.run_bot()
-        self.assertMessageEqual(0, EXAMPLE_JSON_STREAM_EVENTS[0])
-        self.assertMessageEqual(1, EXAMPLE_JSON_STREAM_EVENTS[1])
+        self.assertMessageEqual(0, EXAMPLE_JSON_STREAM_EVENTS[0], use_packer='json')
+        self.assertMessageEqual(1, EXAMPLE_JSON_STREAM_EVENTS[1], use_packer='json')
 
     def dump_message(self, error_traceback, message=None):
         self.assertDictEqual(JSON_STREAM_BOGUS_DUMP[self.call_counter], message)

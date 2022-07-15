@@ -504,6 +504,9 @@ Requires the `kafka python library <https://pypi.org/project/kafka/>`_.
 
 .. _intelmq.bots.collectors.misp.collector:
 
+
+.. _intelmq.bots.collectors.misp.collector:
+
 MISP Generic
 ^^^^^^^^^^^^
 
@@ -639,6 +642,9 @@ Requires the rsync executable
 * `file`: The filename to process, combined with `rsync_path`.
 * `rsync_path`: Path to file. It can be "/home/username/directory" or "username@remote_host:/home/username/directory"
 * `temp_directory`: The temporary directory for rsync to use for rsync'd files. Optional. Default: `$VAR_STATE_PATH/rsync_collector`. `$VAR_STATE_PATH` is `/var/run/intelmq/` or `/opt/intelmq/var/run/`.
+
+
+.. _intelmq.bots.collectors.shadowserver.collector_reports_api:
 
 
 .. _intelmq.bots.collectors.shadowserver.collector_reports_api:
@@ -1700,6 +1706,7 @@ It is required to look up the correct configuration.
 
 Look at the documentation in the bot's ``_config.py`` file for more information.
 
+.. _intelmq.bots.parsers.shodan.parser:
 
 .. _intelmq.bots.parsers.shodan.parser:
 
@@ -1788,7 +1795,6 @@ Aggregate
 **Configuration Parameters**
 
 * **Cache parameters** (see in section :ref:`common-parameters`)
-
   * TTL is not used, using it would result in data loss.
 * **fields** Given fields which are used to aggregate like `classification.type, classification.identifier`
 * **threshold** If the aggregated event is lower than the given threshold after the timespan, the event will get dropped.
@@ -1858,6 +1864,8 @@ The database is fetched from `routeviews.org <http://www.routeviews.org/routevie
 
 .. _intelmq.bots.experts.csv_converter.expert:
 
+.. _intelmq.bots.experts.csv_converter.expert:
+
 CSV Converter
 ^^^^^^^^^^^^^
 
@@ -1923,6 +1931,8 @@ RemoveAffix
 **Description**
 Remove part of string from string, example: `www.` from domains.
 
+
+.. _intelmq.bots.experts.domain_suffix.expert:
 
 .. _intelmq.bots.experts.domain_suffix.expert:
 
@@ -2698,6 +2708,8 @@ RDAP
 
 .. _intelmq.bots.experts.recordedfuture_iprisk.expert:
 
+.. _intelmq.bots.experts.recordedfuture_iprisk.expert:
+
 RecordedFuture IP risk
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -2968,6 +2980,23 @@ The following operators may be used to match events:
  * Lists of numeric values support `:in` to check for inclusion in a list of numbers:
 
    ``if source.port :in [80, 443] { ... }``
+
+ * `:equals` tests for equality between lists, including order. Example for checking a hostname-port pair:
+   ``if extra.host_tuple :equals ['dns.google', 53] { ... }``
+ * `:setequals` tests for set-based equality (ignoring duplicates and value order) between a list of given values. Example for checking for the first nameserver of two domains, regardless of the order they are given in the list:
+   ``if extra.hostnames :setequals ['ns1.example.com', 'ns1.example.mx'] { ... }``
+
+ * `:overlaps` tests if there is at least one element in common between the list specified by a key and a list of values. Example for checking if at least one of the ICS, database or vulnerable tags is given:
+   ``if extra.tags :overlaps ['ics', 'database', 'vulnerable'] { ... } ``
+
+ * `:subsetof` tests if the list of values from the given key only contains values from a set of values specified as the argument. Example for checking for a host that has only ns1.example.com and/or ns2.[...] as its apparent hostname:
+   ``if extra.hostnames :subsetof ['ns1.example.com', 'ns2.example.com'] { ... }``
+
+ * `:supersetof` tests if the list of values from the given key is a superset of the values specified as the argument. Example for matching hosts with at least the IoT and vulnerable tags:
+   ``if extra.tags :supersetof ['iot', 'vulnerable'] { ... }``
+
+ * Boolean values can be matched with `==` or `!=` followed by `true` or `false`. Example:
+   ``if extra.has_known_vulns == true { ... }``
 
  * `:equals` tests for equality between lists, including order. Example for checking a hostname-port pair:
    ``if extra.host_tuple :equals ['dns.google', 53] { ... }``
@@ -3396,7 +3425,6 @@ Events without `source.url`, `source.fqdn`, `source.ip`, or `source.asn`, are ig
 only contains the domain. uWhoisd will automatically strip the subdomain part if it is present in the request.
 
 Example: `https://www.theguardian.co.uk`
-
 * TLD: `co.uk` (uWhoisd uses the `Mozilla public suffix list <https://publicsuffix.org/list/>`_ as a reference)
 * Domain: `theguardian.co.uk`
 * Subdomain: `www`
@@ -4096,6 +4124,8 @@ Create the new database (you can ignore all errors since SQLite doesn't know all
 Then, set the `database` parameter to the `your-db.db` file path.
 
 .. _stomp output bot:
+
+.. _intelmq.bots.outputs.stomp.output:
 
 .. _intelmq.bots.outputs.stomp.output:
 

@@ -191,6 +191,9 @@ UPDATE events
    SET "classification.taxonomy" = 'information-content-security', "classification.type" = 'unauthorised-information-modification'
    WHERE "classification.taxonomy" = 'intrusions', "classification.type" = 'defacement'
 UPDATE events
+   SET "classification.taxonomy" = 'information-content-security', "classification.type" = 'unauthorised-information-modification'
+   WHERE "classification.taxonomy" = 'intrusions', "classification.type" = 'defacement'
+UPDATE events
    SET "classification.taxonomy" = 'malicious-code'
    WHERE "classification.taxonomy" = 'malicious code';
 UPDATE events
@@ -284,7 +287,7 @@ CentOS 7 (with EPEL) provides both Python 3.4 and Python 3.6. If IntelMQ was ins
   type and reloads them afterwards. Removes any external dependencies (such as curl or wget).
   This is a replacement for shell scripts such as `update-tor-nodes`, `update-asn-data`,
   `update-geoip-data`, `update-rfiprisk-data`.
-  
+
   Usage:
   ```
   intelmq.bots.experts.asn_lookup.expert --update-database

@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-import json
+import os
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.cymru_whois.expert import CymruExpertBot
+from intelmq.lib.message import MessageFactory
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "78.104.144.2",  # example.com
@@ -93,7 +94,7 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         """
         self.input_message = EXAMPLE_6TO4_INPUT
         self.run_bot()
-        actual = json.loads(self.get_output_queue()[0])
+        actual = MessageFactory.serialize(self.get_output_queue()[0], use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack'))
         self.assertDictContainsSubset(EXAMPLE_6TO4_INPUT, actual)
         self.assertIn("source.asn", actual)
         self.assertIn("source.as_name", actual)

@@ -101,6 +101,7 @@ class Bot:
     statistics_host: str = "127.0.0.1"
     statistics_password: Optional[str] = None
     statistics_port: int = 6379
+    use_packer: str = os.environ.get('INTELMQ_USE_PACKER', 'MsgPack')
 
     _message_processed_verb: str = 'Processed'
 
@@ -329,8 +330,8 @@ class Bot:
                     self.logger.error('Pipeline failed.')
                 self.__disconnect_pipelines()
 
-            except exceptions.DecodingError as exc:
-                self.logger.exception('Could not decode message from pipeline. No retries useful.')
+            except exceptions.DeserializationError as exc:
+                self.logger.exception('Could not deserialize message from pipeline. No retries useful.')
 
                 # ensure that we do not re-process the faulty message
                 self.__error_retries_counter = self.error_max_retries + 1
@@ -661,7 +662,7 @@ class Bot:
             return self.receive_message()
 
         try:
-            self.__current_message = libmessage.MessageFactory.unserialize(message,
+            self.__current_message = libmessage.MessageFactory.deserialize(message,
                                                                            harmonization=self.harmonization)
         except exceptions.InvalidKey as exc:
             # In case a incoming message is malformed an does not conform with the currently
@@ -820,7 +821,7 @@ class Bot:
 
     def __log_configuration_parameter(self, config_name: str, option: str, value: Any):
         if "password" in option or "token" in option:
-            value = "HIDDEN"
+            value = "<redacted>"
 
         message = "{} configuration: parameter {!r} loaded with value {!r}." \
             .format(config_name.title(), option, value)
@@ -1318,9 +1319,8 @@ class OutputBot(Bot):
                 if 'raw' in event:
                     del event['raw']
             if return_type is str:
-                return event.to_json(hierarchical=self.hierarchical,
-                                     with_type=self.with_type,
-                                     jsondict_as_string=self.jsondict_as_string)
+                return event.to_pack(use_packer=self.use_packer, hierarchical=self.hierarchical,
+                                     with_type=self.with_type)
             else:
                 retval = event.to_dict(hierarchical=self.hierarchical,
                                        with_type=self.with_type,

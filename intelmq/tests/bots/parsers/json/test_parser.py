@@ -51,7 +51,6 @@ NO_DEFAULT_REPORT = {"feed.name": "Test feed",
 NO_DEFAULT_EVENT = MULTILINE_EVENTS[1].copy()
 NO_DEFAULT_EVENT['raw'] = base64.b64encode(b'{"source.ip": "127.0.0.2", "classification.type": "c2-server"}\n').decode()
 
-
 class TestJSONParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for a MalwareDomainListParserBot.

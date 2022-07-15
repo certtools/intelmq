@@ -610,7 +610,7 @@ def v230_feed_changes(configuration, harmonization, dry_run, **kwargs):
 
 def v300_bots_file_removal(configuration, harmonization, dry_run, **kwargs):
     """
-    Remove BOTS file
+    Migrate Abuse.ch Feodotracker Browser feed parsing parameters
     """
     changed = None
     messages = []

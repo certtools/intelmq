@@ -10,7 +10,9 @@ Unicode is used for all tests.
 Most tests are performed on Report, as it is formally the same as Message,
 but has a valid Harmonization configuration.
 """
+from cmath import exp
 import json
+import os
 import unittest
 
 import pkg_resources
@@ -158,12 +160,20 @@ class TestMessageFactory(unittest.TestCase):
     def test_invalid_type(self):
         """ Test if Message raises InvalidArgument for invalid type. """
         with self.assertRaises(exceptions.InvalidArgument):
-            message.MessageFactory.unserialize('{"__type": "Message"}', harmonization=HARM)
+            data = message.MessageFactory.serialize({"__type": "Message"}, use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack'))
+            message.MessageFactory.deserialize(data, harmonization=HARM, use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack'))
 
     def test_invalid_type2(self):
         """ Test if MessageFactory raises InvalidArgument for invalid type. """
         with self.assertRaises(exceptions.InvalidArgument):
-            message.MessageFactory.unserialize('{"__type": "Invalid"}', harmonization=HARM)
+            data = message.MessageFactory.serialize({"__type": "Invalid"}, use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack'))
+            message.MessageFactory.deserialize(data, harmonization=HARM, use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack'))
+
+    def test_missing_packer(self):
+        """ Test if MessageFactory raises MissingPackerError if a non existing packer is being used. """
+        with self.assertRaises(exceptions.MissingPackerError):
+            data = message.MessageFactory.serialize({"__type": "Invalid"}, use_packer='non_existing_packer')
+            message.MessageFactory.deserialize(data, harmonization=HARM, use_packer='non_existing_packer')
 
     def test_report_invalid_key(self):
         """ Test if report raises InvalidKey for invalid key in add(). """
@@ -364,11 +374,17 @@ class TestMessageFactory(unittest.TestCase):
         report.add('feed.name', 'Example')
         report.add('feed.url', URL_SANE)
         report.add('raw', LOREM_BASE64, sanitize=False)
-        actual = message.MessageFactory.serialize(report)
-        expected = ('{"raw": "bG9yZW0gaXBzdW0=", "__type": "Report", "feed.url'
-                    '": "https://example.com/", "feed.name": "Example"}')
-        self.assertDictEqual(json.loads(expected),
-                             json.loads(actual))
+        actual = message.MessageFactory.serialize(report, use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack'))
+        expected = message.MessageFactory.serialize({
+            'feed.name': 'Example',
+            'feed.url': 'https://example.com/',
+            'raw': 'bG9yZW0gaXBzdW0=',
+            '__type': 'Report',
+        }, use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack'))
+        self.assertDictEqual(
+            message.MessageFactory.deserialize(expected, use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack')),
+            message.MessageFactory.deserialize(actual, use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack'))
+        )
 
     def test_deep_copy_content(self):
         """ Test if deep_copy does return the same items. """
@@ -496,45 +512,11 @@ class TestMessageFactory(unittest.TestCase):
                                                       '00:00'}},
                              event.to_dict(hierarchical=True))
 
-    def test_event_json(self):
-        """ Test Event to_json. """
-        event = self.new_event()
-        event = self.add_event_examples(event)
-        actual = event.to_json()
-        self.assertIsInstance(actual, str)
-        expected = ('{"feed.url": "https://example.com/", "feed.name": '
-                    '"Example", "raw": "bG9yZW0gaXBzdW0=", "time.observation": '
-                    '"2015-01-01T13:37:00+00:00"}')
-        self.assertDictEqual(json.loads(expected), json.loads(actual))
-
-    def test_event_json_hierarchical(self):
-        """ Test Event to_json. """
-        event = self.new_event()
-        event = self.add_event_examples(event)
-        actual = event.to_json(hierarchical=True)
-        self.assertIsInstance(actual, str)
-        expected = ('{"feed": {"url": "https://example.com/", "name": '
-                    '"Example"}, "raw": "bG9yZW0gaXBzdW0=", "time": '
-                    '{"observation": "2015-01-01T13:37:00+00:00"}}')
-        self.assertDictEqual(json.loads(expected), json.loads(actual))
-
     def test_event_serialize(self):
         """ Test Event serialize. """
         event = self.new_event()
-        self.assertEqual('{"__type": "Event"}',
-                         event.serialize())
-
-    def test_event_string(self):
-        """ Test Event serialize. """
-        event = self.new_event()
-        self.assertEqual('{"__type": "Event"}',
-                         event.serialize())
-
-    def test_event_unicode(self):
-        """ Test Event serialize. """
-        event = self.new_event()
-        self.assertEqual('{"__type": "Event"}',
-                         event.serialize())
+        expected = message.MessageFactory.serialize({'__type': 'Event'}, use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack'))
+        self.assertEqual(expected, event.serialize())
 
     def test_event_from_report(self):
         """ Data from report should be in event, except for extra. """
@@ -599,9 +581,9 @@ class TestMessageFactory(unittest.TestCase):
 
     def test_event_init(self):
         """ Test if initialization method checks fields. """
-        event = '{"__type": "Event", "source.asn": "foo"}'
+        event = message.MessageFactory.serialize({"__type": "Event", "source.asn": "foo"}, use_packer=os.environ.get('INTELMQ_USE_PACKER', 'MsgPack'))
         with self.assertRaises(exceptions.InvalidValue):
-            message.MessageFactory.unserialize(event, harmonization=HARM)
+            message.MessageFactory.deserialize(event, harmonization=HARM)
 
     def test_malware_hash_md5(self):
         """ Test if MD5 is checked correctly. """
@@ -696,11 +678,9 @@ class TestMessageFactory(unittest.TestCase):
         """
         event = self.new_event()
         event["extra"] = {"a": {"x": 1}, "b": "foo"}
-        self.assertEqual(json.loads(event['extra']),
-                         {"a": {"x": 1}, "b": "foo"})
+        self.assertEqual(json.loads(event['extra']), {"a": {"x": 1}, "b": "foo"})
         event.add("extra", {"a": {}}, overwrite=True)
-        self.assertEqual(json.loads(event['extra']),
-                         {"a": {}})
+        self.assertEqual(json.loads(event['extra']), {"a": {}})
 
     def test_message_extra_set_dict_empty(self):
         """
@@ -708,8 +688,7 @@ class TestMessageFactory(unittest.TestCase):
         """
         event = self.new_event()
         event.add('extra', {"foo": ''})
-        self.assertEqual(json.loads(event['extra']),
-                         {"foo": ''})
+        self.assertEqual(json.loads(event["extra"]), {"foo": ""})
 
     def test_message_extra_in_backwardcomp(self):
         """

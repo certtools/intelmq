@@ -25,6 +25,21 @@ Having an `events` table as outlined in the SQL file, IntelMQ's :ref:`intelmq.bo
 
 This events table is the core of the so-called EventDB and also required by all other sections of this document.
 
+-----------------------
+The events table itself
+-----------------------
+
+IntelMQ comes with the ``intelmq_psql_initdb`` command line tool. It creates an SQL file containing:
+
+- A ``CREATE TABLE events`` statement with all valid IntelMQ fields as columns and correct types
+- Several indexes as examples for a good read & search performance
+
+All elements of this SQL file can be adapted and extended before running the SQL file against a database, especially the indexes.
+
+Having an `events` table as outlined in the SQL file, IntelMQ's PostgreSQL Output bot can write all received events into this database table.
+
+This events table is the core of the so-called EventDB and also required by all other sections of this document.
+
 -----------------
 EventDB Utilities
 -----------------
