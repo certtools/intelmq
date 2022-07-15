@@ -210,11 +210,15 @@ class MicrosoftCTIPParserBot(ParserBot):
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
         if raw_report.startswith('['):
+            # Interflow
             self.recover_line = self.recover_line_json
             yield from self.parse_json(report)
         elif raw_report.startswith('{'):
+            # Azure
             self.recover_line = self.recover_line_json_stream
             yield from self.parse_json_stream(report)
+        else:
+            raise ValueError("Can't parse the received message. It is neither a JSON list nor a JSON dictionary. Please report this bug.")
 
     def parse_line(self, line, report):
         if line.get('version', None) == 1.5:
@@ -222,7 +226,7 @@ class MicrosoftCTIPParserBot(ParserBot):
         else:
             yield from self.parse_azure(line, report)
 
-    def parse_interflow(self, line, report):
+    def parse_interflow(self, line: dict, report):
         raw = self.recover_line(line)
         if line['indicatorthreattype'] != 'Botnet':
             raise ValueError('Unknown indicatorthreattype %r, only Botnet is supported.' % line['indicatorthreattype'])
@@ -257,7 +261,7 @@ class MicrosoftCTIPParserBot(ParserBot):
         yield event
 
     def parse_azure(self, line, report):
-        raw = self.recover_line(line)
+        raw = self.recover_line()
 
         event = self.new_event(report)
 
