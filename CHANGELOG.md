@@ -29,6 +29,8 @@ CHANGELOG
   The `LogLevel` and `ReturnType` Enums were added to `intelmq.lib.datatypes`.
 - `intelmq.lib.bot`:
   - Enhance behaviour if an unconfigured bot is started (PR#2054 by Sebastian Wagner).
+  - Fix line recovery and message dumping of the `ParserBot` (PR#2192 by Sebastian Wagner).
+    - Previously the dumped message was always the last message of a report if the report contained muliple lines leading to data-loss.
 
 ### Development
 
@@ -72,6 +74,7 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver._config`:
   - Added support for `Accessible AMQP`, `Device Identification Report` (IPv4 and IPv6) (PR#2134 by Mateo Durante).
   - Added file name mapping for `SSL-POODLE-Vulnerable-Servers IPv6` (file name `scan6_ssl_poodle`) (PR#2134 by Mateo Durante).
+- `intelmq.bots.parsers.generic.parser_csv`: Use RewindableFileHandle to use the original current line for line recovery (PR#2192 by Sebastian Wagner).
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).

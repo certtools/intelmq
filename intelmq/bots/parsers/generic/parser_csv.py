@@ -28,6 +28,7 @@ from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidArgument, InvalidValue
 from intelmq.lib.harmonization import DateTime
+from intelmq.lib.utils import RewindableFileHandle
 
 TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
                     'windows_nt': DateTime.from_windows_nt,
@@ -101,8 +102,10 @@ class GenericCsvParserBot(ParserBot):
         if self.skip_header:
             self.tempdata.append(raw_report[:raw_report.find('\n')])
             raw_report = raw_report[raw_report.find('\n') + 1:]
-        for row in csv.reader(io.StringIO(raw_report),
+        self._handle = RewindableFileHandle(io.StringIO(raw_report))
+        for row in csv.reader(self._handle,
                               delimiter=str(self.delimiter)):
+            self._current_line = self._handle.current_line
 
             if self.filter_text and self.filter_type:
                 text_in_row = self.filter_text in self.delimiter.join(row)
@@ -115,7 +118,7 @@ class GenericCsvParserBot(ParserBot):
             else:
                 yield row
 
-    def parse_line(self, row, report):
+    def parse_line(self, row: list, report):
         event = self.new_event(report)
 
         for keygroup, value, required in zip(self.columns, row, self.columns_required):

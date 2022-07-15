@@ -26,7 +26,7 @@ class CymruFullBogonsParserBot(ParserBot):
         for row in raw_report.splitlines():
             yield row.strip()
 
-    def parse_line(self, val, report):
+    def parse_line(self, val: str, report):
         if not len(val) or val.startswith('#') or val.startswith('//'):
             return
 
