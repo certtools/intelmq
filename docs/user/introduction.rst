@@ -25,7 +25,7 @@ handling processes of CERTs.
 - **Mailing-list:** <ihap@lists.trusted-introducer.org>
 
 Several pieces of software are evolved around IntelMQ. For an overview,
-look at the :doc:`ecosystem`.
+look at the :doc:`universe`.
 
 IntelMQ can be used for
 - automated incident handling

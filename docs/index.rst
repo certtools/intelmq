@@ -51,7 +51,7 @@ Connecting with other systems
    :glob:
    :maxdepth: 1
 
-   user/ecosystem
+   user/universe
    user/ELK-Stack
    user/MISP-Integrations
    user/n6-integrations

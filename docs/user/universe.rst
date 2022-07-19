@@ -1,20 +1,22 @@
 ..
-   SPDX-FileCopyrightText: 2019-2021 Sebastian Wagner
+   SPDX-FileCopyrightText: 2019-2022 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 
-IntelMQ Ecosystem
+IntelMQ Universe
 =================
 
+.. contents::
 
-IntelMQ is more than a the core library itself and many programs are developed around in the IntelMQ initiative.
+IntelMQ is more than a the core library itself and many programs are developed around in the IntelMQ universe.
 This document provides an overview of the ecosystem and all related tools. If you think something is missing, please let us know!
 
-IntelMQ "Core"
---------------
+IntelMQ Core
+------------
 
-This is IntelMQ itself, as it is available on `github <https://github.com/certtools/intelmq>`_.
+This is IntelMQ itself, as it is available on `GitHub <https://github.com/certtools/intelmq>`_.
 
-It includes all the bots, the harmonization, etc.
+The Core includes all the components required for processing data feeds.
+This includes the bots, configuration, pipeline, the internal data format, management tools etc.
 
 IntelMQ Manager
 ---------------
@@ -28,17 +30,18 @@ intelmq-webinput-csv
 --------------------
 
 A web-based interface to inject CSV data into IntelMQ with on-line validation and live feedback.
+Developed and maintained by `CERT.at <https://cert.at>`_.
 
 → `Repository: intelmq-webinput-csv <https://github.com/certat/intelmq-webinput-csv>`_
 
 intelmq-cb-mailgen
 ------------------
 
-A solution allowing
-an IntelMQ setup with a complex contact database,
+A solution allowing an IntelMQ setup with a complex contact database,
 managed by a web interface and sending out aggregated email reports.
-(In different words:
-To send grouped notifications to network owners using SMTP.)
+In different words: To send grouped notifications to network owners using SMTP.
+
+Developed and maintained by `Intevation <https://intevation.de>`_, initially funded by `BSI <http://bsi.bund.de/>`_.
 
 → `Repository: intelmq-cb-mailgen <https://github.com/Intevation/intelmq-mailgen-release>`_
 
@@ -72,7 +75,7 @@ A web application helping CERTs to enable members of their constituency
 to self-administrate how they get warnings related to their network objects
 (IP addresses, IP ranges, autonomous systems, domains).
 *tuency* is developed by `Intevation <https://intevation.de/>`_ for
-`CERT.at <https://cert.at/>`_.
+`CERT.at <https://cert.at>`_.
 
 If features organizational hierarchies, contact roles, self-administration
 and network objects per organization (Autonomous systems, network ranges,
@@ -98,6 +101,8 @@ contact and notification settings with the
 A contact portal with organizational hierarchies, role functionality and network objects based on RIPE, allows self-administration by the contacts.
 Can be queried from IntelMQ and integrates the stats-portal.
 
+Originally developed by `CERT-EU <https://cert.europa.eu/>`_, then adapted by `CERT.at <https://cert.at>`_.
+
 → `Repository: do-portal <https://github.com/certat/do-portal>`_
 
 stats-portal
@@ -118,5 +123,7 @@ IntelMQ-Docker
 --------------
 
 A repository with tools for IntelMQ docker instance.
+
+Developed and maintained by `CERT.at <https://cert.at>`_.
 
 → `Repository: intelmq-docker <https://github.com/certat/intelmq-docker>`_
