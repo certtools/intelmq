@@ -70,7 +70,7 @@ There is also a list of available :doc:`feeds` as well as a detailed description
 
 If you know additional feeds and how to parse them, please contribute your code or your configuration (by issues or the mailing lists).
 
-For support questions please use the |intelmq-users-list-link|.
+If you need help, read here about your options: :doc:`support`.
 
 IntelMQ Manager
 ===============
