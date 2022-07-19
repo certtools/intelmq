@@ -78,8 +78,8 @@ def feeds_docs():
     with codecs.open(os.path.join(BASEDIR, 'intelmq/etc/feeds.yaml'), encoding='utf-8') as fhandle:
         config = yaml.load(fhandle.read())
 
-    output = """Feeds
-======
+    output = """Data Feeds
+==========
 
 The available feeds are grouped by the provider of the feeds.
 For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.

@@ -18,29 +18,14 @@ Their name is based on the famous `"PEPs" of Python <https://peps.python.org/>`_
 
 IEPs are collected in the separate `iep repository <github.com/certtools/ieps/>`_.
 
-IntelMQ Architecture Board
-==========================
-
-The board consists of diverse members of the community and supports it. It makes the final decision on IEPs. The members are:
-
-* Aaron Kaplan
-* Alexandre Dulanoy
-* Moto Kawasaki
-* Pawel Kacha
-* Pawel Pawlinski
-* Sebastian Wagner
-* Sebastian Waldbauer
-* Trey Darley
-
 Code-Reviews and Merging
 ------------------------
 
 Every line of code checked in for the IntelMQ Core, is checked by at least one trusted developer (excluding the author of the changes) of the IntelMQ community.
-Afterwards, the code can be merged. Currently, these contributors, are actively reviewing and merging contributions for the IntelMQ Core, Manager and API:
- * Sebastian Waldbauer (`waldbauer-certat <https://github.com/waldbauer-certat>`_)
+Afterwards, the code can be merged. Currently, these three contributors, have the permission to push and merging code to IntelMQ Core, Manager and API:
+ * Aaron Kaplan (`aaronkaplan <https://github.com/aaronkaplan>`_)
  * Sebastian Wagner (`sebix <https://github.com/sebix>`_)
-
-Other members can be viewed in this (incomplete) list: `People of CERT-Tools <https://github.com/orgs/certtools/people>`_.
+ * Sebastian Waldbauer (`waldbauer-certat <https://github.com/waldbauer-certat>`_)
 
 Additionally, these people significantly contributed to IntelMQ:
  * Bernhard Reiter
