@@ -4026,7 +4026,8 @@ The parameters marked with 'PostgreSQL' will be sent to libpq via psycopg2. Chec
 * `fields`: list of fields to read from the event. If None, read all fields
 * `reconnect_delay`: number of seconds to wait before reconnecting in case of an error
 
-**PostgreSQL**
+PostgreSQL
+~~~~~~~~~~
 
 You have two basic choices to run PostgreSQL:
 
@@ -4081,7 +4082,13 @@ if the user `intelmq` can authenticate):
 
    psql -h localhost intelmq-events intelmq </tmp/initdb.sql
 
-**SQLite**
+**PostgreSQL and null characters**
+
+While null characters (`\0`, not SQL "NULL") in TEXT and JSON/JSONB fields are valid, data containing null characters can cause troubles in some combinations of clients, servers and each settings.
+To prevent unhandled errors and data which can't be inserted into the database, all null characters are escaped (`\\u0000`) before insertion.
+
+SQLite
+~~~~~~
 
 Similarly to PostgreSQL, you can use `intelmq_psql_initdb` to create initial SQL statements
 from `harmonization.conf`. The script will create the required table layout

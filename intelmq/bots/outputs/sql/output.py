@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2019 Edvard Rejthar
+# SPDX-FileCopyrightText: 2019 Edvard Rejthar, 2022 Intevation GmbH
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -48,14 +48,23 @@ class SQLOutputBot(OutputBot, SQLMixin):
             key_names = event.keys()
         valid_keys = [key for key in key_names if key in event]
         keys = '", "'.join(valid_keys)
-        values = itemgetter_tuple(*valid_keys)(event)
-        fvalues = len(values) * '{0}, '.format(self.format_char)
+        values = self.prepare_values(itemgetter_tuple(*valid_keys)(event))
+        fvalues = len(values) * f'{self.format_char}, '
         query = ('INSERT INTO {table} ("{keys}") VALUES ({values})'
                  ''.format(table=self.table, keys=keys, values=fvalues[:-2]))
 
         if self.execute(query, values, rollback=True):
             self.con.commit()
             self.acknowledge_message()
+
+    def prepare_values(self, values):
+        if self._engine_name == self.POSTGRESQL:
+            # escape JSON-encoded NULL characters. JSON escapes them once, but we need to escape them twice,
+            # so that Postgres does not encounter a NULL char while decoding it
+            # https://github.com/certtools/intelmq/issues/2203
+            return [value.replace('\\u0000', '\\\\u0000') if isinstance(value, str) else value for value in values]
+        else:
+            return list(values)
 
 
 BOT = SQLOutputBot
