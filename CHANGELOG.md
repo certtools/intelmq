@@ -98,6 +98,7 @@ CHANGELOG
 ### Documentation
 - Feeds: Add documentation for newly supported dataplane feeds, see above (PR#2102 by Mikk Margus Möll).
 - Installation: Restructured the whole document to make it clearer and straight-forward (PR#2113 by Sebastian Wagner).
+- Add workaround for https://github.com/sphinx-doc/sphinx/issues/10701 (PR#2225 by Sebastian Wagner, kudos @yarikoptic, fixes #2224).
 
 ### Packaging
 
