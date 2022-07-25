@@ -46,6 +46,7 @@ CHANGELOG
   - Add support for unverified SSL/STARTTLS connections (PR#2055 by Sebastian Wagner).
   - Fix exception handling for aborted IMAP connections (PR#2187 by Sebastian Wagner).
 - `intelmq.bots.collectors.blueliv`: Fix Blueliv collector requirements (PR#2161 by Gethvi).
+- `intelmq.bots.collectors.github_api._collector_github_api`: Added personal access token support (PR#2145 by Sebastian Waldbauer, fixes #1549).
 
 #### Parsers
 - `intelmq.bots.parsers.alienvault.parser_otx`: Save CVE data in `extra.cve` instead of `extra.CVE` due to the field name restriction on lower-case characters  (PR#2059 by Sebastian Wagner).

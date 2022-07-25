@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 Sebastian Waldbauer
+# SPDX-FileCopyrightText: 2022 Sebastian Waldbauer
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -6,14 +6,10 @@
 """
 GITHUB API Collector bot
 """
-import base64
+from typing import Optional
 
+import requests
 from intelmq.lib.bot import CollectorBot
-
-try:
-    import requests
-except ImportError:
-    requests = None
 
 static_params = {
     'headers': {
@@ -23,16 +19,12 @@ static_params = {
 
 
 class GithubAPICollectorBot(CollectorBot):
-    basic_auth_username = None
-    basic_auth_password = None
+    personal_access_token: Optional[str] = None
 
     def init(self):
-        if requests is None:
-            raise ValueError('Could not import requests. Please install it.')
-
         self.__user_headers = static_params['headers']
-        if self.basic_auth_username is not None and self.basic_auth_password is not None:
-            self.__user_headers.update(self.__produce_auth_header(self.basic_auth_username, self.basic_auth_password))
+        if self.personal_access_token:
+            self.__user_headers.update({'Authorization': self.personal_access_token})
         else:
             self.logger.warning('Using unauthenticated API access, means the request limit is at 60 per hour.')
 
@@ -55,10 +47,3 @@ class GithubAPICollectorBot(CollectorBot):
                 return response.json()
         except requests.RequestException:
             raise ValueError(f"Unknown repository {api_path!r}.")
-
-    @staticmethod
-    def __produce_auth_header(username: str, password: str) -> dict:
-        encoded_auth_bytes = base64.b64encode(bytes(f'{username}:{password}', encoding='utf-8'))
-        return {
-            'Authorization': 'Basic {}'.format(encoded_auth_bytes.decode('utf-8'))
-        }

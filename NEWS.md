@@ -39,6 +39,12 @@ The parameter `timeout` has been merged into `redis_cache_ttl`.
 ### Postgres databases
 
 
+### Bots
+
+#### Github Collector
+GitHub removed the basic `Username/Password` Authentication in favor of personal access tokens. So the GitHub Collector uses an Personal Access Token for authentication [Github Documentation: Generate a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+
+
 3.0.2 Maintenance release (2021-09-10)
 --------------------------------------
 Two performance issues were fixed. One affected all collectors which processed high volumes of data and the other issue affected some bots which used threading.
@@ -105,7 +111,7 @@ and the XMPP bots were deprecated in 391d625.
 #### Sieve expert
 The Sieve expert bot has had major updates to its syntax. Breaking new changes:
 * the removal of the `:notcontains` operator, which can be replaced using the newly added
- expression negation, e.g `! foo :contains ['.mx', '.zz']` rather than `foo :notcontains ['.mx', '.zz']`. 
+ expression negation, e.g `! foo :contains ['.mx', '.zz']` rather than `foo :notcontains ['.mx', '.zz']`.
 * changed operators for comparisons against lists of values, e.g `source.ip :in ['127.0.0.5', '192.168.1.2']` rather than `source.ip == ['127.0.0.5', '192.168.1.2']`
   The "old" syntax with `==` on lists is no longer valid and raises an error.
 
@@ -284,7 +290,7 @@ CentOS 7 (with EPEL) provides both Python 3.4 and Python 3.6. If IntelMQ was ins
   type and reloads them afterwards. Removes any external dependencies (such as curl or wget).
   This is a replacement for shell scripts such as `update-tor-nodes`, `update-asn-data`,
   `update-geoip-data`, `update-rfiprisk-data`.
-  
+
   Usage:
   ```
   intelmq.bots.experts.asn_lookup.expert --update-database
