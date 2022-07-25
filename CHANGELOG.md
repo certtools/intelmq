@@ -20,6 +20,8 @@ CHANGELOG
 - `intelmq.lib.message`:
   - Fix and pre-compile the regular expression for harmonization key names and also check keys in the `extra.` namespace (PR#2059 by Sebastian Wagner, fixes #1807).
 - `intelmq.lib.bot.SQLBot` was replaced by an SQLMixin in `intelmq.lib.mixins.SQLMixin`. The Generic DB Lookup Expert bot and the SQLOutput bot were updated accordingly.
+  - Added support for MSSQL (PR#2171 by Karl-Johan Karlsson).
+  - Added optional reconnect delay parameter (PR#2171 by Karl-Johan Karlsson).
 - Added an ExpertBot class - it should be used by all expert bots as a parent class
 - Introduced a module for IntelMQ related datatypes `intelmq.lib.datatypes` which for now only contains an Enum listing the four bot types
 - Added a `bottype` attribute to CollectorBot, ParserBot, ExpertBot, OutputBot

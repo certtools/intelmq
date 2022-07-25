@@ -4101,6 +4101,10 @@ Then, set the `database` parameter to the `your-db.db` file path.
 
 .. _intelmq.bots.outputs.stomp.output:
 
+**MSSQL**
+
+For MSSQL support, the library `pymssql>=2.2` is required.
+
 STOMP
 ^^^^^
 
