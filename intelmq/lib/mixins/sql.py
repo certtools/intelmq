@@ -7,6 +7,8 @@ Based on the former SQLBot base class
 """
 from intelmq.lib import exceptions
 
+from time import sleep
+
 
 class SQLMixin:
     """
@@ -19,10 +21,12 @@ class SQLMixin:
 
     POSTGRESQL = "postgresql"
     SQLITE = "sqlite"
+    MSSQL = "mssql"
     _default_engine = "postgresql"
     engine = None
     # overwrite the default value from the OutputBot
     message_jsondict_as_string = True
+    reconnect_delay = 0
 
     def __init__(self, *args, **kwargs):
         self._init_sql()
@@ -33,7 +37,8 @@ class SQLMixin:
         self.logger.debug("Running SQL Mixin initialization.")
         self._engine_name = getattr(self, 'engine', self._default_engine).lower()
         engines = {SQLMixin.POSTGRESQL: (self._init_postgresql, "%s"),
-                   SQLMixin.SQLITE: (self._init_sqlite, "?")}
+                   SQLMixin.SQLITE: (self._init_sqlite, "?"),
+                   SQLMixin.MSSQL: (self._init_mssql, "%s")}
         for key, val in engines.items():
             if self._engine_name == key:
                 val[0]()
@@ -48,7 +53,7 @@ class SQLMixin:
 
         try:
             self.con = self._engine.connect(**connect_args)
-            if autocommitable:  # psycopg2 has it, sqlite3 has not
+            if autocommitable:  # psycopg2 and mssql has it, sqlite3 has not
                 self.con.autocommit = getattr(self, 'autocommit', True)  # True prevents deadlocks
             self.cur = self.con.cursor()
         except (self._engine.Error, Exception):
@@ -86,6 +91,23 @@ class SQLMixin:
                        }
                       )
 
+    def _init_mssql(self):
+        try:
+            import pymssql
+        except ImportError:
+            raise exceptions.MissingDependencyError("pymssql")
+
+        self._connect(pymssql,
+                      {"server": self.host,
+                       "user": self.user,
+                       "password": self.password,
+                       "database": self.database,
+                       "login_timeout": getattr(self, 'connect_timeout', 5),
+                       "port": self.port,
+                       "as_dict": True
+                       },
+                      autocommitable=True)
+
     def execute(self, query: str, values: tuple, rollback=False):
         try:
             self.logger.debug('Executing %r.', (query, values))
@@ -102,13 +124,19 @@ class SQLMixin:
                 except self._engine.OperationalError:
                     self.logger.exception('Executed rollback command '
                                           'after failed query execution.')
+                    if self.reconnect_delay > 0:
+                        sleep(self.reconnect_delay)
                     self._init_sql()
                 except Exception:
                     self.logger.exception('Cursor has been closed, connecting '
                                           'again.')
+                    if self.reconnect_delay > 0:
+                        sleep(self.reconnect_delay)
                     self._init_sql()
             else:
                 self.logger.exception('Database connection problem, connecting again.')
+                if self.reconnect_delay > 0:
+                    sleep(self.reconnect_delay)
                 self._init_sql()
         else:
             return True
