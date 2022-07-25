@@ -116,3 +116,25 @@ def run_autogen(_):
 def setup(app):
     app.connect("builder-inited", run_apidoc)
     app.connect("builder-inited", run_autogen)
+
+
+
+import sphinx
+if sphinx.__version__ == '5.1.0':
+    # see https://github.com/sphinx-doc/sphinx/issues/10701
+    # workaround copied from https://github.com/datalad/datalad/pull/6883
+
+    # Although crash happens within NumpyDocstring, it is subclass of GoogleDocstring
+    # so we need to overload method there
+    from sphinx.ext.napoleon.docstring import GoogleDocstring
+    from functools import wraps
+
+
+    @wraps(GoogleDocstring._consume_inline_attribute)
+    def _consume_inline_attribute_safe(self):
+        try:
+            return self._consume_inline_attribute_safe()
+        except:
+            return "", []
+
+    GoogleDocstring._consume_inline_attribute = _consume_inline_attribute_safe

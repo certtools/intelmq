@@ -3194,8 +3194,6 @@ Threshold
 
 **Information**
 
-
-* **Cache parameters** (see section :ref:`common-parameters`)
 * `name`: `intelmq.bots.experts.threshold.expert`
 * `lookup`: redis cache
 * `public`: no
@@ -3204,9 +3202,9 @@ Threshold
 
 **Configuration Parameters**
 
+* **Cache parameters** (see section :ref:`common-parameters`), especially ``redis_cache_ttl`` as number of seconds before threshold counter is reset. Since version 3.1 (until 3.1 `timeout` was used).
 * `filter_keys`: String, comma-separated list of field names to consider or ignore when determining which messages are similar.
 * `filter_type`: String, `whitelist` (consider only the fields in `filter_keys`) or `blacklist` (consider everything but the fields in `filter_keys`).
-* `timeout`: Integer, number of seconds before threshold counter is reset.
 * `threshold`: Integer, number of messages required before propagating one. In forwarded messages, the threshold is saved in the message as `extra.count`.
 * `add_keys`: Array of string->string, optional, fields and values to add (or update) to propagated messages. Example:
 
@@ -4008,7 +4006,7 @@ SQL
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` SQL is the bot responsible to send events to a PostgreSQL or SQLite Database, e.g. the IntelMQ :doc:`eventdb`
+* `description:` SQL is the bot responsible to send events to a PostgreSQL, SQLite, or MSSQL Database, e.g. the IntelMQ :doc:`eventdb`
 * `notes`: When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit
 
 **Configuration Parameters**
@@ -4017,15 +4015,17 @@ The parameters marked with 'PostgreSQL' will be sent to libpq via psycopg2. Chec
 
 * `autocommit`: `psycopg's autocommit mode <http://initd.org/psycopg/docs/connection.html?#connection.autocommit>`_, optional, default True
 * `connect_timeout`: Database connect_timeout, optional, default 5 seconds
-* `engine`: 'postgresql' or 'sqlite'
-* `database`: PostgreSQL database or SQLite file
-* `host`: PostgreSQL host
+* `engine`: 'postgresql', 'sqlite', or 'mssql'
+* `database`: Database or SQLite file
+* `host`: Database host
 * `jsondict_as_string`: save JSONDict fields as JSON string, boolean. Default: true (like in versions before 1.1)
-* `port`: PostgreSQL port
-* `user`: PostgreSQL user
-* `password`: PostgreSQL password
-* `sslmode`: PostgreSQL sslmode, can be `'disable'`, `'allow'`, `'prefer'` (default), `'require'`, `'verify-ca'` or `'verify-full'`. See postgresql docs: https://www.postgresql.org/docs/current/static/libpq-connect.html#libpq-connect-sslmode
+* `port`: Database port
+* `user`: Database user
+* `password`: Database password
+* `sslmode`: Database sslmode, can be `'disable'`, `'allow'`, `'prefer'` (default), `'require'`, `'verify-ca'` or `'verify-full'`. See postgresql docs: https://www.postgresql.org/docs/current/static/libpq-connect.html#libpq-connect-sslmode
 * `table`: name of the database table into which events are to be inserted
+* `fields`: list of fields to read from the event. If None, read all fields
+* `reconnect_delay`: number of seconds to wait before reconnecting in case of an error
 
 **PostgreSQL**
 
@@ -4100,6 +4100,10 @@ Then, set the `database` parameter to the `your-db.db` file path.
 .. _stomp output bot:
 
 .. _intelmq.bots.outputs.stomp.output:
+
+**MSSQL**
+
+For MSSQL support, the library `pymssql>=2.2` is required.
 
 STOMP
 ^^^^^

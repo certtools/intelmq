@@ -69,7 +69,7 @@ class AbusechIPParserBot(ParserBot):
         for line in data_lines:
             yield line.strip()
 
-    def parse_line(self, line, report):
+    def parse_line(self, line: str, report):
         event = self.new_event(report)
         self.__process_defaults(event, line, report['feed.url'])
         self.__process_fields(event, line, report['feed.url'])
@@ -114,7 +114,7 @@ class AbusechIPParserBot(ParserBot):
     def __sanitize_csv_lines(s: str):
         return s.replace('"', '')
 
-    def recover_line(self, line):
+    def recover_line(self, line: str):
         return '\n'.join(self.comments + [self.header_line, line])
 
 

@@ -33,7 +33,7 @@ class CertstreamCollectorBot(CollectorBot):
         CertstreamCollectorBot.send_update(message=message, self=self)
 
     def process(self):
-        c = CertStreamClient(self.callback, skip_heartbeats=True, on_open=None, on_error=None)
+        c = CertStreamClient(self.callback, skip_heartbeats=True, on_open=None, on_error=None, url='wss://certstream.calidog.io/')
         c.run_forever()
 
     def send_update(self, message):

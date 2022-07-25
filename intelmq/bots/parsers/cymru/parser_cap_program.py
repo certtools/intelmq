@@ -7,6 +7,7 @@ import re
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
+from intelmq.lib.harmonization import FQDN
 
 MAPPING_STATIC = {'bot': {
     'classification.type': 'infected-system'},
@@ -320,6 +321,8 @@ class CymruCAPProgramParserBot(ParserBot):
                         raise ValueError('Unknown protocol %r, please report a bug'
                                          '' % value)
             elif key == 'hostname':
+                if not FQDN.is_valid(value=value) and value == ip:
+                    continue
                 event['source.fqdn'] = value
             elif key == 'proxy_type':
                 if '-' in value:

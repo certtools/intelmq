@@ -856,24 +856,6 @@ providers:
       revision: 2018-01-20
       documentation: https://dsi.ut-capitole.fr/blacklists/
       public: true
-  Autoshun:
-    Shunlist:
-      description: You need to register in order to use the list.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://www.autoshun.org/download/?api_key=__APIKEY__&format=html
-            rate_limit: 3600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.autoshun.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: https://www.autoshun.org/
-      public: false
   Danger Rulez:
     Bruteforce Blocker:
       description: Its main purpose is to block SSH bruteforce attacks via firewall.
@@ -1756,7 +1738,7 @@ providers:
         parser:
           module: intelmq.bots.parsers.microsoft.parser_ctip
           parameters:
-      revision: 2020-05-29
+      revision: 2022-06-01
       documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange http://www.dcuctip.com/
       public: false
     CTIP C2 via Azure:

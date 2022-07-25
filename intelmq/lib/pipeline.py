@@ -29,7 +29,7 @@ except ImportError:
 class PipelineFactory:
 
     @staticmethod
-    def create(logger, broker=None, direction=None, queues=None, pipeline_args=None, load_balance=False, is_multithreaded=False):
+    def create(logger, broker=None, direction=None, queues=None, pipeline_args: Optional[dict] = None, load_balance=False, is_multithreaded=False):
         """
         direction: "source" or "destination", optional, needed for queues
         queues: needs direction to be set, calls set_queues

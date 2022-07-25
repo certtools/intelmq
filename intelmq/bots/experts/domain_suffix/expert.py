@@ -32,6 +32,7 @@ class DomainSuffixExpertBot(ExpertBot):
     """Extract the domain suffix from a domain and save it in the the domain_suffix field. Requires a local file with valid domain suffixes"""
     field: str = None
     suffix_file: str = None  # TODO: should be pathlib.Path
+    autoupdate_cached_database: bool = True  # Activate/deactivate update-database functionality
 
     def init(self):
         if self.field not in ALLOWED_FIELDS:
@@ -84,7 +85,7 @@ class DomainSuffixExpertBot(ExpertBot):
         runtime_conf = get_bots_settings()
         try:
             for bot in runtime_conf:
-                if runtime_conf[bot]["module"] == __name__:
+                if runtime_conf[bot]["module"] == __name__ and runtime_conf[bot]['parameters'].get('autoupdate_cached_database', True):
                     bots[bot] = runtime_conf[bot]["parameters"]["suffix_file"]
 
         except KeyError as e:
@@ -92,7 +93,7 @@ class DomainSuffixExpertBot(ExpertBot):
 
         if not bots:
             if verbose:
-                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf.")
+                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf or database update disabled with parameter 'autoupdate_cached_database'.")
             sys.exit(0)
 
         # we only need to import now. If there are no asn_lookup bots, this dependency does not need to be installed
