@@ -182,6 +182,7 @@ class Redis(Pipeline):
     destination_pipeline_db = 2
     source_pipeline_password = None
     destination_pipeline_password = None
+    _redis_server_version = None
 
     def load_configurations(self, queues_type):
         self.host = self.pipeline_args.get(f"{queues_type}_pipeline_host", "127.0.0.1")
@@ -213,6 +214,7 @@ class Redis(Pipeline):
             kwargs['single_connection_client'] = True
 
         self.pipe = redis.Redis(db=self.db, password=self.password, **kwargs)
+        self._redis_server_version = tuple(int(x) for x in self.pipe.execute_command('INFO')['redis_version'].split('.'))
 
     def disconnect(self):
         pass
@@ -261,8 +263,10 @@ class Redis(Pipeline):
                 else:
                     break
             if not retval:
-                retval = self.pipe.brpoplpush(self.source_queue,
-                                              self.internal_queue, 0)
+                if self._redis_server_version >= (6, 2, 0):
+                    retval = self.pipe.blmove(self.source_queue, self.internal_queue, 0, 'RIGHT', 'LEFT')
+                else:
+                    retval = self.pipe.brpoplpush(self.source_queue, self.internal_queue, 0)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
         else:
