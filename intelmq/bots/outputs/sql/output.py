@@ -17,6 +17,12 @@ from intelmq.lib.bot import OutputBot
 from intelmq.lib.mixins import SQLMixin
 
 
+def itemgetter_tuple(*items):
+    def g(obj):
+        return tuple(obj[item] for item in items)
+    return g
+
+
 class SQLOutputBot(OutputBot, SQLMixin):
     """Send events to a PostgreSQL or SQLite database"""
     autocommit = True
@@ -29,6 +35,7 @@ class SQLOutputBot(OutputBot, SQLMixin):
     sslmode = "require"
     table = 'events'
     user = "intelmq"
+    fields = None
 
     def init(self):
         super().init()
@@ -36,8 +43,12 @@ class SQLOutputBot(OutputBot, SQLMixin):
     def process(self):
         event = self.receive_message().to_dict(jsondict_as_string=self.jsondict_as_string)
 
-        keys = '", "'.join(event.keys())
-        values = list(event.values())
+        key_names = self.fields
+        if key_names is None:
+            key_names = event.keys()
+        valid_keys = [key for key in key_names if key in event]
+        keys = '", "'.join(valid_keys)
+        values = itemgetter_tuple(*valid_keys)(event)
         fvalues = len(values) * '{0}, '.format(self.format_char)
         query = ('INSERT INTO {table} ("{keys}") VALUES ({values})'
                  ''.format(table=self.table, keys=keys, values=fvalues[:-2]))

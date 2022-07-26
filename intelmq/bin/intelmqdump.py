@@ -92,24 +92,24 @@ def dump_info(fname, file_descriptor=None):
     else:
         try:
             if file_descriptor is None:
-                handle = open(fname, 'rt')
+                handle = open(fname)
                 fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
             else:
                 handle = file_descriptor
         except BlockingIOError:
             info = red('Dump file is locked.')
         except OSError as exc:
-            info = red('unable to open file: {!s}'.format(exc))
+            info = red(f'unable to open file: {exc!s}')
         else:
             try:
                 content = json.load(handle)
             except ValueError as exc:
-                info = red('unable to load JSON: {!s}'.format(exc))
+                info = red(f'unable to load JSON: {exc!s}')
             else:
                 try:
-                    info = "{!s} dumps".format(len(content.keys()))
+                    info = f"{len(content.keys())!s} dumps"
                 except AttributeError as exc:
-                    info = red("unable to count dumps: {!s}".format(exc))
+                    info = red(f"unable to count dumps: {exc!s}")
         finally:
             try:
                 if file_descriptor is None:
@@ -221,7 +221,7 @@ def main():
         filenames = [(fname, fname[len(DEFAULT_LOGGING_PATH):-5])
                      for fname in sorted(filenames)]
 
-        length = max([len(value[1]) for value in filenames])
+        length = max(len(value[1]) for value in filenames)
         print(bold("{c:>3}: {s:{length}} {i}".format(c='id', s='name (bot id)',
                                                      i='content',
                                                      length=length)))
@@ -249,7 +249,7 @@ def main():
         fname = os.path.join(DEFAULT_LOGGING_PATH, botid) + '.dump'
 
     if not os.path.isfile(fname):
-        print(bold('Given file does not exist: {}'.format(fname)))
+        print(bold(f'Given file does not exist: {fname}'))
         exit(1)
 
     answer = None
@@ -264,7 +264,7 @@ def main():
             info = dump_info(fname, file_descriptor=handle)
             handle.seek(0)
             available_answers = ACTIONS.keys()
-            print('Processing {}: {}'.format(bold(botid), info))
+            print(f'Processing {bold(botid)}: {info}')
 
             if info.startswith(str(red)):
                 available_opts = [item[0] for item in ACTIONS.values() if item[2]]
@@ -351,7 +351,7 @@ def main():
                                 print('Event converted to Report automatically.')
                                 msg = message.Report(message.MessageFactory.unserialize(msg)).serialize()
                         else:
-                            print(red("The given queue '{}' is not configured. Please retry with a valid queue.".format(queue_name)))
+                            print(red(f"The given queue '{queue_name}' is not configured. Please retry with a valid queue."))
                             break
                         try:
                             pipe.set_queues(queue_name, 'destination')
@@ -362,12 +362,12 @@ def main():
                                       ''.format(queue_name, traceback.format_exc())))
                         else:
                             del content[key]
-                            print(green('Recovered dump {}.'.format(i)))
+                            print(green(f'Recovered dump {i}.'))
                 finally:
                     save_file(handle, content)
                 if not content:
                     delete_file = True
-                    print('Deleting empty file {}'.format(fname))
+                    print(f'Deleting empty file {fname}')
                     break
             elif answer[0] == 'd':
                 # Delete entries or file
@@ -379,7 +379,7 @@ def main():
                 else:
                     # delete dumpfile
                     delete_file = True
-                    print('Deleting file {}'.format(fname))
+                    print(f'Deleting file {fname}')
                     break
             elif answer[0] == 's':
                 # Show entries by id
@@ -387,7 +387,7 @@ def main():
                     value = copy.copy(orig_value)  # otherwise the raw field gets truncated
                     if count not in ids:
                         continue
-                    print('=' * 100, '\nShowing id {} {}\n'.format(count, key),
+                    print('=' * 100, f'\nShowing id {count} {key}\n',
                           '-' * 50)
                     if value.get('message_type') == 'base64':
                         if args.truncate and len(value['message']) > args.truncate:

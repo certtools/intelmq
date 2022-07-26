@@ -55,7 +55,7 @@ class DshieldBlockParserBot(ParserBot):
 
             network_ip = values[0]
             network_mask = values[2]
-            network = '%s/%s' % (network_ip, network_mask)
+            network = f'{network_ip}/{network_mask}'
 
             extra = {}
             event = self.new_event(report)

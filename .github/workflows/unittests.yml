@@ -1,9 +1,9 @@
-#Github Workflow to run nosetest tests
+#Github Workflow to run unit tests with pytest
 #
-#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>, 2022 Sebastian Wagner <sebix@sebix.at>
 #SPDX-License-Identifier: AGPL-3.0-or-later
 #
-name: "Nosetest test suite"
+name: "Unit tests"
 on:
   push:
     branches: [develop, maintenance, master]
@@ -15,13 +15,13 @@ on:
       - '.github/**'
 
 jobs:
-  nosetest:
+  unittests:
     runs-on: ubuntu-latest
-    name: Run nosetest test suite
+    name: Run unit tests with pytest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.6', '3.7', '3.8', '3.9']
+        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10']
         type: ['full', 'basic']
 
     services:
@@ -65,7 +65,7 @@ jobs:
       run: bash .github/workflows/scripts/setup-full.sh
 
     - name: Install test dependencies
-      run: pip install nose Cerberus requests_mock coverage codecov
+      run: pip install pytest-cov Cerberus requests_mock coverage
 
     - name: Install dependencies
       if: ${{ matrix.type == 'basic' }}
@@ -73,12 +73,14 @@ jobs:
 
     - name: Run basic testsuite
       if: ${{ matrix.type == 'basic' }}
-      run: nosetests --with-coverage --cover-package=intelmq --cover-branches
+      run: pytest --cov intelmq/ --cov-report=xml --cov-branch intelmq/
 
     - name: Run full testsuite
       if: ${{ matrix.type == 'full' }}
-      run: TZ=utc INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; find contrib/ -name "test*.py" -exec nosetests {} \+
+      run: TZ=utc INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_EXOTIC=1 pytest --cov intelmq/ --cov-report=xml --cov-branch intelmq/ contrib/
 
     - name: Run codecov
       if: ${{ matrix.type == 'full' }}
-      run: codecov
+      uses: codecov/codecov-action@v2
+      with:
+        fail_ci_if_error: true

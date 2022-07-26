@@ -58,11 +58,11 @@ class GenericDBLookupExpertBot(ExpertBot, SQLMixin):
         if self.execute(self.query, [event[key] for key in self._match.keys()]):
             if self.cur.rowcount > 1:
                 raise ValueError('Lookup returned more then one result. Please inspect.')
-            elif self.cur.rowcount == 1 or (self.cur.rowcount == -1 and self.engine == SQLBot.SQLITE):
+            elif self.cur.rowcount == 1 or (self.cur.rowcount == -1 and self.engine == SQLMixin.SQLITE):
                 result = None
                 if self.cur.rowcount == 1:
                     result = self.cur.fetchone()
-                elif self.cur.rowcount == -1 and self.engine == SQLBot.SQLITE:
+                elif self.cur.rowcount == -1 and self.engine == SQLMixin.SQLITE:
                     # https://docs.python.org/2/library/sqlite3.html#sqlite3.Cursor.rowcount
                     # since the DB’s own support for the determination is quirky we try to fetch even when rowcount=-1
                     result = self.cur.fetchone()

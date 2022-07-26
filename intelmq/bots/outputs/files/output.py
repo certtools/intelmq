@@ -67,7 +67,7 @@ class FilesOutputBot(OutputBot):
         # Now we know the device/inode, rename to raise uniqueness within the whole filesystem
         newname = self._get_new_name(fd)
         os.rename(path.join(self.tmp, tmpname), path.join(self.tmp, newname))
-        nf = io.open(fd, "w", encoding="utf-8")
+        nf = open(fd, "w", encoding="utf-8")
         return nf, newname
 
     def process(self):

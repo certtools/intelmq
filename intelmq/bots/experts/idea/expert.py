@@ -106,7 +106,7 @@ class IdeaExpertBot(ExpertBot):
             # extra - too informal, will consider based on real world data
 
             "Format": lambda s: "IDEA0",
-            "Description": lambda s: "%s: %s" % (
+            "Description": lambda s: "{}: {}".format(
                 s["feed.name"],
                 s.get("event_description.text",
                       s.get("comment",

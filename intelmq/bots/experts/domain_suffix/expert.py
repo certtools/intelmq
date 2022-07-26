@@ -32,6 +32,7 @@ class DomainSuffixExpertBot(ExpertBot):
     """Extract the domain suffix from a domain and save it in the the domain_suffix field. Requires a local file with valid domain suffixes"""
     field: str = None
     suffix_file: str = None  # TODO: should be pathlib.Path
+    autoupdate_cached_database: bool = True  # Activate/deactivate update-database functionality
 
     def init(self):
         if self.field not in ALLOWED_FIELDS:
@@ -84,15 +85,15 @@ class DomainSuffixExpertBot(ExpertBot):
         runtime_conf = get_bots_settings()
         try:
             for bot in runtime_conf:
-                if runtime_conf[bot]["module"] == __name__:
+                if runtime_conf[bot]["module"] == __name__ and runtime_conf[bot]['parameters'].get('autoupdate_cached_database', True):
                     bots[bot] = runtime_conf[bot]["parameters"]["suffix_file"]
 
         except KeyError as e:
-            sys.exit("Database update failed. Your configuration of {0} is missing key {1}.".format(bot, e))
+            sys.exit(f"Database update failed. Your configuration of {bot} is missing key {e}.")
 
         if not bots:
             if verbose:
-                print("Database update skipped. No bots of type {0} present in runtime.conf.".format(__name__))
+                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf or database update disabled with parameter 'autoupdate_cached_database'.")
             sys.exit(0)
 
         # we only need to import now. If there are no asn_lookup bots, this dependency does not need to be installed
@@ -105,11 +106,11 @@ class DomainSuffixExpertBot(ExpertBot):
             response = session.get(url)
 
             if not response.ok:
-                sys.exit("Database update failed. Server responded: {0}.\n"
-                         "URL: {1}".format(response.status_code, response.url))
+                sys.exit("Database update failed. Server responded: {}.\n"
+                         "URL: {}".format(response.status_code, response.url))
 
         except requests.exceptions.RequestException as e:
-            sys.exit("Database update failed. Connection Error: {0}".format(e))
+            sys.exit(f"Database update failed. Connection Error: {e}")
 
         for database_path in set(bots.values()):
             database_dir = pathlib.Path(database_path).parent

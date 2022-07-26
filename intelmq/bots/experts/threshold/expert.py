@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Threshold value expert bot
 
 SPDX-FileCopyrightText: 2020 Linköping University <https://liu.se/>
@@ -21,6 +20,9 @@ Parameters:
 
     redis_cache_password: string.  default: {None}
 
+    redis_cache_ttl: int, number of seconds to keep counts of similar
+                     messages.
+
     filter_type: string ["whitelist", "blacklist"], when determining
                  whether two messages are similar, consider either
                  only the named fields, or all but the named fields
@@ -35,11 +37,6 @@ Parameters:
     threshold: int, number of messages after which one is sent on. As
                long as the count is above the threshold, no new
                messages will be sent.
-
-    timeout: int, number of seconds to keep counts of similar
-             messages. After this many seconds have elapsed, the count
-             is deleted and "threshold" number of new messages will
-             result in a new message being sent.
 
     add_keys: optional, array of strings to strings, keys to add to
               forwarded messages. Regardless of this setting, the
@@ -60,11 +57,8 @@ class ThresholdExpertBot(ExpertBot, CacheMixin):
     filter_keys: Iterable = ["raw", "time.observation"]
     filter_type: str = "blacklist"
     redis_cache_db: int = 11
-    redis_cache_host: str = "127.0.0.1"  # TODO: could be ipaddress
-    redis_cache_password: Optional[str] = None
-    redis_cache_port: int = 6379
+    redis_cache_ttl: int = 3600
     threshold: int = 100
-    timeout: int = 3600
 
     _message_processed_verb = 'Forwarded'
 
@@ -72,7 +66,7 @@ class ThresholdExpertBot(ExpertBot, CacheMixin):
     bypass = False
 
     def init(self):
-        if self.timeout <= 0:
+        if self.redis_cache_ttl <= 0:
             raise ConfigurationError('Timeout', 'Invalid timeout specified, use positive integer seconds.')
         if self.threshold <= 0:
             raise ConfigurationError('Threshold', 'Invalid threshold specified, use positive integer count.')

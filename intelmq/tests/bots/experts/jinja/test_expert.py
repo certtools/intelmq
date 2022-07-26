@@ -41,6 +41,7 @@ EXAMPLE_OUTPUT3 = {"__type": "Event",
                   }
 
 
+@test.skip_exotic()
 class TestJinjaExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for JinjaExpertBot.
@@ -51,9 +52,9 @@ class TestJinjaExpertBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = JinjaExpertBot
 
     def test_jinja1(self):
-        self.sysconfig = {'fields': { 'feed.url': "{{ msg['feed.url'] | upper }}" } }
         self.input_message = EXAMPLE_INPUT
-        self.run_bot()
+        self.run_bot(parameters={'fields': { 'feed.url': "{{ msg['feed.url'] | upper }}" },
+                                 'overwrite': True})
         self.assertMessageEqual(0, EXAMPLE_OUTPUT1)
 
     def test_jinja2(self):

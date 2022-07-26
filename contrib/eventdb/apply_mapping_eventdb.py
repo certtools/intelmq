@@ -50,7 +50,7 @@ def eventdb_apply(malware_name_column, malware_family_column, host, port,
         print("Error: Python module 'psycopg2' is needed but not available.", file=sys.stderr)
         return 2
     if password:
-        password = input('Password for user %r on %r: ' % (username, host))
+        password = input(f'Password for user {username!r} on {host!r}: ')
     where = 'AND ' + where if where else ''
 
     db = psycopg2.connect(database=database, user=username, password=password,

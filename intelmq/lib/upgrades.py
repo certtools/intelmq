@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 © 2020 Sebastian Wagner <wagner@cert.at>
 
@@ -37,6 +36,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v300_defaults_file_removal',
            'v300_pipeline_file_removal',
            'v301_deprecations',
+           'v310_feed_changes',
            ]
 
 
@@ -726,6 +726,27 @@ def v301_deprecations(configuration, harmonization, dry_run, **kwargs):
     return messages + ' Remove affected bots yourself.' if messages else changed, configuration, harmonization
 
 
+def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
+    """
+    Migrates feeds' configuration for changed/fixed parameter
+    """
+    found_autoshun = []
+    messages = []
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
+        if bot["module"] == "intelmq.bots.collectors.http.collector":
+            if bot["parameters"].get("http_url", "").startswith("https://www.autoshun.org/download"):
+                found_autoshun.append(bot_id)
+        if bot["module"] == "intelmq.bots.parsers.autoshun.parser":
+            found_autoshun.append(bot_id)
+    if found_autoshun:
+        messages.append('A discontinued feed "Autoshun" has been found '
+                        f'as bot {", ".join(sorted(found_autoshun))}.')
+    messages = ' '.join(messages)
+    return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -750,7 +771,7 @@ UPGRADES = OrderedDict([
     ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, v300_pipeline_file_removal, )),
     ((3, 0, 1), (v301_deprecations, )),
     ((3, 0, 2), ()),
-    ((3, 1, 0), ()),
+    ((3, 1, 0), (v310_feed_changes, )),
 ])
 
 ALWAYS = (harmonization, )

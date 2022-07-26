@@ -10,7 +10,7 @@ import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.parsers.openphish.parser_commercial import OpenPhishCommercialParserBot
 
-with open(os.path.join(os.path.dirname(__file__), 'feed_commercial.txt'), 'r') as fh:
+with open(os.path.join(os.path.dirname(__file__), 'feed_commercial.txt')) as fh:
     FILE = fh.read()
 RAW = utils.base64_encode(FILE.encode())
 SPLIT = FILE.splitlines()

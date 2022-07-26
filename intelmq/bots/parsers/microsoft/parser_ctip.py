@@ -59,7 +59,7 @@ There are two different variants of data
            "CustomField4": "",
            "CustomField5": ""
          },
-         "Payload": base64 encoded json
+         "Payload": base64 encoded json with meaningful dictionary keys or JSON-string with numbered dictionary keys
        }
 
 """
@@ -67,7 +67,7 @@ import json
 
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.harmonization import DateTime
+from intelmq.lib.harmonization import DateTime, FQDN
 
 INTERFLOW = {"additionalmetadata": "extra.additionalmetadata",
              "description": "event_description.text",
@@ -210,11 +210,15 @@ class MicrosoftCTIPParserBot(ParserBot):
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
         if raw_report.startswith('['):
+            # Interflow
             self.recover_line = self.recover_line_json
             yield from self.parse_json(report)
         elif raw_report.startswith('{'):
+            # Azure
             self.recover_line = self.recover_line_json_stream
             yield from self.parse_json_stream(report)
+        else:
+            raise ValueError("Can't parse the received message. It is neither a JSON list nor a JSON dictionary. Please report this bug.")
 
     def parse_line(self, line, report):
         if line.get('version', None) == 1.5:
@@ -222,7 +226,7 @@ class MicrosoftCTIPParserBot(ParserBot):
         else:
             yield from self.parse_azure(line, report)
 
-    def parse_interflow(self, line, report):
+    def parse_interflow(self, line: dict, report):
         raw = self.recover_line(line)
         if line['indicatorthreattype'] != 'Botnet':
             raise ValueError('Unknown indicatorthreattype %r, only Botnet is supported.' % line['indicatorthreattype'])
@@ -257,25 +261,34 @@ class MicrosoftCTIPParserBot(ParserBot):
         yield event
 
     def parse_azure(self, line, report):
-        raw = self.recover_line(line)
+        raw = self.recover_line()
 
         event = self.new_event(report)
 
         for key, value in line.copy().items():
             if key == 'Payload':
+                # empty
                 if value == 'AA==':  # NULL
                     del line[key]
                     continue
-                try:
-                    value = json.loads(utils.base64_decode(value))
-                    # continue unpacking in next loop
-                except json.decoder.JSONDecodeError:
-                    line[key] = utils.base64_decode(value)
+
+                # JSON string
+                if value.startswith('{'):
+                    for payload_key, payload_value in json.loads(value).items():
+                        event[f'extra.payload.{payload_key}'] = payload_value
+                    del line[key]
+                else:
+                    # base64-encoded JSON
+                    try:
+                        value = json.loads(utils.base64_decode(value))
+                        # continue unpacking in next loop
+                    except json.decoder.JSONDecodeError:
+                        line[key] = utils.base64_decode(value)
             elif key == 'TLP' and value.lower() == 'unknown':
                 del line[key]
             if isinstance(value, dict):
                 for subkey, subvalue in value.items():
-                    line['%s.%s' % (key, subkey)] = subvalue
+                    line[f'{key}.{subkey}'] = subvalue
                 del line[key]
         for key, value in line.items():
             if key == 'ThreatConfidence':
@@ -291,6 +304,10 @@ class MicrosoftCTIPParserBot(ParserBot):
                 if payload_protocol:
                     # needs to overwrite a field previously parsed and written
                     event.add('protocol.application', payload_protocol, overwrite=True)  # "HTTP/1.1", save additionally
+            elif key == 'Payload.domain':
+                # Sometimes the destination address is also given as domain, ignore it here as we already save it as destination.ip (see https://github.com/certtools/intelmq/pull/2144)
+                if not FQDN.is_valid(value) and value == line.get('Payload.serverIp'):
+                    continue
             elif not value:
                 continue
             if AZURE[key] != '__IGNORE__':

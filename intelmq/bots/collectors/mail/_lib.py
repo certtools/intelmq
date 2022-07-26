@@ -76,7 +76,7 @@ class MailCollectorBot(CollectorBot):
                 if self.process_message(uid, message):
                     try:
                         mailbox.mark_seen(uid)
-                    except imaplib.abort:
+                    except imaplib.IMAP4.abort:
                         # Disconnect, see https://github.com/certtools/intelmq/issues/852
                         mailbox = self.connect_mailbox()
                         mailbox.mark_seen(uid)

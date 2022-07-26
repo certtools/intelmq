@@ -114,7 +114,7 @@ class TwitterCollectorBot(CollectorBot, HttpMixin):
             report.add('raw', tweet.full_text)
             report.add(
                 'feed.url',
-                'https://twitter.com/{}/status/{}'.format(tweet.user.screen_name, tweet.id))
+                f'https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}')
             self.send_message(report)
             if tweet.user.screen_name in self._follow_urls:
                 if len(tweet.urls) > 0:
@@ -127,7 +127,7 @@ class TwitterCollectorBot(CollectorBot, HttpMixin):
                         report.add('feed.code', 'url_text')
                         report.add(
                             'feed.url',
-                            'https://twitter.com/{}/status/{}'.format(tweet.user.screen_name, tweet.id))
+                            f'https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}')
                         self.send_message(report)
 
 

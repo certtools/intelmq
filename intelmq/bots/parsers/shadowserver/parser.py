@@ -67,10 +67,10 @@ class ShadowserverParserBot(ParserBot):
         filename_search = self.__is_filename_regex.search(self.report_name)
 
         if not filename_search:
-            raise ValueError("Report's 'extra.file_name' {!r} is not valid.".format(self.report_name))
+            raise ValueError(f"Report's 'extra.file_name' {self.report_name!r} is not valid.")
         else:
             self.report_name = filename_search.group(1)
-            self.logger.debug("Detected report's file name: {!r}.".format(self.report_name))
+            self.logger.debug(f"Detected report's file name: {self.report_name!r}.")
             retval = config.get_feed_by_filename(self.report_name)
 
             if not retval:
@@ -197,7 +197,7 @@ class ShadowserverParserBot(ParserBot):
         # Now add additional constant fields.
         event.update(conf.get('constant_fields', {}))
 
-        event.add('raw', self.recover_line(row))
+        event.add('raw', self.recover_line())
 
         # Add everything which could not be resolved to extra.
         for f in fields:

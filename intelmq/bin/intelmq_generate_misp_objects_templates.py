@@ -119,11 +119,11 @@ if __name__ == '__main__':
 
     objects = Path(args.objects)
     if not objects.exists():
-        raise Exception('Path to misp-objects repository does not exists: {args.objects}'.format(args=args))
+        raise Exception(f'Path to misp-objects repository does not exists: {args.objects}')
 
     harmonization_file = Path(args.harmonization)
     if not harmonization_file.exists():
-        raise Exception('Path to harmonization configuration does not exists: {args.harmonization}'.format(args=args))
+        raise Exception(f'Path to harmonization configuration does not exists: {args.harmonization}')
 
     g = MISPObjectTemplateGenerator(objects, harmonization_file)
     g.generate_templates()
