@@ -134,7 +134,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild 
                         if isinstance(value, (list, tuple)) and value:
                             value = json.dumps(value)
 
-                        output += f"   * `{key}`: `{value}`\n"
+                        output += f"   * ``{key}``: ``{value}``\n"
 
                 output += '\n'
 
