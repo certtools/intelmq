@@ -10,6 +10,8 @@ IntelMQ Universe
 IntelMQ is more than a the core library itself and many programs are developed around in the IntelMQ universe.
 This document provides an overview of the ecosystem and all related tools. If you think something is missing, please let us know!
 
+Unless otherwise stated, the products are maintained by the IntelMQ community.
+
 IntelMQ Core
 ------------
 
@@ -26,15 +28,24 @@ This software provides a graphical user interface to the management tool `intelm
 
 → `Repository: IntelMQ Manager <https://github.com/certtools/intelmq-manager/>`_
 
-intelmq-webinput-csv
+.. image:: /_static/intelmq-manager/landing_page.png
+   :alt: IntelMQ Manager Landing page
+
+IntelMQ Webinput CSV
 --------------------
 
-A web-based interface to inject CSV data into IntelMQ with on-line validation and live feedback.
+A web-based interface to ingest CSV data into IntelMQ with on-line validation and live feedback.
+
+This interface allows inserting "one-shot" data feeds into IntelMQ without the need to configure bots in IntelMQ.
+
 Developed and maintained by `CERT.at <https://cert.at>`_.
 
 → `Repository: intelmq-webinput-csv <https://github.com/certat/intelmq-webinput-csv>`_
 
-intelmq-cb-mailgen
+.. image:: https://raw.githubusercontent.com/certat/intelmq-webinput-csv/master/docs/images/screenshot.png
+   :alt: IntelMQ Webinput CSV Preview page
+
+IntelMQ Mailgen
 ------------------
 
 A solution allowing an IntelMQ setup with a complex contact database,
@@ -43,27 +54,36 @@ In different words: To send grouped notifications to network owners using SMTP.
 
 Developed and maintained by `Intevation <https://intevation.de>`_, initially funded by `BSI <http://bsi.bund.de/>`_.
 
-→ `Repository: intelmq-cb-mailgen <https://github.com/Intevation/intelmq-mailgen-release>`_
+It consists of these three components, which can also be used on their own.
 
+IntelMQ CertBUND Contact
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-IntelMQ Fody + Backend
-^^^^^^^^^^^^^^^^^^^^^^
+The certbund-contact consists of two IntelMQ expert bots, whcih fetch and process the information from the contact database, and scripts to import RIPE data into the contact database.
+Based on user-defined rules, the experts determine to which contact the event is to be sent to and which e-mail template and attachment format to use.
 
-Fody is a web based interface for intelmq-mailgen's contact database
-and the :doc:`eventdb`. It can also be used to just query the :doc:`eventdb`.
+→ `Repository: intelmq-certbund-contact <https://github.com/Intevation/intelmq-certbund-contact>`_
 
-The certbund-contact expert fetches the information from this contact database and provides scripts to import RIPE data into the contact database.
+IntelMQ Fody
+^^^^^^^^^^^^
+
+Fody is a web based interface for Mailgen.
+It allows to read and edit contacts, query sent mails (tickets) and call up data from the :doc:`eventdb`.
+
+It can also be used to just query the :doc:`eventdb` without using Mailgen.
+
+.. image:: https://raw.githubusercontent.com/Intevation/intelmq-fody/master/docs/images/landing_page.png
+   :alt: IntelMQ Webinput CSV Preview page
 
 → `Repository: intelmq-fody <https://github.com/Intevation/intelmq-fody>`_
 
 → `Repository: intelmq-fody-backend <https://github.com/Intevation/intelmq-fody-backend>`_
 
-→ `Repository: intelmq-certbund-contact <https://github.com/Intevation/intelmq-certbund-contact>`_
-
 intelmq-mailgen
 ^^^^^^^^^^^^^^^
 
-The email sending part:
+Sends emails with grouped event data to the contacts determined by the certbund-contact.
+Mails can be encrypted with PGP.
 
 → `Repository: intelmq-mailgen <https://github.com/Intevation/intelmq-mailgen>`_
 
@@ -90,6 +110,9 @@ The integrated API enables IntelMQ to query the portal for the right abuse
 contact and notification settings with the
 :ref:`intelmq.bots.experts.tuency.expert` expert.
 
+.. image:: https://gitlab.com/sebix1/tuency/-/raw/master/docs/images/netobjects.png
+   :alt: Tuency Netobjects Overview
+
 → `Repository: tuency <https://gitlab.com/Intevation/tuency/tuency>`_
 
 
@@ -105,10 +128,14 @@ Originally developed by `CERT-EU <https://cert.europa.eu/>`_, then adapted by `C
 
 → `Repository: do-portal <https://github.com/certat/do-portal>`_
 
-stats-portal
+Stats Portal
 ------------
 
-A Grafana-based statistics portal for the :doc:`eventdb`. Integrated in do-portal.
+A Grafana-based statistics portal for the :doc:`eventdb`. Can be integrated into do-portal.
+It uses aggregated data to serve statistical data quickly.
+
+.. image:: https://raw.githubusercontent.com/certtools/stats-portal/master/architecture-overview-stats-portal-screen.png
+   :alt: Stats Portal Architecture
 
 → `Repository: stats-portal <https://github.com/certtools/stats-portal>`_
 
