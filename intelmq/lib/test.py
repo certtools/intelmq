@@ -188,7 +188,7 @@ class BotTestCase:
             return logger
         return log
 
-    def prepare_bot(self, parameters={}, destination_queues=None):
+    def prepare_bot(self, parameters={}, destination_queues=None, prepare_source_queue: bool = True):
         """
         Reconfigures the bot with the changed attributes.
 
@@ -238,7 +238,8 @@ class BotTestCase:
         self.pipe.set_queues(parameters.source_queue, "source")
         self.pipe.set_queues(parameters.destination_queues, "destination")
 
-        self.prepare_source_queue()
+        if prepare_source_queue:
+            self.prepare_source_queue()
 
     def prepare_source_queue(self):
         if self.input_message is not None:

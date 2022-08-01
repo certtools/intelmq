@@ -100,6 +100,8 @@ CHANGELOG
 - `intelmq.bots.outputs.templated_smtp.output`:
   - Add new function `from_json()` (which just calls `json.loads()` in the standard Python environment), meaning the Templated SMTP output bot can take strings containing JSON documents and do the formatting itself (PR#2120 by Karl-Johan Karlsson).
   - Lift restriction on requirement jinja2 < 3 (PR#2158 by Sebastian Wagner).
+- `intelmq.bots.outputs.sql`:
+  - For PostgreSQL, escape Nullbytes in text to prevent "unsupported Unicode escape sequence" issues (PR#2223 by Sebastian Wagner, fixes #2203).
 
 ### Documentation
 - Feeds: Add documentation for newly supported dataplane feeds, see above (PR#2102 by Mikk Margus Möll).

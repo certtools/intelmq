@@ -1,8 +1,9 @@
-# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner, 2022 Intevation GmbH
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
+import json
 import os
 import unittest
 
@@ -28,6 +29,10 @@ INPUT_EXTRA = {"__type": "Event",
                "extra.asn": 64496,
                "extra.ip": "192.0.2.1",
                }
+INPUT_NULL = {"__type": "Event",
+              "classification.type": "undetermined",
+              "extra.payload": '{"text": "M41\u0012)3U>\bxӾ6\u0000\u0013M6M6M4M4]4y]4ӭ4"}',
+              }
 
 
 @test.skip_database()
@@ -77,6 +82,18 @@ class TestSQLOutputBot(test.BotTestCase, unittest.TestCase):
         from_db = {k: v for k, v in self.cur.fetchone().items() if v is not None}
         self.assertEqual(from_db['extra'], {"asn": 64496, "ip": "192.0.2.1"})
 
+    def test_extra_nullbyte(self):
+        """
+        Test a Nullbyte in an extra-field
+        https://github.com/certtools/intelmq/issues/2203
+        """
+        self.input_message = INPUT_NULL
+        self.run_bot()
+        self.cur.execute('SELECT "extra" FROM tests WHERE "classification.type" = \'undetermined\'')
+        self.assertEqual(self.cur.rowcount, 1)
+        from_db = {k: v for k, v in self.cur.fetchone().items() if v is not None}
+        self.assertEqual(from_db['extra'], {"payload": '{"text": "M41\u0012)3U>\bxӾ6\\u0000\u0013M6M6M4M4]4y]4ӭ4"}'})
+
     @classmethod
     def tearDownClass(cls):
         if not os.environ.get('INTELMQ_TEST_DATABASES'):
@@ -121,6 +138,13 @@ class TestPostgreSQLOutputBot(test.BotTestCase, unittest.TestCase):
         self.assertEqual(self.cur.rowcount, 1)
         from_db = {k: v for k, v in self.cur.fetchone().items() if v is not None}
         self.assertDictEqual(from_db, OUTPUT1)
+
+    def test_prepare_null(self):
+        """ Test if a null character in extra is correctly removed. https://github.com/certtools/intelmq/issues/2203 """
+        values = [json.dumps({"special": "foo\x00bar"})]
+        self.prepare_bot(prepare_source_queue=False)
+        output = self.bot.prepare_values(values)
+        self.assertEqual(output, ['{"special": "foo\\\\u0000bar"}'])
 
     @classmethod
     def tearDownClass(cls):
