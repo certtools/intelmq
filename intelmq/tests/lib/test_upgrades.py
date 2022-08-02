@@ -534,6 +534,16 @@ V310_FEED_CHANGES = {
         "parameters": {
             "http_url": "https://www.autoshun.org/download"
         }
+    },
+    "malc0de-collector": {
+        "module": "intelmq.bots.collectors.http.collector",
+        "parameters": {
+            "http_url": "https://malc0de.com/bl/ZONES"
+        }
+    },
+    "malc0de-parser": {
+        "module": "intelmq.bots.parsers.malc0de.parser",
+        "parameters": {}
     }
 }
 
@@ -738,7 +748,9 @@ class TestUpgradeLib(unittest.TestCase):
         """ Test v310_feed_changes """
         result = upgrades.v310_feed_changes(V310_FEED_CHANGES, {}, False)
         self.assertTrue(result[0])
-        self.assertEqual('A discontinued feed "Autoshun" has been found as bot '
+        self.assertEqual('A discontinued feed "Malc0de" has been found as bot '
+                         'malc0de-collector, malc0de-parser. '
+                         'A discontinued feed "Autoshun" has been found as bot '
                          'autoshun-collector, autoshun-parser. Remove affected bots yourself.',
                          result[0])
         self.assertEqual(V310_FEED_CHANGES, result[1])

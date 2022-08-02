@@ -504,8 +504,10 @@ def v221_feed_changes(configuration, harmonization, dry_run, **kwargs):
     found_hphosts_collector = []
     found_hphosts_parser = []
     messages = []
-    ULRHAUS_OLD = ['time.source', 'source.url', 'status', 'extra.urlhaus.threat_type', 'source.fqdn', 'source.ip', 'source.asn', 'source.geolocation.cc']
-    URLHAUS_NEW = ['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc']
+    ULRHAUS_OLD = ['time.source', 'source.url', 'status', 'extra.urlhaus.threat_type', 'source.fqdn', 'source.ip',
+                   'source.asn', 'source.geolocation.cc']
+    URLHAUS_NEW = ['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__',
+                   'source.ip', 'source.asn', 'source.geolocation.cc']
     changed = None
     for bot_id, bot in configuration.items():
         if bot_id == 'global':
@@ -657,9 +659,12 @@ def v233_feodotracker_browse(configuration, harmonization, dry_run, **kwargs):
         # The parameters can be given as string or list of strings
         if (bot["module"] == "intelmq.bots.parsers.html_table.parser" and 'feodo' in bot_id.lower() and
                 "columns" in bot["parameters"] and "ignore_values" in bot["parameters"] and
-                (bot["parameters"]["columns"] == old_feodo_columns or bot["parameters"]["columns"] == old_feodo_columns.split(',')) and
-                (bot["parameters"]["ignore_values"] == old_ignore_values or bot["parameters"]["ignore_values"] == old_ignore_values.split(','))):
-            bot["parameters"]["columns"] = 'time.source,source.ip,malware.name,status,source.as_name,source.geolocation.cc'
+                (bot["parameters"]["columns"] == old_feodo_columns or bot["parameters"][
+                    "columns"] == old_feodo_columns.split(',')) and
+                (bot["parameters"]["ignore_values"] == old_ignore_values or bot["parameters"][
+                    "ignore_values"] == old_ignore_values.split(','))):
+            bot["parameters"][
+                "columns"] = 'time.source,source.ip,malware.name,status,source.as_name,source.geolocation.cc'
             bot["parameters"]['ignore_values'] = ',,,,,'
             changed = True
     return changed, configuration, harmonization
@@ -731,47 +736,56 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
     Migrates feeds' configuration for changed/fixed parameter
     """
     found_autoshun = []
+    found_malc0de = []
     messages = []
     for bot_id, bot in configuration.items():
         if bot_id == 'global':
             continue
+        if bot["module"] == "intelmq.bots.parsers.malc0de.parser":
+            found_malc0de.append(bot_id)
+        if bot["module"] == "intelmq.bots.collectors.http.collector":
+            if bot["parameters"].get("http_url", "").startswith("https://malc0de.com/bl"):
+                found_malc0de.append(bot_id)
         if bot["module"] == "intelmq.bots.collectors.http.collector":
             if bot["parameters"].get("http_url", "").startswith("https://www.autoshun.org/download"):
                 found_autoshun.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.autoshun.parser":
             found_autoshun.append(bot_id)
+    if found_malc0de:
+        messages.append('A discontinued feed "Malc0de" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_malc0de)))
     if found_autoshun:
         messages.append('A discontinued feed "Autoshun" has been found '
-                        f'as bot {", ".join(sorted(found_autoshun))}.')
+                        'as bot %s.' % ', '.join(sorted(found_autoshun)))
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
 
 
 UPGRADES = OrderedDict([
-    ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax, )),
+    ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax,)),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
-    ((1, 1, 1), (v111_defaults_process_manager, )),
-    ((1, 1, 2), (v112_feodo_tracker_ips, v112_feodo_tracker_domains, )),
+    ((1, 1, 1), (v111_defaults_process_manager,)),
+    ((1, 1, 2), (v112_feodo_tracker_ips, v112_feodo_tracker_domains,)),
     ((2, 0, 0), (v200_defaults_statistics, v200_defaults_broker,
                  v200_defaults_ssl_ca_certificate)),
     ((2, 0, 1), ()),
-    ((2, 0, 2), (v202_fixes, )),
-    ((2, 1, 0), (v210_deprecations, )),
+    ((2, 0, 2), (v202_fixes,)),
+    ((2, 1, 0), (v210_deprecations,)),
     ((2, 1, 1), ()),
     ((2, 1, 2), ()),
     ((2, 1, 3), (v213_deprecations, v213_feed_changes)),
     ((2, 2, 0), (v220_configuration, v220_azure_collector, v220_feed_changes)),
-    ((2, 2, 1), (v221_feed_changes, )),
-    ((2, 2, 2), (v222_feed_changes, )),
+    ((2, 2, 1), (v221_feed_changes,)),
+    ((2, 2, 2), (v222_feed_changes,)),
     ((2, 2, 3), ()),
     ((2, 3, 0), (v230_csv_parser_parameter_fix, v230_feed_changes, v230_deprecations,)),
     ((2, 3, 1), ()),
     ((2, 3, 2), ()),
-    ((2, 3, 3), (v233_feodotracker_browse, )),
-    ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, v300_pipeline_file_removal, )),
-    ((3, 0, 1), (v301_deprecations, )),
+    ((2, 3, 3), (v233_feodotracker_browse,)),
+    ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, v300_pipeline_file_removal,)),
+    ((3, 0, 1), (v301_deprecations,)),
     ((3, 0, 2), ()),
     ((3, 1, 0), (v310_feed_changes, )),
 ])
 
-ALWAYS = (harmonization, )
+ALWAYS = (harmonization,)

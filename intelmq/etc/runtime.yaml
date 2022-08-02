@@ -115,38 +115,6 @@ gethostbyname-2-expert:
     destination_queues:
       _default: [cymru-whois-expert-queue]
   run_mode: continuous
-malc0de-parser:
-  bot_id: malc0de-parser
-  description: Malc0de Parser is the bot responsible to parse the IP Blacklist and
-    either Windows Format or Bind Format reports and sanitize the information.
-  enabled: true
-  group: Parser
-  groupname: parsers
-  module: intelmq.bots.parsers.malc0de.parser
-  name: Malc0de
-  parameters:
-    destination_queues:
-      _default: [deduplicator-expert-queue]
-  run_mode: continuous
-malc0de-windows-format-collector:
-  bot_id: malc0de-windows-format-collector
-  description: ''
-  enabled: true
-  group: Collector
-  groupname: collectors
-  module: intelmq.bots.collectors.http.collector_http
-  name: Malc0de Windows Format
-  parameters:
-    destination_queues:
-      _default: [malc0de-parser-queue]
-    http_password: null
-    http_url: https://malc0de.com/bl/BOOT
-    http_username: null
-    name: Windows Format
-    provider: Malc0de
-    rate_limit: 10800
-    ssl_client_certificate: null
-  run_mode: continuous
 spamhaus-drop-collector:
   bot_id: spamhaus-drop-collector
   description: ''

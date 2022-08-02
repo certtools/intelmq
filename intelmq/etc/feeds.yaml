@@ -780,60 +780,6 @@ providers:
       revision: 2018-01-20
       documentation: https://project.turris.cz/en/greylist
       public: true
-  Malc0de:
-    Bind Format:
-      description: This feed includes FQDN's of malicious hosts, the file format is
-        in Bind file format.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://malc0de.com/bl/ZONES
-            rate_limit: 10800
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.malc0de.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://malc0de.com/dashboard/
-      public: true
-    Windows Format:
-      description: This feed includes FQDN's of malicious hosts, the file format is
-        in Windows Hosts file format.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://malc0de.com/bl/BOOT
-            rate_limit: 10800
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.malc0de.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://malc0de.com/dashboard/
-      public: true
-    IP Blacklist:
-      description: This feed includes IP Addresses of malicious hosts.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://malc0de.com/bl/IP_Blacklist.txt
-            rate_limit: 10800
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.malc0de.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://malc0de.com/dashboard/
-      public: true
   University of Toulouse:
     Blacklist:
       description: Various blacklist feeds
