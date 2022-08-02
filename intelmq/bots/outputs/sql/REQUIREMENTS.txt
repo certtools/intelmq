@@ -2,3 +2,4 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 psycopg2-binary>=2.5.5
+pymssql>=2.2

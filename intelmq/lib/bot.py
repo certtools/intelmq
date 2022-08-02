@@ -30,8 +30,6 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Any, List, Optional, Union
 
-import psutil
-
 import intelmq.lib.message as libmessage
 from intelmq import (DEFAULT_LOGGING_PATH,
                      HARMONIZATION_CONF_FILE,
@@ -942,7 +940,7 @@ class ParserBot(Bot):
     _csv_params = {}
     _ignore_lines_starting = []
     _handle = None
-    _current_line = None
+    _current_line: Optional[str] = None
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
@@ -956,6 +954,7 @@ class ParserBot(Bot):
     def parse_csv(self, report: libmessage.Report):
         """
         A basic CSV parser.
+        The resulting lines are lists.
         """
         raw_report: str = utils.base64_decode(report.get("raw")).strip()
         raw_report = raw_report.translate({0: None})
@@ -971,6 +970,7 @@ class ParserBot(Bot):
     def parse_csv_dict(self, report: libmessage.Report):
         """
         A basic CSV Dictionary parser.
+        The resulting lines are dictionaries with the column names as keys.
         """
         raw_report: str = utils.base64_decode(report.get("raw")).strip()
         raw_report: str = raw_report.translate({0: None})
@@ -1024,6 +1024,7 @@ class ParserBot(Bot):
         for line in utils.base64_decode(report.get("raw")).splitlines():
             line = line.strip()
             if not any([line.startswith(prefix) for prefix in self._ignore_lines_starting]):
+                self._current_line = line
                 yield line
 
     def parse_line(self, line: Any, report: libmessage.Report):
@@ -1063,14 +1064,14 @@ class ParserBot(Bot):
                     events: list[libmessage.Event] = [value]
             except Exception:
                 self.logger.exception('Failed to parse line.')
-                self.__failed.append((traceback.format_exc(), line))
+                self.__failed.append((traceback.format_exc(), self._current_line))
             else:
                 events_count += len(events)
                 self.send_message(*events)
 
-        for exc, line in self.__failed:
+        for exc, original_line in self.__failed:
             report_dump: libmessage.Message = report.copy()
-            report_dump.change('raw', self.recover_line(line))
+            report_dump.change('raw', self.recover_line(original_line))
             if self.error_dump_message:
                 self._dump_message(exc, report_dump)
             if self.destination_queues and '_on_error' in self.destination_queues:
@@ -1115,21 +1116,34 @@ class ParserBot(Bot):
         line = line if line else self._current_line
         return '\n'.join(tempdata + [line])
 
-    def recover_line_csv(self, line: str) -> str:
-        out = io.StringIO()
-        writer = csv.writer(out, **self._csv_params)
-        writer.writerow(line)
+    def recover_line_csv(self, line: Optional[list]) -> str:
+        """
+        Parameter:
+            line: Optional line as list. If absent, the current line is used as string.
+        """
+        if line:
+            out = io.StringIO()
+            writer = csv.writer(out, **self._csv_params)
+            writer.writerow(line)
+            result = out.getvalue()
+        else:
+            result = self._current_line
         tempdata = '\r\n'.join(self.tempdata) + '\r\n' if self.tempdata else ''
-        return tempdata + out.getvalue()
+        return tempdata + result
 
-    def recover_line_csv_dict(self, line: str) -> str:
+    def recover_line_csv_dict(self, line: Union[dict, str, None] = None) -> str:
         """
         Converts dictionaries to csv. self.csv_fieldnames must be list of fields.
         """
         out = io.StringIO()
         writer = csv.DictWriter(out, self.csv_fieldnames, **self._csv_params)
         writer.writeheader()
-        out.write(self._current_line)
+        if isinstance(line, dict):
+            writer.writerow(line)
+        elif isinstance(line, str):
+            out.write(line)
+        else:
+            out.write(self._current_line)
 
         return out.getvalue().strip()
 
@@ -1138,20 +1152,29 @@ class ParserBot(Bot):
         Reverse of parse for JSON pulses.
 
         Recovers a fully functional report with only the problematic pulse.
+        Using a string as input here is not possible, as the input may span over multiple lines.
+        Output is not identical to the input, but has the same content.
+
+        Parameters:
+            The line as dict.
+
+        Returns:
+            str: The JSON-encoded line as string.
         """
         return json.dumps([line])
 
-    def recover_line_json_stream(self, line=None) -> str:
+    def recover_line_json_stream(self, line: Optional[str] = None) -> str:
         """
-        recover_line for json streams, just returns the current line, unparsed.
+        recover_line for JSON streams (one JSON element per line, no outer structure),
+        just returns the current line, unparsed.
 
         Parameters:
-            line: None, not required, only for compatibility with other recover_line methods
+            line: The line itself as dict, if available, falls back to original current line
 
         Returns:
             str: unparsed JSON line.
         """
-        return self._current_line
+        return line if line else self._current_line
 
 
 class CollectorBot(Bot):

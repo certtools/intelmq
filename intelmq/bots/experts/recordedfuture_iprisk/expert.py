@@ -24,6 +24,7 @@ class RecordedFutureIPRiskExpertBot(ExpertBot):
     api_token: str = "<insert Recorded Future IPRisk API token>"
     database: str = "/opt/intelmq/var/lib/bots/recordedfuture_iprisk/rfiprisk.dat"  # TODO: should be pathlib.Path
     overwrite: bool = False
+    autoupdate_cached_database: bool = True  # Activate/deactivate update-database functionality
 
     _database = dict()
 
@@ -77,7 +78,7 @@ class RecordedFutureIPRiskExpertBot(ExpertBot):
         runtime_conf = get_bots_settings()
         try:
             for bot in runtime_conf:
-                if runtime_conf[bot]["module"] == __name__:
+                if runtime_conf[bot]["module"] == __name__ and runtime_conf[bot]['parameters'].get('autoupdate_cached_database', True):
                     api_token = runtime_conf[bot]["parameters"]["api_token"]
                     bots[bot] = runtime_conf[bot]["parameters"]["database"]
 
@@ -86,7 +87,7 @@ class RecordedFutureIPRiskExpertBot(ExpertBot):
 
         if not bots:
             if verbose:
-                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf.")
+                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf or database update disabled with parameter 'autoupdate_cached_database'.")
             sys.exit(0)
 
         try:

@@ -35,8 +35,7 @@ EXAMPLE_CONTENT_STR = str(EXAMPLE_CONTENT_JSON)
 SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST = {
     'CONFIG': {
         'name': 'Github feed',
-        'basic_auth_username': 'dummy_user',
-        'basic_auth_password': 'dummy_password',
+        'personal_access_token': 'super_special_access_token',
         'repository': 'author/repository',
         'extra_fields': 'size, sha',
         'regex': '.*.txt'
@@ -59,8 +58,7 @@ SHOULD_PASS_WITH_TXT_FILES_AND_EXTRA_FIELD_SIZE_TEST = {
 SHOULD_FAIL_BECAUSE_REPOSITORY_IS_NOT_VALID_CONFIG = {
     'CONFIG': {
         'name': 'Github feed',
-        'basic_auth_username': 'dummy_user',
-        'basic_auth_password': 'dummy_password',
+        'personal_access_token': 'super_special_access_token',
         'repository': 'author/',
         'extra_fields': 'size',
         'regex': '.*.txt'
@@ -70,8 +68,7 @@ SHOULD_FAIL_BECAUSE_REPOSITORY_IS_NOT_VALID_CONFIG = {
 SHOULD_FAIL_WITH_BAD_CREDENTIALS = {
     'CONFIG': {
         'name': 'Github feed',
-        'basic_auth_username': 'dummy_user',
-        'basic_auth_password': 'bad_dummy_password',
+        'personal_access_token': 'faulty_access_token',
         'repository': 'author/repo',
         'regex': '.*.txt'
     }
@@ -94,7 +91,6 @@ def print_requests_get_parameters(url, *args, **kwargs):
         """
         main_mock = MagicMock(content=EXAMPLE_CONTENT_STR)
         return main_mock
-
 
 class TestGithubContentsAPICollectorBot(test.BotTestCase, TestCase):
     """

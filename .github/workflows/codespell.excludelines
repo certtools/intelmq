@@ -10,8 +10,8 @@ The correct name for the parameter "delimeter" is "delimiter". Please fix your c
    WHERE "event_description.text" = 'The infected iot device logged in to a honeypot and issued malicous commands.' AND "classification.taxonomy" = 'intrusions' AND "classification.type" = 'unauthorized-command' AND "classification.identifier" = 'iot' AND "feed.name" = 'Spamhaus CERT';
 
 # from intelmq/tests/lib/test_upgrades.py
-        "delimeter": ","
-        "delimeter": ",",
+            "delimeter": ","
+            "delimeter": ",",
 
 # from intelmq/lib/upgrades.py
             if "delimeter" in bot["parameters"] and "delimiter" in bot["parameters"]:

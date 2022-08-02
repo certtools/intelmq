@@ -20,6 +20,8 @@ CHANGELOG
 - `intelmq.lib.message`:
   - Fix and pre-compile the regular expression for harmonization key names and also check keys in the `extra.` namespace (PR#2059 by Sebastian Wagner, fixes #1807).
 - `intelmq.lib.bot.SQLBot` was replaced by an SQLMixin in `intelmq.lib.mixins.SQLMixin`. The Generic DB Lookup Expert bot and the SQLOutput bot were updated accordingly.
+  - Added support for MSSQL (PR#2171 by Karl-Johan Karlsson).
+  - Added optional reconnect delay parameter (PR#2171 by Karl-Johan Karlsson).
 - Added an ExpertBot class - it should be used by all expert bots as a parent class
 - Introduced a module for IntelMQ related datatypes `intelmq.lib.datatypes` which for now only contains an Enum listing the four bot types
 - Added a `bottype` attribute to CollectorBot, ParserBot, ExpertBot, OutputBot
@@ -29,6 +31,10 @@ CHANGELOG
   The `LogLevel` and `ReturnType` Enums were added to `intelmq.lib.datatypes`.
 - `intelmq.lib.bot`:
   - Enhance behaviour if an unconfigured bot is started (PR#2054 by Sebastian Wagner).
+  - Fix line recovery and message dumping of the `ParserBot` (PR#2192 by Sebastian Wagner).
+    - Previously the dumped message was always the last message of a report if the report contained muliple lines leading to data-loss.
+- `intelmq.lib.pipeline`:
+  - Changed `BRPOPLPUSH` to `BLMOVE`, because `BRPOPLPUSH` has been marked as deprecated by redis in favor of `BLMOVE` (PR#2149 by Sebastian Waldbauer, fixes #1827)
 
 ### Development
 
@@ -38,8 +44,11 @@ CHANGELOG
 - Set the parent class of all bots to the correct bot class
 
 #### Collectors
-- `intelmq.bots.collectors.mail._lib`: Add support for unverified SSL/STARTTLS connections (PR#2055 by Sebastian Wagner).
+- `intelmq.bots.collectors.mail._lib`:
+  - Add support for unverified SSL/STARTTLS connections (PR#2055 by Sebastian Wagner).
+  - Fix exception handling for aborted IMAP connections (PR#2187 by Sebastian Wagner).
 - `intelmq.bots.collectors.blueliv`: Fix Blueliv collector requirements (PR#2161 by Gethvi).
+- `intelmq.bots.collectors.github_api._collector_github_api`: Added personal access token support (PR#2145 by Sebastian Waldbauer, fixes #1549).
 
 #### Parsers
 - `intelmq.bots.parsers.alienvault.parser_otx`: Save CVE data in `extra.cve` instead of `extra.CVE` due to the field name restriction on lower-case characters  (PR#2059 by Sebastian Wagner).
@@ -57,6 +66,7 @@ CHANGELOG
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - New parameter `overwrite` (PR#2112 by Sebastian Wagner, fixes #2022).
   - Fix handling of field `Payload.domain` if it contains the same IP address as `Payload.serverIp` (PR#2144 by Mikk Margus Möll and Sebastian Wagner).
+  - Handle Payload field with non-base64-encoded JSON content and numbered dictionaries (PR#2193 by Sebastian Wagner)
 - `intelmq.bot.parsers.shodan.parser` (PR#2117 by Mikk Margus Möll):
   - Instead of keeping track of `extra.ftp.<something>.parameters`, FTP parameters are collected together into `extra.ftp.features` as a list of said features, reducing field count.
   - Shodan field `rsync.modules` is collected.
@@ -71,6 +81,9 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver._config`:
   - Added support for `Accessible AMQP`, `Device Identification Report` (IPv4 and IPv6) (PR#2134 by Mateo Durante).
   - Added file name mapping for `SSL-POODLE-Vulnerable-Servers IPv6` (file name `scan6_ssl_poodle`) (PR#2134 by Mateo Durante).
+- `intelmq.bots.parsers.cymru.parser_cap_program`: The parser mapped the hostname into `source.fqdn` which is not allowed by the IntelMQ Data Format. Added a check (PR#2215 by Sebastian Waldbauer, fixes #2169)
+- `intelmq.bots.parsers.generic.parser_csv`: Use RewindableFileHandle to use the original current line for line recovery (PR#2192 by Sebastian Wagner).
+- `intelmq.bots.parsers.autoshun.parser`: Removed, as the feed is discontinued (PR#2214 by Sebastian Waldbauer, fixes #2162).
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).
@@ -79,6 +92,7 @@ CHANGELOG
 - `intelmq.bots.experts.asn_lookup.expert`: Fixes update-database script on the last few days of a month (PR#2121 by Filip Pokorný, fixes #2088).
 - `intelmq.bots.experts.threshold.expert`: Correctly use the standard parameter `redis_cache_ttl` instead of the previously used parameter `timeout` (PR#2155 by Karl-Johan Karlsson).
 - `intelmq.bots.experts.jinja2.expert`: Lift restriction on requirement jinja2 < 3 (PR#2158 by Sebastian Wagner).
+- `intelmq.bots.experts.asn_lookup.expert`, `intelmq.bots.experts.domain_suffix.expert`, `intelmq.bots.experts.maxmind_geoip.expert`, `intelmq.bots.experts.recordedfuture_iprisk.expert`, `intelmq.bots.experts.tor_nodes.expert`: New parameter `autoupdate_cached_database` to disable automatic updates (downloads) of cached databases (PR#2180 by Sebastian Wagner).
 
 #### Outputs
 - Removed `intelmq.bots.outputs.postgresql`: this bot was marked as deprecated in 2019 announced to be removed in version 3 of IntelMQ (PR#2045 by Birger Schacht).
@@ -87,10 +101,13 @@ CHANGELOG
 - `intelmq.bots.outputs.templated_smtp.output`:
   - Add new function `from_json()` (which just calls `json.loads()` in the standard Python environment), meaning the Templated SMTP output bot can take strings containing JSON documents and do the formatting itself (PR#2120 by Karl-Johan Karlsson).
   - Lift restriction on requirement jinja2 < 3 (PR#2158 by Sebastian Wagner).
+- `intelmq.bots.outputs.sql`:
+  - For PostgreSQL, escape Nullbytes in text to prevent "unsupported Unicode escape sequence" issues (PR#2223 by Sebastian Wagner, fixes #2203).
 
 ### Documentation
 - Feeds: Add documentation for newly supported dataplane feeds, see above (PR#2102 by Mikk Margus Möll).
 - Installation: Restructured the whole document to make it clearer and straight-forward (PR#2113 by Sebastian Wagner).
+- Add workaround for https://github.com/sphinx-doc/sphinx/issues/10701 (PR#2225 by Sebastian Wagner, kudos @yarikoptic, fixes #2224).
 
 ### Packaging
 
@@ -101,8 +118,12 @@ CHANGELOG
 - Also test on Python 3.10 (PR#2140 by Sebastian Wagner).
 - Switch from nosetests to pytest, as the former does not support Python 3.10 (PR#2140 by Sebastian Wagner).
 - CodeQL Github Actions `exponential backtracking on strings` fixed. (PR#2148 by Sebastian Waldbauer, fixes #2138)
+- Reverse DNS expert tests: remove outdated failing test `test_invalid_ptr` (PR#2208 by Sebastian Wagner, fixes #2206).
+- Add test dependency `requests_mock` to the `development` extra requirements in `setup.py` (PR#2210 by Sebastian Wagner).
 
 ### Tools
+- `intelmqctl`: fix process manager initialization if run non-interactively, as intelmqdump does it (PR#2189 by Sebastian Wagner, fixes 2188).
+- `intelmqsetup`: Revised installation of manager by building the static files at setup, not build time, making it behave more meaningful. Requires intelmq-manager >= 3.1.0 (PR#2198 by Sebastian Wagner, fixes #2197).
 
 ### Contrib
 - logrotate: Move compress and ownership rules to the IntelMQ-blocks to prevent that they apply to other files (PR#2111 by Sebastian Wagner, fixes #2110).

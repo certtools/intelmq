@@ -378,8 +378,7 @@ Github API
 **Configuration Parameters**
 
 * **Feed parameters** (see above)
-* `basic_auth_username:` GitHub account username (optional)
-* `basic_auth_password:` GitHub account password (optional)
+* `personal_access_token:` GitHub account personal access token [GitHub documentation: Creating a personal access token](https://developer.github.com/changes/2020-02-14-deprecating-password-auth/#removal)
 * `repository:` GitHub target repository (`<USER>/<REPOSITORY>`)
 * `regex:` Valid regular expression of target files within the repository (defaults to `.*.json`)
 * `extra_fields:` Comma-separated list of extra fields from `GitHub contents API <https://developer.github.com/v3/repos/contents/>`_.
@@ -4006,7 +4005,7 @@ SQL
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` SQL is the bot responsible to send events to a PostgreSQL or SQLite Database, e.g. the IntelMQ :doc:`eventdb`
+* `description:` SQL is the bot responsible to send events to a PostgreSQL, SQLite, or MSSQL Database, e.g. the IntelMQ :doc:`eventdb`
 * `notes`: When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit
 
 **Configuration Parameters**
@@ -4015,17 +4014,20 @@ The parameters marked with 'PostgreSQL' will be sent to libpq via psycopg2. Chec
 
 * `autocommit`: `psycopg's autocommit mode <http://initd.org/psycopg/docs/connection.html?#connection.autocommit>`_, optional, default True
 * `connect_timeout`: Database connect_timeout, optional, default 5 seconds
-* `engine`: 'postgresql' or 'sqlite'
-* `database`: PostgreSQL database or SQLite file
-* `host`: PostgreSQL host
+* `engine`: 'postgresql', 'sqlite', or 'mssql'
+* `database`: Database or SQLite file
+* `host`: Database host
 * `jsondict_as_string`: save JSONDict fields as JSON string, boolean. Default: true (like in versions before 1.1)
-* `port`: PostgreSQL port
-* `user`: PostgreSQL user
-* `password`: PostgreSQL password
-* `sslmode`: PostgreSQL sslmode, can be `'disable'`, `'allow'`, `'prefer'` (default), `'require'`, `'verify-ca'` or `'verify-full'`. See postgresql docs: https://www.postgresql.org/docs/current/static/libpq-connect.html#libpq-connect-sslmode
+* `port`: Database port
+* `user`: Database user
+* `password`: Database password
+* `sslmode`: Database sslmode, can be `'disable'`, `'allow'`, `'prefer'` (default), `'require'`, `'verify-ca'` or `'verify-full'`. See postgresql docs: https://www.postgresql.org/docs/current/static/libpq-connect.html#libpq-connect-sslmode
 * `table`: name of the database table into which events are to be inserted
+* `fields`: list of fields to read from the event. If None, read all fields
+* `reconnect_delay`: number of seconds to wait before reconnecting in case of an error
 
-**PostgreSQL**
+PostgreSQL
+~~~~~~~~~~
 
 You have two basic choices to run PostgreSQL:
 
@@ -4080,7 +4082,13 @@ if the user `intelmq` can authenticate):
 
    psql -h localhost intelmq-events intelmq </tmp/initdb.sql
 
-**SQLite**
+**PostgreSQL and null characters**
+
+While null characters (`\0`, not SQL "NULL") in TEXT and JSON/JSONB fields are valid, data containing null characters can cause troubles in some combinations of clients, servers and each settings.
+To prevent unhandled errors and data which can't be inserted into the database, all null characters are escaped (`\\u0000`) before insertion.
+
+SQLite
+~~~~~~
 
 Similarly to PostgreSQL, you can use `intelmq_psql_initdb` to create initial SQL statements
 from `harmonization.conf`. The script will create the required table layout
@@ -4098,6 +4106,10 @@ Then, set the `database` parameter to the `your-db.db` file path.
 .. _stomp output bot:
 
 .. _intelmq.bots.outputs.stomp.output:
+
+**MSSQL**
+
+For MSSQL support, the library `pymssql>=2.2` is required.
 
 STOMP
 ^^^^^

@@ -15,7 +15,6 @@ import sys
 import textwrap
 import traceback
 import time
-from collections import OrderedDict
 
 import pkg_resources
 from ruamel.yaml import YAML
@@ -374,6 +373,14 @@ Get some debugging output on the settings and the environment (to be extended):
             parser_debug.set_defaults(func=self.debug)
 
             self.parser = parser
+        else:
+            self._processmanager = process_managers()[self._processmanagertype](
+                self._interactive,
+                self._runtime_configuration,
+                self._logger,
+                self._returntype,
+                self._quiet
+            )
 
     def load_defaults_configuration(self, silent=False):
         for option, value in utils.get_global_settings().items():
