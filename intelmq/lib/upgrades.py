@@ -736,24 +736,27 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
     Migrates feeds' configuration for changed/fixed parameter
     """
     found_autoshun = []
-    found_malc0deparser = []
+    found_malc0de = []
     messages = []
     for bot_id, bot in configuration.items():
         if bot_id == 'global':
             continue
         if bot["module"] == "intelmq.bots.parsers.malc0de.parser":
-            found_malc0deparser.append(bot_id)
+            found_malc0de.append(bot_id)
+        if bot["module"] == "intelmq.bots.collectors.http.collector":
+            if bot["parameters"].get("http_url", "").startswith("https://malc0de.com/bl"):
+                found_malc0de.append(bot_id)
         if bot["module"] == "intelmq.bots.collectors.http.collector":
             if bot["parameters"].get("http_url", "").startswith("https://www.autoshun.org/download"):
                 found_autoshun.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.autoshun.parser":
             found_autoshun.append(bot_id)
-    if found_malc0deparser:
-        messages.append('A discontinued bot "Malc0de Parser" has been found '
-                        'as bot %s.' % ', '.join(sorted(found_malc0deparser)))
+    if found_malc0de:
+        messages.append('A discontinued feed "Malc0de" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_malc0de)))
     if found_autoshun:
         messages.append('A discontinued feed "Autoshun" has been found '
-                        f'as bot {", ".join(sorted(found_autoshun))}.')
+                        'as bot %s.' % ', '.join(sorted(found_autoshun)))
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
 
