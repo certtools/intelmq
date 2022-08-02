@@ -28,7 +28,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
     Parameters:
         api_key (str): Your Shadowserver API key
         secret (str): Your Shadowserver API secret
-        country (str): DEPRECATED The mailing list you want to download reports for (i.e. 'austria')
+        country (str): DEPRECIATED The mailing list you want to download reports for (i.e. 'austria')
         reports (list):
             A list of strings or a comma-separated list of the mailing lists you want to process.
         types (list):
