@@ -44,6 +44,11 @@ BOT_CONFIG = {"destination_pipeline_broker": "pythonlist",
               "source_pipeline_broker": "pythonlist",
               "testing": True,
               }
+BOT_INIT_REGEX = ("{} initialized with id {} and"
+                  r" intelmq [0-9a-z.]*"
+                  r" and python [0-9a-z.]*"
+                  r" \(.*?\)([0-9a-zA-Z.\ \[\]]*)"
+                  r"as process [0-9]+\.")
 
 
 class Parameters:
@@ -348,13 +353,8 @@ class BotTestCase:
                 self.assertIn('raw', event)
 
         """ Test if bot log messages are correctly formatted. """
-        self.assertLoglineMatches(0, "{} initialized with id {} and"
-                                     r" intelmq [0-9a-z.]*"
-                                     r" and python [0-9a-z.]*"
-                                     r" \(.*?\)([0-9a-zA-Z.\ \[\]]*)"
-                                     r"as process [0-9]+\."
-                                     "".format(self.bot_name,
-                                               self.bot_id), "INFO")
+        self.assertLoglineMatches(0, BOT_INIT_REGEX.format(self.bot_name,
+                                                           self.bot_id), "INFO")
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
         if stop_bot:
             self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
