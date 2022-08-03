@@ -37,6 +37,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v300_pipeline_file_removal',
            'v301_deprecations',
            'v310_feed_changes',
+           'v310_shadowserver_feednames',
            ]
 
 
@@ -731,6 +732,66 @@ def v301_deprecations(configuration, harmonization, dry_run, **kwargs):
     return messages + ' Remove affected bots yourself.' if messages else changed, configuration, harmonization
 
 
+def v310_shadowserver_feednames(configuration, harmonization, dry_run, **kwargs):
+    """
+    Remove legacy Shadowserver feednames
+    """
+    legacy = {
+        'Amplification-DDoS-Victim': 1,
+        'Blacklisted-IP': 1,
+        'CAIDA-IP-Spoofer': 1,
+        'Darknet': 1,
+        'Drone': 1,
+        'Drone-Brute-Force': 1,
+        'HTTP-Scanners': 1,
+        'ICS-Scanners': 1,
+        'IPv6-Sinkhole-HTTP-Drone': 1,
+        'Microsoft-Sinkhole': 1,
+        'Outdated-DNSSEC-Key': 1,
+        'Outdated-DNSSEC-Key-IPv6': 1,
+        'Sinkhole-HTTP-Drone': 1
+    }
+    changed = None
+    names = []
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
+        if bot["module"] == "intelmq.bots.parsers.shadowserver.parser":
+            if bot["parameters"]["feedname"] in legacy:
+                names.append(bot["parameters"]["feedname"])
+    return 'A discontinued feed has been found and must be removed %s' % ', '.join(names) if names else changed, configuration, harmonization
+
+
+def v310_shadowserver_feednames(configuration, harmonization, dry_run, **kwargs):
+    """
+    Remove legacy Shadowserver feednames
+    """
+    legacy = {
+        'Amplification-DDoS-Victim': 1,
+        'Blacklisted-IP': 1,
+        'CAIDA-IP-Spoofer': 1,
+        'Darknet': 1,
+        'Drone': 1,
+        'Drone-Brute-Force': 1,
+        'HTTP-Scanners': 1,
+        'ICS-Scanners': 1,
+        'IPv6-Sinkhole-HTTP-Drone': 1,
+        'Microsoft-Sinkhole': 1,
+        'Outdated-DNSSEC-Key': 1,
+        'Outdated-DNSSEC-Key-IPv6': 1,
+        'Sinkhole-HTTP-Drone': 1
+    }
+    changed = None
+    names = []
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
+        if bot["module"] == "intelmq.bots.parsers.shadowserver.parser":
+            if bot["parameters"]["feedname"] in legacy:
+                names.append(bot["parameters"]["feedname"])
+    return 'A discontinued feed has been found and must be removed %s' % ', '.join(names) if names else changed, configuration, harmonization
+
+
 def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
     """
     Migrates feeds' configuration for changed/fixed parameter
@@ -785,7 +846,7 @@ UPGRADES = OrderedDict([
     ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, v300_pipeline_file_removal,)),
     ((3, 0, 1), (v301_deprecations,)),
     ((3, 0, 2), ()),
-    ((3, 1, 0), (v310_feed_changes, )),
+    ((3, 1, 0), (v310_feed_changes, v310_shadowserver_feednames, )),
 ])
 
 ALWAYS = (harmonization,)

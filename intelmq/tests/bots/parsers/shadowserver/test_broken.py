@@ -15,9 +15,7 @@ REPORT1 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
            "time.observation": "2015-01-01T00:00:00+00:00",
            "extra.file_name": "2019-01-01-scan_http-test-test.csv",
            }
-REPORT2 = {"raw": utils.base64_encode('''timestamp,ip,port
-2018-08-01T00:00:00+00,127.0.0.1,80
-'''),
+REPORT2 = {"raw": utils.base64_encode('timestamp,ip,port\n2018-08-01T00:00:00+00,127.0.0.1,80'),
            "__type": "Report",
            "time.observation": "2015-01-01T00:00:00+00:00",
            "extra.file_name": "2019-01-01-scan_ftp-test-test.csv",
@@ -62,10 +60,10 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         Test a report which does not have an optional field.
         """
         self.input_message = REPORT2
-        self.run_bot(allowed_warning_count=54)
+        self.run_bot(allowed_warning_count=63)
         self.assertLogMatches(pattern="Detected report's file name: 'scan_ftp'.",
                               levelname="DEBUG")
-        self.assertLogMatches(pattern="Optional key 'protocol' not found in feed 'Accessible-FTP'. Possible change in data format or misconfiguration.",
+        self.assertLogMatches(pattern="Optional key 'jarm' not found in feed 'Accessible-FTP'.",
                               levelname="WARNING")
         self.assertLogMatches(pattern=r"Sent 1 events and found 0 problem\(s\)\.",
                               levelname="INFO")

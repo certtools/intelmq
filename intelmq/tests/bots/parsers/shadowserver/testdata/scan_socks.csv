@@ -1,0 +1,4 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","sector"
+"2010-02-10 00:00:00",192.168.0.1,tcp,1080,node01.example.com,socks4,64512,ZZ,Region,City,0,0,"Communications, Service Provider, and Hosting Service"
+"2010-02-10 00:00:01",192.168.0.2,tcp,1080,node02.example.com,socks5,64512,ZZ,Region,City,0,0,"Communications, Service Provider, and Hosting Service"
+"2010-02-10 00:00:02",192.168.0.3,tcp,1080,node03.example.com,socks4,64512,ZZ,Region,City,0,0,"Retail Trade"

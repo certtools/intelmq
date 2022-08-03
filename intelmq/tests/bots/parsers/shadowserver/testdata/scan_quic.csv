@@ -1,0 +1,4 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","version_field_1","version_field_2","version_field_3","version_field_4"
+"2022-01-10 14:31:17","176.255.0.0","udp",443,"test1.example.com","quic",5607,"UK","LONDON","LONDON",517311,,"Q050",,"Q046","Q043"
+"2022-01-10 14:31:17","24.244.0.0","udp",443,,"quic",6327,"CA","SASKATCHEWAN","MEACHAM",517311,,"Q050","Q046",,"Q043"
+"2022-01-10 14:31:17","23.60.0.0","udp",443,"test3.example.com","quic",20940,"JP","OSAKA","OSAKA",517919,,,"Q050","Q046","Q043"
