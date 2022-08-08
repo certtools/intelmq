@@ -132,6 +132,23 @@ CHANGELOG
 - logrotate: Move compress and ownership rules to the IntelMQ-blocks to prevent that they apply to other files (PR#2111 by Sebastian Wagner, fixes #2110).
 
 ### Known issues
+This is short list of the most important known issues. The full list can be retrieved from [GitHub](https://github.com/certtools/intelmq/labels/bug?page=2&q=is%3Aopen+label%3Abug).
+- intelmq_psql_initdb does not work for SQLite (#2202).
+- SyntaxError in bots causes intelmqctl check to crash (#2177).
+- intelmqctl create log file before dropping privileges (#2176).
+- intelmqsetup: should install a default state file (#2175).
+- Misp Expert - Crash if misp event already exist (#2170).
+- Turris greylist has been updated (#2167).
+- Spamhaus CERT parser uses wrong field (#2165).
+- Custom headers ignored in HTTPCollectorBot (#2150).
+- Missing commas in SQL query for separate Events table (#2125).
+- intelmqctl log: parsing syslog does not work (#2097).
+- Bash completion scripts depend on old JSON-based configuration files (#2094).
+- Bot configuration examples use JSON instead of YAML (#2066).
+- intelmqdump: logging_path parameter not honoured (#1605).
+- CSV line recovery forces Windows line endings (#1597).
+- Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
+- Corrupt dump files when interrupted during writing (#870).
 
 
 3.0.2 (2021-09-10)
