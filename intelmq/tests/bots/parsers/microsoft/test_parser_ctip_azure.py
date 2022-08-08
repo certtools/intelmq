@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
+import codecs
 import json
 import os
 import unittest
@@ -12,7 +13,7 @@ from intelmq.lib import test
 from intelmq.lib.utils import base64_encode
 
 
-with open(os.path.join(os.path.dirname(__file__), 'ctip_azure.txt')) as handle:
+with codecs.open(os.path.join(os.path.dirname(__file__), 'ctip_azure.txt'), encoding='utf8') as handle:
     EXAMPLE_DATA = handle.read()
 EXAMPLE_LINES = EXAMPLE_DATA.splitlines()
 EXAMPLE_PARSED = [json.loads(EXAMPLE_LINES[0]), json.loads(EXAMPLE_LINES[1])]
