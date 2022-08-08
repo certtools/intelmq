@@ -1,8 +1,8 @@
-intelmq (3.1.0~alpha1-1) UNRELEASED; urgency=medium
+intelmq (3.1.0~rc1-1) stable; urgency=medium
 
-  * Start 3.1.0 development.
+  * 3.1.0 Release candidate 1.
 
- -- Sebastian Wagner <wagner@cert.at>  Fri, 13 Aug 2021 11:09:58 +0200
+ -- Sebastian Wagner <swagner@intevation.de>  Mon, 08 Aug 2022 11:41:15 +0200
 
 intelmq (3.0.2-1) stable; urgency=medium
 
