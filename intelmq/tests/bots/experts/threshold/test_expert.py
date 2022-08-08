@@ -4,8 +4,8 @@
 
 # -*- coding: utf-8 -*-
 
+import os
 import unittest
-import time
 
 import intelmq.lib.test as test
 from intelmq.lib import utils
@@ -35,7 +35,7 @@ PARAMETERS = {
     'filter_keys': ['source.ip'],
     'filter_type': 'whitelist',
     'redis_cache_db': 4,
-    'redis_cache_host': '127.0.0.1',
+    'redis_cache_host': os.getenv('INTELMQ_PIPELINE_HOST', 'localhost'),
     'redis_cache_password': None,
     'redis_cache_port': 6379,
     'timeout': 1,
