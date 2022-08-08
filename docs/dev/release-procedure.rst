@@ -1,5 +1,5 @@
 ..
-   SPDX-FileCopyrightText: 2017 Sebastian Wagner
+   SPDX-FileCopyrightText: 2017-2022 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 
 #################
@@ -28,14 +28,14 @@ These apply to all projects:
 
  * CHANGELOG.MD and
  * NEWS.MD: Update the latest header, fix the order, remove empty sections and (re)group the entries if necessary.
- * ``debian/changelog``: Insert a new section for the new version with the tool ``dch`` or update the version of the existing last item if yet unreleased.
+ * ``debian/changelog``: Insert a new section for the new version with the tool ``dch`` or update the version of the existing last item if yet unreleased. Don't forget the revision after the version number!
 
 IntelMQ
 ^^^^^^^
 
  * ``intelmq/version.py``: Update the version.
 
-Eventually adapt the default log levels if necessary. Should be INFO for stable releases. See older releases.
+Eventually adapt the default log levels if necessary. Should be INFO for stable releases.
 
 IntelMQ API
 ^^^^^^^^^^^
@@ -52,7 +52,7 @@ IntelMQ Manager
 Commit, push, review and merge
 ******************************
 
-Commit your changes in a separate branch, the final commit's message should start with :code:`REL:`. Push and create a pull request to maintenance and after that from maintenance to master. Someone else should review the changes. Eventually fix them, make sure the :code:`REL:` is the last commit, you can also push that one at last, after the reviews.
+Commit your changes in a separate branch, the final commit message should start with :code:`REL:`. Push and create a pull request to maintenance and after that from maintenance to master. Someone else should review the changes. Eventually fix them, make sure the :code:`REL:` is the last commit, you can also push that one at last, after the reviews.
 
 Why a separate branch? Because if problems show up, you can still force-push to that one, keeping the release commit the latest one.
 
@@ -60,7 +60,7 @@ Why a separate branch? Because if problems show up, you can still force-push to 
 Tag and release
 ***************
 
-Tag the commit with `git tag -s version HEAD`, merge it into master, push the branches *and* the tag. The tag is just `a.b.c`, not prefixed with `v` (that was necessary only with SVN a long time ago...).
+Tag the commit with ``git tag -s version HEAD``, merge it into master, push the branches *and* the tag. The tag is just ``a.b.c``, not prefixed with ``v`` (that was necessary only with SVN a long time ago...).
 
 Go to https://github.com/certtools/intelmq/tags and enter the release notes (from the CHANGELOG) for the new tag, then it's considered a *release* by GitHub.
 
