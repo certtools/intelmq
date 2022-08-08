@@ -7,13 +7,11 @@ NEWS
 ====
 
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
-Please refer to the changelog for a full list of changes.
+Please refer to the change log for a full list of changes.
 
 
 3.1.0 Feature release (unreleased)
 ----------------------------------
-
-### Requirements
 
 ### Bots
 #### ShadowServer Reports API collector
@@ -21,19 +19,8 @@ The misleading `country` parameter has been depreciated and a `reports` paramete
 The backwards-compatibility will be removed in IntelMQ version 4.0.0.
 See the [Shadowserver Reports API bot's documentation](https://intelmq.readthedocs.io/en/latest/user/bots.html#shadowserver-reports-api).
 
-
-3.1.0 Feature release (unreleased)
-----------------------------------
-
-### Requirements
-
-### Bots
-#### ShadowServer Reports API collector
-The misleading `country` parameter has been depreciated and a `reports` parameter has been added.
-The backwards-compatibility will be removed in IntelMQ version 4.0.0.
-See the [Shadowserver Reports API bot's documentation](https://intelmq.readthedocs.io/en/latest/user/bots.html#shadowserver-reports-api).
-
-### Tools
+#### GitHub Collector
+GitHub removed the basic `Username/Password` Authentication in favor of personal access tokens. So the GitHub Collector uses an Personal Access Token for authentication [Github Documentation: Generate a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
 ### Data Format
 #### Field name checks
@@ -52,8 +39,6 @@ sudo find /var/log/ -user intelmq ! -path \*intelmq\*
 ### Configuration
 #### Threshold Expert
 The parameter `timeout` has been merged into `redis_cache_ttl`.
-
-### Libraries
 
 ### Postgres databases
 The following statements optionally update existing data for the harmonization classification changes:
@@ -140,13 +125,6 @@ UPDATE events
    SET "classification.identifier" = 'sinkhole-dns'
    WHERE "classification.identifier" = 'sinkholedns';
 ```
-
-
-### Bots
-
-#### Github Collector
-GitHub removed the basic `Username/Password` Authentication in favor of personal access tokens. So the GitHub Collector uses an Personal Access Token for authentication [Github Documentation: Generate a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
-=======
 
 
 3.0.2 Maintenance release (2021-09-10)
