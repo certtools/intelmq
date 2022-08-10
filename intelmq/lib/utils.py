@@ -52,8 +52,6 @@ import intelmq
 from intelmq import RUNTIME_CONF_FILE
 from intelmq.lib.exceptions import DecodingError
 
-yaml = YAML(typ="unsafe", pure=True)
-
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
            'reverse_readline', 'error_message_from_exc', 'parse_relative',
@@ -216,7 +214,7 @@ def load_configuration(configuration_filepath: str) -> dict:
     if os.path.exists(configuration_filepath):
         with open(configuration_filepath) as fpconfig:
             try:
-                config = yaml.load(fpconfig)
+                config = YAML(typ="unsafe", pure=True).load(fpconfig)
             except ScannerError as exc:
                 if "found character '\\t' that cannot start any token" in exc.problem:
                     fpconfig.seek(0)
@@ -257,7 +255,7 @@ def write_configuration(configuration_filepath: str,
         pathlib.Path(configuration_filepath + '.bak').write_text(config.read_text())
     with open(configuration_filepath, 'w') as handle:
         if useyaml:
-            yaml.dump(content, handle)
+            YAML(typ="unsafe", pure=True).dump(content, handle)
         else:
             json.dump(content, fp=handle, indent=4,
                       sort_keys=True,
