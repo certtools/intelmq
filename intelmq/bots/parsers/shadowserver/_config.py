@@ -1188,7 +1188,7 @@ scan_amqp = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'channel', validate_to_none),
-        ('extra.', 'message_length', validate_to_none),
+        ('extra.', 'message_length', convert_int),
         ('extra.', 'class', validate_to_none),
         ('extra.', 'method', validate_to_none),
         ('extra.', 'version_major', validate_to_none),
@@ -3682,6 +3682,46 @@ scan_ssl_poodle = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-stun-service-report/
+scan_stun = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('extra.', 'mapped_port', convert_int),
+        ('extra.', 'xor_mapped_port', convert_int),
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'transaction_id', validate_to_none),
+        ('extra.', 'magic_cookie', validate_to_none),
+        ('extra.', 'message_length', convert_int),
+        ('extra.', 'message_type', validate_to_none),
+        ('extra.', 'mapped_family', validate_to_none),
+        ('extra.', 'mapped_address', validate_to_none),
+        ('extra.', 'xor_mapped_family', validate_to_none),
+        ('extra.', 'xor_mapped_address', validate_to_none),
+        ('extra.', 'software', validate_to_none),
+        ('extra.', 'fingerprint', validate_to_none),
+        ('extra.', 'amplification', convert_float),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+        'protocol.application': 'Session Traversal Utilities for NAT',
+        'classification.identifier': 'open-stun',
+    },
+}
+
 # https://www.shadowserver.org/what-we-do/network-reporting/synful-scan-report/
 scan_synfulknock = {
     'required_fields': [
@@ -3949,9 +3989,12 @@ mapping = (
     ('IPv6-Accessible-FTP', 'scan6_ftp', scan_ftp),
     ('IPv6-Accessible-HTTP', 'scan6_http', scan_http),
     ('IPv6-Vulnerable-HTTP', 'scan6_http_vulnerable', scan_http_vulnerable),
+    ('IPv6-Open-IPP', 'scan6_ipp', scan_ipp),
     ('IPv6-Open-MQTT', 'scan6_mqtt', scan_mqtt),
     ('IPv6-Open-Anonymous-MQTT', 'scan6_mqtt_anon', scan_mqtt_anon),
     ('IPv6-Accessible-MySQL', 'scan6_mysql', scan_mysql),
+    ('IPv6-NTP-Version', 'scan6_ntp', scan_ntp),
+    ('IPv6-NTP-Monitor', 'scan6_ntpmonitor', scan_ntpmonitor),
     ('IPv6-Accessible-PostgreSQL', 'scan6_postgres', scan_postgres),
     ('IPv6-Accessible-RDP', 'scan6_rdp', scan_rdp),
     ('IPv6-Accessible-SMB', 'scan6_smb', scan_smb),
@@ -3962,6 +4005,7 @@ mapping = (
     ('IPv6-Accessible-SSL', 'scan6_ssl', scan_ssl),
     ('SSL-FREAK-Vulnerable-Servers IPv6', 'scan6_ssl_freak', scan_ssl_freak),
     ('SSL-POODLE-Vulnerable-Servers IPv6', 'scan6_ssl_poodle', scan_ssl_poodle),
+    ('IPv6-Accessible-Session-Traversal-Utilities-for-NAT', 'scan6_stun', scan_stun),
     ('IPv6-Accessible-Telnet', 'scan6_telnet', scan_telnet),
     ('IPv6-Accessible-VNC', 'scan6_vnc', scan_vnc),
     ('Accessible-ADB', 'scan_adb', scan_adb),
@@ -4023,6 +4067,7 @@ mapping = (
     ('Accessible-SSL', 'scan_ssl', scan_ssl),
     ('SSL-FREAK-Vulnerable-Servers', 'scan_ssl_freak', scan_ssl_freak),
     ('SSL-POODLE-Vulnerable-Servers IPv4', 'scan_ssl_poodle', scan_ssl_poodle),
+    ('Accessible-Session-Traversal-Utilities-for-NAT', 'scan_stun', scan_stun),
     ('SYNful-Knock', 'scan_synfulknock', scan_synfulknock),
     ('Accessible-Telnet', 'scan_telnet', scan_telnet),
     ('Open-TFTP', 'scan_tftp', scan_tftp),

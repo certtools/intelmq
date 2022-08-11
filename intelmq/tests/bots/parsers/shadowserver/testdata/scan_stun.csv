@@ -1,0 +1,4 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","sector","transaction_id","magic_cookie","message_length","message_type","mapped_family","mapped_address","mapped_port","xor_mapped_family","xor_mapped_address","xor_mapped_port","software","fingerprint","amplification"
+"2010-02-10 00:00:00",192.168.0.1,udp,3478,node01.example.com,stun,64512,ZZ,Region,City,0,0,,000000000000000000000000,2112a442,76,0101,01,192.168.0.1,13114,01,192.168.0.1,13114,"Coturn-4.5.0.8 'dan Eider'",0x68c8e54c,4.80
+"2010-02-10 00:00:01",192.168.0.2,udp,3478,node02.example.com,stun,64512,ZZ,Region,City,0,0,,000000000000000000000000,2112a442,80,0101,01,192.168.0.2,29308,01,192.168.0.2,29308,"Coturn-4.5.1.1 'dan Eider'",,
+"2010-02-10 00:00:02",192.168.0.3,udp,3478,node03.example.com,stun,64512,ZZ,Region,City,0,0,"Communications, Service Provider, and Hosting Service",000000000000000000000000,2112a442,12,0101,,,,01,192.168.0.3,15470,,,1.60
