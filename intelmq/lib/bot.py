@@ -945,7 +945,7 @@ class ParserBot(Bot):
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
-        super().__init__(bot_id=bot_id)
+        super().__init__(bot_id, start, sighup_event, disable_multithreading)
         if self.__class__.__name__ == 'ParserBot':
             self.logger.error('ParserBot can\'t be started itself. '
                               'Possible Misconfiguration.')
@@ -1216,7 +1216,7 @@ class CollectorBot(Bot):
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
-        super().__init__(bot_id=bot_id)
+        super().__init__(bot_id, start, sighup_event, disable_multithreading)
         if self.__class__.__name__ == 'CollectorBot':
             self.logger.error('CollectorBot can\'t be started itself. '
                               'Possible Misconfiguration.')
@@ -1276,7 +1276,7 @@ class ExpertBot(Bot):
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
-        super().__init__(bot_id=bot_id)
+        super().__init__(bot_id, start, sighup_event, disable_multithreading)
 
 
 class OutputBot(Bot):
@@ -1287,7 +1287,7 @@ class OutputBot(Bot):
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
-        super().__init__(bot_id=bot_id)
+        super().__init__(bot_id, start, sighup_event, disable_multithreading)
         if self.__class__.__name__ == 'OutputBot':
             self.logger.error('OutputBot can\'t be started itself. '
                               'Possible Misconfiguration.')
