@@ -7,8 +7,6 @@ name: "Unit tests"
 on:
   push:
     branches: [develop, maintenance, master]
-    paths-ignore:
-      - '.github/**'
   pull_request:
     branches: [develop, maintenance]
     paths-ignore:
@@ -78,9 +76,3 @@ jobs:
     - name: Run full testsuite
       if: ${{ matrix.type == 'full' }}
       run: TZ=utc INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_EXOTIC=1 pytest --cov intelmq/ --cov-report=xml --cov-branch intelmq/ contrib/
-
-    - name: Run codecov
-      if: ${{ matrix.type == 'full' }}
-      uses: codecov/codecov-action@v2
-      with:
-        fail_ci_if_error: true
