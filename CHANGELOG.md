@@ -35,6 +35,8 @@ CHANGELOG
     - Previously the dumped message was always the last message of a report if the report contained muliple lines leading to data-loss.
 - `intelmq.lib.pipeline`:
   - Changed `BRPOPLPUSH` to `BLMOVE`, because `BRPOPLPUSH` has been marked as deprecated by redis in favor of `BLMOVE` (PR#2149 by Sebastian Waldbauer, fixes #1827)
+- `intelmq.bots.parsers.shadowserver._config`:
+  - Corrected "AMQP" message_length type (int) and added "STUN" support (PR#2235 by elsif2).
 
 ### Development
 
