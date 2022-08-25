@@ -35,8 +35,6 @@ CHANGELOG
     - Previously the dumped message was always the last message of a report if the report contained multiple lines leading to data-loss.
 - `intelmq.lib.pipeline`:
   - Changed `BRPOPLPUSH` to `BLMOVE`, because `BRPOPLPUSH` has been marked as deprecated by redis in favor of `BLMOVE` (PR#2149 by Sebastian Waldbauer, fixes #1827)
-- `intelmq.bots.parsers.shadowserver._config`:
-  - Corrected "AMQP" message_length type (int) and added "STUN" support (PR#2235 by elsif2).
 
 ### Development
 
@@ -84,6 +82,9 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver._config`:
   - Added support for `Accessible AMQP`, `Device Identification Report` (IPv4 and IPv6) (PR#2134 by Mateo Durante).
   - Added file name mapping for `SSL-POODLE-Vulnerable-Servers IPv6` (file name `scan6_ssl_poodle`) (PR#2134 by Mateo Durante).
+  - Corrected "AMQP" message_length type (int) and added "STUN" support (PR#2235 by elsif2).
+  - Added amplification factor to UDP scan reports (PR#2238 by elsif2).
+  - Added version and build_date to "Vulnerable-HTTP" report (PR#2238 by elsif2).
 - `intelmq.bots.parsers.cymru.parser_cap_program`: The parser mapped the hostname into `source.fqdn` which is not allowed by the IntelMQ Data Format. Added a check (PR#2215 by Sebastian Waldbauer, fixes #2169)
 - `intelmq.bots.parsers.generic.parser_csv`: Use RewindableFileHandle to use the original current line for line recovery (PR#2192 by Sebastian Wagner).
 - `intelmq.bots.parsers.autoshun.parser`: Removed, as the feed is discontinued (PR#2214 by Sebastian Waldbauer, fixes #2162).
