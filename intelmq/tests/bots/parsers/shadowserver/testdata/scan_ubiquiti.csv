@@ -1,3 +1,4 @@
-"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","mac","radioname","essid","modelshort","modelfull","firmware","size"
-"2019-02-04 15:34:33","177.22.68.220","udp",10001,"220.68.22.177.strnet.com.br","ubiquiti",262890,"BR","SAO PAULO","TAMBAU",0,0,"0027223ae564","Sartori Tecnologia","NETTAMBAU23N-2","AG5-HP",,"XM.ar7240.v6.0.4-licensed.30805.170505.1649",164
-"2019-02-04 15:34:33","195.32.35.53","udp",10001,"c-35-53.cust.wadsl.it","ubiquiti",205005,"IT","ASTI","MONTECHIARO D'ASTI",0,0,"802aa8b03d28","DETTORI Daniela","find-adsl","LB5",,"XW.ar934x.v6.0.4.30805.170505.1510",142
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","mac","radioname","essid","modelshort","modelfull","firmware","size","amplification"
+"2010-02-10 00:00:00",192.168.0.1,udp,10001,node01.example.com,"ubiquiti,iot",64512,ZZ,Region,City,0,0,00156db98c3a,kachine.meta.lidia.tereixa,Kachine-Meta-Lidia-Tereixa,NS5,,XS5.ar2313.v3.5.4494.091109.1459,148,37.00
+"2010-02-10 00:00:01",192.168.0.2,udp,10001,node02.example.com,"ubiquiti,iot",64512,ZZ,Region,City,0,0,00156d7c9188,adana.mason.lanikai.ozaner,Adana-Mason-Lanikai-Ozaner,LM5,"NanoStation Loco M5",XM.ar7240.v5.6.3.28591.151130.1749,156,39.00
+"2010-02-10 00:00:02",192.168.0.3,udp,10001,node03.example.com,"ubiquiti,iot",64512,ZZ,Region,City,0,0,0418d6000fd5,tailynn.kadija.noreen.dinkar,Tailynn-Kadija-Noreen-Dinkar,P2B-400,"PowerBeam M2 400",XW.ar934x.v5.6.5.29033.160515.2108,145,36.25

@@ -1229,6 +1229,7 @@ scan_ard = {
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'machine_name', validate_to_none),
         ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'accessible-ard',
@@ -1256,6 +1257,8 @@ scan_chargen = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -1310,6 +1313,8 @@ scan_coap = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'response', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'accessible-coap',
@@ -1413,6 +1418,7 @@ scan_db2 = {
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'db2_hostname', validate_to_none),
         ('extra.', 'servername', validate_to_none),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'open-db2-discovery-service',
@@ -1570,6 +1576,8 @@ scan_dvr_dhcpdiscover = {
         ('extra.', 'ipv6_address', validate_to_none),
         ('extra.', 'ipv6_link_local', validate_to_none),
         ('extra.', 'ipv6_gateway', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -1851,6 +1859,8 @@ scan_http_vulnerable = {
         ('extra.', 'content_length', convert_int),
         ('extra.', 'transfer_encoding', validate_to_none),
         ('extra.', 'http_date', convert_date),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'build_date', validate_to_none),
     ],
     'constant_fields': {
         'classification.identifier': 'accessible-http',
@@ -2153,6 +2163,7 @@ scan_ldap_tcp = {
         ('extra.', 'supported_ldap_policies', validate_to_none),
         ('extra.', 'supported_ldap_version', validate_to_none),
         ('extra.', 'supported_sasl_mechanisms', validate_to_none),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'open-ldap',
@@ -2162,7 +2173,7 @@ scan_ldap_tcp = {
     },
 }
 
-# https://www.shadowserver.org/what-we-do/network-reporting/open-ldap-tcp-report/
+# https://www.shadowserver.org/what-we-do/network-reporting/open-ldap-report/
 scan_ldap_udp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2202,6 +2213,7 @@ scan_ldap_udp = {
         ('extra.', 'supported_ldap_policies', validate_to_none),
         ('extra.', 'supported_ldap_version', validate_to_none),
         ('extra.', 'supported_sasl_mechanisms', validate_to_none),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'open-ldap',
@@ -2281,6 +2293,8 @@ scan_memcached = {
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'time', validate_to_none),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -2623,6 +2637,8 @@ scan_nat_pmp = {
         ('extra.', 'uptime', validate_to_none),
         ('extra.', 'external_ip', validate_to_none),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'open-natpmp',
@@ -2654,6 +2670,8 @@ scan_netbios = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'open-netbios-nameservice',
@@ -2681,6 +2699,8 @@ scan_netis_router = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'open-netis',
@@ -2733,6 +2753,8 @@ scan_ntp = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'ntp-version',
@@ -2761,6 +2783,7 @@ scan_ntpmonitor = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'ntp-monitor',
@@ -2791,6 +2814,8 @@ scan_portmapper = {
         ('extra.', 'mountd_port', validate_to_none),
         ('extra.', 'exports', validate_to_none),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -2910,6 +2935,8 @@ scan_qotd = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -3039,6 +3066,8 @@ scan_rdpeudp = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sessionid', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'accessible-msrdpeudp',
@@ -3231,6 +3260,8 @@ scan_snmp = {
         ('extra.', 'device_sector', validate_to_none),
         ('extra.', 'tag', validate_to_none),
         ('extra.', 'community', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -3300,6 +3331,8 @@ scan_ssdp = {
         ('extra.', 'version', validate_to_none),
         ('extra.', 'updated_at', validate_to_none),
         ('extra.', 'resource_identifier', validate_to_none),
+        ('extra.', 'amplification', convert_float),
+        ('extra.', 'response_size', convert_int),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -3713,6 +3746,7 @@ scan_stun = {
         ('extra.', 'software', validate_to_none),
         ('extra.', 'fingerprint', validate_to_none),
         ('extra.', 'amplification', convert_float),
+        ('extra.', 'response_size', convert_int),
     ],
     'constant_fields': {
         'classification.taxonomy': 'other',
@@ -3803,6 +3837,7 @@ scan_tftp = {
         ('extra.', 'error', validate_to_none),
         ('extra.', 'errormessage', validate_to_none),
         ('extra.', 'size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -3836,6 +3871,7 @@ scan_ubiquiti = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'essid', validate_to_none),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'accessible-ubiquiti-discovery-service',
@@ -3893,6 +3929,7 @@ scan_xdmcp = {
         ('extra.', 'reported_hostname', validate_to_none),
         ('extra.', 'status', validate_to_none),
         ('extra.', 'size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
