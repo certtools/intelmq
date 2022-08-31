@@ -83,7 +83,7 @@ class TwitterCollectorBot(CollectorBot, HttpMixin):
             tweet_mode="extended")
 
     def get_text_from_url(self, url: str) -> str:
-        # netloc could include the port explicityly, but we ignore that improbable case here
+        # netloc could include the port explicitly, but we ignore that improbable case here
         netloc = urlsplit(url).netloc
         if netloc == "pastebin.com" or netloc.endswith('.pastebin.com'):
             self.logger.debug('Processing url %r.', url)

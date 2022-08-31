@@ -32,7 +32,7 @@ CHANGELOG
 - `intelmq.lib.bot`:
   - Enhance behaviour if an unconfigured bot is started (PR#2054 by Sebastian Wagner).
   - Fix line recovery and message dumping of the `ParserBot` (PR#2192 by Sebastian Wagner).
-    - Previously the dumped message was always the last message of a report if the report contained muliple lines leading to data-loss.
+    - Previously the dumped message was always the last message of a report if the report contained multiple lines leading to data-loss.
 - `intelmq.lib.pipeline`:
   - Changed `BRPOPLPUSH` to `BLMOVE`, because `BRPOPLPUSH` has been marked as deprecated by redis in favor of `BLMOVE` (PR#2149 by Sebastian Waldbauer, fixes #1827)
 - `intelmq.bots.parsers.shadowserver._config`:

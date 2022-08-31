@@ -3864,9 +3864,9 @@ The bot creates tickets in Request Tracker and uses event fields for the ticket 
   - if there is source.abuse_contact is specified,
   - if description text is specified in the field appointed by configuration,
 
-- RT/RTIR supposed to do relevant notifications by scrip working on condition "On Create",
+- RT/RTIR supposed to do relevant notifications by script working on condition "On Create",
 - configuration option investigation_fields specifies which event fields has to be included in the investigation,
-- Resolve Incident ticket, according to configuration (Investigation ticket status should depend on RT scrip configuration),
+- Resolve Incident ticket, according to configuration (Investigation ticket status should depend on RT script configuration),
 
 Take extra caution not to flood your ticketing system with enormous amount of tickets. Add extra filtering for that to pass only critical events to the RT, and/or deduplicating events.
 

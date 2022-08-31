@@ -103,7 +103,7 @@ class RTOutputBot(OutputBot):
                     if event.get(key):
                         ticket_content += key + ": " + str(event.get(key)) + "\n"
                 # Creating Investigation ticket
-                # Communication supposed to be done by RT On Create scrip
+                # Communication supposed to be done by RT On Create script
                 investigation_id = RT.create_ticket(Queue="Investigations", Subject=self.subject, Text=ticket_content, Requestor=requestor)
 
                 if investigation_id > -1:
