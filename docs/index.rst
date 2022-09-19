@@ -62,6 +62,7 @@ Connecting with other systems
    user/ELK-Stack
    user/MISP-Integrations
    user/n6-integrations
+   user/CIFv3-Integrations
    user/eventdb
    user/abuse-contacts
 

@@ -3599,6 +3599,48 @@ xxx.xxx.xxx.xxx    Intel::ADDR    phishing    100    MISP XXX
 www.testdomain.com    Intel::DOMAIN    apt    85    CERT
 ```
 
+.. _intelmq.bots.outputs.cif3.output:
+
+CIF3 API
+^^^^^^^^
+
+**Information**
+
+* `name:` `intelmq.bots.outputs.cif3.output`
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Connect to a CIFv3 instance and add new indicator if not there already.
+
+The cifsdk library >= 3.0.0rc4,<4.0.0 is required, see
+`REQUIREMENTS.txt <https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/cif3/REQUIREMENTS.txt>`_.
+
+**Configuration Parameters**
+
+* **Feed parameters** (see above)
+* `add_feed_provider_as_tag`: boolean (use `false` when in doubt)
+* `cif3_additional_tags`: list of tags to set on submitted indicator(s)
+* `cif3_feed_confidence`: float, used when mapping a feed's confidence fails or 
+      if static confidence param is true
+* `cif3_static_confidence`: bool, when true it always sends the `cif3_feed_confidence` value
+      as confidence rather than dynamically interpret feed value (use false when in doubt)
+* `cif3_token`: str, API key for accessing CIF
+* `cif3_url`: str, URL of the CIFv3 instance
+* `fireball`: int, used to batch events before submitting to a CIFv3 instance
+      (default is 500 per batch, use 0 to disable batch and send each event as received)
+* `http_verify_cert`: bool, used to tell whether the CIFv3 instance cert should be verified
+      (default true, but can be set to false if using a local test instance)
+
+By default, CIFv3 does an upsert check and will only insert entirely new indicators. Otherwise,
+upsert matches will have their count increased by 1. By default, the CIF3 output bot will batch indicators
+up to 500 at a time prior to doing a single bulk send. If the output bot doesn't receive a full 500
+indicators within 5 seconds of the first received indicator, it will send what it has so far.
+
+CIFv3 should be able to process indicators as fast as IntelMQ can
+send them. 
+
+(More details can be found in the docstring of `output.py <https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/cif3/output.py>`_.
+
 .. _intelmq.bots.outputs.elasticsearch.output:
 
 Elasticsearch Output Bot
