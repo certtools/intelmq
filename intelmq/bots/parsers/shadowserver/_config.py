@@ -1795,10 +1795,10 @@ scan_http = {
         ('extra.', 'http_date', convert_date),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-http',
         'classification.taxonomy': 'other',
         'classification.type': 'other',
         'protocol.application': 'http',
-        'classification.identifier': 'open-http',
     },
 }
 
