@@ -82,7 +82,7 @@ class CIF3OutputBot(OutputBot):
     cif3_static_confidence: bool = False
     cif3_additional_tags = []
     cif3_token: str = None
-    cif3_url: str = None
+    cif3_url: Optional[str] = None
     fireball: int = 500
     http_verify_cert: bool = True
 
