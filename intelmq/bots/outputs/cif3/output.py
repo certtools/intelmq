@@ -9,7 +9,7 @@ keep it current, when changing something.
 Parameters:
   - add_feed_provider_as_tag: bool, use false when in doubt
   - cif3_additional_tags: list of tags to set on submitted indicator(s)
-  - cif3_feed_confidence: float, used when mapping a feed's confidence fails or 
+  - cif3_feed_confidence: float, used when mapping a feed's confidence fails or
         if static confidence param is true
   - cif3_static_confidence: bool (use false when in doubt)
   - cif3_token: str, API key for accessing CIF
@@ -28,6 +28,7 @@ Example (of some parameters in JSON):
 """
 import ujson as json
 from datetime import datetime
+from typing import Optional
 
 from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import IntelMQException, MissingDependencyError
@@ -101,8 +102,8 @@ class CIF3OutputBot(OutputBot):
 
         self.logger.info(f"Connecting to CIFv3 instance at {self.cif3_url!r}.")
         self.cli = HttpClient(self.cif3_url,
-                                self.cif3_token,
-                                verify_ssl=self.http_verify_cert)
+            self.cif3_token,
+            verify_ssl=self.http_verify_cert)
 
         try:
             _ = self.cli.ping(write=True)
@@ -125,9 +126,9 @@ class CIF3OutputBot(OutputBot):
             self._submit_cif3_indicator(cif3_indicator)
         elif len(self.indicator_list) > 0 and (
             (
-                (datetime.now() - self.last_flushed).total_seconds() > 
+                (datetime.now() - self.last_flushed).total_seconds() >
                     self.indicator_list_max_seconds
-            ) or 
+            ) or
                 len(self.indicator_list) >= self.indicator_list_max_records
         ):
             self._submit_cif3_indicator(self.indicator_list)
@@ -136,7 +137,6 @@ class CIF3OutputBot(OutputBot):
             if len(self.indicator_list) == 0:
                 self.last_flushed = datetime.now()
             self.indicator_list.append(cif3_indicator)
-
 
         self.acknowledge_message()
 
@@ -171,7 +171,7 @@ class CIF3OutputBot(OutputBot):
                 new_cif3_dict['tags'].append(intelmq_event['classification.type'])
 
         for new_tag in self.cif3_additional_tags:
-             new_cif3_dict['tags'].append(new_tag)
+            new_cif3_dict['tags'].append(new_tag)
 
         # map the confidence
         if 'feed.accuracy' in intelmq_event:
@@ -179,7 +179,6 @@ class CIF3OutputBot(OutputBot):
                 new_cif3_dict['confidence'] = (intelmq_event['feed.accuracy'] / 10)
         if not new_cif3_dict.get('confidence'):
             new_cif3_dict['confidence'] = self.cif3_feed_confidence
-
 
         # map remaining IntelMQ fields to CIFv3 fields
         for intelmq_type in INTELMQ_TO_CIF_FIELDS_MAP.keys():
@@ -193,10 +192,8 @@ class CIF3OutputBot(OutputBot):
             new_indicator = Indicator(**new_cif3_dict)
         except Exception as err:
             self.logger.error(f"Error creating indicator: {err}")
-        
-        return new_indicator
-        
 
+        return new_indicator
 
     def _submit_cif3_indicator(self, indicators):
         # build the CIFv3 indicator object from the dict
@@ -211,7 +208,6 @@ class CIF3OutputBot(OutputBot):
                 if resp.get('status') == 'success':
                     resp = resp['data']
             self.logger.info(f"CIFv3 instance successfully inserted {resp} new indicator(s).")
-
 
     @staticmethod
     def check(parameters):
@@ -230,4 +226,3 @@ class CIF3OutputBot(OutputBot):
 
 
 BOT = CIF3OutputBot
-
