@@ -109,7 +109,7 @@ class ShadowserverParserBot(ParserBot):
         for item in conf.get('required_fields'):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:
-                if not row.get(shadowkey):  # key does not exist in data (not even in the header)
+                if not shadowkey in row:  # key does not exist in data (not even in the header)
                     raise ValueError('Required column {!r} not found in feed {!r}. Possible change in data'
                                      ' format or misconfiguration.'.format(shadowkey, self.feedname))
                 else:  # key is used twice
@@ -139,7 +139,7 @@ class ShadowserverParserBot(ParserBot):
         for item in conf.get('optional_fields'):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:
-                if not row.get(shadowkey):  # key does not exist in data (not even in the header)
+                if not shadowkey in row:  # key does not exist in data (not even in the header)
                     self.logger.warning('Optional key {!r} not found in feed {!r}. Possible change in data'
                                         ' format or misconfiguration.'.format(shadowkey, self.feedname))
                     continue
