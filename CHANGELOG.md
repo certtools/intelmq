@@ -68,7 +68,7 @@ CHANGELOG
   - New parameter `overwrite` (PR#2112 by Sebastian Wagner, fixes #2022).
   - Fix handling of field `Payload.domain` if it contains the same IP address as `Payload.serverIp` (PR#2144 by Mikk Margus Möll and Sebastian Wagner).
   - Handle Payload field with non-base64-encoded JSON content and numbered dictionaries (PR#2193 by Sebastian Wagner)
-- `intelmq.bot.parsers.shodan.parser` (PR#2117 by Mikk Margus Möll):
+- `intelmq.bots.parsers.shodan.parser` (PR#2117 by Mikk Margus Möll):
   - Instead of keeping track of `extra.ftp.<something>.parameters`, FTP parameters are collected together into `extra.ftp.features` as a list of said features, reducing field count.
   - Shodan field `rsync.modules` is collected.
   - Conversion functions can raise `NoValueException` with a string argument to signify that the conversion would not succeed, such as in the case of a single IP address being given in hostnames, which would then be passed into `source.reverse_dns and` fail to validate as a FQDN.
@@ -861,7 +861,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - `intelmq.bots.experts.maxmind_geoip`: On Python < 3.6, require maxminddb < 2, as that version does no longer support Python 3.5.
 
 #### Outputs
-- `intelmq.bot.outputs.udp`: Fix error handling on sending, had a bug itself.
+- `intelmq.bots.outputs.udp`: Fix error handling on sending, had a bug itself.
 
 ### Documentation
 - Feeds:
@@ -1315,7 +1315,7 @@ Dropped support for Python 3.4.
   - use default SSL context for client purposes, fixes compatibility with python `<` 3.6 if TLS is used.
 
 #### Parsers
-- `intelmq.bot.parsers.html_table.parser`:
+- `intelmq.bots.parsers.html_table.parser`:
   * New parameter "html_parser".
   * Use time conversion functions directly from `intelmq.lib.harmonization.DateTime.convert`.
   - Limit lxml dependency on 3.4 to `<` 4.4.0 (incompatibility).
@@ -1326,15 +1326,15 @@ Dropped support for Python 3.4.
 
 #### Experts
 - Add geohash expert.
-- `intelmq.bot.experts.generic_db_lookup.expert`
+- `intelmq.bots.experts.generic_db_lookup.expert`
   - new optional parameter `engine` with `postgresql` (default) and `sqlite` (new) as possible values.
 
 #### Outputs
 - Add `intelmq.bots.outputs.touch.output`.
-- `intelmq.bot.outputs.postgresql.output`:
-  - deprecated in favor of `intelmq.bot.outputs.sql.output`
+- `intelmq.bots.outputs.postgresql.output`:
+  - deprecated in favor of `intelmq.bots.outputs.sql.output`
   - Compatibility shim will be available in the 2.x series.
-- `intelmq.bot.outputs.sql.output` added generic SQL output bot. Comparted to
+- `intelmq.bots.outputs.sql.output` added generic SQL output bot. Comparted to
   - new optional parameter `engine` with `postgresql` (default) and `sqlite` (new) as possible values.
 - `intelmq.bots.outputs.stomp.output`: New parameters `message_hierarchical`, `message_jsondict_as_string`, `message_with_type`, `single_key`.
 
@@ -1725,7 +1725,7 @@ There are some features considered as beta and marked as such in the documentati
   - Update columns and mapping to current (2019-04-02) data.
 - added `intelmq.bots.parsers.surbl.surbl`
 - added `intelmq.bots.parsers.html_table` (#1381).
-- `intelmq.bot.parsers.netlab_360.parser`: Handle empty lines containing blank characters (#1393).
+- `intelmq.bots.parsers.netlab_360.parser`: Handle empty lines containing blank characters (#1393).
 - `intelmq.bots.parsers.n6.parser_n6stomp`: Handle events without IP addresses.
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Handle new feed format.
 - `intelmq.bots.parsers.shadowserver`:
