@@ -1,0 +1,4 @@
+"timestamp","ip","port","protocol","asn","geo","region","city","hostname","naics","sector","tag","public_source","status","method","device_vendor"
+"2010-02-10 00:00:00",192.168.0.1,,,64512,ZZ,Region,City,node01.example.com,0,"Communications, Service Provider, and Hosting Service",cyclops-blink,,"likely compromised",,
+"2010-02-10 00:00:01",192.168.0.2,,,64512,ZZ,Region,City,node02.example.com,0,"Communications, Service Provider, and Hosting Service",cyclops-blink,,"likely compromised",,
+"2010-02-10 00:00:02",192.168.0.3,,,64512,ZZ,Region,City,node03.example.com,0,"Professional, Scientific, and Technical Services",cyclops-blink,,"likely compromised",,

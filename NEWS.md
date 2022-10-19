@@ -1,5 +1,5 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2021 Sebastian Wagner
+   SPDX-FileCopyrightText: 2015-2022 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -7,14 +7,20 @@ NEWS
 ====
 
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
-Please refer to the changelog for a full list of changes.
+Please refer to the change log for a full list of changes.
+
 
 3.1.0 Feature release (unreleased)
 ----------------------------------
 
-### Requirements
+### Bots
+#### ShadowServer Reports API collector
+The misleading `country` parameter has been depreciated and a `reports` parameter has been added.
+The backwards-compatibility will be removed in IntelMQ version 4.0.0.
+See the [Shadowserver Reports API bot's documentation](https://intelmq.readthedocs.io/en/latest/user/bots.html#shadowserver-reports-api).
 
-### Tools
+#### GitHub Collector
+GitHub removed the basic `Username/Password` Authentication in favor of personal access tokens. So the GitHub Collector uses an Personal Access Token for authentication [Github Documentation: Generate a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
 ### Data Format
 #### Field name checks
@@ -22,32 +28,119 @@ The field names for all data added to messages must match a pre-defined format.
 The check which ensures this, was ineffective prior to this version and is effective again starting with version 3.1.0.
 The [Data format documentation](https://intelmq.readthedocs.io/en/maintenance/dev/data-format.html#rules-for-keys) describes the required format.
 
-### Configuration
+### Logrotate
+The packaged configuration for logrotate falsely contained options applying to other programs' log files. This caused wrong ownerships of log files.
+This issues is corrected, but the ownership of affected log files may need to be changed manually.
+To find affected files, you may use:
+```bash
+sudo find /var/log/ -user intelmq ! -path \*intelmq\*
+```
 
-### Libraries
+### Configuration
+#### Threshold Expert
+The parameter `timeout` has been merged into `redis_cache_ttl`.
 
 ### Postgres databases
+The following statements optionally update existing data for the harmonization classification changes:
+```sql
+UPDATE events
+   SET "classification.identifier" = 'open-adb'
+   WHERE "classification.identifier" = 'accessible-adb';
+UPDATE events
+   SET "classification.identifier" = 'open-afp'
+   WHERE "classification.identifier" = 'accessible-afp';
+UPDATE events
+   SET "classification.identifier" = 'open-amqp'
+   WHERE "classification.identifier" = 'accessible-amqp';
+UPDATE events
+   SET "classification.identifier" = 'open-ard'
+   WHERE "classification.identifier" = 'accessible-ard';
+UPDATE events
+   SET "classification.identifier" = 'open-cisco-smart-install'
+   WHERE "classification.identifier" = 'accessible-cisco-smart-install';
+UPDATE events
+   SET "classification.identifier" = 'open-coap'
+   WHERE "classification.identifier" = 'accessible-coap';
+UPDATE events
+   SET "classification.identifier" = 'open-ftp'
+   WHERE "classification.identifier" = 'accessible-ftp';
+UPDATE events
+   SET "classification.identifier" = 'open-hadoop'
+   WHERE "classification.identifier" = 'accessible-hadoop';
+UPDATE events
+   SET "classification.identifier" = 'open-http'
+   WHERE "classification.identifier" = 'accessible-http';
+UPDATE events
+   SET "classification.identifier" = 'open-rdpeudp'
+   WHERE "classification.identifier" = 'accessible-msrdpeudp';
+UPDATE events
+   SET "classification.identifier" = 'open-radmin'
+   WHERE "classification.identifier" = 'accessible-radmin';
+UPDATE events
+   SET "classification.identifier" = 'open-rsync'
+   WHERE "classification.identifier" = 'accessible-rsync';
+UPDATE events
+   SET "classification.identifier" = 'open-ubiquiti'
+   WHERE "classification.identifier" = 'accessible-ubiquiti-discovery-service';
+UPDATE events
+   SET "classification.identifier" = 'honeypot-ddos-amp'
+   WHERE "classification.identifier" = 'amplification-ddos-victim';
+UPDATE events
+   SET "classification.identifier" = 'blocklist'
+   WHERE "classification.identifier" = 'blacklisted-ip';
+UPDATE events
+   SET "classification.identifier" = 'open-dns'
+   WHERE "classification.identifier" = 'dns-open-resolver';
+UPDATE events
+   SET "classification.identifier" = 'honeypot-http-scan'
+   WHERE "classification.identifier" = 'honeypot-http-scan';
+UPDATE events
+   SET "classification.identifier" = 'honeypot-ics-scan'
+   WHERE "classification.identifier" = 'ics';
+UPDATE events
+   SET "classification.identifier" = 'open-ntpmonitor'
+   WHERE "classification.identifier" = 'ntp-monitor';
+UPDATE events
+   SET "classification.identifier" = 'open-ntp'
+   WHERE "classification.identifier" = 'ntp-version';
+UPDATE events
+   SET "classification.identifier" = 'open-db2'
+   WHERE "classification.identifier" = 'open-db2-discovery-service';
+UPDATE events
+   SET "classification.identifier" = 'open-isakmp'
+   WHERE "classification.identifier" = 'open-ike';
+UPDATE events
+   SET "classification.identifier" = 'open-ldap-tcp'
+   WHERE "classification.identifier" = 'open-ldap';
+UPDATE events
+   SET "classification.identifier" = 'open-nat-pmp'
+   WHERE "classification.identifier" = 'open-natpmp';
+UPDATE events
+   SET "classification.identifier" = 'open-netbios'
+   WHERE "classification.identifier" = 'open-netbios-nameservice';
+UPDATE events
+   SET "classification.identifier" = 'open-netis-router'
+   WHERE "classification.identifier" = 'open-netis';
+UPDATE events
+   SET "classification.identifier" = 'sinkhole-dns'
+   WHERE "classification.identifier" = 'sinkholedns';
+```
 
 
-3.0.1 Maintenance release (unreleased)
+3.0.2 Maintenance release (2021-09-10)
 --------------------------------------
+Two performance issues were fixed. One affected all collectors which processed high volumes of data and the other issue affected some bots which used threading.
+See the changelog for more details.
+
+The section on 3.0.0 in this file now contains more details for the upgrade to 3.0.0 in regards to the configuration.
 
 
-### Requirements
-
-### Tools
+3.0.1 Maintenance release (2021-09-02)
+--------------------------------------
 
 ### Bots
 The malwardomains parser bot was removed. The malwaredomains.com website is offline, therefore the parser can not be used anymore. The `intelmqctl upgrade-config` command warns if you have the feed and the bot in use.
 The postgresql output bot was removed. The bot was marked as deprecated in 2019 and announced to be removed in version 3.
-
-### Data Format
-
-### Configuration
-
-### Libraries
-
-### Postgres databases
 
 
 3.0.0 Major release (2021-07-02)
@@ -55,6 +148,28 @@ The postgresql output bot was removed. The bot was marked as deprecated in 2019 
 
 ### Requirements
 IntelMQ now uses YAML for the runtime configuration and therefore needs the `ruamel.yaml` library.
+
+### Configuration
+The `defaults.conf` file was removed. Settings that should effect all the bots are not part of the runtime.conf file and are configured in the `global` section in that file.
+The `intelmqctl upgrade-config` command migrates the existing values from the `defaults.conf` file to the `runtime.conf` file under the `global` section and then deletes the `defaults.conf` file.
+The `pipeline.conf` file was removed. The source- and destination-queues of the bots are now configured in the bot configuration itself, thus in the `runtime.conf` file.
+The `intelmqctl upgrade-config` command migrates the existing configuration from the `pipeline.conf` file to the individual bot configurations in the `runtime.conf` configuration file.
+The `runtime.conf` file was replaced by a `runtime.yaml` file. IntelMQ moves the file for you if it does not find a runtime.conf but a runtime.yaml file. When IntelMQ changes the file, it now writes YAML syntax.
+
+#### When using the official deb/rpm-packages or the official Docker image
+Unfortunately, the automatic upgrade procedures has a flaw.
+The packages provide a default runtime configuration, but only for new installations if there is no previously existing installation.
+But as the runtime configuration was renamed from `/etc/intelmq/runtime.conf` to `/etc/intelmq/runtime.yaml`, this check comes to nothing, and the `/etc/intelmq/runtime.yaml` get installed.
+But only the new filename is considered by IntelMQ itself, so the configuration *appears* to be lost.
+To fix this:
+- remove the newly provided `runtime.yaml`
+- make sure that the `runtime.conf` is the correct file with your correct configuration
+- IntelMQ will rename and convert the configuration automatically, but we need to trigger the migration of the `pipeline.conf` and `defaults.conf`:
+  ```
+  sudo -u intelmq intelmqctl upgrade-config -f -u v300_pipeline_file_removal
+  sudo -u intelmq intelmqctl upgrade-config -f -u v300_defaults_file_removal
+  sudo -u intelmq intelmqctl upgrade-config -f -u v301_deprecations
+  ```
 
 ### Tools
 
@@ -78,7 +193,7 @@ and the XMPP bots were deprecated in 391d625.
 #### Sieve expert
 The Sieve expert bot has had major updates to its syntax. Breaking new changes:
 * the removal of the `:notcontains` operator, which can be replaced using the newly added
- expression negation, e.g `! foo :contains ['.mx', '.zz']` rather than `foo :notcontains ['.mx', '.zz']`. 
+ expression negation, e.g `! foo :contains ['.mx', '.zz']` rather than `foo :notcontains ['.mx', '.zz']`.
 * changed operators for comparisons against lists of values, e.g `source.ip :in ['127.0.0.5', '192.168.1.2']` rather than `source.ip == ['127.0.0.5', '192.168.1.2']`
   The "old" syntax with `==` on lists is no longer valid and raises an error.
 
@@ -132,13 +247,6 @@ Most of the usages were wrong anyway, and should have been infected-device, malw
 There is only one usage in IntelMQ, which can not be changed.
 And that one is really about malware itself (or: the hashes of samples). For this purpose, the new type "malware" under the taxonomy "other" was created, *slightly* deviating from the RSIT in this respect, but the "other" taxonomy can be freely extended.
 
-### Configuration
-
-The `defaults.conf` file was removed. Settings that should effect all the bots are not part of the runtime.conf file and are configured in the `global` section in that file.
-The `intelmqctl upgrade-config` command migrates the existing values from the `defaults.conf` file to the `runtime.conf` file under the `global` section and then deletes the `defaults.conf` file.
-The `pipeline.conf` file was removed. The source- and destination-queues of the bots are now configured in the bot configuration itself, thus in the `runtime.conf` file.
-The `intelmqctl upgrade-config` command migrates the existing configuration from the `pipeline.conf` file to the individual bot configurations in the `runtime.conf` configuration file.
-The `runtime.conf` file was replaced by a `runtime.yaml` file. IntelMQ moves the file for you if it does not find a runtime.conf but a runtime.yaml file. When IntelMQ changes the file, it now writes YAML syntax.
 
 #### Removal of deprecated bots and behaviour
 - The bot `intelmq.bots.experts.ripencc_abuse_contact.expert` has been removed. It was replaced by `intelmq.bots.experts.ripe.expert` and marked as deprecated in 2.0.0.beta1.
@@ -264,7 +372,7 @@ CentOS 7 (with EPEL) provides both Python 3.4 and Python 3.6. If IntelMQ was ins
   type and reloads them afterwards. Removes any external dependencies (such as curl or wget).
   This is a replacement for shell scripts such as `update-tor-nodes`, `update-asn-data`,
   `update-geoip-data`, `update-rfiprisk-data`.
-  
+
   Usage:
   ```
   intelmq.bots.experts.asn_lookup.expert --update-database

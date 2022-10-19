@@ -54,7 +54,7 @@ EVENTS = [{
             'extra.cert_expiration_date': 'Jan 14 08:04:50 2020 GMT',
             'extra.sha1_fingerprint': 'D9:98:3F:2E:F9:D1:BE:9A:10:1E:DE:51:2C:C1:DF:01:18:0A:20:65',
             'extra.cert_serial_number': '1121DC7421AB7924C3B1D396AEA3707E9E29',
-            'extra.ssl_version': '2',
+            'extra.ssl_version': 2,
             'extra.signature_algorithm': 'sha256WithRSAEncryption',
             'extra.key_algorithm': 'rsaEncryption',
             'extra.subject_organization_name': 'NTT Communications Corporation',

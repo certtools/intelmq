@@ -26,7 +26,7 @@ VALID_MESSSAGE_TYPES = ('Event', 'Message', 'Report')
 HARMONIZATION_KEY_FORMAT = re.compile(r'^[a-z_][a-z_0-9]+(\.[a-z_0-9]+)*$')
 
 
-class MessageFactory(object):
+class MessageFactory:
     """
     unserialize: JSON encoded message to object
     serialize: object to JSON encoded object
@@ -275,7 +275,7 @@ class Message(dict):
                         continue
                 if key != 'extra' and extravalue in self._IGNORED_VALUES:
                     continue
-                super().__setitem__('{}.{}'.format(key, extrakey),
+                super().__setitem__(f'{key}.{extrakey}',
                                     extravalue)
         else:
             super().__setitem__(key, value)
@@ -430,7 +430,7 @@ class Message(dict):
             jsondict_as_string:
                 If False (default) treat values in JSONDict fields just as normal ones
                 If True, save such fields as JSON-encoded string. This is the old behavior
-                    before version 1.1.
+                before version 1.1.
 
         Returns:
             new_dict: A dictionary as copy of itself modified according

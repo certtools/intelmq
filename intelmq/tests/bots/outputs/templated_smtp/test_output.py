@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # SPDX-FileCopyrightText: 2021 Linköping University <https://liu.se/>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -87,7 +86,7 @@ class TestCustomTemplatedSMTPOutputBot(test.BotTestCase, unittest.TestCase):
              unittest.mock.patch('smtplib.SMTP.close'):
             self.run_bot(allowed_error_count=1)
         self.sysconfig["attachments"] = saved_attachments
-        self.assertRegexpMatches(self.loglines_buffer,
+        self.assertRegex(self.loglines_buffer,
                                  "ERROR - Attachment does not have a text, ignoring:")
 
     def test_event(self):
@@ -130,6 +129,57 @@ System: destination.example.com""")
         self.assertEqual(SENT_MESSAGE[0]["To"], ", ".join(EVENT1["source.abuse_contact"].split(",")))
         self.assertEqual({"from_addr": "myself", "to_addrs": ["one@example.com", "two@example.com"]},
                          SENT_MESSAGE[1])
+
+    def test_json_parsing(self):
+        event = EVENT.copy()
+        event["output"] = json.dumps(
+            {
+                "title": "Test title",
+                "lines": [
+                    {
+                        "time": "2021-10-11 12:13Z",
+                        "log": "An event occurred"
+                    },
+                    {
+                        "time": "2021-10-14 15:16Z",
+                        "log": "Another event occurred"
+                    }
+                ]
+            }
+        )
+        self.input_message = event
+        with unittest.mock.patch("smtplib.SMTP.send_message", new=send_message), \
+             unittest.mock.patch("smtplib.SMTP.connect", return_value=(220, "Mock server")), \
+             unittest.mock.patch("smtplib.SMTP.close"):
+            self.run_bot(parameters={"body": """
+{%- set output = from_json(event['output']) %}
+{{ output['title'] }}
+
+{% for line in output['lines'] -%}
+{{ line['time'] }} : {{ line['log'] }}
+{% endfor -%}
+"""})
+        self.assertEqual(SENT_MESSAGE[0].get_payload()[0].get_payload(), """
+Test title
+
+2021-10-11 12:13Z : An event occurred
+2021-10-14 15:16Z : Another event occurred
+""")
+
+    def test_malformed_json(self):
+        event = EVENT.copy()
+        event["output"] = "{ malformed"
+        self.input_message = event
+        with unittest.mock.patch("smtplib.SMTP.send_message", new=send_message), \
+             unittest.mock.patch("smtplib.SMTP.connect", return_value=(220, "Mock server")), \
+             unittest.mock.patch("smtplib.SMTP.close"):
+            self.run_bot(parameters={"body": """
+{%- set output = from_json(event['output']) %}
+A{{ output }}B
+"""})
+        self.assertEqual(SENT_MESSAGE[0].get_payload()[0].get_payload(), """
+A{ malformedB
+""")
 
 
 @test.skip_exotic()

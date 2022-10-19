@@ -30,15 +30,15 @@ class InvalidArgument(IntelMQException):
 
     def __init__(self, argument: Any, got: Any = None, expected=None,
                  docs: str = None):
-        message = "Argument {} is invalid.".format(repr(argument))
+        message = f"Argument {repr(argument)} is invalid."
         if expected is list:
-            message += " Should be one of: {}.".format(list)
+            message += f" Should be one of: {list}."
         elif expected:  # not None
-            message += " Should be of type: {}.".format(expected)
+            message += f" Should be of type: {expected}."
         if got:
-            message += " Got {}.".format(repr(got))
+            message += f" Got {repr(got)}."
         if docs:
-            message += " For more information see {}".format(docs)
+            message += f" For more information see {docs}"
         super().__init__(message)
 
 
@@ -52,7 +52,7 @@ class PipelineError(IntelMQException):
 class ConfigurationError(IntelMQException):
 
     def __init__(self, config: str, argument: str):
-        message = "%s configuration failed - %s" % (config, argument)
+        message = f"{config} configuration failed - {argument}"
         super().__init__(message)
 
 
@@ -115,21 +115,16 @@ class MissingDependencyError(IntelMQException):
                  installed: Optional[str] = None,
                  additional_text: Optional[str] = None):
         """
-        Parameters
-        ----------
-        dependency : str
-            The dependency name.
-        version : Optional[str], optional
-            The required version. The default is None.
-        installed : Optional[str], optional
-            The currently installed version. Requires 'version' to be given The default is None.
-        additional_text : Optional[str], optional
-            Arbitrary additional text to show. The default is None.
+        Parameters:
+            dependency (str): The dependency name.
+            version (Optional[str], optional): The required version. The default is None.
+            installed (Optional[str], optional)
+                The currently installed version. Requires 'version' to be given The default is None.
+            additional_text (Optional[str], optional):
+                Arbitrary additional text to show. The default is None.
 
-        Returns
-        -------
-        IntelMQException: with prepared text
-
+        Returns:
+            IntelMQException: with prepared text
         """
         appendix = ""
         if version:
@@ -145,7 +140,7 @@ class MissingDependencyError(IntelMQException):
                 appendix = appendix + (" Installed is version {installed!r}."
                                        "".format(installed=installed))
         if additional_text:
-            appendix = "%s %s" % (appendix, additional_text)
+            appendix = f"{appendix} {additional_text}"
         message = ("Could not load dependency {dependency!r}, please install it "
                    "with apt/yum/dnf/zypper (possibly named "
                    "python3-{dependency}) or pip3.{appendix}"

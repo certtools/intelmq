@@ -26,10 +26,10 @@ except ImportError:
     pika = None
 
 
-class PipelineFactory(object):
+class PipelineFactory:
 
     @staticmethod
-    def create(logger, broker=None, direction=None, queues=None, pipeline_args=None, load_balance=False, is_multithreaded=False):
+    def create(logger, broker=None, direction=None, queues=None, pipeline_args: Optional[dict] = None, load_balance=False, is_multithreaded=False):
         """
         direction: "source" or "destination", optional, needed for queues
         queues: needs direction to be set, calls set_queues
@@ -67,7 +67,7 @@ class PipelineFactory(object):
         return pipe
 
 
-class Pipeline(object):
+class Pipeline:
     has_internal_queues = False
     # If the class currently holds a message, restricts the actions
     _has_message = False
@@ -141,18 +141,13 @@ class Pipeline(object):
         """
         Acknowledge/delete the current message from the source queue
 
-        Parameters
-        ----------
+        Parameters:
 
-        Raises
-        ------
-        exceptions
-            exceptions.PipelineError: If no message is held
+        Raises:
+            exceptions: exceptions.PipelineError: If no message is held
 
-        Returns
-        -------
-        None.
-
+        Returns:
+            None
         """
         if not self._has_message:
             raise exceptions.PipelineError("No message to acknowledge.")
@@ -187,6 +182,7 @@ class Redis(Pipeline):
     destination_pipeline_db = 2
     source_pipeline_password = None
     destination_pipeline_password = None
+    _redis_server_version = None
 
     def load_configurations(self, queues_type):
         self.host = self.pipeline_args.get(f"{queues_type}_pipeline_host", "127.0.0.1")
@@ -218,6 +214,7 @@ class Redis(Pipeline):
             kwargs['single_connection_client'] = True
 
         self.pipe = redis.Redis(db=self.db, password=self.password, **kwargs)
+        self._redis_server_version = tuple(int(x) for x in self.pipe.execute_command('INFO')['redis_version'].split('.'))
 
     def disconnect(self):
         pass
@@ -250,7 +247,7 @@ class Redis(Pipeline):
                         "OOM command not allowed when used memory > 'maxmemory'." in exc.args[0]:
                     raise MemoryError(exc.args[0])
                 elif 'Redis is configured to save RDB snapshots, but is currently not able to persist on disk' in exc.args[0]:
-                    raise IOError(28, 'No space left on device or in memory. Redis can\'t save its snapshots. '
+                    raise OSError(28, 'No space left on device or in memory. Redis can\'t save its snapshots. '
                                       'Look at redis\'s logs.')
                 raise exceptions.PipelineError(exc)
 
@@ -266,8 +263,10 @@ class Redis(Pipeline):
                 else:
                     break
             if not retval:
-                retval = self.pipe.brpoplpush(self.source_queue,
-                                              self.internal_queue, 0)
+                if self._redis_server_version >= (6, 2, 0):
+                    retval = self.pipe.blmove(self.source_queue, self.internal_queue, 0, 'RIGHT', 'LEFT')
+                else:
+                    retval = self.pipe.brpoplpush(self.source_queue, self.internal_queue, 0)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
         else:
@@ -428,24 +427,24 @@ class Amqp(Pipeline):
     intelmqctl_rabbitmq_monitoring_url = None
 
     def __init__(self, logger, pipeline_args: dict = None, load_balance=False, is_multithreaded=False):
-        super(Amqp, self).__init__(logger, pipeline_args, load_balance, is_multithreaded)
+        super().__init__(logger, pipeline_args, load_balance, is_multithreaded)
         if pika is None:
             raise ValueError("To use AMQP you must install the 'pika' library.")
         self.properties = pika.BasicProperties(delivery_mode=2)  # message persistence
 
     def load_configurations(self, queues_type):
-        self.host = self.pipeline_args.get("{}_pipeline_host".format(queues_type), "10.0.0.1")
-        self.port = self.pipeline_args.get("{}_pipeline_port".format(queues_type), 5672)
-        self.username = self.pipeline_args.get("{}_pipeline_username".format(queues_type), None)
-        self.password = self.pipeline_args.get("{}_pipeline_password".format(queues_type), None)
+        self.host = self.pipeline_args.get(f"{queues_type}_pipeline_host", "10.0.0.1")
+        self.port = self.pipeline_args.get(f"{queues_type}_pipeline_port", 5672)
+        self.username = self.pipeline_args.get(f"{queues_type}_pipeline_username", None)
+        self.password = self.pipeline_args.get(f"{queues_type}_pipeline_password", None)
         #  socket_timeout is None by default, which means no timeout
-        self.socket_timeout = self.pipeline_args.get("{}_pipeline_socket_timeout".format(queues_type),
+        self.socket_timeout = self.pipeline_args.get(f"{queues_type}_pipeline_socket_timeout",
                                                      None)
         self.load_balance = self.pipeline_args.get("load_balance", False)
-        self.virtual_host = self.pipeline_args.get("{}_pipeline_amqp_virtual_host".format(queues_type),
+        self.virtual_host = self.pipeline_args.get(f"{queues_type}_pipeline_amqp_virtual_host",
                                                    '/')
-        self.ssl = self.pipeline_args.get("{}_pipeline_ssl".format(queues_type), False)
-        self.exchange = self.pipeline_args.get("{}_pipeline_amqp_exchange".format(queues_type), "")
+        self.ssl = self.pipeline_args.get(f"{queues_type}_pipeline_ssl", False)
+        self.exchange = self.pipeline_args.get(f"{queues_type}_pipeline_amqp_exchange", "")
         self.load_balance_iterator = 0
         self.kwargs = {}
         if self.username and self.password:
@@ -514,7 +513,7 @@ class Amqp(Pipeline):
 
     def set_queues(self, queues: dict, queues_type: str):
         self.load_configurations(queues_type)
-        super(Amqp, self).set_queues(queues, queues_type)
+        super().set_queues(queues, queues_type)
 
     def _send(self, destination_queue, message, reconnect=True):
         self.check_connection()

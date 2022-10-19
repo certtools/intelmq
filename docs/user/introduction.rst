@@ -82,6 +82,5 @@ Contribute
 **********
 
 - Subscribe to the |intelmq-developers-list-link|
-- IRC: server: irc.freenode.net, channel: \#intelmq
 - Via `GitHub issues <github.com/certtools/intelmq/issues/>`_
 - Via `Pull requests <github.com/certtools/intelmq/pulls>`_ (please have a look at the :doc:`/dev/guide` first)

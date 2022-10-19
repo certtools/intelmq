@@ -11,18 +11,17 @@ This bot generates one message per identified IOC:
 - FQDNs the sample tries to connect to
 
 Parameter:
-verdict_severity: defines the minimum severity of reports to be parsed
-                  severity ranges from 1 to 5
+verdict_severity: defines the minimum severity of reports to be parsed severity ranges from 1 to 5
 
 """
 import json
 
 import intelmq.lib.utils as utils
 # imports for additional libraries and intelmq
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class ATDParserBot(Bot):
+class ATDParserBot(ParserBot):
     """Parse IoCs from McAfee Advanced Threat Defense reports (hash, IP, URL)"""
     verdict_severity: int = 4
 

@@ -51,6 +51,11 @@ It follows the following basic meta-guidelines:
 -  Code readability: test with unexperienced programmers
 -  Communicate clearly
 
+============
+Getting Help
+============
+
+IntelMQ's documentation is available at `intelmq.readthedocs.io <https://intelmq.readthedocs.io/>`_.
 
 For support questions please reach out on the `the intelmq-users mailing list <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users>`_
 
@@ -71,7 +76,6 @@ IntelMQ is a community project depending on your contributions. Please consider 
 - Have a look at our `Developers Guide <https://intelmq.readthedocs.io/en/latest/dev/guide.html>`_ for documentation.
 - Subscribe to the `Intelmq-dev Mailing list <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev>`_ to get answers to your development questions:
 - The `Github issues <https://github.com/certtools/intelmq/issues/>`_ lists all the open feature requests, bug reports and ideas.
-- Some developers are also on IRC: `channel #intelmq on irc.freenode.net <ircs://chat.freenode.net:6697/intelmq>`__.
 
 ====================================
 Incident Handling Automation Project

@@ -16,8 +16,7 @@ Parameters:
 
     substitutions : semicolon separated list of pairs
                     substitutions that will be made in the text,
-                    for example " .com,.com" enables parsing of one fuzzy format
-                                "[.];." enables the parsing of another fuzzy format
+                    for example " .com,.com" enables parsing of one fuzzy format "[.];." enables the parsing of another fuzzy format
 
     classification_type : string with a valid classificationtype
 """
@@ -26,7 +25,7 @@ import pkg_resources
 
 from typing import Optional, Iterable
 
-from intelmq.lib.bot import Bot, utils
+from intelmq.lib.bot import ParserBot, utils
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import ClassificationType
 from intelmq.lib.exceptions import MissingDependencyError
@@ -45,7 +44,7 @@ except ImportError:
     update_tld_names = None
 
 
-class TwitterParserBot(Bot):
+class TwitterParserBot(ParserBot):
     """Parse tweets and extract IoC data. Currently only URLs are supported, a whitelist of safe domains can be provided"""
     default_scheme: Optional[str] = None
     domain_whitelist: str = 't.co'

@@ -28,7 +28,7 @@ https://en.wikipedia.org/wiki/Autonomous_system_(Internet)
 import ipaddress
 from urllib.parse import urlparse
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 NETWORKS = ("10.0.0.0/8", "100.64.0.0/10", "127.0.0.0/8",
             "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.0.2.0/24",
@@ -44,7 +44,7 @@ ASN32 = tuple(range(65536, 65552))
 ASNS = ASN16 + ASN32
 
 
-class RFC1918ExpertBot(Bot):
+class RFC1918ExpertBot(ExpertBot):
     """Removes fields or discard events if an IP address or domain is invalid as defined in standards like RFC 1918 (invalid, local, reserved, documentation). IP address, FQDN and URL fields are supported"""
     fields: str = "destination.ip,source.ip,source.url"  # TODO: could be List[str]
     policy: str = "del,drop,drop"  # TODO: detto

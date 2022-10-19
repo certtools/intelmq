@@ -10,7 +10,7 @@ import dns.exception
 import dns.resolver
 import dns.reversename
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.harmonization import IPAddress
 from intelmq.lib.mixins import CacheMixin
 
@@ -23,7 +23,7 @@ class InvalidPTRResult(ValueError):
     pass
 
 
-class ReverseDnsExpertBot(Bot, CacheMixin):
+class ReverseDnsExpertBot(ExpertBot, CacheMixin):
     """Get the correspondent domain name for source and destination IP address"""
     cache_ttl_invalid_response: int = 60
     overwrite: bool = False

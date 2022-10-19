@@ -1,0 +1,4 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","sessionid","response_size","amplification"
+"2010-02-10 00:00:00",192.168.0.1,udp,3389,node01.example.com,rdpeudp,64512,ZZ,Region,City,0,0,05b28c0c,1232,77.00
+"2010-02-10 00:00:01",192.168.0.2,udp,3389,node02.example.com,rdpeudp,64512,ZZ,Region,City,0,0,053d355f,1232,77.00
+"2010-02-10 00:00:02",192.168.0.3,udp,3389,node03.example.com,rdpeudp,64512,ZZ,Region,City,0,0,0567a8cb,1232,77.00

@@ -18,10 +18,10 @@
 import dateutil
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class DshieldDomainParserBot(Bot):
+class DshieldDomainParserBot(ParserBot):
     """Parse the DShield Suspicious Domains feed"""
 
     def process(self):

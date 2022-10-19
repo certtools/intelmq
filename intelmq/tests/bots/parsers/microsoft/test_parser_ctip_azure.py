@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
+import codecs
 import json
 import os
 import unittest
@@ -12,7 +13,7 @@ from intelmq.lib import test
 from intelmq.lib.utils import base64_encode
 
 
-with open(os.path.join(os.path.dirname(__file__), 'ctip_azure.txt')) as handle:
+with codecs.open(os.path.join(os.path.dirname(__file__), 'ctip_azure.txt'), encoding='utf8') as handle:
     EXAMPLE_DATA = handle.read()
 EXAMPLE_LINES = EXAMPLE_DATA.splitlines()
 EXAMPLE_PARSED = [json.loads(EXAMPLE_LINES[0]), json.loads(EXAMPLE_LINES[1])]
@@ -20,6 +21,7 @@ EXAMPLE_PARSED = [json.loads(EXAMPLE_LINES[0]), json.loads(EXAMPLE_LINES[1])]
 
 EXAMPLE_REPORT = {
     "__type": "Report",
+    "feed.name": "ctip",
     "feed.accuracy": 100.0,
     "time.observation": "2016-06-15T09:25:26+00:00",
     "raw": base64_encode(EXAMPLE_DATA)
@@ -155,6 +157,79 @@ EXAMPLE_EVENTS = [{
         'tlp': 'GREEN',
         'extra.source.connection_type': 'Cellular',
     },
+    {
+        '__type': 'Event',
+        'classification.type': 'infected-system',
+        'destination.ip': '10.0.0.1',
+        'destination.port': 80,
+        'event_description.text': 'Microsoft.DCU.CTIP.Sinkhole',
+        'extra.custom_field1': 'andromeda210',
+        'extra.malware': 'Avalanche',
+        'extra.payload.family': 'andromeda',
+        'extra.payload.handler': 'handler1',
+        'extra.payload.ip': '224.0.5.8',
+        'extra.payload.port': 28285,
+        'extra.payload.response': 'HttpOk',
+        'extra.payload.server.ip': '10.0.0.1',
+        'extra.payload.server.port': 80,
+        'extra.payload.timestamp': '2021-05-10T15:47:42.242316+00:00',
+        'extra.total_encounters': 2,
+        'feed.accuracy': 20.0,
+        'feed.name': 'Microsoft.DCU.CTIP.Infected',
+        'malware.name': 'b67-ss-gamarue',
+        'protocol.application': 'http',
+        'raw': 'eyJEYXRhRmVlZCI6Ik1pY3Jvc29mdC5EQ1UuQ1RJUC5JbmZlY3RlZCIsIlNvdXJjZWRGcm9tIjoiTWljcm9zb2Z0LkRDVS5DVElQLlNpbmtob2xlIiwiRGF0ZVRpbWVSZWNlaXZlZFV0YyI6MTMyNjUxMzUyNjIyNDIwMDAwLCJEYXRlVGltZVJlY2VpdmVkVXRjVHh0IjoiTW9uZGF5IE1heSAxMCAyMDIxIDE1OjQ3OjQyLjI0MjAiLCJNYWx3YXJlIjoiQXZhbGFuY2hlIiwiVGhyZWF0Q29kZSI6IkI2Ny1TUy1HYW1hcnVlIiwiVGhyZWF0Q29uZmlkZW5jZSI6IkxvdyIsIlRvdGFsRW5jb3VudGVycyI6MiwiVExQIjoiR3JlZW4iLCJTb3VyY2VJcCI6IjIyNC4wLjUuOCIsIlNvdXJjZVBvcnQiOjI4Mjg1LCJEZXN0aW5hdGlvbklwIjoiMTAuMC4wLjEiLCJEZXN0aW5hdGlvblBvcnQiOjgwLCJTb3VyY2VJcEluZm8iOnsiU291cmNlSXBBc25OdW1iZXIiOiI2NDQ5NiIsIlNvdXJjZUlwQXNuT3JnTmFtZSI6IkV4YW1wbGUgQVMiLCJTb3VyY2VJcENvdW50cnlDb2RlIjoiQVQiLCJTb3VyY2VJcFJlZ2lvbiI6IiIsIlNvdXJjZUlwQ2l0eSI6IiIsIlNvdXJjZUlwUG9zdGFsQ29kZSI6IiIsIlNvdXJjZUlwTGF0aXR1ZGUiOjQ4LjIsIlNvdXJjZUlwTG9uZ2l0dWRlIjoxNi4zNjY3LCJTb3VyY2VJcE1ldHJvQ29kZSI6MCwiU291cmNlSXBBcmVhQ29kZSI6MCwiU291cmNlSXBDb25uZWN0aW9uVHlwZSI6IkNlbGx1bGFyIiwiU291cmNlSXB2NEludCI6Mzc1ODA5NzY3Mn0sIkh0dHBJbmZvIjp7Ikh0dHBIb3N0IjoiIiwiSHR0cFJlcXVlc3QiOiIiLCJIdHRwTWV0aG9kIjoiIiwiSHR0cFJlZmVycmVyIjoiIiwiSHR0cFVzZXJBZ2VudCI6IiIsIkh0dHBWZXJzaW9uIjoiIn0sIkN1c3RvbUluZm8iOnsiQ3VzdG9tRmllbGQxIjoiYW5kcm9tZWRhMjEwIiwiQ3VzdG9tRmllbGQyIjoiIiwiQ3VzdG9tRmllbGQzIjoiIiwiQ3VzdG9tRmllbGQ0IjoiIiwiQ3VzdG9tRmllbGQ1IjoiIn0sIlBheWxvYWQiOiJleUowY3lJNk1UWXlNRFkyTVRZMk1pNHlOREl6TVRZc0ltbHdJam9pTWpJMExqQXVOUzQ0SWl3aWNHOXlkQ0k2TWpneU9EVXNJbk5sY25abGNrbHdJam9pTVRBdU1DNHdMakVpTENKelpYSjJaWEpRYjNKMElqbzRNQ3dpWkc5dFlXbHVJam9pTVRBdU1DNHdMakVpTENKbVlXMXBiSGtpT2lKaGJtUnliMjFsWkdFaUxDSnRZV3gzWVhKbElqcDdmU3dpY21WemNHOXVjMlVpT2lKSWRIUndUMnNpTENKb1lXNWtiR1Z5SWpvaWFHRnVaR3hsY2pFaUxDSjBlWEJsSWpvaVNIUjBjQ0o5In0=',
+        'source.as_name': 'Example AS',
+        'source.asn': 64496,
+        'source.geolocation.cc': 'AT',
+        'source.geolocation.latitude': 48.2,
+        'source.geolocation.longitude': 16.3667,
+        'source.ip': '224.0.5.8',
+        'source.port': 28285,
+        'time.source': '2021-05-10T15:47:42.241999+00:00',
+        'tlp': 'GREEN',
+        'extra.source.connection_type': 'Cellular',
+    },
+    {'__type': 'Event',
+     'classification.type': 'infected-system',
+     'destination.ip': '10.0.0.2',
+     'destination.port': 443,
+     'event_description.text': 'Microsoft.DCU.CTIP.Sinkhole',
+     'extra.custom_field1': 'v1.6',
+     'extra.custom_field2': '14758f1afd44c09b7992073ccf00b43d',
+     'extra.custom_field3': 'my PC name',
+     'extra.custom_field4': 'personal',
+     'extra.http.host': 'example.com',
+     'extra.http.method': 'POST',
+     'extra.http.request': '/index.php',
+     'extra.http.version': 'HTTP/1.1',
+     'extra.malware': 'Malware',
+     'extra.payload.10001': 'my PC name',
+     'extra.payload.10002': 'personal',
+     'extra.payload.10006': '00',
+     'extra.payload.10022': '00000000',
+     'extra.payload.10029': 157,
+     'extra.source.connection_type': 'Cable/DSL',
+     'extra.source.geolocation.postal_code': '66111',
+     'extra.total_encounters': 137,
+     'extra.user_agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) '
+     'AppleWebKit/537.36 (KHTML, like Gecko) '
+     'Chrome/79.0.3945.88 Safari/537.36',
+     'feed.accuracy': 100.0,
+     'feed.name': 'ctip',
+     'malware.name': 'b00-leet',
+     'raw': base64_encode(EXAMPLE_LINES[5]),
+     'source.as_name': 'My ISP',
+     'source.asn': 64496,
+     'source.geolocation.cc': 'DE',
+     'source.geolocation.city': 'Saarbrücken',
+     'source.geolocation.latitude': 49.2367,
+     'source.geolocation.longitude': 6.9794,
+     'source.geolocation.region': 'Saarland',
+     'source.ip': '10.0.0.15',
+     'source.port': 10000,
+     'time.source': '2022-06-06T16:59:01.802999+00:00',
+     'tlp': 'GREEN'},
 ]
 
 
@@ -173,6 +248,14 @@ class TestMicrosoftCTIPParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         for i in range(4):
             self.assertMessageEqual(i, EXAMPLE_EVENTS[i])
+
+    def test_not_overwrite(self):
+        """ Test with overwrite=False """
+        self.run_bot(parameters={'overwrite': False})
+        for i, event in enumerate(EXAMPLE_EVENTS):
+            tmp = event.copy()
+            tmp["feed.name"] = "ctip"
+            self.assertMessageEqual(i, tmp)
 
 
 if __name__ == '__main__':  # pragma: no cover

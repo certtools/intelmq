@@ -9,7 +9,7 @@ pymongo library automatically tries to reconnect if connection has been lost.
 
 import dateutil.parser
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -18,7 +18,7 @@ except ImportError:
     pymongo = None
 
 
-class MongoDBOutputBot(Bot):
+class MongoDBOutputBot(OutputBot):
     """Send events to a MongoDB database"""
     collection = None
     database = None
@@ -78,7 +78,7 @@ class MongoDBOutputBot(Bot):
                     db.authenticate(name=self.db_user,
                                     password=self.db_pass)
                 except pymongo.errors.OperationFailure:
-                    raise ValueError('Authentication to database {} failed'.format(self.database))
+                    raise ValueError(f'Authentication to database {self.database} failed')
             self._collection = db[self.collection]
             self.logger.info('Successfully connected to MongoDB server.')
 

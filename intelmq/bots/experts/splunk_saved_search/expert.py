@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Splunk saved search enrichment export bot
 
 SPDX-FileCopyrightText: 2020 Linköping University <https://liu.se/>
@@ -44,8 +43,7 @@ Parameters:
                               search returns more than one result. All
                               specified actions are performed. Any
                               reasonable combination of:
-                              limit: limit the search so that duplicates
-                                     are impossible
+                              limit: limit the search so that duplicates are impossible
                               warn: log a warning message
                               use_first: use the first search result
                               ignore: do not modify the event
@@ -65,12 +63,12 @@ except ImportError:
     requests = None
 
 import intelmq.lib.utils as utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError, ConfigurationError
 import time
 
 
-class SplunkSavedSearchBot(Bot):
+class SplunkSavedSearchBot(ExpertBot):
     """Enrich an event from Splunk search results"""
     auth_token: str = None
     multiple_result_handling = ["warn", "use_first", "send"]
@@ -82,7 +80,7 @@ class SplunkSavedSearchBot(Bot):
     search_parameters = {"event field": "search parameter"}
     url: str = None
 
-    __is_multithreadable = False
+    _is_multithreadable = False
 
     def init(self):
         if requests is None:
@@ -107,14 +105,14 @@ class SplunkSavedSearchBot(Bot):
 
         self.set_request_parameters()
 
-        self.http_header.update({"Authorization": "Bearer {}".format(self.auth_token)})
+        self.http_header.update({"Authorization": f"Bearer {self.auth_token}"})
 
         self.session = utils.create_request_session(self)
         self.session.keep_alive = False
 
     def update_event(self, event, search_result):
         self.logger.info("Updating event: %s",
-                         dict([(field, search_result[field]) for field in self.result_fields]))
+                         {field: search_result[field] for field in self.result_fields})
         for result, field in self.result_fields.items():
             event.add(field, search_result[result], overwrite=self.overwrite)
 
@@ -129,11 +127,11 @@ class SplunkSavedSearchBot(Bot):
                 return
 
         self.logger.debug("Received event, searching for %s",
-                          dict([(parameter, event[field]) for field, parameter in self.search_parameters.items()]))
+                          {parameter: event[field] for field, parameter in self.search_parameters.items()})
 
-        query = '|savedsearch "{saved_search}"'.format(saved_search=self.saved_search)
+        query = f'|savedsearch "{self.saved_search}"'
         for field, parameter in self.search_parameters.items():
-            query += ' "{parameter}"="{field}"'.format(parameter=parameter, field=event[field])
+            query += f' "{parameter}"="{event[field]}"'
         if "limit" in self.multiple_result_handling:
             query += " | head 1"
 

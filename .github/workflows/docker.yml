@@ -1,5 +1,5 @@
 # Github Workflow to build container image
-# 
+#
 # SPDX-FileCopyrightText: 2021 Sebastian Waldbauer
 # SPDX-License-Identifier: AGPL-3.0-or-later
 #
@@ -17,6 +17,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check if environment is ACT
+        run: sudo chown runner:docker /var/run/docker.sock
+        if: ${{ env.ACT }}
+
       - name: Checkout IntelMQ-Docker
         uses: actions/checkout@v2
         with:
@@ -57,7 +61,7 @@ jobs:
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
-        if: github.repository == 'certtools/intelmq'
+        if: github.repository == 'certtools/intelmq' && !${{ env.ACT }}
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -77,7 +81,7 @@ jobs:
           ./test.sh
 
       - name: Publish develop version to dockerhub
-        if: github.repository == 'certtools/intelmq'
+        if: github.repository == 'certtools/intelmq' && !${{ env.ACT }}
         run: |
           docker tag intelmq-full:latest certat/intelmq-full:develop
           docker push certat/intelmq-full:develop

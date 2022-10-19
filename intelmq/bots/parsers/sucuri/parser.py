@@ -10,7 +10,7 @@ import re
 from html.parser import HTMLParser
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
 class MyHTMLParser(HTMLParser):
@@ -22,10 +22,10 @@ class MyHTMLParser(HTMLParser):
 
 
 parser = MyHTMLParser()
-remove_comments = re.compile(r"<!--(.|\s|\n)*?-->")
+remove_comments = re.compile(r"<!--.*?-->", re.DOTALL)
 
 
-class SucuriParserBot(Bot):
+class SucuriParserBot(ParserBot):
     """Parse the Sucuri Malware Hidden Iframes and Conditional redirections feeds"""
     def process(self):
         report = self.receive_message()

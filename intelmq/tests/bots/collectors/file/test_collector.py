@@ -8,6 +8,7 @@ Testing File Collector
 """
 import os
 import unittest
+import fcntl
 
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
@@ -47,6 +48,16 @@ class TestFileCollectorBot(test.BotTestCase, unittest.TestCase):
         """ Test if correct Events have been produced. """
         self.run_bot(iterations=1)
 
+        self.assertMessageEqual(0, OUTPUT)
+
+    def test_file_lock(self):
+        f = open(PATH, 'rb')
+        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        self.run_bot(iterations=1)
+        self.assertLogMatches(f'File {PATH!r} is locked by another process, skipping.', levelname="INFO")
+        fcntl.flock(f, fcntl.LOCK_UN)
+        f.close()
+        self.run_bot(iterations=1)
         self.assertMessageEqual(0, OUTPUT)
 
 

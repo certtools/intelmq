@@ -1,0 +1,4 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","sector","source_port","bytes","amplification","method"
+"2010-02-10 00:00:00",192.168.0.1,tcp,80,node01.example.com,ddos-middlebox,64512,ZZ,Region,City,0,0,,49002,99,2,SYN+ACK:PSH
+"2010-02-10 00:00:01",192.168.0.2,tcp,80,node02.example.com,ddos-middlebox,64512,ZZ,Region,City,0,0,"Communications, Service Provider, and Hosting Service",41200,99,2,SYN+ACK:PSH
+"2010-02-10 00:00:02",192.168.0.3,tcp,80,node03.example.com,ddos-middlebox,64512,ZZ,Region,City,0,0,,47492,99,2,SYN+ACK:PSH

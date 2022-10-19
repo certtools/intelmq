@@ -24,6 +24,9 @@ class Cache():
 
     def __init__(self, host: str, port: int, db: str, ttl: int,
                  password: Optional[str] = None):
+        if host is None:
+            return
+
         if host.startswith("/"):
             kwargs = {"unix_socket_path": host}
 

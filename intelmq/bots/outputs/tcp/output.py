@@ -14,10 +14,10 @@ import struct
 import time
 
 import intelmq.lib.utils as utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 
 
-class TCPOutputBot(Bot):
+class TCPOutputBot(OutputBot):
     """Send events to a TCP server as Splunk, ElasticSearch or another IntelMQ etc"""
     counterpart_is_intelmq: bool = True
     hierarchical_output: bool = False
@@ -25,7 +25,7 @@ class TCPOutputBot(Bot):
     port: int = None
     separator: str = None
 
-    __is_multithreadable = False
+    _is_multithreadable = False
 
     def init(self):
         self.to_intelmq = self.counterpart_is_intelmq
@@ -64,7 +64,7 @@ class TCPOutputBot(Bot):
                     time.sleep(1)
                 else:
                     break
-        except socket.error as e:
+        except OSError as e:
             self.logger.exception("Reconnecting, %s", e)
             self.con.close()
             self.connect()

@@ -7,11 +7,11 @@
 Reducer bot
 """
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.message import Event
 
 
-class FieldReducerExpertBot(Bot):
+class FieldReducerExpertBot(ExpertBot):
     """Remove fields from events"""
     type = None
     keys = None

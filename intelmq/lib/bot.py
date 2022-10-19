@@ -8,7 +8,6 @@ The bot library has the base classes for all bots.
   * Bot: generic base class for all kind of bots
   * CollectorBot: base class for collectors
   * ParserBot: base class for parsers
-  * SQLBot: base class for any bots using SQL
 """
 import argparse
 import atexit
@@ -31,8 +30,6 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Any, List, Optional, Union
 
-import psutil
-
 import intelmq.lib.message as libmessage
 from intelmq import (DEFAULT_LOGGING_PATH,
                      HARMONIZATION_CONF_FILE,
@@ -40,11 +37,15 @@ from intelmq import (DEFAULT_LOGGING_PATH,
 from intelmq.lib import cache, exceptions, utils
 from intelmq.lib.pipeline import PipelineFactory, Pipeline
 from intelmq.lib.utils import RewindableFileHandle, base64_decode
+from intelmq.lib.datatypes import *
 
-__all__ = ['Bot', 'CollectorBot', 'ParserBot', 'SQLBot', 'OutputBot']
+__all__ = ['Bot', 'CollectorBot', 'ParserBot', 'OutputBot', 'ExpertBot']
+ALLOWED_SYSTEM_PARAMETERS = {'enabled', 'run_mode', 'group', 'description', 'module', 'name'}
+# The first two keys are only used by the IntelMQ Manager and can be ignored, the last just contains the runtime parameters and is handled separately
+IGNORED_SYSTEM_PARAMETERS = {'groupname', 'bot_id', 'parameters'}
 
 
-class Bot(object):
+class Bot:
     """ Not to be reset when initialized again on reload. """
     __current_message: Optional[libmessage.Message] = None
     __message_counter_delay: timedelta = timedelta(seconds=2)
@@ -53,6 +54,8 @@ class Bot(object):
     # Bot is capable of SIGHUP delaying
     _sighup_delay: bool = True
     # From the runtime configuration
+    enabled: bool = True
+    run_mode: str = "continuous"
     description: Optional[str] = None
     group: Optional[str] = None
     module = None
@@ -104,9 +107,9 @@ class Bot(object):
     # True for (non-main) threads of a bot instance
     is_multithreaded: bool = False
     # True if the bot is thread-safe and it makes sense
-    __is_multithreadable: bool = True
+    _is_multithreadable: bool = True
     # Collectors with an empty process() should set this to true, prevents endless loops (#1364)
-    __collector_empty_process: bool = False
+    _collector_empty_process: bool = False
 
     _harmonization: dict = {}
 
@@ -160,11 +163,11 @@ class Bot(object):
 
             broker = self.source_pipeline_broker.title()
             if broker != 'Amqp':
-                self.__is_multithreadable = False
+                self._is_multithreadable = False
 
             """ Multithreading """
             if (self.instances_threads > 1 and not self.is_multithreaded and
-               self.__is_multithreadable and not disable_multithreading):
+               self._is_multithreadable and not disable_multithreading):
                 self.logger.handlers = []
                 num_instances = int(self.instances_threads)
                 instances = []
@@ -191,7 +194,7 @@ class Bot(object):
                     thread.join()
                 return
             elif (getattr(self, 'instances_threads', 1) > 1 and
-                  not self.__is_multithreadable):
+                  not self._is_multithreadable):
                 self.logger.error('Multithreading is configured, but is not '
                                   'available for this bot. Look at the FAQ '
                                   'for a list of reasons for this. '
@@ -441,7 +444,7 @@ class Bot(object):
                 if do_rate_limit:
                     if self.rate_limit and self.run_mode != 'scheduled':
                         self.__sleep()
-                    if self.__collector_empty_process and self.run_mode != 'scheduled':
+                    if self._collector_empty_process and self.run_mode != 'scheduled':
                         self.__sleep(1, log=False)
 
             self.__stats()
@@ -758,16 +761,21 @@ class Bot(object):
 
         if self.__bot_id in config:
             params = config[self.__bot_id]
-            self.run_mode = params.get('run_mode', 'continuous')
-            self.name = params.get('name')
-            self.description = params.get('description')
-            self.group = params.get('group')
-            self.module = params.get('module')
+            for key, value in params.items():
+                if key in ALLOWED_SYSTEM_PARAMETERS and value:
+                    self.__log_configuration_parameter("system", key, value)
+                    setattr(self, key, value)
+                elif key not in IGNORED_SYSTEM_PARAMETERS:
+                    self.logger.warning('Ignoring disallowed system parameter %r.',
+                                        key)
             for option, value in params.get('parameters', {}).items():
                 setattr(self, option, value)
                 self.__log_configuration_parameter("runtime", option, value)
                 if option.startswith('logging_'):
                     reinitialize_logging = True
+        else:
+            self.logger.warning('Bot ID %r not found in runtime configuration - could not load any parameters.',
+                                self.__bot_id)
 
         intelmq_environment = [elem for elem in os.environ if elem.startswith('INTELMQ_')]
         for elem in intelmq_environment:
@@ -783,6 +791,9 @@ class Bot(object):
 
             setattr(self, option, value)
             self.__log_configuration_parameter("environment", option, value)
+
+            if option.startswith('logging_'):
+                reinitialize_logging = True
 
         if reinitialize_logging:
             self.logger.handlers = []  # remove all existing handlers
@@ -925,10 +936,11 @@ class Bot(object):
 
 
 class ParserBot(Bot):
+    bottype = BotType.PARSER
     _csv_params = {}
     _ignore_lines_starting = []
     _handle = None
-    _current_line = None
+    _current_line: Optional[str] = None
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
@@ -942,6 +954,7 @@ class ParserBot(Bot):
     def parse_csv(self, report: libmessage.Report):
         """
         A basic CSV parser.
+        The resulting lines are lists.
         """
         raw_report: str = utils.base64_decode(report.get("raw")).strip()
         raw_report = raw_report.translate({0: None})
@@ -957,6 +970,7 @@ class ParserBot(Bot):
     def parse_csv_dict(self, report: libmessage.Report):
         """
         A basic CSV Dictionary parser.
+        The resulting lines are dictionaries with the column names as keys.
         """
         raw_report: str = utils.base64_decode(report.get("raw")).strip()
         raw_report: str = raw_report.translate({0: None})
@@ -980,8 +994,7 @@ class ParserBot(Bot):
         A basic JSON parser. Assumes a *list* of objects as input to be yield.
         """
         raw_report: str = utils.base64_decode(report.get("raw"))
-        for line in json.loads(raw_report):
-            yield line
+        yield from json.loads(raw_report)
 
     def parse_json_stream(self, report: libmessage.Report):
         """
@@ -1011,6 +1024,7 @@ class ParserBot(Bot):
         for line in utils.base64_decode(report.get("raw")).splitlines():
             line = line.strip()
             if not any([line.startswith(prefix) for prefix in self._ignore_lines_starting]):
+                self._current_line = line
                 yield line
 
     def parse_line(self, line: Any, report: libmessage.Report):
@@ -1050,14 +1064,14 @@ class ParserBot(Bot):
                     events: list[libmessage.Event] = [value]
             except Exception:
                 self.logger.exception('Failed to parse line.')
-                self.__failed.append((traceback.format_exc(), line))
+                self.__failed.append((traceback.format_exc(), self._current_line))
             else:
                 events_count += len(events)
                 self.send_message(*events)
 
-        for exc, line in self.__failed:
+        for exc, original_line in self.__failed:
             report_dump: libmessage.Message = report.copy()
-            report_dump.change('raw', self.recover_line(line))
+            report_dump.change('raw', self.recover_line(original_line))
             if self.error_dump_message:
                 self._dump_message(exc, report_dump)
             if self.destination_queues and '_on_error' in self.destination_queues:
@@ -1075,24 +1089,21 @@ class ParserBot(Bot):
         concatenating all strings in "self.tempdata" with "line" with LF
         newlines. Works fine for most text files.
 
-        Parameters
-        ----------
-        line : Optional[str], optional
-            The currently process line which should be transferred into it's
-            original appearance. As fallback, "self._current_line" is used if
-            available (depending on self.parse).
-            The default is None.
+        Parameters:
+            line (Optional[str], optional):
+                The currently process line which should be transferred into it's
+                original appearance. As fallback, "self._current_line" is used if
+                available (depending on self.parse).
+                The default is None.
 
-        Raises
-        ------
-        ValueError
-            If neither the parameter "line" nor the member "self._current_line"
-            is available.
+        Raises:
+            ValueError:
+                If neither the parameter "line" nor the member "self._current_line"
+                is available.
 
-        Returns
-        -------
-        str
-            The reconstructed raw data.
+        Returns:
+            str
+                The reconstructed raw data.
 
         """
         if self._handle and self._handle.first_line and not self.tempdata:
@@ -1105,21 +1116,34 @@ class ParserBot(Bot):
         line = line if line else self._current_line
         return '\n'.join(tempdata + [line])
 
-    def recover_line_csv(self, line: str) -> str:
-        out = io.StringIO()
-        writer = csv.writer(out, **self._csv_params)
-        writer.writerow(line)
+    def recover_line_csv(self, line: Optional[list]) -> str:
+        """
+        Parameter:
+            line: Optional line as list. If absent, the current line is used as string.
+        """
+        if line:
+            out = io.StringIO()
+            writer = csv.writer(out, **self._csv_params)
+            writer.writerow(line)
+            result = out.getvalue()
+        else:
+            result = self._current_line
         tempdata = '\r\n'.join(self.tempdata) + '\r\n' if self.tempdata else ''
-        return tempdata + out.getvalue()
+        return tempdata + result
 
-    def recover_line_csv_dict(self, line: str) -> str:
+    def recover_line_csv_dict(self, line: Union[dict, str, None] = None) -> str:
         """
         Converts dictionaries to csv. self.csv_fieldnames must be list of fields.
         """
         out = io.StringIO()
         writer = csv.DictWriter(out, self.csv_fieldnames, **self._csv_params)
         writer.writeheader()
-        out.write(self._current_line)
+        if isinstance(line, dict):
+            writer.writerow(line)
+        elif isinstance(line, str):
+            out.write(line)
+        else:
+            out.write(self._current_line)
 
         return out.getvalue().strip()
 
@@ -1128,23 +1152,29 @@ class ParserBot(Bot):
         Reverse of parse for JSON pulses.
 
         Recovers a fully functional report with only the problematic pulse.
+        Using a string as input here is not possible, as the input may span over multiple lines.
+        Output is not identical to the input, but has the same content.
+
+        Parameters:
+            The line as dict.
+
+        Returns:
+            str: The JSON-encoded line as string.
         """
         return json.dumps([line])
 
-    def recover_line_json_stream(self, line=None) -> str:
+    def recover_line_json_stream(self, line: Optional[str] = None) -> str:
         """
-        recover_line for json streams, just returns the current line, unparsed.
+        recover_line for JSON streams (one JSON element per line, no outer structure),
+        just returns the current line, unparsed.
 
-        Parameters
-        ----------
-        line : None, not required, only for compatibility with other recover_line methods
+        Parameters:
+            line: The line itself as dict, if available, falls back to original current line
 
-        Returns
-        -------
-        str
-            unparsed JSON line.
+        Returns:
+            str: unparsed JSON line.
         """
-        return self._current_line
+        return line if line else self._current_line
 
 
 class CollectorBot(Bot):
@@ -1154,7 +1184,8 @@ class CollectorBot(Bot):
     Does some sanity checks on message sending.
     """
 
-    __is_multithreadable: bool = False
+    bottype = BotType.COLLECTOR
+    _is_multithreadable: bool = False
     name: Optional[str] = None
     accuracy: int = 100
     code: Optional[str] = None
@@ -1212,111 +1243,25 @@ class CollectorBot(Bot):
         super().send_message(*messages, path=path)
 
     def new_report(self):
-        return libmessage.Report()
+        return libmessage.Report(harmonization=self.harmonization)
 
 
-class SQLBot(Bot):
+class ExpertBot(Bot):
     """
-    Inherit this bot so that it handles DB connection for you.
-    You do not have to bother:
-        * connecting database in the self.init() method, just call super().init(), self.cur will be set
-        * catching exceptions, just call self.execute() instead of self.cur.execute()
-        * self.format_char will be set to '%s' in PostgreSQL and to '?' in SQLite
+    Base class for expert bots.
     """
+    bottype = BotType.EXPERT
 
-    POSTGRESQL = "postgresql"
-    SQLITE = "sqlite"
-    default_engine = "postgresql"
-
-    def init(self):
-        self.engine_name = getattr(self, 'engine', self.default_engine).lower()
-        engines = {SQLBot.POSTGRESQL: (self._init_postgresql, "%s"),
-                   SQLBot.SQLITE: (self._init_sqlite, "?")}
-        for key, val in engines.items():
-            if self.engine_name == key:
-                val[0]()
-                self.format_char = val[1]
-                break
-        else:
-            raise ValueError("Wrong parameter 'engine' {0!r}, possible values are {1}".format(self.engine_name, engines))
-
-    def _connect(self, engine, connect_args: dict, autocommitable: bool = False):
-        self.engine = engine  # imported external library that connects to the DB
-        self.logger.debug("Connecting to database.")
-
-        try:
-            self.con = self.engine.connect(**connect_args)
-            if autocommitable:  # psycopg2 has it, sqlite3 has not
-                self.con.autocommit = getattr(self, 'autocommit', True)  # True prevents deadlocks
-            self.cur = self.con.cursor()
-        except (self.engine.Error, Exception):
-            self.logger.exception('Failed to connect to database.')
-            self.stop()
-        self.logger.info("Connected to database.")
-
-    def _init_postgresql(self):
-        try:
-            import psycopg2
-            import psycopg2.extras
-        except ImportError:
-            raise exceptions.MissingDependencyError("psycopg2")
-
-        self._connect(psycopg2,
-                      {"database": self.database,
-                       "user": self.user,
-                       "password": self.password,
-                       "host": self.host,
-                       "port": self.port,
-                       "sslmode": self.sslmode,
-                       "connect_timeout": getattr(self, 'connect_timeout', 5)
-                       },
-                      autocommitable=True)
-
-    def _init_sqlite(self):
-        try:
-            import sqlite3
-        except ImportError:
-            raise exceptions.MissingDependencyError("sqlite3")
-
-        self._connect(sqlite3,
-                      {"database": self.database,
-                       "timeout": getattr(self, 'connect_timeout', 5)
-                       }
-                      )
-
-    def execute(self, query: str, values: tuple, rollback=False):
-        try:
-            self.logger.debug('Executing %r.', (query, values))
-            # note: this assumes, the DB was created with UTF-8 support!
-            self.cur.execute(query, values)
-            self.logger.debug('Done.')
-        except (self.engine.InterfaceError, self.engine.InternalError,
-                self.engine.OperationalError, AttributeError):
-            if rollback:
-                try:
-                    self.con.rollback()
-                    self.logger.exception('Executed rollback command '
-                                          'after failed query execution.')
-                except self.engine.OperationalError:
-                    self.logger.exception('Executed rollback command '
-                                          'after failed query execution.')
-                    self.init()
-                except Exception:
-                    self.logger.exception('Cursor has been closed, connecting '
-                                          'again.')
-                    self.init()
-            else:
-                self.logger.exception('Database connection problem, connecting again.')
-                self.init()
-        else:
-            return True
-        return False
+    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
+                 disable_multithreading: bool = None):
+        super().__init__(bot_id=bot_id)
 
 
 class OutputBot(Bot):
     """
     Base class for outputs.
     """
+    bottype = BotType.OUTPUT
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
@@ -1330,7 +1275,10 @@ class OutputBot(Bot):
         self.hierarchical: bool = getattr(self, "hierarchical_output",  # file and files
                                           getattr(self, "message_hierarchical",  # stomp and amqp code
                                                   getattr(self, "message_hierarchical_output", False)))  # stomp and amqp docs
-        self.with_type: bool = getattr(self, "message_with_type", False)
+        # some bots use the attribute `message_with_type`, others use `with_type`
+        # this should be harmonized at some point
+        self.with_type: bool = getattr(self, "message_with_type", getattr(self, "with_type", False))
+
         self.jsondict_as_string: bool = getattr(self, "message_jsondict_as_string", False)
 
         self.single_key: Optional[str] = getattr(self, 'single_key', None)
@@ -1383,5 +1331,5 @@ class OutputBot(Bot):
         return retval
 
 
-class Parameters(object):
+class Parameters:
     pass

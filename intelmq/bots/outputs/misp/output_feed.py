@@ -35,7 +35,7 @@ class MISPFeedOutputBot(OutputBot):
     misp_org_name = None
     misp_org_uuid = None
     output_dir: str = "/opt/intelmq/var/lib/bots/mispfeed-output"  # TODO: should be path
-    __is_multithreadable: bool = False
+    _is_multithreadable: bool = False
 
     @staticmethod
     def check_output_dir(dirname):
@@ -99,7 +99,7 @@ class MISPFeedOutputBot(OutputBot):
             self.current_event.set_date(datetime.date.today())
             self.current_event.Orgc = self.misp_org
             self.current_event.uuid = str(uuid4())
-            self.current_file = self.output_dir / '{self.current_event.uuid}.json'.format(self=self)
+            self.current_file = self.output_dir / f'{self.current_event.uuid}.json'
             with (self.output_dir / '.current').open('w') as f:
                 f.write(str(self.current_file))
 
@@ -127,7 +127,7 @@ class MISPFeedOutputBot(OutputBot):
             return [["error", "Parameter 'output_dir' not given."]]
         try:
             created = MISPFeedOutputBot.check_output_dir(parameters['output_dir'])
-        except IOError:
+        except OSError:
             return [["error",
                      "Directory %r of parameter 'output_dir' does not exist and could not be created." % parameters['output_dir']]]
         else:

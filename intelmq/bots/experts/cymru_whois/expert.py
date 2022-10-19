@@ -5,7 +5,7 @@
 # -*- coding: utf-8 -*-
 import json
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.harmonization import IPAddress
 from intelmq.lib.mixins import CacheMixin
 
@@ -14,7 +14,7 @@ from ._lib import Cymru
 CACHE_KEY = "%d_%s"
 
 
-class CymruExpertBot(Bot, CacheMixin):
+class CymruExpertBot(ExpertBot, CacheMixin):
     """Add ASN, netmask, AS name, country, registry and allocation time from the Cymru Whois DNS service"""
     overwrite = False
     redis_cache_db: int = 5

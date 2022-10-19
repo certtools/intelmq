@@ -10,7 +10,7 @@ https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/
 with extensions.
 """
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 # FIXME: this dict should be on a separated file
 
@@ -64,7 +64,7 @@ TAXONOMY = {
 }
 
 
-class TaxonomyExpertBot(Bot):
+class TaxonomyExpertBot(ExpertBot):
     """Apply the eCSIRT Taxonomy to all events"""
 
     def process(self):

@@ -14,7 +14,7 @@ from intelmq.lib.utils import load_configuration
 
 
 V202 = {"global": {},
-"test-collector": {
+        "test-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
@@ -36,7 +36,7 @@ V202 = {"global": {},
 },
 }
 V202_EXP = {"global": {},
-"test-collector": {
+            "test-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
@@ -61,7 +61,7 @@ V202_EXP = {"global": {},
 }
 
 DEP_110 = {"global": {},
-"n6-collector": {
+           "n6-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.n6.collector_stomp",
     "parameters": {
@@ -83,7 +83,7 @@ DEP_110 = {"global": {},
 }
 }
 DEP_110_EXP = {"global": {},
-"n6-collector": {
+               "n6-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.stomp.collector",
     "parameters": {
@@ -104,7 +104,7 @@ DEP_110_EXP = {"global": {},
     },
 }}
 V210 = {"global": {},
-"test-collector": {
+        "test-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.rt.collector_rt",
     "parameters": {
@@ -154,7 +154,7 @@ V210 = {"global": {},
 }
 }
 V210_EXP = {"global": {},
-"test-collector": {
+            "test-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.rt.collector_rt",
     "parameters": {
@@ -206,7 +206,7 @@ V210_EXP = {"global": {},
 }
 }
 V213 = {"global": {},
-"mail-collector": {
+        "mail-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.mail.collector_mail_attach",
     "parameters": {
@@ -223,7 +223,7 @@ V213 = {"global": {},
 }
 }
 V213_EXP = {"global": {},
-"mail-collector": {
+            "mail-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.mail.collector_mail_attach",
     "parameters": {
@@ -239,28 +239,28 @@ V213_EXP = {"global": {},
 }
 }
 V220_MISP_VERIFY_FALSE = {
-"global": {"http_verify_cert": True},
-"misp-collector": {
+    "global": {"http_verify_cert": True},
+    "misp-collector": {
         "module": "intelmq.bots.collectors.misp.collector",
         "parameters": {
-                "misp_verify": False}}}
+            "misp_verify": False}}}
 V220_MISP_VERIFY_NULL = {
-"global": {"http_verify_cert": True},
-"misp-collector": {
+    "global": {"http_verify_cert": True},
+    "misp-collector": {
         "module": "intelmq.bots.collectors.misp.collector",
         "parameters": {}}}
 V220_MISP_VERIFY_TRUE = {
-"global": {"http_verify_cert": True},
-"misp-collector": {
+    "global": {"http_verify_cert": True},
+    "misp-collector": {
         "module": "intelmq.bots.collectors.misp.collector",
         "parameters": {
-                "misp_verify": True}}}
+            "misp_verify": True}}}
 V220_HTTP_VERIFY_FALSE = {
-"global": {"http_verify_cert": True},
-"misp-collector": {
+    "global": {"http_verify_cert": True},
+    "misp-collector": {
         "module": "intelmq.bots.collectors.misp.collector",
         "parameters": {
-                "http_verify_cert": False}}}
+            "http_verify_cert": False}}}
 HARM = load_configuration(pkg_resources.resource_filename('intelmq',
                                                           'etc/harmonization.conf'))
 V210_HARM = deepcopy(HARM)
@@ -272,96 +272,96 @@ WRONG_TYPE['event']['source.asn']['type'] = 'String'
 WRONG_REGEX = deepcopy(HARM)
 WRONG_REGEX['event']['protocol.transport']['iregex'] = 'foobar'
 V213_FEED = {"global": {},
-"zeus-collector": {
+             "zeus-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
         "http_url": "https://zeustracker.abuse.ch/blocklist.php?download=badips",
     }
 },
-"bitcash-collector": {
+    "bitcash-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
         "http_url": "https://bitcash.cz/misc/log/blacklist",
     }
 },
-"ddos-attack-c2-collector": {
+    "ddos-attack-c2-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http_stream",
     "parameters": {
         "http_url": "https://feed.caad.fkie.fraunhofer.de/ddosattackfeed/",
     }
 },
-"ddos-attack-targets-collector": {
+    "ddos-attack-targets-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http_stream",
     "parameters": {
         "http_url": "https://feed.caad.fkie.fraunhofer.de/ddosattackfeed/",
     }
 },
-"taichung-collector": {
+    "taichung-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
         "http_url": "https://www.tc.edu.tw/net/netflow/lkout/recent/30",
     },
 },
-"ransomware-collector": {
+    "ransomware-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
         "http_url": "https://ransomwaretracker.abuse.ch/feeds/csv/",
     },
 },
-"bambenek-dga-collector": {
+    "bambenek-dga-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
         "http_url": "https://osint.bambenekconsulting.com/feeds/dga-feed.txt",
     },
 },
-"bambenek-c2dommasterlist-collector": {
+    "bambenek-c2dommasterlist-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
         "http_url": "http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt",
     },
 },
-"nothink-dns-collector": {
+    "nothink-dns-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
         "http_url": "http://www.nothink.org/honeypot_dns_attacks.txt",
     },
 },
-"nothink-ssh-collector": {
+    "nothink-ssh-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
         "http_url": "http://www.nothink.org/blacklist/blacklist_ssh_day.txt",
     },
 },
-"nothink-parser": {
+    "nothink-parser": {
     "group": "Parser",
     "module": "intelmq.bots.parsers.nothink.parser",
 },
 }
 V220_FEED = {"global": {},
-"urlvir-hosts-collector": {
+             "urlvir-hosts-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
         "http_url": "http://www.urlvir.com/export-hosts/",
     },
 },
-"urlvir-parser": {
+    "urlvir-parser": {
     "group": "Parser",
     "module": "intelmq.bots.parsers.urlvir.parser",
 },
 }
 V221_FEED = {"global": {},
-"abusech-urlhaus-columns-string-parser": {
+             "abusech-urlhaus-columns-string-parser": {
     "parameters": {
         "column_regex_search": {},
         "columns": "time.source,source.url,status,extra.urlhaus.threat_type,source.fqdn,source.ip,source.asn,source.geolocation.cc",
@@ -378,10 +378,10 @@ V221_FEED = {"global": {},
     },
     "module": "intelmq.bots.parsers.generic.parser_csv",
 },
-"abusech-urlhaus-columns-dict-parser": {
+    "abusech-urlhaus-columns-dict-parser": {
     "parameters": {
         "column_regex_search": {},
-        "columns": ["time.source", "source.url","status","extra.urlhaus.threat_type","source.fqdn","source.ip","source.asn","source.geolocation.cc"],
+        "columns": ["time.source", "source.url", "status", "extra.urlhaus.threat_type", "source.fqdn", "source.ip", "source.asn", "source.geolocation.cc"],
         "default_url_protocol": "http://",
         "delimiter": ",",
         "filter_text": None,
@@ -397,7 +397,7 @@ V221_FEED = {"global": {},
 }
 }
 V221_FEED_OUT = {"global": {},
-"abusech-urlhaus-columns-string-parser": {
+                 "abusech-urlhaus-columns-string-parser": {
     "parameters": {
         "column_regex_search": {},
         "columns": ['time.source', 'source.url', 'status', 'classification.type|__IGNORE__', 'source.fqdn|__IGNORE__', 'source.ip', 'source.asn', 'source.geolocation.cc'],
@@ -417,111 +417,137 @@ V221_FEED_OUT = {"global": {},
 }
 V221_FEED_OUT['abusech-urlhaus-columns-dict-parser'] = V221_FEED_OUT['abusech-urlhaus-columns-string-parser']
 V221_FEED_2 = {"global": {},
-"hphosts-collector": {
+               "hphosts-collector": {
     "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
     "parameters": {
         "http_url": "http://hosts-file.net/download/hosts.txt",
     },
 },
-"hphosts-parser": {
+    "hphosts-parser": {
     "group": "Parser",
     "module": "intelmq.bots.parsers.hphosts.parser",
 },
 }
 V222 = {
-"global": {},
-"shadowserver-parser": {
-    "module": "intelmq.bots.parsers.shadowserver.parser",
-    "parameters": {
-        "feedname": "Blacklisted-IP"}}}
+    "global": {},
+    "shadowserver-parser": {
+        "module": "intelmq.bots.parsers.shadowserver.parser",
+        "parameters": {
+            "feedname": "Blacklisted-IP"}}}
 V222_OUT = {
-"global": {},
-"shadowserver-parser": {
-    "module": "intelmq.bots.parsers.shadowserver.parser",
-    "parameters": {
-        "feedname": "Blocklist"}}}
+    "global": {},
+    "shadowserver-parser": {
+        "module": "intelmq.bots.parsers.shadowserver.parser",
+        "parameters": {
+            "feedname": "Blocklist"}}}
 
 V230_IN = {
-"global": {},
-"urlhaus-parser": {
-    "module": "intelmq.bots.parsers.generic.parser_csv",
-    "parameters": {
-        "delimeter": ","
+    "global": {},
+    "urlhaus-parser": {
+        "module": "intelmq.bots.parsers.generic.parser_csv",
+        "parameters": {
+            "delimeter": ","
+        }
     }
-}
 }
 V230_IN_BOTH = {
-"global": {},
-"urlhaus-parser": {
-    "module": "intelmq.bots.parsers.generic.parser_csv",
-    "parameters": {
-        "delimeter": ",",
-        "delimiter": ","
+    "global": {},
+    "urlhaus-parser": {
+        "module": "intelmq.bots.parsers.generic.parser_csv",
+        "parameters": {
+            "delimeter": ",",
+            "delimiter": ","
+        }
     }
-}
 }
 V230_OUT = {
-"global": {},
-"urlhaus-parser": {
-    "module": "intelmq.bots.parsers.generic.parser_csv",
-    "parameters": {
-        "delimiter": ","
+    "global": {},
+    "urlhaus-parser": {
+        "module": "intelmq.bots.parsers.generic.parser_csv",
+        "parameters": {
+            "delimiter": ","
+        }
     }
-}
 }
 V230_MALWAREDOMAINLIST_IN = {
-"global": {},
-"malwaredomainlist-parser": {
-    "module": "intelmq.bots.parsers.malwaredomainlist.parser",
-    "parameters": {
-    }
-},
-"malwaredomainlist-collector": {
-    "module": "intelmq.bots.collectors.http.collector_http",
-    "parameters": {
-        "http_url": "http://www.malwaredomainlist.com/updatescsv.php"
+    "global": {},
+    "malwaredomainlist-parser": {
+        "module": "intelmq.bots.parsers.malwaredomainlist.parser",
+        "parameters": {
+        }
+    },
+    "malwaredomainlist-collector": {
+        "module": "intelmq.bots.collectors.http.collector_http",
+        "parameters": {
+            "http_url": "http://www.malwaredomainlist.com/updatescsv.php"
         }
     }
 }
 V233_FEODOTRACKER_BROWSE_IN = {
-"global": {},
-'Feodo-tracker-browse-parser': {
-    'module': "intelmq.bots.parsers.html_table.parser",
-    'parameters': {
-        'columns': 'time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc'.split(','),
-        'type': 'c2server',
-        'ignore_values': ',,,,Not listed,,',
-        'skip_table_head': True,
-    }
-}
-}
-V233_FEODOTRACKER_BROWSE_OUT = {
-"global": {},
-'Feodo-tracker-browse-parser': {
-    'module': "intelmq.bots.parsers.html_table.parser",
-    'parameters': {
-        'columns': 'time.source,source.ip,malware.name,status,source.as_name,source.geolocation.cc',
-        'type': 'c2server',
-        'ignore_values': ',,,,,',
-        'skip_table_head': True,
-    }
-}
-}
-V301_MALWAREDOMAINS_IN = {
-"global": {},
-"malwaredomains-parser": {
-    "module": "intelmq.bots.parsers.malwaredomains.parser",
-    "parameters": {
-    }
-},
-"malwaredomains-collector": {
-    "module": "intelmq.bots.collectors.http.collector",
-    "parameters": {
-        "http_url": "http://mirror1.malwaredomains.com/files/domains.txt"
+    "global": {},
+    'Feodo-tracker-browse-parser': {
+        'module': "intelmq.bots.parsers.html_table.parser",
+        'parameters': {
+            'columns': 'time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc'.split(','),
+            'type': 'c2server',
+            'ignore_values': ',,,,Not listed,,',
+            'skip_table_head': True,
         }
     }
 }
+V233_FEODOTRACKER_BROWSE_OUT = {
+    "global": {},
+    'Feodo-tracker-browse-parser': {
+        'module': "intelmq.bots.parsers.html_table.parser",
+        'parameters': {
+            'columns': 'time.source,source.ip,malware.name,status,source.as_name,source.geolocation.cc',
+            'type': 'c2server',
+            'ignore_values': ',,,,,',
+            'skip_table_head': True,
+        }
+    }
+}
+V301_MALWAREDOMAINS_IN = {
+    "global": {},
+    "malwaredomains-parser": {
+        "module": "intelmq.bots.parsers.malwaredomains.parser",
+        "parameters": {
+        }
+    },
+    "malwaredomains-collector": {
+        "module": "intelmq.bots.collectors.http.collector",
+        "parameters": {
+            "http_url": "http://mirror1.malwaredomains.com/files/domains.txt"
+        }
+    }
+}
+V310_FEED_CHANGES = {
+    "global": {},
+    "autoshun-parser": {
+        "module": "intelmq.bots.parsers.autoshun.parser",
+        "parameters": {
+        }
+    },
+    "autoshun-collector": {
+        "module": "intelmq.bots.collectors.http.collector",
+        "parameters": {
+            "http_url": "https://www.autoshun.org/download"
+        }
+    },
+    "malc0de-collector": {
+        "module": "intelmq.bots.collectors.http.collector",
+        "parameters": {
+            "http_url": "https://malc0de.com/bl/ZONES"
+        }
+    },
+    "malc0de-parser": {
+        "module": "intelmq.bots.parsers.malc0de.parser",
+        "parameters": {}
+    }
+}
+
+
 def generate_function(function):
     def test_function(self):
         """ Test if no errors happen for upgrade function %s. """ % function.__name__
@@ -537,8 +563,8 @@ class TestUpgradeLib(unittest.TestCase):
         self.mapping_list = []
         self.mapping_list_name = []
         for values in upgrades.UPGRADES.values():
-            self.mapping_list.extend((x for x in values))
-            self.mapping_list_name.extend((x.__name__ for x in values))
+            self.mapping_list.extend(x for x in values)
+            self.mapping_list_name.extend(x.__name__ for x in values)
 
     def test_all_functions_used(self):
         self.assertEqual(len(self.mapping_list_name),
@@ -717,6 +743,18 @@ class TestUpgradeLib(unittest.TestCase):
                          'has been found as bot malwaredomains-collector. Remove affected bots yourself.',
                          result[0])
         self.assertEqual(V301_MALWAREDOMAINS_IN, result[1])
+
+    def test_v310_feed_changes(self):
+        """ Test v310_feed_changes """
+        result = upgrades.v310_feed_changes(V310_FEED_CHANGES, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual('A discontinued feed "Malc0de" has been found as bot '
+                         'malc0de-collector, malc0de-parser. '
+                         'A discontinued feed "Autoshun" has been found as bot '
+                         'autoshun-collector, autoshun-parser. Remove affected bots yourself.',
+                         result[0])
+        self.assertEqual(V310_FEED_CHANGES, result[1])
+
 
 for name in upgrades.__all__:
     setattr(TestUpgradeLib, 'test_function_%s' % name,

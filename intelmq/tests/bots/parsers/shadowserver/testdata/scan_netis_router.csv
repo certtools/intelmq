@@ -1,0 +1,4 @@
+"timestamp","ip","port","hostname","tag","response","asn","geo","region","city","naics","sic","sector","response_size","amplification"
+"2010-02-10 00:00:00",192.168.0.1,53413,node01.example.com,netis_vulnerability,Login:,64512,ZZ,Region,City,0,0,,18,18.00
+"2010-02-10 00:00:01",192.168.0.2,53413,node02.example.com,netis_vulnerability,Login:,64512,ZZ,Region,City,0,0,,18,18.00
+"2010-02-10 00:00:02",192.168.0.3,53413,node03.example.com,netis_vulnerability,Login:,64512,ZZ,Region,City,0,0,,18,18.00

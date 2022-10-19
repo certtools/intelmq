@@ -79,7 +79,7 @@ class BotDebugger:
             elif self.run_subcommand == "process":
                 self._process(self.dryrun, self.msg, self.show)
             else:
-                self.outputappend("Subcommand {} not known.".format(self.run_subcommand))
+                self.outputappend(f"Subcommand {self.run_subcommand} not known.")
 
         return '\n'.join(self.output) or ""
 
@@ -92,7 +92,7 @@ class BotDebugger:
                 pass
             else:
                 if console_type and console != console_type:
-                    print("Console {} not available.".format(console_type))
+                    print(f"Console {console_type} not available.")
                 print("*** Using console {}. Please use 'self' to access to the bot instance properties."
                       "You may exit the console by 'c' command (like continue). ***"
                       .format(module.__name__))
@@ -122,7 +122,7 @@ class BotDebugger:
             self.outputappend("Collector bots have no input queue.")
         elif message_action_kind == "get":
             self.outputappend("Waiting for a message to get...")
-            if not bool(self.instance._Bot__source_queues):
+            if not self.instance.source_queue:
                 self.outputappend("Bot has no source queue.")
                 return
 
@@ -172,9 +172,9 @@ class BotDebugger:
             msg = MessageFactory.unserialize(msg, default_type=default_type)
         except (Exception, KeyError, TypeError, ValueError) as exc:
             if exists(msg):
-                with open(msg, "r") as f:
+                with open(msg) as f:
                     return self.arg2msg(f.read())
-            self.messageWizzard("Message can not be parsed from JSON: {}".format(error_message_from_exc(exc)))
+            self.messageWizzard(f"Message can not be parsed from JSON: {error_message_from_exc(exc)}")
             sys.exit(1)
         return msg
 

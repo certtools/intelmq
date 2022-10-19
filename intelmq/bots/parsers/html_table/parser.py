@@ -22,7 +22,7 @@ type: string
 """
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib.exceptions import MissingDependencyError
@@ -34,7 +34,7 @@ except ImportError:
     bs = None
 
 
-class HTMLTableParserBot(Bot):
+class HTMLTableParserBot(ParserBot):
     """Parse HTML table data"""
     attribute_name = ""
     attribute_value = ""

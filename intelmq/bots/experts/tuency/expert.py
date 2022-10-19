@@ -9,19 +9,19 @@ Example query:
 > curl -s -H "Authorization: Bearer XXX"\
     'https://tuency-demo1.example.com/intelmq/lookup?classification_taxonomy=availability&classification_type=backdoor\
      &feed_provider=Team+Cymru&feed_name=FTP&feed_status=production&ip=123.123.123.23'
-     same for domain=
-     a query can contain both ip address and domain
+same for domain=
+a query can contain both ip address and domain
 
 Example response:
 {"ip":{"destinations":[{"source":"portal","name":"Thurner","contacts":[{"email":"test@example.com"}]}]},"suppress":true,"interval":{"unit":"days","length":1}}
 {"ip":{"destinations":[{"source":"portal","name":"Thurner","contacts":[{"email":"test@example.vom"}]}]},"domain":{"destinations":[{"source":"portal","name":"Thurner","contacts":[{"email":"abuse@example.at"}]}]},"suppress":true,"interval":{"unit":"immediate","length":1}}
 """
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import create_request_session, parse_relative
 
 
-class TuencyExpertBot(Bot):
+class TuencyExpertBot(ExpertBot):
     url: str  # Path to the tuency instance
     authentication_token: str
     overwrite: bool = True

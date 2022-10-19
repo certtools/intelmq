@@ -40,7 +40,7 @@ setup(
     name='intelmq',
     version=__version__,  # noqa: F821
     maintainer='Sebastian Wagner',
-    maintainer_email='wagner@cert.at',
+    maintainer_email='intelmq-dev@lists.cert.at',
     python_requires='>=3.6',
     install_requires=REQUIRES,
     tests_require=[
@@ -51,6 +51,7 @@ setup(
     extras_require={
         'development': [
             'Cerberus',
+            'requests_mock',
         ],
     },
     packages=find_packages(),
@@ -77,6 +78,8 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Security',

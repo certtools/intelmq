@@ -13,7 +13,7 @@ import json
 import warnings
 
 import intelmq.lib.utils as utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.mixins import CacheMixin
 
@@ -41,7 +41,7 @@ def clean_geo(geo_data):
     return geo_data
 
 
-class RIPEExpertBot(Bot, CacheMixin):
+class RIPEExpertBot(ExpertBot, CacheMixin):
     """Fetch abuse contact and/or geolocation information for the source and/or destination IP addresses and/or ASNs of the events"""
     mode: str = "append"
     query_ripe_db_asn: bool = True
@@ -127,7 +127,7 @@ class RIPEExpertBot(Bot, CacheMixin):
         self.acknowledge_message()
 
     def __perform_cached_query(self, type, resource):
-        cached_value = self.cache_get('{}:{}'.format(type, resource))
+        cached_value = self.cache_get(f'{type}:{resource}')
         if cached_value:
             if cached_value == CACHE_NO_VALUE:
                 return {}
@@ -142,7 +142,7 @@ class RIPEExpertBot(Bot, CacheMixin):
                     """ If no abuse contact could be found, a 404 is given. """
                     try:
                         if response.json()['message'].startswith('No abuse contact found for '):
-                            self.cache_set('{}:{}'.format(type, resource), CACHE_NO_VALUE)
+                            self.cache_set(f'{type}:{resource}', CACHE_NO_VALUE)
                             return {}
                     except ValueError:
                         pass
@@ -159,11 +159,11 @@ class RIPEExpertBot(Bot, CacheMixin):
                                   '' % (type, status))
 
                 data = self.REPLY_TO_DATA[type](response_data)
-                self.cache_set('{}:{}'.format(type, resource),
+                self.cache_set(f'{type}:{resource}',
                                (json.dumps(list(data) if isinstance(data, set) else data) if data else CACHE_NO_VALUE))
                 return data
             except (KeyError, IndexError):
-                self.cache_set('{}:{}'.format(type, resource), CACHE_NO_VALUE)
+                self.cache_set(f'{type}:{resource}', CACHE_NO_VALUE)
 
             return {}
 

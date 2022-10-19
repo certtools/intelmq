@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # SPDX-FileCopyrightText: 2016 by Bundesamt für Sicherheit in der Informationstechnik
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
@@ -25,6 +24,7 @@ Parameters:
 
 import fnmatch
 import os
+import fcntl
 
 import intelmq.lib.exceptions as exceptions
 from intelmq.lib.bot import CollectorBot
@@ -59,23 +59,30 @@ class FileCollectorBot(CollectorBot):
         self.logger.debug("Started looking for files.")
 
         if os.path.isdir(self.path):
-            p = os.path.abspath(self.path)
+            path = os.path.abspath(self.path)
 
             # iterate over all files in dir
-            for f in os.listdir(p):
-                filename = os.path.join(p, f)
+            for file in os.listdir(path):
+                filename = os.path.join(path, file)
                 if os.path.isfile(filename):
-                    if fnmatch.fnmatch(f, '*' + self.postfix):
+                    if fnmatch.fnmatch(file, '*' + self.postfix):
                         self.logger.info("Processing file %r.", filename)
 
                         template = self.new_report()
-                        template.add("feed.url", "file://localhost%s" % filename)
-                        template.add("extra.file_name", f)
+                        template.add("feed.url", f"file://localhost{filename}")
+                        template.add("extra.file_name", file)
 
-                        with open(filename, 'rb') as fh:
-                            for report in generate_reports(template, fh, self.chunk_size,
-                                                           self.chunk_replicate_header):
-                                self.send_message(report)
+                        try:
+                            with open(filename, 'rb') as file_handle:
+                                fcntl.flock(file_handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                                for report in generate_reports(template, file_handle,
+                                                               self.chunk_size,
+                                                               self.chunk_replicate_header):
+                                    self.send_message(report)
+                                fcntl.flock(file_handle, fcntl.LOCK_UN)
+                        except BlockingIOError:
+                            self.logger.info(f"File {filename!r} is locked by another"
+                                             " process, skipping.")
 
                         if self.delete_file:
                             try:
@@ -83,8 +90,10 @@ class FileCollectorBot(CollectorBot):
                                 self.logger.debug("Deleted file: %r.", filename)
                             except PermissionError:
                                 self.logger.error("Could not delete file %r.", filename)
-                                self.logger.info("Maybe I don't have sufficient rights on that file?")
-                                self.logger.error("Stopping now, to prevent reading this file again.")
+                                self.logger.info("Maybe I don't have sufficient rights"
+                                                 " on that file?")
+                                self.logger.error("Stopping now, to prevent reading this"
+                                                  " file again.")
                                 self.stop()
 
 

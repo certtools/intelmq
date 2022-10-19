@@ -19,7 +19,7 @@ Options:
 &sep={TAB, comma, semicolon, pipe}  	Separator for the (output) CSV format
 """
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import create_request_session
 from intelmq.lib.exceptions import MissingDependencyError
 
@@ -32,7 +32,7 @@ except ImportError:
 URL = 'https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl'
 
 
-class NationalCERTContactCertATExpertBot(Bot):
+class NationalCERTContactCertATExpertBot(ExpertBot):
     """Add country and abuse contact information from the CERT.at national CERT Contact Database. Set filter to true if you want to filter out events for Austria. Set overwrite_cc to true if you want to overwrite an existing country code value"""
     filter: bool = False
     http_verify_cert: bool = True
@@ -66,7 +66,7 @@ class NationalCERTContactCertATExpertBot(Bot):
                     continue
                 response = req.text.strip().split(';')
 
-                ccfield = '{}.geolocation.cc'.format(section)
+                ccfield = f'{section}.geolocation.cc'
                 if self.overwrite_cc or ccfield not in event:
                     event.add(ccfield, response[1])
 

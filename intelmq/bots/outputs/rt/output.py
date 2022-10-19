@@ -18,7 +18,7 @@ description_attr - which event attribute contains text message being sent to the
 
 """
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -27,7 +27,7 @@ except ImportError:
     rt = None
 
 
-class RTOutputBot(Bot):
+class RTOutputBot(OutputBot):
     """Request Tracker ticket creation bot. Create linked Investigation queue ticket if needed, according to the RTIR flow"""
     cf_mapping = {
         "classification.taxonomy": "Classification",
@@ -103,7 +103,7 @@ class RTOutputBot(Bot):
                     if event.get(key):
                         ticket_content += key + ": " + str(event.get(key)) + "\n"
                 # Creating Investigation ticket
-                # Communication supposed to be done by RT On Create scrip
+                # Communication supposed to be done by RT On Create script
                 investigation_id = RT.create_ticket(Queue="Investigations", Subject=self.subject, Text=ticket_content, Requestor=requestor)
 
                 if investigation_id > -1:

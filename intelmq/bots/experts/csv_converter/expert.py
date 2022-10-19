@@ -5,10 +5,10 @@
 # -*- coding: utf-8 -*-
 import csv
 import io
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 
-class CSVConverterExpertBot(Bot):
+class CSVConverterExpertBot(ExpertBot):
     """Convert data to CSV"""
     fieldnames: str = "time.source,classification.type,source.ip"  # TODO: could maybe be List[str]
     delimiter: str = ','

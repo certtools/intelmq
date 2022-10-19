@@ -453,7 +453,7 @@ providers:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: http://dataplane.org/sshclient.txt
+            http_url: https://dataplane.org/sshclient.txt
             rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
@@ -461,7 +461,7 @@ providers:
           module: intelmq.bots.parsers.dataplane.parser
           parameters:
       revision: 2018-01-20
-      documentation: http://dataplane.org/
+      documentation: https://dataplane.org/
       public: true
     SSH Password Authentication:
       description: Entries below consist of fields with identifying characteristics
@@ -474,7 +474,7 @@ providers:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: http://dataplane.org/sshpwauth.txt
+            http_url: https://dataplane.org/sshpwauth.txt
             rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
@@ -482,7 +482,7 @@ providers:
           module: intelmq.bots.parsers.dataplane.parser
           parameters:
       revision: 2018-01-20
-      documentation: http://dataplane.org/
+      documentation: https://dataplane.org/
       public: true
     SIP Query:
       description: Entries consist of fields with identifying characteristics of a
@@ -495,7 +495,7 @@ providers:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: http://dataplane.org/sipquery.txt
+            http_url: https://dataplane.org/sipquery.txt
             rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
@@ -503,7 +503,7 @@ providers:
           module: intelmq.bots.parsers.dataplane.parser
           parameters:
       revision: 2018-01-20
-      documentation: http://dataplane.org/
+      documentation: https://dataplane.org/
       public: true
     SIP Registration:
       description: Entries consist of fields with identifying characteristics of a
@@ -516,7 +516,7 @@ providers:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: http://dataplane.org/sipregistration.txt
+            http_url: https://dataplane.org/sipregistration.txt
             rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
@@ -524,7 +524,173 @@ providers:
           module: intelmq.bots.parsers.dataplane.parser
           parameters:
       revision: 2018-01-20
-      documentation: http://dataplane.org/
+      documentation: https://dataplane.org/
+      public: true
+    DNS Recursion Desired:
+      description: Entries consist of fields with identifying characteristics of a
+        source IP address that has been seen performing a DNS recursion desired query
+        to a remote host. This report lists hosts that are suspicious of more than just
+        port scanning. The host may be DNS server cataloging or searching for hosts
+        to use for DNS-based DDoS amplification.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://dataplane.org/dnsrd.txt
+            rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.dataplane.parser
+          parameters:
+      revision: 2021-09-09
+      documentation: https://dataplane.org/
+      public: true
+    DNS Recursion Desired ANY:
+      description: Entries consist of fields with identifying characteristics of a
+        source IP address that has been seen performing a DNS recursion desired IN ANY query
+        to a remote host. This report lists hosts that are suspicious of more than just
+        port scanning. The host may be DNS server cataloging or searching for hosts
+        to use for DNS-based DDoS amplification.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://dataplane.org/dnsrdany.txt
+            rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.dataplane.parser
+          parameters:
+      revision: 2021-09-09
+      documentation: https://dataplane.org/
+      public: true
+    DNS Version:
+      description: Entries consist of fields with identifying characteristics of a
+        source IP address that has been seen performing a DNS CH TXT version.bind query
+        to a remote host. This report lists hosts that are suspicious of more than just
+        port scanning. The host may be DNS server cataloging or searching for vulnerable
+        DNS servers.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://dataplane.org/dnsversion.txt
+            rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.dataplane.parser
+          parameters:
+      revision: 2021-09-09
+      documentation: https://dataplane.org/
+      public: true
+    Protocol 41:
+      description: Entries consist of fields with identifying characteristics of a
+        host that has been detected to offer open IPv6 over IPv4 tunneling.
+        This could allow for the host to be used a public proxy against IPv6 hosts.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://dataplane.org/proto41.txt
+            rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.dataplane.parser
+          parameters:
+      revision: 2021-09-09
+      documentation: https://dataplane.org/
+      public: true
+    SMTP Greet:
+      description: Entries consist of fields with identifying characteristics of a
+        host that has been seen initiating a SMTP HELO/EHLO operation to a remote host.
+        The source report lists hosts that are suspicious of more than just port
+        scanning. The host may be SMTP server cataloging or conducting various forms
+        of email abuse.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://dataplane.org/smtpgreet.txt
+            rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.dataplane.parser
+          parameters:
+      revision: 2021-09-09
+      documentation: https://dataplane.org/
+      public: true
+    SMTP Data:
+      description: Entries consist of fields with identifying characteristics of a
+        host that has been seen initiating a SMTP DATA operation to a remote host.
+        The source report lists hosts that are suspicious of more than just port
+        scanning. The host may be SMTP server cataloging or conducting various forms
+        of email abuse.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://dataplane.org/smtpdata.txt
+            rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.dataplane.parser
+          parameters:
+      revision: 2021-09-09
+      documentation: https://dataplane.org/
+      public: true
+    Telnet Login:
+      description: Entries consist of fields with identifying characteristics of a
+        host that has been seen initiating a telnet connection to a remote host.
+        The source report lists hosts that are suspicious of more than just port
+        scanning. The host may be telnet server cataloging or conducting
+        authentication attack attempts.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://dataplane.org/telnetlogin.txt
+            rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.dataplane.parser
+          parameters:
+      revision: 2021-09-09
+      documentation: https://dataplane.org/
+      public: true
+    VNC/RFB Login:
+      description: Entries consist of fields with identifying characteristics of a
+        host that has been seen initiating a VNC remote buffer session to a remote host.
+        The source report lists hosts that are suspicious of more than just port
+        scanning. The host may be VNC/RFB server cataloging or conducting
+        authentication attack attempts.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://dataplane.org/vncrfb.txt
+            rate_limit: 3600
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.dataplane.parser
+          parameters:
+      revision: 2021-09-09
+      documentation: https://dataplane.org/
       public: true
   Turris:
     Greylist:
@@ -614,60 +780,6 @@ providers:
       revision: 2018-01-20
       documentation: https://project.turris.cz/en/greylist
       public: true
-  Malc0de:
-    Bind Format:
-      description: This feed includes FQDN's of malicious hosts, the file format is
-        in Bind file format.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://malc0de.com/bl/ZONES
-            rate_limit: 10800
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.malc0de.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://malc0de.com/dashboard/
-      public: true
-    Windows Format:
-      description: This feed includes FQDN's of malicious hosts, the file format is
-        in Windows Hosts file format.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://malc0de.com/bl/BOOT
-            rate_limit: 10800
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.malc0de.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://malc0de.com/dashboard/
-      public: true
-    IP Blacklist:
-      description: This feed includes IP Addresses of malicious hosts.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://malc0de.com/bl/IP_Blacklist.txt
-            rate_limit: 10800
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.malc0de.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://malc0de.com/dashboard/
-      public: true
   University of Toulouse:
     Blacklist:
       description: Various blacklist feeds
@@ -690,24 +802,6 @@ providers:
       revision: 2018-01-20
       documentation: https://dsi.ut-capitole.fr/blacklists/
       public: true
-  Autoshun:
-    Shunlist:
-      description: You need to register in order to use the list.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://www.autoshun.org/download/?api_key=__APIKEY__&format=html
-            rate_limit: 3600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.autoshun.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: https://www.autoshun.org/
-      public: false
   Danger Rulez:
     Bruteforce Blocker:
       description: Its main purpose is to block SSH bruteforce attacks via firewall.
@@ -1590,7 +1684,7 @@ providers:
         parser:
           module: intelmq.bots.parsers.microsoft.parser_ctip
           parameters:
-      revision: 2020-05-29
+      revision: 2022-06-01
       documentation: https://docs.microsoft.com/en-us/security/gsp/informationsharingandexchange http://www.dcuctip.com/
       public: false
     CTIP C2 via Azure:
@@ -1714,27 +1808,26 @@ providers:
     Enterprise Callback:
       description: With the Enterprise Subscription of 'Have I Been Pwned' you are able to provide a callback URL and any new leak data is submitted to it. It is recommended to put a webserver with Authorization check, TLS etc. in front of the API collector.
       additional_information: |
-        "A minimal nginx configuration could look like:
-        ```
-        server {
-            listen 443 ssl http2;
-            server_name [your host name];
-            client_max_body_size 50M;
-            
-            ssl_certificate [path to your key];
-            ssl_certificate_key [path to your certificate];
-            
-            location /[your private url] {
-                 if ($http_authorization != '[your private password]') {
-                     return 403;
-                 }
-                 proxy_pass http://localhost:5001/intelmq/push;
-                 proxy_read_timeout 30;
-                 proxy_connect_timeout 30;
-             }
-        }
-        ```
-        "
+        A minimal nginx configuration could look like:
+            .. code-block::
+
+                  server {
+                      listen 443 ssl http2;
+                      server_name [your host name];
+                      client_max_body_size 50M;
+                      
+                      ssl_certificate [path to your key];
+                      ssl_certificate_key [path to your certificate];
+                      
+                      location /[your private url] {
+                           if ($http_authorization != '[your private password]') {
+                               return 403;
+                           }
+                           proxy_pass http://localhost:5001/intelmq/push;
+                           proxy_read_timeout 30;
+                           proxy_connect_timeout 30;
+                       }
+                  }
       bots:
         collector:
           module: intelmq.bots.collectors.api.collector_api
@@ -1757,8 +1850,7 @@ providers:
         collector:
           module: intelmq.bots.collectors.github_api.collector_github_contents_api
           parameters:
-            basic_auth_username: USERNAME
-            basic_auth_password: PASSWORD
+            personal_access_token: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
             repository: StrangerealIntel/DailyIOC
             regex: .*.json
         parser:

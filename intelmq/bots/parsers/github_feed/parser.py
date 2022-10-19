@@ -16,7 +16,7 @@ try:
 except ImportError:
     validators = None
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.utils import base64_decode
 from intelmq.lib.exceptions import MissingDependencyError
 
@@ -27,7 +27,7 @@ HASH_VALIDATORS = {
 }
 
 
-class GithubFeedParserBot(Bot):
+class GithubFeedParserBot(ParserBot):
     """Parse known GitHub feeds"""
 
     def init(self):
@@ -42,7 +42,7 @@ class GithubFeedParserBot(Bot):
         try:
             decoded_content = json.loads(base64_decode(report['raw']).replace("'", '"'))
         except json.JSONDecodeError as e:
-            self.logger.error("Invalid report['raw']: {}".format(e))
+            self.logger.error(f"Invalid report['raw']: {e}")
             self.acknowledge_message()
             return
 
@@ -132,7 +132,7 @@ def parse_domain_indicator(event, ioc_indicator: str):
 
 
 def parse_hash_indicator(event, ioc_indicator: str, hash_type: str):
-    event.add('malware.hash.{}'.format(hash_type), ioc_indicator)
+    event.add(f'malware.hash.{hash_type}', ioc_indicator)
     event.change('classification.taxonomy', 'other')
     event.change('classification.type', 'malware')
     return event

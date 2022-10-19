@@ -48,8 +48,7 @@ class TaichungNetflowRecentParserBot(ParserBot):
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
-        for row in raw_report.split('<tr>'):
-            yield row
+        yield from raw_report.split('<tr>')
 
     def parse_line(self, row, report):
         # Get IP Address and Type

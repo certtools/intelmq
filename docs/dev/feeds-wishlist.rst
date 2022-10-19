@@ -33,6 +33,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
   - `apivoid IP Reputation API <https://www.apivoid.com/api/ip-reputation/>`_
   - `Anomali Limo Free Intel Feed <https://www.anomali.com/resources/limo>`_
   - `APWG's ecrimex <https://www.ecrimex.net>`_
+  - `Avast Threat Intel IoCs of dark matter repository <https://github.com/avast/ioc>`_
   - `Berkeley <https://security.berkeley.edu/aggressive_ips/ips>`_
   - `Binary Defense <https://www.binarydefense.com/>`_
   - `Bot Invaders Realtime tracker <http://www.marc-blanchard.com/BotInvaders/index.php>`_
@@ -76,6 +77,7 @@ This list evolved from the issue :issue:`Contribute: Feeds List (#384) <384>`.
   - `Marc Blanchard DGA Domains <http://www.marc-blanchard.com/BotInvaders/index.php>`_
   - `MaxMind Proxies <https://www.maxmind.com/en/anonymous_proxies>`_
   - `mIRC Servers <http://www.mirc.com/servers.ini>`_
+  - `MISP Warning Lists <https://github.com/MISP/misp-warninglists>`_
   - `Monzymerza <https://github.com/monzymerza/parthenon>`_
   - `Multiproxy <http://multiproxy.org/txt_all/proxy.txt>`_
   - `Neo23x0 signature-base <https://github.com/Neo23x0/signature-base/tree/master/iocs>`_

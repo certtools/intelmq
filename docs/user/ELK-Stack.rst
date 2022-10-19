@@ -105,7 +105,7 @@ The pipeline also needs output, where we define our database (Elasticsearch). Th
 
 * Authors experience, hardware equipment and the amount of events collected led to having a separate index for each month. This might not necessarily suit your needs, but is a suggested option.
 
-* By default the ELK stack uses unsecure HTTP. It is possible to setup Security for secure connections and basic user management. This is possible with the Basic (free) licence since versions 6.8.0 and 7.1.0.
+* By default the ELK stack uses insecure HTTP. It is possible to setup Security for secure connections and basic user management. This is possible with the Basic (free) licence since versions 6.8.0 and 7.1.0.
 
 Configuring Elasticsearch
 -------------------------

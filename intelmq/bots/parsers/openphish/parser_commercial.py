@@ -7,10 +7,10 @@
 import json
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class OpenPhishCommercialParserBot(Bot):
+class OpenPhishCommercialParserBot(ParserBot):
     """Parse the OpenPhish feed"""
 
     def process(self):

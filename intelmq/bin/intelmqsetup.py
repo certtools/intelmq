@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 © 2019-2021 nic.at GmbH <intelmq-team@cert.at>
 
@@ -34,6 +33,7 @@ from typing import Optional
 
 try:
     import intelmq_api
+    import intelmq_api.version
 except ImportError:
     intelmq_api = None
 
@@ -41,6 +41,13 @@ try:
     import intelmq_manager
 except ImportError:
     intelmq_manager = None
+else:
+    try:
+        import intelmq_manager.build
+    except ImportError:
+        intelmq_manager_has_build = False
+    else:
+        intelmq_manager_has_build = True
 
 from termstyle import red
 from intelmq import (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
@@ -255,15 +262,11 @@ def intelmqsetup_api_webserver_configuration(webserver_configuration_directory: 
 
 
 def intelmqsetup_manager_webserver_configuration(webserver_configuration_directory: Optional[str] = None):
-    html_dir = Path(pkg_resources.resource_filename('intelmq_manager', '')).parent / '/usr/share/intelmq-manager/html'
-    html_dir_destination = Path('/usr/share/intelmq-manager/html')
-
-    if not html_dir_destination.as_posix().startswith('/usr/'):
-        # Paths differ in editable installations
-        print(red("Detected an editable (egg-link) pip-installation of intelmq-manager. Some feature of this program may not work."))
-
     webserver_configuration_dir = webserver_configuration_directory or find_webserver_configuration_directory()
-    manager_config = Path(pkg_resources.resource_filename('intelmq_manager', '')).parent / 'etc/intelmq/manager-apache.conf'
+    manager_config_1 = Path(pkg_resources.resource_filename('intelmq_manager', '')).parent / 'etc/intelmq/manager-apache.conf'
+    # IntelMQ Manager >= 3.1.0
+    manager_config_2 = Path(pkg_resources.resource_filename('intelmq_manager', '')) / 'manager-apache.conf'
+    manager_config = manager_config_2 if manager_config_2.exists() else manager_config_1
     apache_manager_config = webserver_configuration_dir / 'manager-apache.conf'
     if manager_config.exists() and not apache_manager_config.exists():
         shutil.copy(manager_config, apache_manager_config)
@@ -273,15 +276,22 @@ def intelmqsetup_manager_webserver_configuration(webserver_configuration_directo
         global NOTE_WEBSERVER_RELOAD
         NOTE_WEBSERVER_RELOAD = True
     elif not manager_config.exists() and not apache_manager_config.exists():
-        print(red(f'Unable to install webserver configuration manager-config.conf: Neither {manager_config!s} nor {apache_manager_config!s} exists.'))
+        print(red(f'Unable to install webserver configuration manager-config.conf: Neither {manager_config_1!s} nor {manager_config_2!s} nor {apache_manager_config!s} exist.'))
 
-    if html_dir.exists():
-        try:
-            shutil.copy(html_dir, '/')
-        except Exception as exc:
-            print(red(f"Unable to copy {html_dir} to {html_dir_destination}: {exc!s}"))
-        else:
-            print(f'Copied {html_dir!s} to {html_dir_destination!s}.')
+
+def intelmqsetup_manager_generate():
+    if not intelmq_manager_has_build:
+        print('Unable to build intelmq-manager files. Installed version of intelmq-manager is too old, at least version 3.1.0 is required.',
+              file=sys.stderr)
+        return
+    src_dir = Path(pkg_resources.resource_filename('intelmq_manager', ''))
+    html_dir_destination = Path('/usr/share/intelmq_manager/html')
+
+    if not src_dir.as_posix().startswith('/usr/'):
+        # Paths differ in editable installations
+        print(red("Detected an editable (egg-link) pip-installation of intelmq-manager. Some features of this program may not work."))
+
+    intelmq_manager.build.buildhtml(html_dir_destination)
 
 
 def main():
@@ -299,24 +309,35 @@ def main():
     parser.add_argument('--skip-api',
                         help='Skip set-up of intelmq-api.',
                         action='store_true')
+    parser.add_argument('--skip-webserver',
+                        help='Skip all operations on the webserver configuration, affects the API and Manager.',
+                        action='store_true')
+    parser.add_argument('--skip-manager',
+                        help='Skip set-up of intelmq-manager.',
+                        action='store_true')
     args = parser.parse_args()
 
     basic_checks(skip_ownership=args.skip_ownership)
     intelmqsetup_core(ownership=not args.skip_ownership,
                       state_file=args.state_file)
     if intelmq_api and not args.skip_api:
-        print('Running setup for intelmq-api.')
+        print(f'Running setup for intelmq-api (version {intelmq_api.version.__version__}).')
         intelmqsetup_api(ownership=not args.skip_ownership,
                          webserver_user=args.webserver_user)
-        print('Running webserver setup for intelmq-api.')
-        intelmqsetup_api_webserver_configuration(webserver_configuration_directory=args.webserver_configuration_directory)
+        if not args.skip_webserver:
+            print('Running webserver setup for intelmq-api.')
+            intelmqsetup_api_webserver_configuration(webserver_configuration_directory=args.webserver_configuration_directory)
     else:
         print('Skipping set-up of intelmq-api.')
-    if intelmq_manager and not args.skip_api:
+    if intelmq_manager and not args.skip_manager and not args.skip_webserver:
         print('Running webserver setup for intelmq-manager.')
         intelmqsetup_manager_webserver_configuration(webserver_configuration_directory=args.webserver_configuration_directory)
     else:
-        print('Skipping set-up of intelmq-manager.')
+        print('Skipping intelmq-manager configuration.')
+    if intelmq_manager and not args.skip_manager:
+        manager_version = pkg_resources.get_distribution('intelmq-manager').version
+        print(f'Generate and save intelmq-manager (version {manager_version}) static files.')
+        intelmqsetup_manager_generate()
 
     if NOTE_WEBSERVER_RELOAD:
         print('Reload the webserver to make the changes effective.')

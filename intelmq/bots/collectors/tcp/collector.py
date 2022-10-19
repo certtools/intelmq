@@ -54,7 +54,7 @@ class TCPCollectorBot(CollectorBot):
                 if msg:  # if the partner connection ended, our message are already sent
                     conn.sendall(b"Ok")
                     pass
-        except socket.error:
+        except OSError:
             self.logger.exception("Socket error.")
         finally:
             if conn:

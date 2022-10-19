@@ -27,10 +27,10 @@
 import dateutil
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 
-class DshieldBlockParserBot(Bot):
+class DshieldBlockParserBot(ParserBot):
     """Parse the DShield Block feed"""
 
     def process(self):
@@ -55,7 +55,7 @@ class DshieldBlockParserBot(Bot):
 
             network_ip = values[0]
             network_mask = values[2]
-            network = '%s/%s' % (network_ip, network_mask)
+            network = f'{network_ip}/{network_mask}'
 
             extra = {}
             event = self.new_event(report)

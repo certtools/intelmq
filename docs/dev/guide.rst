@@ -142,13 +142,13 @@ Run the tests
 All changes have to be tested and new contributions should be accompanied by according unit tests.
 Please do not run the tests as root just like any other IntelMQ component for security reasons. Any other unprivileged user is possible.
 
-You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
+You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `pytest`:
 
 .. code-block:: bash
 
    cd /opt/dev_intelmq
    sudo -u intelmq python3 -m unittest {discover|filename}  # or
-   sudo -u intelmq nosetests3 [filename]  # alternatively nosetests or nosetests-3.8 depending on your installation, or
+   sudo -u intelmq pytest [filename]
    sudo -u intelmq python3 setup.py test  # uses a build environment (no external dependencies)
 
 Some bots need local databases to succeed. If you only want to test one explicit test file, give the file path as argument.
@@ -160,7 +160,7 @@ Environment variables
 
 There are a bunch of environment variables which switch on/off some tests:
 
-* `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default. Set this environment variable to 1 to test those bots. These tests need preparation, e.g. running databases with users and certain passwords etc. Have a look at the `.github/workflows/nosetests.yml` and the corresponding `.github/workflows/scripts/setup-full.sh` in IntelMQ's repository for steps to set databases up.
+* `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default. Set this environment variable to 1 to test those bots. These tests need preparation, e.g. running databases with users and certain passwords etc. Have a look at the `.github/workflows/unittests.yml` and the corresponding `.github/workflows/scripts/setup-full.sh` in IntelMQ's repository for steps to set databases up.
 * `INTELMQ_SKIP_INTERNET`: tests requiring internet connection will be skipped if this is set to 1.
 * `INTELMQ_SKIP_REDIS`: redis-related tests are ran by default, set this to 1 to skip those.
 * `INTELMQ_TEST_EXOTIC`: some bots and tests require libraries which may not be available, those are skipped by default. To run them, set this to 1.
@@ -171,7 +171,7 @@ For example, to run all tests you can use:
 
 .. code-block:: bash
 
-   INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_EXOTIC=1 nosetests3
+   INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_EXOTIC=1 pytest intelmq/tests/
 
 Configuration test files
 ------------------------
@@ -295,7 +295,7 @@ Class name of the bot (ex: PhishTank Parser) must correspond to the type of the 
 
 
 IntelMQ Data Format Rules
-========================
+=========================
 
 Any component of IntelMQ MUST respect the IntelMQ Data Format.
 
@@ -451,6 +451,8 @@ Bot Developer Guide
 
 There's a dummy bot including tests at `intelmq/tests/lib/test_parser_bot.py`.
 
+Please use the correct bot type as parent class for your bot. The `intelmq.lib.bot` module contains the classes `CollectorBot`, `ParserBot`, `ExpertBot` and `OutputBot`.
+
 You can always start any bot directly from command line by calling the executable.
 The executable will be created during installation a directory for binaries. After adding new bots to the code, install IntelMQ to get the files created.
 Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
@@ -482,10 +484,10 @@ Please adjust the doc strings accordingly and remove the in-line comments (`#`).
    import sys
 
    # imports for additional libraries and intelmq
-   from intelmq.lib.bot import Bot
+   from intelmq.lib.bot import ParserBot
 
 
-   class ExampleParserBot(Bot):
+   class ExampleParserBot(ParserBot):
 
        option1: str = "defaultvalue"
        option2: bool = False
@@ -531,13 +533,40 @@ For common settings and methods you can use mixins from :code:`intelmq.lib.mixin
 
    class HTTPCollectorBot(CollectorBot, HttpMixin):
 
-At the moment there is a HttpMixin that you can use for common http requests.
-It provides the HTTP attributes described in :ref:`common-parameters` and the following methods:
+The following mixins are available:
+
+* `HttpMixin`
+* `SqlMixin`
+* `CacheMixin`
+
+The `HttpMixin` provides the HTTP attributes described in :ref:`common-parameters` and the following methods:
 
 * :code:`http_get` takes an URL as argument. Any other arguments get passed to the :code:`request.Session.get` method. :code:`http_get` returns a :code:`reqests.Response`.
 
 * :code:`http_session` can be used if you ever want to work with the session object directly. It takes no arguments and returns the bots request.Session.
 
+The `SqlMixin` provides methods to connect to SQL servers. Inherit this Mixin so that it handles DB connection for you.
+You do not have to bother:
+
+* connecting database in the :code:`self.init()` method, self.cur will be set in the :code:`__init__()`
+* catching exceptions, just call :code:`self.execute()` instead of :code:`self.cur.execute()`
+* :code:`self.format_char` will be set to '%s' in PostgreSQL and to '?' in SQLite
+
+The `CacheMixin` provides methods to cache values for bots in a Redis database. It uses the following attributes:
+
+* :code:`redis_cache_host: str = "127.0.0.1"`
+* :code:`redis_cache_port: int = 6379`
+* :code:`redis_cache_db: int = 9`
+* :code:`redis_cache_ttl: int = 15`
+* :code:`redis_cache_password: Optional[str] = None`
+
+and provides the methods:
+
+* :code:`cache_exists`
+* :code:`cache_get`
+* :code:`cache_set`
+* :code:`cache_flush`
+* :code:`cache_get_redis_instance`
 
 Pipeline interactions
 =====================

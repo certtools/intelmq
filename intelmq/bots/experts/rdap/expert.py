@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import create_request_session
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.mixins import CacheMixin
@@ -14,7 +14,7 @@ except ImportError:
     requests = None
 
 
-class RDAPExpertBot(Bot, CacheMixin):
+class RDAPExpertBot(ExpertBot, CacheMixin):
     """ Get RDAP data"""
     rdap_order: list = ['abuse', 'technical', 'administrative', 'registrant', 'registrar']
     rdap_bootstrapped_servers: dict = {}
@@ -85,7 +85,7 @@ class RDAPExpertBot(Bot, CacheMixin):
                         domain_parts.pop(0)
 
                 url_without_domain_suffix = url.replace(".%s" % (domain_suffix), "")
-                url = "%s.%s" % (url_without_domain_suffix.split(".")[-1], domain_suffix)
+                url = "{}.{}".format(url_without_domain_suffix.split(".")[-1], domain_suffix)
 
                 if domain_suffix in self.__rdap_directory:
                     service = self.__rdap_directory[domain_suffix]
@@ -93,9 +93,9 @@ class RDAPExpertBot(Bot, CacheMixin):
                         if service['auth']['type'] == 'jwt':
                             self.__session.headers['Authorization'] = "Bearer %s" % (service['auth']['token'])
                         else:
-                            raise NotImplementedError("Authentication type %r (configured for service %r) is not implemented" % (service['auth'], domain_suffix))
+                            raise NotImplementedError("Authentication type {!r} (configured for service {!r}) is not implemented".format(service['auth'], domain_suffix))
 
-                    resp = self.__session.get("{0}domain/{1}".format(service['url'], url))
+                    resp = self.__session.get("{}domain/{}".format(service['url'], url))
 
                     if resp.status_code < 200 or resp.status_code > 299:
                         if resp.status_code == 404:

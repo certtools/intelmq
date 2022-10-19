@@ -1,4 +1,4 @@
-.. 
+..
    SPDX-FileCopyrightText: 2020-2021 Birger Schacht, Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -199,7 +199,7 @@ Can I just install it from the deb/rpm packages while installing IntelMQ from a 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Yes, you can install the API and the Manager from the deb/rpm repositories, and install your IntelMQ from a somewhere else, e.g. a local repository.
-However, knowledge about Python system administration experience and is recommended if you do so.
+However, knowledge about Python and system administration experience is recommended if you do so.
 
 The packages install IntelMQ to ``/usr/lib/python3*/site-packages/intelmq/``.
 Installing with ``pip`` results in ``/usr/local/lib/python3*/site-packages/intelmq/`` (and some other accompaning resources) which overrides the installation in ``/usr/lib/``.

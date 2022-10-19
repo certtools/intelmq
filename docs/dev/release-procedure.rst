@@ -68,7 +68,14 @@ Go to https://github.com/certtools/intelmq/tags and enter the release notes (fro
 Tarballs and PyPI
 *****************
 
-* Build the source and binary (wheel) distribution: `python3 setup.py sdist bdist_wheel`
+* Build the source and binary (wheel) distribution:
+
+.. code-block:: bash
+
+   rm -r build/
+   python3 setup.py sdist bdist_wheel
+
+
 * Upload the files including signatures to PyPI with e.g. twine: `twine upload -s dist/intelmq...`
 
 ********

@@ -22,7 +22,7 @@ class FileOutputBot(OutputBot):
     message_jsondict_as_string: bool = False
     message_with_type: bool = False
     single_key: bool = False
-    __is_multithreadable = False
+    _is_multithreadable = False
 
     def init(self):
         # needs to be done here, because in process() FileNotFoundError handling we call init(),
@@ -44,7 +44,7 @@ class FileOutputBot(OutputBot):
             path = Path(os.path.dirname(filename))
             try:
                 path.mkdir(mode=0o755, parents=True, exist_ok=True)
-            except IOError:
+            except OSError:
                 self.logger.exception('Directory %r could not be created.', path)
                 self.stop()
             else:
@@ -98,7 +98,7 @@ class FileOutputBot(OutputBot):
             path = Path(dirname)
             try:
                 path.mkdir(mode=0o755, parents=True, exist_ok=True)
-            except IOError:
+            except OSError:
                 return [["error", "Directory (%r) of parameter 'file' does not exist and could not be created." % dirname]]
             else:
                 return [["info", "Directory (%r) of parameter 'file' did not exist, but has now been created." % dirname]]

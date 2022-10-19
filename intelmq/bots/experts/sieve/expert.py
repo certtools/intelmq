@@ -23,7 +23,7 @@ from functools import partial
 import intelmq.lib.exceptions as exceptions
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.utils import parse_relative
 from intelmq.lib.harmonization import DateTime
@@ -42,7 +42,7 @@ class Procedure(Enum):
     DROP = auto()      # stop processing and drop event
 
 
-class SieveExpertBot(Bot):
+class SieveExpertBot(ExpertBot):
     """Filter and modify events based on a sieve-based language"""
     _message_processed_verb = 'Forwarded'
 

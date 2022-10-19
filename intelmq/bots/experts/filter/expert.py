@@ -10,11 +10,11 @@ from datetime import datetime, timedelta
 import pytz
 from dateutil import parser
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import parse_relative, TIMESPANS
 
 
-class FilterExpertBot(Bot):
+class FilterExpertBot(ExpertBot):
     """Filter events, supports named paths for splitting the message flow"""
 
     _message_processed_verb = 'Forwarded'
@@ -43,9 +43,9 @@ class FilterExpertBot(Bot):
             return absolute
 
     def init(self):
-        if self.not_after is not None:
+        if self.not_after:
             self.not_after = self.parse_timeattr(self.not_after)
-        if self.not_before is not None:
+        if self.not_before:
             self.not_before = self.parse_timeattr(self.not_before)
 
         self.filter = True

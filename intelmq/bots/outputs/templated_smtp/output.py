@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Templated SMTP output bot
 
 SPDX-FileCopyrightText: 2021 Linköping University <https://liu.se/>
@@ -13,6 +12,17 @@ Templates are in Jinja2 format with the event provided in the variable
    mail_to: "{{ event['source.abuse_contact'] }}"
 
 See the Jinja2 documentation at https://jinja.palletsprojects.com/ .
+
+As an extension to the Jinja2 environment, the function "from_json" is
+available for parsing JSON strings into Python structures. This is
+useful if you want to handle complicated structures in the "output"
+field of an event. In that case, you would start your template with a
+line like:
+
+   {%- set output = from_json(event['output']) %}
+
+and can then use "output" as a regular Python object in the rest of
+the template.
 
 Attachments are template strings, especially useful for sending
 structured data. E.g. to send a JSON document including "malware.name"
@@ -79,7 +89,7 @@ verify_cert: boolean, default true, whether to verify the server
 
 """
 
-import io
+import json
 import smtplib
 import ssl
 from typing import List, Optional
@@ -89,12 +99,12 @@ try:
 except:
     Template = None
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import ConfigurationError
 from intelmq.lib.exceptions import MissingDependencyError
 
 
-class TemplatedSMTPOutputBot(Bot):
+class TemplatedSMTPOutputBot(OutputBot):
     smtp_host: str = "localhost"
     smtp_port: int = 25
     ssl: bool = False
@@ -138,8 +148,11 @@ class TemplatedSMTPOutputBot(Bot):
             "from": Template(self.mail_from),
             "to": Template(self.mail_to),
             "body": Template(self.body),
-            "attachments": []
         }
+        for tmpl in self.templates.values():
+            tmpl.globals.update({"from_json": json.loads})
+
+        self.templates["attachments"] = []
         for att in self.attachments:
             if "content-type" not in att:
                 self.logger.error("Attachment does not have a content-type, ignoring: %s.", att)
@@ -155,6 +168,8 @@ class TemplatedSMTPOutputBot(Bot):
                 "text": Template(att["text"]),
                 "name": Template(att["name"])
             }
+            for tmpl in attachment_template.values():
+                tmpl.globals.update({"from_json": json.loads})
             self.templates["attachments"].append(attachment_template)
 
     def process(self):

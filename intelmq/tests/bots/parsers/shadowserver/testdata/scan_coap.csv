@@ -1,2 +1,4 @@
-"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","response"
-"2020-06-28 03:45:24","123.45.67.89","udp",5683,"some.host.com","coap",12345,"AA","REGION","CITY",518210,0,"</api>,</api/v1>,</.well-known/core>"
+"timestamp","ip","protocol","port","hostname","tag","version","asn","geo","region","city","naics","sic","response","response_size","amplification"
+"2010-02-10 00:00:00",192.168.0.1,udp,5683,node01.example.com,coap,2,64512,ZZ,Region,City,0,0,"</api>,</api/v1>,</.well-known/core>",43,2.05
+"2010-02-10 00:00:01",192.168.0.2,udp,5683,node02.example.com,coap,2,64512,ZZ,Region,City,0,0,"</fw>,</efento>,</efento/c>,</efento/i>,</efento/m>,</efento/t>,</sw>,</api>,</api/v1>,</.well-known/core>",113,5.38
+"2010-02-10 00:00:02",192.168.0.3,udp,5683,node03.example.com,coap,1,64512,ZZ,Region,City,0,0,"`EsjAy************************************************************|CoAP RFC 7252                                               |************************************************************|This server is using the Eclipse Californium (Cf) CoAP framework|published under EPL+EDL: http://www.eclipse.org/californium/||(c) 2014, 2015, 2016 Institute for Pervasive Computing, ETH Zurich and others|************************************************************",454,113.50

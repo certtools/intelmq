@@ -16,12 +16,12 @@ https://dgarchive.caad.fkie.fraunhofer.de/pcres
 import json
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 __all__ = ['FraunhoferDGAParserBot']
 
 
-class FraunhoferDGAParserBot(Bot):
+class FraunhoferDGAParserBot(ParserBot):
     """Parse the Fraunhofer DGA feed"""
 
     def process(self):

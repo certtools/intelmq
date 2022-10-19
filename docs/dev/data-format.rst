@@ -156,8 +156,11 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 
 In the "other" taxonomy, several types are not in the RSIT, but this taxonomy is intentionally extensible.
 
-Meaning of source, destination and local values for each classification type and possible identifiers. The identifier is often a normalized malware name, grouping many variants.
-+Examples of the meaning of the *source* and *destination* fields for each classification type and possible identifiers are shown here. Usually the main information is in the *source* fields. The identifier is often a normalized malware name, grouping many variants.
+Meaning of source and destination identities
+--------------------------------------------
+
+Meaning of source and destination identities for each classification type and possible ``classification.identifier`` meanings and usages. The identifier is often a normalized malware name, grouping many variants or the affected network protocol.
+Examples of the meaning of the *source* and *destination* fields for each classification type and possible identifiers are shown here. Usually the main information is in the *source* fields. The identifier is often a normalized malware name, grouping many variants.
 
 =======================  ================================================  ==========================  ===========================
  Type                     Source                                            Destination                 Possible identifiers

@@ -1,0 +1,4 @@
+"timestamp","md5hash","request","type","response","family","tag","source"
+"2022-01-10 00:00:02","b575ce6dcce6502a8431db5610135c25","time.windows.com","A","40.119.6.228",,,
+"2022-01-10 00:00:08","807679198a39c80d3ca07e60fd51b581","time.windows.com","A","40.119.6.228",,,
+"2022-01-10 00:00:20","d97e973b9bf073bd3a217425259cea26","client-office365-tas.msedge.net","A","13.107.5.88",,,

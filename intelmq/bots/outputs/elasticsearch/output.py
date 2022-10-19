@@ -6,15 +6,15 @@
 """
 The ES-connection can't be closed explicitly.
 
-TODO:
-    * Support client_cert and client_key parameters, see https://github.com/certtools/intelmq/pull/1406
+TODO
+* Support client_cert and client_key parameters, see https://github.com/certtools/intelmq/pull/1406
 """
 
 from collections.abc import Mapping
 from datetime import datetime
 from json import loads
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
@@ -55,7 +55,7 @@ def get_event_date(event_dict: dict) -> datetime.date:
     return event_date
 
 
-class ElasticsearchOutputBot(Bot):
+class ElasticsearchOutputBot(OutputBot):
     """Send events to an Elasticsearch database server"""
     elastic_host: str = '127.0.0.1'  # TODO: could be ipadd
     elastic_index: str = 'intelmq'
@@ -160,7 +160,7 @@ class ElasticsearchOutputBot(Bot):
 
             # If no time available in the event and no default date is given, use the default catchall string
             event_date = event_date.strftime(ROTATE_OPTIONS.get(self.rotate_index)) if event_date else default_string
-            return "{}-{}".format(self.elastic_index, event_date)
+            return f"{self.elastic_index}-{event_date}"
         else:
             # If the bot should NOT rotate indices, just use the index name
             return self.elastic_index

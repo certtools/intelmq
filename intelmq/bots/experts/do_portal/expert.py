@@ -14,10 +14,10 @@ except ImportError:
     requests = None
 
 import intelmq.lib.utils as utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 
-class DoPortalExpertBot(Bot):
+class DoPortalExpertBot(ExpertBot):
     """Retrieve abuse contact information for the source IP address from a do-portal instance"""
     mode: str = "append"
     portal_api_key: str = None

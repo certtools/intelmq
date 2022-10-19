@@ -19,10 +19,12 @@ class JinjaExpertBot(Bot):
     """
     Modify the message using the Jinja templating engine
     Example:
-    fields:
-      output: The provider is {{ msg['feed.provider'] }}!
-      feed.url: "{{ msg['feed.url'] | upper }}"
-      extra.somejinjaoutput: file:///etc/intelmq/somejinjatemplate.j2
+        .. code-block:: yaml
+
+        fields:
+          output: The provider is {{ msg['feed.provider'] }}!
+          feed.url: "{{ msg['feed.url'] | upper }}"
+          extra.somejinjaoutput: file:///etc/intelmq/somejinjatemplate.j2
     """
 
     fields: Dict[str, Union[str, Template]] = {}
@@ -30,7 +32,7 @@ class JinjaExpertBot(Bot):
 
     def init(self):
         if not Template:
-            raise MissingDependencyError("Library 'jinja2' is required, please install it.")
+            raise MissingDependencyError("jinja2")
 
         for field, template in self.fields.items():
             if template.startswith("file:///"):

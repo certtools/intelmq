@@ -22,8 +22,7 @@ class CZNICProkiParserBot(ParserBot):
             # extract event list from received JSON
             report = report.get("data")
 
-        for line in report:
-            yield line
+        yield from report
 
     def parse_line(self, line, report):
         event = self.new_event(report)
