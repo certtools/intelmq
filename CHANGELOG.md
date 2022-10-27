@@ -217,6 +217,7 @@ CHANGELOG
   - Lift restriction on requirement jinja2 < 3 (PR#2158 by Sebastian Wagner).
 - `intelmq.bots.outputs.sql`:
   - For PostgreSQL, escape Nullbytes in text to prevent "unsupported Unicode escape sequence" issues (PR#2223 by Sebastian Wagner, fixes #2203).
+- Added `intelmq.bots.outputs.smtp_batch.output` to gathering the events and sending them by e-mails at a stroke as CSV files (PR#2253 by Edvard Rejthar)
 
 ### Documentation
 - Feeds: Add documentation for newly supported dataplane feeds, see above (PR#2102 by Mikk Margus Möll).

@@ -4050,6 +4050,73 @@ The prime motivation for creating this feature was to protect users from badness
 More information: https://dnsrpz.info
 
 
+.. _intelmq.bots.outputs.smtp_batch.output:
+
+SMTP Batch Output Bot
+
+Aggregate events by e-mail addresses in the `source.abuse_contact` field and batch send them at once as a zipped CSV file attachment in a GPG signed message.
+
+**Information**
+
+* `name:` intelmq.bots.outputs.smtp_batch.output
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Sends events collected over a period of time via SMTP in a GPG signed messages
+
+**Configuration Parameters**
+
+* `alternative_mails`: string or null. Path to CSV in the form `original@email.com,alternative@email.com`.
+   - Needed when some of the recipients ask you to forward their e-mails to another address.
+* `attachment_name`: string. Attachment file name for the outgoing messages. May contain date formatting like this `%Y-%m-%d`. Example: "events_%Y-%m-%d" will appear as "events_2022-12-01.zip".
+* `bcc`: list or null. A list of e-mails to be put in the `Bcc` field for every mail.
+* `email_from`: string. Sender's e-mail of the outgoing messages.
+* `gpg_key`: string or null. The Key or the fingerprint of a GPG key stored in ~/.gnupg keyring folder.
+* `gpg_pass`: string or null. Password for the GPG key if needed.
+* `mail_template`: string. Path to the file containing the body of the mail for the outgoing messages.
+* `ignore_older_than_days`: int or null, default 0. If 1..n skip all events with time.observation older than 1..n day; 0 disabled (allow all).
+   - If your queue gets stuck for a reason, you do not want to send old (and probably already solved) events.
+* `limit_results`: int or null. Intended as a debugging option, allows loading just first N e-mails from the queue.
+* `redis_cache_db`: int. Redis database used for event aggregation. As the databases < 10 are reserved for the IntelMQ core, recommended is a bigger number.
+* `redis_cache_host`: string
+* `redis_cache_port`: int
+* `redis_cache_ttl`: int. Recommended 1728000 for 20 days.
+* `smtp_server`: mixed. SMTP server information and credentials.
+   - See SMTP parameter of https://github.com/CZ-NIC/envelope#sending
+   - Examples: "mailer", `{"host": "mailer", "port": 587, "user": "john", "password": "123"}`, `["mailer", 587, "john", "password"]`
+* `subject`: string. Subject for the outgoing messages. May contain date formatting like this `%Y-%m-%d`. Example: "IntelMQ weekly warning (%d.%m.%Y)".
+* `testing_to`: string or null. Tester's e-mail.
+
+When the bot is run normally by IntelMQ, it just aggregates the events for later use into a custom Redis database.
+If run through CLI (by a cron or manually), it shows e-mail messages that are ready to be sent and let you send them to the tester's e-mail OR to abuse contact e-mails.
+E-mails are sent in a zipped CSV file, delimited by a comma, while keeping strings in double quotes.
+Note: The field "raw" gets base64 decoded if possible. Bytes `\n` and `\r` are replaced with "\n" and "\r" strings in order to guarantee best CSV files readability both in Microsoft Office and LibreOffice. (A multiline string may be stored in "raw" which completely confused Microsoft Excel.)
+
+Launch it like that:
+`</usr/local/bin executable> <bot-id> cli [--tester tester's email]`
+Ex:
+`intelmq.bots.outputs.smtp_batch.output  smtp_batch-output-cz --cli --tester your-email@example.com`
+
+CLI flags:
+```
+  -h, --help            show this help message and exit
+  --cli                 initiate CLI interface
+  --tester TESTING_TO   tester's e-mail
+  --ignore-older-than-days IGNORE_OLDER_THAN_DAYS
+                        1..n skip all events with time.observation older than 1..n day; 0 disabled (allow all)
+  --gpg-key GPG_KEY     fingerprint of gpg key to be used
+  --limit-results LIMIT_RESULTS
+                        Just send first N mails.
+  --send                Sends now, without dialog.
+```
+
+You can schedule the batch sending easily with a cron script, I.E. put this into `crontab -e` of the `intelmq` user:
+
+```
+# Send the e-mails every day at 6 AM
+0 6 * * *  /usr/local/bin/intelmq.bots.outputs.smtp_batch.output smtp_batch-output-cz cli --ignore-older-than-days 4 --send > /tmp/intelmq-send.log
+```
+
 .. _intelmq.bots.outputs.smtp.output:
 
 SMTP Output Bot
