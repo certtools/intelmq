@@ -18,7 +18,7 @@ INPUT = """\
 OUTPUT_1 = {
     "classification.type": "phishing",
     "source.asn": 2856,
-    "extra.asn_name": "British Telecommunications PLC",
+    "source.as_name": "British Telecommunications PLC",
     "extra.brand": "Deutsche Telekom",
     "source.geolocation.cc": "GB",
     "source.geolocation.country": "United Kingdom of Great Britain and Northern Ireland",
@@ -37,7 +37,7 @@ OUTPUT_1 = {
 OUTPUT_2 = {
     "classification.type": "phishing",
     "source.asn": 36352,
-    "extra.asn_name": "ColoCrossing",
+    "source.as_name": "ColoCrossing",
     "extra.brand": "Amazon.com Inc.",
     "source.geolocation.cc": "US",
     "source.geolocation.country": "United States of America",
@@ -57,7 +57,7 @@ OUTPUT_2 = {
 OUTPUT_3 = {
     "classification.type": "phishing",
     "source.asn": 55293,
-    "extra.asn_name": "A2 Hosting, Inc.",
+    "source.as_name": "A2 Hosting, Inc.",
     "extra.brand": "Wells Fargo & Company",
     "source.geolocation.cc": "SG",
     "source.geolocation.country": "Singapore",
