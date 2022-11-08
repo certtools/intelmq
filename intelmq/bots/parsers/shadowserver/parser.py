@@ -40,7 +40,7 @@ class ShadowserverParserBot(ParserBot):
     overwrite = False
 
     def init(self):
-        if self.feedname is not None:
+        if self.feedname is not None and self._mode is None:
             self._sparser_config = config.get_feed_by_feedname(self.feedname)
             if self._sparser_config:
                 self.logger.info('Using fixed feed name %r for parsing reports.' % self.feedname)
