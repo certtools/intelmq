@@ -84,16 +84,11 @@ EVENTS = [
     'classification.identifier': 'accessible-http',
     'classification.taxonomy': 'vulnerable',
     'classification.type': 'vulnerable-system',
-    'extra.content_length': 149,
-    'extra.content_type': 'text/html; charset=utf-8',
-    'extra.http': 'HTTP/1.1',
-    'extra.http_code': 401,
+    'extra.detail': 'repositoryformatversion = 0;filemode = false;bare = '
+                    'false;logallrefupdates = true;symlinks = false;ignorecase = '
+                    'true',
     'extra.http_date': '2010-02-10T00:00:02+00:00',
-    'extra.http_reason': 'Unauthorized',
-    'extra.server': 'TwistedWeb/16.4.0',
-    'extra.set_cookie': 'TWISTED_SESSION=cf27d6c5655f80964756b1de32917d78d320324c7ba184df8e793359fd19b1e1',
-    'extra.tag': 'basic-auth,http',
-    'extra.www_authenticate': 'Basic realm=\\\\"OpenWebif\\"\\""',
+    'extra.tag': 'git-config-file',
     'feed.name': 'Vulnerable HTTP',
     'protocol.application': 'http',
     'protocol.transport': 'tcp',
@@ -103,12 +98,11 @@ EVENTS = [
     'source.geolocation.city': 'City',
     'source.geolocation.region': 'Region',
     'source.ip': '192.168.0.3',
-    'source.port': 8080,
+    'source.port': 443,
     'source.reverse_dns': 'node03.example.com',
     'time.source': '2010-02-10T00:00:02+00:00'
 }
-          ]
-
+]
 
 class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     """

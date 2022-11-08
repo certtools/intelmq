@@ -1832,6 +1832,7 @@ scan_http_vulnerable = {
         ('extra.', 'http_date', convert_date),
         ('extra.', 'version', validate_to_none),
         ('extra.', 'build_date', validate_to_none),
+        ('extra.', 'detail', validate_to_none),
     ],
     'constant_fields': {
         'classification.identifier': 'accessible-http',
@@ -3955,6 +3956,7 @@ special = {
         ('malware.name', 'tag'),
         ('extra.', 'public_source', validate_to_none),
         ('extra.', 'status', validate_to_none),
+        ('extra.', 'detail', validate_to_none),
         ('extra.', 'method', validate_to_none),
         ('extra.', 'device_vendor', validate_to_none),
     ],
