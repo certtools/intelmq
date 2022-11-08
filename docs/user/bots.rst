@@ -2894,7 +2894,7 @@ format:
        path 'other-path' // the message is sent to the given path
    }
 
-   if classification.type == ['phishing', 'malware-distribution'] && source.fqdn =~ '.*\.(ch|li)$' {
+   if classification.type :in ['phishing', 'malware-distribution'] && source.fqdn =~ '.*\.(ch|li)$' {
      add! comment = 'domainabuse'
      keep
    } elif classification.type == 'scanner' {
