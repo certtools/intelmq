@@ -4,56 +4,87 @@
 
 # -*- coding: utf-8 -*-
 
-import json
+import dateutil.parser
 
-from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 
 
 class OpenPhishCommercialParserBot(ParserBot):
-    """Parse the OpenPhish feed"""
+    """
+    Parse the OpenPhish feed
 
-    def process(self):
-        report = self.receive_message()
+    List of source fields:
+    [
+        'asn',
+        'asn_name',
+        'brand',
+        'country_code',
+        'country_name',
+        'discover_time',
+        'emails',
+        'family_id',
+        'host',
+        'ip',
+        'isotime',
+        'page_language',
+        'phishing_kit',
+        'screenshot',
+        'sector',
+        'ssl_cert_issued_by',
+        'ssl_cert_issued_to',
+        'ssl_cert_serial',
+        'tld',
+        'url',
+    ]
 
-        raw_report = utils.base64_decode(report.get("raw"))
+    """
 
-        for row in raw_report.splitlines():
+    parse = ParserBot.parse_json_stream
+    recover_line = ParserBot.recover_line_json
 
-            row = row.strip()
-            if row == "":
-                continue
+    def parse_line(self, line, report):
 
-            json_row = json.loads(row)
-            event = self.new_event(report)
+        event = self.new_event(report)
 
-            keys_to_harmonize = {
-                'ip': 'source.ip',
-                'url': 'source.url',
-                'asn': 'source.asn',
-                'host': 'source.fqdn',
-                'isotime': 'time.source',
-                'asn_name': 'source.as_name',
-                'country_code': 'source.geolocation.cc'
-            }
+        if line.get("asn"):
+            try:
+                event.add("source.asn", int(line["asn"][2:]), raise_failure=False)  # it comes as "AS12345"
+            except ValueError:
+                pass
 
-            for source_key in json_row:
-                if source_key in keys_to_harmonize:
-                    if json_row.get(source_key, None):
-                        event_key = keys_to_harmonize[source_key]
-                        if source_key == 'asn':
-                            event.add('source.asn', int(json_row['asn'][2:]))  # It comes as "AS11111"
-                        else:
-                            event.add(event_key, json_row[source_key])
-                else:
-                    if json_row[source_key]:
-                        event['extra.%s' % source_key] = json_row[source_key]
+        if line.get("isotime"):
+            try:
+                event.add("time.source", str(dateutil.parser.parse(line.get("isotime"))), raise_failure=False)
+            except dateutil.parser.ParserError:
+                pass
 
-            event.add('raw', row)
-            event.add('classification.type', 'phishing')
+        elif line.get("discover_time"):
+            try:
+                event.add("time.source", str(dateutil.parser.parse(line.get("discover_time"))), raise_failure=False)
+            except dateutil.parser.ParserError:
+                pass
 
-            self.send_message(event)
-        self.acknowledge_message()
+        event.add("classification.type", "phishing")
+        event.add("source.as_name", line.get("asn_name"))
+        event.add("extra.brand", line.get("brand"))
+        event.add("source.geolocation.cc", line.get("country_code"), raise_failure=False)
+        event.add("source.geolocation.country", line.get("country_name"), raise_failure=False)
+        event.add("extra.emails", line.get("emails"))
+        event.add("extra.family_id", line.get("family_id"))
+        event.add("source.fqdn", line.get("host"), raise_failure=False)
+        event.add("source.ip", line.get("ip"))
+        event.add("extra.page_language", line.get("page_language"))
+        event.add("extra.phishing_kit", line.get("phishing_kit"))
+        event.add("screenshot_url", line.get("screenshot"), raise_failure=False)
+        event.add("extra.sector", line.get("sector"))
+        event.add("extra.ssl_cert_issued_by", line.get("ssl_cert_issued_by"))
+        event.add("extra.ssl_cert_issued_to", line.get("ssl_cert_issued_to"))
+        event.add("extra.ssl_cert_serial", line.get("ssl_cert_serial"))
+        event.add("extra.tld", line.get("tld"))
+        event.add("source.url", line.get("url"))
+        event.add("raw", self.recover_line(line))
+
+        yield event
 
 
 BOT = OpenPhishCommercialParserBot
