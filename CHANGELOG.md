@@ -88,6 +88,9 @@ CHANGELOG
 - `intelmq.bots.parsers.cymru.parser_cap_program`: The parser mapped the hostname into `source.fqdn` which is not allowed by the IntelMQ Data Format. Added a check (PR#2215 by Sebastian Waldbauer, fixes #2169)
 - `intelmq.bots.parsers.generic.parser_csv`: Use RewindableFileHandle to use the original current line for line recovery (PR#2192 by Sebastian Wagner).
 - `intelmq.bots.parsers.autoshun.parser`: Removed, as the feed is discontinued (PR#2214 by Sebastian Waldbauer, fixes #2162).
+- `intelmq.bots.parsers.openphish.parser_commercial`: Refactored complete code (PR#2160 by Filip Pokorný).
+  - Fixes wrong mapping of `host` field to `source.fqdn` when the content was in IP address.
+  - Adds newly added fields in the feed.
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).
