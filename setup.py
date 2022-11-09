@@ -4,9 +4,7 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # -*- coding: utf-8 -*-
-import json
 import os
-import sys
 from pathlib import Path
 
 from setuptools import find_packages, setup
@@ -20,6 +18,11 @@ REQUIRES = [
     'redis>=2.10',
     'requests>=2.2.0',
     'ruamel.yaml',
+]
+
+TESTS_REQUIRES = [
+    'Cerberus!=1.3.0',
+    'requests_mock',
 ]
 
 exec(open(os.path.join(os.path.dirname(__file__),
@@ -43,16 +46,10 @@ setup(
     maintainer_email='intelmq-dev@lists.cert.at',
     python_requires='>=3.6',
     install_requires=REQUIRES,
-    tests_require=[
-        'Cerberus!=1.3',
-        'requests_mock',
-    ],
+    tests_require=TESTS_REQUIRES,
     test_suite='intelmq.tests',
     extras_require={
-        'development': [
-            'Cerberus',
-            'requests_mock',
-        ],
+        'development': TESTS_REQUIRES,
     },
     packages=find_packages(),
     include_package_data=True,
