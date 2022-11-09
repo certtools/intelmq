@@ -112,8 +112,10 @@ CHANGELOG
 - Feeds: Add documentation for newly supported dataplane feeds, see above (PR#2102 by Mikk Margus Möll).
 - Installation: Restructured the whole document to make it clearer and straight-forward (PR#2113 by Sebastian Wagner).
 - Add workaround for https://github.com/sphinx-doc/sphinx/issues/10701 (PR#2225 by Sebastian Wagner, kudos @yarikoptic, fixes #2224).
+- Fix wrong operator for list-contains-value operation in sieve expert documentation (PR#2256 by Filip Pokorný).
 
 ### Packaging
+- Remove deleted `intelmq.bots.experts.sieve.validator` from executables in `setup.py` (PR#2256 by Filip Pokorný).
 
 ### Tests
 - Add GitHub Action to run regexploit on all Python, JSON and YAML files (PR#2059 by Sebastian Wagner).
