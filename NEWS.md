@@ -42,7 +42,7 @@ The parameter `timeout` has been merged into `redis_cache_ttl`.
 
 ### Postgres databases
 
-The develop branch previously contained a set of unneccessary statements to update the classification.identifer. If these changes were made please revert back to the previous state.
+The develop branch previously contained a set of unnecessary statements to update the classification.identifier. If these changes were made please revert back to the previous state.
 
 
 3.0.2 Maintenance release (2021-09-10)
