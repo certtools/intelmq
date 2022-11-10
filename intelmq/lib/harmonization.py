@@ -702,7 +702,7 @@ class FQDN(String):
     @staticmethod
     def to_ip(value: str) -> Optional[str]:
         try:
-            value = str(dns.resolver.query(value, 'A')[0])
+            value = str(utils.resolve_dns(value, 'A')[0])
         except dns.resolver.NXDOMAIN:  # domain not found
             value = None
         return value
