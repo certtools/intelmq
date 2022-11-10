@@ -93,12 +93,28 @@ Using virtual environment
    pip install -e .
 
    # It creates an empty folder and assign group and owner for the current user
-   sudo install -g ${whoami} -o ${whoami} -d /opt/intelmq
+   sudo install -g `whoami` -o `whoami` -d /opt/intelmq
 
    intelmqsetup --skip-ownership
 
 
-**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any shipped configuration file, you need to apply the changes in your repository `/opt/dev_intelmq/intelmq/etc/`.
+.. note::
+
+   Please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any shipped configuration file, you need to apply the changes in your repository `/opt/dev_intelmq/intelmq/etc/`.
+
+
+Additional services
+===================
+
+Some features require additional services, like message queue or database. The commonly used services are gained for development purposes in the Docker Compose file in `contrib/development-tools/docker-compose-common-services.yaml` in the repository.
+You can use them to run services on your machine in a docker containers, or decide to configure them in an another way. To run them using Docker Compose, use following command from the main repository directory:
+
+.. code-block:: bash
+
+   # For older Docker versions, you may need to use `docker-compose` command
+   docker compose -f contrib/development-tools/docker-compose-common-services.yaml up -d
+
+This will start in the background containers with Redis, RabbitMQ, PostgreSQL and MongoDB.
 
 
 How to develop
@@ -157,8 +173,8 @@ Now you can test run your new bot following this procedure:
 Testing
 =======
 
-Additional optional requirements
---------------------------------
+Additional test requirements
+----------------------------
 
 Libraries required for tests are listed in the `setup.py` file. You can install them with the pip:
 
