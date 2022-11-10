@@ -57,10 +57,15 @@ Developers can create a fork repository of IntelMQ in order to commit the new co
 The following instructions will use `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code. However, configuration files still required to be moved to `/opt/intelmq` as the instructions show.
 
 In this guide we use `/opt/dev_intelmq` as local repository copy. You can also use other directories as long as they are readable by other unprivileged users (e.g. home directories on Fedora can't be read by other users by default).
-`/opt/intelmq` is used as root location for IntelMQ installations, this is IntelMQ's default for this installation method. This directory is used for configurations (`/opt/intelmq/etc`), local states (`/opt/intelmq/var/lib`) and logs (`/opt/intelmq/var/log`).
 
 The traditional way to work with `intelmq` is to install it globally and have a separated user for running it. If you wish to separate your machine Python's libraries, you could alternatively use a virtual environment
 and the local user to run the `intelmq`. Please use the preferred way from instructions below.
+
+.. note::
+
+   This guide assumes the default path `/opt/intelmq` as root location for IntelMQ installation. This directory is used for configurations (`/opt/intelmq/etc`), local states (`/opt/intelmq/var/lib`) and logs (`/opt/intelmq/var/log`).
+   If you want to change it, please set the `INTELMQ_ROOT_DIR` environment variable with a desired location and eventually adjust commands in examples below. Remember to keep the variable set for every run of IntelMQ commands.
+
 
 Using globally installed IntelMQ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
