@@ -13,6 +13,7 @@ import dns.reversename
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.harmonization import IPAddress
 from intelmq.lib.mixins import CacheMixin
+from intelmq.lib.utils import resolve_dns
 
 MINIMUM_BGP_PREFIX_IPV4 = 24
 MINIMUM_BGP_PREFIX_IPV6 = 128
@@ -67,7 +68,7 @@ class ReverseDnsExpertBot(ExpertBot, CacheMixin):
             else:
                 rev_name = dns.reversename.from_address(ip)
                 try:
-                    results = dns.resolver.query(rev_name, "PTR")
+                    results = resolve_dns(rev_name, "PTR")
                     expiration = results.expiration
                     for result in results:
                         # use first valid result
