@@ -22,6 +22,11 @@ now = datetime.now()  # for timestamp
 class RpzFileOutputBot(OutputBot):
     _file = None
     format_filename: bool = False
+    hierarchical_output: bool = False
+    keep_raw_field: bool = False
+    message_jsondict_as_string: bool = False
+    message_with_type: bool = False
+    single_key: bool = False
     _is_multithreadable = False
 
     encoding_errors_mode = 'strict'
@@ -33,11 +38,13 @@ class RpzFileOutputBot(OutputBot):
     hostmaster_rpz_domain: str = ''
     rpz_email: str = ''
     ttl: int = 3600
+    generate_time: str = now.strftime("%Y-%m-%d %H:%M:%S")
     ncachttl: int = 60
     serial: str = now.strftime("%y%m%d%H%M")
     refresh: int = 60
     retry: int = 60
     expire: int = 432000
+    dns_record_type: str = 'CNAME'
     test_domain: str = ''
 
     _rpz_header = ""
@@ -48,6 +55,7 @@ class RpzFileOutputBot(OutputBot):
         self.set_rpz_header()
 
         self.logger.debug("Opening %r file.", self.file)
+        self.format_filename = getattr(self, 'format_filename', False)
         self.errors = getattr(self, 'encoding_errors_mode', 'strict')
         if not self.format_filename:
             self.open_file(self.file)
@@ -67,7 +75,7 @@ class RpzFileOutputBot(OutputBot):
 ;\n"""
 
         if self.test_domain:
-            self._rpz_header = self._rpz_header + self.test_domain + " CNAME " + self.cname + ".\n"  # for test
+            self._rpz_header = self._rpz_header + self.test_domain + " " + self.dns_record_type + " " + self.cname + "\n"  # for test
 
     def open_file(self, filename: str = None):
         if self._file is not None:
@@ -89,7 +97,7 @@ class RpzFileOutputBot(OutputBot):
 
     def add_rpz_header(self):
         self._file.seek(0)
-        if not (len(self._file.read())):
+        if self._file.read() != self._rpz_header and not os.stat(self._file.name).st_size:
             self._file.write(self._rpz_header)
             self._file.flush()
 
@@ -100,18 +108,14 @@ class RpzFileOutputBot(OutputBot):
             ev.update(event)
             if 'time.observation' in ev:
                 try:
-                    ev['time.observation'] = datetime.strptime(ev['time.observation'],
-                                                               '%Y-%m-%dT%H:%M:%S+00:00')
+                    ev['time.observation'] = datetime.strptime(ev['time.observation'], '%Y-%m-%dT%H:%M:%S+00:00')
                 except ValueError:
-                    ev['time.observation'] = datetime.strptime(ev['time.observation'],
-                                                               '%Y-%m-%dT%H:%M:%S.%f+00:00')
+                    ev['time.observation'] = datetime.strptime(ev['time.observation'], '%Y-%m-%dT%H:%M:%S.%f+00:00')
             if 'time.source' in ev:
                 try:
-                    ev['time.source'] = datetime.strptime(ev['time.source'],
-                                                          '%Y-%m-%dT%H:%M:%S+00:00')
+                    ev['time.source'] = datetime.strptime(ev['time.source'], '%Y-%m-%dT%H:%M:%S+00:00')
                 except ValueError:
-                    ev['time.source'] = datetime.strptime(ev['time.source'],
-                                                          '%Y-%m-%dT%H:%M:%S.%f+00:00')
+                    ev['time.source'] = datetime.strptime(ev['time.source'], '%Y-%m-%dT%H:%M:%S.%f+00:00')
             filename = self.file.format(event=ev)
             if not self.file or filename != self._file.name:
                 self.open_file(filename)
@@ -121,8 +125,8 @@ class RpzFileOutputBot(OutputBot):
                 domain_url = event['source.fqdn']
                 if domain_url.startswith('www.'):
                     domain_url = domain_url[len('www.'):]
-                event_data = domain_url + ' CNAME ' + self.cname + '.\n'
-                event_data = event_data + '*.' + domain_url + ' CNAME ' + self.cname + '.\n'
+                event_data = domain_url + ' ' + self.dns_record_type + ' ' + self.cname + '\n'
+                event_data = event_data + 'www.' + domain_url + ' ' + self.dns_record_type + ' ' + self.cname + '\n'
 
                 try:
                     self._file.write(event_data)
