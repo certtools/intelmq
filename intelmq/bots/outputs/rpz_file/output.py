@@ -97,7 +97,7 @@ class RpzFileOutputBot(OutputBot):
 
     def add_rpz_header(self):
         self._file.seek(0)
-        if self._file.read() != self._rpz_header and not os.stat(self._file.name).st_size:
+        if not (len(self._file.read())):
             self._file.write(self._rpz_header)
             self._file.flush()
 
