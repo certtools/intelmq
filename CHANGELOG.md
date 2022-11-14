@@ -35,6 +35,8 @@ CHANGELOG
     - Previously the dumped message was always the last message of a report if the report contained multiple lines leading to data-loss.
 - `intelmq.lib.pipeline`:
   - Changed `BRPOPLPUSH` to `BLMOVE`, because `BRPOPLPUSH` has been marked as deprecated by redis in favor of `BLMOVE` (PR#2149 by Sebastian Waldbauer, fixes #1827)
+- `intelmq.lib.utils`:
+  - Added wrapper `resolve_dns` for querying DNS, with the support for recommended methods from `dnspython` package in versions 1 and 2.
 
 ### Development
 
