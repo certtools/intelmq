@@ -110,6 +110,7 @@ CHANGELOG
   - Lift restriction on requirement jinja2 < 3 (PR#2158 by Sebastian Wagner).
 - `intelmq.bots.outputs.sql`:
   - For PostgreSQL, escape Nullbytes in text to prevent "unsupported Unicode escape sequence" issues (PR#2223 by Sebastian Wagner, fixes #2203).
+  - For Python 3.6, restricted the required version of `pymssql` to be lower than 2.2.6 due to support dropped by the package (fixes #2262).  
 
 ### Documentation
 - Feeds: Add documentation for newly supported dataplane feeds, see above (PR#2102 by Mikk Margus Möll).
