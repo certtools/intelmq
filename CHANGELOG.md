@@ -50,6 +50,7 @@ CHANGELOG
 - `intelmq.bots.collectors.blueliv`: Fix Blueliv collector requirements (PR#2161 by Gethvi).
 - `intelmq.bots.collectors.github_api._collector_github_api`: Added personal access token support (PR#2145 by Sebastian Waldbauer, fixes #1549).
 - `intelmq.bots.collectors.file.collector_file`: Added file lock support, no more race conditions (PR#2147 by Sebastian Waldbauer, fixes #2128)
+- `intelmq.bots.collectors.shadowserver.collector_reports_api.py`: Added file_format option to download reports in CSV format for better performance (PR#2246 by elsif2)
 
 #### Parsers
 - `intelmq.bots.parsers.alienvault.parser_otx`: Save CVE data in `extra.cve` instead of `extra.CVE` due to the field name restriction on lower-case characters  (PR#2059 by Sebastian Wagner).
