@@ -802,6 +802,7 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
     found_abusech_removed_parsers = []
     found_abusech_feodotracker_csv = []
     found_abusech_feodotracker_browse = []
+    found_viriback = []
     messages = []
     for bot_id, bot in configuration.items():
         if bot_id == 'global':
@@ -818,6 +819,8 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
                 found_abusech_feodotracker_browse.append(bot_id)
             if http_url.startswith("https://feodotracker.abuse.ch/downloads/ipblocklist.csv"):
                 found_abusech_feodotracker_csv.append(bot_id)
+            if http_url == "http://tracker.viriback.com/":
+                found_viriback.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.autoshun.parser":
             found_autoshun.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.dshield.parser_domain":
@@ -854,6 +857,11 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
     if found_abusech_removed_parsers:
         messages.append('A discontinued bot module has been found'
                         'as bot %s.' % ', '.join(sorted(found_abusech_removed_parsers)))
+
+    if found_viriback:
+        messages.append('The feed "Viriback Unsafe Site" has been replaced. Please see the feed'
+                        ' "Viriback C2 Tracker" and'
+                        ' adjust your configuration. Affected bots: %s' % ', '.join(found_viriback))
 
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization

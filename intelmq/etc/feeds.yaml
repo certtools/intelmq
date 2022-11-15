@@ -5,26 +5,28 @@
 ---
 providers:
   ViriBack:
-    Unsafe sites:
-      description: Latest detected unsafe sites.
-      additional_information: You need to install the lxml library in order to parse this feed.
+    C2 Tracker:
+      description: Latest detected C2 servers.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: http://tracker.viriback.com/
+            http_url: https://tracker.viriback.com/dump.php
             rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
         parser:
-          module: intelmq.bots.parsers.html_table.parser
+          module: intelmq.bots.parsers.generic.csv_parser
           parameters:
-            columns: ["malware.name", "source.url", "source.ip", "time.source"]
+            skip_header: true
             defaults_fields:
               classification.type: malware-distribution
-            time_format: from_format_midnight|%d-%m-%Y
-            html_parser: lxml
-      revision: 2018-06-27
+            columns:
+              - malware.name
+              - source.url
+              - source.ip
+              - time.source
+      revision: 2022-11-15
       documentation: https://viriback.com/
       public: true
   WebInspektor:
