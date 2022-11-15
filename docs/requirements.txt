@@ -11,3 +11,4 @@ pytz>=2012c
 redis>=2.10
 requests>=2.2.0
 ruamel.yaml
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
