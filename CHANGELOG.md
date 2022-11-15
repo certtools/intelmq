@@ -171,6 +171,7 @@ CHANGELOG
 - Added documentation on `default_fields` parameter (PR#2293 by Filip Pokorný).
 - Updated documentation on `skip_header` parameter (PR#2313 by Filip Pokorný).
 - Viriback Unsafe Sites feed replaced with Viriback C2 Tracker. (PR#2266 by Filip Pokorný)
+- Netlab 360 Mirai Scanner feed removed as it is discontinued. (PR#2266 by Filip Pokorný)
 
 ### Packaging
 - Remove deleted `intelmq.bots.experts.sieve.validator` from executables in `setup.py` (PR#2256 by Filip Pokorný).

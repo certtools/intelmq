@@ -171,24 +171,6 @@ providers:
       documentation: https://www.openphish.com/phishing_feeds.html
       public: false
   Netlab 360:
-    Mirai Scanner:
-      description: 'This feed provides IP addresses which actively scan for vulnerable
-        IoT devices and install Mirai Botnet.'
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://data.netlab.360.com/feeds/mirai-scanner/scanner.list
-            rate_limit: 86400
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.netlab_360.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://data.netlab.360.com/mirai-scanner/
-      public: true
     Magnitude EK:
       description: 'This feed lists FQDN and possibly the URL used by Magnitude Exploit
         Kit. Information also includes the IP address used for the domain and last
