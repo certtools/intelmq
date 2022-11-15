@@ -301,6 +301,22 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(v.validate(bots_list),
                         msg='Invalid BOTS list:\n%s' % pprint.pformat(v.errors))
 
+    def test_list_all_bots_ignores_bots_with_syntax_error(self):
+        original_import = utils.importlib.import_module
+        effects = [SyntaxError, original_import, SyntaxError]
+
+        def _mock_importing(module):
+            if len(effects) == 1:
+                return effects[0](module)
+            return effects.pop()(module)
+
+        with unittest.mock.patch.object(utils.importlib, "import_module") as import_mock:
+            import_mock.side_effect = _mock_importing
+            bots = utils.list_all_bots()
+
+        bot_count = sum([len(val) for val in bots.values()])
+        self.assertEqual(1, bot_count)
+
     def test_get_bots_settings(self):
         with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
             runtime = utils.get_bots_settings()

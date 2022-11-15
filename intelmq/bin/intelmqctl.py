@@ -934,6 +934,10 @@ Get some debugging output on the settings and the environment (to be extended):
                     check_logger.error('Incomplete installation: Bot %r not importable: %r.', bot_id, exc)
                     retval = 1
                     continue
+                except SyntaxError as exc:
+                    check_logger.error('SyntaxError in bot %r: %r', bot_id, exc)
+                    retval = 1
+                    continue
                 bot = getattr(bot_module, 'BOT')
                 bot_parameters = utils.get_global_settings()
                 bot_parameters.update(bot_config.get('parameters', {}))  # the parameters field may not exist
