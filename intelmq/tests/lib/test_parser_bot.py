@@ -4,7 +4,6 @@
 
 # -*- coding: utf-8 -*-
 import base64
-import datetime
 import unittest
 import unittest.mock as mock
 import warnings
@@ -145,6 +144,26 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         """ Test DummyParserBot """
         self.run_bot(allowed_error_count=2)
         self.assertMessageEqual(0, EXAMPLE_EVENT)
+
+    def test_default_fields_parameter(self):
+        self.input_message = EXAMPLE_REPORT
+        output_message = EXAMPLE_EVENT.copy()
+        output_message["protocol.application"] = "http"
+        self.run_bot(allowed_error_count=2, parameters={"default_fields": {"protocol.application": "http"}})
+        self.assertMessageEqual(0, output_message)
+
+    def test_bad_default_fields_parameter(self):
+        self.input_message = EXAMPLE_SHORT
+        self.run_bot(allowed_error_count=4, allowed_warning_count=1,
+                     parameters={"error_dump_message": False, "default_fields": {"invalid_key": 100000}})
+        self.assertAnyLoglineEqual(message="Invalid key 'invalid_key' in default_fields parameter.", levelname="ERROR")
+
+    def test_bad_default_fields_parameter_2(self):
+        self.input_message = EXAMPLE_SHORT
+        self.run_bot(allowed_error_count=4, allowed_warning_count=1,
+                     parameters={"error_dump_message": False, "default_fields": {"source.port": 100000}})
+        self.assertAnyLoglineEqual(message="Invalid value of key 'source.port' in default_fields parameter.",
+                                   levelname="ERROR")
 
     def test_missing_raw(self):
         """ Test DummyParserBot with missing raw. """

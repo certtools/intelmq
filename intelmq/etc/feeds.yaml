@@ -20,7 +20,8 @@ providers:
           module: intelmq.bots.parsers.html_table.parser
           parameters:
             columns: ["malware.name", "source.url", "source.ip", "time.source"]
-            type: malware-distribution
+            defaults_fields:
+              classification.type: malware-distribution
             time_format: from_format_midnight|%d-%m-%Y
             html_parser: lxml
       revision: 2018-06-27
@@ -775,7 +776,8 @@ providers:
         parser:
           module: intelmq.bots.parsers.generic.parser_csv
           parameters:
-            type: "{depends on a collection}"
+            defaults_fields:
+              classification.type: "{depends on a collection}"
             delimiter: 'false'
             columns: "{depends on a collection}"
       revision: 2018-01-20
@@ -1173,7 +1175,8 @@ providers:
               - destination.port
               - destination.fqdn
               - protocol.transport
-            type: infected-system
+            defaults_fields:
+              classification.type: infected-system
       revision: 2020-08-20
       documentation:
       public: false
@@ -1407,7 +1410,8 @@ providers:
             compose_fields: {"source.url": "http://{0}{1}"}
             skip_header: true
             delimiter: ","
-            type: malware-distribution
+            defaults_fields:
+              classification.type: malware-distribution
       revision: 2020-07-08
       documentation: http://security-research.dyndns.org/pub/malware-feeds/
       public: true
@@ -1737,7 +1741,8 @@ providers:
             columns: ["time.source", "source.url", "source.ip", "malware.name", "__IGNORE__"]
             skip_table_head: true
             default_url_protocol: http://
-            type: c2-server
+            defaults_fields:
+              classification.type: c2-server
       revision: 2019-03-19
       documentation: https://cybercrime-tracker.net/index.php
       public: true
@@ -1759,7 +1764,8 @@ providers:
             columns: ["source.ip|source.url", "time.source"]
             skip_table_head: true
             default_url_protocol: http://
-            type: malware-distribution
+            defaults_fields:
+              classification.type: malware-distribution
       revision: 2019-04-02
       documentation: https://precisionsec.com/threat-intelligence-feeds/agent-tesla/
       public: true
@@ -1946,7 +1952,8 @@ providers:
         parser:
           module: intelmq.bots.parsers.generic.parser_csv
           parameters:
-            type: c2-server
+            defaults_fields:
+              classification.type: c2-server
             delimiter: ";"
             skip_header: True
             columns:
