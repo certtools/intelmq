@@ -1924,7 +1924,7 @@ providers:
     Malware Panels Tracker:
       description: "Benkow Panels tracker is a list of fresh panel from various malware. The feed is available on the webpage: http://benkow.cc/passwords.php"
       public: true
-      revision: 2021-06-21
+      revision: 2022-11-16
       additional_information:
       bots:
         collector:
@@ -1943,8 +1943,8 @@ providers:
             columns:
               - __IGNORE__
               - malware.name
-              - destination.url
-              - destination.fqdn|destination.ip
+              - source.url
+              - source.fqdn|source.ip
               - time.source
             columns_required:
               - false

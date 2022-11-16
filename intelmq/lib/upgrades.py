@@ -804,6 +804,7 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
     found_abusech_feodotracker_browse = []
     found_viriback = []
     found_netlab_mirai_scanner = []
+    found_benkow_panels = []
     messages = []
     for bot_id, bot in configuration.items():
         if bot_id == 'global':
@@ -824,6 +825,8 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
                 found_viriback.append(bot_id)
             if http_url.startswith("http://data.netlab.360.com/feeds/mirai-scanner/scanner.list"):
                 found_netlab_mirai_scanner.append(bot_id)
+            if "benkow.cc/export.php" in http_url:  # both HTTP and HTTPS
+                found_benkow_panels.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.autoshun.parser":
             found_autoshun.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.dshield.parser_domain":
@@ -869,6 +872,12 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
     if found_netlab_mirai_scanner:
         messages.append('A discontinued feed "Netlab Mirai Scanner" has been found '
                         'as bot %s.' % ', '.join(sorted(found_netlab_mirai_scanner)))
+
+    if found_benkow_panels:
+        messages.append('The feed "Benkow Malware Panels Tracker" has been changed. Please see the feed\'s'
+                        ' documentation and adjust your configuration.'
+                        ' Affected bots: %s' % ', '.join(found_benkow_panels))
+
 
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
