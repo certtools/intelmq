@@ -91,6 +91,9 @@ CHANGELOG
 - `intelmq.bots.parsers.openphish.parser_commercial`: Refactored complete code (PR#2160 by Filip Pokorný).
   - Fixes wrong mapping of `host` field to `source.fqdn` when the content was in IP address.
   - Adds newly added fields in the feed.
+- `intelmq.bots.parsers.phishtank.parser`: Refactored code (PR#2270 by Filip Pokorný)
+  - Changes feed URL to JSON format (contains more information). The URL needs to by manually updated in the configuration!
+  - Adds fields from the JSON feed.
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).

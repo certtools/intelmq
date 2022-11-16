@@ -923,19 +923,20 @@ providers:
     Online:
       description: PhishTank is a collaborative clearing house for data and information
         about phishing on the Internet.
-      additional_information:
+      additional_information: Updated hourly as per the documentation. Download is possible without API key, but limited to few downloads per day.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://data.phishtank.com/data/{{ your API key }}/online-valid.csv
-            rate_limit: 28800
+            http_url: https://data.phishtank.com/data/{{ your API key }}/online-valid.json.gz
+            extract_files: true
+            rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.phishtank.parser
           parameters:
-      revision: 2018-01-20
+      revision: 2022-11-21
       documentation: https://www.phishtank.com/developer_info.php
       public: false
   CINS Army:
