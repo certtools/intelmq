@@ -716,6 +716,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 ### Tools
 - `intelmqdump`:
     - Check if given queue is configured upon recovery (#1433, PR#1587 by Mladen Markovic).
+    - Respected global and per-bot custom settings of `logging_path` (fix #1605).
 - `intelmqctl`:
   - `intelmq list queues`: `--sum`, `--count`, `-s` flag for showing total count of messages (#1408, PR#1581 by Mladen Markovic).
   - `intelmq check`: Added a possibility to ignore queues from the orphaned queues check (by Sebastian Wagner).
@@ -737,7 +738,6 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
 - Corrupt dump files when interrupted during writing (#870).
 - CSV line recovery forces Windows line endings (#1597).
-- intelmqdump: Honor logging_path variable (#1605).
 - Timeout error in mail URL fetcher (#1621).
 - AMQP pipeline: get_queues needs to check vhost of response (#1746).
 
