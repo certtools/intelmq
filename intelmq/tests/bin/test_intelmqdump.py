@@ -102,6 +102,7 @@ class TestIntelMQDump(unittest.TestCase):
 
     @mock.patch.object(intelmqdump, "input", return_value='q')
     def test_list_dumps_for_all_bots_from_custom_locations(self, _):
+        self.global_config = {"logging_path": self.tmp_log_dir.name}
         self._prepare_empty_dump('bot-1/test-1')
         self._prepare_empty_dump('bot-2/test-2')
 
@@ -140,6 +141,7 @@ class TestIntelMQDump(unittest.TestCase):
 
     @mock.patch.object(intelmqdump, "input")
     def test_list_and_select_dump_from_custom_location(self, input_mock):
+        self.global_config = {"logging_path": self.tmp_log_dir.name}
         self._prepare_empty_dump('/bot-1/test-1')
 
         self.runtime_config = {
@@ -191,8 +193,9 @@ class TestIntelMQDump(unittest.TestCase):
 
     @mock.patch.object(intelmqdump, "input", return_value='q')
     def test_get_dump_for_one_bot(self, _):
-        self._prepare_empty_dump("bot-1")
-        self.bot_configs = {"bot-1": {"parameters": {"logging_path": self.tmp_log_dir.name}}}
+        self._prepare_empty_dump("bot/bot-1")
+        self.global_config = {"logging_path": self.tmp_log_dir.name}
+        self.bot_configs = {"bot-1": {"parameters": {"logging_path": f"{self.tmp_log_dir.name}/bot"}}}
 
         output = self._run_main(["bot-1"])
         self.assertIn("Processing bot-1: empty file", output[0])
