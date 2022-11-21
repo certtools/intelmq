@@ -798,6 +798,7 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
     """
     found_autoshun = []
     found_malc0de = []
+    found_dshield_domain = []
     messages = []
     for bot_id, bot in configuration.items():
         if bot_id == 'global':
@@ -812,12 +813,17 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
                 found_autoshun.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.autoshun.parser":
             found_autoshun.append(bot_id)
+        if bot["module"] == "intelmq.bots.parsers.dshield.parser_domain":
+            found_dshield_domain.append(bot_id)
     if found_malc0de:
         messages.append('A discontinued feed "Malc0de" has been found '
                         'as bot %s.' % ', '.join(sorted(found_malc0de)))
     if found_autoshun:
         messages.append('A discontinued feed "Autoshun" has been found '
                         'as bot %s.' % ', '.join(sorted(found_autoshun)))
+    if found_dshield_domain:
+        messages.append('A discontinued feed "DShield Suspicious Domain" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_dshield_domain)))
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
 
