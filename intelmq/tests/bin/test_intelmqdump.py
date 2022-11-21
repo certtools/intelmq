@@ -58,6 +58,11 @@ class TestIntelMQDump(unittest.TestCase):
             get_bots_settings=mock.Mock(side_effect=self._mocked_bots_config))
         self.config_patcher.start()
 
+        self.ctl_config_patcher = mock.patch.multiple(
+            intelmqdump.intelmqctl.utils,
+            load_configuration=mock.Mock(side_effect=self._mocked_runtime_config))
+        self.ctl_config_patcher.start()
+
         # Coloring output makes asserts unnecessary complicated
         termstyle.disable()
 
@@ -76,6 +81,7 @@ class TestIntelMQDump(unittest.TestCase):
         Path(path).touch()
 
     def tearDown(self) -> None:
+        self.ctl_config_patcher.stop()
         self.config_patcher.stop()
         self.tmp_log_dir.cleanup()
         termstyle.auto()
