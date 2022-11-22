@@ -119,7 +119,7 @@ CentOS 7 / RHEL 7:
 .. code-block:: bash
 
    yum install epel-release
-   yum install python36 python36-dns python36-pytz python36-requests python3-setuptools redis bash-completion jq
+   yum install python36 python36-dns python36-requests python3-setuptools redis bash-completion jq
    yum install gcc gcc-c++ python36-devel
    # optional dependencies
    yum install python3-psycopg2
@@ -129,7 +129,7 @@ CentOS 8:
 .. code-block:: bash
 
     dnf install epel-release
-    dnf install python3-dateutil python3-dns python3-pip python3-psutil python3-pytz python3-redis python3-requests redis bash-completion jq
+    dnf install python3-dateutil python3-dns python3-pip python3-psutil python3-redis python3-requests redis bash-completion jq
     # optional dependencies
     dnf install python3-psycopg2 python3-pymongo
 
@@ -137,7 +137,7 @@ openSUSE:
 
 .. code-block:: bash
 
-   zypper install python3-dateutil python3-dnspython python3-psutil python3-pytz python3-redis python3-requests python3-python-termstyle redis bash-completion jq
+   zypper install python3-dateutil python3-dnspython python3-psutil python3-redis python3-requests python3-python-termstyle redis bash-completion jq
    # optional dependencies
    zypper in python3-psycopg2 python3-pymongo
 

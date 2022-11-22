@@ -34,9 +34,8 @@ import gzip
 import io
 import re
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
-import pytz
 from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
@@ -68,7 +67,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot, HttpMixin, CacheMixin):
         over.
         """
         if isinstance(self.time_match, datetime):  # absolute
-            now = datetime.now(tz=pytz.timezone('UTC'))
+            now = datetime.now(tz=timezone.utc)
             if now - timedelta(seconds=self.redis_cache_ttl) > self.time_match:
                 raise ValueError("The cache's TTL must be higher than 'not_older_than', "
                                  "otherwise the bot is processing the same data over and over again.")
@@ -84,7 +83,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot, HttpMixin, CacheMixin):
             try:
                 self.time_match = timedelta(minutes=parse_relative(self.not_older_than))
             except ValueError:
-                self.time_match = parser.parse(self.not_older_than).astimezone(pytz.utc)
+                self.time_match = parser.parse(self.not_older_than).astimezone(timezone.utc)
                 self.logger.info("Filtering files absolute %r.", self.time_match)
                 self.check_ttl_time()
             else:
@@ -113,7 +112,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot, HttpMixin, CacheMixin):
                 self.logger.debug('File %r does not match absolute time filter.', file['Name'])
                 continue
             else:
-                now = datetime.now(tz=pytz.timezone('UTC'))
+                now = datetime.now(tz=timezone.utc)
                 if isinstance(self.time_match, timedelta) and filetime < (now - self.time_match):
                     self.logger.debug('File %r does not match relative time filter.', file['Name'])
                     continue

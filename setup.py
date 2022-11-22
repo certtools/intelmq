@@ -16,7 +16,6 @@ REQUIRES = [
     'psutil>=1.2.1',
     'python-dateutil>=2.5',
     'python-termstyle>=0.1.10',
-    'pytz>=2012c',
     'redis>=2.10',
     'requests>=2.2.0',
     'ruamel.yaml',
