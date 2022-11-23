@@ -37,6 +37,7 @@ CHANGELOG
   - Changed `BRPOPLPUSH` to `BLMOVE`, because `BRPOPLPUSH` has been marked as deprecated by redis in favor of `BLMOVE` (PR#2149 by Sebastian Waldbauer, fixes #1827)
 
 ### Development
+- Removed Python 3.6 from CI.
 
 ### Data Format
 
