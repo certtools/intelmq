@@ -35,7 +35,8 @@ import textwrap
 import traceback
 import zipfile
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, Optional, Sequence, Union
+from typing import (Any, Callable, Dict, Generator, Iterator, Optional,
+                    Sequence, Union)
 
 import dateutil.parser
 import dns.resolver
@@ -619,19 +620,21 @@ def unzip(file: bytes, extract_files: Union[bool, list], logger=None,
 class RewindableFileHandle:
     """
     Can be used for easy retrieval of last input line to populate raw field
-    during CSV parsing.
+    during CSV parsing and handling filtering.
     """
 
-    def __init__(self, f):
+    def __init__(self, f, condition: Optional[Callable] = lambda _: True):
         self.f = f
         self.current_line: Optional[str] = None
         self.first_line: Optional[str] = None
+
+        self._iterator = filter(condition, self.f)
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        self.current_line = next(self.f)
+        self.current_line = next(self._iterator)
         if self.first_line is None:
             self.first_line = self.current_line
         return self.current_line

@@ -65,7 +65,7 @@ EXAMPLE_EVE_1 = {"feed.url": "http://www.example.com/",
                  "__type": "Event",
                  "classification.type": "malware-distribution",
                  "feed.name": "Example",
-                 'raw': 'c291cmNlLmlwLGZvb2Jhcg0KMTkyLjAuMi4zLGJsbGFh'
+                 'raw': 'c291cmNlLmlwLGZvb2JhcgoxOTIuMC4yLjMsYmxsYWE='
                  }
 
 EXAMPLE_SHORT = EXAMPLE_REPORT.copy()
