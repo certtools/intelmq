@@ -958,7 +958,7 @@ class ParserBot(Bot):
     def _get_io_and_save_line_ending(self, raw: str) -> io.StringIO:
         """Prepare StringIO and save the original line ending
 
-        The line ending is saved in self._line_ending. The default value is \\r\\n, 
+        The line ending is saved in self._line_ending. The default value is \\r\\n,
         the same as default used by csv module"""
         data_io = io.StringIO(raw, newline='')  # preserve original line ending
         self._line_ending = data_io.newlines

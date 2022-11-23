@@ -95,14 +95,14 @@ class DummyParserBot(bot.ParserBot):
             event['source.account'] = line[5]
             event['source.asn'] = line[6]
             event['classification.type'] = 'malware-distribution'
-            event['raw'] = '\n'.join(self.tempdata+[','.join(line)])
+            event['raw'] = '\n'.join(self.tempdata + [','.join(line)])
             yield event
 
     def recover_line(self, line):
         return '\n'.join([self.tempdata[0], line, self.tempdata[1]])
 
 
-class DummyCSVParserBot(bot.ParserBot):
+class DummyCSVDictParserBot(bot.ParserBot):
     """
     A csv parser bot only for testing purpose.
     """
@@ -175,16 +175,44 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
                                    levelname='INFO')
 
 
+class TestDummyCSVDictParserBot(test.BotTestCase, unittest.TestCase):
+    @classmethod
+    def set_bot(cls):
+        cls.bot_reference = DummyCSVDictParserBot
+        cls.default_input_message = EXAMPLE_REPO_1
+
+    def test_event(self):
+        """ Test DummyCSVDictParserBot. """
+        self.run_bot()
+        self.assertMessageEqual(0, EXAMPLE_EVE_1)
+
+
+class DummyCSVParserBot(DummyCSVDictParserBot):
+    def parse_line(self, line, report):
+        event = self.new_event(report)
+        event['source.ip'] = line[0]
+        event['classification.type'] = 'malware-distribution'
+        event['raw'] = self.recover_line(line)
+        yield event
+
+    parse = bot.ParserBot.parse_csv
+    recover_line = bot.ParserBot.recover_line_csv
+
+
 class TestDummyCSVParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = DummyCSVParserBot
-        cls.default_input_message = EXAMPLE_REPO_1
+        # Dummy bot doesn't handle the header line
+        raw_split = RAW.splitlines()
+        report = {**EXAMPLE_REPO_1,
+                  "raw": utils.base64_encode('\n'.join(raw_split[:2] + raw_split[3:]))}
+        cls.default_input_message = report
 
     def test_event(self):
         """ Test DummyCSVParserBot. """
         self.run_bot()
-        self.assertMessageEqual(0, EXAMPLE_EVE_1)
+        self.assertMessageEqual(0, {**EXAMPLE_EVE_1, "raw": "MTkyLjAuMi4zLGJsbGFhCg=="})
 
 
 EXAMPLE_JSON_STREAM_REPORT = {'__type': 'Report',
@@ -202,12 +230,12 @@ EXAMPLE_JSON_STREAM_EVENTS = [{'__type': 'Event',
                                },
                               ]
 JSON_STREAM_BOGUS_REPORT = {'__type': 'Report',
-                              'raw': utils.base64_encode('''{"a": 1, "ip": "10.0.0.a"}
+                            'raw': utils.base64_encode('''{"a": 1, "ip": "10.0.0.a"}
 {"a": 2, "ip": "10.0.0.b"}''')}
 JSON_STREAM_BOGUS_DUMP = [
     {'raw': utils.base64_encode('{"a": 1, "ip": "10.0.0.a"}')},
     {'raw': utils.base64_encode('{"a": 2, "ip": "10.0.0.b"}')}
-     ]
+]
 
 
 class DummyJSONStreamParserBot(bot.ParserBot):

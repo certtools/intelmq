@@ -17,7 +17,6 @@ data_type: string
 
 """
 import csv
-import io
 import json
 import re
 from typing import Optional, Union, Iterable
