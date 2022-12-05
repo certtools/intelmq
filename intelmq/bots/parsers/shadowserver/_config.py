@@ -1802,6 +1802,43 @@ scan_http = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-http-proxy-report/
+scan_http_proxy = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.', 'http', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'connection', validate_to_none),
+        ('extra.', 'proxy_authenticate', validate_to_none),
+        ('extra.', 'via', validate_to_none),
+        ('extra.', 'server', validate_to_none),
+        ('extra.', 'content_length', convert_int),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'accessible-http-proxy',
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'protocol.application': 'http',
+    },
+}
+
 # https://www.shadowserver.org/what-we-do/network-reporting/vulnerable-http-report/
 scan_http_vulnerable = {
     'required_fields': [
@@ -4038,6 +4075,7 @@ mapping = (
     ('Accessible-FTP', 'scan_ftp', scan_ftp),
     ('Accessible-Hadoop', 'scan_hadoop', scan_hadoop),
     ('Accessible-HTTP', 'scan_http', scan_http),
+    ('Accessible-HTTP-proxy', 'scan_http_proxy', scan_http_proxy),
     ('Vulnerable-HTTP', 'scan_http_vulnerable', scan_http_vulnerable),
     ('Accessible-ICS', 'scan_ics', scan_ics),
     ('Open-IPMI', 'scan_ipmi', scan_ipmi),

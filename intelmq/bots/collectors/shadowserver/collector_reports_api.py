@@ -71,6 +71,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
                 raise ValueError('Invalid file_format')
         else:
             self.file_format = 'json'
+            self.logger.info("For best performance, set 'file_format' to 'csv' and use intelmq.bots.parsers.shadowserver.parser.")
 
         self.preamble = f'{{ "apikey": "{self.api_key}" '
 
