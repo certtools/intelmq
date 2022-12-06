@@ -122,6 +122,7 @@ CHANGELOG
 
 ### Packaging
 - Remove deleted `intelmq.bots.experts.sieve.validator` from executables in `setup.py` (PR#2256 by Filip Pokorný).
+- Run the geoip database cron-job twice a week (PR#2285 by Filip Pokorný).
 
 ### Tests
 - Add GitHub Action to run regexploit on all Python, JSON and YAML files (PR#2059 by Sebastian Wagner).
