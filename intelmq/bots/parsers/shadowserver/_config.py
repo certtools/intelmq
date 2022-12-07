@@ -1005,6 +1005,43 @@ phish_url = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-http-proxy-report/
+population_http_proxy = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('malware.name', 'tag'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.', 'http', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'connection', validate_to_none),
+        ('extra.', 'proxy_authenticate', validate_to_none),
+        ('extra.', 'via', validate_to_none),
+        ('extra.', 'server', validate_to_none),
+        ('extra.', 'content_length', convert_int),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'accessible-http-proxy',
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+        'protocol.application': 'http',
+    },
+}
+
 # http://www.shadowserver.org/wiki/pmwiki.php/Services/Sandbox-Connection
 sandbox_conn = {
     'required_fields': [
@@ -1802,7 +1839,7 @@ scan_http = {
     },
 }
 
-# https://www.shadowserver.org/what-we-do/network-reporting/accessible-http-proxy-report/
+# https://www.shadowserver.org/what-we-do/network-reporting/open-http-proxy-report/
 scan_http_proxy = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1832,7 +1869,7 @@ scan_http_proxy = {
         ('extra.', 'http_date', convert_date),
     ],
     'constant_fields': {
-        'classification.identifier': 'accessible-http-proxy',
+        'classification.identifier': 'open-http-proxy',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'http',
@@ -4029,6 +4066,7 @@ mapping = (
     ('Sinkhole-Events-HTTP-Referer IPv6', 'event6_sinkhole_http_referer', event_sinkhole_http_referer),
     ('Malware-URL', 'malware_url', malware_url),
     ('Phish-URL', 'phish_url', phish_url),
+    ('Accessible-HTTP-proxy', 'population_http_proxy', population_http_proxy),
     ('Sandbox-Connections', 'sandbox_conn', sandbox_conn),
     ('Sandbox-DNS', 'sandbox_dns', sandbox_dns),
     ('Sandbox-URL', 'sandbox_url', sandbox_url),
@@ -4075,7 +4113,7 @@ mapping = (
     ('Accessible-FTP', 'scan_ftp', scan_ftp),
     ('Accessible-Hadoop', 'scan_hadoop', scan_hadoop),
     ('Accessible-HTTP', 'scan_http', scan_http),
-    ('Accessible-HTTP-proxy', 'scan_http_proxy', scan_http_proxy),
+    ('Open-HTTP-proxy', 'scan_http_proxy', scan_http_proxy),
     ('Vulnerable-HTTP', 'scan_http_vulnerable', scan_http_vulnerable),
     ('Accessible-ICS', 'scan_ics', scan_ics),
     ('Open-IPMI', 'scan_ipmi', scan_ipmi),
