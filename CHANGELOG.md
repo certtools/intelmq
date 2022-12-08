@@ -39,6 +39,7 @@ CHANGELOG
   - Added wrapper `resolve_dns` for querying DNS, with the support for recommended methods from `dnspython` package in versions 1 and 2.
 
 ### Development
+- Removed Python 3.6 from CI.
 
 ### Data Format
 
