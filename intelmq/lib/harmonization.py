@@ -58,7 +58,7 @@ class GenericType:
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = GenericType().sanitize(value)
+            value = GenericType.sanitize(value)
 
         if not value:
             return False
@@ -97,9 +97,9 @@ class String(GenericType):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = GenericType().sanitize(value)
+            value = GenericType.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         if type(value) is not str:
@@ -121,14 +121,14 @@ class Base64(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = Base64().sanitize(value)
+            value = Base64.sanitize(value)
 
         try:
             utils.base64_decode(value)
         except (TypeError, AttributeError):
             return False
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         return True
@@ -155,7 +155,7 @@ class Boolean(GenericType):
             return True
         else:
             if sanitize:
-                value = Boolean().sanitize(value)
+                value = Boolean.sanitize(value)
                 if value is not None:
                     return True
             return False
@@ -211,15 +211,15 @@ class ClassificationTaxonomy(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = ClassificationTaxonomy().sanitize(value)
+            value = ClassificationTaxonomy.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         if not isinstance(value, str):
             return False
 
-        if value not in ClassificationTaxonomy().allowed_values:
+        if value not in ClassificationTaxonomy.allowed_values:
             return False
 
         return True
@@ -237,7 +237,7 @@ class ClassificationTaxonomy(String):
             value = 'intrusion-attempts'
         elif value == 'malicious code':
             value = 'malicious-code'
-        return GenericType().sanitize(value)
+        return GenericType.sanitize(value)
 
 
 class ClassificationType(String):
@@ -321,15 +321,15 @@ class ClassificationType(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = ClassificationType().sanitize(value)
+            value = ClassificationType.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         if not isinstance(value, str):
             return False
 
-        if value not in ClassificationType().allowed_values:
+        if value not in ClassificationType.allowed_values:
             return False
 
         return True
@@ -380,7 +380,7 @@ class ClassificationType(String):
             value = 'system-compromise'
         elif value == 'dropzone':
             value = 'other'
-        return GenericType().sanitize(value)
+        return GenericType.sanitize(value)
 
 
 class DateTime(String):
@@ -400,9 +400,9 @@ class DateTime(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = DateTime().sanitize(value)
+            value = DateTime.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         if value != DateTime.__parse(value):
@@ -416,7 +416,7 @@ class DateTime(String):
             value = DateTime.__parse(value)
         except TypeError:  # None
             return None
-        return GenericType().sanitize(value)
+        return GenericType.sanitize(value)
 
     @staticmethod
     def __parse(value: str) -> Optional[str]:
@@ -596,7 +596,7 @@ class Float(GenericType):
     @staticmethod
     def is_valid(value: float, sanitize: bool = False) -> bool:
         if sanitize:
-            value = Float().sanitize(value)
+            value = Float.sanitize(value)
             if value is not None:
                 return True
 
@@ -663,15 +663,15 @@ class FQDN(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = FQDN().sanitize(value)
+            value = FQDN.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         if value.strip('.') != value or value != value.lower() or ':' in value:
             return False
 
-        if IPAddress().is_valid(value):
+        if IPAddress.is_valid(value):
             return False
 
         url = parse.urlsplit(value)
@@ -687,7 +687,7 @@ class FQDN(String):
     @staticmethod
     def sanitize(value: str) -> Optional[str]:
         try:
-            value = GenericType().sanitize(value)
+            value = GenericType.sanitize(value)
         except ValueError:
             return
         if not isinstance(value, str):
@@ -702,7 +702,7 @@ class FQDN(String):
     @staticmethod
     def to_ip(value: str) -> Optional[str]:
         try:
-            value = str(dns.resolver.query(value, 'A')[0])
+            value = str(utils.resolve_dns(value, 'A')[0])
         except dns.resolver.NXDOMAIN:  # domain not found
             value = None
         return value
@@ -719,7 +719,7 @@ class Integer(GenericType):
     @staticmethod
     def is_valid(value: int, sanitize: bool = False) -> bool:
         if sanitize:
-            value = Integer().sanitize(value)
+            value = Integer.sanitize(value)
             if value is not None:
                 return True
 
@@ -759,7 +759,7 @@ class ASN(Integer):
     @staticmethod
     def is_valid(value: int, sanitize: bool = False) -> bool:
         if sanitize:
-            value = ASN().sanitize(value)
+            value = ASN.sanitize(value)
         if not Integer.is_valid(value):
             return False
         if not ASN.check_asn(value):
@@ -787,9 +787,9 @@ class IPAddress(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = IPAddress().sanitize(value)
+            value = IPAddress.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         try:
@@ -811,7 +811,7 @@ class IPAddress(String):
     def sanitize(value: Union[int, str]) -> Optional[str]:
         if not isinstance(value, int):  # can be str/bytes or ipaddress.ip_address object
             try:
-                value = GenericType().sanitize(value)
+                value = GenericType.sanitize(value)
             except ValueError:
                 return None
 
@@ -829,7 +829,7 @@ class IPAddress(String):
             except ValueError:
                 return None
             # we don't need the specialized checks below, return early
-            return GenericType().sanitize(value)
+            return GenericType.sanitize(value)
 
         try:
             # Remove the scope ID if it's detected.
@@ -850,7 +850,7 @@ class IPAddress(String):
         else:
             return None
 
-        return GenericType().sanitize(value)
+        return GenericType.sanitize(value)
 
     @staticmethod
     def to_int(value: str) -> Optional[int]:
@@ -887,9 +887,9 @@ class IPNetwork(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = IPNetwork().sanitize(value)
+            value = IPNetwork.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         try:
@@ -903,12 +903,12 @@ class IPNetwork(String):
     def sanitize(value: str) -> Optional[str]:
 
         try:
-            value = GenericType().sanitize(value)
+            value = GenericType.sanitize(value)
             value = str(ipaddress.ip_network(str(value), strict=False))
         except ValueError:
             return None
 
-        return GenericType().sanitize(value)
+        return GenericType.sanitize(value)
 
     @staticmethod
     def version(value: str) -> int:
@@ -927,7 +927,7 @@ class JSON(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = JSON().sanitize(value)
+            value = JSON.sanitize(value)
 
         if not isinstance(value, str):
             return False
@@ -948,7 +948,7 @@ class JSON(String):
             if JSON.is_valid(sanitized):
                 return sanitized
         try:
-            return GenericType().sanitize(json.dumps(value, sort_keys=True))
+            return GenericType.sanitize(json.dumps(value, sort_keys=True))
         except TypeError:
             return None
 
@@ -965,7 +965,7 @@ class JSONDict(JSON):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = JSONDict().sanitize(value)
+            value = JSONDict.sanitize(value)
 
         if not isinstance(value, str):
             return False
@@ -993,7 +993,7 @@ class JSONDict(JSON):
             if JSONDict.is_valid(sanitized):
                 return sanitized
         try:
-            return GenericType().sanitize(json.dumps(value, sort_keys=True))
+            return GenericType.sanitize(json.dumps(value, sort_keys=True))
         except TypeError:
             return None
 
@@ -1012,10 +1012,10 @@ class LowercaseString(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = String().sanitize(value)
+            value = String.sanitize(value)
             value = LowercaseString().sanitize(value)
 
-        if not String().is_valid(value):
+        if not String.is_valid(value):
             return False
 
         if value != value.lower():
@@ -1029,7 +1029,7 @@ class LowercaseString(String):
             value = value.lower()
         except AttributeError:  # None
             return None
-        return String().sanitize(value)
+        return String.sanitize(value)
 
 
 class URL(String):
@@ -1045,9 +1045,9 @@ class URL(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = URL().sanitize(value)
+            value = URL.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         result = parse.urlsplit(value)
@@ -1058,7 +1058,7 @@ class URL(String):
 
     @staticmethod
     def sanitize(value: str) -> Optional[str]:
-        value = GenericType().sanitize(value)
+        value = GenericType.sanitize(value)
         if not value:
             return
 
@@ -1080,7 +1080,7 @@ class URL(String):
     def to_ip(url: str) -> Optional[str]:
         value = parse.urlsplit(url)
         if value.netloc != "":
-            return FQDN().to_ip(value.netloc)
+            return FQDN.to_ip(value.netloc)
         return None
 
     @staticmethod
@@ -1101,9 +1101,9 @@ class UppercaseString(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = UppercaseString().sanitize(value)
+            value = UppercaseString.sanitize(value)
 
-        if not String().is_valid(value):
+        if not String.is_valid(value):
             return False
 
         if value != value.upper():
@@ -1117,7 +1117,7 @@ class UppercaseString(String):
             value = value.upper()
         except AttributeError:  # None
             return None
-        return String().sanitize(value)
+        return String.sanitize(value)
 
 
 class Registry(UppercaseString):

@@ -35,6 +35,8 @@ CHANGELOG
     - Previously the dumped message was always the last message of a report if the report contained multiple lines leading to data-loss.
 - `intelmq.lib.pipeline`:
   - Changed `BRPOPLPUSH` to `BLMOVE`, because `BRPOPLPUSH` has been marked as deprecated by redis in favor of `BLMOVE` (PR#2149 by Sebastian Waldbauer, fixes #1827)
+- `intelmq.lib.utils`:
+  - Added wrapper `resolve_dns` for querying DNS, with the support for recommended methods from `dnspython` package in versions 1 and 2.
 
 ### Development
 - Removed Python 3.6 from CI.
@@ -717,6 +719,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 ### Tools
 - `intelmqdump`:
     - Check if given queue is configured upon recovery (#1433, PR#1587 by Mladen Markovic).
+    - Respected global and per-bot custom settings of `logging_path` (fix #1605).
 - `intelmqctl`:
   - `intelmq list queues`: `--sum`, `--count`, `-s` flag for showing total count of messages (#1408, PR#1581 by Mladen Markovic).
   - `intelmq check`: Added a possibility to ignore queues from the orphaned queues check (by Sebastian Wagner).
@@ -738,7 +741,6 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
 - Corrupt dump files when interrupted during writing (#870).
 - CSV line recovery forces Windows line endings (#1597).
-- intelmqdump: Honor logging_path variable (#1605).
 - Timeout error in mail URL fetcher (#1621).
 - AMQP pipeline: get_queues needs to check vhost of response (#1746).
 
