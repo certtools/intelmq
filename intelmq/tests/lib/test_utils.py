@@ -13,22 +13,22 @@ base64 de-/encoding is not tested yet, as we fully rely on the module.
 import contextlib
 import datetime
 import io
+import json
 import os
+import pprint
 import tempfile
 import unittest
 import unittest.mock
-import requests
-import pkg_resources
-import pprint
 
 import cerberus
-import json
-
+import dns.resolver
+import pkg_resources
+import requests
 import termstyle
 from ruamel.yaml.scanner import ScannerError
 
-from intelmq.tests.test_conf import CerberusTests
 import intelmq.lib.utils as utils
+from intelmq.tests.test_conf import CerberusTests
 
 LINES = {'spare': ['Lorem', 'ipsum', 'dolor'],
          'short': ['{}: Lorem', '{}: ipsum',
@@ -208,14 +208,14 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(utils.error_message_from_exc(exc), 'This is a test')
 
     def test_parse_relative(self):
-        """Tests if parse_reltive returns the correct timespan."""
+        """Tests if parse_relative returns the correct timespan."""
         self.assertEqual(utils.parse_relative('1 hour'), 60)
         self.assertEqual(utils.parse_relative('2\tyears'), 1051200)
         self.assertEqual(utils.parse_relative('5 minutes'), 5)
         self.assertEqual(utils.parse_relative('10 seconds'), 1 / 60 * 10)
 
     def test_parse_relative_raises(self):
-        """Tests if parse_reltive correctly raises ValueError."""
+        """Tests if parse_relative correctly raises ValueError."""
         with self.assertRaises(ValueError):
             utils.parse_relative('1 hou')
         with self.assertRaises(ValueError):
@@ -366,6 +366,24 @@ class TestUtils(unittest.TestCase):
         filename = os.path.join(os.path.dirname(__file__), '../assets/example-invalid.yaml')
         with self.assertRaises(ScannerError):
             utils.load_configuration(filename)
+
+    @unittest.mock.patch.object(utils.dns.version, "MAJOR", 1)
+    def test_resolve_dns_supports_dnspython_v1(self):
+        with unittest.mock.patch.object(utils.dns.resolver, "query") as query_mocks:
+            utils.resolve_dns("example.com", "any", other="parameter")
+
+        query_mocks.assert_called_once_with("example.com", "any", other="parameter")
+
+    @unittest.mock.patch.object(utils.dns.version, "MAJOR", 2)
+    def test_resolve_dns_supports_dnspython_v2(self):
+        with unittest.mock.patch.object(utils.dns.resolver, "resolve") as resolve_mocks:
+            utils.resolve_dns("example.com", "any", other="parameter")
+
+        resolve_mocks.assert_called_once_with("example.com", "any", other="parameter", search=True)
+
+    def test_resolve_dns_returns_answer(self):
+        answer = utils.resolve_dns("example.com")
+        self.assertIsInstance(answer, dns.resolver.Answer)
 
 
 if __name__ == '__main__':  # pragma: no cover
