@@ -34,16 +34,13 @@ import ipaddress
 import json
 import re
 import socket
-import sys
 import urllib.parse as parse
+from typing import Optional, Union
 
 import dateutil.parser
 import dns.resolver
-import pytz
 
 import intelmq.lib.utils as utils
-
-from typing import Optional, Union
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
@@ -429,7 +426,10 @@ class DateTime(String):
 
         try:
             value = dateutil.parser.parse(value, fuzzy=True)
-            value = value.astimezone(pytz.utc)
+            if not value.tzinfo:
+                value = value.replace(tzinfo=datetime.timezone.utc)
+            else:
+                value = value.astimezone(tz=datetime.timezone.utc)
             value = value.isoformat()
         except (ValueError, OverflowError):
             return None
@@ -451,13 +451,18 @@ class DateTime(String):
             # With microseconds
             dtvalue = datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f+00:00')
 
-        if return_datetime:
-            return pytz.utc.localize(dtvalue)
+        if not dtvalue.tzinfo:
+            dtvalue = dtvalue.replace(tzinfo=datetime.timezone.utc)
         else:
-            return value
+            dtvalue = dtvalue.astimezone(tz=datetime.timezone.utc)
+
+        if return_datetime:
+            return dtvalue
+
+        return value
 
     @staticmethod
-    def from_epoch_millis(tstamp: str, tzone='UTC') -> datetime.datetime:
+    def from_epoch_millis(tstamp: Union[int, str]) -> str:
         """
         Returns ISO formatted datetime from given epoch timestamp with milliseconds.
         It ignores the milliseconds, converts it into normal timestamp and processes it.
@@ -465,22 +470,18 @@ class DateTime(String):
         bytecount = len(str(tstamp))
         int_tstamp = int(tstamp)
         if bytecount == 10:
-            return DateTime.from_timestamp(int_tstamp, tzone)
+            return DateTime.from_timestamp(int_tstamp)
         if bytecount == 12:
-            return DateTime.from_timestamp(int_tstamp // 100, tzone)
+            return DateTime.from_timestamp(int_tstamp // 100)
         if bytecount == 13:
-            return DateTime.from_timestamp(int_tstamp // 1000, tzone)
+            return DateTime.from_timestamp(int_tstamp // 1000)
 
     @staticmethod
-    def from_timestamp(tstamp: int, tzone='UTC') -> str:
+    def from_timestamp(tstamp: Union[int, float, str]) -> str:
         """
         Returns ISO formatted datetime from given timestamp.
-        You can give timezone for given timestamp, UTC by default.
         """
-        dtime = (datetime.datetime(1970, 1, 1, tzinfo=pytz.utc) +
-                 datetime.timedelta(seconds=tstamp))
-        localized = pytz.timezone(tzone).normalize(dtime)
-        return str(localized.isoformat())
+        return datetime.datetime.fromtimestamp(float(tstamp), datetime.timezone.utc).isoformat()
 
     @staticmethod
     def from_windows_nt(tstamp: int) -> str:
@@ -499,13 +500,13 @@ class DateTime(String):
         See also:
             https://www.epochconverter.com/ldap
         """
-        epoch = datetime.datetime(1601, 1, 1, tzinfo=pytz.utc)
-        dtime = epoch + datetime.timedelta(seconds=int(tstamp) * 10**-7)
+        epoch = datetime.datetime(1601, 1, 1, tzinfo=datetime.timezone.utc)
+        dtime = epoch + datetime.timedelta(seconds=int(tstamp) * 10 ** -7)
         return dtime.isoformat()
 
     @staticmethod
     def generate_datetime_now() -> str:
-        value = datetime.datetime.now(pytz.timezone('UTC'))
+        value = datetime.datetime.now(datetime.timezone.utc)
         value = value.replace(microsecond=0)
         return value.isoformat()
 
@@ -515,10 +516,10 @@ class DateTime(String):
         Converts a datetime with the given format.
         """
         value = datetime.datetime.strptime(value, format)
-        if not value.tzinfo and sys.version_info <= (3, 6):
-            value = pytz.utc.localize(value)
-        elif not value.tzinfo:
-            value = value.astimezone(pytz.utc)
+        if not value.tzinfo:
+            value = value.replace(tzinfo=datetime.timezone.utc)
+        else:
+            value = value.astimezone(tz=datetime.timezone.utc)
         return value.isoformat()
 
     @staticmethod
@@ -527,26 +528,18 @@ class DateTime(String):
         Converts a date with the given format and adds time 00:00:00 to it.
         """
         date = datetime.datetime.strptime(value, format)
-        if sys.version_info <= (3, 6):
-            value = datetime.datetime.combine(date, DateTime.midnight)
-            value = pytz.utc.localize(value)
-        else:
-            value = datetime.datetime.combine(date, DateTime.midnight,
-                                              tzinfo=pytz.utc)
+        value = datetime.datetime.combine(date, DateTime.midnight, tzinfo=datetime.timezone.utc)
         return value.isoformat()
 
     @staticmethod
     def convert_fuzzy(value) -> str:
         value = dateutil.parser.parse(value, fuzzy=True)
-        if not value.tzinfo and sys.version_info <= (3, 6):
-            value = pytz.utc.localize(value)  # pragma: no cover
-        elif not value.tzinfo:
-            value.astimezone(pytz.utc)
-        iso = value.isoformat()
-        if '+' not in iso:
-            return iso + '+00:00'
+        if not value.tzinfo:
+            value = value.replace(tzinfo=datetime.timezone.utc)
         else:
-            return iso
+            value = value.astimezone(tz=datetime.timezone.utc)
+
+        return value.isoformat()
 
     @staticmethod
     def convert(value, format='fuzzy') -> str:
@@ -676,7 +669,7 @@ class FQDN(String):
 
         url = parse.urlsplit(value)
         if (url.scheme != '' or url.netloc != '' or url.query != '' or url.fragment != '' or
-           url.path.find('/') >= 0):
+                url.path.find('/') >= 0):
             return False
 
         if value.encode('idna').decode() != value:
@@ -749,6 +742,7 @@ class ASN(Integer):
     > 65,535, and the last ASN of the 32-bit numbers, namely 4,294,967,295 are
     > reserved and should not be used by operators.
     """
+
     @staticmethod
     def check_asn(value: int) -> bool:
         if 0 < value <= 4294967295:

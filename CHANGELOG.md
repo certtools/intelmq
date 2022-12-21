@@ -37,6 +37,11 @@ CHANGELOG
   - Changed `BRPOPLPUSH` to `BLMOVE`, because `BRPOPLPUSH` has been marked as deprecated by redis in favor of `BLMOVE` (PR#2149 by Sebastian Waldbauer, fixes #1827)
 - `intelmq.lib.utils`:
   - Added wrapper `resolve_dns` for querying DNS, with the support for recommended methods from `dnspython` package in versions 1 and 2.
+- `intelmq.lib.harmonization`:
+  - Fixed DateTime handling of naive time strings (previously assumed local timezone, now assumes UTC) (PR#2279 by Filip Pokorný, fixes #2278)
+  - Removes `tzone` argument from `DateTime.from_timestamp` and `DateTime.from_epoch_millis`
+  - `DateTime.from_timstamp` now also allows string argument
+- Removes `pytz` global dependency
 
 ### Development
 - Removed Python 3.6 from CI.
