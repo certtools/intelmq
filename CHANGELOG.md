@@ -99,6 +99,7 @@ CHANGELOG
 - `intelmq.bots.parsers.openphish.parser_commercial`: Refactored complete code (PR#2160 by Filip Pokorný).
   - Fixes wrong mapping of `host` field to `source.fqdn` when the content was in IP address.
   - Adds newly added fields in the feed.
+- `intelmq.bots.parsers.dshield.parser_domain`: Has been removed, due to the feed is discontinued. (PR#2276 by Sebastian Waldbauer)
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).

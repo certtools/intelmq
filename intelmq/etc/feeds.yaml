@@ -1431,27 +1431,6 @@ providers:
       revision: 2020-07-08
       documentation: http://security-research.dyndns.org/pub/malware-feeds/
       public: true
-  DShield:
-    Suspicious Domains:
-      description: There are many suspicious domains on the internet. In an effort
-        to identify them, as well as false positives, we have assembled weighted lists
-        based on tracking and malware lists from different sources. ISC is collecting
-        and categorizing various lists associated with a certain level of sensitivity.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://www.dshield.org/feeds/suspiciousdomains_High.txt
-            rate_limit: 86400
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.dshield.parser_domain
-          parameters:
-      revision: 2018-01-20
-      documentation: https://www.dshield.org/reports.html
-      public: true
     Block:
       description: This list summarizes the top 20 attacking class C (/24) subnets
         over the last three days. The number of 'attacks' indicates the number of
