@@ -859,7 +859,11 @@ def list_all_bots() -> dict:
     botfiles = [botfile for botfile in pathlib.Path(base_path).glob('**/*.py') if botfile.is_file() and botfile.name != '__init__.py']
     for file in botfiles:
         file = Path(file.as_posix().replace(base_path, 'intelmq/bots'))
-        mod = importlib.import_module('.'.join(file.with_suffix('').parts))
+        try:
+            mod = importlib.import_module('.'.join(file.with_suffix('').parts))
+        except SyntaxError:
+            # Skip invalid bots
+            continue
         if hasattr(mod, 'BOT'):
             name = mod.BOT.__name__
             keys = {}
