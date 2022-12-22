@@ -59,6 +59,7 @@ CHANGELOG
 - `intelmq.bots.collectors.blueliv`: Fix Blueliv collector requirements (PR#2161 by Gethvi).
 - `intelmq.bots.collectors.github_api._collector_github_api`: Added personal access token support (PR#2145 by Sebastian Waldbauer, fixes #1549).
 - `intelmq.bots.collectors.file.collector_file`: Added file lock support, no more race conditions (PR#2147 by Sebastian Waldbauer, fixes #2128)
+- `intelmq.bots.collectors.shadowserver.collector_reports_api.py`: Added file_format option to download reports in CSV format for better performance (PR#2246 by elsif2)
 
 #### Parsers
 - `intelmq.bots.parsers.alienvault.parser_otx`: Save CVE data in `extra.cve` instead of `extra.CVE` due to the field name restriction on lower-case characters  (PR#2059 by Sebastian Wagner).
@@ -91,9 +92,31 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver._config`:
   - Added support for `Accessible AMQP`, `Device Identification Report` (IPv4 and IPv6) (PR#2134 by Mateo Durante).
   - Added file name mapping for `SSL-POODLE-Vulnerable-Servers IPv6` (file name `scan6_ssl_poodle`) (PR#2134 by Mateo Durante).
-  - Corrected "AMQP" message_length type (int) and added "STUN" support (PR#2235 by elsif2).
+  - Added `Malware-URL`, `Sandbox-Connection`, `Sandbox-DNS`, `Accessible-AMQP`, `Open-AnonymouIs-MQTT`, `Accessible-QUIC`, `Accessible-SSH`, `SYNful-Knock`, and `Special` (PR#2227 by elsif2)
+  - Removed legacy reports `Amplification-DDoS-Victim`, `CAIDA-IP-Spoofer`, `Darknet`, `Drone`, `Drone-Brute-Force`, `IPv6-Sinkhole-HTTP-Drone`, `Microsoft-Sinkhole`, and `Sinkhole-HTTP-Drone` (PR#2227 by elsif2).
+  - Users storing events in a database should be aware that field names and types have been updated (PR#2227 by elsif2).
+  - Corrected "Accessible-AMQP" message_length type (int) and added "STUN" support (PR#2235 by elsif2).
   - Added amplification factor to UDP scan reports (PR#2238 by elsif2).
   - Added version and build_date to "Vulnerable-HTTP" report (PR#2238 by elsif2).
+  - The following field types have been standardized across all Shadowserver reports (PR#2246 by elsif2):
+      destination.fqdn (validate_fqdn)
+      destination.url (convert_http_host_and_url)
+      extra.browser_trusted (convert_bool)
+      extra.duration (convert_int)
+      extra.end_time (convert_date_utc)
+      extra.freak_vulnerable (convert_bool)
+      extra.ok (convert_bool)
+      extra.password (validate_to_none)
+      extra.ssl_poodle (convert_bool)
+      extra.status (convert_int)
+      extra.uptime (convert_int)
+      extra.version (convert_to_none)
+      source.network (validate_network)
+  - The following report field names have changed to better represent their values:
+      scan_rsync:extra.password renamed to extra.has_password
+      scan_elasticsearch:status renamed to http_code
+  - Added `Accessible-HTTP-proxy` and `Open-HTTP-proxy` (PR#2246 by elsif2).
+
 - `intelmq.bots.parsers.cymru.parser_cap_program`: The parser mapped the hostname into `source.fqdn` which is not allowed by the IntelMQ Data Format. Added a check (PR#2215 by Sebastian Waldbauer, fixes #2169)
 - `intelmq.bots.parsers.generic.parser_csv`:
   - Use RewindableFileHandle to use the original current line for line recovery (PR#2192 by Sebastian Wagner).
