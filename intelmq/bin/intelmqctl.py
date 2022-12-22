@@ -99,6 +99,9 @@ class IntelMQController():
         # otherwise the output on stdout/stderr is less than the user expects
         logging_level_stream = self._logging_level if self._logging_level == 'DEBUG' else 'INFO'
 
+        if drop_privileges and not utils.drop_privileges():
+            self.abort('IntelMQ must not run as root. Dropping privileges did not work.')
+
         try:
             if no_file_logging:
                 raise FileNotFoundError('Logging to file disabled.')
@@ -115,9 +118,6 @@ class IntelMQController():
                 self._logger.error('Not logging to file: %s', exc)
         if defaults_loading_exc:
             self._logger.exception('Loading the defaults configuration failed!', exc_info=defaults_loading_exc)
-
-        if drop_privileges and not utils.drop_privileges():
-            self.abort('IntelMQ must not run as root. Dropping privileges did not work.')
 
         APPNAME = "intelmqctl"
         try:
@@ -932,6 +932,10 @@ Get some debugging output on the settings and the environment (to be extended):
                     bot_module = importlib.import_module(bot_config['module'])
                 except ImportError as exc:
                     check_logger.error('Incomplete installation: Bot %r not importable: %r.', bot_id, exc)
+                    retval = 1
+                    continue
+                except SyntaxError as exc:
+                    check_logger.error('SyntaxError in bot %r: %r', bot_id, exc)
                     retval = 1
                     continue
                 bot = getattr(bot_module, 'BOT')

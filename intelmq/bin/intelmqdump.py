@@ -3,8 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-"""
-"""
+
 import argparse
 import base64
 import copy
@@ -20,6 +19,7 @@ import sys
 import tempfile
 import traceback
 from collections import OrderedDict
+from pathlib import Path
 
 from termstyle import bold, green, inverted, red
 
@@ -28,9 +28,7 @@ import intelmq.lib.exceptions as exceptions
 import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import (DEFAULT_LOGGING_PATH,
-                     RUNTIME_CONF_FILE,
-                     DEFAULT_LOGGING_LEVEL)
+from intelmq import DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_PATH
 
 APPNAME = "intelmqdump"
 DESCRIPTION = """
@@ -170,7 +168,7 @@ class Completer():
             return
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(
         prog=APPNAME,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -185,7 +183,7 @@ def main():
                         default=1000,
                         help='Truncate raw-data with more characters than given. '
                         '0 for no truncating. Default: 1000.')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.truncate < 1:
         args.truncate = None
 
@@ -196,9 +194,11 @@ def main():
         log_level = DEFAULT_LOGGING_LEVEL
 
     try:
-        logger = utils.log('intelmqdump', log_level=defaults.get('logging_level', DEFAULT_LOGGING_LEVEL),
+        logger = utils.log('intelmqdump',
+                           log_level=defaults.get('logging_level', DEFAULT_LOGGING_LEVEL),
                            log_max_size=defaults.get("logging_max_size", 0),
-                           log_max_copies=defaults.get("logging_max_copies", None))
+                           log_max_copies=defaults.get("logging_max_copies", None),
+                           log_path=defaults.get("logging_path", DEFAULT_LOGGING_PATH))
     except (FileNotFoundError, PermissionError) as exc:
         logger = utils.log('intelmqdump', log_level=log_level, log_path=False)
         logger.error('Not logging to file: %s', exc)
@@ -208,17 +208,22 @@ def main():
     readline.set_completer_delims('')
 
     defaults = utils.get_global_settings()
-    runtime_config = utils.load_configuration(RUNTIME_CONF_FILE)
+    runtime_config = utils.get_runtime()
     pipeline_pipes = {}
-    for bot, parameters in runtime_config.items():
-        pipeline_pipes[parameters.get('source_queue', f"{bot}-queue")] = bot
+    logging_paths = set([defaults.get('logging_path', DEFAULT_LOGGING_PATH)])
+    for bot, settings in runtime_config.items():
+        pipeline_pipes[settings.get('source_queue', f"{bot}-queue")] = bot
+        logging_paths.add(settings.get("parameters", {}).get('logging_path', DEFAULT_LOGGING_PATH))
 
     if args.botid is None:
-        filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
+        filenames = list()
+        for path in logging_paths:
+            filenames.extend(glob.glob(os.path.join(path, '*.dump')))
+
         if not len(filenames):
             print(green('Nothing to recover from, no dump files found!'))
             sys.exit(0)
-        filenames = [(fname, fname[len(DEFAULT_LOGGING_PATH):-5])
+        filenames = [(fname, Path(fname).name[:-5])
                      for fname in sorted(filenames)]
 
         length = max(len(value[1]) for value in filenames)
@@ -243,10 +248,16 @@ def main():
         try:
             fname, botid = filenames[int(botid)]
         except ValueError:
-            fname = os.path.join(DEFAULT_LOGGING_PATH, botid) + '.dump'
+            fname = [path for path, filename in filenames if filename == botid]
+            if len(fname) > 1:
+                print(bold('Given filename is not unique, please use number'))
+                exit(1)
+            fname = fname[0]
     else:
         botid = args.botid
-        fname = os.path.join(DEFAULT_LOGGING_PATH, botid) + '.dump'
+        logging_path = utils.get_bots_settings(botid)["parameters"].get(
+            "logging_path", DEFAULT_LOGGING_PATH)
+        fname = os.path.join(logging_path, botid) + '.dump'
 
     if not os.path.isfile(fname):
         print(bold(f'Given file does not exist: {fname}'))

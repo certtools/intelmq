@@ -9,12 +9,10 @@ IntelMQ
 .. figure:: _static/Logo_Intel_MQ.png
    :alt: IntelMQ
 
-|Build Status| |codecov.io| |CII Badge|
+|Build Status| |CII Badge|
 
 .. |Build Status| image:: https://github.com/certtools/intelmq/workflows/Nosetest%20test%20suite/badge.svg
    :target: https://github.com/certtools/intelmq/actions
-.. |codecov.io| image:: https://codecov.io/github/certtools/intelmq/coverage.svg?branch=develop
-   :target: https://codecov.io/github/certtools/intelmq?branch=master
 .. |CII Badge| image:: https://bestpractices.coreinfrastructure.org/projects/4186/badge
    :target: https://bestpractices.coreinfrastructure.org/projects/4186/
 

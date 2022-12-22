@@ -544,6 +544,10 @@ V310_FEED_CHANGES = {
     "malc0de-parser": {
         "module": "intelmq.bots.parsers.malc0de.parser",
         "parameters": {}
+    },
+    "dshield_domain_parser": {
+        "module": "intelmq.bots.parsers.dshield.parser_domain",
+        "parameters": {}
     }
 }
 
@@ -751,7 +755,10 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertEqual('A discontinued feed "Malc0de" has been found as bot '
                          'malc0de-collector, malc0de-parser. '
                          'A discontinued feed "Autoshun" has been found as bot '
-                         'autoshun-collector, autoshun-parser. Remove affected bots yourself.',
+                         'autoshun-collector, autoshun-parser. '
+                         'A discontinued feed "DShield Suspicious Domain" has been found as bot '
+                         'dshield_domain_parser. '
+                         'Remove affected bots yourself.',
                          result[0])
         self.assertEqual(V310_FEED_CHANGES, result[1])
 

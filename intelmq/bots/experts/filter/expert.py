@@ -5,9 +5,8 @@
 # -*- coding: utf-8 -*-
 
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
-import pytz
 from dateutil import parser
 
 from intelmq.lib.bot import ExpertBot
@@ -79,7 +78,7 @@ class FilterExpertBot(ExpertBot):
         # time based filtering
         if self.time_filter and 'time.source' in event:
             try:
-                event_time = parser.parse(str(event.get('time.source'))).replace(tzinfo=pytz.timezone('UTC'))
+                event_time = parser.parse(str(event.get('time.source'))).replace(tzinfo=timezone.utc)
             except ValueError:
                 self.logger.error("Could not parse time.source %s.", event.get('time.source'))
             else:
@@ -92,7 +91,7 @@ class FilterExpertBot(ExpertBot):
                     self.logger.debug("Filtered out event with time.source %r.", event.get('time.source'))
                     return
 
-                now = datetime.now(tz=pytz.timezone('UTC'))
+                now = datetime.now(tz=timezone.utc)
                 if type(self.not_after) is timedelta and event_time > (now - self.not_after):
                     self.acknowledge_message()
                     self.logger.debug("Filtered out event with time.source %r.", event.get('time.source'))

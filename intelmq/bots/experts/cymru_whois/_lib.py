@@ -12,7 +12,7 @@ See https://github.com/certtools/intelmq/issues/543
 import io
 import ipaddress
 
-import dns.resolver
+import dns.exception
 
 import intelmq.lib.utils as utils
 from intelmq.lib.harmonization import IPAddress
@@ -54,7 +54,7 @@ class Cymru():
     @staticmethod
     def __query(query):
         try:
-            for query_result in dns.resolver.query(query, rdtype='TXT'):
+            for query_result in utils.resolve_dns(query, rdtype='TXT'):
                 fp = io.BytesIO()
                 query_result.to_wire(fp)
                 value = fp.getvalue()[1:]  # ignore first character

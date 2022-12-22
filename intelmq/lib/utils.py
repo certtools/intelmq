@@ -19,37 +19,38 @@ import base64
 import collections
 import grp
 import gzip
+import importlib
+import inspect
 import io
 import json
 import logging
 import logging.handlers
 import os
+import pathlib
 import pwd
 import re
-import requests
-import shutil
 import sys
 import tarfile
-import traceback
-import warnings
-import zipfile
-from typing import Any, Dict, Generator, Iterator, Optional, Sequence, Union
-from pathlib import Path
-import importlib
-import inspect
-import pathlib
 import textwrap
-from pkg_resources import resource_filename
+import traceback
+import zipfile
+from pathlib import Path
+from typing import (Any, Callable, Dict, Generator, Iterator, Optional,
+                    Sequence, Union)
 
 import dateutil.parser
+import dns.resolver
+import dns.version
+import requests
 from dateutil.relativedelta import relativedelta
-from termstyle import red
+from pkg_resources import resource_filename
 from ruamel.yaml import YAML
 from ruamel.yaml.scanner import ScannerError
+from termstyle import red
 
 import intelmq
-from intelmq.lib.exceptions import DecodingError
 from intelmq import RUNTIME_CONF_FILE
+from intelmq.lib.exceptions import DecodingError
 
 yaml = YAML(typ="unsafe", pure=True)
 
@@ -619,19 +620,21 @@ def unzip(file: bytes, extract_files: Union[bool, list], logger=None,
 class RewindableFileHandle:
     """
     Can be used for easy retrieval of last input line to populate raw field
-    during CSV parsing.
+    during CSV parsing and handling filtering.
     """
 
-    def __init__(self, f):
+    def __init__(self, f, condition: Optional[Callable] = lambda _: True):
         self.f = f
         self.current_line: Optional[str] = None
         self.first_line: Optional[str] = None
+
+        self._iterator = filter(condition, self.f)
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        self.current_line = next(self.f)
+        self.current_line = next(self._iterator)
         if self.first_line is None:
             self.first_line = self.current_line
         return self.current_line
@@ -859,7 +862,11 @@ def list_all_bots() -> dict:
     botfiles = [botfile for botfile in pathlib.Path(base_path).glob('**/*.py') if botfile.is_file() and botfile.name != '__init__.py']
     for file in botfiles:
         file = Path(file.as_posix().replace(base_path, 'intelmq/bots'))
-        mod = importlib.import_module('.'.join(file.with_suffix('').parts))
+        try:
+            mod = importlib.import_module('.'.join(file.with_suffix('').parts))
+        except SyntaxError:
+            # Skip invalid bots
+            continue
         if hasattr(mod, 'BOT'):
             name = mod.BOT.__name__
             keys = {}
@@ -916,3 +923,16 @@ def get_bots_settings(bot_id: str = None) -> dict:
     if 'global' in runtime_conf:
         del runtime_conf['global']
     return runtime_conf
+
+
+def resolve_dns(*args, **kwargs) -> dns.resolver.Answer:
+    """Resolve DNS query using the method recommended according to the installed dnspython version
+
+    Parameters:
+        see: https://dnspython.readthedocs.io/en/stable/resolver-class.html#dns.resolver.Resolver.resolve
+        The `search` parameter is always set to True for compatibility with dnspython version 1.
+
+    """
+    if dns.version.MAJOR < 2:
+        return dns.resolver.query(*args, **kwargs)
+    return dns.resolver.resolve(*args, **kwargs, search=True)

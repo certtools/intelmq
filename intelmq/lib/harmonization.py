@@ -34,16 +34,13 @@ import ipaddress
 import json
 import re
 import socket
-import sys
 import urllib.parse as parse
+from typing import Optional, Union
 
 import dateutil.parser
 import dns.resolver
-import pytz
 
 import intelmq.lib.utils as utils
-
-from typing import Optional, Union
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
@@ -58,7 +55,7 @@ class GenericType:
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = GenericType().sanitize(value)
+            value = GenericType.sanitize(value)
 
         if not value:
             return False
@@ -97,9 +94,9 @@ class String(GenericType):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = GenericType().sanitize(value)
+            value = GenericType.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         if type(value) is not str:
@@ -121,14 +118,14 @@ class Base64(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = Base64().sanitize(value)
+            value = Base64.sanitize(value)
 
         try:
             utils.base64_decode(value)
         except (TypeError, AttributeError):
             return False
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         return True
@@ -155,7 +152,7 @@ class Boolean(GenericType):
             return True
         else:
             if sanitize:
-                value = Boolean().sanitize(value)
+                value = Boolean.sanitize(value)
                 if value is not None:
                     return True
             return False
@@ -211,15 +208,15 @@ class ClassificationTaxonomy(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = ClassificationTaxonomy().sanitize(value)
+            value = ClassificationTaxonomy.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         if not isinstance(value, str):
             return False
 
-        if value not in ClassificationTaxonomy().allowed_values:
+        if value not in ClassificationTaxonomy.allowed_values:
             return False
 
         return True
@@ -237,7 +234,7 @@ class ClassificationTaxonomy(String):
             value = 'intrusion-attempts'
         elif value == 'malicious code':
             value = 'malicious-code'
-        return GenericType().sanitize(value)
+        return GenericType.sanitize(value)
 
 
 class ClassificationType(String):
@@ -321,15 +318,15 @@ class ClassificationType(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = ClassificationType().sanitize(value)
+            value = ClassificationType.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         if not isinstance(value, str):
             return False
 
-        if value not in ClassificationType().allowed_values:
+        if value not in ClassificationType.allowed_values:
             return False
 
         return True
@@ -380,7 +377,7 @@ class ClassificationType(String):
             value = 'system-compromise'
         elif value == 'dropzone':
             value = 'other'
-        return GenericType().sanitize(value)
+        return GenericType.sanitize(value)
 
 
 class DateTime(String):
@@ -400,9 +397,9 @@ class DateTime(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = DateTime().sanitize(value)
+            value = DateTime.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         if value != DateTime.__parse(value):
@@ -416,7 +413,7 @@ class DateTime(String):
             value = DateTime.__parse(value)
         except TypeError:  # None
             return None
-        return GenericType().sanitize(value)
+        return GenericType.sanitize(value)
 
     @staticmethod
     def __parse(value: str) -> Optional[str]:
@@ -429,7 +426,10 @@ class DateTime(String):
 
         try:
             value = dateutil.parser.parse(value, fuzzy=True)
-            value = value.astimezone(pytz.utc)
+            if not value.tzinfo:
+                value = value.replace(tzinfo=datetime.timezone.utc)
+            else:
+                value = value.astimezone(tz=datetime.timezone.utc)
             value = value.isoformat()
         except (ValueError, OverflowError):
             return None
@@ -451,13 +451,18 @@ class DateTime(String):
             # With microseconds
             dtvalue = datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f+00:00')
 
-        if return_datetime:
-            return pytz.utc.localize(dtvalue)
+        if not dtvalue.tzinfo:
+            dtvalue = dtvalue.replace(tzinfo=datetime.timezone.utc)
         else:
-            return value
+            dtvalue = dtvalue.astimezone(tz=datetime.timezone.utc)
+
+        if return_datetime:
+            return dtvalue
+
+        return value
 
     @staticmethod
-    def from_epoch_millis(tstamp: str, tzone='UTC') -> datetime.datetime:
+    def from_epoch_millis(tstamp: Union[int, str]) -> str:
         """
         Returns ISO formatted datetime from given epoch timestamp with milliseconds.
         It ignores the milliseconds, converts it into normal timestamp and processes it.
@@ -465,22 +470,18 @@ class DateTime(String):
         bytecount = len(str(tstamp))
         int_tstamp = int(tstamp)
         if bytecount == 10:
-            return DateTime.from_timestamp(int_tstamp, tzone)
+            return DateTime.from_timestamp(int_tstamp)
         if bytecount == 12:
-            return DateTime.from_timestamp(int_tstamp // 100, tzone)
+            return DateTime.from_timestamp(int_tstamp // 100)
         if bytecount == 13:
-            return DateTime.from_timestamp(int_tstamp // 1000, tzone)
+            return DateTime.from_timestamp(int_tstamp // 1000)
 
     @staticmethod
-    def from_timestamp(tstamp: int, tzone='UTC') -> str:
+    def from_timestamp(tstamp: Union[int, float, str]) -> str:
         """
         Returns ISO formatted datetime from given timestamp.
-        You can give timezone for given timestamp, UTC by default.
         """
-        dtime = (datetime.datetime(1970, 1, 1, tzinfo=pytz.utc) +
-                 datetime.timedelta(seconds=tstamp))
-        localized = pytz.timezone(tzone).normalize(dtime)
-        return str(localized.isoformat())
+        return datetime.datetime.fromtimestamp(float(tstamp), datetime.timezone.utc).isoformat()
 
     @staticmethod
     def from_windows_nt(tstamp: int) -> str:
@@ -499,13 +500,13 @@ class DateTime(String):
         See also:
             https://www.epochconverter.com/ldap
         """
-        epoch = datetime.datetime(1601, 1, 1, tzinfo=pytz.utc)
-        dtime = epoch + datetime.timedelta(seconds=int(tstamp) * 10**-7)
+        epoch = datetime.datetime(1601, 1, 1, tzinfo=datetime.timezone.utc)
+        dtime = epoch + datetime.timedelta(seconds=int(tstamp) * 10 ** -7)
         return dtime.isoformat()
 
     @staticmethod
     def generate_datetime_now() -> str:
-        value = datetime.datetime.now(pytz.timezone('UTC'))
+        value = datetime.datetime.now(datetime.timezone.utc)
         value = value.replace(microsecond=0)
         return value.isoformat()
 
@@ -515,10 +516,10 @@ class DateTime(String):
         Converts a datetime with the given format.
         """
         value = datetime.datetime.strptime(value, format)
-        if not value.tzinfo and sys.version_info <= (3, 6):
-            value = pytz.utc.localize(value)
-        elif not value.tzinfo:
-            value = value.astimezone(pytz.utc)
+        if not value.tzinfo:
+            value = value.replace(tzinfo=datetime.timezone.utc)
+        else:
+            value = value.astimezone(tz=datetime.timezone.utc)
         return value.isoformat()
 
     @staticmethod
@@ -527,26 +528,18 @@ class DateTime(String):
         Converts a date with the given format and adds time 00:00:00 to it.
         """
         date = datetime.datetime.strptime(value, format)
-        if sys.version_info <= (3, 6):
-            value = datetime.datetime.combine(date, DateTime.midnight)
-            value = pytz.utc.localize(value)
-        else:
-            value = datetime.datetime.combine(date, DateTime.midnight,
-                                              tzinfo=pytz.utc)
+        value = datetime.datetime.combine(date, DateTime.midnight, tzinfo=datetime.timezone.utc)
         return value.isoformat()
 
     @staticmethod
     def convert_fuzzy(value) -> str:
         value = dateutil.parser.parse(value, fuzzy=True)
-        if not value.tzinfo and sys.version_info <= (3, 6):
-            value = pytz.utc.localize(value)  # pragma: no cover
-        elif not value.tzinfo:
-            value.astimezone(pytz.utc)
-        iso = value.isoformat()
-        if '+' not in iso:
-            return iso + '+00:00'
+        if not value.tzinfo:
+            value = value.replace(tzinfo=datetime.timezone.utc)
         else:
-            return iso
+            value = value.astimezone(tz=datetime.timezone.utc)
+
+        return value.isoformat()
 
     @staticmethod
     def convert(value, format='fuzzy') -> str:
@@ -596,7 +589,7 @@ class Float(GenericType):
     @staticmethod
     def is_valid(value: float, sanitize: bool = False) -> bool:
         if sanitize:
-            value = Float().sanitize(value)
+            value = Float.sanitize(value)
             if value is not None:
                 return True
 
@@ -663,20 +656,20 @@ class FQDN(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = FQDN().sanitize(value)
+            value = FQDN.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         if value.strip('.') != value or value != value.lower() or ':' in value:
             return False
 
-        if IPAddress().is_valid(value):
+        if IPAddress.is_valid(value):
             return False
 
         url = parse.urlsplit(value)
         if (url.scheme != '' or url.netloc != '' or url.query != '' or url.fragment != '' or
-           url.path.find('/') >= 0):
+                url.path.find('/') >= 0):
             return False
 
         if value.encode('idna').decode() != value:
@@ -687,7 +680,7 @@ class FQDN(String):
     @staticmethod
     def sanitize(value: str) -> Optional[str]:
         try:
-            value = GenericType().sanitize(value)
+            value = GenericType.sanitize(value)
         except ValueError:
             return
         if not isinstance(value, str):
@@ -702,7 +695,7 @@ class FQDN(String):
     @staticmethod
     def to_ip(value: str) -> Optional[str]:
         try:
-            value = str(dns.resolver.query(value, 'A')[0])
+            value = str(utils.resolve_dns(value, 'A')[0])
         except dns.resolver.NXDOMAIN:  # domain not found
             value = None
         return value
@@ -719,7 +712,7 @@ class Integer(GenericType):
     @staticmethod
     def is_valid(value: int, sanitize: bool = False) -> bool:
         if sanitize:
-            value = Integer().sanitize(value)
+            value = Integer.sanitize(value)
             if value is not None:
                 return True
 
@@ -749,6 +742,7 @@ class ASN(Integer):
     > 65,535, and the last ASN of the 32-bit numbers, namely 4,294,967,295 are
     > reserved and should not be used by operators.
     """
+
     @staticmethod
     def check_asn(value: int) -> bool:
         if 0 < value <= 4294967295:
@@ -759,7 +753,7 @@ class ASN(Integer):
     @staticmethod
     def is_valid(value: int, sanitize: bool = False) -> bool:
         if sanitize:
-            value = ASN().sanitize(value)
+            value = ASN.sanitize(value)
         if not Integer.is_valid(value):
             return False
         if not ASN.check_asn(value):
@@ -787,9 +781,9 @@ class IPAddress(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = IPAddress().sanitize(value)
+            value = IPAddress.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         try:
@@ -811,7 +805,7 @@ class IPAddress(String):
     def sanitize(value: Union[int, str]) -> Optional[str]:
         if not isinstance(value, int):  # can be str/bytes or ipaddress.ip_address object
             try:
-                value = GenericType().sanitize(value)
+                value = GenericType.sanitize(value)
             except ValueError:
                 return None
 
@@ -829,7 +823,7 @@ class IPAddress(String):
             except ValueError:
                 return None
             # we don't need the specialized checks below, return early
-            return GenericType().sanitize(value)
+            return GenericType.sanitize(value)
 
         try:
             # Remove the scope ID if it's detected.
@@ -850,7 +844,7 @@ class IPAddress(String):
         else:
             return None
 
-        return GenericType().sanitize(value)
+        return GenericType.sanitize(value)
 
     @staticmethod
     def to_int(value: str) -> Optional[int]:
@@ -887,9 +881,9 @@ class IPNetwork(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = IPNetwork().sanitize(value)
+            value = IPNetwork.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         try:
@@ -903,12 +897,12 @@ class IPNetwork(String):
     def sanitize(value: str) -> Optional[str]:
 
         try:
-            value = GenericType().sanitize(value)
+            value = GenericType.sanitize(value)
             value = str(ipaddress.ip_network(str(value), strict=False))
         except ValueError:
             return None
 
-        return GenericType().sanitize(value)
+        return GenericType.sanitize(value)
 
     @staticmethod
     def version(value: str) -> int:
@@ -927,7 +921,7 @@ class JSON(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = JSON().sanitize(value)
+            value = JSON.sanitize(value)
 
         if not isinstance(value, str):
             return False
@@ -948,7 +942,7 @@ class JSON(String):
             if JSON.is_valid(sanitized):
                 return sanitized
         try:
-            return GenericType().sanitize(json.dumps(value, sort_keys=True))
+            return GenericType.sanitize(json.dumps(value, sort_keys=True))
         except TypeError:
             return None
 
@@ -965,7 +959,7 @@ class JSONDict(JSON):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = JSONDict().sanitize(value)
+            value = JSONDict.sanitize(value)
 
         if not isinstance(value, str):
             return False
@@ -993,7 +987,7 @@ class JSONDict(JSON):
             if JSONDict.is_valid(sanitized):
                 return sanitized
         try:
-            return GenericType().sanitize(json.dumps(value, sort_keys=True))
+            return GenericType.sanitize(json.dumps(value, sort_keys=True))
         except TypeError:
             return None
 
@@ -1012,10 +1006,10 @@ class LowercaseString(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = String().sanitize(value)
+            value = String.sanitize(value)
             value = LowercaseString().sanitize(value)
 
-        if not String().is_valid(value):
+        if not String.is_valid(value):
             return False
 
         if value != value.lower():
@@ -1029,7 +1023,7 @@ class LowercaseString(String):
             value = value.lower()
         except AttributeError:  # None
             return None
-        return String().sanitize(value)
+        return String.sanitize(value)
 
 
 class URL(String):
@@ -1045,9 +1039,9 @@ class URL(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = URL().sanitize(value)
+            value = URL.sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not GenericType.is_valid(value):
             return False
 
         result = parse.urlsplit(value)
@@ -1058,7 +1052,7 @@ class URL(String):
 
     @staticmethod
     def sanitize(value: str) -> Optional[str]:
-        value = GenericType().sanitize(value)
+        value = GenericType.sanitize(value)
         if not value:
             return
 
@@ -1080,7 +1074,7 @@ class URL(String):
     def to_ip(url: str) -> Optional[str]:
         value = parse.urlsplit(url)
         if value.netloc != "":
-            return FQDN().to_ip(value.netloc)
+            return FQDN.to_ip(value.netloc)
         return None
 
     @staticmethod
@@ -1101,9 +1095,9 @@ class UppercaseString(String):
     @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
-            value = UppercaseString().sanitize(value)
+            value = UppercaseString.sanitize(value)
 
-        if not String().is_valid(value):
+        if not String.is_valid(value):
             return False
 
         if value != value.upper():
@@ -1117,7 +1111,7 @@ class UppercaseString(String):
             value = value.upper()
         except AttributeError:  # None
             return None
-        return String().sanitize(value)
+        return String.sanitize(value)
 
 
 class Registry(UppercaseString):
