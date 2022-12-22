@@ -631,7 +631,7 @@ Get some debugging output on the settings and the environment (to be extended):
 
     def list_bots(self, non_zero=False, configured=False):
         """
-        Lists all (configured) bots from runtime.conf or generated on demand
+        Lists all (configured) bots from runtime configuration or generated on demand
         with bot id/module and description and parameters.
 
         If description is not set, None is used instead.

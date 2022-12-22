@@ -109,7 +109,7 @@ if __name__ == "__main__":
                         dest="runtime_file",
                         metavar="<filepath>",
                         required=False,
-                        help="write runtime configuration to the given file (e.g. '/tmp/runtime.conf') instead of stdout")
+                        help="write runtime configuration to the given file (e.g. '/tmp/runtime.yaml') instead of stdout")
 
     parser.add_argument('--pipeline-output-file',
                         action="store",

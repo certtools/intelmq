@@ -84,7 +84,7 @@ class DomainValidExpertBot(ExpertBot):
 
         if not bots:
             if verbose:
-                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf.")
+                print(f"Database update skipped. No bots of type {__name__} present in runtime configuration.")
             sys.exit(0)
 
         try:

@@ -71,7 +71,7 @@ In the shipped examples 4 collectors and parsers, 6 common experts and one outpu
 Systemwide Configuration (global)
 *********************************
 
-All bots inherit the global configuration parameters in the ``runtime.conf`` and they can overwrite them using the same parameters in their individual configuration in the ``runtime.conf`` file.
+All bots inherit the global configuration parameters in the ``runtime.yaml`` and they can overwrite them using the same parameters in their individual configuration in the ``runtime.yaml`` file.
 
 .. _configuration-logging:
 
@@ -238,9 +238,9 @@ This configuration is used by each bot to load its specific (runtime) parameters
        name: Blocklist.de Apache
        rate_limit: 3600
 
-More examples can be found in the ``intelmq/etc/runtime.conf`` directory. See :doc:`bots` for more details.
+More examples can be found in the ``intelmq/etc/runtime.yaml`` file. See :doc:`bots` for more details.
 
-By default, all of the bots are started when you start the whole botnet, however there is a possibility to *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your runtime.conf: ``"enabled": false``. For example:
+By default, all of the bots are started when you start the whole botnet, however there is a possibility to *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your ``runtime.yaml``: ``"enabled": false``. For example:
 
 .. code-block:: yaml
 
@@ -258,7 +258,7 @@ By default, all of the bots are started when you start the whole botnet, however
 Pipeline Configuration
 ======================
 
-The pipeline configuration defines how the data is exchanges between the bots. For each bot, it defines the source queue (there is always only one) and one or multiple destination queues. This section shows the possibilities and definition as well as examples. The configuration of the pipeline can be done by the |intelmq-manager-github-link|  with no need to intervene manually. It is recommended to use this tool as it guarantees that the configuration is correct. The configuration of the pipelines is done in the ``runtime.conf`` as part of the individiual bots settings.
+The pipeline configuration defines how the data is exchanges between the bots. For each bot, it defines the source queue (there is always only one) and one or multiple destination queues. This section shows the possibilities and definition as well as examples. The configuration of the pipeline can be done by the |intelmq-manager-github-link|  with no need to intervene manually. It is recommended to use this tool as it guarantees that the configuration is correct. The configuration of the pipelines is done in the ``runtime.yaml`` as part of the individual bots settings.
 
 Source queue
 ------------
@@ -483,7 +483,7 @@ Disabled bots can still be started explicitly using ``intelmqctl start <bot_id>`
 Scheduled Run Mode
 ------------------
 
-In many cases, it is useful to schedule a bot at a specific time (i.e. via cron(1)), for example to collect information from a website every day at midnight. To do this, set ``run_mode`` to ``scheduled`` in the ``runtime.conf`` for the bot. Check out the following example:
+In many cases, it is useful to schedule a bot at a specific time (i.e. via cron(1)), for example to collect information from a website every day at midnight. To do this, set ``run_mode`` to ``scheduled`` in the ``runtime.yaml`` for the bot. Check out the following example:
 
 .. code-block:: yaml
 
@@ -513,7 +513,7 @@ Setting ``enabled`` to ``false`` will cause the bot to not start with ``intelmqc
 Continuous Run Mode
 -------------------
 
-Most of the cases, bots will need to be configured as ``continuous`` run mode (the default) in order to have them always running and processing events. Usually, the types of bots that will require the continuous mode will be Parsers, Experts and Outputs. To do this, set ``run_mode`` to ``continuous`` in the ``runtime.conf`` for the bot. Check the following example:
+Most of the cases, bots will need to be configured as ``continuous`` run mode (the default) in order to have them always running and processing events. Usually, the types of bots that will require the continuous mode will be Parsers, Experts and Outputs. To do this, set ``run_mode`` to ``continuous`` in the ``runtime.yaml`` for the bot. Check the following example:
 
 .. code-block:: yaml
 
