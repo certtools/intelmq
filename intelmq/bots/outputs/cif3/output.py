@@ -26,7 +26,11 @@ Example (of some parameters in JSON):
 
 
 """
-import ujson as json
+try:
+    import ujson as json
+except ImportError:
+    JsonLib = None
+
 from datetime import datetime
 from typing import Optional
 
@@ -36,12 +40,9 @@ from intelmq.lib.exceptions import IntelMQException, MissingDependencyError
 try:
     from cifsdk.client.http import HTTP as HttpClient
     from csirtg_indicator import Indicator
+    from cifsdk._version import get_versions as get_cifsdk_version
 except ImportError:
     HttpClient = None
-    import_fail_reason = 'import'
-except SyntaxError:
-    HttpClient = None
-    import_fail_reason = 'syntax'
 
 INTELMQ_TO_CIF_FIELDS_MAP = {
     'source.ip': 'indicator',
@@ -90,13 +91,20 @@ class CIF3OutputBot(OutputBot):
     _is_multithreadable = False
 
     def init(self):
-        if HttpClient is None and import_fail_reason == 'syntax':
+        cifsdk_version = int(get_cifsdk_version().get('version').split('.')[0])
+        # installed cifsdk version must be >=3 and < 4
+        if not 3<= cifsdk_version < 4:
+            HttpClient = None
+        if HttpClient is None:
             raise MissingDependencyError(
-                "cifsdk",
+                'cifsdk',
                 version='3.0.0rc4,<4.0'
             )
-        elif HttpClient is None:
-            raise MissingDependencyError('cifsdk', version='3.0.0rc4,<4.0')
+        elif JsonLib is None:
+            raise MissingDependencyError(
+                'ujson',
+                version='>=2.0'
+            )
 
         self.cif3_url = self.cif3_url.rstrip('/')
 
@@ -197,17 +205,18 @@ class CIF3OutputBot(OutputBot):
 
     def _submit_cif3_indicator(self, indicators):
         # build the CIFv3 indicator object from the dict
-        self.logger.info(f"Sending {len(indicators)} indicator(s).")
+        self.logger.debug(f"Sending {len(indicators)} indicator(s).")
         try:
             resp = self.cli.indicators_create(indicators)
         except Exception as err:
             self.logger.error(f"Error submitting indicator(s): {err}")
+            raise 
         else:
             if isinstance(resp, list):
                 resp = json.loads(resp[0])
                 if resp.get('status') == 'success':
                     resp = resp['data']
-            self.logger.info(f"CIFv3 instance successfully inserted {resp} new indicator(s).")
+            self.logger.debug(f"CIFv3 instance successfully inserted {resp} new indicator(s).")
 
     @staticmethod
     def check(parameters):
