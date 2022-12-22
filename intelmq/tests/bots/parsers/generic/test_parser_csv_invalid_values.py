@@ -25,20 +25,20 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "time.source": "2018-08-01T07:49:41+00:00",
                  "classification.type": "malware-distribution",
                  "source.ip": "127.0.0.1",
-                 "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\r\n'),
+                 "raw": utils.base64_encode(SAMPLE_SPLIT[0] + '\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 EXAMPLE_EVENT2 = EXAMPLE_EVENT.copy()
 EXAMPLE_EVENT2['source.fqdn'] = "example.com"
-EXAMPLE_EVENT2["raw"] = utils.base64_encode(SAMPLE_SPLIT[1] + '\r\n')
+EXAMPLE_EVENT2["raw"] = utils.base64_encode(SAMPLE_SPLIT[1] + '\n')
 
 EXAMPLE_EVENT3 = EXAMPLE_EVENT.copy()
 del EXAMPLE_EVENT3['source.ip']
 EXAMPLE_EVENT3['source.fqdn'] = "example.com"
-EXAMPLE_EVENT3["raw"] = utils.base64_encode(SAMPLE_SPLIT[2] + '\r\n')
+EXAMPLE_EVENT3["raw"] = utils.base64_encode(SAMPLE_SPLIT[2] + '\n')
 
 EXAMPLE_EVENT4 = EXAMPLE_EVENT.copy()
-EXAMPLE_EVENT4["raw"] = utils.base64_encode(SAMPLE_SPLIT[3] + '\r\n')
+EXAMPLE_EVENT4["raw"] = utils.base64_encode(SAMPLE_SPLIT[3] + '\n')
 
 
 class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
