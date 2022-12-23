@@ -10,3 +10,4 @@ python-termstyle>=0.1.10
 redis>=2.10
 requests>=2.2.0
 ruamel.yaml
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
