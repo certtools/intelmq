@@ -51,7 +51,7 @@ class RsyncCollectorBot(CollectorBot):
             raise Exception("You must define only one of the variables private_key or private_key_path")
 
         if self.private_key:
-            bot_id = f'{self!r}'.split('.')[-1].split(' ')[0] # TODO: use bot id
+            bot_id = self._Bot__bot_id
             self.privkeydir = path.join(VAR_STATE_PATH, f'privkey_dir_{bot_id}')
             try:
                 mkdir(self.privkeydir)
