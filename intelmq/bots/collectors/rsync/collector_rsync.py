@@ -57,7 +57,7 @@ class RsyncCollectorBot(CollectorBot):
                 mkdir(self.privkeydir)
             except FileExistsError:
                 pass
-            self.private_key_path = path.join(self.privkeydir, 'private.key') 
+            self.private_key_path = path.join(self.privkeydir, 'private.key')
 
             # privkey format parser, support formats with and without headers, breaklines, etc.
             if '-----' in self.private_key:
@@ -66,7 +66,7 @@ class RsyncCollectorBot(CollectorBot):
                 p = self.private_key
             pb64 = ''.join(p.split())
             fullkey = ['-----BEGIN OPENSSH PRIVATE KEY-----']
-            fullkey += [ pb64[i:i+70] for i in range(0, len(pb64), 70) ]
+            fullkey += [pb64[i:i + 70] for i in range(0, len(pb64), 70)]
             fullkey += ['-----END OPENSSH PRIVATE KEY-----']
             fullkey += ['']
             final_key = '\n'.join(fullkey)
@@ -97,7 +97,7 @@ class RsyncCollectorBot(CollectorBot):
 
         self.logger.info(f"Updating file {rsync_file}.")
         cmd_list = ["rsync"] + self.extra_params + [rsync_full_path, self.temp_directory]
-        self.logger.info(f"CMD: {cmd_list}")
+        self.logger.debug(f"Executing command: {cmd_list}.")
         process = run(cmd_list, stderr=PIPE)
         if process.returncode == 0:
             report = self.new_report()
@@ -105,7 +105,7 @@ class RsyncCollectorBot(CollectorBot):
                 report.add("raw", f.read())
                 self.send_message(report)
         elif process.returncode == 23:
-            self.logger.warning(f"rsync exited with error code 23. {process.stderr!r}. Check if the file exists: {rsync_file!r}")
+            self.logger.warning(f"rsync failed with exitcode 23. {process.stderr!r}. Check if the file exists: {rsync_file!r}")
         else:
             raise ValueError(f"Rsync on file {rsync_file!r} failed with exitcode \
                                 {process.returncode} and stderr {process.stderr!r}.")
