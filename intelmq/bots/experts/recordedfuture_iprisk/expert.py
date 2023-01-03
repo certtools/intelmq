@@ -87,7 +87,7 @@ class RecordedFutureIPRiskExpertBot(ExpertBot):
 
         if not bots:
             if verbose:
-                print(f"Database update skipped. No bots of type {__name__} present in runtime.conf or database update disabled with parameter 'autoupdate_cached_database'.")
+                print(f"Database update skipped. No bots of type {__name__} present in runtime configuration or database update disabled with parameter 'autoupdate_cached_database'.")
             sys.exit(0)
 
         try:
