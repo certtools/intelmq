@@ -896,7 +896,7 @@ Get some debugging output on the settings and the environment (to be extended):
                 if orphan_queues:
                     check_logger.warning("Orphaned queues found: '%s'. Possible leftover from past reconfigurations "
                                          "without cleanup. Have a look at the FAQ at "
-                                         "https://intelmq.readthedocs.io/en/latest/guides/intelmqctl.html"
+                                         "https://intelmq.readthedocs.io/en/maintenance/user/FAQ.html"
                                          "#orphaned-queues", orphan_queues)
 
         check_logger.info('Checking harmonization configuration.')
