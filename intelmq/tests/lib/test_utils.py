@@ -376,7 +376,7 @@ class TestUtils(unittest.TestCase):
 
     @unittest.mock.patch.object(utils.dns.version, "MAJOR", 2)
     def test_resolve_dns_supports_dnspython_v2(self):
-        with unittest.mock.patch.object(utils.dns.resolver, "resolve") as resolve_mocks:
+        with unittest.mock.patch.object(utils.dns.resolver, "resolve", create=True) as resolve_mocks:
             utils.resolve_dns("example.com", "any", other="parameter")
 
         resolve_mocks.assert_called_once_with("example.com", "any", other="parameter", search=True)
