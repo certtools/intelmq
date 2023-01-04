@@ -59,6 +59,7 @@ CHANGELOG
 - `intelmq.bots.outputs.smtp_batch.output`: Added a bot to gathering the events and sending them by e-mails at a stroke as CSV files (PR#2253 by Edvard Rejthar)
 
 ### Documentation
+- API: update API installation to be aligned with the rewritten API, and clarify some missing steps.
 
 ### Tests
 - New decorator `skip_installation` and environment variable `INTELMQ_TEST_INSTALLATION` to skip tests requiring an IntelMQ installation on the test host by default (PR#2370 by Sebastian Wagner, fixes #2369)

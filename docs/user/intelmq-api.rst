@@ -6,7 +6,7 @@
 IntelMQ API
 ###########
 
-`intelmq-api` is a `hug <http://hug.rest>`_ based API for the `IntelMQ <https://github.com/certtools/intelmq/>`_ project.
+`intelmq-api` is a `FastAPI <https://fastapi.tiangolo.com/>`_ based API for the `IntelMQ <https://github.com/certtools/intelmq/>`_ project.
 
 .. contents::
 
@@ -23,31 +23,84 @@ For the list of supported distributions, please see the intelmq :doc:`installati
 Our repository page gives `installation instructions for various operating systems <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq-api>`_.
 No additional set-up steps are needed if you use these packages.
 
-The `intelmq-api` provides the route ``/api`` for managing the IntelMQ installation.
+The `intelmq-api` provides the route ``/v1/api`` for managing the IntelMQ installation.
 
-For development purposes and testing you can also run `intelmq-api` directly using ``hug``:
+For development purposes and testing you can also run `intelmq-api` using development script
+from its `repository <https://github.com/certtools/intelmq-api>`_:
 
 .. code-block:: bash
 
-   hug -m intelmq_api.serve
+   ./scripts/run_dev.sh
+
+The API is then served on ``127.0.0.1:8000/v1/api``, and the interactive documentation on ``127.0.0.1:8000/docs``.
+Please refer to the repository README for more development tips.
 
 Installation using pip
 ^^^^^^^^^^^^^^^^^^^^^^
 
-The `intelmq-api` packages ship a configuration file in ``${PREFIX}/etc/intelmq/api-config.json``, a positions configuration for the manager in ``{PREFIX}/etc/intelmq/manager/positions.conf``, a virtualhost configuration file for Apache 2 in ``${PREFIX}/etc/intelmq/api-apache.conf`` and a sudoers configuration file in ``${PREFIX}/etc/intelmq/api-sudoers.conf``.
+.. note::
+
+   Native system packages (DEB, RPM) should automatically prepare steps described in this section. If
+   you wish to base on package from pip, you may need need to do them manually, as described below.
+
+To configure your system to serve the API for not-development purposes, you need to prepare a
+configuration for IntelMQ API, a position config for the IntelMQ Manager as well as a web application
+server and a (reverse)proxy. For all those steps we have prepared example configuration, intended
+to work with `Gunicorn <https://gunicorn.org/>`_ as the web server and `Apache 2 <https://httpd.apache.org/>`_
+as the proxy.
+
+The `intelmq-api` packages ship following example files:
+ - ``${PREFIX}/etc/intelmq/api-config.json`` - the API configuration,
+ - ``${PREFIX}/etc/intelmq/manager/positions.conf`` - a positions configuration for the manager,
+ - ``${PREFIX}/etc/intelmq/api-apache.conf`` - a virtualhost configuration file for Apache 2,
+ - ``${PREFIX}/etc/intelmq/api-sudoers.conf`` - a sudoers configuration file,
+ - ``${PREFIX}/etc/intelmq/intelmq-api.service`` - a systemd service unit configuration for Gunicorn,
+ - ``${PREFIX}/etc/intelmq/intelmq-api.socket`` - a systemd socket unit configuration.
+
 The value of ``${PREFIX}`` depends on your environment and is something like ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version).
+
+You need to install Gunicorn and Apache2 on your own, e.g., using apt:
+
+.. code-block:: bash
+
+   apt install gunicorn apache2
+
+Then, if you didn't use it before, ensure to enable the ``proxy_http`` module for Apache:
+
+.. code-block:: bash
+
+   a2enmod proxy_http
+
 
 The file ``${PREFIX}/etc/intelmq/api-apache.conf`` needs to be placed in the correct place for your Apache 2 installation.
  - On Debian and Ubuntu, move the file to ``/etc/apache2/conf-available.d/api-apache.conf`` and then execute ``a2enconf api-apache``.
  - On CentOS, RHEL and Fedora, move the file to ``/etc/httpd/conf.d/``.
  - On openSUSE, move the file to ``/etc/apache2/conf.d/``.
-Don't forget to reload your webserver afterwards.
+Don't forget to reload the Apache2 afterwards.
+
+The systemd configuration files (``intelmq-api.service`` and ``intelmq-api.socket``) are responsible
+for instructing systemd daemon to start and keep running Gunicorn (that serves the API), and
+forwarding requests between proxy and the Gunicorn instance.
+
+- Files ``${PREFIX}/etc/intelmq/intelmq-api.service`` and ``${PREFIX}/etc/intelmq/intelmq-api.socket``
+  should be placed in ``/lib/systemd/system/`` directory. Then adapt the webserver user name in
+  ``intelmq-api.service``.
+
+After moving files, you can enable the service by executing ``systemctl enable intelmq-api`` to
+start it on the system startup.
 
 - The file ``${PREFIX}/etc/intelmq/api-config.json`` needs to be moved to ``/etc/intelmq/api-config.json``.
 - The file ``${PREFIX}/etc/intelmq/manager/positions.conf`` needs to be moved to ``/etc/intelmq/manager/positions.conf``.
 - Last but not least move the file ``${PREFIX}/etc/intelmq/api-sudoers.conf`` to ``/etc/sudoers.d/01_intelmq-api`` and adapt the webserver user name in this file. Set the file permissions to ``0o440``.
 
-Afterwards continue with the section Permissions below.
+Afterwards continue with the section Permissions below. When you finish the configuration,
+you can start the service using ``systemctl start intelmq-api``. You may need to restart the service
+after any configuration change.
+
+.. note::
+
+   The example Apache2 and Gunicorn configurations serve the IntelMQ API under ``/intelmq`` prefix,
+   what means that you should be able to get, e.g., the documentation under ``/intelmq/docs`` etc.
 
 IntelMQ 2.3.1 comes with a tool ``intelmqsetup`` which performs these set-up steps automatically.
 Please note that the tool is very new and may not detect all situations correctly. Please report us any bugs you are observing.
@@ -61,13 +114,13 @@ Depending on your setup you might have to install ``sudo`` to make it possible f
 
 ``intelmq-api`` is configured using a configuration file in ``json`` format.
 ``intelmq-api`` tries to load the configuration file from ``/etc/intelmq/api-config.json`` and ``${PREFIX}/etc/intelmq/api-config.json``, but you can override the path setting the environment variable ``INTELMQ_API_CONFIG``.
-(When using Apache, you can do this by modifying the Apache configuration file shipped with ``intelmq-api``, the file contains an example)
+(When using Gunicorn and systemd service, you can do this by modifying the ``intelmq-api.service`` configuration file shipped with ``intelmq-api``, the file contains an example)
 
-When running the API using ``hug``, you can set the environment variable like this:
+When running the API using development mode, you can set the environment variable like this:
 
 .. code-block:: bash
 
-   INTELMQ_API_CONFIG=/etc/intelmq/api-config.json hug -m intelmq_api.serve
+   INTELMQ_API_CONFIG=/etc/intelmq/api-config.json ./scripts/run_dev.sh
 
 
 The default configuration which is shipped with the packages is also listed here for reference:
@@ -210,6 +263,22 @@ sqlite3.OperationalError: attempt to write a readonly database
 
 SQLite does not only need write access to the database itself, but also the folder the database file is located in. Please check that the webserver has write permissions to the folder
 the session file is located in.
+
+Can I use other web server or proxy?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Yes, the proposed setup with Gunicorn and Apache 2 is just one of many possibilities. You can
+refer to the `FastAPI documentation <https://fastapi.tiangolo.com/deployment/>`_ for another
+examples.
+
+How to debug API running as system service?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you experience any issues with the API, please first check the logs provided in journal:
+
+.. code-block:: bash
+
+   journalctl -u intelmq-api
 
 
 ************
