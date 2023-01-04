@@ -12,11 +12,15 @@ from collections import namedtuple, OrderedDict
 from io import StringIO
 
 from redis.exceptions import TimeoutError
-from envelope import Envelope
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
+from intelmq.lib.exceptions import MissingDependencyError
 
+try:
+    from envelope import Envelope
+except ImportError:
+    Envelope = None
 
 Mail = namedtuple('Mail', ["key", "to", "path", "count"])
 
@@ -68,6 +72,8 @@ class SMTPBatchOutputBot(Bot):
         )
 
     def init(self):
+        if Envelope is None:
+            raise MissingDependencyError('envelope', '>=2.0.0')
         self.set_cache()
         self.key = f"{self._Bot__bot_id}:"
 
