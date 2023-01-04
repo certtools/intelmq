@@ -7,7 +7,11 @@ import time
 from types import SimpleNamespace
 import unittest
 
-from envelope import Envelope
+try:
+    from envelope import Envelope
+except ImportError:
+    from intelmq.lib.exceptions import MissingDependencyError
+    raise MissingDependencyError('envelope', '>=2.0.0')
 
 import intelmq.lib.test as test
 from intelmq.bots.outputs.smtp_batch.output import SMTPBatchOutputBot
