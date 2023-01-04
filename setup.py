@@ -43,7 +43,7 @@ setup(
     version=__version__,  # noqa: F821
     maintainer='Sebastian Wagner',
     maintainer_email='intelmq-dev@lists.cert.at',
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     install_requires=REQUIRES,
     tests_require=TESTS_REQUIRES,
     test_suite='intelmq.tests',
@@ -71,7 +71,6 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
