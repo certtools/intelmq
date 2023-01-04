@@ -1,14 +1,4 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-#
-# Initiate dialog ex like this:
-# ssh -t $USER@proki.csirt.cz 'docker exec -it -u 1000 intelmq intelmq.bots.outputs.smtp_batch.output smtp-batch-output-cz cli
-#   --tester [your-email] --ignore-older-than-days 4'
-#
-from __future__ import unicode_literals
-
-import argparse
 import csv
 import datetime
 import json
@@ -47,7 +37,7 @@ class SMTPBatchOutputBot(Bot):
     redis_cache_ttl: int = 1728000
     smtp_server: Any = "localhost"
     subject: str = "IntelMQ warning (%Y-%m-%d)"
-    attachment_name : str = "intelmq_%Y-%m-%d"
+    attachment_name: str = "intelmq_%Y-%m-%d"
     testing_to: Optional[str] = None
 
     # private parameters
@@ -61,7 +51,7 @@ class SMTPBatchOutputBot(Bot):
     cli: bool = False  # whether we are in the CLI mode
 
     def process(self):
-        message = self.receive_message()        
+        message = self.receive_message()
         if "source.abuse_contact" in message:
             field = message["source.abuse_contact"]
             for mail in (field if isinstance(field, list) else [field]):
@@ -77,7 +67,7 @@ class SMTPBatchOutputBot(Bot):
             self.redis_cache_ttl
         )
 
-    def init(self):        
+    def init(self):
         self.set_cache()
         self.key = f"{self._Bot__bot_id}:"
 
@@ -86,9 +76,9 @@ class SMTPBatchOutputBot(Bot):
         if not parsed_args:
             parsed_args = cls._create_argparser().parse_args()
 
-        if parsed_args.cli:            
-            instance = cls(parsed_args.bot_id)            
-            [setattr(instance, k ,v) for k, v in vars(parsed_args).items()]
+        if parsed_args.cli:
+            instance = cls(parsed_args.bot_id)
+            [setattr(instance, k, v) for k, v in vars(parsed_args).items()]
             instance.cli_run()
         else:
             super().run(parsed_args=parsed_args)
@@ -99,14 +89,13 @@ class SMTPBatchOutputBot(Bot):
         argparser.add_argument('--cli', help='initiate CLI interface', action="store_true")
         argparser.add_argument('--tester', dest="testing_to", help='tester\'s e-mail')
         argparser.add_argument('--ignore-older-than-days',
-                            help='1..n skip all events with time.observation'
-                                    ' older than 1..n day; 0 disabled (allow all)',
-                            type=int)
+                               help='1..n skip all events with time.observation'
+                               ' older than 1..n day; 0 disabled (allow all)',
+                               type=int)
         argparser.add_argument("--gpg-key", help="fingerprint of gpg key to be used")
         argparser.add_argument("--limit-results", type=int, help="Just send first N mails.")
-        argparser.add_argument("--send", help="Sends now, without dialog.", action='store_true')        
+        argparser.add_argument("--send", help="Sends now, without dialog.", action='store_true')
         return argparser
-    
 
     def cli_run(self):
         os.makedirs(self.TMP_DIR, exist_ok=True)
@@ -246,7 +235,7 @@ class SMTPBatchOutputBot(Bot):
             # prepare rows for csv attachment
             threshold = datetime.datetime.now() - datetime.timedelta(
                 days=self.ignore_older_than_days) if getattr(self, 'ignore_older_than_days',
-                                                                        False) else False
+                                                             False) else False
             fieldnames = set()
             rows_output = []
             for row in lines:
