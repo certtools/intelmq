@@ -48,6 +48,7 @@ CHANGELOG
 
 ### Development
 - Removed Python 3.6 from CI.
+- Enabled tests against Python 3.11.
 
 ### Data Format
 
