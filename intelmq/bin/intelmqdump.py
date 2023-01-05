@@ -210,7 +210,7 @@ def main(argv=None):
     defaults = utils.get_global_settings()
     runtime_config = utils.get_runtime()
     pipeline_pipes = {}
-    logging_paths = set([defaults.get('logging_path', DEFAULT_LOGGING_PATH)])
+    logging_paths = {defaults.get('logging_path', DEFAULT_LOGGING_PATH)}
     for bot, settings in runtime_config.items():
         pipeline_pipes[settings.get('source_queue', f"{bot}-queue")] = bot
         logging_paths.add(settings.get("parameters", {}).get('logging_path', DEFAULT_LOGGING_PATH))

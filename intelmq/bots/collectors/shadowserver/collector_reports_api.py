@@ -95,9 +95,9 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
         dayafter = date + timedelta(1)
 
         data = self.preamble
-        data += ',"date": "{}:{}" '.format(daybefore.isoformat(), dayafter.isoformat())
+        data += f',"date": "{daybefore.isoformat()}:{dayafter.isoformat()}" '
         if len(self._report_list) > 0:
-            data += ',"reports": {}'.format(json.dumps(self._report_list))
+            data += f',"reports": {json.dumps(self._report_list)}'
         data += '}'
         self.logger.debug('Downloading report list with data: %s.', data)
 

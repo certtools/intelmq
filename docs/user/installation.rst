@@ -26,7 +26,7 @@ The following installation methods are available:
 Base Requirements
 -----------------
 
-The following instructions assume the following requirements. Python versions >= 3.6 are supported.
+The following instructions assume the following requirements. Python versions >= 3.7 are supported.
 
 Supported and recommended operating systems are:
 
@@ -123,6 +123,12 @@ CentOS 7 / RHEL 7:
    yum install gcc gcc-c++ python36-devel
    # optional dependencies
    yum install python3-psycopg2
+
+.. note::
+
+   We no longer support already end-of-life Python 3.6, which is the last Python version officially
+   packaged for CentOS Linux 7. You can either use alternative Python source, or stay on the IntelMQ
+   3.0.2.
 
 CentOS 8:
 
