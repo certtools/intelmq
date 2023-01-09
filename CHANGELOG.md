@@ -12,6 +12,7 @@ CHANGELOG
 - Upgraded syntax to Python 3.6 (mostly Format-Strings) using pyuprade (PR#2136 by Sebastian Wagner).
 
 ### Configuration
+- Disabled the Feodo bots in the default configuration as they required additional dependencies to run (fixes [#1499](https://github.com/certtools/intelmq/issues/1499)).
 
 ### Core
 - `intelmq.lib.upgrades`:

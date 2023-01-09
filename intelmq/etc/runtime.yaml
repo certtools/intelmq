@@ -40,7 +40,7 @@ deduplicator-expert:
 feodo-tracker-browse-collector:
   description: Generic URL Fetcher is the bot responsible to get the report from an
     URL.
-  enabled: true
+  enabled: false
   group: Collector
   module: intelmq.bots.collectors.http.collector_http
   name: URL Fetcher
@@ -60,7 +60,7 @@ feodo-tracker-browse-collector:
 feodo-tracker-browse-parser:
   description: HTML Table Parser is a bot configurable to parse different html table
     data.
-  enabled: true
+  enabled: false
   group: Parser
   module: intelmq.bots.parsers.html_table.parser
   name: HTML Table
