@@ -6,7 +6,6 @@
 """ IntelMQ Dataplane Parser """
 
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 
 class DataplaneParserBot(ParserBot):
@@ -64,7 +63,7 @@ class DataplaneParserBot(ParserBot):
         if line.startswith('#') or len(line) == 0:
             self.tempdata.append(line)
         else:
-            event = Event(report)
+            event = self.new_event(report)
 
             line_contents = line.split('|')
             if len(line_contents) != len(self.FILE_FORMAT) + 1:
