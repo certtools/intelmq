@@ -42,7 +42,7 @@ Developed and maintained by `CERT.at <https://cert.at>`_.
 
 → `Repository: intelmq-webinput-csv <https://github.com/certat/intelmq-webinput-csv>`_
 
-.. image:: https://raw.githubusercontent.com/certat/intelmq-webinput-csv/master/docs/images/screenshot.png
+.. image:: https://raw.githubusercontent.com/certat/intelmq-webinput-csv/c20413a401c2077140dd17fb7651db1132fde648/docs/images/screenshot.png
    :alt: IntelMQ Webinput CSV Preview page
 
 IntelMQ Mailgen
@@ -59,8 +59,8 @@ It consists of these three components, which can also be used on their own.
 IntelMQ CertBUND Contact
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-The certbund-contact consists of two IntelMQ expert bots, whcih fetch and process the information from the contact database, and scripts to import RIPE data into the contact database.
-Based on user-defined rules, the experts determine to which contact the event is to be sent to and which e-mail template and attachment format to use.
+The certbund-contact consists of two IntelMQ expert bots, which fetch and process the information from the contact database, and scripts to import RIPE data into the contact database.
+Based on user-defined rules, the experts determine to which contact the event is to be sent to, and which e-mail template and attachment format to use.
 
 → `Repository: intelmq-certbund-contact <https://github.com/Intevation/intelmq-certbund-contact>`_
 
@@ -72,8 +72,8 @@ It allows to read and edit contacts, query sent mails (tickets) and call up data
 
 It can also be used to just query the :doc:`eventdb` without using Mailgen.
 
-.. image:: https://raw.githubusercontent.com/Intevation/intelmq-fody/master/docs/images/landing_page.png
-   :alt: IntelMQ Webinput CSV Preview page
+.. image:: https://raw.githubusercontent.com/Intevation/intelmq-fody/6e41b836d0a2c350a5f2c5c95a4b3be4d3f46027/docs/images/landing_page.png
+   :alt: IntelMQ Fody Dashboard
 
 → `Repository: intelmq-fody <https://github.com/Intevation/intelmq-fody>`_
 
@@ -110,7 +110,7 @@ The integrated API enables IntelMQ to query the portal for the right abuse
 contact and notification settings with the
 :ref:`intelmq.bots.experts.tuency.expert` expert.
 
-.. image:: https://gitlab.com/sebix1/tuency/-/raw/master/docs/images/netobjects.png
+.. image:: https://gitlab.com/intevation/tuency/tuency/-/raw/64b95ec0/docs/images/netobjects.png
    :alt: Tuency Netobjects Overview
 
 → `Repository: tuency <https://gitlab.com/Intevation/tuency/tuency>`_
@@ -134,7 +134,7 @@ Stats Portal
 A Grafana-based statistics portal for the :doc:`eventdb`. Can be integrated into do-portal.
 It uses aggregated data to serve statistical data quickly.
 
-.. image:: https://raw.githubusercontent.com/certtools/stats-portal/master/architecture-overview-stats-portal-screen.png
+.. image:: https://raw.githubusercontent.com/certtools/stats-portal/38515266aabdf661a0b4becd8e921b03f32429fa/architecture-overview-stats-portal-screen.png
    :alt: Stats Portal Architecture
 
 → `Repository: stats-portal <https://github.com/certtools/stats-portal>`_

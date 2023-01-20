@@ -32,7 +32,7 @@ GitHub
 To report bugs, `GitHub issues <https://github.com/certtools/intelmq/issues>`_ are the ideal place to do so.
 Every IntelMQ component has it's own repository on GitHub, with a separate Issue tracker.
 
-GitHub also offers a `discussion platform <https://github.com/certtools/intelmq/discussions/landing>`_.
+GitHub also offers a `discussion platform <https://github.com/certtools/intelmq/discussions>`_.
 
 To participate on GitHub, you first need to create an account on the platform.
 
