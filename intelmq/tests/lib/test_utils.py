@@ -28,6 +28,7 @@ import termstyle
 from ruamel.yaml.scanner import ScannerError
 
 import intelmq.lib.utils as utils
+from intelmq.lib.test import skip_internet
 from intelmq.tests.test_conf import CerberusTests
 
 LINES = {'spare': ['Lorem', 'ipsum', 'dolor'],
@@ -381,6 +382,7 @@ class TestUtils(unittest.TestCase):
 
         resolve_mocks.assert_called_once_with("example.com", "any", other="parameter", search=True)
 
+    @skip_internet()
     def test_resolve_dns_returns_answer(self):
         answer = utils.resolve_dns("example.com")
         self.assertIsInstance(answer, dns.resolver.Answer)
