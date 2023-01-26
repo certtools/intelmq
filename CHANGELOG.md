@@ -44,9 +44,11 @@ CHANGELOG
   - Removes `tzone` argument from `DateTime.from_timestamp` and `DateTime.from_epoch_millis`
   - `DateTime.from_timstamp` now also allows string argument
 - Removes `pytz` global dependency
+- Removed support for Python 3.6, including removing conditional dependencies and updating syntax to use features from newest versions. (fixes [#2272](https://github.com/certtools/intelmq/issues/2272)
 
 ### Development
 - Removed Python 3.6 from CI.
+- Enabled tests against Python 3.11.
 
 ### Data Format
 
@@ -179,6 +181,7 @@ CHANGELOG
   - `check`: handle `SyntaxError` in bot modules and report it without breaking execution (fixes #2177)
   - Privilege drop before logfile creation (PR#2277 by Sebastian Waldbauer, fixes 2176)
 - `intelmqsetup`: Revised installation of manager by building the static files at setup, not build time, making it behave more meaningful. Requires intelmq-manager >= 3.1.0 (PR#2198 by Sebastian Wagner, fixes #2197).
+- `intelmqdump`: Respected global and per-bot custom settings of `logging_path` (fix #1605).
 
 ### Contrib
 - logrotate: Move compress and ownership rules to the IntelMQ-blocks to prevent that they apply to other files (PR#2111 by Sebastian Wagner, fixes #2110).
@@ -186,8 +189,6 @@ CHANGELOG
 ### Known issues
 This is short list of the most important known issues. The full list can be retrieved from [GitHub](https://github.com/certtools/intelmq/labels/bug?page=2&q=is%3Aopen+label%3Abug).
 - intelmq_psql_initdb does not work for SQLite (#2202).
-- SyntaxError in bots causes intelmqctl check to crash (#2177).
-- intelmqctl create log file before dropping privileges (#2176).
 - intelmqsetup: should install a default state file (#2175).
 - Misp Expert - Crash if misp event already exist (#2170).
 - Turris greylist has been updated (#2167).
@@ -197,7 +198,6 @@ This is short list of the most important known issues. The full list can be retr
 - intelmqctl log: parsing syslog does not work (#2097).
 - Bash completion scripts depend on old JSON-based configuration files (#2094).
 - Bot configuration examples use JSON instead of YAML (#2066).
-- intelmqdump: logging_path parameter not honoured (#1605).
 - Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
 - Corrupt dump files when interrupted during writing (#870).
 
@@ -759,7 +759,6 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 ### Tools
 - `intelmqdump`:
     - Check if given queue is configured upon recovery (#1433, PR#1587 by Mladen Markovic).
-    - Respected global and per-bot custom settings of `logging_path` (fix #1605).
 - `intelmqctl`:
   - `intelmq list queues`: `--sum`, `--count`, `-s` flag for showing total count of messages (#1408, PR#1581 by Mladen Markovic).
   - `intelmq check`: Added a possibility to ignore queues from the orphaned queues check (by Sebastian Wagner).
