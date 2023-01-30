@@ -241,23 +241,22 @@ providers:
       documentation: https://data.netlab.360.com/hajime/
       public: true
   Abuse.ch:
-    Feodo Tracker IPs:
-      description: 'List of botnet Command&Control servers (C&Cs) tracked by Feodo Tracker,
-        associated with Dridex and Emotet (aka Heodo).'
+    Feodo Tracker:
+      description: 'List of botnet Command & Control servers (C&Cs) tracked by Feodo Tracker, associated with Dridex and Emotet (aka Heodo).'
       additional_information: https://feodotracker.abuse.ch/
         The data in the column Last Online is used for `time.source` if available, with 00:00 as time. Otherwise first seen is used as `time.source`.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://feodotracker.abuse.ch/downloads/ipblocklist.csv
+            http_url: https://feodotracker.abuse.ch/downloads/ipblocklist.json
             rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
         parser:
-          module: intelmq.bots.parsers.abusech.parser_ip
+          module: intelmq.bots.parsers.abusech.parser_feodotracker
           parameters:
-      revision: 2019-03-25
+      revision: 2022-11-15
       documentation: https://feodotracker.abuse.ch/
       public: true
     URLhaus:
@@ -294,27 +293,6 @@ providers:
               - source.geolocation.cc
       revision: 2020-07-07
       documentation: https://urlhaus.abuse.ch/feeds/
-      public: true
-    Feodo Tracker Browse:
-      description: ''
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://feodotracker.abuse.ch/browse
-            rate_limit: 86400
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.html_table.parser
-          parameters:
-            columns: "time.source,source.ip,malware.name,status,source.as_name,source.geolocation.cc"
-            ignore_values: ",,,,,"
-            skip_table_head: True
-            type: c2-server
-      revision: 2019-03-19
-      documentation: https://feodotracker.abuse.ch/browse
       public: true
   Blueliv:
     CrimeServer:

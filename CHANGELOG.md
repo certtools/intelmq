@@ -132,6 +132,11 @@ CHANGELOG
   - Changes feed URL to JSON format (contains more information). The URL needs to by manually updated in the configuration!
   - Adds fields from the JSON feed.
 - `intelmq.bots.parsers.dshield.parser_domain`: Has been removed, due to the feed is discontinued. (PR#2276 by Sebastian Waldbauer)
+- `intelmq.bots.parsers.abusech.parser_ip`: Removed (PR#2268 by Filip Pokorný).
+- `intelmq.bots.parsers.abusech.parser_domain`: Removed (PR#2268 by Filip Pokorný).
+- `intelmq.bots.parsers.abusech.parser_feodotracker`: Added new parser bot (PR#2268 by Filip Pokorný)
+  - Changes feed URL to JSON format (contains more information).
+  - Adds fields from the JSON feed.
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).
