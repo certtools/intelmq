@@ -39,7 +39,7 @@ class FileOutputBot(OutputBot):
         if self._file is not None:
             self._file.close()
         try:
-            self._file = open(filename, mode='at', encoding='utf-8', errors=self.errors)
+            self._file = open(filename, mode='a', encoding='utf-8', errors=self.errors)
         except FileNotFoundError:  # directory does not exist
             path = Path(os.path.dirname(filename))
             try:
@@ -48,7 +48,7 @@ class FileOutputBot(OutputBot):
                 self.logger.exception('Directory %r could not be created.', path)
                 self.stop()
             else:
-                self._file = open(filename, mode='at', encoding='utf-8', errors=self.errors)
+                self._file = open(filename, mode='a', encoding='utf-8', errors=self.errors)
 
     def process(self):
         event = self.receive_message()
