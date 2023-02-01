@@ -30,13 +30,12 @@ The following instructions assume the following requirements. Python versions >=
 
 Supported and recommended operating systems are:
 
-* CentOS 7 and 8
 * Debian 10 Buster and 11 Bullseye
-* openSUSE Leap 15.3, 15.4 and Tumbleweed
-* Ubuntu: 18.04, 20.04
+* openSUSE Tumbleweed
+* Ubuntu: 20.04 focal
 * For the Docker-installation: Docker Engine: 18.x and higher
 
-Other distributions which are (most probably) supported include AlmaLinux, Fedora, FreeBSD 12, RHEL and RockyLinux.
+Other distributions which are (most probably) supported include AlmaLinux, CentOS, Fedora, FreeBSD 12, RHEL and RockyLinux.
 
 A short guide on hardware requirements can be found on the page :doc:`hardware-requirements`.
 
@@ -46,16 +45,9 @@ Native deb/rpm packages
 
 These are the operating systems which are currently supported by packages:
 
-* **CentOS 7** (run ``yum install epel-release`` first)
-* **CentOS 8** (run ``dnf install epel-release`` first)
 * **Debian 10** Buster
 * **Debian 11** Bullseye
-* **Fedora 34**
-* **openSUSE Leap 15.2**
-* **openSUSE Leap 15.3** (make sure the ``openSUSE:Backports:SLE-15-SP3`` repository is enabled)
-* **openSUSE Leap 15.4**
 * **openSUSE Tumbleweed**
-* **Ubuntu 18.04** Bionic Beaver (enable the universe repositories by appending ``universe`` in ``/etc/apt/sources.list`` to ``deb http://[...].archive.ubuntu.com/ubuntu/ bionic main`` first)
 * **Ubuntu 20.04** Focal Fossa (enable the universe repositories by appending ``universe`` in ``/etc/apt/sources.list`` to ``deb http://[...].archive.ubuntu.com/ubuntu/ focal main`` first)
 
 Get the installation instructions for your operating system here: `Installation Native Packages <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq>`_.

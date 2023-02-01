@@ -27,6 +27,8 @@ import intelmq.lib.harmonization as harmonization
 from intelmq.lib.utils import lazy_int
 
 yaml = YAML(typ="safe", pure=True)
+yaml.default_flow_style = False # This makes the configuration more readable, diff-friendly and consistent.
+
 
 def to_json(obj):
     """
