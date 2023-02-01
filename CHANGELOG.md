@@ -119,6 +119,7 @@ CHANGELOG
       scan_rsync:extra.password renamed to extra.has_password
       scan_elasticsearch:status renamed to http_code
   - Added `Accessible-HTTP-proxy` and `Open-HTTP-proxy` (PR#2246 by elsif2).
+  - Added http_agent to the `Honeypot-DDoS` report and added the `DDoS-Participant` report (PR#2303 by elsif2)
 
 - `intelmq.bots.parsers.cymru.parser_cap_program`: The parser mapped the hostname into `source.fqdn` which is not allowed by the IntelMQ Data Format. Added a check (PR#2215 by Sebastian Waldbauer, fixes #2169)
 - `intelmq.bots.parsers.generic.parser_csv`:
