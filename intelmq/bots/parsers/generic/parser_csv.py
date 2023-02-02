@@ -17,7 +17,6 @@ data_type: string
 
 """
 import csv
-import io
 import json
 import re
 from typing import Optional, Union, Iterable
@@ -98,11 +97,13 @@ class GenericCsvParserBot(ParserBot):
         raw_report = re.sub(r'(?m)\0', '', raw_report)
         # ignore lines having mix of spaces and tabs only
         raw_report = re.sub(r'(?m)^[ \t]*\n?', '', raw_report)
-        # skip header
+
+        report_io = self._get_io_and_save_line_ending(raw_report)
+
         if self.skip_header:
-            self.tempdata.append(raw_report[:raw_report.find('\n')])
-            raw_report = raw_report[raw_report.find('\n') + 1:]
-        self._handle = RewindableFileHandle(io.StringIO(raw_report))
+            self.tempdata.append(next(report_io).rstrip(''.join(report_io.newlines)))
+
+        self._handle = RewindableFileHandle(report_io)
         for row in csv.reader(self._handle,
                               delimiter=str(self.delimiter)):
             self._current_line = self._handle.current_line

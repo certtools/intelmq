@@ -21,7 +21,7 @@ EXAMPLE_REPORT = {"feed.name": "Sample CSV Feed",
                   "time.observation": "2015-01-01T00:00:00+00:00"}
 EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "__type": "Event",
-                 "raw": "aXBzZXQsYWRkLHRlc3RJUCwxMC4xLjEuMQ0K",
+                 "raw": "aXBzZXQsYWRkLHRlc3RJUCwxMC4xLjEuMQo=",
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  "classification.type": "blacklist",
                  "source.ip": "10.1.1.1"}

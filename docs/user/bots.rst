@@ -15,8 +15,8 @@ General remarks
 By default all of the bots are started when you start the whole botnet, however there is a possibility to
 *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start
 and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your
-`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others
-described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check out
+``runtime.yaml``: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others
+described in this file). It is set outside of the `parameters` object in ``runtime.yaml``. Check out
 :doc:`configuration-management` for an example.
 
 There are two different types of parameters: The initialization parameters are need to start the bot. The runtime parameters are needed by the bot itself during runtime.
@@ -2894,7 +2894,7 @@ format:
        path 'other-path' // the message is sent to the given path
    }
 
-   if classification.type == ['phishing', 'malware-distribution'] && source.fqdn =~ '.*\.(ch|li)$' {
+   if classification.type :in ['phishing', 'malware-distribution'] && source.fqdn =~ '.*\.(ch|li)$' {
      add! comment = 'domainabuse'
      keep
    } elif classification.type == 'scanner' {

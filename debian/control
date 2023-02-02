@@ -23,7 +23,7 @@ Build-Depends: debhelper (>= 4.1.16),
                quilt,
                rsync,
                safe-rm
-X-Python3-Version: >= 3.5
+X-Python3-Version: >= 3.7
 Standards-Version: 3.9.6
 Homepage: https://github.com/certtools/intelmq/
 

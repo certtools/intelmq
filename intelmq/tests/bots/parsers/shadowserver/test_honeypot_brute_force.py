@@ -15,7 +15,7 @@ with open(os.path.join(os.path.dirname(__file__), 'testdata/event4_honeypot_brut
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {'feed.name': 'Drone Brute Force',
+EXAMPLE_REPORT = {'feed.name': 'Honeypot-Brute-Force-Events',
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
@@ -33,11 +33,11 @@ EVENTS = [{'__type': 'Event',
            'destination.ip': '162.250.1.2',
            'destination.port': 22,
            'extra.application': 'ssh',
-           'extra.end_time': '2021-03-27T00:00:01.710968Z',
+           'extra.end_time': '2021-03-27T00:00:01.710968+00:00',
            'extra.public_source': 'CAPRICA-EU',
-           'extra.start_time': '2021-03-27T00:00:00.521730Z',
+           'extra.start_time': '2021-03-27T00:00:00.521730+00:00',
            'malware.name': 'ssh-brute-force',
-           'feed.name': 'Drone Brute Force',
+           'feed.name': 'Honeypot-Brute-Force-Events',
            'protocol.transport': 'tcp',
            'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
                                                  EXAMPLE_LINES[1]])),

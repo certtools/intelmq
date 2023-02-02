@@ -56,39 +56,105 @@ Developers can create a fork repository of IntelMQ in order to commit the new co
 
 The following instructions will use `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code. However, configuration files still required to be moved to `/opt/intelmq` as the instructions show.
 
-In this guide we use `/opt/dev_intelmq` as local repository copy. You can also use other directories as long as they are readable by other unprivileged users (e.g. home directories on Fedora can't be read by other users by default).
-`/opt/intelmq` is used as root location for IntelMQ installations, this is IntelMQ's default for this installation method. This directory is used for configurations (`/opt/intelmq/etc`), local states (`/opt/intelmq/var/lib`) and logs (`/opt/intelmq/var/log`).
+The traditional way to work with IntelMQ is to install it globally and have a separated user for running it. If you wish to separate your machine Python's libraries, e.g. for development purposes, you could alternatively use a Python virtual environment
+and your local user to run IntelMQ. Please use your preferred way from instructions below.
+
+Directories explained
+~~~~~~~~~~~~~~~~~~~~~
+
+For development purposes, you need two directories: one for a local repository copy, and the second as a root dictionary for the IntelMQ installation.
+
+The default IntelMQ root directory is `/opt/intelmq`. This directory is used for configurations (`/opt/intelmq/etc`), local states (`/opt/intelmq/var/lib`) and logs (`/opt/intelmq/var/log`).
+If you want to change it, please set the `INTELMQ_ROOT_DIR` environment variable with a desired location.
+
+For repository directory, you can use any path that is accessible by users you use to run IntelMQ. For globally installed IntelMQ, the directory has to be readable by other unprivileged users (e.g. home directories on Fedora can't be read by other users by default).
+
+To keep commands in the guide universal, we will use environmental variables for repository and installation paths. You can set them with following commands:
+
+.. code-block::
+
+   # Adjust paths if you want to use non-standard directories
+   export INTELMQ_REPO=/opt/dev_intelmq
+   export INTELMQ_ROOT_DIR=/opt/intelmq
+
+.. note::
+
+   If using non-default installation directory, remember to keep the root directory variable set for every run of IntelMQ commands.
+   If you don't, then the default location `/opt/intelmq` will be used.
+
+Using globally installed IntelMQ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
    sudo -s
 
-   git clone https://github.com/<your username>/intelmq.git /opt/dev_intelmq
-   cd /opt/dev_intelmq
+   git clone https://github.com/<your username>/intelmq.git $INTELMQ_REPO
+   cd $INTELMQ_REPO
 
    pip3 install -e .
 
-   useradd -d /opt/intelmq -U -s /bin/bash intelmq
+   useradd -d $INTELMQ_ROOT_DIR -U -s /bin/bash intelmq
 
    intelmqsetup
 
-**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any shipped configuration file, you need to apply the changes in your repository `/opt/dev_intelmq/intelmq/etc/`.
+
+Using virtual environment
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   git clone https://github.com/<your username>/intelmq.git $INTELMQ_REPO
+   cd $INTELMQ_REPO
+
+   python -m venv .venv
+   source .venv/bin/activate
+
+   pip install -e .
+
+   # If you use a non-local directory as INTELMQ_ROOT_DIR, use following
+   # command to create it and change the ownership.
+   sudo install -g `whoami` -o `whoami` -d $INTELMQ_ROOT_DIR
+   # For local directory, just create it with mkdir:
+   mkdir $INTELMQ_ROOT_DIR
+
+   intelmqsetup --skip-ownership
+
+
+.. note::
+
+   Please do not forget that configuration files, log files will be available on `$INTELMQ_ROOT_DIR`. However, if your development is somehow related to any shipped configuration file, you need to apply the changes in your repository `$INTELMQ_REPO/intelmq/etc/`.
+
+
+Additional services
+===================
+
+Some features require additional services, like message queue or database. The commonly used services are gained for development purposes in the Docker Compose file in `contrib/development-tools/docker-compose-common-services.yaml` in the repository.
+You can use them to run services on your machine in a docker containers, or decide to configure them in an another way. To run them using Docker Compose, use following command from the main repository directory:
+
+.. code-block:: bash
+
+   # For older Docker versions, you may need to use `docker-compose` command
+   docker compose -f contrib/development-tools/docker-compose-common-services.yaml up -d
+
+This will start in the background containers with Redis, RabbitMQ, PostgreSQL and MongoDB.
 
 
 How to develop
 ==============
 
-After you successfully setup your IntelMQ development environment, you can perform any development on any `.py` file on `/opt/dev_intelmq`. After you change, you can use the normal procedure to run the bots:
+After you successfully setup your IntelMQ development environment, you can perform any development on any `.py` file on `$INTELMQ_REPO`. After you change, you can use the normal procedure to run the bots:
 
 .. code-block:: bash
 
-   su - intelmq
+   su - intelmq # Use for global installation
+   source .venv/bin/activate # Use for virtual environment installation
 
    intelmqctl start spamhaus-drop-collector
 
-   tail -f /opt/intelmq/var/log/spamhaus-drop-collector.log
+   tail -f $INTELMQ_ROOT_DIR/var/log/spamhaus-drop-collector.log
 
-You can also add new bots, creating the new `.py` file on the proper directory inside `cd /opt/dev_intelmq/intelmq`. However, your IntelMQ installation with pip3 needs to be updated. Please check the following section.
+You can also add new bots, creating the new `.py` file on the proper directory inside `cd $INTELMQ_REPO/intelmq`. However, your IntelMQ installation with pip3 needs to be updated. Please check the following section.
 
 
 Update
@@ -98,41 +164,46 @@ In case you developed a new bot, you need to update your current development ins
 
 
 1. Make sure that you have your new bot in the right place.
-2. Execute the following commands:
+2. Update pip metadata and new executables:
 
 .. code-block:: bash
 
-   sudo -s
+   sudo -s # Use for global installation
+   source .venv/bin/activate # Use for virtual environment installation
 
    cd /opt/dev_intelmq
-   ## necessary for pip metadata update and new executables:
    pip3 install -e .
 
-   find /opt/intelmq/ -type d -exec chmod 0770 {} \+
-   find /opt/intelmq/ -type f -exec chmod 0660 {} \+
-   chown -R intelmq.intelmq /opt/intelmq
+3. If you're using the global installation, an additional step of changing permissions and ownership is necessary:
+
+.. code-block:: bash
+
+   find $INTELMQ_ROOT_DIR/ -type d -exec chmod 0770 {} \+
+   find $INTELMQ_ROOT_DIR/ -type f -exec chmod 0660 {} \+
+   chown -R intelmq.intelmq $INTELMQ_ROOT_DIR
    ## if you use the intelmq manager (adapt the webservers' group if needed):
-   chown intelmq.www-data /opt/intelmq/etc/*.conf
+   chown intelmq.www-data $INTELMQ_ROOT_DIR/etc/*.conf
 
 Now you can test run your new bot following this procedure:
 
 .. code-block:: bash
 
-   su - intelmq
+   su - intelmq # Use for global installation
+   source .venv/bin/activate # Use for virtual environment installation
 
    intelmqctl start <bot_id>
 
 Testing
 =======
 
-Additional optional requirements
---------------------------------
+Additional test requirements
+----------------------------
 
-For the documentation tests one additional librariy is required: Cerberus. You can install it with pip:
+Libraries required for tests are listed in the `setup.py` file. You can install them with pip:
 
 .. code-block:: bash
 
-   pip3 install Cerberus
+   pip3 install -e .[development]
 
 or the package management of your operating system.
 
@@ -142,11 +213,12 @@ Run the tests
 All changes have to be tested and new contributions should be accompanied by according unit tests.
 Please do not run the tests as root just like any other IntelMQ component for security reasons. Any other unprivileged user is possible.
 
-You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `pytest`:
+You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `pytest`. For virtual environment
+installation, please activate it and omit the `sudo -u` from examples below:
 
 .. code-block:: bash
 
-   cd /opt/dev_intelmq
+   cd $INTELMQ_REPO
    sudo -u intelmq python3 -m unittest {discover|filename}  # or
    sudo -u intelmq pytest [filename]
    sudo -u intelmq python3 setup.py test  # uses a build environment (no external dependencies)
@@ -240,7 +312,7 @@ Layout Rules
          <bot name>/
                output.py
      /conf
-       runtime.conf
+       runtime.yaml
 
 Assuming you want to create a bot for a new 'Abuse.ch' feed. It turns out that here it is necessary to create different parsers for the respective kind of events (e.g. malicious URLs). Therefore, the usual hierarchy ‘intelmq/bots/parser/<FEED>/parser.py’ would not be suitable because it is necessary to have more parsers for each Abuse.ch Feed. The solution is to use the same hierarchy with an additional "description" in the file name, separated by underscore. Also see the section *Directories and Files naming*.
 
@@ -541,7 +613,7 @@ The following mixins are available:
 
 The `HttpMixin` provides the HTTP attributes described in :ref:`common-parameters` and the following methods:
 
-* :code:`http_get` takes an URL as argument. Any other arguments get passed to the :code:`request.Session.get` method. :code:`http_get` returns a :code:`reqests.Response`.
+* :code:`http_get` takes an URL as argument. Any other arguments get passed to the :code:`request.Session.get` method. :code:`http_get` returns a :code:`requests.Response`.
 
 * :code:`http_session` can be used if you ever want to work with the session object directly. It takes no arguments and returns the bots request.Session.
 
@@ -756,7 +828,7 @@ You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e
 parse_line
 ----------
 
-One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multiple values. Use `yield event` for valid Events and `return` in case of a void result (not parseable line, invalid data etc.).
+One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multiple values. Use `yield event` for valid Events and `return` in case of a void result (not parsable line, invalid data etc.).
 
 Tests
 =====

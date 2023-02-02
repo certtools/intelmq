@@ -24,7 +24,7 @@ optional arguments:
                         feeds.yaml config file
   --all                 iterate through all feeds
   --runtime-output-file <filepath>
-                        /tmp/runtime.conf
+                        /tmp/runtime.yaml
   --pipeline-output-file <filepath>
                         /tmp/pipeline.conf
 
@@ -43,5 +43,5 @@ optional arguments:
 ### Generate all bots configurations and send to file
 
 ```
-./intelmq_gen_feeds_conf --feeds-file=../../intelmq/etc/feeds.yaml --all  --runtime-output-file=/tmp/runtime.conf --pipeline-output-file=/tmp/pipeline.conf
+./intelmq_gen_feeds_conf --feeds-file=../../intelmq/etc/feeds.yaml --all  --runtime-output-file=/tmp/runtime.yaml --pipeline-output-file=/tmp/pipeline.conf
 ```

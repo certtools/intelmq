@@ -941,15 +941,33 @@ class ParserBot(Bot):
     _ignore_lines_starting = []
     _handle = None
     _current_line: Optional[str] = None
+    _line_ending = '\r\n'
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
-        super().__init__(bot_id=bot_id)
+        super().__init__(bot_id, start, sighup_event, disable_multithreading)
         if self.__class__.__name__ == 'ParserBot':
             self.logger.error('ParserBot can\'t be started itself. '
                               'Possible Misconfiguration.')
             self.stop()
         self.group = 'Parser'
+
+    def _line_filtering_condition(self, line: str) -> str:
+        return not any([line.startswith(prefix) for prefix in self._ignore_lines_starting])
+
+    def _get_io_and_save_line_ending(self, raw: str) -> io.StringIO:
+        """Prepare StringIO and save the original line ending
+
+        The line ending is saved in self._line_ending. The default value is \\r\\n,
+        the same as default used by csv module"""
+        data_io = io.StringIO(raw, newline='')  # preserve original line ending
+        self._line_ending = data_io.newlines
+
+        # In case of mixed endings, StringIO will report a tuple with them.
+        # In such a case, use the line ending default for the csv module
+        if not self._line_ending or isinstance(self._line_ending, tuple):
+            self._line_ending = '\r\n'
+        return data_io
 
     def parse_csv(self, report: libmessage.Report):
         """
@@ -958,11 +976,12 @@ class ParserBot(Bot):
         """
         raw_report: str = utils.base64_decode(report.get("raw")).strip()
         raw_report = raw_report.translate({0: None})
+        report_io = self._get_io_and_save_line_ending(raw_report)
         if self._ignore_lines_starting:
-            raw_report = '\n'.join([line for line in raw_report.splitlines()
-                                    if not any([line.startswith(prefix) for prefix
-                                                in self._ignore_lines_starting])])
-        self._handle = RewindableFileHandle(io.StringIO(raw_report))
+            self._handle = RewindableFileHandle(report_io, condition=self._line_filtering_condition)
+        else:
+            self._handle = RewindableFileHandle(report_io)
+
         for line in csv.reader(self._handle, **self._csv_params):
             self._current_line = self._handle.current_line
             yield line
@@ -974,11 +993,11 @@ class ParserBot(Bot):
         """
         raw_report: str = utils.base64_decode(report.get("raw")).strip()
         raw_report: str = raw_report.translate({0: None})
+        report_io = self._get_io_and_save_line_ending(raw_report)
         if self._ignore_lines_starting:
-            raw_report = '\n'.join([line for line in raw_report.splitlines()
-                                    if not any([line.startswith(prefix) for prefix
-                                                in self._ignore_lines_starting])])
-        self._handle = RewindableFileHandle(io.StringIO(raw_report))
+            self._handle = RewindableFileHandle(report_io, condition=self._line_filtering_condition)
+        else:
+            self._handle = RewindableFileHandle(report_io)
 
         csv_reader = csv.DictReader(self._handle, **self._csv_params)
         # create an array of fieldnames,
@@ -1023,7 +1042,7 @@ class ParserBot(Bot):
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
             line = line.strip()
-            if not any([line.startswith(prefix) for prefix in self._ignore_lines_starting]):
+            if self._line_filtering_condition(line):
                 self._current_line = line
                 yield line
 
@@ -1116,27 +1135,30 @@ class ParserBot(Bot):
         line = line if line else self._current_line
         return '\n'.join(tempdata + [line])
 
-    def recover_line_csv(self, line: Optional[list]) -> str:
+    def recover_line_csv(self, line: Optional[list] = None) -> str:
         """
+        Recover csv line, respecting saved line ending.
+
         Parameter:
             line: Optional line as list. If absent, the current line is used as string.
         """
         if line:
-            out = io.StringIO()
-            writer = csv.writer(out, **self._csv_params)
+            out = io.StringIO(newline='')
+            writer = csv.writer(out, **{"lineterminator": self._line_ending, **self._csv_params})
             writer.writerow(line)
             result = out.getvalue()
         else:
             result = self._current_line
-        tempdata = '\r\n'.join(self.tempdata) + '\r\n' if self.tempdata else ''
-        return tempdata + result
+        return self._line_ending.join((self.tempdata or []) + [result])
 
     def recover_line_csv_dict(self, line: Union[dict, str, None] = None) -> str:
         """
-        Converts dictionaries to csv. self.csv_fieldnames must be list of fields.
+        Converts dictionaries to csv. self.csv_fieldnames must be list of fields. Respect
+        saved line ending.
         """
-        out = io.StringIO()
-        writer = csv.DictWriter(out, self.csv_fieldnames, **self._csv_params)
+        out = io.StringIO(newline='')
+        writer = csv.DictWriter(out, self.csv_fieldnames,
+                                **{"lineterminator": self._line_ending, **self._csv_params})
         writer.writeheader()
         if isinstance(line, dict):
             writer.writerow(line)
@@ -1194,7 +1216,7 @@ class CollectorBot(Bot):
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
-        super().__init__(bot_id=bot_id)
+        super().__init__(bot_id, start, sighup_event, disable_multithreading)
         if self.__class__.__name__ == 'CollectorBot':
             self.logger.error('CollectorBot can\'t be started itself. '
                               'Possible Misconfiguration.')
@@ -1254,7 +1276,7 @@ class ExpertBot(Bot):
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
-        super().__init__(bot_id=bot_id)
+        super().__init__(bot_id, start, sighup_event, disable_multithreading)
 
 
 class OutputBot(Bot):
@@ -1265,7 +1287,7 @@ class OutputBot(Bot):
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
-        super().__init__(bot_id=bot_id)
+        super().__init__(bot_id, start, sighup_event, disable_multithreading)
         if self.__class__.__name__ == 'OutputBot':
             self.logger.error('OutputBot can\'t be started itself. '
                               'Possible Misconfiguration.')

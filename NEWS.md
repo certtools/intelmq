@@ -22,6 +22,10 @@ See the [Shadowserver Reports API bot's documentation](https://intelmq.readthedo
 #### GitHub Collector
 GitHub removed the basic `Username/Password` Authentication in favor of personal access tokens. So the GitHub Collector uses an Personal Access Token for authentication [Github Documentation: Generate a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
+### Feeds
+#### Abuse.ch Feodo Tracker
+IntelMQ previously supported two feeds: "Feodo Tracker IPs" (downloaded as csv file) and "Feodo Tracker Browse" (downloaded as HTML table). These two feeds contain the same data but differ in the additional details. This IntelMQ release replaces both these feeds (and their parsers) with a feed called "Feodo Tracker" (downloaded as json file) which contains all the additional details from both feeds. The parser module for the new feed is `intelmq.bots.parsers.abusech.parser_feodotracker`.
+
 ### Data Format
 #### Field name checks
 The field names for all data added to messages must match a pre-defined format.
@@ -41,90 +45,8 @@ sudo find /var/log/ -user intelmq ! -path \*intelmq\*
 The parameter `timeout` has been merged into `redis_cache_ttl`.
 
 ### Postgres databases
-The following statements optionally update existing data for the harmonization classification changes:
-```sql
-UPDATE events
-   SET "classification.identifier" = 'open-adb'
-   WHERE "classification.identifier" = 'accessible-adb';
-UPDATE events
-   SET "classification.identifier" = 'open-afp'
-   WHERE "classification.identifier" = 'accessible-afp';
-UPDATE events
-   SET "classification.identifier" = 'open-amqp'
-   WHERE "classification.identifier" = 'accessible-amqp';
-UPDATE events
-   SET "classification.identifier" = 'open-ard'
-   WHERE "classification.identifier" = 'accessible-ard';
-UPDATE events
-   SET "classification.identifier" = 'open-cisco-smart-install'
-   WHERE "classification.identifier" = 'accessible-cisco-smart-install';
-UPDATE events
-   SET "classification.identifier" = 'open-coap'
-   WHERE "classification.identifier" = 'accessible-coap';
-UPDATE events
-   SET "classification.identifier" = 'open-ftp'
-   WHERE "classification.identifier" = 'accessible-ftp';
-UPDATE events
-   SET "classification.identifier" = 'open-hadoop'
-   WHERE "classification.identifier" = 'accessible-hadoop';
-UPDATE events
-   SET "classification.identifier" = 'open-http'
-   WHERE "classification.identifier" = 'accessible-http';
-UPDATE events
-   SET "classification.identifier" = 'open-rdpeudp'
-   WHERE "classification.identifier" = 'accessible-msrdpeudp';
-UPDATE events
-   SET "classification.identifier" = 'open-radmin'
-   WHERE "classification.identifier" = 'accessible-radmin';
-UPDATE events
-   SET "classification.identifier" = 'open-rsync'
-   WHERE "classification.identifier" = 'accessible-rsync';
-UPDATE events
-   SET "classification.identifier" = 'open-ubiquiti'
-   WHERE "classification.identifier" = 'accessible-ubiquiti-discovery-service';
-UPDATE events
-   SET "classification.identifier" = 'honeypot-ddos-amp'
-   WHERE "classification.identifier" = 'amplification-ddos-victim';
-UPDATE events
-   SET "classification.identifier" = 'blocklist'
-   WHERE "classification.identifier" = 'blacklisted-ip';
-UPDATE events
-   SET "classification.identifier" = 'open-dns'
-   WHERE "classification.identifier" = 'dns-open-resolver';
-UPDATE events
-   SET "classification.identifier" = 'honeypot-http-scan'
-   WHERE "classification.identifier" = 'honeypot-http-scan';
-UPDATE events
-   SET "classification.identifier" = 'honeypot-ics-scan'
-   WHERE "classification.identifier" = 'ics';
-UPDATE events
-   SET "classification.identifier" = 'open-ntpmonitor'
-   WHERE "classification.identifier" = 'ntp-monitor';
-UPDATE events
-   SET "classification.identifier" = 'open-ntp'
-   WHERE "classification.identifier" = 'ntp-version';
-UPDATE events
-   SET "classification.identifier" = 'open-db2'
-   WHERE "classification.identifier" = 'open-db2-discovery-service';
-UPDATE events
-   SET "classification.identifier" = 'open-isakmp'
-   WHERE "classification.identifier" = 'open-ike';
-UPDATE events
-   SET "classification.identifier" = 'open-ldap-tcp'
-   WHERE "classification.identifier" = 'open-ldap';
-UPDATE events
-   SET "classification.identifier" = 'open-nat-pmp'
-   WHERE "classification.identifier" = 'open-natpmp';
-UPDATE events
-   SET "classification.identifier" = 'open-netbios'
-   WHERE "classification.identifier" = 'open-netbios-nameservice';
-UPDATE events
-   SET "classification.identifier" = 'open-netis-router'
-   WHERE "classification.identifier" = 'open-netis';
-UPDATE events
-   SET "classification.identifier" = 'sinkhole-dns'
-   WHERE "classification.identifier" = 'sinkholedns';
-```
+
+The develop branch previously contained a set of unnecessary statements to update the classification.identifier. If these changes were made please revert back to the previous state.
 
 
 3.0.2 Maintenance release (2021-09-10)

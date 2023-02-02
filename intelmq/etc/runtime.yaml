@@ -9,7 +9,8 @@ cymru-whois-expert:
   name: Cymru Whois
   parameters:
     destination_queues:
-      _default: [file-output-queue]
+      _default:
+      - file-output-queue
     overwrite: true
     redis_cache_db: 5
     redis_cache_host: 127.0.0.1
@@ -29,7 +30,8 @@ deduplicator-expert:
   name: Deduplicator
   parameters:
     destination_queues:
-      _default: [taxonomy-expert-queue]
+      _default:
+      - taxonomy-expert-queue
     filter_keys: raw,time.observation
     filter_type: blacklist
     redis_cache_db: 6
@@ -37,7 +39,7 @@ deduplicator-expert:
     redis_cache_port: 6379
     redis_cache_ttl: 86400
   run_mode: continuous
-feodo-tracker-browse-collector:
+feodo-tracker-collector:
   description: Generic URL Fetcher is the bot responsible to get the report from an
     URL.
   enabled: true
@@ -46,39 +48,28 @@ feodo-tracker-browse-collector:
   name: URL Fetcher
   parameters:
     destination_queues:
-      _default: [feodo-tracker-browse-parser-queue]
+      _default:
+      - feodo-tracker-parser-queue
     extract_files: false
     http_password: null
-    http_url: https://feodotracker.abuse.ch/browse
+    http_url: https://feodotracker.abuse.ch/downloads/ipblocklist.json
     http_url_formatting: false
     http_username: null
-    name: Feodo Tracker Browse
+    name: Feodo Tracker
     provider: Abuse.ch
     rate_limit: 86400
     ssl_client_certificate: null
   run_mode: continuous
-feodo-tracker-browse-parser:
-  description: HTML Table Parser is a bot configurable to parse different html table
-    data.
+feodo-tracker-parser:
+  description: Parser for Feodo Tracker collector.
   enabled: true
   group: Parser
-  module: intelmq.bots.parsers.html_table.parser
-  name: HTML Table
+  module: intelmq.bots.parsers.abusech.parser_feodotracker
+  name: Feodo Tracker Parser
   parameters:
-    attribute_name: ''
-    attribute_value: ''
-    columns: time.source,source.ip,malware.name,status,extra.SBL,source.as_name,source.geolocation.cc
-    default_url_protocol: http://
     destination_queues:
-      _default: [deduplicator-expert-queue]
-    ignore_values: ',,,,Not listed,,'
-    skip_table_head: true
-    split_column: ''
-    split_index: 0
-    split_separator: ''
-    table_index: 0
-    time_format: null
-    type: c2-server
+      _default:
+      - deduplicator-expert-queue
   run_mode: continuous
 file-output:
   bot_id: file-output
@@ -88,8 +79,10 @@ file-output:
   groupname: outputs
   module: intelmq.bots.outputs.file.output
   name: File
-  parameters: {file: /opt/intelmq/var/lib/bots/file-output/events.txt, hierarchical_output: false,
-    single_key: null}
+  parameters:
+    file: /opt/intelmq/var/lib/bots/file-output/events.txt
+    hierarchical_output: false
+    single_key: null
   run_mode: continuous
 gethostbyname-1-expert:
   bot_id: gethostbyname-1-expert
@@ -101,7 +94,8 @@ gethostbyname-1-expert:
   name: Gethostbyname
   parameters:
     destination_queues:
-      _default: [cymru-whois-expert-queue]
+      _default:
+      - cymru-whois-expert-queue
   run_mode: continuous
 gethostbyname-2-expert:
   bot_id: gethostbyname-2-expert
@@ -113,7 +107,8 @@ gethostbyname-2-expert:
   name: Gethostbyname
   parameters:
     destination_queues:
-      _default: [cymru-whois-expert-queue]
+      _default:
+      - cymru-whois-expert-queue
   run_mode: continuous
 spamhaus-drop-collector:
   bot_id: spamhaus-drop-collector
@@ -125,7 +120,8 @@ spamhaus-drop-collector:
   name: Spamhaus Drop
   parameters:
     destination_queues:
-      _default: [spamhaus-drop-parser-queue]
+      _default:
+      - spamhaus-drop-parser-queue
     http_password: null
     http_url: https://www.spamhaus.org/drop/drop.txt
     http_username: null
@@ -145,7 +141,8 @@ spamhaus-drop-parser:
   name: Spamhaus Drop
   parameters:
     destination_queues:
-      _default: [deduplicator-expert-queue]
+      _default:
+      - deduplicator-expert-queue
   run_mode: continuous
 taxonomy-expert:
   bot_id: taxonomy-expert
@@ -158,7 +155,8 @@ taxonomy-expert:
   name: Taxonomy
   parameters:
     destination_queues:
-      _default: [url2fqdn-expert-queue]
+      _default:
+      - url2fqdn-expert-queue
   run_mode: continuous
 url2fqdn-expert:
   bot_id: url2fqdn-expert
@@ -170,7 +168,9 @@ url2fqdn-expert:
   name: URL2FQDN
   parameters:
     destination_queues:
-      _default: [gethostbyname-1-expert-queue, gethostbyname-2-expert-queue]
+      _default:
+      - gethostbyname-1-expert-queue
+      - gethostbyname-2-expert-queue
     load_balance: true
     overwrite: false
   run_mode: continuous

@@ -798,6 +798,10 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
     """
     found_autoshun = []
     found_malc0de = []
+    found_dshield_domain = []
+    found_abusech_removed_parsers = []
+    found_abusech_feodotracker_csv = []
+    found_abusech_feodotracker_browse = []
     messages = []
     for bot_id, bot in configuration.items():
         if bot_id == 'global':
@@ -805,19 +809,47 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
         if bot["module"] == "intelmq.bots.parsers.malc0de.parser":
             found_malc0de.append(bot_id)
         if bot["module"] == "intelmq.bots.collectors.http.collector":
-            if bot["parameters"].get("http_url", "").startswith("https://malc0de.com/bl"):
+            http_url = bot["parameters"].get("http_url", "")
+            if http_url.startswith("https://malc0de.com/bl"):
                 found_malc0de.append(bot_id)
-        if bot["module"] == "intelmq.bots.collectors.http.collector":
-            if bot["parameters"].get("http_url", "").startswith("https://www.autoshun.org/download"):
+            if http_url.startswith("https://www.autoshun.org/download"):
                 found_autoshun.append(bot_id)
+            if http_url.startswith("https://feodotracker.abuse.ch/browse"):
+                found_abusech_feodotracker_browse.append(bot_id)
+            if http_url.startswith("https://feodotracker.abuse.ch/downloads/ipblocklist.csv"):
+                found_abusech_feodotracker_csv.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.autoshun.parser":
             found_autoshun.append(bot_id)
+        if bot["module"] == "intelmq.bots.parsers.dshield.parser_domain":
+            found_dshield_domain.append(bot_id)
+        if (bot["module"] == "intelmq.bots.parsers.abusech.parser_ip" or
+                bot["module"] == "intelmq.bots.parsers.abusech.parser_domain"):
+            found_abusech_removed_parsers.append(bot_id)
+
     if found_malc0de:
         messages.append('A discontinued feed "Malc0de" has been found '
                         'as bot %s.' % ', '.join(sorted(found_malc0de)))
     if found_autoshun:
         messages.append('A discontinued feed "Autoshun" has been found '
                         'as bot %s.' % ', '.join(sorted(found_autoshun)))
+    if found_dshield_domain:
+        messages.append('A discontinued feed "DShield Suspicious Domain" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_dshield_domain)))
+
+    if found_abusech_feodotracker_csv:
+        messages.append('A discontinued feed "Abuse.ch Feodo Tracker IPs" has been found'
+                        'as bot %s.\nPlease manually replace with the feed'
+                        '"Abuse.ch Feodo Tracker".' % ', '.join(sorted(found_abusech_feodotracker_csv)))
+
+    if found_abusech_feodotracker_browse:
+        messages.append('A discontinued feed "Abuse.ch Feodo Tracker Browse" has been found'
+                        'as bot %s.\nPlease manually replace with the feed'
+                        '"Abuse.ch Feodo Tracker".' % ', '.join(sorted(found_abusech_feodotracker_browse)))
+
+    if found_abusech_removed_parsers:
+        messages.append('A discontinued bot module has been found'
+                        'as bot %s.' % ', '.join(sorted(found_abusech_removed_parsers)))
+
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
 

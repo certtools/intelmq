@@ -99,6 +99,9 @@ class IntelMQController():
         # otherwise the output on stdout/stderr is less than the user expects
         logging_level_stream = self._logging_level if self._logging_level == 'DEBUG' else 'INFO'
 
+        if drop_privileges and not utils.drop_privileges():
+            self.abort('IntelMQ must not run as root. Dropping privileges did not work.')
+
         try:
             if no_file_logging:
                 raise FileNotFoundError('Logging to file disabled.')
@@ -115,9 +118,6 @@ class IntelMQController():
                 self._logger.error('Not logging to file: %s', exc)
         if defaults_loading_exc:
             self._logger.exception('Loading the defaults configuration failed!', exc_info=defaults_loading_exc)
-
-        if drop_privileges and not utils.drop_privileges():
-            self.abort('IntelMQ must not run as root. Dropping privileges did not work.')
 
         APPNAME = "intelmqctl"
         try:
@@ -631,7 +631,7 @@ Get some debugging output on the settings and the environment (to be extended):
 
     def list_bots(self, non_zero=False, configured=False):
         """
-        Lists all (configured) bots from runtime.conf or generated on demand
+        Lists all (configured) bots from runtime configuration or generated on demand
         with bot id/module and description and parameters.
 
         If description is not set, None is used instead.
@@ -822,7 +822,7 @@ Get some debugging output on the settings and the environment (to be extended):
         self.log_log_messages(messages[::-1])
         return 0, messages[::-1]
 
-    def check(self, no_connections=False):
+    def check(self, no_connections=False, check_executables=True):
         retval = 0
         if self._returntype is ReturnType.JSON:
             check_logger, list_handler = utils.setup_list_logging(name='check', logging_level=self._logging_level)
@@ -896,7 +896,7 @@ Get some debugging output on the settings and the environment (to be extended):
                 if orphan_queues:
                     check_logger.warning("Orphaned queues found: '%s'. Possible leftover from past reconfigurations "
                                          "without cleanup. Have a look at the FAQ at "
-                                         "https://intelmq.readthedocs.io/en/latest/guides/intelmqctl.html"
+                                         "https://intelmq.readthedocs.io/en/maintenance/user/FAQ.html"
                                          "#orphaned-queues", orphan_queues)
 
         check_logger.info('Checking harmonization configuration.')
@@ -934,6 +934,10 @@ Get some debugging output on the settings and the environment (to be extended):
                     check_logger.error('Incomplete installation: Bot %r not importable: %r.', bot_id, exc)
                     retval = 1
                     continue
+                except SyntaxError as exc:
+                    check_logger.error('SyntaxError in bot %r: %r', bot_id, exc)
+                    retval = 1
+                    continue
                 bot = getattr(bot_module, 'BOT')
                 bot_parameters = utils.get_global_settings()
                 bot_parameters.update(bot_config.get('parameters', {}))  # the parameters field may not exist
@@ -941,13 +945,14 @@ Get some debugging output on the settings and the environment (to be extended):
                 if bot_check:
                     for log_line in bot_check:
                         getattr(check_logger, log_line[0])(f"Bot {bot_id!r}: {log_line[1]}")
-        for group in utils.list_all_bots().values():
-            for bot_id, bot in group.items():
-                if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
-                                   stderr=subprocess.DEVNULL):
-                    check_logger.error('Incomplete installation: Executable %r for %r not found in $PATH (%r).',
-                                       bot['module'], bot_id, os.getenv('PATH'))
-                    retval = 1
+        if check_executables:
+            for group in utils.list_all_bots().values():
+                for bot_id, bot in group.items():
+                    if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
+                                       stderr=subprocess.DEVNULL):
+                        check_logger.error('Incomplete installation: Executable %r for %r not found in $PATH (%r).',
+                                           bot['module'], bot_id, os.getenv('PATH'))
+                        retval = 1
 
         if os.path.isfile(STATE_FILE_PATH):
             state = utils.load_configuration(STATE_FILE_PATH)

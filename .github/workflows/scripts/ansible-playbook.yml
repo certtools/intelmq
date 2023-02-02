@@ -8,7 +8,7 @@
     - name: Prepare Debian and Ubuntu
       include: /src/intelmq-vagrant/ansible/debian_based.yml
       when: ansible_facts['distribution'] == "Debian" or ansible_facts['distribution'] == "Ubuntu"
-    - name: Install git
+    - name: Install dependencies
       package:
         name: "{{ item }}"
       with_items:
@@ -44,22 +44,10 @@
         owner: intelmq
         group: intelmq
 
-    - name: Delete shipped runtime.yaml
-      file:
-        path: '/opt/intelmq/etc/runtime.yaml'
-        state: absent
-
-    - name: Copy runtime.conf
+    - name: Copy runtime.yaml
       copy:
-        src: 'assets/runtime.conf'
-        dest: '/opt/intelmq/etc/runtime.conf'
-        owner: intelmq
-        group: intelmq
-        mode: '0664'
-    - name: Copy pipeline.conf
-      copy:
-        src: 'assets/pipeline.conf'
-        dest: '/opt/intelmq/etc/pipeline.conf'
+        src: 'assets/runtime.yaml'
+        dest: '/opt/intelmq/etc/runtime.yaml'
         owner: intelmq
         group: intelmq
         mode: '0664'

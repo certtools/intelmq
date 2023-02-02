@@ -18,6 +18,7 @@ from intelmq.lib.mixins import HttpMixin, CacheMixin
 
 
 APIROOT = 'https://transform.shadowserver.org/api2/'
+DLROOT  = 'https://dl.shadowserver.org/'
 FILENAME_PATTERN = re.compile(r'\.csv$')
 
 
@@ -33,6 +34,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
             A list of strings or a comma-separated list of the mailing lists you want to process.
         types (list):
             A list of strings or a string of comma-separated values with the names of reporttypes you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
+        file_format (str): File format to download ('csv' or 'json').  The default is 'json' for compatibility. Using 'csv' is recommended for best performance.
     """
 
     country = None
@@ -40,6 +42,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
     secret = None
     types = None
     reports = None
+    file_format = None
     rate_limit: int = 86400
     redis_cache_db: int = 12
     redis_cache_host: str = "127.0.0.1"  # TODO: type could be ipadress
@@ -63,6 +66,13 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
             self.logger.warn("Deprecated parameter 'country' found. Please use 'reports' instead. The backwards-compatibility will be removed in IntelMQ version 4.0.0.")
             self._report_list.append(self.country)
 
+        if self.file_format is not None:
+            if not (self.file_format == 'csv' or self.file_format == 'json'):
+                raise ValueError('Invalid file_format')
+        else:
+            self.file_format = 'json'
+            self.logger.info("For best performance, set 'file_format' to 'csv' and use intelmq.bots.parsers.shadowserver.parser.")
+
         self.preamble = f'{{ "apikey": "{self.api_key}" '
 
     def _headers(self, data):
@@ -85,9 +95,9 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
         dayafter = date + timedelta(1)
 
         data = self.preamble
-        data += ',"date": "{}:{}" '.format(daybefore.isoformat(), dayafter.isoformat())
+        data += f',"date": "{daybefore.isoformat()}:{dayafter.isoformat()}" '
         if len(self._report_list) > 0:
-            data += ',"reports": {}'.format(json.dumps(self._report_list))
+            data += f',"reports": {json.dumps(self._report_list)}'
         data += '}'
         self.logger.debug('Downloading report list with data: %s.', data)
 
@@ -114,7 +124,10 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
         data += f',"id": "{reportid}"}}'
         self.logger.debug('Downloading report with data: %s.', data)
 
-        response = self.http_session().post(APIROOT + 'reports/download', data=data, headers=self._headers(data))
+        if (self.file_format == 'json'):
+            response = self.http_session().post(APIROOT + 'reports/download', data=data, headers=self._headers(data))
+        else:
+            response = self.http_session().get(DLROOT + reportid)
         response.raise_for_status()
 
         return response.text
@@ -131,7 +144,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
 
         for item in reportslist:
             filename = item['file']
-            filename_fixed = FILENAME_PATTERN.sub('.json', filename, count=1)
+            filename_fixed = FILENAME_PATTERN.sub('.' + self.file_format, filename, count=1)
             if self.cache_get(filename):
                 self.logger.debug('Processed file %r (fixed: %r) already.', filename, filename_fixed)
                 continue

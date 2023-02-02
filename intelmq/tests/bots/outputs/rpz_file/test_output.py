@@ -71,7 +71,7 @@ class TestFileOutputBot(test.BotTestCase, unittest.TestCase):
         cls.os_fp, cls.filename = tempfile.mkstemp()
         cls.sysconfig = {"hierarchical_output": True,
                          "file": cls.filename,
-                         "cname": 'cert.aa'
+                         "cname": 'cert.aa.'
                          }
 
     def test_event2(self):
@@ -85,7 +85,7 @@ class TestFileOutputBot(test.BotTestCase, unittest.TestCase):
             'pw.aparat.com.torojoonemadaretkarkonkhasteshodamdigeenqadtestzadam.filterchipedaramodarovordibekeshbiroon.dollarshode20000tomanbaskondigeh.salavatemohammadibefres.soltane-tel-injas-heh.digital CNAME cert.aa.\n',
             file_lines[10])
         self.assertEqual(
-            '*.pw.aparat.com.torojoonemadaretkarkonkhasteshodamdigeenqadtestzadam.filterchipedaramodarovordibekeshbiroon.dollarshode20000tomanbaskondigeh.salavatemohammadibefres.soltane-tel-injas-heh.digital CNAME cert.aa.\n',
+            'www.pw.aparat.com.torojoonemadaretkarkonkhasteshodamdigeenqadtestzadam.filterchipedaramodarovordibekeshbiroon.dollarshode20000tomanbaskondigeh.salavatemohammadibefres.soltane-tel-injas-heh.digital CNAME cert.aa.\n',
             file_lines[11])
         self.assertEqual(12, len(file_lines))
         filepointer.close()

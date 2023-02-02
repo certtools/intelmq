@@ -34,13 +34,13 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "source.fqdn": "mail5.bulls.unisonplatform.com",
                  "event_description.text": "Really bad actor site comment",
                  "classification.type": "malware-distribution",
-                 "raw": utils.base64_encode(SAMPLE_SPLIT[10].replace('\t', ',')+'\r\n'),
+                 "raw": utils.base64_encode(SAMPLE_SPLIT[10].replace('\t', ',')+'\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 EXAMPLE_EVENT2 = EXAMPLE_EVENT.copy()
 EXAMPLE_EVENT2['time.source'] = "2016-12-14T04:19:00+00:00"
 EXAMPLE_EVENT2['source.ip'] = "198.105.221.161"
-EXAMPLE_EVENT2["raw"] = utils.base64_encode(SAMPLE_SPLIT[11].replace('\t', ',')+'\r\n')
+EXAMPLE_EVENT2["raw"] = utils.base64_encode(SAMPLE_SPLIT[11].replace('\t', ',')+'\n')
 COMPOSE_REPORT = {"feed.name": "Sample CSV Feed",
                   "raw": utils.base64_encode(COMPOSE_FILE),
                   "__type": "Report",
@@ -52,7 +52,7 @@ COMPOSE_EVENT = {"feed.name": "Sample CSV Feed",
                  "source.url": "http://example.com/foo/",
                  "source.fqdn": "example.com",
                  "classification.type": "malware-distribution",
-                 "raw": utils.base64_encode(COMPOSE_SPLIT[1]+'\r\n'),
+                 "raw": utils.base64_encode(COMPOSE_SPLIT[1]+'\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 

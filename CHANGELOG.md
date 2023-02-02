@@ -33,10 +33,22 @@ CHANGELOG
   - Enhance behaviour if an unconfigured bot is started (PR#2054 by Sebastian Wagner).
   - Fix line recovery and message dumping of the `ParserBot` (PR#2192 by Sebastian Wagner).
     - Previously the dumped message was always the last message of a report if the report contained multiple lines leading to data-loss.
+  - Fix crashing at start in multithreaded bots (PR#2236 by DigitalTrustCenter).
 - `intelmq.lib.pipeline`:
-  - Changed `BRPOPLPUSH` to `BLMOVE`, because `BRPOPLPUSH` has been marked as deprecated by redis in favor of `BLMOVE` (PR#2149 by Sebastian Waldbauer, fixes #1827)
+  - Changed `BRPOPLPUSH` to `BLMOVE`, because `BRPOPLPUSH` has been marked as deprecated by redis in favor of `BLMOVE` (PR#2149 and PR#2240 by Sebastian Waldbauer and Sebastian Wagner, fixes #1827, #2233).
+- `intelmq.lib.utils`:
+  - Added wrapper `resolve_dns` for querying DNS, with the support for recommended methods from `dnspython` package in versions 1 and 2.
+  - Moved line filtering inside `RewindableFileHandle` for easier handling and limiting number of temporary objects.
+- `intelmq.lib.harmonization`:
+  - Fixed DateTime handling of naive time strings (previously assumed local timezone, now assumes UTC) (PR#2279 by Filip Pokorný, fixes #2278)
+  - Removes `tzone` argument from `DateTime.from_timestamp` and `DateTime.from_epoch_millis`
+  - `DateTime.from_timstamp` now also allows string argument
+- Removes `pytz` global dependency
+- Removed support for Python 3.6, including removing conditional dependencies and updating syntax to use features from newest versions. (fixes [#2272](https://github.com/certtools/intelmq/issues/2272)
 
 ### Development
+- Removed Python 3.6 from CI.
+- Enabled tests against Python 3.11.
 
 ### Data Format
 
@@ -50,6 +62,7 @@ CHANGELOG
 - `intelmq.bots.collectors.blueliv`: Fix Blueliv collector requirements (PR#2161 by Gethvi).
 - `intelmq.bots.collectors.github_api._collector_github_api`: Added personal access token support (PR#2145 by Sebastian Waldbauer, fixes #1549).
 - `intelmq.bots.collectors.file.collector_file`: Added file lock support, no more race conditions (PR#2147 by Sebastian Waldbauer, fixes #2128)
+- `intelmq.bots.collectors.shadowserver.collector_reports_api.py`: Added file_format option to download reports in CSV format for better performance (PR#2246 by elsif2)
 
 #### Parsers
 - `intelmq.bots.parsers.alienvault.parser_otx`: Save CVE data in `extra.cve` instead of `extra.CVE` due to the field name restriction on lower-case characters  (PR#2059 by Sebastian Wagner).
@@ -82,12 +95,49 @@ CHANGELOG
 - `intelmq.bots.parsers.shadowserver._config`:
   - Added support for `Accessible AMQP`, `Device Identification Report` (IPv4 and IPv6) (PR#2134 by Mateo Durante).
   - Added file name mapping for `SSL-POODLE-Vulnerable-Servers IPv6` (file name `scan6_ssl_poodle`) (PR#2134 by Mateo Durante).
-  - Corrected "AMQP" message_length type (int) and added "STUN" support (PR#2235 by elsif2).
+  - Added `Malware-URL`, `Sandbox-Connection`, `Sandbox-DNS`, `Accessible-AMQP`, `Open-AnonymouIs-MQTT`, `Accessible-QUIC`, `Accessible-SSH`, `SYNful-Knock`, and `Special` (PR#2227 by elsif2)
+  - Removed legacy reports `Amplification-DDoS-Victim`, `CAIDA-IP-Spoofer`, `Darknet`, `Drone`, `Drone-Brute-Force`, `IPv6-Sinkhole-HTTP-Drone`, `Microsoft-Sinkhole`, and `Sinkhole-HTTP-Drone` (PR#2227 by elsif2).
+  - Users storing events in a database should be aware that field names and types have been updated (PR#2227 by elsif2).
+  - Corrected "Accessible-AMQP" message_length type (int) and added "STUN" support (PR#2235 by elsif2).
   - Added amplification factor to UDP scan reports (PR#2238 by elsif2).
   - Added version and build_date to "Vulnerable-HTTP" report (PR#2238 by elsif2).
+  - The following field types have been standardized across all Shadowserver reports (PR#2246 by elsif2):
+      destination.fqdn (validate_fqdn)
+      destination.url (convert_http_host_and_url)
+      extra.browser_trusted (convert_bool)
+      extra.duration (convert_int)
+      extra.end_time (convert_date_utc)
+      extra.freak_vulnerable (convert_bool)
+      extra.ok (convert_bool)
+      extra.password (validate_to_none)
+      extra.ssl_poodle (convert_bool)
+      extra.status (convert_int)
+      extra.uptime (convert_int)
+      extra.version (convert_to_none)
+      source.network (validate_network)
+  - The following report field names have changed to better represent their values:
+      scan_rsync:extra.password renamed to extra.has_password
+      scan_elasticsearch:status renamed to http_code
+  - Added `Accessible-HTTP-proxy` and `Open-HTTP-proxy` (PR#2246 by elsif2).
+  - Added http_agent to the `Honeypot-DDoS` report and added the `DDoS-Participant` report (PR#2303 by elsif2)
+
 - `intelmq.bots.parsers.cymru.parser_cap_program`: The parser mapped the hostname into `source.fqdn` which is not allowed by the IntelMQ Data Format. Added a check (PR#2215 by Sebastian Waldbauer, fixes #2169)
-- `intelmq.bots.parsers.generic.parser_csv`: Use RewindableFileHandle to use the original current line for line recovery (PR#2192 by Sebastian Wagner).
+- `intelmq.bots.parsers.generic.parser_csv`:
+  - Use RewindableFileHandle to use the original current line for line recovery (PR#2192 by Sebastian Wagner).
+  - Recovering CSV lines preserves the original line ending (PR#2280 by Kamil Mankowski, fixes [#1597](https://github.com/certtools/intelmq/issues/1597))
 - `intelmq.bots.parsers.autoshun.parser`: Removed, as the feed is discontinued (PR#2214 by Sebastian Waldbauer, fixes #2162).
+- `intelmq.bots.parsers.openphish.parser_commercial`: Refactored complete code (PR#2160 by Filip Pokorný).
+  - Fixes wrong mapping of `host` field to `source.fqdn` when the content was in IP address.
+  - Adds newly added fields in the feed.
+- `intelmq.bots.parsers.phishtank.parser`: Refactored code (PR#2270 by Filip Pokorný)
+  - Changes feed URL to JSON format (contains more information). The URL needs to by manually updated in the configuration!
+  - Adds fields from the JSON feed.
+- `intelmq.bots.parsers.dshield.parser_domain`: Has been removed, due to the feed is discontinued. (PR#2276 by Sebastian Waldbauer)
+- `intelmq.bots.parsers.abusech.parser_ip`: Removed (PR#2268 by Filip Pokorný).
+- `intelmq.bots.parsers.abusech.parser_domain`: Removed (PR#2268 by Filip Pokorný).
+- `intelmq.bots.parsers.abusech.parser_feodotracker`: Added new parser bot (PR#2268 by Filip Pokorný)
+  - Changes feed URL to JSON format (contains more information).
+  - Adds fields from the JSON feed.
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).
@@ -112,8 +162,11 @@ CHANGELOG
 - Feeds: Add documentation for newly supported dataplane feeds, see above (PR#2102 by Mikk Margus Möll).
 - Installation: Restructured the whole document to make it clearer and straight-forward (PR#2113 by Sebastian Wagner).
 - Add workaround for https://github.com/sphinx-doc/sphinx/issues/10701 (PR#2225 by Sebastian Wagner, kudos @yarikoptic, fixes #2224).
+- Fix wrong operator for list-contains-value operation in sieve expert documentation (PR#2256 by Filip Pokorný).
 
 ### Packaging
+- Remove deleted `intelmq.bots.experts.sieve.validator` from executables in `setup.py` (PR#2256 by Filip Pokorný).
+- Run the geoip database cron-job twice a week (PR#2285 by Filip Pokorný).
 
 ### Tests
 - Add GitHub Action to run regexploit on all Python, JSON and YAML files (PR#2059 by Sebastian Wagner).
@@ -126,10 +179,15 @@ CHANGELOG
 - Reverse DNS expert tests: remove outdated failing test `test_invalid_ptr` (PR#2208 by Sebastian Wagner, fixes #2206).
 - Add test dependency `requests_mock` to the `development` extra requirements in `setup.py` (PR#2210 by Sebastian Wagner).
 - Threshold Expert tests: Use environment variable `INTELMQ_PIPELINE_HOST` as redis host, analogous to other tests (PR#2209 by Sebastian Wagner, fixes #2207).
+- Remove codecov action as it failed regularly (PR#2237 by Sebastian Wagner, fixes #2229).
 
 ### Tools
-- `intelmqctl`: fix process manager initialization if run non-interactively, as intelmqdump does it (PR#2189 by Sebastian Wagner, fixes 2188).
+- `intelmqctl`:
+  - fix process manager initialization if run non-interactively, as intelmqdump does it (PR#2189 by Sebastian Wagner, fixes 2188).
+  - `check`: handle `SyntaxError` in bot modules and report it without breaking execution (fixes #2177)
+  - Privilege drop before logfile creation (PR#2277 by Sebastian Waldbauer, fixes 2176)
 - `intelmqsetup`: Revised installation of manager by building the static files at setup, not build time, making it behave more meaningful. Requires intelmq-manager >= 3.1.0 (PR#2198 by Sebastian Wagner, fixes #2197).
+- `intelmqdump`: Respected global and per-bot custom settings of `logging_path` (fix #1605).
 
 ### Contrib
 - logrotate: Move compress and ownership rules to the IntelMQ-blocks to prevent that they apply to other files (PR#2111 by Sebastian Wagner, fixes #2110).
@@ -137,8 +195,6 @@ CHANGELOG
 ### Known issues
 This is short list of the most important known issues. The full list can be retrieved from [GitHub](https://github.com/certtools/intelmq/labels/bug?page=2&q=is%3Aopen+label%3Abug).
 - intelmq_psql_initdb does not work for SQLite (#2202).
-- SyntaxError in bots causes intelmqctl check to crash (#2177).
-- intelmqctl create log file before dropping privileges (#2176).
 - intelmqsetup: should install a default state file (#2175).
 - Misp Expert - Crash if misp event already exist (#2170).
 - Turris greylist has been updated (#2167).
@@ -148,8 +204,6 @@ This is short list of the most important known issues. The full list can be retr
 - intelmqctl log: parsing syslog does not work (#2097).
 - Bash completion scripts depend on old JSON-based configuration files (#2094).
 - Bot configuration examples use JSON instead of YAML (#2066).
-- intelmqdump: logging_path parameter not honoured (#1605).
-- CSV line recovery forces Windows line endings (#1597).
 - Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
 - Corrupt dump files when interrupted during writing (#870).
 
@@ -732,7 +786,6 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 - Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
 - Corrupt dump files when interrupted during writing (#870).
 - CSV line recovery forces Windows line endings (#1597).
-- intelmqdump: Honor logging_path variable (#1605).
 - Timeout error in mail URL fetcher (#1621).
 - AMQP pipeline: get_queues needs to check vhost of response (#1746).
 

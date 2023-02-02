@@ -89,7 +89,7 @@ def main():
                                                  text=True)
             fp = os.fdopen(os_fp, 'wt')
         else:
-            fp = open(OUTPUTFILE, 'wt')
+            fp = open(OUTPUTFILE, 'w')
         psql = generate()
         print("INFO - Writing %s file" % OUTPUTFILE)
         fp.write(psql)
