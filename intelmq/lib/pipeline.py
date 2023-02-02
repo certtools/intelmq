@@ -216,6 +216,19 @@ class Redis(Pipeline):
         self.pipe = redis.Redis(db=self.db, password=self.password, **kwargs)
         self._redis_server_version = tuple(int(x) for x in self.pipe.execute_command('INFO')['redis_version'].split('.'))
 
+        # BRPOPLPUSH is deprecated, available in redis > 6.2.0 and usable in redis-py >= 4.1.2
+        # https://github.com/certtools/intelmq/issues/2233
+        def __blmove(source, destination):
+            return self.pipe.blmove(source, destination, 0, 'RIGHT', 'LEFT')
+
+        def __brlpoplpush(source, destination):
+            return self.pipe.brpoplpush(source, destination, 0)
+
+        if self._redis_server_version >= (6, 2, 0) and redis.VERSION >= (4, 1, 2):
+            self._blmove = __blmove
+        else:
+            self._blmove = __brlpoplpush
+
     def disconnect(self):
         pass
 
@@ -263,10 +276,7 @@ class Redis(Pipeline):
                 else:
                     break
             if not retval:
-                if self._redis_server_version >= (6, 2, 0):
-                    retval = self.pipe.blmove(self.source_queue, self.internal_queue, 0, 'RIGHT', 'LEFT')
-                else:
-                    retval = self.pipe.brpoplpush(self.source_queue, self.internal_queue, 0)
+                retval = self._blmove(self.source_queue, self.internal_queue)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
         else:
