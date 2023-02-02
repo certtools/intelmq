@@ -31,7 +31,7 @@ year = datetime.date.today().year
 exec(open(os.path.join(os.path.dirname(__file__), '../intelmq/version.py')).read())  # defines __version__
 
 project = 'intelmq'
-copyright = f'{year}, cert.at'
+copyright = f'{year}, IntelMQ community'
 author = 'IntelMQ Community'
 # for compatibility with Sphinx < 2.0 as the old versions default to 'contents'
 master_doc = 'index'

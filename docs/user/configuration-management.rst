@@ -11,14 +11,6 @@ Configuration and Management
 For installation instructions, see :doc:`installation`.
 For upgrade instructions, see :doc:`upgrade`.
 
-******************
-Where to get help?
-******************
-
-In case you are lost or something is not discussed in this guide, you might want to subscribe to the |intelmq-users-list-link| and ask your questions there.
-
-With that clarified, let's dig into the details...
-
 
 ******************
 Configure services
