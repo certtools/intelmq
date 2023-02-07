@@ -38,7 +38,7 @@ The `intelmq-api` packages ship a configuration file in ``${PREFIX}/etc/intelmq/
 The value of ``${PREFIX}`` depends on your environment and is something like ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version).
 
 The file ``${PREFIX}/etc/intelmq/api-apache.conf`` needs to be placed in the correct place for your Apache 2 installation.
- - On Debian and Ubuntu, move the file to ``/etc/apache2/conf-available.d/manager-apache.conf`` and then execute ``a2enconf manager-apache``.
+ - On Debian and Ubuntu, move the file to ``/etc/apache2/conf-available.d/api-apache.conf`` and then execute ``a2enconf api-apache``.
  - On CentOS, RHEL and Fedora, move the file to ``/etc/httpd/conf.d/``.
  - On openSUSE, move the file to ``/etc/apache2/conf.d/``.
 Don't forget to reload your webserver afterwards.
