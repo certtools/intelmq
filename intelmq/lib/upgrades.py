@@ -805,6 +805,7 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
     found_viriback = []
     found_netlab_mirai_scanner = []
     found_benkow_panels = []
+    found_taichung = []
     messages = []
     for bot_id, bot in configuration.items():
         if bot_id == 'global':
@@ -827,6 +828,8 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
                 found_netlab_mirai_scanner.append(bot_id)
             if "benkow.cc/export.php" in http_url:  # both HTTP and HTTPS
                 found_benkow_panels.append(bot_id)
+            if http_url.startswith("https://www.tc.edu.tw/net/netflow/lkout/recent"):
+                found_taichung.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.autoshun.parser":
             found_autoshun.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.dshield.parser_domain":
@@ -839,6 +842,8 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
                 "classification.type": bot["parameters"]["type"]
             }
             del bot["parameters"]["type"]
+        if bot["module"] == "intelmq.bots.parsers.taichung.parser":
+            found_taichung.append(bot_id)
 
     if found_malc0de:
         messages.append('A discontinued feed "Malc0de" has been found '
@@ -878,6 +883,9 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
                         ' documentation and adjust your configuration.'
                         ' Affected bots: %s' % ', '.join(found_benkow_panels))
 
+    if found_taichung:
+        messages.append('A discontinued feed "Taichung" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_taichung)))
 
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
