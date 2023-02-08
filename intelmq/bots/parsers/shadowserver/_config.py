@@ -1540,7 +1540,7 @@ scan_ddos_middlebox = {
     },
 }
 
-# http://dnsscan.shadowserver.org
+# https://www.shadowserver.org/what-we-do/network-reporting/dns-open-resolvers-report/
 scan_dns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2013,7 +2013,7 @@ scan_ics = {
         ('extra.', 'device_model', validate_to_none),
         ('extra.', 'device_version', validate_to_none),
         ('extra.', 'device_id', validate_to_none),
-        ('extra.', 'response_length', convert_int),
+        ('extra.', 'response_size', convert_int),
         ('extra.', 'raw_response', validate_to_none),
     ],
     'constant_fields': {
@@ -2618,7 +2618,7 @@ scan_mssql = {
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'instance_name', validate_to_none),
         ('extra.', 'named_pipe', validate_to_none),
-        ('extra.', 'response_length', convert_int),
+        ('extra.', 'response_size', convert_int),
         ('extra.', 'amplification', convert_float),
         ('extra.', 'sector', validate_to_none),
     ],
@@ -3262,6 +3262,45 @@ scan_rsync = {
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'rsync',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-slp-service-report/
+scan_slp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'function', validate_to_none),
+        ('extra.', 'function_text', validate_to_none),
+        ('extra.', 'flags', validate_to_none),
+        ('extra.', 'next_extension_offset', validate_to_none),
+        ('extra.', 'xid', validate_to_none),
+        ('extra.', 'language_tag_length', validate_to_none),
+        ('extra.', 'language_tag', validate_to_none),
+        ('extra.', 'error_code', validate_to_none),
+        ('extra.', 'error_code_text', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'raw_response', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'protocol.application': 'slp',
+        'classification.identifier': 'open-slp',
     },
 }
 
@@ -4146,10 +4185,12 @@ mapping = (
     ('Sandbox-DNS', 'sandbox_dns', sandbox_dns),
     ('Sandbox-URL', 'sandbox_url', sandbox_url),
     ('IPv6-Accessible-CWMP', 'scan6_cwmp', scan_cwmp),
+    ('IPv6-DNS-Open-Resolvers', 'scan6_dns', scan_dns),
     ('IPv6-Accessible-FTP', 'scan6_ftp', scan_ftp),
     ('IPv6-Accessible-HTTP', 'scan6_http', scan_http),
     ('IPv6-Vulnerable-HTTP', 'scan6_http_vulnerable', scan_http_vulnerable),
     ('IPv6-Open-IPP', 'scan6_ipp', scan_ipp),
+    ('IPv6-Open-LDAP-TCP', 'scan6_ldap_tcp', scan_ldap_tcp),
     ('IPv6-Open-MQTT', 'scan6_mqtt', scan_mqtt),
     ('IPv6-Open-Anonymous-MQTT', 'scan6_mqtt_anon', scan_mqtt_anon),
     ('IPv6-Accessible-MySQL', 'scan6_mysql', scan_mysql),
@@ -4157,6 +4198,7 @@ mapping = (
     ('IPv6-NTP-Monitor', 'scan6_ntpmonitor', scan_ntpmonitor),
     ('IPv6-Accessible-PostgreSQL', 'scan6_postgres', scan_postgres),
     ('IPv6-Accessible-RDP', 'scan6_rdp', scan_rdp),
+    ('IPv6-Accessible-SLP', 'scan6_slp', scan_slp),
     ('IPv6-Accessible-SMB', 'scan6_smb', scan_smb),
     ('IPv6-Accessible-SMTP', 'scan6_smtp', scan_smtp),
     ('IPv6-Vulnerable-SMTP', 'scan6_smtp_vulnerable', scan_smtp_vulnerable),
@@ -4218,6 +4260,7 @@ mapping = (
     ('Accessible-MS-RDPEUDP', 'scan_rdpeudp', scan_rdpeudp),
     ('Open-Redis', 'scan_redis', scan_redis),
     ('Accessible-Rsync', 'scan_rsync', scan_rsync),
+    ('Accessible-SLP', 'scan_slp', scan_slp),
     ('Accessible-SMB', 'scan_smb', scan_smb),
     ('Accessible-SMTP', 'scan_smtp', scan_smtp),
     ('Vulnerable-SMTP', 'scan_smtp_vulnerable', scan_smtp_vulnerable),

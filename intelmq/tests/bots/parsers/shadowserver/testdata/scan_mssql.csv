@@ -1,4 +1,4 @@
-"timestamp","ip","protocol","port","hostname","tag","version","asn","geo","region","city","naics","sic","server_name","instance_name","tcp_port","named_pipe","response_length","amplification","sector"
+"timestamp","ip","protocol","port","hostname","tag","version","asn","geo","region","city","naics","sic","server_name","instance_name","tcp_port","named_pipe","response_size","amplification","sector"
 "2010-02-10 00:00:00",192.168.0.1,udp,1434,node01.example.com,mssql,13.2.5026.0,64512,ZZ,Region,City,0,0,ERPOPTIMA,OPTIMA,49729,"\\\\ERPOPTIMA\\pipe\\MSSQL$OPTIMA\\sql\\query",310,310.00,
 "2010-02-10 00:00:01",192.168.0.2,udp,1434,node02.example.com,mssql,13.0.1601.5,64512,ZZ,Region,City,0,0,SERWER,MSSQLSERVER,1433,,226,226.00,"Communications, Service Provider, and Hosting Service"
 "2010-02-10 00:00:02",192.168.0.3,udp,1434,node03.example.com,mssql,10.50.2500.0,64512,ZZ,Region,City,0,0,ILONY,INSERTGT,49358,"\\\\ILONY\\pipe\\MSSQL$INSERTGT\\sql\\query",304,304.00,

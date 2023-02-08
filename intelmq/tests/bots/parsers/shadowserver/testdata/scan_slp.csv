@@ -1,0 +1,4 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","sector","version","function","function_text","flags","next_extension_offset","xid","language_tag_length","language_tag","error_code","error_code_text","response_size","raw_response"
+"2010-02-10 00:00:00",192.168.0.1,tcp,427,node01.example.com,slp,64512,ZZ,Region,City,0,0,,2,2,"Service reply",0x0000,0,5,2,en,5,"Unsupported SLP SPI",40,MDIwMjAwMDAxNDAwMDAwMDAwMDAwMDA1MDAwMjY1NmUwMDA1MDAwMA==
+"2010-02-10 00:00:01",192.168.0.2,tcp,427,node02.example.com,slp,64512,ZZ,Region,City,0,0,,2,2,"Service reply",0x0000,0,5,2,en,5,"Unsupported SLP SPI",40,MDIwMjAwMDAxNDAwMDAwMDAwMDAwMDA1MDAwMjY1NmUwMDA1MDAwMA==
+"2010-02-10 00:00:02",192.168.0.3,tcp,427,node03.example.com,slp,64512,ZZ,Region,City,0,0,,2,2,"Service reply",0x0000,0,5,2,en,5,"Unsupported SLP SPI",40,MDIwMjAwMDAxNDAwMDAwMDAwMDAwMDA1MDAwMjY1NmUwMDA1MDAwMA==
