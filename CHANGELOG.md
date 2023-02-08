@@ -142,6 +142,7 @@ CHANGELOG
   - Changes feed URL to JSON format (contains more information).
   - Adds fields from the JSON feed.
 - `intelmq.bots.parsers.generic.parser_csv`: Parameter `type` is deprecated, `default_fields` should be used. (PR#2293 by Filip Pokorný)
+- `intelmq.bots.parsers.generic.parser_csv`: Parameter `skip_header` now allows also integer as a fixed number of lines to skip. (PR#2313 by Filip Pokorný)
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).
@@ -167,6 +168,8 @@ CHANGELOG
 - Installation: Restructured the whole document to make it clearer and straight-forward (PR#2113 by Sebastian Wagner).
 - Add workaround for https://github.com/sphinx-doc/sphinx/issues/10701 (PR#2225 by Sebastian Wagner, kudos @yarikoptic, fixes #2224).
 - Fix wrong operator for list-contains-value operation in sieve expert documentation (PR#2256 by Filip Pokorný).
+- Added documentation on `default_fields` parameter (PR#2293 by Filip Pokorný).
+- Updated documentation on `skip_header` parameter (PR#2313 by Filip Pokorný).
 
 ### Packaging
 - Remove deleted `intelmq.bots.experts.sieve.validator` from executables in `setup.py` (PR#2256 by Filip Pokorný).
@@ -236,7 +239,6 @@ This is short list of the most important known issues. The full list can be retr
 
 ### Documentation
 - Add configuration upgrade steps for 3.0 to NEWS (PR#2101 by Sebastian Wagner).
-- Added documentation on `default_fields` parameter (PR#2293 by Filip Pokorný).
 
 ### Known issues
 See [open bug reports](https://github.com/certtools/intelmq/issues?q=is%3Aissue+is%3Aopen+label%3Abug) for a more detailed list.

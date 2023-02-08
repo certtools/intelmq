@@ -52,7 +52,7 @@ class GenericCsvParserBot(ParserBot):
     time_format = None
     type: Optional[str] = None
     type_translation = {}
-    skip_header: bool = False
+    skip_header: Union[bool, int] = False
 
     def init(self):
         # convert columns to an array
@@ -104,7 +104,7 @@ class GenericCsvParserBot(ParserBot):
 
         report_io = self._get_io_and_save_line_ending(raw_report)
 
-        if self.skip_header:
+        for _ in range(int(self.skip_header)):
             self.tempdata.append(next(report_io).rstrip(''.join(report_io.newlines)))
 
         self._handle = RewindableFileHandle(report_io)
