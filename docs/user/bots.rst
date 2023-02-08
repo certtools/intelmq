@@ -1013,6 +1013,18 @@ This list is not complete. Look at ``intelmqctl list bots`` or the list of parse
 
 TODO
 
+**Configuration Parameters**
+
+* `default_fields`: map of statically added fields to each event (only applied if parsing the event doesn't set the value)
+
+example usage:
+
+.. code-block:: yaml
+
+   defaults_fields:
+     classification.type: c2-server
+     protocol.transport: tcp
+
 
 .. _intelmq.bots.parsers.anubisnetworks.parser:
 

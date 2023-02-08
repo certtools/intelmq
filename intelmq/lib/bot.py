@@ -943,6 +943,8 @@ class ParserBot(Bot):
     _current_line: Optional[str] = None
     _line_ending = '\r\n'
 
+    default_fields: Optional[dict] = {}
+
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None):
         super().__init__(bot_id, start, sighup_event, disable_multithreading)
@@ -951,6 +953,25 @@ class ParserBot(Bot):
                               'Possible Misconfiguration.')
             self.stop()
         self.group = 'Parser'
+
+        # validate default fields
+        stop = False
+        if self.default_fields:
+            dummy_event = self.new_event()
+            for key, value in self.default_fields.items():
+                try:
+                    dummy_event.add(key, value, raise_failure=True)
+
+                except exceptions.InvalidValue:
+                    self.logger.error("Invalid value of key '%s' in default_fields parameter.", key)
+                    stop = True
+
+                except exceptions.InvalidKey:
+                    self.logger.error("Invalid key '%s' in default_fields parameter.", key)
+                    stop = True
+
+            if stop:
+                self.stop()
 
     def _line_filtering_condition(self, line: str) -> str:
         return not any([line.startswith(prefix) for prefix in self._ignore_lines_starting])
@@ -1081,6 +1102,12 @@ class ParserBot(Bot):
                     events: list[libmessage.Event] = list(filter(bool, value))
                 else:
                     events: list[libmessage.Event] = [value]
+
+                if self.default_fields:
+                    for event in events:
+                        for key, value in self.default_fields.items():
+                            event.add(key, value, overwrite=False)
+
             except Exception:
                 self.logger.exception('Failed to parse line.')
                 self.__failed.append((traceback.format_exc(), self._current_line))

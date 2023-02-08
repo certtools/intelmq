@@ -825,6 +825,11 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
         if (bot["module"] == "intelmq.bots.parsers.abusech.parser_ip" or
                 bot["module"] == "intelmq.bots.parsers.abusech.parser_domain"):
             found_abusech_removed_parsers.append(bot_id)
+        if bot["module"] == "intelmq.bots.parsers.generic.parser_csv":
+            bot["parameters"]["default_fields"] = {
+                "classification.type": bot["parameters"]["type"]
+            }
+            del bot["parameters"]["type"]
 
     if found_malc0de:
         messages.append('A discontinued feed "Malc0de" has been found '
@@ -878,7 +883,7 @@ UPGRADES = OrderedDict([
     ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, v300_pipeline_file_removal,)),
     ((3, 0, 1), (v301_deprecations,)),
     ((3, 0, 2), ()),
-    ((3, 1, 0), (v310_feed_changes, v310_shadowserver_feednames, )),
+    ((3, 1, 0), (v310_feed_changes, v310_shadowserver_feednames)),
 ])
 
 ALWAYS = (harmonization,)

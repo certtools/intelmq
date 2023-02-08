@@ -34,6 +34,7 @@ CHANGELOG
   - Fix line recovery and message dumping of the `ParserBot` (PR#2192 by Sebastian Wagner).
     - Previously the dumped message was always the last message of a report if the report contained multiple lines leading to data-loss.
   - Fix crashing at start in multithreaded bots (PR#2236 by DigitalTrustCenter).
+  - Added `default_fields` parameter to `ParserBot` (PR#2293 by Filip Pokorný)
 - `intelmq.lib.pipeline`:
   - Changed `BRPOPLPUSH` to `BLMOVE`, because `BRPOPLPUSH` has been marked as deprecated by redis in favor of `BLMOVE` (PR#2149 and PR#2240 by Sebastian Waldbauer and Sebastian Wagner, fixes #1827, #2233).
 - `intelmq.lib.utils`:
@@ -140,6 +141,7 @@ CHANGELOG
 - `intelmq.bots.parsers.abusech.parser_feodotracker`: Added new parser bot (PR#2268 by Filip Pokorný)
   - Changes feed URL to JSON format (contains more information).
   - Adds fields from the JSON feed.
+- `intelmq.bots.parsers.generic.parser_csv`: Parameter `type` is deprecated, `default_fields` should be used. (PR#2293 by Filip Pokorný)
 
 #### Experts
 - `intelmq.bots.experts.domain_valid`: New bot for checking domain's validity (PR#1966 by Marius Karotkis).
@@ -234,6 +236,7 @@ This is short list of the most important known issues. The full list can be retr
 
 ### Documentation
 - Add configuration upgrade steps for 3.0 to NEWS (PR#2101 by Sebastian Wagner).
+- Added documentation on `default_fields` parameter (PR#2293 by Filip Pokorný).
 
 ### Known issues
 See [open bug reports](https://github.com/certtools/intelmq/issues?q=is%3Aissue+is%3Aopen+label%3Abug) for a more detailed list.
