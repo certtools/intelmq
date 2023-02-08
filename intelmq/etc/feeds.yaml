@@ -5,26 +5,28 @@
 ---
 providers:
   ViriBack:
-    Unsafe sites:
-      description: Latest detected unsafe sites.
-      additional_information: You need to install the lxml library in order to parse this feed.
+    C2 Tracker:
+      description: Latest detected C2 servers.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: http://tracker.viriback.com/
+            http_url: https://tracker.viriback.com/dump.php
             rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
         parser:
-          module: intelmq.bots.parsers.html_table.parser
+          module: intelmq.bots.parsers.generic.csv_parser
           parameters:
-            columns: ["malware.name", "source.url", "source.ip", "time.source"]
+            skip_header: true
             defaults_fields:
               classification.type: malware-distribution
-            time_format: from_format_midnight|%d-%m-%Y
-            html_parser: lxml
-      revision: 2018-06-27
+            columns:
+              - malware.name
+              - source.url
+              - source.ip
+              - time.source
+      revision: 2022-11-15
       documentation: https://viriback.com/
       public: true
   WebInspektor:
@@ -169,24 +171,6 @@ providers:
       documentation: https://www.openphish.com/phishing_feeds.html
       public: false
   Netlab 360:
-    Mirai Scanner:
-      description: 'This feed provides IP addresses which actively scan for vulnerable
-        IoT devices and install Mirai Botnet.'
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://data.netlab.360.com/feeds/mirai-scanner/scanner.list
-            rate_limit: 86400
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.netlab_360.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://data.netlab.360.com/mirai-scanner/
-      public: true
     Magnitude EK:
       description: 'This feed lists FQDN and possibly the URL used by Magnitude Exploit
         Kit. Information also includes the IP address used for the domain and last
@@ -402,23 +386,6 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.team-cymru.com/bogon-reference-http.html
-      public: true
-  Taichung:
-    Netflow Recent:
-      description: "Abnormal flows detected: Attacking (DoS, Brute-Force, Scanners) and malicious hosts (C&C servers, hosting malware)"
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://www.tc.edu.tw/net/netflow/lkout/recent/
-            rate_limit: 3600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.taichung.parser
-      revision: 2018-01-20
-      documentation: https://www.tc.edu.tw/net/netflow/lkout/recent/
       public: true
   Dataplane:
     SSH Client Connection:
@@ -1940,7 +1907,7 @@ providers:
     Malware Panels Tracker:
       description: "Benkow Panels tracker is a list of fresh panel from various malware. The feed is available on the webpage: http://benkow.cc/passwords.php"
       public: true
-      revision: 2021-06-21
+      revision: 2022-11-16
       additional_information:
       bots:
         collector:
@@ -1959,8 +1926,8 @@ providers:
             columns:
               - __IGNORE__
               - malware.name
-              - destination.url
-              - destination.fqdn|destination.ip
+              - source.url
+              - source.fqdn|source.ip
               - time.source
             columns_required:
               - false
