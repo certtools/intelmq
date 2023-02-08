@@ -10,8 +10,8 @@ import intelmq.lib.test as test
 from intelmq.bots.experts.reverse_dns.expert import ReverseDnsExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
-                 "source.ip": "192.0.43.7",  # icann.org
-                 "destination.ip": "192.0.43.8",  # iana.org
+                 "source.ip": "192.0.43.7",  # icann.org.
+                 "destination.ip": "192.0.43.8",  # iana.org.
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
@@ -20,7 +20,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "destination.ip": "192.0.43.8",
                   "destination.reverse_dns": "icann.org",
                   # manual verification shows another result:
-                  # "destination.reverse_dns": "43-8.any.icann.org",
+                  # "destination.reverse_dns": "43-8.any.icann.org.",       # pretty weird!
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
