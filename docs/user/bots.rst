@@ -1123,7 +1123,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
    in the respective `source.url` fields. The value in the dictionary mapping is formatted whereas the columns are available with their index.
  * `"default_url_protocol"`: For URLs you can give a default protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
- * `"skip_header"`: Boolean, skip the first line of the file, optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
+ * `"skip_header"`: Boolean or Int, skip the first N lines of the file (True -> 1, False -> 0), optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
  * `time_format`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
  * `"data_type"`: sets the data of specific type, currently only `"json"` is supported value. An example
