@@ -65,7 +65,7 @@ IntelMQ Manager and more tools
 
 Several pieces of software evolved around IntelMQ. For example, check out `IntelMQ Manager <https://github.com/certtools/intelmq-manager>`_ which is a web based interface to easily manage an IntelMQ system.
 
-More tools can be found in the `Ecosystem chapter in the documentation <https://intelmq.readthedocs.io/en/latest/user/ecosystem.html>`_.
+More tools can be found in the `IntelMQ Universe chapter in the documentation <https://intelmq.readthedocs.io/en/latest/user/universe.html>`_.
 
 ==================
 How to participate
