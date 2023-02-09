@@ -3362,11 +3362,47 @@ Example: Cut through a long domain with a dot. The string is truncated until the
 - ``max_length``: 20
 - Resulting value ``test.domain.com`` (length: 15 characters)
 
+.. _intelmq.bots.experts.url.expert:
+
+URL
+^^^
+
+This bot extracts additional information from `source.url` and `destination.url` fields. It can fill the following fields:
+
+* `source.fqdn`
+* `source.ip`
+* `source.port`
+* `source.urlpath`
+* `source.account`
+* `destination.fqdn`
+* `destination.ip`
+* `destination.port`
+* `destination.urlpath`
+* `destination.account`
+* `protocol.application`
+* `protocol.transport`
+
+**Information**
+
+* `name:` `intelmq.bots.experts.url.expert`
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` extract additional information from the URL
+
+**Configuration Parameters**
+
+* `overwrite`: boolean, replace existing fields?
+* `skip_fields`: list of fields to not extract from the URL
+
+
 
 .. _intelmq.bots.experts.url2fqdn.expert:
 
 Url2FQDN
 ^^^^^^^^
+
+This bot is deprecated and will be removed in version 4.0. Use 'URL Expert' bot instead.
 
 This bot extracts the Host from the `source.url` and `destination.url` fields and
 writes it to `source.fqdn` or `destination.fqdn` if it is a hostname, or

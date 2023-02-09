@@ -146,6 +146,7 @@ class BotTestCase:
         cls.use_cache = False
         cls.allowed_warning_count = 0
         cls.allowed_error_count = 0  # allows dumping of some lines
+        cls.skip_checks: bool = False  # skips testing of output from `check()`
 
         cls.set_bot()
 
@@ -273,7 +274,7 @@ class BotTestCase:
         See for example `intelmq.tests.bots.collectors.http.test_collector`.
         """
         checks = self.bot_reference.check(self.sysconfig)
-        if checks is None:
+        if checks is None or self.skip_checks:
             return
         self.assertIsInstance(checks, (list, tuple))
         for check in checks:
