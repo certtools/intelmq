@@ -6,12 +6,10 @@
 CHANGELOG
 ==========
 
-3.1.0 (unreleased)
+3.1.0 (2023-02-10)
 ------------------
 
 - Upgraded syntax to Python 3.6 (mostly Format-Strings) using pyuprade (PR#2136 by Sebastian Wagner).
-
-### Configuration
 
 ### Core
 - `intelmq.lib.upgrades`:
@@ -51,8 +49,6 @@ CHANGELOG
 - Removed Python 3.6 from CI.
 - Enabled tests against Python 3.11.
 
-### Data Format
-
 ### Bots
 - Set the parent class of all bots to the correct bot class
 
@@ -68,15 +64,17 @@ CHANGELOG
 #### Parsers
 - `intelmq.bots.parsers.alienvault.parser_otx`: Save CVE data in `extra.cve` instead of `extra.CVE` due to the field name restriction on lower-case characters  (PR#2059 by Sebastian Wagner).
 - `intelmq.bots.parsers.anubisnetworks.parser`: Changed field name format from `extra.communication.http.x_forwarded_for_#1` to `extra.communication.http.x_forwarded_for_1` due to the field name restriction on alphanumeric characters (PR#2059 by Sebastian Wagner).
-- `intelmq.bots.parsers.dataplane.parser`: Add support for additional feeds (PR#2102 by Mikk Margus Möll).
-  - DNS Recursion Desired
-  - DNS Recursion Desired ANY
-  - DNS Version
-  - Protocol 41
-  - SMTP Greet
-  - SMTP Data
-  - Telnet Login
-  - VNC/RFB Login
+- `intelmq.bots.parsers.dataplane.parser`:
+  - Add support for additional feeds (PR#2102 by Mikk Margus Möll).
+    - DNS Recursion Desired
+    - DNS Recursion Desired ANY
+    - DNS Version
+    - Protocol 41
+    - SMTP Greet
+    - SMTP Data
+    - Telnet Login
+    - VNC/RFB Login
+  - Fix event object creation (PR#2298 by DigitalTrustCenter).
 - Removed `intelmq.bots.parsers.malc0de`: this bot was marked as deprecated and removed from feed due to offline status (PR#2184 by Tamas Gutsohn, fixes#2178).
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - New parameter `overwrite` (PR#2112 by Sebastian Wagner, fixes #2022).

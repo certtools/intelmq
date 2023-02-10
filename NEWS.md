@@ -1,5 +1,5 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2022 Sebastian Wagner
+   SPDX-FileCopyrightText: 2015-2023 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -10,21 +10,21 @@ This file lists all changes which have an affect on the administration of IntelM
 Please refer to the change log for a full list of changes.
 
 
-3.1.0 Feature release (unreleased)
+3.1.0 Feature release (2023-02-10)
 ----------------------------------
 
 ### Bots
-#### ShadowServer Reports API collector
+#### Shadowserver Reports API collector
 The misleading `country` parameter has been depreciated and a `reports` parameter has been added.
 The backwards-compatibility will be removed in IntelMQ version 4.0.0.
 See the [Shadowserver Reports API bot's documentation](https://intelmq.readthedocs.io/en/latest/user/bots.html#shadowserver-reports-api).
 
 #### GitHub Collector
-GitHub removed the basic `Username/Password` Authentication in favor of personal access tokens. So the GitHub Collector uses an Personal Access Token for authentication [Github Documentation: Generate a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+GitHub removed the basic `Username/Password` Authentication in favor of personal access tokens. So the GitHub Collector uses an Personal Access Token for authentication [GitHub Documentation: Generate a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
 ### Feeds
 #### Abuse.ch Feodo Tracker
-IntelMQ previously supported two feeds: "Feodo Tracker IPs" (downloaded as csv file) and "Feodo Tracker Browse" (downloaded as HTML table). These two feeds contain the same data but differ in the additional details. This IntelMQ release replaces both these feeds (and their parsers) with a feed called "Feodo Tracker" (downloaded as json file) which contains all the additional details from both feeds. The parser module for the new feed is `intelmq.bots.parsers.abusech.parser_feodotracker`.
+IntelMQ previously supported two feeds: "Feodo Tracker IPs" (downloaded as CSV file) and "Feodo Tracker Browse" (downloaded as HTML table). These two feeds contain the same data but differ in the additional details. This IntelMQ release replaces both these feeds (and their parsers) with a feed called "Feodo Tracker" (downloaded as JSON file) which contains all the additional details from both feeds. The parser module for the new feed is `intelmq.bots.parsers.abusech.parser_feodotracker`.
 
 ### Data Format
 #### Field name checks
@@ -33,7 +33,7 @@ The check which ensures this, was ineffective prior to this version and is effec
 The [Data format documentation](https://intelmq.readthedocs.io/en/maintenance/dev/data-format.html#rules-for-keys) describes the required format.
 
 ### Logrotate
-The packaged configuration for logrotate falsely contained options applying to other programs' log files. This caused wrong ownerships of log files.
+The packaged configuration for *logrotate* falsely contained options applying to other programs' log files. This caused wrong ownership of log files.
 This issues is corrected, but the ownership of affected log files may need to be changed manually.
 To find affected files, you may use:
 ```bash
@@ -46,7 +46,7 @@ The parameter `timeout` has been merged into `redis_cache_ttl`.
 
 ### Postgres databases
 
-The develop branch previously contained a set of unnecessary statements to update the classification.identifier. If these changes were made please revert back to the previous state.
+The develop branch previously contained a set of unnecessary statements in a pre-release version to update the `classification.identifier`. If these changes were made please revert back to the previous state.
 
 
 3.0.2 Maintenance release (2021-09-10)
