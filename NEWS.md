@@ -22,6 +22,10 @@ See the [Shadowserver Reports API bot's documentation](https://intelmq.readthedo
 #### GitHub Collector
 GitHub removed the basic `Username/Password` Authentication in favor of personal access tokens. So the GitHub Collector uses an Personal Access Token for authentication [Github Documentation: Generate a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
+#### url expert bot will deprecate url2fqdn
+There is a new, more abstract bot (URL expert bot) which will gradually replace the old url2fqdn bot. The new one builds on top of the urlparse lib of python.
+If you use the url2fqdn bot, please start migrating.
+
 ### Feeds
 #### Abuse.ch Feodo Tracker
 IntelMQ previously supported two feeds: "Feodo Tracker IPs" (downloaded as csv file) and "Feodo Tracker Browse" (downloaded as HTML table). These two feeds contain the same data but differ in the additional details. This IntelMQ release replaces both these feeds (and their parsers) with a feed called "Feodo Tracker" (downloaded as json file) which contains all the additional details from both feeds. The parser module for the new feed is `intelmq.bots.parsers.abusech.parser_feodotracker`.
