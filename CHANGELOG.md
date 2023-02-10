@@ -43,7 +43,7 @@ CHANGELOG
   - Removes `tzone` argument from `DateTime.from_timestamp` and `DateTime.from_epoch_millis`
   - `DateTime.from_timstamp` now also allows string argument
 - Removes `pytz` global dependency
-- Removed support for Python 3.6, including removing conditional dependencies and updating syntax to use features from newest versions. (fixes [#2272](https://github.com/certtools/intelmq/issues/2272)
+- Removed support for Python 3.6, including removing conditional dependencies and updating syntax to use features from newest versions. (fixes [#2272](https://github.com/certtools/intelmq/issues/2272))
 
 ### Development
 - Removed Python 3.6 from CI.
@@ -75,7 +75,7 @@ CHANGELOG
     - Telnet Login
     - VNC/RFB Login
   - Fix event object creation (PR#2298 by DigitalTrustCenter).
-- Removed `intelmq.bots.parsers.malc0de`: this bot was marked as deprecated and removed from feed due to offline status (PR#2184 by Tamas Gutsohn, fixes#2178).
+- Removed `intelmq.bots.parsers.malc0de`: this bot was marked as deprecated and removed from feed due to offline status (PR#2184 by Tamas Gutsohn, fixes #2178).
 - `intelmq.bots.parsers.microsoft.parser_ctip`:
   - New parameter `overwrite` (PR#2112 by Sebastian Wagner, fixes #2022).
   - Fix handling of field `Payload.domain` if it contains the same IP address as `Payload.serverIp` (PR#2144 by Mikk Margus Möll and Sebastian Wagner).
@@ -128,7 +128,7 @@ CHANGELOG
   - Recovering CSV lines preserves the original line ending (PR#2280 by Kamil Mankowski, fixes [#1597](https://github.com/certtools/intelmq/issues/1597))
 - `intelmq.bots.parsers.autoshun.parser`: Removed, as the feed is discontinued (PR#2214 by Sebastian Waldbauer, fixes #2162).
 - `intelmq.bots.parsers.openphish.parser_commercial`: Refactored complete code (PR#2160 by Filip Pokorný).
-  - Fixes wrong mapping of `host` field to `source.fqdn` when the content was in IP address.
+  - Fixes wrong mapping of `host` field to `source.fqdn` when the content was an IP address.
   - Adds newly added fields in the feed.
 - `intelmq.bots.parsers.phishtank.parser`: Refactored code (PR#2270 by Filip Pokorný)
   - Changes feed URL to JSON format (contains more information). The URL needs to by manually updated in the configuration!
