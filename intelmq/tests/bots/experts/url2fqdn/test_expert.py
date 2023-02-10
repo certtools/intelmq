@@ -46,6 +46,8 @@ class TestUrl2fqdnExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = Url2fqdnExpertBot
+        self.allowed_warning_count = 1
+        self.skip_checks = True
 
     def test(self):
         self.input_message = EXAMPLE_INPUT
@@ -55,8 +57,7 @@ class TestUrl2fqdnExpertBot(test.BotTestCase, unittest.TestCase):
     def test_overwrite(self):
         self.input_message = EXAMPLE_INPUT.copy()
         self.input_message['source.fqdn'] = 'example.net'
-        self.sysconfig = {'overwrite': True}
-        self.run_bot()
+        self.run_bot(parameters={'overwrite': True})
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
     def test_ip(self):

@@ -153,6 +153,7 @@ CHANGELOG
 - `intelmq.bots.experts.threshold.expert`: Correctly use the standard parameter `redis_cache_ttl` instead of the previously used parameter `timeout` (PR#2155 by Karl-Johan Karlsson).
 - `intelmq.bots.experts.jinja2.expert`: Lift restriction on requirement jinja2 < 3 (PR#2158 by Sebastian Wagner).
 - `intelmq.bots.experts.asn_lookup.expert`, `intelmq.bots.experts.domain_suffix.expert`, `intelmq.bots.experts.maxmind_geoip.expert`, `intelmq.bots.experts.recordedfuture_iprisk.expert`, `intelmq.bots.experts.tor_nodes.expert`: New parameter `autoupdate_cached_database` to disable automatic updates (downloads) of cached databases (PR#2180 by Sebastian Wagner).
+- `intelmq.bots.experts.url.expert`: New bot for extracting additional information from `source.url` and/or `destination.url` (PR#2315 by Filip Pokorný).
 
 #### Outputs
 - Removed `intelmq.bots.outputs.postgresql`: this bot was marked as deprecated in 2019 announced to be removed in version 3 of IntelMQ (PR#2045 by Birger Schacht).
@@ -175,6 +176,7 @@ CHANGELOG
 - Netlab 360 Mirai Scanner feed removed as it is discontinued. (PR#2266 by Filip Pokorný)
 - Benkow Malware Panels Tracker feed changed parser configuration. (PR#2266 by Filip Pokorný)
 - Taichung feed removed as it is discontinued. (PR#2266 by Filip Pokorný)
+- Added new URL Expert bot. (PR#2315 by Filip Pokorný)
 
 ### Packaging
 - Remove deleted `intelmq.bots.experts.sieve.validator` from executables in `setup.py` (PR#2256 by Filip Pokorný).
@@ -192,6 +194,7 @@ CHANGELOG
 - Add test dependency `requests_mock` to the `development` extra requirements in `setup.py` (PR#2210 by Sebastian Wagner).
 - Threshold Expert tests: Use environment variable `INTELMQ_PIPELINE_HOST` as redis host, analogous to other tests (PR#2209 by Sebastian Wagner, fixes #2207).
 - Remove codecov action as it failed regularly (PR#2237 by Sebastian Wagner, fixes #2229).
+- `intelmq.lib.test.BotTestCase`: Adds `skip_checks` variable to not fail on non-empty messages from calling `check` function (PR#2315 by Filip Pokorný).
 
 ### Tools
 - `intelmqctl`:
