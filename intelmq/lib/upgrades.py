@@ -808,10 +808,11 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
                 bot["module"] == "intelmq.bots.parsers.abusech.parser_domain"):
             found_abusech_removed_parsers.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.generic.parser_csv":
-            bot["parameters"]["default_fields"] = {
-                "classification.type": bot["parameters"]["type"]
-            }
-            del bot["parameters"]["type"]
+            if bot.get("parameters") and bot["parameters"].get("type"):
+                bot["parameters"]["default_fields"] = {
+                    "classification.type": bot["parameters"]["type"]
+                }
+                del bot["parameters"]["type"]
         if bot["module"] == "intelmq.bots.parsers.taichung.parser":
             found_taichung.append(bot_id)
 
