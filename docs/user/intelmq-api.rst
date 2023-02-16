@@ -300,6 +300,19 @@ sqlite3.OperationalError: attempt to write a readonly database
 SQLite does not only need write access to the database itself, but also the folder the database file is located in. Please check that the webserver has `write` permissions to the folder
 the session file is located in.
 
+sqlite3.OperationalError: unable to open database file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Please check the ``session_store`` in ``api-config.json`` and ensure the path is correct - the
+directory exists and application can write to it.
+
+Gunicorn returns ``ModuleNotFoundError: No module named 'uvicorn'``, but Uvicorn is installed
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Most probably one of them (Gunicorn and Uvicorn) were installed using different method (e.g. one
+from native system package, other from pip). Try to install both from one source. You may need
+to eventually update the Gunicorn executable path in `intelmq-api.service`.
+
 Can I use other web servers or proxy?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
