@@ -59,6 +59,20 @@ The `intelmq-api` package ships the following example files:
 
 The value of ``${PREFIX}`` depends on your environment and is something like ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version).
 
+.. note::
+
+   All configuration files have example paths to the IntelMQ API package. During the installation
+   please ensure to update them with the right value, as the ``${PREFIX}``.
+
+Installing packages
+~~~~~~~~~~~~~~~~~~~
+
+Let's start with installing the IntelMQ API package:
+
+.. code-block:: bash
+
+   pip install intelmq-api
+
 You need to install Gunicorn and Apache2 on your own, e.g., using apt:
 
 .. code-block:: bash
@@ -71,6 +85,8 @@ Then, if you didn't use it before, ensure to enable the ``proxy_http`` module fo
 
    a2enmod proxy_http
 
+Configuring Apache
+~~~~~~~~~~~~~~~~~~
 
 The file ``${PREFIX}/etc/intelmq/api-apache.conf`` needs to be placed in the correct place for your Apache 2 installation.
  - On Debian and Ubuntu, move the file to ``/etc/apache2/conf-available.d/api-apache.conf`` and then execute ``a2enconf api-apache``.
@@ -78,6 +94,17 @@ The file ``${PREFIX}/etc/intelmq/api-apache.conf`` needs to be placed in the cor
  - On openSUSE, move the file to ``/etc/apache2/conf.d/``.
 
 Don't forget to reload the Apache2 afterwards.
+
+Configuring Systemd services
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+   This step could be also done by calling the script:
+
+   .. code-block:: bash
+
+      intelmq-api-setup-systemd
 
 The systemd configuration files (``intelmq-api.service`` and ``intelmq-api.socket``) are responsible
 for instructing systemd daemon to start and keep running Gunicorn (that serves the API), and
@@ -90,6 +117,9 @@ forwarding requests between proxy and the Gunicorn instance.
 After moving files, you can enable the service by executing ``systemctl enable intelmq-api`` to
 start it on the system startup.
 
+Setup API configuration files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 - The file ``${PREFIX}/etc/intelmq/api-config.json`` needs to be moved to ``/etc/intelmq/api-config.json``.
 - The file ``${PREFIX}/etc/intelmq/manager/positions.conf`` needs to be moved to ``/etc/intelmq/manager/positions.conf``.
 - Last but not least move the file ``${PREFIX}/etc/intelmq/api-sudoers.conf`` to ``/etc/sudoers.d/01_intelmq-api`` and adapt the webserver username in this file. Set the file permissions to ``0o440``.
@@ -98,14 +128,19 @@ Afterwards, continue with the section Permissions below. When you finish the con
 you can start the service using ``systemctl start intelmq-api``. You may need to restart the service
 after any configuration change.
 
-.. note::
+Next steps
+~~~~~~~~~~
 
-   The example Apache2 and Gunicorn configurations serve the IntelMQ API under ``/intelmq`` prefix,
-   what means that you should be able to get, e.g., the documentation under ``/intelmq/docs`` etc.
+The example Apache2 and Gunicorn configurations serve the IntelMQ API under ``/intelmq`` prefix,
+what means that at this moment you should be able to get, e.g., the API documentation under
+``/intelmq/docs`` etc.
 
-IntelMQ 2.3.1 comes with a tool ``intelmqsetup`` which performs these set-up steps automatically.
-Please note that the tool is very new and may not detect all situations correctly. Please report us any bugs you are observing.
-The tool is idempotent, you can execute it multiple times.
+Now, you should continue with the API configuration and creating users. If you didn't do it before,
+it's also time to configure IntelMQ itself.
+
+IntelMQ 2.3.1 comes with a tool ``intelmqsetup`` which helps with performing some steps automatically.
+Please note that the tool is still under development and may not detect all situations correctly.
+Please report us any bugs you are observing. The tool is idempotent, you can execute it multiple times.
 
 ***********************
 Configuring intelmq-api
