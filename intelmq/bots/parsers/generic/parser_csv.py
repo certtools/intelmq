@@ -21,18 +21,11 @@ import json
 import re
 from typing import Optional, Union, Iterable
 
-from dateutil.parser import parse
-
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidArgument, InvalidValue
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.utils import RewindableFileHandle
-
-TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
-                    'windows_nt': DateTime.from_windows_nt,
-                    'epoch_millis': DateTime.from_epoch_millis,
-                    None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
+from intelmq.lib.datatypes import TimeFormat
 
 DATA_CONVERSIONS = {'json': lambda data: json.loads(data)}
 DOCS = "https://intelmq.readthedocs.io/en/latest/guides/Bots.html#generic-csv-parser"
@@ -49,7 +42,7 @@ class GenericCsvParserBot(ParserBot):
     delimiter: str = ','
     filter_text = None
     filter_type = None
-    time_format = None
+    time_format: Optional[TimeFormat] = None
     type: Optional[str] = None
     type_translation = {}
     skip_header: Union[bool, int] = False
@@ -67,14 +60,8 @@ class GenericCsvParserBot(ParserBot):
 
         # prevents empty strings:
         self.column_regex_search = self.column_regex_search or {}
+        self.time_format = TimeFormat(self.time_format)
 
-        # handle empty strings, false etc.
-        if not self.time_format:
-            self.time_format = None
-        if self.time_format not in TIME_CONVERSIONS.keys():
-            raise InvalidArgument('time_format', got=self.time_format,
-                                  expected=list(TIME_CONVERSIONS.keys()),
-                                  docs=DOCS)
         if self.filter_type and self.filter_type not in ('blacklist', 'whitelist'):
             raise InvalidArgument('filter_type', got=self.filter_type,
                                   expected=("blacklist", "whitelist"),
@@ -137,7 +124,6 @@ class GenericCsvParserBot(ParserBot):
                     if search:
                         value = search.group(0)
                     else:
-                        type = None
                         value = None
 
                 if key in ("__IGNORE__", ""):
@@ -147,7 +133,7 @@ class GenericCsvParserBot(ParserBot):
                     value = DATA_CONVERSIONS[self.data_type[key]](value)
 
                 if key in ("time.source", "time.destination"):
-                    value = TIME_CONVERSIONS[self.time_format](value)
+                    value = self.time_format.parse_datetime(value)
                 elif key.endswith('.url'):
                     if not value:
                         continue

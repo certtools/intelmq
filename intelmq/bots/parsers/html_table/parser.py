@@ -20,12 +20,12 @@ default_url_protocol: string
 time_format: string
 type: string
 """
+from typing import Optional
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.exceptions import InvalidArgument
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.datatypes import TimeFormat
 
 
 try:
@@ -46,7 +46,7 @@ class HTMLTableParserBot(ParserBot):
     split_index = 0
     split_separator = None
     table_index = 0
-    time_format = None
+    time_format: Optional[TimeFormat] = None
     type = "c2-server"
     _parser = 'html.parser'
 
@@ -69,11 +69,7 @@ class HTMLTableParserBot(ParserBot):
         self.attr_value = self.attribute_value
         self.skip_head = self.skip_table_head
         self.skip_row = 1 if self.skip_head else 0
-
-        if self.time_format and self.time_format.split('|')[0] not in DateTime.TIME_CONVERSIONS.keys():
-            raise InvalidArgument('time_format', got=self.time_format,
-                                  expected=list(DateTime.TIME_CONVERSIONS.keys()),
-                                  docs='https://intelmq.readthedocs.io/en/latest/guides/Bots.html#html-table-parser')
+        self.time_format = TimeFormat(self.time_format)
 
     def process(self):
         report = self.receive_message()
@@ -119,7 +115,7 @@ class HTMLTableParserBot(ParserBot):
                             data = int(data)
                         except ValueError:
                             pass
-                        data = DateTime.convert(data, format=self.time_format)
+                        data = self.time_format.parse_datetime(data)
 
                     elif key.endswith('.url'):
                         if not data:

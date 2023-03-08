@@ -38,7 +38,7 @@ class AbusechFeodoTrackerParserBot(ParserBot):
         if line.get("first_seen"):
             try:
                 event.add("time.source",
-                          str(DateTime.convert_from_format(value=line.get("first_seen"), format="%Y-%m-%d %H:%M:%S")),
+                          str(DateTime.from_format(value=line.get("first_seen"), format="%Y-%m-%d %H:%M:%S")),
                           raise_failure=False)
 
             except ValueError:
@@ -48,7 +48,7 @@ class AbusechFeodoTrackerParserBot(ParserBot):
         elif line.get("last_online"):
             try:
                 event.add("time.source",
-                          str(DateTime.convert_from_format_midnight(line.get("last_online"), format="%Y-%m-%d")),
+                          str(DateTime.from_format_midnight(line.get("last_online"), format="%Y-%m-%d")),
                           raise_failure=False)
             except ValueError:
                 self.logger.warning("Failed to parse '%s' to DateTime.", line.get('last_online'))

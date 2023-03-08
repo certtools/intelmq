@@ -31,8 +31,8 @@ class InvalidArgument(IntelMQException):
     def __init__(self, argument: Any, got: Any = None, expected=None,
                  docs: str = None):
         message = f"Argument {repr(argument)} is invalid."
-        if expected is list:
-            message += f" Should be one of: {list}."
+        if isinstance(expected, list):
+            message += f" Should be one of: {expected}."
         elif expected:  # not None
             message += f" Should be of type: {expected}."
         if got:

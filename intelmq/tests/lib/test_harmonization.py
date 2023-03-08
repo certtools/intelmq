@@ -245,19 +245,19 @@ class TestHarmonization(unittest.TestCase):
     def test_datetime_parse_utc_isoformat(self):
         """ Test DateTime.parse_utc_isoformat """
         self.assertEqual('2020-12-31T12:00:00+00:00',
-                         harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00+00:00'))
+                         harmonization.DateTime.from_isoformat('2020-12-31T12:00:00+00:00'))
         self.assertEqual('2020-12-31T12:00:00.001+00:00',
-                         harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00.001+00:00'))
+                         harmonization.DateTime.from_isoformat('2020-12-31T12:00:00.001+00:00'))
         self.assertEqual(datetime.datetime(year=2020, month=12, day=31, hour=12, tzinfo=datetime.timezone.utc),
-                         harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00+00:00',
-                                                                    return_datetime=True))
+                         harmonization.DateTime.from_isoformat('2020-12-31T12:00:00+00:00',
+                                                               return_datetime=True))
 
     def test_datetime_convert_fuzzy(self):
         """ Test DateTime.convert_fuzzy """
         self.assertEqual('2020-12-31T12:00:00+00:00',
-                         harmonization.DateTime.convert_fuzzy('2020-12-31T12:00:00+00:00'))
+                         harmonization.DateTime.from_fuzzy('2020-12-31T12:00:00+00:00'))
         self.assertEqual('2020-12-31T12:00:00+00:00',
-                         harmonization.DateTime.convert_fuzzy('31st December 2020 12:00'))
+                         harmonization.DateTime.from_fuzzy('31st December 2020 12:00'))
 
 
     def test_fqdn_valid(self):
