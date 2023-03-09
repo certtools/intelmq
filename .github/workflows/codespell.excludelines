@@ -34,3 +34,6 @@ Destination                 destination.local_hostname          :ref:`string`   
 
 # ./docs/dev/harmonization-fields.rst:28: compromized ==> compromised
 Destination                 destination.local_ip                :ref:`ipaddress`              Some sources report a internal (NATed) IP address related a compromized system. N.B. RFC1918 IPs are OK here.
+
+# ./intelmq/tests/bots/parsers/shodan/test_parser.py:36: ALLO ==> ALLOW
+                         '   ALLO   MLST   MLSD   SITE   P@SW   STRU   CLNT   MFMT\n'
