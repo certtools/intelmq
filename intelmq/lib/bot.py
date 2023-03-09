@@ -211,6 +211,7 @@ class Bot:
 
             super().__init__()
             self.__connect_pipelines()
+            self.__reset_total_path_stats()
             self.init()
 
             if not self.__instance_id:
@@ -479,6 +480,17 @@ class Bot:
             self.__message_counter["stats_timestamp"] = datetime.now()
         except Exception:
             self.logger.debug('Failed to write statistics to cache, check your `statistics_*` settings.', exc_info=True)
+
+    def __reset_total_path_stats(self):
+        """Initially set destination paths to 0 to reset them in stats cache"""
+        if not self.destination_queues:
+            return
+        queues_type = type(self.destination_queues)
+        if queues_type is dict:
+            for path in self.destination_queues.keys():
+                self.__message_counter["path_total"][path] = 0
+        else:
+            self.__message_counter["path_total"]["_default"]
 
     def __sleep(self, remaining: Optional[float] = None, log: bool = True):
         """
