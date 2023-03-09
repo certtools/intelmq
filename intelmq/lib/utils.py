@@ -687,7 +687,7 @@ def drop_privileges() -> bool:
         except (OSError, KeyError):
             # KeyError: User or group 'intelmq' does not exist
             return False
-    if os.geteuid() != 0:  # For the unprobably possibility that intelmq is root
+    if os.geteuid() != 0:  # For the improbably possibility that intelmq is root
         return True
     return False
 
