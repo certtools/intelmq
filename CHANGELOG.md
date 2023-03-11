@@ -6,6 +6,34 @@
 CHANGELOG
 ==========
 
+3.1.1 (unreleased)
+------------------
+
+### Core
+- Fixed not resetting destination path statistics in the stats cache after restarting bot (Fixes [#2331](https://github.com/certtools/intelmq/issues/2331))
+
+### Development
+
+### Bots
+
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Tests
+
+### Packaging
+
+### Tools
+
+### Known Errors
+
 3.1.0 (2023-02-10)
 ------------------
 
