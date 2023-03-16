@@ -11,6 +11,7 @@ CHANGELOG
 
 ### Core
 - Fixed not resetting destination path statistics in the stats cache after restarting bot (Fixes [#2331](https://github.com/certtools/intelmq/issues/2331))
+- Force flushing statistics if bot will sleep longer than flushing delay (Fixes [#2336](https://github.com/certtools/intelmq/issues/2336))
 
 ### Development
 

@@ -512,6 +512,9 @@ class Bot:
             if log:
                 self.logger.info("Idling for {:.1f}s ({}) now.".format(remaining,
                                                                        utils.seconds_to_human(remaining)))
+            if timedelta(seconds=remaining) > self.__message_counter_delay:
+                self.__stats(force=True)
+
             time.sleep(remaining)
             self.__handle_sighup()
             remaining = self.rate_limit - (time.time() - starttime)
