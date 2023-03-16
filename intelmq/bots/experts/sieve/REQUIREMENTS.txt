@@ -1,4 +1,0 @@
-# SPDX-FileCopyrightText: 2017 Antoine Neuenschwander
-# SPDX-License-Identifier: AGPL-3.0-or-later
-
-textX>=1.5.1

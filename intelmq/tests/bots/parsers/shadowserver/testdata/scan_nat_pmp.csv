@@ -1,4 +1,0 @@
-"timestamp","ip","protocol","port","hostname","tag","version","asn","geo","region","city","naics","sic","opcode","uptime","external_ip","sector","response_size","amplification"
-"2010-02-10 00:00:00",192.168.0.1,udp,5351,node01.example.com,nat-pmp,0,64512,ZZ,Region,City,0,0,128,291278940,192.168.0.1,,12,6.00
-"2010-02-10 00:00:01",192.168.0.2,udp,5351,node02.example.com,nat-pmp,0,64512,ZZ,Region,City,0,0,128,768416,192.168.0.2,,12,6.00
-"2010-02-10 00:00:02",192.168.0.3,udp,5351,node03.example.com,nat-pmp,0,64512,ZZ,Region,City,0,0,128,19629454,192.168.0.3,,12,6.00

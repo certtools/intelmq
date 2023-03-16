@@ -1,4 +1,0 @@
-# SPDX-FileCopyrightText: 2016 kralca
-# SPDX-License-Identifier: AGPL-3.0-or-later
-
-pymisp>=2.4.36; python_version >= '3.6'
