@@ -1,0 +1,4 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","sector","response_size","amplification","error","raw_response"
+"2010-02-10 00:00:00",192.168.0.1,udp,3702,node01.example.com,ws-discovery,64512,ZZ,Region,City,0,0,"Communications, Service Provider, and Hosting Service",989,164.83,"Validation constraint violation: SOAP message expected",c2FtcGxlIHJlc3BvbnNlIGRhdGEK
+"2010-02-10 00:00:01",192.168.0.2,udp,3702,node02.example.com,ws-discovery,64512,ZZ,Region,City,0,0,"Communications, Service Provider, and Hosting Service",918,183.60,"Validation constraint violation: missing root element",c2FtcGxlIHJlc3BvbnNlIGRhdGEK
+"2010-02-10 00:00:02",192.168.0.3,udp,3702,node03.example.com,ws-discovery,64512,ZZ,Region,City,0,0,"Communications, Service Provider, and Hosting Service",989,197.80,"Validation constraint violation: SOAP message expected",c2FtcGxlIHJlc3BvbnNlIGRhdGEK

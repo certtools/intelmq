@@ -1557,8 +1557,6 @@ scan_dns = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('os.name', 'p0f_genre'),
-        ('os.version', 'p0f_detail'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
@@ -3392,7 +3390,7 @@ scan_smtp_vulnerable = {
     },
 }
 
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SNMP
+# https://www.shadowserver.org/what-we-do/network-reporting/open-snmp-report/
 scan_snmp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -4067,6 +4065,37 @@ scan_vnc = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ws-discovery-service-report/
+scan_ws_discovery = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
+        ('extra.', 'error', validate_to_none),
+        ('extra.', 'raw_response', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'protocol.application': 'ws-discovery',
+        'classification.identifier': 'open-ws-discovery',
+    },
+}
+
 # https://www.shadowserver.org/what-we-do/network-reporting/accessible-xdmcp-service-report/
 scan_xdmcp = {
     'required_fields': [
@@ -4116,6 +4145,13 @@ spam_url = {
         ('extra.', 'source', validate_to_none),
         ('extra.', 'sender', validate_to_none),
         ('extra.', 'subject', validate_to_none),
+        ('source.ip', 'src_ip', validate_ip),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('extra.source.naics', 'src_naics', invalidate_zero),
+        ('extra.source.sector', 'src_sector', validate_to_none),
         ('malware.hash.md5', 'md5', validate_to_none),
     ],
     'constant_fields': {
@@ -4186,6 +4222,7 @@ mapping = (
     ('Sandbox-URL', 'sandbox_url', sandbox_url),
     ('IPv6-Accessible-CWMP', 'scan6_cwmp', scan_cwmp),
     ('IPv6-DNS-Open-Resolvers', 'scan6_dns', scan_dns),
+    ('IPv6-Vulnerable-Exchange', 'scan6_exchange', scan_exchange),
     ('IPv6-Accessible-FTP', 'scan6_ftp', scan_ftp),
     ('IPv6-Accessible-HTTP', 'scan6_http', scan_http),
     ('IPv6-Vulnerable-HTTP', 'scan6_http_vulnerable', scan_http_vulnerable),
@@ -4277,6 +4314,7 @@ mapping = (
     ('Open-TFTP', 'scan_tftp', scan_tftp),
     ('Accessible-Ubiquiti-Discovery-Service', 'scan_ubiquiti', scan_ubiquiti),
     ('Accessible-VNC', 'scan_vnc', scan_vnc),
+    ('Accessible-WS-Discovery-Service', 'scan_ws_discovery', scan_ws_discovery),
     ('Open-XDMCP', 'scan_xdmcp', scan_xdmcp),
     ('Spam-URL', 'spam_url', spam_url),
     ('Special', 'special', special),
