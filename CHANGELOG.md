@@ -21,8 +21,9 @@ CHANGELOG
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
-  - Added 'IPv6-Vulnerable-Exchange' alias and 'Accessible-WS-Discovery-Service' report. (PR#2338 by elsif2)
-  - Removed unused 'p0f_genre' and 'p0f_detail' from the 'DNS-Open-Resolvers' report. (PR#2338 by elsif2)
+  - Added 'IPv6-Vulnerable-Exchange' alias and 'Accessible-WS-Discovery-Service' report. (PR#2338)
+  - Removed unused 'p0f_genre' and 'p0f_detail' from the 'DNS-Open-Resolvers' report. (PR#2338)
+  - Updated 'Spam-URL' to include relay details. (PR#2339)
 
 #### Experts
 
