@@ -1679,6 +1679,19 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, expected)
 
+    def test_empty_list(self):
+        ''' Test whether empty lists function '''
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_empty_list.sieve')
+
+        event = EXAMPLE_INPUT.copy()
+        event['extra.list'] = []
+        expected = event.copy()
+        expected['extra.list_empty'] = True
+
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
