@@ -4249,6 +4249,7 @@ mapping = (
     ('Sinkhole-Events-HTTP-Referer IPv6', 'event6_sinkhole_http_referer', event_sinkhole_http_referer),
     ('Malware-URL', 'malware_url', malware_url),
     ('Phish-URL', 'phish_url', phish_url),
+    ('IPv6-Accessible-HTTP-Proxy', 'population6_http_proxy', population_http_proxy),
     ('Accessible-HTTP-Proxy', 'population_http_proxy', population_http_proxy),
     ('Sandbox-Connections', 'sandbox_conn', sandbox_conn),
     ('Sandbox-DNS', 'sandbox_dns', sandbox_dns),
