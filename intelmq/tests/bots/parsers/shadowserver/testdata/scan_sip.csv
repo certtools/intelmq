@@ -1,0 +1,4 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","sip","sip_code","sip_reason","user_agent","sip_via","sip_to","sip_from","content_length","content_type","server","contact","cseq","call_id","allow","amplification","response_size"
+"2010-02-10 00:00:00",192.168.0.1,udp,5060,node01.example.com,sip,64512,ZZ,Region,City,SIP/2.0,489,"Event Package Not Supported",,,,,0,,,,,,"INVITE,ACK,BYE,CANCEL,REGISTER",15.57,109
+"2010-02-10 00:00:01",192.168.0.2,udp,5060,node02.example.com,sip,64512,ZZ,Region,City,SIP/2.0,400,"Bad Request",,,,,364,text/plain,,,,,,62.57,438
+"2010-02-10 00:00:02",192.168.0.3,udp,5060,node03.example.com,sip,64512,ZZ,Region,City,SIP/2.0,400,"Bad Request",,,,,0,,,,,,,6.57,46
