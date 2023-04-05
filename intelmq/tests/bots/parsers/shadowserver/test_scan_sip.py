@@ -28,7 +28,7 @@ EVENTS = [
     'classification.identifier': 'open-sip',
     'classification.taxonomy': 'vulnerable',
     'classification.type': 'vulnerable-system',
-    'extra.allow': 'INVITE,ACK,BYE,CANCEL,REGISTER',
+    'extra.sip_allow': 'INVITE,ACK,BYE,CANCEL,REGISTER',
     'extra.amplification': 15.57,
     'extra.content_length': 0,
     'extra.response_size': 109,
