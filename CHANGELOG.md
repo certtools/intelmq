@@ -28,6 +28,8 @@ CHANGELOG
   - Removed  duplicate mappings from the 'Spam-URL' report. (PR#2348) 
 
 #### Experts
+- `intelmq.bots.experts.sieve`:
+  - Allow empty lists in sieve rule files (PR#2341 by Mikk Margus Möll).
 
 #### Outputs
 
