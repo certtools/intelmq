@@ -3263,6 +3263,46 @@ scan_rsync = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-sip-report/
+scan_sip = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'sip', validate_to_none),
+        ('extra.', 'sip_code', validate_to_none),
+        ('extra.', 'sip_reason', validate_to_none),
+        ('user_agent', 'user_agent', validate_to_none),
+        ('extra.', 'sip_via', validate_to_none),
+        ('extra.', 'sip_to', validate_to_none),
+        ('extra.', 'sip_from', validate_to_none),
+        ('extra.', 'content_length', convert_int),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.sip_server', 'server', validate_to_none),
+        ('extra.sip_contact', 'contact', validate_to_none),
+        ('extra.sip_cseq', 'cseq', validate_to_none),
+        ('extra.sip_call_id', 'call_id', validate_to_none),
+        ('extra.sip_allow', 'allow', validate_to_none),
+        ('extra.', 'amplification', convert_float),
+        ('extra.', 'response_size', convert_int),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'protocol.application': 'sip',
+        'classification.identifier': 'open-sip',
+    },
+}
+
 # https://www.shadowserver.org/what-we-do/network-reporting/accessible-slp-service-report/
 scan_slp = {
     'required_fields': [
@@ -4135,7 +4175,7 @@ spam_url = {
     ],
     'optional_fields': [
         ('source.url', 'url', convert_http_host_and_url, True),
-        ('source.fqdn', 'http_host', validate_fqdn),
+        ('source.fqdn', 'host', validate_fqdn),
         ('source.asn', 'asn', invalidate_zero),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -4145,13 +4185,6 @@ spam_url = {
         ('extra.', 'source', validate_to_none),
         ('extra.', 'sender', validate_to_none),
         ('extra.', 'subject', validate_to_none),
-        ('source.ip', 'src_ip', validate_ip),
-        ('source.asn', 'src_asn', invalidate_zero),
-        ('source.geolocation.cc', 'src_geo'),
-        ('source.geolocation.region', 'src_region'),
-        ('source.geolocation.city', 'src_city'),
-        ('extra.source.naics', 'src_naics', invalidate_zero),
-        ('extra.source.sector', 'src_sector', validate_to_none),
         ('malware.hash.md5', 'md5', validate_to_none),
     ],
     'constant_fields': {
@@ -4216,7 +4249,8 @@ mapping = (
     ('Sinkhole-Events-HTTP-Referer IPv6', 'event6_sinkhole_http_referer', event_sinkhole_http_referer),
     ('Malware-URL', 'malware_url', malware_url),
     ('Phish-URL', 'phish_url', phish_url),
-    ('Accessible-HTTP-proxy', 'population_http_proxy', population_http_proxy),
+    ('IPv6-Accessible-HTTP-Proxy', 'population6_http_proxy', population_http_proxy),
+    ('Accessible-HTTP-Proxy', 'population_http_proxy', population_http_proxy),
     ('Sandbox-Connections', 'sandbox_conn', sandbox_conn),
     ('Sandbox-DNS', 'sandbox_dns', sandbox_dns),
     ('Sandbox-URL', 'sandbox_url', sandbox_url),
@@ -4225,6 +4259,7 @@ mapping = (
     ('IPv6-Vulnerable-Exchange', 'scan6_exchange', scan_exchange),
     ('IPv6-Accessible-FTP', 'scan6_ftp', scan_ftp),
     ('IPv6-Accessible-HTTP', 'scan6_http', scan_http),
+    ('IPv6-Open-HTTP-Proxy', 'scan6_http_proxy', scan_http_proxy),
     ('IPv6-Vulnerable-HTTP', 'scan6_http_vulnerable', scan_http_vulnerable),
     ('IPv6-Open-IPP', 'scan6_ipp', scan_ipp),
     ('IPv6-Open-LDAP-TCP', 'scan6_ldap_tcp', scan_ldap_tcp),
@@ -4267,7 +4302,7 @@ mapping = (
     ('Accessible-FTP', 'scan_ftp', scan_ftp),
     ('Accessible-Hadoop', 'scan_hadoop', scan_hadoop),
     ('Accessible-HTTP', 'scan_http', scan_http),
-    ('Open-HTTP-proxy', 'scan_http_proxy', scan_http_proxy),
+    ('Open-HTTP-Proxy', 'scan_http_proxy', scan_http_proxy),
     ('Vulnerable-HTTP', 'scan_http_vulnerable', scan_http_vulnerable),
     ('Accessible-ICS', 'scan_ics', scan_ics),
     ('Open-IPMI', 'scan_ipmi', scan_ipmi),
@@ -4297,6 +4332,7 @@ mapping = (
     ('Accessible-MS-RDPEUDP', 'scan_rdpeudp', scan_rdpeudp),
     ('Open-Redis', 'scan_redis', scan_redis),
     ('Accessible-Rsync', 'scan_rsync', scan_rsync),
+    ('Accessible-SIP', 'scan_sip', scan_sip),
     ('Accessible-SLP', 'scan_slp', scan_slp),
     ('Accessible-SMB', 'scan_smb', scan_smb),
     ('Accessible-SMTP', 'scan_smtp', scan_smtp),
