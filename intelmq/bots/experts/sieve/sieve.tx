@@ -87,7 +87,7 @@ BoolOperator: '==' | '!=';
 Negation: '!';
 
 TypedValue: STRICTFLOAT | INT | BOOL | STRING;
-ListValue: '[' values+=TypedValue[','] ']' ;
+ListValue: '[' values*=TypedValue[','] ']' ;
 
 Key: /[a-z0-9_\.]+/;
 
