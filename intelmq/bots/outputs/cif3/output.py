@@ -160,10 +160,7 @@ class CIF3OutputBot(OutputBot):
         new_cif3_dict = {}
         new_cif3_dict['tags'] = []
 
-        if 'feed.provider' in intelmq_event:
-            new_cif3_dict['provider'] = intelmq_event['feed.provider']
-        else:
-            new_cif3_dict['provider'] = 'IntelMQ'
+       new_cif3_dict['provider'] = intelmq_event.get('feed.provider', 'IntelMQ')
 
         # set the tags
         if (self.add_feed_provider_as_tag and
