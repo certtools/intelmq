@@ -93,7 +93,7 @@ class CIF3OutputBot(OutputBot):
     def init(self):
         cifsdk_version = int(get_cifsdk_version().get('version').split('.')[0])
         # installed cifsdk version must be >=3 and < 4
-        if not 3<= cifsdk_version < 4:
+        if not 3 <= cifsdk_version < 4:
             HttpClient = None
         if HttpClient is None:
             raise MissingDependencyError(
@@ -110,8 +110,8 @@ class CIF3OutputBot(OutputBot):
 
         self.logger.info(f"Connecting to CIFv3 instance at {self.cif3_url!r}.")
         self.cli = HttpClient(self.cif3_url,
-            self.cif3_token,
-            verify_ssl=self.http_verify_cert)
+                    self.cif3_token,
+                    verify_ssl=self.http_verify_cert)
 
         try:
             _ = self.cli.ping(write=True)
@@ -135,7 +135,7 @@ class CIF3OutputBot(OutputBot):
         elif len(self.indicator_list) > 0 and (
             (
                 (datetime.now() - self.last_flushed).total_seconds() >
-                    self.indicator_list_max_seconds
+                        self.indicator_list_max_seconds
             ) or
                 len(self.indicator_list) >= self.indicator_list_max_records
         ):
@@ -210,7 +210,7 @@ class CIF3OutputBot(OutputBot):
             resp = self.cli.indicators_create(indicators)
         except Exception as err:
             self.logger.error(f"Error submitting indicator(s): {err}")
-            raise 
+            raise
         else:
             if isinstance(resp, list):
                 resp = json.loads(resp[0])
