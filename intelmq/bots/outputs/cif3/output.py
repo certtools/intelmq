@@ -160,7 +160,7 @@ class CIF3OutputBot(OutputBot):
         new_cif3_dict = {}
         new_cif3_dict['tags'] = []
 
-       new_cif3_dict['provider'] = intelmq_event.get('feed.provider', 'IntelMQ')
+        new_cif3_dict['provider'] = intelmq_event.get('feed.provider', 'IntelMQ')
 
         # set the tags
         if (self.add_feed_provider_as_tag and
@@ -200,6 +200,7 @@ class CIF3OutputBot(OutputBot):
             new_indicator = Indicator(**new_cif3_dict)
         except Exception as err:
             self.logger.error(f"Error creating indicator: {err}")
+            raise
 
         return new_indicator
 
