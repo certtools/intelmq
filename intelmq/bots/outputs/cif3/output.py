@@ -91,7 +91,10 @@ class CIF3OutputBot(OutputBot):
     _is_multithreadable = False
 
     def init(self):
-        cifsdk_version = int(get_cifsdk_version().get('version').split('.')[0])
+        try:
+            cifsdk_version = int(get_cifsdk_version().get('version').split('.')[0])
+        except NameError:
+            cifsdk_version = 0
         # installed cifsdk version must be >=3 and < 4
         if not 3 <= cifsdk_version < 4:
             HttpClient = None
