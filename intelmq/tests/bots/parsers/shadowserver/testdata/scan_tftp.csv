@@ -1,4 +1,0 @@
-"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","opcode","errorcode","error","errormessage","size","amplification"
-"2010-02-10 00:00:00",192.168.0.1,udp,35067,node01.example.com,tftp,64512,ZZ,Region,City,0,0,5,0,"Not defined","Get not supported",22,1.57
-"2010-02-10 00:00:01",192.168.0.2,udp,56709,node02.example.com,tftp,64512,ZZ,Region,City,0,0,5,1,"File not found","File not found",19,1.36
-"2010-02-10 00:00:02",192.168.0.3,udp,32785,node03.example.com,tftp,64512,ZZ,Region,City,0,0,5,2,"Access violation","Access violation",21,1.50
