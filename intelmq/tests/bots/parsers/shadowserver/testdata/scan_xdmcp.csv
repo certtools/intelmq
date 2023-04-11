@@ -1,4 +1,0 @@
-"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","opcode","reported_hostname","status","size","amplification"
-"2010-02-10 00:00:00",192.168.0.1,udp,177,node01.example.com,xdmcp,64512,ZZ,Region,City,0,0,Willing,node01.example.com,"Linux 3.0.101-100-default",44,6.29
-"2010-02-10 00:00:01",192.168.0.2,udp,47074,node02.example.com,xdmcp,64512,ZZ,Region,City,0,0,Willing,node02.example.com,"Linux 2.6.9-103.ELsmp",48,6.86
-"2010-02-10 00:00:02",192.168.0.3,udp,177,node03.example.com,xdmcp,64512,ZZ,Region,City,0,0,Willing,node03.example.com,"1 user,  load: 6,5, 6,6, 6,6",46,6.57

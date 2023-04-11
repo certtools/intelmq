@@ -1,4 +1,0 @@
-"timestamp","ip","protocol","port","hostname","tag","version","asn","geo","region","city","naics","sic","pid","pointer_size","uptime","time","curr_connections","total_connections","sector","response_size","amplification"
-"2010-02-10 00:00:00",192.168.0.1,udp,50260,node01.example.com,memcached,1.4.15,64512,ZZ,Region,City,0,0,1010,64,32908114,"2022-08-21 10:34:06",243,6106,"Communications, Service Provider, and Hosting Service",1144,81.71
-"2010-02-10 00:00:01",192.168.0.2,udp,11211,node02.example.com,memcached,1.4.13,64512,ZZ,Region,City,0,0,5316,64,9618498,"2022-08-21 10:39:21",9,2962,"Communications, Service Provider, and Hosting Service",1053,75.21
-"2010-02-10 00:00:02",192.168.0.3,udp,11211,node03.example.com,memcached,1.2.6,64512,ZZ,Region,City,0,0,1460,32,1375159,"2022-08-21 10:39:39",2,534,,442,31.57

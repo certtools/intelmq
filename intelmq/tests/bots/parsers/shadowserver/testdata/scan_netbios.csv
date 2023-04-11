@@ -1,4 +1,0 @@
-"timestamp","ip","protocol","port","hostname","tag","mac_address","asn","geo","region","city","workgroup","machine_name","username","naics","sic","sector","response_size","amplification"
-"2010-02-10 00:00:00",192.168.0.1,udp,137,node01.example.com,netbios,00-00-00-00-00-00,64512,ZZ,Region,City,,NBG6503,NBG6503,0,0,,229,4.58
-"2010-02-10 00:00:01",192.168.0.2,udp,137,node02.example.com,netbios,00-00-00-00-00-00,64512,ZZ,Region,City,PRACOWNIAELN.,NAS-OLD,NAS-OLD,0,0,,193,3.86
-"2010-02-10 00:00:02",192.168.0.3,udp,137,node03.example.com,netbios,00-25-90-F0-64-64,64512,ZZ,Region,City,HRSIGMA,HR-SRV01,,0,0,Government,157,3.14
