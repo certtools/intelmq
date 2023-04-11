@@ -1,4 +1,0 @@
-"timestamp","ip","protocol","port","hostname","packets","size","asn","geo","region","city","naics","sic","sector","amplification"
-"2010-02-10 00:00:00",192.168.0.1,udp,123,node01.example.com,2,664,64512,ZZ,Region,City,0,0,,55.33
-"2010-02-10 00:00:01",192.168.0.2,udp,123,node02.example.com,100,44000,64512,ZZ,Region,City,0,0,,3666.67
-"2010-02-10 00:00:02",192.168.0.3,udp,123,node03.example.com,100,44000,64512,ZZ,Region,City,0,0,,3666.67
