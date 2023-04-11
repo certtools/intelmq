@@ -22,6 +22,7 @@ Optional parameters:
 """
 import copy
 import re
+import os
 
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidKey, InvalidValue
@@ -29,7 +30,13 @@ import intelmq.bots.parsers.shadowserver._config as config
 
 
 class ShadowserverParserBot(ParserBot):
-    """Parse all ShadowServer feeds"""
+    """
+    Parse all ShadowServer feeds
+
+    Parameters:
+        schema_file (str): Path to the report schema file
+
+    """
 
     recover_line = ParserBot.recover_line_csv_dict
     _csv_params = {'dialect': 'unix'}
@@ -124,10 +131,17 @@ class ShadowserverParserBot(ParserBot):
             value = raw_value
 
             if conv_func is not None and raw_value is not None:
-                if len(item) == 4 and item[3]:
-                    value = conv_func(raw_value, row)
-                else:
-                    value = conv_func(raw_value)
+                try:
+                    if len(item) == 4 and item[3]:
+                        value = config.functions[conv_func](raw_value, row)
+                    else:
+                        value = config.functions[conv_func](raw_value)
+                except Exception:
+                    """ fail early and often in this case. We want to be able to convert everything """
+                    self.logger.error('Could not convert shadowkey: %r in feed %r, '
+                                      'value: %r via conversion function %r.',
+                                      shadowkey, self.feedname, raw_value, conv_func)
+                    raise
 
             if value is not None:
                 event.add(intelmqkey, value)
@@ -153,17 +167,17 @@ class ShadowserverParserBot(ParserBot):
             value = raw_value
 
             if conv_func is not None and raw_value is not None:
-                if len(item) == 4 and item[3]:
-                    value = conv_func(raw_value, row)
-                else:
-                    try:
-                        value = conv_func(raw_value)
-                    except Exception:
-                        """ fail early and often in this case. We want to be able to convert everything """
-                        self.logger.error('Could not convert shadowkey: %r in feed %r, '
-                                          'value: %r via conversion function %r.',
-                                          shadowkey, self.feedname, raw_value, conv_func.__name__)
-                        raise
+                try:
+                    if len(item) == 4 and item[3]:
+                        value = config.functions[conv_func](raw_value, row)
+                    else:
+                        value = config.functions[conv_func](raw_value)
+                except Exception:
+                    """ fail early and often in this case. We want to be able to convert everything """
+                    self.logger.error('Could not convert shadowkey: %r in feed %r, '
+                                      'value: %r via conversion function %r.',
+                                      shadowkey, self.feedname, raw_value, conv_func)
+                    raise
 
             if value is not None:
                 if intelmqkey == 'extra.':
