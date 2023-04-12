@@ -11,22 +11,22 @@ from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 
 
 with open(os.path.join(os.path.dirname(__file__),
-                       'testdata/scan_telnet.csv')) as handle:
+                       'testdata/test_telnet.csv')) as handle:
     TELNET_FILE = handle.read()
 EXAMPLE_TELNET = {
     "raw": utils.base64_encode(TELNET_FILE),
     "__type": "Report",
     "time.observation": "2015-01-01T00:00:00+00:00",
-    "extra.file_name": "2019-01-01-scan_telnet.csv",
+    "extra.file_name": "2019-01-01-test_telnet.csv",
 }
 with open(os.path.join(os.path.dirname(__file__),
-                       'testdata/scan_vnc.csv')) as handle:
+                       'testdata/test_smb.csv')) as handle:
     TELNET_FILE = handle.read()
 EXAMPLE_VNC = {
     "raw": utils.base64_encode(TELNET_FILE),
     "__type": "Report",
     "time.observation": "2015-01-01T00:00:00+00:00",
-    "extra.file_name": "2019-01-01-scan_vnc.csv",
+    "extra.file_name": "2019-01-01-test_smb.csv",
 }
 
 
