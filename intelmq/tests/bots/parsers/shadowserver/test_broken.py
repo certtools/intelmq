@@ -13,12 +13,12 @@ from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 REPORT1 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
            "__type": "Report",
            "time.observation": "2015-01-01T00:00:00+00:00",
-           "extra.file_name": "2019-01-01-scan_http-test-test.csv",
+           "extra.file_name": "2019-01-01-test_smb-test-test.csv",
            }
 REPORT2 = {"raw": utils.base64_encode('timestamp,ip,port\n2018-08-01T00:00:00+00,127.0.0.1,80'),
            "__type": "Report",
            "time.observation": "2015-01-01T00:00:00+00:00",
-           "extra.file_name": "2019-01-01-scan_ftp-test-test.csv",
+           "extra.file_name": "2019-01-01-test_telnet-test-test.csv",
            }
 REPORT3 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
            "__type": "Report",
@@ -48,10 +48,10 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         """
         self.input_message = REPORT1
         self.run_bot(allowed_error_count=1)
-        self.assertLogMatches(pattern="Detected report's file name: 'scan_http'.",
+        self.assertLogMatches(pattern="Detected report's file name: 'test_smb'.",
                               levelname="DEBUG")
         self.assertLogMatches(pattern="Failed to parse line.")
-        self.assertLogMatches(pattern="ValueError: Required column 'timestamp' not found in feed 'Accessible-HTTP'. Possible change in data format or misconfiguration.")
+        self.assertLogMatches(pattern="ValueError: Required column 'timestamp' not found in feed 'Test-Accessible-SMB'. Possible change in data format or misconfiguration.")
         self.assertLogMatches(pattern=r"Sent 0 events and found 1 problem\(s\)\.",
                               levelname="INFO")
 
@@ -61,9 +61,9 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         """
         self.input_message = REPORT2
         self.run_bot(allowed_warning_count=63)
-        self.assertLogMatches(pattern="Detected report's file name: 'scan_ftp'.",
+        self.assertLogMatches(pattern="Detected report's file name: 'test_telnet'.",
                               levelname="DEBUG")
-        self.assertLogMatches(pattern="Optional key 'jarm' not found in feed 'Accessible-FTP'.",
+        self.assertLogMatches(pattern="Optional key 'banner' not found in feed 'Test-Accessible-Telnet'.",
                               levelname="WARNING")
         self.assertLogMatches(pattern=r"Sent 1 events and found 0 problem\(s\)\.",
                               levelname="INFO")

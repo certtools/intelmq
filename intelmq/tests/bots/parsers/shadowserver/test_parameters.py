@@ -12,38 +12,41 @@ import intelmq.lib.utils as utils
 from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 
 with open(os.path.join(os.path.dirname(__file__),
-                       'testdata/scan_dns.csv')) as handle:
+                       'testdata/test_smb.csv')) as handle:
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
 EXAMPLE_REPORT = {"raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2018-07-30T00:00:00+00:00",
-                  "extra.file_name": "2019-01-01-scan_dns-test-test.csv",
+                  "extra.file_name": "2019-01-01-test_smb-test-test.csv",
                   'feed.name': 'report feedname',
                   }
 EVENTS = [{
     '__type': 'Event',
     'feed.name': 'report feedname',
-    "classification.identifier": "dns-open-resolver",
+    "classification.identifier": 'test-smb',
     "classification.taxonomy": "vulnerable",
     "classification.type": "vulnerable-system",
-    "extra.dns_version": "dnsmasq-2.66",
-    "extra.min_amplification": 4.619,
-    "extra.tag": "openresolver",
-    "protocol.application": "dns",
-    "protocol.transport": "udp",
+    "extra.smb_implant": False,
+    "extra.smb_major_number": '2',
+    "extra.smb_minor_number": '1',
+    "extra.smb_version_string": 'SMB 2.1',
+    "extra.smbv1_support": 'N',
+    "extra.tag": "smb",
+    "protocol.application": "smb",
+    "protocol.transport": "tcp",
     'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
                                          EXAMPLE_LINES[1]])),
-    "source.asn": 25255,
-    "source.geolocation.cc": "AT",
-    "source.geolocation.city": "VIENNA",
-    "source.geolocation.region": "WIEN",
-    "source.ip": "198.51.100.179",
-    "source.port": 53,
-    "source.reverse_dns": "198-51-100-189.example.net",
+    "source.asn": 64512,
+    "source.geolocation.cc": "ZZ",
+    "source.geolocation.city": "City",
+    "source.geolocation.region": "Region",
+    "source.ip": "192.168.0.1",
+    "source.port": 445,
+    "source.reverse_dns": "node01.example.com",
     "time.observation": "2018-07-30T00:00:00+00:00",
-    "time.source": "2018-04-14T00:14:34+00:00"
+    "time.source": "2010-02-10T00:00:00+00:00"
 },
 ]
 
@@ -70,7 +73,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(prepare=False)
         for i, EVENT in enumerate(EVENTS):
             event = EVENT.copy()
-            event['feed.name'] = 'DNS-Open-Resolvers'
+            event['feed.name'] = 'Test-Accessible-SMB'
             self.assertMessageEqual(i, event)
 
 
