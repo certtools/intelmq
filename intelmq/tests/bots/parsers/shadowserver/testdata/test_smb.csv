@@ -1,0 +1,4 @@
+"timestamp","ip","port","hostname","tag","asn","geo","region","city","naics","sic","smb_implant","arch","key","smbv1_support","smb_major_number","smb_minor_number","smb_revision","smb_version_string"
+"2010-02-10 00:00:00",192.168.0.1,445,node01.example.com,smb,64512,ZZ,Region,City,0,0,N,,,N,2,1,0,"SMB 2.1"
+"2010-02-10 00:00:01",192.168.0.2,445,node02.example.com,smb,64512,ZZ,Region,City,0,0,N,,,N,2,1,0,"SMB 2.1"
+"2010-02-10 00:00:02",192.168.0.3,445,node03.example.com,smb,64512,ZZ,Region,City,0,0,N,,,N,2,1,0,"SMB 2.1"
