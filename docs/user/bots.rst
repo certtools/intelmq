@@ -3620,7 +3620,7 @@ The cifsdk library >= 3.0.0rc4,<4.0.0 is required, see
 * **Feed parameters** (see above)
 * `add_feed_provider_as_tag`: boolean (use `false` when in doubt)
 * `cif3_additional_tags`: list of tags to set on submitted indicator(s)
-* `cif3_feed_confidence`: float, used when mapping a feed's confidence fails or 
+* `cif3_feed_confidence`: float, used when mapping a feed's confidence fails or
       if static confidence param is true
 * `cif3_static_confidence`: bool, when true it always sends the `cif3_feed_confidence` value
       as confidence rather than dynamically interpret feed value (use false when in doubt)
@@ -3637,7 +3637,7 @@ up to 500 at a time prior to doing a single bulk send. If the output bot doesn't
 indicators within 5 seconds of the first received indicator, it will send what it has so far.
 
 CIFv3 should be able to process indicators as fast as IntelMQ can
-send them. 
+send them.
 
 (More details can be found in the docstring of `output.py <https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/cif3/output.py>`_.
 
