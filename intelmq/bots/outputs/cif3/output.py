@@ -113,8 +113,8 @@ class CIF3OutputBot(OutputBot):
 
         self.logger.info(f"Connecting to CIFv3 instance at {self.cif3_url!r}.")
         self.cli = HttpClient(self.cif3_url,
-                    self.cif3_token,
-                    verify_ssl=self.http_verify_cert)
+                              self.cif3_token,
+                              verify_ssl=self.http_verify_cert)
 
         try:
             _ = self.cli.ping(write=True)
@@ -138,7 +138,7 @@ class CIF3OutputBot(OutputBot):
         elif len(self.indicator_list) > 0 and (
             (
                 (datetime.now() - self.last_flushed).total_seconds() >
-                        self.indicator_list_max_seconds
+                self.indicator_list_max_seconds
             ) or
                 len(self.indicator_list) >= self.indicator_list_max_records
         ):
