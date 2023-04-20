@@ -32,7 +32,7 @@ except ImportError:
     JsonLib = None
 
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import IntelMQException, MissingDependencyError
@@ -82,8 +82,8 @@ class CIF3OutputBot(OutputBot):
     add_feed_provider_as_tag: bool = False
     cif3_feed_confidence: float = 5
     cif3_static_confidence: bool = False
-    cif3_additional_tags = []
-    cif3_token: str = None
+    cif3_additional_tags: List[str] = []
+    cif3_token: Optional[str] = None
     cif3_url: Optional[str] = None
     fireball: int = 500
     http_verify_cert: bool = True
@@ -119,7 +119,7 @@ class CIF3OutputBot(OutputBot):
         try:
             _ = self.cli.ping(write=True)
         except Exception as err:
-            raise IntelMQException(f"Error connecting to CIFv3 instance: {err}")
+            raise ValueError(f"Error connecting to CIFv3 instance: {err}")
         else:
             self.logger.info('Connected to CIFv3 instance.')
 
