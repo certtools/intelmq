@@ -32,6 +32,7 @@ CHANGELOG
   - Allow empty lists in sieve rule files (PR#2341 by Mikk Margus Möll).
 
 #### Outputs
+- `intelmq.bots.output.cif3.output`: Added (PR#2244 by Michael Davis).
 
 ### Documentation
 

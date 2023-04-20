@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2022 REN-ISAC
+
+cifsdk>=3.0.0rc4,<4.0
