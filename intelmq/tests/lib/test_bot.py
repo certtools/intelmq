@@ -11,6 +11,7 @@ import unittest
 
 import intelmq.lib.test as test
 from intelmq.tests.lib import test_parser_bot
+from intelmq.lib.message import MessageFactory
 
 
 class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
@@ -77,6 +78,30 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.assertEqual(self.pipe.state['test-bot-input-internal'], [])
         self.assertEqual(self.pipe.state['test-bot-input'], [])
         self.assertEqual(self.pipe.state['test-bot-output'], [])
+
+
+def send_message(self, *messages, path: str = "_default", auto_add=None,
+                     path_permissive: bool = False):
+    self._sent_messages.extend(messages)
+
+
+def _dump_message(self, error_traceback, message: dict):
+    self._dumped_messages.append((error_traceback, message))
+
+
+class TestBotAsLibrary(unittest.TestCase):
+    def test_dummy(self):
+        bot = test_parser_bot.DummyParserBot('dummy-bot', settings={'global': {'logging_path': None, 'skip_pipeline': True}, 'dummy-bot': {}})
+        bot._Bot__current_message = MessageFactory.from_dict(test_parser_bot.EXAMPLE_REPORT)
+        bot._Bot__connect_pipelines = lambda self: None
+        bot._sent_messages = []
+        bot._dumped_messages = []
+        bot.send_message = send_message.__get__(bot, test_parser_bot.DummyParserBot)
+        bot._dump_message = _dump_message.__get__(bot, test_parser_bot.DummyParserBot)
+        bot.process()
+        assert bot._sent_messages == [MessageFactory.from_dict(test_parser_bot.EXAMPLE_EVENT)]
+        assert bot._dumped_messages[0][1] == test_parser_bot.EXPECTED_DUMP[0]
+        assert bot._dumped_messages[1][1] == test_parser_bot.EXPECTED_DUMP[1]
 
 
 if __name__ == '__main__':  # pragma: no cover

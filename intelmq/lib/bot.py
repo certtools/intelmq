@@ -121,7 +121,8 @@ class Bot:
     _harmonization: dict = {}
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
-                 disable_multithreading: bool = None, settings: Optional[dict] = None):
+                 disable_multithreading: bool = None, settings: Optional[dict] = None,
+                 source_queue: Optional[str] = None):
 
         self.__log_buffer: list = []
 
@@ -131,6 +132,8 @@ class Bot:
         self.logger = None
         if settings is not None:
             self.__settings = settings
+        if source_queue is not None:
+            self.source_queue = source_queue
 
         self.__message_counter = {"since": 0,  # messages since last logging
                                   "start": None,  # last login time
@@ -587,6 +590,9 @@ class Bot:
 
     def __connect_pipelines(self):
         pipeline_args = {key: getattr(self, key) for key in dir(self) if not inspect.ismethod(getattr(self, key)) and (key.startswith('source_pipeline_') or key.startswith('destination_pipeline'))}
+        print('pipeline_args', pipeline_args, 'source_queue', self.source_queue)
+        if getattr(self, 'skip_pipeline', False):
+            return
         if self.source_queue is not None:
             self.logger.debug("Loading source pipeline and queue %r.", self.source_queue)
             self.__source_pipeline = PipelineFactory.create(logger=self.logger,
@@ -667,7 +673,7 @@ class Bot:
         will be rejected to the pipeline in the first place to get to a clean state.
         Then, after reloading, the message will be retrieved again.
         """
-        if self.__current_message:
+        if self.__current_message is not None:
             self.logger.debug("Reusing existing current message as incoming.")
             return self.__current_message
 
@@ -775,6 +781,8 @@ class Bot:
         if not self.__settings:
             self.__settings = utils.get_runtime()
 
+        print('settings:', self.__settings, 'logging_path', self.__settings.get('logging_path'))
+
         config = self.__settings.get('global', {})
 
         for option, value in config.items():
@@ -782,6 +790,7 @@ class Bot:
             self.__log_configuration_parameter("defaults", option, value)
 
         self.__log_processed_messages_seconds = timedelta(seconds=self.log_processed_messages_seconds)
+        print('settings:', self.__settings, 'logging_path', self.__settings.get('logging_path'))
 
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
@@ -840,6 +849,7 @@ class Bot:
             syslog = self.logging_syslog
         else:
             syslog = False
+        print('self.logging_path', self.logging_path)
         self.logger = utils.log(self.__bot_id_full, syslog=syslog,
                                 log_path=self.logging_path,
                                 log_level=self.logging_level,
