@@ -18,6 +18,7 @@ CHANGELOG
 - `intelmq.lib.datatypes`: Adds `TimeFormat` class to be used for the `time_format` bot parameter (PR#2329 by Filip Pokorný).
 - `intelmq.lib.exceptions`: Fixes a bug in `InvalidArgument` exception (PR#2329 by Filip Pokorný).
 - `intelmq.lib.harmonization`: Changes signature and names of `DateTime` conversion functions for consistency, backwards compatible (PR#2329 by Filip Pokorný).
+- `intelmq.lib.bot.Bot`: Allow setting the parameters via parameter on bot initialization.
 
 ### Development
 

@@ -55,6 +55,7 @@ class Bot:
     __source_pipeline = None
     __destination_pipeline = None
     __log_buffer: List[tuple] = []
+    __settings: Optional[dict] = None
 
     logger = None
     # Bot is capable of SIGHUP delaying
@@ -120,7 +121,7 @@ class Bot:
     _harmonization: dict = {}
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
-                 disable_multithreading: bool = None):
+                 disable_multithreading: bool = None, settings: Optional[dict] = None):
 
         self.__log_buffer: list = []
 
@@ -128,6 +129,8 @@ class Bot:
         self.__source_pipeline: Optional[Pipeline] = None
         self.__destination_pipeline: Optional[Pipeline] = None
         self.logger = None
+        if settings is not None:
+            self.__settings = settings
 
         self.__message_counter = {"since": 0,  # messages since last logging
                                   "start": None,  # last login time
@@ -769,9 +772,10 @@ class Bot:
         self.logger.debug('Message dumped.')
 
     def __load_defaults_configuration(self):
-        config = utils.get_global_settings()
+        if not self.__settings:
+            self.__settings = utils.get_runtime()
 
-        setattr(self, 'logging_path', DEFAULT_LOGGING_PATH)
+        config = self.__settings.get('global', {})
 
         for option, value in config.items():
             setattr(self, option, value)
@@ -781,11 +785,10 @@ class Bot:
 
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
-        config = utils.load_configuration(RUNTIME_CONF_FILE)
         reinitialize_logging = False
 
-        if self.__bot_id in config:
-            params = config[self.__bot_id]
+        if self.__bot_id in self.__settings:
+            params = self.__settings[self.__bot_id]
             for key, value in params.items():
                 if key in ALLOWED_SYSTEM_PARAMETERS and value:
                     self.__log_configuration_parameter("system", key, value)
