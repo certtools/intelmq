@@ -32,6 +32,7 @@ from typing import Any, List, Optional, Union
 
 import intelmq.lib.message as libmessage
 from intelmq import (DEFAULT_LOGGING_PATH,
+                     DEFAULT_LOGGING_LEVEL,
                      HARMONIZATION_CONF_FILE,
                      RUNTIME_CONF_FILE, __version__)
 from intelmq.lib import cache, exceptions, utils
@@ -85,8 +86,8 @@ class Bot:
     log_processed_messages_count: int = 500
     log_processed_messages_seconds: int = 900
     logging_handler: str = "file"
-    logging_level: str = "INFO"
-    logging_path: str = "/opt/intelmq/var/log/"
+    logging_level: str = DEFAULT_LOGGING_LEVEL
+    logging_path: str = DEFAULT_LOGGING_PATH
     logging_syslog: str = "/dev/log"
     process_manager: str = "intelmq"
     rate_limit: int = 0
