@@ -961,9 +961,8 @@ class ParserBot(Bot):
 
     default_fields: Optional[dict] = {}
 
-    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
-                 disable_multithreading: bool = None):
-        super().__init__(bot_id, start, sighup_event, disable_multithreading)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         if self.__class__.__name__ == 'ParserBot':
             self.logger.error('ParserBot can\'t be started itself. '
                               'Possible Misconfiguration.')
@@ -1257,9 +1256,8 @@ class CollectorBot(Bot):
     provider: Optional[str] = None
     documentation: Optional[str] = None
 
-    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
-                 disable_multithreading: bool = None):
-        super().__init__(bot_id, start, sighup_event, disable_multithreading)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         if self.__class__.__name__ == 'CollectorBot':
             self.logger.error('CollectorBot can\'t be started itself. '
                               'Possible Misconfiguration.')
@@ -1317,9 +1315,8 @@ class ExpertBot(Bot):
     """
     bottype = BotType.EXPERT
 
-    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
-                 disable_multithreading: bool = None):
-        super().__init__(bot_id, start, sighup_event, disable_multithreading)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class OutputBot(Bot):
@@ -1328,9 +1325,8 @@ class OutputBot(Bot):
     """
     bottype = BotType.OUTPUT
 
-    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
-                 disable_multithreading: bool = None):
-        super().__init__(bot_id, start, sighup_event, disable_multithreading)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         if self.__class__.__name__ == 'OutputBot':
             self.logger.error('OutputBot can\'t be started itself. '
                               'Possible Misconfiguration.')
