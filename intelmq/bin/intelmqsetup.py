@@ -95,6 +95,9 @@ def create_directory(directory: str, octal_mode: int):
 
 
 def change_owner(file: str, owner: Optional[str] = None, group: Optional[str] = None, log: bool = True):
+    if Path(file).as_posix() in ['/', '//']:
+        # Skip taking ownership over system root path
+        return
     if owner and Path(file).owner() != owner:
         if log:
             print(f'Fixing owner of {file!s}.')
