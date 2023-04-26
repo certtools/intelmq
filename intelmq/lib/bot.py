@@ -55,7 +55,14 @@ class Bot:
     __source_pipeline = None
     __destination_pipeline = None
     __log_buffer: List[tuple] = []
+    # runtime_file
+    __runtime_settings: Optional[dict] = None
+    # settings provided via parameter
     __settings: Optional[dict] = None
+    # if messages should be serialized/unserialized coming from/sending to the pipeline
+    __pipeline_serialize_messages = True
+    # if the Bot is running by itself or called by other procedures
+    _standalone: bool = False
 
     logger = None
     # Bot is capable of SIGHUP delaying
@@ -92,7 +99,7 @@ class Bot:
     log_processed_messages_count: int = 500
     log_processed_messages_seconds: int = 900
     logging_handler: str = "file"
-    logging_level: str = DEFAULT_LOGGING_LEVEL
+    logging_level: str = 'DEBUG'  # DEFAULT_LOGGING_LEVEL
     logging_path: str = DEFAULT_LOGGING_PATH
     logging_syslog: str = "/dev/log"
     process_manager: str = "intelmq"
@@ -122,7 +129,7 @@ class Bot:
 
     def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
                  disable_multithreading: bool = None, settings: Optional[dict] = None,
-                 source_queue: Optional[str] = None):
+                 source_queue: Optional[str] = None, standalone: bool = False):
 
         self.__log_buffer: list = []
 
@@ -134,6 +141,7 @@ class Bot:
             self.__settings = settings
         if source_queue is not None:
             self.source_queue = source_queue
+        self._standalone = standalone
 
         self.__message_counter = {"since": 0,  # messages since last logging
                                   "start": None,  # last login time
@@ -153,9 +161,10 @@ class Bot:
             if not utils.drop_privileges():
                 raise ValueError('IntelMQ must not run as root. Dropping privileges did not work.')
 
-            self.__load_defaults_configuration()
-
             self.__bot_id_full, self.__bot_id, self.__instance_id = self.__check_bot_id(bot_id)
+
+            self.__load_configuration()
+
             if self.__instance_id:
                 self.is_multithreaded = True
             self.__init_logger()
@@ -168,7 +177,6 @@ class Bot:
 
         try:
             self.logger.info('Bot is starting.')
-            self.__load_runtime_configuration()
 
             broker = self.source_pipeline_broker.title()
             if broker != 'Amqp':
@@ -561,7 +569,7 @@ class Bot:
             self.__log('info', 'Bot stopped.')
             self.__print_log_buffer()
 
-        if not getattr(self, 'testing', False):
+        if not getattr(self, 'testing', False) and self._standalone:
             sys.exit(exitcode)
 
     def __print_log_buffer(self):
@@ -588,10 +596,8 @@ class Bot:
     def __connect_pipelines(self):
         pipeline_args = {key: getattr(self, key) for key in dir(self) if not inspect.ismethod(getattr(self, key)) and (key.startswith('source_pipeline_') or key.startswith('destination_pipeline'))}
         print('pipeline_args', pipeline_args, 'source_queue', self.source_queue)
-        if getattr(self, 'skip_pipeline', False):
-            return
         if self.source_queue is not None:
-            self.logger.debug("Loading source pipeline and queue %r.", self.source_queue)
+            self.logger.info("Loading source pipeline and queue %r.", self.source_queue)
             self.__source_pipeline = PipelineFactory.create(logger=self.logger,
                                                             direction="source",
                                                             queues=self.source_queue,
@@ -601,10 +607,10 @@ class Bot:
 
             self.__source_pipeline.connect()
             self.__current_message = None
-            self.logger.debug("Connected to source queue.")
+            self.logger.info("Connected to source queue.")
 
         if self.destination_queues:
-            self.logger.debug("Loading destination pipeline and queues %r.", self.destination_queues)
+            self.logger.info("Loading destination pipeline and queues %r.", self.destination_queues)
             self.__destination_pipeline = PipelineFactory.create(logger=self.logger,
                                                                  direction="destination",
                                                                  queues=self.destination_queues,
@@ -613,9 +619,9 @@ class Bot:
                                                                  is_multithreaded=self.is_multithreaded)
 
             self.__destination_pipeline.connect()
-            self.logger.debug("Connected to destination queues.")
+            self.logger.info("Connected to destination queues.")
         else:
-            self.logger.debug("No destination queues to load.")
+            self.logger.info("No destination queues to load.")
 
     def __disconnect_pipelines(self):
         """ Disconnecting pipelines. """
@@ -646,6 +652,8 @@ class Bot:
                                                                 'but needed')
 
             self.logger.debug("Sending message to path %r.", path)
+
+            # Message counter start
             self.__message_counter["since"] += 1
             self.__message_counter["path"][path] += 1
             if not self.__message_counter["start"]:
@@ -657,10 +665,16 @@ class Bot:
                                  self.__message_counter["since"])
                 self.__message_counter["since"] = 0
                 self.__message_counter["start"] = datetime.now()
+            # Message counter end
 
-            raw_message = libmessage.MessageFactory.serialize(message)
-            self.__destination_pipeline.send(raw_message, path=path,
-                                             path_permissive=path_permissive)
+            if self.__pipeline_serialize_messages:
+                raw_message = libmessage.MessageFactory.serialize(message)
+                self.__destination_pipeline.send(raw_message, path=path,
+                                                 path_permissive=path_permissive)
+            else:
+                print(f'send_message, message: {message!r}')
+                self.__destination_pipeline.send(message, path=path,
+                                                 path_permissive=path_permissive)
 
     def receive_message(self) -> libmessage.Message:
         """
@@ -692,8 +706,12 @@ class Bot:
             return self.receive_message()
 
         try:
-            self.__current_message = libmessage.MessageFactory.unserialize(message,
-                                                                           harmonization=self.harmonization)
+            if self.__pipeline_serialize_messages:
+                self.__current_message = libmessage.MessageFactory.unserialize(message,
+                                                                               harmonization=self.harmonization)
+            else:
+                self.__current_message = message
+
         except exceptions.InvalidKey as exc:
             # In case a incoming message is malformed an does not conform with the currently
             # loaded harmonization, stop now as this will happen repeatedly without any change
@@ -774,27 +792,25 @@ class Bot:
 
         self.logger.debug('Message dumped.')
 
-    def __load_defaults_configuration(self):
-        if not self.__settings:
-            self.__settings = utils.get_runtime()
+    def __load_configuration(self):
+        self.__log('debug', "Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
+        if not self.__runtime_settings:
+            self.__runtime_settings = utils.get_runtime()
 
-        print('settings:', self.__settings, 'logging_path', self.__settings.get('logging_path'))
+        # merge in configuration provided as parameter to init
+        if self.__settings:
+            if self.__bot_id not in self.__runtime_settings:
+                self.__runtime_settings[self.__bot_id] = {}
+            if 'parameters' not in self.__runtime_settings[self.__bot_id]:
+                self.__runtime_settings[self.__bot_id]['parameters'] = {}
+            self.__runtime_settings[self.__bot_id]['parameters'].update(self.__settings)
 
-        config = self.__settings.get('global', {})
-
-        for option, value in config.items():
+        for option, value in self.__runtime_settings.get('global', {}).items():
             setattr(self, option, value)
             self.__log_configuration_parameter("defaults", option, value)
 
-        self.__log_processed_messages_seconds = timedelta(seconds=self.log_processed_messages_seconds)
-        print('settings:', self.__settings, 'logging_path', self.__settings.get('logging_path'))
-
-    def __load_runtime_configuration(self):
-        self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
-        reinitialize_logging = False
-
-        if self.__bot_id in self.__settings:
-            params = self.__settings[self.__bot_id]
+        if self.__bot_id in self.__runtime_settings:
+            params = self.__runtime_settings[self.__bot_id]
             for key, value in params.items():
                 if key in ALLOWED_SYSTEM_PARAMETERS and value:
                     self.__log_configuration_parameter("system", key, value)
@@ -805,8 +821,6 @@ class Bot:
             for option, value in params.get('parameters', {}).items():
                 setattr(self, option, value)
                 self.__log_configuration_parameter("runtime", option, value)
-                if option.startswith('logging_'):
-                    reinitialize_logging = True
         else:
             self.__log('warning', 'Bot ID %r not found in runtime configuration - could not load any parameters.',
                        self.__bot_id)
@@ -826,12 +840,7 @@ class Bot:
             setattr(self, option, value)
             self.__log_configuration_parameter("environment", option, value)
 
-            if option.startswith('logging_'):
-                reinitialize_logging = True
-
-        if reinitialize_logging:
-            self.logger.handlers = []  # remove all existing handlers
-            self.__init_logger()
+        self.__log_processed_messages_seconds = timedelta(seconds=self.log_processed_messages_seconds)
 
         # The default source_queue should be "{bot-id}-queue",
         # but this can be overridden
@@ -847,6 +856,8 @@ class Bot:
         else:
             syslog = False
         print('self.logging_path', self.logging_path)
+        import pprint
+        pprint.pprint(self.__log_buffer)
         self.logger = utils.log(self.__bot_id_full, syslog=syslog,
                                 log_path=self.logging_path,
                                 log_level=self.logging_level,
@@ -888,7 +899,7 @@ class Bot:
         if not parsed_args.bot_id:
             sys.exit('No bot ID given.')
 
-        instance = cls(parsed_args.bot_id)
+        instance = cls(parsed_args.bot_id, standalone=True)
         if not instance.is_multithreaded:
             instance.start()
 
@@ -976,6 +987,25 @@ class Bot:
         argparser.add_argument('bot_id', nargs='?', metavar='BOT-ID', help='unique bot-id of your choosing')
         return argparser
 
+    def process_message(self, message: Optional[libmessage.Message] = None):
+        if self.bottype == BotType.COLLECTOR:
+            if message:
+                raise exceptions.InvalidArgument('Collector Bots take not messages as processing input')
+        else:
+            # convert to Message object, it the input is a dict
+            # use a appropriate default message type, not requiring __type keys in the message
+            if not isinstance(message, libmessage.Message) and isinstance(message, dict):
+                message = libmessage.MessageFactory.from_dict(message=message, harmonization=self.harmonization, default_type=self._default_message_type)
+        print('destination_queues', repr(self.destination_queues))
+        # messages is a tuple, the pipeline can't pop from a tuple. convert to a list instead
+        self.__source_pipeline.state[self.source_queue].append(message)
+        # do not dump to file
+        self.error_dump_message = False
+        # do not serialize messages to strings, keep the objects
+        self.__pipeline_serialize_messages = False
+        self.process()
+        return self.__destination_pipeline.state
+
 
 class ParserBot(Bot):
     bottype = BotType.PARSER
@@ -984,6 +1014,7 @@ class ParserBot(Bot):
     _handle = None
     _current_line: Optional[str] = None
     _line_ending = '\r\n'
+    _default_message_type = 'Report'
 
     default_fields: Optional[dict] = {}
 
@@ -1340,6 +1371,7 @@ class ExpertBot(Bot):
     Base class for expert bots.
     """
     bottype = BotType.EXPERT
+    _default_message_type = 'Event'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1350,6 +1382,7 @@ class OutputBot(Bot):
     Base class for outputs.
     """
     bottype = BotType.OUTPUT
+    _default_message_type = 'Event'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

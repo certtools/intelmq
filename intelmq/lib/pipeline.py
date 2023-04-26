@@ -23,6 +23,7 @@ import redis
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline
 import intelmq.lib.utils as utils
+from intelmq.lib.message import Message
 
 __all__ = ['Pipeline', 'PipelineFactory', 'Redis', 'Pythonlist', 'Amqp']
 
@@ -419,6 +420,66 @@ class Pythonlist(Pipeline):
         """
         No-op because of the internal queue
         """
+
+
+class Pythonlistsimple(Pythonlist):
+    """
+    This pipeline uses simple lists for internal queues.
+
+    It does no conversions and encoding stuff.
+    """
+
+    state = {}  # type: Dict[str, list]
+
+    def connect(self):
+        pass
+
+    def send(self, message: Message,
+             path: str = "_default",
+             path_permissive: bool = True):
+        """
+        Sends a message to the destination queues
+
+        message should be of type Message, not string/bytes
+
+        path_permissive defaults to true as opposed to the other pipelines!
+        """
+        print(f'Pythonlistsimple, send: {message!r}')
+        if path not in self.destination_queues and path_permissive:
+            return
+
+        for destination_queue in self.destination_queues[path]:
+            try:
+                self.state[destination_queue].append(message)
+            except KeyError:
+                self.state[destination_queue] = [message]
+
+    def _receive(self) -> bytes:
+        """
+        Receives the last not yet acknowledged message.
+
+        Does not block unlike the other pipelines.
+        """
+        if len(self.state[self.internal_queue]) > 0:
+            return self.state[self.internal_queue][0]
+
+        try:
+            first_msg = self.state[self.source_queue].pop(0)
+        except IndexError as exc:
+            raise exceptions.PipelineError(exc)
+        self.state[self.internal_queue].append(first_msg)
+
+        return first_msg
+
+    def receive(self) -> str:
+        if self._has_message:
+            raise exceptions.PipelineError("There's already a message, first "
+                                           "acknowledge the existing one.")
+
+        retval = self._receive()
+        self._has_message = True
+        # no decoding
+        return retval
 
 
 class Amqp(Pipeline):

@@ -56,8 +56,10 @@ class MessageFactory:
                                              got=message["__type"],
                                              expected=VALID_MESSSAGE_TYPES,
                                              docs=HARMONIZATION_CONF_FILE)
-        del message["__type"]
-        return class_reference(message, auto=True, harmonization=harmonization)
+        # don't modify the parameter
+        message_copy = message.copy()
+        del message_copy["__type"]
+        return class_reference(message_copy, auto=True, harmonization=harmonization)
 
     @staticmethod
     def unserialize(raw_message: str, harmonization: dict = None,
