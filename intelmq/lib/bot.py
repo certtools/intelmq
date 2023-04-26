@@ -869,7 +869,8 @@ class Bot:
             getattr(self.logger, level)(message, *args, **kwargs)
         else:
             # we can't process **kwargs here, but not needed at this stage
-            self.__log_buffer.append((level, message % args))
+            # if the message contains '%Y' or similar (e.g. a formatted `http_url`) but not args for formatting, no formatting should be done. if we did it, a wrong 'TypeError: not enough arguments for format string' would be thrown
+            self.__log_buffer.append((level, message % args if args else message))
 
     def __log_configuration_parameter(self, config_name: str, option: str, value: Any):
         if "password" in option or "token" in option:
