@@ -141,7 +141,9 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
             super().run_bot(*args, **kwargs)
 
     def test_event(self):
-        """ Test DummyParserBot """
+        """
+        Test DummyParserBot: One event (and two dumps)
+        """
         self.run_bot(allowed_error_count=2)
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
