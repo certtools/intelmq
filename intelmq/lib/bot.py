@@ -1464,3 +1464,31 @@ class OutputBot(Bot):
 
 class Parameters:
     pass
+<<<<<<< HEAD
+=======
+
+
+if sys.version_info < (3, 9):
+    class Dict39(dict):
+        """
+        Python 3.9 introduced the handy | operator for dicts.
+        Tor backwards-compatibility, this is the backport
+        as IntelMQ supports Python >= 3.7
+        """
+        def __or__(self, other):
+            """
+            Create a new dictionary with the merged keys and values of d and other, which must both be dictionaries. The values of other take priority when d and other share keys.
+            """
+            ret = self.copy()
+            ret.update(other)
+            return ret
+else:
+    Dict39 = dict
+
+
+BotLibSettings = Dict39({'logging_path': None,
+                         'source_pipeline_broker': 'Pythonlistsimple',
+                         'destination_pipeline_broker': 'Pythonlistsimple',
+                         'destination_queues': {'_default': 'output',
+                                                '_on_error': 'error'}})
+>>>>>>> abe70085f (compat)
