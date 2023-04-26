@@ -595,7 +595,6 @@ class Bot:
 
     def __connect_pipelines(self):
         pipeline_args = {key: getattr(self, key) for key in dir(self) if not inspect.ismethod(getattr(self, key)) and (key.startswith('source_pipeline_') or key.startswith('destination_pipeline'))}
-        print('pipeline_args', pipeline_args, 'source_queue', self.source_queue)
         if self.source_queue is not None:
             self.logger.info("Loading source pipeline and queue %r.", self.source_queue)
             self.__source_pipeline = PipelineFactory.create(logger=self.logger,
@@ -855,9 +854,6 @@ class Bot:
             syslog = self.logging_syslog
         else:
             syslog = False
-        print('self.logging_path', self.logging_path)
-        import pprint
-        pprint.pprint(self.__log_buffer)
         self.logger = utils.log(self.__bot_id_full, syslog=syslog,
                                 log_path=self.logging_path,
                                 log_level=self.logging_level,

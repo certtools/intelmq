@@ -133,10 +133,10 @@ class TestBotAsLibrary(unittest.TestCase):
 
     def test_dummy_pythonlist(self):
         bot = test_parser_bot.DummyParserBot('dummy-bot', settings=BotLibSettings)
-        sent_messages = bot.process_message(test_parser_bot.EXAMPLE_REPORT)
+        sent_messages = bot.process_message(test_parser_bot.EXAMPLE_REPORT.copy())
         self.assertMessageEqual(sent_messages['output'][0], test_parser_bot.EXAMPLE_EVENT)
-        self.assertMessageEqual(sent_messages['error'][0], MessageFactory.from_dict(test_parser_bot.EXPECTED_DUMP[0], default_type='Report'))
-        self.assertMessageEqual(sent_messages['error'][1], MessageFactory.from_dict(test_parser_bot.EXPECTED_DUMP[1], default_type='Report'))
+        self.assertMessageEqual(sent_messages['error'][0], MessageFactory.from_dict(test_parser_bot.EXPECTED_DUMP[0].copy(), default_type='Report'))
+        self.assertMessageEqual(sent_messages['error'][1], MessageFactory.from_dict(test_parser_bot.EXPECTED_DUMP[1].copy(), default_type='Report'))
 
     def test_domain_suffix(self):
         from intelmq.bots.experts.domain_suffix.expert import DomainSuffixExpertBot
