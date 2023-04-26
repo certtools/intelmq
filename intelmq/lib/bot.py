@@ -146,13 +146,10 @@ class Bot:
 
         try:
             version_info = sys.version.splitlines()[0].strip()
-            self.__log_buffer.append(('info',
-                                      '{bot} initialized with id {id} and intelmq {intelmq}'
-                                      ' and python {python} as process {pid}.'
-                                      ''.format(bot=self.__class__.__name__,
-                                                id=bot_id, python=version_info,
-                                                pid=os.getpid(), intelmq=__version__)))
-            self.__log_buffer.append(('debug', 'Library path: %r.' % __file__))
+            self.__log('info',
+                       f'{self.__class__.__name__} initialized with id {bot_id} and intelmq {__version__}'
+                       f' and python {version_info} as process {os.getpid()}.')
+            self.__log('debug', f'Library path: {__file__!r}.')
             if not utils.drop_privileges():
                 raise ValueError('IntelMQ must not run as root. Dropping privileges did not work.')
 
@@ -163,7 +160,7 @@ class Bot:
                 self.is_multithreaded = True
             self.__init_logger()
         except Exception:
-            self.__log_buffer.append(('critical', traceback.format_exc()))
+            self.__log('critical', traceback.format_exc())
             self.stop()
         else:
             for line in self.__log_buffer:
@@ -561,7 +558,7 @@ class Bot:
             self.logger.info("Bot stopped.")
             logging.shutdown()
         else:
-            self.__log_buffer.append(('info', 'Bot stopped.'))
+            self.__log('info', 'Bot stopped.')
             self.__print_log_buffer()
 
         if not getattr(self, 'testing', False):
@@ -582,9 +579,9 @@ class Bot:
         if res:
             if not (res.group(2) and threading.current_thread() == threading.main_thread()):
                 return name, res.group(1), res.group(2)[1:] if res.group(2) else None
-        self.__log_buffer.append(('error',
-                                  "Invalid bot id, must match '"
-                                  r"[^0-9a-zA-Z\-]+'."))
+        self.__log('error',
+                   "Invalid bot id, must match '"
+                   r"[^0-9a-zA-Z\-]+'.")
         self.stop()
         return False, False, False
 
@@ -803,16 +800,16 @@ class Bot:
                     self.__log_configuration_parameter("system", key, value)
                     setattr(self, key, value)
                 elif key not in IGNORED_SYSTEM_PARAMETERS:
-                    self.logger.warning('Ignoring disallowed system parameter %r.',
-                                        key)
+                    self.__log('warning', 'Ignoring disallowed system parameter %r.',
+                               key)
             for option, value in params.get('parameters', {}).items():
                 setattr(self, option, value)
                 self.__log_configuration_parameter("runtime", option, value)
                 if option.startswith('logging_'):
                     reinitialize_logging = True
         else:
-            self.logger.warning('Bot ID %r not found in runtime configuration - could not load any parameters.',
-                                self.__bot_id)
+            self.__log('warning', 'Bot ID %r not found in runtime configuration - could not load any parameters.',
+                       self.__bot_id)
 
         intelmq_environment = [elem for elem in os.environ if elem.startswith('INTELMQ_')]
         for elem in intelmq_environment:
@@ -856,17 +853,24 @@ class Bot:
                                 log_max_size=getattr(self, "logging_max_size", 0),
                                 log_max_copies=getattr(self, "logging_max_copies", None))
 
+    def __log(self, level, message, *args, **kwargs):
+        """
+        If the logger is already initialized, redirect to the logger
+        othwise write the message to the log buffer
+        """
+        if self.logger:
+            getattr(self.logger, level)(message, *args, **kwargs)
+        else:
+            # we can't process **kwargs here, but not needed at this stage
+            self.__log_buffer.append((level, message % args))
+
     def __log_configuration_parameter(self, config_name: str, option: str, value: Any):
         if "password" in option or "token" in option:
             value = "HIDDEN"
 
-        message = "{} configuration: parameter {!r} loaded with value {!r}." \
-            .format(config_name.title(), option, value)
+        message = f"{config_name.title()} configuration: parameter {option!r} loaded with value {value!r}."
 
-        if self.logger:
-            self.logger.debug(message)
-        else:
-            self.__log_buffer.append(("debug", message))
+        self.__log('debug', message)
 
     def __load_harmonization_configuration(self):
         self.logger.debug("Loading Harmonization configuration from %r.", HARMONIZATION_CONF_FILE)
