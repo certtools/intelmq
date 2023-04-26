@@ -1008,7 +1008,6 @@ class Bot:
             # use a appropriate default message type, not requiring __type keys in the message
             if not isinstance(message, libmessage.Message) and isinstance(message, dict):
                 message = libmessage.MessageFactory.from_dict(message=message, harmonization=self.harmonization, default_type=self._default_message_type)
-        print('destination_queues', repr(self.destination_queues))
         # messages is a tuple, the pipeline can't pop from a tuple. convert to a list instead
         self.__source_pipeline.state[self.source_queue].append(message)
         # do not dump to file
