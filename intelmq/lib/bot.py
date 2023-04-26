@@ -29,6 +29,7 @@ import warnings
 from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Any, List, Optional, Union, Tuple
+from pkg_resources import resource_filename
 
 import intelmq.lib.message as libmessage
 from intelmq import (DEFAULT_LOGGING_PATH,
@@ -794,7 +795,15 @@ class Bot:
     def __load_configuration(self):
         self.__log('debug', "Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
         if not self.__runtime_settings:
-            self.__runtime_settings = utils.get_runtime()
+            try:
+                self.__runtime_settings = utils.get_runtime()
+            except ValueError:
+                if not self._standalone:
+                    self.__log('info', 'Could not load runtime configuration file. '
+                               'Continuing, as settings are provided as parameter in library-mode.')
+                    self.__runtime_settings = {}
+                else:
+                    raise
 
         # merge in configuration provided as parameter to init
         if self.__settings:
@@ -882,7 +891,13 @@ class Bot:
 
     def __load_harmonization_configuration(self):
         self.logger.debug("Loading Harmonization configuration from %r.", HARMONIZATION_CONF_FILE)
-        self._harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
+        try:
+            self._harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
+        except ValueError:
+            if self._standalone:
+                raise
+            else:
+                self._harmonization = utils.load_configuration(resource_filename('intelmq', 'etc/harmonization.conf'))
 
     def new_event(self, *args, **kwargs):
         return libmessage.Event(*args, harmonization=self.harmonization, **kwargs)
