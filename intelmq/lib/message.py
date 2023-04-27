@@ -14,6 +14,7 @@ import re
 import warnings
 from collections import defaultdict
 from typing import Any, Dict, Iterable, Optional, Sequence, Union
+from pkg_resources import resource_filename
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
@@ -105,7 +106,11 @@ class Message(dict):
             classname = self.__class__.__name__.lower()
 
         if harmonization is None:
-            harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
+            try:
+                harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
+            except ValueError:
+                # Fallback to internal harmonization file
+                harmonization = utils.load_configuration(resource_filename('intelmq', 'etc/harmonization.conf'))
         try:
             self.harmonization_config = harmonization[classname]
         except KeyError:
