@@ -1464,8 +1464,6 @@ class OutputBot(Bot):
 
 class Parameters:
     pass
-<<<<<<< HEAD
-=======
 
 
 if sys.version_info < (3, 9):
@@ -1491,4 +1489,3 @@ BotLibSettings = Dict39({'logging_path': None,
                          'destination_pipeline_broker': 'Pythonlistsimple',
                          'destination_queues': {'_default': 'output',
                                                 '_on_error': 'error'}})
->>>>>>> abe70085f (compat)

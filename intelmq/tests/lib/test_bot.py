@@ -12,6 +12,7 @@ import unittest
 import intelmq.lib.test as test
 from intelmq.tests.lib import test_parser_bot
 from intelmq.lib.message import MessageFactory, Message
+from intelmq.lib.bot import BotLibSettings
 
 
 class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
@@ -83,24 +84,6 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
 def send_message(self, *messages, path: str = "_default", auto_add=None,
                      path_permissive: bool = False):
     self._sent_messages.extend(messages)
-
-
-class Dict39(dict):
-    """
-    Python 3.9 introduced the | operator for dicts
-    for backwards-compatibility, this is the backport
-    """
-    def or_(self, a, b):
-        ret = a.copy()
-        a.update(b)
-        return ret
-
-
-BotLibSettings = Dict39({'logging_path': None,
-                         'source_pipeline_broker': 'Pythonlistsimple',
-                         'destination_pipeline_broker': 'Pythonlistsimple',
-                         'destination_queues': {'_default': 'output',
-                                                '_on_error': 'error'}})
 
 
 class TestBotAsLibrary(unittest.TestCase):
