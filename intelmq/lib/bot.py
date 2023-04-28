@@ -100,7 +100,7 @@ class Bot:
     log_processed_messages_count: int = 500
     log_processed_messages_seconds: int = 900
     logging_handler: str = "file"
-    logging_level: str = 'DEBUG'  # DEFAULT_LOGGING_LEVEL
+    logging_level: str = DEFAULT_LOGGING_LEVEL
     logging_path: str = DEFAULT_LOGGING_PATH
     logging_syslog: str = "/dev/log"
     process_manager: str = "intelmq"
@@ -572,6 +572,8 @@ class Bot:
 
         if not getattr(self, 'testing', False) and self._standalone:
             sys.exit(exitcode)
+        if not self._standalone:  # library-mode
+            raise ValueError('Bot shutdown. See error messages in logs for details.')
 
     def __print_log_buffer(self):
         for level, message in self.__log_buffer:
@@ -800,7 +802,7 @@ class Bot:
             except ValueError:
                 if not self._standalone:
                     self.__log('info', 'Could not load runtime configuration file. '
-                               'Continuing, as settings are provided as parameter in library-mode.')
+                               'Continuing, as we in library-mode.')
                     self.__runtime_settings = {}
                 else:
                     raise

@@ -444,7 +444,6 @@ class Pythonlistsimple(Pythonlist):
 
         path_permissive defaults to true as opposed to the other pipelines!
         """
-        print(f'Pythonlistsimple, send: {message!r}')
         if path not in self.destination_queues and path_permissive:
             return
 
