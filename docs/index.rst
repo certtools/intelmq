@@ -74,6 +74,7 @@ Getting involved
    :maxdepth: 1
 
    dev/guide
+   dev/library
    dev/data-format
    dev/harmonization-fields
    dev/release-procedure
