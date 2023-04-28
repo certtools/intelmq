@@ -134,7 +134,7 @@ class TestBotAsLibrary(unittest.TestCase):
 
     def test_domain_suffix(self):
         from intelmq.bots.experts.domain_suffix.expert import DomainSuffixExpertBot
-        domain_suffix = DomainSuffixExpertBot('domain-suffix',  # bot id
+        domain_suffix = DomainSuffixExpertBot('domain-suffix',
                                               settings=BotLibSettings | {'field': 'fqdn',
                                                                          'suffix_file': '/usr/share/publicsuffix/public_suffix_list.dat'})
         queues = domain_suffix.process_message({'source.fqdn': 'www.example.com'})
