@@ -28,7 +28,7 @@ import types
 import warnings
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Union, Tuple
 
 import intelmq.lib.message as libmessage
 from intelmq import (DEFAULT_LOGGING_PATH,
@@ -563,7 +563,7 @@ class Bot:
                 print(level.upper(), '-', message)
         self.__log_buffer = []
 
-    def __check_bot_id(self, name: str):
+    def __check_bot_id(self, name: str) -> Tuple[str, str, str]:
         res = re.fullmatch(r'([0-9a-zA-Z\-]+)(\.[0-9]+)?', name)
         if res:
             if not (res.group(2) and threading.current_thread() == threading.main_thread()):
@@ -572,6 +572,7 @@ class Bot:
                                   "Invalid bot id, must match '"
                                   r"[^0-9a-zA-Z\-]+'."))
         self.stop()
+        return False, False, False
 
     def __connect_pipelines(self):
         pipeline_args = {key: getattr(self, key) for key in dir(self) if not inspect.ismethod(getattr(self, key)) and (key.startswith('source_pipeline_') or key.startswith('destination_pipeline'))}
