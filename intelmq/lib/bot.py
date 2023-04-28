@@ -572,7 +572,9 @@ class Bot:
 
         if not getattr(self, 'testing', False) and self._standalone:
             sys.exit(exitcode)
-        if not self._standalone:  # library-mode
+
+        # in library-mode raise an error if e.g. initialization failed
+        if exitcode != 0 and not self._standalone and not getattr(self, 'testing', False):
             raise ValueError('Bot shutdown. See error messages in logs for details.')
 
     def __print_log_buffer(self):
