@@ -159,7 +159,10 @@ class Bot:
                        f'{self.__class__.__name__} initialized with id {bot_id} and intelmq {__version__}'
                        f' and python {version_info} as process {os.getpid()}.')
             self.__log('debug', f'Library path: {__file__!r}.')
-            if not utils.drop_privileges():
+
+            # in standalone mode, drop privileges
+            # In library mode, the calling user can vary, we must not change their user
+            if self._standalone and not utils.drop_privileges():
                 raise ValueError('IntelMQ must not run as root. Dropping privileges did not work.')
 
             self.__bot_id_full, self.__bot_id, self.__instance_id = self.__check_bot_id(bot_id)
