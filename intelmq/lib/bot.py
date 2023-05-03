@@ -185,6 +185,9 @@ class Bot:
             broker = self.source_pipeline_broker.title()
             if broker != 'Amqp':
                 self._is_multithreadable = False
+                # multithreading is not (yet) available in library-mode
+            elif not self._standalone:
+                self._is_multithreadable = False
 
             """ Multithreading """
             if (self.instances_threads > 1 and not self.is_multithreaded and
@@ -235,7 +238,9 @@ class Bot:
             self.__reset_total_path_stats()
             self.init()
 
-            if not self.__instance_id:
+            # only the main thread registers the signal handlers
+            # in library-mode, handle no signals to not interfere with the caller
+            if not self.__instance_id and self._standalone:
                 self.__sighup = threading.Event()
                 signal.signal(signal.SIGHUP, self.__handle_sighup_signal)
                 # system calls should not be interrupted, but restarted
@@ -293,7 +298,7 @@ class Bot:
         """
         Handle SIGHUP.
         """
-        if not self.__sighup.is_set():
+        if not self.__sighup or not self.__sighup.is_set():
             return False
         self.logger.info('Handling SIGHUP, initializing again now.')
         self.__disconnect_pipelines()
@@ -707,7 +712,7 @@ class Bot:
         # * handle a sighup which happened during blocking read
         # * re-queue the message before reloading
         #   https://github.com/certtools/intelmq/issues/1438
-        if self.__sighup.is_set():
+        if self.__sighup and self.__sighup.is_set():
             self.__source_pipeline.reject_message()
             self.__handle_sighup()
             return self.receive_message()
