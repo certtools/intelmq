@@ -311,7 +311,12 @@ class StreamHandler(logging.StreamHandler):
                 stream = sys.stderr
                 stream.write(red(msg))
             stream.write(self.terminator)
-            self.flush()
+            try:
+                self.flush()
+            except ValueError:
+                # I/O operation on closed file.
+                # stdout/stderr is already close (during shutdown), there's nothing we can do about it
+                pass
         except Exception:
             self.handleError(record)
 
