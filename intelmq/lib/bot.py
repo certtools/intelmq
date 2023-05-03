@@ -227,7 +227,7 @@ class Bot:
 
                 @atexit.register
                 def catch_shutdown():
-                    self.stop()
+                    self.stop(exitcode=0)
         except Exception as exc:
             if self.error_log_exception:
                 self.logger.exception('Bot initialization failed.')
