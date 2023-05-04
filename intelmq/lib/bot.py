@@ -27,6 +27,7 @@ import traceback
 import types
 import warnings
 from collections import defaultdict
+from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import Any, List, Optional, Union, Tuple
 from pkg_resources import resource_filename
@@ -139,7 +140,8 @@ class Bot:
         self.__destination_pipeline: Optional[Pipeline] = None
         self.logger = None
         if settings is not None:
-            self.__settings = settings
+            # make a copy of the settings dict, to no modify the original values of the caller
+            self.__settings = deepcopy(settings)
         if source_queue is not None:
             self.source_queue = source_queue
         self._standalone = standalone
