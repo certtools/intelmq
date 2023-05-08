@@ -11,6 +11,6 @@ The report configuration is now stored in a _schema.json_ file downloaded from h
 
 For environments that have internet connectivity the `update_schema.py` script should be setup as a cron job to obtain the latest revision.
 
-For air-gapped systems automation will be required to download and copy the  _schema.json_ file into this directory
+For air-gapped systems automation will be required to download and copy the  _schema.json_ file into this directory.
 
 The parser will automatically reload the configuration when the file changes.
