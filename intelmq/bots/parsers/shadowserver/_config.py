@@ -272,15 +272,14 @@ functions = {
 def reload ():
     """ reload the configuration if it has changed """
     mtime = 0.0
+    schema_file = __config.schema_file
 
-    if (os.path.isfile(__config.schema_file)):
+    if os.path.isfile(__config.schema_file):
         mtime = os.path.getmtime(__config.schema_file)
         if __config.schema_mtime == mtime:
             return
-        schema_file = __config.schema_file
     else:
         # load a test schema if one has not been downloaded yet
-        schema_file = __config.schema_file
         schema_file += '.test'
 
     __config.feedname_mapping.clear()
