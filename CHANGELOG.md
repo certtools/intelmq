@@ -41,6 +41,8 @@ CHANGELOG
 ### Packaging
 
 ### Tools
+- `intelmqsetup`:
+  - SECURITY: fixed a low-risk bug causing the tool to change owner of `/` if run with the `INTELMQ_PATHS_NO_OPT` environment variable set. This affects only the PIP package as the DEB/RPM packages don't contain this tool. (PR#2355 by Kamil Mańkowski, fixes #2354)
 
 ### Known Errors
 
