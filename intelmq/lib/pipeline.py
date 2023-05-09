@@ -416,6 +416,11 @@ class Pythonlist(Pipeline):
         """ Empties given queue. """
         self.state[queue] = []
 
+    def clear_all_queues(self):
+        """ Empties all queues / state """
+        for queue in self.state:
+            self.state[queue] = []
+
     def _reject_message(self):
         """
         No-op because of the internal queue

@@ -18,6 +18,11 @@ from intelmq.bots.experts.taxonomy.expert import TaxonomyExpertBot
 from intelmq.bots.experts.jinja.expert import JinjaExpertBot
 
 EXAMPLE_DATA_URL = Dict39({'source.url': 'http://example.com/'})
+EXAMPLE_DATA_URL_OUT = EXAMPLE_DATA_URL | {'source.fqdn': 'example.com',
+                                           'source.port': 80,
+                                           'source.urlpath': '/',
+                                           'protocol.application': 'http',
+                                           'protocol.transport': 'tcp'}
 BOT_CONFIG_JINJA_FAILING = Dict39({
     'fields': {
         'feed.url': "{{ error! msg['source.fqdn'] | upper }}"
@@ -29,12 +34,7 @@ def test_url_expert():
     url_expert = URLExpertBot('url', settings=BotLibSettings)
     queues = url_expert.process_message(EXAMPLE_DATA_URL.copy())
     del url_expert
-    print(0, queues)
-    assert queues['output'] == [EXAMPLE_DATA_URL | {'source.fqdn': 'example.com',
-                                                    'source.port': 80,
-                                                    'source.urlpath': '/',
-                                                    'protocol.application': 'http',
-                                                    'protocol.transport': 'tcp'}]
+    assert queues['output'] == [EXAMPLE_DATA_URL_OUT]
 
 
 def test_url_and_taxonomy():
@@ -44,11 +44,7 @@ def test_url_and_taxonomy():
     message = queues_url['output'][0]
     taxonomy_expert = TaxonomyExpertBot('taxonomy', settings=BotLibSettings)
     queues = taxonomy_expert.process_message(message)
-    assert queues['output'] == [EXAMPLE_DATA_URL | {'source.fqdn': 'example.com',
-                                                    'source.port': 80,
-                                                    'source.urlpath': '/',
-                                                    'protocol.application': 'http', 'protocol.transport': 'tcp',
-                                                    'classification.taxonomy': 'other', 'classification.type': 'undetermined'}]
+    assert queues['output'] == [Dict39(EXAMPLE_DATA_URL_OUT) | {'classification.taxonomy': 'other', 'classification.type': 'undetermined'}]
 
 
 def test_bot_exception_import():
@@ -59,6 +55,13 @@ def test_bot_exception_import():
         JinjaExpertBot('jinja', settings=BotLibSettings | BOT_CONFIG_JINJA_FAILING)
     except:
         pass
+
+
+def test_bot_multi_message():
+    url_expert = URLExpertBot('url', settings=BotLibSettings)
+    queues = url_expert.process_message(EXAMPLE_DATA_URL.copy(), EXAMPLE_DATA_URL.copy())
+    del url_expert
+    assert queues['output'] == [EXAMPLE_DATA_URL_OUT] * 2
 
 
 if __name__ == '__main__':  # pragma: no cover

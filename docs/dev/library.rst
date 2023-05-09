@@ -50,6 +50,13 @@ Inserting a message as dictionary:
 The return value is a dictionary of queues, e.g. the output queue and the error queue.
 More details below.
 
+The methods accepts multiple messages as positional argument:
+
+.. code-block:: python
+
+   domain_suffix.process_message({'source.fqdn': 'www.example.com'}, {'source.fqdn': 'www.example.net'})
+   domain_suffix.process_message(*[{'source.fqdn': 'www.example.com'}, {'source.fqdn': 'www.example.net'}])
+
 
 Select the output queue (as defined in `destination_queues`), first message, access the field 'source.domain_suffix':
 

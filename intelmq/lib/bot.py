@@ -1013,23 +1013,46 @@ class Bot:
         argparser.add_argument('bot_id', nargs='?', metavar='BOT-ID', help='unique bot-id of your choosing')
         return argparser
 
-    def process_message(self, message: Optional[libmessage.Message] = None):
+    def process_message(self, *messages: Union[libmessage.Message, dict]):
+        """
+        Call the bot's process method with a prepared source queue.
+        Return value is a dict with the complete pipeline state.
+        Multiple messages can be given as positional argument.
+        The pipeline needs to be configured accordinglit with BotLibSettings,
+        see https://intelmq.readthedocs.io/en/develop/dev/library.html
+
+        Access the output queue e.g. with return_value['output']
+        """
+        print('process_message, destination state:', self.__destination_pipeline.state, 'self.destination_queues', self.destination_queues)
         if self.bottype == BotType.COLLECTOR:
-            if message:
-                raise exceptions.InvalidArgument('Collector Bots take not messages as processing input')
+            if messages:
+                raise exceptions.InvalidArgument('Collector Bots take no messages as processing input')
         else:
-            # convert to Message object, it the input is a dict
-            # use a appropriate default message type, not requiring __type keys in the message
-            if not isinstance(message, libmessage.Message) and isinstance(message, dict):
-                message = libmessage.MessageFactory.from_dict(message=message, harmonization=self.harmonization, default_type=self._default_message_type)
-        # messages is a tuple, the pipeline can't pop from a tuple. convert to a list instead
-        self.__source_pipeline.state[self.source_queue].append(message)
+            # reset source queue
+            self.__source_pipeline.state[self.source_queue] = []
+            for message in messages:
+                # convert to Message objects, it the message is a dict
+                # use an appropriate default message type, not requiring __type keys in the message
+                if not isinstance(message, libmessage.Message) and isinstance(message, dict):
+                    message = libmessage.MessageFactory.from_dict(message=message,
+                                                                  harmonization=self.harmonization,
+                                                                  default_type=self._default_message_type)
+                self.__source_pipeline.state[self.source_queue].append(message)
         # do not dump to file
         self.error_dump_message = False
         # do not serialize messages to strings, keep the objects
         self.__pipeline_serialize_messages = False
-        self.process()
-        return self.__destination_pipeline.state
+
+        # process all input messages
+        while self.__source_pipeline.state[self.source_queue]:
+            self.logger.info('source queue: %r', self.__source_pipeline.state[self.source_queue])
+            self.process()
+
+        # clear destination state, before make a copy for return
+        state = self.__destination_pipeline.state.copy()
+        self.__destination_pipeline.clear_all_queues()
+
+        return state
 
 
 class ParserBot(Bot):
