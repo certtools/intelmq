@@ -525,6 +525,9 @@ class Bot:
             self.__handle_sighup()
             remaining = self.rate_limit - (time.time() - starttime)
 
+    def __del__(self):
+        return self.stop(exitcode=0)
+
     def stop(self, exitcode: int = 1):
         if not self.logger:
             print('Could not initialize logger, only logging to stdout.')
