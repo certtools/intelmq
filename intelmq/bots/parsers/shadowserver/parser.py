@@ -206,5 +206,8 @@ class ShadowserverParserBot(ParserBot):
 
         yield event
 
+    def shutdown(self):
+        self.feedname = None
+
 
 BOT = ShadowserverParserBot

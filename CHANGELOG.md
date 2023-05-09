@@ -21,11 +21,13 @@ CHANGELOG
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
+  - Reset detected `feedname` at shutdown to re-detect the feedname on reloads (PR#2361 by @elsif2, fixes #2360).
+- `intelmq.bots.parsers.shadowserver._config`:
   - Added 'IPv6-Vulnerable-Exchange' alias and 'Accessible-WS-Discovery-Service' report. (PR#2338)
   - Removed unused 'p0f_genre' and 'p0f_detail' from the 'DNS-Open-Resolvers' report. (PR#2338)
   - Added 'Accessible-SIP' report. (PR#2348)
   - Added 'IPv6-Open-HTTP-Proxy' and 'IPv6-Accessible-HTTP-Proxy' aliases. (PR#2348)
-  - Removed  duplicate mappings from the 'Spam-URL' report. (PR#2348) 
+  - Removed  duplicate mappings from the 'Spam-URL' report. (PR#2348)
 
 #### Experts
 - `intelmq.bots.experts.sieve`:
