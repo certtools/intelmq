@@ -17,6 +17,7 @@ import re
 import unittest
 import unittest.mock as mock
 from itertools import chain
+from sys import version_info
 
 import pkg_resources
 import redis
@@ -355,8 +356,16 @@ class BotTestCase:
                 self.assertIn('raw', event)
 
         """ Test if bot log messages are correctly formatted. """
-        self.assertLoglineMatches(0, BOT_INIT_REGEX.format(self.bot_name,
-                                                           self.bot_id), "INFO")
+        try:
+            self.assertLoglineMatches(0, BOT_INIT_REGEX.format(self.bot_name,
+                                                               self.bot_id), "INFO")
+        except AssertionError:
+            if version_info <= (3, 8):
+                # In Python 3.7, the logging of the previous bot run can end up in the logging of the next run, resulting in line 0 being:
+                # "Processed 1 messages since last logging." (written at shutdown of that bot)
+                pass
+            else:
+                raise
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
         if stop_bot:
             self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
