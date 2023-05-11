@@ -27,6 +27,8 @@ class SQLMixin:
     # overwrite the default value from the OutputBot
     message_jsondict_as_string = True
     reconnect_delay = 0
+    # If process()/execute() should raise exceptions (True) or rollback (False)
+    fail_on_errors = False
 
     def __init__(self, *args, **kwargs):
         self._init_sql()
@@ -116,7 +118,7 @@ class SQLMixin:
             self.logger.debug('Done.')
         except (self._engine.InterfaceError, self._engine.InternalError,
                 self._engine.OperationalError, AttributeError):
-            if rollback:
+            if rollback and not self.fail_on_errors:
                 try:
                     self.con.rollback()
                     self.logger.exception('Executed rollback command '
@@ -133,6 +135,8 @@ class SQLMixin:
                     if self.reconnect_delay > 0:
                         sleep(self.reconnect_delay)
                     self._init_sql()
+            elif self.fail_on_errors:
+                raise
             else:
                 self.logger.exception('Database connection problem, connecting again.')
                 if self.reconnect_delay > 0:

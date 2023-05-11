@@ -6,6 +6,7 @@
 import json
 import os
 import unittest
+from unittest import mock
 
 import intelmq.lib.test as test
 from intelmq.bots.outputs.sql.output import SQLOutputBot
@@ -13,6 +14,7 @@ from intelmq.bots.outputs.sql.output import SQLOutputBot
 if os.environ.get('INTELMQ_TEST_DATABASES'):
     import psycopg2
     import psycopg2.extras
+    from psycopg2 import InterfaceError
 
 
 INPUT1 = {"__type": "Event",
@@ -145,6 +147,42 @@ class TestPostgreSQLOutputBot(test.BotTestCase, unittest.TestCase):
         self.prepare_bot(prepare_source_queue=False)
         output = self.bot.prepare_values(values)
         self.assertEqual(output, ['{"special": "foo\\\\u0000bar"}'])
+
+    def test_execution_error(self):
+        """
+        Raise an exception at statement execution
+        """
+
+        def execute_raising(*args, **kwargs):
+            raise InterfaceError
+
+        with mock.patch('psycopg2.connect') as mock_connect:
+            mock_con = mock_connect.return_value  # result of psycopg2.connect(**connection_stuff)
+            mock_cur = mock_con.cursor.return_value  # result of con.cursor(cursor_factory=DictCursor)
+            mock_cur.execute = execute_raising
+
+            self.run_bot(allowed_error_count=1, expected_internal_queue_size=1)
+        self.assertLogMatches('psycopg2.InterfaceError', levelname='ERROR')
+        self.assertLogMatches('Executed rollback command after failed query execution.', levelname='ERROR')
+        self.assertNotRegexpMatchesLog('Bot has found a problem.')
+
+    def test_execution_error_fail(self):
+        """
+        Raise an exception at statement execution with fail_on_errors = True
+        """
+
+        def execute_raising(*args, **kwargs):
+            raise InterfaceError
+
+        with mock.patch('psycopg2.connect') as mock_connect:
+            mock_con = mock_connect.return_value  # result of psycopg2.connect(**connection_stuff)
+            mock_cur = mock_con.cursor.return_value  # result of con.cursor(cursor_factory=DictCursor)
+            mock_cur.execute = execute_raising
+
+            self.run_bot(allowed_error_count=1, parameters={'fail_on_errors': True})
+        self.assertLogMatches('psycopg2.InterfaceError', levelname='ERROR')
+        self.assertNotRegexpMatchesLog('Executed rollback command after failed query execution.')
+        self.assertLogMatches('Bot has found a problem.', levelname='ERROR')
 
     @classmethod
     def tearDownClass(cls):
