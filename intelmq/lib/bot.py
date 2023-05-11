@@ -49,8 +49,12 @@ IGNORED_SYSTEM_PARAMETERS = {'groupname', 'bot_id', 'parameters'}
 class Bot:
     """ Not to be reset when initialized again on reload. """
     __current_message: Optional[libmessage.Message] = None
+    __message_counter: dict = {"since": None}
     __message_counter_delay: timedelta = timedelta(seconds=2)
     __stats_cache: cache.Cache = None
+    __source_pipeline = None
+    __destination_pipeline = None
+    __log_buffer: List[tuple] = []
 
     logger = None
     # Bot is capable of SIGHUP delaying
