@@ -217,3 +217,8 @@ class BotDebugger:
     def pprint(msg) -> str:
         """ We can't use standard pprint as JSON standard asks for double quotes. """
         return json.dumps(msg, indent=4, sort_keys=True)
+
+    def __del__(self):
+        # prevents a SystemExit Exception at object deletion
+        # remove once PR#2358 (library mode) is merged
+        setattr(self.instance, 'testing', True)
