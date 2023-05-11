@@ -52,6 +52,7 @@ class Bot:
     __message_counter_delay: timedelta = timedelta(seconds=2)
     __stats_cache: cache.Cache = None
 
+    logger = None
     # Bot is capable of SIGHUP delaying
     _sighup_delay: bool = True
     # From the runtime configuration
