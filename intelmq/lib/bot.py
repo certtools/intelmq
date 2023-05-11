@@ -40,7 +40,7 @@ from intelmq import (DEFAULT_LOGGING_PATH,
 from intelmq.lib import cache, exceptions, utils
 from intelmq.lib.pipeline import PipelineFactory, Pipeline
 from intelmq.lib.utils import RewindableFileHandle, base64_decode
-from intelmq.lib.datatypes import BotType
+from intelmq.lib.datatypes import BotType, Dict39
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot', 'OutputBot', 'ExpertBot']
 ALLOWED_SYSTEM_PARAMETERS = {'enabled', 'run_mode', 'group', 'description', 'module', 'name'}
@@ -1501,24 +1501,6 @@ class OutputBot(Bot):
 
 class Parameters:
     pass
-
-
-if sys.version_info < (3, 9):
-    class Dict39(dict):
-        """
-        Python 3.9 introduced the handy | operator for dicts.
-        Tor backwards-compatibility, this is the backport
-        as IntelMQ supports Python >= 3.7
-        """
-        def __or__(self, other):
-            """
-            Create a new dictionary with the merged keys and values of d and other, which must both be dictionaries. The values of other take priority when d and other share keys.
-            """
-            ret = self.copy()
-            ret.update(other)
-            return ret
-else:
-    Dict39 = dict
 
 
 BotLibSettings = Dict39({'logging_path': None,
