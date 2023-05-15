@@ -65,7 +65,9 @@ class BotDebugger:
             # Set's the bot's default and initial value for the logging_level to the value we want
             bot.logging_level = self.logging_level
 
-        self.instance = bot(bot_id, disable_multithreading=True)
+        self.instance = bot(bot_id, disable_multithreading=True,
+                            standalone=True,  # instruct the bot to call SystemExit exception at the end or in case of errors
+                            )
 
     def run(self) -> str:
         if not self.run_subcommand:
@@ -221,4 +223,5 @@ class BotDebugger:
     def __del__(self):
         # prevents a SystemExit Exception at object deletion
         # remove once PR#2358 (library mode) is merged
-        setattr(self.instance, 'testing', True)
+        if self.instance:
+            setattr(self.instance, 'testing', True)
