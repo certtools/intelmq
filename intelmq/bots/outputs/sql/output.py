@@ -53,7 +53,7 @@ class SQLOutputBot(OutputBot, SQLMixin):
         query = ('INSERT INTO {table} ("{keys}") VALUES ({values})'
                  ''.format(table=self.table, keys=keys, values=fvalues[:-2]))
 
-        if self.execute(query, values, rollback=True):
+        if self.execute(query, values, rollback=not self.fail_on_errors):
             self.con.commit()
             self.acknowledge_message()
 

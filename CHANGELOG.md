@@ -40,7 +40,8 @@ CHANGELOG
   - Avoid extraneous search domain-based queries on NXDOMAIN result (PR#2352)
 
 #### Outputs
-- `intelmq.bots.output.cif3.output`: Added (PR#2244 by Michael Davis).
+- `intelmq.bots.outputs.cif3.output`: Added (PR#2244 by Michael Davis).
+- `intelmq.bots.outputs.sql.output`: New parameter `fail_on_errors` (PR#2362 by Sebastian Wagner).
 
 ### Documentation
 

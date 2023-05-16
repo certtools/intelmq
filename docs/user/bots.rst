@@ -4116,6 +4116,7 @@ The parameters marked with 'PostgreSQL' will be sent to libpq via psycopg2. Chec
 * `table`: name of the database table into which events are to be inserted
 * `fields`: list of fields to read from the event. If None, read all fields
 * `reconnect_delay`: number of seconds to wait before reconnecting in case of an error
+* `fail_on_errors`: If any error should cause the bot to fail (raise an exception) or otherwise rollback. If false (default), the bot eventually waits and re-try (e.g. re-connect) etc. to solve the issue. If true, the bot raises an exception and - depending on the IntelMQ error handling configuration - stops.
 
 PostgreSQL
 ~~~~~~~~~~
