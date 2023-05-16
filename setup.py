@@ -10,7 +10,7 @@ from pathlib import Path
 from setuptools import find_packages, setup
 
 REQUIRES = [
-    'dnspython>=1.11.1',
+    'dnspython>=2.0.0',
     'psutil>=1.2.1',
     'python-dateutil>=2.5',
     'python-termstyle>=0.1.10',
