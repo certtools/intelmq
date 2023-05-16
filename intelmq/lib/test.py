@@ -303,7 +303,9 @@ class BotTestCase:
                 prepare=True, parameters={},
                 allowed_error_count=0,
                 allowed_warning_count=0,
-                stop_bot: bool = True):
+                stop_bot: bool = True,
+                expected_internal_queue_size: int = 0,
+                ):
         """
         Call this method for actually doing a test run for the specified bot.
 
@@ -339,10 +341,10 @@ class BotTestCase:
                          'iterations of `run_bot`.')
 
         internal_queue_size = len(self.get_input_internal_queue())
-        self.assertEqual(internal_queue_size, 0,
-                         'The internal input queue is not empty, but has '
+        self.assertEqual(internal_queue_size, expected_internal_queue_size,
+                         f'The internal input queue does not have expected size {expected_internal_queue_size}, but has '
                          f'{internal_queue_size} element(s). '
-                         'The bot did not acknowledge all messages.')
+                         'The bot did not acknowledge the expected number of messages.')
 
         """ Test if report has required fields. """
         if self.bot_type == 'collector':
