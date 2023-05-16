@@ -762,42 +762,20 @@ def v310_shadowserver_feednames(configuration, harmonization, dry_run, **kwargs)
     return 'A discontinued feed has been found and must be removed %s' % ', '.join(names) if names else changed, configuration, harmonization
 
 
-def v310_shadowserver_feednames(configuration, harmonization, dry_run, **kwargs):
-    """
-    Remove legacy Shadowserver feednames
-    """
-    legacy = {
-        'Amplification-DDoS-Victim': 1,
-        'Blacklisted-IP': 1,
-        'CAIDA-IP-Spoofer': 1,
-        'Darknet': 1,
-        'Drone': 1,
-        'Drone-Brute-Force': 1,
-        'HTTP-Scanners': 1,
-        'ICS-Scanners': 1,
-        'IPv6-Sinkhole-HTTP-Drone': 1,
-        'Microsoft-Sinkhole': 1,
-        'Outdated-DNSSEC-Key': 1,
-        'Outdated-DNSSEC-Key-IPv6': 1,
-        'Sinkhole-HTTP-Drone': 1
-    }
-    changed = None
-    names = []
-    for bot_id, bot in configuration.items():
-        if bot_id == 'global':
-            continue
-        if bot["module"] == "intelmq.bots.parsers.shadowserver.parser":
-            if bot["parameters"]["feedname"] in legacy:
-                names.append(bot["parameters"]["feedname"])
-    return 'A discontinued feed has been found and must be removed %s' % ', '.join(names) if names else changed, configuration, harmonization
-
-
 def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
     """
     Migrates feeds' configuration for changed/fixed parameter
     """
     found_autoshun = []
     found_malc0de = []
+    found_dshield_domain = []
+    found_abusech_removed_parsers = []
+    found_abusech_feodotracker_csv = []
+    found_abusech_feodotracker_browse = []
+    found_viriback = []
+    found_netlab_mirai_scanner = []
+    found_benkow_panels = []
+    found_taichung = []
     messages = []
     for bot_id, bot in configuration.items():
         if bot_id == 'global':
@@ -805,19 +783,80 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
         if bot["module"] == "intelmq.bots.parsers.malc0de.parser":
             found_malc0de.append(bot_id)
         if bot["module"] == "intelmq.bots.collectors.http.collector":
-            if bot["parameters"].get("http_url", "").startswith("https://malc0de.com/bl"):
+            http_url = bot["parameters"].get("http_url", "")
+            if http_url.startswith("https://malc0de.com/bl"):
                 found_malc0de.append(bot_id)
-        if bot["module"] == "intelmq.bots.collectors.http.collector":
-            if bot["parameters"].get("http_url", "").startswith("https://www.autoshun.org/download"):
+            if http_url.startswith("https://www.autoshun.org/download"):
                 found_autoshun.append(bot_id)
+            if http_url.startswith("https://feodotracker.abuse.ch/browse"):
+                found_abusech_feodotracker_browse.append(bot_id)
+            if http_url.startswith("https://feodotracker.abuse.ch/downloads/ipblocklist.csv"):
+                found_abusech_feodotracker_csv.append(bot_id)
+            if http_url == "http://tracker.viriback.com/":
+                found_viriback.append(bot_id)
+            if http_url.startswith("http://data.netlab.360.com/feeds/mirai-scanner/scanner.list"):
+                found_netlab_mirai_scanner.append(bot_id)
+            if "benkow.cc/export.php" in http_url:  # both HTTP and HTTPS
+                found_benkow_panels.append(bot_id)
+            if http_url.startswith("https://www.tc.edu.tw/net/netflow/lkout/recent"):
+                found_taichung.append(bot_id)
         if bot["module"] == "intelmq.bots.parsers.autoshun.parser":
             found_autoshun.append(bot_id)
+        if bot["module"] == "intelmq.bots.parsers.dshield.parser_domain":
+            found_dshield_domain.append(bot_id)
+        if (bot["module"] == "intelmq.bots.parsers.abusech.parser_ip" or
+                bot["module"] == "intelmq.bots.parsers.abusech.parser_domain"):
+            found_abusech_removed_parsers.append(bot_id)
+        if bot["module"] == "intelmq.bots.parsers.generic.parser_csv":
+            bot["parameters"]["default_fields"] = {
+                "classification.type": bot["parameters"]["type"]
+            }
+            del bot["parameters"]["type"]
+        if bot["module"] == "intelmq.bots.parsers.taichung.parser":
+            found_taichung.append(bot_id)
+
     if found_malc0de:
         messages.append('A discontinued feed "Malc0de" has been found '
                         'as bot %s.' % ', '.join(sorted(found_malc0de)))
     if found_autoshun:
         messages.append('A discontinued feed "Autoshun" has been found '
                         'as bot %s.' % ', '.join(sorted(found_autoshun)))
+    if found_dshield_domain:
+        messages.append('A discontinued feed "DShield Suspicious Domain" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_dshield_domain)))
+
+    if found_abusech_feodotracker_csv:
+        messages.append('A discontinued feed "Abuse.ch Feodo Tracker IPs" has been found'
+                        'as bot %s.\nPlease manually replace with the feed'
+                        '"Abuse.ch Feodo Tracker".' % ', '.join(sorted(found_abusech_feodotracker_csv)))
+
+    if found_abusech_feodotracker_browse:
+        messages.append('A discontinued feed "Abuse.ch Feodo Tracker Browse" has been found'
+                        'as bot %s.\nPlease manually replace with the feed'
+                        '"Abuse.ch Feodo Tracker".' % ', '.join(sorted(found_abusech_feodotracker_browse)))
+
+    if found_abusech_removed_parsers:
+        messages.append('A discontinued bot module has been found'
+                        'as bot %s.' % ', '.join(sorted(found_abusech_removed_parsers)))
+
+    if found_viriback:
+        messages.append('The feed "Viriback Unsafe Site" has been replaced. Please see the feed'
+                        ' "Viriback C2 Tracker" and'
+                        ' adjust your configuration. Affected bots: %s' % ', '.join(found_viriback))
+
+    if found_netlab_mirai_scanner:
+        messages.append('A discontinued feed "Netlab Mirai Scanner" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_netlab_mirai_scanner)))
+
+    if found_benkow_panels:
+        messages.append('The feed "Benkow Malware Panels Tracker" has been changed. Please see the feed\'s'
+                        ' documentation and adjust your configuration.'
+                        ' Affected bots: %s' % ', '.join(found_benkow_panels))
+
+    if found_taichung:
+        messages.append('A discontinued feed "Taichung" has been found '
+                        'as bot %s.' % ', '.join(sorted(found_taichung)))
+
     messages = ' '.join(messages)
     return messages + ' Remove affected bots yourself.' if messages else None, configuration, harmonization
 
@@ -846,7 +885,7 @@ UPGRADES = OrderedDict([
     ((3, 0, 0), (v300_bots_file_removal, v300_defaults_file_removal, v300_pipeline_file_removal,)),
     ((3, 0, 1), (v301_deprecations,)),
     ((3, 0, 2), ()),
-    ((3, 1, 0), (v310_feed_changes, v310_shadowserver_feednames, )),
+    ((3, 1, 0), (v310_feed_changes, v310_shadowserver_feednames)),
 ])
 
 ALWAYS = (harmonization,)

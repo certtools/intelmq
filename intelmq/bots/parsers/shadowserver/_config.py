@@ -334,32 +334,76 @@ device_id = {
     },
 }
 
-# https://www.shadowserver.org/what-we-do/network-reporting/device-identification-report/
-device_id6 = {
+# https://www.shadowserver.org/what-we-do/network-reporting/ddos-participant-report/
+event_ddos_participant = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
-        ('source.ip', 'ip', validate_ip),
-        ('source.port', 'port', convert_int),
+        ('source.ip', 'src_ip', validate_ip),
+        ('source.port', 'src_port', convert_int),
     ],
     'optional_fields': [
-        ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'duration', convert_int),
+        ('extra.', 'attack_src_port', convert_int),
+        ('extra.', 'http_usessl', convert_bool),
+        ('extra.', 'ip_header_seqnum', convert_int),
+        ('extra.', 'ip_header_ttl', convert_int),
+        ('extra.', 'number_of_connections', convert_int),
+        ('extra.', 'packet_length', convert_int),
+        ('extra.', 'packet_randomized', convert_bool),
         ('extra.', 'tag', validate_to_none),
-        ('source.asn', 'asn', invalidate_zero),
-        ('source.geolocation.cc', 'geo'),
-        ('source.geolocation.region', 'region'),
-        ('source.geolocation.city', 'city'),
-        ('extra.source.naics', 'naics', invalidate_zero),
-        ('extra.source.sic', 'sic', invalidate_zero),
-        ('extra.source.sector', 'sector', validate_to_none),
+        ('protocol.transport', 'protocol'),
+        ('source.asn', 'src_asn', invalidate_zero),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('source.geolocation.city', 'src_city'),
+        ('source.reverse_dns', 'src_hostname'),
+        ('extra.source.naics', 'src_naics', invalidate_zero),
+        ('extra.source.sector', 'src_sector', validate_to_none),
         ('extra.', 'device_vendor', validate_to_none),
         ('extra.', 'device_type', validate_to_none),
         ('extra.', 'device_model', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.port', 'dst_port', convert_int),
+        ('destination.asn', 'dst_asn', invalidate_zero),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.geolocation.city', 'dst_city'),
+        ('destination.reverse_dns', 'dst_hostname', validate_to_none),
+        ('extra.destination.naics', 'dst_naics', invalidate_zero),
+        ('extra.destination.sector', 'dst_sector', validate_to_none),
+        ('extra.', 'domain_source', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('malware.name', 'infection'),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'event_id', validate_to_none),
+        ('extra.', 'dst_network', validate_to_none),
+        ('extra.', 'dst_netmask', validate_to_none),
+        ('extra.', 'attack', validate_to_none),
+        ('extra.', 'attack_src_ip', validate_to_none),
+        ('extra.', 'domain', validate_to_none),
+        ('extra.', 'domain_transaction_id', validate_to_none),
+        ('extra.', 'gcip', validate_to_none),
+        ('extra.', 'http_method', validate_to_none),
+        ('extra.', 'http_path', validate_to_none),
+        ('extra.', 'http_postdata', validate_to_none),
+        ('extra.', 'ip_header_ack', validate_to_none),
+        ('extra.', 'ip_header_acknum', validate_to_none),
+        ('extra.', 'ip_header_dont_fragment', validate_to_none),
+        ('extra.', 'ip_header_fin', validate_to_none),
+        ('extra.', 'ip_header_identity', validate_to_none),
+        ('extra.', 'ip_header_psh', validate_to_none),
+        ('extra.', 'ip_header_rst', validate_to_none),
+        ('extra.', 'ip_header_syn', validate_to_none),
+        ('extra.', 'ip_header_tos', validate_to_none),
+        ('extra.', 'ip_header_urg', validate_to_none),
+        ('extra.', 'http_agent', validate_to_none),
     ],
     'constant_fields': {
-        'classification.taxonomy': 'other',
-        'classification.type': 'undetermined',
-        'classification.identifier': 'device-id',
+        'classification.taxonomy': 'availability',
+        'classification.type': 'ddos',
+        'classification.identifier': 'ddos-participant',
     },
 }
 
@@ -401,8 +445,8 @@ event_honeypot_brute_force = {
         ('extra.', 'version', validate_to_none),
         ('extra.', 'event_id', validate_to_none),
         ('extra.', 'service', validate_to_none),
-        ('extra.', 'start_time', validate_to_none),
-        ('extra.', 'end_time', validate_to_none),
+        ('extra.', 'start_time', convert_date_utc),
+        ('extra.', 'end_time', convert_date_utc),
         ('extra.', 'client_version', validate_to_none),
         ('extra.', 'password', validate_to_none),
         ('extra.', 'payload_url', validate_to_none),
@@ -522,6 +566,7 @@ event_honeypot_ddos = {
         ('extra.', 'ip_header_syn', validate_to_none),
         ('extra.', 'ip_header_tos', validate_to_none),
         ('extra.', 'ip_header_urg', validate_to_none),
+        ('extra.', 'http_agent', validate_to_none),
     ],
     'constant_fields': {
         'classification.taxonomy': 'availability',
@@ -538,7 +583,6 @@ event_honeypot_ddos_amp = {
         ('source.port', 'src_port', convert_int),
     ],
     'optional_fields': [
-        ('extra.', 'end_time', convert_date_utc),
         ('extra.', 'avg_pps', convert_float),
         ('extra.', 'max_pps', convert_float),
         ('extra.', 'tag', validate_to_none),
@@ -571,7 +615,8 @@ event_honeypot_ddos_amp = {
         ('extra.', 'request', validate_to_none),
         ('extra.', 'count', convert_int),
         ('extra.', 'bytes', convert_int),
-        ('extra.', 'duration', validate_to_none),
+        ('extra.', 'end_time', convert_date_utc),
+        ('extra.', 'duration', convert_int),
     ],
     'constant_fields': {
         'classification.identifier': 'amplification-ddos-victim',
@@ -588,7 +633,6 @@ event_honeypot_ddos_target = {
         ('source.port', 'src_port', convert_int),
     ],
     'optional_fields': [
-        ('extra.', 'duration', convert_int),
         ('extra.', 'attack_src_port', convert_int),
         ('extra.', 'http_usessl', convert_bool),
         ('extra.', 'ip_header_seqnum', convert_int),
@@ -627,6 +671,7 @@ event_honeypot_ddos_target = {
         ('extra.', 'dst_network', validate_to_none),
         ('extra.', 'dst_netmask', validate_to_none),
         ('extra.', 'attack', validate_to_none),
+        ('extra.', 'duration', convert_int),
         ('extra.', 'attack_src_ip', validate_to_none),
         ('extra.', 'domain', validate_to_none),
         ('extra.', 'domain_transaction_id', validate_to_none),
@@ -776,7 +821,7 @@ event_ip_spoofer = {
     ],
     'optional_fields': [
         ('extra.', 'infection', validate_to_none),
-        ('source.network', 'network', validate_to_none),
+        ('source.network', 'network', validate_network),
         ('extra.', 'tag', validate_to_none),
         ('protocol.transport', 'protocol'),
         ('source.asn', 'src_asn', invalidate_zero),
@@ -1034,6 +1079,43 @@ phish_url = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-http-proxy-report/
+population_http_proxy = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('malware.name', 'tag'),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.', 'http', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'connection', validate_to_none),
+        ('extra.', 'proxy_authenticate', validate_to_none),
+        ('extra.', 'via', validate_to_none),
+        ('extra.', 'server', validate_to_none),
+        ('extra.', 'content_length', convert_int),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'accessible-http-proxy',
+        'classification.taxonomy': 'other',
+        'classification.type': 'other',
+        'protocol.application': 'http',
+    },
+}
+
 # http://www.shadowserver.org/wiki/pmwiki.php/Services/Sandbox-Connection
 sandbox_conn = {
     'required_fields': [
@@ -1042,7 +1124,7 @@ sandbox_conn = {
         ('source.port', 'port', convert_int),
     ],
     'optional_fields': [
-        ('destination.fqdn', 'host', validate_to_none),
+        ('destination.fqdn', 'host', validate_fqdn),
         ('source.asn', 'asn', invalidate_zero),
         ('source.geolocation.cc', 'geo'),
         ('malware.hash.md5', 'md5', validate_to_none),
@@ -1085,12 +1167,12 @@ sandbox_url = {
         ('source.ip', 'ip', validate_ip),
     ],
     'optional_fields': [
-        ('destination.url', 'url', validate_to_none),
-        ('destination.fqdn', 'host', validate_to_none),
+        ('destination.fqdn', 'host', validate_fqdn),
         ('extra.http_request_method', 'method', validate_to_none),
         ('source.asn', 'asn', invalidate_zero),
         ('source.geolocation.cc', 'geo'),
         ('malware.hash.md5', 'md5', validate_to_none),
+        ('destination.url', 'url', convert_http_host_and_url, True),
         ('user_agent', 'user_agent', validate_to_none),
     ],
     'constant_fields': {
@@ -1229,6 +1311,7 @@ scan_ard = {
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'machine_name', validate_to_none),
         ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'accessible-ard',
@@ -1256,6 +1339,8 @@ scan_chargen = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -1310,6 +1395,8 @@ scan_coap = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'response', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'accessible-coap',
@@ -1413,6 +1500,7 @@ scan_db2 = {
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'db2_hostname', validate_to_none),
         ('extra.', 'servername', validate_to_none),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'open-db2-discovery-service',
@@ -1452,7 +1540,7 @@ scan_ddos_middlebox = {
     },
 }
 
-# http://dnsscan.shadowserver.org
+# https://www.shadowserver.org/what-we-do/network-reporting/dns-open-resolvers-report/
 scan_dns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1469,8 +1557,6 @@ scan_dns = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('os.name', 'p0f_genre'),
-        ('os.version', 'p0f_detail'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
@@ -1512,7 +1598,7 @@ scan_docker = {
         ('extra.', 'api_version', validate_to_none),
         ('extra.', 'arch', validate_to_none),
         ('extra.', 'go_version', validate_to_none),
-        ('extra.', 'os', validate_to_none),
+        ('extra.os.name', 'os', validate_to_none),
         ('extra.', 'kernel_version', validate_to_none),
         ('extra.', 'git_commit', validate_to_none),
         ('extra.', 'min_api_version', validate_to_none),
@@ -1570,6 +1656,8 @@ scan_dvr_dhcpdiscover = {
         ('extra.', 'ipv6_address', validate_to_none),
         ('extra.', 'ipv6_link_local', validate_to_none),
         ('extra.', 'ipv6_gateway', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -1586,8 +1674,6 @@ scan_elasticsearch = {
         ('source.port', 'port', convert_int),
     ],
     'optional_fields': [
-        ('extra.', 'ok', convert_bool),
-        ('extra.', 'status', convert_int),
         ('extra.', 'build_snapshot', convert_bool),
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
@@ -1599,8 +1685,10 @@ scan_elasticsearch = {
         ('source.geolocation.city', 'city'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'ok', convert_bool),
         ('extra.', 'name', validate_to_none),
         ('extra.', 'cluster_name', validate_to_none),
+        ('extra.', 'http_code', convert_int),
         ('extra.', 'build_hash', validate_to_none),
         ('extra.', 'build_timestamp', validate_to_none),
         ('extra.', 'lucene_version', validate_to_none),
@@ -1666,7 +1754,7 @@ scan_exchange = {
         ('extra.source.sector', 'sector', validate_to_none),
         ('extra.', 'version', validate_to_none),
         ('extra.', 'servername', validate_to_none),
-        ('extra.', 'url', validate_to_none),
+        ('destination.url', 'url', convert_http_host_and_url, True),
     ],
     'constant_fields': {
     },
@@ -1816,10 +1904,47 @@ scan_http = {
         ('extra.', 'http_date', convert_date),
     ],
     'constant_fields': {
+        'classification.identifier': 'accessible-http',
         'classification.taxonomy': 'other',
         'classification.type': 'other',
         'protocol.application': 'http',
-        'classification.identifier': 'open-http',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/open-http-proxy-report/
+scan_http_proxy = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.', 'http', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'connection', validate_to_none),
+        ('extra.', 'proxy_authenticate', validate_to_none),
+        ('extra.', 'via', validate_to_none),
+        ('extra.', 'server', validate_to_none),
+        ('extra.', 'content_length', convert_int),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+    ],
+    'constant_fields': {
+        'classification.identifier': 'open-http-proxy',
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'protocol.application': 'http',
     },
 }
 
@@ -1851,6 +1976,9 @@ scan_http_vulnerable = {
         ('extra.', 'content_length', convert_int),
         ('extra.', 'transfer_encoding', validate_to_none),
         ('extra.', 'http_date', convert_date),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'build_date', validate_to_none),
+        ('extra.', 'detail', validate_to_none),
     ],
     'constant_fields': {
         'classification.identifier': 'accessible-http',
@@ -1883,7 +2011,7 @@ scan_ics = {
         ('extra.', 'device_model', validate_to_none),
         ('extra.', 'device_version', validate_to_none),
         ('extra.', 'device_id', validate_to_none),
-        ('extra.', 'response_length', convert_int),
+        ('extra.', 'response_size', convert_int),
         ('extra.', 'raw_response', validate_to_none),
     ],
     'constant_fields': {
@@ -2100,7 +2228,7 @@ scan_kubernetes = {
         ('extra.', 'self_signed', convert_bool),
         ('extra.', 'cert_expired', convert_bool),
         ('extra.', 'validation_level', validate_to_none),
-        ('extra.', 'browser_trusted', validate_to_none),
+        ('extra.', 'browser_trusted', convert_bool),
         ('extra.', 'browser_error', validate_to_none),
         ('extra.', 'raw_cert', validate_to_none),
         ('extra.', 'raw_cert_chain', validate_to_none),
@@ -2153,6 +2281,7 @@ scan_ldap_tcp = {
         ('extra.', 'supported_ldap_policies', validate_to_none),
         ('extra.', 'supported_ldap_version', validate_to_none),
         ('extra.', 'supported_sasl_mechanisms', validate_to_none),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'open-ldap',
@@ -2162,7 +2291,7 @@ scan_ldap_tcp = {
     },
 }
 
-# https://www.shadowserver.org/what-we-do/network-reporting/open-ldap-tcp-report/
+# https://www.shadowserver.org/what-we-do/network-reporting/open-ldap-report/
 scan_ldap_udp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -2202,6 +2331,7 @@ scan_ldap_udp = {
         ('extra.', 'supported_ldap_policies', validate_to_none),
         ('extra.', 'supported_ldap_version', validate_to_none),
         ('extra.', 'supported_sasl_mechanisms', validate_to_none),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'open-ldap',
@@ -2281,6 +2411,8 @@ scan_memcached = {
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'time', validate_to_none),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -2315,7 +2447,7 @@ scan_mongodb = {
         ('extra.', 'javascriptengine', validate_to_none),
         ('extra.', 'bits', validate_to_none),
         ('extra.', 'maxbsonobjectsize', validate_to_none),
-        ('extra.', 'ok', validate_to_none),
+        ('extra.', 'ok', convert_bool),
         ('extra.', 'visible_databases', validate_to_none),
         ('extra.', 'sector', validate_to_none),
     ],
@@ -2484,7 +2616,7 @@ scan_mssql = {
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'instance_name', validate_to_none),
         ('extra.', 'named_pipe', validate_to_none),
-        ('extra.', 'response_length', convert_int),
+        ('extra.', 'response_size', convert_int),
         ('extra.', 'amplification', convert_float),
         ('extra.', 'sector', validate_to_none),
     ],
@@ -2588,7 +2720,7 @@ scan_mysql = {
         ('extra.', 'self_signed', convert_bool),
         ('extra.', 'cert_expired', convert_bool),
         ('extra.', 'validation_level', validate_to_none),
-        ('extra.', 'browser_trusted', validate_to_none),
+        ('extra.', 'browser_trusted', convert_bool),
         ('extra.', 'browser_error', validate_to_none),
         ('extra.', 'raw_cert', validate_to_none),
         ('extra.', 'raw_cert_chain', validate_to_none),
@@ -2620,9 +2752,11 @@ scan_nat_pmp = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'opcode', validate_to_none),
-        ('extra.', 'uptime', validate_to_none),
+        ('extra.', 'uptime', convert_int),
         ('extra.', 'external_ip', validate_to_none),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'open-natpmp',
@@ -2654,6 +2788,8 @@ scan_netbios = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'open-netbios-nameservice',
@@ -2681,6 +2817,8 @@ scan_netis_router = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'open-netis',
@@ -2733,6 +2871,8 @@ scan_ntp = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'ntp-version',
@@ -2761,6 +2901,7 @@ scan_ntpmonitor = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'ntp-monitor',
@@ -2791,6 +2932,8 @@ scan_portmapper = {
         ('extra.', 'mountd_port', validate_to_none),
         ('extra.', 'exports', validate_to_none),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -2878,7 +3021,7 @@ scan_postgres = {
         ('extra.', 'self_signed', convert_bool),
         ('extra.', 'cert_expired', convert_bool),
         ('extra.', 'validation_level', validate_to_none),
-        ('extra.', 'browser_trusted', validate_to_none),
+        ('extra.', 'browser_trusted', convert_bool),
         ('extra.', 'browser_error', validate_to_none),
         ('extra.', 'raw_cert', validate_to_none),
         ('extra.', 'raw_cert_chain', validate_to_none),
@@ -2910,6 +3053,8 @@ scan_qotd = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -3039,6 +3184,8 @@ scan_rdpeudp = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sessionid', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'accessible-msrdpeudp',
@@ -3055,7 +3202,6 @@ scan_redis = {
         ('source.port', 'port', convert_int),
     ],
     'optional_fields': [
-        ('extra.os.name', 'os', validate_to_none),
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
         ('extra.', 'tag', validate_to_none),
@@ -3070,12 +3216,13 @@ scan_redis = {
         ('extra.', 'git_dirty_flag', validate_to_none),
         ('extra.', 'build_id', validate_to_none),
         ('extra.', 'mode', validate_to_none),
+        ('extra.os.name', 'os', validate_to_none),
         ('extra.', 'architecture', validate_to_none),
         ('extra.', 'multiplexing_api', validate_to_none),
         ('extra.', 'gcc_version', validate_to_none),
         ('extra.', 'process_id', validate_to_none),
         ('extra.', 'run_id', validate_to_none),
-        ('extra.', 'uptime', validate_to_none),
+        ('extra.', 'uptime', convert_int),
         ('extra.', 'connected_clients', validate_to_none),
         ('extra.', 'sector', validate_to_none),
     ],
@@ -3095,7 +3242,6 @@ scan_rsync = {
         ('source.port', 'port', convert_int),
     ],
     'optional_fields': [
-        ('extra.', 'password', convert_bool),
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
         ('extra.', 'tag', validate_to_none),
@@ -3107,12 +3253,92 @@ scan_rsync = {
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'module', validate_to_none),
         ('extra.', 'motd', validate_to_none),
+        ('extra.', 'has_password', validate_to_none),
     ],
     'constant_fields': {
         'classification.identifier': 'accessible-rsync',
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable-system',
         'protocol.application': 'rsync',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-sip-report/
+scan_sip = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'sip', validate_to_none),
+        ('extra.', 'sip_code', validate_to_none),
+        ('extra.', 'sip_reason', validate_to_none),
+        ('user_agent', 'user_agent', validate_to_none),
+        ('extra.', 'sip_via', validate_to_none),
+        ('extra.', 'sip_to', validate_to_none),
+        ('extra.', 'sip_from', validate_to_none),
+        ('extra.', 'content_length', convert_int),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.sip_server', 'server', validate_to_none),
+        ('extra.sip_contact', 'contact', validate_to_none),
+        ('extra.sip_cseq', 'cseq', validate_to_none),
+        ('extra.sip_call_id', 'call_id', validate_to_none),
+        ('extra.sip_allow', 'allow', validate_to_none),
+        ('extra.', 'amplification', convert_float),
+        ('extra.', 'response_size', convert_int),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'protocol.application': 'sip',
+        'classification.identifier': 'open-sip',
+    },
+}
+
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-slp-service-report/
+scan_slp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'function', validate_to_none),
+        ('extra.', 'function_text', validate_to_none),
+        ('extra.', 'flags', validate_to_none),
+        ('extra.', 'next_extension_offset', validate_to_none),
+        ('extra.', 'xid', validate_to_none),
+        ('extra.', 'language_tag_length', validate_to_none),
+        ('extra.', 'language_tag', validate_to_none),
+        ('extra.', 'error_code', validate_to_none),
+        ('extra.', 'error_code_text', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'raw_response', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'protocol.application': 'slp',
+        'classification.identifier': 'open-slp',
     },
 }
 
@@ -3204,7 +3430,7 @@ scan_smtp_vulnerable = {
     },
 }
 
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SNMP
+# https://www.shadowserver.org/what-we-do/network-reporting/open-snmp-report/
 scan_snmp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -3212,7 +3438,6 @@ scan_snmp = {
         ('source.port', 'port', convert_int),
     ],
     'optional_fields': [
-        ('extra.', 'version', convert_int),
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
         ('extra.', 'sysdesc', validate_to_none),
@@ -3221,6 +3446,7 @@ scan_snmp = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('extra.', 'version', validate_to_none),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
@@ -3231,6 +3457,8 @@ scan_snmp = {
         ('extra.', 'device_sector', validate_to_none),
         ('extra.', 'tag', validate_to_none),
         ('extra.', 'community', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -3300,6 +3528,8 @@ scan_ssdp = {
         ('extra.', 'version', validate_to_none),
         ('extra.', 'updated_at', validate_to_none),
         ('extra.', 'resource_identifier', validate_to_none),
+        ('extra.', 'amplification', convert_float),
+        ('extra.', 'response_size', convert_int),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -3422,7 +3652,7 @@ scan_ssl = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('extra.', 'cipher_suite', validate_to_none),
-        ('extra.', 'ssl_poodle', validate_to_none),
+        ('extra.', 'ssl_poodle', convert_bool),
         ('extra.', 'cert_length', convert_int),
         ('extra.', 'subject_common_name', validate_to_none),
         ('extra.', 'issuer_common_name', validate_to_none),
@@ -3459,7 +3689,7 @@ scan_ssl = {
         ('extra.', 'issuer_serial_number', validate_to_none),
         ('extra.source.naics', 'naics', invalidate_zero),
         ('extra.source.sic', 'sic', invalidate_zero),
-        ('extra.', 'freak_vulnerable', validate_to_none),
+        ('extra.', 'freak_vulnerable', convert_bool),
         ('extra.', 'freak_cipher_suite', validate_to_none),
         ('extra.source.sector', 'sector', validate_to_none),
         ('extra.', 'sha256_fingerprint', validate_to_none),
@@ -3479,7 +3709,7 @@ scan_ssl = {
         ('extra.', 'cert_valid', convert_bool),
         ('extra.', 'self_signed', convert_bool),
         ('extra.', 'cert_expired', convert_bool),
-        ('extra.', 'browser_trusted', validate_to_none),
+        ('extra.', 'browser_trusted', convert_bool),
         ('extra.', 'validation_level', validate_to_none),
         ('extra.', 'browser_error', validate_to_none),
         ('extra.', 'tlsv13_support', validate_to_none),
@@ -3502,8 +3732,6 @@ scan_ssl_freak = {
         ('source.port', 'port', convert_int),
     ],
     'optional_fields': [
-        ('extra.', 'freak_vulnerable', convert_bool),
-        ('extra.', 'browser_trusted', convert_bool),
         ('source.reverse_dns', 'hostname'),
         ('extra.', 'tag', validate_to_none),
         ('extra.', 'handshake', validate_to_none),
@@ -3547,6 +3775,7 @@ scan_ssl_freak = {
         ('extra.', 'issuer_serial_number', validate_to_none),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'freak_vulnerable', convert_bool),
         ('extra.', 'freak_cipher_suite', validate_to_none),
         ('extra.', 'sector', validate_to_none),
         ('extra.', 'sha256_fingerprint', validate_to_none),
@@ -3566,6 +3795,7 @@ scan_ssl_freak = {
         ('extra.', 'cert_valid', convert_bool),
         ('extra.', 'self_signed', convert_bool),
         ('extra.', 'cert_expired', convert_bool),
+        ('extra.', 'browser_trusted', convert_bool),
         ('extra.', 'validation_level', validate_to_none),
         ('extra.', 'browser_error', validate_to_none),
         ('extra.', 'tlsv13_support', validate_to_none),
@@ -3596,8 +3826,6 @@ scan_ssl_poodle = {
         ('source.port', 'port', convert_int),
     ],
     'optional_fields': [
-        ('extra.', 'ssl_poodle', convert_bool),
-        ('extra.', 'browser_trusted', convert_bool),
         ('source.reverse_dns', 'hostname'),
         ('extra.', 'tag', validate_to_none),
         ('extra.', 'handshake', validate_to_none),
@@ -3606,6 +3834,7 @@ scan_ssl_poodle = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('extra.', 'cipher_suite', validate_to_none),
+        ('extra.', 'ssl_poodle', convert_bool),
         ('extra.', 'cert_length', convert_int),
         ('extra.', 'subject_common_name', validate_to_none),
         ('extra.', 'issuer_common_name', validate_to_none),
@@ -3660,6 +3889,7 @@ scan_ssl_poodle = {
         ('extra.', 'cert_valid', convert_bool),
         ('extra.', 'self_signed', convert_bool),
         ('extra.', 'cert_expired', convert_bool),
+        ('extra.', 'browser_trusted', convert_bool),
         ('extra.', 'validation_level', validate_to_none),
         ('extra.', 'browser_error', validate_to_none),
         ('extra.', 'tlsv13_support', validate_to_none),
@@ -3713,6 +3943,7 @@ scan_stun = {
         ('extra.', 'software', validate_to_none),
         ('extra.', 'fingerprint', validate_to_none),
         ('extra.', 'amplification', convert_float),
+        ('extra.', 'response_size', convert_int),
     ],
     'constant_fields': {
         'classification.taxonomy': 'other',
@@ -3803,6 +4034,7 @@ scan_tftp = {
         ('extra.', 'error', validate_to_none),
         ('extra.', 'errormessage', validate_to_none),
         ('extra.', 'size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -3836,6 +4068,7 @@ scan_ubiquiti = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'essid', validate_to_none),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.identifier': 'accessible-ubiquiti-discovery-service',
@@ -3872,6 +4105,37 @@ scan_vnc = {
     },
 }
 
+# https://www.shadowserver.org/what-we-do/network-reporting/accessible-ws-discovery-service-report/
+scan_ws_discovery = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip', validate_ip),
+        ('source.port', 'port', convert_int),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'tag', validate_to_none),
+        ('source.asn', 'asn', invalidate_zero),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.source.naics', 'naics', invalidate_zero),
+        ('extra.source.sic', 'sic', invalidate_zero),
+        ('extra.source.sector', 'sector', validate_to_none),
+        ('extra.', 'response_size', convert_int),
+        ('extra.', 'amplification', convert_float),
+        ('extra.', 'error', validate_to_none),
+        ('extra.', 'raw_response', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable-system',
+        'protocol.application': 'ws-discovery',
+        'classification.identifier': 'open-ws-discovery',
+    },
+}
+
 # https://www.shadowserver.org/what-we-do/network-reporting/accessible-xdmcp-service-report/
 scan_xdmcp = {
     'required_fields': [
@@ -3893,6 +4157,7 @@ scan_xdmcp = {
         ('extra.', 'reported_hostname', validate_to_none),
         ('extra.', 'status', validate_to_none),
         ('extra.', 'size', convert_int),
+        ('extra.', 'amplification', convert_float),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -3910,7 +4175,7 @@ spam_url = {
     ],
     'optional_fields': [
         ('source.url', 'url', convert_http_host_and_url, True),
-        ('source.fqdn', 'http_host', validate_fqdn),
+        ('source.fqdn', 'host', validate_fqdn),
         ('source.asn', 'asn', invalidate_zero),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -3947,6 +4212,7 @@ special = {
         ('malware.name', 'tag'),
         ('extra.', 'public_source', validate_to_none),
         ('extra.', 'status', validate_to_none),
+        ('extra.', 'detail', validate_to_none),
         ('extra.', 'method', validate_to_none),
         ('extra.', 'device_vendor', validate_to_none),
     ],
@@ -3962,7 +4228,8 @@ mapping = (
     ('Blocklist', 'blocklist', blocklist),
     ('Compromised-Website', 'compromised_website', compromised_website),
     ('Device-Identification IPv4', 'device_id', device_id),
-    ('Device-Identification IPv6', 'device_id6', device_id6),
+    ('Device-Identification IPv6', 'device_id6', device_id),
+    ('DDoS-Participant', 'event4_ddos_participant', event_ddos_participant),
     ('Honeypot-Brute-Force-Events', 'event4_honeypot_brute_force', event_honeypot_brute_force),
     ('Honeypot-Darknet', 'event4_honeypot_darknet', event_honeypot_darknet),
     ('Honeypot-DDoS', 'event4_honeypot_ddos', event_honeypot_ddos),
@@ -3982,14 +4249,20 @@ mapping = (
     ('Sinkhole-Events-HTTP-Referer IPv6', 'event6_sinkhole_http_referer', event_sinkhole_http_referer),
     ('Malware-URL', 'malware_url', malware_url),
     ('Phish-URL', 'phish_url', phish_url),
+    ('IPv6-Accessible-HTTP-Proxy', 'population6_http_proxy', population_http_proxy),
+    ('Accessible-HTTP-Proxy', 'population_http_proxy', population_http_proxy),
     ('Sandbox-Connections', 'sandbox_conn', sandbox_conn),
     ('Sandbox-DNS', 'sandbox_dns', sandbox_dns),
     ('Sandbox-URL', 'sandbox_url', sandbox_url),
     ('IPv6-Accessible-CWMP', 'scan6_cwmp', scan_cwmp),
+    ('IPv6-DNS-Open-Resolvers', 'scan6_dns', scan_dns),
+    ('IPv6-Vulnerable-Exchange', 'scan6_exchange', scan_exchange),
     ('IPv6-Accessible-FTP', 'scan6_ftp', scan_ftp),
     ('IPv6-Accessible-HTTP', 'scan6_http', scan_http),
+    ('IPv6-Open-HTTP-Proxy', 'scan6_http_proxy', scan_http_proxy),
     ('IPv6-Vulnerable-HTTP', 'scan6_http_vulnerable', scan_http_vulnerable),
     ('IPv6-Open-IPP', 'scan6_ipp', scan_ipp),
+    ('IPv6-Open-LDAP-TCP', 'scan6_ldap_tcp', scan_ldap_tcp),
     ('IPv6-Open-MQTT', 'scan6_mqtt', scan_mqtt),
     ('IPv6-Open-Anonymous-MQTT', 'scan6_mqtt_anon', scan_mqtt_anon),
     ('IPv6-Accessible-MySQL', 'scan6_mysql', scan_mysql),
@@ -3997,6 +4270,7 @@ mapping = (
     ('IPv6-NTP-Monitor', 'scan6_ntpmonitor', scan_ntpmonitor),
     ('IPv6-Accessible-PostgreSQL', 'scan6_postgres', scan_postgres),
     ('IPv6-Accessible-RDP', 'scan6_rdp', scan_rdp),
+    ('IPv6-Accessible-SLP', 'scan6_slp', scan_slp),
     ('IPv6-Accessible-SMB', 'scan6_smb', scan_smb),
     ('IPv6-Accessible-SMTP', 'scan6_smtp', scan_smtp),
     ('IPv6-Vulnerable-SMTP', 'scan6_smtp_vulnerable', scan_smtp_vulnerable),
@@ -4028,6 +4302,7 @@ mapping = (
     ('Accessible-FTP', 'scan_ftp', scan_ftp),
     ('Accessible-Hadoop', 'scan_hadoop', scan_hadoop),
     ('Accessible-HTTP', 'scan_http', scan_http),
+    ('Open-HTTP-Proxy', 'scan_http_proxy', scan_http_proxy),
     ('Vulnerable-HTTP', 'scan_http_vulnerable', scan_http_vulnerable),
     ('Accessible-ICS', 'scan_ics', scan_ics),
     ('Open-IPMI', 'scan_ipmi', scan_ipmi),
@@ -4057,6 +4332,8 @@ mapping = (
     ('Accessible-MS-RDPEUDP', 'scan_rdpeudp', scan_rdpeudp),
     ('Open-Redis', 'scan_redis', scan_redis),
     ('Accessible-Rsync', 'scan_rsync', scan_rsync),
+    ('Accessible-SIP', 'scan_sip', scan_sip),
+    ('Accessible-SLP', 'scan_slp', scan_slp),
     ('Accessible-SMB', 'scan_smb', scan_smb),
     ('Accessible-SMTP', 'scan_smtp', scan_smtp),
     ('Vulnerable-SMTP', 'scan_smtp_vulnerable', scan_smtp_vulnerable),
@@ -4073,6 +4350,7 @@ mapping = (
     ('Open-TFTP', 'scan_tftp', scan_tftp),
     ('Accessible-Ubiquiti-Discovery-Service', 'scan_ubiquiti', scan_ubiquiti),
     ('Accessible-VNC', 'scan_vnc', scan_vnc),
+    ('Accessible-WS-Discovery-Service', 'scan_ws_discovery', scan_ws_discovery),
     ('Open-XDMCP', 'scan_xdmcp', scan_xdmcp),
     ('Spam-URL', 'spam_url', spam_url),
     ('Special', 'special', special),

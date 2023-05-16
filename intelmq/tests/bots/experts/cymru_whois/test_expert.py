@@ -42,7 +42,7 @@ EMPTY_INPUT = {"__type": "Event",
                "time.observation": "2015-01-01T00:00:00+00:00",
                }
 EXAMPLE_6TO4_INPUT = {"__type": "Event",
-                 "source.ip": "2002:3ee0:3972:0001::1",
+                 "source.ip": "2a01:190:160a::3",
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 OVERWRITE_OUT = {"__type": "Event",
@@ -62,7 +62,7 @@ OVERWRITE_OUT = {"__type": "Event",
 @test.skip_ci()
 class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for AbusixExpertBot.
+    A TestCase for CymruExpertBot.
     """
 
     @classmethod
@@ -94,7 +94,7 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EXAMPLE_6TO4_INPUT
         self.run_bot()
         actual = json.loads(self.get_output_queue()[0])
-        self.assertDictContainsSubset(EXAMPLE_6TO4_INPUT, actual)
+        self.assertTrue(set(EXAMPLE_6TO4_INPUT.items()) <= set(actual.items()))
         self.assertIn("source.asn", actual)
         self.assertIn("source.as_name", actual)
         self.assertIn("source.network", actual)

@@ -26,17 +26,16 @@ The following installation methods are available:
 Base Requirements
 -----------------
 
-The following instructions assume the following requirements. Python versions >= 3.6 are supported.
+The following instructions assume the following requirements. Python versions >= 3.7 are supported.
 
 Supported and recommended operating systems are:
 
-* CentOS 7 and 8
 * Debian 10 Buster and 11 Bullseye
-* openSUSE Leap 15.3, 15.4 and Tumbleweed
-* Ubuntu: 18.04, 20.04
+* openSUSE Tumbleweed
+* Ubuntu: 20.04 focal
 * For the Docker-installation: Docker Engine: 18.x and higher
 
-Other distributions which are (most probably) supported include AlmaLinux, Fedora, FreeBSD 12, RHEL and RockyLinux.
+Other distributions which are (most probably) supported include AlmaLinux, CentOS, Fedora, FreeBSD 12, RHEL and RockyLinux.
 
 A short guide on hardware requirements can be found on the page :doc:`hardware-requirements`.
 
@@ -46,16 +45,9 @@ Native deb/rpm packages
 
 These are the operating systems which are currently supported by packages:
 
-* **CentOS 7** (run ``yum install epel-release`` first)
-* **CentOS 8** (run ``dnf install epel-release`` first)
 * **Debian 10** Buster
 * **Debian 11** Bullseye
-* **Fedora 34**
-* **openSUSE Leap 15.2**
-* **openSUSE Leap 15.3** (make sure the ``openSUSE:Backports:SLE-15-SP3`` repository is enabled)
-* **openSUSE Leap 15.4**
 * **openSUSE Tumbleweed**
-* **Ubuntu 18.04** Bionic Beaver (enable the universe repositories by appending ``universe`` in ``/etc/apt/sources.list`` to ``deb http://[...].archive.ubuntu.com/ubuntu/ bionic main`` first)
 * **Ubuntu 20.04** Focal Fossa (enable the universe repositories by appending ``universe`` in ``/etc/apt/sources.list`` to ``deb http://[...].archive.ubuntu.com/ubuntu/ focal main`` first)
 
 Get the installation instructions for your operating system here: `Installation Native Packages <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq>`_.
@@ -119,17 +111,23 @@ CentOS 7 / RHEL 7:
 .. code-block:: bash
 
    yum install epel-release
-   yum install python36 python36-dns python36-pytz python36-requests python3-setuptools redis bash-completion jq
+   yum install python36 python36-dns python36-requests python3-setuptools redis bash-completion jq
    yum install gcc gcc-c++ python36-devel
    # optional dependencies
    yum install python3-psycopg2
+
+.. note::
+
+   We no longer support already end-of-life Python 3.6, which is the last Python version officially
+   packaged for CentOS Linux 7. You can either use alternative Python source, or stay on the IntelMQ
+   3.0.2.
 
 CentOS 8:
 
 .. code-block:: bash
 
     dnf install epel-release
-    dnf install python3-dateutil python3-dns python3-pip python3-psutil python3-pytz python3-redis python3-requests redis bash-completion jq
+    dnf install python3-dateutil python3-dns python3-pip python3-psutil python3-redis python3-requests redis bash-completion jq
     # optional dependencies
     dnf install python3-psycopg2 python3-pymongo
 
@@ -137,7 +135,7 @@ openSUSE:
 
 .. code-block:: bash
 
-   zypper install python3-dateutil python3-dnspython python3-psutil python3-pytz python3-redis python3-requests python3-python-termstyle redis bash-completion jq
+   zypper install python3-dateutil python3-dnspython python3-psutil python3-redis python3-requests python3-python-termstyle redis bash-completion jq
    # optional dependencies
    zypper in python3-psycopg2 python3-pymongo
 

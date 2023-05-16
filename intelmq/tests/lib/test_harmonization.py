@@ -13,7 +13,6 @@ import unittest
 
 import intelmq.lib.harmonization as harmonization
 import intelmq.lib.test as test
-import pytz
 
 
 class TestHarmonization(unittest.TestCase):
@@ -210,25 +209,13 @@ class TestHarmonization(unittest.TestCase):
                          harmonization.DateTime.from_epoch_millis(1441008970))
         self.assertEqual('2015-08-31T08:16:10+00:00',
                          harmonization.DateTime.from_epoch_millis("1441008970"))
-        self.assertEqual('2015-08-31T07:16:10-01:00',
-                         harmonization.DateTime.from_epoch_millis(144100897000,
-                                                                 'Etc/GMT+1'))
-        self.assertEqual('2015-08-31T04:16:10-04:00',
-                         harmonization.DateTime.from_epoch_millis(1441008970000,
-                                                                     'America/'
-                                                                     'Guyana'))
 
     def test_datetime_from_timestamp(self):
         """ Test DateTime.from_timestamp method. """
         self.assertEqual('2015-08-31T08:16:10+00:00',
                          harmonization.DateTime.from_timestamp(1441008970))
-        self.assertEqual('2015-08-31T07:16:10-01:00',
-                         harmonization.DateTime.from_timestamp(1441008970,
-                                                               'Etc/GMT+1'))
-        self.assertEqual('2015-08-31T04:16:10-04:00',
-                         harmonization.DateTime.from_timestamp(1441008970,
-                                                               'America/'
-                                                               'Guyana'))
+        self.assertEqual('2015-08-31T08:16:10+00:00',
+                         harmonization.DateTime.from_timestamp("1441008970"))
 
     def test_datetime_from_windows_nt(self):
         """ Test DateTime.from_ldap method. """
@@ -244,12 +231,6 @@ class TestHarmonization(unittest.TestCase):
                          harmonization.DateTime.sanitize(
                          '2016-07-19 13:08:38 UTC'))
 
-    def test_datetime_from_timestamp_invalid(self):
-        """ Test DateTime.from_timestamp method with invalid inputs. """
-        with self.assertRaises(TypeError):
-            harmonization.DateTime.from_timestamp('1441008970')
-
-    @unittest.skipIf(time.timezone != 0, 'Test only works with UTC')
     def test_datetime_convert(self):
         self.assertEqual('2019-07-01T15:15:15+00:00',
                          harmonization.DateTime.convert('15 15 15 07 01 2019',
@@ -267,7 +248,7 @@ class TestHarmonization(unittest.TestCase):
                          harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00+00:00'))
         self.assertEqual('2020-12-31T12:00:00.001+00:00',
                          harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00.001+00:00'))
-        self.assertEqual(datetime.datetime(year=2020, month=12, day=31, hour=12, tzinfo=pytz.utc),
+        self.assertEqual(datetime.datetime(year=2020, month=12, day=31, hour=12, tzinfo=datetime.timezone.utc),
                          harmonization.DateTime.parse_utc_isoformat('2020-12-31T12:00:00+00:00',
                                                                     return_datetime=True))
 

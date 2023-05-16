@@ -4,9 +4,7 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # -*- coding: utf-8 -*-
-import json
 import os
-import sys
 from pathlib import Path
 
 from setuptools import find_packages, setup
@@ -16,10 +14,14 @@ REQUIRES = [
     'psutil>=1.2.1',
     'python-dateutil>=2.5',
     'python-termstyle>=0.1.10',
-    'pytz>=2012c',
     'redis>=2.10',
     'requests>=2.2.0',
     'ruamel.yaml',
+]
+
+TESTS_REQUIRES = [
+    'Cerberus!=1.3.0',
+    'requests_mock',
 ]
 
 exec(open(os.path.join(os.path.dirname(__file__),
@@ -41,18 +43,12 @@ setup(
     version=__version__,  # noqa: F821
     maintainer='Sebastian Wagner',
     maintainer_email='intelmq-dev@lists.cert.at',
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     install_requires=REQUIRES,
-    tests_require=[
-        'Cerberus!=1.3',
-        'requests_mock',
-    ],
+    tests_require=TESTS_REQUIRES,
     test_suite='intelmq.tests',
     extras_require={
-        'development': [
-            'Cerberus',
-            'requests_mock',
-        ],
+        'development': TESTS_REQUIRES,
     },
     packages=find_packages(),
     include_package_data=True,
@@ -75,11 +71,11 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Security',
@@ -90,7 +86,6 @@ setup(
             'intelmqctl = intelmq.bin.intelmqctl:main',
             'intelmqdump = intelmq.bin.intelmqdump:main',
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
-            'intelmq.bots.experts.sieve.validator = intelmq.bots.experts.sieve.validator:main',
             'intelmqsetup = intelmq.bin.intelmqsetup:main',
         ] + BOTS,
     },

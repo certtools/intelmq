@@ -41,3 +41,6 @@ debian/intelmq.substvars
 debian/intelmq/
 /.pc/*
 /cover/
+
+# Misc
+.bashrc

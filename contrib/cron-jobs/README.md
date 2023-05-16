@@ -30,7 +30,7 @@ Otherwise `intelmqctl` can't find the executables' paths and check if they are r
 
 ### Notes
 
-* GeoLite2 City database is updated weekly, every Tuesday. No need to run the cron more often.
-([source](https://support.maxmind.com/geoip-faq/geoip2-and-geoip-legacy-database-updates/how-often-are-the-geoip2-and-geoip-legacy-databases-updated/))
+* GeoLite2 City database is updated twice a week, every Tuesday and Friday. No need to run the cron more often.
+([source](https://support.maxmind.com/hc/en-us/articles/4408216129947-Download-and-Update-Databases#h_01G3XX402XKD3J1CMWKNKMDYYZ))
 
 * ASN Lookup database is updated every two hours.

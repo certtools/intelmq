@@ -1,10 +1,10 @@
 ..
-   SPDX-FileCopyrightText: 2015-2021 Sebastian Wagner
+   SPDX-FileCopyrightText: 2015-2022 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 
-####
-Bots
-####
+##############
+Bots inventory
+##############
 
 .. contents::
 
@@ -15,8 +15,8 @@ General remarks
 By default all of the bots are started when you start the whole botnet, however there is a possibility to
 *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start
 and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your
-`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others
-described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check out
+``runtime.yaml``: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others
+described in this file). It is set outside of the `parameters` object in ``runtime.yaml``. Check out
 :doc:`configuration-management` for an example.
 
 There are two different types of parameters: The initialization parameters are need to start the bot. The runtime parameters are needed by the bot itself during runtime.
@@ -1016,6 +1016,18 @@ This list is not complete. Look at ``intelmqctl list bots`` or the list of parse
 
 TODO
 
+**Configuration Parameters**
+
+* `default_fields`: map of statically added fields to each event (only applied if parsing the event doesn't set the value)
+
+example usage:
+
+.. code-block:: yaml
+
+   defaults_fields:
+     classification.type: c2-server
+     protocol.transport: tcp
+
 
 .. _intelmq.bots.parsers.anubisnetworks.parser:
 
@@ -1114,7 +1126,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
    in the respective `source.url` fields. The value in the dictionary mapping is formatted whereas the columns are available with their index.
  * `"default_url_protocol"`: For URLs you can give a default protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
- * `"skip_header"`: Boolean, skip the first line of the file, optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
+ * `"skip_header"`: Boolean or Int, skip the first N lines of the file (True -> 1, False -> 0), optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
  * `time_format`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
  * `"data_type"`: sets the data of specific type, currently only `"json"` is supported value. An example
@@ -2897,7 +2909,7 @@ format:
        path 'other-path' // the message is sent to the given path
    }
 
-   if classification.type == ['phishing', 'malware-distribution'] && source.fqdn =~ '.*\.(ch|li)$' {
+   if classification.type :in ['phishing', 'malware-distribution'] && source.fqdn =~ '.*\.(ch|li)$' {
      add! comment = 'domainabuse'
      keep
    } elif classification.type == 'scanner' {
@@ -3353,11 +3365,47 @@ Example: Cut through a long domain with a dot. The string is truncated until the
 - ``max_length``: 20
 - Resulting value ``test.domain.com`` (length: 15 characters)
 
+.. _intelmq.bots.experts.url.expert:
+
+URL
+^^^
+
+This bot extracts additional information from `source.url` and `destination.url` fields. It can fill the following fields:
+
+* `source.fqdn`
+* `source.ip`
+* `source.port`
+* `source.urlpath`
+* `source.account`
+* `destination.fqdn`
+* `destination.ip`
+* `destination.port`
+* `destination.urlpath`
+* `destination.account`
+* `protocol.application`
+* `protocol.transport`
+
+**Information**
+
+* `name:` `intelmq.bots.experts.url.expert`
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` extract additional information from the URL
+
+**Configuration Parameters**
+
+* `overwrite`: boolean, replace existing fields?
+* `skip_fields`: list of fields to not extract from the URL
+
+
 
 .. _intelmq.bots.experts.url2fqdn.expert:
 
 Url2FQDN
 ^^^^^^^^
+
+This bot is deprecated and will be removed in version 4.0. Use 'URL Expert' bot instead.
 
 This bot extracts the Host from the `source.url` and `destination.url` fields and
 writes it to `source.fqdn` or `destination.fqdn` if it is a hostname, or
@@ -3553,6 +3601,48 @@ File example:
 xxx.xxx.xxx.xxx    Intel::ADDR    phishing    100    MISP XXX
 www.testdomain.com    Intel::DOMAIN    apt    85    CERT
 ```
+
+.. _intelmq.bots.outputs.cif3.output:
+
+CIF3 API
+^^^^^^^^
+
+**Information**
+
+* `name:` `intelmq.bots.outputs.cif3.output`
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Connect to a CIFv3 instance and add new indicator if not there already.
+
+The cifsdk library >= 3.0.0rc4,<4.0.0 is required, see
+`REQUIREMENTS.txt <https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/cif3/REQUIREMENTS.txt>`_.
+
+**Configuration Parameters**
+
+* **Feed parameters** (see above)
+* `add_feed_provider_as_tag`: boolean (use `false` when in doubt)
+* `cif3_additional_tags`: list of tags to set on submitted indicator(s)
+* `cif3_feed_confidence`: float, used when mapping a feed's confidence fails or
+      if static confidence param is true
+* `cif3_static_confidence`: bool, when true it always sends the `cif3_feed_confidence` value
+      as confidence rather than dynamically interpret feed value (use false when in doubt)
+* `cif3_token`: str, API key for accessing CIF
+* `cif3_url`: str, URL of the CIFv3 instance
+* `fireball`: int, used to batch events before submitting to a CIFv3 instance
+      (default is 500 per batch, use 0 to disable batch and send each event as received)
+* `http_verify_cert`: bool, used to tell whether the CIFv3 instance cert should be verified
+      (default true, but can be set to false if using a local test instance)
+
+By default, CIFv3 does an upsert check and will only insert entirely new indicators. Otherwise,
+upsert matches will have their count increased by 1. By default, the CIF3 output bot will batch indicators
+up to 500 at a time prior to doing a single bulk send. If the output bot doesn't receive a full 500
+indicators within 5 seconds of the first received indicator, it will send what it has so far.
+
+CIFv3 should be able to process indicators as fast as IntelMQ can
+send them.
+
+(More details can be found in the docstring of `output.py <https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/cif3/output.py>`_.
 
 .. _intelmq.bots.outputs.elasticsearch.output:
 

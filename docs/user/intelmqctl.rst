@@ -270,7 +270,7 @@ Manage the botnet
 -----------------
 
 In IntelMQ, the botnet is the set of all currently configured and enabled bots.
-All configured bots have their configuration in runtime.conf.
+All configured bots have their configuration in ``runtime.yaml``.
 By default, all bots are enabled. To disable a bot set `enabled` to `false`.
 Also see :doc:`bots` and :ref:`runtime-configuration`.
 
@@ -364,7 +364,7 @@ The same as reload of every bot.
 enable / disable
 ================
 
-The sub commands `enable` and `disable` set the corresponding flags in runtime.conf.
+The sub commands `enable` and `disable` set the corresponding flags in ``runtime.yaml``.
 
 .. code-block:: bash
 

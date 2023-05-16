@@ -1,29 +1,32 @@
-# SPDX-FileCopyrightText: 2018 SYNchroACK
+# SPDX-FileCopyrightText: 2018 SYNchroACK, 2018-2022 Sebastian Wagner
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
 providers:
   ViriBack:
-    Unsafe sites:
-      description: Latest detected unsafe sites.
-      additional_information: You need to install the lxml library in order to parse this feed.
+    C2 Tracker:
+      description: Latest detected C2 servers.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: http://tracker.viriback.com/
+            http_url: https://tracker.viriback.com/dump.php
             rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
         parser:
-          module: intelmq.bots.parsers.html_table.parser
+          module: intelmq.bots.parsers.generic.csv_parser
           parameters:
-            columns: ["malware.name", "source.url", "source.ip", "time.source"]
-            type: malware-distribution
-            time_format: from_format_midnight|%d-%m-%Y
-            html_parser: lxml
-      revision: 2018-06-27
+            skip_header: true
+            defaults_fields:
+              classification.type: malware-distribution
+            columns:
+              - malware.name
+              - source.url
+              - source.ip
+              - time.source
+      revision: 2022-11-15
       documentation: https://viriback.com/
       public: true
   WebInspektor:
@@ -168,24 +171,6 @@ providers:
       documentation: https://www.openphish.com/phishing_feeds.html
       public: false
   Netlab 360:
-    Mirai Scanner:
-      description: 'This feed provides IP addresses which actively scan for vulnerable
-        IoT devices and install Mirai Botnet.'
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://data.netlab.360.com/feeds/mirai-scanner/scanner.list
-            rate_limit: 86400
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.netlab_360.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://data.netlab.360.com/mirai-scanner/
-      public: true
     Magnitude EK:
       description: 'This feed lists FQDN and possibly the URL used by Magnitude Exploit
         Kit. Information also includes the IP address used for the domain and last
@@ -241,23 +226,22 @@ providers:
       documentation: https://data.netlab.360.com/hajime/
       public: true
   Abuse.ch:
-    Feodo Tracker IPs:
-      description: 'List of botnet Command&Control servers (C&Cs) tracked by Feodo Tracker,
-        associated with Dridex and Emotet (aka Heodo).'
+    Feodo Tracker:
+      description: 'List of botnet Command & Control servers (C&Cs) tracked by Feodo Tracker, associated with Dridex and Emotet (aka Heodo).'
       additional_information: https://feodotracker.abuse.ch/
         The data in the column Last Online is used for `time.source` if available, with 00:00 as time. Otherwise first seen is used as `time.source`.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://feodotracker.abuse.ch/downloads/ipblocklist.csv
+            http_url: https://feodotracker.abuse.ch/downloads/ipblocklist.json
             rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
         parser:
-          module: intelmq.bots.parsers.abusech.parser_ip
+          module: intelmq.bots.parsers.abusech.parser_feodotracker
           parameters:
-      revision: 2019-03-25
+      revision: 2022-11-15
       documentation: https://feodotracker.abuse.ch/
       public: true
     URLhaus:
@@ -294,27 +278,6 @@ providers:
               - source.geolocation.cc
       revision: 2020-07-07
       documentation: https://urlhaus.abuse.ch/feeds/
-      public: true
-    Feodo Tracker Browse:
-      description: ''
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://feodotracker.abuse.ch/browse
-            rate_limit: 86400
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.html_table.parser
-          parameters:
-            columns: "time.source,source.ip,malware.name,status,source.as_name,source.geolocation.cc"
-            ignore_values: ",,,,,"
-            skip_table_head: True
-            type: c2-server
-      revision: 2019-03-19
-      documentation: https://feodotracker.abuse.ch/browse
       public: true
   Blueliv:
     CrimeServer:
@@ -423,23 +386,6 @@ providers:
           parameters:
       revision: 2018-01-20
       documentation: https://www.team-cymru.com/bogon-reference-http.html
-      public: true
-  Taichung:
-    Netflow Recent:
-      description: "Abnormal flows detected: Attacking (DoS, Brute-Force, Scanners) and malicious hosts (C&C servers, hosting malware)"
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://www.tc.edu.tw/net/netflow/lkout/recent/
-            rate_limit: 3600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.taichung.parser
-      revision: 2018-01-20
-      documentation: https://www.tc.edu.tw/net/netflow/lkout/recent/
       public: true
   Dataplane:
     SSH Client Connection:
@@ -733,36 +679,37 @@ providers:
         PGP signature verification.
         
         PGP Public key:
-        ```
-        -----BEGIN PGP PUBLIC KEY BLOCK-----
-        Version: SKS 1.1.6
-        Comment: Hostname: pgp.mit.edu
         
-        mQINBFRl7D8BEADaRFoDa/+r27Gtqrdn8sZL4aSYTU4Q3gDr3TfigK8H26Un/Y79a/DUL1o0
-        o8SRae3uwVcjJDHZ6KDnxThbqF7URfpuCcCYxOs8p/eu3dSueqEGTODHWF4ChIh2japJDc4t
-        3FQHbIh2e3GHotVqJGhvxMmWqBFoZ/mlWvhjs99FFBZ87qbUNk7l1UAGEXeWeECgz9nGox40
-        3YpCgEsnJJsKC53y5LD/wBf4z+z0GsLg2GMRejmPRgrkSE/d9VjF/+niifAj2ZVFoINSVjjI
-        8wQFc8qLiExdzwLdgc+ggdzk5scY3ugI5IBt1zflxMIOG4BxKj/5IWsnhKMG2NLVGUYOODoG
-        pKhcY0gCHypw1bmkp2m+BDVyg4KM2fFPgQ554DAX3xdukMCzzZyBxR3UdT4dN7xRVhpph3Y2
-        Amh1E/dpde9uwKFk1oRHkRZ3UT1XtpbXtFNY0wCiGXPt6KznJAJcomYFkeLHjJo3nMK0hISV
-        GSNetVLfNWlTkeo93E1innbSaDEN70H4jPivjdVjSrLtIGfr2IudUJI84dGmvMxssWuM2qdg
-        FSzoTHw9UE9KT3SltKPS+F7u9x3h1J492YaVDncATRjPZUBDhbvo6Pcezhup7XTnI3gbRQc2
-        oEUDb933nwuobHm3VsUcf9686v6j8TYehsbjk+zdA4BoS/IdCwARAQABtC5UdXJyaXMgR3Jl
-        eWxpc3QgR2VuZXJhdG9yIDxncmV5bGlzdEB0dXJyaXMuY3o+iQI4BBMBAgAiBQJUZew/AhsD
-        BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDAQrU3EIdmZoH4D/9Jo6j9RZxCAPTaQ9WZ
-        WOdb1Eqd/206bObEX+xJAago+8vuy+waatHYBM9/+yxh0SIg2g5whd6J7A++7ePpt5XzX6hq
-        bzdG8qGtsCRu+CpDJ40UwHep79Ck6O/A9KbZcZW1z/DhbYT3z/ZVWALy4RtgmyC67Vr+j/C7
-        KNQ529bs3kP9AzvEIeBC4wdKl8dUSuZIPFbgf565zRNKLtHVgVhiuDPcxKmBEl4/PLYF30a9
-        5Tgp8/PNa2qp1DV/EZjcsxvSRIZB3InGBvdKdSzvs4N/wLnKWedj1GGm7tJhSkJa4MLBSOIx
-        yamhTS/3A5Cd1qoDhLkp7DGVXSdgEtpoZDC0jR7nTS6pXojcgQaF7SfJ3cjZaLI5rjsx0YLk
-        G4PzonQKCAAQG1G9haCDniD8NrrkZ3eFiafoKEECRFETIG0BJHjPdSWcK9jtNCupBYb7JCiz
-        Q0hwLh2wrw/wCutQezD8XfsBFFIQC18TsJAVgdHLZnGYkd5dIbV/1scOcm52w6EGIeMBBYlB
-        J2+JNukH5sJDA6zAXNl2I1H1eZsP4+FSNIfB6LdovHVPAjn7qXCw3+IonnQK8+g8YJkbbhKJ
-        sPejfg+ndpe5u0zX+GvQCFBFu03muANA0Y/OOeGIQwU93d/akN0P1SRfq+bDXnkRIJQOD6XV
-        0ZPKVXlNOjy/z2iN2A==
-        =wjkM
-        -----END PGP PUBLIC KEY BLOCK-----
-        ```
+        .. code-block::
+        
+           -----BEGIN PGP PUBLIC KEY BLOCK-----
+           Version: SKS 1.1.6
+           Comment: Hostname: pgp.mit.edu
+           
+           mQINBFRl7D8BEADaRFoDa/+r27Gtqrdn8sZL4aSYTU4Q3gDr3TfigK8H26Un/Y79a/DUL1o0
+           o8SRae3uwVcjJDHZ6KDnxThbqF7URfpuCcCYxOs8p/eu3dSueqEGTODHWF4ChIh2japJDc4t
+           3FQHbIh2e3GHotVqJGhvxMmWqBFoZ/mlWvhjs99FFBZ87qbUNk7l1UAGEXeWeECgz9nGox40
+           3YpCgEsnJJsKC53y5LD/wBf4z+z0GsLg2GMRejmPRgrkSE/d9VjF/+niifAj2ZVFoINSVjjI
+           8wQFc8qLiExdzwLdgc+ggdzk5scY3ugI5IBt1zflxMIOG4BxKj/5IWsnhKMG2NLVGUYOODoG
+           pKhcY0gCHypw1bmkp2m+BDVyg4KM2fFPgQ554DAX3xdukMCzzZyBxR3UdT4dN7xRVhpph3Y2
+           Amh1E/dpde9uwKFk1oRHkRZ3UT1XtpbXtFNY0wCiGXPt6KznJAJcomYFkeLHjJo3nMK0hISV
+           GSNetVLfNWlTkeo93E1innbSaDEN70H4jPivjdVjSrLtIGfr2IudUJI84dGmvMxssWuM2qdg
+           FSzoTHw9UE9KT3SltKPS+F7u9x3h1J492YaVDncATRjPZUBDhbvo6Pcezhup7XTnI3gbRQc2
+           oEUDb933nwuobHm3VsUcf9686v6j8TYehsbjk+zdA4BoS/IdCwARAQABtC5UdXJyaXMgR3Jl
+           eWxpc3QgR2VuZXJhdG9yIDxncmV5bGlzdEB0dXJyaXMuY3o+iQI4BBMBAgAiBQJUZew/AhsD
+           BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDAQrU3EIdmZoH4D/9Jo6j9RZxCAPTaQ9WZ
+           WOdb1Eqd/206bObEX+xJAago+8vuy+waatHYBM9/+yxh0SIg2g5whd6J7A++7ePpt5XzX6hq
+           bzdG8qGtsCRu+CpDJ40UwHep79Ck6O/A9KbZcZW1z/DhbYT3z/ZVWALy4RtgmyC67Vr+j/C7
+           KNQ529bs3kP9AzvEIeBC4wdKl8dUSuZIPFbgf565zRNKLtHVgVhiuDPcxKmBEl4/PLYF30a9
+           5Tgp8/PNa2qp1DV/EZjcsxvSRIZB3InGBvdKdSzvs4N/wLnKWedj1GGm7tJhSkJa4MLBSOIx
+           yamhTS/3A5Cd1qoDhLkp7DGVXSdgEtpoZDC0jR7nTS6pXojcgQaF7SfJ3cjZaLI5rjsx0YLk
+           G4PzonQKCAAQG1G9haCDniD8NrrkZ3eFiafoKEECRFETIG0BJHjPdSWcK9jtNCupBYb7JCiz
+           Q0hwLh2wrw/wCutQezD8XfsBFFIQC18TsJAVgdHLZnGYkd5dIbV/1scOcm52w6EGIeMBBYlB
+           J2+JNukH5sJDA6zAXNl2I1H1eZsP4+FSNIfB6LdovHVPAjn7qXCw3+IonnQK8+g8YJkbbhKJ
+           sPejfg+ndpe5u0zX+GvQCFBFu03muANA0Y/OOeGIQwU93d/akN0P1SRfq+bDXnkRIJQOD6XV
+           0ZPKVXlNOjy/z2iN2A==
+           =wjkM
+           -----END PGP PUBLIC KEY BLOCK-----
       additional_information:
       bots:
         collector:
@@ -773,7 +720,7 @@ providers:
             provider: __PROVIDER__
             rate_limit: 43200
             signature_url: https://www.turris.cz/greylist-data/greylist-latest.csv.asc
-            verify_pgp_signatures: false
+            verify_pgp_signatures: true
         parser:
           module: intelmq.bots.parsers.turris.parser
           parameters:
@@ -796,7 +743,8 @@ providers:
         parser:
           module: intelmq.bots.parsers.generic.parser_csv
           parameters:
-            type: "{depends on a collection}"
+            defaults_fields:
+              classification.type: "{depends on a collection}"
             delimiter: 'false'
             columns: "{depends on a collection}"
       revision: 2018-01-20
@@ -923,19 +871,20 @@ providers:
     Online:
       description: PhishTank is a collaborative clearing house for data and information
         about phishing on the Internet.
-      additional_information:
+      additional_information: Updated hourly as per the documentation. Download is possible without API key, but limited to few downloads per day.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://data.phishtank.com/data/{{ your API key }}/online-valid.csv
-            rate_limit: 28800
+            http_url: https://data.phishtank.com/data/{{ your API key }}/online-valid.json.gz
+            extract_files: true
+            rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.phishtank.parser
           parameters:
-      revision: 2018-01-20
+      revision: 2022-11-21
       documentation: https://www.phishtank.com/developer_info.php
       public: false
   CINS Army:
@@ -1193,7 +1142,8 @@ providers:
               - destination.port
               - destination.fqdn
               - protocol.transport
-            type: infected-system
+            defaults_fields:
+              classification.type: infected-system
       revision: 2020-08-20
       documentation:
       public: false
@@ -1427,30 +1377,10 @@ providers:
             compose_fields: {"source.url": "http://{0}{1}"}
             skip_header: true
             delimiter: ","
-            type: malware-distribution
+            defaults_fields:
+              classification.type: malware-distribution
       revision: 2020-07-08
       documentation: http://security-research.dyndns.org/pub/malware-feeds/
-      public: true
-  DShield:
-    Suspicious Domains:
-      description: There are many suspicious domains on the internet. In an effort
-        to identify them, as well as false positives, we have assembled weighted lists
-        based on tracking and malware lists from different sources. ISC is collecting
-        and categorizing various lists associated with a certain level of sensitivity.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://www.dshield.org/feeds/suspiciousdomains_High.txt
-            rate_limit: 86400
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.dshield.parser_domain
-          parameters:
-      revision: 2018-01-20
-      documentation: https://www.dshield.org/reports.html
       public: true
     Block:
       description: This list summarizes the top 20 attacking class C (/24) subnets
@@ -1778,7 +1708,8 @@ providers:
             columns: ["time.source", "source.url", "source.ip", "malware.name", "__IGNORE__"]
             skip_table_head: true
             default_url_protocol: http://
-            type: c2-server
+            defaults_fields:
+              classification.type: c2-server
       revision: 2019-03-19
       documentation: https://cybercrime-tracker.net/index.php
       public: true
@@ -1800,7 +1731,8 @@ providers:
             columns: ["source.ip|source.url", "time.source"]
             skip_table_head: true
             default_url_protocol: http://
-            type: malware-distribution
+            defaults_fields:
+              classification.type: malware-distribution
       revision: 2019-04-02
       documentation: https://precisionsec.com/threat-intelligence-feeds/agent-tesla/
       public: true
@@ -1975,7 +1907,7 @@ providers:
     Malware Panels Tracker:
       description: "Benkow Panels tracker is a list of fresh panel from various malware. The feed is available on the webpage: http://benkow.cc/passwords.php"
       public: true
-      revision: 2021-06-21
+      revision: 2022-11-16
       additional_information:
       bots:
         collector:
@@ -1987,14 +1919,15 @@ providers:
         parser:
           module: intelmq.bots.parsers.generic.parser_csv
           parameters:
-            type: c2-server
+            defaults_fields:
+              classification.type: c2-server
             delimiter: ";"
             skip_header: True
             columns:
               - __IGNORE__
               - malware.name
-              - destination.url
-              - destination.fqdn|destination.ip
+              - source.url
+              - source.fqdn|source.ip
               - time.source
             columns_required:
               - false

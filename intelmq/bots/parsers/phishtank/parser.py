@@ -1,58 +1,63 @@
-# SPDX-FileCopyrightText: 2014 Tomás Lima
+# SPDX-FileCopyrightText: 2022 Filip Pokorný
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-# -*- coding: utf-8 -*-
-import csv
-import io
 
-from intelmq.lib import utils
+import dateutil.parser
+
 from intelmq.lib.bot import ParserBot
 
 
 class PhishTankParserBot(ParserBot):
-    """Parse the PhishTank feed"""
+    """
+    Parse the PhishTank feed (json)
+    List of source fields:
+    [
+        'phish_id',
+        'url',
+        'phish_detail_url',
+        'submission_time',
+        'verified',
+        'verification_time',
+        'online',
+        'target',
+        'details'
+    ]
+    """
 
-    def process(self):
-        report = self.receive_message()
+    parse = ParserBot.parse_json
+    recover_line = ParserBot.recover_line_json
 
-        columns = ["__IGNORE__",
-                   "source.url",
-                   "event_description.url",
-                   "time.source",
-                   "__IGNORE__",
-                   "__IGNORE__",
-                   "__IGNORE__",
-                   "event_description.target"
-                   ]
+    def parse_line(self, line, report):
 
-        raw_report = utils.base64_decode(report.get("raw"))
-        raw_report = raw_report.translate({0: None})
-        for row in csv.reader(io.StringIO(raw_report)):
+        event = self.new_event(report)
 
-            if not len(row):  # csv module can give empty lists
-                self.acknowledge_message()
-                return
+        if line.get("submission_time"):
+            try:
+                event.add("time.source", str(dateutil.parser.parse(line.get("submission_time"))), raise_failure=False)
+            except dateutil.parser.ParserError:
+                self.logger.warning("Could not parse submission_time value '%s'", line.get("submission_time"))
+                pass
 
-            # ignore headers
-            if "phish_id" in row:
-                continue
+        event.add("classification.type", "phishing")
+        event.add("extra.phishtank.phish_id", line.get("phish_id"), raise_failure=False)
+        event.add("source.url", line.get("url"))
+        event.add("event_description.url", line.get("phish_detail_url"), raise_failure=False)
+        event.add("event_description.target", line.get("target"), raise_failure=False)
+        event.add("status", "online", raise_failure=False)  # Phishtank provides only online phishing websites
+        event.add("extra.phishtank.verified", line.get("verified"), raise_failure=False)
+        event.add("extra.phishtank.verification_time", line.get("verification_time"), raise_failure=False)
 
-            event = self.new_event(report)
-            event.change("feed.url", event["feed.url"][:event["feed.url"].find('data/')])
+        if line.get("details") and isinstance(line.get("details"), list) and len(line.get("details")) > 0:
+            detail = line.get("details")[0]
+            event.add("source.ip", detail.get("ip_address"), raise_failure=False)
+            event.add("source.network", detail.get("cidr_block"), raise_failure=False)
+            event.add("source.asn", detail.get("announcing_network"), raise_failure=False)
+            event.add("source.geolocation.cc", detail.get("country"), raise_failure=False)
 
-            for key, value in zip(columns, row):
+        event.add("raw", self.recover_line(line))
 
-                if key == "__IGNORE__":
-                    continue
-
-                event.add(key, value)
-
-            event.add('classification.type', 'phishing')
-            event.add("raw", ",".join(row))
-
-            self.send_message(event)
-        self.acknowledge_message()
+        yield event
 
 
 BOT = PhishTankParserBot

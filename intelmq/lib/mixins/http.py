@@ -50,7 +50,7 @@ class HttpMixin:
 
     def __init__(self, **kwargs):
         self.logger.debug("Running HTTP Mixin initialization.")
-        self.http_header = {}
+        self.http_header = self.http_header or {}
         super().__init__()
 
     def setup(self):

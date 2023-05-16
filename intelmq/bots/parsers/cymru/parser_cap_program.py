@@ -251,7 +251,7 @@ class CymruCAPProgramParserBot(ParserBot):
         """
         category, ip, asn, timestamp, notes, asninfo = line.split('|')
 
-        # to detect bogous lines like 'hostname: sub.example.comport: 80'
+        # to detect bogus lines like 'hostname: sub.example.comport: 80'
         bogus = BOGUS_HOSTNAME_PORT.search(notes)
         if bogus:
             span = bogus.span()
