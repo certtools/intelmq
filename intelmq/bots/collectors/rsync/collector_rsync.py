@@ -104,8 +104,6 @@ class RsyncCollectorBot(CollectorBot):
             with open(path.join(self.temp_directory, rsync_file)) as f:
                 report.add("raw", f.read())
                 self.send_message(report)
-        elif process.returncode == 23:
-            self.logger.warning(f"rsync failed with exitcode 23. {process.stderr!r}. Check if the file exists: {rsync_file!r}")
         else:
             raise ValueError(f"Rsync on file {rsync_file!r} failed with exitcode \
                                 {process.returncode} and stderr {process.stderr!r}.")
