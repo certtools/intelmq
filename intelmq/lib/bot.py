@@ -28,16 +28,17 @@ import types
 import warnings
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Union, Tuple
 
 import intelmq.lib.message as libmessage
 from intelmq import (DEFAULT_LOGGING_PATH,
+                     DEFAULT_LOGGING_LEVEL,
                      HARMONIZATION_CONF_FILE,
                      RUNTIME_CONF_FILE, __version__)
 from intelmq.lib import cache, exceptions, utils
 from intelmq.lib.pipeline import PipelineFactory, Pipeline
 from intelmq.lib.utils import RewindableFileHandle, base64_decode
-from intelmq.lib.datatypes import *
+from intelmq.lib.datatypes import BotType
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot', 'OutputBot', 'ExpertBot']
 ALLOWED_SYSTEM_PARAMETERS = {'enabled', 'run_mode', 'group', 'description', 'module', 'name'}
@@ -48,9 +49,14 @@ IGNORED_SYSTEM_PARAMETERS = {'groupname', 'bot_id', 'parameters'}
 class Bot:
     """ Not to be reset when initialized again on reload. """
     __current_message: Optional[libmessage.Message] = None
+    __message_counter: dict = {"since": None}
     __message_counter_delay: timedelta = timedelta(seconds=2)
     __stats_cache: cache.Cache = None
+    __source_pipeline = None
+    __destination_pipeline = None
+    __log_buffer: List[tuple] = []
 
+    logger = None
     # Bot is capable of SIGHUP delaying
     _sighup_delay: bool = True
     # From the runtime configuration
@@ -85,8 +91,8 @@ class Bot:
     log_processed_messages_count: int = 500
     log_processed_messages_seconds: int = 900
     logging_handler: str = "file"
-    logging_level: str = "INFO"
-    logging_path: str = "/opt/intelmq/var/log/"
+    logging_level: str = DEFAULT_LOGGING_LEVEL
+    logging_path: str = DEFAULT_LOGGING_PATH
     logging_syslog: str = "/dev/log"
     process_manager: str = "intelmq"
     rate_limit: int = 0
@@ -226,7 +232,7 @@ class Bot:
 
                 @atexit.register
                 def catch_shutdown():
-                    self.stop()
+                    self.stop(exitcode=0)
         except Exception as exc:
             if self.error_log_exception:
                 self.logger.exception('Bot initialization failed.')
@@ -562,7 +568,7 @@ class Bot:
                 print(level.upper(), '-', message)
         self.__log_buffer = []
 
-    def __check_bot_id(self, name: str):
+    def __check_bot_id(self, name: str) -> Tuple[str, str, str]:
         res = re.fullmatch(r'([0-9a-zA-Z\-]+)(\.[0-9]+)?', name)
         if res:
             if not (res.group(2) and threading.current_thread() == threading.main_thread()):
@@ -571,6 +577,7 @@ class Bot:
                                   "Invalid bot id, must match '"
                                   r"[^0-9a-zA-Z\-]+'."))
         self.stop()
+        return False, False, False
 
     def __connect_pipelines(self):
         pipeline_args = {key: getattr(self, key) for key in dir(self) if not inspect.ismethod(getattr(self, key)) and (key.startswith('source_pipeline_') or key.startswith('destination_pipeline'))}
@@ -960,9 +967,8 @@ class ParserBot(Bot):
 
     default_fields: Optional[dict] = {}
 
-    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
-                 disable_multithreading: bool = None):
-        super().__init__(bot_id, start, sighup_event, disable_multithreading)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         if self.__class__.__name__ == 'ParserBot':
             self.logger.error('ParserBot can\'t be started itself. '
                               'Possible Misconfiguration.')
@@ -1256,9 +1262,8 @@ class CollectorBot(Bot):
     provider: Optional[str] = None
     documentation: Optional[str] = None
 
-    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
-                 disable_multithreading: bool = None):
-        super().__init__(bot_id, start, sighup_event, disable_multithreading)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         if self.__class__.__name__ == 'CollectorBot':
             self.logger.error('CollectorBot can\'t be started itself. '
                               'Possible Misconfiguration.')
@@ -1316,9 +1321,8 @@ class ExpertBot(Bot):
     """
     bottype = BotType.EXPERT
 
-    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
-                 disable_multithreading: bool = None):
-        super().__init__(bot_id, start, sighup_event, disable_multithreading)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class OutputBot(Bot):
@@ -1327,9 +1331,8 @@ class OutputBot(Bot):
     """
     bottype = BotType.OUTPUT
 
-    def __init__(self, bot_id: str, start: bool = False, sighup_event=None,
-                 disable_multithreading: bool = None):
-        super().__init__(bot_id, start, sighup_event, disable_multithreading)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         if self.__class__.__name__ == 'OutputBot':
             self.logger.error('OutputBot can\'t be started itself. '
                               'Possible Misconfiguration.')

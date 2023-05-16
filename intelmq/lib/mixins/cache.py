@@ -44,8 +44,6 @@ class CacheMixin:
         return retval
 
     def cache_set(self, key: str, value: Any, ttl: Optional[int] = None):
-        if self.redis_cache_ttl is None:
-            ttl = self.redis_cache_ttl
         if isinstance(value, str):
             value = utils.encode(value)
         # backward compatibility (Redis v2.2)

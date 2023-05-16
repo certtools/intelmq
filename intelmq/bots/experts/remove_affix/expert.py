@@ -4,10 +4,10 @@ Remove Affix
 SPDX-FileCopyrightText: 2021 Marius Karotkis <marius.karotkis@gmail.com>
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 
 
-class RemoveAffixExpertBot(Bot):
+class RemoveAffixExpertBot(ExpertBot):
     remove_prefix: bool = True  # True - from start, False - from end
     affix: str = 'www.'
     field: str = 'source.fqdn'

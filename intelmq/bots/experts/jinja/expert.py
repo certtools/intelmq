@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 import pathlib
@@ -15,7 +15,7 @@ except ImportError:
     Template = None
 
 
-class JinjaExpertBot(Bot):
+class JinjaExpertBot(ExpertBot):
     """
     Modify the message using the Jinja templating engine
     Example:

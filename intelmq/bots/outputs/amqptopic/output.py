@@ -143,7 +143,11 @@ class AMQPTopicOutputBot(OutputBot):
 
     def shutdown(self):
         if self._connection:
-            self._connection.close()
+            try:
+                self._connection.close()
+            except pika.exceptions.ConnectionWrongStateError:
+                # pika.exceptions.ConnectionWrongStateError: BlockingConnection.close(200, 'Normal shutdown') called on closed connection.
+                pass
 
 
 BOT = AMQPTopicOutputBot
