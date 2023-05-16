@@ -311,7 +311,12 @@ class StreamHandler(logging.StreamHandler):
                 stream = sys.stderr
                 stream.write(red(msg))
             stream.write(self.terminator)
-            self.flush()
+            try:
+                self.flush()
+            except ValueError:
+                # I/O operation on closed file.
+                # stdout/stderr is already close (during shutdown), there's nothing we can do about it
+                pass
         except Exception:
             self.handleError(record)
 
@@ -928,9 +933,6 @@ def resolve_dns(*args, **kwargs) -> dns.resolver.Answer:
 
     Parameters:
         see: https://dnspython.readthedocs.io/en/stable/resolver-class.html#dns.resolver.Resolver.resolve
-        The `search` parameter is always set to True for compatibility with dnspython version 1.
 
     """
-    if dns.version.MAJOR < 2:
-        return dns.resolver.query(*args, **kwargs)
-    return dns.resolver.resolve(*args, **kwargs, search=True)
+    return dns.resolver.resolve(*args, **kwargs)

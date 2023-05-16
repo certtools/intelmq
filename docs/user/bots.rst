@@ -1931,7 +1931,7 @@ RemoveAffix
 
 **Configuration Parameters**
 
-* `remove_prefix`: True - cut from start, False - cut from end
+* `remove_prefix`: True - cut from start, False - cut from end. Default: True
 * `affix`: example 'www.'
 * `field`: example field 'source.fqdn'
 

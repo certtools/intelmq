@@ -168,6 +168,8 @@ class Cymru():
         if items[4]:
             # unicode characters need to be decoded explicitly
             # with the help of https://stackoverflow.com/questions/60890590/
-            result['as_name'] = items[4].encode('latin1').decode('utf8')
+            as_name = items[4].encode('latin1', errors='ignore').decode('utf8')
+            if as_name:
+                result['as_name'] = as_name
 
         return result

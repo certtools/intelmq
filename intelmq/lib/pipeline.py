@@ -3,6 +3,16 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
+
+"""
+Algorithm
+---------
+[Receive]     B RPOP LPUSH   source_queue ->  internal_queue
+[Send]        LPUSH          message      ->  destination_queue
+[Acknowledge] RPOP           message      <-  internal_queue
+"""
+
+
 import time
 from itertools import chain
 from typing import Dict, Optional
@@ -326,18 +336,13 @@ class Redis(Pipeline):
         Rejecting is a no-op as the message is in the internal queue anyway.
         """
 
-# Algorithm
-# ---------
-# [Receive]     B RPOP LPUSH   source_queue ->  internal_queue
-# [Send]        LPUSH          message      ->  destination_queue
-# [Acknowledge] RPOP           message      <-  internal_queue
-
 
 class Pythonlist(Pipeline):
     """
     This pipeline uses simple lists and is only for testing purpose.
 
     It behaves in most ways like a normal pipeline would do,
+    including all encoding and decoding steps,
     but works entirely without external modules and programs.
     Data is saved as it comes (no conversion) and it is not blocking.
     """
