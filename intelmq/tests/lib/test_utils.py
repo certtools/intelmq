@@ -368,20 +368,6 @@ class TestUtils(unittest.TestCase):
         with self.assertRaises(ScannerError):
             utils.load_configuration(filename)
 
-    @unittest.mock.patch.object(utils.dns.version, "MAJOR", 1)
-    def test_resolve_dns_supports_dnspython_v1(self):
-        with unittest.mock.patch.object(utils.dns.resolver, "query") as query_mocks:
-            utils.resolve_dns("example.com", "any", other="parameter")
-
-        query_mocks.assert_called_once_with("example.com", "any", other="parameter")
-
-    @unittest.mock.patch.object(utils.dns.version, "MAJOR", 2)
-    def test_resolve_dns_supports_dnspython_v2(self):
-        with unittest.mock.patch.object(utils.dns.resolver, "resolve", create=True) as resolve_mocks:
-            utils.resolve_dns("example.com", "any", other="parameter")
-
-        resolve_mocks.assert_called_once_with("example.com", "any", other="parameter", search=True)
-
     @skip_internet()
     def test_resolve_dns_returns_answer(self):
         answer = utils.resolve_dns("example.com")

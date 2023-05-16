@@ -933,9 +933,6 @@ def resolve_dns(*args, **kwargs) -> dns.resolver.Answer:
 
     Parameters:
         see: https://dnspython.readthedocs.io/en/stable/resolver-class.html#dns.resolver.Resolver.resolve
-        The `search` parameter is always set to True for compatibility with dnspython version 1.
 
     """
-    if dns.version.MAJOR < 2:
-        return dns.resolver.query(*args, **kwargs)
-    return dns.resolver.resolve(*args, **kwargs, search=True)
+    return dns.resolver.resolve(*args, **kwargs)

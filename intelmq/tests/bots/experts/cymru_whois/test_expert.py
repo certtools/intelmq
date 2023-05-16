@@ -55,6 +55,11 @@ OVERWRITE_OUT = {"__type": "Event",
                   "source.as_name": "ACONET ACOnet Backbone, AT",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
+UNEXPECTED_UNICODE = {"__type": "Event",
+                      "source.asn": 266522}
+UNKNOWN_IP = {"__type": "Event",
+              "source.ip": "255.255.255.210",
+              }
 
 
 @test.skip_redis()
@@ -106,6 +111,10 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(parameters={'overwrite': False})
         self.assertMessageEqual(0, OVERWRITE_OUT)
 
+    def test_unexpected_unicode(self):
+        self.input_message = UNEXPECTED_UNICODE.copy()
+        self.run_bot()
+        self.assertMessageEqual(0, UNEXPECTED_UNICODE)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
