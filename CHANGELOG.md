@@ -14,6 +14,7 @@ CHANGELOG
   - `resolve_dns`: Deprecate dnspython versions pre-2.0.0 and disable search domains (PR#2352)
 - Fixed not resetting destination path statistics in the stats cache after restarting bot (Fixes [#2331](https://github.com/certtools/intelmq/issues/2331))
 - Force flushing statistics if bot will sleep longer than flushing delay (Fixes [#2336](https://github.com/certtools/intelmq/issues/2336))
+- `intelmq.lib.upgrages`: Fix a bug in the upgrade function for version 3.1.0 which caused an exception if a generic csv parser instance had no parameter `type` (PR#2319 by Filip Pokorný).
 
 ### Development
 
