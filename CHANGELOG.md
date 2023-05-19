@@ -15,6 +15,9 @@ CHANGELOG
 - Fixed not resetting destination path statistics in the stats cache after restarting bot (Fixes [#2331](https://github.com/certtools/intelmq/issues/2331))
 - Force flushing statistics if bot will sleep longer than flushing delay (Fixes [#2336](https://github.com/certtools/intelmq/issues/2336))
 - `intelmq.lib.upgrages`: Fix a bug in the upgrade function for version 3.1.0 which caused an exception if a generic csv parser instance had no parameter `type` (PR#2319 by Filip Pokorný).
+- `intelmq.lib.datatypes`: Adds `TimeFormat` class to be used for the `time_format` bot parameter (PR#2329 by Filip Pokorný).
+- `intelmq.lib.exceptions`: Fixes a bug in `InvalidArgument` exception (PR#2329 by Filip Pokorný).
+- `intelmq.lib.harmonization`: Changes signature and names of `DateTime` conversion functions for consistency, backwards compatible (PR#2329 by Filip Pokorný).
 
 ### Development
 
@@ -31,6 +34,8 @@ CHANGELOG
   - Added 'Accessible-SIP' report. (PR#2348)
   - Added 'IPv6-Open-HTTP-Proxy' and 'IPv6-Accessible-HTTP-Proxy' aliases. (PR#2348)
   - Removed  duplicate mappings from the 'Spam-URL' report. (PR#2348)
+- `intelmq.bots.parsers.generic.parser_csv`: Changes `time_format` parameter to use new `TimeFormat` class (PR#2329 by Filip Pokorný).
+- `intelmq.bots.parsers.html_table.parser`: Changes `time_format` parameter to use new `TimeFormat` class (PR#2329 by Filip Pokorný).
 
 #### Experts
 - `intelmq.bots.experts.sieve`:

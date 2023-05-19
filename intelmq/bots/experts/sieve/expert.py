@@ -315,7 +315,7 @@ class SieveExpertBot(ExpertBot):
         return self._bool_op_map[op](event[key], value)
 
     def compute_basic_math(self, action, event) -> str:
-        date = DateTime.parse_utc_isoformat(event[action.key], True)
+        date = DateTime.from_isoformat(event[action.key], True)
         delta = datetime.timedelta(minutes=parse_relative(action.value))
 
         return self._basic_math_op_map[action.operator](date, delta).isoformat()
