@@ -106,6 +106,8 @@ def get_feed_by_filename(given_filename: str) -> Optional[Tuple[str, Dict[str, A
     reload()
     return __config.filename_mapping.get(given_filename, None)
 
+def set_logger(logger):
+    __config.logger = logger
 
 def add_UTC_to_timestamp(value: str) -> str:
     return value + ' UTC'
@@ -272,29 +274,38 @@ functions = {
 def reload ():
     """ reload the configuration if it has changed """
     mtime = 0.0
-    schema_file = __config.schema_file
 
     if os.path.isfile(__config.schema_file):
         mtime = os.path.getmtime(__config.schema_file)
         if __config.schema_mtime == mtime:
             return
     else:
-        # load a test schema if one has not been downloaded yet
-        schema_file += '.test'
+        __config.logger.info("The schema file does not exist.")
+
+    if __config.schema_mtime == 0.0 and mtime == 0.0 and not os.environ.get('INTELMQ_SKIP_INTERNET'):
+        __config.logger.info("Attempting to download schema.")
+        update_schema()
 
     __config.feedname_mapping.clear()
     __config.filename_mapping.clear()
-    with open(schema_file) as fh:
-        schema = json.load(fh)
-    for report in schema:
-        __config.feedname_mapping[schema[report]['feed_name']] = (schema[report]['feed_name'], schema[report])
-        __config.filename_mapping[schema[report]['file_name']] = (schema[report]['feed_name'], schema[report])
+    for schema_file in [ __config.schema_file, ".".join([__config.schema_file, 'test']) ]:
+        if os.path.isfile(schema_file):
+            with open(schema_file) as fh:
+                schema = json.load(fh)
+            for report in schema:
+                if report == "_meta":
+                    __config.logger.info("Loading schema %s." % schema[report]['date_created'])
+                    for msg in schema[report]['change_log']:
+                        __config.logger.info(msg)
+                else:
+                    __config.feedname_mapping[schema[report]['feed_name']] = (schema[report]['feed_name'], schema[report])
+                    __config.filename_mapping[schema[report]['file_name']] = (schema[report]['feed_name'], schema[report])
     __config.schema_mtime = mtime
 
-def update_schema (version):
+def update_schema ():
     """ download the latest configuration """
     (th, tmp) = tempfile.mkstemp()
-    url = 'https://interchange.shadowserver.org/intelmq/'+version
+    url = 'https://interchange.shadowserver.org/intelmq/v1'
     try:
         urllib.request.urlretrieve(url, tmp)
     except:
@@ -307,4 +318,6 @@ def update_schema (version):
         # leave tempfile behind for diagnosis
         raise ValueError("Failed to validate %r" % tmp)
 
+    if os.path.exists(__config.schema_file):
+        os.replace(__config.schema_file, ".".join([__config.schema_file, 'bak']))
     os.replace(tmp, __config.schema_file)

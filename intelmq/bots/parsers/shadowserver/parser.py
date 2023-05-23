@@ -47,6 +47,7 @@ class ShadowserverParserBot(ParserBot):
     overwrite = False
 
     def init(self):
+        config.set_logger(self.logger)
         if self.feedname is not None:
             self._sparser_config = config.get_feed_by_feedname(self.feedname)
             if self._sparser_config:
