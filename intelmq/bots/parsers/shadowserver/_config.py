@@ -97,6 +97,11 @@ __config.schema_mtime = 0.0
 __config.feedname_mapping = {}
 __config.filename_mapping = {}
 
+def set_logger(logger):
+    """ Sets the logger instance. """
+    __config.logger = logger
+
+
 def get_feed_by_feedname(given_feedname: str) -> Optional[Dict[str, Any]]:
     reload()
     return __config.feedname_mapping.get(given_feedname, None)
@@ -106,8 +111,6 @@ def get_feed_by_filename(given_filename: str) -> Optional[Tuple[str, Dict[str, A
     reload()
     return __config.filename_mapping.get(given_filename, None)
 
-def set_logger(logger):
-    __config.logger = logger
 
 def add_UTC_to_timestamp(value: str) -> str:
     return value + ' UTC'
@@ -304,20 +307,39 @@ def reload ():
 
 def update_schema ():
     """ download the latest configuration """
-    (th, tmp) = tempfile.mkstemp()
+    if os.environ.get('INTELMQ_SKIP_INTERNET'):
+        return None
+
+    (th, tmp) = tempfile.mkstemp(dir=os.path.dirname(__file__))
     url = 'https://interchange.shadowserver.org/intelmq/v1'
     try:
         urllib.request.urlretrieve(url, tmp)
     except:
         raise ValueError("Failed to download %r" % url)
 
+    new_version = ''
+    old_version = ''
+
     try:
         with open(tmp) as fh:
             schema = json.load(fh)
+            new_version = schema['_meta']['date_created']
     except:
         # leave tempfile behind for diagnosis
         raise ValueError("Failed to validate %r" % tmp)
 
     if os.path.exists(__config.schema_file):
-        os.replace(__config.schema_file, ".".join([__config.schema_file, 'bak']))
-    os.replace(tmp, __config.schema_file)
+        old_version = ''
+        try:
+            with open(__config.schema_file) as fh:
+                schema = json.load(fh)
+                old_version = schema['_meta']['date_created']
+            if new_version != old_version:
+                os.replace(__config.schema_file, ".".join([__config.schema_file, 'bak']))
+        except:
+            pass
+
+    if new_version != old_version:
+        os.replace(tmp, __config.schema_file)
+    else:
+        os.unlink(tmp)
