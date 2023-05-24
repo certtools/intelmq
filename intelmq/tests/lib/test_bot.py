@@ -6,13 +6,10 @@
 """
 Tests the Bot class itself.
 """
-import json
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.tests.lib import test_parser_bot
-from intelmq.lib.message import MessageFactory, Message
-from intelmq.lib.bot import BotLibSettings
 
 
 class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
@@ -79,66 +76,6 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.assertEqual(self.pipe.state['test-bot-input-internal'], [])
         self.assertEqual(self.pipe.state['test-bot-input'], [])
         self.assertEqual(self.pipe.state['test-bot-output'], [])
-
-
-def send_message(self, *messages, path: str = "_default", auto_add=None,
-                     path_permissive: bool = False):
-    self._sent_messages.extend(messages)
-
-
-class TestBotAsLibrary(unittest.TestCase):
-    def assertMessageEqual(self, actual, expected):
-        """
-        Compare two messages as dicts.
-        """
-        if isinstance(actual, Message):
-            actual = actual.to_dict(with_type=True)
-        else:
-            actual = actual.copy()
-
-        if isinstance(expected, Message):
-            expected = expected.to_dict(with_type=True)
-        else:
-            expected = expected.copy()
-
-        if 'time.observation' in actual:
-            del actual['time.observation']
-        if 'time.observation' in expected:
-            del expected['time.observation']
-        if 'output' in actual:
-            actual['output'] = json.loads(actual['output'])
-        if 'output' in expected:
-            expected['output'] = json.loads(expected['output'])
-
-        self.assertDictEqual(actual, expected)
-
-    """def test_dummy_mocked(self):
-        bot = test_parser_bot.DummyParserBot('dummy-bot', settings={'global': {'logging_path': None, 'skip_pipeline': True, 'broker': 'pythonlist'}, 'dummy-bot': {}})
-        bot._Bot__current_message = MessageFactory.from_dict(test_parser_bot.EXAMPLE_REPORT)
-        bot._Bot__connect_pipelines = lambda self: None
-        bot._sent_messages = []
-        bot._dumped_messages = []
-        bot.send_message = send_message.__get__(bot, test_parser_bot.DummyParserBot)
-        bot._dump_message = _dump_message.__get__(bot, test_parser_bot.DummyParserBot)
-        bot.process()
-        assert bot._sent_messages == [MessageFactory.from_dict(test_parser_bot.EXAMPLE_EVENT)]
-        assert bot._dumped_messages[0][1] == test_parser_bot.EXPECTED_DUMP[0]
-        assert bot._dumped_messages[1][1] == test_parser_bot.EXPECTED_DUMP[1]"""
-
-    def test_dummy_pythonlist(self):
-        bot = test_parser_bot.DummyParserBot('dummy-bot', settings=BotLibSettings)
-        sent_messages = bot.process_message(test_parser_bot.EXAMPLE_REPORT.copy())
-        self.assertMessageEqual(sent_messages['output'][0], test_parser_bot.EXAMPLE_EVENT)
-        self.assertMessageEqual(sent_messages['error'][0], MessageFactory.from_dict(test_parser_bot.EXPECTED_DUMP[0].copy(), default_type='Report'))
-        self.assertMessageEqual(sent_messages['error'][1], MessageFactory.from_dict(test_parser_bot.EXPECTED_DUMP[1].copy(), default_type='Report'))
-
-    def test_domain_suffix(self):
-        from intelmq.bots.experts.domain_suffix.expert import DomainSuffixExpertBot
-        domain_suffix = DomainSuffixExpertBot('domain-suffix',
-                                              settings=BotLibSettings | {'field': 'fqdn',
-                                                                         'suffix_file': '/usr/share/publicsuffix/public_suffix_list.dat'})
-        queues = domain_suffix.process_message({'source.fqdn': 'www.example.com'})
-        assert queues['output'][0]['source.domain_suffix'] == 'com'
 
 
 if __name__ == '__main__':  # pragma: no cover
