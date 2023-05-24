@@ -9,13 +9,18 @@ Software engineering by BSI & Intevation GmbH
 
 This tests IntelMQ bots in library mode (IEP007)
 """
+import json
 import unittest
+from os.path import dirname, join
 
-from intelmq.lib.bot import Dict39, BotLibSettings
-
-from intelmq.bots.experts.url.expert import URLExpertBot
-from intelmq.bots.experts.taxonomy.expert import TaxonomyExpertBot
+import intelmq.tests.bots.experts.domain_suffix.test_expert as domain_suffix_expert_test
+from intelmq.bots.experts.domain_suffix.expert import DomainSuffixExpertBot
 from intelmq.bots.experts.jinja.expert import JinjaExpertBot
+from intelmq.bots.experts.taxonomy.expert import TaxonomyExpertBot
+from intelmq.bots.experts.url.expert import URLExpertBot
+from intelmq.lib.bot import BotLibSettings, Dict39
+from intelmq.lib.message import Message, MessageFactory
+from intelmq.tests.lib import test_parser_bot
 
 EXAMPLE_DATA_URL = Dict39({'source.url': 'http://example.com/'})
 EXAMPLE_DATA_URL_OUT = EXAMPLE_DATA_URL | {'source.fqdn': 'example.com',
@@ -28,6 +33,48 @@ BOT_CONFIG_JINJA_FAILING = Dict39({
         'feed.url': "{{ error! msg['source.fqdn'] | upper }}"
     }
 })
+
+
+def assertMessageEqual(actual, expected):
+    """
+    Compare two messages as dicts.
+    """
+    if isinstance(actual, Message):
+        actual = actual.to_dict(with_type=True)
+    else:
+        actual = actual.copy()
+
+    if isinstance(expected, Message):
+        expected = expected.to_dict(with_type=True)
+    else:
+        expected = expected.copy()
+
+    if 'time.observation' in actual:
+        del actual['time.observation']
+    if 'time.observation' in expected:
+        del expected['time.observation']
+    if 'output' in actual:
+        actual['output'] = json.loads(actual['output'])
+    if 'output' in expected:
+        expected['output'] = json.loads(expected['output'])
+
+    assert actual == expected
+
+
+def test_dummy_parser_bot():
+    bot = test_parser_bot.DummyParserBot('dummy-bot', settings=BotLibSettings)
+    sent_messages = bot.process_message(test_parser_bot.EXAMPLE_REPORT.copy())
+    assertMessageEqual(sent_messages['output'][0], test_parser_bot.EXAMPLE_EVENT)
+    assertMessageEqual(sent_messages['error'][0], MessageFactory.from_dict(test_parser_bot.EXPECTED_DUMP[0].copy(), default_type='Report'))
+    assertMessageEqual(sent_messages['error'][1], MessageFactory.from_dict(test_parser_bot.EXPECTED_DUMP[1].copy(), default_type='Report'))
+
+
+def test_domain_suffix():
+    domain_suffix = DomainSuffixExpertBot('domain-suffix',
+                                          settings=BotLibSettings | {'field': 'fqdn',
+                                                                     'suffix_file': join(dirname(domain_suffix_expert_test.__file__), 'public_suffix_list.dat')})
+    queues = domain_suffix.process_message({'source.fqdn': 'www.example.com'})
+    assert queues['output'][0]['source.domain_suffix'] == 'example.com'
 
 
 def test_url_expert():
