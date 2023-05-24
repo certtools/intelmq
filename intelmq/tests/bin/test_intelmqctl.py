@@ -12,6 +12,7 @@ from pkg_resources import resource_filename
 
 import intelmq.bin.intelmqctl as ctl
 import intelmq.lib.utils as utils
+from intelmq.lib.test import skip_installation
 
 
 class TestIntelMQProcessManager(unittest.TestCase):
@@ -100,16 +101,19 @@ class TestIntelMQController(unittest.TestCase):
         self.tmp_config_dir.cleanup()
         return super().tearDown()
 
+    @skip_installation()
     def test_check_passed_with_default_harmonization_and_empty_runtime(self):
         self._load_default_harmonization()
         self.assertEqual((0, 'success'), self.intelmqctl.check(no_connections=True, check_executables=False))
 
+    @skip_installation()
     def test_check_pass_with_default_runtime(self):
         with mock.patch.object(ctl.utils, "RUNTIME_CONF_FILE", self.tmp_runtime):
             self._load_default_harmonization()
             self._load_default_runtime()
             self.assertEqual((0, 'success'), self.intelmqctl.check(no_connections=True, check_executables=False))
 
+    @skip_installation()
     @mock.patch.object(ctl.importlib, "import_module", mock.Mock(side_effect=SyntaxError))
     def test_check_handles_syntaxerror_when_importing_bots(self):
         self._load_default_harmonization()

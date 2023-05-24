@@ -45,6 +45,9 @@ CHANGELOG
 - `intelmq.bots.outputs.cif3.output`: Added (PR#2244 by Michael Davis).
 - `intelmq.bots.outputs.sql.output`: New parameter `fail_on_errors` (PR#2362 by Sebastian Wagner).
 
+### Tests
+- New decorator `skip_installation` and environment variable `INTELMQ_TEST_INSTALLATION` to skip tests requiring an IntelMQ installation on the test host by default (PR#2370 by Sebastian Wagner, fixes #2369)
+
 ### Tools
 - `intelmqsetup`:
   - SECURITY: fixed a low-risk bug causing the tool to change owner of `/` if run with the `INTELMQ_PATHS_NO_OPT` environment variable set. This affects only the PIP package as the DEB/RPM packages don't contain this tool. (PR#2355 by Kamil Mańkowski, fixes #2354)
