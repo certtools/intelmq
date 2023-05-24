@@ -12,13 +12,13 @@ This tests IntelMQ bots in library mode (IEP007)
 import json
 import unittest
 from os.path import dirname, join
+from pytest import raises
 
 import intelmq.tests.bots.experts.domain_suffix.test_expert as domain_suffix_expert_test
 from intelmq.bots.experts.domain_suffix.expert import DomainSuffixExpertBot
-from intelmq.bots.experts.jinja.expert import JinjaExpertBot
 from intelmq.bots.experts.taxonomy.expert import TaxonomyExpertBot
 from intelmq.bots.experts.url.expert import URLExpertBot
-from intelmq.lib.bot import BotLibSettings, Dict39
+from intelmq.lib.bot import BotLibSettings, Dict39, ExpertBot
 from intelmq.lib.message import Message, MessageFactory
 from intelmq.tests.lib import test_parser_bot
 
@@ -28,11 +28,11 @@ EXAMPLE_DATA_URL_OUT = EXAMPLE_DATA_URL | {'source.fqdn': 'example.com',
                                            'source.urlpath': '/',
                                            'protocol.application': 'http',
                                            'protocol.transport': 'tcp'}
-BOT_CONFIG_JINJA_FAILING = Dict39({
-    'fields': {
-        'feed.url': "{{ error! msg['source.fqdn'] | upper }}"
-    }
-})
+
+
+class BrokenInitExpertBot(ExpertBot):
+    def init(self):
+        raise ValueError('This initialization intionally raises an error!')
 
 
 def assertMessageEqual(actual, expected):
@@ -94,14 +94,12 @@ def test_url_and_taxonomy():
     assert queues['output'] == [Dict39(EXAMPLE_DATA_URL_OUT) | {'classification.taxonomy': 'other', 'classification.type': 'undetermined'}]
 
 
-def test_bot_exception_import():
+def test_bot_exception_init():
     """
     When a bot raises an exception during Bot initialization
     """
-    try:
-        JinjaExpertBot('jinja', settings=BotLibSettings | BOT_CONFIG_JINJA_FAILING)
-    except:
-        pass
+    with raises(ValueError):
+        BrokenInitExpertBot('broken', settings=BotLibSettings)
 
 
 def test_bot_multi_message():
