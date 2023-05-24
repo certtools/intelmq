@@ -238,12 +238,13 @@ There are a bunch of environment variables which switch on/off some tests:
 * `INTELMQ_TEST_EXOTIC`: some bots and tests require libraries which may not be available, those are skipped by default. To run them, set this to 1.
 * `INTELMQ_TEST_REDIS_PASSWORD`: Set this value to the password for the local redis database if needed.
 * `INTELMQ_LOOKYLOO_TEST`: Set this value to run the lookyloo tests. Public lookyloo instance will be used as default.
+* `INTELMQ_TEST_INSTALLATION`: Set this value to run tests which require a local IntelMQ installation, such as for testing the command lines tools relying on configuration files, dump files etc.
 
 For example, to run all tests you can use:
 
 .. code-block:: bash
 
-   INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_EXOTIC=1 pytest intelmq/tests/
+   INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_EXOTIC=1 INTELMQ_TEST_INSTALLATION=1 pytest intelmq/tests/
 
 Configuration test files
 ------------------------

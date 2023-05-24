@@ -17,7 +17,6 @@ import re
 import unittest
 import unittest.mock as mock
 from itertools import chain
-from sys import version_info
 
 import pkg_resources
 import redis
@@ -109,6 +108,14 @@ def skip_ci():
 def skip_build_environment():
     # For test that regularly fail in build environments like local or public Open Build Service builds
     return unittest.skipIf(os.getenv('USER') == 'abuild', 'Test disabled in Build Service.')
+
+
+def skip_installation():
+    """
+    Skip a test that requires an IntelMQ installation on this host
+    """
+    return unittest.skipUnless(os.getenv('INTELMQ_TEST_INSTALLATION'),
+                               'Skipping tests requiring an IntelMQ installation.')
 
 
 class BotTestCase:

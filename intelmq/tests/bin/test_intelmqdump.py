@@ -14,6 +14,7 @@ from unittest import mock
 import termstyle
 
 from intelmq.bin import intelmqdump
+from intelmq.lib.test import skip_installation
 
 
 class TestCompleter(unittest.TestCase):
@@ -95,6 +96,7 @@ class TestIntelMQDump(unittest.TestCase):
                 intelmqdump.main(argv)
         return output.getvalue().split("\n")
 
+    @skip_installation()
     @mock.patch.object(intelmqdump, "input", return_value='q')
     def test_list_dumps_for_all_bots_from_default_log_path(self, _):
         self._prepare_empty_dump('test-1')
@@ -106,6 +108,7 @@ class TestIntelMQDump(unittest.TestCase):
         self.assertIn("0: test-1 empty file", output[1])
         self.assertIn("1: test-2 empty file", output[2])
 
+    @skip_installation()
     @mock.patch.object(intelmqdump, "input", return_value='q')
     def test_list_dumps_for_all_bots_from_custom_locations(self, _):
         self.global_config = {"logging_path": self.tmp_log_dir.name}
@@ -130,6 +133,7 @@ class TestIntelMQDump(unittest.TestCase):
         self.assertIn("0: test-1 empty file", output[1])
         self.assertIn("1: test-2 empty file", output[2])
 
+    @skip_installation()
     @mock.patch.object(intelmqdump, "input")
     def test_list_and_select_dump_from_global_location(self, input_mock):
         self._prepare_empty_dump('test-1')
@@ -145,6 +149,7 @@ class TestIntelMQDump(unittest.TestCase):
                 # Enough to check that the correct file path was used
                 self.assertIn("Processing test-1: empty file", output[2])
 
+    @skip_installation()
     @mock.patch.object(intelmqdump, "input")
     def test_list_and_select_dump_from_custom_location(self, input_mock):
         self.global_config = {"logging_path": self.tmp_log_dir.name}
@@ -166,6 +171,7 @@ class TestIntelMQDump(unittest.TestCase):
                 # Enough to check that the correct file path was used
                 self.assertIn("Processing test-1: empty file", output[2])
 
+    @skip_installation()
     @mock.patch.object(intelmqdump, "input")
     def test_selecting_dump_warns_when_filename_is_ambiguous(self, input_mock):
         """With different locations used, there could be a case of dumps with the same
@@ -197,6 +203,7 @@ class TestIntelMQDump(unittest.TestCase):
             output = self._run_main([])
             self.assertIn("Processing test-1: empty file", output[3])
 
+    @skip_installation()
     @mock.patch.object(intelmqdump, "input", return_value='q')
     def test_get_dump_for_one_bot(self, _):
         self._prepare_empty_dump("bot/bot-1")
