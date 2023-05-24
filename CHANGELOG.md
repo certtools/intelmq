@@ -6,7 +6,7 @@
 CHANGELOG
 ==========
 
-3.1.1 (unreleased)
+3.2.0 (unreleased)
 ------------------
 
 ### Core
@@ -20,18 +20,14 @@ CHANGELOG
 - `intelmq.lib.harmonization`: Changes signature and names of `DateTime` conversion functions for consistency, backwards compatible (PR#2329 by Filip Pokorný).
 - `intelmq.lib.bot.Bot`: Allow setting the parameters via parameter on bot initialization.
 
-### Development
-
 ### Bots
-
-#### Collectors
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
   - Reset detected `feedname` at shutdown to re-detect the feedname on reloads (PR#2361 by @elsif2, fixes #2360).
 - `intelmq.bots.parsers.shadowserver._config`:
   - Added 'IPv6-Vulnerable-Exchange' alias and 'Accessible-WS-Discovery-Service' report. (PR#2338)
-  - Removed unused 'p0f_genre' and 'p0f_detail' from the 'DNS-Open-Resolvers' report. (PR#2338)
+  - Removed unused `p0f_genre` and `p0f_detail` from the 'DNS-Open-Resolvers' report. (PR#2338)
   - Added 'Accessible-SIP' report. (PR#2348)
   - Added 'IPv6-Open-HTTP-Proxy' and 'IPv6-Accessible-HTTP-Proxy' aliases. (PR#2348)
   - Removed  duplicate mappings from the 'Spam-URL' report. (PR#2348)
@@ -49,17 +45,34 @@ CHANGELOG
 - `intelmq.bots.outputs.cif3.output`: Added (PR#2244 by Michael Davis).
 - `intelmq.bots.outputs.sql.output`: New parameter `fail_on_errors` (PR#2362 by Sebastian Wagner).
 
-### Documentation
-
-### Tests
-
-### Packaging
-
 ### Tools
 - `intelmqsetup`:
   - SECURITY: fixed a low-risk bug causing the tool to change owner of `/` if run with the `INTELMQ_PATHS_NO_OPT` environment variable set. This affects only the PIP package as the DEB/RPM packages don't contain this tool. (PR#2355 by Kamil Mańkowski, fixes #2354)
 
-### Known Errors
+### Known Issues
+This is short list of the most important known issues. The full list can be retrieved from [GitHub](https://github.com/certtools/intelmq/labels/bug?page=2&q=is%3Aopen+label%3Abug).
+- Breaking changes in 'rt' library (#2367).
+- Stomp collector failed (#2342).
+- Type error with SQL output bot's `prepare_values` returning list instead of tuple (#2255).
+- `intelmq_psql_initdb` does not work for SQLite (#2202).
+- intelmqsetup: should install a default state file (#2175).
+- Misp Expert - Crash if misp event already exist (#2170).
+- Turris greylist has been updated (#2167).
+- Spamhaus CERT parser uses wrong field (#2165).
+- Custom headers ignored in HTTPCollectorBot (#2150).
+- Missing commas in SQL query for separate Events table (#2125).
+- intelmqctl log: parsing syslog does not work (#2097).
+- Bash completion scripts depend on old JSON-based configuration files (#2094).
+- Bot configuration examples use JSON instead of YAML (#2066).
+- Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
+- Corrupt dump files when interrupted during writing (#870).
+
+
+3.0.2 (2021-09-10)
+------------------
+
+### Core
+- `intelmq.lib.bot.CollectorBot`: Fixed an issue with within the `new_report` function, which re-loads the harmonization file after a new incoming dataset, which leads to CPU drain and decreased performance (PR#2106 by Sebastian Waldbauer, fixes #2098).
 
 3.1.0 (2023-02-10)
 ------------------

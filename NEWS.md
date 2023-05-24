@@ -10,6 +10,14 @@ This file lists all changes which have an affect on the administration of IntelM
 Please refer to the change log for a full list of changes.
 
 
+3.2.0 Feature release (2023-05-24)
+----------------------------------
+
+No changes are required by administrators.
+
+[IEP007: Running IntelMQ bots as Python Library](https://github.com/certtools/ieps/tree/main/007) is implemented.
+
+
 3.1.0 Feature release (2023-02-10)
 ----------------------------------
 
