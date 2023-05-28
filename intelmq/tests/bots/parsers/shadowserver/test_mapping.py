@@ -52,6 +52,5 @@ class TestShadowserverMapping(test.BotTestCase, unittest.TestCase):
         self.run_bot(iterations=2)
 
 
-
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

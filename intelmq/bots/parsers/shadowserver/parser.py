@@ -51,7 +51,7 @@ class ShadowserverParserBot(ParserBot):
         try:
             config.update_schema()
         except Exception as e:
-            logger.warning(f"Schema update failed: {e}.")
+            self.logger.warning("Schema update failed: %s." % e)
         if self.feedname is not None:
             self._sparser_config = config.get_feed_by_feedname(self.feedname)
             if self._sparser_config:

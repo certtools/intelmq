@@ -16,11 +16,11 @@ with open(os.path.join(os.path.dirname(__file__),
     EXAMPLE_LINES = handle.read().splitlines()[:2]
 
 FIRST_REPORT = {'feed.name': 'Test-Accessible-SMB',
-                  "raw": utils.base64_encode('\n'.join(EXAMPLE_LINES)),
-                  "__type": "Report",
-                  "time.observation": "2019-03-25T00:00:00+00:00",
-                  "extra.file_name": "2019-03-25-test_smb-test-test.csv",
-                  }
+                "raw": utils.base64_encode('\n'.join(EXAMPLE_LINES)),
+                "__type": "Report",
+                "time.observation": "2019-03-25T00:00:00+00:00",
+                "extra.file_name": "2019-03-25-test_smb-test-test.csv",
+                }
 with open(os.path.join(os.path.dirname(__file__), 'testdata/test_telnet.csv')) as handle:
     EXAMPLE_LINES = handle.read().splitlines()[:2]
 

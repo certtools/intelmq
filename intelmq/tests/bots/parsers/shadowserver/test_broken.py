@@ -24,12 +24,12 @@ REPORT3 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
            "__type": "Report",
            "time.observation": "2015-01-01T00:00:00+00:00",
            "extra.file_name": "2019-01-01-some_string-test-test.csv",
-}
+           }
 REPORT4 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
            "__type": "Report",
            "time.observation": "2015-01-01T00:00:00+00:00",
            "extra.file_name": "2020.wrong-filename.csv",
-}
+           }
 
 
 class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
