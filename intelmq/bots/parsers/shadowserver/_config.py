@@ -88,14 +88,17 @@ from typing import Optional, Dict, Tuple, Any
 
 import intelmq.lib.harmonization as harmonization
 
+
 class __Container:
     pass
+
 
 __config = __Container()
 __config.schema_file = os.path.join(os.path.dirname(__file__), 'schema.json')
 __config.schema_mtime = 0.0
 __config.feedname_mapping = {}
 __config.filename_mapping = {}
+
 
 def set_logger(logger):
     """ Sets the logger instance. """
@@ -254,27 +257,28 @@ def scan_exchange_identifier(field):
         return 'exchange-server-webshell'
     return 'vulnerable-exchange-server'
 
+
 functions = {
-        'add_UTC_to_timestamp': add_UTC_to_timestamp,
-        'convert_bool': convert_bool,
-        'validate_to_none': validate_to_none,
-        'convert_int': convert_int,
-        'convert_float': convert_float,
-        'convert_http_host_and_url': convert_http_host_and_url,
-        'invalidate_zero': invalidate_zero,
-        'validate_ip': validate_ip,
-        'validate_network': validate_network,
-        'validate_fqdn': validate_fqdn,
-        'convert_date': convert_date,
-        'convert_date_utc': convert_date_utc,
-        'force_base64': force_base64,
-        'scan_exchange_taxonomy': scan_exchange_taxonomy,
-        'scan_exchange_type': scan_exchange_type,
-        'scan_exchange_identifier': scan_exchange_identifier,
-        }
+    'add_UTC_to_timestamp': add_UTC_to_timestamp,
+    'convert_bool': convert_bool,
+    'validate_to_none': validate_to_none,
+    'convert_int': convert_int,
+    'convert_float': convert_float,
+    'convert_http_host_and_url': convert_http_host_and_url,
+    'invalidate_zero': invalidate_zero,
+    'validate_ip': validate_ip,
+    'validate_network': validate_network,
+    'validate_fqdn': validate_fqdn,
+    'convert_date': convert_date,
+    'convert_date_utc': convert_date_utc,
+    'force_base64': force_base64,
+    'scan_exchange_taxonomy': scan_exchange_taxonomy,
+    'scan_exchange_type': scan_exchange_type,
+    'scan_exchange_identifier': scan_exchange_identifier,
+}
 
 
-def reload ():
+def reload():
     """ reload the configuration if it has changed """
     mtime = 0.0
 
@@ -291,7 +295,7 @@ def reload ():
 
     __config.feedname_mapping.clear()
     __config.filename_mapping.clear()
-    for schema_file in [ __config.schema_file, ".".join([__config.schema_file, 'test']) ]:
+    for schema_file in [__config.schema_file, ".".join([__config.schema_file, 'test'])]:
         if os.path.isfile(schema_file):
             with open(schema_file) as fh:
                 schema = json.load(fh)
@@ -305,13 +309,14 @@ def reload ():
                     __config.filename_mapping[schema[report]['file_name']] = (schema[report]['feed_name'], schema[report])
     __config.schema_mtime = mtime
 
-def update_schema ():
+
+def update_schema():
     """ download the latest configuration """
     if os.environ.get('INTELMQ_SKIP_INTERNET'):
         return None
 
     (th, tmp) = tempfile.mkstemp(dir=os.path.dirname(__file__))
-    url = 'https://interchange.shadowserver.org/intelmq/v1'
+    url = 'https://interchange.shadowserver.org/intelmq/v1/schema'
     try:
         urllib.request.urlretrieve(url, tmp)
     except:
@@ -329,7 +334,6 @@ def update_schema ():
         raise ValueError("Failed to validate %r" % tmp)
 
     if os.path.exists(__config.schema_file):
-        old_version = ''
         try:
             with open(__config.schema_file) as fh:
                 schema = json.load(fh)

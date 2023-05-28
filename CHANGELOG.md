@@ -62,15 +62,21 @@ CHANGELOG
 ### Bots
 
 #### Collectors
+<<<<<<< HEAD
 - `intelmq.bots.collector.rt`:
   - restrict `python-rt` to be below version 3.0 due to introduced breaking changes,
   - added support for `Subject NOT LIKE` queries,
   - added support for multiple values in ticket subject queries.
 - `intelmq.bots.collectors.rsync`: Support for optional private key, relative time parsing for the source path, extra rsync parameters and strict host key checking (PR#2241 by Mateo Durante).
+=======
+- `intelmq.bots.collectors.shadowserver.collector_reports_api`:
+  - The 'json' option is no longer supported as the 'csv' option provides better performance.  Please see intelmq/bots/parsers/shadowserver/README.md for a sample configuration. (PR#2372)
+>>>>>>> Documentation and style updates.
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
   - Reset detected `feedname` at shutdown to re-detect the feedname on reloads (PR#2361 by @elsif2, fixes #2360).
+  - Switch to dynamic configuration to decouple report schema changes from IntelMQ releases.  Please see intelmq/bots/parsers/shadowserver/README.md for details. (PR#2372)
 - `intelmq.bots.parsers.shadowserver._config`:
   - Added 'IPv6-Vulnerable-Exchange' alias and 'Accessible-WS-Discovery-Service' report. (PR#2338)
   - Removed unused `p0f_genre` and `p0f_detail` from the 'DNS-Open-Resolvers' report. (PR#2338)
