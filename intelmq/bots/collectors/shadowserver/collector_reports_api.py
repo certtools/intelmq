@@ -34,7 +34,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
             A list of strings or a comma-separated list of the mailing lists you want to process.
         types (list):
             A list of strings or a string of comma-separated values with the names of reporttypes you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
-        file_format (str): File format to download ('csv').  The 'json' option is not longer supported.
+        file_format (str): File format to download ('csv').  The 'json' option is no longer supported.
     """
 
     country = None

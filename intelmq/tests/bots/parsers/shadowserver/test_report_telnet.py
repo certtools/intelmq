@@ -42,7 +42,7 @@ EVENTS = [{'__type': 'Event',
            "source.reverse_dns": "example.local",
            "time.observation": "2015-01-01T00:00:00+00:00",
            "time.source": "2019-09-04T12:27:34+00:00"
-          },
+           },
           {'__type': 'Event',
            'feed.name': 'Test-Accessible-Telnet',
            "classification.identifier": "test-telnet",
@@ -63,7 +63,7 @@ EVENTS = [{'__type': 'Event',
            "source.reverse_dns": "example.local",
            "time.observation": "2015-01-01T00:00:00+00:00",
            "time.source": "2019-09-04T12:27:40+00:00"
-          }]
+           }]
 
 
 class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
