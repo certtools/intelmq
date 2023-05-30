@@ -103,3 +103,9 @@ This project was partially funded by the CEF framework
    :target: https://github.com/certtools/intelmq/actions
 .. |CII Badge| image:: https://bestpractices.coreinfrastructure.org/projects/4186/badge
    :target: https://bestpractices.coreinfrastructure.org/projects/4186/
+
+
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/certtools/intelmq.svg)](https://starchart.cc/certtools/intelmq)
