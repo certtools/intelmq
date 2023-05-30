@@ -96,6 +96,12 @@ Funding
 
 This project was partially funded by the CEF framework
 
+=======
+Stargazers over time
+=======
+
+|Stargazers|
+
 .. figure:: https://ec.europa.eu/inea/sites/default/files/ceflogos/en_horizontal_cef_logo_2.png
    :alt: Co-financed by the Connecting Europe Facility of the European Union
 
@@ -103,9 +109,8 @@ This project was partially funded by the CEF framework
    :target: https://github.com/certtools/intelmq/actions
 .. |CII Badge| image:: https://bestpractices.coreinfrastructure.org/projects/4186/badge
    :target: https://bestpractices.coreinfrastructure.org/projects/4186/
+.. |Stargazers| image:: https://starchart.cc/certtools/intelmq.svg
+    :target: https://starchart.cc/certtools/intelmq
 
 
 
-## Stargazers over time
-
-[![Stargazers over time](https://starchart.cc/certtools/intelmq.svg)](https://starchart.cc/certtools/intelmq)
