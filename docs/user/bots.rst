@@ -550,7 +550,11 @@ Request Tracker
 * `cache (redis db):` none
 * `description:` Request Tracker Collector fetches attachments from an RTIR instance.
 
-You need the rt-library >= 1.9 from nic.cz, available via `pypi <https://pypi.org/project/rt/>`_: `pip3 install rt`
+You need the rt-library >= 1.9 and < 3.0 from nic.cz, available via `pypi <https://pypi.org/project/rt/>`_: `pip3 install rt`
+
+.. warning::
+
+   Actually the bot supports the python-rt library in the version older than 3.0.
 
 This rt bot will connect to RT and inspect the given `search_queue` for tickets matching all criteria in `search_*`,
 Any matches will be inspected. For each match, all (RT-) attachments of the matching RT tickets are iterated over and within this loop, the first matching filename in the attachment is processed.
