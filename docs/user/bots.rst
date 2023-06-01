@@ -554,7 +554,7 @@ You need the rt-library >= 1.9 and < 3.0 from nic.cz, available via `pypi <https
 
 .. warning::
 
-   Actually the bot supports the python-rt library in the version older than 3.0.
+   At the moment, the bot only supports `python-rt` versions below 3.0.
 
 This rt bot will connect to RT and inspect the given `search_queue` for tickets matching all criteria in `search_*`,
 Any matches will be inspected. For each match, all (RT-) attachments of the matching RT tickets are iterated over and within this loop, the first matching filename in the attachment is processed.
