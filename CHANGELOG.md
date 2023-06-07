@@ -24,6 +24,7 @@ CHANGELOG
 ### Bots
 
 #### Collectors
+- `intelmq.bots.collector.rt`: restrict `python-rt` to be below version 3.0 due to introduced breaking changes.
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
