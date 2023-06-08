@@ -242,6 +242,8 @@ class SMTPBatchOutputBot(Bot):
             threshold = datetime.datetime.now() - datetime.timedelta(
                 days=self.ignore_older_than_days) if getattr(self, 'ignore_older_than_days',
                                                              False) else False
+
+            # XX worthy to generate on the fly https://github.com/certtools/intelmq/pull/2253#discussion_r1172779620
             fieldnames = set()
             rows_output = []
             for row in lines:

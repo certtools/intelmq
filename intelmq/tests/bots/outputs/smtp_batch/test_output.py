@@ -10,12 +10,12 @@ import unittest
 try:
     from envelope import Envelope
 except ImportError:
-    from intelmq.lib.exceptions import MissingDependencyError
-    raise MissingDependencyError('envelope', '>=2.0.0')
+    Envelope = None
 
 import intelmq.lib.test as test
 from intelmq.bots.outputs.smtp_batch.output import SMTPBatchOutputBot
 from intelmq.lib.cache import Cache
+from intelmq.lib.exceptions import MissingDependencyError
 
 SENT_MESSAGES = []  # here we collect e-mail messages there were to be sent
 BOT_ID = "test-bot"
@@ -34,19 +34,17 @@ EVENT2 = {'__type': 'Event',
           'source.abuse_contact': IDENTITY2
           }
 
-REDIS_LOGIN = {"redis_cache_host": "127.0.0.1",
-               "redis_cache_port": 6379,
-               "redis_cache_db": "14",
-               "redis_cache_ttl": ""}
 MAIL_TEMPLATE = Path("mail_template.txt")
 FROM_IDENTITY = "from-example@example.com"
 
-
+@test.skip_exotic()
+@test.skip_redis()
 class TestSMTPBatchOutputBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod
     def set_bot(cls):
         cls.bot_reference = SMTPBatchOutputBot
+        cls.use_cache = True
         cls.sysconfig = {"alternative_mails": "",
                          "attachment_name": "events_%Y-%m-%d",
                          "bcc": [],
@@ -56,11 +54,13 @@ class TestSMTPBatchOutputBot(test.BotTestCase, unittest.TestCase):
                          "mail_template": str(MAIL_TEMPLATE.resolve()),
                          "ignore_older_than_days": 0,
                          "limit_results": 10,
-                         **REDIS_LOGIN,
                          "smtp_server": "localhost",
                          "subject": "Testing subject %Y-%m-%d",
                          "testing_to": ""
                          }
+
+        if not Envelope:
+            raise MissingDependencyError('envelope', '>=2.0.0')
 
     def compare_envelope(self, envelope: Envelope, subject, message, from_, to):
         self.assertEqual(subject, envelope.subject())
@@ -75,7 +75,7 @@ class TestSMTPBatchOutputBot(test.BotTestCase, unittest.TestCase):
         return True  # let's pretend the message sending succeeded
 
     def test_processing(self):
-        redis = Cache(*REDIS_LOGIN.values()).redis
+        redis = self.cache
         time_string = time.strftime("%Y-%m-%d")
         message = MAIL_TEMPLATE.read_text()
         self.input_message = (EVENT1, EVENT1, EVENT2, EVENT1)
@@ -107,8 +107,8 @@ class TestSMTPBatchOutputBot(test.BotTestCase, unittest.TestCase):
                         .attachments(f"events_{time_string}.zip"))
 
         # messages should have disappeared from the redis
-        self.assertCountEqual([], redis.keys(f"{self.bot.key}*"))        
-        
+        self.assertCountEqual([], redis.keys(f"{self.bot.key}*"))
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
