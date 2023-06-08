@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import csv
+from dataclasses import dataclass
 import datetime
 import json
 import os
@@ -23,7 +24,12 @@ try:
 except ImportError:
     Envelope = None
 
-Mail = namedtuple('Mail', ["key", "to", "path", "count"])
+@dataclass
+class Mail:
+    key: str
+    to: str
+    path: str
+    count: int
 
 
 class SMTPBatchOutputBot(Bot):
@@ -44,6 +50,14 @@ class SMTPBatchOutputBot(Bot):
     subject: str = "IntelMQ warning (%Y-%m-%d)"
     attachment_name: str = "intelmq_%Y-%m-%d"
     testing_to: Optional[str] = None
+    allowed_fieldnames: list = ['time.source', 'source.ip', 'classification.taxonomy', 'classification.type',
+                              'time.observation', 'source.geolocation.cc', 'source.asn', 'event_description.text',
+                              'malware.name', 'feed.name', 'feed.url', 'raw']
+    fieldnames_translation: dict = {'time.source': 'time_detected', 'source.ip': 'ip', 'classification.taxonomy': 'class',
+                                'classification.type': 'type', 'time.observation': 'time_delivered',
+                                'source.geolocation.cc': 'country_code', 'source.asn': 'asn',
+                                'event_description.text': 'description', 'malware.name': 'malware',
+                                'feed.name': 'feed_name', 'feed.url': 'feed_url', 'raw': 'raw'}
 
     # private parameters
     mail_contents: str
@@ -204,14 +218,8 @@ class SMTPBatchOutputBot(Bot):
 
     def prepare_mails(self):
         """ Generates Mail objects """
-        allowed_fieldnames = ['time.source', 'source.ip', 'classification.taxonomy', 'classification.type',
-                              'time.observation', 'source.geolocation.cc', 'source.asn', 'event_description.text',
-                              'malware.name', 'feed.name', 'feed.url', 'raw']
-        fieldnames_translation = {'time.source': 'time_detected', 'source.ip': 'ip', 'classification.taxonomy': 'class',
-                                  'classification.type': 'type', 'time.observation': 'time_delivered',
-                                  'source.geolocation.cc': 'country_code', 'source.asn': 'asn',
-                                  'event_description.text': 'description', 'malware.name': 'malware',
-                                  'feed.name': 'feed_name', 'feed.url': 'feed_url', 'raw': 'raw'}
+
+
 
         for mail_record in self.cache.redis.keys(f"{self.key}*")[slice(self.limit_results)]:
             lines = []
@@ -249,21 +257,21 @@ class SMTPBatchOutputBot(Bot):
                 if threshold and row["time.observation"][:19] < threshold.isoformat()[:19]:
                     continue
                 fieldnames = fieldnames | set(row.keys())
-                keys = set(allowed_fieldnames).intersection(row)
+                keys = set(self.allowed_fieldnames).intersection(row)
                 ordered_keys = []
-                for field in allowed_fieldnames:
+                for field in self.allowed_fieldnames:
                     if field in keys:
                         ordered_keys.append(field)
                 try:
                     row["raw"] = b64decode(row["raw"]).decode("utf-8").strip().replace("\n", r"\n").replace("\r", r"\r")
                 except (ValueError, KeyError):  # not all events have to contain the "raw" field
                     pass
-                rows_output.append(OrderedDict({fieldnames_translation[k]: row[k] for k in ordered_keys}))
+                rows_output.append(OrderedDict({self.fieldnames_translation[k]: row[k] for k in ordered_keys}))
 
             # prepare headers for csv attachment
             ordered_fieldnames = []
-            for field in allowed_fieldnames:
-                ordered_fieldnames.append(fieldnames_translation[field])
+            for field in self.allowed_fieldnames:
+                ordered_fieldnames.append(self.fieldnames_translation[field])
 
             # write data to csv
             output = StringIO()
