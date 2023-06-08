@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: 2022 CSIRT.cz <https://csirt.cz>
+# SPDX-License-Identifier: AGPL-3.0-or-later
 import csv
 from dataclasses import dataclass
 import datetime
@@ -23,6 +24,7 @@ try:
     from envelope import Envelope
 except ImportError:
     Envelope = None
+
 
 @dataclass
 class Mail:
@@ -51,13 +53,13 @@ class SMTPBatchOutputBot(Bot):
     attachment_name: str = "intelmq_%Y-%m-%d"
     testing_to: Optional[str] = None
     allowed_fieldnames: list = ['time.source', 'source.ip', 'classification.taxonomy', 'classification.type',
-                              'time.observation', 'source.geolocation.cc', 'source.asn', 'event_description.text',
-                              'malware.name', 'feed.name', 'feed.url', 'raw']
+                                'time.observation', 'source.geolocation.cc', 'source.asn', 'event_description.text',
+                                'malware.name', 'feed.name', 'feed.url', 'raw']
     fieldnames_translation: dict = {'time.source': 'time_detected', 'source.ip': 'ip', 'classification.taxonomy': 'class',
-                                'classification.type': 'type', 'time.observation': 'time_delivered',
-                                'source.geolocation.cc': 'country_code', 'source.asn': 'asn',
-                                'event_description.text': 'description', 'malware.name': 'malware',
-                                'feed.name': 'feed_name', 'feed.url': 'feed_url', 'raw': 'raw'}
+                                    'classification.type': 'type', 'time.observation': 'time_delivered',
+                                    'source.geolocation.cc': 'country_code', 'source.asn': 'asn',
+                                    'event_description.text': 'description', 'malware.name': 'malware',
+                                    'feed.name': 'feed_name', 'feed.url': 'feed_url', 'raw': 'raw'}
 
     # private parameters
     mail_contents: str
@@ -218,8 +220,6 @@ class SMTPBatchOutputBot(Bot):
 
     def prepare_mails(self):
         """ Generates Mail objects """
-
-
 
         for mail_record in self.cache.redis.keys(f"{self.key}*")[slice(self.limit_results)]:
             lines = []
