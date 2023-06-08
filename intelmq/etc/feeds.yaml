@@ -651,14 +651,14 @@ providers:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: https://www.turris.cz/greylist-data/greylist-latest.csv
+            http_url: https://view.sentinel.turris.cz/greylist-data/greylist-latest.csv
             rate_limit: 43200
             name: __FEED__
             provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.turris.parser
           parameters:
-      revision: 2018-01-20
+      revision: 2023-06-13
       documentation: https://project.turris.cz/en/greylist
       public: true
     Greylist with PGP signature verification:
