@@ -4,6 +4,7 @@ import datetime
 import json
 import os
 import sys
+from tempfile import NamedTemporaryFile
 import time
 from typing import Any, Optional
 import zipfile
@@ -45,7 +46,6 @@ class SMTPBatchOutputBot(Bot):
     testing_to: Optional[str] = None
 
     # private parameters
-    TMP_DIR = "/tmp/intelmq-smtp-batch-output/"
     mail_contents: str
     alternative_mail: dict = {}
     timeout: list
@@ -104,7 +104,6 @@ class SMTPBatchOutputBot(Bot):
         return argparser
 
     def cli_run(self):
-        os.makedirs(self.TMP_DIR, exist_ok=True)
         with open(self.mail_template) as f:
             self.mail_contents = f.read()
         if self.alternative_mails:
@@ -243,7 +242,7 @@ class SMTPBatchOutputBot(Bot):
                 days=self.ignore_older_than_days) if getattr(self, 'ignore_older_than_days',
                                                              False) else False
 
-            # XX worthy to generate on the fly https://github.com/certtools/intelmq/pull/2253#discussion_r1172779620
+            # TODO: worthy to generate on the fly https://github.com/certtools/intelmq/pull/2253#discussion_r1172779620
             fieldnames = set()
             rows_output = []
             for row in lines:
@@ -278,17 +277,14 @@ class SMTPBatchOutputBot(Bot):
                 path = None
             else:
                 filename = f'{time.strftime("%y%m%d")}_{count}_events'
-                path = self.TMP_DIR + filename + '_' + email_to + '.zip'
+                path = NamedTemporaryFile().name
 
-                zf = zipfile.ZipFile(path, mode='w', compression=zipfile.ZIP_DEFLATED)
-                # noinspection PyBroadException
-                try:
-                    zf.writestr(filename + ".csv", output.getvalue())
-                except Exception:
-                    self.logger.error(f"Cannot zip mail {mail_record}")
-                    continue
-                finally:
-                    zf.close()
+                with zipfile.ZipFile(path, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
+                    try:
+                        zf.writestr(filename + ".csv", output.getvalue())
+                    except Exception:
+                        self.logger.error(f"Cannot zip mail {mail_record}")
+                        continue
 
                 if email_to in self.alternative_mail:
                     print(f"Alternative: instead of {email_to} we use {self.alternative_mail[email_to]}")

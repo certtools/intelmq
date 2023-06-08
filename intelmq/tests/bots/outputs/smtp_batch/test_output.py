@@ -4,7 +4,6 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
 import time
-from types import SimpleNamespace
 import unittest
 
 try:
@@ -17,7 +16,6 @@ from intelmq.bots.outputs.smtp_batch.output import SMTPBatchOutputBot
 from intelmq.lib.cache import Cache
 from intelmq.lib.exceptions import MissingDependencyError
 
-SENT_MESSAGES = []  # here we collect e-mail messages there were to be sent
 BOT_ID = "test-bot"
 IDENTITY1 = 'one@example.com'
 KEY1 = f"{BOT_ID}:{IDENTITY1}".encode()
@@ -34,12 +32,16 @@ EVENT2 = {'__type': 'Event',
           'source.abuse_contact': IDENTITY2
           }
 
-MAIL_TEMPLATE = Path("mail_template.txt")
+MAIL_TEMPLATE = Path(__file__).parent / "mail_template.txt"
 FROM_IDENTITY = "from-example@example.com"
+
 
 @test.skip_exotic()
 @test.skip_redis()
 class TestSMTPBatchOutputBot(test.BotTestCase, unittest.TestCase):
+
+    def setUp(self):
+        self.sent_messages = []  # here we collect e-mail messages there were to be sent
 
     @classmethod
     def set_bot(cls):
@@ -68,11 +70,11 @@ class TestSMTPBatchOutputBot(test.BotTestCase, unittest.TestCase):
         self.assertEqual(from_, envelope.from_())
         self.assertEqual(to, envelope.to())
 
-    @staticmethod
-    def send_message(envelope):
-        global SENT_MESSAGES
-        SENT_MESSAGES.append(envelope)
-        return True  # let's pretend the message sending succeeded
+    def send_message(self):
+        def _(envelope):
+            self.sent_messages.append(envelope)
+            return True  # let's pretend the message sending succeeded
+        return _
 
     def test_processing(self):
         redis = self.cache
@@ -92,18 +94,18 @@ class TestSMTPBatchOutputBot(test.BotTestCase, unittest.TestCase):
         self.assertEqual(1, len(redis.lrange(KEY2, 0, -1)))
 
         # run the CLI interface with the --send parameter, it should send the messages and exit
-        with unittest.mock.patch('envelope.Envelope.send', new=self.send_message):
+        with unittest.mock.patch('envelope.Envelope.send', new=self.send_message()):
             self.bot.send = True
             self.assertRaises(SystemExit, self.bot.cli_run)
 
         # compare messages there were to be sent
         self.compare_envelope(
-            SENT_MESSAGES[0], f"Testing subject {time_string} ({IDENTITY2})", message, FROM_IDENTITY, [IDENTITY2])
+            self.sent_messages[0], f"Testing subject {time_string} ({IDENTITY2})", message, FROM_IDENTITY, [IDENTITY2])
         self.compare_envelope(
-            SENT_MESSAGES[1], f"Testing subject {time_string} ({IDENTITY1})", message, FROM_IDENTITY, [IDENTITY1])
+            self.sent_messages[1], f"Testing subject {time_string} ({IDENTITY1})", message, FROM_IDENTITY, [IDENTITY1])
 
         # we expect this ZIP attachment
-        self.assertTrue(SENT_MESSAGES[1]
+        self.assertTrue(self.sent_messages[1]
                         .attachments(f"events_{time_string}.zip"))
 
         # messages should have disappeared from the redis
