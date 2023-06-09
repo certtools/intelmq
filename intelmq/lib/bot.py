@@ -1023,13 +1023,17 @@ class Bot:
 
         Access the output queue e.g. with return_value['output']
         """
-        print('process_message, destination state:', self.__destination_pipeline.state, 'self.destination_queues', self.destination_queues)
         if self.bottype == BotType.COLLECTOR:
             if messages:
                 raise exceptions.InvalidArgument('Collector Bots take no messages as processing input')
         else:
             # reset source queue
             self.__source_pipeline.state[self.source_queue] = []
+            # reset internal queue
+            if self.__source_pipeline._has_message:
+                self.__source_pipeline.acknowledge()
+            self.__current_message = None
+
             for message in messages:
                 # convert to Message objects, it the message is a dict
                 # use an appropriate default message type, not requiring __type keys in the message

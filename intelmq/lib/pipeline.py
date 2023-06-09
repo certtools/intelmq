@@ -15,7 +15,7 @@ Algorithm
 
 import time
 from itertools import chain
-from typing import Dict, Optional
+from typing import Optional
 import ssl
 
 import redis

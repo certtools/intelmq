@@ -7,7 +7,7 @@ Copyright (c) 2023 by Bundesamt für Sicherheit in der Informationstechnik (BSI)
 
 Software engineering by BSI & Intevation GmbH
 
-This tests IntelMQ bots in library mode (IEP007)
+This file tests IntelMQ bots in library mode (IEP007)
 """
 import json
 import unittest
@@ -28,11 +28,30 @@ EXAMPLE_DATA_URL_OUT = EXAMPLE_DATA_URL | {'source.fqdn': 'example.com',
                                            'source.urlpath': '/',
                                            'protocol.application': 'http',
                                            'protocol.transport': 'tcp'}
+EXAMPLE_IP_INPUT = {"source.ip": "192.0.43.7",  # icann.org.
+                    "destination.ip": "192.0.43.8",  # iana.org.
+                    "time.observation": "2015-01-01T00:00:00+00:00",
+                    }
 
 
 class BrokenInitExpertBot(ExpertBot):
     def init(self):
         raise ValueError('This initialization intionally raises an error!')
+
+
+class RaisesOnFirstRunExpertBot(ExpertBot):
+    counter = 0
+
+    def init(self):
+        self.counter = 0
+
+    def process(self):
+        event = self.receive_message()
+        self.counter += 1
+        if self.counter == 1:
+            raise ValueError('This initialization intionally raises an error!')
+        self.send_message(event)
+        self.acknowledge_message()
 
 
 def assertMessageEqual(actual, expected):
@@ -107,6 +126,19 @@ def test_bot_multi_message():
     queues = url_expert.process_message(EXAMPLE_DATA_URL.copy(), EXAMPLE_DATA_URL.copy())
     del url_expert
     assert queues['output'] == [EXAMPLE_DATA_URL_OUT] * 2
+
+
+def test_bot_raises_and_second_message():
+    """
+    The first message raises an error and the second message
+    This test is based on an issue where the exception-raising message was not cleared from the internal message store of the Bot/Pipeline instance and thus re-used on the second run
+    """
+    raises_on_first_run = RaisesOnFirstRunExpertBot('raises', settings=BotLibSettings)
+    with raises(ValueError):
+        raises_on_first_run.process_message(EXAMPLE_DATA_URL)
+    queues = raises_on_first_run.process_message(EXAMPLE_IP_INPUT)
+    assert len(queues['output']) == 1
+    assertMessageEqual(queues['output'][0], EXAMPLE_IP_INPUT)
 
 
 if __name__ == '__main__':  # pragma: no cover
