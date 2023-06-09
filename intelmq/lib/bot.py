@@ -1045,7 +1045,6 @@ class Bot:
 
         # process all input messages
         while self.__source_pipeline.state[self.source_queue]:
-            self.logger.info('source queue: %r', self.__source_pipeline.state[self.source_queue])
             self.process()
 
         # clear destination state, before make a copy for return
