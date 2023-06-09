@@ -13,20 +13,25 @@ import ipaddress
 import os
 import re
 import traceback
-import datetime
 import operator
 
-from typing import Optional
+from datetime import datetime, timedelta, timezone
+from typing import Callable, Dict, Optional, Union
 from enum import Enum, auto
-from functools import partial
 
 import intelmq.lib.exceptions as exceptions
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
-from intelmq.lib.utils import parse_relative
+from intelmq.lib.message import Event
+from intelmq.lib.utils import parse_relative, TIMESPANS
 from intelmq.lib.harmonization import DateTime
+
+try:
+    from pendulum import parse
+except:
+    parse = None
 
 try:
     import textx.model
@@ -34,6 +39,8 @@ try:
     from textx.exceptions import TextXError, TextXSemanticError
 except ImportError:
     metamodel_from_file = None
+
+CondMap = Dict[str, Callable[['SieveExpertBot', object, Event], bool]]
 
 
 class Procedure(Enum):
@@ -93,19 +100,28 @@ class SieveExpertBot(ExpertBot):
         '!=': operator.ne,
     }
 
-    _cond_map = {
+    _date_op_map = {
+        ':before': operator.lt,
+        ':after': operator.gt
+    }
+
+    _cond_map: CondMap = {
         'ExistMatch': lambda self, match, event: self.process_exist_match(match.key, match.op, event),
         'SingleStringMatch': lambda self, match, event: self.process_single_string_match(match.key, match.op, match.value, event),
         'MultiStringMatch': lambda self, match, event: self.process_multi_string_match(match.key, match.op, match.value, event),
         'SingleNumericMatch': lambda self, match, event: self.process_single_numeric_match(match.key, match.op, match.value, event),
         'MultiNumericMatch': lambda self, match, event: self.process_multi_numeric_match(match.key, match.op, match.value, event),
         'IpRangeMatch': lambda self, match, event: self.process_ip_range_match(match.key, match.range, event),
+        'DateMatch': lambda self, match, event: self.process_date_match(match.key, match.op, match.date, event),
         'ListMatch': lambda self, match, event: self.process_list_match(match.key, match.op, match.value, event),
         'BoolMatch': lambda self, match, event: self.process_bool_match(match.key, match.op, match.value, event),
         'Expression': lambda self, match, event: self.match_expression(match, event),
     }
 
     def init(self) -> None:
+        if parse is None:
+            raise MissingDependencyError("pendulum")
+
         if not SieveExpertBot._harmonization:
             harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
             SieveExpertBot._harmonization = harmonization_config['event']
@@ -300,6 +316,30 @@ class SieveExpertBot(ExpertBot):
             return any(addr in ipaddress.ip_network(val.value, strict=False) for val in ip_range.values)
         raise TextXSemanticError(f'Unhandled type: {name}')
 
+    def parse_timeattr(self, time_attr) -> Union[datetime, timedelta]:
+        """ Parses relative or absolute time specification. """
+        try:
+            return parse(time_attr)
+        except ValueError:
+            return timedelta(minutes=parse_relative(time_attr))
+
+    def process_date_match(self, key, op, value, event) -> bool:
+        if key not in event:
+            return False
+
+        op = self._date_op_map[op]
+
+        base_time = self.parse_timeattr(value.value)
+        if isinstance(base_time, timedelta):
+            base_time = datetime.now(tz=timezone.utc) - base_time
+        try:
+            event_time = parse(str(event[key]))
+        except ValueError:
+            self.logger.warning("Could not parse time.source %s=%s at %s.", key, event[key], event)
+            return False
+        else:
+            return op(event_time, base_time)
+
     def process_list_match(self, key, op, value, event) -> bool:
         if not (key in event and isinstance(event[key], list)):
             return False
@@ -316,7 +356,7 @@ class SieveExpertBot(ExpertBot):
 
     def compute_basic_math(self, action, event) -> str:
         date = DateTime.from_isoformat(event[action.key], True)
-        delta = datetime.timedelta(minutes=parse_relative(action.value))
+        delta = timedelta(minutes=parse_relative(action.value))
 
         return self._basic_math_op_map[action.operator](date, delta).isoformat()
 
