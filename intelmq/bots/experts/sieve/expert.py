@@ -25,7 +25,7 @@ from intelmq.lib import utils
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.message import Event
-from intelmq.lib.utils import parse_relative, TIMESPANS
+from intelmq.lib.utils import parse_relative
 from intelmq.lib.harmonization import DateTime
 
 try:
@@ -333,9 +333,9 @@ class SieveExpertBot(ExpertBot):
         if isinstance(base_time, timedelta):
             base_time = datetime.now(tz=timezone.utc) - base_time
         try:
-            event_time = parse(str(event[key]))
+            event_time = DateTime.from_isoformat(event[key], True)
         except ValueError:
-            self.logger.warning("Could not parse time.source %s=%s at %s.", key, event[key], event)
+            self.logger.warning("Could not parse %s=%s at %s.", key, event[key], event)
             return False
         else:
             return op(event_time, base_time)
