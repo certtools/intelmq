@@ -97,10 +97,14 @@ class TestSMTPBatchOutputBot(test.BotTestCase, unittest.TestCase):
             self.assertRaises(SystemExit, self.bot.cli_run)
 
         # compare messages there were to be sent
+        msg1, msg2 = self.sent_messages
+        if msg1.to()[0] == IDENTITY1:  # the redis KEYS order is not guaranteed, compensate
+            msg2, msg1 = msg1, msg2
+
         self.compare_envelope(
-            self.sent_messages[0], f"Testing subject {time_string} ({IDENTITY2})", message, FROM_IDENTITY, [IDENTITY2])
+            msg1, f"Testing subject {time_string} ({IDENTITY2})", message, FROM_IDENTITY, [IDENTITY2])
         self.compare_envelope(
-            self.sent_messages[1], f"Testing subject {time_string} ({IDENTITY1})", message, FROM_IDENTITY, [IDENTITY1])
+            msg2, f"Testing subject {time_string} ({IDENTITY1})", message, FROM_IDENTITY, [IDENTITY1])
 
         # we expect this ZIP attachment
         self.assertTrue(self.sent_messages[1]
