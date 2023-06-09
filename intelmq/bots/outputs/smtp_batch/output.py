@@ -11,7 +11,7 @@ import time
 from typing import Any, Optional
 import zipfile
 from base64 import b64decode
-from collections import namedtuple, OrderedDict
+from collections import OrderedDict
 from io import StringIO
 
 from redis.exceptions import TimeoutError
