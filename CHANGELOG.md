@@ -48,6 +48,7 @@ CHANGELOG
 #### Outputs
 - `intelmq.bots.outputs.cif3.output`: Added (PR#2244 by Michael Davis).
 - `intelmq.bots.outputs.sql.output`: New parameter `fail_on_errors` (PR#2362 by Sebastian Wagner).
+- `intelmq.bots.outputs.smtp_batch.output`: Added a bot to gathering the events and sending them by e-mails at a stroke as CSV files (PR#2253 by Edvard Rejthar)
 
 ### Documentation
 
