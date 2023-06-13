@@ -53,6 +53,7 @@ CHANGELOG
 ### Documentation
 
 ### Tests
+- New decorator `skip_installation` and environment variable `INTELMQ_TEST_INSTALLATION` to skip tests requiring an IntelMQ installation on the test host by default (PR#2370 by Sebastian Wagner, fixes #2369)
 
 ### Packaging
 

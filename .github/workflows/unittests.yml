@@ -75,4 +75,9 @@ jobs:
 
     - name: Run full testsuite
       if: ${{ matrix.type == 'full' }}
-      run: TZ=utc INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_EXOTIC=1 pytest --cov intelmq/ --cov-report=xml --cov-branch intelmq/ contrib/
+      run: pytest --cov intelmq/ --cov-report=xml --cov-branch intelmq/ contrib/
+      env:
+        TZ: utz
+        INTELMQ_TEST_DATABASES: 1
+        INTELMQ_TEST_EXOTIC: 1
+        INTELMQ_TEST_INSTALLATION: 1
