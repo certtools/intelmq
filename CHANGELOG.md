@@ -17,7 +17,9 @@ CHANGELOG
 - `intelmq.lib.upgrages`: Fix a bug in the upgrade function for version 3.1.0 which caused an exception if a generic csv parser instance had no parameter `type` (PR#2319 by Filip Pokorný).
 - `intelmq.lib.datatypes`: Adds `TimeFormat` class to be used for the `time_format` bot parameter (PR#2329 by Filip Pokorný).
 - `intelmq.lib.exceptions`: Fixes a bug in `InvalidArgument` exception (PR#2329 by Filip Pokorný).
-- `intelmq.lib.harmonization`: Changes signature and names of `DateTime` conversion functions for consistency, backwards compatible (PR#2329 by Filip Pokorný).
+- `intelmq.lib.harmonization`:
+  - Changes signature and names of `DateTime` conversion functions for consistency, backwards compatible (PR#2329 by Filip Pokorný).
+  - Ensure rejecting URLs with leading whitespaces after changes in CPython (fixes [#2377](https://github.com/certtools/intelmq/issues/2377))
 
 ### Development
 

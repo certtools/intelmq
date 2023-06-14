@@ -34,6 +34,7 @@ import ipaddress
 import json
 import re
 import socket
+import string
 import warnings
 import urllib.parse as parse
 from typing import Optional, Union
@@ -1088,6 +1089,9 @@ class URL(String):
             value = URL.sanitize(value)
 
         if not GenericType.is_valid(value):
+            return False
+
+        if value[0] in string.whitespace:
             return False
 
         result = parse.urlsplit(value)
