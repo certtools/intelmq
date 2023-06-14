@@ -24,7 +24,10 @@ CHANGELOG
 ### Bots
 
 #### Collectors
-- `intelmq.bots.collector.rt`: restrict `python-rt` to be below version 3.0 due to introduced breaking changes.
+- `intelmq.bots.collector.rt`:
+  - restrict `python-rt` to be below version 3.0 due to introduced breaking changes,
+  - added support for `Subject NOT LIKE` queries,
+  - added support for multiple values in ticket subject queries.
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:

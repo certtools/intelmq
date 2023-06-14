@@ -574,7 +574,8 @@ If none of the filename matches apply, the contents of the first (RT-) "history"
 * `search_queue`: queue of the ticket to search for (default: `Incident Reports`)
 * `search_requestor`: the e-mail address of the requestor
 * `search_status`: status of the ticket to search for (default: `new`)
-* `search_subject_like`: part of the subject of the ticket to search for (default: `Report`)
+* `search_subject_like`: part of the subject of the ticket to search for (default: `Report`); use list for multiple required values,
+* `search_subject_notlike`: exclude subject containing given value, use list for multiple excluding values,
 * `set_status`: status to set the ticket to after processing (default: `open`). `false` or `null` to not set a different status.
 * `take_ticket`: whether to take the ticket (default: `true`)
 * `url_regex`: regular expression of an URL to search for in the ticket

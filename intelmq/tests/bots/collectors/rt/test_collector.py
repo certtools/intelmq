@@ -21,19 +21,19 @@ rt_attachment_ticket = os.getenv('INTELMQ_TEST_RT_ATTACHMENT_TICKET')
 rt_url_ticket = os.getenv('INTELMQ_TEST_RT_URL_TICKET')
 
 REPORT = {"__type": "Report",
-              "feed.name": "Example feed",
-              "feed.accuracy": 100.,
-              "raw": utils.base64_encode('bar text\n'),
-              "extra.file_name": "foobar",
-              "extra.email_subject": "Incoming IntelMQ Test Report",
-              "extra.ticket_subject": "Incoming IntelMQ Test Report",
-              "extra.ticket_requestors": "wagner@cert.at",
-              "extra.email_from": "wagner@cert.at",
-              "extra.ticket_queue": "Incident Reports",
-              "extra.ticket_status": "new",
-              "extra.ticket_owner": "intelmq",
-              "rtir_id": utils.lazy_int(0 if not rt_attachment_ticket else rt_attachment_ticket),
-              }
+          "feed.name": "Example feed",
+          "feed.accuracy": 100.,
+          "raw": utils.base64_encode('bar text\n'),
+          "extra.file_name": "foobar",
+          "extra.email_subject": "Incoming IntelMQ Test Report",
+          "extra.ticket_subject": "Incoming IntelMQ Test Report",
+          "extra.ticket_requestors": "wagner@cert.at",
+          "extra.email_from": "wagner@cert.at",
+          "extra.ticket_queue": "Incident Reports",
+          "extra.ticket_status": "new",
+          "extra.ticket_owner": "intelmq",
+          "rtir_id": utils.lazy_int(0 if not rt_attachment_ticket else rt_attachment_ticket),
+          }
 REPORT_URL1 = REPORT.copy()
 REPORT_URL1['rtir_id'] = utils.lazy_int(0 if not rt_url_ticket else rt_url_ticket)
 REPORT_URL1['extra.file_name'] = 'bar'
@@ -97,6 +97,44 @@ class TestRTCollectorBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(iterations=1, prepare=False)
         self.assertMessageEqual(0, REPORT_URL1)
         self.assertMessageEqual(1, REPORT_URL2)
+
+
+class TestRTRawQuery(unittest.TestCase):
+    def test_simple(self):
+        kwargs = {
+            'Status': 'active',
+            'Subject__like': 'Report',
+            'Subject__notlike': 'except',
+            'Created__gt': '2023-01-01',
+        }
+
+        raw_query = RTCollectorBot._convert_to_raw_query(kwargs)
+
+        expected = ("(Status=\'active\')"
+                    " AND (Subject LIKE \'Report\')"
+                    " AND (Subject NOT LIKE \'except\')"
+                    " AND (Created>\'2023-01-01\')")
+
+        self.assertEqual(raw_query, expected)
+
+    def test_multiple_values(self):
+        kwargs = {
+            'Status': 'active',
+            'Subject__like': ['Report', 'Report 2'],
+            'Subject__notlike': ['except', 'except2'],
+            'Created__gt': '2023-01-01',
+        }
+
+        raw_query = RTCollectorBot._convert_to_raw_query(kwargs)
+
+        expected = ("(Status=\'active\')"
+                    " AND (Subject LIKE \'Report\')"
+                    " AND (Subject LIKE \'Report 2\')"
+                    " AND (Subject NOT LIKE \'except\')"
+                    " AND (Subject NOT LIKE \'except2\')"
+                    " AND (Created>\'2023-01-01\')")
+
+        self.assertEqual(raw_query, expected)
 
 
 if __name__ == '__main__':  # pragma: no cover

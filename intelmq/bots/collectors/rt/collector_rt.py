@@ -35,6 +35,7 @@ class RTCollectorBot(CollectorBot, HttpMixin):
     search_requestor: Optional[str] = None
     search_status: str = "new"
     search_subject_like: str = "Report"
+    search_subject_not_like: str = None
     set_status: str = "open"
     ssl_client_certificate: str = None  # TODO: type should be pathlib.Path
     take_ticket: bool = True
@@ -47,7 +48,10 @@ class RTCollectorBot(CollectorBot, HttpMixin):
                          'search_requestor': 'Requestor',
                          'search_status': 'Status',
                          'search_subject_like': 'Subject__like',
+                         'search_subject_not_like': 'Subject__notlike',
                          }
+
+    RAW_QUERY_OP_MAPPING = {None: '=', 'like': ' LIKE ', 'notlike': ' NOT LIKE ', 'gt': '>'}
 
     def init(self):
         if rt is None:
@@ -85,10 +89,16 @@ class RTCollectorBot(CollectorBot, HttpMixin):
         else:
             kwargs = {}
 
+        convert_to_raw = False
         for parameter_name, rt_name in self.PARAMETER_MAPPING.items():
             parameter_value = getattr(self, parameter_name, None)
             if parameter_value:
                 kwargs[rt_name] = parameter_value
+                if isinstance(parameter_value, list):
+                    convert_to_raw = True
+
+        if convert_to_raw:
+            kwargs = {'raw_query': self._convert_to_raw_query(kwargs)}
 
         query = RT.search(order='Created', **kwargs)
         self.logger.info('%s results on search query.', len(query))
@@ -204,6 +214,17 @@ class RTCollectorBot(CollectorBot, HttpMixin):
                     self.logger.exception("Could not take ticket %s.", ticket_id)
             if self.set_status:
                 RT.edit_ticket(ticket_id, status=self.set_status)
+
+    @classmethod
+    def _convert_to_raw_query(cls, kwargs: dict) -> str:
+        parts = []
+        for key, values in kwargs.items():
+            key_parts = key.split('__')
+            field_name, op = key_parts[0], None if len(key_parts) == 1 else key_parts[-1]
+            values = values if isinstance(values, list) else [values]
+            for value in values:
+                parts.append(f"({field_name}{cls.RAW_QUERY_OP_MAPPING[op]}\'{value}\')")
+        return ' AND '.join(parts)
 
 
 BOT = RTCollectorBot
