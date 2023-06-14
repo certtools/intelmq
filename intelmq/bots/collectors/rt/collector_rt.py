@@ -98,7 +98,7 @@ class RTCollectorBot(CollectorBot, HttpMixin):
                     convert_to_raw = True
 
         if convert_to_raw:
-            kwargs = {'raw_query': self._convert_to_raw_query(kwargs)}
+            kwargs = self._convert_to_raw_query(kwargs)
 
         query = RT.search(order='Created', **kwargs)
         self.logger.info('%s results on search query.', len(query))
@@ -219,12 +219,15 @@ class RTCollectorBot(CollectorBot, HttpMixin):
     def _convert_to_raw_query(cls, kwargs: dict) -> str:
         parts = []
         for key, values in kwargs.items():
+            if key == 'Queue':
+                continue
             key_parts = key.split('__')
             field_name, op = key_parts[0], None if len(key_parts) == 1 else key_parts[-1]
             values = values if isinstance(values, list) else [values]
             for value in values:
                 parts.append(f"({field_name}{cls.RAW_QUERY_OP_MAPPING[op]}\'{value}\')")
-        return ' AND '.join(parts)
+
+        return {'Queue': kwargs.get('Queue'), 'raw_query': ' AND '.join(parts)}
 
 
 BOT = RTCollectorBot
