@@ -26,6 +26,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     - name: Install codespell
-      run: pip install codespell
+      run: pip install "codespell==2.2.4"
     - name: Run codespell
       run: /home/runner/.local/bin/codespell
