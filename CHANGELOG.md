@@ -21,6 +21,7 @@ CHANGELOG
 ### Bots
 
 #### Collectors
+- `intelmq.bots.collectors.rsync`: Support for optional private key, relative time parsing for the source path, extra rsync parameters and strict host key checking (PR#2241 by Matteo Durante).
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
