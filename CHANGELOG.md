@@ -40,6 +40,7 @@ CHANGELOG
   - Removed  duplicate mappings from the 'Spam-URL' report. (PR#2348)
 - `intelmq.bots.parsers.generic.parser_csv`: Changes `time_format` parameter to use new `TimeFormat` class (PR#2329 by Filip Pokorný).
 - `intelmq.bots.parsers.html_table.parser`: Changes `time_format` parameter to use new `TimeFormat` class (PR#2329 by Filip Pokorný).
+- `intelmq.bots.parsers.turris.parser.py` Updated to the latest data format (issue #2167). (PR#2373 by Filip Pokorný).
 
 #### Experts
 - `intelmq.bots.experts.sieve`:

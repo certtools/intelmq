@@ -1,50 +1,47 @@
-# SPDX-FileCopyrightText: 2015 robcza
+# SPDX-FileCopyrightText: 2023 Filip Pokorný
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-# -*- coding: utf-8 -*-
-import csv
-import io
-
-from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
+
+PORTS = {
+    "ftp": 21,
+    "telnet": 23,
+    "http": 80
+    # smtp uses both 25 and 587, therefore we can't say for certain
+}
 
 
 class TurrisGreylistParserBot(ParserBot):
     """Parse the Turris Greylist feed"""
 
-    def process(self):
-        report = self.receive_message()
+    parse = ParserBot.parse_csv_dict
+    recover_line = ParserBot.recover_line_csv_dict
+    _ignore_lines_starting = ["#"]
 
-        columns = [
-            "source.ip",
-            "source.geolocation.cc",
-            "event_description.text",
-            "source.asn"
-        ]
+    def parse_line(self, line, report):
 
-        headers = True
-        raw_report = utils.base64_decode(report.get("raw"))
-        raw_report = raw_report.translate({0: None})
-        for row in csv.reader(io.StringIO(raw_report)):
-            # ignore headers
-            if headers:
-                headers = False
-                continue
+        for tag in line.get("Tags", "").split(","):
 
             event = self.new_event(report)
 
-            for key, value in zip(columns, row):
-                if key == "__IGNORE__":
-                    continue
+            if tag in ["smtp", "http", "ftp", "telnet"]:
+                event.add("protocol.transport", "tcp")
+                event.add("protocol.application", tag)
+                event.add("classification.type", "brute-force")
+                event.add("destination.port", PORTS.get(tag))
 
-                event.add(key, value)
+            elif tag == "port_scan":
+                event.add("classification.type", "scanner")
 
-            event.add('classification.type', 'scanner')
-            event.add("raw", ",".join(row))
+            else:
+                # cases such as "haas", "hass_logged" and "hass_not_logged" come from CZ.NIC HaaS Feed (available in IntelMQ)
+                # it's better to use that feed for this data (it's data from SSH honeypot)
+                continue
 
-            self.send_message(event)
-        self.acknowledge_message()
+            event.add("raw", self.recover_line(line))
+            event.add("source.ip", line.get("Address"))
+            yield event
 
 
 BOT = TurrisGreylistParserBot
