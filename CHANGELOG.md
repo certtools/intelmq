@@ -42,6 +42,7 @@ CHANGELOG
 - `intelmq.bots.parsers.html_table.parser`: Changes `time_format` parameter to use new `TimeFormat` class (PR#2329 by Filip Pokorný).
 - `intelmq.bots.parsers.turris.parser.py` Updated to the latest data format (issue #2167). (PR#2373 by Filip Pokorný).
 
+
 #### Experts
 - `intelmq.bots.experts.sieve`:
   - Allow empty lists in sieve rule files (PR#2341 by Mikk Margus Möll).
@@ -66,6 +67,7 @@ CHANGELOG
   - SECURITY: fixed a low-risk bug causing the tool to change owner of `/` if run with the `INTELMQ_PATHS_NO_OPT` environment variable set. This affects only the PIP package as the DEB/RPM packages don't contain this tool. (PR#2355 by Kamil Mańkowski, fixes #2354)
 
 ### Known Errors
+- `intelmq.parsers.html_table` may not process invalid URLs in patched Python version due to changes in `urllib`. See #2382
 
 3.1.0 (2023-02-10)
 ------------------
