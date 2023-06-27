@@ -17,9 +17,12 @@ CHANGELOG
 - `intelmq.lib.upgrages`: Fix a bug in the upgrade function for version 3.1.0 which caused an exception if a generic csv parser instance had no parameter `type` (PR#2319 by Filip Pokorný).
 - `intelmq.lib.datatypes`: Adds `TimeFormat` class to be used for the `time_format` bot parameter (PR#2329 by Filip Pokorný).
 - `intelmq.lib.exceptions`: Fixes a bug in `InvalidArgument` exception (PR#2329 by Filip Pokorný).
-- `intelmq.lib.harmonization`: Changes signature and names of `DateTime` conversion functions for consistency, backwards compatible (PR#2329 by Filip Pokorný).
+- `intelmq.lib.harmonization`:
+  - Changes signature and names of `DateTime` conversion functions for consistency, backwards compatible (PR#2329 by Filip Pokorný).
+  - Ensure rejecting URLs with leading whitespaces after changes in CPython (fixes [#2377](https://github.com/certtools/intelmq/issues/2377))
 
 ### Development
+- CI: pin the Codespell version to omit troubles caused by its new releases (PR #2379).
 
 ### Bots
 
@@ -63,6 +66,7 @@ CHANGELOG
   - SECURITY: fixed a low-risk bug causing the tool to change owner of `/` if run with the `INTELMQ_PATHS_NO_OPT` environment variable set. This affects only the PIP package as the DEB/RPM packages don't contain this tool. (PR#2355 by Kamil Mańkowski, fixes #2354)
 
 ### Known Errors
+- `intelmq.parsers.html_table` may not process invalid URLs in patched Python version due to changes in `urllib`. See #2382
 
 3.1.0 (2023-02-10)
 ------------------
