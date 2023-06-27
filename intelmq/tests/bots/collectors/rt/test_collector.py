@@ -99,5 +99,45 @@ class TestRTCollectorBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(1, REPORT_URL2)
 
 
+class TestRTRawQuery(unittest.TestCase):
+    def test_simple(self):
+        kwargs = {
+            'Status': 'active',
+            'Subject__like': 'Report',
+            'Subject__notlike': 'except',
+            'Created__gt': '2023-01-01',
+            'Queue': 'IR',
+        }
+
+        raw_query = RTCollectorBot._convert_to_raw_query(kwargs)
+
+        expected_query = ("(Status=\'active\')"
+                          " AND (Subject LIKE \'Report\')"
+                          " AND (Subject NOT LIKE \'except\')"
+                          " AND (Created>\'2023-01-01\')")
+
+        self.assertEqual(raw_query, {"Queue": "IR", "raw_query": expected_query})
+
+    def test_multiple_values(self):
+        kwargs = {
+            'Status': 'active',
+            'Subject__like': ['Report', 'Report 2'],
+            'Subject__notlike': ['except', 'except2'],
+            'Created__gt': '2023-01-01',
+            'Queue': 'IR',
+        }
+
+        raw_query = RTCollectorBot._convert_to_raw_query(kwargs)
+
+        expected_query = ("(Status=\'active\')"
+                          " AND (Subject LIKE \'Report\')"
+                          " AND (Subject LIKE \'Report 2\')"
+                          " AND (Subject NOT LIKE \'except\')"
+                          " AND (Subject NOT LIKE \'except2\')"
+                          " AND (Created>\'2023-01-01\')")
+
+        self.assertEqual(raw_query, {"Queue": "IR", "raw_query": expected_query})
+
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

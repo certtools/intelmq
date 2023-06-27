@@ -27,7 +27,10 @@ CHANGELOG
 ### Bots
 
 #### Collectors
-- `intelmq.bots.collector.rt`: restrict `python-rt` to be below version 3.0 due to introduced breaking changes.
+- `intelmq.bots.collector.rt`:
+  - restrict `python-rt` to be below version 3.0 due to introduced breaking changes,
+  - added support for `Subject NOT LIKE` queries,
+  - added support for multiple values in ticket subject queries.
 - `intelmq.bots.collectors.rsync`: Support for optional private key, relative time parsing for the source path, extra rsync parameters and strict host key checking (PR#2241 by Mateo Durante).
 
 #### Parsers
