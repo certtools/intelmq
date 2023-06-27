@@ -70,6 +70,7 @@ class TestHTMLTableParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
+    @unittest.skip("Change in urllib prevent invalid URLs to be processed, see #2377")
     def test_event_without_split(self):
         self.sysconfig = {"columns": ["time.source", "source.url", "malware.hash.md5",
                                       "source.ip", "__IGNORE__"],
