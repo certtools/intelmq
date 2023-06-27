@@ -637,10 +637,13 @@ Requires the rsync executable
 
 **Configuration Parameters**
 
-* **Feed parameters** (see above)
-* `file`: Name of downloaded file.
-* `file`: The filename to process, combined with `rsync_path`.
-* `rsync_path`: Path to file. It can be "/home/username/directory" or "username@remote_host:/home/username/directory"
+* `rsync_path`: Rsync server connection and path. It can be "/home/username/directory/" or "username@remote_host:/home/username/directory/". Supports formatting, see below.
+* `file`: The filename to process, combined with `rsync_path`. Supports formatting, see below.
+* `rsync_file_path_formatting`: Boolean if the file and rsync_path should be formatted by the given format (default: `false`). E.g. if the path is `/path/to_file/{time[%Y]}`, then the resulting path is `/path/to/file/2023` for the year 2023. (Python's `Format Specification Mini-Language <https://docs.python.org/3/library/string.html#formatspec>`_ is used for this.). You may use a `JSON` specifying `time-delta <https://docs.python.org/3/library/datetime.html#datetime.timedelta>`_ parameters to shift the current time accordingly. For example use `{"days": -1}` for the yesterday's date; the path `/path/to/file/{time[%Y-%m-%d]}` will get translated to "/path/to/file/2018-12-31" for the 1st Jan of 2023.
+* `extra_params`: A list of extra parameters to pass to rsync. Optional.
+* `private_key`: Private key to use for rsync authentication. Optional.
+* `private_key_path`: Path to private key to use for rsync authentication. Optional. (Use `private_key` or `private_key_path`, not both.)
+* `strict_host_key_checking`: Boolean if the host key should be checked (default: `false`).
 * `temp_directory`: The temporary directory for rsync to use for rsync'd files. Optional. Default: `$VAR_STATE_PATH/rsync_collector`. `$VAR_STATE_PATH` is `/var/run/intelmq/` or `/opt/intelmq/var/run/`.
 
 
