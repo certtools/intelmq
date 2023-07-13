@@ -107,7 +107,7 @@ def main():
                         )
     args = parser.parse_args()
 
-    OUTPUTFILE = args.output
+    OUTPUTFILE = args.outputfile
     fp = None
     try:
         if os.path.exists(OUTPUTFILE):
