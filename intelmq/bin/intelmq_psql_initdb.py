@@ -23,18 +23,12 @@ INDICES = ['classification.identifier', 'classification.taxonomy',
            'source.abuse_contact', 'source.asn', 'source.ip', 'source.fqdn',
            'time.observation', 'time.source']
 
-APPNAME = 'intelmq_psql_initdb'
-
 DESCRIPTION = """
 Generates a SQL command file with commands to create the events table.
 
 Reads the harmonization configuration and generates an SQL command from it.
 The SQL file is saved by default in `/tmp/initdb.sql` or a temporary name
 if the other one exists.
-"""
-
-USAGE = """
-    intelmq_psql_initdb [-o|--outputfile]
 """
 
 
@@ -96,10 +90,8 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
 
 def main():
     parser = argparse.ArgumentParser(
-        prog=APPNAME,
         description=DESCRIPTION,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        usage=USAGE
+        formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument('-o', '--outputfile',
                         help='Defines the Ouputfile',
