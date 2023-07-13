@@ -26,6 +26,8 @@ htmlcov/
 src/
 .eggs
 .secrets
+.venv/
+.env
 
 # sphinx
 docs/source
