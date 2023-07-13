@@ -14,6 +14,7 @@ import json
 import os
 import sys
 import tempfile
+import argparse
 
 from intelmq import HARMONIZATION_CONF_FILE
 
@@ -21,6 +22,20 @@ INDICES = ['classification.identifier', 'classification.taxonomy',
            'classification.type', 'feed.code', 'feed.name',
            'source.abuse_contact', 'source.asn', 'source.ip', 'source.fqdn',
            'time.observation', 'time.source']
+
+APPNAME = 'intelmq_psql_initdb'
+
+DESCRIPTION = """
+Generates a SQL command file with commands to create the events table.
+
+Reads the harmonization configuration and generates an SQL command from it.
+The SQL file is saved by default in `/tmp/initdb.sql` or a temporary name
+if the other one exists.
+"""
+
+USAGE = """
+    intelmq_psql_initdb [-o|--outputfile]
+"""
 
 
 def generate(harmonization_file=HARMONIZATION_CONF_FILE):
@@ -80,7 +95,19 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
 
 
 def main():
-    OUTPUTFILE = "/tmp/initdb.sql"
+    parser = argparse.ArgumentParser(
+        prog=APPNAME,
+        description=DESCRIPTION,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        usage=USAGE
+    )
+    parser.add_argument('-o', '--outputfile',
+                        help='Defines the Ouputfile',
+                        default='/tmp/initdb.sql'
+                        )
+    args = parser.parse_args()
+
+    OUTPUTFILE = args.output
     fp = None
     try:
         if os.path.exists(OUTPUTFILE):
