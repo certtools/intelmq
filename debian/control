@@ -5,7 +5,6 @@ Priority: optional
 Build-Depends: debhelper (>= 4.1.16),
                dh-python,
                lsb-release,
-               python-setuptools,
                python3-all,
                python3-cerberus,
                python3-dateutil,
