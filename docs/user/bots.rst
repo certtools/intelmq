@@ -2194,7 +2194,7 @@ Both parameters accept string values describing absolute or relative time:
 
 * absolute
 
- * basically anything parseable by datetime parser, eg. "2015-09-12T06:22:11+00:00"
+ * basically anything parseable by datetime parser, eg. "2015-09-012T06:22:11+00:00"
  * `time.source` taken from the event will be compared to this value to decide the filter behavior
 
 * relative
@@ -2204,7 +2204,7 @@ Both parameters accept string values describing absolute or relative time:
 
 *Examples of time filter definition*
 
-* ```"not_before" : "2015-09-12T06:22:11+00:00"``` events older than the specified time will be dropped
+* ```"not_before" : "2015-09-012T06:22:11+00:00"``` events older than the specified time will be dropped
 * ```"not_after" : "6 months"``` just events older than 6 months will be passed through the pipeline
 
 **Possible paths**
@@ -3002,12 +3002,6 @@ The following operators may be used to match events:
 
  * `:supersetof` tests if the list of values from the given key is a superset of the values specified as the argument. Example for matching hosts with at least the IoT and vulnerable tags:
    ``if extra.tags :supersetof ['iot', 'vulnerable'] { ... }``
-
- * `:before` tests if the date value occurred before given time ago. The time might be absolute (basically anything parseable by pendulum parser, eg. “2015-09-12T06:22:11+00:00”) or relative (accepted string formatted like this “<integer> <epoch>”, where epoch could be any of following strings (could optionally end with trailing ‘s’): hour, day, week, month, year)
-   ``if time.observation :before '1 week' { ... }``
-
- * `:after`  tests if the date value occurred after given time ago; see `:before`
-    ``if time.observation :after '2015-09-12' { ... }  # happened after midnight the 12th Sep``
 
  * Boolean values can be matched with `==` or `!=` followed by `true` or `false`. Example:
    ``if extra.has_known_vulns == true { ... }``

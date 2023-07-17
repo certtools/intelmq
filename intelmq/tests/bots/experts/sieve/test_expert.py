@@ -4,10 +4,8 @@
 
 # -*- coding: utf-8 -*-
 
-from pathlib import Path
 import unittest
 import os
-from datetime import timedelta, datetime
 import intelmq.lib.test as test
 from intelmq.bots.experts.sieve.expert import SieveExpertBot
 
@@ -951,55 +949,6 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, event)
 
-    def test_date_match(self):
-        """ Test comparing absolute and relative to now dates. """
-        self.sysconfig['file'] = Path(__file__).parent / 'test_sieve_files/test_date_match.sieve'
-
-        def check(event, expected):
-            self.input_message = event
-            self.run_bot()
-            self.assertMessageEqual(0, expected)
-
-        event = EXAMPLE_INPUT.copy()
-        expected = event.copy()
-
-        event["time.observation"] = "2017-01-01T00:00:00+00:00"  # past event with tz
-        expected['extra.list'] = ['before 1 week', 'before 2023-06-01', 'before 2023-06-01 15:00']
-        check(event, expected)
-
-        event["time.observation"] = "2017-01-01T00:00:00"  # past event without tz
-        check(event, expected)
-
-        event["time.observation"] = "2023-06-01"  # just date, neither before nor after the date's midnight
-        expected['extra.list'] = ['before 1 week', 'before 2023-06-01 15:00']
-        check(event, expected)
-
-        event["time.observation"] = "2023-06-01 10:00"  # time given
-        expected['extra.list'] = ['before 1 week', 'after 2023-06-01', 'before 2023-06-01 15:00']
-        check(event, expected)
-
-        event["time.observation"] = "2023-06-01T10:00+00:00"  # time including tz
-        check(event, expected)
-
-        event["time.observation"] = "2023-06-01T10:00-06:00"  # tz changes
-        expected['extra.list'] = ['before 1 week', 'after 2023-06-01', 'after 2023-06-01 15:00']
-        check(event, expected)
-
-        event["time.observation"] = str(datetime.now())
-        expected['extra.list'] = ['after 1 week', 'after 2023-06-01', 'after 2023-06-01 15:00']
-        check(event, expected)
-
-        event["time.observation"] = str(datetime.now() - timedelta(days=3))
-        check(event, expected)
-
-        event["time.observation"] = str(datetime.now() - timedelta(days=8))
-        expected['extra.list'] = ['before 1 week', 'after 2023-06-01', 'after 2023-06-01 15:00']
-        check(event, expected)
-
-        event["time.observation"] = str(datetime.now() - timedelta(days=8))
-        expected['extra.list'] = ['before 1 week', 'after 2023-06-01', 'after 2023-06-01 15:00']
-        check(event, expected)
-
     def test_comments(self):
         """ Test comments in sieve file."""
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_comments.sieve')
@@ -1022,6 +971,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = numeric_match_true
         self.run_bot()
         self.assertOutputQueueLen(0)
+
 
         # if doesn't match keep
         numeric_match_false = EXAMPLE_INPUT.copy()
@@ -1351,6 +1301,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, expected)
 
+
         # negative test with true == false
         event = base.copy()
         event['comment'] = 'match5'
@@ -1442,6 +1393,9 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = event
         self.run_bot()
         self.assertMessageEqual(0, expected)
+
+
+
 
     def test_append(self):
         ''' Test append action '''
