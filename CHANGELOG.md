@@ -53,6 +53,8 @@ CHANGELOG
 - `intelmq.bots.experts.cymru_whois`:
   - Ignore AS names with unexpected unicode characters (PR#2352, fixes #2132)
   - Avoid extraneous search domain-based queries on NXDOMAIN result (PR#2352)
+- `intelmq.bots.experts.sieve`:
+  - Added :before and :after keywords (PR#2374)
 
 #### Outputs
 - `intelmq.bots.outputs.cif3.output`: Added (PR#2244 by Michael Davis).

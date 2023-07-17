@@ -18,6 +18,7 @@ Condition:
         match=StringMatch
         | match=NumericMatch
         | match=IpRangeMatch
+        | match=DateMatch
         | match=ExistMatch
         | match=ListMatch
         | match=BoolMatch
@@ -67,6 +68,9 @@ IpRangeMatch: key=Key '<<' range=IpRange;
 IpRange: SingleIpRange | IpRangeList;
 SingleIpRange: value=STRING;
 IpRangeList: '[' values+=SingleIpRange[','] ']' ;
+
+DateMatch: key=Key op=DateOperator date=SingleStringValue;
+DateOperator: ':before' | ':after';
 
 ExistMatch: op=ExistOperator key=Key;
 ExistOperator: ':exists' | ':notexists';
