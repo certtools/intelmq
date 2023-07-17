@@ -20,6 +20,7 @@ CHANGELOG
 - `intelmq.lib.harmonization`:
   - Changes signature and names of `DateTime` conversion functions for consistency, backwards compatible (PR#2329 by Filip Pokorný).
   - Ensure rejecting URLs with leading whitespaces after changes in CPython (fixes [#2377](https://github.com/certtools/intelmq/issues/2377))
+- `intelmq.lib.bot.Bot`: Allow setting the parameters via parameter on bot initialization.
 
 ### Development
 - CI: pin the Codespell version to omit troubles caused by its new releases (PR #2379).

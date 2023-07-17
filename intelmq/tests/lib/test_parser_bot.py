@@ -141,7 +141,9 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
             super().run_bot(*args, **kwargs)
 
     def test_event(self):
-        """ Test DummyParserBot """
+        """
+        Test DummyParserBot: One event (and two dumps)
+        """
         self.run_bot(allowed_error_count=2)
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
@@ -183,7 +185,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
     def test_processed_messages_seconds(self):
         self.input_message = EXAMPLE_SHORT
         self.run_bot(parameters={'log_processed_messages_count': 10,
-                                 'log_processed_messages_seconds': 0})
+                                 'log_processed_messages_seconds': 0.1})
         self.assertAnyLoglineEqual(message='Processed 2 messages since last logging.',
                                    levelname='INFO')
 
