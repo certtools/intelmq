@@ -926,7 +926,7 @@ Get some debugging output on the settings and the environment (to be extended):
                                  "intelmqctl upgrade-config.")
 
         check_logger.info('Checking for bots.')
-        global_settings = files[RUNTIME_CONF_FILE]
+        global_settings = files[RUNTIME_CONF_FILE].get('global', {})
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             if bot_id != 'global':
                 # importable module
