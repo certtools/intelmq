@@ -10,6 +10,17 @@ This file lists all changes which have an affect on the administration of IntelM
 Please refer to the change log for a full list of changes.
 
 
+3.2.0 Feature release (2023-07-18)
+----------------------------------
+
+No changes are required by administrators.
+
+[IEP007: Running IntelMQ bots as Python Library](https://github.com/certtools/ieps/tree/main/007) is implemented.
+
+The accompanying 3.2.0 release of intelmq-api switches it's backend from the library hug to fastapi.
+Deb-packages of intelmq-api 3.2.0 are delayed for some distributions because of necessary changes in packaging.
+
+
 3.1.0 Feature release (2023-02-10)
 ----------------------------------
 
