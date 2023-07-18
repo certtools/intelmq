@@ -75,6 +75,8 @@ CHANGELOG
 - `contrib.eventdb.separate-raws-table.sql`: Added the missing commas to complete the sql syntax. (PR#2386, fixes #2125 by Sebastian Kufner)
 - `intelmq_psql_initdb`:
   - Added parameter `-o` to set the output file destination. (by Sebastian Kufner)
+- `intelmqctl`:
+  - Increased the performance through removing unnecessary reads. (by Sebastian Kufner)
 
 ### Known Errors
 - `intelmq.parsers.html_table` may not process invalid URLs in patched Python version due to changes in `urllib`. See #2382
