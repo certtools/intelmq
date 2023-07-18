@@ -68,6 +68,7 @@ CHANGELOG
 ### Tools
 - `intelmqsetup`:
   - SECURITY: fixed a low-risk bug causing the tool to change owner of `/` if run with the `INTELMQ_PATHS_NO_OPT` environment variable set. This affects only the PIP package as the DEB/RPM packages don't contain this tool. (PR#2355 by Kamil Mańkowski, fixes #2354)
+- `contrib.eventdb.separate-raws-table.sql`: Added the missing commas to complete the sql syntax. (PR#2386, fixes #2125 by Sebastian Kufner)
 
 ### Known Errors
 - `intelmq.parsers.html_table` may not process invalid URLs in patched Python version due to changes in `urllib`. See #2382
