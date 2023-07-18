@@ -1,4 +1,10 @@
-intelmq (3.2.0a1-1) stable; urgency=medium
+intelmq (3.2.0-1) stable; urgency=medium
+
+  * 3.2.0 Release
+
+ -- Sebastian Wagner <sebix@sebix.at>  Tue, 18 Jul 2023 20:04:50 +0200
+
+intelmq (3.2.0~a1-1) stable; urgency=medium
 
   * Update to 3.2.0 Alpha 1.
 

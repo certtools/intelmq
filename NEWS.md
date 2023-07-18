@@ -10,7 +10,7 @@ This file lists all changes which have an affect on the administration of IntelM
 Please refer to the change log for a full list of changes.
 
 
-3.2.0 Feature release (2023-05-24)
+3.2.0 Feature release (2023-07-18)
 ----------------------------------
 
 No changes are required by administrators.

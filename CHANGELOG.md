@@ -1,12 +1,12 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2022 Sebastian Wagner
+   SPDX-FileCopyrightText: 2015-2023 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 CHANGELOG
 ==========
 
-3.2.0 (unreleased)
+3.2.0 (2023-07-18)
 ------------------
 
 ### Core
