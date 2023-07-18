@@ -4,6 +4,7 @@
 
 # -*- coding: utf-8 -*-
 import argparse
+import copy
 import datetime
 import importlib
 import json
@@ -925,6 +926,7 @@ Get some debugging output on the settings and the environment (to be extended):
                                  "intelmqctl upgrade-config.")
 
         check_logger.info('Checking for bots.')
+        global_settings = files[RUNTIME_CONF_FILE]
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             if bot_id != 'global':
                 # importable module
@@ -939,7 +941,7 @@ Get some debugging output on the settings and the environment (to be extended):
                     retval = 1
                     continue
                 bot = getattr(bot_module, 'BOT')
-                bot_parameters = utils.get_global_settings()
+                bot_parameters = copy.deepcopy(global_settings)
                 bot_parameters.update(bot_config.get('parameters', {}))  # the parameters field may not exist
                 bot_check = bot.check(bot_parameters)
                 if bot_check:
