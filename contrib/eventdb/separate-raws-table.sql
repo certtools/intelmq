@@ -27,29 +27,29 @@ CREATE VIEW public.v_events AS
         events."classification.taxonomy",
         events."classification.type",
         events."comment",
-        events."destination.abuse_contact"
-        events."destination.account"
-        events."destination.allocated"
-        events."destination.asn"
-        events."destination.as_name"
+        events."destination.abuse_contact",
+        events."destination.account",
+        events."destination.allocated",
+        events."destination.asn",
+        events."destination.as_name",
         events."destination.domain_suffix",
-        events."destination.fqdn"
+        events."destination.fqdn",
         events."destination.geolocation.cc",
-        events."destination.geolocation.city"
-        events."destination.geolocation.country"
-        events."destination.geolocation.latitude"
-        events."destination.geolocation.longitude"
-        events."destination.geolocation.region"
-        events."destination.geolocation.state"
-        events."destination.ip"
-        events."destination.local_hostname"
-        events."destination.local_ip"
-        events."destination.network"
-        events."destination.port"
-        events."destination.registry"
-        events."destination.reverse_dns"
-        events."destination.tor_node"
-        events."destination.url"
+        events."destination.geolocation.city",
+        events."destination.geolocation.country",
+        events."destination.geolocation.latitude",
+        events."destination.geolocation.longitude",
+        events."destination.geolocation.region",
+        events."destination.geolocation.state",
+        events."destination.ip",
+        events."destination.local_hostname",
+        events."destination.local_ip",
+        events."destination.network",
+        events."destination.port",
+        events."destination.registry",
+        events."destination.reverse_dns",
+        events."destination.tor_node",
+        events."destination.url",
         events."destination.urlpath",
         events."event_description.target",
         events."event_description.text",
@@ -103,9 +103,9 @@ CREATE VIEW public.v_events AS
         events."status",
         events."time.observation",
         events."time.source",
-        events."tlp"
+        events."tlp",
         raws."event_id",
-        raws."raw",
+        raws."raw"
     FROM (
         public.events
         JOIN public.raws ON ((events.id = raws.event_id)));
