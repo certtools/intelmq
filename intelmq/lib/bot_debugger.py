@@ -65,7 +65,9 @@ class BotDebugger:
             # Set's the bot's default and initial value for the logging_level to the value we want
             bot.logging_level = self.logging_level
 
-        self.instance = bot(bot_id, disable_multithreading=True)
+        self.instance = bot(bot_id, disable_multithreading=True,
+                            standalone=True,  # instruct the bot to call SystemExit exception at the end or in case of errors
+                            )
 
     def run(self) -> str:
         if not self.run_subcommand:
@@ -217,3 +219,9 @@ class BotDebugger:
     def pprint(msg) -> str:
         """ We can't use standard pprint as JSON standard asks for double quotes. """
         return json.dumps(msg, indent=4, sort_keys=True)
+
+    def __del__(self):
+        # prevents a SystemExit Exception at object deletion
+        # remove once PR#2358 (library mode) is merged
+        if self.instance:
+            setattr(self.instance, 'testing', True)

@@ -6,7 +6,6 @@
 """
 Tests the Bot class itself.
 """
-
 import unittest
 
 import intelmq.lib.test as test

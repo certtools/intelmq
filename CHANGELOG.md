@@ -20,6 +20,7 @@ CHANGELOG
 - `intelmq.lib.harmonization`:
   - Changes signature and names of `DateTime` conversion functions for consistency, backwards compatible (PR#2329 by Filip Pokorný).
   - Ensure rejecting URLs with leading whitespaces after changes in CPython (fixes [#2377](https://github.com/certtools/intelmq/issues/2377))
+- `intelmq.lib.bot.Bot`: Allow setting the parameters via parameter on bot initialization.
 
 ### Development
 - CI: pin the Codespell version to omit troubles caused by its new releases (PR #2379).
@@ -52,6 +53,8 @@ CHANGELOG
 - `intelmq.bots.experts.cymru_whois`:
   - Ignore AS names with unexpected unicode characters (PR#2352, fixes #2132)
   - Avoid extraneous search domain-based queries on NXDOMAIN result (PR#2352)
+- `intelmq.bots.experts.sieve`:
+  - Added :before and :after keywords (PR#2374)
 
 #### Outputs
 - `intelmq.bots.outputs.cif3.output`: Added (PR#2244 by Michael Davis).
@@ -59,6 +62,7 @@ CHANGELOG
 - `intelmq.bots.outputs.smtp_batch.output`: Added a bot to gathering the events and sending them by e-mails at a stroke as CSV files (PR#2253 by Edvard Rejthar)
 
 ### Documentation
+- API: update API installation to be aligned with the rewritten API, and clarify some missing steps.
 
 ### Tests
 - New decorator `skip_installation` and environment variable `INTELMQ_TEST_INSTALLATION` to skip tests requiring an IntelMQ installation on the test host by default (PR#2370 by Sebastian Wagner, fixes #2369)
@@ -69,6 +73,8 @@ CHANGELOG
 - `intelmqsetup`:
   - SECURITY: fixed a low-risk bug causing the tool to change owner of `/` if run with the `INTELMQ_PATHS_NO_OPT` environment variable set. This affects only the PIP package as the DEB/RPM packages don't contain this tool. (PR#2355 by Kamil Mańkowski, fixes #2354)
 - `contrib.eventdb.separate-raws-table.sql`: Added the missing commas to complete the sql syntax. (PR#2386, fixes #2125 by Sebastian Kufner)
+- `intelmq_psql_initdb`:
+  - Added parameter `-o` to set the output file destination. (by Sebastian Kufner)
 
 ### Known Errors
 - `intelmq.parsers.html_table` may not process invalid URLs in patched Python version due to changes in `urllib`. See #2382

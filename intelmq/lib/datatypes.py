@@ -1,13 +1,13 @@
-# SPDX-FileCopyrightText: 2021 Birger Schacht
+# SPDX-FileCopyrightText: 2021 Birger Schacht, 2023 Bundesamt für Sicherheit in der Informationstechnik (BSI)
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
-from datetime import datetime
 from enum import Enum
 from inspect import signature
+from sys import version_info
 from typing import Optional, Callable, Union, List
 
+from datetime import datetime
 from termstyle import green
-
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import DateTime
 
@@ -137,3 +137,21 @@ class TimeFormat(str):
                                   expected=conversion_name)
 
         return conversion, format_string
+
+
+if version_info < (3, 9):
+    class Dict39(dict):
+        """
+        Python 3.9 introduced the handy | operator for dicts.
+        For backwards-compatibility, this is the backport
+        as IntelMQ supports Python >= 3.7
+        """
+        def __or__(self, other: dict) -> 'Dict39':
+            """
+            Create a new dictionary with the merged keys and values of d and other, which must both be dictionaries. The values of other take priority when d and other share keys.
+            """
+            ret = Dict39(self.copy())
+            ret.update(other)
+            return ret
+else:
+    Dict39 = dict

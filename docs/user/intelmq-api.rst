@@ -6,7 +6,7 @@
 IntelMQ API
 ###########
 
-`intelmq-api` is a `hug <http://hug.rest>`_ based API for the `IntelMQ <https://github.com/certtools/intelmq/>`_ project.
+`intelmq-api` is a `FastAPI <https://fastapi.tiangolo.com/>`_ based API for the `IntelMQ <https://github.com/certtools/intelmq/>`_ project.
 
 .. contents::
 
@@ -23,51 +23,140 @@ For the list of supported distributions, please see the intelmq :doc:`installati
 Our repository page gives `installation instructions for various operating systems <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq-api>`_.
 No additional set-up steps are needed if you use these packages.
 
-The `intelmq-api` provides the route ``/api`` for managing the IntelMQ installation.
+The `intelmq-api` provides the route ``/v1/api`` for managing the IntelMQ installation.
 
-For development purposes and testing you can also run `intelmq-api` directly using ``hug``:
+For development purposes and testing, you can also run `intelmq-api` using development script
+from this `repository <https://github.com/certtools/intelmq-api>`_:
 
 .. code-block:: bash
 
-   hug -m intelmq_api.serve
+   ./scripts/run_dev.sh
+
+The API is then served on ``127.0.0.1:8000/v1/api``, and the interactive documentation on ``127.0.0.1:8000/docs``.
+Please refer to the repository README for more development tips.
 
 Installation using pip
 ^^^^^^^^^^^^^^^^^^^^^^
 
-The `intelmq-api` packages ship a configuration file in ``${PREFIX}/etc/intelmq/api-config.json``, a positions configuration for the manager in ``{PREFIX}/etc/intelmq/manager/positions.conf``, a virtualhost configuration file for Apache 2 in ``${PREFIX}/etc/intelmq/api-apache.conf`` and a sudoers configuration file in ``${PREFIX}/etc/intelmq/api-sudoers.conf``.
+.. note::
+
+   Native system packages (DEB, RPM) should automatically prepare steps described in this section. If
+   you wish to base on package from pip, you may need to do them manually, as described below.
+
+To configure your system to serve the API for not-development purposes, you need to prepare a
+configuration for IntelMQ API, a position config for the IntelMQ Manager as well as a web application
+server and a (reverse)proxy. For all those steps we have prepared example configuration, intended
+to work with `Gunicorn <https://gunicorn.org/>`_ as the web server and `Apache 2 <https://httpd.apache.org/>`_
+as the proxy.
+
+The `intelmq-api` package ships the following example files:
+ - ``${PREFIX}/etc/intelmq/api-config.json`` - the API configuration,
+ - ``${PREFIX}/etc/intelmq/manager/positions.conf`` - positions configuration for the manager,
+ - ``${PREFIX}/etc/intelmq/api-apache.conf`` - a virtualhost configuration file for Apache 2,
+ - ``${PREFIX}/etc/intelmq/api-sudoers.conf`` - a sudoers configuration file,
+ - ``${PREFIX}/etc/intelmq/intelmq-api.service`` - a systemd service unit configuration for Gunicorn,
+ - ``${PREFIX}/etc/intelmq/intelmq-api.socket`` - a systemd socket unit configuration.
+
 The value of ``${PREFIX}`` depends on your environment and is something like ``/usr/local/lib/pythonX.Y/dist-packages/`` (where ``X.Y`` is your Python version).
+
+.. note::
+
+   All configuration files have example paths to the IntelMQ API package. During the installation
+   please ensure to update them with the right value, as the ``${PREFIX}``.
+
+Installing packages
+~~~~~~~~~~~~~~~~~~~
+
+Let's start with installing the IntelMQ API package:
+
+.. code-block:: bash
+
+   pip install intelmq-api
+
+You need to install Gunicorn and Apache2 on your own, e.g., using apt:
+
+.. code-block:: bash
+
+   apt install gunicorn apache2
+
+Then, if you didn't use it before, ensure to enable the ``proxy_http`` module for Apache:
+
+.. code-block:: bash
+
+   a2enmod proxy_http
+
+Configuring Apache
+~~~~~~~~~~~~~~~~~~
 
 The file ``${PREFIX}/etc/intelmq/api-apache.conf`` needs to be placed in the correct place for your Apache 2 installation.
  - On Debian and Ubuntu, move the file to ``/etc/apache2/conf-available.d/api-apache.conf`` and then execute ``a2enconf api-apache``.
  - On CentOS, RHEL and Fedora, move the file to ``/etc/httpd/conf.d/``.
  - On openSUSE, move the file to ``/etc/apache2/conf.d/``.
-Don't forget to reload your webserver afterwards.
+
+Don't forget to reload the Apache2 afterwards.
+
+Configuring Systemd services
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+   This step could be also done by calling the script:
+
+   .. code-block:: bash
+
+      intelmq-api-setup-systemd
+
+The systemd configuration files (``intelmq-api.service`` and ``intelmq-api.socket``) are responsible
+for instructing systemd daemon to start and keep running Gunicorn (that serves the API), and
+forwarding requests between proxy and the Gunicorn instance.
+
+- Files ``${PREFIX}/etc/intelmq/intelmq-api.service`` and ``${PREFIX}/etc/intelmq/intelmq-api.socket``
+  should be placed in ``/lib/systemd/system/`` directory. Then adapt the webserver username in
+  ``intelmq-api.service``.
+
+After moving files, you can enable the service by executing ``systemctl enable intelmq-api`` to
+start it on the system startup.
+
+Setup API configuration files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - The file ``${PREFIX}/etc/intelmq/api-config.json`` needs to be moved to ``/etc/intelmq/api-config.json``.
 - The file ``${PREFIX}/etc/intelmq/manager/positions.conf`` needs to be moved to ``/etc/intelmq/manager/positions.conf``.
-- Last but not least move the file ``${PREFIX}/etc/intelmq/api-sudoers.conf`` to ``/etc/sudoers.d/01_intelmq-api`` and adapt the webserver user name in this file. Set the file permissions to ``0o440``.
+- Last but not least move the file ``${PREFIX}/etc/intelmq/api-sudoers.conf`` to ``/etc/sudoers.d/01_intelmq-api`` and adapt the webserver username in this file. Set the file permissions to ``0o440``.
 
-Afterwards continue with the section Permissions below.
+Afterwards, continue with the section Permissions below. When you finish the configuration,
+you can start the service using ``systemctl start intelmq-api``. You may need to restart the service
+after any configuration change.
 
-IntelMQ 2.3.1 comes with a tool ``intelmqsetup`` which performs these set-up steps automatically.
-Please note that the tool is very new and may not detect all situations correctly. Please report us any bugs you are observing.
-The tools is idempotent, you can execute it multiple times.
+Next steps
+~~~~~~~~~~
+
+The example Apache2 and Gunicorn configurations serve the IntelMQ API under ``/intelmq`` prefix,
+what means that at this moment you should be able to get, e.g., the API documentation under
+``/intelmq/docs`` etc.
+
+Now, you should continue with the API configuration and creating users. If you didn't do it before,
+it's also time to configure IntelMQ itself.
+
+IntelMQ 2.3.1 comes with a tool ``intelmqsetup`` which helps with performing some steps automatically.
+Please note that the tool is still under development and may not detect all situations correctly.
+Please report us any bugs you are observing. The tool is idempotent, you can execute it multiple times.
 
 ***********************
 Configuring intelmq-api
 ***********************
 
-Depending on your setup you might have to install ``sudo`` to make it possible for the ``intelmq-api`` to run the ``intelmq`` command as the user-account usually used to run ``intelmq`` (which is also often called ``intelmq``).
+Depending on your setup, you might have to install ``sudo`` to make it possible for the ``intelmq-api`` to run the ``intelmq`` command as the user-account usually used to run ``intelmq`` (which is also often called ``intelmq``).
 
 ``intelmq-api`` is configured using a configuration file in ``json`` format.
 ``intelmq-api`` tries to load the configuration file from ``/etc/intelmq/api-config.json`` and ``${PREFIX}/etc/intelmq/api-config.json``, but you can override the path setting the environment variable ``INTELMQ_API_CONFIG``.
-(When using Apache, you can do this by modifying the Apache configuration file shipped with ``intelmq-api``, the file contains an example)
+(When using Gunicorn and systemd service, you can do this by modifying the ``intelmq-api.service`` configuration file shipped with ``intelmq-api``, the file contains an example)
 
-When running the API using ``hug``, you can set the environment variable like this:
+When running the API using development mode, you can set the environment variable like this:
 
 .. code-block:: bash
 
-   INTELMQ_API_CONFIG=/etc/intelmq/api-config.json hug -m intelmq_api.serve
+   INTELMQ_API_CONFIG=/etc/intelmq/api-config.json ./scripts/run_dev.sh
 
 
 The default configuration which is shipped with the packages is also listed here for reference:
@@ -83,7 +172,7 @@ The default configuration which is shipped with the packages is also listed here
    }
 
 
-On Debian based systems, the default path for the ``session_store`` is ``/var/lib/dbconfig-common/sqlite3/intelmq-api/intelmqapi``, because the Debian package uses the Debian packaging tools to manage the database file.
+On Debian based systems, the default path for the ``session_store`` is ``/var/lib/dbconfig-common/sqlite3/intelmq-api/intelmqapi`` because the Debian package uses the Debian packaging tools to manage the database file.
 
 The following configuration options are available:
 
@@ -92,14 +181,14 @@ The following configuration options are available:
   This means that if the command you want to use needs parameters, they have to be separate strings.
 * ``allowed_path``: intelmq-api can grant **read-only** access to specific files - this setting defines the path those files can reside in.
 * ``session_store``: this is an optional path to a sqlite database, which is used for session storage and authentication. If it is not set (which is the default), no authentication is used!
-* ``session_duration``: the maximal duration of a session, its 86400 seconds by default
+* ``session_duration``: the maximal duration of a session, it's 86400 seconds by default
 * ``allow_origins``: a list of origins the responses of the API can be shared with. Allows every origin by default.
 
 Permissions
 ^^^^^^^^^^^
 
 ``intelmq-api`` tries to write a couple of configuration files in the ``${PREFIX}/etc/intelmq`` directory - this is only possible if you set the permissions accordingly, given that ``intelmq-api`` runs under a different user.
-The user the API run as also needs write access to the folder the ``session_store`` is located in, otherwise there will be an error accessing the session data.
+The user the API run as also needs write access to the folder the ``session_store`` is located in; otherwise there will be an error accessing the session data.
 If you're using the default Apache 2 setup, you might want to set the group of the files to ``www-data`` and give it write permissions (``chmod -R g+w <directoryname>``).
 In addition to that, the ``intelmq-manager`` tries to store the bot positions via the API into the file ``${PREFIX}/etc/intelmq/manager/positions.conf``.
 You should therefore create the folder ``${PREFIX}/etc/intelmq/manager`` and the file ``positions.conf`` in it.
@@ -138,7 +227,7 @@ To do so, first send a POST-Request with JSON-formatted data to http://localhost
 
    {
        "username": "$your_username",
-       "password: "$your_password"
+       "password": "$your_password"
    }
 
 With valid credentials, the JSON-formatted response contains the ``login_token``.
@@ -188,12 +277,12 @@ Access Denied / Authentication Required "Please provide valid Token verification
 
 If you see the IntelMQ Manager interface and menu, but the API calls to the back-end querying configuration and status of IntelMQ fail with "Access Denied" or "Authentication Required: Please provide valid Token verification credentials" errors, you are maybe not logged in while the API requires authentication.
 
-By default, the API requires authentication. Create user accounts and login with them or - if you have other protection means in place - deactivate the authentication requirement by removing or renaming the `session_store` parameter in the configuration.
+By default, the API requires authentication. Create user accounts and login with them, or - if you have other protection means in place - deactivate the authentication requirement by removing or renaming the `session_store` parameter in the configuration.
 
 Internal Server Error
 ^^^^^^^^^^^^^^^^^^^^^
 
-There can be various reasons for internal server errors. You need to look at the error log of your web server, for example ``/var/log/apache2/error.log`` or ``/var/log/httpd/error_log`` for Apache 2. It could be that the sudo-setup is not functional, the configuration file or session database file can not be read or written or other errors in regards to the execution of the API program.
+There can be various reasons for internal server errors. You need to look at the error log of your web server, for example ``/var/log/apache2/error.log`` or ``/var/log/httpd/error_log`` for Apache 2. It could be that the sudo-setup is not functional, the configuration file or session database file can not be read or written or other errors in regard to the execution of the API program.
 
 Can I just install it from the deb/rpm packages while installing IntelMQ from a different source?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -202,14 +291,43 @@ Yes, you can install the API and the Manager from the deb/rpm repositories, and 
 However, knowledge about Python and system administration experience is recommended if you do so.
 
 The packages install IntelMQ to ``/usr/lib/python3*/site-packages/intelmq/``.
-Installing with ``pip`` results in ``/usr/local/lib/python3*/site-packages/intelmq/`` (and some other accompaning resources) which overrides the installation in ``/usr/lib/``.
+Installing with ``pip`` results in ``/usr/local/lib/python3*/site-packages/intelmq/`` (and some other accompanying resources) which overrides the installation in ``/usr/lib/``.
 You probably need to adapt the configuration parameter ``intelmq_ctl_cmd`` to the ``/usr/local/bin/intelmqctl`` executable and some other tweaks.
 
 sqlite3.OperationalError: attempt to write a readonly database
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-SQLite does not only need write access to the database itself, but also the folder the database file is located in. Please check that the webserver has write permissions to the folder
+SQLite does not only need write access to the database itself, but also the folder the database file is located in. Please check that the webserver has `write` permissions to the folder
 the session file is located in.
+
+sqlite3.OperationalError: unable to open database file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Please check the ``session_store`` in ``api-config.json`` and ensure the path is correct - the
+directory exists and application can write to it.
+
+Gunicorn returns ``ModuleNotFoundError: No module named 'uvicorn'``, but Uvicorn is installed
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Most probably one of them (Gunicorn and Uvicorn) were installed using different method (e.g. one
+from native system package, other from pip). Try to install both from one source. You may need
+to eventually update the Gunicorn executable path in `intelmq-api.service`.
+
+Can I use other web servers or proxy?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Yes, the proposed setup with Gunicorn and Apache 2 is just one of many possibilities. You can
+refer to the `FastAPI documentation <https://fastapi.tiangolo.com/deployment/>`_ for another
+examples.
+
+How to debug API running as system service?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you experience any issues with the API, please first check the logs provided in journal:
+
+.. code-block:: bash
+
+   journalctl -u intelmq-api
 
 
 ************
