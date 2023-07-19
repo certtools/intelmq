@@ -88,7 +88,6 @@ This is short list of the most important known issues. The full list can be retr
 - Turris greylist has been updated (#2167).
 - Spamhaus CERT parser uses wrong field (#2165).
 - Custom headers ignored in HTTPCollectorBot (#2150).
-- Missing commas in SQL query for separate Events table (#2125).
 - intelmqctl log: parsing syslog does not work (#2097).
 - Bash completion scripts depend on old JSON-based configuration files (#2094).
 - Bot configuration examples use JSON instead of YAML (#2066).
