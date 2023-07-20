@@ -1,5 +1,5 @@
 Source: intelmq
-Maintainer: IntelMQ Team <intelmq-team@cert.at>
+Maintainer: Institute for Common Good Technology <packaging@commongoodtechnology.org>
 Section: python
 Priority: optional
 Build-Depends: debhelper (>= 4.1.16),
@@ -7,17 +7,17 @@ Build-Depends: debhelper (>= 4.1.16),
                lsb-release,
                python3-all,
                python3-cerberus,
-               python3-dateutil,
-               python3-dnspython,
-               python3-psutil,
-               python3-redis,
-               python3-requests,
+               python3-dateutil (>= 2.5),
+               python3-dnspython (>= 2.0.0),
+               python3-psutil (>= 1.2.1),
+               python3-redis (>= 2.10),
+               python3-requests (>= 2.2.0),
                python3-requests-mock,
                python3-ruamel.yaml,
                python3-setuptools,
                python3-sphinx,
                python3-sphinx-rtd-theme,
-               python3-termstyle,
+               python3-termstyle (>= 0.1.10),
                python3-tz,
                quilt,
                rsync,
@@ -37,7 +37,7 @@ Depends: bash-completion,
          python3-openssl,
          python3-psutil (>= 1.2.1),
          python3-redis (>= 2.10),
-         python3-requests (>= 2.2.1),
+         python3-requests (>= 2.2.0),
          python3-ruamel.yaml,
          python3-termstyle (>= 0.1.10),
          python3-tz,
@@ -48,9 +48,9 @@ Depends: bash-completion,
          ${python3:Depends}
 Suggests: python3-geoip2 (>= 2.2.0),
           python3-imbox (>= 0.8),
-          python3-psycopg2,
+          python3-psycopg2 (>= 2.5.5),
           python3-pyasn (>= 1.5.0),
-          python3-pymongo,
+          python3-pymongo (>= 2.7.1),
           python3-sleekxmpp (>= 1.3.1),
           python3-stomp.py (>= 4.1.9)
 Description: Solution for IT security teams for collecting and processing security feeds
@@ -61,3 +61,11 @@ Description: Solution for IT security teams for collecting and processing securi
  designed by European CERTs/CSIRTs during several InfoSec events. Its main goal
  is to give to incident responders an easy way to collect & process threat
  intelligence thus improving the incident handling processes of CERTs.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
