@@ -8,12 +8,12 @@ name: "Run pycodestyle on repository"
 on:
   push:
     branches: [develop, maintenance, master]
-#    paths-ignore:
-#      - '.github/**'
+    paths-ignore:
+      - '.github/**'
   pull_request:
     branches: [develop, maintenance]
-#    paths-ignore:
-#      - '.github/**'
+    paths-ignore:
+      - '.github/**'
 
 jobs:
   pycodestyle:

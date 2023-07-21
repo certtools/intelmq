@@ -7,12 +7,12 @@ name: "Build Debian packages"
 on:
   push:
     branches: [develop, maintenance, master]
-#    paths-ignore:
-#      - '.github/**'
+    paths-ignore:
+      - '.github/**'
   pull_request:
     branches: [develop, maintenance]
-#    paths-ignore:
-#      - '.github/**'
+    paths-ignore:
+      - '.github/**'
 
 jobs:
   build:

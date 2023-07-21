@@ -8,8 +8,8 @@ on:
   push:
   pull_request:
     branches: [develop, maintenance]
-#    paths-ignore:
-#      - '.github/**'
+    paths-ignore:
+      - '.github/**'
 
 jobs:
   unittests:

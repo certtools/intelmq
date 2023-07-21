@@ -8,8 +8,8 @@ name: "Build and upload docker image"
 on:
   push:
     branches: ['develop']
-#    paths-ignore:
-#      - '.github/**'
+    paths-ignore:
+      - '.github/**'
 
 jobs:
   docker:
