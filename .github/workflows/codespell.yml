@@ -8,12 +8,12 @@ name: "Codespell spelling check"
 on:
   push:
     branches: [develop, maintenance, master]
-    paths-ignore:
-      - '.github/**'
+#    paths-ignore:
+#      - '.github/**'
   pull_request:
     branches: [develop, maintenance]
-    paths-ignore:
-      - '.github/**'
+#    paths-ignore:
+#      - '.github/**'
 
 jobs:
   codespell:
@@ -24,7 +24,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Install codespell
       run: pip install "codespell==2.2.4"
     - name: Run codespell

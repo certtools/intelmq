@@ -7,12 +7,12 @@ name: "Run ansible tests"
 on:
   push:
     branches: [develop, maintenance, master]
-    paths-ignore:
-      - '.github/**'
+#    paths-ignore:
+#      - '.github/**'
   pull_request:
     branches: [develop, maintenance]
-    paths-ignore:
-      - '.github/**'
+#    paths-ignore:
+#      - '.github/**'
 
 jobs:
   ansible:
@@ -22,12 +22,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         path: ./src/intelmq
 
     - name: Checkout ansible scripts
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: certtools/intelmq-vagrant
         path: ./src/intelmq-vagrant

@@ -7,12 +7,12 @@ name: "Build Debian packages"
 on:
   push:
     branches: [develop, maintenance, master]
-    paths-ignore:
-      - '.github/**'
+#    paths-ignore:
+#      - '.github/**'
   pull_request:
     branches: [develop, maintenance]
-    paths-ignore:
-      - '.github/**'
+#    paths-ignore:
+#      - '.github/**'
 
 jobs:
   build:
@@ -27,14 +27,14 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Build package
       run: bash .github/workflows/scripts/debian-package.sh ${{ matrix.codename }}
 
     - name: Upload artifact
       if: ${{ github.event_name == 'push' }}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: debian-package-${{ matrix.codename }}-${{ github.sha }}
         path: '~/artifacts'
