@@ -1,0 +1,33 @@
+Metadata-Version: 2.1
+Name: intelmqTest
+Version: 3.1
+Summary: IntelMQ is a solution for IT security teams for collecting and processing security feeds using a message queuing protocol.
+Home-page: https://github.com/certtools/intelmq/
+Maintainer: Sebastian Wagner
+Maintainer-email: intelmq-dev@lists.cert.at
+License: AGPLv3
+Project-URL: Documentation, https://intelmq.readthedocs.io/
+Project-URL: Source and Issue Tracker, https://github.com/certtools/intelmq/
+Keywords: incident handling cert csirt
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: System Administrators
+Classifier: Intended Audience :: Telecommunications Industry
+Classifier: License :: OSI Approved :: GNU Affero General Public License v3
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Topic :: Security
+Requires-Python: >=3.7
+
+UNKNOWN
+

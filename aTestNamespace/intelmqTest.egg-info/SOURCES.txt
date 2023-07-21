@@ -1,0 +1,10 @@
+setup.py
+intelmqTest/__init__.py
+intelmqTest.egg-info/PKG-INFO
+intelmqTest.egg-info/SOURCES.txt
+intelmqTest.egg-info/dependency_links.txt
+intelmqTest.egg-info/top_level.txt
+intelmqTest/bots/__init__.py
+intelmqTest/bots/collectors/__init__.py
+intelmqTest/bots/collectors/amqp/__init__.py
+intelmqTest/bots/collectors/amqp/testNamespace.py
