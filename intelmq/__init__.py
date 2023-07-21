@@ -37,3 +37,4 @@ if not pathlib.Path(RUNTIME_CONF_FILE).exists() and old_runtime_conf_file.exists
     old_runtime_conf_file.rename(RUNTIME_CONF_FILE)
 STATE_FILE_PATH = os.path.abspath(os.path.join(VAR_STATE_PATH,
                                                '../state.json'))
+__path__ = __import__('pkgutil').extend_path(__path__, __name__)
