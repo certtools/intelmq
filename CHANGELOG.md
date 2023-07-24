@@ -24,6 +24,7 @@ CHANGELOG
 
 ### Development
 - CI: pin the Codespell version to omit troubles caused by its new releases (PR #2379).
+- CI: Updated the versions of the github actions in the CI workflows. (PR#2392 by Sebastian Kufner)
 
 ### Bots
 
