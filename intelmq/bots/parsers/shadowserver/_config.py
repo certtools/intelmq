@@ -82,11 +82,12 @@ import re
 import base64
 import binascii
 import json
-import urllib.request
 import tempfile
 from typing import Optional, Dict, Tuple, Any
 
 import intelmq.lib.harmonization as harmonization
+from intelmq.lib.utils import create_request_session
+from intelmq import VAR_STATE_PATH
 
 
 class __Container:
@@ -94,8 +95,10 @@ class __Container:
 
 
 __config = __Container()
-__config.schema_file = os.path.join(os.path.dirname(__file__), 'schema.json')
+__config.schema_file = os.path.join(VAR_STATE_PATH, 'shadowserver-schema.json')
+__config.schema_base = os.path.join(os.path.dirname(__file__), 'schema.json.test')
 __config.schema_mtime = 0.0
+__config.auto_update = False
 __config.feedname_mapping = {}
 __config.filename_mapping = {}
 
@@ -105,13 +108,16 @@ def set_logger(logger):
     __config.logger = logger
 
 
+def enable_auto_update(enable):
+    """ Enable automatic schema update. """
+    __config.auto_update = enable
+
+
 def get_feed_by_feedname(given_feedname: str) -> Optional[Dict[str, Any]]:
-    reload()
     return __config.feedname_mapping.get(given_feedname, None)
 
 
 def get_feed_by_filename(given_filename: str) -> Optional[Tuple[str, Dict[str, Any]]]:
-    reload()
     return __config.filename_mapping.get(given_filename, None)
 
 
@@ -289,19 +295,18 @@ def reload():
     else:
         __config.logger.info("The schema file does not exist.")
 
-    if __config.schema_mtime == 0.0 and mtime == 0.0 and not os.environ.get('INTELMQ_SKIP_INTERNET'):
-        __config.logger.info("Attempting to download schema.")
+    if __config.schema_mtime == 0.0 and mtime == 0.0 and __config.auto_update:
         update_schema()
 
     __config.feedname_mapping.clear()
     __config.filename_mapping.clear()
-    for schema_file in [__config.schema_file, ".".join([__config.schema_file, 'test'])]:
+    for schema_file in [__config.schema_file, __config.schema_base]:
         if os.path.isfile(schema_file):
             with open(schema_file) as fh:
                 schema = json.load(fh)
             for report in schema:
                 if report == "_meta":
-                    __config.logger.info("Loading schema %s." % schema[report]['date_created'])
+                    __config.logger.info("Loading schema %r." % schema[report]['date_created'])
                     for msg in schema[report]['change_log']:
                         __config.logger.info(msg)
                 else:
@@ -313,37 +318,55 @@ def reload():
 def update_schema():
     """ download the latest configuration """
     if os.environ.get('INTELMQ_SKIP_INTERNET'):
-        return None
+        return False
 
-    (th, tmp) = tempfile.mkstemp(dir=os.path.dirname(__file__))
+    # download the schema to a temp file
+    (th, tmp) = tempfile.mkstemp(dir=VAR_STATE_PATH)
     url = 'https://interchange.shadowserver.org/intelmq/v1/schema'
+    __config.logger.info("Attempting to download schema from %r" % url)
+    __config.logger.debug("Using temp file %r for the download." % tmp)
     try:
-        urllib.request.urlretrieve(url, tmp)
+        with create_request_session() as session:
+            with session.get(url, stream=True) as r:
+                r.raise_for_status()
+                with open(tmp, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        f.write(chunk)
     except:
-        raise ValueError("Failed to download %r" % url)
+        __config.logger.error("Failed to download %r" % url)
+        return False
+    __config.logger.info("Download successful.")
 
     new_version = ''
     old_version = ''
 
     try:
+        # validate the downloaded file
         with open(tmp) as fh:
             schema = json.load(fh)
             new_version = schema['_meta']['date_created']
     except:
         # leave tempfile behind for diagnosis
-        raise ValueError("Failed to validate %r" % tmp)
+        __config.logger.error("Failed to validate %r" % tmp)
+        return False
 
     if os.path.exists(__config.schema_file):
+        # compare the new version against the old; rename the existing file
         try:
             with open(__config.schema_file) as fh:
                 schema = json.load(fh)
                 old_version = schema['_meta']['date_created']
             if new_version != old_version:
                 os.replace(__config.schema_file, ".".join([__config.schema_file, 'bak']))
-        except:
-            pass
+        except Exception as e:
+            __config.logger.error("Unable to replace schema file: %s" % str(e))
+            return False
 
     if new_version != old_version:
         os.replace(tmp, __config.schema_file)
+        __config.logger.info("New schema version is %r." % new_version)
+        return True
     else:
         os.unlink(tmp)
+
+    return False
