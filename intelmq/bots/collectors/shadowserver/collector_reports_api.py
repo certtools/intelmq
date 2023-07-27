@@ -68,11 +68,18 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
 
         if self.file_format is not None:
             if not (self.file_format == 'csv'):
-                raise ValueError('Invalid file_format')
+                raise ValueError("Invalid file_format '%s'. Must be 'csv'." % self.file_format)
         else:
             self.file_format = 'csv'
 
         self.preamble = f'{{ "apikey": "{self.api_key}" '
+
+    def check(parameters: dict):
+        for key in parameters:
+            if key == 'file_format' and parameters[key] != 'csv':
+                return [["error", "Invalid file_format '%s'. Must be 'csv'." % parameters[key]]]
+            elif key == 'country':
+                return [["warning", "Deprecated parameter 'country' found. Please use 'reports' instead. The backwards-compatibility will be removed in IntelMQ version 4.0.0."]]
 
     def _headers(self, data):
         return {'HMAC2': hmac.new(self.secret.encode(), data.encode('utf-8'), digestmod=hashlib.sha256).hexdigest()}

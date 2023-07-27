@@ -7,15 +7,27 @@ This module is maintained by [The Shadowserver Foundation](https://www.shadowser
 
 Please contact intelmq@shadowserver.org with any issues or concerns.
 
-The report configuration is now stored in a _schema.json_ file downloaded from https://interchange.shadowserver.org/intelmq/v1/schema.
+The report configuration is now stored in a _shadowserver-schema.json_ file downloaded from https://interchange.shadowserver.org/intelmq/v1/schema.
 
-For environments that have internet connectivity the `update_schema.py` script should be called from a cron job to obtain the latest revision.
-The parser will attempt to download a schema update on startup unless INTELMQ_SKIP_INTERNET is set.
+The parser will attempt to download a schema update on startup when the *auto_update* option is enabled.
 
-For air-gapped systems automation will be required to download and copy the _schema.json_ file into this directory.
+Schema downloads can also be scheduled as a cron job:
+
+```
+02  01 *   *   *     intelmq.bots.parsers.shadowserver.parser --update-schema
+```
+
+For air-gapped systems automation will be required to download and copy the file to VAR_STATE_PATH/shadowserver-schema.json.
 
 The parser will automatically reload the configuration when the file changes.
 
+
+## Schema contract
+
+Once set the `classification.identifier`, `classification.taxonomy`, and `classification.type` fields will remain static.
+
+Once set report fields will not be deleted.
+ 
 
 ## Sample configuration:
 
@@ -46,6 +58,7 @@ shadowserver-parser:
   parameters:
     destination_queues:
       _default: [file-output-queue]
+    auto_update: true
   run_mode: continuous
 ```
 

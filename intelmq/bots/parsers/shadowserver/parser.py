@@ -26,6 +26,8 @@ import os
 
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidKey, InvalidValue
+from intelmq.bin.intelmqctl import IntelMQController
+import intelmq.lib.utils as utils
 import intelmq.bots.parsers.shadowserver._config as config
 
 
@@ -34,8 +36,7 @@ class ShadowserverParserBot(ParserBot):
     Parse all ShadowServer feeds
 
     Parameters:
-        schema_file (str): Path to the report schema file
-
+        auto_update (boolean): Enable automatic schema download
     """
 
     recover_line = ParserBot.recover_line_csv_dict
@@ -45,13 +46,15 @@ class ShadowserverParserBot(ParserBot):
     feedname = None
     _mode = None
     overwrite = False
+    auto_update = False
 
     def init(self):
         config.set_logger(self.logger)
-        try:
-            config.update_schema()
-        except Exception as e:
-            self.logger.warning("Schema update failed: %s." % e)
+        if self.auto_update:
+            config.enable_auto_update(True)
+            self.logger.debug("Feature 'auto_update' is enabled.")
+        config.reload()
+
         if self.feedname is not None:
             self._sparser_config = config.get_feed_by_feedname(self.feedname)
             if self._sparser_config:
@@ -227,6 +230,36 @@ class ShadowserverParserBot(ParserBot):
 
     def shutdown(self):
         self.feedname = None
+
+    @classmethod
+    def _create_argparser(cls):
+        argparser = super()._create_argparser()
+        argparser.add_argument("--update-schema", action='store_true', help='downloads latest report schema')
+        argparser.add_argument("--verbose", action='store_true', help='be verbose')
+        return argparser
+
+    @classmethod
+    def run(cls, parsed_args=None):
+        if not parsed_args:
+            parsed_args = cls._create_argparser().parse_args()
+        if parsed_args.update_schema:
+            logger = utils.log(__name__, log_path=None)
+            if parsed_args.verbose:
+                logger.setLevel('INFO')
+            else:
+                logger.setLevel('ERROR')
+            config.set_logger(logger)
+            if config.update_schema():
+                runtime_conf = utils.get_bots_settings()
+                try:
+                    ctl = IntelMQController()
+                    for bot in runtime_conf:
+                        if runtime_conf[bot]["module"] == __name__ and runtime_conf[bot]['parameters'].get('auto_update', True):
+                            ctl.bot_reload(bot)
+                except Exception as e:
+                    logger.error("Failed to signal bot: %r" % str(e))
+        else:
+            super().run(parsed_args=parsed_args)
 
 
 BOT = ShadowserverParserBot
