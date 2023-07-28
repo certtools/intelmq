@@ -51,6 +51,8 @@ from termstyle import red
 import intelmq
 from intelmq import RUNTIME_CONF_FILE
 from intelmq.lib.exceptions import DecodingError
+from pkgutil import iter_modules
+import intelmq.bots
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
@@ -860,13 +862,22 @@ def list_all_bots() -> dict:
     from intelmq.lib.bot import Bot  # noqa: prevents circular import
     bot_parameters = dir(Bot)
 
-    base_path = resource_filename('intelmq', 'bots')
+    ns_pkg = intelmq.bots
 
-    botfiles = [botfile for botfile in pathlib.Path(base_path).glob('**/*.py') if botfile.is_file() and botfile.name != '__init__.py']
-    for file in botfiles:
-        file = Path(file.as_posix().replace(base_path, 'intelmq/bots'))
+    def iter_ns(pkg):
+        botmodules = []
+        for path, name, is_pkg in iter_modules(pkg.__path__, pkg.__name__ + '.'):
+            if is_pkg:
+                botmodules = botmodules + iter_ns(importlib.import_module(name))
+            else:
+                botmodules.append(name)
+        return botmodules
+
+    botmodules = iter_ns(ns_pkg)
+
+    for botmodule in botmodules:
         try:
-            mod = importlib.import_module('.'.join(file.with_suffix('').parts))
+            mod = importlib.import_module(botmodule)
         except SyntaxError:
             # Skip invalid bots
             continue
@@ -884,7 +895,7 @@ def list_all_bots() -> dict:
             for bot_type in ['CollectorBot', 'ParserBot', 'ExpertBot', 'OutputBot', 'Bot']:
                 name = name.replace(bot_type, '')
 
-            bots[file.parts[2].capitalize()[:-1]][name] = {
+            bots[botmodule.split('.')[2].capitalize()[:-1]][name] = {
                 "module": mod.__name__,
                 "description": "Missing description" if not getattr(mod.BOT, '__doc__', None) else textwrap.dedent(mod.BOT.__doc__).strip(),
                 "parameters": keys,

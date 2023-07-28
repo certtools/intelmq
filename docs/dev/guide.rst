@@ -891,6 +891,50 @@ The databases `<` 10 are reserved for the IntelMQ core:
  * 3: statistics
  * 4: tests
 
+Add a new Bot
+=============
+
+The ``intelmq/bots`` folder is defined as a `python namespace package <https://packaging.python.org/en/latest/guides/packaging-namespace-packages/>`_, 
+thus you can add a package with your own bots (in this example ``additional_bots``). This package must contain the following structure:
+
+.. code-block:: text
+
+   additional_bots
+   ├── setup.py
+   └── intelmq
+        ├── __init__.py
+        └── bots
+             └── collectors
+                  └── your_bot
+                       └── your_bot.py
+
+The ``additional_bots`` folder needs to be defined e.g. with a ``setup.py``. Only the intelmq folder contains a ``__init__.py`` 
+file and it must contain only this line. Any additional code in ``__init__.py`` after this line will be inaccessible.
+
+.. code-block:: python
+
+   __path__ = __import__('pkgutil').extend_path(__path__, __name__)
+
+To install your own package you can use pip:
+
+.. code-block:: bash
+
+   pip install ./additional_bots
+
+After the installation you can import your own bot the same way you import the others.
+
+.. code-block:: python
+
+   import intelmq.bots.collectors.your_bot.your_bot
+
+You can check your installation, by checking if you bot appears when running this command:
+
+.. code-block:: bash
+
+   intelmqctl list bots
+
+You find an example for this in `contrib/examples/example_add_bot`.
+
 *************
 Documentation
 *************
