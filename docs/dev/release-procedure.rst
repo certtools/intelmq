@@ -76,7 +76,13 @@ Tarballs and PyPI
    python3 setup.py sdist bdist_wheel
 
 
-* Upload the files including signatures to PyPI with e.g. twine: `twine upload -s dist/intelmq...`
+* Upload the files including signatures to PyPI with e.g. twine: `twine upload -u __token__ -p $APITOKEN dist/intelmq...` (or set the API Token in `.pypirc`).
+
+*************
+Documentation
+*************
+
+Got to `the version settings on readthedocs <https://readthedocs.org/projects/intelmq/versions/>`_ and activate build for the new version.
 
 ********
 Packages
