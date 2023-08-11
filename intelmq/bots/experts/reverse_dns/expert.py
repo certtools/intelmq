@@ -15,8 +15,6 @@ from intelmq.lib.harmonization import IPAddress
 from intelmq.lib.mixins import CacheMixin
 from intelmq.lib.utils import resolve_dns
 
-MINIMUM_BGP_PREFIX_IPV4 = 24
-MINIMUM_BGP_PREFIX_IPV6 = 128
 DNS_EXCEPTION_VALUE = "__dns-exception"
 
 
@@ -48,16 +46,9 @@ class ReverseDnsExpertBot(ExpertBot, CacheMixin):
                 continue
 
             ip = event.get(ip_key)
-            ip_version = IPAddress.version(ip)
             ip_integer = IPAddress.to_int(ip)
 
-            if ip_version == 4:
-                minimum = MINIMUM_BGP_PREFIX_IPV4
-
-            elif ip_version == 6:
-                minimum = MINIMUM_BGP_PREFIX_IPV6
-
-            cache_key = bin(ip_integer)[2: minimum + 2]
+            cache_key = bin(ip_integer)[2:]
             cachevalue = self.cache_get(cache_key)
 
             result = None
