@@ -1935,3 +1935,19 @@ providers:
               - true
               - false
               - true
+  JamesBrine:
+    Bruteforce Host Feed:
+      description: "jamesbrine.com.au provides an IPv4 blocklist covering brutefoce, exploit, and scanning activity from an international honeynet. The feed is available through https://jamesbrine.com.au"
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://jamesbrine.com.au/csv
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.jamesbrine.parser_jamesbrine
+          parameters:
+      public: true
+      revision: 2023-14-08
