@@ -88,8 +88,8 @@ class InvalidValue(IntelMQHarmonizationException):
 
 class InvalidKey(IntelMQHarmonizationException, KeyError):
 
-    def __init__(self, key: str):
-        message = "invalid key %s" % repr(key)
+    def __init__(self, key: str, additional_text: Optional[str] = None):
+        message = f"invalid key {key!r} {additional_text or ''}".strip()  # remove trailing whitespace if additional_text is not given
         super().__init__(message)
 
 
