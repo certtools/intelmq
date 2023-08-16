@@ -10,6 +10,22 @@ This file lists all changes which have an affect on the administration of IntelM
 Please refer to the change log for a full list of changes.
 
 
+3.2.1 Bugfix release (unreleased)
+---------------------------------
+
+### Requirements
+
+### Tools
+
+### Data Format
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
 3.2.0 Feature release (2023-07-18)
 ----------------------------------
 
