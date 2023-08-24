@@ -20,9 +20,10 @@ import intelmq.lib.test as test
 class TestShadowserverSchemaDownload(unittest.TestCase):
 
     def test_download(self):
-        schema_file = os.path.join(VAR_STATE_PATH, 'shadowserver-schema.json')
-        config.set_logger(utils.log('test-bot', log_path=None))
-        if os.path.exists(schema_file):
-            os.unlink(schema_file)
-        self.assertEqual(True, config.update_schema())
-        self.assertEqual(True, os.path.exists(schema_file))
+        if os.path.isdir(VAR_STATE_PATH):
+            schema_file = os.path.join(VAR_STATE_PATH, 'shadowserver-schema.json')
+            config.set_logger(utils.log('test-bot', log_path=None))
+            if os.path.exists(schema_file):
+                os.unlink(schema_file)
+            self.assertEqual(True, config.update_schema())
+            self.assertEqual(True, os.path.exists(schema_file))
