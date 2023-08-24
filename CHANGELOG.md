@@ -68,10 +68,8 @@ CHANGELOG
   - added support for `Subject NOT LIKE` queries,
   - added support for multiple values in ticket subject queries.
 - `intelmq.bots.collectors.rsync`: Support for optional private key, relative time parsing for the source path, extra rsync parameters and strict host key checking (PR#2241 by Mateo Durante).
-=======
 - `intelmq.bots.collectors.shadowserver.collector_reports_api`:
   - The 'json' option is no longer supported as the 'csv' option provides better performance.  Please see intelmq/bots/parsers/shadowserver/README.md for a sample configuration. (PR#2372)
->>>>>>> Documentation and style updates.
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:

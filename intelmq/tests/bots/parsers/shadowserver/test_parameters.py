@@ -63,13 +63,14 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
 
     def test_default(self):
         """ Test if feed name is not overwritten has been produced. """
+        self.prepare_bot(parameters={'test_mode': True})
         self.run_bot()
         for i, EVENT in enumerate(EVENTS):
             self.assertMessageEqual(i, EVENT)
 
     def test_overwrite_feed_name(self):
         """ Test if feed name is overwritten if asked to do so. """
-        self.prepare_bot(parameters={'overwrite': True})
+        self.prepare_bot(parameters={'test_mode': True, 'overwrite': True})
         self.run_bot(prepare=False)
         for i, EVENT in enumerate(EVENTS):
             event = EVENT.copy()

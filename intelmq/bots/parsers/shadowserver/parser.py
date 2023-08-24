@@ -37,6 +37,7 @@ class ShadowserverParserBot(ParserBot):
 
     Parameters:
         auto_update (boolean): Enable automatic schema download
+        test_mode (boolean): Use test schema
     """
 
     recover_line = ParserBot.recover_line_csv_dict
@@ -47,9 +48,12 @@ class ShadowserverParserBot(ParserBot):
     _mode = None
     overwrite = False
     auto_update = False
+    test_mode = False
 
     def init(self):
         config.set_logger(self.logger)
+        if self.test_mode:
+            config.enable_test_mode(True)
         if self.auto_update:
             config.enable_auto_update(True)
             self.logger.debug("Feature 'auto_update' is enabled.")
@@ -254,7 +258,7 @@ class ShadowserverParserBot(ParserBot):
                 try:
                     ctl = IntelMQController()
                     for bot in runtime_conf:
-                        if runtime_conf[bot]["module"] == __name__ and runtime_conf[bot]['parameters'].get('auto_update', True):
+                        if runtime_conf[bot]["module"] == __name__:
                             ctl.bot_reload(bot)
                 except Exception as e:
                     logger.error("Failed to signal bot: %r" % str(e))
