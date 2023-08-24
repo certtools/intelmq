@@ -117,6 +117,7 @@ def enable_test_mode(enable):
     else:
         __config.schema_active = __config.schema_file
 
+
 def enable_auto_update(enable):
     """ Enable automatic schema update. """
     __config.auto_update = enable
