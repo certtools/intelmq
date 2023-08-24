@@ -183,7 +183,7 @@ class Bot:
 
         try:
             self.logger.info('Bot is starting.')
-            self.logger.debug("Standalone mode: %s", self._standalone)
+            self.logger.debug("Standalone mode: %s.", self._standalone)
 
             broker = self.source_pipeline_broker.title()
             if broker != 'Amqp':
