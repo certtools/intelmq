@@ -46,6 +46,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
 
     def test_event(self):
         """ Test if the parser correctly detects and handles different report types. """
+        self.prepare_bot(parameters={'test_mode': True})
         self.input_message = [FIRST_REPORT, SECOND_REPORT]
         self.run_bot(iterations=2)
         self.assertLogMatches("Detected report's file name: 'test_smb'",

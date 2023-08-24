@@ -28,6 +28,8 @@ Once set the `classification.identifier`, `classification.taxonomy`, and `classi
 
 Once set report fields will not be deleted.
  
+The schema revision history is maintained at https://github.com/The-Shadowserver-Foundation/report_schema/.
+
 
 ## Sample configuration:
 

@@ -78,6 +78,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
 
     def test_event(self):
         """ Test if correct Event has been produced. """
+        self.prepare_bot(parameters={'test_mode': True})
         self.run_bot()
         for i, EVENT in enumerate(EVENTS):
             self.assertMessageEqual(i, EVENT)

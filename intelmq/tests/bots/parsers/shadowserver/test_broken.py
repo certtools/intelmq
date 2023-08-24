@@ -46,6 +46,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         """
         Test a report which does not have valid fields
         """
+        self.prepare_bot(parameters={'test_mode': True})
         self.input_message = REPORT1
         self.run_bot(allowed_error_count=1)
         self.assertLogMatches(pattern="Detected report's file name: 'test_smb'.",
@@ -59,6 +60,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         """
         Test a report which does not have an optional field.
         """
+        self.prepare_bot(parameters={'test_mode': True})
         self.input_message = REPORT2
         self.run_bot(allowed_warning_count=63)
         self.assertLogMatches(pattern="Detected report's file name: 'test_telnet'.",
@@ -72,6 +74,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         """
         Test a report which does not have a valid extra.file_name
         """
+        self.prepare_bot(parameters={'test_mode': True})
         self.input_message = REPORT3
         self.run_bot(allowed_error_count=1)
         self.assertLogMatches(pattern="ValueError: Could not get a config for 'some_string', check the documentation.")
@@ -80,6 +83,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         """
         Test a report which does not have a valid extra.file_name
         """
+        self.prepare_bot(parameters={'test_mode': True})
         self.input_message = REPORT4
         self.run_bot(allowed_error_count=1)
         self.assertLogMatches(pattern="ValueError: Report's 'extra.file_name' '2020.wrong-filename.csv' is not valid.")
@@ -89,6 +93,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         Test a report without file_name and no given feedname as parameter.
         Error message should be verbose.
         """
+        self.prepare_bot(parameters={'test_mode': True})
         self.run_bot(allowed_error_count=1)
         self.assertLogMatches(pattern="ValueError: No feedname given as parameter and the "
                                       "processed report has no 'extra.file_name'. "
