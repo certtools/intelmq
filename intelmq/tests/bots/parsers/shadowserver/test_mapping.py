@@ -48,6 +48,7 @@ class TestShadowserverMapping(test.BotTestCase, unittest.TestCase):
         Tests if the parser correctly re-detects the feed for the second received report
         #1493
         """
+        self.prepare_bot(parameters={'test_mode': True})
         self.input_message = (EXAMPLE_TELNET, EXAMPLE_VNC)
         self.run_bot(iterations=2)
 

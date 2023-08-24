@@ -95,8 +95,10 @@ class __Container:
 
 
 __config = __Container()
+__config.schema_url = 'https://interchange.shadowserver.org/intelmq/v1/schema'
 __config.schema_file = os.path.join(VAR_STATE_PATH, 'shadowserver-schema.json')
 __config.schema_base = os.path.join(os.path.dirname(__file__), 'schema.json.test')
+__config.schema_active = __config.schema_file
 __config.schema_mtime = 0.0
 __config.auto_update = False
 __config.feedname_mapping = {}
@@ -107,6 +109,13 @@ def set_logger(logger):
     """ Sets the logger instance. """
     __config.logger = logger
 
+
+def enable_test_mode(enable):
+    """ Set which schema to load. """
+    if enable:
+        __config.schema_active = __config.schema_base
+    else:
+        __config.schema_active = __config.schema_file
 
 def enable_auto_update(enable):
     """ Enable automatic schema update. """
@@ -300,40 +309,36 @@ def reload():
 
     __config.feedname_mapping.clear()
     __config.filename_mapping.clear()
-    for schema_file in [__config.schema_file, __config.schema_base]:
-        if os.path.isfile(schema_file):
-            with open(schema_file) as fh:
-                schema = json.load(fh)
-            for report in schema:
-                if report == "_meta":
-                    __config.logger.info("Loading schema %r." % schema[report]['date_created'])
-                    for msg in schema[report]['change_log']:
-                        __config.logger.info(msg)
-                else:
-                    __config.feedname_mapping[schema[report]['feed_name']] = (schema[report]['feed_name'], schema[report])
-                    __config.filename_mapping[schema[report]['file_name']] = (schema[report]['feed_name'], schema[report])
+    if os.path.isfile(__config.schema_active):
+        with open(__config.schema_active) as fh:
+            schema = json.load(fh)
+        for report in schema:
+            if report == "_meta":
+                __config.logger.info("Loading schema %r.", schema[report]['date_created'])
+                for msg in schema[report]['change_log']:
+                    __config.logger.info(msg)
+            else:
+                __config.feedname_mapping[schema[report]['feed_name']] = (schema[report]['feed_name'], schema[report])
+                __config.filename_mapping[schema[report]['file_name']] = (schema[report]['feed_name'], schema[report])
     __config.schema_mtime = mtime
 
 
 def update_schema():
     """ download the latest configuration """
-    if os.environ.get('INTELMQ_SKIP_INTERNET'):
-        return False
 
     # download the schema to a temp file
     (th, tmp) = tempfile.mkstemp(dir=VAR_STATE_PATH)
-    url = 'https://interchange.shadowserver.org/intelmq/v1/schema'
-    __config.logger.info("Attempting to download schema from %r" % url)
-    __config.logger.debug("Using temp file %r for the download." % tmp)
+    __config.logger.info("Attempting to download schema from %r", __config.schema_url)
+    __config.logger.debug("Using temp file %r for the download.", tmp)
     try:
         with create_request_session() as session:
-            with session.get(url, stream=True) as r:
+            with session.get(__config.schema_url, stream=True) as r:
                 r.raise_for_status()
                 with open(tmp, 'wb') as f:
                     for chunk in r.iter_content(chunk_size=8192):
                         f.write(chunk)
     except:
-        __config.logger.error("Failed to download %r" % url)
+        __config.logger.error("Failed to download %r", __config.schema_url)
         return False
     __config.logger.info("Download successful.")
 
@@ -347,7 +352,7 @@ def update_schema():
             new_version = schema['_meta']['date_created']
     except:
         # leave tempfile behind for diagnosis
-        __config.logger.error("Failed to validate %r" % tmp)
+        __config.logger.error("Failed to validate %r", tmp)
         return False
 
     if os.path.exists(__config.schema_file):
@@ -359,12 +364,12 @@ def update_schema():
             if new_version != old_version:
                 os.replace(__config.schema_file, ".".join([__config.schema_file, 'bak']))
         except Exception as e:
-            __config.logger.error("Unable to replace schema file: %s" % str(e))
+            __config.logger.error("Unable to replace schema file: %s", str(e))
             return False
 
     if new_version != old_version:
         os.replace(tmp, __config.schema_file)
-        __config.logger.info("New schema version is %r." % new_version)
+        __config.logger.info("New schema version is %r.", new_version)
         return True
     else:
         os.unlink(tmp)
