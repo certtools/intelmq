@@ -183,6 +183,7 @@ class Bot:
 
         try:
             self.logger.info('Bot is starting.')
+            self.logger.debug("Standalone mode: %s", self._standalone)
 
             broker = self.source_pipeline_broker.title()
             if broker != 'Amqp':
@@ -310,7 +311,7 @@ class Bot:
             self.logger.exception('Error during shutdown of bot.')
         self.logger.handlers = []  # remove all existing handlers
         self.__sighup.clear()
-        self.__init__(self.__bot_id_full, sighup_event=self.__sighup)
+        self.__init__(self.__bot_id_full, sighup_event=self.__sighup, standalone=self._standalone)
 
     def init(self):
         pass
