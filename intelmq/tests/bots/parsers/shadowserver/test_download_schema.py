@@ -8,21 +8,29 @@ Created on Thu Jul 27 19:44:44 2023
 
 """
 
-import unittest
-import os
-import tempfile
 import logging
-import intelmq.bots.parsers.shadowserver._config as config
+import unittest
+import unittest.mock as mock
+from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 import intelmq.lib.utils as utils
 import intelmq.lib.test as test
 
+
 @test.skip_internet()
-class TestShadowserverSchemaDownload(unittest.TestCase):
+class TestShadowserverSchemaDownload(test.BotTestCase, unittest.TestCase):
+
+    @classmethod
+    def set_bot(cls):
+        cls.bot_reference = ShadowserverParserBot
+        cls.sysconfig = {"logging_level": "DEBUG"}
 
     def test_download(self):
-        if not os.environ.get('INTELMQ_SKIP_INTERNET'):
-            with tempfile.TemporaryDirectory() as tmp_dir:
-                schema_file = config.prepare_update_schema_test(tmp_dir)
-                config.set_logger(utils.log('test-bot', log_path=None, log_level=logging.DEBUG))
-                self.assertEqual(True, config.update_schema())
-                self.assertEqual(True, os.path.exists(schema_file))
+        self.prepare_bot(prepare_source_queue=False, parameters={'test_mode': True})
+        result = False
+        with mock.patch('intelmq.lib.utils.load_configuration', new=self.mocked_config):
+            with mock.patch('intelmq.lib.utils.log', self.get_mocked_logger(self.logger)):
+                self.log_stream.truncate(0)
+                result = self.bot.test_update_schema()
+                self.bot.stop(exitcode=0)
+        print(self.log_stream.getvalue())
+        self.assertEqual(True, result)

@@ -23,6 +23,7 @@ Optional parameters:
 import copy
 import re
 import os
+import tempfile
 
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidKey, InvalidValue
@@ -264,6 +265,11 @@ class ShadowserverParserBot(ParserBot):
                     logger.error("Failed to signal bot: %r" % str(e))
         else:
             super().run(parsed_args=parsed_args)
+
+    def test_update_schema(cls):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            schema_file = config.prepare_update_schema_test(tmp_dir)
+            return config.update_schema()
 
 
 BOT = ShadowserverParserBot
