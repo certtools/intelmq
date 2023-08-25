@@ -23,6 +23,6 @@ class TestShadowserverSchemaDownload(unittest.TestCase):
         if not os.environ.get('INTELMQ_SKIP_INTERNET'):
             with tempfile.TemporaryDirectory() as tmp_dir:
                 schema_file = config.prepare_update_schema_test(tmp_dir)
-                config.set_logger(utils.log('test-bot', log_path=None))
+                config.set_logger(utils.log('test-bot', log_path=None, log_level=logging.DEBUG))
                 self.assertEqual(True, config.update_schema())
                 self.assertEqual(True, os.path.exists(schema_file))
