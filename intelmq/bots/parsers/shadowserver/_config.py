@@ -339,8 +339,9 @@ def update_schema():
                 with open(tmp, 'wb') as f:
                     for chunk in r.iter_content(chunk_size=8192):
                         f.write(chunk)
-    except:
+    except Exception as e:
         __config.logger.error("Failed to download %r", __config.schema_url)
+        __config.logger.debug(str(e))
         return False
     __config.logger.info("Download successful.")
 
