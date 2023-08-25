@@ -20,8 +20,9 @@ import intelmq.lib.test as test
 class TestShadowserverSchemaDownload(unittest.TestCase):
 
     def test_download(self):
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            schema_file = config.prepare_update_schema_test(tmp_dir)
-            config.set_logger(utils.log('test-bot', log_path=None))
-            self.assertEqual(True, config.update_schema())
-            self.assertEqual(True, os.path.exists(schema_file))
+        if not os.environ.get('INTELMQ_SKIP_INTERNET'):
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                schema_file = config.prepare_update_schema_test(tmp_dir)
+                config.set_logger(utils.log('test-bot', log_path=None))
+                self.assertEqual(True, config.update_schema())
+                self.assertEqual(True, os.path.exists(schema_file))
