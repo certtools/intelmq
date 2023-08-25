@@ -95,6 +95,7 @@ class __Container:
 
 
 __config = __Container()
+__config.var_state_path = VAR_STATE_PATH
 __config.schema_url = 'https://interchange.shadowserver.org/intelmq/v1/schema'
 __config.schema_file = os.path.join(VAR_STATE_PATH, 'shadowserver-schema.json')
 __config.schema_base = os.path.join(os.path.dirname(__file__), 'schema.json.test')
@@ -328,7 +329,7 @@ def update_schema():
     """ download the latest configuration """
 
     # download the schema to a temp file
-    (th, tmp) = tempfile.mkstemp(dir=VAR_STATE_PATH)
+    (th, tmp) = tempfile.mkstemp(dir=__config.var_state_path)
     __config.logger.info("Attempting to download schema from %r", __config.schema_url)
     __config.logger.debug("Using temp file %r for the download.", tmp)
     try:
@@ -376,3 +377,10 @@ def update_schema():
         os.unlink(tmp)
 
     return False
+
+
+def prepare_update_schema_test(path):
+    """ Reconfigure internal settings to perform a schema update test. """
+    __config.var_state_path = path
+    __config.schema_file = os.path.join(path, 'shadowserver-schema.json')
+    return __config.schema_file
