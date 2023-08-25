@@ -673,6 +673,23 @@ The resulting reports contain the following special field:
 
 * `extra.file_name`: The name of the downloaded file, with fixed filename extension. The API returns file names with the extension `.csv`, although the files are JSON, not CSV. Therefore, for clarity and better error detection in the parser, the file name in `extra.file_name` uses `.json` as extension.
 
+**Sample configuration**
+
+.. code-block:: yaml
+
+  shadowserver-collector:
+    description: Our bot responsible for getting reports from Shadowserver
+    enabled: true
+    group: Collector
+    module: intelmq.bots.collectors.shadowserver.collector_reports_api
+    name: Shadowserver_Collector
+    parameters:
+      destination_queues:
+        _default: [shadowserver-parser-queue]
+      file_format: csv
+      api_key: "$API_KEY_received_from_the_shadowserver_foundation"
+      secret: "$SECRET_received_from_the_shadowserver_foundation"
+    run_mode: continuous
 
 .. _intelmq.bots.collectors.shodan.collector_stream:
 
@@ -1554,17 +1571,15 @@ This does not affect URLs which already include the scheme.
 
 
 .. _intelmq.bots.parsers.shadowserver.parser:
-.. _intelmq.bots.parsers.shadowserver.parser_json:
 
 Shadowserver
 ^^^^^^^^^^^^
 
-There are two Shadowserver parsers, one for data in ``CSV`` format (``intelmq.bots.parsers.shadowserver.parser``) and one for data in ``JSON`` format (``intelmq.bots.parsers.shadowserver.parser_json``).
-The latter was added in IntelMQ 2.3 and is meant to be used together with the Shadowserver API collector.
+The Shadowserver parser operates on ``CSV`` formatted data. 
 
 **Information**
 
-* `name:` `intelmq.bots.parsers.shadowserver.parser` (for CSV data) or `intelmq.bots.parsers.shadowserver.parser_json` (for JSON data)
+* `name:` `intelmq.bots.parsers.shadowserver.parser` 
 * `public:` yes
 * `description:` Parses different reports from Shadowserver.
 
@@ -1600,107 +1615,45 @@ A list of possible feeds can be found in the table below in the column "feed nam
 
 **Supported reports**
 
-These are the supported feed name and their corresponding file name for automatic detection:
+The report configuration is stored in a `shadowserver-schema.json` file downloaded from https://interchange.shadowserver.org/intelmq/v1/schema.
 
-  =======================================   =========================
-   feed name                                 file name
-  =======================================   =========================
-   Accessible-ADB                            `scan_adb`
-   Accessible-AFP                            `scan_afp`
-   Accessible-AMQP                           `scan_amqp`
-   Accessible-ARD                            `scan_ard`
-   Accessible-Cisco-Smart-Install            `cisco_smart_install`
-   Accessible-CoAP                           `scan_coap`
-   Accessible-CWMP                           `scan_cwmp`
-   Accessible-MS-RDPEUDP                     `scan_msrdpeudp`
-   Accessible-FTP                            `scan_ftp`
-   Accessible-Hadoop                         `scan_hadoop`
-   Accessible-HTTP                           `scan_http`
-   Accessible-Radmin                         `scan_radmin`
-   Accessible-RDP                            `scan_rdp`
-   Accessible-Rsync                          `scan_rsync`
-   Accessible-SMB                            `scan_smb`
-   Accessible-Telnet                         `scan_telnet`
-   Accessible-Ubiquiti-Discovery-Service     `scan_ubiquiti`
-   Accessible-VNC                            `scan_vnc`
-   Blacklisted-IP (deprecated)               `blacklist`
-   Blocklist                                 `blocklist`
-   Compromised-Website                       `compromised_website`
-   Device-Identification IPv4 / IPv6         `device_id`/`device_id6`
-   DNS-Open-Resolvers                        `scan_dns`
-   Honeypot-Amplification-DDoS-Events        `event4_honeypot_ddos_amp`
-   Honeypot-Brute-Force-Events               `event4_honeypot_brute_force`
-   Honeypot-Darknet                          `event4_honeypot_darknet`
-   Honeypot-HTTP-Scan                        `event4_honeypot_http_scan`
-   HTTP-Scanners                             `hp_http_scan`
-   ICS-Scanners                              `hp_ics_scan`
-   IP-Spoofer-Events                         `event4_ip_spoofer`
-   Microsoft-Sinkhole-Events IPv4            `event4_microsoft_sinkhole`
-   Microsoft-Sinkhole-Events-HTTP IPv4       `event4_microsoft_sinkhole_http`
-   NTP-Monitor                               `scan_ntpmonitor`
-   NTP-Version                               `scan_ntp`
-   Open-Chargen                              `scan_chargen`
-   Open-DB2-Discovery-Service                `scan_db2`
-   Open-Elasticsearch                        `scan_elasticsearch`
-   Open-IPMI                                 `scan_ipmi`
-   Open-IPP                                  `scan_ipp`
-   Open-LDAP                                 `scan_ldap`
-   Open-LDAP-TCP                             `scan_ldap_tcp`
-   Open-mDNS                                 `scan_mdns`
-   Open-Memcached                            `scan_memcached`
-   Open-MongoDB                              `scan_mongodb`
-   Open-MQTT                                 `scan_mqtt`
-   Open-MSSQL                                `scan_mssql`
-   Open-NATPMP                               `scan_nat_pmp`
-   Open-NetBIOS-Nameservice                  `scan_netbios`
-   Open-Netis                                `netis_router`
-   Open-Portmapper                           `scan_portmapper`
-   Open-QOTD                                 `scan_qotd`
-   Open-Redis                                `scan_redis`
-   Open-SNMP                                 `scan_snmp`
-   Open-SSDP                                 `scan_ssdp`
-   Open-TFTP                                 `scan_tftp`
-   Open-XDMCP                                `scan_xdmcp`
-   Outdated-DNSSEC-Key                       `outdated_dnssec_key`
-   Outdated-DNSSEC-Key-IPv6                  `outdated_dnssec_key_v6`
-   Sandbox-URL                               `cwsandbox_url`
-   Sinkhole-DNS                              `sinkhole_dns`
-   Sinkhole-Events                           `event4_sinkhole`/`event6_sinkhole`
-   Sinkhole-Events IPv4                      `event4_sinkhole`
-   Sinkhole-Events IPv6                      `event6_sinkhole`
-   Sinkhole-HTTP-Events                      `event4_sinkhole_http`/`event6_sinkhole_http`
-   Sinkhole-HTTP-Events IPv4                 `event4_sinkhole_http`
-   Sinkhole-HTTP-Events IPv6                 `event6_sinkhole_http`
-   Sinkhole-Events-HTTP-Referer              `event4_sinkhole_http_referer`/`event6_sinkhole_http_referer`
-   Sinkhole-Events-HTTP-Referer IPv4         `event4_sinkhole_http_referer`
-   Sinkhole-Events-HTTP-Referer IPv6         `event6_sinkhole_http_referer`
-   Spam-URL                                  `spam_url`
-   SSL-FREAK-Vulnerable-Servers              `scan_ssl_freak`
-   SSL-POODLE-Vulnerable-Servers             `scan_ssl_poodle`/`scan6_ssl_poodle`
-   Vulnerable-Exchange-Server `*`            `scan_exchange`
-   Vulnerable-ISAKMP                         `scan_isakmp`
-   Vulnerable-HTTP                           `scan_http`
-   Vulnerable-SMTP                           `scan_smtp_vulnerable`
-  =======================================   =========================
+The parser will attempt to download a schema update on startup when the *auto_update* option is enabled.
 
-`*` This report can also contain data on active webshells (column `tag` is `exchange;webshell`), and are therefore not only vulnerable but also actively infected.
+Schema downloads can also be scheduled as a cron job:
 
-In addition, the following legacy reports are supported:
+.. code-block:: bash
 
-  ===========================   ===================================================   ========================
-   feed name                     successor feed name                                  file name
-  ===========================   ===================================================   ========================
-   Amplification-DDoS-Victim     Honeypot-Amplification-DDoS-Events                   ``ddos_amplification``
-   CAIDA-IP-Spoofer              IP-Spoofer-Events                                    ``caida_ip_spoofer``
-   Darknet                       Honeypot-Darknet                                     ``darknet``
-   Drone                         Sinkhole-Events                                      ``botnet_drone``
-   Drone-Brute-Force             Honeypot-Brute-Force-Events, Sinkhole-HTTP-Events    ``drone_brute_force``
-   Microsoft-Sinkhole            Sinkhole-HTTP-Events                                 ``microsoft_sinkhole``
-   Sinkhole-HTTP-Drone           Sinkhole-HTTP-Events                                 ``sinkhole_http_drone``
-   IPv6-Sinkhole-HTTP-Drone      Sinkhole-HTTP-Events                                 ``sinkhole6_http``
-  ===========================   ===================================================   ========================
+  02  01 *   *   *     intelmq.bots.parsers.shadowserver.parser --update-schema
 
-More information on these legacy reports can be found in `Changes in Sinkhole and Honeypot Report Types and Formats <https://www.shadowserver.org/news/changes-in-sinkhole-and-honeypot-report-types-and-formats/>`_.
+
+For air-gapped systems automation will be required to download and copy the file to VAR_STATE_PATH/shadowserver-schema.json.
+
+The parser will automatically reload the configuration when the file changes.
+
+**Schema contract**
+
+Once set in the schema, the `classification.identifier`, `classification.taxonomy`, and `classification.type` fields will remain static for a specific report.
+
+Report fields will not be removed from a report.
+
+The schema revision history is maintained at https://github.com/The-Shadowserver-Foundation/report_schema/.
+
+**Sample configuration**
+
+.. code-block:: yaml
+
+  shadowserver-parser:
+    bot_id: shadowserver-parser
+    name: Shadowserver Parser
+    enabled: true
+    group: Parser
+    groupname: parsers
+    module: intelmq.bots.parsers.shadowserver.parser
+    parameters:
+      destination_queues:
+        _default: [file-output-queue]
+      auto_update: true
+    run_mode: continuous
 
 **Development**
 
@@ -1711,14 +1664,6 @@ The parser consists of two files:
  * ``parser.py`` or ``parser_json.py``
 
 Both files are required for the parser to work properly.
-
-**Add new Feedformats**
-
-Add a new feed format and conversions if required to the file
-``_config.py``. Don't forget to update the ``mapping`` dict.
-It is required to look up the correct configuration.
-
-Look at the documentation in the bot's ``_config.py`` file for more information.
 
 
 .. _intelmq.bots.parsers.shodan.parser:
