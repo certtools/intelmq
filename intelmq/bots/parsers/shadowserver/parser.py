@@ -267,6 +267,13 @@ class ShadowserverParserBot(ParserBot):
             super().run(parsed_args=parsed_args)
 
     def test_update_schema(cls):
+        """
+        Test schema download to a temporary directory.
+
+        This is necessary as the request session requires mocking in order to function.
+
+        Returns True on success.
+        """
         with tempfile.TemporaryDirectory() as tmp_dir:
             schema_file = config.prepare_update_schema_test(tmp_dir)
             return config.update_schema()
