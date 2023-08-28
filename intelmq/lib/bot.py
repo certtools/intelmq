@@ -159,7 +159,7 @@ class Bot:
             version_info = sys.version.splitlines()[0].strip()
             self.__log('info',
                        f'{self.__class__.__name__} initialized with id {bot_id} and intelmq {__version__}'
-                       f' and python {version_info} as process {os.getpid()}.')
+                       f' and python {version_info} as process {os.getpid()}. Standalone mode: {self._standalone}.')
             self.__log('debug', f'Library path: {__file__!r}.')
 
             # in standalone mode, drop privileges
@@ -183,7 +183,6 @@ class Bot:
 
         try:
             self.logger.info('Bot is starting.')
-            self.logger.debug("Standalone mode: %s.", self._standalone)
 
             broker = self.source_pipeline_broker.title()
             if broker != 'Amqp':
