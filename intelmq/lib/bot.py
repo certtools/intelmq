@@ -159,7 +159,7 @@ class Bot:
             version_info = sys.version.splitlines()[0].strip()
             self.__log('info',
                        f'{self.__class__.__name__} initialized with id {bot_id} and intelmq {__version__}'
-                       f' and python {version_info} as process {os.getpid()}.')
+                       f' and python {version_info} as process {os.getpid()}. Standalone mode: {self._standalone}.')
             self.__log('debug', f'Library path: {__file__!r}.')
 
             # in standalone mode, drop privileges
@@ -310,7 +310,7 @@ class Bot:
             self.logger.exception('Error during shutdown of bot.')
         self.logger.handlers = []  # remove all existing handlers
         self.__sighup.clear()
-        self.__init__(self.__bot_id_full, sighup_event=self.__sighup)
+        self.__init__(self.__bot_id_full, sighup_event=self.__sighup, standalone=self._standalone)
 
     def init(self):
         pass

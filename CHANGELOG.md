@@ -12,6 +12,7 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- Fixed issue preventing bots from stopping after reloading (PR by Kamil Mankowski).
 
 ### Development
 
