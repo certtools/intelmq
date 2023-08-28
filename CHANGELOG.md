@@ -6,40 +6,16 @@
 CHANGELOG
 ==========
 
-3.2.1 (unreleased)
+3.2.1 (2023-08-28)
 ------------------
-
-### Configuration
 
 ### Core
 - Fixed issue preventing bots from stopping after reloading (PR by Kamil Mankowski).
 
-### Development
-
-### Data Format
-
 ### Bots
-#### Collectors
-
-#### Parsers
-
 #### Experts
 - `intelmq.bots.experts.reverse_dns.expert`:
   - Fix the cache key to not cache results for /24 (IPv4) and /128 (IPv6) networks but for single IP-Adresses (PR#2395 by Sebastian Wagner, fixes #2394).
-
-#### Outputs
-
-### Documentation
-
-### Packaging
-
-### Tests
-
-### Tools
-
-### Contrib
-
-### Known issues
 
 
 3.2.0 (2023-07-18)
