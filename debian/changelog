@@ -1,3 +1,9 @@
+intelmq (3.2.2-1) UNRELEASED; urgency=medium
+
+  *
+
+ -- Sebastian Wagner <sebix@sebix.at>  Mon, 28 Aug 2023 17:41:52 +0200
+
 intelmq (3.2.1-1) stable; urgency=medium
 
   * 3.2.1 Bugfix release

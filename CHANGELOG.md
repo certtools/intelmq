@@ -6,6 +6,40 @@
 CHANGELOG
 ==========
 
+
+3.2.2 (unreleased)
+------------------
+
+### Configuration
+
+### Core
+
+### Development
+
+### Data Format
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
+
 3.2.1 (2023-08-28)
 ------------------
 
