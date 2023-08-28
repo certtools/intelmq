@@ -17,20 +17,20 @@ EXAMPLE_INPUT = {"__type": "Event",
 EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.ip": "192.0.43.7",
                   "source.reverse_dns": "icann.org",
-                  "destination.ip": "192.0.43.8",
-                  "destination.reverse_dns": "icann.org",
-                  # manual verification shows another result:
-                  # "destination.reverse_dns": "43-8.any.icann.org.",       # pretty weird!
+                  "destination.ip": "192.0.43.8",  # in the same /24 as source.ip, certtools/intelmq#2394
+                  "destination.reverse_dns": "43-8.any.icann.org",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
                   "source.ip": "2001:500:88:200::8",  # iana.org
                   "source.reverse_dns": "example.com",
                   "time.observation": "2015-01-01T00:00:00+00:00",
+                  "destination.ip": "2001:500:88:200::7",  # has no reverse record, certtools/intelmq#2394
                   }
 EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "source.ip": "2001:500:88:200::8",
                    "source.reverse_dns": "iana.org",
+                   "destination.ip": "2001:500:88:200::7",
                    "time.observation": "2015-01-01T00:00:00+00:00",
                    }
 INVALID_PTR_INP2 = {"__type": "Event",

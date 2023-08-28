@@ -24,6 +24,8 @@ CHANGELOG
 #### Parsers
 
 #### Experts
+- `intelmq.bots.experts.reverse_dns.expert`:
+  - Fix the cache key to not cache results for /24 (IPv4) and /128 (IPv6) networks but for single IP-Adresses (PR#2395 by Sebastian Wagner, fixes #2394).
 
 #### Outputs
 

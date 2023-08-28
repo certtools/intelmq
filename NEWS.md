@@ -13,6 +13,13 @@ Please refer to the change log for a full list of changes.
 3.2.1 Bugfix release (unreleased)
 ---------------------------------
 
+### Reverse DNS Expert
+Until IntelMQ version 3.2.0, the bot incorrectly cached and re-used results for /24 networks instead of single IP addresses.
+If the bot retrieved the PTR for `192.0.43.7`, it was cached for `192.0.43.0/24` and used for all IP addresses in this range, for example for `192.0.43.8`.
+IntelMQ version 3.2.1 fixes this issue.
+
+The bugfix will correctly increase the cache sizes and decrease the performance, as less (incorrect) data is re-used.
+
 ### Requirements
 
 ### Tools
