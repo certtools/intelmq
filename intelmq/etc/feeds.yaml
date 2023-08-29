@@ -1937,7 +1937,7 @@ providers:
               - true
   JamesBrine:
     Bruteforce Host Feed:
-      description: "jamesbrine.com.au provides an IPv4 blocklist covering brutefoce, exploit, and scanning activity from an international honeynet. The feed is available through https://jamesbrine.com.au"
+      description: "jamesbrine.com.au provides an IPv4 blocklist covering brutefoce, exploit, and scanning activity from an international honeynet"
       additional_information:
       bots:
         collector:
