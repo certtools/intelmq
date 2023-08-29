@@ -29,8 +29,6 @@ class TestShadowserverSchemaDownload(test.BotTestCase, unittest.TestCase):
         result = False
         with mock.patch('intelmq.lib.utils.load_configuration', new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.get_mocked_logger(self.logger)):
-                self.log_stream.truncate(0)
                 result = self.bot.test_update_schema()
                 self.bot.stop(exitcode=0)
-        print(self.log_stream.getvalue())
         self.assertEqual(True, result)
