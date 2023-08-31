@@ -1,9 +1,9 @@
 from intelmq.lib.bot import CollectorBot
 
 
-class DummyCollectorBot(CollectorBot):
+class ExampleAdditionalCollectorBot(CollectorBot):
     """
-    A dummy collector bot only for testing purpose.
+    This is an example bot provided by extension package
     """
 
     def process(self):
@@ -13,4 +13,4 @@ class DummyCollectorBot(CollectorBot):
         self.send_message(report)
 
 
-BOT = DummyCollectorBot
+BOT = ExampleAdditionalCollectorBot

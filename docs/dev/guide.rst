@@ -894,7 +894,8 @@ The databases `<` 10 are reserved for the IntelMQ core:
 Add a new Bot
 =============
 
-The ``intelmq/bots`` folder is defined as a `python namespace package <https://packaging.python.org/en/latest/guides/packaging-namespace-packages/>`_, 
+# FIXME
+The ``intelmq/bots`` folder is defined as a `python namespace package <https://packaging.python.org/en/latest/guides/packaging-namespace-packages/>`_,
 thus you can add a package with your own bots (in this example ``additional_bots``). This package must contain the following structure:
 
 .. code-block:: text
@@ -908,8 +909,8 @@ thus you can add a package with your own bots (in this example ``additional_bots
                   └── your_bot
                        └── your_bot.py
 
-The ``additional_bots`` folder needs to be defined e.g. with a ``setup.py``. Only the intelmq folder contains a ``__init__.py`` 
-file and it must contain only this line. Any additional code in ``__init__.py`` after this line will be inaccessible.
+The ``additional_bots`` folder needs to be defined e.g. with a ``setup.py``. Only the intelmq folder contains a ``__init__.py``
+file, which must have only the following line. Any additional code in ``__init__.py`` after this line will be inaccessible.
 
 .. code-block:: python
 
