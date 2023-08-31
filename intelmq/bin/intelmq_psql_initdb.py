@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+# SPDX-FileCopyrightText: 2015 Sebastian Wagner, 2023 CERT.at GmbH
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -32,33 +32,33 @@ if the other one exists.
 """
 
 
-def _generate_events_schema(fields: dict) -> list:
+def _generate_events_schema(fields: dict, partition_key: str = None) -> list:
     sql_lines = []
-    sql_lines.append("CREATE TABLE events (")
-    sql_lines.append('    "id" BIGSERIAL UNIQUE PRIMARY KEY,')
+    sql_lines.append("CREATE TABLE{if_not_exist} events (")
+    sql_lines.append(f'    "id" BIGSERIAL{" UNIQUE PRIMARY KEY" if not partition_key else ""},')
 
     for field, field_type in sorted(fields.items()):
         sql_lines.append(f'    "{field}" {field_type},')
 
-    sql_lines[-1] = sql_lines[-1][:-1]  # remove last ','
+    if not partition_key:
+        sql_lines[-1] = sql_lines[-1][:-1]  # remove last ','
+    else:
+        sql_lines.append(f'    PRIMARY KEY ("id", "{partition_key}")')
     sql_lines.append(");")
 
     for index in INDICES:
-        sql_lines.append('CREATE INDEX "idx_events_{0}" ON events USING btree ("{0}");'.format(index))
+        sql_lines.append(f'CREATE INDEX{{if_not_exist}} "idx_events_{index}" ON events USING btree ("{index}");')
     return sql_lines
 
 
-RAW_TABLE = """
-CREATE TABLE public.raws (
+RAW_TABLE_PART = """
+CREATE TABLE{if_not_exist} public.raws (
     event_id bigint,
     raw text,
-    PRIMARY KEY(event_id),
-    CONSTRAINT raws_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(id) ON DELETE CASCADE
-);
-"""
+    PRIMARY KEY(event_id)"""
 
 RAW_TRIGGER = """
-CREATE TRIGGER tr_events
+CREATE{or_replace} TRIGGER tr_events
     INSTEAD OF INSERT
     ON public.v_events
     FOR EACH ROW
@@ -66,14 +66,18 @@ CREATE TRIGGER tr_events
 """
 
 
-def _generate_separated_raws_schema(fields: dict) -> list:
+def _generate_separated_raws_schema(fields: dict, partition_key: str) -> list:
     sorted_fields = sorted(key for key in fields.keys() if key != "raw")
-    sql_lines = ['-- Create the table holding only the "raw" values\n', RAW_TABLE]
+    sql_lines = ['', '-- Create the table holding only the "raw" values', RAW_TABLE_PART]
+    if not partition_key:
+        sql_lines[-1] += ","
+        sql_lines.append("    CONSTRAINT raws_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(id) ON DELETE CASCADE")
+    sql_lines.append(");")
 
     sql_lines.extend([
         '',
         '-- Create the v_events view which joins the tables "events" and "raws"\n',
-        'CREATE VIEW public.v_events AS',
+        'CREATE{or_replace} VIEW public.v_events AS',
         '    SELECT',
         '        events.id,',
     ])
@@ -91,7 +95,7 @@ def _generate_separated_raws_schema(fields: dict) -> list:
         '',
         '-- Establish the INSERT trigger for the events table, splitting the data into events and raws',
         '',
-        'CREATE FUNCTION public.process_v_events_insert()',
+        'CREATE{or_replace} FUNCTION public.process_v_events_insert()',
         '    RETURNS trigger',
         '    LANGUAGE plpgsql',
         '    AS $$',
@@ -127,7 +131,8 @@ def _generate_separated_raws_schema(fields: dict) -> list:
     return sql_lines
 
 
-def generate(harmonization_file=HARMONIZATION_CONF_FILE, skip_events=False, separate_raws=False):
+def generate(harmonization_file=HARMONIZATION_CONF_FILE, skip_events=False,
+             separate_raws=False, partition_key=None, skip_or_replace=False):
     FIELDS = {}
     sql_lines = []
 
@@ -172,12 +177,17 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE, skip_events=False, sepa
         FIELDS[field] = dbtype
 
     if not skip_events:
-        sql_lines.extend(_generate_events_schema(FIELDS))
+        sql_lines.extend(_generate_events_schema(FIELDS, partition_key))
 
     if separate_raws:
-        sql_lines.extend(_generate_separated_raws_schema(FIELDS))
+        sql_lines.extend(_generate_separated_raws_schema(FIELDS, partition_key))
 
-    return "\n".join(sql_lines)
+    existing_clause = " IF NOT EXISTS" if skip_or_replace else ""
+    replace_clause = " OR REPLACE" if skip_or_replace else ""
+
+    return "\n".join(
+        line.format(if_not_exist=existing_clause, or_replace=replace_clause) for line in sql_lines
+    )
 
 
 def main():
@@ -193,12 +203,14 @@ def main():
                         help="Skip generating the events table schema")
     parser.add_argument("--separate-raws", action="store_true", default=False,
                         help="Generate v_events view to separate raw field from the rest of the data on insert")
-    parser.add_argument("--partition-field", default=None,
-                        help="Add given field to all generated indexes. Useful when utilizing partitioning for TimescaleDB")
+    parser.add_argument("--partition-key", default=None,
+                        help=("Add given field to the primary key of the events table. "
+                              "Useful when utilizing partitioning for TimescaleDB. "
+                              "If combined with --separate-raws, the v_events does not get foreign key"))
     parser.add_argument("--harmonization", default=HARMONIZATION_CONF_FILE,
                         help="Path to the harmonization file")
-    parser.add_argument("--if-not-exists", default=False,
-                        help="Add IF NOT EXISTS directive to created schemas")
+    parser.add_argument("--skip-or-replace", default=False, action="store_true",
+                        help="Add IF NOT EXISTS or REPLACE directive to created schemas")
     args = parser.parse_args()
 
     OUTPUTFILE = args.outputfile
@@ -213,7 +225,10 @@ def main():
             fp = open(OUTPUTFILE, 'w')
         psql = generate(args.harmonization,
                         skip_events=args.no_events,
-                        separate_raws=args.separate_raws)
+                        separate_raws=args.separate_raws,
+                        partition_key=args.partition_key,
+                        skip_or_replace=args.skip_or_replace,
+                        )
         print("INFO - Writing %s file" % OUTPUTFILE)
         fp.write(psql)
     finally:

@@ -101,6 +101,7 @@ class TestPsqlInit(unittest.TestCase):
         generated = psql_initdb.generate(self.harmonization_path, separate_raws=True)
         generated = self._normalize_leading_whitespaces(generated)
         self.assertIn("CREATE TABLE public.raws", generated)  # static schema, check if added
+        self.assertIn("CONSTRAINT raws_event_id_fkey", generated)
         self.assertIn(self._normalize_leading_whitespaces(expected_view), generated)
 
     def test_separated_raws_trigger(self):
@@ -136,6 +137,39 @@ class TestPsqlInit(unittest.TestCase):
         generated = self._normalize_leading_whitespaces(generated)
         self.assertIn(self._normalize_leading_whitespaces(expected_function), generated)
         self.assertIn("CREATE TRIGGER tr_events", generated)  # Static, check if added
+
+    def test_partition_field(self):
+        """For paritioned table """
+        expected_table = """
+        CREATE TABLE events (
+            "id" BIGSERIAL,
+            "classification.identifier" text,
+            "raw" text,
+            "time.source" timestamp with time zone,
+            PRIMARY KEY ("id", "time.source")
+        );
+        """
+        generated = psql_initdb.generate(self.harmonization_path, partition_key="time.source",
+                                         separate_raws=True)
+        generated = self._normalize_leading_whitespaces(generated)
+        self.assertIn(self._normalize_leading_whitespaces(expected_table), generated)
+        # Foreign key may not be supported on partitioned or Timescale tables, skipping
+        self.assertNotIn("CONSTRAINT raws_event_id_fkey", generated)
+
+    def test_skip_or_replace(self):
+        expected_creates = [
+            "CREATE TABLE IF NOT EXISTS public.raws",
+            "CREATE TABLE IF NOT EXISTS events",
+            'CREATE INDEX IF NOT EXISTS "idx_events_classification.identifier"',
+            # Do not support IF NOT EXISTS:
+            "CREATE OR REPLACE TRIGGER tr_events",
+            "CREATE OR REPLACE FUNCTION public.process_v_events_insert()",
+            "CREATE OR REPLACE VIEW public.v_events",
+        ]
+        generated = psql_initdb.generate(self.harmonization_path, separate_raws=True,
+                                         skip_or_replace=True)
+        for create in expected_creates:
+            self.assertIn(create, generated)
 
     @staticmethod
     def _normalize_leading_whitespaces(data: str) -> str:
