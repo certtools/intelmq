@@ -1637,8 +1637,6 @@ The parser will automatically reload the configuration when the file changes.
 
 Once set in the schema, the `classification.identifier`, `classification.taxonomy`, and `classification.type` fields will remain static for a specific report.
 
-Report fields will not be removed from a report.
-
 The schema revision history is maintained at https://github.com/The-Shadowserver-Foundation/report_schema/.
 
 **Sample configuration**
