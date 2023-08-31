@@ -10,11 +10,11 @@ Reads the harmonization configuration and generates an SQL command from it.
 The SQL file is saved in `/tmp/initdb.sql` or a temporary name if the other one
 exists.
 """
+import argparse
 import json
 import os
 import sys
 import tempfile
-import argparse
 
 from intelmq import HARMONIZATION_CONF_FILE
 
@@ -32,8 +32,104 @@ if the other one exists.
 """
 
 
-def generate(harmonization_file=HARMONIZATION_CONF_FILE):
+def _generate_events_schema(fields: dict) -> list:
+    sql_lines = []
+    sql_lines.append("CREATE TABLE events (")
+    sql_lines.append('    "id" BIGSERIAL UNIQUE PRIMARY KEY,')
+
+    for field, field_type in sorted(fields.items()):
+        sql_lines.append(f'    "{field}" {field_type},')
+
+    sql_lines[-1] = sql_lines[-1][:-1]  # remove last ','
+    sql_lines.append(");")
+
+    for index in INDICES:
+        sql_lines.append('CREATE INDEX "idx_events_{0}" ON events USING btree ("{0}");'.format(index))
+    return sql_lines
+
+
+RAW_TABLE = """
+CREATE TABLE public.raws (
+    event_id bigint,
+    raw text,
+    PRIMARY KEY(event_id),
+    CONSTRAINT raws_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(id) ON DELETE CASCADE
+);
+"""
+
+RAW_TRIGGER = """
+CREATE TRIGGER tr_events
+    INSTEAD OF INSERT
+    ON public.v_events
+    FOR EACH ROW
+    EXECUTE FUNCTION public.process_v_events_insert();
+"""
+
+
+def _generate_separated_raws_schema(fields: dict) -> list:
+    sorted_fields = sorted(key for key in fields.keys() if key != "raw")
+    sql_lines = ['-- Create the table holding only the "raw" values\n', RAW_TABLE]
+
+    sql_lines.extend([
+        '',
+        '-- Create the v_events view which joins the tables "events" and "raws"\n',
+        'CREATE VIEW public.v_events AS',
+        '    SELECT',
+        '        events.id,',
+    ])
+    for field in sorted_fields:
+        sql_lines.append(f'        events."{field}",')
+    sql_lines.extend([
+        '        raws."event_id",',
+        '        raws."raw"',
+        '    FROM (',
+        '        public.events',
+        '        JOIN public.raws ON ((events.id = raws.event_id)));'
+    ])
+
+    sql_lines.extend([
+        '',
+        '-- Establish the INSERT trigger for the events table, splitting the data into events and raws',
+        '',
+        'CREATE FUNCTION public.process_v_events_insert()',
+        '    RETURNS trigger',
+        '    LANGUAGE plpgsql',
+        '    AS $$',
+        '    DECLARE event_id integer;',
+        '',
+        '    BEGIN',
+        '        INSERT INTO',
+        '            events (',
+    ])
+    for field in sorted_fields:
+        sql_lines.append(f'                "{field}"{"," if field != sorted_fields[-1] else ""}')
+    sql_lines.extend([
+        '            )',
+        '        VALUES',
+        '            (',
+    ])
+    for field in sorted_fields:
+        sql_lines.append(f'                NEW."{field}"{"," if field != sorted_fields[-1] else ""}')
+    sql_lines.extend([
+        '            )',
+        '            RETURNING id INTO event_id;',
+        '        INSERT INTO',
+        '            raws ("event_id", "raw")',
+        '        VALUES',
+        '            (event_id, NEW.raw);',
+        '        RETURN NEW;',
+        '    END;',
+        '$$;'
+    ])
+
+    sql_lines.append(RAW_TRIGGER)
+
+    return sql_lines
+
+
+def generate(harmonization_file=HARMONIZATION_CONF_FILE, skip_events=False, separate_raws=False):
     FIELDS = {}
+    sql_lines = []
 
     try:
         print("INFO - Reading %s file" % harmonization_file)
@@ -75,17 +171,13 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
 
         FIELDS[field] = dbtype
 
-    initdb = """CREATE TABLE events (
-    "id" BIGSERIAL UNIQUE PRIMARY KEY,"""
-    for field, field_type in sorted(FIELDS.items()):
-        initdb += f'\n    "{field}" {field_type},'
+    if not skip_events:
+        sql_lines.extend(_generate_events_schema(FIELDS))
 
-    initdb = initdb[:-1]  # remove last ','
-    initdb += "\n);\n"
+    if separate_raws:
+        sql_lines.extend(_generate_separated_raws_schema(FIELDS))
 
-    for index in INDICES:
-        initdb += 'CREATE INDEX "idx_events_{0}" ON events USING btree ("{0}");\n'.format(index)
-    return initdb
+    return "\n".join(sql_lines)
 
 
 def main():
@@ -97,6 +189,16 @@ def main():
                         help='Defines the Ouputfile',
                         default='/tmp/initdb.sql'
                         )
+    parser.add_argument("--no-events", action="store_true", default=False,
+                        help="Skip generating the events table schema")
+    parser.add_argument("--separate-raws", action="store_true", default=False,
+                        help="Generate v_events view to separate raw field from the rest of the data on insert")
+    parser.add_argument("--partition-field", default=None,
+                        help="Add given field to all generated indexes. Useful when utilizing partitioning for TimescaleDB")
+    parser.add_argument("--harmonization", default=HARMONIZATION_CONF_FILE,
+                        help="Path to the harmonization file")
+    parser.add_argument("--if-not-exists", default=False,
+                        help="Add IF NOT EXISTS directive to created schemas")
     args = parser.parse_args()
 
     OUTPUTFILE = args.outputfile
@@ -109,7 +211,9 @@ def main():
             fp = os.fdopen(os_fp, 'wt')
         else:
             fp = open(OUTPUTFILE, 'w')
-        psql = generate()
+        psql = generate(args.harmonization,
+                        skip_events=args.no_events,
+                        separate_raws=args.separate_raws)
         print("INFO - Writing %s file" % OUTPUTFILE)
         fp.write(psql)
     finally:
