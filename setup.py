@@ -25,7 +25,7 @@ TESTS_REQUIRES = [
 ]
 
 exec(open(os.path.join(os.path.dirname(__file__),
-                       'intelmq/version.py')).read())  # defines __version__
+                       'intelmq/version/__init__.py')).read())  # defines __version__
 BOTS = []
 
 base_path = Path(__file__).parent / 'intelmq/bots'
