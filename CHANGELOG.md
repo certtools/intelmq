@@ -143,12 +143,6 @@ This is short list of the most important known issues. The full list can be retr
 - Corrupt dump files when interrupted during writing (#870).
 
 
-3.0.2 (2021-09-10)
-------------------
-
-### Core
-- `intelmq.lib.bot.CollectorBot`: Fixed an issue with within the `new_report` function, which re-loads the harmonization file after a new incoming dataset, which leads to CPU drain and decreased performance (PR#2106 by Sebastian Waldbauer, fixes #2098).
-
 3.1.0 (2023-02-10)
 ------------------
 
