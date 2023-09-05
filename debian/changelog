@@ -1,3 +1,9 @@
+intelmq (3.2.2-1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Sebastian Wagner <sebix@sebix.at>  Tue, 05 Sep 2023 15:05:07 +0200
+
 intelmq (3.2.1-2) stable; urgency=medium
 
   * Fix build on Debian 12
