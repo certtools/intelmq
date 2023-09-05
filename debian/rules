@@ -36,7 +36,7 @@ override_dh_auto_install: $(BOTDOCS)
 	rm intelmq/bin/rewrite_config_files.py
 	sed -i -e '/#!\/usr\/bin\//d' intelmq/bin/*.py
 	sed -i -f debian/sedfile intelmq/etc/* docs/user/intelmqctl.rst docs/user/bots.rst setup.py contrib/logrotate/intelmq contrib/logcheck/logcheck.logfiles
-	python3 setup.py install --root=debian/intelmq --prefix=/usr
+	dh_auto_install
 	# create directories
 	mkdir -p debian/intelmq/var/log/intelmq
 	mkdir -p debian/intelmq/var/lib/intelmq/bots/file-output
