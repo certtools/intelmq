@@ -8,22 +8,42 @@ EventDB
 
 The EventDB is not a software itself.
 
-The EventDB is a database (usually `PostgreSQL <postgresql.org/>`_) that gets filled with with data from IntelMQ using the :ref:`intelmq.bots.outputs.sql.output` Output Bot.
+The EventDB is a database (usually `PostgreSQL <postgresql.org/>`_) that gets filled with with data
+from IntelMQ using the :ref:`intelmq.bots.outputs.sql.output` Output Bot. Its core is the `events`
+table with the structure corresponding to the :doc:`IntelMQ Data Format </dev/harmonization-fields>`.
+Having the table created is required to use the EventDB.
+
+.. _intelmq_psql_initdb:
 
 -----------------------
-The events table itself
+intelmq_psql_initdb
 -----------------------
 
-IntelMQ comes with the ``intelmq_psql_initdb`` command line tool. It creates an SQL file containing:
+IntelMQ comes with the ``intelmq_psql_initdb`` command line tool designed to help with creating the
+EventDB. It creates in the first line:
 
 - A ``CREATE TABLE events`` statement with all valid IntelMQ fields as columns and correct types
 - Several indexes as examples for a good read & search performance
 
-All elements of this SQL file can be adapted and extended before running the SQL file against a database, especially the indexes.
+Having an `events` table as outlined in the SQL file, IntelMQ's :ref:`intelmq.bots.outputs.sql.output`
+Output Bot can write all received events into this database table.
 
-Having an `events` table as outlined in the SQL file, IntelMQ's :ref:`intelmq.bots.outputs.sql.output` Output Bot can write all received events into this database table.
+In addition, the script supports some additional features supporting use cases described later in
+this document:
 
-This events table is the core of the so-called EventDB and also required by all other sections of this document.
+- ``--partition-key`` - for generating schema aligned with :ref:`TimescaleDB <timescaledb>`
+  or partitioned tables,
+- ``--separate-raws`` - for generating views and triggers needed to :ref:`eventdb_raws_table`
+  (works also together with adjustments for partitioning).
+
+For full list of supported parameters, call the script help using ``-h`` parameter.
+
+All elements of generated SQL file can be adapted and extended before running the SQL file against
+a database, especially the indexes. Please review the generated script before applying.
+
+Be aware that if you create tables using another DB user that used later by the output bot, you may
+need to adjust ownership or privileges in the database. If you have problems with database permissions,
+refer to `PostgreSQL documentation <https://www.postgresql.org/docs/current/ddl-priv.html>`.
 
 -----------------
 EventDB Utilities
@@ -77,11 +97,13 @@ By modifying the configuration file it is possible to configure various queries 
    :alt: EventDB Statistics Example
 
 
+.. _timescaledb:
+
 -------------------------------
 Using EventDB with Timescale DB
 -------------------------------
 
-`Timescale DB <https://www.timescale.com/>`_ is a PostgreSQL extension to add time-series support, which is quite handy as you dont have to learn other syntaxes as you already know. You can use the SQL Queries as before, the extension will handle the rest.
+`Timescale DB <https://www.timescale.com/>`_ is a PostgreSQL extension to add time-series support, which is quite handy as you don't have to learn other syntaxes as you already know. You can use the SQL Queries as before, the extension will handle the rest.
 To see all limitations, please check the `Timescale DB Documentation <https://docs.timescale.com/timescaledb/latest/>`_.
 
 What is time-series?
@@ -91,10 +113,28 @@ Time-series has been invented as traditional database design like relational or 
 A big benefit of time-series instead of other database designs over a time-based search pattern is the performance.
 As IntelMQ uses data based upon time, this design is awesome & will give you a performance boost.
 
-How to setup
-------------
+How to choose the time column?
+------------------------------
 
-Thanks to TimescaleDB its very easy to setup.
+To utilize the time-series, you need to choose a column containing the right time. This is then
+used by you for manual queries and graphs, but also by the database itself for organizing the data.
+
+The :doc:`IntelMQ Data Format </dev/harmonization-fields>` has two fields that can be used for this:
+``time.source`` or ``time.observation``. Depending on your needs (tracking when event occurred or when
+was detected, if different) choose one of them.
+
+You can use :ref:`intelmq_psql_initdb` tool to generate SQL schema valid for TimescaleDB by passing
+the partitioning key:
+
+.. code-block:: bash
+
+   intelmq_psql_initdb --partition-key "time.source"
+
+How to setup?
+-------------
+
+Thanks to TimescaleDB it's very easy to setup.
+
 1. Choose your preferred `Timescale DB <https://docs.timescale.com/timescaledb/latest/how-to-guides/install-timescaledb/self-hosted/>`_ environment & follow the installation instructions.
 2. Now lets create a `hypertable <https://docs.timescale.com/api/latest/hypertable/create_hypertable/>`_, which is the timescale DB time-series structure. ``SELECT create_hypertable('', 'time.source');``.
 3. Now our hypertable is setup & timescaleDB takes care of the rest. You can perform queries as usual, for further information please check `Timescale DB Documentation <https://docs.timescale.com/timescaledb/latest/>`_.
@@ -132,5 +172,5 @@ The last steps brings us several advantages:
 - No code changes are needed in the IntelMQ output bot or your own scripts. A migration is seamless.
 - PostgreSQL itself ensures that the data of both tables is consistent and linked correctly.
 
-The complete SQL script can be found in the `contrib/eventdb <https://github.com/certtools/intelmq/tree/develop/contrib/eventdb>`_ directory of IntelMQ.
+The complete SQL script can be generated using :ref:`intelmq_psql_initdb`.
 It does *not* cover step 2 to avoid accidental data loss - you need to do this step manually.

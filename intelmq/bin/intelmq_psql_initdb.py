@@ -204,8 +204,9 @@ def main():
     parser.add_argument("--separate-raws", action="store_true", default=False,
                         help="Generate v_events view to separate raw field from the rest of the data on insert")
     parser.add_argument("--partition-key", default=None,
-                        help=("Add given field to the primary key of the events table. "
-                              "Useful when utilizing partitioning for TimescaleDB. "
+                        help=("Add given field to the primary key of the events table to allow "
+                              "partitioning in the database. Useful especially for setups with "
+                              "TimescaleDB, see IntelMQ documentation for more advices. "
                               "If combined with --separate-raws, the v_events does not get foreign key"))
     parser.add_argument("--harmonization", default=HARMONIZATION_CONF_FILE,
                         help="Path to the harmonization file")
