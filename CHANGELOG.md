@@ -28,6 +28,7 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
+- Add a readthedocs configuration file to fix the build fail (PR#2403 by Sebastian Wagner).
 
 ### Packaging
 
