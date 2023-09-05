@@ -30,7 +30,7 @@ The following instructions assume the following requirements. Python versions >=
 
 Supported and recommended operating systems are:
 
-* Debian 10 Buster, Debian 11 Bullseye, Debian 12 Bookworm
+* Debian Debian 11 Bullseye, Debian 12 Bookworm
 * openSUSE Tumbleweed, Leap 15.5
 * Ubuntu: 20.04 Focal, 22.04 Jammy
 * For the Docker-installation: Docker Engine: 18.x and higher
