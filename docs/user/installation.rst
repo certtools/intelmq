@@ -30,9 +30,9 @@ The following instructions assume the following requirements. Python versions >=
 
 Supported and recommended operating systems are:
 
-* Debian Debian 11 Bullseye, Debian 12 Bookworm
+* Debian 11 Bullseye, Debian 12 Bookworm
 * openSUSE Tumbleweed, Leap 15.5
-* Ubuntu: 20.04 Focal, 22.04 Jammy
+* Ubuntu: 22.04 Jammy
 * For the Docker-installation: Docker Engine: 18.x and higher
 
 Other distributions which are (most probably) supported include AlmaLinux, CentOS, Fedora, FreeBSD 12, RHEL and RockyLinux.
@@ -45,13 +45,16 @@ Native deb/rpm packages
 
 These are the operating systems which are currently supported by packages:
 
-* **Debian 11** Bullseye
+* **Debian 10** Buster, **Debian 11** Bullseye
+
+  * For Debian 10, `intelmq-api` is only available with hug-based version 3.0.1, not the latest fastapi-based 3.2.0).
+
 * **openSUSE Tumbleweed**
-* **Ubuntu 20.04** Focal Fossa
+* **Ubuntu 20.04** Focal, **Ubuntu 22.04** Jammy
 
   * Enable the universe repositories by appending ``universe`` in ``/etc/apt/sources.list`` to ``deb http://[...].archive.ubuntu.com/ubuntu/ focal main`` first.
 
-  * `intelmq-api` is only available with hug-based version 3.0.1, not the latest fastapi-based 3.1.0).
+  * `intelmq-api` is only available with hug-based version 3.0.1, not the latest fastapi-based 3.2.0).
 
 Get the installation instructions for your operating system here: `Installation Native Packages <https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq>`_.
 The instructions show how to add the repository and install the `intelmq` package. You can also install the `intelmq-manager` package to get the `Web-Frontend IntelMQ Manager <https://github.com/certtools/intelmq-manager/>`_.
