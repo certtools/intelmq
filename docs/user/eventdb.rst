@@ -116,14 +116,14 @@ As IntelMQ uses data based upon time, this design is awesome & will give you a p
 How to choose the time column?
 ------------------------------
 
-To utilize the time-series, you need to choose a column containing the right time. This is then
-used by you for manual queries and graphs, but also by the database itself for organizing the data.
+To utilize the time-series, choose a column containing the right time. This is then
+used by you for manual queries and graphs, and also by the database itself for organizing the data.
 
 The :doc:`IntelMQ Data Format </dev/harmonization-fields>` has two fields that can be used for this:
-``time.source`` or ``time.observation``. Depending on your needs (tracking when event occurred or when
-was detected, if different) choose one of them.
+``time.source`` or ``time.observation``. Depending on your needs (tracking when the event occurred or when
+it was detected, if different), choose one of them.
 
-You can use :ref:`intelmq_psql_initdb` tool to generate SQL schema valid for TimescaleDB by passing
+You can use the :ref:`intelmq_psql_initdb` tool to generate SQL schema valid for TimescaleDB by passing
 the partitioning key:
 
 .. code-block:: bash
@@ -133,7 +133,7 @@ the partitioning key:
 How to setup?
 -------------
 
-Thanks to TimescaleDB it's very easy to setup.
+Thanks to TimescaleDB, it's very easy to setup.
 
 1. Choose your preferred `Timescale DB <https://docs.timescale.com/timescaledb/latest/how-to-guides/install-timescaledb/self-hosted/>`_ environment & follow the installation instructions.
 2. Now lets create a `hypertable <https://docs.timescale.com/api/latest/hypertable/create_hypertable/>`_, which is the timescale DB time-series structure. ``SELECT create_hypertable('', 'time.source');``.
