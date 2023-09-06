@@ -8,7 +8,7 @@ EventDB
 
 The EventDB is not a software itself.
 
-The EventDB is a database (usually `PostgreSQL <postgresql.org/>`_) that gets filled with with data
+The EventDB is a database (usually `PostgreSQL <postgresql.org/>`_) that gets filled with data
 from IntelMQ using the :ref:`intelmq.bots.outputs.sql.output` Output Bot. Its core is the `events`
 table with the structure corresponding to the :doc:`IntelMQ Data Format </dev/harmonization-fields>`.
 Having the table created is required to use the EventDB.
