@@ -38,7 +38,7 @@ this document:
 
 For a full list of supported parameters, call the script help using ``-h`` parameter.
 
-All elements of generated SQL file can be adapted and extended before running the SQL file against
+All elements of the generated SQL file can be adapted and extended before running the SQL file against
 a database, especially the indexes. Please review the generated script before applying.
 
 Be aware that if you create tables using another DB user that is used later by the output bot, you may
