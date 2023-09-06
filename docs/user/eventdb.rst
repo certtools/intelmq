@@ -36,7 +36,7 @@ this document:
 - ``--separate-raws`` - for generating views and triggers needed to :ref:`eventdb_raws_table`
   (works also together with adjustments for partitioning).
 
-For full list of supported parameters, call the script help using ``-h`` parameter.
+For a full list of supported parameters, call the script help using ``-h`` parameter.
 
 All elements of generated SQL file can be adapted and extended before running the SQL file against
 a database, especially the indexes. Please review the generated script before applying.
