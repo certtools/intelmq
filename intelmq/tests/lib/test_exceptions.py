@@ -64,6 +64,13 @@ class TestUtils(unittest.TestCase):
         self.assertIn(repr(depname), exc)
         self.assertTrue(exc.endswith(" %s" % additional))
 
+    def test_invalid_key(self):
+        """
+        Check intelmq.lib.exceptions.InvalidKey
+        """
+        exc = excs.InvalidKey('test_key', additional_text='TEST').args[0]
+        self.assertTrue(exc.endswith(' TEST'))
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

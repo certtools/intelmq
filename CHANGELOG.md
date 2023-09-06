@@ -13,6 +13,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.message`: For invalid message keys, add a hint on the failure to the exception: not allowed by configuration or not matching regular expression (PR#2398 by Sebastian Wagner).
+- `intelmq.lib.exceptions.InvalidKey`: Add optional parameter `additional_text` (PR#2398 by Sebastian Wagner).
 
 ### Development
 
