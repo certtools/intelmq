@@ -41,7 +41,7 @@ For a full list of supported parameters, call the script help using ``-h`` param
 All elements of generated SQL file can be adapted and extended before running the SQL file against
 a database, especially the indexes. Please review the generated script before applying.
 
-Be aware that if you create tables using another DB user that used later by the output bot, you may
+Be aware that if you create tables using another DB user that is used later by the output bot, you may
 need to adjust ownership or privileges in the database. If you have problems with database permissions,
 refer to `PostgreSQL documentation <https://www.postgresql.org/docs/current/ddl-priv.html>`.
 
