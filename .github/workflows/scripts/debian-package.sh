@@ -10,7 +10,7 @@ set -x
 set -e
 
 # A list of known Debian releases
-knowncodenames=("stretch" "buster" "bullseye" "stable" "testing")
+knowncodenames=("bullseye" "bookworm" "stable" "testing")
 
 # We want exactly one argument: the name of the release
 if (( $# != 1 ))

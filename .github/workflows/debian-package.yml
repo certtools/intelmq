@@ -23,7 +23,7 @@ jobs:
     name: Build Debian packages
     strategy:
       matrix:
-        codename: ['buster', 'bullseye']
+        codename: ['bullseye', 'bookworm']
 
     steps:
     - name: Checkout repository

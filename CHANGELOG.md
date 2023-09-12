@@ -13,6 +13,8 @@ CHANGELOG
 ### Configuration
 
 ### Core
+- `intelmq.lib.message`: For invalid message keys, add a hint on the failure to the exception: not allowed by configuration or not matching regular expression (PR#2398 by Sebastian Wagner).
+- `intelmq.lib.exceptions.InvalidKey`: Add optional parameter `additional_text` (PR#2398 by Sebastian Wagner).
 
 ### Development
 
@@ -28,6 +30,7 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
+- Add a readthedocs configuration file to fix the build fail (PR#2403 by Sebastian Wagner).
 
 ### Packaging
 
@@ -142,12 +145,6 @@ This is short list of the most important known issues. The full list can be retr
 - Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
 - Corrupt dump files when interrupted during writing (#870).
 
-
-3.0.2 (2021-09-10)
-------------------
-
-### Core
-- `intelmq.lib.bot.CollectorBot`: Fixed an issue with within the `new_report` function, which re-loads the harmonization file after a new incoming dataset, which leads to CPU drain and decreased performance (PR#2106 by Sebastian Waldbauer, fixes #2098).
 
 3.1.0 (2023-02-10)
 ------------------

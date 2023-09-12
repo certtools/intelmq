@@ -168,8 +168,10 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_invalid_key(self):
         """ Test if report raises InvalidKey for invalid key in add(). """
         report = self.new_report()
-        with self.assertRaises(exceptions.InvalidKey):
+        with self.assertRaises(exceptions.InvalidKey) as cm:
             report.add('invalid', 0)
+        self.assertIn('not allowed', cm.exception.args[0])
+
 
     def test_report_add_raw(self):
         """ Test if report can add raw value. """
@@ -764,10 +766,11 @@ class TestMessageFactory(unittest.TestCase):
             message.Event(harmonization={'event': {'foo.bar.': {}}})
 
     def test_invalid_extra_key_name(self):
-        """ Test if error is raised if an extra field name is invalid. """
+        """ Test if error is raised when an extra field name is invalid and error message is included in exception. """
         event = message.Event(harmonization=HARM)
-        with self.assertRaises(exceptions.InvalidKey):
+        with self.assertRaises(exceptions.InvalidKey) as cm:
             event.add('extra.foo-', 'bar')
+        self.assertIn('Does not match regular expression', cm.exception.args[0])
 
 
 class TestReport(unittest.TestCase):

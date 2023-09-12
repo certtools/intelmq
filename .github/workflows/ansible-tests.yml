@@ -33,4 +33,4 @@ jobs:
         path: ./src/intelmq-vagrant
 
     - name: Run ansible tests
-      run: podman run -e CI=${CI} -v ${GITHUB_WORKSPACE}/src:/src docker.io/debian:buster-slim /src/intelmq/.github/workflows/scripts/ansible.sh
+      run: podman run -e CI=${CI} -v ${GITHUB_WORKSPACE}/src:/src docker.io/debian:bullseye-slim /src/intelmq/.github/workflows/scripts/ansible.sh
