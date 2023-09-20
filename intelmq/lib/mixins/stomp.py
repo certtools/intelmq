@@ -31,6 +31,11 @@ class StompMixin:
     port: int
     heartbeat: int
 
+    auth_by_ssl_client_certificate: bool
+
+    username: str  # to be ignored if `auth_by_ssl_client_certificate` is true
+    password: str  # to be ignored if `auth_by_ssl_client_certificate` is true
+
     ssl_ca_certificate: str  # TODO: could be pathlib.Path
     ssl_client_certificate: str  # TODO: could be pathlib.Path
     ssl_client_certificate_key: str  # TODO: could be patlib.Path
@@ -102,12 +107,28 @@ class StompMixin:
     def __verify_parameters(cls,
                             get_param: Callable[[str], Any],
                             on_error: Callable[[str], None]) -> None:
-        for param_name in [
-            'ssl_ca_certificate',
-            'ssl_client_certificate',
-            'ssl_client_certificate_key',
-        ]:
+        file_param_names = ['ssl_ca_certificate']
+        if cls.__should_cert_auth_params_be_verified(get_param, on_error):
+            file_param_names.extend([
+                'ssl_client_certificate',
+                'ssl_client_certificate_key',
+            ])
+        for param_name in file_param_names:
             cls.__verify_file_param(param_name, get_param, on_error)
+
+    @classmethod
+    def __should_cert_auth_params_be_verified(cls,
+                                              get_param: Callable[[str], Any],
+                                              on_error: Callable[[str], None]) -> bool:
+        flag = get_param('auth_by_ssl_client_certificate')
+        if not isinstance(flag, bool):
+            # Let us better be strict here -- explicitly rejecting any
+            # non-`bool` values as potentially misleading (e.g., consider
+            # a string like "false", which would be interpreted as True).
+            on_error(f"Parameter 'auth_by_ssl_client_certificate' "
+                     f"is not set to a bool value (got: {flag!r}).")
+            flag = False
+        return flag
 
     @classmethod
     def __verify_file_param(cls,
@@ -136,10 +157,16 @@ class StompMixin:
         # Note: the `ca_certs` argument to `set_ssl()` must always be
         # provided, otherwise the `stomp.py`'s machinery would *not*
         # perform any certificate verification!
-        ssl_kwargs = dict(
-            ca_certs=self.ssl_ca_certificate,
-            cert_file=self.ssl_client_certificate,
-            key_file=self.ssl_client_certificate_key,
-        )
+        ssl_kwargs = dict(ca_certs=self.ssl_ca_certificate)
         connect_kwargs = dict(wait=True)
+        if self.auth_by_ssl_client_certificate:
+            ssl_kwargs.update(
+                cert_file=self.ssl_client_certificate,
+                key_file=self.ssl_client_certificate_key,
+            )
+        else:
+            connect_kwargs.update(
+                username=self.username,
+                passcode=self.password,
+            )
         return ssl_kwargs, connect_kwargs

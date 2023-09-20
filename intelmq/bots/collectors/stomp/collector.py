@@ -77,6 +77,9 @@ class StompCollectorBot(CollectorBot, StompMixin):
     exchange: str = ''
     port: int = 61614
     server: str = "n6stream.cert.pl"
+    auth_by_ssl_client_certificate: bool = True
+    username: str = 'guest'  # ignored if `auth_by_ssl_client_certificate` is true
+    password: str = 'guest'  # ignored if `auth_by_ssl_client_certificate` is true
     ssl_ca_certificate: str = 'ca.pem'  # TODO pathlib.Path
     ssl_client_certificate: str = 'client.pem'  # TODO pathlib.Path
     ssl_client_certificate_key: str = 'client.key'  # TODO pathlib.Path

@@ -26,6 +26,9 @@ class StompOutputBot(OutputBot, StompMixin):
     port: int = 61614
     server: str = "127.0.0.1"  # TODO: could be ip address
     single_key: bool = False
+    auth_by_ssl_client_certificate: bool = True
+    username: str = 'guest'  # ignored if `auth_by_ssl_client_certificate` is true
+    password: str = 'guest'  # ignored if `auth_by_ssl_client_certificate` is true
     ssl_ca_certificate: str = 'ca.pem'  # TODO: could be pathlib.Path
     ssl_client_certificate: str = 'client.pem'  # TODO: pathlib.Path
     ssl_client_certificate_key: str = 'client.key'  # TODO: patlib.Path
