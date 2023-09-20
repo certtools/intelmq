@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-import os.path
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.mixins import StompMixin
 
 try:
     import stomp
+    import stomp.exception
 except ImportError:
     stomp = None
 else:
@@ -18,9 +18,10 @@ else:
         the stomp listener gets called asynchronously for
         every STOMP message
         """
-        def __init__(self, n6stompcollector, conn, destination):
+        def __init__(self, n6stompcollector, conn, destination, connect_kwargs=None):
             self.stompbot = n6stompcollector
             self.conn = conn
+            self.connect_kwargs = connect_kwargs
             self.destination = destination
             super().__init__()
             if stomp.__version__ >= (5, 0, 0):
@@ -29,15 +30,23 @@ else:
 
         def on_heartbeat_timeout(self):
             self.stompbot.logger.info("Heartbeat timeout. Attempting to re-connect.")
-            connect_and_subscribe(self.conn, self.stompbot.logger, self.destination)
+            if self.stompbot._auto_reconnect:
+                connect_and_subscribe(self.conn, self.stompbot.logger, self.destination,
+                                      connect_kwargs=self.connect_kwargs)
 
-        def on_error(self, headers, message):
-            self.stompbot.logger.error('Received an error: %r.', message)
+        def on_error(self, frame, body=None):
+            if body is None:
+                # `stomp.py >= 6.1.0`
+                body = frame.body
+            self.stompbot.logger.error('Received an error: %r.', body)
 
-        def on_message(self, headers, message):
-            self.stompbot.logger.debug('Receive message %r...', message[:500])
+        def on_message(self, frame, body=None):
+            if body is None:
+                # `stomp.py >= 6.1.0`
+                body = frame.body
+            self.stompbot.logger.debug('Receive message %r...', body[:500])
             report = self.stompbot.new_report()
-            report.add("raw", message.rstrip())
+            report.add("raw", body.rstrip())
             report.add("feed.url", "stomp://" +
                        self.stompbot.server +
                        ":" + str(self.stompbot.port) +
@@ -46,19 +55,23 @@ else:
 
         def on_disconnected(self):
             self.stompbot.logger.debug('Detected disconnect')
-            connect_and_subscribe(self.conn, self.stompbot.logger, self.destination)
+            if self.stompbot._auto_reconnect:
+                connect_and_subscribe(self.conn, self.stompbot.logger, self.destination,
+                                      connect_kwargs=self.connect_kwargs)
 
 
-def connect_and_subscribe(conn, logger, destination, start=False):
+def connect_and_subscribe(conn, logger, destination, start=False, connect_kwargs=None):
     if start:
         conn.start()
-    conn.connect(wait=True)
+    if connect_kwargs is None:
+        connect_kwargs = dict(wait=True)
+    conn.connect(**connect_kwargs)
     conn.subscribe(destination=destination,
                    id=1, ack='auto')
     logger.info('Successfully connected and subscribed.')
 
 
-class StompCollectorBot(CollectorBot):
+class StompCollectorBot(CollectorBot, StompMixin):
     """Collect data from a STOMP Interface"""
     """ main class for the STOMP protocol collector """
     exchange: str = ''
@@ -73,36 +86,22 @@ class StompCollectorBot(CollectorBot):
     __conn = False  # define here so shutdown method can check for it
 
     def init(self):
-        if stomp is None:
-            raise MissingDependencyError("stomp")
-        elif stomp.__version__ < (4, 1, 8):
-            raise MissingDependencyError("stomp", version="4.1.8",
-                                         installed=stomp.__version__)
+        self.stomp_bot_runtime_initial_check()
 
-        self.ssl_ca_cert = self.ssl_ca_certificate
-        self.ssl_cl_cert = self.ssl_client_certificate
-        self.ssl_cl_cert_key = self.ssl_client_certificate_key
+        # (note: older versions of `stomp.py` do not play well with reconnects)
+        self._auto_reconnect = (stomp.__version__ >= (4, 1, 21))
 
-        # check if certificates exist
-        for f in [self.ssl_ca_cert, self.ssl_cl_cert, self.ssl_cl_cert_key]:
-            if not os.path.isfile(f):
-                raise ValueError("Could not open file %r." % f)
-
-        _host = [(self.server, self.port)]
-        self.__conn = stomp.Connection(host_and_ports=_host, use_ssl=True,
-                                       ssl_key_file=self.ssl_cl_cert_key,
-                                       ssl_cert_file=self.ssl_cl_cert,
-                                       ssl_ca_certs=self.ssl_ca_cert,
-                                       heartbeats=(self.heartbeat,
-                                                   self.heartbeat))
-
-        self.__conn.set_listener('', StompListener(self, self.__conn, self.exchange))
+        self.__conn, connect_kwargs = self.prepare_stomp_connection()
+        self.__conn.set_listener('', StompListener(self, self.__conn, self.exchange,
+                                                   connect_kwargs=connect_kwargs))
         connect_and_subscribe(self.__conn, self.logger, self.exchange,
-                              start=stomp.__version__ < (4, 1, 20))
+                              start=stomp.__version__ < (4, 1, 20),
+                              connect_kwargs=connect_kwargs)
 
     def shutdown(self):
         if not stomp or not self.__conn:
             return
+        self._auto_reconnect = False
         try:
             self.__conn.disconnect()
         except stomp.exception.NotConnectedException:
@@ -110,6 +109,10 @@ class StompCollectorBot(CollectorBot):
 
     def process(self):
         pass
+
+    @classmethod
+    def check(cls, parameters):
+        return cls.stomp_bot_parameters_check(parameters) or None
 
 
 BOT = StompCollectorBot
