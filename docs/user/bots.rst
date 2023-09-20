@@ -945,12 +945,15 @@ Install the `stomp.py` library from PyPI:
 **Configuration Parameters**
 
 * **Feed parameters** (see above)
-* `exchange`: exchange point
+* `exchange`: STOMP *destination* to subscribe to, e.g. "/exchange/my.org/*.*.*.*"
 * `port`: 61614
-* `server`: hostname e.g. "n6stream.cert.pl"
+* `server`: hostname, e.g. "n6stream.cert.pl"
 * `ssl_ca_certificate`: path to CA file
-* `ssl_client_certificate`: path to client cert file
-* `ssl_client_certificate_key`: path to client cert key file
+* `auth_by_ssl_client_certificate`: Boolean, default: true (note: set to false for new *n6* auth)
+* `ssl_client_certificate`: path to client cert file, used only if `auth_by_ssl_client_certificate` is true
+* `ssl_client_certificate_key`: path to client cert key file, used only if `auth_by_ssl_client_certificate` is true
+* `username`: STOMP *login* (e.g., *n6* user login), used only if `auth_by_ssl_client_certificate` is false
+* `password`: STOMP *passcode* (e.g., *n6* user API key), used only if `auth_by_ssl_client_certificate` is false
 
 
 .. _intelmq.bots.collectors.twitter.collector_twitter:
@@ -4305,7 +4308,7 @@ Also you will need a so called "exchange point".
 
 **Configuration Parameters**
 
-* `exchange`: The exchange to push at
+* `exchange`: STOMP *destination* to push at, e.g. "/exchange/_push"
 * `heartbeat`: default: 60000
 * `message_hierarchical_output`: Boolean, default: false
 * `message_jsondict_as_string`: Boolean, default: false
@@ -4314,8 +4317,11 @@ Also you will need a so called "exchange point".
 * `server`: Host or IP address of the STOMP server
 * `single_key`: Boolean or string (field name), default: false
 * `ssl_ca_certificate`: path to CA file
-* `ssl_client_certificate`: path to client cert file
-* `ssl_client_certificate_key`: path to client cert key file
+* `auth_by_ssl_client_certificate`: Boolean, default: true (note: set to false for new *n6* auth)
+* `ssl_client_certificate`: path to client cert file, used only if `auth_by_ssl_client_certificate` is true
+* `ssl_client_certificate_key`: path to client cert key file, used only if `auth_by_ssl_client_certificate` is true
+* `username`: STOMP *login* (e.g., *n6* user login), used only if `auth_by_ssl_client_certificate` is false
+* `password`: STOMP *passcode* (e.g., *n6* user API key), used only if `auth_by_ssl_client_certificate` is false
 
 
 .. _intelmq.bots.outputs.tcp.output:
