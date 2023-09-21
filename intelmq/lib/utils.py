@@ -847,7 +847,7 @@ def file_name_from_response(response: requests.Response) -> str:
 def _get_console_entry_points():
     # Select interface was introduced in Python 3.10
     if version_info < (3, 10):
-        return entry_points().get("console_scripts", [])
+        return entry_points()["console_scripts"]
     return entry_points(group="console_scripts")
 
 
