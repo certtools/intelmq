@@ -34,6 +34,7 @@ import tarfile
 import textwrap
 import traceback
 import zipfile
+from sys import version_info
 from typing import (Any, Callable, Dict, Generator, Iterator, Optional,
                     Sequence, Union)
 
@@ -843,6 +844,13 @@ def file_name_from_response(response: requests.Response) -> str:
     return file_name
 
 
+def _get_console_entry_points():
+    # Select interface was introduced in Python 3.10
+    if version_info < (3, 10):
+        return entry_points().get("console_scripts", [])
+    return entry_points(group="console_scripts")
+
+
 def list_all_bots() -> dict:
     """
     Compile a dictionary with all bots and their parameters.
@@ -864,7 +872,7 @@ def list_all_bots() -> dict:
     from intelmq.lib.bot import Bot  # noqa: prevents circular import
     bot_parameters = dir(Bot)
 
-    bot_entrypoints = filter(lambda entry: entry.name.startswith("intelmq.bots."), entry_points(group="console_scripts"))
+    bot_entrypoints = filter(lambda entry: entry.name.startswith("intelmq.bots."), _get_console_entry_points())
     for bot in bot_entrypoints:
         try:
             module_name = bot.value.replace(":BOT.run", '')
