@@ -47,6 +47,7 @@ from pkg_resources import resource_filename
 from ruamel.yaml import YAML
 from ruamel.yaml.scanner import ScannerError
 from termstyle import red
+from importlib.metadata import entry_points
 
 import intelmq
 from intelmq import RUNTIME_CONF_FILE
@@ -860,13 +861,11 @@ def list_all_bots() -> dict:
     from intelmq.lib.bot import Bot  # noqa: prevents circular import
     bot_parameters = dir(Bot)
 
-    base_path = resource_filename('intelmq', 'bots')
-
-    botfiles = [botfile for botfile in pathlib.Path(base_path).glob('**/*.py') if botfile.is_file() and botfile.name != '__init__.py']
-    for file in botfiles:
-        file = Path(file.as_posix().replace(base_path, 'intelmq/bots'))
+    bot_entrypoints = filter(lambda entry: entry.name.startswith("intelmq.bots."), entry_points(group="console_scripts"))
+    for bot in bot_entrypoints:
         try:
-            mod = importlib.import_module('.'.join(file.with_suffix('').parts))
+            module_name = bot.value.replace(":BOT.run", '')
+            mod = importlib.import_module(module_name)
         except SyntaxError:
             # Skip invalid bots
             continue
@@ -884,7 +883,7 @@ def list_all_bots() -> dict:
             for bot_type in ['CollectorBot', 'ParserBot', 'ExpertBot', 'OutputBot', 'Bot']:
                 name = name.replace(bot_type, '')
 
-            bots[file.parts[2].capitalize()[:-1]][name] = {
+            bots[module_name.split('.')[2].capitalize()[:-1]][name] = {
                 "module": mod.__name__,
                 "description": "Missing description" if not getattr(mod.BOT, '__doc__', None) else textwrap.dedent(mod.BOT.__doc__).strip(),
                 "parameters": keys,
