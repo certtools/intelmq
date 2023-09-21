@@ -948,6 +948,9 @@ file would then have the following section:
    [project.scripts]
    intelmq.bots.collectors.awesome.special = "awesome_bots.special:BOT.run"
 
+Once you installed your package, you can run ``intelmqctl list bots`` to check if your bot was
+properly registered.
+
 *************
 Documentation
 *************

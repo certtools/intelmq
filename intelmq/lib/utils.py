@@ -845,10 +845,11 @@ def file_name_from_response(response: requests.Response) -> str:
 
 
 def _get_console_entry_points():
-    # Select interface was introduced in Python 3.10
-    if version_info < (3, 10):
-        return entry_points()["console_scripts"]
-    return entry_points(group="console_scripts")
+    # Select interface was introduced in Python 3.10 and newer importlib_metadata
+    entries = entry_points()
+    if hasattr(entries, "select"):
+        return entries.select(group="console_scripts")
+    return entries.get("console_scripts", [])  # it's a dict
 
 
 def list_all_bots() -> dict:
