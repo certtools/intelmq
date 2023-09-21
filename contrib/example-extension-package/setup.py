@@ -1,3 +1,9 @@
+"""Example IntelMQ extension package
+
+SPDX-FileCopyrightText: 2023 CERT.at GmbH <https://cert.at/>
+SPDX-License-Identifier: AGPL-3.0-or-later
+"""
+
 from pathlib import Path
 from setuptools import find_packages, setup
 

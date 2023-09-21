@@ -34,7 +34,6 @@ import tarfile
 import textwrap
 import traceback
 import zipfile
-from pathlib import Path
 from typing import (Any, Callable, Dict, Generator, Iterator, Optional,
                     Sequence, Union)
 
@@ -43,15 +42,19 @@ import dns.resolver
 import dns.version
 import requests
 from dateutil.relativedelta import relativedelta
-from pkg_resources import resource_filename
 from ruamel.yaml import YAML
 from ruamel.yaml.scanner import ScannerError
 from termstyle import red
-from importlib.metadata import entry_points
 
 import intelmq
 from intelmq import RUNTIME_CONF_FILE
 from intelmq.lib.exceptions import DecodingError
+
+try:
+    from importlib.metadata import entry_points
+except ImportError:
+    from importlib_metadata import entry_points
+
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
