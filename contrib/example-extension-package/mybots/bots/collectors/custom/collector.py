@@ -8,7 +8,7 @@ from intelmq.lib.bot import CollectorBot
 
 class ExampleAdditionalCollectorBot(CollectorBot):
     """
-    This is an example bot provided by extension package
+    This is an example bot provided by an extension package
     """
 
     def process(self):

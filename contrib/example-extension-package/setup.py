@@ -11,7 +11,7 @@ from setuptools import find_packages, setup
 # Instead of the bot-autodiscovery below, you can also just manually declare entrypoints
 # (regardless of packaging solution, even in pyproject.toml etc.), e.g.:
 #
-# intelmq.bots.collectors.custom.collector = mybots.bots.collectors.custom.collector:BOT.run
+# 'intelmq.bots.collectors.custom.collector = mybots.bots.collectors.custom.collector:BOT.run'
 #
 # Important is:
 #  - entry point has to start with `intelmq.bots.{type}` (type: collectors, experts, parsers, outputs)

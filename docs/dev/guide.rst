@@ -896,14 +896,14 @@ Creating extensions packages
 ****************************
 
 IntelMQ supports adding additional bots using your own independent packages. You can use this to
-add a new integration that is special to you, or cannot be integrated for some reason
-into the main IntelMQ repository.
+add a new integration that is special to you, or cannot be integrated
+into the main IntelMQ repository for some reason.
 
 Building an extension package
 =============================
 
-A simple example of the package can be found in ``contrib/example-extension-package``. In order to
-bots to work with IntelMQ, you need to ensure that
+A simple example of the package can be found in ``contrib/example-extension-package``. To make your custom
+bots work with IntelMQ, you need to ensure that
 
  - your bot's module exposes a ``BOT`` object of the class inherited from ``intelmq.lib.bot.Bot``
    or its subclasses,
@@ -912,7 +912,7 @@ bots to work with IntelMQ, you need to ensure that
    the name of the group (collectors, experts, outputs, parsers), and then your original name.
    The entry point must point to the ``BOT.run`` method,
  - the module in which the bot resides must be importable by IntelMQ (e.g. installed in the same
-   virtualv).
+   virtualenv, if you use them).
 
 Apart from these requirements, your package can use any of the usual package features. We strongly
 recommend following the same principles and main guidelines as the official bots. This will ensure
@@ -948,7 +948,7 @@ file would then have the following section:
    [project.scripts]
    intelmq.bots.collectors.awesome.special = "awesome_bots.special:BOT.run"
 
-Once you installed your package, you can run ``intelmqctl list bots`` to check if your bot was
+Once you have installed your package, you can run ``intelmqctl list bots`` to check if your bot was
 properly registered.
 
 *************

@@ -15,7 +15,7 @@ CHANGELOG
 ### Core
 - `intelmq.lib.message`: For invalid message keys, add a hint on the failure to the exception: not allowed by configuration or not matching regular expression (PR#2398 by Sebastian Wagner).
 - `intelmq.lib.exceptions.InvalidKey`: Add optional parameter `additional_text` (PR#2398 by Sebastian Wagner).
-- Change the way we discover bots to allow easy extending based on the entry point name. (PR by Kamil Mankowski)
+- Change the way we discover bots to allow easy extending based on the entry point name. (PR#2413 by Kamil Mankowski)
 
 ### Development
 
@@ -32,7 +32,7 @@ CHANGELOG
 
 ### Documentation
 - Add a readthedocs configuration file to fix the build fail (PR#2403 by Sebastian Wagner).
-- Add a guide of developing extensions packages (PR by Kamil Mankowski)
+- Add a guide of developing extensions packages (PR#2413 by Kamil Mankowski)
 
 ### Packaging
 
