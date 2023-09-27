@@ -11,10 +11,9 @@ n6 is maintained and developed by `CERT.pl <https://www.cert.pl/>`_.
 
 Information about n6 can be found here:
 
-- Website: `n6.cert.pl <https://n6.cert.pl/en/>`_
+- Website: `cert.pl/en/n6 <https://cert.pl/en/n6/>`_
 - Source Code: `github.com/CERT-Polska/n6 <https://github.com/CERT-Polska/n6/>`_
 - n6 documentation: `n6.readthedocs.io <https://n6.readthedocs.io/>`_
-- n6sdk developer documentation: `n6sdk.readthedocs.io <https://n6sdk.readthedocs.io/>`_
 
 .. image:: /_static/n6/n6-schemat2.png
    :alt: n6 schema

@@ -11,10 +11,22 @@ CHANGELOG
 ------------------
 
 ### Configuration
+- Add new optional configuration parameters for `intelmq.bots.collectors.stomp.collector`
+  and `intelmq.bots.outputs.stomp.output` (PR#2408 by Jan Kaliszewski):
+  - `auth_by_ssl_client_certificate` (Boolean, default: *true*; if *false* then
+    `ssl_client_certificate` and `ssl_client_certificate_key` will be ignored);
+  - `username` (STOMP authentication login, default: "guest"; to be used only
+    if `auth_by_ssl_client_certificate` is *false*);
+  - `password` (STOMP authentication passcode, default: "guest"; to be used only
+    if `auth_by_ssl_client_certificate` is *false*).
 
 ### Core
 - `intelmq.lib.message`: For invalid message keys, add a hint on the failure to the exception: not allowed by configuration or not matching regular expression (PR#2398 by Sebastian Wagner).
 - `intelmq.lib.exceptions.InvalidKey`: Add optional parameter `additional_text` (PR#2398 by Sebastian Wagner).
+- `intelmq.lib.mixins`: Add a new class, `StompMixin` (defined in a new submodule: `stomp`),
+  which provides certain common STOMP-bot-specific operations, factored out from
+  `intelmq.bots.collectors.stomp.collector` and `intelmq.bots.outputs.stomp.output`
+  (PR#2408 by Jan Kaliszewski).
 
 ### Development
 
@@ -22,15 +34,42 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.stomp.collector` (PR#2408 by Jan Kaliszewski):
+  - Add support for authentication based on STOMP login and passcode,
+    introducing 3 new configuration parameters (see above: *Configuration*).
+  - Update the code to support new versions of `stomp.py`, including the latest (`8.1.0`);
+    fixes [#2342](https://github.com/certtools/intelmq/issues/2342).
+  - Fix the reconnection behavior: do not attempt to reconnect after `shutdown`. Also,
+    never attempt to reconnect if the version of `stomp.py` is older than `4.1.21` (it
+    did not work properly anyway).
+  - Add coercion of the `port` config parameter to `int`.
+  - Add implementation of the `check` hook (verifying, in particular, accessibility
+    of necessary file(s)).
+  - Remove undocumented and unused attributes of `StompCollectorBot` instances:
+    `ssl_ca_cert`, `ssl_cl_cert`, `ssl_cl_cert_key`.
+  - Minor fixes/improvements and some refactoring (see also above: *Core*...).
 
 #### Parsers
 
 #### Experts
 
 #### Outputs
+- `intelmq.bots.outputs.stomp.output` (PR#2408 by Jan Kaliszewski):
+  - Add support for authentication based on STOMP login and passcode,
+    introducing 3 new configuration parameters (see above: *Configuration*).
+  - Update the code to support new versions of `stomp.py`, including the latest (`8.1.0`).
+  - Fix `AttributeError` caused by attempts to get unset attributes of `StompOutputBot`
+    (`ssl_ca_cert` et consortes).
+  - Add coercion of the `port` config parameter to `int`.
+  - Add implementation of the `check` hook (verifying, in particular, accessibility
+    of necessary file(s)).
+  - Add `stomp.py` version check (raise `MissingDependencyError` if not `>=4.1.8`).
+  - Minor fixes/improvements and some refactoring (see also above: *Core*...).
 
 ### Documentation
 - Add a readthedocs configuration file to fix the build fail (PR#2403 by Sebastian Wagner).
+- Update/fix/improve the stuff related to the STOMP bots and integration with the *n6*'s
+  Stream API (PR#2408 by Jan Kaliszewski).
 
 ### Packaging
 

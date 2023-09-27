@@ -5,5 +5,6 @@
 from intelmq.lib.mixins.http import HttpMixin
 from intelmq.lib.mixins.cache import CacheMixin
 from intelmq.lib.mixins.sql import SQLMixin
+from intelmq.lib.mixins.stomp import StompMixin
 
-__all__ = ['HttpMixin', 'CacheMixin', 'SQLMixin']
+__all__ = ['HttpMixin', 'CacheMixin', 'SQLMixin', 'StompMixin']

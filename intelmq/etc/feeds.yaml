@@ -1158,20 +1158,19 @@ providers:
           module: intelmq.bots.collectors.stomp.collector
           parameters:
             exchange: "{insert your exchange point as given by CERT.pl}"
-            ssl_client_certificate_key: "{insert path to client cert key file for
-              CERT.pl's n6}"
             ssl_ca_certificate: "{insert path to CA file for CERT.pl's n6}"
+            auth_by_ssl_client_certificate: false
+            username: "{insert n6 user's login}"
+            password: "{insert n6 user's API key}"
             port: '61614'
-            ssl_client_certificate: "{insert path to client cert file for CERTpl's
-              n6}"
             server: n6stream.cert.pl
             name: __FEED__
             provider: __PROVIDER__
         parser:
           module: intelmq.bots.parsers.n6.parser_n6stomp
           parameters:
-      revision: 2018-01-20
-      documentation: https://n6.cert.pl/en/
+      revision: 2023-09-23
+      documentation: https://n6.readthedocs.io/usage/streamapi/
       public: false
   AlienVault:
     OTX:
