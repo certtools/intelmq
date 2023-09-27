@@ -916,7 +916,7 @@ bots work with IntelMQ, you need to ensure that
 
 Apart from these requirements, your package can use any of the usual package features. We strongly
 recommend following the same principles and main guidelines as the official bots. This will ensure
-experience when using official and additional bots.
+the same experience when using official and additional bots.
 
 Naming convention
 =================
