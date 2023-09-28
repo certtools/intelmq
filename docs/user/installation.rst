@@ -47,7 +47,7 @@ These are the operating systems which are currently supported by packages:
 
 * **Debian 10** Buster
 
-  * Enable the backport repository by the line ``deb-src http://deb.debian.org/debian buster-backports main contrib non-free`` to the file ``/etc/apt/sources.list`` first.
+  * Enable the backport repository by the line ``deb http://deb.debian.org/debian buster-backports main`` to the file ``/etc/apt/sources.list`` first.
 
 * **Debian 11** Bullseye
 * **openSUSE Tumbleweed**
