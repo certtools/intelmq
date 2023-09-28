@@ -3,11 +3,9 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
-import os.path
 
 from intelmq.lib.bot import OutputBot
-from intelmq.lib.exceptions import MissingDependencyError
-
+from intelmq.lib.mixins import StompMixin
 
 try:
     import stomp
@@ -15,7 +13,7 @@ except ImportError:
     stomp = None
 
 
-class StompOutputBot(OutputBot):
+class StompOutputBot(OutputBot, StompMixin):
     """Send events to a STMOP server"""
     """ main class for the STOMP protocol output bot """
     exchange: str = "/exchange/_push"
@@ -28,6 +26,9 @@ class StompOutputBot(OutputBot):
     port: int = 61614
     server: str = "127.0.0.1"  # TODO: could be ip address
     single_key: bool = False
+    auth_by_ssl_client_certificate: bool = True
+    username: str = 'guest'  # ignored if `auth_by_ssl_client_certificate` is true
+    password: str = 'guest'  # ignored if `auth_by_ssl_client_certificate` is true
     ssl_ca_certificate: str = 'ca.pem'  # TODO: could be pathlib.Path
     ssl_client_certificate: str = 'client.pem'  # TODO: pathlib.Path
     ssl_client_certificate_key: str = 'client.key'  # TODO: patlib.Path
@@ -35,29 +36,18 @@ class StompOutputBot(OutputBot):
     _conn = None
 
     def init(self):
-        if stomp is None:
-            raise MissingDependencyError("stomp")
-
-        # check if certificates exist
-        for f in [self.ssl_ca_cert, self.ssl_cl_cert, self.ssl_cl_cert_key]:
-            if not os.path.isfile(f):
-                raise ValueError("Could not open SSL (certificate) file '%s'." % f)
-
-        _host = [(self.server, self.port)]
-        self._conn = stomp.Connection(host_and_ports=_host, use_ssl=True,
-                                      ssl_key_file=self.ssl_cl_cert_key,
-                                      ssl_cert_file=self.ssl_cl_cert,
-                                      ssl_ca_certs=self.ssl_ca_cert,
-                                      heartbeats=(self.heartbeat,
-                                                  self.heartbeat))
+        self.stomp_bot_runtime_initial_check()
+        (self._conn,
+         self._connect_kwargs) = self.prepare_stomp_connection()
         self.connect()
 
     def connect(self):
         self.logger.debug('Connecting.')
         # based on the documentation at:
         # https://github.com/jasonrbriggs/stomp.py/wiki/Simple-Example
-        self._conn.start()
-        self._conn.connect(wait=True)
+        if stomp.__version__ < (4, 1, 20):
+            self._conn.start()
+        self._conn.connect(**self._connect_kwargs)
         self.logger.debug('Connected.')
 
     def shutdown(self):
@@ -72,6 +62,10 @@ class StompOutputBot(OutputBot):
         self._conn.send(body=body,
                         destination=self.exchange)
         self.acknowledge_message()
+
+    @classmethod
+    def check(cls, parameters):
+        return cls.stomp_bot_parameters_check(parameters) or None
 
 
 BOT = StompOutputBot
