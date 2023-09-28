@@ -852,6 +852,19 @@ def _get_console_entry_points():
     return entries.get("console_scripts", [])  # it's a dict
 
 
+def get_bot_module_name(bot_name: str) -> str:
+    entries = entry_points()
+    if hasattr(entries, "select"):
+        entries = entries.select(name=bot_name, group="console_scripts")
+    else:
+        entries = [entry for entry in entries.get("console_scripts", []) if entry.name == bot_name]
+
+    if not entries:
+        return None
+    else:
+        return entries[0].value.replace(":BOT.run", '')
+
+
 def list_all_bots() -> dict:
     """
     Compile a dictionary with all bots and their parameters.

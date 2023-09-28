@@ -931,7 +931,7 @@ Get some debugging output on the settings and the environment (to be extended):
             if bot_id != 'global':
                 # importable module
                 try:
-                    bot_module = importlib.import_module(bot_config['module'])
+                    bot_module = importlib.import_module(utils.get_bot_module_name(bot_config['module']))
                 except ImportError as exc:
                     check_logger.error('Incomplete installation: Bot %r not importable: %r.', bot_id, exc)
                     retval = 1

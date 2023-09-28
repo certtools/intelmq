@@ -346,6 +346,10 @@ class TestUtils(unittest.TestCase):
         )
         self.assertEqual(2, import_mock.call_count)
 
+    def test_get_bot_module_name_builtin_bot(self):
+        found_name = utils.get_bot_module_name("intelmq.bots.collectors.api.collector_api")
+        self.assertEqual("intelmq.bots.collectors.api.collector_api", found_name)
+
     def test_get_bots_settings(self):
         with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
             runtime = utils.get_bots_settings()
@@ -381,14 +385,14 @@ class TestUtils(unittest.TestCase):
         filename = os.path.join(os.path.dirname(__file__), '../assets/example.yaml')
         self.assertEqual(utils.load_configuration(filename),
                          {
-                            'some_string': 'Hello World!',
-                            'other_string': 'with a : in it',
+            'some_string': 'Hello World!',
+            'other_string': 'with a : in it',
                             'now more': ['values', 'in', 'a', 'list'],
                             'types': -4,
                             'other': True,
                             'final': 0.5,
-                        }
-                        )
+        }
+        )
 
     def test_load_configuration_yaml_invalid(self):
         """ Test load_configuration with an invalid YAML file """
