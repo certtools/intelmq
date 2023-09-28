@@ -855,7 +855,7 @@ def _get_console_entry_points():
 def get_bot_module_name(bot_name: str) -> str:
     entries = entry_points()
     if hasattr(entries, "select"):
-        entries = entries.select(name=bot_name, group="console_scripts")
+        entries = tuple(entries.select(name=bot_name, group="console_scripts"))
     else:
         entries = [entry for entry in entries.get("console_scripts", []) if entry.name == bot_name]
 

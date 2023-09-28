@@ -350,6 +350,8 @@ class TestUtils(unittest.TestCase):
         found_name = utils.get_bot_module_name("intelmq.bots.collectors.api.collector_api")
         self.assertEqual("intelmq.bots.collectors.api.collector_api", found_name)
 
+        self.assertIsNone(utils.get_bot_module_name("intelmq.not-existing-bot"))
+
     def test_get_bots_settings(self):
         with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
             runtime = utils.get_bots_settings()
