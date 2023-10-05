@@ -719,15 +719,15 @@ parameters:
 
 ### N6 Stomp Stream
 
-N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.
+N6 Collector - CERT.pl's *n6* Stream API feed (via STOMP interface). Note that 'rate_limit' does not apply to this bot, as it is waiting for messages on a stream.
 
 **Public:** no
 
-**Revision:** 2023-09-23
+**Revision:** 2023-10-08
 
 **Documentation:** <https://n6.readthedocs.io/usage/streamapi/>
 
-**Additional Information:** Contact cert.pl to get access to the feed.
+**Additional Information:** Contact CERT.pl to get access to the feed. Note that the configuration parameter values suggested here are suitable for the new *n6* Stream API variant (with authentication based on 'username' and 'password'); for this variant, typically you can leave the 'ssl_ca_certificate' parameter's value empty - then the system's default CA certificates will be used; however, if that does not work, you need to set 'ssl_ca_certificate' to the path to a file containing CA certificates eligible to verify "*.cert.pl" server certificates (to be found among the publicly available CA certs distributed with modern web browsers/OSes). Also, note that the 'server' parameter's value (for the *new API variant*) suggested here, "n6stream-new.cert.pl", is a temporary domain; ultimately, it will be changed back to "stream.cert.pl". When it comes to the *old API variant* (turned off in November 2023!), you need to have the 'server' parameter set to the name "n6stream.cert.pl", 'auth_by_ssl_client_certificate' set to true, 'ssl_ca_certificate' set to the path to a file containing the *n6*'s legacy self-signed CA certificate (which is stored in file "intelmq/bots/collectors/stomp/ca.pem"), and the parameters 'ssl_client_certificate' and 'ssl_client_certificate_key' set to the paths to your-*n6*-client-specific certificate and key files (note that the 'username' and 'password' parameters are then irrelevant and can be omitted).
 
 
 **Collector configuration**
@@ -736,14 +736,14 @@ N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface. Note that r
 module: intelmq.bots.collectors.stomp.collector
 parameters:
   auth_by_ssl_client_certificate: False
-  exchange: {insert your exchange point as given by CERT.pl}
+  exchange: {insert your STOMP *destination* to subscribe to, as given by CERT.pl, e.g. /exchange/my.example.org/*.*.*.*}
   name: N6 Stomp Stream
-  password: {insert n6 user's API key}
+  password: {insert your *n6* API key}
   port: 61614
   provider: CERT.PL
-  server: n6stream.cert.pl
-  ssl_ca_certificate: {insert path to CA file for CERT.pl's n6}
-  username: {insert n6 user's login}
+  server: n6stream-new.cert.pl
+  ssl_ca_certificate:
+  username: {insert your *n6* login, e.g. someuser@my.example.org}
 ```
 
 **Parser configuration**

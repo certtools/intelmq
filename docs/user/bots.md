@@ -1176,35 +1176,49 @@ Install the `stomp.py` library from PyPI:
 pip3 install -r intelmq/bots/collectors/stomp/REQUIREMENTS.txt
 ```
 
+Alternatively, you may want to install it using your OS's native
+packaging tools, e.g.:
+
+```bash
+apt install python3-stomp
+```
+
+Apart from that, depending on what STOMP server you connect to, you may
+need to obtain, from the organization or company owning the server, one
+or more of the following security/authentication-related resources:
+
+* CA certificate file;
+* either: *client certificate* and *client certificate's key* files,
+  or: *username* (STOMP *login*) and *password* (STOMP *passcode*).
+
+Also, you will need to know an appropriate STOMP *destination* (aka
+*exchange point*), e.g. `/exchange/my.example.org/*.*.*.*`.
+
 **Parameters (also expects [feed parameters](#feed-parameters)):**
 
 **`server`**
 
-(required, string) Hostname of the STOMP server.
+(required, string) STOMP server's hostname or IP, e.g. "n6stream.cert.pl" (which is default)
 
 **`port`**
 
-(optional, integer) Defaults to 61614.
+(optional, integer) STOMP server's port number (default: 61614)
 
 **`exchange`**
 
-(required, string) STOMP *destination* to subscribe to, e.g. "/exchange/my.org/*.*.*.*"
+(required, string) STOMP *destination* to subscribe to, e.g. `"/exchange/my.org/*.*.*.*"`
 
-**`username`**
+**`heartbeat`**
 
-(optional, string) Username to use.
-
-**`password`**
-
-(optional, string) Password to use.
+(optional, integer) default: 6000
 
 **`ssl_ca_certificate`**
 
-(optional, string) Path to trusted CA certificate.
+(optional, string) Path to CA file, or empty string to load system's default CA certificates
 
 **`auth_by_ssl_client_certificate`**
 
-(optional, boolean) Whether to authenticate using TLS certificate. (Set to false for new *n6* auth.) Defaults to true.
+(optional, boolean) Default: true (note: false is needed for new *n6* auth)
 
 **`ssl_client_certificate`**
 
@@ -1213,6 +1227,14 @@ pip3 install -r intelmq/bots/collectors/stomp/REQUIREMENTS.txt
 **`ssl_client_certificate_key`**
 
 (optional, string) Path to client private key to use for TLS connections.
+
+**`username`**
+
+(optional, string) Username to use.
+
+**`password`**
+
+(optional, string) Password to use.
 
 ---
 
@@ -5127,36 +5149,71 @@ This bot pushes data to any STOMP stream. STOMP stands for Streaming Text Orient
 
 **Requirements**
 
-Install the stomp.py library, e.g. [apt install python3-stomp.py] or [pip install stomp.py].
+Install the `stomp.py` library from PyPI:
 
-You need a CA certificate, client certificate and key file from the organization / server you are connecting to. Also
-you will need a so called "exchange point".
+```bash
+pip3 install -r intelmq/bots/outputs/stomp/REQUIREMENTS.txt
+```
+
+Alternatively, you may want to install it using your OS's native
+packaging tools, e.g.:
+
+```bash
+apt install python3-stomp
+```
+
+Apart from that, depending on what STOMP server you connect to, you may
+need to obtain, from the organization or company owning the server, one
+or more of the following security/authentication-related resources:
+
+* CA certificate file;
+* either: *client certificate* and *client certificate's key* files,
+  or: *username* (STOMP *login*) and *password* (STOMP *passcode*).
+
+Also, you will need to know an appropriate STOMP *destination* (aka
+*exchange point*), e.g. `/exchange/_push`.
 
 **Parameters:**
 
+**`server`**
+
+(optional, string) STOMP server's hostname or IP, e.g. "n6stream.cert.pl" or "127.0.0.1" (which is default)
+
+**`port`**
+
+(optional, integer) STOMP server's port number (default: 61614)
+
 **`exchange`**
 
-(optional, string) The exchange to push to. Defaults to `/exchange/_push`.
-
-**`username`**
-
-(optional, string) Username to use.
-
-**`password`**
-
-(optional, string) Password to use.
-
-**`ssl_ca_certificate`**
-
-(optional, string) Path to trusted CA certificate.
-
-**`auth_by_ssl_client_certificate`**
-
-(optional, boolean) Whether to authenticate using TLS certificate. (Set to false for new *n6* auth.) Defaults to true.
+(optional, string) STOMP *destination* to push at, e.g. ``"/exchange/_push"`` (which is default)
 
 **`heartbeat`**
 
 (optional, integer) Defaults to 60000.
+
+**`ssl_ca_certificate`**
+
+(optional, string) path to CA file, or empty string to load system's default CA certificates
+
+**`auth_by_ssl_client_certificate`**
+
+(optional, boolean) default: true (note: false is needed for new *n6* auth)
+
+**`ssl_client_certificate`**
+
+(optional, string) Path to client certificate to use for TLS connections.
+
+**`ssl_client_certificate_key`**
+
+(optional, string) Path to client private key to use for TLS connections.
+
+**`username`**
+
+(optional, string) STOMP *login* (e.g., *n6* user login), used only if `auth_by_ssl_client_certificate` is false
+
+**`password`**
+
+(optional, string) STOMP *passcode* (e.g., *n6* user API key), used only if `auth_by_ssl_client_certificate` is false
 
 **`message_hierarchical_output`**
 
@@ -5170,29 +5227,9 @@ you will need a so called "exchange point".
 
 (optional, boolean) Defaults to false.
 
-**`port`**
-
-(optional, integer) Defaults to 61614.
-
-**`server`**
-
-(optional, string) Hostname of the STOMP server.
-
 **`single_key`**
 
 (optional, string) Output only a single specified key. In case of `raw` key the data is base64 decoded. Defaults to null (output the whole message).
-
-**`ssl_ca_certificate`**
-
-(optional, string) Path to trusted CA certificate.
-
-**`ssl_client_certificate`**
-
-(optional, string) Path to client certificate to use for TLS connections.
-
-**`ssl_client_certificate_key`**
-
-(optional, string) Path to client private key to use for TLS connections.
 
 ---
 
