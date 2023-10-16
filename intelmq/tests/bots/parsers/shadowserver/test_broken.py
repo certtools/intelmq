@@ -30,6 +30,11 @@ REPORT4 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
            "time.observation": "2015-01-01T00:00:00+00:00",
            "extra.file_name": "2020.wrong-filename.csv",
            }
+REPORT5 = {"raw": utils.base64_encode('timestamp,ip,protocol,port,severity\n2018-08-01T00:00:00+00,127.0.0.1,tcp,7000,critical'),
+           "__type": "Report",
+           "time.observation": "2023-10-16T00:00:00+00:00",
+           "extra.file_name": "2023-10-16-test_afs-test-test.csv",
+           }
 
 
 class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
@@ -99,6 +104,16 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
                                       "processed report has no 'extra.file_name'. "
                                       "Ensure that at least one is given. "
                                       "Also have a look at the documentation of the bot.")
+
+    def test_field_not_in_idf(self):
+        """
+        Test a report that contains a field mapping not in the IDF.
+        Error message should be verbose.
+        """
+        self.prepare_bot(parameters={'test_mode': True})
+        self.input_message = REPORT5
+        self.run_bot(allowed_error_count=0, allowed_warning_count=1)
+        self.assertLogMatches(pattern="Key not found in IDF", levelname="WARNING")
 
 
 if __name__ == '__main__':  # pragma: no cover
