@@ -30,6 +30,7 @@ REPORT4 = {"raw": utils.base64_encode('adasdasdasdasd\nadasdasdafgf'),
            "time.observation": "2015-01-01T00:00:00+00:00",
            "extra.file_name": "2020.wrong-filename.csv",
            }
+
 REPORT5 = {"raw": utils.base64_encode('timestamp,ip,protocol,port,severity\n2018-08-01T00:00:00+00,127.0.0.1,tcp,7000,critical'),
            "__type": "Report",
            "time.observation": "2023-10-16T00:00:00+00:00",
