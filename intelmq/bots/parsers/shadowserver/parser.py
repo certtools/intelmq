@@ -157,7 +157,10 @@ class ShadowserverParserBot(ParserBot):
                     raise
 
             if value is not None:
-                event.add(intelmqkey, value)
+                try:
+                    event.add(intelmqkey, value)
+                except InvalidKey:
+                    self.logger.warning('Key not found in IDF %r.', intelmqkey)
                 fields.remove(shadowkey)
 
         # Now add optional fields.

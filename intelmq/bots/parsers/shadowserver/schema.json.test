@@ -176,5 +176,42 @@
             "convert_int"
          ]
       ]
+   },
+   "test_afs" : {
+      "constant_fields" : {
+         "classification.identifier" : "test-afs",
+         "classification.taxonomy" : "vulnerable",
+         "classification.type" : "vulnerable-system",
+         "protocol.application" : "afs"
+      },
+      "feed_name" : "Test-Accessible-AFS",
+      "file_name" : "test_afs",
+      "required_fields" : [
+         [
+            "time.source",
+            "timestamp",
+            "add_UTC_to_timestamp"
+         ],
+         [
+            "source.ip",
+            "ip",
+            "validate_ip"
+         ],
+         [
+            "source.port",
+            "port",
+            "convert_int"
+         ],
+         [
+            "not_in_idf",
+            "severity"
+         ]
+      ],
+      "optional_fields" : [
+         [
+            "protocol.transport",
+            "protocol"
+         ]
+     ]
    }
 }
