@@ -686,7 +686,6 @@ class Bot:
                 self.__destination_pipeline.send(raw_message, path=path,
                                                  path_permissive=path_permissive)
             else:
-                print(f'send_message, message: {message!r}')
                 self.__destination_pipeline.send(message, path=path,
                                                  path_permissive=path_permissive)
 
