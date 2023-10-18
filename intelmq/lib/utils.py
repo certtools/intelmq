@@ -862,7 +862,8 @@ def list_all_bots() -> dict:
 
     base_path = resource_filename('intelmq', 'bots')
 
-    botfiles = [botfile for botfile in pathlib.Path(base_path).glob('**/*.py') if botfile.is_file() and botfile.name != '__init__.py']
+    botfiles = [botfile for botfile in pathlib.Path(base_path).glob('**/*.py') if
+                botfile.is_file() and botfile.name != '__init__.py']
     for file in botfiles:
         file = Path(file.as_posix().replace(base_path, 'intelmq/bots'))
         try:
@@ -886,7 +887,8 @@ def list_all_bots() -> dict:
 
             bots[file.parts[2].capitalize()[:-1]][name] = {
                 "module": mod.__name__,
-                "description": "Missing description" if not getattr(mod.BOT, '__doc__', None) else textwrap.dedent(mod.BOT.__doc__).strip(),
+                "description": "Missing description" if not getattr(mod.BOT, '__doc__', None) else textwrap.dedent(
+                    mod.BOT.__doc__),
                 "parameters": keys,
             }
     return bots

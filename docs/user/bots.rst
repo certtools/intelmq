@@ -3223,6 +3223,7 @@ Threshold
 
 **Information**
 
+* **Cache parameters** (see section :ref:`common-parameters`)
 * `name`: `intelmq.bots.experts.threshold.expert`
 * `lookup`: redis cache
 * `public`: no
@@ -3253,6 +3254,31 @@ This bot has certain limitations and is not a true threshold filter (yet). It wo
 3. If the new count matches the threshold exactly, the message is forwarded. Otherwise it is dropped.
 
 Please note: Even if a message is sent, any further identical messages are dropped, if the time difference to the last message is less than the timeout! The counter is not reset if the threshold is reached.
+
+
+.. _intelmq.bots.experts.time_filter.expert:
+
+Time Filter
+^^^^^^^^^
+
+Filtering records that do not exceed the specified deadline.
+
+**Information**
+
+* `name:` `intelmq.bots.experts.time_filter.expert`
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Time based filtering
+
+**Configuration Parameters**
+
+* `field`: the event field which should be filtered on. Needs to be in ISO 8601 formatted. Default: `time.source`
+* `timespan`: time interval for filtering records. Default: `24 hours`
+
+**Description**
+
+The bot filters new records, for example when only records from the last 2 days (48 hours) are needed. Also allows entries without a date.
 
 
 .. _intelmq.bots.experts.tor_nodes.expert:
