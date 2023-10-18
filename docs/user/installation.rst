@@ -190,14 +190,7 @@ In order to work with your current infrastructure, you need to specify some envi
                    --name nginx \
                    certat/intelmq-nginx:latest
 
-   sudo docker run -e INTELMQ_IS_DOCKER="true" \
-                   -e INTELMQ_SOURCE_PIPELINE_BROKER: "redis" \
-                   -e INTELMQ_PIPELINE_BROKER: "redis" \
-                   -e INTELMQ_DESTIONATION_PIPELINE_BROKER: "redis" \
-                   -e INTELMQ_PIPELINE_HOST: redis \
-                   -e INTELMQ_SOURCE_PIPELINE_HOST: redis \
-                   -e INTELMQ_DESTINATION_PIPELINE_HOST: redis \
-                   -e INTELMQ_REDIS_CACHE_HOST: redis \
+   sudo docker run -e INTELMQ_PIPELINE_HOST: redis \
                    -v $(pwd)/example_config/intelmq/etc/:/etc/intelmq/etc/ \
                    -v $(pwd)/example_config/intelmq-api/config.json:/etc/intelmq/api-config.json \
                    -v $(pwd)/intelmq_logs:/etc/intelmq/var/log \
