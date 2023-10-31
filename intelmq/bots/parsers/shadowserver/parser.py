@@ -182,7 +182,7 @@ class ShadowserverParserBot(ParserBot):
             raw_value = row.get(shadowkey)
             value = raw_value
 
-            if conv_func is not None and raw_value is not None:
+            if conv_func is not None and raw_value is not None and conv_func in config.functions:
                 try:
                     if len(item) == 4 and item[3]:
                         value = config.functions[conv_func](raw_value, row)
