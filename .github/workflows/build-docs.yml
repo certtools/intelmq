@@ -1,39 +1,61 @@
-#Github Workflow to run test documentation built
-#
-#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
-#SPDX-License-Identifier: AGPL-3.0-or-later
-#
-name: "Build the documentation with sphinx"
+# SPDX-FileCopyrightText: 2023 Filip Pokorný
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: "Build and publish documentation"
+
 on:
   push:
-    branches: [develop, maintenance, master]
-    paths-ignore:
-      - '.github/**'
+    branches:
+      - develop
+      - maintenance
+      - mkdocs
+
   pull_request:
-    branches: [develop, maintenance]
-    paths-ignore:
-      - '.github/**'
+    branches:
+      - develop
+      - maintenance
+      - mkdocs
+
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
 
 jobs:
-  documentationbuild:
+  build:
     runs-on: ubuntu-latest
-    name: Build the documentation
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: "Checkout repository"
+        uses: actions/checkout@v3
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: "Setup python"
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
 
-    - name: Install documentation dependencies
-      run: pip install -r docs/requirements.txt
+      - name: "Install build dependencies"
+        run: |
+          pip install mkdocs-material mike lunr pygments mkdocstrings[python] mkdocs-material mkdocs-glightbox mkdocs-redirects mkdocs-minify-plugin
 
-    - name: Build documentation
-      run: make -C docs html
+      - name: "Prepare git"
+        run: |
+          git fetch origin gh-pages --depth=1
+          git config user.name intelmq-bot
+          git config user.email intelmq-bot
+
+      - name: "Build docs without publishing"
+        if: github.event_name == 'pull_request'
+        run: |
+          mkdocs build
+
+      - name: "Build docs with version tag and publish"
+        if: github.event_name == 'release'
+        run: |
+          mike deploy --push --update-aliases ${{ github.ref_name }} latest
+
+      - name: "Build docs with branch tag and publish"
+        if: github.event_name == 'push'
+        run: |
+          mike deploy --push ${{ github.ref_name }}

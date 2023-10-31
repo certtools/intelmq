@@ -159,8 +159,8 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: https://openphish.com/prvt-intell/
-            http_password: "{{ your password}}"
-            http_username: "{{ your username}}"
+            http_password: "{{ your password }}"
+            http_username: "{{ your username }}"
             rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
@@ -228,8 +228,7 @@ providers:
   Abuse.ch:
     Feodo Tracker:
       description: 'List of botnet Command & Control servers (C&Cs) tracked by Feodo Tracker, associated with Dridex and Emotet (aka Heodo).'
-      additional_information: https://feodotracker.abuse.ch/
-        The data in the column Last Online is used for `time.source` if available, with 00:00 as time. Otherwise first seen is used as `time.source`.
+      additional_information: The data in the column Last Online is used for `time.source` if available, with 00:00 as time. Otherwise first_seen is used as `time.source`.
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -265,7 +264,8 @@ providers:
           parameters:
             skip_header: false
             default_url_protocol: http://
-            type_translation: '{"malware_download": "malware-distribution"}'
+            type_translation:
+              - malware_download: malware-distribution
             delimiter: ","
             columns:
               - time.source
@@ -288,16 +288,16 @@ providers:
         feed the difference lies in the data points present in the feed. The non-free API
         available from Blueliv contains, for this specific feed, following extra fields not
         present in the free API;
-          "_id" - Internal unique ID
-          "subType" - Subtype of the Crime Server
-          "countryName" - Country name where the Crime Server is located, in English
-          "city" - City where the Crime Server is located
-          "domain" - Domain of the Crime Server
-          "host" - Host of the Crime Server
-          "createdAt" - Date when the Crime Server was added to Blueliv CrimeServer database
-          "asnCidr" - Range of IPs that belong to an ISP (registered via Autonomous System Number (ASN))
-          "asnId" - Identifier of an ISP registered via ASN
-          "asnDesc" Description of the ISP registered via ASN
+        "_id" - Internal unique ID
+        "subType" - Subtype of the Crime Server
+        "countryName" - Country name where the Crime Server is located, in English
+        "city" - City where the Crime Server is located
+        "domain" - Domain of the Crime Server
+        "host" - Host of the Crime Server
+        "createdAt" - Date when the Crime Server was added to Blueliv CrimeServer database
+        "asnCidr" - Range of IPs that belong to an ISP (registered via Autonomous System Number (ASN))
+        "asnId" - Identifier of an ISP registered via ASN
+        "asnDesc" Description of the ISP registered via ASN
       bots:
         collector:
           module: intelmq.bots.collectors.blueliv.collector_crimeserver
@@ -328,10 +328,10 @@ providers:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_password: "{{your password}}"
+            http_password: "{{ your password }}"
             http_url_formatting: true
             http_url: https://www.cymru.com/$certname/$certname_{time[%Y%m%d]}.txt
-            http_username: "{{your login}}"
+            http_username: "{{ your username }}"
             rate_limit: 86400
             name: __FEED__
             provider: __PROVIDER__
@@ -669,7 +669,7 @@ providers:
         services on the router or tried to gain access to them. The list also
         contains a list of tags for each address which
         indicate what behaviour of the address was observed.
-        
+
         The Turris Greylist feed provides PGP signatures for the provided files.
         You will need to import the public PGP key from the linked documentation
         page, currently available at
@@ -677,39 +677,39 @@ providers:
         or from below.
         See the URL Fetcher Collector documentation for more information on
         PGP signature verification.
-        
+
         PGP Public key:
-        
-        .. code-block::
-        
-           -----BEGIN PGP PUBLIC KEY BLOCK-----
-           Version: SKS 1.1.6
-           Comment: Hostname: pgp.mit.edu
-           
-           mQINBFRl7D8BEADaRFoDa/+r27Gtqrdn8sZL4aSYTU4Q3gDr3TfigK8H26Un/Y79a/DUL1o0
-           o8SRae3uwVcjJDHZ6KDnxThbqF7URfpuCcCYxOs8p/eu3dSueqEGTODHWF4ChIh2japJDc4t
-           3FQHbIh2e3GHotVqJGhvxMmWqBFoZ/mlWvhjs99FFBZ87qbUNk7l1UAGEXeWeECgz9nGox40
-           3YpCgEsnJJsKC53y5LD/wBf4z+z0GsLg2GMRejmPRgrkSE/d9VjF/+niifAj2ZVFoINSVjjI
-           8wQFc8qLiExdzwLdgc+ggdzk5scY3ugI5IBt1zflxMIOG4BxKj/5IWsnhKMG2NLVGUYOODoG
-           pKhcY0gCHypw1bmkp2m+BDVyg4KM2fFPgQ554DAX3xdukMCzzZyBxR3UdT4dN7xRVhpph3Y2
-           Amh1E/dpde9uwKFk1oRHkRZ3UT1XtpbXtFNY0wCiGXPt6KznJAJcomYFkeLHjJo3nMK0hISV
-           GSNetVLfNWlTkeo93E1innbSaDEN70H4jPivjdVjSrLtIGfr2IudUJI84dGmvMxssWuM2qdg
-           FSzoTHw9UE9KT3SltKPS+F7u9x3h1J492YaVDncATRjPZUBDhbvo6Pcezhup7XTnI3gbRQc2
-           oEUDb933nwuobHm3VsUcf9686v6j8TYehsbjk+zdA4BoS/IdCwARAQABtC5UdXJyaXMgR3Jl
-           eWxpc3QgR2VuZXJhdG9yIDxncmV5bGlzdEB0dXJyaXMuY3o+iQI4BBMBAgAiBQJUZew/AhsD
-           BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDAQrU3EIdmZoH4D/9Jo6j9RZxCAPTaQ9WZ
-           WOdb1Eqd/206bObEX+xJAago+8vuy+waatHYBM9/+yxh0SIg2g5whd6J7A++7ePpt5XzX6hq
-           bzdG8qGtsCRu+CpDJ40UwHep79Ck6O/A9KbZcZW1z/DhbYT3z/ZVWALy4RtgmyC67Vr+j/C7
-           KNQ529bs3kP9AzvEIeBC4wdKl8dUSuZIPFbgf565zRNKLtHVgVhiuDPcxKmBEl4/PLYF30a9
-           5Tgp8/PNa2qp1DV/EZjcsxvSRIZB3InGBvdKdSzvs4N/wLnKWedj1GGm7tJhSkJa4MLBSOIx
-           yamhTS/3A5Cd1qoDhLkp7DGVXSdgEtpoZDC0jR7nTS6pXojcgQaF7SfJ3cjZaLI5rjsx0YLk
-           G4PzonQKCAAQG1G9haCDniD8NrrkZ3eFiafoKEECRFETIG0BJHjPdSWcK9jtNCupBYb7JCiz
-           Q0hwLh2wrw/wCutQezD8XfsBFFIQC18TsJAVgdHLZnGYkd5dIbV/1scOcm52w6EGIeMBBYlB
-           J2+JNukH5sJDA6zAXNl2I1H1eZsP4+FSNIfB6LdovHVPAjn7qXCw3+IonnQK8+g8YJkbbhKJ
-           sPejfg+ndpe5u0zX+GvQCFBFu03muANA0Y/OOeGIQwU93d/akN0P1SRfq+bDXnkRIJQOD6XV
-           0ZPKVXlNOjy/z2iN2A==
-           =wjkM
-           -----END PGP PUBLIC KEY BLOCK-----
+
+        ```
+        -----BEGIN PGP PUBLIC KEY BLOCK-----
+        Version: SKS 1.1.6
+        Comment: Hostname: pgp.mit.edu
+
+        mQINBFRl7D8BEADaRFoDa/+r27Gtqrdn8sZL4aSYTU4Q3gDr3TfigK8H26Un/Y79a/DUL1o0
+        o8SRae3uwVcjJDHZ6KDnxThbqF7URfpuCcCYxOs8p/eu3dSueqEGTODHWF4ChIh2japJDc4t
+        3FQHbIh2e3GHotVqJGhvxMmWqBFoZ/mlWvhjs99FFBZ87qbUNk7l1UAGEXeWeECgz9nGox40
+        3YpCgEsnJJsKC53y5LD/wBf4z+z0GsLg2GMRejmPRgrkSE/d9VjF/+niifAj2ZVFoINSVjjI
+        8wQFc8qLiExdzwLdgc+ggdzk5scY3ugI5IBt1zflxMIOG4BxKj/5IWsnhKMG2NLVGUYOODoG
+        pKhcY0gCHypw1bmkp2m+BDVyg4KM2fFPgQ554DAX3xdukMCzzZyBxR3UdT4dN7xRVhpph3Y2
+        Amh1E/dpde9uwKFk1oRHkRZ3UT1XtpbXtFNY0wCiGXPt6KznJAJcomYFkeLHjJo3nMK0hISV
+        GSNetVLfNWlTkeo93E1innbSaDEN70H4jPivjdVjSrLtIGfr2IudUJI84dGmvMxssWuM2qdg
+        FSzoTHw9UE9KT3SltKPS+F7u9x3h1J492YaVDncATRjPZUBDhbvo6Pcezhup7XTnI3gbRQc2
+        oEUDb933nwuobHm3VsUcf9686v6j8TYehsbjk+zdA4BoS/IdCwARAQABtC5UdXJyaXMgR3Jl
+        eWxpc3QgR2VuZXJhdG9yIDxncmV5bGlzdEB0dXJyaXMuY3o+iQI4BBMBAgAiBQJUZew/AhsD
+        BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDAQrU3EIdmZoH4D/9Jo6j9RZxCAPTaQ9WZ
+        WOdb1Eqd/206bObEX+xJAago+8vuy+waatHYBM9/+yxh0SIg2g5whd6J7A++7ePpt5XzX6hq
+        bzdG8qGtsCRu+CpDJ40UwHep79Ck6O/A9KbZcZW1z/DhbYT3z/ZVWALy4RtgmyC67Vr+j/C7
+        KNQ529bs3kP9AzvEIeBC4wdKl8dUSuZIPFbgf565zRNKLtHVgVhiuDPcxKmBEl4/PLYF30a9
+        5Tgp8/PNa2qp1DV/EZjcsxvSRIZB3InGBvdKdSzvs4N/wLnKWedj1GGm7tJhSkJa4MLBSOIx
+        yamhTS/3A5Cd1qoDhLkp7DGVXSdgEtpoZDC0jR7nTS6pXojcgQaF7SfJ3cjZaLI5rjsx0YLk
+        G4PzonQKCAAQG1G9haCDniD8NrrkZ3eFiafoKEECRFETIG0BJHjPdSWcK9jtNCupBYb7JCiz
+        Q0hwLh2wrw/wCutQezD8XfsBFFIQC18TsJAVgdHLZnGYkd5dIbV/1scOcm52w6EGIeMBBYlB
+        J2+JNukH5sJDA6zAXNl2I1H1eZsP4+FSNIfB6LdovHVPAjn7qXCw3+IonnQK8+g8YJkbbhKJ
+        sPejfg+ndpe5u0zX+GvQCFBFu03muANA0Y/OOeGIQwU93d/akN0P1SRfq+bDXnkRIJQOD6XV
+        0ZPKVXlNOjy/z2iN2A==
+        =wjkM
+        -----END PGP PUBLIC KEY BLOCK-----
+        ```
       additional_information:
       bots:
         collector:
@@ -1373,7 +1373,7 @@ providers:
               - extra.tag
               - extra.redirect_target
               - extra.category
-            compose_fields: {"source.url": "http://{0}{1}"}
+            compose_fields: { "source.url": "http://{0}{1}" }
             skip_header: true
             delimiter: ","
             defaults_fields:
@@ -1381,6 +1381,7 @@ providers:
       revision: 2020-07-08
       documentation: http://security-research.dyndns.org/pub/malware-feeds/
       public: true
+  DShield:
     Block:
       description: This list summarizes the top 20 attacking class C (/24) subnets
         over the last three days. The number of 'attacks' indicates the number of
@@ -1524,8 +1525,8 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: https://dgarchive.caad.fkie.fraunhofer.de/today
-            http_password: "{{ your password}}"
-            http_username: "{{ your username}}"
+            http_password: "{{ your password }}"
+            http_username: "{{ your username }}"
             rate_limit: 10800
             name: __FEED__
             provider: __PROVIDER__
@@ -1561,7 +1562,7 @@ providers:
         collector:
           module: intelmq.bots.collectors.microsoft.collector_interflow
           parameters:
-            api_key: "{{your API key}}"
+            api_key: "{{ your API key }}"
             file_match: "^bingmurls_"
             not_older_than: "2 days"
             rate_limit: 3600
@@ -1581,7 +1582,7 @@ providers:
         collector:
           module: intelmq.bots.collectors.microsoft.collector_interflow
           parameters:
-            api_key: "{{your API key}}"
+            api_key: "{{ your API key }}"
             file_match: "^ctip_"
             not_older_than: "2 days"
             rate_limit: 3600
@@ -1601,7 +1602,7 @@ providers:
         collector:
           module: intelmq.bots.collectors.microsoft.collector_azure
           parameters:
-            connection_string: "{{your connection string}}"
+            connection_string: "{{ your connection string }}"
             container_name: "ctip-infected-summary"
             name: __FEED__
             provider: __PROVIDER__
@@ -1623,7 +1624,7 @@ providers:
         collector:
           module: intelmq.bots.collectors.microsoft.collector_azure
           parameters:
-            connection_string: "{{your connection string}}"
+            connection_string: "{{ your connection string }}"
             container_name: "ctip-c2"
             name: __FEED__
             provider: __PROVIDER__
@@ -1680,7 +1681,7 @@ providers:
         collector:
           module: intelmq.bots.collectors.opendxl.collector
           parameters:
-            dxl_config_file: "{{location of dxl configuration file}}"
+            dxl_config_file: "{{ location of dxl configuration file }}"
             dxl_topic: "/mcafee/event/atd/file/report"
         parser:
           module: intelmq.bots.parsers.mcafee.parser_atd
@@ -1704,7 +1705,12 @@ providers:
         parser:
           module: intelmq.bots.parsers.html_table.parser
           parameters:
-            columns: ["time.source", "source.url", "source.ip", "malware.name", "__IGNORE__"]
+            columns:
+              - "time.source"
+              - "source.url"
+              - "source.ip"
+              - "malware.name"
+              - "__IGNORE__"
             skip_table_head: true
             default_url_protocol: http://
             defaults_fields:
@@ -1727,7 +1733,9 @@ providers:
         parser:
           module: intelmq.bots.parsers.html_table.parser
           parameters:
-            columns: ["source.ip|source.url", "time.source"]
+            columns:
+              - "source.ip|source.url"
+              - "time.source"
             skip_table_head: true
             default_url_protocol: http://
             defaults_fields:
@@ -1740,25 +1748,25 @@ providers:
       description: With the Enterprise Subscription of 'Have I Been Pwned' you are able to provide a callback URL and any new leak data is submitted to it. It is recommended to put a webserver with Authorization check, TLS etc. in front of the API collector.
       additional_information: |
         A minimal nginx configuration could look like:
-            .. code-block::
+        ```
+        server {
+            listen 443 ssl http2;
+            server_name [your host name];
+            client_max_body_size 50M;
 
-                  server {
-                      listen 443 ssl http2;
-                      server_name [your host name];
-                      client_max_body_size 50M;
-                      
-                      ssl_certificate [path to your key];
-                      ssl_certificate_key [path to your certificate];
-                      
-                      location /[your private url] {
-                           if ($http_authorization != '[your private password]') {
-                               return 403;
-                           }
-                           proxy_pass http://localhost:5001/intelmq/push;
-                           proxy_read_timeout 30;
-                           proxy_connect_timeout 30;
-                       }
-                  }
+            ssl_certificate [path to your key];
+            ssl_certificate_key [path to your certificate];
+
+            location /[your private url] {
+                 if ($http_authorization != '[your private password]') {
+                     return 403;
+                 }
+                 proxy_pass http://localhost:5001/intelmq/push;
+                 proxy_read_timeout 30;
+                 proxy_connect_timeout 30;
+             }
+        }
+        ```
       bots:
         collector:
           module: intelmq.bots.collectors.api.collector_api
