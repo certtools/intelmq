@@ -170,12 +170,15 @@ def convert_http_host_and_url(value: str, row: Dict[str, str]) -> str:
     Sinkhole-HTTP-Drone: http_host, url
     With some reports, url/http_url holds only the path, with others the full HTTP request.
     """
+    hostname = ''
     if "cc_dns" in row:
         hostname = row.get('cc_dns', '')
-    elif "http_host" in row:
-        hostname = row.get('http_host', '')
-    else:
-        hostname = ''
+    if not hostname and "http_host" in row:
+        hostname = row.get("http_host")
+    if not hostname and "hostname" in row:
+        hostname = row.get("hostname")
+    if not hostname and "ip" in row:
+        hostname = row.get("ip")
 
     if "url" in row:
         path = row.get('url', '')
@@ -275,6 +278,16 @@ def scan_exchange_identifier(field):
     return 'vulnerable-exchange-server'
 
 
+def category_or_detail(value: str, row: Dict[str, str]) -> str:
+    """
+    Returns the category or detail field from the row.
+    """
+    category = row.get('category', '')
+    if category != "":
+        return category
+    return row.get('detail', '')
+
+
 functions = {
     'add_UTC_to_timestamp': add_UTC_to_timestamp,
     'convert_bool': convert_bool,
@@ -292,6 +305,7 @@ functions = {
     'scan_exchange_taxonomy': scan_exchange_taxonomy,
     'scan_exchange_type': scan_exchange_type,
     'scan_exchange_identifier': scan_exchange_identifier,
+    'category_or_detail': category_or_detail,
 }
 
 
