@@ -3,8 +3,8 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-CHANGELOG
-==========
+# CHANGELOG
+
 
 
 3.2.2 (unreleased)
@@ -70,6 +70,7 @@ CHANGELOG
 - Add a readthedocs configuration file to fix the build fail (PR#2403 by Sebastian Wagner).
 - Update/fix/improve the stuff related to the STOMP bots and integration with the *n6*'s
   Stream API (PR#2408 by Jan Kaliszewski).
+- Complete documentation overhaul. Change to markdown format. Uses the mkdocs-material (PR#2419 by Filip Pokorný).
 
 ### Packaging
 

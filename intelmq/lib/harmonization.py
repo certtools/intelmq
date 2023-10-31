@@ -249,18 +249,19 @@ class ClassificationType(String):
     with extensions.
 
     These old values are automatically mapped to the new ones:
-        'botnet drone' -> 'infected-system'
-        'ids alert' -> 'ids-alert'
-        'c&c' -> 'c2-server'
-        'c2server' -> 'c2-server'
-        'infected system' -> 'infected-system'
-        'malware configuration' -> 'malware-configuration'
-        'Unauthorised-information-access' -> 'unauthorised-information-access'
-        'leak' -> 'data-leak'
-        'vulnerable client' -> 'vulnerable-system'
-        'vulnerable service' -> 'vulnerable-system'
-        'ransomware' -> 'infected-system'
-        'unknown' -> 'undetermined'
+
+    - 'botnet drone' -> 'infected-system'
+    - 'ids alert' -> 'ids-alert'
+    - 'c&c' -> 'c2-server'
+    - 'c2server' -> 'c2-server'
+    - 'infected system' -> 'infected-system'
+    - 'malware configuration' -> 'malware-configuration'
+    - 'Unauthorised-information-access' -> 'unauthorised-information-access'
+    - 'leak' -> 'data-leak'
+    - 'vulnerable client' -> 'vulnerable-system'
+    - 'vulnerable service' -> 'vulnerable-system'
+    - 'ransomware' -> 'infected-system'
+    - 'unknown' -> 'undetermined'
 
     These values changed their taxonomy:
         'malware': In terms of the taxonomy 'malicious-code' they can be either 'infected-system' or 'malware-distribution'

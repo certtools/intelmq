@@ -24,6 +24,18 @@ TESTS_REQUIRES = [
     'requests_mock',
 ]
 
+DOCS_REQUIRES = [
+    'mkdocs-material',
+    'mike',
+    'lunr',
+    'pygments',
+    'mkdocstrings[python]',
+    'mkdocs-material',
+    'mkdocs-glightbox',
+    'mkdocs-redirects',
+    'mkdocs-minify-plugin'
+]
+
 exec(open(os.path.join(os.path.dirname(__file__),
                        'intelmq/version.py')).read())  # defines __version__
 BOTS = []
@@ -35,7 +47,7 @@ for file in botfiles:
     module = '.'.join(file.with_suffix('').parts)
     BOTS.append('{0} = {0}:BOT.run'.format(module))
 
-with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as handle:
+with open(os.path.join(os.path.dirname(__file__), 'README.md')) as handle:
     README = handle.read()
 
 setup(
@@ -48,7 +60,7 @@ setup(
     tests_require=TESTS_REQUIRES,
     test_suite='intelmq.tests',
     extras_require={
-        'development': TESTS_REQUIRES,
+        'development': TESTS_REQUIRES + DOCS_REQUIRES,
     },
     packages=find_packages(),
     include_package_data=True,
@@ -61,6 +73,7 @@ setup(
     description='IntelMQ is a solution for IT security teams for collecting and '
                 'processing security feeds using a message queuing protocol.',
     long_description=README,
+    long_description_content_type='text/markdown',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
