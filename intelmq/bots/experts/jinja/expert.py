@@ -27,7 +27,8 @@ class JinjaExpertBot(ExpertBot):
           extra.somejinjaoutput: file:///etc/intelmq/somejinjatemplate.j2
     """
 
-    fields: Dict[str, Union[str, Template]] = {}
+    fields: Dict[str, str] = {}
+    _templates: Dict[str, Union[str, Template]] = {}
     overwrite: bool = False
 
     def init(self):
@@ -35,23 +36,24 @@ class JinjaExpertBot(ExpertBot):
             raise MissingDependencyError("jinja2")
 
         for field, template in self.fields.items():
-            if template.startswith("file:///"):
-                templatefile = pathlib.Path(template[7:])
-                if templatefile.exists() and os.access(templatefile, os.R_OK):
-                    self.fields[field] = templatefile.read_text()
-                else:
-                    raise ValueError(f"Jinja Template {templatefile} does not exist or is not readable.")
+            if not template.startswith("file:///"):
+                continue
+
+            templatefile = pathlib.Path(template[7:])
+            if not (templatefile.exists() and os.access(templatefile, os.R_OK)):
+                raise ValueError(f"Jinja Template {templatefile} does not exist or is not readable.")
+            self.fields[field] = templatefile.read_text()
 
         for field, template in self.fields.items():
             try:
-                self.fields[field] = Template(template)
+                self._templates[field] = Template(template)
             except TemplateError as msg:
                 raise ValueError(f"Error parsing Jinja Template for '{field}': {msg}")
 
     def process(self):
         msg = self.receive_message()
 
-        for field, template in self.fields.items():
+        for field, template in self._templates.items():
             msg.add(field, template.render(msg=msg), overwrite=self.overwrite)
 
         self.send_message(msg)
