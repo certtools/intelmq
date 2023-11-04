@@ -1622,7 +1622,7 @@ The report configuration is stored in a `shadowserver-schema.json` file download
 
 The parser will attempt to download a schema update on startup when the *auto_update* option is enabled.
 
-Schema downloads can also be scheduled as a cron job:
+Schema downloads can also be scheduled as a cron job for the `intelmq` user:
 
 .. code-block:: bash
 

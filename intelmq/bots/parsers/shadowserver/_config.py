@@ -102,6 +102,7 @@ __config.schema_base = os.path.join(os.path.dirname(__file__), 'schema.json.test
 __config.schema_active = __config.schema_file
 __config.schema_mtime = 0.0
 __config.auto_update = False
+__config.test_mode = False
 __config.feedname_mapping = {}
 __config.filename_mapping = {}
 
@@ -113,6 +114,7 @@ def set_logger(logger):
 
 def enable_test_mode(enable):
     """ Set which schema to load. """
+    __config.test_mode = enable
     if enable:
         __config.schema_active = __config.schema_base
     else:
@@ -318,7 +320,8 @@ def reload():
         if __config.schema_mtime == mtime:
             return
     else:
-        __config.logger.info("The schema file does not exist.")
+        if not __config.test_mode:
+            raise ValueError("The schema file does not exist.")
 
     if __config.schema_mtime == 0.0 and mtime == 0.0 and __config.auto_update:
         update_schema()
