@@ -1,0 +1,155 @@
+# SPDX-FileCopyrightText: 2023 Filip Pokorný
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+site_name: IntelMQ
+site_url: https://docs.intelmq.org
+site_author: Gethvi
+site_description: |
+  Isn't it sad to see all public and private feeds available and not use them
+  properly because it's too much "monkey" work? Thanks to IntelMQ you can
+  collect and process all of them automatically and without effort.
+
+repo_name: certtools/intelmq
+repo_url: https://github.com/certtools/intelmq
+
+edit_uri: edit/develop/docs
+docs_dir: docs
+site_dir: docs_build
+
+theme:
+  name: material
+  logo: static/images/Logo_Intel_MQ.svg
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: white
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: white
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  features:
+    - content.code.copy # copy code button
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+
+plugins:
+  - minify:
+      minify_html: true
+
+  - mkdocstrings:
+      enabled: false
+      custom_templates: templates
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_source: false
+
+  - search:
+      lang: en
+
+  - glightbox # enlarging images
+
+  - redirects:
+      redirect_maps: # TODO add other redirects from old docs
+        'en/latest/dev/data-format.html': 'dev/data-format.md'
+
+extra:
+  version:
+    provider: mike
+    default: latest
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/certtools/intelmq
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/intelmq/
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/u/certat
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      use_pygments: true                  # highlight code during build time, not in javascript
+      linenums: false                     # enable line numbering
+      linenums_style: pymdownx-inline     # how lines are numbered
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.keys # keyboard keys
+  - tables
+  - footnotes
+
+nav:
+  - Introduction: 'index.md'
+  - Overview: 'overview.md'
+  - Tutorials:
+      - Using IntelMQ Manager: 'tutorials/intelmq-manager.md'
+  - User Guide:
+      - Intro: 'user/intro.md'
+      - Event: 'user/event.md'
+      - Bots: 'user/bots.md'
+      - Feeds: 'user/feeds.md'
+      - Abuse Contacts: 'user/abuse-contacts.md'
+      - Manager: 'user/manager.md'
+      - API: 'user/api.md'
+
+  - Administrator Guide:
+      - Intro: 'admin/intro.md'
+      - Installation:
+          - Linux Package: 'admin/installation/linux-packages.md'
+          - PyPI: 'admin/installation/pypi.md'
+          - DockerHub: 'admin/installation/dockerhub.md'
+      - Upgrade: 'admin/upgrade.md'
+      - Hardware Requirements: 'admin/hardware-requirements.md'
+      - Configuration:
+          - IntelMQ: 'admin/configuration/intelmq.md'
+          - IntelMQ API: 'admin/configuration/intelmq-api.md'
+          - IntelMQ Manager: 'admin/configuration/intelmq-manager.md'
+      - Management:
+          - IntelMQ: 'admin/management/intelmq.md'
+          - IntelMQ API: 'admin/management/intelmq-api.md'
+      - Database:
+          - PostgreSQL: 'admin/database/postgresql.md'
+          - Elasticsearch: 'admin/database/elasticsearch.md'
+          - Splunk: 'admin/database/splunk.md'
+          - SQLite: 'admin/database/sqlite.md'
+          - MSSQL: 'admin/database/mssql.md'
+      - Utilities:
+          - Bash Completion: 'admin/utilities/bash-completion.md'
+      - Integrations:
+          - MISP: 'admin/integrations/misp.md'
+          - N6: 'admin/integrations/n6.md'
+          - CIFv3: 'admin/integrations/cifv3.md'
+      - Beta Features: 'admin/beta-features.md'
+      - Common Problems: 'admin/common-problems.md'
+      - FAQ: 'admin/faq.md'
+
+  - Developer Guide:
+      - Intro: 'dev/intro.md'
+      - Guidelines: 'dev/guidelines.md'
+      - Structure: 'dev/structure.md'
+      - Environment: 'dev/environment.md'
+      - Data Format: 'dev/data-format.md'
+      - Adding Feeds: 'dev/adding-feeds.md'
+      - Bot Development: 'dev/bot-development.md'
+      - Extensions Packages: 'dev/extensions-packages.md'
+      - Testing: 'dev/testing.md'
+      - Documentation: 'dev/documentation.md'
+      - Use as Library: 'dev/library.md'
+      - Release: 'dev/release.md'
+
+  - Changelog: 'changelog.md'
+  - Security: 'security.md'
+  - Community: 'community.md'
+  - Help: 'help.md'

@@ -27,13 +27,11 @@ src/
 .eggs
 .secrets
 .venv/
+venv/
 .env
 
-# sphinx
-docs/source
-docs/_build
-docs/user/feeds.rst
-docs/dev/harmonization-fields.rst
+# mkdocs
+docs_build
 
 # Debian build filed
 debian/files

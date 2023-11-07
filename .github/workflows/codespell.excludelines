@@ -26,14 +26,8 @@ The correct name for the parameter "delimeter" is "delimiter". Please fix your c
 # intelmq/tests/bots/collectors/fireeye/first_request.json "attch"
 {"alert": [{"explanation": {"malwareDetected": {"malware": [{"md5Sum": "21232f297a57a5a743894a0e4a801fc3", "sha256": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", "name": "Downloader.Emotet"}]}, "osChanges": []}, "src": {"smtpMailFrom": "attacker@badland.com"}, "alertUrl": "https://127.0.0.1/emps/eanalysis?e_id=161862&type=attch", "action": "blocked", "occurred": "2021-01-05 14:19:06 +0100", "dst": {"smtpTo": "mymail@google.com"}, "smtpMessage": {"subject": "Online Streaming am 30.06.2020 1800 Uhr REMINDER"}, "applianceId": "16EV1C1A6K94", "id": 1454270, "rootInfection": 7113664, "sensorIp": "127.0.0.1", "name": "MALWARE_OBJECT", "severity": "MAJR", "uuid": "1591de22-4926-4124-b3ed-ffff96766295", "ack": "no", "product": "EMAIL_MPS", "sensor": "mail", "vlan": 0, "malicious": "yes", "scVersion": "0000.000"}], "appliance": "CMS", "version": "CMS (CMS) 0.0.0.000000", "msg": "concise", "alertsCount": 1}
 
-# ./docs/user/universe.rst:55: bund ==> bind, bound
-Developed and maintained by `Intevation <https://intevation.de>`_, initially funded by `BSI <http://bsi.bund.de/>`_.
-
-# ./docs/dev/harmonization-fields.rst:27: compromized ==> compromised
-Destination                 destination.local_hostname          :ref:`string`                 Some sources report a internal hostname within a NAT related to the name configured for a compromized system
-
-# ./docs/dev/harmonization-fields.rst:28: compromized ==> compromised
-Destination                 destination.local_ip                :ref:`ipaddress`              Some sources report a internal (NATed) IP address related a compromized system. N.B. RFC1918 IPs are OK here.
+# ./docs/overview.md:60: bund ==> bind, bound
+Developed and maintained by [Intevation](https://intevation.de), initially funded by [BSI](https://bsi.bund.de/).
 
 # ./intelmq/tests/bots/parsers/shodan/test_parser.py:36: ALLO ==> ALLOW
                          '   ALLO   MLST   MLSD   SITE   P@SW   STRU   CLNT   MFMT\n'
