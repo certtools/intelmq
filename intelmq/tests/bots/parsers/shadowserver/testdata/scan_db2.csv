@@ -1,3 +1,0 @@
-"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","db2_hostname","servername","size","amplification"
-"2010-02-10 00:00:00",192.168.0.1,udp,523,node01.example.com,db2,64512,ZZ,Region,City,0,0,NOWAK_SERWER,node01.example.com,298,14.90
-"2010-02-10 00:00:01",192.168.0.2,udp,523,node02.example.com,db2,64512,ZZ,Region,City,0,0,SPZOZ-DZIEWIN,node02.example.com,298,14.90

@@ -1,4 +1,0 @@
-"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","machine_name","response_size","amplification"
-"2010-02-10 00:00:00",192.168.0.1,udp,3283,node01.example.com,ard,64512,ZZ,Region,City,0,0,"Macmini (radio)",1006,201.20
-"2010-02-10 00:00:01",192.168.0.2,udp,3283,node02.example.com,ard,64512,ZZ,Region,City,0,0,biuro-rip-org-pl,1006,201.20
-"2010-02-10 00:00:02",192.168.0.3,udp,3283,node03.example.com,ard,64512,ZZ,Region,City,0,0,127.0.0.1,1006,201.20

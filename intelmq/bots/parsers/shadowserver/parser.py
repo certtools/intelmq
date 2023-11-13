@@ -22,14 +22,24 @@ Optional parameters:
 """
 import copy
 import re
+import os
+import tempfile
 
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidKey, InvalidValue
+from intelmq.bin.intelmqctl import IntelMQController
+import intelmq.lib.utils as utils
 import intelmq.bots.parsers.shadowserver._config as config
 
 
 class ShadowserverParserBot(ParserBot):
-    """Parse all ShadowServer feeds"""
+    """
+    Parse all ShadowServer feeds
+
+    Parameters:
+        auto_update (boolean): Enable automatic schema download
+        test_mode (boolean): Use test schema
+    """
 
     recover_line = ParserBot.recover_line_csv_dict
     _csv_params = {'dialect': 'unix'}
@@ -38,8 +48,18 @@ class ShadowserverParserBot(ParserBot):
     feedname = None
     _mode = None
     overwrite = False
+    auto_update = False
+    test_mode = False
 
     def init(self):
+        config.set_logger(self.logger)
+        if self.test_mode:
+            config.enable_test_mode(True)
+        if self.auto_update:
+            config.enable_auto_update(True)
+            self.logger.debug("Feature 'auto_update' is enabled.")
+        config.reload()
+
         if self.feedname is not None:
             self._sparser_config = config.get_feed_by_feedname(self.feedname)
             if self._sparser_config:
@@ -124,13 +144,23 @@ class ShadowserverParserBot(ParserBot):
             value = raw_value
 
             if conv_func is not None and raw_value is not None:
-                if len(item) == 4 and item[3]:
-                    value = conv_func(raw_value, row)
-                else:
-                    value = conv_func(raw_value)
+                try:
+                    if len(item) == 4 and item[3]:
+                        value = config.functions[conv_func](raw_value, row)
+                    else:
+                        value = config.functions[conv_func](raw_value)
+                except Exception:
+                    """ fail early and often in this case. We want to be able to convert everything """
+                    self.logger.error('Could not convert shadowkey: %r in feed %r, '
+                                      'value: %r via conversion function %r.',
+                                      shadowkey, self.feedname, raw_value, conv_func)
+                    raise
 
             if value is not None:
-                event.add(intelmqkey, value)
+                try:
+                    event.add(intelmqkey, value)
+                except InvalidKey:
+                    self.logger.warning('Key not found in IDF %r.', intelmqkey)
                 fields.remove(shadowkey)
 
         # Now add optional fields.
@@ -152,18 +182,18 @@ class ShadowserverParserBot(ParserBot):
             raw_value = row.get(shadowkey)
             value = raw_value
 
-            if conv_func is not None and raw_value is not None:
-                if len(item) == 4 and item[3]:
-                    value = conv_func(raw_value, row)
-                else:
-                    try:
-                        value = conv_func(raw_value)
-                    except Exception:
-                        """ fail early and often in this case. We want to be able to convert everything """
-                        self.logger.error('Could not convert shadowkey: %r in feed %r, '
-                                          'value: %r via conversion function %r.',
-                                          shadowkey, self.feedname, raw_value, conv_func.__name__)
-                        raise
+            if conv_func is not None and raw_value is not None and conv_func in config.functions:
+                try:
+                    if len(item) == 4 and item[3]:
+                        value = config.functions[conv_func](raw_value, row)
+                    else:
+                        value = config.functions[conv_func](raw_value)
+                except Exception:
+                    """ fail early and often in this case. We want to be able to convert everything """
+                    self.logger.error('Could not convert shadowkey: %r in feed %r, '
+                                      'value: %r via conversion function %r.',
+                                      shadowkey, self.feedname, raw_value, conv_func)
+                    raise
 
             if value is not None:
                 if intelmqkey == 'extra.':
@@ -208,6 +238,48 @@ class ShadowserverParserBot(ParserBot):
 
     def shutdown(self):
         self.feedname = None
+
+    @classmethod
+    def _create_argparser(cls):
+        argparser = super()._create_argparser()
+        argparser.add_argument("--update-schema", action='store_true', help='downloads latest report schema')
+        argparser.add_argument("--verbose", action='store_true', help='be verbose')
+        return argparser
+
+    @classmethod
+    def run(cls, parsed_args=None):
+        if not parsed_args:
+            parsed_args = cls._create_argparser().parse_args()
+        if parsed_args.update_schema:
+            logger = utils.log(__name__, log_path=None)
+            if parsed_args.verbose:
+                logger.setLevel('INFO')
+            else:
+                logger.setLevel('ERROR')
+            config.set_logger(logger)
+            if config.update_schema():
+                runtime_conf = utils.get_bots_settings()
+                try:
+                    ctl = IntelMQController()
+                    for bot in runtime_conf:
+                        if runtime_conf[bot]["module"] == __name__:
+                            ctl.bot_reload(bot)
+                except Exception as e:
+                    logger.error("Failed to signal bot: %r" % str(e))
+        else:
+            super().run(parsed_args=parsed_args)
+
+    def test_update_schema(cls):
+        """
+        Test schema download to a temporary directory.
+
+        This is necessary as the request session requires mocking in order to function.
+
+        Returns True on success.
+        """
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            schema_file = config.prepare_update_schema_test(tmp_dir)
+            return config.update_schema()
 
 
 BOT = ShadowserverParserBot

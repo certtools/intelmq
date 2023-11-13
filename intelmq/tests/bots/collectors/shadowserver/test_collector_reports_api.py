@@ -14,12 +14,13 @@ from intelmq.bots.collectors.shadowserver.collector_reports_api import ShadowSer
 RANDSTR = secrets.token_urlsafe(50)
 ASSET_PATH = pathlib.Path(__file__).parent / 'reports-list.json'
 PARAMETERS = {'reports': 'anarres', 'api_key': RANDSTR, 'secret': RANDSTR, 'logging_level': 'DEBUG', 'types': ['scan_smb', 'cisco_smart_install', 'nonexistent'], 'name': 'shadowservercollector'}
-REPORT = {'__type': 'Report', 'extra.file_name': '2020-08-02-scan_smb-anarres-geo.json', 'feed.accuracy': 100.0, 'feed.name': 'shadowservercollector', 'raw': 'e30='}
+REPORT = {'__type': 'Report', 'extra.file_name': '2020-08-02-scan_smb-anarres-geo.csv', 'feed.accuracy': 100.0, 'feed.name': 'shadowservercollector', 'raw': 'e30='}
 
 
 def prepare_mocker(mocker):
     mocker.post('https://transform.shadowserver.org/api2/reports/list', content=ASSET_PATH.read_bytes())
-    mocker.post('https://transform.shadowserver.org/api2/reports/download', text='{}')
+    mocker.get('https://dl.shadowserver.org/xNDSuwXrKnrLrDopU926rR75CAESMWesVCKsuyI8b8ncTv7GCX', text='{}')
+    mocker.get('https://dl.shadowserver.org/unnzVtn92tS9459rKIEz2J8qb7oJDv0Fa2feGUOiJLCDLqBXnN', text='{}')
 
 
 # Explicit skip_redis is required (although implicitly called by no_cache), otherwise fails in package build environments
@@ -80,7 +81,7 @@ class TestShadowServerAPICollectorBot(test.BotTestCase, unittest.TestCase):
         self.cache.flushdb()
         prepare_mocker(mocker)
         self.run_bot(iterations=1, parameters=PARAMETERS)
-        self.assertAnyLoglineEqual("Sent report: '2020-08-02-cisco_smart_install-anarres-geo.csv' (fixed: '2020-08-02-cisco_smart_install-anarres-geo.json', size: 0.00195 KiB).", 'DEBUG')
+        self.assertAnyLoglineEqual("Sent report: '2020-08-02-cisco_smart_install-anarres-geo.csv' (fixed: '2020-08-02-cisco_smart_install-anarres-geo.csv', size: 0.00195 KiB).", 'DEBUG')
 
     def test_report_content(self, mocker):
         self.cache.flushdb()

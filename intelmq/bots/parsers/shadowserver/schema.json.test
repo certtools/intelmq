@@ -1,0 +1,217 @@
+{
+   "test_smb" : {
+      "constant_fields" : {
+         "classification.identifier" : "test-smb",
+         "classification.taxonomy" : "vulnerable",
+         "classification.type" : "vulnerable-system",
+         "protocol.application" : "smb",
+         "protocol.transport" : "tcp"
+      },
+      "feed_name" : "Test-Accessible-SMB",
+      "file_name" : "test_smb",
+      "optional_fields" : [
+         [
+            "extra.",
+            "smb_implant",
+            "convert_bool"
+         ],
+         [
+            "source.reverse_dns",
+            "hostname"
+         ],
+         [
+            "extra.",
+            "tag"
+         ],
+         [
+            "source.asn",
+            "asn",
+            "invalidate_zero"
+         ],
+         [
+            "source.geolocation.cc",
+            "geo"
+         ],
+         [
+            "source.geolocation.region",
+            "region"
+         ],
+         [
+            "source.geolocation.city",
+            "city"
+         ],
+         [
+            "extra.source.naics",
+            "naics",
+            "invalidate_zero"
+         ],
+         [
+            "extra.source.sic",
+            "sic",
+            "invalidate_zero"
+         ],
+         [
+            "extra.",
+            "arch",
+            "validate_to_none"
+         ],
+         [
+            "extra.",
+            "key",
+            "validate_to_none"
+         ],
+         [
+            "extra.",
+            "smbv1_support",
+            "validate_to_none"
+         ],
+         [
+            "extra.",
+            "smb_major_number",
+            "validate_to_none"
+         ],
+         [
+            "extra.",
+            "smb_minor_number",
+            "validate_to_none"
+         ],
+         [
+            "extra.",
+            "smb_revision",
+            "validate_to_none"
+         ],
+         [
+            "extra.",
+            "smb_version_string",
+            "validate_to_none"
+         ]
+      ],
+      "required_fields" : [
+         [
+            "time.source",
+            "timestamp",
+            "add_UTC_to_timestamp"
+         ],
+         [
+            "source.ip",
+            "ip",
+            "validate_ip"
+         ],
+         [
+            "source.port",
+            "port",
+            "convert_int"
+         ]
+      ]
+   },
+   "test_telnet" : {
+      "constant_fields" : {
+         "classification.identifier" : "test-telnet",
+         "classification.taxonomy" : "vulnerable",
+         "classification.type" : "vulnerable-system",
+         "protocol.application" : "telnet"
+      },
+      "feed_name" : "Test-Accessible-Telnet",
+      "file_name" : "test_telnet",
+      "optional_fields" : [
+         [
+            "protocol.transport",
+            "protocol"
+         ],
+         [
+            "source.reverse_dns",
+            "hostname"
+         ],
+         [
+            "extra.",
+            "tag",
+            "validate_to_none"
+         ],
+         [
+            "source.asn",
+            "asn",
+            "invalidate_zero"
+         ],
+         [
+            "source.geolocation.cc",
+            "geo"
+         ],
+         [
+            "source.geolocation.region",
+            "region"
+         ],
+         [
+            "source.geolocation.city",
+            "city"
+         ],
+         [
+            "extra.",
+            "naics",
+            "invalidate_zero"
+         ],
+         [           "extra.",
+            "sic",
+            "invalidate_zero"
+         ],
+         [
+            "extra.",
+            "banner",
+            "validate_to_none"
+         ]
+      ],
+      "required_fields" : [
+         [
+            "time.source",
+            "timestamp",
+            "add_UTC_to_timestamp"
+         ],
+         [
+            "source.ip",
+            "ip",
+            "validate_ip"
+         ],
+         [
+            "source.port",
+            "port",
+            "convert_int"
+         ]
+      ]
+   },
+   "test_afs" : {
+      "constant_fields" : {
+         "classification.identifier" : "test-afs",
+         "classification.taxonomy" : "vulnerable",
+         "classification.type" : "vulnerable-system",
+         "protocol.application" : "afs"
+      },
+      "feed_name" : "Test-Accessible-AFS",
+      "file_name" : "test_afs",
+      "required_fields" : [
+         [
+            "time.source",
+            "timestamp",
+            "add_UTC_to_timestamp"
+         ],
+         [
+            "source.ip",
+            "ip",
+            "validate_ip"
+         ],
+         [
+            "source.port",
+            "port",
+            "convert_int"
+         ],
+         [
+            "not_in_idf",
+            "severity"
+         ]
+      ],
+      "optional_fields" : [
+         [
+            "protocol.transport",
+            "protocol"
+         ]
+     ]
+   }
+}
