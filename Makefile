@@ -13,3 +13,9 @@ docs: mkdocs.yml docs/* intelmq/etc/feeds.yaml intelmq/etc/harmonization.conf in
 
 clean:
 	rm -rf docs_build .mypy_cache .coverage .pytest_cache dist
+
+codespell:
+	codespell -x .github/workflows/codespell.excludelines
+
+test:
+	pytest --no-cov -v intelmq/tests/ && echo "Success!"

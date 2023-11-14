@@ -30,6 +30,7 @@
   (PR#2408 by Jan Kaliszewski).
 
 ### Development
+- Makefile: Add codespell and test commands (PR#2425 by Sebastian Wagner).
 
 ### Data Format
 
