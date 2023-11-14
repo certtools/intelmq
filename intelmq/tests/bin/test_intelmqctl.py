@@ -125,6 +125,18 @@ class TestIntelMQController(unittest.TestCase):
         self.assertIsNotNone(
             next(filter(lambda l: "SyntaxError in bot 'test-bot'" in l, captured.output)))
 
+    @skip_installation()
+    @mock.patch.object(utils, "get_bot_module_name", mock.Mock(return_value="mocked-module"))
+    def test_check_imports_real_bot_module(self):
+        self._load_default_harmonization()
+        self._extend_config(self.tmp_runtime, self.BOT_CONFIG)
+
+        # raise SyntaxError to stop checking after import
+        with mock.patch.object(ctl.importlib, "import_module", mock.Mock(side_effect=SyntaxError)) as import_mock:
+            self.intelmqctl.check(no_connections=True, check_executables=False)
+
+        import_mock.assert_called_once_with("mocked-module")
+
 
 if __name__ == '__main__':  # pragma: nocover
     unittest.main()

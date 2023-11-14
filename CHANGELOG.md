@@ -23,6 +23,7 @@
 ### Core
 - `intelmq.lib.message`: For invalid message keys, add a hint on the failure to the exception: not allowed by configuration or not matching regular expression (PR#2398 by Sebastian Wagner).
 - `intelmq.lib.exceptions.InvalidKey`: Add optional parameter `additional_text` (PR#2398 by Sebastian Wagner).
+- Change the way we discover bots to allow easy extending based on the entry point name. (PR#2413 by Kamil Mankowski)
 - `intelmq.lib.mixins`: Add a new class, `StompMixin` (defined in a new submodule: `stomp`),
   which provides certain common STOMP-bot-specific operations, factored out from
   `intelmq.bots.collectors.stomp.collector` and `intelmq.bots.outputs.stomp.output`
@@ -68,6 +69,7 @@
 
 ### Documentation
 - Add a readthedocs configuration file to fix the build fail (PR#2403 by Sebastian Wagner).
+- Add a guide of developing extensions packages (PR#2413 by Kamil Mankowski)
 - Update/fix/improve the stuff related to the STOMP bots and integration with the *n6*'s
   Stream API (PR#2408 by Jan Kaliszewski).
 - Complete documentation overhaul. Change to markdown format. Uses the mkdocs-material (PR#2419 by Filip Pokorný).

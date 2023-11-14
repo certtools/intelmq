@@ -143,6 +143,7 @@ nav:
       - Data Format: 'dev/data-format.md'
       - Adding Feeds: 'dev/adding-feeds.md'
       - Bot Development: 'dev/bot-development.md'
+      - Extensions Packages: 'dev/extensions-packages.md'
       - Testing: 'dev/testing.md'
       - Documentation: 'dev/documentation.md'
       - Use as Library: 'dev/library.md'

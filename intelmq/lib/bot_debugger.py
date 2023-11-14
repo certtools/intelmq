@@ -50,7 +50,7 @@ class BotDebugger:
         self.dryrun = dryrun
         self.msg = msg
         self.show = show
-        module = import_module(self.runtime_configuration['module'])
+        module = import_module(utils.get_bot_module_name(self.runtime_configuration['module']))
 
         if loglevel:
             self.leverageLogger(loglevel)
