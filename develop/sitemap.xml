@@ -171,6 +171,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://docs.intelmq.org/develop/dev/extensions-packages/</loc>
+         <lastmod>2023-11-14</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://docs.intelmq.org/develop/dev/guidelines/</loc>
          <lastmod>2023-11-14</lastmod>
          <changefreq>daily</changefreq>
