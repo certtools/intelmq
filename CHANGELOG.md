@@ -84,6 +84,8 @@
     of necessary file(s)).
   - Add `stomp.py` version check (raise `MissingDependencyError` if not `>=4.1.12`).
   - Minor fixes/improvements and some refactoring (see also above: *Core*...).
+- `intelmq.bots.outputs.stomp.output` (PR#2423 by Kamil Mankowski):
+  - Try to reconnect on `NotConnectedException`.
 
 ### Documentation
 - Add a readthedocs configuration file to fix the build fail (PR#2403 by Sebastian Wagner).
