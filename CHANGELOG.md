@@ -75,6 +75,7 @@
 - Complete documentation overhaul. Change to markdown format. Uses the mkdocs-material (PR#2419 by Filip Pokorný).
 
 ### Packaging
+- Add `pendulum` to suggested packages, as it is required for the sieve bot (PR#2424 by Sebastian Wagner).
 
 ### Tests
 
