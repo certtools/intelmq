@@ -34,7 +34,7 @@ import tarfile
 import textwrap
 import traceback
 import zipfile
-from pathlib import Path
+from sys import version_info
 from typing import (Any, Callable, Dict, Generator, Iterator, Optional,
                     Sequence, Union)
 
@@ -43,7 +43,6 @@ import dns.resolver
 import dns.version
 import requests
 from dateutil.relativedelta import relativedelta
-from pkg_resources import resource_filename
 from ruamel.yaml import YAML
 from ruamel.yaml.scanner import ScannerError
 from termstyle import red
@@ -51,6 +50,12 @@ from termstyle import red
 import intelmq
 from intelmq import RUNTIME_CONF_FILE
 from intelmq.lib.exceptions import DecodingError
+
+try:
+    from importlib.metadata import entry_points
+except ImportError:
+    from importlib_metadata import entry_points
+
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
@@ -839,6 +844,27 @@ def file_name_from_response(response: requests.Response) -> str:
     return file_name
 
 
+def _get_console_entry_points():
+    # Select interface was introduced in Python 3.10 and newer importlib_metadata
+    entries = entry_points()
+    if hasattr(entries, "select"):
+        return entries.select(group="console_scripts")
+    return entries.get("console_scripts", [])  # it's a dict
+
+
+def get_bot_module_name(bot_name: str) -> str:
+    entries = entry_points()
+    if hasattr(entries, "select"):
+        entries = tuple(entries.select(name=bot_name, group="console_scripts"))
+    else:
+        entries = [entry for entry in entries.get("console_scripts", []) if entry.name == bot_name]
+
+    if not entries:
+        return None
+    else:
+        return entries[0].value.replace(":BOT.run", '')
+
+
 def list_all_bots() -> dict:
     """
     Compile a dictionary with all bots and their parameters.
@@ -860,13 +886,11 @@ def list_all_bots() -> dict:
     from intelmq.lib.bot import Bot  # noqa: prevents circular import
     bot_parameters = dir(Bot)
 
-    base_path = resource_filename('intelmq', 'bots')
-
-    botfiles = [botfile for botfile in pathlib.Path(base_path).glob('**/*.py') if botfile.is_file() and botfile.name != '__init__.py']
-    for file in botfiles:
-        file = Path(file.as_posix().replace(base_path, 'intelmq/bots'))
+    bot_entrypoints = filter(lambda entry: entry.name.startswith("intelmq.bots."), _get_console_entry_points())
+    for bot in bot_entrypoints:
         try:
-            mod = importlib.import_module('.'.join(file.with_suffix('').parts))
+            module_name = bot.value.replace(":BOT.run", '')
+            mod = importlib.import_module(module_name)
         except SyntaxError:
             # Skip invalid bots
             continue
@@ -884,7 +908,7 @@ def list_all_bots() -> dict:
             for bot_type in ['CollectorBot', 'ParserBot', 'ExpertBot', 'OutputBot', 'Bot']:
                 name = name.replace(bot_type, '')
 
-            bots[file.parts[2].capitalize()[:-1]][name] = {
+            bots[module_name.split('.')[2].capitalize()[:-1]][name] = {
                 "module": mod.__name__,
                 "description": "Missing description" if not getattr(mod.BOT, '__doc__', None) else textwrap.dedent(mod.BOT.__doc__).strip(),
                 "parameters": keys,

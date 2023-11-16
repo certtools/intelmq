@@ -11,7 +11,7 @@
 *.profile
 .vscode/
 .profile
-intelmq.egg-info
+*.egg-info
 build
 dist
 *.old

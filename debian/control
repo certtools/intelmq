@@ -41,6 +41,7 @@ Depends: bash-completion,
          python3-ruamel.yaml,
          python3-termstyle (>= 0.1.10),
          python3-tz,
+         python3-importlib-metadata,
          redis-server,
          systemd,
          ${misc:Depends},
@@ -52,7 +53,8 @@ Suggests: python3-geoip2 (>= 2.2.0),
           python3-pyasn (>= 1.5.0),
           python3-pymongo (>= 2.7.1),
           python3-sleekxmpp (>= 1.3.1),
-          python3-stomp.py (>= 4.1.9)
+          python3-stomp.py (>= 4.1.9),
+          python3-pendulum
 Description: Solution for IT security teams for collecting and processing security feeds
  IntelMQ is a solution for IT security teams (CERTs, CSIRTs, abuse
  departments,...) for collecting and processing security feeds (such as log

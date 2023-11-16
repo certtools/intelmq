@@ -31,6 +31,12 @@ import intelmq.lib.utils as utils
 from intelmq.lib.test import skip_internet
 from intelmq.tests.test_conf import CerberusTests
 
+try:
+    from importlib.metadata import EntryPoint
+except ImportError:
+    from importlib_metadata import EntryPoint
+
+
 LINES = {'spare': ['Lorem', 'ipsum', 'dolor'],
          'short': ['{}: Lorem', '{}: ipsum',
                    '{}: dolor'],
@@ -318,6 +324,34 @@ class TestUtils(unittest.TestCase):
         bot_count = sum([len(val) for val in bots.values()])
         self.assertEqual(1, bot_count)
 
+    def test_list_all_bots_filters_entrypoints(self):
+        entries = [
+            EntryPoint("intelmq.bots.collector.api.collector_api",
+                       "intelmq.bots.collector.api.collector_api:BOT.run", group="console_scripts"),
+            EntryPoint("intelmq.bots.collector.awesome.my_bot",
+                       "awesome.extension.package.collector:BOT.run", group="console_scripts"),
+            EntryPoint("not.a.bot", "not.a.bot:run", group="console_scripts")
+        ]
+
+        with unittest.mock.patch.object(utils, "_get_console_entry_points", return_value=entries):
+            with unittest.mock.patch.object(utils.importlib, "import_module") as import_mock:
+                import_mock.side_effect = SyntaxError()  # stop processing after import try
+                utils.list_all_bots()
+
+        import_mock.assert_has_calls(
+            [
+                unittest.mock.call("intelmq.bots.collector.api.collector_api"),
+                unittest.mock.call("awesome.extension.package.collector"),
+            ]
+        )
+        self.assertEqual(2, import_mock.call_count)
+
+    def test_get_bot_module_name_builtin_bot(self):
+        found_name = utils.get_bot_module_name("intelmq.bots.collectors.api.collector_api")
+        self.assertEqual("intelmq.bots.collectors.api.collector_api", found_name)
+
+        self.assertIsNone(utils.get_bot_module_name("intelmq.not-existing-bot"))
+
     def test_get_bots_settings(self):
         with unittest.mock.patch.object(utils, "get_runtime", new_get_runtime):
             runtime = utils.get_bots_settings()
@@ -353,14 +387,14 @@ class TestUtils(unittest.TestCase):
         filename = os.path.join(os.path.dirname(__file__), '../assets/example.yaml')
         self.assertEqual(utils.load_configuration(filename),
                          {
-                            'some_string': 'Hello World!',
-                            'other_string': 'with a : in it',
+            'some_string': 'Hello World!',
+            'other_string': 'with a : in it',
                             'now more': ['values', 'in', 'a', 'list'],
                             'types': -4,
                             'other': True,
                             'final': 0.5,
-                        }
-                        )
+        }
+        )
 
     def test_load_configuration_yaml_invalid(self):
         """ Test load_configuration with an invalid YAML file """
