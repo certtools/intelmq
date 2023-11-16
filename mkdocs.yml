@@ -47,7 +47,6 @@ plugins:
 
   - mkdocstrings:
       enabled: false
-      custom_templates: templates
       default_handler: python
       handlers:
         python:
