@@ -263,19 +263,19 @@ def force_base64(value: Optional[str]) -> Optional[str]:
 
 
 def scan_exchange_taxonomy(field):
-    if field == 'exchange;webshell':
+    if 'webshell' in field:
         return 'intrusions'
     return 'vulnerable'
 
 
 def scan_exchange_type(field):
-    if field == 'exchange;webshell':
+    if 'webshell' in field:
         return 'system-compromise'
-    return 'infected-system'
+    return 'vulnerable-system'
 
 
 def scan_exchange_identifier(field):
-    if field == 'exchange;webshell':
+    if 'webshell' in field:
         return 'exchange-server-webshell'
     return 'vulnerable-exchange-server'
 
@@ -321,7 +321,7 @@ def reload():
             return
     else:
         if not __config.test_mode:
-            raise ValueError("The schema file does not exist.")
+            raise ValueError("The schema file does not exist: %r.", __config.schema_file)
 
     if __config.schema_mtime == 0.0 and mtime == 0.0 and __config.auto_update:
         update_schema()
