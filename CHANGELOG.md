@@ -63,6 +63,9 @@
 #### Parsers
 
 #### Experts
+- `intelmq.bots.experts.jinja` (PR#2417 by Mikk Margus Möll):
+  - Add optional `socket_perms` and `socket_group` parameters to change
+    file permissions on socket file, if it is in use.
 
 #### Outputs
 - `intelmq.bots.outputs.stomp.output` (PR#2408 and PR#2414 by Jan Kaliszewski):

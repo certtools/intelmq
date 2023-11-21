@@ -8,6 +8,7 @@ API Collector bot
 """
 from threading import Thread
 from typing import Optional
+import grp
 import os
 import socket
 
@@ -42,6 +43,8 @@ class APICollectorBot(CollectorBot):
     _is_multithreadable: bool = False
     use_socket = False
     socket_path = '/tmp/imq_api_default_socket'
+    socket_perms = '600'
+    socket_group = ''
     _server: Optional['HTTPServer'] = None
     _unix_socket: Optional[socket.socket] = None
     _eventLoopThread: Optional[Thread] = None
@@ -56,7 +59,12 @@ class APICollectorBot(CollectorBot):
 
         if self.use_socket:
             self.server = HTTPServer(app)
-            self._unix_socket = bind_unix_socket(self.socket_path)
+            self._unix_socket = bind_unix_socket(self.socket_path, mode=int(self.socket_perms, 8))
+            if self.socket_group:
+                group = grp.getgrnam(self.socket_group)
+                gid = group.gr_gid
+                os.chown(self.socket_path, -1, gid)
+
             self.server.add_socket(self._unix_socket)
         else:
             self.server = app.listen(self.port)
