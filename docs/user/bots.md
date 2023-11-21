@@ -259,6 +259,14 @@ used. Requires the [tornado](https://pypi.org/project/tornado/) library.
 
 (optional, string) Location of the socket. Defaults to `/tmp/imq_api_default_socket`.
 
+**`socket_perms`**
+
+(optional, octal integer) Unix permissions to grant to the socket file. Default: `600`
+
+**`socket_group`**
+
+(optional, string) Name of group to change group ownership of socket file to.
+
 ---
 
 ### Generic URL Fetcher <div id="intelmq.bots.collectors.http.collector_http" />
