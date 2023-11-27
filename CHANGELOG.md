@@ -19,6 +19,10 @@
     if `auth_by_ssl_client_certificate` is *false*);
   - `password` (STOMP authentication passcode, default: "guest"; to be used only
     if `auth_by_ssl_client_certificate` is *false*).
+- Add the possibility to set the `ssl_ca_certificate` configuration parameter for
+  `intelmq.bots.collectors.stomp.collector` and/or `intelmq.bots.outputs.stomp.output`
+  to an empty string - which means that the SSL machinery used for STOMP communication
+  will attempt to load the system’s default CA certificates (PR#2414 by Jan Kaliszewski).
 
 ### Core
 - `intelmq.lib.message`: For invalid message keys, add a hint on the failure to the exception: not allowed by configuration or not matching regular expression (PR#2398 by Sebastian Wagner).
@@ -27,7 +31,7 @@
 - `intelmq.lib.mixins`: Add a new class, `StompMixin` (defined in a new submodule: `stomp`),
   which provides certain common STOMP-bot-specific operations, factored out from
   `intelmq.bots.collectors.stomp.collector` and `intelmq.bots.outputs.stomp.output`
-  (PR#2408 by Jan Kaliszewski).
+  (PR#2408 and PR#2414 by Jan Kaliszewski).
 
 ### Development
 - Makefile: Add codespell and test commands (PR#2425 by Sebastian Wagner).
@@ -36,11 +40,16 @@
 
 ### Bots
 #### Collectors
-- `intelmq.bots.collectors.stomp.collector` (PR#2408 by Jan Kaliszewski):
-  - Add support for authentication based on STOMP login and passcode,
-    introducing 3 new configuration parameters (see above: *Configuration*).
+- `intelmq.bots.collectors.stomp.collector` (PR#2408 and PR#2414 by Jan Kaliszewski):
+  - Drop support for versions of `stomp.py` older than `4.1.12`.
   - Update the code to support new versions of `stomp.py`, including the latest (`8.1.0`);
     fixes [#2342](https://github.com/certtools/intelmq/issues/2342).
+  - Add support for authentication based on STOMP login and passcode, introducing three
+    new configuration parameters (see above: *Configuration*).
+  - Add support for loading the system’s default CA certificates, as an alternative to
+    specifying the CA certificate(s) file path explicitly (see above: *Configuration*).
+  - Fix (by carefully targeted monkey patching) certain security problems caused by
+    SSL-related weaknesses that some versions of `stomp.py` suffer from.
   - Fix the reconnection behavior: do not attempt to reconnect after `shutdown`. Also,
     never attempt to reconnect if the version of `stomp.py` is older than `4.1.21` (it
     did not work properly anyway).
@@ -54,29 +63,40 @@
 #### Parsers
 
 #### Experts
+- `intelmq.bots.experts.jinja` (PR#2417 by Mikk Margus Möll):
+  - Add optional `socket_perms` and `socket_group` parameters to change
+    file permissions on socket file, if it is in use.
 
 #### Outputs
-- `intelmq.bots.outputs.stomp.output` (PR#2408 by Jan Kaliszewski):
-  - Add support for authentication based on STOMP login and passcode,
-    introducing 3 new configuration parameters (see above: *Configuration*).
+- `intelmq.bots.outputs.stomp.output` (PR#2408 and PR#2414 by Jan Kaliszewski):
+  - Drop support for versions of `stomp.py` older than `4.1.12`.
   - Update the code to support new versions of `stomp.py`, including the latest (`8.1.0`).
+  - Add support for authentication based on STOMP login and passcode, introducing three
+    new configuration parameters (see above: *Configuration*).
+  - Add support for loading the system’s default CA certificates, as an alternative to
+    specifying the CA certificate(s) file path explicitly (see above: *Configuration*).
+  - Fix (by carefully targeted monkey patching) certain security problems caused by
+    SSL-related weaknesses that some versions of `stomp.py` suffer from.
   - Fix `AttributeError` caused by attempts to get unset attributes of `StompOutputBot`
     (`ssl_ca_cert` et consortes).
   - Add coercion of the `port` config parameter to `int`.
   - Add implementation of the `check` hook (verifying, in particular, accessibility
     of necessary file(s)).
-  - Add `stomp.py` version check (raise `MissingDependencyError` if not `>=4.1.8`).
+  - Add `stomp.py` version check (raise `MissingDependencyError` if not `>=4.1.12`).
   - Minor fixes/improvements and some refactoring (see also above: *Core*...).
 
 ### Documentation
 - Add a readthedocs configuration file to fix the build fail (PR#2403 by Sebastian Wagner).
 - Add a guide of developing extensions packages (PR#2413 by Kamil Mankowski)
 - Update/fix/improve the stuff related to the STOMP bots and integration with the *n6*'s
-  Stream API (PR#2408 by Jan Kaliszewski).
+  Stream API (PR#2408 and PR#2414 by Jan Kaliszewski).
 - Complete documentation overhaul. Change to markdown format. Uses the mkdocs-material (PR#2419 by Filip Pokorný).
 
 ### Packaging
 - Add `pendulum` to suggested packages, as it is required for the sieve bot (PR#2424 by Sebastian Wagner).
+- `debian/control`: in `Suggests` field, replace ``python3-stomp.py (>= 4.1.9)`` with
+  ``python3-stomp (>= 4.1.12)``, i.e., fix the package name by removing the `.py`
+  suffix and bump the minimum version to `4.1.12` (PR#2414 by Jan Kaliszewski).
 
 ### Tests
 
