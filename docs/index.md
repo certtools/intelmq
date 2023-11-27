@@ -7,7 +7,7 @@
 [![CII Badge](https://bestpractices.coreinfrastructure.org/projects/4186/badge)](https://bestpractices.coreinfrastructure.org/projects/4186/)
 -->
 
-![IntelMQ](static/images/Logo_Intel_MQ.svg)
+![IntelMQ](/docs/static/images/Logo_Intel_MQ.svg)
 
 # Introduction
 
