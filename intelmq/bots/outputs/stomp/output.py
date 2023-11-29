@@ -76,8 +76,12 @@ class StompOutputBot(OutputBot, StompMixin):
 
         body = self.export_event(event)
 
-        self._conn.send(body=body,
-                        destination=self.exchange)
+        try:
+            self._conn.send(body=body, destination=self.exchange)
+        except stomp.exception.NotConnectedException:
+            self.logger.warning("Detected connection error, trying to reestablish it.")
+            self.connect()
+            raise  # Fallback to default retry
         self.acknowledge_message()
 
     @classmethod
