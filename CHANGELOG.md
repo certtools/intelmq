@@ -32,6 +32,7 @@
   which provides certain common STOMP-bot-specific operations, factored out from
   `intelmq.bots.collectors.stomp.collector` and `intelmq.bots.outputs.stomp.output`
   (PR#2408 and PR#2414 by Jan Kaliszewski).
+- `intelmq.lib.upgrades`: Replace deprecated instances of `url2fqdn` experts by the new `url` expert in runtime configuration (PR#2432 by Sebastian Wagner).
 
 ### Development
 - Makefile: Add codespell and test commands (PR#2425 by Sebastian Wagner).

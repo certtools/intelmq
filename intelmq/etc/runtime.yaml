@@ -156,16 +156,16 @@ taxonomy-expert:
   parameters:
     destination_queues:
       _default:
-      - url2fqdn-expert-queue
+      - url-expert-queue
   run_mode: continuous
-url2fqdn-expert:
-  bot_id: url2fqdn-expert
-  description: url2fqdn is the bot responsible to parsing the fqdn from the url.
+url-expert:
+  bot_id: url-expert
+  description: Extract additional information for the URL
   enabled: true
   group: Expert
   groupname: experts
-  module: intelmq.bots.experts.url2fqdn.expert
-  name: URL2FQDN
+  module: intelmq.bots.experts.url.expert
+  name: url
   parameters:
     destination_queues:
       _default:
