@@ -308,9 +308,24 @@ class Bot:
             self.shutdown()  # disconnects, stops threads etc
         except Exception:
             self.logger.exception('Error during shutdown of bot.')
-        self.logger.handlers = []  # remove all existing handlers
+        self.__cleanup_logging_handlers()
         self.__sighup.clear()
         self.__init__(self.__bot_id_full, sighup_event=self.__sighup, standalone=self._standalone)
+
+    def __cleanup_logging_handlers(self):
+        # thread-safe removing of handlers and closing opened files
+        handlers_list = self.logger.handlers[:]
+        for handler in handlers_list:
+            try:
+                self.logger.removeHandler(handler)
+                # ensure all log files are closed to prevent caching them in RAM
+                if isinstance(handler, logging.FileHandler):
+                    handler.close()
+            except:
+                # Logger should still be safe to use even without handlers
+                # In addition, we do not want any side issue to break execution
+                #  - we are about to reinitialize logging.
+                self.logger.exception("Error while cleaning up logging handlers")
 
     def init(self):
         pass
