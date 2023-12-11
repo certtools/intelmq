@@ -884,7 +884,7 @@ def v322_url_replacement(configuration, harmonization, dry_run, **kwargs):
     """
     Replace deprecated url2fqdn expert with url expert.
     """
-    changed = False
+    changed = None
     for bot_id, bot in configuration.items():
         if bot_id == 'global':
             continue
