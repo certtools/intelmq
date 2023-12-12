@@ -132,7 +132,8 @@ def _generate_separated_raws_schema(fields: dict, partition_key: str) -> list:
 
 
 def generate(harmonization_file=HARMONIZATION_CONF_FILE, skip_events=False,
-             separate_raws=False, partition_key=None, skip_or_replace=False):
+             separate_raws=False, partition_key=None, skip_or_replace=False,
+             use_jsonb=False):
     FIELDS = {}
     sql_lines = []
 
@@ -170,7 +171,7 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE, skip_events=False,
         elif value['type'] == 'UUID':
             dbtype = 'UUID'
         elif value['type'] in ('JSON', 'JSONDict'):
-            dbtype = 'json'
+            dbtype = 'jsonb' if use_jsonb else 'json'
         else:
             raise ValueError('Unknown type %r.' % value['type'])
 
@@ -212,6 +213,8 @@ def main():
                         help="Path to the harmonization file")
     parser.add_argument("--skip-or-replace", default=False, action="store_true",
                         help="Add IF NOT EXISTS or REPLACE directive to created schemas")
+    parser.add_argument("--jsonb", default=False, action="store_true",
+                        help="Use JSONB type to represent dictionary fields")
     args = parser.parse_args()
 
     OUTPUTFILE = args.outputfile
@@ -229,6 +232,7 @@ def main():
                         separate_raws=args.separate_raws,
                         partition_key=args.partition_key,
                         skip_or_replace=args.skip_or_replace,
+                        use_jsonb=args.jsonb,
                         )
         print("INFO - Writing %s file" % OUTPUTFILE)
         fp.write(psql)
