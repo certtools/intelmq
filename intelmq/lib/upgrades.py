@@ -39,6 +39,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v310_feed_changes',
            'v310_shadowserver_feednames',
            'v320_update_turris_greylist_url',
+           'v322_url_replacement',
            ]
 
 
@@ -879,6 +880,24 @@ def v320_update_turris_greylist_url(configuration, harmonization, dry_run, **kwa
     return ' '.join(messages) if messages else None, configuration, harmonization
 
 
+def v322_url_replacement(configuration, harmonization, dry_run, **kwargs):
+    """
+    Replace deprecated url2fqdn expert with url expert.
+    """
+    changed = None
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
+        if bot["module"] == "intelmq.bots.experts.url2fqdn.expert":
+            configuration[bot_id]["module"] = "intelmq.bots.experts.url.expert"
+            if "parameters" not in configuration[bot_id]:
+                configuration[bot_id]["parameters"] = {}
+            # skip all fields except the fqdn field for backwards compatibility
+            configuration[bot_id]["parameters"]["skip_fields"] = ["source.ip", "source.port", "source.urlpath", "source.account", "destination.ip", "destination.port", "destination.urlpath", "destination.account", "protocol.application", "protocol.transport"]
+            changed = True
+    return changed, configuration, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax,)),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -905,6 +924,7 @@ UPGRADES = OrderedDict([
     ((3, 0, 2), ()),
     ((3, 1, 0), (v310_feed_changes, v310_shadowserver_feednames)),
     ((3, 2, 0), (v320_update_turris_greylist_url,)),
+    ((3, 2, 2), (v322_url_replacement, )),
 ])
 
 ALWAYS = (harmonization,)
