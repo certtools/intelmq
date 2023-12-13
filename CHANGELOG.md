@@ -106,7 +106,7 @@
 ### Tools
  - `intelmq_psql_initdb`:
    -  got support for providing custom harmonization file, generating view for storing `raw` fields separately, and adding `IF NOT EXISTS`/`OR REPLACE` clauses ([PR#2404](https://github.com/certtools/intelmq/pull/2404) by Kamil Mankowski).
-   -  got support for generating JSONB fields for PostgreSQL schema (PR by Kamil Mankowski).
+   -  got support for generating JSONB fields for PostgreSQL schema (PR#2436 by Kamil Mankowski).
 
 ### Contrib
 
