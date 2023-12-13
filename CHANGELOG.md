@@ -33,6 +33,7 @@
   `intelmq.bots.collectors.stomp.collector` and `intelmq.bots.outputs.stomp.output`
   (PR#2408 and PR#2414 by Jan Kaliszewski).
 - `intelmq.lib.upgrades`: Replace deprecated instances of `url2fqdn` experts by the new `url` expert in runtime configuration (PR#2432 by Sebastian Wagner).
+- `intelmq.lib.bot`: Ensure closing log files on reloading (PR#2435 by Kamil Mankowski).
 
 ### Development
 - Makefile: Add codespell and test commands (PR#2425 by Sebastian Wagner).
