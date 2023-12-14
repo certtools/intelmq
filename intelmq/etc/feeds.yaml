@@ -29,42 +29,6 @@ providers:
       revision: 2022-11-15
       documentation: https://viriback.com/
       public: true
-  WebInspektor:
-    Unsafe sites:
-      description: Latest detected unsafe sites.
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://app.webinspector.com/public/recent_detections/
-            rate_limit: 60
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.webinspektor.parser
-          parameters:
-      revision: 2018-03-09
-      documentation:
-      public: true
-  Sucuri:
-    Hidden IFrames:
-      description: Latest hidden iframes identified on compromised web sites.
-      additional_information: Please note that the parser only extracts the hidden iframes  and the conditional redirects, not the encoded javascript.
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://labs.sucuri.net/?malware
-            rate_limit: 86400
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.sucuri.parser
-          parameters:
-      revision: 2018-01-28
-      documentation: http://labs.sucuri.net/?malware
-      public: true
   Surbl:
     Malicious Domains:
       description: Detected malicious domains. Note that you have to opened up Sponsored Datafeed Service (SDS) access to the SURBL data via rsync for your IP address.
@@ -170,61 +134,6 @@ providers:
       revision: 2018-02-06
       documentation: https://www.openphish.com/phishing_feeds.html
       public: false
-  Netlab 360:
-    Magnitude EK:
-      description: 'This feed lists FQDN and possibly the URL used by Magnitude Exploit
-        Kit. Information also includes the IP address used for the domain and last
-        time seen.'
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://data.netlab.360.com/feeds/ek/magnitude.txt
-            rate_limit: 3600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.netlab_360.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://data.netlab.360.com/ek
-      public: true
-    DGA:
-      description: 'This feed lists DGA family, Domain, Start and end of valid time(UTC)
-        of a number of DGA families.'
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: http://data.netlab.360.com/feeds/dga/dga.txt
-            rate_limit: 3600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.netlab_360.parser
-          parameters:
-      revision: 2018-01-20
-      documentation: http://data.netlab.360.com/dga
-      public: true
-    Hajime Scanner:
-      description: 'This feed lists IP address for know Hajime bots network. These IPs data are obtained by joining the DHT network and interacting with the Hajime node'
-      additional_information:
-      bots:
-        collector:
-          module: intelmq.bots.collectors.http.collector_http
-          parameters:
-            http_url: https://data.netlab.360.com/feeds/hajime-scanner/bot.list
-            rate_limit: 3600
-            name: __FEED__
-            provider: __PROVIDER__
-        parser:
-          module: intelmq.bots.parsers.netlab_360.parser
-          parameters:
-      revision: 2019-08-01
-      documentation: https://data.netlab.360.com/hajime/
-      public: true
   Abuse.ch:
     Feodo Tracker:
       description: 'List of botnet Command & Control servers (C&Cs) tracked by Feodo Tracker, associated with Dridex and Emotet (aka Heodo).'

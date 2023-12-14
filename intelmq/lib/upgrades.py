@@ -40,6 +40,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v310_shadowserver_feednames',
            'v320_update_turris_greylist_url',
            'v322_url_replacement',
+           'v322_removed_feeds_and_bots'
            ]
 
 
@@ -898,6 +899,59 @@ def v322_url_replacement(configuration, harmonization, dry_run, **kwargs):
     return changed, configuration, harmonization
 
 
+def v322_removed_feeds_and_bots(configuration, harmonization, dry_run, **kwargs):
+    """
+    Discontinued feeds and bots detection
+    """
+
+    messages = []
+    discontinued_bots = []
+
+    discontinued_bots_modules = [
+        "intelmq.bots.parsers.netlab_360.parser",
+        "intelmq.bots.parsers.webinspektor.parser",
+        "intelmq.bots.parsers.sucuri.parser"
+    ]
+
+    discontinued_feeds = []
+
+    discontinued_feeds_urls = [
+        'http://data.netlab.360.com/feeds/dga/dga.txt',
+        'https://data.netlab.360.com/feeds/dga/dga.txt',
+        'http://data.netlab.360.com/feeds/ek/magnitude.txt',
+        'https://data.netlab.360.com/feeds/ek/magnitude.txt',
+        'http://data.netlab.360.com/feeds/hajime-scanner/bot.list',
+        'https://data.netlab.360.com/feeds/hajime-scanner/bot.list',
+        'http://labs.sucuri.net/?malware',
+        'https://app.webinspector.com/public/recent_detections/'
+    ]
+
+    for bot_id, bot in configuration.items():
+
+        if bot_id == 'global':
+            continue
+
+        if bot["module"] in discontinued_bots_modules:
+            discontinued_bots.append(bot_id)
+
+        elif bot["module"] == "intelmq.bots.collectors.http.collector":
+            url: str = bot["parameters"].get("http_url", "")
+
+            if url in discontinued_feeds_urls:
+                discontinued_feeds.append(bot_id)
+
+    if discontinued_bots:
+        messages.append(f"Found discontinued bots: {', '.join(discontinued_bots)}")
+
+    if discontinued_feeds:
+        messages.append(f"Found discontinued feeds collected by bots: {', '.join(discontinued_feeds)}")
+
+    if messages:
+        messages.append("Remove the affected bots from the configuration.")
+
+    return '\n'.join(messages) if messages else None, configuration, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax,)),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -924,7 +978,7 @@ UPGRADES = OrderedDict([
     ((3, 0, 2), ()),
     ((3, 1, 0), (v310_feed_changes, v310_shadowserver_feednames)),
     ((3, 2, 0), (v320_update_turris_greylist_url,)),
-    ((3, 2, 2), (v322_url_replacement, )),
+    ((3, 2, 2), (v322_url_replacement, v322_removed_feeds_and_bots)),
 ])
 
 ALWAYS = (harmonization,)

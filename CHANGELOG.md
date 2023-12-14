@@ -63,6 +63,9 @@
   - Minor fixes/improvements and some refactoring (see also above: *Core*...).
 
 #### Parsers
+  - `intelmq.bots.parsers.netlab_360.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
+  - `intelmq.bots.parsers.webinspektor.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
+  - `intelmq.bots.parsers.sucuri.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
 
 #### Experts
 - `intelmq.bots.experts.jinja` (PR#2417 by Mikk Margus Möll):
