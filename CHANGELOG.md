@@ -88,6 +88,8 @@
   - Minor fixes/improvements and some refactoring (see also above: *Core*...).
 - `intelmq.bots.outputs.stomp.output` (PR#2423 by Kamil Mankowski):
   - Try to reconnect on `NotConnectedException`.
+- `intelmq.bots.outputs.smtp_batch.output` (PR #2439 by Edvard Rejthar):
+  - Fix ability to send with the default `bcc`
 
 ### Documentation
 - Add a readthedocs configuration file to fix the build fail (PR#2403 by Sebastian Wagner).
