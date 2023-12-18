@@ -33,6 +33,7 @@
   `intelmq.bots.collectors.stomp.collector` and `intelmq.bots.outputs.stomp.output`
   (PR#2408 and PR#2414 by Jan Kaliszewski).
 - `intelmq.lib.upgrades`: Replace deprecated instances of `url2fqdn` experts by the new `url` expert in runtime configuration (PR#2432 by Sebastian Wagner).
+- `intelmq.lib.bot`: Ensure closing log files on reloading (PR#2435 by Kamil Mankowski).
 
 ### Development
 - Makefile: Add codespell and test commands (PR#2425 by Sebastian Wagner).
@@ -87,6 +88,8 @@
   - Minor fixes/improvements and some refactoring (see also above: *Core*...).
 - `intelmq.bots.outputs.stomp.output` (PR#2423 by Kamil Mankowski):
   - Try to reconnect on `NotConnectedException`.
+- `intelmq.bots.outputs.smtp_batch.output` (PR #2439 by Edvard Rejthar):
+  - Fix ability to send with the default `bcc`
 
 ### Documentation
 - Add a readthedocs configuration file to fix the build fail (PR#2403 by Sebastian Wagner).
@@ -104,7 +107,9 @@
 ### Tests
 
 ### Tools
- - `intelmq_psql_initdb` got support for providing custom harmonization file, generating view for storing `raw` fields separately, and adding `IF NOT EXISTS`/`OR REPLACE` clauses ([PR#2404](https://github.com/certtools/intelmq/pull/2404) by Kamil Mankowski).
+ - `intelmq_psql_initdb`:
+   -  got support for providing custom harmonization file, generating view for storing `raw` fields separately, and adding `IF NOT EXISTS`/`OR REPLACE` clauses ([PR#2404](https://github.com/certtools/intelmq/pull/2404) by Kamil Mankowski).
+   -  got support for generating JSONB fields for PostgreSQL schema (PR#2436 by Kamil Mankowski).
 
 ### Contrib
 

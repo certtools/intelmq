@@ -246,9 +246,8 @@ class SMTPBatchOutputBot(Bot):
             lines.extend(json.loads(str(message, encoding="utf-8")) for message in messages)
 
             # prepare rows for csv attachment
-            threshold = datetime.datetime.now() - datetime.timedelta(
-                days=self.ignore_older_than_days) if getattr(self, 'ignore_older_than_days',
-                                                             False) else False
+            threshold = self.ignore_older_than_days and \
+                datetime.datetime.now() - datetime.timedelta(days=self.ignore_older_than_days)
 
             # TODO: worthy to generate on the fly https://github.com/certtools/intelmq/pull/2253#discussion_r1172779620
             fieldnames = set()
@@ -338,7 +337,7 @@ class SMTPBatchOutputBot(Bot):
             return (Envelope(text)
                     .attach(path=mail.path, name=attachment_name + '.zip')
                     .from_(email_from).to(email_to)
-                    .bcc([] if intended_to else getattr(self, 'bcc', []))
+                    .bcc(not intended_to and self.bcc or [])
                     .subject(subject)
                     .smtp(self.smtp_server)
                     .signature(self.gpg_key, self.gpg_pass)
