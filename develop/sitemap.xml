@@ -226,11 +226,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.intelmq.org/develop/unsorted/shadowserver/</loc>
-         <lastmod>2023-12-18</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://docs.intelmq.org/develop/user/abuse-contacts/</loc>
          <lastmod>2023-12-18</lastmod>
          <changefreq>daily</changefreq>
