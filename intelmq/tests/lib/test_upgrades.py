@@ -574,6 +574,30 @@ V322_URL2FQN_OUT = {
     },
 }
 
+V322_DISCONTINUED_BOTS_AND_FEEDS_IN = {
+    "global": {},
+    "sucuri-parser": {
+        "module": "intelmq.bots.parsers.sucuri.parser"
+    },
+    "webinspektor-parser": {
+        "module": "intelmq.bots.parsers.webinspektor.parser"
+    },
+    "netlab360-parser": {
+        "module": "intelmq.bots.parsers.netlab_360.parser"
+    },
+    "sucuri-collector": {
+        "module": "intelmq.bots.collectors.http.collector",
+        "parameters": {
+            "http_url": "http://labs.sucuri.net/?malware"
+        }
+    }
+}
+
+V322_DISCONTINUED_BOTS_AND_FEEDS_OUT = """\
+Found discontinued bots: sucuri-parser, webinspektor-parser, netlab360-parser
+Found discontinued feeds collected by bots: sucuri-collector
+Remove the affected bots from the configuration."""
+
 
 def generate_function(function):
     def test_function(self):
@@ -794,6 +818,11 @@ class TestUpgradeLib(unittest.TestCase):
         result = upgrades.v322_url_replacement(V322_URL2FQN_IN_1, {}, False)
         self.assertTrue(result[0])
         self.assertEqual(V322_URL2FQN_OUT, result[1])
+
+    def test_v322_removed_feeds_and_bots(self):
+        """ Test v322_removed_feeds_and_bots """
+        result = upgrades.v322_removed_feeds_and_bots(V322_DISCONTINUED_BOTS_AND_FEEDS_IN, {}, False)
+        self.assertEqual(V322_DISCONTINUED_BOTS_AND_FEEDS_OUT, result[0])
 
 
 for name in upgrades.__all__:
