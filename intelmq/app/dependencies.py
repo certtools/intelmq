@@ -9,8 +9,8 @@ from typing import Generic, Optional, TypeVar
 
 from fastapi import Depends, Header, HTTPException, Response, status
 
-import intelmq_api.config
-import intelmq_api.session as session
+import intelmq.app.config
+import intelmq.app.api.session as session
 
 T = TypeVar("T")
 
@@ -31,7 +31,7 @@ class OneTimeDependency(Generic[T]):
         return self._value
 
 
-api_config = OneTimeDependency[intelmq_api.config.Config]()
+app_config = OneTimeDependency[intelmq.app.config.Config]()
 session_store = OneTimeDependency[session.SessionStore]()
 
 
@@ -52,10 +52,10 @@ def token_authorization(authorization: typing.Union[str, None] = Header(default=
                                 })
 
 
-def startup(config: intelmq_api.config.Config):
+def startup(config: intelmq.app.config.Config):
     """A starting point to one-time initialization of necessary dependencies. This needs to
         be called by the application on the startup."""
-    api_config.initialize(config)
+    app_config.initialize(config)
     session_file = config.session_store
     if session_file is not None:
         session_store.initialize(session.SessionStore(str(session_file),

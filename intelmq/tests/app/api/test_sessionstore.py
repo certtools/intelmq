@@ -8,7 +8,7 @@ import tempfile
 import os
 from pathlib import Path
 
-from intelmq_api.session import SessionStore
+from intelmq.app.api.session import SessionStore
 
 
 class TestSessionStore(unittest.TestCase):

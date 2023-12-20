@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-import intelmq_api.runctl as runctl
+import intelmq.app.api.runctl as runctl
 
 
 def ctl_error_handler(request: Request, exc: runctl.IntelMQCtlError):

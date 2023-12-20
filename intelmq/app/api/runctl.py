@@ -16,8 +16,8 @@ import json
 import subprocess
 from typing import List, Dict, Optional
 
-from intelmq_api.util import shell_command_for_errors
-from .version import __version__
+from intelmq.app.api.util import shell_command_for_errors
+from intelmq.version import __version__
 
 #
 # Typing aliases for use with RunIntelMQCtl
@@ -120,10 +120,7 @@ class RunIntelMQCtl:
         return self._run_json(["list", kind])
 
     def version(self) -> Dict[str, str]:
-        intelmq_version = self._run_str(["--version"]).strip()
-        return {"intelmq": intelmq_version,
-                "intelmq-api": __version__,
-                }
+        return {"intelmq": __version__}
 
     def check(self) -> JSONFile:
         return self._run_json(["check"])

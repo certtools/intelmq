@@ -15,7 +15,7 @@ IntelMQ.
 from pathlib import PurePath, Path
 from typing import Optional, Tuple, Union, Dict, Any, Iterable, BinaryIO
 
-from intelmq_api.config import Config
+from intelmq.app.config import Config
 
 
 def path_starts_with(path: PurePath, prefix: PurePath) -> bool:
@@ -40,7 +40,7 @@ class FileAccess:
         self.allowed_path = config.allowed_path
 
     def file_name_allowed(self, filename: str) -> Optional[Tuple[bool, Path]]:
-        """Determine wether the API should allow access to a file."""
+        """Determine whether the API should allow access to a file."""
         resolved = Path(filename).resolve()
         if not path_starts_with(resolved, self.allowed_path):
             return None

@@ -11,18 +11,21 @@ import tempfile
 from tempfile import TemporaryDirectory
 from typing import Dict, List, Optional
 from unittest import TestCase, mock
-
+from unittest.mock import patch, MagicMock
 from fastapi.testclient import TestClient
-from intelmq.lib import utils  # type: ignore
 
-from intelmq_api import dependencies
-from intelmq_api.api import runner
-from intelmq_api.config import Config
-from intelmq_api.dependencies import session_store
-from intelmq_api.main import app
-from intelmq_api.runctl import RunIntelMQCtl
-from intelmq_api.session import SessionStore
-from intelmq_api.version import __version__
+
+with patch("intelmq.lib.utils.get_intelmq_settings", MagicMock(return_value={})):
+
+    from intelmq.app import dependencies
+    from intelmq.app.api.router import runner
+    from intelmq.app.dependencies import session_store
+    from intelmq.app.api.runctl import RunIntelMQCtl
+    from intelmq.app.api.session import SessionStore
+    from intelmq.app.config import Config
+    from intelmq.version import __version__
+    from intelmq.app.server import app
+    from intelmq.lib import utils  # type: ignore
 
 
 class DummyConfig(Config):
@@ -64,10 +67,10 @@ class TestApiWithCLI(TestCase):
         app.dependency_overrides = {}
 
     def test_version(self):
-        response = self.client.get("/v1/api/version")
+        response = self.client.get("/api/v1/version")
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.json(), dict)
-        self.assertEqual(response.json()["intelmq-api"], __version__)
+        self.assertEqual(response.json()["intelmq"], __version__)
 
     def test_ensure_response_get_values_and_is_json(self):
         json_paths = ["botnet?action=status", "bot?action=status&id=1",
@@ -76,14 +79,14 @@ class TestApiWithCLI(TestCase):
 
         for path in json_paths:
             with self.subTest(path):
-                response = self.client.get(f"/v1/api/{path}")
+                response = self.client.get(f"/api/v1/{path}")
                 self.assertEqual(response.status_code, 200)
                 self.assertIsInstance(response.json(), dict)
                 self.assertEqual(response.json(), {"some": "json"})
 
     def test_run_input(self):
         response = self.client.post(
-            "/v1/api/run?bot=feodo-tracker-browse-parser&cmd=get&dry=false&show=false",
+            "/api/v1/run?bot=feodo-tracker-browse-parser&cmd=get&dry=false&show=false",
             data={"msg": "some message"})
         self.assertEqual(response.status_code, 200)
 
@@ -117,18 +120,6 @@ class TestApiWithDir(TestCase):
         self.path_patcher.stop()
         self.conf_dir.cleanup()
 
-    def test_handle_path_with_doubled_slashes(self):
-        """The IntelMQ Manager doubles slashes in some paths, but FastAPI doesn't handle it.
-
-        In addition, IntelMQ Manager doesn't respect redirection. As so, keeping the invalid
-        paths for backward compatibility."""
-        PATHS = ["/v1/api//runtime", "/v1/api//positions"]
-        for path in PATHS:
-            with self.subTest(path):
-                response = self.client.post(path, json={})
-                self.assertEqual(response.status_code, 200)
-                self.assertEqual(response.text, "success")
-
     def test_post_runtime(self):
         data = {
             "some-bot": {
@@ -146,7 +137,7 @@ class TestApiWithDir(TestCase):
                 "run_mode": "continuous"
             }
         }
-        response = self.client.post("/v1/api/runtime", json=data)
+        response = self.client.post("/api/v1/runtime", json=data)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.text, "success")
@@ -160,7 +151,7 @@ class TestApiWithDir(TestCase):
                 "y": 314
             }
         }
-        response = self.client.post("/v1/api/positions", json=data)
+        response = self.client.post("/api/v1/positions", json=data)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.text, "success")
@@ -187,24 +178,24 @@ class TestAPILogin(TestCase):
         app.dependency_overrides = {}
 
     def test_login(self):
-        response = self.client.post("/v1/api/login", data={"username": "test", "password": "pass"})
+        response = self.client.post("/api/v1/login", data={"username": "test", "password": "pass"})
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.json().get("login_token"))
 
     def test_login_and_call(self):
-        response = self.client.post("/v1/api/login", data={"username": "test", "password": "pass"})
+        response = self.client.post("/api/v1/login", data={"username": "test", "password": "pass"})
         self.assertEqual(response.status_code, 200)
 
         token = response.json().get("login_token")
-        authorized_response = self.client.get("/v1/api/version", headers={"authorization": token})
+        authorized_response = self.client.get("/api/v1/version", headers={"authorization": token})
         self.assertEqual(authorized_response.status_code, 200)
-        self.assertEqual(authorized_response.json()["intelmq-api"], __version__)
+        self.assertEqual(authorized_response.json()["intelmq"], __version__)
 
     def test_unauthorized_call(self):
-        response = self.client.get("/v1/api/version")
+        response = self.client.get("/api/v1/version")
         self.assertEqual(response.status_code, 401)
 
     def test_bad_token(self):
         response = self.client.get(
-            "/v1/api/version", headers={"authorization": "not-a-valid-token"})
+            "/api/v1/version", headers={"authorization": "not-a-valid-token"})
         self.assertEqual(response.status_code, 401)

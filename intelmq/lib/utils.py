@@ -48,7 +48,7 @@ from ruamel.yaml.scanner import ScannerError
 from termstyle import red
 
 import intelmq
-from intelmq import RUNTIME_CONF_FILE
+from intelmq import RUNTIME_CONF_FILE, INTELMQ_CONF_FILE
 from intelmq.lib.exceptions import DecodingError
 
 try:
@@ -923,9 +923,18 @@ def get_runtime() -> dict:
     return load_configuration(RUNTIME_CONF_FILE)
 
 
+def get_intelmq_settings() -> dict:
+    return load_configuration(INTELMQ_CONF_FILE)
+
+
 def get_global_settings() -> dict:
     runtime_conf = get_runtime()
     return runtime_conf.get('global', {})
+
+
+def get_server_settings() -> dict:
+    global_settings = get_intelmq_settings()
+    return global_settings.get('server', {})
 
 
 def set_runtime(runtime: dict) -> dict:

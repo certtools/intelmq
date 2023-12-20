@@ -21,16 +21,16 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from intelmq.lib import utils  # type: ignore
 from typing_extensions import Literal  # Python 3.8+
 
-import intelmq_api.config
-import intelmq_api.files as files
-import intelmq_api.runctl as runctl
-import intelmq_api.session as session
+import intelmq.app.config
+import intelmq.app.api.files as files
+import intelmq.app.api.runctl as runctl
+import intelmq.app.api.session as session
 
-from .dependencies import (api_config, cached_response, session_store,
-                           token_authorization)
+from intelmq.app.dependencies import (app_config, cached_response, session_store,
+                                      token_authorization)
 from .models import TokenResponse
 
-api = APIRouter()
+router = APIRouter()
 
 
 Levels = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALL"]
@@ -48,11 +48,11 @@ def ID(id: str) -> str:
     return id
 
 
-def runner(config: intelmq_api.config.Config = Depends(api_config)):
+def runner(config: intelmq.app.config.Config = Depends(app_config)):
     return runctl.RunIntelMQCtl(config.intelmq_ctl_cmd)
 
 
-def file_access(config: intelmq_api.config.Config = Depends(api_config)):
+def file_access(config: intelmq.app.config.Config = Depends(app_config)):
     return files.FileAccess(config)
 
 
@@ -67,65 +67,71 @@ class JSONFileResponse(JSONResponse):
         return content
 
 
-@api.get("/api/botnet", dependencies=[authorized])
+@router.get("/")
+def api_base_url():
+    """Do not rename or delete!"""
+    return JSONResponse({})
+
+
+@router.get("/botnet", dependencies=[authorized])
 def botnet(action: Actions, group: typing.Optional[Groups] = None,
            runner: runctl.RunIntelMQCtl = Depends(runner)):
     return JSONFileResponse(runner.botnet(action, group))
 
 
-@api.get("/api/bot", dependencies=[authorized])
+@router.get("/bot", dependencies=[authorized])
 def bot(action: Actions, id: str = Depends(ID), runner: runctl.RunIntelMQCtl = Depends(runner)):
     return JSONFileResponse(runner.bot(action, id))
 
 
-@api.get("/api/getlog", dependencies=[authorized, cached])
+@router.get("/getlog", dependencies=[authorized, cached])
 def get_log(lines: int, id: str = Depends(ID), level: Levels = "DEBUG",
             runner: runctl.RunIntelMQCtl = Depends(runner)):
     return JSONFileResponse(runner.log(id, lines, level))
 
 
-@api.get("/api/queues", dependencies=[authorized, cached])
+@router.get("/queues", dependencies=[authorized, cached])
 def queues(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return JSONFileResponse(runner.list("queues"))
 
 
-@api.get("/api/queues-and-status", dependencies=[authorized, cached])
+@router.get("/queues-and-status", dependencies=[authorized, cached])
 def queues_and_status(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return JSONFileResponse(runner.list("queues-and-status"))
 
 
-@api.get("/api/bots", dependencies=[authorized, cached])
+@router.get("/bots", dependencies=[authorized, cached])
 def bots(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return JSONFileResponse(runner.list("bots"))
 
 
-@api.get("/api/version", dependencies=[authorized], response_model=dict)
+@router.get("/version", dependencies=[authorized], response_model=dict)
 def version(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.version()
 
 
-@api.get("/api/check", dependencies=[authorized])
+@router.get("/check", dependencies=[authorized])
 def check(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return JSONFileResponse(runner.check())
 
 
-@api.get("/api/clear", dependencies=[authorized])
+@router.get("/clear", dependencies=[authorized])
 def clear(id: str = Depends(ID), runner: runctl.RunIntelMQCtl = Depends(runner)):
     return JSONFileResponse(runner.clear(id))
 
 
-@api.post("/api/run", dependencies=[authorized], response_model=str)
+@router.post("/run", dependencies=[authorized], response_model=str)
 def run(bot: str, cmd: BotCmds, show: bool = False, dry: bool = False, msg: str = Form(default=""),
         runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.run(bot, cmd, show, dry, msg)
 
 
-@api.get("/api/debug", dependencies=[authorized])
+@router.get("/debug", dependencies=[authorized])
 def debug(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return JSONFileResponse(runner.debug())
 
 
-@api.get("/api/config", dependencies=[authorized])
+@router.get("/config", dependencies=[authorized])
 def config(file: str, fetch: bool = False,
            file_access: files.FileAccess = Depends(file_access)):
     result = file_access.load_file_or_directory(file, fetch)
@@ -136,7 +142,7 @@ def config(file: str, fetch: bool = False,
     return Response(contents, headers={"content-type": content_type})
 
 
-@api.post("/api/login", status_code=status.HTTP_200_OK, response_model=TokenResponse)
+@router.post("/login", status_code=status.HTTP_200_OK, response_model=TokenResponse)
 def login(username: str = Form(...), password: str = Form(...),
           session: session.SessionStore = Depends(session_store)):
     if session is None:
@@ -156,7 +162,7 @@ def login(username: str = Form(...), password: str = Form(...),
                                 detail="Invalid username and/or password.")
 
 
-@api.get("/api/harmonization", dependencies=[authorized], response_model=dict)
+@router.get("/harmonization", dependencies=[authorized], response_model=dict)
 def get_harmonization(runner: runctl.RunIntelMQCtl = Depends(runner)):
     harmonization = pathlib.Path('/opt/intelmq/etc/harmonization.conf')
     paths = runner.get_paths()
@@ -169,16 +175,13 @@ def get_harmonization(runner: runctl.RunIntelMQCtl = Depends(runner)):
         return {}
 
 
-@api.get("/api/runtime", dependencies=[authorized], response_model=dict)
+@router.get("/runtime", dependencies=[authorized], response_model=dict)
 def get_runtime():
     return utils.get_runtime()
 
 
-@api.post("/api//runtime", dependencies=[authorized], response_model=str, deprecated=True,
-          description="Invalid path for compatibility with older IntelMQ Manager versions",
-          response_class=PlainTextResponse)
-@api.post("/api/runtime", dependencies=[authorized], response_model=str,
-          response_class=PlainTextResponse)
+@router.post("/runtime", dependencies=[authorized], response_model=str,
+             response_class=PlainTextResponse)
 def post_runtime(body: dict):
     try:
         utils.set_runtime(body)
@@ -188,7 +191,7 @@ def post_runtime(body: dict):
         return str(e)
 
 
-@api.get("/api/positions", dependencies=[authorized], response_model=dict)
+@router.get("/positions", dependencies=[authorized], response_model=dict)
 def get_positions(runner: runctl.RunIntelMQCtl = Depends(runner)):
     positions = pathlib.Path('/opt/intelmq/etc/manager/positions.conf')
     paths = runner.get_paths()
@@ -201,11 +204,8 @@ def get_positions(runner: runctl.RunIntelMQCtl = Depends(runner)):
         return {}
 
 
-@api.post("/api//positions", dependencies=[authorized], response_model=str, deprecated=True,
-          description="Invalid path for compatibility with older IntelMQ Manager versions",
-          response_class=PlainTextResponse)
-@api.post("/api/positions", dependencies=[authorized], response_model=str,
-          response_class=PlainTextResponse)
+@router.post("/positions", dependencies=[authorized], response_model=str,
+             response_class=PlainTextResponse)
 def post_positions(body: dict, runner: runctl.RunIntelMQCtl = Depends(runner)):
     positions = pathlib.Path('/opt/intelmq/etc/manager/positions.conf')
     paths = runner.get_paths()
