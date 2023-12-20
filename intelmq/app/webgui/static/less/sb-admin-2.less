@@ -1,0 +1,542 @@
+/*!
+ * Start Bootstrap - SB Admin 2 Bootstrap Admin Theme (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+body {
+    background-color: #f8f8f8;
+    overflow: auto;
+}
+
+@media(min-width:768px) {
+    body {
+        overflow: hidden;
+    }
+}
+
+#page-wrapper {
+    margin: 0px;
+    padding: 0px;
+    min-height: 568px;
+    background-color: #fff;
+}
+
+#page-wrapper-with-sidebar {
+    padding: 0px;
+    min-height: 568px;
+    background-color: #fff;
+}
+
+@media(min-width:768px) {
+    #page-wrapper-with-sidebar {
+        position: inherit;
+        margin: 0 0 0 250px;
+        padding: 0px;
+        border-left: 1px solid #e7e7e7;
+    }
+}
+
+.navbar-top-links li {
+    display: inline-block;
+}
+
+.navbar-top-links li:last-child {
+    margin-right: 15px;
+}
+
+.navbar-top-links li a {
+    padding: 15px;
+    min-height: 50px;
+}
+
+.navbar-top-links .dropdown-menu li {
+    display: block;
+}
+
+.navbar-top-links .dropdown-menu li:last-child {
+    margin-right: 0;
+}
+
+.navbar-top-links .dropdown-menu li a {
+    padding: 3px 20px;
+    min-height: 0;
+}
+
+.navbar-top-links .dropdown-menu li a div {
+    white-space: normal;
+}
+
+.navbar-top-links .dropdown-messages,
+.navbar-top-links .dropdown-tasks,
+.navbar-top-links .dropdown-alerts {
+    width: 310px;
+    min-width: 0;
+}
+
+.navbar-top-links .dropdown-messages {
+    margin-left: 5px;
+}
+
+.navbar-top-links .dropdown-tasks {
+    margin-left: -59px;
+}
+
+.navbar-top-links .dropdown-alerts {
+    margin-left: -123px;
+}
+
+.navbar-top-links .dropdown-user {
+    right: 0;
+    left: auto;
+}
+
+.sidebar .sidebar-nav.navbar-collapse {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.sidebar .sidebar-search {
+    padding: 15px;
+}
+
+.sidebar ul li {
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.sidebar ul li a.active {
+    background-color: #eee;
+}
+
+.sidebar .arrow {
+    float: right;
+}
+
+.sidebar .fa.arrow:before {
+    content: "\f104";
+}
+
+.sidebar .active>a>.fa.arrow:before {
+    content: "\f107";
+}
+
+.sidebar .nav-second-level li,
+.sidebar .nav-third-level li {
+    border-bottom: 0!important;
+}
+
+.sidebar .nav-second-level li a {
+    padding-left: 37px;
+}
+
+.sidebar .nav-third-level li a {
+    padding-left: 52px;
+}
+
+#customListItem{
+    border-bottom: none;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+@media(min-width:768px) {
+    .sidebar {
+        z-index: 1;
+        position: absolute;
+        width: 250px;
+        margin-top: 0px;
+    }
+
+    .navbar-top-links .dropdown-messages,
+    .navbar-top-links .dropdown-tasks,
+    .navbar-top-links .dropdown-alerts {
+        margin-left: auto;
+    }
+}
+
+.btn-outline {
+    color: inherit;
+    background-color: transparent;
+    transition: all .5s;
+}
+
+.btn-primary.btn-outline {
+    color: #428bca;
+}
+
+.btn-success.btn-outline {
+    color: #5cb85c;
+}
+
+.btn-info.btn-outline {
+    color: #5bc0de;
+}
+
+.btn-warning.btn-outline {
+    color: #f0ad4e;
+}
+
+.btn-danger.btn-outline {
+    color: #d9534f;
+}
+
+.btn-primary.btn-outline:hover,
+.btn-success.btn-outline:hover,
+.btn-info.btn-outline:hover,
+.btn-warning.btn-outline:hover,
+.btn-danger.btn-outline:hover {
+    color: #fff;
+}
+
+.chat {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.chat li {
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #999;
+}
+
+.chat li.left .chat-body {
+    margin-left: 60px;
+}
+
+.chat li.right .chat-body {
+    margin-right: 60px;
+}
+
+.chat li .chat-body p {
+    margin: 0;
+}
+
+.panel .slidedown .glyphicon,
+.chat .glyphicon {
+    margin-right: 5px;
+}
+
+.chat-panel .panel-body {
+    height: 350px;
+    overflow-y: scroll;
+}
+
+.login-panel {
+    margin-top: 25%;
+}
+
+.flot-chart {
+    display: block;
+    height: 400px;
+}
+
+.flot-chart-content {
+    width: 100%;
+    height: 100%;
+}
+
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc {
+  background: transparent;
+}
+
+table.dataTable thead .sorting_asc:after {
+    content: "\f0de";
+    float: right;
+    font-family: fontawesome;
+}
+
+table.dataTable thead .sorting_desc:after {
+    content: "\f0dd";
+    float: right;
+    font-family: fontawesome;
+}
+
+table.dataTable thead .sorting:after {
+    content: "\f0dc";
+    float: right;
+    font-family: fontawesome;
+    color: rgba(50,50,50,.5);
+}
+
+.highlightHovering td:first-child:hover {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.428571429;
+}
+
+.btn-circle.btn-lg {
+    width: 50px;
+    height: 50px;
+    padding: 10px 16px;
+    border-radius: 25px;
+    font-size: 18px;
+    line-height: 1.33;
+}
+
+.btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    border-radius: 35px;
+    font-size: 24px;
+    line-height: 1.33;
+}
+
+.show-grid [class^=col-] {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 1px solid #ddd;
+    background-color: #eee!important;
+}
+
+.show-grid {
+    margin: 15px 0;
+}
+
+.huge {
+    font-size: 40px;
+}
+
+.panel-green {
+    border-color: #5cb85c;
+}
+
+.panel-green .panel-heading {
+    border-color: #5cb85c;
+    color: #fff;
+    background-color: #5cb85c;
+}
+
+.panel-green a {
+    color: #5cb85c;
+}
+
+.panel-green a:hover {
+    color: #3d8b3d;
+}
+
+.panel-red {
+    border-color: #d9534f;
+}
+
+.panel-red .panel-heading {
+    border-color: #d9534f;
+    color: #fff;
+    background-color: #d9534f;
+}
+
+.panel-red a {
+    color: #d9534f;
+}
+
+.panel-red a:hover {
+    color: #b52b27;
+}
+
+.panel-yellow {
+    border-color: #f0ad4e;
+}
+
+.panel-yellow .panel-heading {
+    border-color: #f0ad4e;
+    color: #fff;
+    background-color: #f0ad4e;
+}
+
+.panel-yellow a {
+    color: #f0ad4e;
+}
+
+.panel-yellow a:hover {
+    color: #df8a13;
+}
+
+.jumbotron {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0px;
+    text-align: center;
+    height: 100%;
+    max-width: 90%;
+}
+
+.jumbotron .page-header-text {
+    background-color: #000000;
+    background-size: contain;
+    max-width: 100%;
+}
+
+.jumbotron .page-header-text span {
+    color: #ffffff;
+    text-align: center;
+    height: 100%;
+}
+
+.jumbotron-row {
+    margin-top: 15px;
+}
+
+.center-row {
+    text-align: center;
+}
+
+.center-row-content {
+    overflow: auto;
+    display: inline-block;
+    float: none;
+    margin: auto;
+}
+
+.header-img img {
+    height: 100px;
+    padding: 5px;
+}
+
+.thumbnail img {
+    width: 128px;
+    height: 128px;
+    padding: 15px;
+}
+
+.form-group {
+    margin-bottom: 45px;
+}
+
+#bot-table td:first-child:hover {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#network-popUp {
+    display:none;
+    position:absolute;
+    top:15%;
+    left:5%;
+    margin: auto;
+    z-index:299;
+    background-color: #FFFFFF;
+    border-style:solid;
+    border-width:3px;
+    border-color: #5394ed;
+    padding:10px;
+    width:90%;
+    text-align: center;
+}
+
+@media(min-width:768px) {
+    #network-popUp {
+        left: 25%;
+        width: 50%;
+    }
+}
+
+#network-popUp-fields {
+    background: #FFFFFF;
+    width: 100%;
+}
+
+#network-popUp-fields input {
+    width: 100%;
+}
+
+#network-popUp-fields td {
+    text-align: left;
+}
+
+form {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+#border{
+    text-align: center !important;
+    font-weight: bold;
+}
+
+#network-popUp-title {
+    width: 100%;
+    font-size:28px;
+    display: inherit;
+}
+
+#network-row {
+    display: none;
+    height: 90%;
+}
+
+#network-row.col-xs-10 {
+    height: 100%;
+}
+
+#network-row.col-xs-2 {
+    height: 100%;
+}
+
+#network-tab {
+    height: 100%;
+}
+
+.with-bot {
+    max-height: 75%;
+    overflow-y: auto;
+}
+
+.without-bot {
+
+}
+
+#logs-panel {
+    margin-top: 15px;
+}
+
+#queues-panel {
+    margin-top: 15px;
+}
+
+#queues-panel .width-80 {
+  width: 80%;
+}
+
+#queues-panel .width-20 {
+  width: 20%;
+}
+
+.waiting {
+    background-image: url('../images/waiting.gif');
+    background-repeat:  no-repeat;
+    background-size: 16px;
+    background-position: right 10px center;
+}
+
+.row {
+    margin: 0px;
+}
+
+.navbar-config {
+    margin-right: 16px;
+}
+
+.index-link:hover {
+    text-decoration: none;
+    box-shadow: 1px 1px 16px rgba(0, 0, 0, 1);
+}
+
+.index-link {
+    display: block;
+    box-shadow: 1px 1px 16px rgba(0, 0, 0, 0.20);
+}
