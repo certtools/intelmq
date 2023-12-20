@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2022 CERT.at GmbH <https://cert.at/>
+# SPDX-License-Identifier: CC0-1.0
+
+[Unit]
+Description=Gunicorn deamon to serve the IntelMQ API
+Requires=intelmq-api.socket
+After=network.target
+
+[Service]
+
+# To override settings path, use e.g.:
+# Environment="INTELMQ_API_CONFIG=/etc/intelmq/api-config.json"
+
+Environment="ROOT_PATH=/intelmq"
+User=www-data
+Group=www-data
+RuntimeDirectory=gunicorn
+WorkingDirectory=/usr/lib/python3/dist-packages/intelmq_api/
+ExecStart=/usr/bin/gunicorn intelmq_api.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind unix:intelmq_api.sock
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

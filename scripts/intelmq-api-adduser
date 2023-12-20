@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+#
+# SPDX-FileCopyrightText: 2021 Birger Schacht
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# IntelMQ-API adduser command
+import argparse
+import getpass
+import os
+import sys
+
+import intelmq_api.config
+import intelmq_api.session
+
+api_config: intelmq_api.config.Config = intelmq_api.config.Config(os.environ.get("INTELMQ_API_CONFIG"))
+
+parser = argparse.ArgumentParser(description='Add a user account to the IntelMQ-API session store.')
+parser.add_argument('--user', required=True, help='The username of the account.', type=str)
+parser.add_argument('--password', required=False, help='The password of the account.', type=str)
+
+args = parser.parse_args()
+
+if api_config.session_store is None:
+    print("Could not add user- no session store configured in configuration!", file=sys.stderr)
+    exit(1)
+
+session_store = intelmq_api.session.SessionStore(str(api_config.session_store), api_config.session_duration)
+
+if args.password is None:
+    password = getpass.getpass()
+else:
+    password = args.password
+session_store.add_user(args.user, password)
+print(f"Added user {args.user} to intelmq session file.")
