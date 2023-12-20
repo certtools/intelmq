@@ -1,9 +1,11 @@
-## SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
-## SPDX-License-Identifier: AGPL-3.0-or-later
+{#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>#}
+{#SPDX-License-Identifier: AGPL-3.0-or-later#}
 
-<%inherit file="base.mako" />
+{% extends "base.html" %}
 
-<!-- Page Content -->
+{% block title %}Management{% endblock %}
+
+{% block content %}
 <div id="page-wrapper">
     <div class="row">
         <div id="graph-container">
@@ -74,3 +76,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascript %}
+<script src="{{ url_for('static', path='js/runtime.js') }}"></script>
+<script src="{{ url_for('static', path='js/management.js') }}"></script>
+{% endblock %}

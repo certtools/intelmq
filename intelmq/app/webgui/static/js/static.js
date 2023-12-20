@@ -76,7 +76,7 @@ var LOAD_X_LOG_LINES = 30;
 
 var MESSAGE_LENGTH = 200;
 
-var MONITOR_BOT_URL = "monitor.html?bot_id={0}";
+var MONITOR_BOT_URL = "monitor?bot_id={0}";
 
 var page_is_exiting = false;
 

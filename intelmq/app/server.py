@@ -7,8 +7,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 import os
 import gunicorn.app.base
 import uvicorn
+import pathlib
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn.workers import UvicornH11Worker
 
@@ -18,6 +20,7 @@ import intelmq.app.api.exceptions
 
 from intelmq.app.config import Config
 from intelmq.app.api.router import router as api_router
+from intelmq.app.webgui.router import router as web_router
 
 
 class IntelMQUvicornWorker(UvicornH11Worker):
@@ -57,6 +60,11 @@ def init_app():
 
 app.add_middleware(CORSMiddleware, allow_origins=config.allow_origins, allow_methods=("GET", "POST"))
 app.include_router(api_router, prefix="/api/v1")
+
+if config.enable_webgui:
+    static_files = pathlib.Path(__file__).parent / "webgui" / "static"
+    app.mount("/static", StaticFiles(directory=static_files), name="static")
+    app.include_router(web_router)
 
 intelmq.app.api.exceptions.register(app)
 

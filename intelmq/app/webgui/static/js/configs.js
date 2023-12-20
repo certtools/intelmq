@@ -30,7 +30,7 @@ var documentation = null;
 var span = null;
 var table = null;
 var disabledKeys = ['group', 'name', 'module'];
-var $manipulation, $saveButton; // jQuery of Vis control panel; elements reseted with network
+var $manipulation, $saveButton; // jQuery of Vis control panel; elements reset with network
 var node = null;
 
 var $EDIT_DEFAULT_BUTTON = $("#editDefaults");
@@ -544,7 +544,7 @@ function saveData(data, callback) {
 
     saveFormData();
 
-    // check inputs beeing valid
+    // check inputs being valid
     if (node.bot_id === '' && node.group === '') {
         show_error('fields id and group must not be empty!');
         return;
@@ -740,7 +740,7 @@ function draw() {
     initNetwork();
     if (window.location.hash) {
         let node = window.location.hash.substr(1);
-        setTimeout(() => { // doesnt work immediately, I don't know why. Maybe a js guru would bind to visjs onready if that exists or sth.
+        setTimeout(() => { // doesn't work immediately, I don't know why. Maybe a js guru would bind to visjs onready if that exists or sth.
             try {
                 fitNode(node);
             } catch (e) {
