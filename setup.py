@@ -109,6 +109,8 @@ setup(
             'intelmqdump = intelmq.bin.intelmqdump:main',
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
             'intelmqsetup = intelmq.bin.intelmqsetup:main',
+            'intelmq-api-adduser = intelmq.__main__:intelmq_api_adduser',
+            'intelmq = intelmq.__main__:main'
         ] + BOTS,
     },
 )
