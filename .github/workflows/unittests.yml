@@ -62,7 +62,7 @@ jobs:
       run: bash .github/workflows/scripts/setup-full.sh
 
     - name: Install test dependencies
-      run: pip install pytest-cov Cerberus requests_mock coverage
+      run: pip install pytest-cov Cerberus requests_mock coverage httpx pycodestyle
 
     - name: Install dependencies
       if: ${{ matrix.type == 'basic' }}

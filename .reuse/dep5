@@ -30,6 +30,56 @@ Files:     debian/debian/py3dist-overrides
 Copyright: 2021 Birger Schacht
 License:   AGPL-3.0-or-later
 
-Files:     docs/_static/n6/data-flow.png docs/_static/n6/n6-schemat2.png
-Copyright: CERT.pl <n6@cert.pl>
-License:   AGPL-3.0-only
+Files:     intelmq/app/webgui/static/plugins/vis.js/*
+Copyright: 2011-2017 Almende B.V, http://almende.com
+License:   Apache-2.0
+
+Files:     intelmq/app/webgui/static/plugins/font-awesome-4.1.0/css/*
+           intelmq/app/webgui/static/plugins/font-awesome-4.1.0/less/*
+           intelmq/app/webgui/static/plugins/font-awesome-4.1.0/scss/*
+Copyright: Dave Gandy <drgandy@alum.mit.edu>
+License:   MIT
+
+Files:     intelmq/app/webgui/static/plugins/font-awesome-4.1.0/fonts/*
+Copyright: Dave Gandy <drgandy@alum.mit.edu>
+License:   CC-BY-3.0
+
+Files:     intelmq/app/webgui/static/plugins/metisMenu/*
+Copyright: Osman Nuri Okumuş
+License:   MIT
+
+Files:     intelmq/app/webgui/static/plugins/jquery*
+Copyright: JS Foundation and other contributors
+License:   MIT
+
+Files:     intelmq/app/webgui/static/plugins/dataTables/*
+Copyright: 2008-2017 SpryMedia Ltd.
+License:   MIT
+
+Files:     intelmq/app/webgui/static/plugins/bootstrap/*
+Copyright: Copyright 2011-2019 Twitter, Inc.
+License:   MIT
+
+Files:     intelmq/app/webgui/static/plugins/fonts/*
+Copyright: 2011-2014 Twitter, Inc.
+License:   MIT
+
+Files:     intelmq/app/webgui/static/images/check*
+Copyright: 2018 Sebastian Wagner
+License:   CC-BY-3.0
+
+Files:     intelmq/app/webgui/static/images/*
+Copyright: 2014-2016 Mauro Silva, Tomás Lima, Aaron Kaplan
+License:   AGPL-3.0-or-later
+
+Files:     intelmq/app/webgui/static/css/*
+Copyright: 2014-2016 Mauro Silva, Tomás Lima, Aaron Kaplan
+License:   AGPL-3.0-or-later
+
+Files:     intelmq/app/webgui/static/less/*
+Copyright: 2014-2016 Mauro Silva, Tomás Lima, Aaron Kaplan
+License:   AGPL-3.0-or-later
+
+Files:     intelmq/etc/intelmq.yaml
+Copyright: 2023 Filip Pokorný
+License:   AGPL-3.0-or-later

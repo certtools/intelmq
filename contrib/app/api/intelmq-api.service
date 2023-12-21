@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 [Unit]
-Description=Gunicorn deamon to serve the IntelMQ API
+Description=Gunicorn daemon to serve the IntelMQ API
 Requires=intelmq-api.socket
 After=network.target
 

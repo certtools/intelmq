@@ -7,7 +7,7 @@
 import os
 from pathlib import Path
 
-from setuptools import find_packages, setup
+from setuptools import find_namespace_packages, setup
 
 REQUIRES = [
     'dnspython>=2.0.0',
@@ -17,12 +17,20 @@ REQUIRES = [
     'redis>=2.10',
     'requests>=2.2.0',
     'ruamel.yaml',
-    'importlib-metadata; python_version < "3.8"'
+    'importlib-metadata; python_version < "3.8"',
+    "fastapi>=0.63.0",  # Newest version in the Debian 11 repository
+    "jinja2",
+    "uvicorn[standard]>=0.20.0",
+    "gunicorn>=21.2.0",
+    "typing-extensions>=3.10.0.0",
+    "python-multipart",
 ]
 
 TESTS_REQUIRES = [
     'Cerberus!=1.3.0',
     'requests_mock',
+    "pycodestyle>=2.10.0",
+    "httpx",
 ]
 
 DOCS_REQUIRES = [
@@ -63,7 +71,7 @@ setup(
     extras_require={
         'development': TESTS_REQUIRES + DOCS_REQUIRES,
     },
-    packages=find_packages(),
+    packages=find_namespace_packages(),
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
     project_urls={
