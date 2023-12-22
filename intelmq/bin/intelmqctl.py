@@ -940,6 +940,12 @@ Get some debugging output on the settings and the environment (to be extended):
                     check_logger.error('SyntaxError in bot %r: %r', bot_id, exc)
                     retval = 1
                     continue
+                except AttributeError:
+                    # if module does not exist, utils.get_bot_module_name returns None. import_module then raises
+                    # AttributeError: 'NoneType' object has no attribute 'startswith'
+                    check_logger.error('Incomplete installation: Bot %r not importable.', bot_id,)
+                    retval = 1
+                    continue
                 bot = getattr(bot_module, 'BOT')
                 bot_parameters = copy.deepcopy(global_settings)
                 bot_parameters.update(bot_config.get('parameters', {}))  # the parameters field may not exist
