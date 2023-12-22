@@ -852,7 +852,10 @@ def _get_console_entry_points():
     return entries.get("console_scripts", [])  # it's a dict
 
 
-def get_bot_module_name(bot_name: str) -> str:
+def get_bot_module_name(bot_name: str) -> Optional[str]:
+    """
+    Returns None if the bot does not exist
+    """
     entries = entry_points()
     if hasattr(entries, "select"):
         entries = tuple(entries.select(name=bot_name, group="console_scripts"))
