@@ -18,6 +18,10 @@ Files:     debian/*
 Copyright: 2016 Intevation GmbH
 License:   AGPL-3.0-or-later
 
+Files:     debian/systemd/intelmq.service
+Copyright: 2023 Filip Pokorný
+License:   AGPL-3.0-or-later
+
 Files:     debian/cron.d/intelmq-update-database
 Copyright: 2020 gethvi <gethvi@tuta.io>
 License:   AGPL-3.0-or-later

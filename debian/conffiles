@@ -1,2 +1,3 @@
 /etc/intelmq/harmonization.conf
 /etc/intelmq/runtime.yaml
+/etc/intelmq/intelmq.yaml
