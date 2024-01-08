@@ -45,6 +45,10 @@ jobs:
           git config user.name intelmq-bot
           git config user.email intelmq-bot
 
+      - name: "Fix images path"
+        run: |
+          sed -i 's|docs/static/images/|static/images/|' docs/index.md
+
       - name: "Build docs without publishing"
         if: github.event_name == 'pull_request'
         run: |
