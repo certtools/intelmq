@@ -19,6 +19,7 @@ site_dir: docs_build
 theme:
   name: material
   logo: static/images/Logo_Intel_MQ.svg
+  custom_dir: docs/_overrides
   palette:
     # Palette toggle for light mode
     - scheme: default
