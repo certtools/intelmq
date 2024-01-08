@@ -105,6 +105,7 @@
   Stream API (PR#2408 and PR#2414 by Jan Kaliszewski).
 - Complete documentation overhaul. Change to markdown format. Uses the mkdocs-material (PR#2419 by Filip Pokorný).
 - Adds warning banner if not browsing the latest version of the docs (PR#2445 by Filip Pokorný).
+- Fix logo path in index.md when building the docs (PR#2445 by Filip Pokorný).
 
 ### Packaging
 - Add `pendulum` to suggested packages, as it is required for the sieve bot (PR#2424 by Sebastian Wagner).
