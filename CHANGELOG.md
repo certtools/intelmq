@@ -61,11 +61,15 @@
   - Remove undocumented and unused attributes of `StompCollectorBot` instances:
     `ssl_ca_cert`, `ssl_cl_cert`, `ssl_cl_cert_key`.
   - Minor fixes/improvements and some refactoring (see also above: *Core*...).
+- `intelmq.bots.collectors.shadowserver.collector_reports_api`:
+  - The 'json' option is no longer supported as the 'csv' option provides better performance (PR#2372 by elsif2).
 
 #### Parsers
-  - `intelmq.bots.parsers.netlab_360.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
-  - `intelmq.bots.parsers.webinspektor.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
-  - `intelmq.bots.parsers.sucuri.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
+- `intelmq.bots.parsers.netlab_360.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
+- `intelmq.bots.parsers.webinspektor.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
+- `intelmq.bots.parsers.sucuri.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
+- `intelmq.bots.parsers.shadowserver._config`:
+  - Switch to dynamic configuration to decouple report schema changes from IntelMQ releases by regularly downloading them from the Shadowserver server (PR#2372 by elsif2).
 
 #### Experts
 - `intelmq.bots.experts.jinja` (PR#2417 by Mikk Margus Möll):
@@ -159,13 +163,10 @@
   - added support for `Subject NOT LIKE` queries,
   - added support for multiple values in ticket subject queries.
 - `intelmq.bots.collectors.rsync`: Support for optional private key, relative time parsing for the source path, extra rsync parameters and strict host key checking (PR#2241 by Mateo Durante).
-- `intelmq.bots.collectors.shadowserver.collector_reports_api`:
-  - The 'json' option is no longer supported as the 'csv' option provides better performance.
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
   - Reset detected `feedname` at shutdown to re-detect the feedname on reloads (PR#2361 by @elsif2, fixes #2360).
-  - Switch to dynamic configuration to decouple report schema changes from IntelMQ releases. 
   - Added 'IPv6-Vulnerable-Exchange' alias and 'Accessible-WS-Discovery-Service' report. (PR#2338)
   - Removed unused `p0f_genre` and `p0f_detail` from the 'DNS-Open-Resolvers' report. (PR#2338)
   - Added 'Accessible-SIP' report. (PR#2348)
