@@ -530,7 +530,7 @@ class Amqp(Pipeline):
         if self.username and self.password:
             self.kwargs['credentials'] = pika.PlainCredentials(self.username, self.password)
         if self.ssl:
-            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.create_default_context(ssl.Purpose.CLIENT_AUTH))
+            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.create_default_context(ssl.Purpose.SERVER_AUTH))
         pika_version = tuple(int(x) for x in pika.__version__.split('.'))
         if pika_version < (0, 11):
             self.kwargs['heartbeat_interval'] = 10
