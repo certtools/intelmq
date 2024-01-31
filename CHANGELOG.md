@@ -61,6 +61,8 @@
   - Remove undocumented and unused attributes of `StompCollectorBot` instances:
     `ssl_ca_cert`, `ssl_cl_cert`, `ssl_cl_cert_key`.
   - Minor fixes/improvements and some refactoring (see also above: *Core*...).
+- `intelmq.bots.collectors.alienvault_otx.collector` (PR#2449 by qux-bbb):
+  - Fix modified_pulses_only is always False.
 
 #### Parsers
   - `intelmq.bots.parsers.netlab_360.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
