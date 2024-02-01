@@ -34,6 +34,7 @@
   (PR#2408 and PR#2414 by Jan Kaliszewski).
 - `intelmq.lib.upgrades`: Replace deprecated instances of `url2fqdn` experts by the new `url` expert in runtime configuration (PR#2432 by Sebastian Wagner).
 - `intelmq.lib.bot`: Ensure closing log files on reloading (PR#2435 by Kamil Mankowski).
+- Only load the config once when starting intelmqctl (which makes IntelMQ API calls take less time) (PR#2444 by DigitalTrustCenter).
 
 ### Development
 - Makefile: Add codespell and test commands (PR#2425 by Sebastian Wagner).
@@ -105,6 +106,8 @@
 - Update/fix/improve the stuff related to the STOMP bots and integration with the *n6*'s
   Stream API (PR#2408 and PR#2414 by Jan Kaliszewski).
 - Complete documentation overhaul. Change to markdown format. Uses the mkdocs-material (PR#2419 by Filip Pokorný).
+- Adds warning banner if not browsing the latest version of the docs (PR#2445 by Filip Pokorný).
+- Fix logo path in index.md when building the docs (PR#2445 by Filip Pokorný).
 
 ### Packaging
 - Add `pendulum` to suggested packages, as it is required for the sieve bot (PR#2424 by Sebastian Wagner).
