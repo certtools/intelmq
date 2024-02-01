@@ -87,3 +87,7 @@ License:   AGPL-3.0-or-later
 Files:     intelmq/etc/intelmq.yaml
 Copyright: 2023 Filip Pokorný
 License:   AGPL-3.0-or-later
+
+Files:     intelmq/etc/positions.json
+Copyright: 2020 Birger Schacht, 2023 Filip Pokorný
+License:   CC0-1.0

@@ -7,3 +7,4 @@ intelmq/bots/experts/modify/examples/* usr/share/doc/intelmq/bots/experts/modify
 intelmq/etc/runtime.yaml etc/intelmq/
 intelmq/etc/harmonization.conf etc/intelmq/
 intelmq/etc/intelmq.yaml etc/intelmq/
+intelmq/etc/positions.json var/lib/intelmq/server/

@@ -35,6 +35,7 @@ DEFAULT_LOGGING_LEVEL = "INFO"
 HARMONIZATION_CONF_FILE = os.path.join(CONFIG_DIR, "harmonization.conf")
 RUNTIME_CONF_FILE = os.path.join(CONFIG_DIR, "runtime.yaml")
 INTELMQ_CONF_FILE = os.path.join(CONFIG_DIR, "intelmq.yaml")
+POSITIONS_FILE = os.path.join(VAR_SERVER_PATH, "positions.json")
 old_runtime_conf_file = pathlib.Path(RUNTIME_CONF_FILE).with_suffix('.conf')
 if not pathlib.Path(RUNTIME_CONF_FILE).exists() and old_runtime_conf_file.exists():
     old_runtime_conf_file.rename(RUNTIME_CONF_FILE)

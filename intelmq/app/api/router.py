@@ -26,6 +26,7 @@ import intelmq.app.api.files as files
 import intelmq.app.api.runctl as runctl
 import intelmq.app.api.session as session
 
+from intelmq import RUNTIME_CONF_FILE, POSITIONS_FILE, HARMONIZATION_CONF_FILE
 from intelmq.app.dependencies import (app_config, cached_response, session_store,
                                       token_authorization)
 from .models import TokenResponse
@@ -193,10 +194,8 @@ def post_runtime(body: dict):
 
 @router.get("/positions", dependencies=[authorized], response_model=dict)
 def get_positions(runner: runctl.RunIntelMQCtl = Depends(runner)):
-    positions = pathlib.Path('/opt/intelmq/etc/manager/positions.conf')
     paths = runner.get_paths()
-    if 'CONFIG_DIR' in paths:
-        positions = pathlib.Path(paths['CONFIG_DIR']) / 'manager/positions.conf'
+    positions = pathlib.Path(paths.get("POSITIONS_FILE", POSITIONS_FILE))
     try:
         return json.loads(positions.read_text())
     except OSError as e:
@@ -207,10 +206,8 @@ def get_positions(runner: runctl.RunIntelMQCtl = Depends(runner)):
 @router.post("/positions", dependencies=[authorized], response_model=str,
              response_class=PlainTextResponse)
 def post_positions(body: dict, runner: runctl.RunIntelMQCtl = Depends(runner)):
-    positions = pathlib.Path('/opt/intelmq/etc/manager/positions.conf')
     paths = runner.get_paths()
-    if 'CONFIG_DIR' in paths:
-        positions = pathlib.Path(paths['CONFIG_DIR']) / 'manager/positions.conf'
+    positions = pathlib.Path(paths.get("POSITIONS_FILE", POSITIONS_FILE))
     try:
         positions.parent.mkdir(exist_ok=True)
         positions.write_text(json.dumps(body, indent=4))

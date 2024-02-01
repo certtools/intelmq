@@ -94,19 +94,19 @@ def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
 
     example_path = Path(pkg_resources.resource_filename('intelmq', 'etc'))
     example_confs = [
-        example_path / 'runtime.yaml',
-        example_path / 'harmonization.conf',
-        example_path / 'intelmq.yaml',
+        (example_path / 'runtime.yaml', Path(CONFIG_DIR) / 'runtime.yaml'),
+        (example_path / 'harmonization.conf', Path(CONFIG_DIR) / 'harmonization.conf'),
+        (example_path / 'intelmq.yaml', Path(CONFIG_DIR) / 'intelmq.yaml'),
+        (example_path / 'positions.json', Path(VAR_SERVER_PATH) / 'positions.json'),
     ]
-    for example_conf in example_confs:
+    for example_conf, destination_file in example_confs:
         fname = Path(example_conf).name
-        destination_file = Path(CONFIG_DIR) / fname
         if destination_file.exists():
             print(f'Not overwriting existing {fname!r} with example.')
             log_ownership_change = True
         else:
-            shutil.copy(example_conf, CONFIG_DIR)
-            print(f'Installing example {fname!r} to {CONFIG_DIR}.')
+            shutil.copy(example_conf, destination_file.parent)
+            print(f'Installing example {fname!r} to {destination_file.parent}.')
             log_ownership_change = False  # For installing the new files, we don't need to inform the admin that the permissions have been "fixed"
         if ownership:
             change_owner(destination_file, owner='intelmq', group='intelmq', log=log_ownership_change)

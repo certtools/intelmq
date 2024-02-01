@@ -14,7 +14,6 @@ from unittest import TestCase, mock
 from unittest.mock import patch, MagicMock
 from fastapi.testclient import TestClient
 
-
 with patch("intelmq.lib.utils.get_intelmq_settings", MagicMock(return_value={})):
 
     from intelmq.app import dependencies
@@ -97,7 +96,11 @@ class TestApiWithDir(TestCase):
         dependencies.startup(DummyConfig())
         self.conf_dir = TemporaryDirectory()
         app.dependency_overrides[runner] = get_dummy_reader(
-            paths={"CONFIG_DIR": self.conf_dir.name})
+            paths={
+                "CONFIG_DIR": self.conf_dir.name,
+                "POSITIONS_FILE": os.path.join(self.conf_dir.name, "positions.json")
+            }
+        )
 
         self.save_runtime()
         self.save_positions()
@@ -110,9 +113,12 @@ class TestApiWithDir(TestCase):
         with open(f"{self.conf_dir.name}/runtime.yaml", "w+") as f:
             json.dump({}, f)
 
+    def load_positions(self):
+        with open(f"{self.conf_dir.name}/positions.json") as f:
+            return json.load(f)
+
     def save_positions(self):
-        os.makedirs(f"{self.conf_dir.name}/manager", exist_ok=True)
-        with open(f"{self.conf_dir.name}/manager/positions.conf", "w+") as f:
+        with open(f"{self.conf_dir.name}/positions.json", "w+") as f:
             json.dump({}, f)
 
     def tearDown(self) -> None:
@@ -141,7 +147,6 @@ class TestApiWithDir(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.text, "success")
-
         self.assertEqual(utils.get_runtime(), data)
 
     def test_post_positions(self):
@@ -155,10 +160,7 @@ class TestApiWithDir(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.text, "success")
-
-        with open(f"{self.conf_dir.name}/manager/positions.conf", "r") as f:
-            saved = json.load(f)
-        self.assertEqual(saved, data)
+        self.assertEqual(self.load_positions(), data)
 
 
 class TestAPILogin(TestCase):
