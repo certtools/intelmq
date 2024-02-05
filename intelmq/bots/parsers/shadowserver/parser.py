@@ -63,6 +63,7 @@ class ShadowserverParserBot(ParserBot):
         if self.feedname is not None:
             self._sparser_config = config.get_feed_by_feedname(self.feedname)
             if self._sparser_config:
+                self._sparser_config = self._sparser_config[1]
                 self.logger.info('Using fixed feed name %r for parsing reports.' % self.feedname)
                 self._mode = 'fixed'
             else:

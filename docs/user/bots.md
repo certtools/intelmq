@@ -2128,23 +2128,23 @@ correct mapping of the columns:
 
 1. **Automatic report type detection**
 
-   Since IntelMQ version 2.1 the parser can detect the feed based on metadata provided by the collector.
-
-   When processing a report, this bot takes `extra.file_name` from the report and looks in `config.py` how the report
-   should be parsed. If this lookup is not possible, and the `feedname` is not given as parameter, the feed cannot be
-   parsed.
-
-   The field `extra.file_name` has the following structure: `%Y-%m-%d-${report_name}[-suffix].csv` where the optional
-   suffix can be something like `country-geo`. For example, some possible filenames
-   are `2019-01-01-scan_http-country-geo.csv` or `2019-01-01-scan_tftp.csv`. The important part is the `report_name`,
-   between the date and the suffix. Since version 2.1.2 the date in the filename is optional, so filenames
-   like `scan_tftp.csv` are also detected.
+    Since IntelMQ version 2.1 the parser can detect the feed based on metadata provided by the collector.
+    
+    When processing a report, this bot takes `extra.file_name` from the report and looks in `config.py` how the report
+    should be parsed. If this lookup is not possible, and the `feedname` is not given as parameter, the feed cannot be
+    parsed.
+    
+    The field `extra.file_name` has the following structure: `%Y-%m-%d-${report_name}[-suffix].csv` where the optional
+    suffix can be something like `country-geo`. For example, some possible filenames
+    are `2019-01-01-scan_http-country-geo.csv` or `2019-01-01-scan_tftp.csv`. The important part is the `report_name`,
+    between the date and the suffix. Since version 2.1.2 the date in the filename is optional, so filenames
+    like `scan_tftp.csv` are also detected.
 
 2. **Fixed report type**
 
-   If the method above is not possible and for upgraded instances, the report type can be set with the `feedname`
-   parameter. Report type is derived from the subject of Shadowserver e-mails. A list of possible values of
-   the `feedname` parameter can be found in the table below in the column "Report Type".
+    If the method above is not possible and for upgraded instances, the report type can be set with the `feedname`
+    parameter. Report type is derived from the subject of Shadowserver e-mails. A list of possible values of
+    the `feedname` parameter can be found in the table below in the column "Report Type".
 
 **Module:**
 
@@ -2200,6 +2200,7 @@ The schema revision history is maintained at https://github.com/The-Shadowserver
       auto_update: true
     run_mode: continuous
 ```
+
 ---
 
 ### Shodan <div id="intelmq.bots.parsers.shodan.parser" />
