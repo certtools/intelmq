@@ -930,8 +930,7 @@ oldest files available!).
 
 The resulting reports contain the following special field:
 
-- `extra.file_name`: The name of the downloaded file, with fixed filename extension. The API returns file names with the
-  extension `.csv`, although the files are JSON, not CSV. Therefore, for clarity and better error detection in the parser, the file name in `extra.file_name` uses `.json` as extension.
+- `extra.file_name`: The name of the downloaded file, with fixed filename extension. 
 
 **Module:** `intelmq.bots.collectors.shadowserver.collector_reports_api`
 
@@ -951,7 +950,7 @@ The resulting reports contain the following special field:
 
 **`types`**
 
-(optional, string/array of strings) An array of strings (or a list of comma-separated values) with the names of report types you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined'). The possible report types are equivalent to the file names given in the section Supported Reports of the [Shadowserver parser](#intelmq.bots.parsers.shadowserver.parser).
+(optional, string/array of strings) An array of strings (or a list of comma-separated values) with the names of report types you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined'). The possible report types are equivalent to the file names defined the the schema.  Please see the Supported Reports of the [Shadowserver parser](#intelmq.bots.parsers.shadowserver.parser) for details.
 
 **Sample configuration**
 
@@ -2154,7 +2153,7 @@ correct mapping of the columns:
 
 **`feedname`**
 
-(optional, string) Name of the Shadowserver report, see list below for possible values.
+(optional, string) Name of the Shadowserver report. The value for each report type can be found in the schema `feed_name` field.
 
 **`overwrite`**
 
