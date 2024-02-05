@@ -126,7 +126,7 @@ def enable_auto_update(enable):
     __config.auto_update = enable
 
 
-def get_feed_by_feedname(given_feedname: str) -> Optional[Dict[str, Any]]:
+def get_feed_by_feedname(given_feedname: str) -> Optional[Tuple[str, Dict[str, Any]]]:
     return __config.feedname_mapping.get(given_feedname, None)
 
 
