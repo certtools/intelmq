@@ -1,0 +1,11 @@
+{#SPDX-FileCopyrightText: 2023 Filip Pokorný#}
+{#SPDX-License-Identifier: AGPL-3.0-or-later#}
+
+{% extends "base.html" %}
+
+{% block outdated %}
+  You're not viewing the latest version.
+  <a href="{{ '../' ~ base_url }}" style="color: black">
+    <strong>Click here to go to latest.</strong>
+  </a>
+{% endblock %}

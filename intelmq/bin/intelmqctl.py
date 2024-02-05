@@ -87,6 +87,11 @@ class IntelMQController():
         self._parameters.logging_handler = 'file'
         self._parameters.logging_path = DEFAULT_LOGGING_PATH
 
+        try:
+            self._runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
+        except ValueError as exc:  # pragma: no cover
+            self.abort(f'Error loading {RUNTIME_CONF_FILE!r}: {exc}')
+
         # Try to get logging_level from defaults configuration, else use default (defined above)
         defaults_loading_exc = None
         try:
@@ -202,11 +207,6 @@ Get some debugging output on the settings and the environment (to be extended):
     intelmqctl debug --get-paths
     intelmqctl debug --get-environment-variables
 '''
-
-        try:
-            self._runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
-        except ValueError as exc:  # pragma: no cover
-            self.abort(f'Error loading {RUNTIME_CONF_FILE!r}: {exc}')
 
         self._processmanagertype = getattr(self._parameters, 'process_manager', 'intelmq')
         if self._processmanagertype not in process_managers():
@@ -384,7 +384,8 @@ Get some debugging output on the settings and the environment (to be extended):
             )
 
     def load_defaults_configuration(self, silent=False):
-        for option, value in utils.get_global_settings().items():
+        global_settings = self._runtime_configuration.get('global', {})
+        for option, value in global_settings.items():
             setattr(self._parameters, option, value)
 
         # copied from intelmq.lib.bot, should be refactored to e.g. intelmq.lib.config
