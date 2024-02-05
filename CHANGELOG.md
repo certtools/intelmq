@@ -64,6 +64,9 @@
   - Minor fixes/improvements and some refactoring (see also above: *Core*...).
 - `intelmq.bots.collectors.shadowserver.collector_reports_api`:
   - The 'json' option is no longer supported as the 'csv' option provides better performance (PR#2372 by elsif2).
+- `intelmq.bots.collectors.alienvault_otx.collector` (PR#2449 by qux-bbb):
+  - Fix modified_pulses_only is always False.
+
 
 #### Parsers
 - `intelmq.bots.parsers.netlab_360.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)

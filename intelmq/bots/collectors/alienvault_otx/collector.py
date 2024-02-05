@@ -26,10 +26,6 @@ class AlienVaultOTXCollectorBot(CollectorBot):
         if OTXv2 is None:
             raise MissingDependencyError("OTXv2")
 
-        self.modified_pulses_only = False
-        if hasattr(self, 'modified_pulses_only'):
-            self.modified_pulses_only = self.modified_pulses_only
-
     def process(self):
         self.logger.info("Downloading report through API.")
         otx = OTXv2(self.api_key, proxy=self.https_proxy)
