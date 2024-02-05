@@ -322,6 +322,7 @@ functions = {
     'scan_exchange_type': scan_exchange_type,
     'scan_exchange_identifier': scan_exchange_identifier,
     'category_or_detail': category_or_detail,
+    'extract_cve_from_tag': extract_cve_from_tag,
 }
 
 
