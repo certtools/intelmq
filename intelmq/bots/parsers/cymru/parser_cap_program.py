@@ -64,6 +64,7 @@ class CymruCAPProgramParserBot(ParserBot):
                 elif 'Data file written at' in line:
                     self.parse_line = self.parse_line_old
             else:
+                self._current_line = line
                 yield line
 
     def parse_bot_old(self, comment_split, report_type, event):

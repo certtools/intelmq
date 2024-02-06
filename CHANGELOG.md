@@ -74,6 +74,7 @@
 - `intelmq.bots.parsers.sucuri.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
 - `intelmq.bots.parsers.shadowserver._config`:
   - Switch to dynamic configuration to decouple report schema changes from IntelMQ releases by regularly downloading them from the Shadowserver server (PR#2372 by elsif2).
+- `intelmq.bots.parsers.cymru`: Save current line. (PR by Kamil Mankowski)
 
 #### Experts
 - `intelmq.bots.experts.jinja` (PR#2417 by Mikk Margus Möll):
