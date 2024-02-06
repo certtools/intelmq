@@ -291,7 +291,7 @@ def category_or_detail(value: str, row: Dict[str, str]) -> str:
 
 
 def extract_cve_from_tag(tag: str) -> Optional[str]:
-    """ Returns a string with a sorted comma-separated list of CVEs or None if no CVE found in tag. """
+    """ Returns a string with a sorted semicolon-separated list of CVEs or None if no CVE found in tag. """
     cveset = set()
     tags = tag.split(";")
 
@@ -300,8 +300,8 @@ def extract_cve_from_tag(tag: str) -> Optional[str]:
             cveset.add(t)
 
     if not (len(cveset)):
-        return None;
-    return (','.join(str(c) for c in sorted(cveset)))
+        return None
+    return (';'.join(str(c) for c in sorted(cveset)))
 
 
 functions = {
