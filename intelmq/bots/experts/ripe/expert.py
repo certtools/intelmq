@@ -138,7 +138,7 @@ class RIPEExpertBot(ExpertBot, CacheMixin):
                                              data="", timeout=self.http_timeout_sec)
 
             if response.status_code != 200:
-                if type == 'db_asn' and response.status_code == 404:
+                if response.status_code == 404:
                     """ If no abuse contact could be found, a 404 is given. """
                     try:
                         if response.json()['message'].startswith('No abuse contact found for '):
