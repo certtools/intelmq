@@ -55,7 +55,7 @@ class AMQPCollectorBot(AMQPTopicOutputBot, CollectorBot):
                                                                self.password)
 
         if self.use_ssl:
-            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.create_default_context(ssl.Purpose.CLIENT_AUTH))
+            self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.create_default_context(ssl.Purpose.SERVER_AUTH))
 
         self.connection_parameters = pika.ConnectionParameters(
             host=self.connection_host,

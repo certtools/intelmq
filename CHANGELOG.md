@@ -34,6 +34,7 @@
   (PR#2408 and PR#2414 by Jan Kaliszewski).
 - `intelmq.lib.upgrades`: Replace deprecated instances of `url2fqdn` experts by the new `url` expert in runtime configuration (PR#2432 by Sebastian Wagner).
 - `intelmq.lib.bot`: Ensure closing log files on reloading (PR#2435 by Kamil Mankowski).
+- AMQP Pipeline: fix SSL context to pointing to create a client-side connection that verifies the server (PR by Kamil Mankowski).
 - Only load the config once when starting intelmqctl (which makes IntelMQ API calls take less time) (PR#2444 by DigitalTrustCenter).
 
 ### Development
@@ -62,6 +63,7 @@
   - Remove undocumented and unused attributes of `StompCollectorBot` instances:
     `ssl_ca_cert`, `ssl_cl_cert`, `ssl_cl_cert_key`.
   - Minor fixes/improvements and some refactoring (see also above: *Core*...).
+- `intelmq.bots.collectors.amqp`: fix SSL context to pointing to create a client-side connection that verifies the server (PR by Kamil Mankowski).
 - `intelmq.bots.collectors.shadowserver.collector_reports_api`:
   - The 'json' option is no longer supported as the 'csv' option provides better performance (PR#2372 by elsif2).
 - `intelmq.bots.collectors.alienvault_otx.collector` (PR#2449 by qux-bbb):
@@ -102,6 +104,7 @@
   - Try to reconnect on `NotConnectedException`.
 - `intelmq.bots.outputs.smtp_batch.output` (PR #2439 by Edvard Rejthar):
   - Fix ability to send with the default `bcc`
+- `intelmq.bots.outputs.amqp`: fix SSL context to pointing to create a client-side connection that verifies the server (PR by Kamil Mankowski).
 
 ### Documentation
 - Add a readthedocs configuration file to fix the build fail (PR#2403 by Sebastian Wagner).
@@ -174,6 +177,7 @@
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
   - Reset detected `feedname` at shutdown to re-detect the feedname on reloads (PR#2361 by @elsif2, fixes #2360).
+  - Switch to dynamic configuration to decouple report schema changes from IntelMQ releases.
   - Added 'IPv6-Vulnerable-Exchange' alias and 'Accessible-WS-Discovery-Service' report. (PR#2338)
   - Removed unused `p0f_genre` and `p0f_detail` from the 'DNS-Open-Resolvers' report. (PR#2338)
   - Added 'Accessible-SIP' report. (PR#2348)
