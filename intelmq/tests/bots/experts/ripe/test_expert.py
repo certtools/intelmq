@@ -75,6 +75,9 @@ INDEX_ERROR = {"__type": "Event",
                "source.ip": "228.66.141.189",
                }
 
+ARIN_IP_EVENT = {"__type": "Event",
+                 "source.ip": "2001:500:110:201::47"}
+
 @test.skip_internet()
 class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
     """
@@ -262,6 +265,12 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = INDEX_ERROR
         self.run_bot()
         self.assertMessageEqual(0, INDEX_ERROR)
+
+    def test_arin_ip(self):
+        self.input_message = ARIN_IP_EVENT
+        self.run_bot()
+        self.assertMessageEqual(0, ARIN_IP_EVENT)
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
