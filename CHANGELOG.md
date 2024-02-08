@@ -68,6 +68,8 @@
 - `intelmq.bots.experts.jinja` (PR#2417 by Mikk Margus Möll):
   - Add optional `socket_perms` and `socket_group` parameters to change
     file permissions on socket file, if it is in use.
+- `intelmq.bots.experts.ripe` (PR#2461 by Mikk Margus Möll):
+  - Handle "No abuse contact found for" messages for non-ASN resources
 
 #### Outputs
 - `intelmq.bots.outputs.stomp.output` (PR#2408 and PR#2414 by Jan Kaliszewski):
