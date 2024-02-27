@@ -11,7 +11,7 @@ EventDB Utilities
   It queries the database for all distinct malware names with the taxonomy "malicious-code" and sets another column to the malware family name.
 - Apply Domain Suffix: Writes the public domain suffix to the `source.domain_suffix` / `destination.domain_suffix` columns, extracted from `source.fqdn` / `destination.fqdn`.
 - PostgreSQL trigger keeping track of the oldest inserted/updated "time.source" data. This can be useful to (re-)generate statistics or aggregation data.
-- SQL queries to set up a separate `raws` table, described in https://intelmq.readthedocs.io/en/latest/user/eventdb.html#separating-raw-values-in-postgresql-using-view-and-trigger
+- SQL queries to set up a separate `raws` table, described in https://docs.intelmq.org/latest/admin/database/postgresql/#separating-raw-values-in-postgresql-using-view-and-trigger
 
 Usage
 -----

@@ -224,7 +224,7 @@ class Bot:
                 self.logger.error('Multithreading is configured, but is not '
                                   'available for this bot. Look at the FAQ '
                                   'for a list of reasons for this. '
-                                  'https://intelmq.readthedocs.io/en/latest/user/FAQ.html'
+                                  'https://docs.intelmq.org/latest/admin/faq/'
                                   '#multithreading-is-not-available-for-this-bot')
             elif (getattr(self, 'instances_threads', 1) > 1 and
                   disable_multithreading):
@@ -1033,7 +1033,7 @@ class Bot:
         Return value is a dict with the complete pipeline state.
         Multiple messages can be given as positional argument.
         The pipeline needs to be configured accordinglit with BotLibSettings,
-        see https://intelmq.readthedocs.io/en/develop/dev/library.html
+        see https://docs.intelmq.org/latest/dev/library/
 
         Access the output queue e.g. with return_value['output']
         """

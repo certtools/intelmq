@@ -67,7 +67,7 @@ setup(
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
     project_urls={
-        'Documentation': 'https://intelmq.readthedocs.io/',
+        'Documentation': 'https://docs.intelmq.org/',
         'Source and Issue Tracker': 'https://github.com/certtools/intelmq/',
     },
     license='AGPLv3',
