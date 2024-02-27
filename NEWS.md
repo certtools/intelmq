@@ -59,7 +59,7 @@ Deb-packages of intelmq-api 3.2.0 are delayed for some distributions because of 
 #### Shadowserver Reports API collector
 The misleading `country` parameter has been depreciated and a `reports` parameter has been added.
 The backwards-compatibility will be removed in IntelMQ version 4.0.0.
-See the [Shadowserver Reports API bot's documentation](https://intelmq.readthedocs.io/en/latest/user/bots.html#shadowserver-reports-api).
+See the [Shadowserver Reports API bot's documentation](https://docs.intelmq.org/latest/user/bots/#shadowserver-reports-api).
 
 #### GitHub Collector
 GitHub removed the basic `Username/Password` Authentication in favor of personal access tokens. So the GitHub Collector uses an Personal Access Token for authentication [GitHub Documentation: Generate a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
@@ -76,7 +76,7 @@ IntelMQ previously supported two feeds: "Feodo Tracker IPs" (downloaded as CSV f
 #### Field name checks
 The field names for all data added to messages must match a pre-defined format.
 The check which ensures this, was ineffective prior to this version and is effective again starting with version 3.1.0.
-The [Data format documentation](https://intelmq.readthedocs.io/en/maintenance/dev/data-format.html#rules-for-keys) describes the required format.
+The [Data format documentation](https://docs.intelmq.org/latest/dev/data-format/#rules-for-keys) describes the required format.
 
 ### Logrotate
 The packaged configuration for *logrotate* falsely contained options applying to other programs' log files. This caused wrong ownership of log files.
@@ -172,7 +172,7 @@ New features:
 * negation of arbitrary expressions and expression groups separated by brackets through a prepended `!`, e.g `! src.port :in [80, 443]`
 * non-string values accepted by `add`/`add!`/`update`
 
-The [sieve bot documentation](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#intelmq-bots-experts-sieve-expert) has been updated to reflect on these new changes.
+The [sieve bot documentation](https://docs.intelmq.org/latest/user/bots/#sieve) has been updated to reflect on these new changes.
 
 ### Data format
 The classification scheme has been updated to better match the [Reference Security Incident Taxonomy (RSIT)](https://github.com/enisaeu/Reference-Security-Incident-Taxonomy-Task-Force/). The following labels were renamed, deleted or merged into others:
@@ -307,7 +307,7 @@ The `intelmqctl upgrade-config` command automatically fixes a configuration if t
 
 Shadowserver changed some of their feeds, for more information see [Changes in Sinkhole and Honeypot Report Types and Formats](https://www.shadowserver.org/news/changes-in-sinkhole-and-honeypot-report-types-and-formats/). Support for the legacy feeds has not been removed yet.
 
-The [Shadowserver Parser Bot documentation](https://intelmq.readthedocs.io/en/maintenance/user/bots.html#shadowserver-supported-reports) lists the supported feeds, as well as the legacy feeds.
+The [Shadowserver Parser Bot documentation](https://docs.intelmq.org/latest/user/bots/#shadowserver) lists the supported feeds, as well as the legacy feeds.
 
 
 2.3.2 Bugfix release (2021-04-27)

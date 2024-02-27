@@ -28,7 +28,7 @@ from intelmq.lib.utils import RewindableFileHandle
 from intelmq.lib.datatypes import TimeFormat
 
 DATA_CONVERSIONS = {'json': lambda data: json.loads(data)}
-DOCS = "https://intelmq.readthedocs.io/en/latest/guides/Bots.html#generic-csv-parser"
+DOCS = "https://docs.intelmq.org/latest/user/bots/#generic-csv"
 
 
 class GenericCsvParserBot(ParserBot):
