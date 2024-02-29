@@ -14,20 +14,65 @@ Please refer to the change log for a full list of changes.
 ---------------------------------
 
 ### Documentation
-The documentation is now available at [docs.intelmq.org](https://docs.intelmq.org/). Documentation has been updated and restructured into User, Administrator and Developer Guide. It provides modern look with various quality of life improvements.
+The documentation is now available at [docs.intelmq.org](https://docs.intelmq.org/). Documentation has been updated and restructured into User, Administrator and Developer Guide. It provides modern look with various quality of life improvements. Big thanks to to @gethvi. 
+We now have a slick, modern mkdocs based documentation. Please do check it out!
 
-### Requirements
 
-### Tools
+### Bots
+#### Shadowserver dynamic parser / collector
+
+**Note well**: if you use shadowserver feeds, **please read this section carefully**.
+
+Thanks to shadowserver (@elsif2), we have a new dynamic shadowserver reports API integration. What does it do?
+It connects to the [Shadowserver API](https://www.shadowserver.org/what-we-do/network-reporting/api-documentation/),
+requests a list of all the reports for a specific country and processes the ones that are new.
+
+Motivation for this change:
+
+Shadowserver adds new scans on a nearly weekly basis. IntelMQ's release cycle and the need for a stable release could not keep up with this high intensity of shadowserver parser changes.
+We therefore (thanks to @eslif2) move the shadowserver reports collector and parser to a new, dynamic system. It can:
+
+ - fetch the shadowserver schema from shadowserver (https://interchange.shadowserver.org/intelmq/v1/schema)
+ - dynamically collect new reports (see also https://docs.intelmq.org/latest/user/bots/?h=shadow#shadowserver-reports-api) 
+ - parse the new reports
+
+**Note well**: if your IntelMQ system runs in an airgapped environment or if it may only reach out to specific IPs/sites, you should read the notes here:
+https://docs.intelmq.org/latest/user/bots/#shadowserver.
+You will need to download shadowserver-schema.json periodically yourself in this case.
+
+**Note well:**: since dynamic changes are a bit tricky, we defined that there is a schema contract:
+
+> Schema contract
+>
+> Once set in the schema, the classification.identifier, classification.taxonomy, and classification.type fields will remain static for a specific report.
+
+This makes things deterministic again.
+
+#### Alienvault OTX
+
+Fix of a bug where a certain condition would have always evaluated to False. (PR#2449 by qux-bbb. Thanks)
+
+#### AMQP
+Quite a few changes (thanks to Kamil, @gethvi) on AMQP
+
+#### Obsoleted bots
+
+- `intelmq.bots.parsers.netlab_360.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
+- `intelmq.bots.parsers.webinspektor.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
+- `intelmq.bots.parsers.sucuri.parser`: Removed as the feed is discontinued. (#2442 by Filip Pokorný)
+
+### General changes and bug fixes
+
+Digital Trust Center fixed a bug where the config was loaded twice in intelmqctl which created quite some speedups. Thanks!
+This speeds up IntelMQ API calls. 
 
 ### Data Format
 
-### Configuration
+Shadowserver dynamic parser (see above).
 
-### Libraries
+### General remarks
 
-### Postgres databases
-
+The full list of changes can be seen in the CHANGELOG.md file.
 
 3.2.1 Bugfix release (2023-08-23)
 ---------------------------------
