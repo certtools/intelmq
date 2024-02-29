@@ -39,7 +39,7 @@ Eventually adapt the default log levels if necessary. Should be INFO for stable 
 ### IntelMQ Manager
 
 -   `intelmq_manager/version.py`: Update the version.
--   `intelmq_manager/static/images/js/about.js`: Update the version.
+-   `intelmq_manager/static/js/about.js`: Update the version.
 
 ## Commit, push, review and merge
 
