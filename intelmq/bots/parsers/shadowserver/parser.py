@@ -119,6 +119,9 @@ class ShadowserverParserBot(ParserBot):
         # set feed.name and code, honor the overwrite parameter
         event.add('feed.name', self.feedname, overwrite=self.overwrite)
 
+        # set feed.documentation to a report url
+        event.add('feed.documentation', conf.get('url'))
+
         extra = {}  # The Json-Object which will be populated with the
         # fields that could not be added to the standard intelmq fields
         # the parser is going to write this information into an object
