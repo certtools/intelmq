@@ -17,7 +17,7 @@ different.
 -   Check the upgrade functions in `intelmq/lib/upgrades.py`.
 -   Close the milestone on GitHub and move any open issues to the next
     one.
--   `docs/user/installation.rst`: Update supported operating systems.
+-   `docs/admin/installation/linux-packages.md`: Update supported operating systems.
 
 ## Documentation
 
