@@ -43,18 +43,17 @@ Eventually adapt the default log levels if necessary. Should be INFO for stable 
 
 ## Commit, push, review and merge
 
-Commit your changes in a separate branch, the final commit message
-should start with `REL:`. Push and create a pull request to maintenance
-and after that from maintenance to master. Someone else should review
-the changes. Eventually fix them, make sure the `REL:` is the last
-commit, you can also push that one at last, after the reviews.
+Commit your changes in a separate branch, the final commit message should start
+with `REL:`. Push and create a pull request to the `develop` branch. Someone
+else should review the changes. Eventually fix them, make sure the `REL:` is
+the last commit, you can also push that one at last, after the reviews.
 
 Why a separate branch? Because if problems show up, you can still
 force-push to that one, keeping the release commit the latest one.
 
 ## Tag and release
 
-Tag the commit with `git tag -s version HEAD`, merge it into master,
+Tag the commit with `git tag -s version HEAD`, merge it into `develop`,
 push the branches *and* the tag. The tag is just `a.b.c`, not prefixed
 with `v` (that was necessary only with SVN a long time ago...).
 
