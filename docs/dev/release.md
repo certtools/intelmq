@@ -75,7 +75,7 @@ python3 setup.py sdist bdist_wheel
 
 ## Documentation
 
-Got to `the version settings on readthedocs <https://readthedocs.org/projects/intelmq/versions/>`_ and activate build for the new version.
+Since using mkdocs (see https://docs.intelmq.org) nothing needs to be done anymore.
 
 ## Packages
 
