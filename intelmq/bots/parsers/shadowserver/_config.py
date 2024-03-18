@@ -83,6 +83,7 @@ import base64
 import binascii
 import json
 import tempfile
+import time
 from typing import Optional, Dict, Tuple, Any
 
 import intelmq.lib.harmonization as harmonization
@@ -97,6 +98,7 @@ class __Container:
 __config = __Container()
 __config.var_state_path = VAR_STATE_PATH
 __config.schema_url = 'https://interchange.shadowserver.org/intelmq/v1/schema'
+__config.schema_check = os.path.join(VAR_STATE_PATH, 'shadowserver-schema.check')
 __config.schema_file = os.path.join(VAR_STATE_PATH, 'shadowserver-schema.json')
 __config.schema_base = os.path.join(os.path.dirname(__file__), 'schema.json.test')
 __config.schema_active = __config.schema_file
@@ -330,6 +332,9 @@ def reload():
     """ reload the configuration if it has changed """
     mtime = 0.0
 
+    if __config.auto_update:
+        update_schema()
+
     if os.path.isfile(__config.schema_file):
         mtime = os.path.getmtime(__config.schema_file)
         if __config.schema_mtime == mtime:
@@ -337,9 +342,6 @@ def reload():
     else:
         if not __config.test_mode:
             raise ValueError("The schema file does not exist: %r.", __config.schema_file)
-
-    if __config.schema_mtime == 0.0 and mtime == 0.0 and __config.auto_update:
-        update_schema()
 
     __config.feedname_mapping.clear()
     __config.filename_mapping.clear()
@@ -359,6 +361,14 @@ def reload():
 
 def update_schema():
     """ download the latest configuration """
+
+    # skip update if the last check was less than an hour ago
+    if os.path.isfile(__config.schema_check):
+        age = time.time() - os.path.getmtime(__config.schema_check)
+        if age < 3600:
+            return False
+    with open(__config.schema_check, "w+") as myfile:
+        pass
 
     # download the schema to a temp file
     (th, tmp) = tempfile.mkstemp(dir=__config.var_state_path)
@@ -415,5 +425,6 @@ def update_schema():
 def prepare_update_schema_test(path):
     """ Reconfigure internal settings to perform a schema update test. """
     __config.var_state_path = path
+    __config.schema_check = os.path.join(path, 'shadowserver-schema.check')
     __config.schema_file = os.path.join(path, 'shadowserver-schema.json')
     return __config.schema_file
