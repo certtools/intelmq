@@ -130,7 +130,7 @@ def v110_shadowserver_feednames(configuration, harmonization, dry_run, **kwargs)
         if bot_id == 'global':
             continue
         if bot["module"] == "intelmq.bots.parsers.shadowserver.parser":
-            if bot["parameters"]["feedname"] in mapping:
+            if bot["parameters"].get("feedname") and bot["parameters"]["feedname"] in mapping:
                 changed = True
                 bot["parameters"]["feedname"] = mapping[bot["parameters"]["feedname"]]
 
@@ -760,7 +760,7 @@ def v310_shadowserver_feednames(configuration, harmonization, dry_run, **kwargs)
         if bot_id == 'global':
             continue
         if bot["module"] == "intelmq.bots.parsers.shadowserver.parser":
-            if bot["parameters"]["feedname"] in legacy:
+            if bot["parameters"].get("feedname") and bot["parameters"]["feedname"] in legacy:
                 names.append(bot["parameters"]["feedname"])
     return 'A discontinued feed has been found and must be removed %s' % ', '.join(names) if names else changed, configuration, harmonization
 
