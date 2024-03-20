@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2022 CERT.at GmbH <https://cert.at/>
+# SPDX-License-Identifier: CC0-1.0
+
+[Unit]
+Description=The socket to handle IntelMQ API requests
+
+[Socket]
+ListenStream=/usr/lib/python3/dist-packages/intelmq_api/intelmq_api.sock
+SocketUser=www-data
+
+[Install]
+WantedBy=sockets.target

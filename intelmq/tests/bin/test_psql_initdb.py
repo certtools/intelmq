@@ -139,7 +139,7 @@ class TestPsqlInit(unittest.TestCase):
         self.assertIn("CREATE TRIGGER tr_events", generated)  # Static, check if added
 
     def test_partition_field(self):
-        """For paritioned table """
+        """For partitioned table """
         expected_table = """
         CREATE TABLE events (
             "id" BIGSERIAL,

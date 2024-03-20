@@ -24,7 +24,7 @@ from intelmq import (DEFAULT_LOGGING_LEVEL,  # noqa: F401
                      HARMONIZATION_CONF_FILE,
                      RUNTIME_CONF_FILE, VAR_RUN_PATH, STATE_FILE_PATH,
                      DEFAULT_LOGGING_PATH, __version_info__,
-                     CONFIG_DIR, ROOT_DIR)
+                     CONFIG_DIR, ROOT_DIR, POSITIONS_FILE, VAR_SERVER_PATH, INTELMQ_CONF_FILE)
 from intelmq.lib import utils
 from intelmq.lib.datatypes import ReturnType, MESSAGES, LogLevel
 from intelmq.lib.processmanager import *
@@ -1257,9 +1257,16 @@ Get some debugging output on the settings and the environment (to be extended):
             if self._returntype is ReturnType.TEXT:
                 print('Paths:')
             for path in ('HARMONIZATION_CONF_FILE',
-                         'RUNTIME_CONF_FILE', 'VAR_RUN_PATH', 'STATE_FILE_PATH',
-                         'DEFAULT_LOGGING_PATH', '__file__',
-                         'CONFIG_DIR', 'ROOT_DIR'):
+                         'RUNTIME_CONF_FILE',
+                         'INTELMQ_CONF_FILE',
+                         'POSITIONS_FILE',
+                         'VAR_RUN_PATH',
+                         'STATE_FILE_PATH',
+                         'DEFAULT_LOGGING_PATH',
+                         '__file__',
+                         'CONFIG_DIR',
+                         'ROOT_DIR',
+                         'VAR_SERVER_PATH'):
                 output['paths'][path] = variables[path]
                 if self._returntype is ReturnType.TEXT:
                     print(f'{path}: {variables[path]!r}')

@@ -20,18 +20,22 @@ if path == "lsb":
     CONFIG_DIR = os.path.join(ROOT_DIR, "etc/intelmq/")
     DEFAULT_LOGGING_PATH = os.path.join(ROOT_DIR, "var/log/intelmq/")
     VAR_RUN_PATH = os.path.join(ROOT_DIR, "var/run/intelmq/")
+    VAR_SERVER_PATH = os.path.join(ROOT_DIR, "var/lib/intelmq/server/")
     VAR_STATE_PATH = os.path.join(ROOT_DIR, "var/lib/intelmq/bots/")
 elif path == "opt":
     ROOT_DIR = os.getenv("INTELMQ_ROOT_DIR", "/opt/intelmq/")
     CONFIG_DIR = os.path.join(ROOT_DIR, "etc/")
     DEFAULT_LOGGING_PATH = os.path.join(ROOT_DIR, "var/log/")
     VAR_RUN_PATH = os.path.join(ROOT_DIR, "var/run/")
+    VAR_SERVER_PATH = os.path.join(ROOT_DIR, "var/lib/server/")
     VAR_STATE_PATH = os.path.join(ROOT_DIR, "var/lib/bots/")
 
 
 DEFAULT_LOGGING_LEVEL = "INFO"
 HARMONIZATION_CONF_FILE = os.path.join(CONFIG_DIR, "harmonization.conf")
 RUNTIME_CONF_FILE = os.path.join(CONFIG_DIR, "runtime.yaml")
+INTELMQ_CONF_FILE = os.path.join(CONFIG_DIR, "intelmq.yaml")
+POSITIONS_FILE = os.path.join(VAR_SERVER_PATH, "positions.json")
 old_runtime_conf_file = pathlib.Path(RUNTIME_CONF_FILE).with_suffix('.conf')
 if not pathlib.Path(RUNTIME_CONF_FILE).exists() and old_runtime_conf_file.exists():
     old_runtime_conf_file.rename(RUNTIME_CONF_FILE)
