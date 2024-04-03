@@ -143,7 +143,10 @@ class DataplaneParserBot(ParserBot):
         else:
             event = self.new_event(report)
 
-            line_contents = line.split('|')
+            # As mentioned in the feed header: Each field is separated
+            # by a pipe symbol ('|') and at least two whitespace
+            # characters on either side.
+            line_contents = line.split('  |  ')
             feed_name = line_contents[-1].strip()
             file_format = FILE_FORMATS.get(feed_name) or FILE_FORMATS['_default']
 

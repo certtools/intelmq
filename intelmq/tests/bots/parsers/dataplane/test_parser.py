@@ -198,6 +198,21 @@ SSH_AUTH_EVENT = [{'feed.url': 'https://dataplane.org/sshpwauth.txt',
                    'time.source': '2016-12-06T02:35:38+00:00',
                    'protocol.application': 'ssh',
                    'classification.type': 'brute-force',
+                   },
+                  {'feed.url': 'https://dataplane.org/sshpwauth.txt',
+                   'feed.name': 'SSH Password Authentication',
+                   '__type': 'Event',
+                   'time.observation': '2016-12-07T06:27:26+00:00',
+                   'raw': 'MSAgICAgICAgICAgIHwgIFRFU1QtQVMgY29tcGFueSB8IFdpdGggfCBwaXBlICAgfCAgMS4yLjMuNCAgICAgICAgICB8ICAyMDI0LTA0LTAyIDEyOjAwOjAwICB8ICBzc2hwd2F1dGg=',
+                   'event_description.text': 'Address has been seen attempting to remotely login to a host using SSH password '
+                                             'authentication. The source report lists hosts that are highly suspicious and '
+                                             'are likely conducting malicious SSH password authentication attacks.',
+                   'source.asn': 1,
+                   'source.ip': '1.2.3.4',
+                   'source.as_name': 'TEST-AS',
+                   'time.source': '2024-04-02T12:00:00+00:00',
+                   'protocol.application': 'ssh',
+                   'classification.type': 'brute-force',
                    }]
 
 
@@ -228,6 +243,7 @@ class TestDataplaneParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, SSH_AUTH_EVENT[0])
         self.assertMessageEqual(1, SSH_AUTH_EVENT[1])
+        self.assertMessageEqual(2, SSH_AUTH_EVENT[2])
 
 
 if __name__ == '__main__':  # pragma: no cover

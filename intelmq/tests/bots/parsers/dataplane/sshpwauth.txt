@@ -70,7 +70,8 @@
 #
 NA           |  NA                              |  170.239.104.183  |  2016-12-01 04:26:48  |  sshpwauth
 4134         |  CHINANET-BACKBONE No.31,Jin-ro  |   117.21.224.121  |  2016-12-06 02:35:38  |  sshpwauth
+1            |  TEST-AS company | With | pipe   |  1.2.3.4          |  2024-04-02 12:00:00  |  sshpwauth
 #
 # Statistics
-#        ASNs: 1
-#   Addresses: 2
+#        ASNs: 2
+#   Addresses: 3
