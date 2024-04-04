@@ -6,7 +6,8 @@
 # CHANGELOG
 
 
-## 3.3.1 (unreleased)
+3.3.1 (unreleased)
+------------------
 
 ### Configuration
 
@@ -20,6 +21,9 @@
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.shadowserver._config`:
+  - Fetch schema before first run (PR#2482 by elsif2, fixes #2480).
+- `intelmq.bots.parsers.dataplane.parser`: Use `  |  ` as field delimiter, fix parsing of AS names including `|` (PR#2488 by DigitalTrustCenter).
 
 #### Experts
 
