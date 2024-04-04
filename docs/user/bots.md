@@ -4969,7 +4969,7 @@ Note: The field "raw" gets base64 decoded if possible. Bytes `\n` and `\r` are r
 
 Launch it like this:
 ```
-</usr/local/bin executable> <bot-id> cli [--tester tester's email]
+</usr/local/bin executable> <bot-id> --cli [--tester tester's email]
 ```
 Example:
 ```bash
@@ -4993,7 +4993,7 @@ You can schedule the batch sending easily with a cron script, I.E. put this into
 
 ```
 # Send the e-mails every day at 6 AM
-0 6 * * *  /usr/local/bin/intelmq.bots.outputs.smtp_batch.output smtp-batch-output-cz cli --ignore-older-than-days 4 --send > /tmp/intelmq-send.log
+0 6 * * *  /usr/local/bin/intelmq.bots.outputs.smtp_batch.output smtp-batch-output-cz cli --ignore-older-than-days 4 --send &> /tmp/intelmq-send.log
 ```
 
 **Module:** `intelmq.bots.outputs.smtp_batch.output`
