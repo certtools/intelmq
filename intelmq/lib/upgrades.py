@@ -40,7 +40,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v310_shadowserver_feednames',
            'v320_update_turris_greylist_url',
            'v322_url_replacement',
-           'v322_removed_feeds_and_bots'
+           'v322_removed_feeds_and_bots',
            ]
 
 
@@ -979,6 +979,8 @@ UPGRADES = OrderedDict([
     ((3, 1, 0), (v310_feed_changes, v310_shadowserver_feednames)),
     ((3, 2, 0), (v320_update_turris_greylist_url,)),
     ((3, 2, 2), (v322_url_replacement, v322_removed_feeds_and_bots)),
+    ((3, 3, 0), ()),
+    ((3, 3, 1), ()),
 ])
 
 ALWAYS = (harmonization,)

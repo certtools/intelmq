@@ -6,6 +6,37 @@
 # CHANGELOG
 
 
+## 3.3.1 (unreleased)
+
+### Configuration
+
+### Core
+
+### Development
+
+### Data Format
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Tools
+
+### Contrib
+
+### Known issues
+
 
 3.3.0 (2024-03-01)
 ------------------

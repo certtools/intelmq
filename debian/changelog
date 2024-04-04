@@ -1,8 +1,14 @@
+intelmq (3.3.1~a1-1) UNRELEASED; urgency=medium
+
+  * 3.3.1 Bugfix release
+
+ -- Sebastian Wagner <sebix@sebix.at>  Thu, 04 Apr 2024 10:40:34 +0200
+
 intelmq (3.3.0-1) stable; urgency=medium
 
   * 3.3.0 Feature release
 
- -- Aaron Kaplan <aaron@lo-res.org>  Fr, 01 Mar 2024 14:19:00 +0100
+ -- Aaron Kaplan <aaron@lo-res.org>  Fri, 01 Mar 2024 14:19:00 +0100
 
 intelmq (3.2.1-2) stable; urgency=medium
 
