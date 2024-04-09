@@ -237,9 +237,7 @@ class SMTPBatchOutputBot(Bot):
                         print("... failed ...", flush=True)
                         continue
                 else:
-                    # visible both warning and print
-                    print(f"Warning: {mail_record} timeout, too big to read from redis", flush=True)
-                    self.logger.warning(f"Warning: {mail_record} timeout, too big to read from redis")
+                    self.logger.warning("Warning: timeout, too big to read from redis: %r", mail_record)
                     self.timeout.append(mail_record)
                     continue
 
@@ -253,8 +251,11 @@ class SMTPBatchOutputBot(Bot):
             fieldnames = set()
             rows_output = []
             for row in lines:
-                if threshold and row["time.observation"][:19] < threshold.isoformat()[:19]:
-                    continue
+                try:
+                    if threshold and row["time.observation"][:19] < threshold.isoformat()[:19]:
+                        continue
+                except KeyError:
+                    self.logger.warning("Warning: row skipped due to time.observation error: %r", mail_record)
                 fieldnames = fieldnames | set(row.keys())
                 keys = set(self.allowed_fieldnames).intersection(row)
                 ordered_keys = []
@@ -290,7 +291,7 @@ class SMTPBatchOutputBot(Bot):
                     try:
                         zf.writestr(filename + ".csv", output.getvalue())
                     except Exception:
-                        self.logger.error(f"Cannot zip mail {mail_record}")
+                        self.logger.error("Error: Cannot zip mail: %r", mail_record)
                         continue
 
                 if email_to in self.alternative_mail:
