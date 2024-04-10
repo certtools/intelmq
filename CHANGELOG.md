@@ -19,6 +19,8 @@
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.shodan.collector_stream` (PR#2492 by Mikk Margus Möll):
+  - Add `alert` parameter to Shodan stream collector to allow fetching streams by configured alert ID
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:

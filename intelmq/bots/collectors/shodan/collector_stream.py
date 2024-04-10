@@ -8,15 +8,15 @@ Parameters:
 * api_key: The API key
 
 Selectors:
-The only possible selector is currently the country:
 * countries: A list of strings or a comma separated list with country codes
+* alert: An alert ID from monitor.shodan.io
 """
 import pkg_resources
 from http.client import IncompleteRead
 from urllib3.exceptions import ProtocolError, ReadTimeoutError
 
 from requests.exceptions import ChunkedEncodingError, ConnectionError
-from typing import List
+from typing import List, Optional
 
 from intelmq.lib.bot import CollectorBot
 
@@ -31,6 +31,7 @@ class ShodanStreamCollectorBot(CollectorBot):
     "Collect the Shodan stream from the Shodan API"
     api_key: str = "<INSERT your API key>"
     countries: List[str] = []
+    alert: Optional[str] = None
 
     def init(self):
         if shodan is None:
@@ -46,14 +47,28 @@ class ShodanStreamCollectorBot(CollectorBot):
             self.api = shodan.Shodan(self.api_key,
                                      proxies=self.proxy)
         if isinstance(self.countries, str):
+            if self.countries and self.alert:
+                raise ValueError('Both alert and country filters specified. Please use only one selector.')
             self.countries = self.countries.split(',')
 
         self.__error_count = 0
 
     def process(self):
         try:
-            for line in self.api.stream.countries(timeout=self.http_timeout_sec, raw=True,
-                                                  countries=self.countries):
+            if self.alert:
+                stream = self.api.stream.alert(
+                    aid=self.alert,
+                    timeout=self.http_timeout_sec,
+                    raw=True,
+                )
+            else:
+                stream = self.api.stream.countries(
+                    countries=self.countries,
+                    timeout=self.http_timeout_sec,
+                    raw=True,
+                )
+
+            for line in stream:
                 report = self.new_report()
                 report.add('raw', line)
                 self.send_message(report)
