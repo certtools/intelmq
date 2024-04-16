@@ -68,21 +68,25 @@ class MISPFeedOutputBot(OutputBot):
             self.timedelta = datetime.timedelta(minutes=parse_relative(self.interval_event))
 
         if (self.output_dir / '.current').exists():
-            with (self.output_dir / '.current').open() as f:
-                self.current_file = Path(f.read())
-            self.current_event = MISPEvent()
-            self.current_event.load_file(self.current_file)
+            try:
+                with (self.output_dir / '.current').open() as f:
+                    self.current_file = Path(f.read())
+                self.current_event = MISPEvent()
+                self.current_event.load_file(self.current_file)
 
-            last_min_time, last_max_time = re.findall('IntelMQ event (.*) - (.*)', self.current_event.info)[0]
-            last_min_time = datetime.datetime.strptime(last_min_time, '%Y-%m-%dT%H:%M:%S.%f')
-            last_max_time = datetime.datetime.strptime(last_max_time, '%Y-%m-%dT%H:%M:%S.%f')
-            if last_max_time < datetime.datetime.now():
-                self.min_time_current = datetime.datetime.now()
-                self.max_time_current = self.min_time_current + self.timedelta
+                last_min_time, last_max_time = re.findall('IntelMQ event (.*) - (.*)', self.current_event.info)[0]
+                last_min_time = datetime.datetime.strptime(last_min_time, '%Y-%m-%dT%H:%M:%S.%f')
+                last_max_time = datetime.datetime.strptime(last_max_time, '%Y-%m-%dT%H:%M:%S.%f')
+                if last_max_time < datetime.datetime.now():
+                    self.min_time_current = datetime.datetime.now()
+                    self.max_time_current = self.min_time_current + self.timedelta
+                    self.current_event = None
+                else:
+                    self.min_time_current = last_min_time
+                    self.max_time_current = last_max_time
+            except:
+                self.logger.exception("Loading current event %s failed. Skipping it.", self.current_event)
                 self.current_event = None
-            else:
-                self.min_time_current = last_min_time
-                self.max_time_current = last_max_time
         else:
             self.min_time_current = datetime.datetime.now()
             self.max_time_current = self.min_time_current + self.timedelta
