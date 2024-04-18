@@ -59,7 +59,8 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
             self._report_list = self.reports.split(',')
         elif isinstance(self.reports, list):
             self._report_list = self.reports
-
+        if isinstance(self.types, str):
+            self.types = self.types.split(',')
         if self.country and self.country not in self._report_list:
             self.logger.warn("Deprecated parameter 'country' found. Please use 'reports' instead. The backwards-compatibility will be removed in IntelMQ version 4.0.0.")
             self._report_list.append(self.country)
@@ -110,8 +111,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
             return None
 
         if self.types:
-            reports = [report for report in reports if any(rtype in report['file'] for rtype in self.types)]
-
+            reports = [report for report in reports if any(report['type'] == rtype for rtype in self.types)]
         return reports
 
     def _report_download(self, reportid: str):

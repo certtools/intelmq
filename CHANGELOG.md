@@ -19,6 +19,9 @@
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.shadowserver.collector_reports_api.py`:
+  - Added support for the types parameter to be either a string or a list.
+  - Refactored to utilize the type field returned by the API to match the requested types instead of a sub-string match on the filename.
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
