@@ -994,6 +994,10 @@ Only the proxy is used (requires `shodan-python > 1.8.1`). Certificate is always
 
 () A list of countries to query for. If it is a string, it will be spit by `,`.
 
+**`alert`**
+
+() Alert ID from monitor.shodan.io.
+
 If the stream is interrupted, the connection will be aborted using the timeout parameter. No error will be logged if the
 number of consecutive connection fails does not reach the parameter
 `error_max_retries`. Instead of errors, an INFO message is logged. This is a measurement against too frequent ERROR
