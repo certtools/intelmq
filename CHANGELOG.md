@@ -33,6 +33,7 @@
 #### Experts
 
 #### Outputs
+- `intelmq.bots.outputs.misp.output_feed`: handle failures if saved current event wasn't saved or is incorrect (PR by Kamil Mankowski).
 
 ### Documentation
 
