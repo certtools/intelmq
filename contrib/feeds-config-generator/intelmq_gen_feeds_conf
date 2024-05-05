@@ -8,9 +8,10 @@ import json
 import sys
 
 try:
-    import yaml
+    from ruamel.yaml import YAML
+    yaml = YAML(typ="safe", pure=True)
 except ImportError:
-    print("[-] Please install yaml using the following command: 'pip install pyyaml'.", file=sys.stderr)
+    print("[-] Please install ruamel.yaml using the following command: 'pip install ruamel.yaml'.", file=sys.stderr)
     sys.exit(-1)
 
 
