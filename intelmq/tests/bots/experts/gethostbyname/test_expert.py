@@ -20,8 +20,8 @@ EXAMPLE_INPUT = {"__type": "Event",
 EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.fqdn": "example.com",
                   "destination.fqdn": "example.org",
-                  "source.ip": "93.184.216.34",
-                  "destination.ip": "93.184.216.34",
+                  "source.ip": "93.184.215.14",
+                  "destination.ip": "93.184.215.14",
                   "time.observation": "2015-01-01T00:00:00+00:00"
                   }
 NONEXISTING_INPUT = {"__type": "Event",
@@ -34,7 +34,7 @@ EXAMPLE_URL_INPUT = {"__type": "Event",
                      }
 EXAMPLE_URL_OUTPUT = {"__type": "Event",
                       "source.url": "http://example.com",
-                      "source.ip": "93.184.216.34",
+                      "source.ip": "93.184.215.14",
                       }
 EXISITNG_INPUT = {"__type": "Event",
                   "source.fqdn": "example.com",
