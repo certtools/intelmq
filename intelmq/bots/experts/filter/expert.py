@@ -64,7 +64,7 @@ class FilterExpertBot(ExpertBot):
             self.filter = False
 
         self.regex = False
-        if self.filter_regex is not None:
+        if self.filter_regex:
             self.regex = re.compile(self.filter_value)
 
         self.time_filter = self.not_after is not None or self.not_before is not None
