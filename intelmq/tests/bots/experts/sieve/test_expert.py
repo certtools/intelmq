@@ -1738,6 +1738,14 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, expected)
 
+    def test_extra_dict(self):
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_extra_dict.sieve')
+        event = EXAMPLE_INPUT.copy()
+        event['extra.some_dict'] = {'key': []}
+        self.input_message = event
+        self.run_bot()
+        self.assertOutputQueueLen(0)
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

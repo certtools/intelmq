@@ -31,6 +31,8 @@
 - `intelmq.bots.parsers.dataplane.parser`: Use `  |  ` as field delimiter, fix parsing of AS names including `|` (PR#2488 by DigitalTrustCenter).
 
 #### Experts
+- `intelmq.bots.experts.sieve.expert`:
+  - For `:contains`, `=~` and `!~`, convert the value to string before matching avoiding an exception. If the value is a dict, convert the value to JSON (PR#2500 by Sebastian Wagner).
 
 #### Outputs
 - `intelmq.bots.outputs.misp.output_feed`: handle failures if saved current event wasn't saved or is incorrect (PR by Kamil Mankowski).

@@ -3582,9 +3582,11 @@ if :exists source.fqdn { ... }
 if feed.name != 'acme-security' || feed.accuracy == 100 || extra.false_positive == false { ... }
 ```
 
-- `:contains` matches on substrings.
+- `:contains` matches on substrings ([`str.find`](https://docs.python.org/3/library/stdtypes.html#str.find)).
 
 - `=~` matches strings based on the given regular expression. `!~` is the inverse regular expression match.
+
+- For `:contains`, `=~` and `!~`, the value is converted to string before matching. If the value is a dict, convert the value to JSON.
 
 - Numerical comparisons are evaluated with `<`, `<=`, `>`, `>=`.
 
