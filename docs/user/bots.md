@@ -12,7 +12,7 @@ This document contains complete reference of bots implemented by IntelMQ and how
 Each bot has it's own configuration. The configuration consists of two types of parameters:
 
 - **Generic parameters** that are common to all the bots and need to be set for each bot.
-  
+
 - **Runtime parameters** are needed by the bot itself during runtime. Some of these parameters can be inherited from the [global configuration](../admin/configuration/intelmq.md#runtimeyaml) (which is applied to all the bots), but can be overridden in the individual bot configuration.
 
 ## Generic Parameters
@@ -930,7 +930,7 @@ oldest files available!).
 
 The resulting reports contain the following special field:
 
-- `extra.file_name`: The name of the downloaded file, with fixed filename extension. 
+- `extra.file_name`: The name of the downloaded file, with fixed filename extension.
 
 **Module:** `intelmq.bots.collectors.shadowserver.collector_reports_api`
 
@@ -2119,7 +2119,7 @@ No additional parameters.
 
 ---
 
-### Shadowserver <div id="intelmq.bots.parsers.shadowserver.parser" /> 
+### Shadowserver <div id="intelmq.bots.parsers.shadowserver.parser" />
 
 The Shadowserver parser operates on CSV formatted data.
 
@@ -2132,11 +2132,11 @@ correct mapping of the columns:
 1. **Automatic report type detection**
 
     Since IntelMQ version 2.1 the parser can detect the feed based on metadata provided by the collector.
-    
+
     When processing a report, this bot takes `extra.file_name` from the report and looks in `config.py` how the report
     should be parsed. If this lookup is not possible, and the `feedname` is not given as parameter, the feed cannot be
     parsed.
-    
+
     The field `extra.file_name` has the following structure: `%Y-%m-%d-${report_name}[-suffix].csv` where the optional
     suffix can be something like `country-geo`. For example, some possible filenames
     are `2019-01-01-scan_http-country-geo.csv` or `2019-01-01-scan_tftp.csv`. The important part is the `report_name`,
@@ -3650,9 +3650,9 @@ if extra.tags :supersetof ['iot', 'vulnerable'] { ... }
 ```
 if time.observation :before '1 week' { ... }
 ```
-  
+
 * `:after`  tests if the date value occurred after given time ago; see `:before`
-  
+
 ```
 if time.observation :after '2015-09-12' { ... }  # happened after midnight the 12th Sep
 ```
@@ -5006,7 +5006,13 @@ You can schedule the batch sending easily with a cron script, I.E. put this into
 
 **`alternative_mails`**
 
-(optional, string) Path to CSV in the form `original@email.com,alternative@email.com`. Needed when some of the recipients ask you to forward their e-mails to another address.
+(optional, string) Path to CSV in the form `original@email.com,alternative@email.com`. Needed when some of the recipients ask you to forward their e-mails to another address. Delimit multiple recipients by the semicolon. The field is internally parsed by [Envelope](https://github.com/CZ-NIC/envelope#recipients) so pretty anything is allowed:
+
+```
+original@email.com,alternative@email.com
+original2@email.com,person1@email.com;person2@email.com
+original3@email.com, Mary <person1@example.com>; John <person2@example.com>
+```
 
 **`attachment_name`**
 
@@ -5070,7 +5076,7 @@ You can schedule the batch sending easily with a cron script, I.E. put this into
 
 (required, string/array/object) SMTP server information and credentials. See [SMTP parameter](https://github.com/CZ-NIC/envelope#sending) of the envelope module.
 
-Examples: 
+Examples:
 ```yaml
 smtp_server: "mailer"
 smtp_server: {"host": "mailer", "port": 587, "user": "john", "password": "123"}
