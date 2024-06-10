@@ -34,7 +34,7 @@
 
 #### Outputs
 - `intelmq.bots.outputs.misp.output_feed`: Handle failures if saved current event wasn't saved or is incorrect (PR by Kamil Mankowski).
-- `intelmq.bots.outputs.smtp_batch.output`: Multiple alternative mails added to the docs.
+- `intelmq.bots.outputs.smtp_batch.output`: Documentation on multiple recipients added (PR#2501 by Edvard Rejthar).
 
 ### Documentation
 
