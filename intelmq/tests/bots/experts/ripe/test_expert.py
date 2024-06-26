@@ -15,14 +15,14 @@ import intelmq.lib.test as test
 from intelmq.bots.experts.ripe.expert import RIPEExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
-                 "source.ip": "93.184.216.34",  # example.com
+                 "source.ip": "93.184.215.14",  # example.com
                  "destination.ip": "193.238.157.5",  # funkfeuer.at
                  "destination.asn": 35492,
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
-                  "source.ip": "93.184.216.34",
-                  "source.abuse_contact": "abuse@verizondigitalmedia.com",
+                  "source.ip": "93.184.215.14",
+                  "source.abuse_contact": "abuse@edg.io",
                   "destination.ip": "193.238.157.5",
                   "destination.abuse_contact": "abuse@funkfeuer.at",
                   "destination.asn": 35492,
@@ -106,7 +106,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
         self.assertEqual(self.cache.get('db_asn:35492'), b'["abuse@funkfeuer.at"]')
-        self.assertEqual(self.cache.get('db_ip:93.184.216.34'), b'["abuse@verizondigitalmedia.com"]')
+        self.assertEqual(self.cache.get('db_ip:93.184.215.14'), b'["abuse@edg.io"]')
         self.assertEqual(self.cache.get('db_ip:193.238.157.5'), b'["abuse@funkfeuer.at"]')
 
     def test_db_ipv6_lookup(self):
@@ -196,7 +196,7 @@ class TestRIPEExpertBot(test.BotTestCase, unittest.TestCase):
                                       })
         old = self.bot.QUERY['db_ip']
         self.bot.QUERY['db_ip'] = 'http://localhost/{}'
-        mocker.get('/93.184.216.34', status_code=404)
+        mocker.get('/93.184.215.14', status_code=404)
         mocker.get('/193.238.157.5', status_code=404)
 
         self.run_bot(prepare=False,
