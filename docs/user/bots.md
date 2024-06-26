@@ -2165,6 +2165,10 @@ For example using `curl -s https://interchange.shadowserver.org/intelmq/v1/schem
 
 (optional, boolean) If an existing `feed.name` should be overwritten.
 
+** `auto_update`**
+
+(optional, boolean) Enable automatic schema download.
+
 **Supported reports:**
 
 The report configuration is stored in a `shadowserver-schema.json` file downloaded from https://interchange.shadowserver.org/intelmq/v1/schema.
