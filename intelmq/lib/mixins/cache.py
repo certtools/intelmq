@@ -1,4 +1,4 @@
-""" CacheMixin for IntelMQ
+"""CacheMixin for IntelMQ
 
 SPDX-FileCopyrightText: 2021 Sebastian Waldbauer
 SPDX-License-Identifier: AGPL-3.0-or-later
@@ -6,6 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 CacheMixin is used for caching/storing data in redis.
 """
 
+import json
 from typing import Any, Optional
 import redis
 import intelmq.lib.utils as utils
@@ -31,7 +32,9 @@ class CacheMixin:
                 "socket_timeout": 5,
             }
 
-        self.__redis = redis.Redis(db=self.redis_cache_db, password=self.redis_cache_password, **kwargs)
+        self.__redis = redis.Redis(
+            db=self.redis_cache_db, password=self.redis_cache_password, **kwargs
+        )
         super().__init__()
 
     def cache_exists(self, key: str):
@@ -50,6 +53,17 @@ class CacheMixin:
         self.__redis.set(key, value)
         if self.redis_cache_ttl:
             self.__redis.expire(key, self.redis_cache_ttl)
+
+    def cache_put(self, value: dict) -> int:
+        # Returns the length of the list after pushing
+        size = self.__redis.lpush(self.bot_id, json.dumps(value))
+        return size
+
+    def cache_pop(self) -> dict:
+        data = self.__redis.rpop(self.bot_id)
+        if data is None:
+            return None
+        return json.loads(data)
 
     def cache_flush(self):
         """
