@@ -22,6 +22,7 @@
 - `intelmq.bots.collectors.shadowserver.collector_reports_api.py`:
   - Added support for the types parameter to be either a string or a list.
   - Refactored to utilize the type field returned by the API to match the requested types instead of a sub-string match on the filename.
+  - Fixed timezone issue for collecting reports.
 - `intelmq.bots.collectors.shodan.collector_stream` (PR#2492 by Mikk Margus Möll):
   - Add `alert` parameter to Shodan stream collector to allow fetching streams by configured alert ID
 
