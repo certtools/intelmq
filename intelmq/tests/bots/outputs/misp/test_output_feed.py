@@ -3,8 +3,9 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
+import json
 import unittest
-import sys
+from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import intelmq.lib.test as test
@@ -37,9 +38,9 @@ EXAMPLE_EVENT = {"classification.type": "infected-system",
 
 @test.skip_exotic()
 class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
-
     @classmethod
     def set_bot(cls):
+        cls.use_cache = True
         cls.bot_reference = MISPFeedOutputBot
         cls.default_input_message = EXAMPLE_EVENT
         cls.directory = TemporaryDirectory()
@@ -51,10 +52,57 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
     def test_event(self):
         self.run_bot()
 
+        current_event = open(f"{self.directory.name}/.current").read()
+        with open(current_event) as f:
+            objects = json.load(f).get("Event", {}).get("Object", [])
+        assert len(objects) == 1
+
+    def test_accumulating_events(self):
+        self.input_message = [EXAMPLE_EVENT, EXAMPLE_EVENT]
+        self.run_bot(iterations=2, parameters={"delay_save_event_count": 3})
+
+        current_event = open(f"{self.directory.name}/.current").read()
+
+        # First, the feed is empty - not enough events came
+        with open(current_event) as f:
+            objects = json.load(f).get("Event", {}).get("Object", [])
+        assert len(objects) == 0
+
+        self.input_message = [EXAMPLE_EVENT]
+        self.run_bot(parameters={"delay_save_event_count": 3})
+
+        # When enough events were collected, save them
+        with open(current_event) as f:
+            objects = json.load(f)["Event"]["Object"]
+        assert len(objects) == 3
+
+        self.input_message = [EXAMPLE_EVENT, EXAMPLE_EVENT, EXAMPLE_EVENT]
+        self.run_bot(iterations=3, parameters={"delay_save_event_count": 3})
+
+        # We continue saving to the same file until interval timeout
+        with open(current_event) as f:
+            objects = json.load(f)["Event"]["Object"]
+        assert len(objects) == 6
+
+        # Simulating leftovers in the queue when it's time to generate new event
+        Path(f"{self.directory.name}/.current").unlink()
+        self.bot.cache_put(EXAMPLE_EVENT)
+        self.run_bot(parameters={"delay_save_event_count": 3})
+
+        new_event = open(f"{self.directory.name}/.current").read()
+        with open(new_event) as f:
+            objects = json.load(f)["Event"]["Object"]
+        assert len(objects) == 1
+
+
+    def tearDown(self):
+        self.cache.delete(self.bot_id)
+        super().tearDown()
+
     @classmethod
     def tearDownClass(cls):
         cls.directory.cleanup()
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     unittest.main()

@@ -279,6 +279,10 @@ class Bot:
     def harmonization(self):
         return self._harmonization
 
+    @property
+    def bot_id(self):
+        return self.__bot_id_full
+
     def __handle_sigterm_signal(self, signum: int, stack: Optional[object]):
         """
         Calls when a SIGTERM is received. Stops the bot.
