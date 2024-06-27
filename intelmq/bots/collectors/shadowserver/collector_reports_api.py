@@ -4,7 +4,7 @@ Shadowserver Reports API Collector Bot
 SPDX-FileCopyrightText: 2020 Intelmq Team <intelmq-team@cert.at>
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 import hashlib
 import hmac
@@ -89,12 +89,11 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
         again.
         """
         if date is None:
-            date = datetime.today().date()
-        daybefore = date - timedelta(2)
-        dayafter = date + timedelta(1)
+            date = datetime.now(timezone.utc).date()
+        begin = date - timedelta(2)
 
         data = self.preamble
-        data += f',"date": "{daybefore.isoformat()}:{dayafter.isoformat()}" '
+        data += f',"date": "{begin.isoformat()}:{date.isoformat()}" '
         if len(self._report_list) > 0:
             data += f',"reports": {json.dumps(self._report_list)}'
         data += '}'
