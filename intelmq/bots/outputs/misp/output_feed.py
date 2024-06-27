@@ -5,12 +5,13 @@
 # -*- coding: utf-8 -*-
 import datetime
 import json
+import re
 from pathlib import Path
 from uuid import uuid4
-import re
 
 from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.mixins import CacheMixin
 from intelmq.lib.utils import parse_relative
 
 try:
@@ -19,19 +20,14 @@ try:
 except ImportError:
     # catching SyntaxError because of https://github.com/MISP/PyMISP/issues/501
     MISPEvent = None
-    import_fail_reason = 'import'
-except SyntaxError:
-    # catching SyntaxError because of https://github.com/MISP/PyMISP/issues/501
-    MISPEvent = None
-    import_fail_reason = 'syntax'
+    import_fail_reason = "import"
 
 
-# NOTE: This module is compatible with Python 3.6+
-
-
-class MISPFeedOutputBot(OutputBot):
+class MISPFeedOutputBot(OutputBot, CacheMixin):
     """Generate an output in the MISP Feed format"""
+
     interval_event: str = "1 hour"
+    delay_save_event_count: int = None
     misp_org_name = None
     misp_org_uuid = None
     output_dir: str = "/opt/intelmq/var/lib/bots/mispfeed-output"  # TODO: should be path
@@ -45,13 +41,8 @@ class MISPFeedOutputBot(OutputBot):
             return True
 
     def init(self):
-        if MISPEvent is None and import_fail_reason == 'syntax':
-            raise MissingDependencyError("pymisp",
-                                         version='>=2.4.117.3',
-                                         additional_text="Python versions below 3.6 are "
-                                                         "only supported by pymisp <= 2.4.119.1.")
-        elif MISPEvent is None:
-            raise MissingDependencyError('pymisp', version='>=2.4.117.3')
+        if MISPEvent is None:
+            raise MissingDependencyError("pymisp", version=">=2.4.117.3")
 
         self.current_event = None
 
@@ -71,59 +62,90 @@ class MISPFeedOutputBot(OutputBot):
             try:
                 with (self.output_dir / '.current').open() as f:
                     self.current_file = Path(f.read())
-                self.current_event = MISPEvent()
-                self.current_event.load_file(self.current_file)
 
-                last_min_time, last_max_time = re.findall('IntelMQ event (.*) - (.*)', self.current_event.info)[0]
-                last_min_time = datetime.datetime.strptime(last_min_time, '%Y-%m-%dT%H:%M:%S.%f')
-                last_max_time = datetime.datetime.strptime(last_max_time, '%Y-%m-%dT%H:%M:%S.%f')
-                if last_max_time < datetime.datetime.now():
-                    self.min_time_current = datetime.datetime.now()
-                    self.max_time_current = self.min_time_current + self.timedelta
-                    self.current_event = None
-                else:
-                    self.min_time_current = last_min_time
-                    self.max_time_current = last_max_time
+                if self.current_file.exists():
+                    self.current_event = MISPEvent()
+                    self.current_event.load_file(self.current_file)
+
+                    last_min_time, last_max_time = re.findall(
+                        "IntelMQ event (.*) - (.*)", self.current_event.info
+                    )[0]
+                    last_min_time = datetime.datetime.strptime(
+                        last_min_time, "%Y-%m-%dT%H:%M:%S.%f"
+                    )
+                    last_max_time = datetime.datetime.strptime(
+                        last_max_time, "%Y-%m-%dT%H:%M:%S.%f"
+                    )
+                    if last_max_time < datetime.datetime.now():
+                        self.min_time_current = datetime.datetime.now()
+                        self.max_time_current = self.min_time_current + self.timedelta
+                        self.current_event = None
+                    else:
+                        self.min_time_current = last_min_time
+                        self.max_time_current = last_max_time
             except:
-                self.logger.exception("Loading current event %s failed. Skipping it.", self.current_event)
+                self.logger.exception(
+                    "Loading current event %s failed. Skipping it.", self.current_event
+                )
                 self.current_event = None
         else:
             self.min_time_current = datetime.datetime.now()
             self.max_time_current = self.min_time_current + self.timedelta
 
     def process(self):
-
         if not self.current_event or datetime.datetime.now() > self.max_time_current:
             self.min_time_current = datetime.datetime.now()
             self.max_time_current = self.min_time_current + self.timedelta
             self.current_event = MISPEvent()
-            self.current_event.info = ('IntelMQ event {begin} - {end}'
-                                       ''.format(begin=self.min_time_current.isoformat(),
-                                                 end=self.max_time_current.isoformat()))
+            self.current_event.info = "IntelMQ event {begin} - {end}" "".format(
+                begin=self.min_time_current.isoformat(),
+                end=self.max_time_current.isoformat(),
+            )
             self.current_event.set_date(datetime.date.today())
             self.current_event.Orgc = self.misp_org
             self.current_event.uuid = str(uuid4())
-            self.current_file = self.output_dir / f'{self.current_event.uuid}.json'
-            with (self.output_dir / '.current').open('w') as f:
+            self.current_file = self.output_dir / f"{self.current_event.uuid}.json"
+            with (self.output_dir / ".current").open("w") as f:
                 f.write(str(self.current_file))
+
+            # On startup or when timeout occurs, clean the queue to ensure we do not
+            # keep events forever because there was not enough generated
+            self._generate_feed()
 
         event = self.receive_message().to_dict(jsondict_as_string=True)
 
-        obj = self.current_event.add_object(name='intelmq_event')
-        for object_relation, value in event.items():
+        cache_size = None
+        if self.delay_save_event_count:
+            cache_size = self.cache_put(event)
+
+        if cache_size is None:
+            self._generate_feed(event)
+        elif cache_size >= self.delay_save_event_count:
+            self._generate_feed()
+
+        self.acknowledge_message()
+
+    def _add_message_to_feed(self, message: dict):
+        obj = self.current_event.add_object(name="intelmq_event")
+        for object_relation, value in message.items():
             try:
                 obj.add_attribute(object_relation, value=value)
             except NewAttributeError:
                 # This entry isn't listed in the harmonization file, ignoring.
                 pass
 
-        feed_output = self.current_event.to_feed(with_meta=False)
+    def _generate_feed(self, message: dict = None):
+        if message:
+            self._add_message_to_feed(message)
 
-        with self.current_file.open('w') as f:
+        while message := self.cache_pop():
+            self._add_message_to_feed(message)
+
+        feed_output = self.current_event.to_feed(with_meta=False)
+        with self.current_file.open("w") as f:
             json.dump(feed_output, f)
 
         feed_meta_generator(self.output_dir)
-        self.acknowledge_message()
 
     @staticmethod
     def check(parameters):
