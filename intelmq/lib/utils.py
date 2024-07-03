@@ -692,6 +692,7 @@ def drop_privileges() -> bool:
     """
     if os.geteuid() == 0:
         try:
+            os.setgroups([group.gr_gid for group in grp.getgrall() if 'intelmq' in group.gr_mem])
             os.setgid(grp.getgrnam('intelmq').gr_gid)
             os.setuid(pwd.getpwnam('intelmq').pw_uid)
         except (OSError, KeyError):
