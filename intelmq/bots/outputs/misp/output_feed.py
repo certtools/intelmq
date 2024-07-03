@@ -27,7 +27,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
     """Generate an output in the MISP Feed format"""
 
     interval_event: str = "1 hour"
-    delay_save_event_count: int = None
+    bulk_save_count: int = None
     misp_org_name = None
     misp_org_uuid = None
     output_dir: str = "/opt/intelmq/var/lib/bots/mispfeed-output"  # TODO: should be path
@@ -115,12 +115,12 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         event = self.receive_message().to_dict(jsondict_as_string=True)
 
         cache_size = None
-        if self.delay_save_event_count:
+        if self.bulk_save_count:
             cache_size = self.cache_put(event)
 
         if cache_size is None:
             self._generate_feed(event)
-        elif cache_size >= self.delay_save_event_count:
+        elif cache_size >= self.bulk_save_count:
             self._generate_feed()
 
         self.acknowledge_message()
@@ -138,8 +138,10 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         if message:
             self._add_message_to_feed(message)
 
-        while message := self.cache_pop():
+        message = self.cache_pop()
+        while message:
             self._add_message_to_feed(message)
+            message = self.cache_pop()
 
         feed_output = self.current_event.to_feed(with_meta=False)
         with self.current_file.open("w") as f:
