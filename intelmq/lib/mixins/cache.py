@@ -13,6 +13,17 @@ import intelmq.lib.utils as utils
 
 
 class CacheMixin:
+    """Provides caching possibilities for bots
+
+        For key-value cache, use methods:
+            cache_exists
+            cache_get
+            cache_set
+
+        To store dict elements in a cache queue named after bot id, use methods:
+            cache_put
+            cache_pop
+    """
     __redis: redis.Redis = None
     redis_cache_host: str = "127.0.0.1"
     redis_cache_port: int = 6379

@@ -34,7 +34,9 @@
 #### Experts
 
 #### Outputs
-- `intelmq.bots.outputs.misp.output_feed`: Handle failures if saved current event wasn't saved or is incorrect (PR by Kamil Mankowski).
+- `intelmq.bots.outputs.misp.output_feed`:
+  - Handle failures if saved current event wasn't saved or is incorrect (PR by Kamil Mankowski).
+  - Allow saving messages in bulks instead of refreshing the feed immediately (PR#2505 by Kamil Mankowski).
 - `intelmq.bots.outputs.smtp_batch.output`: Documentation on multiple recipients added (PR#2501 by Edvard Rejthar).
 
 ### Documentation

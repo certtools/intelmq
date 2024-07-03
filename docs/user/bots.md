@@ -4595,6 +4595,13 @@ The PyMISP library >= 2.4.119.1 is required, see
 () The output bot creates one event per each interval, all data in this time frame is part of this event. Default "1
 hour", string.
 
+**`bulk_save_count`**
+
+(optional, int) If set to a non-0 value, the bot won't refresh the MISP feed immeadiately, but will cache
+incoming messages until the given number of them. Use it if your bot proceeds a high number of messages
+and constant saving to the disk is a problem. Reloading or restarting bot as well as generating
+a new MISP event based on `interval_event` triggers saving regardless of the cache size.
+
 **Usage in MISP**
 
 Configure the destination directory of this feed as feed in MISP, either as local location, or served via a web server.
