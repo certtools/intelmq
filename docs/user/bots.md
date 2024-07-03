@@ -4611,7 +4611,7 @@ hour", string.
 
 **`bulk_save_count`**
 
-(optional, int) If set to a non-0 value, the bot won't refresh the MISP feed immeadiately, but will cache
+(optional, int) If set to a non-0 value, the bot won't refresh the MISP feed immediately, but will cache
 incoming messages until the given number of them. Use it if your bot proceeds a high number of messages
 and constant saving to the disk is a problem. Reloading or restarting bot as well as generating
 a new MISP event based on `interval_event` triggers saving regardless of the cache size.
