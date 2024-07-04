@@ -4616,6 +4616,31 @@ incoming messages until the given number of them. Use it if your bot proceeds a 
 and constant saving to the disk is a problem. Reloading or restarting bot as well as generating
 a new MISP event based on `interval_event` triggers saving regardless of the cache size.
 
+**`attribute_mapping`**
+
+(optional, dict) If set, allows selecting which IntelMQ event fields are mapped to MISP attributes
+as well as attribute parameters (like e.g. a comment). The expected format is a *dictonary of dictionaries*:
+first-level key represents an IntelMQ field that will be directly translated to a MISP attribute; nested
+dictionary represents addditional parameters PyMISP can take when creating an attribute. They can use
+names of other IntelMQ fields (then the value of such field will be used), or static values. If not needed,
+leave empty dict.
+
+For example:
+
+```yaml
+attribute_mapping:
+  source.ip:
+  feed.name:
+    comment: event_description.text
+  destination.ip:
+    to_ids: False
+```
+
+would create a MISP object with three attributes `source.ip`, `feed.name` and `destination.ip`
+and set their values as in the IntelMQ event. In addition, the `feed.name` would have a comment
+as given in the `event_description.text` from IntelMQ event, and `destination.ip` would be set
+as not usable for IDS.
+
 **Usage in MISP**
 
 Configure the destination directory of this feed as feed in MISP, either as local location, or served via a web server.

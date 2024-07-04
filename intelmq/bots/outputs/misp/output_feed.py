@@ -9,8 +9,11 @@ import re
 from pathlib import Path
 from uuid import uuid4
 
+import pymisp
+
 from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
+from ....lib.message import Message, MessageFactory
 from intelmq.lib.mixins import CacheMixin
 from intelmq.lib.utils import parse_relative
 
@@ -30,8 +33,11 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
     bulk_save_count: int = None
     misp_org_name = None
     misp_org_uuid = None
-    output_dir: str = "/opt/intelmq/var/lib/bots/mispfeed-output"  # TODO: should be path
+    output_dir: str = (
+        "/opt/intelmq/var/lib/bots/mispfeed-output"  # TODO: should be path
+    )
     _is_multithreadable: bool = False
+    attribute_mapping: dict = None
 
     @staticmethod
     def check_output_dir(dirname):
@@ -56,11 +62,13 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         if self.interval_event is None:
             self.timedelta = datetime.timedelta(hours=1)
         else:
-            self.timedelta = datetime.timedelta(minutes=parse_relative(self.interval_event))
+            self.timedelta = datetime.timedelta(
+                minutes=parse_relative(self.interval_event)
+            )
 
-        if (self.output_dir / '.current').exists():
+        if (self.output_dir / ".current").exists():
             try:
-                with (self.output_dir / '.current').open() as f:
+                with (self.output_dir / ".current").open() as f:
                     self.current_file = Path(f.read())
 
                 if self.current_file.exists():
@@ -127,12 +135,49 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
 
     def _add_message_to_feed(self, message: dict):
         obj = self.current_event.add_object(name="intelmq_event")
+        if not self.attribute_mapping:
+            self._default_mapping(obj, message)
+        else:
+            self._custom_mapping(obj, message)
+
+    def _default_mapping(self, obj: pymisp.MISPObject, message: dict):
         for object_relation, value in message.items():
             try:
                 obj.add_attribute(object_relation, value=value)
             except NewAttributeError:
                 # This entry isn't listed in the harmonization file, ignoring.
-                pass
+                self.logger.warning(
+                    "Object relation %s not exists in MISP definition, ignoring",
+                    object_relation,
+                )
+
+    def _extract_misp_attribute_kwargs(self, message: dict, definition: dict) -> dict:
+        # For caching and default mapping, the serialized version is the right format to work on.
+        # However, for any custom mapping the Message object is more sufficient as it handles
+        # subfields.
+        message = MessageFactory.from_dict(
+            message, harmonization=self.harmonization, default_type="Event"
+        )
+        result = {}
+        for parameter, value in definition.items():
+            # Check if the value is a harmonization key or a static value
+            if isinstance(value, str) and (
+                value in self.harmonization["event"]
+                or value.split(".", 1)[0] in self.harmonization["event"]
+            ):
+                result[parameter] = message.get(value)
+            else:
+                result[parameter] = value
+        return result
+
+    def _custom_mapping(self, obj: pymisp.MISPObject, message: dict):
+        for object_relation, definition in self.attribute_mapping.items():
+            obj.add_attribute(
+                object_relation,
+                value=message[object_relation],
+                **self._extract_misp_attribute_kwargs(message, definition),
+            )
+            # In case of manual mapping, we want to fail if it produces incorrect values
 
     def _generate_feed(self, message: dict = None):
         if message:
@@ -151,18 +196,27 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
 
     @staticmethod
     def check(parameters):
-        if 'output_dir' not in parameters:
+        if "output_dir" not in parameters:
             return [["error", "Parameter 'output_dir' not given."]]
         try:
-            created = MISPFeedOutputBot.check_output_dir(parameters['output_dir'])
+            created = MISPFeedOutputBot.check_output_dir(parameters["output_dir"])
         except OSError:
-            return [["error",
-                     "Directory %r of parameter 'output_dir' does not exist and could not be created." % parameters['output_dir']]]
+            return [
+                [
+                    "error",
+                    "Directory %r of parameter 'output_dir' does not exist and could not be created."
+                    % parameters["output_dir"],
+                ]
+            ]
         else:
             if created:
-                return [["info",
-                         "Directory %r of parameter 'output_dir' did not exist, but has now been created."
-                         "" % parameters['output_dir']]]
+                return [
+                    [
+                        "info",
+                        "Directory %r of parameter 'output_dir' did not exist, but has now been created."
+                        "" % parameters["output_dir"],
+                    ]
+                ]
 
 
 BOT = MISPFeedOutputBot

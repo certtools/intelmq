@@ -8,6 +8,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from .....lib.message import Message, MessageFactory
 import intelmq.lib.test as test
 from intelmq.bots.outputs.misp.output_feed import MISPFeedOutputBot
 
@@ -92,13 +93,57 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
 
         # Simulating leftovers in the queue when it's time to generate new event
         Path(f"{self.directory.name}/.current").unlink()
-        self.bot.cache_put(EXAMPLE_EVENT)
+        self.bot.cache_put(MessageFactory.from_dict(EXAMPLE_EVENT).to_dict(jsondict_as_string=True))
         self.run_bot(parameters={"bulk_save_count": 3})
 
         new_event = open(f"{self.directory.name}/.current").read()
         with open(new_event) as f:
             objects = json.load(f)["Event"]["Object"]
         assert len(objects) == 1
+
+    def test_attribute_mapping(self):
+        self.run_bot(
+            parameters={
+                "attribute_mapping": {
+                    "source.ip": {},
+                    "feed.name": {"comment": "event_description.text"},
+                    "destination.ip": {"to_ids": False},
+                    "malware.name": {"comment": "extra.non_ascii"}
+                }
+            }
+        )
+
+        current_event = open(f"{self.directory.name}/.current").read()
+        with open(current_event) as f:
+            objects = json.load(f).get("Event", {}).get("Object", [])
+
+        assert len(objects) == 1
+        attributes = objects[0].get("Attribute")
+        assert len(attributes) == 4
+        source_ip = next(
+            attr for attr in attributes if attr.get("object_relation") == "source.ip"
+        )
+        assert source_ip["value"] == "152.166.119.2"
+        assert source_ip["comment"] == ""
+
+        feed_name = next(
+            attr for attr in attributes if attr.get("object_relation") == "feed.name"
+        )
+        assert feed_name["value"] == EXAMPLE_EVENT["feed.name"]
+        assert feed_name["comment"] == EXAMPLE_EVENT["event_description.text"]
+
+        destination_ip = next(
+            attr for attr in attributes if attr.get("object_relation") == "destination.ip"
+        )
+        assert destination_ip["value"] == EXAMPLE_EVENT["destination.ip"]
+        assert destination_ip["to_ids"] is False
+
+        malware_name = next(
+            attr for attr in attributes if attr.get("object_relation") == "malware.name"
+        )
+        assert malware_name["value"] == EXAMPLE_EVENT["malware.name"]
+        assert malware_name["comment"] == EXAMPLE_EVENT["extra.non_ascii"]
+
 
     def tearDown(self):
         self.cache.delete(self.bot_id)
