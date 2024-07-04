@@ -9,21 +9,21 @@ import re
 from pathlib import Path
 from uuid import uuid4
 
-import pymisp
-
 from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
-from ....lib.message import Message, MessageFactory
+from ....lib.message import MessageFactory
 from intelmq.lib.mixins import CacheMixin
 from intelmq.lib.utils import parse_relative
 
 try:
-    from pymisp import MISPEvent, MISPOrganisation, NewAttributeError
+    from pymisp import MISPEvent, MISPObject, MISPOrganisation, NewAttributeError
     from pymisp.tools import feed_meta_generator
 except ImportError:
     # catching SyntaxError because of https://github.com/MISP/PyMISP/issues/501
     MISPEvent = None
     import_fail_reason = "import"
+
+DEFAULT_KEY = "default"
 
 
 class MISPFeedOutputBot(OutputBot, CacheMixin):
@@ -38,6 +38,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
     )
     _is_multithreadable: bool = False
     attribute_mapping: dict = None
+    event_separator: str = None
 
     @staticmethod
     def check_output_dir(dirname):
@@ -50,7 +51,8 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         if MISPEvent is None:
             raise MissingDependencyError("pymisp", version=">=2.4.117.3")
 
-        self.current_event = None
+        self.current_events = {}
+        self.current_files = {}
 
         self.misp_org = MISPOrganisation()
         self.misp_org.name = self.misp_org_name
@@ -66,58 +68,57 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                 minutes=parse_relative(self.interval_event)
             )
 
+        self.min_time_current = datetime.datetime.max
+        self.max_time_current = datetime.datetime.min
+
         if (self.output_dir / ".current").exists():
             try:
                 with (self.output_dir / ".current").open() as f:
-                    self.current_file = Path(f.read())
+                    current = f.read()
 
-                if self.current_file.exists():
-                    self.current_event = MISPEvent()
-                    self.current_event.load_file(self.current_file)
+                if not self.event_separator:
+                    self.current_files[DEFAULT_KEY] = Path(current)
+                else:
+                    self.current_files = {
+                        k: Path(v) for k, v in json.loads(current).items()
+                    }
 
-                    last_min_time, last_max_time = re.findall(
-                        "IntelMQ event (.*) - (.*)", self.current_event.info
-                    )[0]
-                    last_min_time = datetime.datetime.strptime(
-                        last_min_time, "%Y-%m-%dT%H:%M:%S.%f"
-                    )
-                    last_max_time = datetime.datetime.strptime(
-                        last_max_time, "%Y-%m-%dT%H:%M:%S.%f"
-                    )
-                    if last_max_time < datetime.datetime.now():
-                        self.min_time_current = datetime.datetime.now()
-                        self.max_time_current = self.min_time_current + self.timedelta
-                        self.current_event = None
-                    else:
-                        self.min_time_current = last_min_time
-                        self.max_time_current = last_max_time
-            except:
+                for key, path in self.current_files.items():
+                    self._load_event(path, key)
+            except Exception:
                 self.logger.exception(
-                    "Loading current event %s failed. Skipping it.", self.current_event
+                    "Loading current events %s failed. Skipping it.", self.current_files
                 )
-                self.current_event = None
-        else:
+                self.current_events = {}
+
+        if not self.current_files or self.max_time_current < datetime.datetime.now():
             self.min_time_current = datetime.datetime.now()
             self.max_time_current = self.min_time_current + self.timedelta
+            self.current_events = {}
+
+    def _load_event(self, file_path: Path, key: str):
+        if file_path.exists():
+            self.current_events[key] = MISPEvent()
+            self.current_events[key].load_file(file_path)
+
+            last_min_time, last_max_time = re.findall(
+                "IntelMQ event (.*) - (.*)", self.current_events[key].info
+            )[0]
+            last_min_time = datetime.datetime.strptime(
+                last_min_time, "%Y-%m-%dT%H:%M:%S.%f"
+            )
+            last_max_time = datetime.datetime.strptime(
+                last_max_time, "%Y-%m-%dT%H:%M:%S.%f"
+            )
+
+            self.min_time_current = min(last_min_time, self.min_time_current)
+            self.max_time_current = max(last_max_time, self.max_time_current)
 
     def process(self):
-        if not self.current_event or datetime.datetime.now() > self.max_time_current:
+        if datetime.datetime.now() > self.max_time_current:
             self.min_time_current = datetime.datetime.now()
             self.max_time_current = self.min_time_current + self.timedelta
-            self.current_event = MISPEvent()
-            self.current_event.info = "IntelMQ event {begin} - {end}" "".format(
-                begin=self.min_time_current.isoformat(),
-                end=self.max_time_current.isoformat(),
-            )
-            self.current_event.set_date(datetime.date.today())
-            self.current_event.Orgc = self.misp_org
-            self.current_event.uuid = str(uuid4())
-            self.current_file = self.output_dir / f"{self.current_event.uuid}.json"
-            with (self.output_dir / ".current").open("w") as f:
-                f.write(str(self.current_file))
 
-            # On startup or when timeout occurs, clean the queue to ensure we do not
-            # keep events forever because there was not enough generated
             self._generate_feed()
 
         event = self.receive_message().to_dict(jsondict_as_string=True)
@@ -128,19 +129,57 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
 
         if cache_size is None:
             self._generate_feed(event)
+        elif not self.current_events:
+            # Always create the first event so we can keep track of the interval.
+            # It also ensures cleaning the queue after startup in case of awaiting
+            # messages from the previous run
+            self._generate_feed()
         elif cache_size >= self.bulk_save_count:
             self._generate_feed()
 
         self.acknowledge_message()
 
+    def _generate_new_event(self, key):
+        self.current_events[key] = MISPEvent()
+        self.current_events[key].info = "IntelMQ event {begin} - {end}" "".format(
+            begin=self.min_time_current.isoformat(),
+            end=self.max_time_current.isoformat(),
+        )
+        self.current_events[key].set_date(datetime.date.today())
+        self.current_events[key].Orgc = self.misp_org
+        self.current_events[key].uuid = str(uuid4())
+        self.current_files[key] = (
+            self.output_dir / f"{self.current_events[key].uuid}.json"
+        )
+        with (self.output_dir / ".current").open("w") as f:
+            if not self.event_separator:
+                f.write(str(self.current_files[key]))
+            else:
+                json.dump({k: str(v) for k, v in self.current_files.items()}, f)
+        return self.current_events[key]
+
     def _add_message_to_feed(self, message: dict):
-        obj = self.current_event.add_object(name="intelmq_event")
+        if not self.event_separator:
+            key = DEFAULT_KEY
+        else:
+            # For proper handling of nested fields
+            message_obj = MessageFactory.from_dict(
+                message, harmonization=self.harmonization, default_type="Event"
+            )
+            key = message_obj.get(self.event_separator) or DEFAULT_KEY
+
+        if key in self.current_events:
+            event = self.current_events[key]
+        else:
+            event = self._generate_new_event(key)
+
+        obj = event.add_object(name="intelmq_event")
         if not self.attribute_mapping:
             self._default_mapping(obj, message)
         else:
             self._custom_mapping(obj, message)
 
-    def _default_mapping(self, obj: pymisp.MISPObject, message: dict):
+    def _default_mapping(self, obj: "MISPObject", message: dict):
         for object_relation, value in message.items():
             try:
                 obj.add_attribute(object_relation, value=value)
@@ -162,15 +201,15 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         for parameter, value in definition.items():
             # Check if the value is a harmonization key or a static value
             if isinstance(value, str) and (
-                value in self.harmonization["event"]
-                or value.split(".", 1)[0] in self.harmonization["event"]
+                value in self.harmonization["event"] or
+                value.split(".", 1)[0] in self.harmonization["event"]
             ):
                 result[parameter] = message.get(value)
             else:
                 result[parameter] = value
         return result
 
-    def _custom_mapping(self, obj: pymisp.MISPObject, message: dict):
+    def _custom_mapping(self, obj: "MISPObject", message: dict):
         for object_relation, definition in self.attribute_mapping.items():
             obj.add_attribute(
                 object_relation,
@@ -188,9 +227,10 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
             self._add_message_to_feed(message)
             message = self.cache_pop()
 
-        feed_output = self.current_event.to_feed(with_meta=False)
-        with self.current_file.open("w") as f:
-            json.dump(feed_output, f)
+        for key, event in self.current_events.items():
+            feed_output = event.to_feed(with_meta=False)
+            with self.current_files[key].open("w") as f:
+                json.dump(feed_output, f)
 
         feed_meta_generator(self.output_dir)
 

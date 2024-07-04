@@ -48,17 +48,18 @@ class MessageFactory:
             MessageFactory.unserialize
             MessageFactory.serialize
         """
-        if default_type and "__type" not in message:
-            message["__type"] = default_type
-        try:
-            class_reference = getattr(intelmq.lib.message, message["__type"])
-        except AttributeError:
-            raise exceptions.InvalidArgument('__type',
-                                             got=message["__type"],
-                                             expected=VALID_MESSSAGE_TYPES,
-                                             docs=HARMONIZATION_CONF_FILE)
         # don't modify the parameter
         message_copy = message.copy()
+
+        if default_type and "__type" not in message_copy:
+            message_copy["__type"] = default_type
+        try:
+            class_reference = getattr(intelmq.lib.message, message_copy["__type"])
+        except AttributeError:
+            raise exceptions.InvalidArgument('__type',
+                                             got=message_copy["__type"],
+                                             expected=VALID_MESSSAGE_TYPES,
+                                             docs=HARMONIZATION_CONF_FILE)
         del message_copy["__type"]
         return class_reference(message_copy, auto=True, harmonization=harmonization)
 

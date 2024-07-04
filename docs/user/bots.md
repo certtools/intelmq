@@ -4619,9 +4619,9 @@ a new MISP event based on `interval_event` triggers saving regardless of the cac
 **`attribute_mapping`**
 
 (optional, dict) If set, allows selecting which IntelMQ event fields are mapped to MISP attributes
-as well as attribute parameters (like e.g. a comment). The expected format is a *dictonary of dictionaries*:
+as well as attribute parameters (like e.g. a comment). The expected format is a *dictionary of dictionaries*:
 first-level key represents an IntelMQ field that will be directly translated to a MISP attribute; nested
-dictionary represents addditional parameters PyMISP can take when creating an attribute. They can use
+dictionary represents additional parameters PyMISP can take when creating an attribute. They can use
 names of other IntelMQ fields (then the value of such field will be used), or static values. If not needed,
 leave empty dict.
 
@@ -4640,6 +4640,12 @@ would create a MISP object with three attributes `source.ip`, `feed.name` and `d
 and set their values as in the IntelMQ event. In addition, the `feed.name` would have a comment
 as given in the `event_description.text` from IntelMQ event, and `destination.ip` would be set
 as not usable for IDS.
+
+**`event_separator`
+
+(optional, string): If set to a field name from IntelMQ event, the bot will group incoming messages
+in separated MISP events, based on the value of this field. The `interval_event` parameter acts
+for all grouping events together.
 
 **Usage in MISP**
 
