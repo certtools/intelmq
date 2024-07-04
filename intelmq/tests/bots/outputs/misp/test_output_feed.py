@@ -70,18 +70,19 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
 
         current_event = open(f"{self.directory.name}/.current").read()
 
-        # First, the feed is empty - not enough events came
+        # The first event is always immediately dumped to the MISP feed
+        # But the second wait until bulk saving size is achieved
         with open(current_event) as f:
             objects = json.load(f).get("Event", {}).get("Object", [])
-        assert len(objects) == 0
+        assert len(objects) == 1
 
-        self.input_message = [EXAMPLE_EVENT]
-        self.run_bot(parameters={"bulk_save_count": 3})
+        self.input_message = [EXAMPLE_EVENT, EXAMPLE_EVENT]
+        self.run_bot(iterations=2, parameters={"bulk_save_count": 3})
 
         # When enough events were collected, save them
         with open(current_event) as f:
             objects = json.load(f)["Event"]["Object"]
-        assert len(objects) == 3
+        assert len(objects) == 4
 
         self.input_message = [EXAMPLE_EVENT, EXAMPLE_EVENT, EXAMPLE_EVENT]
         self.run_bot(iterations=3, parameters={"bulk_save_count": 3})
@@ -89,17 +90,19 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         # We continue saving to the same file until interval timeout
         with open(current_event) as f:
             objects = json.load(f)["Event"]["Object"]
-        assert len(objects) == 6
+        assert len(objects) == 7
 
         # Simulating leftovers in the queue when it's time to generate new event
         Path(f"{self.directory.name}/.current").unlink()
-        self.bot.cache_put(MessageFactory.from_dict(EXAMPLE_EVENT).to_dict(jsondict_as_string=True))
+        self.bot.cache_put(
+            MessageFactory.from_dict(EXAMPLE_EVENT).to_dict(jsondict_as_string=True)
+        )
         self.run_bot(parameters={"bulk_save_count": 3})
 
         new_event = open(f"{self.directory.name}/.current").read()
         with open(new_event) as f:
             objects = json.load(f)["Event"]["Object"]
-        assert len(objects) == 1
+        assert len(objects) == 2
 
     def test_attribute_mapping(self):
         self.run_bot(
@@ -108,7 +111,7 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
                     "source.ip": {},
                     "feed.name": {"comment": "event_description.text"},
                     "destination.ip": {"to_ids": False},
-                    "malware.name": {"comment": "extra.non_ascii"}
+                    "malware.name": {"comment": "extra.non_ascii"},
                 }
             }
         )
@@ -133,7 +136,9 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         assert feed_name["comment"] == EXAMPLE_EVENT["event_description.text"]
 
         destination_ip = next(
-            attr for attr in attributes if attr.get("object_relation") == "destination.ip"
+            attr
+            for attr in attributes
+            if attr.get("object_relation") == "destination.ip"
         )
         assert destination_ip["value"] == EXAMPLE_EVENT["destination.ip"]
         assert destination_ip["to_ids"] is False
@@ -144,6 +149,70 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         assert malware_name["value"] == EXAMPLE_EVENT["malware.name"]
         assert malware_name["comment"] == EXAMPLE_EVENT["extra.non_ascii"]
 
+    def test_event_separation(self):
+        self.input_message = [
+            EXAMPLE_EVENT,
+            {**EXAMPLE_EVENT, "malware.name": "another_malware"},
+            EXAMPLE_EVENT,
+        ]
+        self.run_bot(iterations=3, parameters={"event_separator": "malware.name"})
+
+        current_events = json.loads(open(f"{self.directory.name}/.current").read())
+        assert len(current_events) == 2
+
+        with open(current_events["salityp2p"]) as f:
+            objects = json.load(f).get("Event", {}).get("Object", [])
+        assert len(objects) == 2
+        malware_name = next(
+            attr["value"]
+            for attr in objects[0]["Attribute"]
+            if attr.get("object_relation") == "malware.name"
+        )
+        assert malware_name == "salityp2p"
+
+        with open(current_events["another_malware"]) as f:
+            objects = json.load(f).get("Event", {}).get("Object", [])
+        assert len(objects) == 1
+        malware_name = next(
+            attr["value"]
+            for attr in objects[0]["Attribute"]
+            if attr.get("object_relation") == "malware.name"
+        )
+        assert malware_name == "another_malware"
+
+    def test_event_separation_with_extra_and_bulk_save(self):
+        self.input_message = [
+            {**EXAMPLE_EVENT, "extra.some_key": "another_malware"},
+            {**EXAMPLE_EVENT, "extra.some_key": "first_malware"},
+            {**EXAMPLE_EVENT, "extra.some_key": "another_malware"},
+        ]
+        self.run_bot(
+            iterations=3,
+            parameters={"event_separator": "extra.some_key", "bulk_save_count": 3},
+        )
+
+        # Only the initial event is saved, the rest is cached
+        current_events = json.loads(open(f"{self.directory.name}/.current").read())
+        assert len(current_events) == 1
+        with open(current_events["another_malware"]) as f:
+            objects = json.load(f).get("Event", {}).get("Object", [])
+        assert len(objects) == 1
+
+        self.input_message = {**EXAMPLE_EVENT, "extra.some_key": "first_malware"}
+        self.run_bot(
+            parameters={"event_separator": "extra.some_key", "bulk_save_count": 3},
+        )
+
+        # Now everything is saved
+        current_events = json.loads(open(f"{self.directory.name}/.current").read())
+        assert len(current_events) == 2
+        with open(current_events["another_malware"]) as f:
+            objects = json.load(f).get("Event", {}).get("Object", [])
+        assert len(objects) == 2
+
+        with open(current_events["first_malware"]) as f:
+            objects = json.load(f).get("Event", {}).get("Object", [])
+        assert len(objects) == 2
 
     def tearDown(self):
         self.cache.delete(self.bot_id)
