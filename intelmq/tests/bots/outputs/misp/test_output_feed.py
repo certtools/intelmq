@@ -149,6 +149,28 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         assert malware_name["value"] == EXAMPLE_EVENT["malware.name"]
         assert malware_name["comment"] == EXAMPLE_EVENT["extra.non_ascii"]
 
+    def test_attribute_mapping_empty_field(self):
+        self.run_bot(
+            parameters={
+                "attribute_mapping": {
+                    "source.ip": {},
+                    "source.fqdn": {},  # not exists in the message
+                }
+            }
+        )
+
+        current_event = open(f"{self.directory.name}/.current").read()
+        with open(current_event) as f:
+            objects = json.load(f).get("Event", {}).get("Object", [])
+
+        assert len(objects) == 1
+        attributes = objects[0].get("Attribute")
+        assert len(attributes) == 1
+        source_ip = next(
+            attr for attr in attributes if attr.get("object_relation") == "source.ip"
+        )
+        assert source_ip["value"] == "152.166.119.2"
+
     def test_event_separation(self):
         self.input_message = [
             EXAMPLE_EVENT,

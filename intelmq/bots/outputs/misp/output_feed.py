@@ -212,12 +212,13 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
 
     def _custom_mapping(self, obj: "MISPObject", message: dict):
         for object_relation, definition in self.attribute_mapping.items():
-            obj.add_attribute(
-                object_relation,
-                value=message[object_relation],
-                **self._extract_misp_attribute_kwargs(message, definition),
-            )
-            # In case of manual mapping, we want to fail if it produces incorrect values
+            if object_relation in message:
+                obj.add_attribute(
+                    object_relation,
+                    value=message[object_relation],
+                    **self._extract_misp_attribute_kwargs(message, definition),
+                )
+                # In case of manual mapping, we want to fail if it produces incorrect values
 
     def _generate_feed(self, message: dict = None):
         if message:
