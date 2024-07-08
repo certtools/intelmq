@@ -16,6 +16,7 @@ import traceback
 import operator
 
 from datetime import datetime, timedelta, timezone
+from json import dumps
 from typing import Callable, Dict, Optional, Union
 from enum import Enum, auto
 
@@ -272,7 +273,14 @@ class SieveExpertBot(ExpertBot):
         if key not in event:
             return op in {'!=', '!~'}
 
-        return self._string_op_map[op](event[key], value.value)
+        lhs = event[key]
+        if not isinstance(lhs, str) and op not in ('==', '!='):
+            if isinstance(lhs, dict):
+                lhs = dumps(lhs)
+            else:
+                lhs = str(lhs)
+
+        return self._string_op_map[op](lhs, value.value)
 
     def process_multi_string_match(self, key, op, value, event) -> bool:
         if key not in event:
