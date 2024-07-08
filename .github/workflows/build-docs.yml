@@ -37,7 +37,12 @@ jobs:
 
       - name: "Install build dependencies"
         run: |
-          pip install mkdocs-material mike lunr pygments mkdocstrings[python] mkdocs-material mkdocs-glightbox mkdocs-redirects mkdocs-minify-plugin
+          pip install mkdocs-material mike lunr pygments mkdocstrings[python] mkdocs-material mkdocs-glightbox mkdocs-redirects mkdocs-minify-plugin ruamel.yaml
+
+      - name: "Generate Feed and Event documentation"
+        run: |
+          python3 scripts/generate-feeds-docs.py
+          python3 scripts/generate-event-docs.py
 
       - name: "Prepare git"
         run: |

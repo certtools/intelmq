@@ -31,7 +31,9 @@ venv/
 .env
 
 # mkdocs
-docs_build
+docs_build/
+docs/user/feeds.md
+docs/user/event.md
 
 # Debian build filed
 debian/files
