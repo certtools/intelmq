@@ -38,6 +38,7 @@
 - `intelmq.bots.outputs.smtp_batch.output`: Documentation on multiple recipients added (PR#2501 by Edvard Rejthar).
 
 ### Documentation
+- Bots: Clarify some section of Mail collectors and the Generic CSV Parser (PR#2510 by Sebastian Wagner).
 
 ### Packaging
 

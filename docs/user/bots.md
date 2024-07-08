@@ -350,6 +350,7 @@ the line) or not. Defaults to true.
 ### Generic Mail URL Fetcher <div id="intelmq.bots.collectors.mail.collector_mail_url" />
 
 Extracts URLs from e-mail messages and downloads the content from the URLs.
+It uses the [`imbox`](https://github.com/martinrusev/imbox) library.
 
 The resulting reports contain the following special fields:
 
@@ -359,6 +360,8 @@ The resulting reports contain the following special fields:
 - `extra.email_from`: The email's from address.
 - `extra.email_message_id`: The email's message ID.
 - `extra.file_name`: The file name of the downloaded file (extracted from the HTTP Response Headers if possible).
+
+The fields can be used by parsers to identify the feed and are not automatically passed on to events.
 
 **Chunking**
 
@@ -392,6 +395,10 @@ limitation set `chunk_size` to something like 384000000 (~384 MB).
 
 (optional, boolean) Whether the mail server uses TLS or not. Defaults to true.
 
+**`mail_starttls`**
+
+(optional, boolean) Whether the mail server uses STARTTLS or not. Defaults to false.
+
 **`folder`**
 
 (optional, string) Folder in which to look for e-mail messages. Defaults to INBOX.
@@ -422,6 +429,7 @@ certificate is not found, the IMAP connection will fail on handshake. Defaults t
 ### Generic Mail Attachment Fetcher <div id="intelmq.bots.collectors.mail.collector_mail_attach" />
 
 This bot collects messages from mailboxes and downloads the attachments.
+It uses the [`imbox`](https://github.com/martinrusev/imbox) library.
 
 The resulting reports contains the following special fields:
 
@@ -431,6 +439,8 @@ The resulting reports contains the following special fields:
 - `extra.email_message_id`: The email's message ID
 - `extra.file_name`: The file name of the attachment or the file name in the attached archive if attachment is to
   uncompress.
+
+The fields can be used by parsers to identify the feed and are not automatically passed on to events.
 
 **Module:** `intelmq.bots.collectors.mail.collector_mail_attach`
 
@@ -442,7 +452,7 @@ The resulting reports contains the following special fields:
 
 **`mail_port`**
 
-(optional, integer) IMAP server port: 143 without TLS, 993 with TLS. Defaults to 143.
+(optional, integer) IMAP server port: 143 without TLS, 993 with TLS. Default depends on SSL setting.
 
 **`mail_user`**
 
@@ -456,6 +466,10 @@ The resulting reports contains the following special fields:
 
 (optional, boolean) Whether the mail server uses TLS or not. Defaults to true.
 
+**`mail_starttls`**
+
+(optional, boolean) Whether to use STARTTLS before authenticating to the server. Defaults to false.
+
 **`folder`**
 
 (optional, string) Folder in which to look for e-mail messages. Defaults to INBOX.
@@ -466,7 +480,7 @@ The resulting reports contains the following special fields:
 
 **`attach_regex`**
 
-(optional, string) Regular expression of the name of the attachment. Defaults to csv.zip.
+(optional, string) All attachments which match this [regular expression](https://docs.python.org/3/library/re.html#re.search) will be processed. Defaults to `csv.zip`.
 
 **`extract_files`**
 
@@ -1697,8 +1711,8 @@ available with their index.
 
 **`skip_header`**
 
-(optional, boolean/integer) Whether to skip the first N lines of the input (True -> 1, False -> 0). Lines starting
-with `#` will be skipped additionally, make sure you do not skip more lines than needed!
+(optional, boolean/integer) Whether to skip the first N lines of the input (true equals to 1, false requalis to 0). Lines starting
+with `#` will be skipped additionally, make sure you do not skip more lines than needed! Defaults to false/0.
 
 **`time_format`**
 
