@@ -185,10 +185,11 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                 obj.add_attribute(object_relation, value=value)
             except NewAttributeError:
                 # This entry isn't listed in the harmonization file, ignoring.
-                self.logger.warning(
-                    "Object relation %s not exists in MISP definition, ignoring",
-                    object_relation,
-                )
+                if object_relation != "__type":
+                    self.logger.warning(
+                        "Object relation %s not exists in MISP definition, ignoring",
+                        object_relation,
+                    )
 
     def _extract_misp_attribute_kwargs(self, message: dict, definition: dict) -> dict:
         # For caching and default mapping, the serialized version is the right format to work on.
