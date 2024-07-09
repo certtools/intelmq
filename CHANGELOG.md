@@ -13,6 +13,8 @@
 
 ### Core
 - `intelmq.lib.utils.drop_privileges`: When IntelMQ is called as `root` and dropping the privileges to user `intelmq`, also set the non-primary groups associated with the `intelmq` user. Makes the behaviour of running intelmqctl as `root` closer to the behaviour of `sudo -u intelmq ...` (PR#2507 by Mikk Margus Möll).
+- `intelmq.lib.utils.unzip`: Filter out directory entries when extracting data fixing the issue that
+  archives with directories causes extracting empty data for a directory entry (PR# by Kamil Mankowski).
 
 ### Development
 
