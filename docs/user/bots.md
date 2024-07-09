@@ -2730,25 +2730,23 @@ A simple filter for messages (drop or pass) based on a exact string comparison o
 
 **`filter_key`**
 
-() - key from data format
+(required, string) - key from data format
 
 **`filter_value`**
 
-() - value for the key
+(required, string) - value for the key
 
 **`filter_action`**
 
-() - action when a message match to the criteria
+(required, string) - action when a message match to the criteria
 (possible actions: keep/drop)
 
 **`filter_regex`**
 
-() - attribute determines if the `filter_value` shall be treated as regular expression or not.
+(optional, boolean) - attribute determines if the `filter_value` shall be treated as regular expression or not.
 
-If this attribute is not empty (can be `true`, `yes` or whatever), the bot uses python's `` `re.search ``
-<<https://docs.python.org/3/library/re.html#re.search>>`_ function to evaluate the filter with regular expressions. If
-this attribute is empty or evaluates to false, an exact string comparison is performed. A check on string *
-inequality* can be achieved with the usage of *Paths* described below.
+If this attribute is not empty (can be `true`, `yes` or whatever), the bot uses python's [`re.search`](https://docs.python.org/3/library/re.html#re.search) function to evaluate the filter with regular expressions. If
+this attribute is empty or evaluates to false, an exact string comparison is performed. A check on string *inequality* can be achieved with the usage of *Paths* described below.
 
 *Parameters for time based filtering*
 

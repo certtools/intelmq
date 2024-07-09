@@ -64,7 +64,7 @@ class FilterExpertBot(ExpertBot):
             self.filter = False
 
         self.regex = False
-        if self.filter_regex is not None:
+        if self.filter_regex:
             self.regex = re.compile(self.filter_value)
 
         self.time_filter = self.not_after is not None or self.not_before is not None
@@ -148,10 +148,12 @@ class FilterExpertBot(ExpertBot):
             return self.equalsFilter(event, key, condition)
 
     def equalsFilter(self, event, key, value):
+        self.logger.debug('Equality check: %r (event value) == %r (filter value).', event.get(key), value)
         return (key in event and
                 event.get(key) == value)
 
     def regexSearchFilter(self, event, key):
+        self.logger.debug('Regex filter: Matching %r against %r.', str(event.get(key)), self.filter_value)
         if key in event:
             return self.regex.search(str(event.get(key)))
         else:

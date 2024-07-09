@@ -34,6 +34,8 @@
 #### Experts
 - `intelmq.bots.experts.sieve.expert`:
   - For `:contains`, `=~` and `!~`, convert the value to string before matching avoiding an exception. If the value is a dict, convert the value to JSON (PR#2500 by Sebastian Wagner).
+- `intelmq.bots.experts.filter.expert`:
+  - Treat value `false` for parameter `filter_regex` as false (PR#2499 by Sebastian Wagner).
 
 #### Outputs
 - `intelmq.bots.outputs.misp.output_feed`: Handle failures if saved current event wasn't saved or is incorrect (PR by Kamil Mankowski).
