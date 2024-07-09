@@ -33,12 +33,11 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
     bulk_save_count: int = None
     misp_org_name = None
     misp_org_uuid = None
-    output_dir: str = (
-        "/opt/intelmq/var/lib/bots/mispfeed-output"  # TODO: should be path
-    )
+    output_dir: str = "/opt/intelmq/var/lib/bots/mispfeed-output"  # TODO: should be path
     _is_multithreadable: bool = False
     attribute_mapping: dict = None
     event_separator: str = None
+    additional_info: str = None
 
     @staticmethod
     def check_output_dir(dirname):
@@ -141,10 +140,14 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
 
     def _generate_new_event(self, key):
         self.current_events[key] = MISPEvent()
-        self.current_events[key].info = "IntelMQ event {begin} - {end}" "".format(
+        info = "IntelMQ event {begin} - {end}" "".format(
             begin=self.min_time_current.isoformat(),
             end=self.max_time_current.isoformat(),
         )
+        if self.additional_info:
+            info = f"{self.additional_info.format(separator=key)} {info}"
+
+        self.current_events[key].info = info
         self.current_events[key].set_date(datetime.date.today())
         self.current_events[key].Orgc = self.misp_org
         self.current_events[key].uuid = str(uuid4())

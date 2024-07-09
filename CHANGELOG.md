@@ -45,6 +45,7 @@
   - Allow saving messages in bulks instead of refreshing the feed immediately (PR#2509 by Kamil Mankowski).
   - Add `attribute_mapping` parameter to allow selecting a subset of event attributes as well as additional attribute parameters (PR#2509 by Kamil Mankowski).
   - Add `event_separator` parameter to allow keeping IntelMQ events in separated MISP Events based on a given field (PR#2509 by Kamil Mankowski).
+  - Add `additional_info` parameter to extend the default description of MISP Events (PR#2509 by Kamil Mankowski).
 - `intelmq.bots.outputs.smtp_batch.output`: Documentation on multiple recipients added (PR#2501 by Edvard Rejthar).
 
 ### Documentation

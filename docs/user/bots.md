@@ -4643,9 +4643,30 @@ as not usable for IDS.
 
 **`event_separator`
 
-(optional, string): If set to a field name from IntelMQ event, the bot will group incoming messages
-in separated MISP events, based on the value of this field. The `interval_event` parameter acts
-for all grouping events together.
+(optional, string): If set to a field name from IntelMQ event, the bot will work in parallel on a few
+events instead of saving all incomming messages to a one. Each unique value from the field will
+use its own MISP Event. This is useful if your feed provides data about multiple entities you would
+like to group, for example IPs of C2 servers from different botnets. For a given value, the bot will
+use the same MISP Event as long as it's allowed by the `interval_event`.
+
+**`additional_info`
+
+(optional, string): If set, the generated MISP Event will use it in the `info` field of the event,
+in addition to the standard IntelMQ description with the time frame (you cannot remove it as the bot
+depends of datetimes saved there). If you use `event_separator`, you may want to use `{separator}`
+placeholder which will be then replaced with the value of the separator.
+
+For example, the following configuration can be used to create MISP Feed with IPs of C2 servers
+of different botnets, having each botnet in a separated MISP Events with an appropiate description.
+Each MISP Event will contain objects with the `source.ip` field only, and the events' info will look
+like *C2 Servers for botnet-1. IntelMQ event 2024-07-09T14:51:10.825123 - 2024-07-10T14:51:10.825123*
+
+```yaml
+event_separator: malware.name
+additional_info: C2 Servers for {separator}.
+attribute_mapping:
+  source.ip:
+```
 
 **Usage in MISP**
 
