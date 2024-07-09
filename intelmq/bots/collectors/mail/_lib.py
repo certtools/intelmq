@@ -17,7 +17,6 @@ except ImportError:
 
 
 class MailCollectorBot(CollectorBot):
-    attach_unzip = None
     mail_host = None
     ssl_ca_certificate = None
     mail_user = None
@@ -35,8 +34,8 @@ class MailCollectorBot(CollectorBot):
         if imbox is None:
             raise MissingDependencyError("imbox")
 
-        if self.attach_unzip is not None and not self.extract_files:
-            self.extract_files = True
+        if getattr(self, 'attach_unzip', None) is not None and hasattr(self, 'extract_files'):
+            setattr(self, 'extract_files', True)
             self.logger.warning("The parameter 'attach_unzip' is deprecated and will "
                                 "be removed in version 4.0. Use 'extract_files' instead.")
 

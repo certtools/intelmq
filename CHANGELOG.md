@@ -26,6 +26,7 @@
   - Fixed timezone issue for collecting reports.
 - `intelmq.bots.collectors.shodan.collector_stream` (PR#2492 by Mikk Margus Möll):
   - Add `alert` parameter to Shodan stream collector to allow fetching streams by configured alert ID
+- `intelmq.bots.collectors.mail._lib`: Remove deprecated parameter `attach_unzip` from default parameters (PR#2511 by Sebastian Wagner).
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
