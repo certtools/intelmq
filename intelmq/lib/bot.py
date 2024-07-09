@@ -1082,6 +1082,7 @@ class ParserBot(Bot):
     _default_message_type = 'Report'
 
     default_fields: Optional[dict] = {}
+    copy_custom_fields: Optional[list] = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1244,6 +1245,13 @@ class ParserBot(Bot):
                     for event in events:
                         for key, value in self.default_fields.items():
                             event.add(key, value, overwrite=False)
+
+                if self.copy_custom_fields:
+                    for key in self.copy_custom_fields:
+                        if key not in report:
+                            continue
+                        for event in events:
+                            event.add(key, report.get(key), overwrite=False)
 
             except Exception:
                 self.logger.exception('Failed to parse line.')
