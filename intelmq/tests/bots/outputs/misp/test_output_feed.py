@@ -64,6 +64,27 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
             objects = json.load(f).get("Event", {}).get("Object", [])
         assert len(objects) == 1
 
+    def test_additional_info(self):
+        self.run_bot(parameters={"additional_info": "This is my custom info."})
+
+        current_event = open(f"{self.directory.name}/.current").read()
+        with open(current_event) as f:
+            info: str = json.load(f).get("Event", {}).get("info", "")
+        assert info.startswith("This is my custom info. IntelMQ event ")
+
+    def test_additional_info_with_separator(self):
+        self.run_bot(
+            parameters={
+                "additional_info": "Event related to {separator}.",
+                "event_separator": "malware.name",
+            }
+        )
+
+        current_events = json.loads(open(f"{self.directory.name}/.current").read())
+        with open(current_events["salityp2p"]) as f:
+            info: str = json.load(f).get("Event", {}).get("info", "")
+        assert info.startswith("Event related to salityp2p. IntelMQ event ")
+
     def test_accumulating_events(self):
         self.input_message = [EXAMPLE_EVENT, EXAMPLE_EVENT]
         self.run_bot(iterations=2, parameters={"bulk_save_count": 3})
