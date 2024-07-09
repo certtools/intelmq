@@ -1331,6 +1331,17 @@ tweet text is sent separately and if allowed, links to pastebin are followed and
 
 ## Parser Bots
 
+If not set differently during parsing, all parser bots copy the following fields from the report to an event:
+
+  - `feed.accuracy`
+  - `feed.code`
+  - `feed.documentation`
+  - `feed.name`
+  - `feed.provider`
+  - `feed.url`
+  - `rtir_id`
+  - `time.observation`
+
 ### Common parameters
 
 #### `default_fields`
@@ -1344,6 +1355,18 @@ example usage:
 defaults_fields:
   classification.type: c2-server
   protocol.transport: tcp
+```
+
+#### `copy_custom_fields`
+
+(optional, list) List of additional fields to be copy from the report (only applied if parsing the
+event doesn't set the value).
+
+Example usage:
+
+```yaml
+copy_custom_fields:
+  - extra.file_name
 ```
 
 ---
