@@ -257,6 +257,19 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
             objects = json.load(f).get("Event", {}).get("Object", [])
         assert len(objects) == 2
 
+    def test_tagging(self):
+        self.run_bot(
+            parameters={
+                "tagging": {"__all__": [{"name": "tlp:unclear", "colour": "#7e7eae"}]}
+            }
+        )
+
+        current_event = open(f"{self.directory.name}/.current").read()
+        with open(current_event) as f:
+            objects = json.load(f).get("Event", {}).get("Object", [])
+        assert len(objects) == 1
+
+
     def tearDown(self):
         self.cache.delete(self.bot_id)
         self.directory.cleanup()

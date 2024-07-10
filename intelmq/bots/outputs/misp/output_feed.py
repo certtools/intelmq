@@ -16,7 +16,7 @@ from intelmq.lib.mixins import CacheMixin
 from intelmq.lib.utils import parse_relative
 
 try:
-    from pymisp import MISPEvent, MISPObject, MISPOrganisation, NewAttributeError
+    from pymisp import MISPEvent, MISPObject, MISPOrganisation, MISPTag, NewAttributeError
     from pymisp.tools import feed_meta_generator
 except ImportError:
     # catching SyntaxError because of https://github.com/MISP/PyMISP/issues/501
@@ -38,6 +38,10 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
     attribute_mapping: dict = None
     event_separator: str = None
     additional_info: str = None
+    tagging: dict = None
+    # A structure like:
+    # __all__: list of tag kwargs for all events
+    # <key>: list of tag kwargs per separator key
 
     @staticmethod
     def check_output_dir(dirname):
@@ -95,6 +99,18 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
             self.max_time_current = self.min_time_current + self.timedelta
             self.current_events = {}
 
+        self._tagging_objects = {}
+        if self.tagging:
+            for key, tag_list in self.tagging.items():
+                self._tagging_objects[key] = list()
+                for kw in tag_list:
+                    # For some reason, PyMISP do not uses classmethod, and from_dict requires
+                    # unpacking. So this is really the way to initialize tag objects.
+                    tag = MISPTag()
+                    tag.from_dict(**kw)
+                    self._tagging_objects[key].append(tag)
+            self.logger.debug("Generated tags: %r.", self._tagging_objects)
+
     def _load_event(self, file_path: Path, key: str):
         if file_path.exists():
             self.current_events[key] = MISPEvent()
@@ -140,6 +156,14 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
 
     def _generate_new_event(self, key):
         self.current_events[key] = MISPEvent()
+
+        tags: list[MISPTag] = []
+        if "__all__" in self._tagging_objects:
+            tags.extend(self._tagging_objects["__all__"])
+        if key in self._tagging_objects:
+            tags.extend(self._tagging_objects[key])
+        self.current_events[key].tags = tags
+
         info = "IntelMQ event {begin} - {end}" "".format(
             begin=self.min_time_current.isoformat(),
             end=self.max_time_current.isoformat(),
@@ -195,6 +219,9 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                     )
 
     def _extract_misp_attribute_kwargs(self, message: dict, definition: dict) -> dict:
+        """
+        Creates a
+        """
         # For caching and default mapping, the serialized version is the right format to work on.
         # However, for any custom mapping the Message object is more sufficient as it handles
         # subfields.
