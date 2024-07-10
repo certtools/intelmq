@@ -15,15 +15,17 @@ import intelmq.lib.utils as utils
 class CacheMixin:
     """Provides caching possibilities for bots
 
-        For key-value cache, use methods:
-            cache_exists
-            cache_get
-            cache_set
+    For key-value cache, use methods:
+        cache_exists
+        cache_get
+        cache_set
 
-        To store dict elements in a cache queue named after bot id, use methods:
-            cache_put
-            cache_pop
+    To store dict elements in a cache queue named after bot id, use methods:
+        cache_put
+        cache_pop
+        cache_length
     """
+
     __redis: redis.Redis = None
     redis_cache_host: str = "127.0.0.1"
     redis_cache_port: int = 6379
@@ -69,6 +71,9 @@ class CacheMixin:
         # Returns the length of the list after pushing
         size = self.__redis.lpush(self.bot_id, json.dumps(value))
         return size
+
+    def cache_length(self) -> int:
+        return self.__redis.llen(self.bot_id)
 
     def cache_pop(self) -> dict:
         data = self.__redis.rpop(self.bot_id)
