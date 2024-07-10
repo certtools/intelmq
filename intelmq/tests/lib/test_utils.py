@@ -261,7 +261,7 @@ class TestUtils(unittest.TestCase):
                                          ('foo', b'foo text\n')))
 
     def test_unzip_tar_gz_with_subdir(self):
-        """ Test the unzip function with a tar gz file and return_names. """
+        """ Test the unzip function with a tar gz file containing a subdirectory and return_names. Test that the directories themselves are ignored. """
         filename = os.path.join(os.path.dirname(__file__), '../assets/subdir.tar.gz')
         with open(filename, 'rb') as fh:
             result = utils.unzip(fh.read(), extract_files=True, return_names=True)
@@ -298,7 +298,7 @@ class TestUtils(unittest.TestCase):
                                          ('foo', b'foo text\n')))
 
     def test_unzip_zip_with_subdir(self):
-        """ Test the unzip function with a zip containing a subdirectory and returning names."""
+        """ Test the unzip function with a zip containing a subdirectory and returning names. Test that the directories themselves are ignored."""
         filename = os.path.join(os.path.dirname(__file__), '../assets/subdir.zip')
         with open(filename, 'rb') as fh:
             result = utils.unzip(fh.read(), extract_files=True, return_names=True)
