@@ -111,6 +111,10 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                     self._tagging_objects[key].append(tag)
             self.logger.debug("Generated tags: %r.", self._tagging_objects)
 
+        if self.current_events and self.cache_length():
+            # Ensure we do generate feed on reload / restart
+            self._generate_feed()
+
     def _load_event(self, file_path: Path, key: str):
         if file_path.exists():
             self.current_events[key] = MISPEvent()
