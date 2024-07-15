@@ -1875,15 +1875,19 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, expected)
 
-    def test_extra_dict(self):
+    def test_variables(self):
+        """Test operations with variables"""
         self.sysconfig["file"] = os.path.join(
-            os.path.dirname(__file__), "test_sieve_files/test_extra_dict.sieve"
+            os.path.dirname(__file__), "test_sieve_files/test_basic_variables.sieve"
         )
+
         event = EXAMPLE_INPUT.copy()
-        event["extra.some_dict"] = {"key": []}
+        expected = event.copy()
+        expected["extra.email"] = event["source.abuse_contact"]
+
         self.input_message = event
         self.run_bot()
-        self.assertOutputQueueLen(0)
+        self.assertMessageEqual(0, expected)
 
 
 if __name__ == "__main__":  # pragma: no cover
