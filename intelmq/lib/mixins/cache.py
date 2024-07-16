@@ -13,7 +13,7 @@ import intelmq.lib.utils as utils
 
 
 class CacheMixin:
-    """Provides caching possibilities for bots
+    """Provides caching possibilities for bots, see also https://docs.intelmq.org/latest/dev/bot-development/#mixins
 
     For key-value cache, use methods:
         cache_exists
