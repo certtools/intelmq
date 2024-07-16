@@ -4,6 +4,7 @@
 
 # -*- coding: utf-8 -*-
 import json
+import select
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -86,6 +87,9 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         assert info.startswith("Event related to salityp2p. IntelMQ event ")
 
     def test_accumulating_events(self):
+        """Ensures bot first collects events and then saves them in bulks to MISP feed,
+        and also respects the event interval to create a new event periodically.
+        """
         self.input_message = [EXAMPLE_EVENT, EXAMPLE_EVENT]
         self.run_bot(iterations=2, parameters={"bulk_save_count": 3})
 
@@ -126,6 +130,8 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         assert len(objects) == 2
 
     def test_attribute_mapping(self):
+        """Tests custom attribute mapping that selects just a subset of fields to export
+        and allows including custom parameters for MISPObjectAttribute, like comments."""
         self.run_bot(
             parameters={
                 "attribute_mapping": {
@@ -170,7 +176,7 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         assert malware_name["value"] == EXAMPLE_EVENT["malware.name"]
         assert malware_name["comment"] == EXAMPLE_EVENT["extra.non_ascii"]
 
-    def test_attribute_mapping_empty_field(self):
+    def test_attribute_mapping_omitted_when_field_is_empty(self):
         self.run_bot(
             parameters={
                 "attribute_mapping": {
@@ -193,6 +199,8 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         assert source_ip["value"] == "152.166.119.2"
 
     def test_event_separation(self):
+        """Tests that based on the value of the given field, incoming messages are put in separated
+        MISP events."""
         self.input_message = [
             EXAMPLE_EVENT,
             {**EXAMPLE_EVENT, "malware.name": "another_malware"},
@@ -258,17 +266,117 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         assert len(objects) == 2
 
     def test_tagging(self):
+        """Ensures MISP events get correct MISP tags"""
         self.run_bot(
             parameters={
-                "tagging": {"__all__": [{"name": "tlp:unclear", "colour": "#7e7eae"}]}
+                "tagging": {
+                    "__all__": [
+                        {"name": "tlp:unclear", "colour": "#7e7eae"},
+                        {"name": "source:intelmq"},
+                    ]
+                }
             }
         )
 
         current_event = open(f"{self.directory.name}/.current").read()
         with open(current_event) as f:
-            objects = json.load(f).get("Event", {}).get("Object", [])
-        assert len(objects) == 1
+            tags = json.load(f).get("Event", {}).get("Tag", [])
+        assert len(tags) == 2
 
+        tlp = next(t for t in tags if t["name"] == "tlp:unclear")
+        assert tlp["colour"] == "#7e7eae"
+
+    def test_tagging_and_event_separation(self):
+        """When separating events, it is possible to add different MISP tags to specific MISP
+        events."""
+        self.input_message = [
+            EXAMPLE_EVENT,
+            {**EXAMPLE_EVENT, "malware.name": "another_malware"},
+        ]
+        self.run_bot(
+            iterations=2,
+            parameters={
+                "event_separator": "malware.name",
+                "tagging": {
+                    "__all__": [{"name": "source:intelmq"}],
+                    "salityp2p": [{"name": "family:salityp2p"}],
+                    "another_malware": [{"name": "family:malware_2"}],
+                },
+            },
+        )
+
+        current_events = json.loads(open(f"{self.directory.name}/.current").read())
+        assert len(current_events) == 2
+
+        with open(current_events["salityp2p"]) as f:
+            tags = json.load(f).get("Event", {}).get("Tag", [])
+        assert len(tags) == 2
+        assert next(t for t in tags if t["name"] == "source:intelmq")
+        assert next(t for t in tags if t["name"] == "family:salityp2p")
+
+        with open(current_events["another_malware"]) as f:
+            tags = json.load(f).get("Event", {}).get("Tag", [])
+        assert len(tags) == 2
+        assert next(t for t in tags if t["name"] == "source:intelmq")
+        assert next(t for t in tags if t["name"] == "family:malware_2")
+
+    def test_parameter_check_correct(self):
+        result = self.bot_reference.check(
+            {
+                **self.sysconfig,
+                "attribute_mapping": {
+                    "source.ip": {},
+                    "feed.name": {"comment": "event_description.text"},
+                    "destination.ip": {"to_ids": False, "comment": "Possible FP"},
+                    "malware.name": {"comment": "extra.non_ascii"},
+                },
+                "event_separator": "extra.botnet",
+                "bulk_save_count": 10,
+                "tagging": {
+                    "__all__": [{"name": "source:feed", "colour": "#000000"}],
+                    "abotnet": [{"name": "type:botnet"}],
+                },
+            }
+        )
+        assert result is None
+
+    def test_parameter_check_errors(self):
+        cases = [
+            {"bulk_save_count": "not-a-number"},
+            {"event_separator": "not-a-field"},
+            {"attribute_mapping": "not-a-dict"},
+            {"attribute_mapping": {"not-a-field": {}}},
+            {"attribute_mapping": {"source.ip": "not-a-dict"}},
+            {"tagging": {"not-all": []}}, # without event_separator, only __all__ is allowed
+            {"tagging": {"__all__": [], "other": []}},
+            {"event_separator": "malware.name", "tagging": ["not", "a", "dict"]},
+            {
+                "event_separator": "malware.name",
+                "tagging": {"case": "must-be-list-of-dicts"},
+            },
+            {
+                "event_separator": "malware.name",
+                "tagging": {"case": ["must-be-list-of-dicts"]},
+            },
+            {
+                "event_separator": "malware.name",
+                "tagging": {"case": [{"must": "have a name"}]},
+            },
+        ]
+        for case in cases:
+            with self.subTest():
+                result = self.bot_reference.check({**self.sysconfig, **case})
+                assert len(list(r for r in result if r[0] == "error")) == 1
+
+    def test_parameter_check_warnings(self):
+        cases = [
+            {"attribute_mapping": {"source.ip": {"not-a-feed-arg": "any"}}},
+            {"tagging": {"case": [{"name": "", "not-a-feed-arg": "any"}]}},
+        ]
+        for case in cases:
+            with self.subTest():
+                result = self.bot_reference.check({**self.sysconfig, **case})
+                assert len(list(r for r in result if r[0] == "warning")) == 1
 
     def tearDown(self):
         self.cache.delete(self.bot_id)
