@@ -24,6 +24,8 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 - `intelmq.lib.datatypes`: Remove unneeded Dict39 alias (PR#2639 by Nakul Rajpal, fixes #2635)
 - `intelmq.lib.mixins.http`: Only set HTTP header 'Authorization' if username or password are set and are not both empty string as they are by default in the Manager (fixes #2590, PR#2634 by Sebastian Wagner).
 - `intelmq.lib.message.Message.from_dict`: Do not modify the dict parameter by adding the `__type` field and raise an error when type is not determinable (PR#2545 by Sebastian Wagner).
+- `intelmq.lib.mixins.cache.CacheMixin` was extended to support temporary storing messages in a cache queue
+  (PR#2509 by Kamil Mankowski).
 
 ### Development
 
