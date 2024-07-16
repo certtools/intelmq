@@ -4684,7 +4684,7 @@ attribute_mapping:
 The keys refers to which MISP events you want to tag. If you want to tag all of them, use `__all__`.
 If you use `event_separator` and want to add additional tags to some events, use the expected values
 of the separation field. The *list of dicts* defines MISP tags as parameters to create `MISPTag`
-objects from. Each dictonary has to have at least `name`. For all available parameters refer to the
+objects from. Each dictionary has to have at least `name`. For all available parameters refer to the
 [PyMISP documentation](https://pymisp.readthedocs.io/en/latest/_modules/pymisp/abstract.html#MISPTag)
 for `MISPTag`.
 
