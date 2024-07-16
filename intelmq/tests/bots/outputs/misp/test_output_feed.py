@@ -4,14 +4,13 @@
 
 # -*- coding: utf-8 -*-
 import json
-import select
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from .....lib.message import Message, MessageFactory
 import intelmq.lib.test as test
 from intelmq.bots.outputs.misp.output_feed import MISPFeedOutputBot
+from intelmq.lib.message import MessageFactory
 
 EXAMPLE_EVENT = {
     "classification.type": "infected-system",
@@ -347,7 +346,9 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
             {"attribute_mapping": "not-a-dict"},
             {"attribute_mapping": {"not-a-field": {}}},
             {"attribute_mapping": {"source.ip": "not-a-dict"}},
-            {"tagging": {"not-all": []}}, # without event_separator, only __all__ is allowed
+            {
+                "tagging": {"not-all": []}
+            },  # without event_separator, only __all__ is allowed
             {"tagging": {"__all__": [], "other": []}},
             {"event_separator": "malware.name", "tagging": ["not", "a", "dict"]},
             {
