@@ -263,8 +263,8 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         for parameter, value in definition.items():
             # Check if the value is a harmonization key or a static value
             if isinstance(value, str) and (
-                value in self.harmonization["event"]
-                or value.split(".", 1)[0] in self.harmonization["event"]
+                value in self.harmonization["event"] or
+                value.split(".", 1)[0] in self.harmonization["event"]
             ):
                 result[parameter] = message.get(value)
             else:
@@ -333,8 +333,8 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         sanity_event = Event({})
         event_separator = parameters.get("event_separator")
         if (
-            event_separator
-            and not sanity_event._Message__is_valid_key(event_separator)[0]
+            event_separator and not
+            sanity_event._Message__is_valid_key(event_separator)[0]
         ):
             results.append(
                 [
@@ -399,8 +399,8 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                         "error",
                         (
                             "Parameter 'tagging' has to be a dictionary with keys as '__all__' "
-                            "or possible 'event_separator' values. Each dictionary value "
-                            + tagging_error,
+                            "or possible 'event_separator' values. Each dictionary value " +
+                            tagging_error,
                         ),
                     ]
                 )
