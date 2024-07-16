@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner, 2024 CERT.at GmbH
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -9,19 +9,25 @@ import re
 from pathlib import Path
 from uuid import uuid4
 
+
 from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
-from ....lib.message import MessageFactory
+from intelmq.lib.message import Event, Message, MessageFactory
 from intelmq.lib.mixins import CacheMixin
 from intelmq.lib.utils import parse_relative
 
 try:
-    from pymisp import MISPEvent, MISPObject, MISPOrganisation, MISPTag, NewAttributeError
+    from pymisp import (
+        MISPEvent,
+        MISPObject,
+        MISPOrganisation,
+        MISPTag,
+        MISPObjectAttribute,
+        NewAttributeError,
+    )
     from pymisp.tools import feed_meta_generator
 except ImportError:
-    # catching SyntaxError because of https://github.com/MISP/PyMISP/issues/501
     MISPEvent = None
-    import_fail_reason = "import"
 
 DEFAULT_KEY = "default"
 
@@ -30,18 +36,44 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
     """Generate an output in the MISP Feed format"""
 
     interval_event: str = "1 hour"
-    bulk_save_count: int = None
     misp_org_name = None
     misp_org_uuid = None
-    output_dir: str = "/opt/intelmq/var/lib/bots/mispfeed-output"  # TODO: should be path
-    _is_multithreadable: bool = False
-    attribute_mapping: dict = None
-    event_separator: str = None
+    output_dir: str = (
+        "/opt/intelmq/var/lib/bots/mispfeed-output"  # TODO: should be path
+    )
+    # Enables regenerating the MISP feed after collecting given number of messages
+    bulk_save_count: int = None
+
+    # Additional information to be added to the MISP event description
     additional_info: str = None
+
+    # An optional field used to create multiple MISP events from incoming messages
+    event_separator: str = None
+
+    # Optional non-standard mapping of message fields to MISP object attributes
+    # The structure is like:
+    # {<IDF_field_name = MIPS_object_relation>: {<dict of additional parameters for MISPObjectAttribute>}}
+    # For example:
+    #   {"source.ip": {"comment": "This is the source of the event"}}
+    #        will include only the "source.ip" field in the MISP object attributes,
+    #        and set the comment
+    attribute_mapping: dict = None
+
+    # Optional definition to add tags to the MISP event. It should be a dict where keys are
+    # '__all__' (to add tags for every event) or, if the event_separator is used, the separator
+    # values. For each key, there should be a list of dicts defining parameters for the MISPTag
+    # object, but only the "name" is required to set.
+    # For example:
+    #   {"__all__": [{"name": "tag1"}, {"name": "tag2"}]}
+    #       will add two tags to every event
+    #   {"infostealer": [{"name": "type:infostealer"}], "__all__": [{"name": "tag1"}]}
+    #       will add two tags to every event separated by "infostealer", and
+    #       one tag to every other event
     tagging: dict = None
-    # A structure like:
-    # __all__: list of tag kwargs for all events
-    # <key>: list of tag kwargs per separator key
+
+    # Delaying reloading would delay saving eventually long-awaiting messages
+    _sighup_delay = False
+    _is_multithreadable: bool = False
 
     @staticmethod
     def check_output_dir(dirname):
@@ -109,11 +141,13 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                     tag = MISPTag()
                     tag.from_dict(**kw)
                     self._tagging_objects[key].append(tag)
-            self.logger.debug("Generated tags: %r.", self._tagging_objects)
 
-        if self.current_events and self.cache_length():
-            # Ensure we do generate feed on reload / restart
-            self._generate_feed()
+        # Ensure we do generate feed on reload / restart, so awaiting messages won't wait forever
+        if self.cache_length() and not getattr(self, "testing", False):
+            self.logger.debug(
+                "Found %s awaiting messages. Generating feed.", self.cache_length()
+            )
+            self._generate_misp_feed()
 
     def _load_event(self, file_path: Path, key: str):
         if file_path.exists():
@@ -138,7 +172,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
             self.min_time_current = datetime.datetime.now()
             self.max_time_current = self.min_time_current + self.timedelta
 
-            self._generate_feed()
+            self._generate_misp_feed()
 
         event = self.receive_message().to_dict(jsondict_as_string=True)
 
@@ -147,18 +181,16 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
             cache_size = self.cache_put(event)
 
         if cache_size is None:
-            self._generate_feed(event)
+            self._generate_misp_feed(event)
         elif not self.current_events:
             # Always create the first event so we can keep track of the interval.
-            # It also ensures cleaning the queue after startup in case of awaiting
-            # messages from the previous run
-            self._generate_feed()
+            self._generate_misp_feed()
         elif cache_size >= self.bulk_save_count:
-            self._generate_feed()
+            self._generate_misp_feed()
 
         self.acknowledge_message()
 
-    def _generate_new_event(self, key):
+    def _generate_new_misp_event(self, key):
         self.current_events[key] = MISPEvent()
 
         tags: list[MISPTag] = []
@@ -189,26 +221,29 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                 json.dump({k: str(v) for k, v in self.current_files.items()}, f)
         return self.current_events[key]
 
-    def _add_message_to_feed(self, message: dict):
+    def _add_message_to_misp_event(self, message: dict):
+        # For proper handling of nested fields, we need the object
+        message_obj = MessageFactory.from_dict(
+            message, harmonization=self.harmonization, default_type="Event"
+        )
         if not self.event_separator:
             key = DEFAULT_KEY
         else:
-            # For proper handling of nested fields
-            message_obj = MessageFactory.from_dict(
-                message, harmonization=self.harmonization, default_type="Event"
-            )
             key = message_obj.get(self.event_separator) or DEFAULT_KEY
 
         if key in self.current_events:
             event = self.current_events[key]
         else:
-            event = self._generate_new_event(key)
+            event = self._generate_new_misp_event(key)
 
         obj = event.add_object(name="intelmq_event")
+        # For caching and default mapping, the serialized version is the right format to work on.
+        # However, for any custom mapping the Message object is more sufficient as it handles
+        # subfields.
         if not self.attribute_mapping:
             self._default_mapping(obj, message)
         else:
-            self._custom_mapping(obj, message)
+            self._custom_mapping(obj, message_obj)
 
     def _default_mapping(self, obj: "MISPObject", message: dict):
         for object_relation, value in message.items():
@@ -223,28 +258,21 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                     )
 
     def _extract_misp_attribute_kwargs(self, message: dict, definition: dict) -> dict:
-        """
-        Creates a
-        """
-        # For caching and default mapping, the serialized version is the right format to work on.
-        # However, for any custom mapping the Message object is more sufficient as it handles
-        # subfields.
-        message = MessageFactory.from_dict(
-            message, harmonization=self.harmonization, default_type="Event"
-        )
+        """Creates the a dict with arguments to create a MISPObjectAttribute."""
         result = {}
         for parameter, value in definition.items():
             # Check if the value is a harmonization key or a static value
             if isinstance(value, str) and (
-                value in self.harmonization["event"] or
-                value.split(".", 1)[0] in self.harmonization["event"]
+                value in self.harmonization["event"]
+                or value.split(".", 1)[0] in self.harmonization["event"]
             ):
                 result[parameter] = message.get(value)
             else:
                 result[parameter] = value
         return result
 
-    def _custom_mapping(self, obj: "MISPObject", message: dict):
+    def _custom_mapping(self, obj: "MISPObject", message: Message):
+        """Map the IntelMQ event to the MISP Object using the custom mapping definition."""
         for object_relation, definition in self.attribute_mapping.items():
             if object_relation in message:
                 obj.add_attribute(
@@ -252,15 +280,15 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                     value=message[object_relation],
                     **self._extract_misp_attribute_kwargs(message, definition),
                 )
-                # In case of manual mapping, we want to fail if it produces incorrect values
+                # In case of custom mapping, we want to fail if it produces incorrect values
 
-    def _generate_feed(self, message: dict = None):
+    def _generate_misp_feed(self, message: dict = None):
         if message:
-            self._add_message_to_feed(message)
+            self._add_message_to_misp_event(message)
 
         message = self.cache_pop()
         while message:
-            self._add_message_to_feed(message)
+            self._add_message_to_misp_event(message)
             message = self.cache_pop()
 
         for key, event in self.current_events.items():
@@ -272,27 +300,163 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
 
     @staticmethod
     def check(parameters):
+        results = []
         if "output_dir" not in parameters:
-            return [["error", "Parameter 'output_dir' not given."]]
-        try:
-            created = MISPFeedOutputBot.check_output_dir(parameters["output_dir"])
-        except OSError:
-            return [
+            results.append(["error", "Parameter 'output_dir' not given."])
+        else:
+            try:
+                created = MISPFeedOutputBot.check_output_dir(parameters["output_dir"])
+            except OSError:
+                results.append(
+                    [
+                        "error",
+                        "Directory %r of parameter 'output_dir' does not exist and could not be created."
+                        % parameters["output_dir"],
+                    ]
+                )
+            else:
+                if created:
+                    results.append(
+                        [
+                            "info",
+                            "Directory %r of parameter 'output_dir' did not exist, but has now been created."
+                            "" % parameters["output_dir"],
+                        ]
+                    )
+
+        bulk_save_count = parameters.get("bulk_save_count")
+        if bulk_save_count and not isinstance(bulk_save_count, int):
+            results.append(
+                ["error", "Parameter 'bulk_save_count' has to be int if set."]
+            )
+
+        sanity_event = Event({})
+        event_separator = parameters.get("event_separator")
+        if (
+            event_separator
+            and not sanity_event._Message__is_valid_key(event_separator)[0]
+        ):
+            results.append(
                 [
                     "error",
-                    "Directory %r of parameter 'output_dir' does not exist and could not be created."
-                    % parameters["output_dir"],
+                    f"Value {event_separator} in 'event_separator' is not a valid event key.",
                 ]
-            ]
-        else:
-            if created:
-                return [
+            )
+
+        not_feed_field_warning = (
+            "Parameter '{parameter}' of {context} looks like not being a field exportable to"
+            " MISP Feed. It may be a valid PyMISP parameter, but won't be exported to the feed."
+            " Please ensure it's intended and consult PyMISP documentation at https://pymisp.readthedocs.io/"
+            " for valid parameters for the {object}."
+        )
+        attribute_mapping = parameters.get("attribute_mapping")
+        if attribute_mapping:
+            if not isinstance(attribute_mapping, dict):
+                results.append(
+                    ["error", "Parameter 'attribute_mapping has to be a dictionary."]
+                )
+            else:
+                for key, value in attribute_mapping.items():
+                    if not sanity_event._Message__is_valid_key(key)[0]:
+                        results.append(
+                            [
+                                "error",
+                                f"The key '{key}' in attribute_mapping is not a valid IDF field.",
+                            ]
+                        )
+                    if not isinstance(value, dict):
+                        results.append(
+                            [
+                                "error",
+                                f"The config attribute_mapping['{key}'] should be a "
+                                "dict with parameters for MISPObjectAttribute.",
+                            ]
+                        )
+                    else:
+                        for parameter in value.keys():
+                            if parameter not in MISPObjectAttribute._fields_for_feed:
+                                results.append(
+                                    [
+                                        "warning",
+                                        not_feed_field_warning.format(
+                                            parameter=parameter,
+                                            context=f"attribute_mapping['{key}']",
+                                            object="MISPObjectAttribute",
+                                        ),
+                                    ]
+                                )
+
+        tagging = parameters.get("tagging")
+        if tagging:
+            tagging_error = (
+                "should be a list of dictionaries with parameters for the MISPTag object."
+                " Please consult PyMISP documentation at https://pymisp.readthedocs.io/"
+                " to find valid fields."
+            )
+            if not isinstance(tagging, dict):
+                results.append(
                     [
-                        "info",
-                        "Directory %r of parameter 'output_dir' did not exist, but has now been created."
-                        "" % parameters["output_dir"],
+                        "error",
+                        (
+                            "Parameter 'tagging' has to be a dictionary with keys as '__all__' "
+                            "or possible 'event_separator' values. Each dictionary value "
+                            + tagging_error,
+                        ),
                     ]
-                ]
+                )
+            else:
+                if not event_separator and (
+                    "__all__" not in tagging or len(tagging.keys()) > 1
+                ):
+                    results.append(
+                        [
+                            "error",
+                            (
+                                "Tagging configuration expects custom values, but the 'event_separator'"
+                                " parameter is not set. If you want to just tag all events, use only"
+                                " the '__all__' key."
+                            ),
+                        ]
+                    )
+                for key, value in tagging.items():
+                    if not isinstance(value, list):
+                        results.append(
+                            [
+                                "error",
+                                f"The config tagging['{key}'] {tagging_error}",
+                            ]
+                        )
+                    else:
+                        for tag in value:
+                            if not isinstance(tag, dict):
+                                results.append(
+                                    [
+                                        "error",
+                                        f"The config tagging['{key}'] {tagging_error}",
+                                    ]
+                                )
+                            else:
+                                if "name" not in tag:
+                                    results.append(
+                                        [
+                                            "error",
+                                            f"The config tagging['{key}'] contains a tag without 'name'.",
+                                        ]
+                                    )
+                                for parameter in tag.keys():
+                                    if parameter not in MISPTag._fields_for_feed:
+                                        results.append(
+                                            [
+                                                "warning",
+                                                not_feed_field_warning.format(
+                                                    parameter=parameter,
+                                                    context=f"tagging['{key}']",
+                                                    object="MISPTag",
+                                                ),
+                                            ]
+                                        )
+
+        return results or None
 
 
 BOT = MISPFeedOutputBot
