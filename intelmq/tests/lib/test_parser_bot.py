@@ -167,12 +167,12 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.assertAnyLoglineEqual(message="Invalid value of key 'source.port' in default_fields parameter.",
                                    levelname="ERROR")
 
-    def test_copy_custom_fields_from_report(self):
+    def test_copy_collector_provided_fields_from_report(self):
         """Allow copying custom fields from the report message to support more context from reports"""
         report = {**EXAMPLE_SHORT, "extra.file_name": "file.txt", "extra.field2": "value2"}
         self.input_message = report
 
-        self.run_bot(parameters={"copy_custom_fields":
+        self.run_bot(parameters={"copy_collector_provided_fields":
                                  ["extra.file_name", "extra.not_exists"]})
 
         output_message = EXAMPLE_EVENT.copy()

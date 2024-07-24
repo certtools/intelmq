@@ -1357,7 +1357,7 @@ defaults_fields:
   protocol.transport: tcp
 ```
 
-#### `copy_custom_fields`
+#### `copy_collector_provided_fields`
 
 (optional, list) List of additional fields to be copy from the report (only applied if parsing the
 event doesn't set the value).
@@ -1365,7 +1365,7 @@ event doesn't set the value).
 Example usage:
 
 ```yaml
-copy_custom_fields:
+copy_collector_provided_fields:
   - extra.file_name
 ```
 

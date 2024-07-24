@@ -98,7 +98,7 @@ class Message(dict):
     _default_value_set = False
 
     def __init__(self, message: Union[dict, tuple] = (), auto: bool = False,
-                 harmonization: dict = None) -> None:
+                 harmonization: dict = None, **_) -> None:
         try:
             classname = message['__type'].lower()
             del message['__type']
@@ -522,9 +522,13 @@ class Message(dict):
 
 
 class Event(Message):
-
-    def __init__(self, message: Union[dict, tuple] = (), auto: bool = False,
-                 harmonization: Optional[dict] = None) -> None:
+    def __init__(
+        self,
+        message: Union[dict, tuple] = (),
+        auto: bool = False,
+        harmonization: Optional[dict] = None,
+        copy_collector_provided_fields: Optional[dict] = None,
+    ) -> None:
         """
         Parameters:
             message: Give a report and feed.name, feed.url and
@@ -551,6 +555,12 @@ class Event(Message):
                 template['rtir_id'] = message['rtir_id']
             if 'time.observation' in message:
                 template['time.observation'] = message['time.observation']
+            
+            if copy_collector_provided_fields:
+                for key in copy_collector_provided_fields:
+                    if key not in message:
+                        continue
+                    template[key] = message.get(key)
         else:
             template = message
         super().__init__(template, auto, harmonization)
@@ -559,7 +569,7 @@ class Event(Message):
 class Report(Message):
 
     def __init__(self, message: Union[dict, tuple] = (), auto: bool = False,
-                 harmonization: Optional[dict] = None) -> None:
+                 harmonization: Optional[dict] = None, **_) -> None:
         """
         Parameters:
             message: Passed along to Message's and dict's init.
