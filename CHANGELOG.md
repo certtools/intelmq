@@ -32,8 +32,8 @@
 - `intelmq.bots.parsers.shadowserver._config`:
   - Fetch schema before first run (PR#2482 by elsif2, fixes #2480).
 - `intelmq.bots.parsers.dataplane.parser`: Use `  |  ` as field delimiter, fix parsing of AS names including `|` (PR#2488 by DigitalTrustCenter).
-- all parsers: add `copy_custom_fields` parameter allowing copying additional fields from the report, e.g. `extra.file_name`.
-  (PR# by Kamil Mankowski).
+- all parsers: add `copy_collector_provided_fields` parameter allowing copying additional fields from the report, e.g. `extra.file_name`.
+  (PR#2513 by Kamil Mankowski).
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`:
