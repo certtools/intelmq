@@ -555,7 +555,7 @@ class Event(Message):
                 template['rtir_id'] = message['rtir_id']
             if 'time.observation' in message:
                 template['time.observation'] = message['time.observation']
-            
+
             if copy_collector_provided_fields:
                 for key in copy_collector_provided_fields:
                     if key not in message:

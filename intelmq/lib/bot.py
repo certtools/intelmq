@@ -1127,7 +1127,7 @@ class ParserBot(Bot):
         if not self._line_ending or isinstance(self._line_ending, tuple):
             self._line_ending = '\r\n'
         return data_io
-    
+
     def new_event(self, *args, **kwargs):
         if self.copy_collector_provided_fields:
             kwargs['copy_collector_provided_fields'] = self.copy_collector_provided_fields
