@@ -14,6 +14,7 @@ import os
 import re
 import traceback
 import operator
+import json
 
 from datetime import datetime, timedelta, timezone
 from typing import Callable, Dict, Optional, Union
@@ -24,7 +25,7 @@ from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
-from intelmq.lib.message import Event
+from intelmq.lib.message import Message
 from intelmq.lib.utils import parse_relative
 from intelmq.lib.harmonization import DateTime
 
@@ -65,7 +66,9 @@ class SieveExpertBot(ExpertBot):
             harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
             SieveExpertBot._harmonization = harmonization_config["event"]
 
-        self.sieve = SieveModel(self.file, self.logger)
+        self.metamodel = self.init_metamodel()
+        self.model = self.read_sieve_file(self.file, self.metamodel)
+        self.variables = {}
 
     @staticmethod
     def check(parameters):
@@ -105,7 +108,7 @@ class SieveExpertBot(ExpertBot):
 
     def process(self) -> None:
         event = self.receive_message()
-        procedure = self.sieve.process(event)
+        procedure = self.model_process(event)
 
         # forwarding decision
         if procedure == Procedure.DROP:
@@ -122,14 +125,6 @@ class SieveExpertBot(ExpertBot):
             self.send_message(event, path=path)
 
         self.acknowledge_message()
-
-
-class SieveModel:
-    def __init__(self, file_path: str, logger) -> None:
-        self.metamodel = self.init_metamodel()
-        self.sieve = self.read_sieve_file(file_path, self.metamodel)
-        self.logger = logger
-        self.variables = {}
 
     _string_op_map = {
         "==": operator.eq,
@@ -181,9 +176,9 @@ class SieveModel:
         str,
         Callable[
             [
-                "SieveModel",
+                "SieveExpertBot",
                 object,
-                Event,
+                Message,
             ],
             bool,
         ],
@@ -245,11 +240,11 @@ class SieveModel:
             # apply custom validation rules
             metamodel.register_obj_processors(
                 {
-                    "SingleStringMatch": SieveModel.validate_string_match,
-                    "MultiStringMatch": SieveModel.validate_string_match,
-                    "SingleNumericMatch": SieveModel.validate_numeric_match,
-                    "MultiNumericMatch": SieveModel.validate_numeric_match,
-                    "SingleIpRange": SieveModel.validate_ip_range,
+                    "SingleStringMatch": SieveExpertBot.validate_string_match,
+                    "MultiStringMatch": SieveExpertBot.validate_string_match,
+                    "SingleNumericMatch": SieveExpertBot.validate_numeric_match,
+                    "MultiNumericMatch": SieveExpertBot.validate_numeric_match,
+                    "SingleIpRange": SieveExpertBot.validate_ip_range,
                 }
             )
 
@@ -274,13 +269,13 @@ class SieveModel:
                 f"Could not parse sieve file {filename!r}, error in ({e.line}, {e.col}): {e}"
             )
 
-    def process(self, event):
+    def model_process(self, event):
         procedure = Procedure.CONTINUE
         self.variables.clear()
-        if not self.sieve:  # empty rules file results in empty string
+        if not self.model:  # empty rules file results in empty string
             return procedure
 
-        for statement in self.sieve.statements:
+        for statement in self.model.statements:
             procedure = self.process_statement(statement, event)
             if procedure == Procedure.KEEP:
                 self.logger.debug(
@@ -353,9 +348,7 @@ class SieveModel:
     def process_condition(self, cond, event) -> bool:
         name = cond.match.__class__.__name__
         ret = self._cond_map[name](self, cond.match, event)
-        if cond.neg:
-            ret = not ret
-        return ret
+        return not ret if cond.neg else ret
 
     def process_exist_match(self, key, op, event) -> bool:
         ret = key in event
@@ -367,7 +360,14 @@ class SieveModel:
         if key not in event:
             return op in {"!=", "!~"}
 
-        return self._string_op_map[op](event[key], value)
+        lhs = event[key]
+        if not isinstance(lhs, str) and op not in ("==", "!="):
+            if isinstance(lhs, dict):
+                lhs = json.dumps(lhs)
+            else:
+                lhs = str(lhs)
+
+        return self._string_op_map[op](lhs, value)
 
     def process_multi_string_match(self, key, op, values, event) -> bool:
         if key not in event:
@@ -511,7 +511,7 @@ class SieveModel:
         try:
             ipaddress.ip_network(ip_range.value, strict=False)
         except ValueError:
-            position = SieveModel.get_linecol(ip_range, as_dict=True)
+            position = SieveExpertBot.get_linecol(ip_range, as_dict=True)
             raise TextXSemanticError(f"Invalid ip range: {ip_range.value}.", **position)
 
     @staticmethod
@@ -525,7 +525,7 @@ class SieveModel:
             TextXSemanticError: when the key is of an incompatible type for numeric match expressions.
         """
         valid_types = {"Integer", "Float", "Accuracy", "ASN"}
-        position = SieveModel.get_linecol(num_match.value, as_dict=True)
+        position = SieveExpertBot.get_linecol(num_match.value, as_dict=True)
 
         # validate harmonization type (event key)
         try:
@@ -555,17 +555,17 @@ class SieveModel:
         if str_match.key in ipaddr_types:
             name = str_match.value.__class__.__name__
             if name == "SingleStringValue":
-                SieveModel.validate_ip_address(str_match.value)
+                SieveExpertBot.validate_ip_address(str_match.value)
             elif name == "StringValueList":
                 for val in str_match.value.values:
-                    SieveModel.validate_ip_address(val)
+                    SieveExpertBot.validate_ip_address(val)
 
     @staticmethod
     def validate_ip_address(ipaddr) -> None:
         try:
             ipaddress.ip_address(ipaddr.value)
         except ValueError:
-            position = SieveModel.get_linecol(ipaddr, as_dict=True)
+            position = SieveExpertBot.get_linecol(ipaddr, as_dict=True)
             raise TextXSemanticError(f"Invalid IP address: {ipaddr.value}.", **position)
 
     @staticmethod
