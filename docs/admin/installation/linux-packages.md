@@ -55,7 +55,13 @@ Add the repository to the package manager and install IntelMQ (packages `intelmq
 deb http://[...].archive.ubuntu.com/ubuntu/ focal main universe
 ```
 
-3. Update the list of available packages and install IntelMQ:
+3. Next, add the IntelMQ APT Repository for Ubuntu:
+```bash
+echo "deb http://download.opensuse.org/repositories/home:/sebix:/intelmq/xUbuntu_$(lsb_release -rs)/ /" | sudo tee /etc/apt/sources.list.d/intelmq.list
+curl -fsSL "https://download.opensuse.org/repositories/home:sebix:intelmq/xUbuntu_$(lsb_release -rs)/Release.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/intelmq.gpg > /dev/null
+```
+
+3. Now update the list of available packages and install the IntelMQ packages:
 ```bash
 sudo apt update
 sudo apt install intelmq intelmq-api intelmq-manager
