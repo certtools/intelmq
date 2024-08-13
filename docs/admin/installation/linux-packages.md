@@ -1,5 +1,5 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2023 Sebastian Wagner, Filip Pokorný
+   SPDX-FileCopyrightText: 2015-2024 Sebastian Wagner, Filip Pokorný
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -27,7 +27,7 @@ Native packages are currently provided for the following Linux distributions:
 Add the repository to the package manager and install IntelMQ (packages `intelmq-api` and `intelmq-manager` are optional):
 
 ```bash
-echo "deb http://download.opensuse.org/repositories/home:/sebix:/intelmq/Debian_$(lsb_release -rs)/ /" | sudo tee /etc/apt/sources.list.d/intelmq
+echo "deb http://download.opensuse.org/repositories/home:/sebix:/intelmq/Debian_$(lsb_release -rs)/ /" | sudo tee /etc/apt/sources.list.d/intelmq.list
 curl -fsSL "https://download.opensuse.org/repositories/home:sebix:intelmq/Debian_$(lsb_release -rs)/Release.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/intelmq.gpg > /dev/null
 sudo apt update
 sudo apt install intelmq intelmq-api intelmq-manager
@@ -50,7 +50,7 @@ For Ubuntu you must enable the Universe repository which provides community-main
 Add the repository to the package manager and install IntelMQ (packages `intelmq-api` and `intelmq-manager` are optional):
 
 1. Open the file `/etc/apt/sources.list` in an editor of your choice. Use `sudo` or the `root` user.
-   
+
 2. Append `universe` to this line:
 ```
 deb http://[...].archive.ubuntu.com/ubuntu/ focal main universe
