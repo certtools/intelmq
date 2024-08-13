@@ -18,7 +18,6 @@ Native packages are currently provided for the following Linux distributions:
 - **Debian 11** (bullseye)
 - **Debian 12** (bookworm)
 - **openSUSE Tumbleweed**
-- **openSUSE Leap 15.5**
 - **Ubuntu 20.04** (focal fossa)
 - **Ubuntu 22.04** (jammy jellyfish)
 
