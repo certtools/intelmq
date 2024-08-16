@@ -56,7 +56,9 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
             raise ValueError('No secret provided.')
 
         if isinstance(self.reports, str):
-            self._report_list = self.reports.split(',')
+            # if reports is an empty string (or only contains whitespace), behave as if the parameter is not set and select all reports
+            reports = self.reports.strip()
+            self._report_list = reports.split(',') if reports else []
         elif isinstance(self.reports, list):
             self._report_list = self.reports
         if isinstance(self.types, str):
