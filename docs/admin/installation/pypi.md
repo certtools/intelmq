@@ -9,7 +9,7 @@
 This guide provides instruction on how to install IntelMQ and it's components using the Python Package Index (PyPI)
 repository.
 
-!!! note 
+!!! note
     Some bots may have additional dependencies which are mentioned in their own documentation.
 
 ## Installing IntelMQ

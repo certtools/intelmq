@@ -43,7 +43,7 @@ Here is a full example using **curl**:
    ```json
    {"login_token":"68b329da9893e34099c7d8ad5cb9c940","username":"$username"}
    ```
-   
+
 2. Using the login token to fetch data:
    ```bash
    curl --location "http://localhost/intelmq/v1/api/version" \

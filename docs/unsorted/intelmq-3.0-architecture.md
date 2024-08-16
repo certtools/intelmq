@@ -56,7 +56,7 @@ See [#1424](https://github.com/certtools/intelmq/issues/1424)
 _Task_: create a setup where each bot MAY run in a docker container
 
 _Background_: It might make sense to  be able to run each bot in a docker container since it fits with a lot of new paradigms in orchestration.
-With a proper template, each bot running in a docker container could send its logs to some central logger (for example splunk or similar) and 
+With a proper template, each bot running in a docker container could send its logs to some central logger (for example splunk or similar) and
 the sysadmin/devops teams which are already using these systems for monitoring alerts can properly fit the IntelMQ logs and alerts to their regular daily routine.
 Docker also allows the sysadmin/devops folks to centrally manage the system.
 
@@ -69,7 +69,7 @@ _Category_: this feature should be OPTIONAL.
 _Task_: create tutorials with VMs/docker images.
 
 _Background_:
-We are missing good tutorials ("playbooks") on how to run certain workflows via IntelMQ. Ideally, we would offer ready-made VMs/docker images where people who want to 
+We are missing good tutorials ("playbooks") on how to run certain workflows via IntelMQ. Ideally, we would offer ready-made VMs/docker images where people who want to
 try out IntelMQ (and consequently adapt the setup to their own needs). This also helps teachers/presenters who want to demo IntelMQ.
 
 Specifically we would like to have:

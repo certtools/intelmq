@@ -491,7 +491,7 @@ In case of errors, unsuccessful operations, the exit code is higher than
 enabled bot is not running, the exit code is 1. The same is valid for
 e.g. `intelmqctl status`, which can be used for monitoring,
 and all other operations.
-   
+
 ## Error Handling
 
 When bots are failing due to bad input data or programming errors, they can dump the problematic message to a file along

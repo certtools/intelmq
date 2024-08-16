@@ -50,7 +50,7 @@ For Ubuntu you must enable the Universe repository which provides community-main
 Add the repository to the package manager and install IntelMQ (packages `intelmq-api` and `intelmq-manager` are optional):
 
 1. Open the file `/etc/apt/sources.list` in an editor of your choice. Use `sudo` or the `root` user.
-   
+
 2. Append `universe` to this line:
 ```
 deb http://[...].archive.ubuntu.com/ubuntu/ focal main universe
