@@ -197,13 +197,25 @@ The `CacheMixin` provides methods to cache values for bots in a Redis database. 
 - `redis_cache_ttl: int = 15`
 - `redis_cache_password: Optional[str] = None`
 
-and provides the methods:
+and provides the methods to cache key-value pairs:
 
 - `cache_exists`
 - `cache_get`
 - `cache_set`
 - `cache_flush`
 - `cache_get_redis_instance`
+
+and following methods to cache objects in a queue:
+
+- `cache_put`
+- `cache_pop`
+- `cache_length`.
+
+Caching key-value pairs and queue caching are two separated mechanisms. The first is designed
+ for arbitrary values, the second one is focused on temporary storing messages (but can handle other
+ data). You won't see caches from one in the another. For example, if adding a key-value pair using
+ `cache_set`, it does not change the value from `cache_length`, and if adding an element using
+ `cache_put` you cannot use `check_exists` to look for it.
 
 ### Pipeline Interactions
 

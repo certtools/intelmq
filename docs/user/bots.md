@@ -4608,6 +4608,12 @@ Create a directory layout in the MISP Feed format.
 The PyMISP library >= 2.4.119.1 is required, see
 [REQUIREMENTS.txt](https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/misp/REQUIREMENTS.txt).
 
+Note: please test the produced feed before using in production. This bot allows you to do an
+extensive customisation of the MISP feed, including creating multiple events and tags, but it can
+be tricky to configure properly. Misconfiguration can prevent bot from starting or have bad
+consequences for your MISP Instance (e.g. spaming with events). Use `intelmqctl check` command
+to validate your configuration against common mistakes.
+
 **Module:** `intelmq.bots.outputs.misp.output_feed`
 
 **Parameters:**
@@ -4631,6 +4637,103 @@ The PyMISP library >= 2.4.119.1 is required, see
 
 () The output bot creates one event per each interval, all data in this time frame is part of this event. Default "1
 hour", string.
+
+**`bulk_save_count`**
+
+(optional, int) If set to a non-0 value, the bot won't refresh the MISP feed immediately, but will cache
+incoming messages until the given number of them. Use it if your bot proceeds a high number of messages
+and constant saving to the disk is a problem. Reloading or restarting bot as well as generating
+a new MISP event based on `interval_event` triggers regenerating MISP feed regardless of the cache size.
+
+**`attribute_mapping`**
+
+(optional, dict) If set, allows selecting which IntelMQ event fields are mapped to MISP attributes
+as well as attribute parameters (like e.g. a comment). The expected format is a *dictionary of dictionaries*:
+first-level key represents an IntelMQ field that will be directly translated to a MISP attribute; nested
+dictionary represents additional parameters PyMISP can take when creating an attribute. They can use
+names of other IntelMQ fields (then the value of such field will be used), or static values. If not needed,
+leave empty dict.
+
+For available attribute parameters, refer to the
+[PyMISP documentation](https://pymisp.readthedocs.io/en/latest/_modules/pymisp/mispevent.html#MISPObjectAttribute)
+for the `MISPObjectAttribute`.
+
+For example:
+
+```yaml
+attribute_mapping:
+  source.ip:
+  feed.name:
+    comment: event_description.text
+  destination.ip:
+    to_ids: False
+```
+
+would create a MISP object with three attributes `source.ip`, `feed.name` and `destination.ip`
+and set their values as in the IntelMQ event. In addition, the `feed.name` would have a comment
+as given in the `event_description.text` from IntelMQ event, and `destination.ip` would be set
+as not usable for IDS.
+
+**`event_separator`
+
+(optional, string): If set to a field name from IntelMQ event, the bot will work in parallel on a few
+events instead of saving all incoming messages to a one. Each unique value from the field will
+use its own MISP Event. This is useful if your feed provides data about multiple entities you would
+like to group, for example IPs of C2 servers from different botnets. For a given value, the bot will
+use the same MISP Event as long as it's allowed by the `interval_event`.
+
+**`additional_info`
+
+(optional, string): If set, the generated MISP Event will use it in the `info` field of the event,
+in addition to the standard IntelMQ description with the time frame (you cannot remove it as the bot
+depends of datetimes saved there). If you use `event_separator`, you may want to use `{separator}`
+placeholder which will be then replaced with the value of the separator.
+
+For example, the following configuration can be used to create MISP Feed with IPs of C2 servers
+of different botnets, having each botnet in a separated MISP Events with an appropriate description.
+Each MISP Event will contain objects with the `source.ip` field only, and the events' info will look
+like *C2 Servers for botnet-1. IntelMQ event 2024-07-09T14:51:10.825123 - 2024-07-10T14:51:10.825123*
+
+```yaml
+event_separator: malware.name
+additional_info: C2 Servers for {separator}.
+attribute_mapping:
+  source.ip:
+```
+
+**`tagging`
+
+(optional, dict): Allows setting MISP tags to MISP events. The structure is a *dict of list of dicts*.
+The keys refers to which MISP events you want to tag. If you want to tag all of them, use `__all__`.
+If you use `event_separator` and want to add additional tags to some events, use the expected values
+of the separation field. The *list of dicts* defines MISP tags as parameters to create `MISPTag`
+objects from. Each dictionary has to have at least `name`. For all available parameters refer to the
+[PyMISP documentation](https://pymisp.readthedocs.io/en/latest/_modules/pymisp/abstract.html#MISPTag)
+for `MISPTag`.
+
+Note: setting `name` is enough for MISP to match a correct tag from the global collection. You may
+see it lacking the colour in the MISP Feed view, but it will be retriven after importing to your
+instance.
+
+Example 1 - set two tags for every MISP event:
+
+```yaml
+tagging:
+  __all__:
+    - name: tlp:red
+    - name: source:intelmq
+```
+
+Example 2 - create separated events based on `malware.name` and set additional family tag:
+
+```yaml
+event_separator: malware.name
+tagging:
+  __all__:
+    - name: tlp:red
+  njrat:
+    - name: njrat
+```
 
 **Usage in MISP**
 

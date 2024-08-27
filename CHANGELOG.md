@@ -14,6 +14,8 @@
 ### Core
 - `intelmq.lib.utils.drop_privileges`: When IntelMQ is called as `root` and dropping the privileges to user `intelmq`, also set the non-primary groups associated with the `intelmq` user. Makes the behaviour of running intelmqctl as `root` closer to the behaviour of `sudo -u intelmq ...` (PR#2507 by Mikk Margus Möll).
 - `intelmq.lib.utils.unzip`: Ignore directories themselves when extracting data to prevent the extraction of empty data for a directory entries (PR#2512 by Kamil Mankowski).
+- `intelmq.lib.mixins.cache.CacheMixin` was extended to support temporary storing messages in a cache queue
+  (PR#2509 by Kamil Mankowski).
 
 ### Development
 
@@ -43,7 +45,13 @@
   - Treat value `false` for parameter `filter_regex` as false (PR#2499 by Sebastian Wagner).
 
 #### Outputs
-- `intelmq.bots.outputs.misp.output_feed`: Handle failures if saved current event wasn't saved or is incorrect (PR by Kamil Mankowski).
+- `intelmq.bots.outputs.misp.output_feed`:
+  - Handle failures if saved current event wasn't saved or is incorrect (PR by Kamil Mankowski).
+  - Allow saving messages in bulks instead of refreshing the feed immediately (PR#2509 by Kamil Mankowski).
+  - Add `attribute_mapping` parameter to allow selecting a subset of event attributes as well as additional attribute parameters (PR#2509 by Kamil Mankowski).
+  - Add `event_separator` parameter to allow keeping IntelMQ events in separated MISP Events based on a given field (PR#2509 by Kamil Mankowski).
+  - Add `tagging` parameter to allow adding tags to MISP events (PR#2509 by Kamil Mankowski).
+  - Add `additional_info` parameter to extend the default description of MISP Events (PR#2509 by Kamil Mankowski).
 - `intelmq.bots.outputs.smtp_batch.output`: Documentation on multiple recipients added (PR#2501 by Edvard Rejthar).
 
 ### Documentation

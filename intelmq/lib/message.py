@@ -48,6 +48,7 @@ class MessageFactory:
             MessageFactory.unserialize
             MessageFactory.serialize
         """
+
         if default_type and "__type" not in message:
             message["__type"] = default_type
         try:
