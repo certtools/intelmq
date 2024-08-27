@@ -260,6 +260,14 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tuple(result), (('bar', b'bar text\n'),
                                          ('foo', b'foo text\n')))
 
+    def test_unzip_tar_gz_with_subdir(self):
+        """ Test the unzip function with a tar gz file containing a subdirectory and return_names. Test that the directories themselves are ignored. """
+        filename = os.path.join(os.path.dirname(__file__), '../assets/subdir.tar.gz')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True, return_names=True)
+        self.assertEqual(tuple(result), (('subdir/foo', b'foo text\n'),
+                                         ('subdir/bar', b'bar text\n')))
+
     def test_unzip_gz(self):
         """ Test the unzip function with a gz file. """
         filename = os.path.join(os.path.dirname(__file__), '../assets/foobar.gz')
@@ -288,6 +296,14 @@ class TestUtils(unittest.TestCase):
             result = utils.unzip(fh.read(), extract_files=True, return_names=True)
         self.assertEqual(tuple(result), (('bar', b'bar text\n'),
                                          ('foo', b'foo text\n')))
+
+    def test_unzip_zip_with_subdir(self):
+        """ Test the unzip function with a zip containing a subdirectory and returning names. Test that the directories themselves are ignored."""
+        filename = os.path.join(os.path.dirname(__file__), '../assets/subdir.zip')
+        with open(filename, 'rb') as fh:
+            result = utils.unzip(fh.read(), extract_files=True, return_names=True)
+        self.assertEqual(tuple(result), (('subdir/bar', b'bar text\n'),
+                                         ('subdir/foo', b'foo text\n')))
 
     def test_file_name_from_response(self):
         """ test file_name_from_response """

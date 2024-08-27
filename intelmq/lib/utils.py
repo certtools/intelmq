@@ -538,7 +538,7 @@ def extract_tar(file):
     def extract(filename):
         return tar.extractfile(filename).read()
 
-    return tuple(file.name for file in tar.getmembers()), tar, extract
+    return tuple(file.name for file in tar.getmembers() if file.isfile()), tar, extract
 
 
 def extract_gzip(file):
@@ -547,7 +547,7 @@ def extract_gzip(file):
 
 def extract_zip(file):
     zfp = zipfile.ZipFile(io.BytesIO(file), "r")
-    return zfp.namelist(), zfp, zfp.read
+    return [member.filename for member in zfp.infolist() if not member.is_dir()], zfp, zfp.read
 
 
 def unzip(file: bytes, extract_files: Union[bool, list], logger=None,

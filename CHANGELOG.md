@@ -13,6 +13,7 @@
 
 ### Core
 - `intelmq.lib.utils.drop_privileges`: When IntelMQ is called as `root` and dropping the privileges to user `intelmq`, also set the non-primary groups associated with the `intelmq` user. Makes the behaviour of running intelmqctl as `root` closer to the behaviour of `sudo -u intelmq ...` (PR#2507 by Mikk Margus Möll).
+- `intelmq.lib.utils.unzip`: Ignore directories themselves when extracting data to prevent the extraction of empty data for a directory entries (PR#2512 by Kamil Mankowski).
 - `intelmq.lib.mixins.cache.CacheMixin` was extended to support temporary storing messages in a cache queue
   (PR#2509 by Kamil Mankowski).
 
@@ -34,6 +35,8 @@
 - `intelmq.bots.parsers.shadowserver._config`:
   - Fetch schema before first run (PR#2482 by elsif2, fixes #2480).
 - `intelmq.bots.parsers.dataplane.parser`: Use `  |  ` as field delimiter, fix parsing of AS names including `|` (PR#2488 by DigitalTrustCenter).
+- all parsers: add `copy_collector_provided_fields` parameter allowing copying additional fields from the report, e.g. `extra.file_name`.
+  (PR#2513 by Kamil Mankowski).
 
 #### Experts
 - `intelmq.bots.experts.sieve.expert`:

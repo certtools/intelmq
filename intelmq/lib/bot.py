@@ -1086,6 +1086,7 @@ class ParserBot(Bot):
     _default_message_type = 'Report'
 
     default_fields: Optional[dict] = {}
+    copy_collector_provided_fields: Optional[list] = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1130,6 +1131,11 @@ class ParserBot(Bot):
         if not self._line_ending or isinstance(self._line_ending, tuple):
             self._line_ending = '\r\n'
         return data_io
+
+    def new_event(self, *args, **kwargs):
+        if self.copy_collector_provided_fields:
+            kwargs['copy_collector_provided_fields'] = self.copy_collector_provided_fields
+        return super().new_event(*args, **kwargs)
 
     def parse_csv(self, report: libmessage.Report):
         """
