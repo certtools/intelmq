@@ -26,21 +26,22 @@ Condition:
     )
 ;
 
+Variable: value=/\$[a-z0-9_]+/;
 
 StringMatch: SingleStringMatch | MultiStringMatch;
 SingleStringMatch: key=Key op=SingleStringOperator value=SingleStringValue;
 MultiStringMatch: key=Key op=MultiStringOperator value=StringValueList;
 
-SingleStringOperator:
-  '=='             // compares two whole strings with each other
+SingleStringOperator
+  : '=='           // compares two whole strings with each other
   | '!='           // test for string inequality
   | ':contains'    // sub-string match
   | '=~'           // match strings according to regular expression
   | '!~'           // inverse match with regular expression
 ;
 
-MultiStringOperator:
-  ':in'            // tests if a string is in a list of strings
+MultiStringOperator
+  : ':in'          // tests if a string is in a list of strings
   | ':containsany' // sub-string match against multiple substrings
   | ':regexin'     // match a string against at least one of a list of regex patterns
 ;
@@ -50,8 +51,8 @@ NumericMatch: SingleNumericMatch | MultiNumericMatch;
 SingleNumericMatch: key=Key op=SingleNumericOperator value=SingleNumericValue;
 MultiNumericMatch: key=Key op=MultiNumericOperator value=NumericValueList;
 
-SingleNumericOperator:
-  '=='          // equal
+SingleNumericOperator
+  : '=='        // equal
   | '!='        // not equal
   | '<='        // less than or equal
   | '>='        // greater than or equal
@@ -59,8 +60,8 @@ SingleNumericOperator:
   | '>'         // greater than
 ;
 
-MultiNumericOperator:
-  ':in'         // tests if number is in a list of numbers
+MultiNumericOperator
+  : ':in'       // tests if number is in a list of numbers
 ;
 
 
@@ -76,33 +77,35 @@ ExistMatch: op=ExistOperator key=Key;
 ExistOperator: ':exists' | ':notexists';
 
 ListMatch: key=Key op=ListOperator value=ListValue;
-ListOperator:
-  ':equals'           // lists are equal, including order
+ListOperator
+  : ':equals'         // lists are equal, including order
   | ':setequals'      // lists contain the same elements, ignoring order and repeating values
   | ':overlaps'       // lists contain one or more common values
   | ':subsetof'       // key is a proper subset of value
   | ':supersetof'     // key is a proper superset of value
 ;
 
-BoolMatch: key=Key op=BoolOperator value=BOOL;
+Bool: BOOL | Variable;
+BoolMatch: key=Key op=BoolOperator value=Bool;
 BoolOperator: '==' | '!=';
 
 
 Negation: '!';
 
-TypedValue: STRICTFLOAT | INT | BOOL | STRING;
+TypedValue: STRICTFLOAT | INT | BOOL | STRING | Variable;
 ListValue: '[' values*=TypedValue[','] ']' ;
 
-Key: /[a-z0-9_\.]+/;
+KeyLiteral: /[a-z0-9_\.]+/;
+Key: KeyLiteral | Variable;
 
-SingleStringValue: value=STRING ;
+SingleStringValue: value=STRING | value=Variable ;
 StringValueList: '[' values+=SingleStringValue[','] ']' ;
 
-SingleNumericValue: value=NUMBER ;
+SingleNumericValue: value=NUMBER | value=Variable ;
 NumericValueList: '[' values+=SingleNumericValue[','] ']' ;
 
-AssignOperator:
-  '='
+AssignOperator
+  : '='
   | '+='
   | '-='
 ;
@@ -120,7 +123,9 @@ Action: action=DropAction
         | action=RemoveAction
         | action=AppendAction
         | action=AppendForceAction
+        | action=VarSetAction
       );
+
 DropAction: 'drop';
 KeepAction: 'keep';
 PathAction: 'path' path=PathValue;
@@ -131,4 +136,5 @@ RemoveAction: 'remove' key=Key;
 AppendAction: 'append' key=Key value=TypedValue;                            // append an element to a list if it exists
 AppendForceAction: 'append!' key=Key value=TypedValue;                      // append an element to a list; converts a single item to a list with one element
                                                                             // or creates a new list if the key is not included yet
+VarSetAction: var=Variable '=' key=KeyLiteral ;                                    // set variable to value given in key
 Comment: /(#|\/\/).*$/ ;
