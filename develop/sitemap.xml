@@ -2,262 +2,210 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://docs.intelmq.org/develop/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/changelog/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/community/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/help/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/overview/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/security/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/beta-features/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/common-problems/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/faq/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/hardware-requirements/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/intro/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/upgrade/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/configuration/intelmq-api/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/configuration/intelmq-manager/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/configuration/intelmq/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/database/elasticsearch/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/database/mssql/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/database/postgresql/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/database/splunk/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/database/sqlite/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/installation/dockerhub/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/installation/linux-packages/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/installation/pypi/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/integrations/cifv3/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/integrations/misp/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/integrations/n6/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/management/intelmq-api/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/management/intelmq/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/admin/utilities/bash-completion/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/dev/adding-feeds/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/dev/bot-development/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/dev/data-format/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/dev/documentation/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/dev/environment/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/dev/extensions-packages/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/dev/guidelines/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/dev/intro/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/dev/library/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/dev/release/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/dev/structure/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/dev/testing/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/tutorials/intelmq-manager/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/unsorted/botnet-concept/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/unsorted/intelmq-3.0-architecture/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/unsorted/intelmqctl-more/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/user/abuse-contacts/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/user/api/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/user/bots/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/user/event/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/user/feeds/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/user/intro/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
     <url>
          <loc>https://docs.intelmq.org/develop/user/manager/</loc>
-         <lastmod>2024-08-27</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2024-09-03</lastmod>
     </url>
 </urlset>
