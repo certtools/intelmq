@@ -120,7 +120,7 @@ intelmq_psql_initdb --partition-key "time.source"
 
 ### How to setup
 
-Thanks to TimescaleDB its very easy to setup. 
+Thanks to TimescaleDB its very easy to setup.
 
 1. Choose your preferred
 [Timescale

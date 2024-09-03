@@ -35,7 +35,7 @@ The User Guide provides information on how to use installed IntelMQ and it's com
 ```
 
 - Bots are divided into following groups:
-  
+
     - **Collectors** - bots that collect data from sources such as website, mailbox, api, etc.
     - **Parsers** - bots that split and parse collected data into individual events.
     - **Experts** - bots that can do additional processing of events such as enriching, filtering, etc.

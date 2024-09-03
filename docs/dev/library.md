@@ -39,7 +39,7 @@ settings=BotLibSettings | {
 ```
 
 As the bot is not fully initialized, we can process messages now.
-Inserting a message as dictionary: 
+Inserting a message as dictionary:
 
 ```python
 queues = domain_suffix.process_message({'source.fqdn': 'www.example.com'})

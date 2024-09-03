@@ -4,7 +4,7 @@
 -->
 
 
-# Common Problems 
+# Common Problems
 
 ## IntelMQ
 

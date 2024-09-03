@@ -16,7 +16,7 @@ If you installed the packages, standard Linux paths (LSB paths) are used:
 - `/var/log/intelmq/` (logs)
 - `/var/lib/intelmq/` (local states)
 - `/var/run/intelmq/` (PID files)
-  
+
 Otherwise, the configuration directory is `/opt/intelmq/etc/`. Using the environment variable `INTELMQ_ROOT_DIR` allows setting any arbitrary root directory.
 
 You can switch this by setting the environment variables `INTELMQ_PATHS_NO_OPT` and `INTELMQ_PATHS_OPT`, respectively.
@@ -42,7 +42,7 @@ The environment variable `ROOT_DIR` is meant to set an alternative root director
 This is the main configuration file. It uses YAML format since IntelMQ 3.0. It consists of two parts:
 
 * Global Configuration
-* Individual Bot Configuration 
+* Individual Bot Configuration
 
 !!! warning
     Comments in YAML are currently not preserved by IntelMQ (known bug [#2003](https://github.com/certtools/intelmq/issues/2003)).
@@ -152,7 +152,7 @@ Some information can as well be found in Python's documentation on the used
 **`error_dump_message`**
 
 (required, boolean) Specifies if the bot will write queued up messages to its dump file (use intelmqdump to
-  re-insert the message). 
+  re-insert the message).
 
 If the path `_on_error` exists for a bot, the message is also sent to this queue, instead of (only) dumping the file if
 configured to do so.
@@ -178,7 +178,7 @@ configured to do so.
 
 (optional, string) Allowed values are `redis` and `amqp`. Selects the message broker IntelMQ should use. As this parameter can be overridden by each bot, this allows usage of different broker systems and hosts, as well as switching between them on the same IntelMQ instance. Defaults to `redis`.
 
-  - **redis** - Please note that persistence has to be [manually activated](http://redis.io/topics/persistence). 
+  - **redis** - Please note that persistence has to be [manually activated](http://redis.io/topics/persistence).
   - **amqp** - [Using the AMQP broker]() is currently beta but there are no known issues. A popular AMQP broker is [RabbitMQ](https://www.rabbitmq.com/).
 
 **`destination_pipeline_broker`**
@@ -320,7 +320,7 @@ Example: a bot with id `example-bot` will have a default source queue named `exa
 
 **`destination_queues`**
 
-(optional, object) Bots can have multiple destination queues. Destination queues can also be grouped into **named paths**. There are two special path names `_default` and `_on_error`.  The path `_default` is used if the path is not is specified by the bot itself (which is the most common case). In case of an error during the processing, the message will be sent to the `_on_error` path if specified (optional). 
+(optional, object) Bots can have multiple destination queues. Destination queues can also be grouped into **named paths**. There are two special path names `_default` and `_on_error`.  The path `_default` is used if the path is not is specified by the bot itself (which is the most common case). In case of an error during the processing, the message will be sent to the `_on_error` path if specified (optional).
 
 Only few of the bots (mostly expert bots with filtering capabilities) can take advantage of arbitrarily named paths. Some expert bots are capable of sending messages to paths, this feature is explained in their documentation, e.g. the [Filter](../../user/bots.md#intelmq.bots.experts.filter.expert) expert and the [Sieve](../../user/bots.md#intelmq.bots.experts.sieve.expert) expert.
 

@@ -53,7 +53,7 @@ redis_db: 4
 redis_queue: logstash-queue
 ```
 
-!!! warning 
+!!! warning
     You will not be able to monitor this redis queue via IntelMQ Manager.
 
 ### Configuring Logstash
@@ -70,7 +70,7 @@ input {
   redis {
     host => "10.10.10.10"
     port => 6379
-    db => 4 
+    db => 4
     data_type => "list"
     key => "logstash-queue"
   }
