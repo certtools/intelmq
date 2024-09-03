@@ -10,20 +10,10 @@ This file lists all changes which have an affect on the administration of IntelM
 Please refer to the change log for a full list of changes.
 
 
-3.3.0 Bugfix release (unreleased)
+3.3.1 Bugfix release (2024-09-03)
 ---------------------------------
 
-### Requirements
-
-### Tools
-
-### Data Format
-
-### Configuration
-
-### Libraries
-
-### Postgres databases
+No changes are required by administrators.
 
 
 3.3.0 Feature release (2024-03-01)

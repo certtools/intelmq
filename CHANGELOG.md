@@ -1,30 +1,25 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2023 Sebastian Wagner
+   SPDX-FileCopyrightText: 2015-2024 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 # CHANGELOG
 
 
-3.3.1 (unreleased)
+3.3.1 (2024-09-03)
 ------------------
-
-### Configuration
 
 ### Core
 - `intelmq.lib.utils.drop_privileges`: When IntelMQ is called as `root` and dropping the privileges to user `intelmq`, also set the non-primary groups associated with the `intelmq` user. Makes the behaviour of running intelmqctl as `root` closer to the behaviour of `sudo -u intelmq ...` (PR#2507 by Mikk Margus Möll).
 - `intelmq.lib.utils.unzip`: Ignore directories themselves when extracting data to prevent the extraction of empty data for a directory entries (PR#2512 by Kamil Mankowski).
 
-### Development
-
-### Data Format
-
 ### Bots
 #### Collectors
 - `intelmq.bots.collectors.shadowserver.collector_reports_api.py`:
-  - Added support for the types parameter to be either a string or a list.
+  - Added support for the types parameter to be either a string or a list (PR#2495 by elsif2).
   - Refactored to utilize the type field returned by the API to match the requested types instead of a sub-string match on the filename.
-  - Fixed timezone issue for collecting reports.
+  - Fixed timezone issue for collecting reports (PR#2506 by elsif2).
+  - Fixed behaviour if parameter `reports` value is empty string, behave the same way as not set, not like no report (PR#2523 by Sebastian Wagner).
 - `intelmq.bots.collectors.shodan.collector_stream` (PR#2492 by Mikk Margus Möll):
   - Add `alert` parameter to Shodan stream collector to allow fetching streams by configured alert ID
 - `intelmq.bots.collectors.mail._lib`: Remove deprecated parameter `attach_unzip` from default parameters (PR#2511 by Sebastian Wagner).
@@ -50,15 +45,20 @@
 ### Documentation
 - Bots: Clarify some section of Mail collectors and the Generic CSV Parser (PR#2510 by Sebastian Wagner).
 
-### Packaging
-
-### Tests
-
-### Tools
-
-### Contrib
-
-### Known issues
+### Known Issues
+This is short list of the most important known issues. The full list can be retrieved from [GitHub](https://github.com/certtools/intelmq/labels/bug?page=2&q=is%3Aopen+label%3Abug).
+- `intelmq.parsers.html_table` may not process invalid URLs in patched Python version due to changes in `urllib` (#2382).
+- Breaking changes in 'rt' 3.0 library (#2367).
+- Type error with SQL output bot's `prepare_values` returning list instead of tuple (#2255).
+- `intelmq_psql_initdb` does not work for SQLite (#2202).
+- intelmqsetup: should install a default state file (#2175).
+- Misp Expert - Crash if misp event already exist (#2170).
+- Spamhaus CERT parser uses wrong field (#2165).
+- Custom headers ignored in HTTPCollectorBot (#2150).
+- intelmqctl log: parsing syslog does not work (#2097).
+- Bash completion scripts depend on old JSON-based configuration files (#2094).
+- Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
+- Corrupt dump files when interrupted during writing (#870).
 
 
 3.3.0 (2024-03-01)
@@ -183,10 +183,6 @@
  - `intelmq_psql_initdb`:
    -  got support for providing custom harmonization file, generating view for storing `raw` fields separately, and adding `IF NOT EXISTS`/`OR REPLACE` clauses ([PR#2404](https://github.com/certtools/intelmq/pull/2404) by Kamil Mankowski).
    -  got support for generating JSONB fields for PostgreSQL schema (PR#2436 by Kamil Mankowski).
-
-### Contrib
-
-### Known issues
 
 
 3.2.1 (2023-08-28)

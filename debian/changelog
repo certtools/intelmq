@@ -1,8 +1,8 @@
-intelmq (3.3.1~a1-1) UNRELEASED; urgency=medium
+intelmq (3.3.1-1) stable; urgency=medium
 
   * 3.3.1 Bugfix release
 
- -- Sebastian Wagner <sebix@sebix.at>  Thu, 04 Apr 2024 10:40:34 +0200
+ -- Sebastian Wagner <sebix@sebix.at>  Fri, 30 Aug 2024 21:57:18 +0200
 
 intelmq (3.3.0-1) stable; urgency=medium
 
