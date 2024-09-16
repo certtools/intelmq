@@ -1,5 +1,5 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2023 Sebastian Wagner
+   SPDX-FileCopyrightText: 2015-2024 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -8,6 +8,22 @@ NEWS
 
 This file lists all changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 Please refer to the change log for a full list of changes.
+
+
+3.3.2 Bugfix release (unreleased)
+---------------------------------
+
+### Requirements
+
+### Tools
+
+### Data Format
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
 
 
 3.3.1 Bugfix release (2024-09-03)
