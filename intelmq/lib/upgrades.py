@@ -981,6 +981,7 @@ UPGRADES = OrderedDict([
     ((3, 2, 2), (v322_url_replacement, v322_removed_feeds_and_bots)),
     ((3, 3, 0), ()),
     ((3, 3, 1), ()),
+    ((3, 3, 2), ()),
 ])
 
 ALWAYS = (harmonization,)
