@@ -21,6 +21,8 @@
 #### Collectors
 
 #### Parsers
+- `intelmq.bots.parsers.shadowserver._config`:
+  - fix error message formatting if schema file is absent (PR#2528 by Sebastian Wagner).
 
 #### Experts
 
