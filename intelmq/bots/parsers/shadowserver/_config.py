@@ -341,7 +341,7 @@ def reload():
             return
     else:
         if not __config.test_mode:
-            raise ValueError("The schema file does not exist: %r.", __config.schema_file)
+            raise ValueError(f"The schema file does not exist: {__config.schema_file}.")
 
     __config.feedname_mapping.clear()
     __config.filename_mapping.clear()

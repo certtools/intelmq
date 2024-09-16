@@ -2202,7 +2202,7 @@ For example using `curl -s https://interchange.shadowserver.org/intelmq/v1/schem
 
 (optional, boolean) If an existing `feed.name` should be overwritten.
 
-** `auto_update`**
+**`auto_update`**
 
 (optional, boolean) Enable automatic schema download.
 
