@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2014 Tomás Lima
+# SPDX-FileCopyrightText: 2014 Tomás Lima, 2015-2020 nic.at GmbH, 2024 Institute for Common Good Technology
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -29,7 +29,12 @@ elif path == "opt":
     VAR_STATE_PATH = os.path.join(ROOT_DIR, "var/lib/bots/")
 
 
-DEFAULT_LOGGING_LEVEL = "INFO"
+if isinstance(__version_info__[-1], str) and __version_info__[-1][0].lower() in ('a', 'b', 'd'):
+    # for alpha, beta and dev instances, set default log level to DEBUG, for others, including RCs, use INFO
+    DEFAULT_LOGGING_LEVEL = "DEBUG"
+else:
+    DEFAULT_LOGGING_LEVEL = "INFO"
+
 HARMONIZATION_CONF_FILE = os.path.join(CONFIG_DIR, "harmonization.conf")
 RUNTIME_CONF_FILE = os.path.join(CONFIG_DIR, "runtime.yaml")
 old_runtime_conf_file = pathlib.Path(RUNTIME_CONF_FILE).with_suffix('.conf')

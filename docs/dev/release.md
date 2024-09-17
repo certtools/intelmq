@@ -30,8 +30,6 @@ These apply to all projects:
 
 - `intelmq/version.py`: Update the version.
 
-Eventually adapt the default log levels if necessary. Should be INFO for stable releases.
-
 ### IntelMQ API
 
 -   `intelmq_api/version.py`: Update the version.
