@@ -261,15 +261,18 @@ class ShadowserverParserBot(ParserBot):
             else:
                 logger.setLevel('ERROR')
             config.set_logger(logger)
-            if config.update_schema():
-                runtime_conf = utils.get_bots_settings()
-                try:
-                    ctl = IntelMQController()
-                    for bot in runtime_conf:
-                        if runtime_conf[bot]["module"] == __name__:
-                            ctl.bot_reload(bot)
-                except Exception as e:
-                    logger.error("Failed to signal bot: %r" % str(e))
+            runtime_conf = utils.get_bots_settings()
+            try:
+                ctl = IntelMQController()
+                bots = []
+                for bot in runtime_conf:
+                    if runtime_conf[bot]["module"] == __name__:
+                        bots.append(bot)
+                if len(bots) and config.update_schema():
+                    for bot in bots:
+                        ctl.bot_reload(bot)
+            except Exception as e:
+                logger.error("Failed to update: %r" % str(e))
         else:
             super().run(parsed_args=parsed_args)
 
