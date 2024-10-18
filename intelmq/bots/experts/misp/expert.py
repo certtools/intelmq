@@ -17,9 +17,9 @@ from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
-    from pymisp import ExpandedPyMISP
+    from pymisp import PyMISP
 except ImportError:
-    ExpandedPyMISP = None
+    PyMISP = None
 
 
 class MISPExpertBot(ExpertBot):
@@ -28,13 +28,13 @@ class MISPExpertBot(ExpertBot):
     misp_url: str = "<insert url of MISP server (with trailing '/')>"
 
     def init(self):
-        if ExpandedPyMISP is None:
+        if PyMISP is None:
             raise MissingDependencyError('pymisp', '>=2.4.117.3')
 
         # Initialize MISP connection
-        self.misp = ExpandedPyMISP(self.misp_url,
-                                   self.misp_key,
-                                   self.http_verify_cert)
+        self.misp = PyMISP(self.misp_url,
+                           self.misp_key,
+                           self.http_verify_cert)
 
     def process(self):
         event = self.receive_message()

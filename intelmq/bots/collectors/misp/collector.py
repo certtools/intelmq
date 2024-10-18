@@ -25,10 +25,7 @@ from intelmq.lib.bot import CollectorBot
 from intelmq.lib.exceptions import MissingDependencyError
 
 try:
-    try:
-        from pymisp import ExpandedPyMISP as PyMISP
-    except ImportError:
-        from pymisp import PyMISP
+    from pymisp import PyMISP
 except ImportError:
     PyMISP = None
     import_fail_reason = 'import'
