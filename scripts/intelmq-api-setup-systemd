@@ -1,0 +1,64 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: 2023 CERT.at GmbH <https://cert.at/>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# Installation helper to configure Systemd units
+#
+# This script will:
+#   1. Get the installation path of the IntelMQ API package.
+#   2. Edit paths in default units (copied to /etc/intelmq during package installation).
+#   3. Copy unit files to the unit path.
+#   4. Enable IntelMQ units.
+# Configuring webserver can be done by using intelmqsetup command
+
+SERVICE_NAME=intelmq-api
+SERVICE_FILE="/etc/intelmq/intelmq-api.service"
+SOCKET_FILE="/etc/intelmq/intelmq-api.socket"
+DEFAULT_INTELMQ_API_PATH="/usr/lib/python3/dist-packages/intelmq_api"
+
+# If file exists in /etc, then use it. If not, try to locate it in python packages file
+function select_file() {
+    if [ -f $1 ]; then
+        echo "Found $1"
+        return
+    elif [ -f "$INTELMQ_API_PATH/..$1" ]; then
+        export -n "$2=$INTELMQ_API_PATH/..$1";
+        echo "Found ${!2}";
+    else
+        echo "File $1 not found, aborting."
+        exit 1
+    fi
+}
+
+INTELMQ_API_PATH=$(python3 -c 'import intelmq_api; print(intelmq_api.__path__[0])')
+if [ ! $? -eq 0 ]; then
+    echo "The intelmq_api package was not found, aborting."
+    exit 1
+else
+    echo "Found intelmq_api installed in $INTELMQ_API_PATH"
+fi
+
+select_file $SERVICE_FILE SERVICE_FILE
+select_file $SOCKET_FILE SOCKET_FILE
+
+# Select first units path for library units, basing on the system configuration
+UNITS_PATH=$(systemd-analyze unit-paths | grep -v 'local' | grep '/lib/systemd/system' -m 1)
+if [ ! $? -eq 0 ]; then
+    echo "Cannot find the right Systemd unit path, aborting."
+    exit 1
+else
+    echo "Found units path in $UNITS_PATH"
+fi
+
+echo "Setting the package path and saving unit files in Systemd path"
+
+# From this point, fail fast
+set -e
+sed "s#$DEFAULT_INTELMQ_API_PATH#$INTELMQ_API_PATH#" $SERVICE_FILE > $UNITS_PATH/$SERVICE_NAME.service
+sed "s#$DEFAULT_INTELMQ_API_PATH#$INTELMQ_API_PATH#" $SOCKET_FILE > $UNITS_PATH/$SERVICE_NAME.socket
+
+echo "Enabling and starting service"
+systemctl enable $SERVICE_NAME
+systemctl start $SERVICE_NAME
+
+echo "DONE. Please now ensure to configure your webserver"

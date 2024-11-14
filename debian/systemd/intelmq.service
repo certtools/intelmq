@@ -1,0 +1,17 @@
+[Unit]
+Description=IntelMQ server app
+After=network.target
+
+[Service]
+User=intelmq
+Group=intelmq
+RuntimeDirectory=intelmq
+WorkingDirectory=/var/lib/intelmq/
+ExecStart=intelmq server start
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

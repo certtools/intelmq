@@ -1,0 +1,149 @@
+/*
+ * Navigation
+ */
+nav ul.nav.navbar-top-links li.active {
+  color: #555;
+  cursor: default;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+}
+/*
+ * Common elements
+ */
+#common-templates {
+  display: none;
+}
+#wrapper .navbar #log-window {
+  background-color: black;
+  color: white;
+  display: none;
+  float: right;
+  margin: 5px 5px;
+  padding: 5px;
+  width: 500px;
+  height: 44px;
+  overflow: auto;
+  resize: vertical;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+}
+#wrapper .navbar #log-window.extended {
+  height: auto;
+  max-height: 100vh;
+  width: auto;
+  cursor: unset;
+  overflow: scroll;
+}
+#wrapper .navbar #log-window [role=close] {
+  float: right;
+  cursor: pointer;
+}
+#wrapper .navbar #log-window .command {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.42857143;
+  color: #333;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: auto;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+#wrapper .navbar #log-window .alert a {
+  text-decoration: underline;
+  display: inline-block;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+.fa {
+  font-family: FontAwesome;
+}
+.control-buttons [data-url=status] {
+  display: none;
+}
+/*
+ * Management page
+ */
+#botnet-panels > .panel[data-botnet-group] {
+  display: none;
+}
+#botnet-panels > .panel[data-botnet-group][data-botnet-group=botnet] {
+  display: block;
+}
+/*
+ * Monitor page
+ */
+#botnet-panels .panel .control-buttons [data-role=control-status] {
+  display: none;
+}
+#inspect-panel .control-buttons {
+  float: right;
+}
+#inspect-panel button[data-role="clear"] {
+  float: right;
+}
+#inspect-panel #command-show {
+  display: none;
+}
+#inspect-panel textarea {
+  resize: vertical;
+}
+/*
+ * Config page
+ */
+#templates {
+  display: none;
+}
+#network-container .control-buttons {
+  float: left;
+}
+#network-container .control-buttons button {
+  height: 25px;
+}
+#network-container .control-buttons button span {
+  top: -2px;
+}
+#network-container .monitor-button div a {
+  color: black;
+}
+#network-container .duplicate-button {
+  background-image: url('../plugins/vis.js/img/network/addNodeIcon.png');
+}
+#network-container .network-right-menu > div {
+  display: block;
+}
+#network-container .network-right-menu .vis-live-toggle,
+#network-container .network-right-menu .vis-physics-toggle {
+  border-radius: 10px;
+  position: absolute;
+  right: 560px;
+  top: 35px;
+  white-space: nowrap;
+  padding: 5px 0 5px 5px;
+  cursor: pointer;
+}
+#network-container .network-right-menu .vis-live-toggle.running,
+#network-container .network-right-menu .vis-physics-toggle.running {
+  background-color: #00D000;
+}
+#network-container .network-right-menu .vis-live-toggle .icon {
+  background-image: url("../images/monitor.png");
+  background-repeat: no-repeat;
+  background-size: 30%;
+  padding-left: 30px;
+  padding-right: 15px;
+  position: relative;
+  z-index: 20;
+}
+#network-container .network-right-menu .vis-physics-toggle {
+  right: 480px;
+}
+/*# sourceMappingURL=style.css.map */
