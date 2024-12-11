@@ -12,15 +12,19 @@ Software engineering by Intevation GmbH
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.utils import base64_decode
+import json
 
 
 class JSONParserBot(ParserBot):
     """Parse IntelMQ-JSON data"""
     splitlines = False
+    multiple_events = False
 
     def process(self):
         report = self.receive_message()
-        if self.splitlines:
+        if self.multiple_events:
+            lines = [json.dumps(event) for event in json.loads(base64_decode(report['raw']))]
+        elif self.splitlines:
             lines = base64_decode(report['raw']).splitlines()
         else:
             lines = [base64_decode(report['raw'])]
