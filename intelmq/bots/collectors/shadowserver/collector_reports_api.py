@@ -33,7 +33,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
         reports (list):
             A list of strings or a comma-separated list of the mailing lists you want to process.
         types (list):
-            A list of strings or a string of comma-separated values with the names of reporttypes you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
+            A list of strings or a string of comma-separated values with the names of report types you want to process. If you leave this empty, all the available reports will be downloaded and processed (i.e. 'scan', 'drones', 'intel', 'sandbox_connection', 'sinkhole_combined').
     """
 
     country = None
@@ -48,6 +48,7 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
     redis_cache_ttl: int = 864000  # 10 days
     redis_cache_password: Optional[str] = None
     _report_list = []
+    _type_list = []
 
     def init(self):
         if not self.api_key:
@@ -62,7 +63,11 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
         elif isinstance(self.reports, list):
             self._report_list = self.reports
         if isinstance(self.types, str):
-            self.types = self.types.split(',')
+            # if types is an empty string (or only contains whitespace), behave as if the parameter is not set and select all types
+            types = self.types.strip()
+            self._type_list = types.split(',') if types else []
+        elif isinstance(self.types, list):
+            self._type_list = self.types
         if self.country and self.country not in self._report_list:
             self.logger.warn("Deprecated parameter 'country' found. Please use 'reports' instead. The backwards-compatibility will be removed in IntelMQ version 4.0.0.")
             self._report_list.append(self.country)
@@ -111,8 +116,8 @@ class ShadowServerAPICollectorBot(CollectorBot, HttpMixin, CacheMixin):
             self.logger.debug('There was an error downloading the reports: %s', reports['error'])
             return None
 
-        if self.types:
-            reports = [report for report in reports if any(report['type'] == rtype for rtype in self.types)]
+        if self._type_list:
+            reports = [report for report in reports if any(report['type'] == rtype for rtype in self._type_list)]
         return reports
 
     def _report_download(self, reportid: str):

@@ -20,6 +20,8 @@
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.shadowserver.collector_reports_api.py`:
+  - Fixed behaviour if parameter `types` value is empty string, behave the same way as not set, not like no type.
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
