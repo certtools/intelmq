@@ -16,6 +16,11 @@ Please refer to the change log for a full list of changes.
 ### Requirements
 Python 3.8 or newer is required.
 
+## Bots
+#### CIF 3 API
+The CIF 3 API Output bot is not compatible with Python version greater or equal to 3.12 and will be removed in the future due to lack of maintenance.
+See https://lists.cert.at/pipermail/intelmq-users/2024-December/000474.html for more information.
+
 ### Tools
 
 ### Data Format

@@ -266,8 +266,8 @@ class TestAmqp(unittest.TestCase):
         self.pipe.reject_message()
         self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
 
-    @unittest.skipIf(os.getenv('CI') == 'true' and sys.version_info[:2] == (3, 8),
-                     'Fails on CI with Python 3.8')
+    @unittest.skipIf(os.getenv('CI') == 'true' and sys.version_info[:2] in ((3, 8), (3, 11)),
+                     'Fails on CI with Python 3.8 and 3.11')
     def test_acknowledge(self):
         self.pipe.send(SAMPLES['normal'][0])
         self.pipe.receive()

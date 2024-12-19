@@ -59,6 +59,7 @@ jobs:
         PGPORT: 5432
         PGUSER: intelmq
         PGPASSWORD: intelmq
+        python_version: ${{ matrix.python-version }}
       run: bash .github/workflows/scripts/setup-full.sh
 
     - name: Install test dependencies
