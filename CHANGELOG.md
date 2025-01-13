@@ -97,6 +97,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 ### Contrib
 - Bash Completion: Adapt to YAML-style runtime configuration (PR#2642 by Sebastian Wagner, fixes #2094).
+- Remove `prettyprint` script, use `jq` instead (PR#2551 by Sebastian Wagner).
 
 ### Known issues
 
