@@ -4,6 +4,7 @@ CREATE TABLE events (
     "classification.taxonomy" varchar(100),
     "classification.type" text,
     "comment" text,
+    "constituency" text,
     "destination.abuse_contact" text,
     "destination.account" text,
     "destination.allocated" timestamp with time zone,
