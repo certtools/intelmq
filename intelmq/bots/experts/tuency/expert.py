@@ -99,14 +99,13 @@ class TuencyExpertBot(ExpertBot):
                     (
                         parse_relative(
                             f"{response['interval']['length']} {response['interval']['unit']}"
-                        )
-                        * 60
+                        ) * 60
                     ),
                 )
         contacts = []
         for destination in (
-            response.get("ip", {"destinations": []})["destinations"]
-            + response.get("domain", {"destinations": []})["destinations"]
+            response.get("ip", {"destinations": []})["destinations"] +
+            response.get("domain", {"destinations": []})["destinations"]
         ):
             contacts.extend(contact["email"] for contact in destination["contacts"])
         event.add("source.abuse_contact", ",".join(contacts), overwrite=self.overwrite)

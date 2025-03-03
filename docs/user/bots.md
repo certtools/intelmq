@@ -4066,7 +4066,7 @@ The IntelMQ fields used by this bot may be customized by the parameters.
 **`notify_field`**
 
 (optional, string) Name of the field to save information if the message should not be send
-(suspention in Tuency). By default `extra.notify`
+(suspension in Tuency). By default `extra.notify`
 
 **`ttl_field`**
 
