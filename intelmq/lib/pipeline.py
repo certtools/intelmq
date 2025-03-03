@@ -511,6 +511,7 @@ class Amqp(Pipeline):
         if pika is None:
             raise ValueError("To use AMQP you must install the 'pika' library.")
         self.properties = pika.BasicProperties(delivery_mode=2)  # message persistence
+        self.heartbeat = 10
 
     def load_configurations(self, queues_type):
         self.host = self.pipeline_args.get(f"{queues_type}_pipeline_host", "10.0.0.1")
@@ -533,9 +534,9 @@ class Amqp(Pipeline):
             self.kwargs['ssl_options'] = pika.SSLOptions(context=ssl.create_default_context(ssl.Purpose.SERVER_AUTH))
         pika_version = tuple(int(x) for x in pika.__version__.split('.'))
         if pika_version < (0, 11):
-            self.kwargs['heartbeat_interval'] = 10
+            self.kwargs['heartbeat_interval'] = self.heartbeat
         else:
-            self.kwargs['heartbeat'] = 10
+            self.kwargs['heartbeat'] = self.heartbeat
         if pika_version < (1, ):
             # https://groups.google.com/forum/#!topic/pika-python/gz7lZtPRq4Q
             self.publish_raises_nack = False
@@ -607,7 +608,7 @@ class Amqp(Pipeline):
                                                 mandatory=True,
                                                 )
         except Exception as exc:  # UnroutableError, NackError in 1.0.0
-            if reconnect and isinstance(exc, pika.exceptions.ConnectionClosed):
+            if reconnect and isinstance(exc, (pika.exceptions.ConnectionClosed, pika.exceptions.StreamLostError)):
                 self.logger.debug('Error sending the message. '
                                   'Will re-connect and re-send.',
                                   exc_info=True)
@@ -645,9 +646,16 @@ class Amqp(Pipeline):
         if self.source_queue is None:
             raise exceptions.ConfigurationError('pipeline', 'No source queue given.')
         try:
-            method, header, body = next(self.channel.consume(self.source_queue))
-            if method:
-                self.delivery_tag = method.delivery_tag
+            # self.channel.consume is blocking and with no incoming messages
+            # can prevent heartbeat maintenance. This loop let the pika maintain
+            # the channel at least once between expected heartbeats.
+            method, body = None, None
+            while not (method or body):
+                method, _, body = next(
+                    self.channel.consume(self.source_queue, inactivity_timeout=self.heartbeat / 2)
+                )
+                if method:
+                    self.delivery_tag = method.delivery_tag
         except Exception as exc:
             raise exceptions.PipelineError(exc)
         else:
