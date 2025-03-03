@@ -21,6 +21,18 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 ### Data Format
 
+- Implementing [IEP009](https://github.com/certtools/ieps/tree/main/009) introducing fields to
+  identify products and vulnerabilities: `product.full_name`, `product.name`, `product.vendor`,
+  `product.version`, `product.vulnerabilities`. To store in existing PostgreSQL instances, a following
+  schema update will be necessary:
+  ```sql
+  ALTER TABLE events ADD "product.full_name" text;
+  ALTER TABLE events ADD "product.name" text;
+  ALTER TABLE events ADD "product.vendor" text;
+  ALTER TABLE events ADD "product.version" text;
+  ALTER TABLE events ADD "product.vulnerabilities" text;
+  ```
+
 ### Bots
 #### Collectors
 
