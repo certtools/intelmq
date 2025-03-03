@@ -1,5 +1,5 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2024 Sebastian Wagner
+   SPDX-FileCopyrightText: 2015-2025 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -13,6 +13,7 @@
 
 ### Core
 - Python 3.8 or newer is required (PR#2541 by Sebastian Wagner).
+- `intelmq.lib.utils.list_all_bots`/`intelmqctl check`: Fix check for bot executable in $PATH by using the bot name instead of the import path (fixes #2559, PR#2564 by Sebastian Wagner).
 
 ### Development
 
@@ -23,6 +24,13 @@
 - `intelmq.bots.collectors.shadowserver.collector_reports_api.py`:
   - Fixed behaviour if parameter `types` value is empty string, behave the same way as not set, not like no type.
 - `intelmq.bots.collectors.misp`: Use `PyMISP` class instead of deprecated `ExpandedPyMISP` (PR#2532 by Radek Vyhnal)
+- `intelmq.bots.collectors.http.collector_http`: Log the downloaded size in bytes to ease troubleshooting (PR#2554 by Sebastian Wagner).
+- `intelmq.bots.collectors.mail.collector_mail_url`:
+  - Log the downloaded size in bytes to ease troubleshooting (PR#2554 by Sebastian Wagner).
+  - Fix import for Timeout exception preventing another exception (fixes #2555, PR#2556 by Sebastian Wagner).
+- Remove `intelmq.bots.collectors.twitter` as it uses an unmaintained library and does not work any more (fixes #2346, #2441, PR#2568 by Sebastian Wagner).
+- Renamed `intelmq.bots.parser.twitter` to `intelmq.bots.parser.ioc_extractor` (PR#2568 by Sebastian Wagner).
+  - Added `intelmq.bots.parser.twitter` as a stub to load the IoC Extractor parser.
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
@@ -48,6 +56,8 @@
 
 ### Documentation
 - `docs/admin/installation/linux-packages`: Add `[signed-by=]` options, add wget command as alternative to curl (PR#2547 by Sebastian Wagner).
+- Add documentation on the Redis pipeline (databases, configuration), fix generic pipeline documentation and add missing information on parameters, add unlinked intelmqctl docs to the index and TOC (PR#2560 by Sebastian Wagner).
+- Remove empty page tutorials/intelmq-manager (PR#2562 by Sebastian Wagner).
 
 ### Packaging
 
@@ -55,8 +65,9 @@
 - Install build dependencies for `pymssql` on Python 3.8 as there are no wheels available for this Python version (PR#2542 by Sebastian Wagner).
 - Install `psql` explicitly for workflow support on other platforms such as act (PR#2542 by Sebastian Wagner).
 - Create intelmq user & group if running privileged to allow dropping privileges (PR#2542 by Sebastian Wagner).
-- `intelmq.tests.lib.test_pipeline.TestAmqp.test_acknowledge`: Also skip on Python 3.11 besides on 3.8 when running on CI (PR#2542 by Sebastian Wagner).
+- `intelmq.tests.lib.test_pipeline.TestAmqp.test_acknowledge`: Also skip on Python 3.11 and 3.12 besides on 3.8 when running on CI (PR#2542 by Sebastian Wagner).
 - Full pytest workflow: Version-independent install of postgres client, for Ubuntu 24.04 (default on GitHub now) test environment compatibility (PR#2557 by Sebastian Wagner).
+- Debian package build workflow: Use artifact upload v4 instead of v3 (PR#2565 by Sebastian Wagner).
 
 ### Tools
 
@@ -363,7 +374,7 @@ This is short list of the most important known issues. The full list can be retr
 - Added an ExpertBot class - it should be used by all expert bots as a parent class
 - Introduced a module for IntelMQ related datatypes `intelmq.lib.datatypes` which for now only contains an Enum listing the four bot types
 - Added a `bottype` attribute to CollectorBot, ParserBot, ExpertBot, OutputBot
-- Introduces a module for IntelMQ processmanagers. The processmanagers were up until now part of the intelmqct script.
+- Introduces a module for IntelMQ processmanagers. The processmanagers were up until now part of the intelmqctl script.
   They now reside in `intelmq.lib.processmanager` which also contains an interface definition the processmanager implementations must adhere to.
   Both the processmanagers and the `intelmqctl` script were cleaned up a bit.
   The `LogLevel` and `ReturnType` Enums were added to `intelmq.lib.datatypes`.

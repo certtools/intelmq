@@ -34,7 +34,7 @@ jobs:
 
     - name: Upload artifact
       if: ${{ github.event_name == 'push' }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: debian-package-${{ matrix.codename }}-${{ github.sha }}
         path: '~/artifacts'

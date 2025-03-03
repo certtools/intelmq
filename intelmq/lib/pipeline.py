@@ -488,23 +488,23 @@ class Pythonlistsimple(Pythonlist):
 
 class Amqp(Pipeline):
     queue_args = {'x-queue-mode': 'lazy'}
-    source_pipeline_host = '127.0.0.1'
-    destination_pipeline_host = '127.0.0.1'
-    source_pipeline_db = 2
-    destination_pipeline_db = 2
-    source_pipeline_username = None
-    destination_pipeline_username = None
-    source_pipeline_password = None
-    destination_pipeline_password = None
-    source_pipeline_socket_timeout = None
-    destination_pipeline_socket_timeout = None
-    source_pipeline_amqp_virtual_host = '/'
-    destination_pipeline_amqp_virtual_host = '/'
-    source_pipeline_ssl = False
-    destination_pipeline_ssl = False
-    source_pipeline_amqp_exchange = ""
-    destination_pipeline_amqp_exchange = ""
-    intelmqctl_rabbitmq_monitoring_url = None
+    source_pipeline_host: str = '127.0.0.1'
+    destination_pipeline_host: str = '127.0.0.1'
+    source_pipeline_db: int = 2
+    destination_pipeline_db: int = 2
+    source_pipeline_username: Optional[str] = None
+    destination_pipeline_username: Optional[str] = None
+    source_pipeline_password: Optional[str] = None
+    destination_pipeline_password: Optional[str] = None
+    source_pipeline_socket_timeout: Optional[int] = None
+    destination_pipeline_socket_timeout: Optional[int] = None
+    source_pipeline_amqp_virtual_host: str = '/'
+    destination_pipeline_amqp_virtual_host: str = '/'
+    source_pipeline_ssl: bool = False
+    destination_pipeline_ssl: bool = False
+    source_pipeline_amqp_exchange: str = ""
+    destination_pipeline_amqp_exchange: str = ""
+    intelmqctl_rabbitmq_monitoring_url: Optional[str] = None
 
     def __init__(self, logger, pipeline_args: dict = None, load_balance=False, is_multithreaded=False):
         super().__init__(logger, pipeline_args, load_balance, is_multithreaded)

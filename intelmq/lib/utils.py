@@ -913,7 +913,7 @@ def list_all_bots() -> dict:
                 name = name.replace(bot_type, '')
 
             bots[module_name.split('.')[2].capitalize()[:-1]][name] = {
-                "module": mod.__name__,
+                "module": bot.name,
                 "description": "Missing description" if not getattr(mod.BOT, '__doc__', None) else textwrap.dedent(mod.BOT.__doc__).strip(),
                 "parameters": keys,
             }

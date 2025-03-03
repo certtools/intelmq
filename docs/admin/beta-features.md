@@ -56,78 +56,84 @@ only RabbitMQ as broker has been tested.
 You can change the broker for single bots (set the parameters in the runtime configuration per bot) or for the whole
 botnet (using the global configuration).
 
+### Settings
+
 You need to set the parameter
 `source_pipeline_broker`/`destination_pipeline_broker` to `amqp`. There are more parameters available:
-
-!!! bug
-    This section of the documentation is currently incomplete and will be updated later.
 
 **`destination_pipeline_broker`**
 
 (required, string) `"amqp"`
 
-
 **`destination_pipeline_host`**
 
-()  (default: `'127.0.0.1'`)
+(optional, string)  (default: `'127.0.0.1'`)
 
 **`destination_pipeline_port`**
 
-() (default: 5672)
+(optional, integer) (default: 5672)
 
 **`destination_pipeline_username`**
 
-()
+(optional, string)
 
 **`destination_pipeline_password`**
 
-()
+(optional, string)
+
+**`destination_pipeline_ssl`**
+
+(optional, boolean) (default: false)
 
 **`destination_pipeline_socket_timeout`**
 
-() (default: no timeout)
+(optional, integer) (default: no timeout)
 
 **`destination_pipeline_amqp_exchange`**
 
-() Only change/set this if you know what you do. If set, the destination queues are not declared as queues, but used as routing key. (default: `''`).
+(optional, string) Only change/set this if you know what you do. If set, the destination queues are not declared as queues, but used as routing key. (default: `''`).
 
 **`destination_pipeline_amqp_virtual_host`**
 
-() (default: `'/'`)
+(optional, string) (default: `'/'`)
 
 **`source_pipeline_host`**
 
-() (default: `'127.0.0.1'`)
-
+(optional, string) (default: `'127.0.0.1'`)
 
 **`source_pipeline_port`**
 
-() (default: 5672)
+(optional, port) (default: 5672)
 
 **`source_pipeline_username`**
 
-()
+(optional, string)
 
 **`source_pipeline_password`**
 
-()
+(optional, string)
+
+**`source_pipeline_ssl`**
+
+(optional, boolean) (default: false)
 
 **`source_pipeline_socket_timeout`**
 
-() (default: no timeout)
+(optional, string) (default: no timeout)
 
 **`source_pipeline_amqp_exchange`**
 
-() Only change/set this if you know what you do. If set, the destination queues are not declared as queues, but used as routing key. (default: ['']).
-
+(optional, string) Only change/set this if you know what you do. If set, the destination queues are not declared as queues, but used as routing key. (default: `""`]).
 
 **`source_pipeline_amqp_virtual_host`**
 
-() (default: `'/'`)
+(optional, string) (default: `'/'`)
 
 **`intelmqctl_rabbitmq_monitoring_url`**
 
-() string, see below (default: `"http://{host}:15672"`)
+(optional, string) string, see below (default: `"http://{host}:15672"`)
+
+### Monitoring queues
 
 For getting the queue sizes, `intelmqctl` needs to connect to the monitoring interface of RabbitMQ. If the monitoring
 interface is not available under `http://{host}:15672` you can manually set using the
@@ -137,9 +143,10 @@ user account, make sure to add the tag "monitoring" to it, otherwise IntelMQ can
 
 ![](../static/images/rabbitmq-user-monitoring.png)
 
+### Statistics
+
 Setting the statistics (and cache) parameters is necessary when the local redis is running under a non-default
 host/port. If this is the case, you can set them explicitly:
-
 
 **`statistics_database`**
 

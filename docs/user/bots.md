@@ -960,7 +960,7 @@ The resulting reports contain the following special field:
 
 **`reports`**
 
-(required, string/array of strings) An array of strings (or a list of comma-separated values) of the mailing lists you want to process.
+(optional, string/array of strings) An array of strings (or a list of comma-separated values) of the mailing lists you want to process.
 
 **`types`**
 
@@ -1275,59 +1275,6 @@ Also, you will need to know an appropriate STOMP *destination* (aka
 **`password`**
 
 (optional, string) Password to use.
-
----
-
-### Twitter (REMOVE?) <div id="intelmq.bots.collectors.twitter.collector_twitter" />
-
-Collects tweets.
-
-Collects tweets from target_timelines. Up to tweet_count tweets from each user and up to timelimit back in time. The
-tweet text is sent separately and if allowed, links to pastebin are followed and the text sent in a separate report
-
-**Module:** `intelmq.bots.collectors.twitter.collector_twitter`
-
-**Parameters (also expects [feed parameters](#feed-parameters)):**
-
-**`target_timelines`**
-
-() screen_names of twitter accounts to be followed
-
-**`tweet_count`**
-
-() number of tweets to be taken from each account
-
-**`timelimit`**
-
-() maximum age of the tweets collected in seconds
-
-**`follow_urls`**
-
-() list of screen_names for which URLs will be followed
-
-**`exclude_replies`**
-
-() exclude replies of the followed screen_names
-
-**`include_rts`**
-
-() whether to include retweets by given screen_name
-
-**`consumer_key`**
-
-() Twitter API login data
-
-**`consumer_secret`**
-
-() Twitter API login data
-
-**`access_token_key`**
-
-() Twitter API login data
-
-**`access_token_secret`**
-
-() Twitter API login data
 
 ## Parser Bots
 
@@ -2321,11 +2268,12 @@ No additional parameters.
 
 ---
 
-### Twitter <div id="intelmq.bots.parsers.twitter.parser" />
+### IoC Extractor (ex: Twitter) <div id="intelmq.bots.parsers.twitter.parser" /><div id="intelmq.bots.parsers.ioc_extractor.parser" />
 
 Extracts URLs from text, fuzzy, aimed at parsing tweets.
 
-**Module:** `intelmq.bots.parsers.twitter.parser`
+**Module:** `intelmq.bots.parsers.ioc_extractor.parser`<br>
+previously: `intelmq.bots.parsers.twitter.parser`
 
 **Parameters:**
 

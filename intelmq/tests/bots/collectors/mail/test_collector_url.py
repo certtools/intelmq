@@ -56,3 +56,4 @@ class TestMailURLCollectorBot(test.BotTestCase, unittest.TestCase):
         with mock.patch('imbox.Imbox', new=MockedTxtImbox):
             self.run_bot()
         self.assertMessageEqual(0, REPORT_FOOBARTXT)
+        self.assertLogMatches('Report downloaded \(9B\).', 'INFO')
