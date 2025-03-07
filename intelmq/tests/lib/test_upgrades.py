@@ -598,6 +598,26 @@ Found discontinued bots: sucuri-parser, webinspektor-parser, netlab360-parser
 Found discontinued feeds collected by bots: sucuri-collector
 Remove the affected bots from the configuration."""
 
+V340_TWITTER_PARSER_IN = {
+    "global": {},
+    "twitter-parser": {
+        "module": "intelmq.bots.parsers.twitter.parser",
+    },
+}
+V340_TWITTER_PARSER_OUT = {
+    "global": {},
+    "twitter-parser": {
+        "module": "intelmq.bots.parsers.ioc_extractor.parser"
+    },
+}
+V340_TWITTER_COLLECTOR_IN = {
+    "global": {},
+    "twitter-collector": {
+        "module": "intelmq.bots.collectors.twitter.collector",
+    },
+}
+
+
 
 def generate_function(function):
     def test_function(self):
@@ -823,6 +843,18 @@ class TestUpgradeLib(unittest.TestCase):
         """ Test v322_removed_feeds_and_bots """
         result = upgrades.v322_removed_feeds_and_bots(V322_DISCONTINUED_BOTS_AND_FEEDS_IN, {}, False)
         self.assertEqual(V322_DISCONTINUED_BOTS_AND_FEEDS_OUT, result[0])
+
+    def test_v340_twitter_parser(self):
+        """ Test v340_deprecations with a Twitter parser """
+        result = upgrades.v340_deprecations(V340_TWITTER_PARSER_IN, {}, False)
+        self.assertTrue(result[0])
+        self.assertEqual(V340_TWITTER_PARSER_OUT, result[1])
+
+    def test_v340_twitter_collector(self):
+        """ Test v340_deprecations with a Twitter collector """
+        result = upgrades.v340_deprecations(V340_TWITTER_COLLECTOR_IN, {}, False)
+        self.assertIn('twitter-collector', result[0])
+        self.assertEqual(V340_TWITTER_COLLECTOR_IN, result[1])
 
 
 for name in upgrades.__all__:

@@ -1,5 +1,5 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2024 Sebastian Wagner, Filip Pokorný
+   SPDX-FileCopyrightText: 2015-2025 Sebastian Wagner, Filip Pokorný
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -20,6 +20,7 @@ Native packages are currently provided for the following Linux distributions:
 - **openSUSE Tumbleweed**
 - **Ubuntu 20.04** (focal fossa)
 - **Ubuntu 22.04** (jammy jellyfish)
+- **Ubuntu 24.04** (jammy jellyfish)
 
 ### Debian 11 and 12
 
@@ -47,7 +48,7 @@ zypper refresh
 zypper install intelmq intelmq-api intelmq-manager
 ```
 
-### Ubuntu 20.04 and 22.04
+### Ubuntu 20.04, 22.04 and 24.04
 
 For Ubuntu you must enable the Universe repository which provides community-maintained free and open-source software.
 

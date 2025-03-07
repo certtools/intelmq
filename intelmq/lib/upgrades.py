@@ -41,6 +41,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v320_update_turris_greylist_url',
            'v322_url_replacement',
            'v322_removed_feeds_and_bots',
+           'v340_deprecations'
            ]
 
 
@@ -952,6 +953,27 @@ def v322_removed_feeds_and_bots(configuration, harmonization, dry_run, **kwargs)
     return '\n'.join(messages) if messages else None, configuration, harmonization
 
 
+def v340_deprecations(configuration, harmonization, dry_run, **kwargs):
+    """
+    Rename twitter parser, warn on Twitter collector
+    """
+    changed = None
+    found_twitter_collector = []
+    message = None
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
+        if bot["module"] == "intelmq.bots.parsers.twitter.parser":
+            configuration[bot_id]["module"] = "intelmq.bots.parsers.ioc_extractor.parser"
+            changed = True
+        elif bot["module"] == "intelmq.bots.collectors.twitter.collector":
+            found_twitter_collector.append(bot_id)
+
+    if found_twitter_collector:
+        message = f"Found discontinued Twitter collector bot: {', '.join(found_twitter_collector)}"
+    return message or changed, configuration, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax,)),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -981,7 +1003,7 @@ UPGRADES = OrderedDict([
     ((3, 2, 2), (v322_url_replacement, v322_removed_feeds_and_bots)),
     ((3, 3, 0), ()),
     ((3, 3, 1), ()),
-    ((3, 3, 2), ()),
+    ((3, 4, 0), (v340_deprecations, )),
 ])
 
 ALWAYS = (harmonization,)
