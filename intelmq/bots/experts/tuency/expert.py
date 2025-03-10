@@ -30,6 +30,9 @@ class TuencyExpertBot(ExpertBot):
     ttl_field = "extra.ttl"
     constituency_field = "extra.constituency"
 
+    query_ip = True
+    query_domain = True
+
     # Allows setting custom TTL for suspended sending
     ttl_on_suspended = None
 
@@ -69,22 +72,30 @@ class TuencyExpertBot(ExpertBot):
             self.send_message(event)
             self.acknowledge_message()
             return
-        try:
-            params["ip"] = event["source.ip"]
-        except KeyError:
-            pass
-        try:
-            params["domain"] = event["source.fqdn"]
-        except KeyError:
-            pass
+
+        if self.query_ip:
+            try:
+                params["ip"] = event["source.ip"]
+            except KeyError:
+                pass
+
+        if self.query_domain:
+            try:
+                params["domain"] = event["source.fqdn"]
+            except KeyError:
+                pass
 
         response = self.session.get(self.url, params=params).json()
         self.logger.debug("Received response %r.", response)
 
         if response.get("suppress", False):
-            event.add(self.notify_field, False)
+            event.add(self.notify_field, False, overwrite=self.overwrite)
             if self.ttl_on_suspended:
-                event.add(self.ttl_field, self.ttl_on_suspended)
+                event.add(
+                    self.ttl_field,
+                    self.ttl_on_suspended,
+                    overwrite=self.overwrite,
+                )
         else:
             if "interval" not in response:
                 # empty response
@@ -92,20 +103,22 @@ class TuencyExpertBot(ExpertBot):
                 self.acknowledge_message()
                 return
             elif response["interval"]["unit"] == "immediate":
-                event.add(self.ttl_field, 0)
+                event.add(self.ttl_field, 0, overwrite=self.overwrite)
             else:
                 event.add(
                     self.ttl_field,
                     (
                         parse_relative(
                             f"{response['interval']['length']} {response['interval']['unit']}"
-                        ) * 60
+                        )
+                        * 60
                     ),
+                    overwrite=self.overwrite,
                 )
         contacts = []
         for destination in (
-            response.get("ip", {"destinations": []})["destinations"] +
-            response.get("domain", {"destinations": []})["destinations"]
+            response.get("ip", {"destinations": []})["destinations"]
+            + response.get("domain", {"destinations": []})["destinations"]
         ):
             contacts.extend(contact["email"] for contact in destination["contacts"])
         event.add("source.abuse_contact", ",".join(contacts), overwrite=self.overwrite)
@@ -113,7 +126,11 @@ class TuencyExpertBot(ExpertBot):
         if self.constituency_field and (
             constituencies := response.get("constituencies", [])
         ):
-            event.add(self.constituency_field, ",".join(constituencies))
+            event.add(
+                self.constituency_field,
+                ",".join(constituencies),
+                overwrite=self.overwrite,
+            )
 
         self.send_message(event)
         self.acknowledge_message()
