@@ -4054,8 +4054,9 @@ addresses and delivery settings for IP objects (addresses, netblocks), Autonomou
 
 - `classification.taxonomy`
 - `classification.type`
+- `classification.identifier`
 - `feed.provider`
-- `feed.name`
+- `feed.name` or `feed.code`
 
 These fields therefore need to exist, otherwise the message is skipped.
 
@@ -4064,17 +4065,20 @@ The API parameter "feed_status" is currently set to "production" constantly, unt
 The API answer is processed as following. For the notification interval:
 
 - If *suppress* is true, then `extra.notify` is set to false.
+  If explicitly configured, a special TTL value can be set.
 - Otherwise:
-- If the interval is *immediate*, then `extra.ttl` is set to 0.
-- Otherwise the interval is converted into seconds and saved in
-  `extra.ttl`.
+  - If the interval is *immediate*, then `extra.ttl` is set to 0.
+  - Otherwise the interval is converted into seconds and saved in
+    `extra.ttl`.
 
 For the contact lookup: For both fields *ip* and *domain*, the
 *destinations* objects are iterated and its *email* fields concatenated to a comma-separated list
 in `source.abuse_contact`.
 
-The IntelMQ fields used by this bot may change in the next IntelMQ release, as soon as better suited fields are
-available.
+For constituency: if provided from Tuency, the list of relvant consitituencies will
+be saved comma-separated in the `extra.constituency` field.
+
+The IntelMQ fields used by this bot may be customized by the parameters.
 
 **Module:** `intelmq.bots.experts.tuency.expert`
 
@@ -4091,6 +4095,43 @@ available.
 **`overwrite`**
 
 (optional, boolean) Whether the existing data in `source.abuse_contact` should be overwritten. Defaults to true.
+
+**`notify_field`**
+
+(optional, string) Name of the field to save information if the message should not be send
+(suspension in Tuency). By default `extra.notify`
+
+**`ttl_field`**
+
+(optional, string) Name of the field to save the TTL value (in seconds). By default `extra.ttl`.
+
+**`constituency_field`**
+
+(optional, string) Name of the gield to save information about the consitutuency. By default
+`extra.constituency`. If set to empty value, this information won't be saved.
+
+**`query_ip`**
+
+(optional, boolean) Whether the bot should query Tuency based on `source.ip`. By default `true`.
+
+**`query_domain`**
+
+(optional, boolean) Whether the bot should query Tuency based on `source.fqdn`. By default `true`.
+
+**`ttl_on_suspended`**
+
+(optional, integer) Custom value to set as TTL when the sending is suspended. By default
+not set - no value will be set at all.
+
+**`query_classification_identifier`**
+
+(optional, boolean) Whether to add `classification.identifier` to the query. Requires
+at least Tuency 2.6. By default `False`.
+
+**`query_feed_code`**
+
+(optional, boolean) Whether to query using `feed.code` instead of `feed.name`. Requires
+at least Tuency 2.6. By default `False`.
 
 ---
 
