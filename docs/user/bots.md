@@ -4077,6 +4077,14 @@ The IntelMQ fields used by this bot may be customized by the parameters.
 (optional, string) Name of the gield to save information about the consitutuency. By default
 `extra.constituency`. If set to empty value, this information won't be saved.
 
+**`query_ip`**
+
+(optional, boolean) Whether the bot should query Tuency based on `source.ip`. By default `true`.
+
+**`query_domain`**
+
+(optional, boolean) Whether the bot should query Tuency based on `source.fqdn`. By default `true`.
+
 **`ttl_on_suspended`**
 
 (optional, integer) Custom value to set as TTL when the sending is suspended. By default

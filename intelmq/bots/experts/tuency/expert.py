@@ -46,12 +46,30 @@ class TuencyExpertBot(ExpertBot):
         self.session.headers["Authorization"] = f"Bearer {self.authentication_token}"
         self.url = f"{self.url}intelmq/lookup"
 
+        if not self.query_ip and not self.query_domain:
+            self.logger.warning(
+                "Neither query_ip nor query_domain is set. "
+                "Bot won't do anything, please ensure it's intended."
+            )
+
+    @staticmethod
+    def check(parameters):
+        results = []
+        if not parameters.get("query_ip", True) and not parameters.get(
+            "query_domain", True
+        ):
+            results.append(
+                [
+                    "warning",
+                    "Neither query_ip nor query_domain is set. "
+                    "Bot won't do anything, please ensure it's intended.",
+                ]
+            )
+
+        return results or None
+
     def process(self):
         event = self.receive_message()
-        if not ("source.ip" in event or "source.fqdn" in event):
-            self.send_message(event)
-            self.acknowledge_message()
-            return
 
         try:
             params = {
@@ -85,8 +103,20 @@ class TuencyExpertBot(ExpertBot):
             except KeyError:
                 pass
 
-        response = self.session.get(self.url, params=params).json()
-        self.logger.debug("Received response %r.", response)
+        if "ip" not in params and "domain" not in params:
+            # Nothing to query - skip
+            self.send_message(event)
+            self.acknowledge_message()
+            return
+
+        response = self.session.get(self.url, params=params)
+        self.logger.debug("Received response %r.", response.text)
+        response = response.json()
+
+        destinations = (
+            response.get("ip", {"destinations": []})["destinations"]
+            + response.get("domain", {"destinations": []})["destinations"]
+        )
 
         if response.get("suppress", False):
             event.add(self.notify_field, False, overwrite=self.overwrite)
@@ -97,29 +127,29 @@ class TuencyExpertBot(ExpertBot):
                     overwrite=self.overwrite,
                 )
         else:
-            if "interval" not in response:
+            if not destinations:
                 # empty response
                 self.send_message(event)
                 self.acknowledge_message()
                 return
-            elif response["interval"]["unit"] == "immediate":
-                event.add(self.ttl_field, 0, overwrite=self.overwrite)
-            else:
-                event.add(
-                    self.ttl_field,
-                    (
-                        parse_relative(
-                            f"{response['interval']['length']} {response['interval']['unit']}"
-                        )
-                        * 60
-                    ),
-                    overwrite=self.overwrite,
-                )
+
+            if "interval" in response:
+                if response["interval"]["unit"] == "immediate":
+                    event.add(self.ttl_field, 0, overwrite=self.overwrite)
+                else:
+                    event.add(
+                        self.ttl_field,
+                        (
+                            parse_relative(
+                                f"{response['interval']['length']} {response['interval']['unit']}"
+                            )
+                            * 60
+                        ),
+                        overwrite=self.overwrite,
+                    )
+
         contacts = []
-        for destination in (
-            response.get("ip", {"destinations": []})["destinations"]
-            + response.get("domain", {"destinations": []})["destinations"]
-        ):
+        for destination in destinations:
             contacts.extend(contact["email"] for contact in destination["contacts"])
         event.add("source.abuse_contact", ",".join(contacts), overwrite=self.overwrite)
 

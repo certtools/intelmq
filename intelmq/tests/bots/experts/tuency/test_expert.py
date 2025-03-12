@@ -171,6 +171,25 @@ def prepare_mocker(mocker):
         },
     )
 
+    # IP address directly from RIPE
+    mocker.get(
+        f"{PREFIX}&ip=123.123.123.123&feed_name=FTP",
+        request_headers={"Authorization": "Bearer Lorem ipsum"},
+        json={
+            "ip": {
+                "destinations": [
+                    {
+                        "source": "ripe",
+                        "name": "Thurner",
+                        "contacts": [{"email": "test@ntvtn.de"}],
+                    }
+                ]
+            },
+            "suppress": True,
+            "constituencies": ["Tenant1", "Tenant2"],
+        },
+    )
+
 
 @requests_mock.Mocker()
 class TestTuencyExpertBot(BotTestCase, unittest.TestCase):
@@ -348,9 +367,17 @@ class TestTuencyExpertBot(BotTestCase, unittest.TestCase):
             prepare_mocker(mocker)
         else:
             mocker.real_http = True
+
         self.input_message = EMPTY
         self.run_bot()
         self.assertMessageEqual(0, EMPTY)
+
+        self.input_message = INPUT
+        self.run_bot(
+            parameters={"query_ip": False, "query_domain": False},
+            allowed_warning_count=1,
+        )
+        self.assertMessageEqual(0, INPUT)
 
     def test_no_result(self, mocker):
         """
@@ -363,3 +390,22 @@ class TestTuencyExpertBot(BotTestCase, unittest.TestCase):
         self.input_message = UNKNOWN_IP
         self.run_bot()
         self.assertMessageEqual(0, UNKNOWN_IP)
+
+    def test_data_from_ripe(self, mocker):
+        """
+        Data sourced from ripe don't get interval
+        """
+        if self.mock:
+            prepare_mocker(mocker)
+        else:
+            mocker.real_http = True
+
+        input_msq = INPUT_IP.copy()
+        input_msq["source.ip"] = "123.123.123.123"
+
+        self.input_message = input_msq
+        self.run_bot()
+
+        output_msg = OUTPUT_IP.copy()
+        output_msg["source.ip"] = "123.123.123.123"
+        self.assertMessageEqual(0, output_msg)
