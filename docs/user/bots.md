@@ -2682,6 +2682,39 @@ is `$portal_url + '/api/1.0/ripe/contact?cidr=%s'`.
 
 ---
 
+### Fake <div id="intelmq.bots.experts.fake.expert" />
+
+Adds fake data to events. Currently supports setting the IP address and network.
+
+For each incoming event, the bots chooses one random IP network range from the configured data file.
+It set's the first IP address of the range as `source.ip` and the network itself as `source.network`.
+To adapt the `source.asn` field accordingly, use the [ASN Lookup Expert](#asn-lookup).
+
+**Module:** `intelmq.bots.experts.fake.expert`
+
+**Parameters:**
+
+**`database`**
+
+(required, string) Path to a JSON file in the following format:
+```
+{
+    "ip_network": [
+        "10.0.0.0/8",
+        ...
+    ]
+}
+```
+
+**`overwrite`**
+
+(optional, boolean) Whether to overwrite existing fields. Defaults to false.
+
+For data consistency `source.network` will only be set if `source.ip` was set or overridden.
+If overwrite is false, `source.ip` was did not exist before but `source.network` existed before, `source.network` will still be overridden.
+
+---
+
 ### Field Reducer <div id="intelmq.bots.experts.field_reducer.expert" />
 
 The field reducer bot is capable of removing fields from events.

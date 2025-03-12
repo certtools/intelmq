@@ -1,14 +1,14 @@
-# SPDX-FileCopyrightText: 2016 kralca
+# SPDX-FileCopyrightText: 2016 kralca, 2025 Institute for Common Good Technology - Sebastian Wagner
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
 import json
-from datetime import datetime
 from urllib.parse import urljoin
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
+from intelmq.lib.harmonization import DateTime
 
 
 class MISPParserBot(ParserBot):
@@ -120,8 +120,7 @@ class MISPParserBot(ParserBot):
                 event.add('malware.name', malware_variant, raise_failure=False)
                 event.add('classification.type', classifier)
                 event.add('classification.identifier', identifier)
-                event.add('time.source', '{} UTC'.format(
-                          datetime.utcfromtimestamp(float(timestamp))))
+                event.add('time.source', DateTime.from_timestamp(timestamp))
                 self.send_message(event)
 
         self.acknowledge_message()

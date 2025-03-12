@@ -12,6 +12,7 @@
 ### Configuration
 
 ### Core
+- AMQP: Fix maintaining pipeline connection when during interrupted connections (PR#2533 by Kamil Mankowski).
 - Python 3.8 or newer is required (PR#2541 by Sebastian Wagner).
 - `intelmq.lib.utils.list_all_bots`/`intelmqctl check`: Fix check for bot executable in $PATH by using the bot name instead of the import path (fixes #2559, PR#2564 by Sebastian Wagner).
 
@@ -37,6 +38,8 @@
   - fix error message formatting if schema file is absent (PR#2528 by Sebastian Wagner).
 - `intelmq.bots.parsers.shadowserver.parser`:
   - Fix to avoid schema download if not configured #2530.
+- `intelmq.bots.parsers.misp.parser`: Replace deprecated datetime function `utcfromtimestamp` for Ubuntu 24.04 compatibility (PR#2577 by Sebastian Wagner, fixes #2576, #2571).
+- `intelmq.bots.parsers.cleanmx.parser`: Replace deprecated datetime function `utcfromtimestamp` for Ubuntu 24.04 compatibility (PR#2577 by Sebastian Wagner, fixes #2576, #2571).
 
 #### Experts
 - `intelmq.bots.experts.securitytxt`:
@@ -47,6 +50,7 @@
   - Support for customizing fields and the TTL value for suspended sending.
   - Support selecting if IP and/or FQDN should be used for querying Tuency.
   - Various fixes.
+- `intelmq.bots.experts.fake.expert`: New expert to fake data (PR#2567 by Sebastian Wagner).
 
 #### Outputs
 - `intelmq.bots.outputs.cif3.output`:
