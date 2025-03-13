@@ -38,6 +38,8 @@
   - fix error message formatting if schema file is absent (PR#2528 by Sebastian Wagner).
 - `intelmq.bots.parsers.shadowserver.parser`:
   - Fix to avoid schema download if not configured #2530.
+- `intelmq.bots.parsers.misp.parser`: Replace deprecated datetime function `utcfromtimestamp` for Ubuntu 24.04 compatibility (PR#2577 by Sebastian Wagner, fixes #2576, #2571).
+- `intelmq.bots.parsers.cleanmx.parser`: Replace deprecated datetime function `utcfromtimestamp` for Ubuntu 24.04 compatibility (PR#2577 by Sebastian Wagner, fixes #2576, #2571).
 
 #### Experts
 - `intelmq.bots.experts.securitytxt`:
