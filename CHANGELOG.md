@@ -39,7 +39,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
   ALTER TABLE events ADD "product.version" text;
   ALTER TABLE events ADD "product.vulnerabilities" text;
   ```
-- added `severity` field to help with triaging received events (PR# by Kamil Mańkowski).
+- added `severity` field to help with triaging received events (PR#2575 by Kamil Mańkowski).
   To allow saving the field in PostgreSQL database in existing installations, the following schema update is necessary: `ALTER TABLE events ADD severity varchar(10);`.
 
 ### Bots
