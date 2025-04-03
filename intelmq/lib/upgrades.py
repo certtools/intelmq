@@ -977,6 +977,9 @@ def v340_deprecations(configuration, harmonization, dry_run, **kwargs):
 
 
 def v341_new_fields(configuration, harmonization, dry_run, **kwargs):
+    """
+    Add new fields to IntelMQ Data Format
+    """
     changed = False
     if "severity" not in harmonization["event"]:
         harmonization["event"]["severity"] = {
