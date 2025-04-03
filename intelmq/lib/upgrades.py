@@ -975,6 +975,18 @@ def v340_deprecations(configuration, harmonization, dry_run, **kwargs):
         message = f"Found discontinued Twitter collector bot: {', '.join(found_twitter_collector)}"
     return message or changed, configuration, harmonization
 
+def v341_new_fields(configuration, harmonization, dry_run, **kwargs):
+    changed = False
+    if "severity" not in harmonization["event"]:
+        harmonization["event"]["severity"] = {
+            "description": "Severity of the event, based on the information from the source, and eventually modified by IntelMQ during processing. Meaning of the levels may differ based on the event source.",
+            "length": 10,
+            "regex": "^(critical|high|medium|low|info|undefined)$",
+            "type": "LowercaseString",
+        }
+        changed = True
+    return changed, configuration, harmonization
+
 
 def v341_blueliv_removal(configuration, harmonization, dry_run, **kwargs):
     """
