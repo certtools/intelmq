@@ -975,6 +975,7 @@ def v340_deprecations(configuration, harmonization, dry_run, **kwargs):
         message = f"Found discontinued Twitter collector bot: {', '.join(found_twitter_collector)}"
     return message or changed, configuration, harmonization
 
+
 def v341_new_fields(configuration, harmonization, dry_run, **kwargs):
     changed = False
     if "severity" not in harmonization["event"]:
