@@ -884,6 +884,8 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertIn("product.vendor", result[2]["event"])
         self.assertIn("product.version", result[2]["event"])
         self.assertIn("product.vulnerabilities", result[2]["event"])
+        self.assertIn("old-field", result[2]["event"])
+        self.assertIn("severity", result[2]["event"])
 
 
 for name in upgrades.__all__:

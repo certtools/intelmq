@@ -43,7 +43,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v322_removed_feeds_and_bots',
            'v340_deprecations',
            'v341_blueliv_removal',
-           'v342_new_fields'
+           'v342_new_fields',
            ]
 
 
