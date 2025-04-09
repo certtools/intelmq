@@ -18,6 +18,15 @@ Please refer to the change log for a full list of changes.
 ### Tools
 
 ### Data Format
+To save new fields from IntelMQ Data Format in existing PostgreSQL instances, the following schema
+update is necessary:
+```sql
+ALTER TABLE events ADD "product.full_name" text;
+ALTER TABLE events ADD "product.name" text;
+ALTER TABLE events ADD "product.vendor" text;
+ALTER TABLE events ADD "product.version" text;
+ALTER TABLE events ADD "product.vulnerabilities" text;
+```
 
 ### Configuration
 
