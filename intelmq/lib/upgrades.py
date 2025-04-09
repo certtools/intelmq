@@ -1017,6 +1017,7 @@ def v350_new_fields(configuration, harmonization, dry_run, **kwargs):
         "product.vendor",
         "product.version",
         "product.vulnerabilities",
+        "constituency",
     ]:
         if field not in harmonization["event"]:
             if field not in builtin_harmonisation["event"]:
