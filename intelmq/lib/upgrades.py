@@ -994,6 +994,9 @@ def v341_new_fields(configuration, harmonization, dry_run, **kwargs):
         "product.vulnerabilities",
     ]:
         if field not in harmonization["event"]:
+            if field not in builtin_harmonisation["event"]:
+                # ensure forward-compatibility if we ever remove something from harmonisation
+                continue
             harmonization["event"][field] = builtin_harmonisation["event"][field]
             changed = True
     return changed, configuration, harmonization
