@@ -981,7 +981,7 @@ def v341_new_fields(configuration, harmonization, dry_run, **kwargs):
     Add new fields to IntelMQ Data Format
     """
     changed = False
-    if "severity" not in harmonization["event"]:
+    if "event" in harmonization and "severity" not in harmonization["event"]:
         harmonization["event"]["severity"] = {
             "description": "Severity of the event, based on the information from the source, and eventually modified by IntelMQ during processing. Meaning of the levels may differ based on the event source.",
             "length": 10,
