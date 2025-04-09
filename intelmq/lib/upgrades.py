@@ -976,22 +976,6 @@ def v340_deprecations(configuration, harmonization, dry_run, **kwargs):
     return message or changed, configuration, harmonization
 
 
-def v341_new_fields(configuration, harmonization, dry_run, **kwargs):
-    """
-    Add new fields to IntelMQ Data Format
-    """
-    changed = False
-    if "event" in harmonization and "severity" not in harmonization["event"]:
-        harmonization["event"]["severity"] = {
-            "description": "Severity of the event, based on the information from the source, and eventually modified by IntelMQ during processing. Meaning of the levels may differ based on the event source.",
-            "length": 10,
-            "regex": "^(critical|high|medium|low|info|undefined)$",
-            "type": "LowercaseString",
-        }
-        changed = True
-    return changed, configuration, harmonization
-
-
 def v341_blueliv_removal(configuration, harmonization, dry_run, **kwargs):
     """
     Remove blueliv collector and parser
@@ -1027,6 +1011,7 @@ def v342_new_fields(configuration, harmonization, dry_run, **kwargs):
         resource_filename("intelmq", "etc/harmonization.conf")
     )
     for field in [
+        "severity",
         "product.full_name",
         "product.name",
         "product.vendor",

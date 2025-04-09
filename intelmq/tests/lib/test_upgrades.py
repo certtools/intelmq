@@ -876,8 +876,6 @@ class TestUpgradeLib(unittest.TestCase):
         """ Test adding new harmonisation fields """
         result = upgrades.v342_new_fields({}, {"event": {"old-field": "must stay"}}, False)
         self.assertTrue(result[0])
-        self.assertIn("old-field", result[1]["event"])
-        self.assertIn("severity", result[1]["event"])
         self.assertIn("old-field", result[2]["event"])
         self.assertIn("product.full_name", result[2]["event"])
         self.assertIn("product.name", result[2]["event"])
