@@ -567,12 +567,14 @@ Get some debugging output on the settings and the environment (to be extended):
         # only aliasing the list to ease reading the following
         stopped_but_still_running_bots = bots
 
-        # parameters:
+        retries = getattr(self._parameters, 'stop_retry_limit', 5)
+
+        # parameters (default):
         # - sleep 0.75 s with an increment of 0.1
         # - at most 5 tries
         # => sleep-ing at most 4.75 seconds
         sleep_time = 0.75 # in seconds
-        for _ in range(5):
+        for _ in range(retries):
             # give the bots some time to terminate
             time.sleep(sleep_time)
             # update the botnet_status
