@@ -573,7 +573,7 @@ Get some debugging output on the settings and the environment (to be extended):
         # - sleep 0.75 s with an increment of 0.1
         # - at most 5 tries
         # => sleep-ing at most 4.75 seconds
-        sleep_time = 0.75 # in seconds
+        sleep_time = 0.75  # in seconds
         for _ in range(retries):
             # give the bots some time to terminate
             time.sleep(sleep_time)
@@ -590,7 +590,7 @@ Get some debugging output on the settings and the environment (to be extended):
             # again to avoid long-term load on the system
             # but stop at 5 seconds to avoid waiting too long until rechecking
             # the status
-            sleep_time = min(5, sleep_time+0.1)
+            sleep_time = min(5, sleep_time + 0.1)
 
         retval = 1
         if len(stopped_but_still_running_bots) == 0:
