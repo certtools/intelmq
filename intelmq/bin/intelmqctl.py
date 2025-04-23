@@ -771,7 +771,8 @@ Get some debugging output on the settings and the environment (to be extended):
             self._logger.exception("Error while clearing queue %s.", queue)
             return 1, 'error'
 
-    def read_bot_log(self, bot_id, log_level, number_of_lines):
+    def read_bot_log(self, bot_id: str, log_level: str, number_of_lines: int):
+        """ Read logs of a bot filtered by logging level """
         if self._parameters.logging_handler == 'file':
             bot_log_path = os.path.join(self._parameters.logging_path,
                                         bot_id + '.log')
@@ -799,13 +800,13 @@ Get some debugging output on the settings and the environment (to be extended):
             if self._parameters.logging_handler == 'syslog':
                 log_message = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
 
-            if type(log_message) is not dict:
+            if not isinstance(log_message, dict):
                 if self._parameters.logging_handler == 'file':
                     message_overflow = '\n'.join([line, message_overflow])
                 continue
             if log_message['bot_id'] != bot_id:
                 continue
-            if LogLevel[log_message['log_level']].value > LogLevel[log_level].value:
+            if LogLevel[log_message['log_level']].value < LogLevel[log_level].value:
                 continue
 
             if message_overflow:
