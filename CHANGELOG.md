@@ -73,6 +73,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 - `intelmq.bin.intelmq_psql_initdb`: Use `JSONB` type by default, Postgres supports it since version 9 (PR#2597 by Sebastian Wagner).
 - `intelmq.bin.rewrite_config_files`: Removed obsolete JSON configuration file rewriter (PR#2613 by Sebastian Wagner).
 - `intelmq/lib/bot_debugger.py`: Fix overwriting the runtime logging level by command line parameter (PR#2603 by Sebastian Wagner, fixes #2563).
+- `intelmq.bin.intelmqctl`: Fix bot log level filtering (PR#2607 by Sebastian Wagner, fixes #2596).
 
 ### Contrib
 - Bash Completion: Adapt to YAML-style runtime configuration (PR#2642 by Sebastian Wagner, fixes #2094).
