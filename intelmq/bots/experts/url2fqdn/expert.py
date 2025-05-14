@@ -21,7 +21,7 @@ class Url2fqdnExpertBot(ExpertBot):
         warnings.warn(DEPRECATION_WARNING, DeprecationWarning)
 
     @staticmethod
-    def check(parameters: dict) -> Optional[List[List[str]]]:
+    def check(parameters: dict) -> Optional[list[list[str]]]:
         return [["warning", DEPRECATION_WARNING]]
 
     def process(self):

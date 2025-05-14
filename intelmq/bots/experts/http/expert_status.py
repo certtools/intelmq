@@ -24,7 +24,7 @@ class HttpStatusExpertBot(ExpertBot):
             Specifies if an existing 'status' value should be overwritten.
     """
     field: str = "source.url"  # The field containing the URL
-    success_status_codes: List[int] = []  # A list of status codes for success
+    success_status_codes: list[int] = []  # A list of status codes for success
     overwrite: bool = True
 
     def process(self):

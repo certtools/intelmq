@@ -113,7 +113,7 @@ class TimeFormat(str):
         :return: correct time conversion function and the format string
         """
 
-        split_value: List[str] = value.split('|')
+        split_value: list[str] = value.split('|')
         conversion: Callable
         conversion_name: str = split_value[0]
         format_string: Optional[str] = split_value[1] if len(split_value) > 1 else None
@@ -139,19 +139,4 @@ class TimeFormat(str):
         return conversion, format_string
 
 
-if version_info < (3, 9):
-    class Dict39(dict):
-        """
-        Python 3.9 introduced the handy | operator for dicts.
-        For backwards-compatibility, this is the backport
-        as IntelMQ supports Python >= 3.7
-        """
-        def __or__(self, other: dict) -> 'Dict39':
-            """
-            Create a new dictionary with the merged keys and values of d and other, which must both be dictionaries. The values of other take priority when d and other share keys.
-            """
-            ret = Dict39(self.copy())
-            ret.update(other)
-            return ret
-else:
-    Dict39 = dict
+Dict39 = dict

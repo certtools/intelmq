@@ -66,7 +66,7 @@ class URLExpertBot(ExpertBot):
     """
 
     overwrite: bool = False
-    skip_fields: Optional[List[str]] = None
+    skip_fields: Optional[list[str]] = None
 
     def init(self):
         if self.skip_fields is None:

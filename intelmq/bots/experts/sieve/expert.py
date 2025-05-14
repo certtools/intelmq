@@ -173,7 +173,7 @@ class SieveExpertBot(ExpertBot):
 
     _date_op_map = {":before": operator.lt, ":after": operator.gt}
 
-    _cond_map: Dict[
+    _cond_map: dict[
         str,
         Callable[
             [

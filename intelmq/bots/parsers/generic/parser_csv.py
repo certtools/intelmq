@@ -19,7 +19,8 @@ data_type: string
 import csv
 import json
 import re
-from typing import Optional, Union, Iterable
+from typing import Optional, Union
+from collections.abc import Iterable
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot

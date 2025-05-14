@@ -39,12 +39,13 @@ Other considerations:
    chunk size must take this into account, but multiplying the actual
    limit by 3/4 and subtracting a generous amount for the meta data.
 """
-from typing import BinaryIO, Generator, List, Optional
+from typing import BinaryIO, List, Optional
+from collections.abc import Generator
 
 from intelmq.lib.message import Report
 
 
-def split_chunks(chunk: bytes, chunk_size: int) -> List[bytes]:
+def split_chunks(chunk: bytes, chunk_size: int) -> list[bytes]:
     """Split a bytestring into chunk_size pieces at ASCII newlines characters.
 
     The return value is a list of bytestring objects. Appending all of

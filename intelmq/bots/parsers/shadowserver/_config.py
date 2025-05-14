@@ -128,11 +128,11 @@ def enable_auto_update(enable):
     __config.auto_update = enable
 
 
-def get_feed_by_feedname(given_feedname: str) -> Optional[Tuple[str, Dict[str, Any]]]:
+def get_feed_by_feedname(given_feedname: str) -> Optional[tuple[str, dict[str, Any]]]:
     return __config.feedname_mapping.get(given_feedname, None)
 
 
-def get_feed_by_filename(given_filename: str) -> Optional[Tuple[str, Dict[str, Any]]]:
+def get_feed_by_filename(given_filename: str) -> Optional[tuple[str, dict[str, Any]]]:
     return __config.filename_mapping.get(given_filename, None)
 
 
@@ -164,7 +164,7 @@ def convert_float(value: str) -> Optional[float]:
     return float(value) if value else None
 
 
-def convert_http_host_and_url(value: str, row: Dict[str, str]) -> str:
+def convert_http_host_and_url(value: str, row: dict[str, str]) -> str:
     """
     URLs are split into hostname and path. The column names differ in reports.
     Compromised-Website: http_host, url
@@ -282,7 +282,7 @@ def scan_exchange_identifier(field):
     return 'vulnerable-exchange-server'
 
 
-def category_or_detail(value: str, row: Dict[str, str]) -> str:
+def category_or_detail(value: str, row: dict[str, str]) -> str:
     """
     Returns the category or detail field from the row.
     """

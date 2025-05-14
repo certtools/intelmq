@@ -460,7 +460,7 @@ _common_keys = {  # not indicative of type
 }
 
 
-def _keys_conversion(x: Dict[str, Any]) -> List[str]:
+def _keys_conversion(x: dict[str, Any]) -> list[str]:
     '''
     extracts object keys to a list, for cases where the values they map to are empty/irrelevant
     '''
@@ -471,7 +471,7 @@ def _keys_conversion(x: Dict[str, Any]) -> List[str]:
 
 
 # in case item can be either T or List[T]
-def _maybe_single_to_list(x: Any) -> List[Any]:
+def _maybe_single_to_list(x: Any) -> list[Any]:
     '''
     converts non-list objects to lists with a single item and leaves lists as-is,
     used to harmonize fields which avoid lists when a single value is given
@@ -479,7 +479,7 @@ def _maybe_single_to_list(x: Any) -> List[Any]:
     return x if isinstance(x, list) else [x]
 
 
-def _dict_dict_to_obj_list(x: Dict[str, Dict[str, Any]], identifier: str = 'identifier') -> List[Dict[str, Any]]:
+def _dict_dict_to_obj_list(x: dict[str, dict[str, Any]], identifier: str = 'identifier') -> list[dict[str, Any]]:
     '''
     convert e.g
     {'OuterKey1': {'InnerKey1': 'Value1'}, 'OuterKey2': {'InnerKey2': 'Value2'}}
@@ -497,7 +497,7 @@ def _dict_dict_to_obj_list(x: Dict[str, Dict[str, Any]], identifier: str = 'iden
     return out
 
 
-def _get_first(variable: List[Any]) -> Any:
+def _get_first(variable: list[Any]) -> Any:
     '''
     get first element from list, if the list has any; raise NoValueException otherwise
     '''
@@ -507,7 +507,7 @@ def _get_first(variable: List[Any]) -> Any:
         raise NoValueException(f'empty list passed to _get_first')
 
 
-def _get_first_fqdn(variable: List[str]) -> str:
+def _get_first_fqdn(variable: list[str]) -> str:
     '''
     get first valid FQDN from a list of strings
     '''
@@ -519,7 +519,7 @@ def _get_first_fqdn(variable: List[str]) -> str:
     return first
 
 
-CONVERSIONS: Dict[str, Callable[[Any], Any]] = {
+CONVERSIONS: dict[str, Callable[[Any], Any]] = {
     'ftp.features': _dict_dict_to_obj_list,
     'timestamp': lambda x: x + '+00',
     'hostnames': _get_first_fqdn,
@@ -541,7 +541,7 @@ class ShodanParserBot(ParserBot):
     ignore_errors = True
     minimal_mode = False
 
-    def apply_mapping(self, mapping: Dict[str, Any], data: Dict[str, Any], key_path: Tuple[str, ...] = ()) -> Dict[str, Any]:
+    def apply_mapping(self, mapping: dict[str, Any], data: dict[str, Any], key_path: tuple[str, ...] = ()) -> dict[str, Any]:
         self.logger.debug(f'Applying mapping {mapping!r} to data {data!r}.')
         event = {}
         for key in data.keys() & mapping.keys():
