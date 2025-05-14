@@ -14,6 +14,7 @@ Please refer to the change log for a full list of changes.
 --------------------------------
 
 ### Requirements
+Python `>=3.9` is now required, which is available on all platforms supported by IntelMQ.
 
 ### Tools
 

@@ -15,7 +15,7 @@ system to preserve processed events.
 
 ## Base Requirements
 
-The following instructions assume the following requirements. Python versions >= 3.7 are supported.
+The following instructions assume the following requirements. Python versions >= 3.9 are supported.
 
 Supported and recommended operating systems are:
 

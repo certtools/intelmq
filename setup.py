@@ -55,7 +55,7 @@ setup(
     version=__version__,  # noqa: F821
     maintainer='Sebastian Wagner',
     maintainer_email='intelmq-dev@lists.cert.at',
-    python_requires='>=3.8',
+    python_requires='>=3.9',
     install_requires=REQUIRES,
     tests_require=TESTS_REQUIRES,
     test_suite='intelmq.tests',

@@ -16,6 +16,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 ### Configuration
 
 ### Core
+- Drop support for Python 3.8 (fixes #2616, PR#2617 by Sebastian Wagner).
 
 ### Development
 

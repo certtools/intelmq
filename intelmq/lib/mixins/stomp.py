@@ -379,12 +379,11 @@ class _StompPyDedicatedSSLProxy:
                 cafile = _SYSTEM_DEFAULT_CA_MARKER
             ssl_context.load_verify_locations(cafile, capath, cadata)
 
-            if sys.version_info[:2] >= (3, 8):
-                # Support for OpenSSL 1.1.1 keylog (copied from `Py>=3.8`):
-                if hasattr(ssl_context, 'keylog_filename'):
-                    keylogfile = os.environ.get('SSLKEYLOGFILE')
-                    if keylogfile and not sys.flags.ignore_environment:
-                        ssl_context.keylog_filename = keylogfile
+            # Support for OpenSSL 1.1.1 keylog:
+            if hasattr(ssl_context, 'keylog_filename'):
+                keylogfile = os.environ.get('SSLKEYLOGFILE')
+                if keylogfile and not sys.flags.ignore_environment:
+                    ssl_context.keylog_filename = keylogfile
 
         else:
             ssl_context = ssl.create_default_context(

@@ -25,7 +25,7 @@ Build-Depends: debhelper (>= 4.1.16),
                python3-pytest-cov,
                findutils,
                sed
-X-Python3-Version: >= 3.7
+X-Python3-Version: >= 3.9
 Standards-Version: 3.9.6
 Homepage: https://github.com/certtools/intelmq/
 
