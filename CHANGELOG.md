@@ -26,6 +26,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.shodan.collector_alert`: Added a new collector to query the Shodan Alert API (PR#2618 by Sebastian Wagner and Malawi CERT).
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Add mapping for TOR and ipv6-icmp protocol (PR#2621 by Mikk Margus Möll).
