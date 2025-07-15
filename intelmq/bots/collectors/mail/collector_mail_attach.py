@@ -11,14 +11,16 @@ https://github.com/martinrusev/imbox/commit/7c6cc2fb5f7e39c1496d68f3d432eec19517
 Uses the common mail iteration method from the lib file.
 """
 import re
+
 from intelmq.lib.utils import unzip
-from intelmq.lib.exceptions import InvalidArgument
+from intelmq.lib.exceptions import InvalidArgument, MissingDependencyError
 
 from ._lib import MailCollectorBot
 
 
 class MailAttachCollectorBot(MailCollectorBot):
     """Monitor IMAP mailboxes and retrieve mail attachments"""
+
     attach_regex: str = "csv.zip"
     extract_files: bool = True
     folder: str = "INBOX"
@@ -28,11 +30,25 @@ class MailAttachCollectorBot(MailCollectorBot):
     mail_user: str = "<user>"
     rate_limit: int = 60
     subject_regex: str = "<subject>"
+    decrypt_openpgp: bool = False
+    """ Decrypt the attachment with OpenPGP """
+
+    openpgp_passphrase: str = ""
+    """ The OpenPGP private key passhrase """
+
+    gpg_home: str = ""
+    """ Change the GPG home directory """
 
     def init(self):
         super().init()
         if self.attach_regex is None:
             raise InvalidArgument('attach_regex', expected='string')
+        if self.decrypt_openpgp:
+            try:
+                from gnupg import GPG
+            except ImportError:
+                raise MissingDependencyError("python-gnupg", ">=0.5")
+            self._gpg = GPG(gnupghome=self.gpg_home)
 
     def process_message(self, uid, message):
         seen = False
@@ -63,6 +79,15 @@ class MailAttachCollectorBot(MailCollectorBot):
                     raw_reports = ((attach_filename, attach['content'].read()), )
 
                 for file_name, raw_report in raw_reports:
+                    if self.decrypt_openpgp:
+                        gpg = self._gpg.decrypt(
+                            raw_report, passphrase=self.openpgp_passphrase
+                        )
+                        if gpg.ok:
+                            raw_report = gpg.data
+                        else:
+                            self.logger.error('Could not decrypt attachment %s: %s.', file_name, gpg.status)
+                            continue
                     report = self.new_report()
                     report.add("raw", raw_report)
                     if file_name:

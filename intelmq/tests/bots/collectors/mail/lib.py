@@ -10,17 +10,15 @@ Created on Tue Sep 10 17:10:54 2019
 """
 import os
 from copy import deepcopy
+from pathlib import Path
 
 if os.getenv('INTELMQ_TEST_EXOTIC'):
     from imbox.parser import parse_email
-    with open(os.path.join(os.path.dirname(__file__), 'foobarzip.eml')) as handle:
-        EMAIL_ZIP_FOOBAR = parse_email(handle.read())
-    with open(os.path.join(os.path.dirname(__file__), 'foobartxt.eml')) as handle:
-        EMAIL_TXT_FOOBAR = parse_email(handle.read())
-    with open(os.path.join(os.path.dirname(__file__), 'fake_attachment.eml')) as handle:
-        EMAIL_FAKE_ATTACHMENT = parse_email(handle.read())
-    with open(os.path.join(os.path.dirname(__file__), 'text_attachment.eml')) as handle:
-        EMAIL_TEXT_ATTACHMENT = parse_email(handle.read())
+    EMAIL_ZIP_FOOBAR = parse_email((Path(__file__).parent / 'foobarzip.eml').read_text())
+    EMAIL_TXT_FOOBAR = parse_email((Path(__file__).parent / 'foobartxt.eml').read_text())
+    EMAIL_FAKE_ATTACHMENT = parse_email((Path(__file__).parent / 'fake_attachment.eml').read_text())
+    EMAIL_TEXT_ATTACHMENT = parse_email((Path(__file__).parent / 'text_attachment.eml').read_text())
+    EMAIL_GPG_ATTACHMENT = parse_email((Path(__file__).parent / 'gpg_attachment.eml').read_text())
 
 
 class MockedImbox():
@@ -57,3 +55,7 @@ class MockedBadAttachmentImbox(MockedImbox):
 class MockedTextAttachmentImbox(MockedImbox):
     def messages(self, *args, **kwargs):
         yield 0, deepcopy(EMAIL_TEXT_ATTACHMENT)
+
+class MockedGpgAttachmentImbox(MockedImbox):
+    def messages(self, *args, **kwargs):
+        yield 0, deepcopy(EMAIL_GPG_ATTACHMENT)

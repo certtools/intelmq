@@ -24,6 +24,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.mail.collector_mail_attach`: Decrypt GPG attachments (PR#2623 by Edvard Rejthar).
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Add mapping for TOR and ipv6-icmp protocol (PR#2621 by Mikk Margus Möll).
