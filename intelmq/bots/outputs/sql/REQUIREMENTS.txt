@@ -3,3 +3,4 @@
 
 psycopg2-binary>=2.5.5
 pymssql>=2.2
+PyMySQL>=0.10

@@ -22,6 +22,7 @@ class SQLMixin:
     POSTGRESQL = "postgresql"
     SQLITE = "sqlite"
     MSSQL = "mssql"
+    MYSQL = "mysql"
     _default_engine = "postgresql"
     engine = None
     # overwrite the default value from the OutputBot
@@ -40,7 +41,8 @@ class SQLMixin:
         self._engine_name = getattr(self, 'engine', self._default_engine).lower()
         engines = {SQLMixin.POSTGRESQL: (self._init_postgresql, "%s"),
                    SQLMixin.SQLITE: (self._init_sqlite, "?"),
-                   SQLMixin.MSSQL: (self._init_mssql, "%s")}
+                   SQLMixin.MSSQL: (self._init_mssql, "%s"),
+                   SQLMixin.MYSQL: (self._init_mysql, "%s")}
         for key, val in engines.items():
             if self._engine_name == key:
                 val[0]()
@@ -107,6 +109,22 @@ class SQLMixin:
                        "login_timeout": getattr(self, 'connect_timeout', 5),
                        "port": self.port,
                        "as_dict": True
+                       },
+                      autocommitable=True)
+
+    def _init_mysql(self):
+        try:
+            import pymysql
+        except ImportError:
+            raise exceptions.MissingDependencyError("pymysql")
+
+        self._connect(pymysql,
+                      {"database": self.database,
+                       "user": self.user,
+                       "password": self.password,
+                       "host": self.host,
+                       "port": self.port,
+                       "connect_timeout": getattr(self, 'connect_timeout', 5)
                        },
                       autocommitable=True)
 
