@@ -127,6 +127,7 @@ class SQLMixin:
                        "connect_timeout": getattr(self, 'connect_timeout', 5)
                        },
                       autocommitable=True)
+        self.cur.execute("SET sql_mode = CONCAT_WS(',', (SELECT @@sql_mode), 'ANSI_QUOTES')")
 
     def execute(self, query: str, values: tuple, rollback=False):
         try:
