@@ -2905,8 +2905,7 @@ Order of operation: `strip -> replace -> split`. These three methods can be comb
 
 ### Generic DB Lookup <div id="intelmq.bots.experts.generic_db_lookup.expert" />
 
-This bot is capable for enriching intelmq events by lookups to a database. Currently only PostgreSQL and SQLite are
-supported.
+This bot is capable for enriching intelmq events by lookups to a database. Currently PostgreSQL, SQLite, MSSQL, and MySQL/MariaDB are supported.
 
 If more than one result is returned, a ValueError is raised.
 
@@ -2918,7 +2917,7 @@ If more than one result is returned, a ValueError is raised.
 
 **`engine`**
 
-(required, string) Allowed values: `postgresql` or `sqlite`.
+(required, string) Allowed values: `postgresql`, `sqlite`, `mssql`, or `mysql`.
 
 **`database`**
 
@@ -2928,23 +2927,25 @@ If more than one result is returned, a ValueError is raised.
 
 (optional, string) Name of the table. Defaults to `contacts`.
 
-*PostgreSQL specific parameters*
+*Database server (i.e. not SQLite) specific parameters*
 
 **`host`**
 
-(optional, string) Hostname of the PostgreSQL server. Defaults to `localhost`.
+(optional, string) Hostname of the database server. Defaults to `localhost`.
 
 **`port`**
 
-(optional, integer) Port of the PostgreSQL server. Defaults to 5432.
+(optional, integer) Port of the database server. Defaults to 5432 (which is the default for PostgreSQL).
 
 **`user`**
 
-(optional, string) Username for accessing PostgreSQL. Defaults to `intelmq`.
+(optional, string) Username for accessing the database server. Defaults to `intelmq`.
 
 **`password`**
 
-(optional, string) Password for accessing PostgreSQL. Defaults to ?.
+(optional, string) Password for accessing the database server. Defaults to ?.
+
+*PostgreSQL specific parameters*
 
 **`sslmode`**
 
@@ -5294,7 +5295,7 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 
 ### SQL <div id="intelmq.bots.outputs.sql.output" />
 
-SQL is the bot responsible to send events to a PostgreSQL, SQLite, or MSSQL Database.
+SQL is the bot responsible to send events to a PostgreSQL, SQLite, MSSQL, or MySQL/MariaDB database.
 
 !!! note
     When activating autocommit, transactions are not used. See: <http://initd.org/psycopg/docs/connection.html#connection.autocommit>
@@ -5311,7 +5312,7 @@ The parameters marked with 'PostgreSQL' will be sent to libpq via psycopg2. Chec
 
 **`engine`**
 
-(required, string) Allowed values are `postgresql`, `sqlite`, or `mssql`.
+(required, string) Allowed values are `postgresql`, `sqlite`, `mssql`, or `mysql`.
 
 **`database`**
 
@@ -5343,7 +5344,7 @@ The parameters marked with 'PostgreSQL' will be sent to libpq via psycopg2. Chec
 
 **`sslmode`**
 
-(optional, string) Database sslmode, Allowed values: `disable`, `allow`, `prefer`, `require`, `verify-ca` or `verify-full`. See: <https://www.postgresql.org/docs/current/static/images/libpq-connect.html#libpq-connect-sslmode>. Defaults to `require`.
+(optional, string, PostgreSQL only) Database sslmode, Allowed values: `disable`, `allow`, `prefer`, `require`, `verify-ca` or `verify-full`. See: <https://www.postgresql.org/docs/current/static/images/libpq-connect.html#libpq-connect-sslmode>. Defaults to `require`.
 
 **`table`**
 

@@ -16,7 +16,7 @@ class SQLMixin:
     You do not have to bother:
     * connecting database in the self.init() method, just call super().init(), self.cur will be set
     * catching exceptions, just call self.execute() instead of self.cur.execute()
-    * self.format_char will be set to '%s' in PostgreSQL and to '?' in SQLite
+    * self.format_char will be set to '?' in SQLite and '%s' otherwise
     """
 
     POSTGRESQL = "postgresql"
