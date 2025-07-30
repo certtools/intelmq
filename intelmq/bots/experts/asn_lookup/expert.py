@@ -80,7 +80,7 @@ class ASNLookupExpertBot(ExpertBot):
 
         # Check the age of the database file
         # use local time zone for both time operations
-        if datetime.now() - datetime.fromtimestamp(database_path.stat().st_mtime) < timedelta(weeks=1):
+        if datetime.now() - datetime.fromtimestamp(database_path.stat().st_mtime) > timedelta(weeks=1):
             return [["warning", f"Database ({database_path!s}) is older than one week. Check the auto update, see: https://docs.intelmq.org/latest/user/bots/#asn-lookup."]]
 
     @classmethod
