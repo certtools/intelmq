@@ -584,7 +584,7 @@ Get some debugging output on the settings and the environment (to be extended):
                     stopped_but_still_running_bots.remove(bot_id)
 
             # check if all bots are stopped -> no need to wait further
-            if len(stopped_but_still_running_bots) == 0:
+            if not stopped_but_still_running_bots:
                 break
             # the longer the bots need to terminate the longer we wait to check
             # again to avoid long-term load on the system
