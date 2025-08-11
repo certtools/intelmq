@@ -578,10 +578,11 @@ Get some debugging output on the settings and the environment (to be extended):
             # give the bots some time to terminate
             time.sleep(sleep_time)
             # update the botnet_status
-            for bot_id in stopped_but_still_running_bots:
-                botnet_status[bot_id] = self.bot_status(bot_id)[1]
-                if botnet_status[bot_id] in ['stopped', 'disabled']:
-                    stopped_but_still_running_bots.remove(bot_id)
+            # only keep bots in the list which are not stopped already
+            stopped_but_still_running_bots = list(filter(
+                lambda bot_id: self.bot_status(bot_id)[1] not in ['stopped', 'disabled'],
+                stopped_but_still_running_bots
+            ))
 
             # check if all bots are stopped -> no need to wait further
             if not stopped_but_still_running_bots:
