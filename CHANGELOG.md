@@ -38,6 +38,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
   - Use database path matching to installation type (PR#2606 by Sebastian Wagner).
   - Add new mode `random_single_value` (PR#2601 by Sebastian Wagner).
 - `intelmq.bots.experts.sieve.expert`: Test for textX dependency in self-check (PR#2605 by Sebastian Wagner).
+- `intelmq.bots.experts.trusted_introducer_lookup.expert`: Change to new TI database URL (fixes #2620, PR#2633 by Sebastian Wagner).
 
 #### Outputs
 - `intelmq.bots.outputs.smtp_batch.output`:
