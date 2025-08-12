@@ -29,9 +29,11 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 ### Bots
 #### Collectors
+- Remove `intelmq.bots.collectors.blueliv` as it uses an unmaintained library, does not work any more and breaks other CI tests (fixes #2593, PR#2632 by Sebastian Wagner).
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Add mapping for TOR and ipv6-icmp protocol (PR#2621 by Mikk Margus Möll).
+- Remove `intelmq.bots.collectors.blueliv` as it is obsolete with the removed collector (PR#2632 by Sebastian Wagner).
 
 #### Experts
 - `intelmq.bots.experts.asn_lookup.expert`:
