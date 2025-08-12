@@ -9,6 +9,9 @@ from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.mixins import HttpMixin
 
 
+TI_DATABASE_URL = "https://www.trusted-introducer.org/trusted-introducer/directory/downloads/json/teams/"
+
+
 class TrustedIntroducerLookupExpertBot(ExpertBot, HttpMixin):
     """ Get trusted introducer lookup data"""
     order: str = 'domain, asn'
@@ -23,7 +26,7 @@ class TrustedIntroducerLookupExpertBot(ExpertBot, HttpMixin):
         for entry in self.__order:
             self.__ti_dict[entry] = {}
 
-        resp = self.http_get(url="https://www.trusted-introducer.org/directory/teams.json")
+        resp = self.http_get(url=TI_DATABASE_URL)
         resp = resp.json()
         for introducer in resp:
             abuse_contact = ""
