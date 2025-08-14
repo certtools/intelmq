@@ -24,7 +24,7 @@ def itemgetter_tuple(*items):
 
 
 class SQLOutputBot(OutputBot, SQLMixin):
-    """Send events to a PostgreSQL or SQLite database"""
+    """Send events to an SQL database"""
     autocommit = True
     database = "intelmq-events"
     engine = None
