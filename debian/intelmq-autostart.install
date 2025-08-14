@@ -1,0 +1,3 @@
+contrib/autostart/intelmq-periodic-start.timer /lib/systemd/system/
+contrib/autostart/intelmq-start.service /lib/systemd/system/
+contrib/autostart/intelmq-start.sh /usr/bin/
