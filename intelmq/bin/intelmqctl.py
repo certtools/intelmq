@@ -799,7 +799,7 @@ Get some debugging output on the settings and the environment (to be extended):
             if self._parameters.logging_handler == 'syslog':
                 log_message = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
 
-            if type(log_message) is not dict:
+            if not isinstance(log_message, dict):
                 if self._parameters.logging_handler == 'file':
                     message_overflow = '\n'.join([line, message_overflow])
                 continue
@@ -1084,7 +1084,7 @@ Get some debugging output on the settings and the environment (to be extended):
                 result['traceback'] = traceback.format_exc()
                 result['success'] = False
             else:
-                if type(retval) is str:
+                if isinstance(retval, str):
                     self._logger.error('Upgrade %r failed: %s', function, retval)
                     result['message'] = retval
                     result['success'] = False
@@ -1176,7 +1176,7 @@ Get some debugging output on the settings and the environment (to be extended):
                         result['traceback'] = traceback.format_exc()
                         result['success'] = False
                     else:
-                        if type(retval) is str:
+                        if isinstance(retval, str):
                             self._logger.error('%s: Upgrade failed: %s', docstring, retval)
                             result['message'] = retval
                             result['success'] = False
