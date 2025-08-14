@@ -1239,7 +1239,7 @@ class ParserBot(Bot):
                 value = self.parse_line(line, report)
                 if value is None:
                     continue
-                elif isinstace(value, list)  or isinstance(value, types.GeneratorType):
+                elif isinstance(value, list)  or isinstance(value, types.GeneratorType):
                     # filter out None
                     events: list[libmessage.Event] = list(filter(bool, value))
                 else:
