@@ -47,14 +47,15 @@ class RDAPExpertBot(ExpertBot, CacheMixin):
         # get bootstrapped servers
         for service in self.rdap_bootstrapped_servers:
             if type(self.rdap_bootstrapped_servers[service]) is str:
+            if isinstance(self.rdap_bootstrapped_servers[service], str):
                 self.__rdap_directory[service] = {"url": self.rdap_bootstrapped_servers[service]}
-            elif type(self.rdap_bootstrapped_servers) is dict:
+            elif isinstance(self.rdap_bootstrapped_servers, dict):
                 self.__rdap_directory[service] = self.rdap_bootstrapped_servers[service]
 
     def parse_entities(self, vcardArray) -> list:
         vcard = []
         for vcardentry in vcardArray:
-            if type(vcardentry) is str:
+            if isinstance(vcardentry, str):
                 continue
 
             for vcarddata in vcardentry:
