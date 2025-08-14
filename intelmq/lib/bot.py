@@ -528,8 +528,7 @@ class Bot:
         """Initially set destination paths to 0 to reset them in stats cache"""
         if not self.destination_queues:
             return
-        queues_type = type(self.destination_queues)
-        if queues_type is dict:
+        if isinstance(self.destination_queues, dict):
             for path in self.destination_queues.keys():
                 self.__message_counter["path_total"][path] = 0
         else:
@@ -1240,7 +1239,7 @@ class ParserBot(Bot):
                 value = self.parse_line(line, report)
                 if value is None:
                     continue
-                elif type(value) is list or isinstance(value, types.GeneratorType):
+                elif isinstace(value, list)  or isinstance(value, types.GeneratorType):
                     # filter out None
                     events: list[libmessage.Event] = list(filter(bool, value))
                 else:
