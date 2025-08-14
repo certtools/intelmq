@@ -200,7 +200,7 @@ def v100_dev7_modify_syntax(configuration, harmonization, dry_run, **kwargs):
         if bot["module"] == "intelmq.bots.experts.modify.expert":
             if "configuration_path" in bot["parameters"]:
                 config = load_configuration(bot["parameters"]["configuration_path"])
-                if isinstace(config, dict):
+                if isinstance(config, dict):
                     new_config = modify_expert_convert_config(config)
                     if len(config) != len(new_config):
                         return 'Error converting modify expert syntax. Different size of configurations. Please report this.'
