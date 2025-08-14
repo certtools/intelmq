@@ -22,3 +22,6 @@ test:
 
 codestyle:
 	pycodestyle intelmq/{bots,lib,bin}
+
+licenses:
+	reuse lint

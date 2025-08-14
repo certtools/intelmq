@@ -390,10 +390,11 @@ Usually, this configuration doesn't need any change. It is mostly maintained by 
 }
 ```
 
+## Automatic start
 
+By default the operating system does not start any IntelMQ bots by itself, they must be started by `intelmqctl start`.
 
+In order to automatically start all enabled bots by default, you can either setup your own job scheduling or use a shorthand:
 
-
-
-
-
+In a package-installation, you can install the package `intelmq-autostart`.
+It calls `intelmqctl start` on system boot after the message queue Redis/Valkey is available and then every five minutes.
