@@ -50,7 +50,7 @@ class GenericCsvParserBot(ParserBot):
 
     def init(self):
         # convert columns to an array
-        if type(self.columns) is str:
+        if isinstance(self.columns, str): 
             self.columns = [column.strip() for column in self.columns.split(",")]
 
         if self.type_translation and isinstance(self.type_translation, str):  # not-empty string
