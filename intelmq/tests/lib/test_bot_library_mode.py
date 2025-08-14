@@ -32,6 +32,7 @@ EXAMPLE_IP_INPUT = {"source.ip": "192.0.43.7",  # icann.org.
                     "destination.ip": "192.0.43.8",  # iana.org.
                     "time.observation": "2015-01-01T00:00:00+00:00",
                     }
+EXAMPLE_IP_OUTPUT = MessageFactory.from_dict(EXAMPLE_IP_INPUT, default_type='Event')  # adds __type = Event
 
 
 class BrokenInitExpertBot(ExpertBot):
@@ -130,7 +131,7 @@ def test_bot_multi_message():
 
 def test_bot_raises_and_second_message():
     """
-    The first message raises an error and the second message
+    The first message raises an error and the second message is processed correctly
     This test is based on an issue where the exception-raising message was not cleared from the internal message store of the Bot/Pipeline instance and thus re-used on the second run
     """
     raises_on_first_run = RaisesOnFirstRunExpertBot('raises', settings=BotLibSettings)
@@ -138,7 +139,7 @@ def test_bot_raises_and_second_message():
         raises_on_first_run.process_message(EXAMPLE_DATA_URL)
     queues = raises_on_first_run.process_message(EXAMPLE_IP_INPUT)
     assert len(queues['output']) == 1
-    assertMessageEqual(queues['output'][0], EXAMPLE_IP_INPUT)
+    assertMessageEqual(queues['output'][0], EXAMPLE_IP_OUTPUT)
 
 
 if __name__ == '__main__':  # pragma: no cover

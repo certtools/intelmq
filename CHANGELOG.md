@@ -23,6 +23,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 - New parameter `stop_retry_limit` to gracefully handle stopping bots which take longer to shutdown (PR#2598 by Lukas Heindl, fixes #2595).
 - `intelmq.lib.datatypes`: Remove unneeded Dict39 alias (PR#2639 by Nakul Rajpal, fixes #2635)
 - `intelmq.lib.mixins.http`: Only set HTTP header 'Authorization' if username or password are set and are not both empty string as they are by default in the Manager (fixes #2590, PR#2634 by Sebastian Wagner).
+- `intelmq.lib.message.Message.from_dict`: Do not modify the dict parameter by adding the `__type` field and raise an error when type is not determinable (PR#2545 by Sebastian Wagner).
 
 ### Development
 
@@ -49,6 +50,9 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Add mapping for TOR and ipv6-icmp protocol (PR#2621 by Mikk Margus Möll).
 - Remove `intelmq.bots.collectors.blueliv` as it is obsolete with the removed collector (PR#2632 by Sebastian Wagner).
+- `intelmq.bots.parser.json.parser`:
+  - Support data containing lists of JSON Events (PR#2545 by Tim de Boer).
+  - Add default `classification.type` with value `undetermined` if input data has now classification itself (PR#2545 by Sebastian Wagner).
 
 #### Experts
 - `intelmq.bots.experts.asn_lookup.expert`:

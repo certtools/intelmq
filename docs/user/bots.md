@@ -1925,11 +1925,68 @@ also <https://www.crummy.com/software/BeautifulSoup/bs4/doc/>). Defaults to `htm
 
 ---
 
-### JSON (TODO) <div id="intelmq.bots.parsers.json.parser" />
+### JSON <div id="intelmq.bots.parsers.json.parser" />
 
-TODO
+Parses JSON events that are already in IntelMQ format.
+If the input data did not contain the field `classification.type`, it is set to `undetermined`.
+
+Supports multiple different modes:
+
+#### Input data is one event
+Example:
+```json
+{ INTELMQ data... }
+```
+or:
+```
+{
+  INTELMQ data...
+}
+```
+
+Configuration:
+* `splitlines`: False
+* `multiple_events`: False
+
+#### Input data is in JSON stream format
+Example:
+```json
+{ INTELMQ data... }
+{ INTELMQ data... }
+{ INTELMQ data... }
+```
+
+Configuration:
+* `splitlines`: True
+* `multiple_events`: False
+
+#### Input data is a list of events
+Example:
+```json
+[
+  { INTELMQ data... },
+  { INTELMQ data... },
+  ...
+]
+```
+
+Configuration:
+* `splitlines`: False
+* `multiple_events`: True
+
+#### Configuration
 
 **Module:** `intelmq.bots.parsers.json.parser`
+
+**Parameters:**
+
+**`splitlines`**
+
+(optional, boolean) When the input file contains one JSON dictionary per line, set this to `true`. Defaults to `false`.
+
+**`multiple_events`**
+
+(optional, string) When the input file contains a JSON list of dictionaries, set this to `true`. Defaults to `false`.
 
 ---
 
