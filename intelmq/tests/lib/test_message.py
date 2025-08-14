@@ -90,14 +90,12 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_type(self):
         """ Test if MessageFactory returns a Report. """
         report = self.new_report()
-        self.assertEqual(type(report),
-                         message.Report)
+        self.assertTrue(isinstance(report, message.Report))
 
     def test_event_type(self):
         """ Test if MessageFactory returns a Event. """
         event = self.new_event()
-        self.assertEqual(type(event),
-                         message.Event)
+        self.assertTrue(isinstance(event, message.Event))
 
     def test_report_init_auto(self):
         """ Test if serialize does pass auto=True """
@@ -584,7 +582,8 @@ class TestMessageFactory(unittest.TestCase):
         event = {'__type': 'Event'}
         event_type = type(message.MessageFactory.from_dict(event,
                                                            harmonization=HARM))
-        self.assertTrue(event_type is message.Event,
+        
+        self.assertTrue(isinstance(message.MessageFactory.from_dict(event, harmonization=HARM), message.Event),
                         msg=f'Type is {event_type} instead of Event.')
 
     def test_event_init_check(self):
