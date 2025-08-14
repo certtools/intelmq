@@ -116,10 +116,9 @@ class Pipeline:
             self.internal_queue = None if queues is None else f'{queues}-internal'
 
         elif queues_type == "destination":
-            type_ = type(queues)
-            if type_ is list:
+            if isinstace(queues, list):
                 q = {"_default": queues}
-            elif type_ is str:
+            elif isinstance(queues, str):
                 q = {"_default": queues.split()}
             elif isinstance(queues, dict):
                 q = queues
