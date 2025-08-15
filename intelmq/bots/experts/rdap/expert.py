@@ -46,7 +46,6 @@ class RDAPExpertBot(ExpertBot, CacheMixin):
 
         # get bootstrapped servers
         for service in self.rdap_bootstrapped_servers:
-            if type(self.rdap_bootstrapped_servers[service]) is str:
             if isinstance(self.rdap_bootstrapped_servers[service], str):
                 self.__rdap_directory[service] = {"url": self.rdap_bootstrapped_servers[service]}
             elif isinstance(self.rdap_bootstrapped_servers, dict):
