@@ -270,7 +270,7 @@ class BotTestCase:
             for msg in self.input_message:
                 if isinstance(msg, dict):
                     self.input_queue.append(json.dumps(msg))
-                elif issubclass(type(msg), message.Message):
+                elif isinstance(msg, message.Message):
                     self.input_queue.append(msg.serialize())
                 else:
                     self.input_queue.append(msg)
