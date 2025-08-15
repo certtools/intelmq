@@ -580,10 +580,9 @@ class TestMessageFactory(unittest.TestCase):
     def test_message_from_dict_return_type(self):
         """ Test if from_dict() returns the correct class. """
         event = {'__type': 'Event'}
-        event_type = type(message.MessageFactory.from_dict(event,
-                                                           harmonization=HARM))
-        
-        self.assertTrue(isinstance(message.MessageFactory.from_dict(event, harmonization=HARM), message.Event),
+        event_message = message.MessageFactory.from_dict(event,harmonization=HARM)
+        event_type = type(event_message)
+        self.assertTrue(isinstance(event_message, message.Event),
                         msg=f'Type is {event_type} instead of Event.')
 
     def test_event_init_check(self):
