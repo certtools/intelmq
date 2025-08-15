@@ -86,7 +86,7 @@ class FilterExpertBot(ExpertBot):
                     self.acknowledge_message()
                     self.logger.debug("Filtered out event with time.source %s.", event.get('time.source'))
                     return
-                if isinstance(self.not_before, datetime)  and event_time < self.not_before:
+                if isinstance(self.not_before, datetime) and event_time < self.not_before:
                     self.acknowledge_message()
                     self.logger.debug("Filtered out event with time.source %r.", event.get('time.source'))
                     return
