@@ -1,0 +1,4 @@
+# SPDX-FileCopyrightText: 2025 Ladislav Baco
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+stix2-patterns>=2.0.0

@@ -1802,6 +1802,234 @@ providers:
       revision: 2020-06-30
       documentation: https://www.eset.com/int/business/services/threat-intelligence/
       public: false
+    APT IoC:
+      description: Indicators of Compromise associated with APT groups' attacks.
+      additional_information:
+      documentation: https://help.eset.com/eti_portal/en-US/apt-feed.html
+      revision: 2025-05-01
+      public: false
+      bots:
+        collector:
+          module: intelmq.bots.collectors.taxii.collector
+          parameters:
+            name: __FEED__
+            provider: __PROVIDER__
+            username: <username>
+            password: <password>
+            collection: https://taxii.eset.com/taxii2/643f4eb5-f8b7-46a3-a606-6d61d5ce223a/collections/97e3eb74ae5f46dd9e22f677a6938ee7/
+            time_delta: 3600
+        parser:
+          module: intelmq.bots.parsers.stix.parser_eset
+          parameters:
+    Botnet:
+      description: Data from automated botnet tracking system. Indicators of Compromise include C&Cs (URLs)  and MD5, SHA-1, SHA-256 (currently not implemented in TStixParserBot).
+      additional_information:
+      documentation: https://help.eset.com/eti_portal/en-US/botnet-feed.html
+      revision: 2025-05-01
+      public: false
+      bots:
+        collector:
+          module: intelmq.bots.collectors.taxii.collector
+          parameters:
+            name: __FEED__
+            provider: __PROVIDER__
+            username: <username>
+            password: <password>
+            collection: https://taxii.eset.com/taxii2/643f4eb5-f8b7-46a3-a606-6d61d5ce223a/collections/0abb06690b0b47e49cd7794396b76b20/
+            time_delta: 3600
+        parser:
+          module: intelmq.bots.parsers.stix.parser_eset
+          parameters:
+    Botnet C&C:
+      description: Subset of a Botnet feed, provides information about URLs of Command and Control (C&C) servers and associated data.
+      additional_information:
+      documentation: https://help.eset.com/eti_portal/en-US/cc-feed.html
+      revision: 2025-05-01
+      public: false
+      bots:
+        collector:
+          module: intelmq.bots.collectors.taxii.collector
+          parameters:
+            name: __FEED__
+            provider: __PROVIDER__
+            username: <username>
+            password: <password>
+            collection: https://taxii.eset.com/taxii2/643f4eb5-f8b7-46a3-a606-6d61d5ce223a/collections/d1923a526e8f400dbb301259240ee3d5/
+            time_delta: 3600
+        parser:
+          module: intelmq.bots.parsers.stix.parser_eset
+          parameters:
+    Botnet Target:
+      description: Subset of a Botnet feed, provides information about the targets.
+      additional_information:
+      documentation: https://help.eset.com/eti_portal/en-US/target-feed.html
+      revision: 2025-05-01
+      public: false
+      bots:
+        collector:
+          module: intelmq.bots.collectors.taxii.collector
+          parameters:
+            name: __FEED__
+            provider: __PROVIDER__
+            username: <username>
+            password: <password>
+            collection: https://taxii.eset.com/taxii2/643f4eb5-f8b7-46a3-a606-6d61d5ce223a/collections/61b6e4f9153e411ca7a9982a2c6ae788/
+            time_delta: 3600
+        parser:
+          module: intelmq.bots.parsers.stix.parser_eset
+          parameters:
+    Cryptoscam:
+      description: Subset of scam domains and URLs that contain targeted information about the current and prevalent crypto scam domains, URLs, and associated data.
+      additional_information:
+      documentation: https://help.eset.com/eti_portal/en-US/cryptoscam_feed.html
+      revision: 2025-05-01
+      public: false
+      bots:
+        collector:
+          module: intelmq.bots.collectors.taxii.collector
+          parameters:
+            name: __FEED__
+            provider: __PROVIDER__
+            username: <username>
+            password: <password>
+            collection: https://taxii.eset.com/taxii2/643f4eb5-f8b7-46a3-a606-6d61d5ce223a/collections/2c183ce9551a43338c6cc2ed7c2a704d/
+            time_delta: 3600
+        parser:
+          module: intelmq.bots.parsers.stix.parser_eset
+          parameters:
+    Domain:
+      description: The feed covers the domain name, the data associated with it, and respective malicious activity.
+      additional_information:
+      documentation: https://help.eset.com/eti_portal/en-US/domain-feed.html
+      revision: 2025-05-01
+      public: false
+      bots:
+        collector:
+          module: intelmq.bots.collectors.taxii.collector
+          parameters:
+            name: __FEED__
+            provider: __PROVIDER__
+            username: <username>
+            password: <password>
+            collection: https://taxii.eset.com/taxii2/643f4eb5-f8b7-46a3-a606-6d61d5ce223a/collections/a34aa0a4f9de419582a883863503f9c4/
+            time_delta: 3600
+        parser:
+          module: intelmq.bots.parsers.stix.parser_eset
+          parameters:
+    IP:
+      description: Current and prevalent malicious and abusive IPs and some data associated with them.
+      additional_information:
+      documentation: https://help.eset.com/eti_portal/en-US/ip-feed.html
+      revision: 2025-05-01
+      public: false
+      bots:
+        collector:
+          module: intelmq.bots.collectors.taxii.collector
+          parameters:
+            name: __FEED__
+            provider: __PROVIDER__
+            username: <username>
+            password: <password>
+            collection: https://taxii.eset.com/taxii2/643f4eb5-f8b7-46a3-a606-6d61d5ce223a/collections/baaed2a92335418aa753fe944e13c23a/
+            time_delta: 3600
+        parser:
+          module: intelmq.bots.parsers.stix.parser_eset
+          parameters:
+    Phishing URL:
+      description: Phishing URLs direct recipients to fake websites and attempt to entice them into divulging sensitive data such as login credentials or financial information.
+      additional_information:
+      documentation: https://help.eset.com/eti_portal/en-US/phishing_url_feed.html
+      revision: 2025-05-01
+      public: false
+      bots:
+        collector:
+          module: intelmq.bots.collectors.taxii.collector
+          parameters:
+            name: __FEED__
+            provider: __PROVIDER__
+            username: <username>
+            password: <password>
+            collection: https://taxii.eset.com/taxii2/643f4eb5-f8b7-46a3-a606-6d61d5ce223a/collections/d0a6c0f962dd4dd2b3eeb96b18612584/
+            time_delta: 3600
+        parser:
+          module: intelmq.bots.parsers.stix.parser_eset
+          parameters:
+    Scam URL:
+      description: This feed covers fraudulent electronic shops, investment scams, dating scams.
+      additional_information:
+      documentation: https://help.eset.com/eti_portal/en-US/scam_url_feed.html
+      revision: 2025-05-01
+      public: false
+      bots:
+        collector:
+          module: intelmq.bots.collectors.taxii.collector
+          parameters:
+            name: __FEED__
+            provider: __PROVIDER__
+            username: <username>
+            password: <password>
+            collection: https://taxii.eset.com/taxii2/643f4eb5-f8b7-46a3-a606-6d61d5ce223a/collections/2130adc3c67c43f9a3664b187931375e/
+            time_delta: 3600
+        parser:
+          module: intelmq.bots.parsers.stix.parser_eset
+          parameters:
+    Smishing:
+      description: The Smishing feed works exactly the same as the SMS Scam feed except that the fraudulent activity utilizes smishing.
+      additional_information:
+      documentation: https://help.eset.com/eti_portal/en-US/smishing_feed.html
+      revision: 2025-05-01
+      public: false
+      bots:
+        collector:
+          module: intelmq.bots.collectors.taxii.collector
+          parameters:
+            name: __FEED__
+            provider: __PROVIDER__
+            username: <username>
+            password: <password>
+            collection: https://taxii.eset.com/taxii2/643f4eb5-f8b7-46a3-a606-6d61d5ce223a/collections/330ad7d0c736476babe5e49077b96c95/
+            time_delta: 3600
+        parser:
+          module: intelmq.bots.parsers.stix.parser_eset
+          parameters:
+    SMS scam:
+      description: This feed contains targeted information about the current and prevalent SMS scam domains, URLs, and associated data.
+      additional_information:
+      documentation: https://help.eset.com/eti_portal/en-US/sms_scam_feed.html
+      revision: 2025-05-01
+      public: false
+      bots:
+        collector:
+          module: intelmq.bots.collectors.taxii.collector
+          parameters:
+            name: __FEED__
+            provider: __PROVIDER__
+            username: <username>
+            password: <password>
+            collection: https://taxii.eset.com/taxii2/643f4eb5-f8b7-46a3-a606-6d61d5ce223a/collections/6e20217a2e1246b8ab11be29f759f716/
+            time_delta: 3600
+        parser:
+          module: intelmq.bots.parsers.stix.parser_eset
+          parameters:
+    URL:
+      description: URL feed provides information about current and prevalent malicious URLs and associated data. The feed is created from all URL sources every five minutes, deduplication happens every 24 hours.
+      additional_information:
+      documentation: https://help.eset.com/eti_portal/en-US/url-feed.html
+      revision: 2025-05-01
+      public: false
+      bots:
+        collector:
+          module: intelmq.bots.collectors.taxii.collector
+          parameters:
+            name: __FEED__
+            provider: __PROVIDER__
+            username: <username>
+            password: <password>
+            collection: https://taxii.eset.com/taxii2/643f4eb5-f8b7-46a3-a606-6d61d5ce223a/collections/1d3208c143be49da8130f5a66fd3a0fa/
+            time_delta: 3600
+        parser:
+          module: intelmq.bots.parsers.stix.parser_eset
+          parameters:
   Shodan:
     Country Stream:
       description: Collects the Shodan stream for one or multiple countries from the Shodan API.

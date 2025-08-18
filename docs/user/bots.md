@@ -1276,6 +1276,40 @@ Also, you will need to know an appropriate STOMP *destination* (aka
 
 (optional, string) Password to use.
 
+---
+
+### TAXII <div id="intelmq.bots.collectors.taxii.collector" />
+
+Collects indicator objects from TAXII server.
+
+**Module:** `intelmq.bots.collectors.taxii.collector`
+
+**Requirements**
+
+Install `taxii2-client` module:
+
+```bash
+pip3 install -r intelmq/bots/collectors/taxii/REQUIREMENTS.txt
+```
+
+**Parameters (also expects [feed parameters](#feed-parameters)):**
+
+**`username`**
+
+(required, string) TAXII username.
+
+**`password`**
+
+(required, string) TAXII password.
+
+**`collection`**
+
+(required, string) The URL of collection to fetch.
+
+**`time_delta`**
+
+(optional, integer) The time (in seconds) span to look back. Default to 3600.
+
 ## Parser Bots
 
 If not set differently during parsing, all parser bots copy the following fields from the report to an event:
@@ -2233,6 +2267,48 @@ No additional parameters.
 Parses data from Spamhaus CERT feed.
 
 **Module:** `intelmq.bots.parsers.spamhaus.parser_cert`
+
+No additional parameters.
+
+---
+
+### STIX <div id="intelmq.bots.parsers.stix.parser" />
+
+Parses indicators objects in STIX format received by TAXII collector.
+
+**Module:** `intelmq.bots.parsers.stix.parser`
+
+**Requirements**
+
+Install `stix2-patterns` module:
+
+```bash
+pip3 install -r intelmq/bots/parsers/stix/REQUIREMENTS.txt
+```
+
+No additional parameters.
+
+---
+
+### STIX <div id="intelmq.bots.parsers.stix.parser_eset" />
+
+Parses ESET Threat Intelligence feeds.
+
+This bot Parses indicators objects in STIX format received by TAXII collector
+from ESET Threat Intelligence TAXII server.
+Then it analyzes event's comments based on STIX indicator's description
+and it adds classification.type and malware family info.
+It is recommended to apply TaxonomyExpertBot then to map the taxonomy.
+
+**Module:** `intelmq.bots.parsers.stix.parser_eset`
+
+**Requirements**
+
+Install `stix2-patterns` module:
+
+```bash
+pip3 install -r intelmq/bots/parsers/stix/REQUIREMENTS.txt
+```
 
 No additional parameters.
 

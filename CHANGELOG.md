@@ -28,9 +28,12 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.taxii.collector`: Added new bot to collect data from TAXII servers (PR#2611 by Ladislav Baco).
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Add mapping for TOR and ipv6-icmp protocol (PR#2621 by Mikk Margus Möll).
+- `intelmq.bots.parsers.stix.parser`: Added new bot to parse STIX data (PR#2611 by Ladislav Baco).
+- `intelmq.bots.parsers.stix.parser_eset`: Added new bot to parse STIX data from ESET (PR#2611 by Ladislav Baco).
 
 #### Experts
 - `intelmq.bots.experts.asn_lookup.expert`:
