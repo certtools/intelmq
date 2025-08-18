@@ -14,11 +14,13 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 --------------------------------
 
 ### Configuration
+- New parameter `stop_retry_limit` (PR#2598 by Lukas Heindl).
 
 ### Core
 - Drop support for Python 3.8 (fixes #2616, PR#2617 by Sebastian Wagner).
 - `intelmq.lib.splitreports`: Handle bot parameter `chunk_size` values empty string, due to missing parameter typing checks (PR#2604 by Sebastian Wagner).
 - `intelmq.lib.mixins.sql` Add Support for MySQL (PR#2625 by Karl-Johan Karlsson).
+- New parameter `stop_retry_limit` to gracefully handle stopping bots which take longer to shutdown (PR#2598 by Lukas Heindl, fixes #2595).
 
 ### Development
 

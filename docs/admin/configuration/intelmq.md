@@ -237,6 +237,13 @@ configured to do so.
 
 (optional, boolean) Verify the TLS certificate of the server. Defaults to true.
 
+**`stop_retry_limit`**
+
+(optional, integer) amount of retries when checking the status of a botnet after issuing `intelmqctl stop`. Each retry
+another *0.1s* longer is waited until a maximum of *5s* to sleep in each iteration is reached. Only applies when
+stopping a bot*net* (not individual bots).
+Defaults to 5.
+
 #### Individual Bot Configuration
 
 !!! info
