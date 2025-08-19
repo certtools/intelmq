@@ -138,5 +138,3 @@ class TimeFormat(str):
 
         return conversion, format_string
 
-
-Dict39 = dict
