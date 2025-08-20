@@ -1527,7 +1527,8 @@ class Parameters:
 
 
 BotLibSettings = {'logging_path': None,
-                         'source_pipeline_broker': 'Pythonlistsimple',
-                         'destination_pipeline_broker': 'Pythonlistsimple',
-                         'destination_queues': {'_default': 'output',
-                                                '_on_error': 'error'}}
+                  'source_pipeline_broker': 'Pythonlistsimple',
+                  'destination_pipeline_broker': 'Pythonlistsimple',
+                  'destination_queues': {'_default': 'output',
+                                         '_on_error': 'error'}}
+
