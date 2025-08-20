@@ -1531,4 +1531,3 @@ BotLibSettings = {'logging_path': None,
                   'destination_pipeline_broker': 'Pythonlistsimple',
                   'destination_queues': {'_default': 'output',
                                          '_on_error': 'error'}}
-
