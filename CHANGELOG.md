@@ -75,6 +75,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 - `intelmq/lib/bot_debugger.py`: Fix overwriting the runtime logging level by command line parameter (PR#2603 by Sebastian Wagner, fixes #2563).
 
 ### Contrib
+- Bash Completion: Adapt to YAML-style runtime configuration (PR#2642 by Sebastian Wagner, fixes #2094).
 
 ### Known issues
 
