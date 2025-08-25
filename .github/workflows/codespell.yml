@@ -18,7 +18,7 @@ on:
 jobs:
   codespell:
     name: Find and notify about common misspellings
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     # This should not fail the whole workflow run
     continue-on-error: true
 

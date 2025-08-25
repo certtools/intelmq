@@ -13,7 +13,8 @@ import json
 import re
 import warnings
 from collections import defaultdict
-from typing import Any, Dict, Iterable, Optional, Sequence, Union, Tuple
+from typing import Any, Dict, Optional, Union, Tuple
+from collections.abc import Iterable, Sequence
 from pkg_resources import resource_filename
 
 import intelmq.lib.exceptions as exceptions
@@ -332,7 +333,7 @@ class Message(dict):
         message = json.loads(message_string)
         return message
 
-    def __is_valid_key(self, key: str) -> Tuple[bool, str]:
+    def __is_valid_key(self, key: str) -> tuple[bool, str]:
         try:
             class_name, subitem = self.__get_type_config(key)
         except KeyError:
@@ -497,7 +498,7 @@ class Message(dict):
         """
         dict_eq = super().__eq__(other)
         if dict_eq and issubclass(type(other), Message):
-            type_eq = type(self) == type(other)
+            type_eq = type(self) is type(other)
             harm_eq = self.harmonization_config == other.harmonization_config if hasattr(other, 'harmonization_config') else False
             if type_eq and harm_eq:
                 return True

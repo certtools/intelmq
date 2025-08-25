@@ -90,7 +90,7 @@ class HTTPCollectorBot(CollectorBot, HttpMixin):
             self.logger.debug('Response body: %r.', resp.text)
             raise ValueError('HTTP response status code was %i.' % resp.status_code)
 
-        self.logger.info("Report downloaded.")
+        self.logger.info("Report downloaded (%sB).", len(resp.content))
 
         # PGP verification
         if self.use_gpg:

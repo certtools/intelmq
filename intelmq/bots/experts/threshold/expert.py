@@ -44,7 +44,8 @@ Parameters:
               messages seen (which will be the threshold value).
 
 """
-from typing import Iterable, Optional
+from typing import Optional
+from collections.abc import Iterable
 
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import ConfigurationError

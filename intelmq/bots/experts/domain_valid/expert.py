@@ -16,6 +16,7 @@ import sys
 
 import requests.exceptions
 
+from intelmq import VAR_STATE_PATH
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError, ConfigurationError
 from intelmq.lib.utils import get_bots_settings, create_request_session
@@ -24,7 +25,7 @@ from intelmq.bin.intelmqctl import IntelMQController
 
 class DomainValidExpertBot(ExpertBot):
     domain_field: str = 'source.fqdn'
-    tlds_domains_list: str = '/opt/intelmq/var/lib/bots/domain_valid/tlds-alpha-by-domain.txt'
+    tlds_domains_list: str = f"{VAR_STATE_PATH}domain_valid/tlds-alpha-by-domain.txt"
 
     def init(self):
         if validators is None:

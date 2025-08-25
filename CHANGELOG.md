@@ -1,59 +1,177 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2024 Sebastian Wagner
+   SPDX-FileCopyrightText: 2015-2025 Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 # CHANGELOG
 
 
-3.3.2 (unreleased)
-------------------
+This file lists all changes between IntelMQ releases.
+Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
+
+
+3.4.1 Patch release (unreleased)
+--------------------------------
 
 ### Configuration
+- New parameter `stop_retry_limit` (PR#2598 by Lukas Heindl).
 
 ### Core
-- Python 3.8 or newer is required (PR#2541 by Sebastian Wagner).
+- Drop support for Python 3.8 (fixes #2616, PR#2617 by Sebastian Wagner).
+- `intelmq.lib.splitreports`: Handle bot parameter `chunk_size` values empty string, due to missing parameter typing checks (PR#2604 by Sebastian Wagner).
+- `intelmq.lib.mixins.sql` Add Support for MySQL (PR#2625 by Karl-Johan Karlsson).
+- New parameter `stop_retry_limit` to gracefully handle stopping bots which take longer to shutdown (PR#2598 by Lukas Heindl, fixes #2595).
+- `intelmq.lib.datatypes`: Remove unneeded Dict39 alias (PR#2639 by Nakul Rajpal, fixes #2635)
 
 ### Development
 
 ### Data Format
 
+- Implementing [IEP009](https://github.com/certtools/ieps/tree/main/009) introducing fields to
+  identify products and vulnerabilities: `product.full_name`, `product.name`, `product.vendor`,
+  `product.version`, `product.vulnerabilities`. To store in existing PostgreSQL instances, a following
+  schema update will be necessary:
+  ```sql
+  ALTER TABLE events ADD "product.full_name" text;
+  ALTER TABLE events ADD "product.name" text;
+  ALTER TABLE events ADD "product.vendor" text;
+  ALTER TABLE events ADD "product.version" text;
+  ALTER TABLE events ADD "product.vulnerabilities" text;
+  ```
+
+### Bots
+#### Collectors
+- `intelmq.bots.collectors.mail.collector_mail_attach`: Decrypt GPG attachments (PR#2623 by Edvard Rejthar).
+- `intelmq.bots.collectors.shodan.collector_alert`: Added a new collector to query the Shodan Alert API (PR#2618 by Sebastian Wagner and Malawi CERT).
+- Remove `intelmq.bots.collectors.blueliv` as it uses an unmaintained library, does not work any more and breaks other CI tests (fixes #2593, PR#2632 by Sebastian Wagner).
+
+#### Parsers
+- `intelmq.bots.parsers.cymru.parser_cap_program`: Add mapping for TOR and ipv6-icmp protocol (PR#2621 by Mikk Margus Möll).
+- Remove `intelmq.bots.collectors.blueliv` as it is obsolete with the removed collector (PR#2632 by Sebastian Wagner).
+
+#### Experts
+- `intelmq.bots.experts.asn_lookup.expert`:
+  - Print URLs to stdout only in verbose mode (PR#2591 by Sebastian Wagner).
+  - Check for database file existence and writability (fixes #2566).
+  - Use database path matching to installation type (PR#2606 by Sebastian Wagner).
+- `intelmq.bots.experts.fake.expert`:
+  - Use database path matching to installation type (PR#2606 by Sebastian Wagner).
+  - Add new mode `random_single_value` (PR#2601 by Sebastian Wagner).
+- `intelmq.bots.experts.sieve.expert`: Test for textX dependency in self-check (PR#2605 by Sebastian Wagner).
+- `intelmq.bots.experts.trusted_introducer_lookup.expert`: Change to new TI database URL (fixes #2620, PR#2633 by Sebastian Wagner).
+
+#### Outputs
+- `intelmq.bots.outputs.smtp_batch.output`:
+  - Add new parameter `additional_grouping_keys` for an enhanced email batching feature.
+  - Add new parameter `templating` for additional template variables.
+  - Add new parameter `allowed_fieldnames` for csv field specification.
+  - Add new parameter `fieldnames_translation` for naming csv headers (PR#2610 by Lukas Heindl, fixes #2586).
+- `intelmq.bots.outputs.sql.output`: Add Support for MySQL (PR#2625 by Karl-Johan Karlsson).
+
+### Documentation
+- Fix and refresh links to mailing lists (PR#2609 by Kamil Mańkowski)
+- `Aggregate Bot`: Add illustration graphics (PR#2612 by Sebastian Wagner).
+
+### Packaging
+- Replace `/opt/intelmq` example paths in bots with variable `VAR_STATE_PATH` for correct paths in LSB-path setups like with packages (PR#2587 by Sebastian Wagner).
+- New deb-package `intelmq-contrib` with all `contrib/` scripts and documentation (PR#2614 by Sebastian Wagner).
+- New deb-package `intelmq-autostart` containing systemd services and timers to start all enabled IntelMQ bots at boot and periodically (PR#2638 by Sebastian Wagner).
+
+### Tests
+- `intelmq.tests.lib.test_pipeline.TestAmqp.test_acknowledge`: Skip on all Python versions when running on CI (PR#2602 by Sebastian Wagner).
+- `.github/workflows/codespell.yml`, `debian-package.yml`, `regexploit.yml`: Upgrade to `ubuntu-latest` runners (PR#2602 by Sebastian Wagner).
+- `intelmq.test.test_conf`: With changed behaviour in ruamel.yaml on line wrapping since version 0.18.13, only test the parsabilty of `runtime.yaml` (PR#2619 by Sebastian Wagner).
+- `intelmq.test.BotTestCase.test_static_bot_check_method`: Remove debugging stub raising for all non-empty checks (PR#2622 by Sebastian Wagner).
+
+### Tools
+- `intelmq.bin.intelmq_psql_initdb`: Use `JSONB` type by default, Postgres supports it since version 9 (PR#2597 by Sebastian Wagner).
+- `intelmq.bin.rewrite_config_files`: Removed obsolete JSON configuration file rewriter (PR#2613 by Sebastian Wagner).
+- `intelmq/lib/bot_debugger.py`: Fix overwriting the runtime logging level by command line parameter (PR#2603 by Sebastian Wagner, fixes #2563).
+- `intelmq.bin.intelmqctl`: Fix bot log level filtering (PR#2607 by Sebastian Wagner, fixes #2596).
+
+### Contrib
+- Bash Completion: Adapt to YAML-style runtime configuration (PR#2642 by Sebastian Wagner, fixes #2094).
+
+### Known issues
+
+
+3.4.0 Feature release (2025-03-14)
+----------------------------------
+
+### Configuration
+
+### Core
+- AMQP: Fix maintaining pipeline connection when during interrupted connections (PR#2533 by Kamil Mankowski).
+- Python 3.8 or newer is required (PR#2541 by Sebastian Wagner).
+- `intelmq.lib.utils.list_all_bots`/`intelmqctl check`: Fix check for bot executable in $PATH by using the bot name instead of the import path (fixes #2559, PR#2564 by Sebastian Wagner).
+
 ### Bots
 #### Collectors
 - `intelmq.bots.collectors.shadowserver.collector_reports_api.py`:
   - Fixed behaviour if parameter `types` value is empty string, behave the same way as not set, not like no type.
+- `intelmq.bots.collectors.misp`: Use `PyMISP` class instead of deprecated `ExpandedPyMISP` (PR#2532 by Radek Vyhnal)
+- `intelmq.bots.collectors.http.collector_http`: Log the downloaded size in bytes to ease troubleshooting (PR#2554 by Sebastian Wagner).
+- `intelmq.bots.collectors.mail.collector_mail_url`:
+  - Log the downloaded size in bytes to ease troubleshooting (PR#2554 by Sebastian Wagner).
+  - Fix import for Timeout exception preventing another exception (fixes #2555, PR#2556 by Sebastian Wagner).
+- Remove `intelmq.bots.collectors.twitter` as it uses an unmaintained library and does not work any more (fixes #2346, #2441, PR#2568 by Sebastian Wagner).
 
 #### Parsers
 - `intelmq.bots.parsers.shadowserver._config`:
   - fix error message formatting if schema file is absent (PR#2528 by Sebastian Wagner).
 - `intelmq.bots.parsers.shadowserver.parser`:
   - Fix to avoid schema download if not configured #2530.
+- `intelmq.bots.parsers.misp.parser`: Replace deprecated datetime function `utcfromtimestamp` for Ubuntu 24.04 compatibility (PR#2577 by Sebastian Wagner, fixes #2576, #2571).
+- `intelmq.bots.parsers.cleanmx.parser`: Replace deprecated datetime function `utcfromtimestamp` for Ubuntu 24.04 compatibility (PR#2577 by Sebastian Wagner, fixes #2576, #2571).
+- Renamed `intelmq.bots.parsers.twitter` to `intelmq.bots.parser.ioc_extractor` (PR#2568 by Sebastian Wagner).
+  - Added `intelmq.bots.parsers.twitter` as a stub to load the IoC Extractor parser.
 
 #### Experts
 - `intelmq.bots.experts.securitytxt`:
-  - Added new bot (PR#2538 by Frank Westers and Sebastian Wagner)
+  - Added new bot (PR#2538 by Frank Westers and Sebastian Wagner).
+- `intelmq.bots.experts.misp`: Use `PyMISP` class instead of deprecated `ExpandedPyMISP` (PR#2532 by Radek Vyhnal).
+- `intelmq.bots.experts.fake.expert`: New expert to fake data (PR#2567 by Sebastian Wagner).
 
 #### Outputs
 - `intelmq.bots.outputs.cif3.output`:
   - The requirement can only be installed on Python version < 3.12.
   - Add a check on the Python version and exit if incompatible.
-  - Add a deprecation warning (PR#2544 by Sebastian Wagner)
+  - Add a deprecation warning (PR#2544 by Sebastian Wagner).
+- `intelmq.bots.outputs.sql.output`:
+  - Treat an empty string `fields` parameter as unset parameter, fixing a crash in default configuration (PR#2548 by Sebastian Wagner, fixes #2548).
 
 ### Documentation
+- `docs/admin/installation/linux-packages`: Add `[signed-by=]` options, add wget command as alternative to curl (PR#2547 by Sebastian Wagner).
+- Add documentation on the Redis pipeline (databases, configuration), fix generic pipeline documentation and add missing information on parameters, add unlinked intelmqctl docs to the index and TOC (PR#2560 by Sebastian Wagner).
+- Remove empty page tutorials/intelmq-manager (PR#2562 by Sebastian Wagner).
 
 ### Packaging
+- Packages for Ubuntu 24.04 (by Sebastian Wagner, fixes #2571).
 
 ### Tests
 - Install build dependencies for `pymssql` on Python 3.8 as there are no wheels available for this Python version (PR#2542 by Sebastian Wagner).
 - Install `psql` explicitly for workflow support on other platforms such as act (PR#2542 by Sebastian Wagner).
 - Create intelmq user & group if running privileged to allow dropping privileges (PR#2542 by Sebastian Wagner).
-- `intelmq.tests.lib.test_pipeline.TestAmqp.test_acknowledge`: Also skip on Python 3.11 besides on 3.8 when running on CI (PR#2542 by Sebastian Wagner).
-
-### Tools
-
-### Contrib
+- `intelmq.tests.lib.test_pipeline.TestAmqp.test_acknowledge`: Also skip on Python 3.11 and 3.12 besides on 3.8 when running on CI (PR#2542 by Sebastian Wagner).
+- Full pytest workflow: Version-independent install of postgres client, for Ubuntu 24.04 (default on GitHub now) test environment compatibility (PR#2557 by Sebastian Wagner).
+- Debian package build workflow: Use artifact upload v4 instead of v3 (PR#2565 by Sebastian Wagner).
+- `intelmq.lib.test.BotTestCase`: Show the warnings and errors of a bot if the amount does not match the expected number (PR#2578 by Kamil Mankowski/Sebastian Wagner, related to #2571).
 
 ### Known issues
+This is short list of the most important known issues. The full list can be retrieved from [GitHub](https://github.com/certtools/intelmq/labels/bug?page=2&q=is%3Aopen+label%3Abug).
+- intelmqctl: interactive run ignores custom log level (#2563).
+- `intelmq.parsers.html_table` may not process invalid URLs in patched Python version due to changes in `urllib` (#2382).
+- Breaking changes in 'rt' 3.0 library (#2367).
+- Type error with SQL output bot's `prepare_values` returning list instead of tuple (#2255).
+- `intelmq_psql_initdb` does not work for SQLite (#2202).
+- intelmqsetup: should install a default state file (#2175).
+- Misp Expert - Crash if misp event already exist (#2170).
+- Spamhaus CERT parser uses wrong field (#2165).
+- Custom headers ignored in HTTPCollectorBot (#2150).
+- intelmqctl log: parsing syslog does not work (#2097).
+- Bash completion scripts depend on old JSON-based configuration files (#2094).
+- Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
+- Corrupt dump files when interrupted during writing (#870).
 
 
 3.3.1 (2024-09-03)
@@ -354,7 +472,7 @@ This is short list of the most important known issues. The full list can be retr
 - Added an ExpertBot class - it should be used by all expert bots as a parent class
 - Introduced a module for IntelMQ related datatypes `intelmq.lib.datatypes` which for now only contains an Enum listing the four bot types
 - Added a `bottype` attribute to CollectorBot, ParserBot, ExpertBot, OutputBot
-- Introduces a module for IntelMQ processmanagers. The processmanagers were up until now part of the intelmqct script.
+- Introduces a module for IntelMQ processmanagers. The processmanagers were up until now part of the intelmqctl script.
   They now reside in `intelmq.lib.processmanager` which also contains an interface definition the processmanager implementations must adhere to.
   Both the processmanagers and the `intelmqctl` script were cleaned up a bit.
   The `LogLevel` and `ReturnType` Enums were added to `intelmq.lib.datatypes`.

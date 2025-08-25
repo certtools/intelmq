@@ -1,0 +1,8 @@
+{
+    "event_fields": {
+        "extra.severity": {
+          "mode": "random_single_value",
+          "values": ["critical", "high", "medium", "low", "info", "undefined"]
+        }
+      }
+}

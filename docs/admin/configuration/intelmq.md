@@ -156,30 +156,14 @@ Some information can as well be found in Python's documentation on the used
 
 If the path `_on_error` exists for a bot, the message is also sent to this queue, instead of (only) dumping the file if
 configured to do so.
-
-##### Miscellaneous
-
-**`load_balance`**
-
-(required, boolean) this option allows you to choose the behavior of the queue. Use the following values:
-
-  - **true** - splits the messages into several queues without duplication
-  - **false** - duplicates the messages into each queue - When using AMQP as message broker, take a look at the `multithreading`{.interpreted-text role="ref"} section and the `instances_threads` parameter.
-
-**`rate_limit`**
-
-(required, integer) time interval (in seconds) between messages processing. int value.
-
-**`ssl_ca_certificate`**
-
-(optional, string) trusted CA certificate for IMAP connections (supported by some bots).
+##### Pipeline
 
 **`source_pipeline_broker`**
 
 (optional, string) Allowed values are `redis` and `amqp`. Selects the message broker IntelMQ should use. As this parameter can be overridden by each bot, this allows usage of different broker systems and hosts, as well as switching between them on the same IntelMQ instance. Defaults to `redis`.
 
   - **redis** - Please note that persistence has to be [manually activated](http://redis.io/topics/persistence).
-  - **amqp** - [Using the AMQP broker]() is currently beta but there are no known issues. A popular AMQP broker is [RabbitMQ](https://www.rabbitmq.com/).
+  - **amqp** - [Using the AMQP broker](../beta-features.md#using-amqp-message-broker) is currently beta but there are no known issues. A popular AMQP broker is [RabbitMQ](https://www.rabbitmq.com/).
 
 **`destination_pipeline_broker`**
 
@@ -220,6 +204,22 @@ configured to do so.
 
 (required, integer) broker database that the bot will use to connect and send messages (requirement from
   redis broker).
+##### Miscellaneous
+
+**`load_balance`**
+
+(required, boolean) this option allows you to choose the behavior of the queue. Use the following values:
+
+  - **true** - splits the messages into several queues without duplication
+  - **false** - duplicates the messages into each queue - When using AMQP as message broker, take a look at the `multithreading`{.interpreted-text role="ref"} section and the `instances_threads` parameter.
+
+**`rate_limit`**
+
+(required, integer) time interval (in seconds) between messages processing. int value.
+
+**`ssl_ca_certificate`**
+
+(optional, string) trusted CA certificate for IMAP connections (supported by some bots).
 
 **`http_proxy`**
 
@@ -236,6 +236,13 @@ configured to do so.
 **`http_verify_cert`**
 
 (optional, boolean) Verify the TLS certificate of the server. Defaults to true.
+
+**`stop_retry_limit`**
+
+(optional, integer) amount of retries when checking the status of a botnet after issuing `intelmqctl stop`. Each retry
+another *0.1s* longer is waited until a maximum of *5s* to sleep in each iteration is reached. Only applies when
+stopping a bot*net* (not individual bots).
+Defaults to 5.
 
 #### Individual Bot Configuration
 
@@ -383,10 +390,11 @@ Usually, this configuration doesn't need any change. It is mostly maintained by 
 }
 ```
 
+## Automatic start
 
+By default the operating system does not start any IntelMQ bots by itself, they must be started by `intelmqctl start`.
 
+In order to automatically start all enabled bots by default, you can either setup your own job scheduling or use a shorthand:
 
-
-
-
-
+In a package-installation, you can install the package `intelmq-autostart`.
+It calls `intelmqctl start` on system boot after the message queue Redis/Valkey is available and then every five minutes.

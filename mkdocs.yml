@@ -93,8 +93,6 @@ markdown_extensions:
 nav:
   - Introduction: 'index.md'
   - Overview: 'overview.md'
-  - Tutorials:
-      - Using IntelMQ Manager: 'tutorials/intelmq-manager.md'
   - User Guide:
       - Intro: 'user/intro.md'
       - Event: 'user/event.md'
@@ -116,9 +114,11 @@ nav:
           - IntelMQ: 'admin/configuration/intelmq.md'
           - IntelMQ API: 'admin/configuration/intelmq-api.md'
           - IntelMQ Manager: 'admin/configuration/intelmq-manager.md'
+          - Redis: 'admin/configuration/redis.md'
       - Management:
           - IntelMQ: 'admin/management/intelmq.md'
           - IntelMQ API: 'admin/management/intelmq-api.md'
+          - intelmqctl: 'admin/management/intelmqctl-more.md'
       - Database:
           - PostgreSQL: 'admin/database/postgresql.md'
           - Elasticsearch: 'admin/database/elasticsearch.md'

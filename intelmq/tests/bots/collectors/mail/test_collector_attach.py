@@ -7,6 +7,8 @@
 Testing Mail Attach collector
 """
 import os
+from shutil import copytree
+from tempfile import mkdtemp
 import unittest
 import unittest.mock as mock
 
@@ -15,7 +17,7 @@ import intelmq.lib.test as test
 from intelmq.bots.collectors.mail.collector_mail_attach import MailAttachCollectorBot
 from intelmq.lib.utils import base64_encode
 if os.getenv('INTELMQ_TEST_EXOTIC'):
-    from .lib import MockedZipImbox, MockedBadAttachmentImbox, MockedTextAttachmentImbox
+    from .lib import MockedZipImbox, MockedBadAttachmentImbox, MockedTextAttachmentImbox, MockedGpgAttachmentImbox
 
 REPORT_FOOBARZIP = {
                     '__type': 'Report',
@@ -30,6 +32,8 @@ REPORT_FOOBARZIP = {
                     }
 REPORT_FOOBARTXT = REPORT_FOOBARZIP.copy()
 REPORT_FOOBARTXT['extra.file_name'] = 'foobar.txt'
+REPORT_FOOBARGPG = REPORT_FOOBARZIP.copy()
+REPORT_FOOBARGPG['extra.file_name'] = 'foobar.txt.gpg'
 
 
 @test.skip_exotic()
@@ -47,7 +51,7 @@ class TestMailAttachCollectorBot(test.BotTestCase, unittest.TestCase):
                          'folder': None,
                          'subject_regex': None,
                          'attach_regex': '.*zip',
-                         'name': 'IMAP Feed',
+                         'name': 'IMAP Feed'
                          }
 
     def test_extract_files(self):
@@ -77,6 +81,53 @@ class TestMailAttachCollectorBot(test.BotTestCase, unittest.TestCase):
             self.run_bot(parameters={'attach_regex': '.*.txt$',
                                      'extract_files': False})
         self.assertMessageEqual(0, REPORT_FOOBARTXT)
+
+
+    def _make_ring(self):
+        temp_gnupg_dir = mkdtemp(prefix="gnupg-temp-")
+        copytree(os.environ.get('GPG_RING_PATH'), temp_gnupg_dir, dirs_exist_ok=True)
+        return temp_gnupg_dir
+
+
+    def test_gpg_attachment(self):
+        """
+        Attachment is GPG encrypted.
+        """
+        with mock.patch('imbox.Imbox', new=MockedGpgAttachmentImbox):
+            self.run_bot(parameters={'attach_regex': '.*.gpg$',
+                                     'extract_files': False,
+                                     'decrypt_openpgp': True,
+                                     'gpg_home': self._make_ring(),
+                                     'openpgp_passphrase': 'test'})
+        self.assertMessageEqual(0, REPORT_FOOBARGPG)
+
+    def test_gpg_wrong_passphrase(self):
+        """
+        Attachment is GPG encrypted. But we have wrong passphrase.
+        """
+        with mock.patch('imbox.Imbox', new=MockedGpgAttachmentImbox):
+            self.run_bot(parameters={'attach_regex': '.*.gpg$',
+                                     'extract_files': False,
+                                     'decrypt_openpgp': True,
+                                     'gpg_home': self._make_ring(),
+                                     'openpgp_passphrase': 'WRONG',
+                                     }, allowed_error_count=1)
+        self.assertLogMatches("Could not decrypt")
+        self.assertOutputQueueLen(0)
+
+    def test_gpg_not_encrypted(self):
+        """
+        We want to decrypt an attachment that is not encrypted.
+        """
+        with mock.patch('imbox.Imbox', new=MockedTextAttachmentImbox):
+            self.run_bot(parameters={'attach_regex': '.*.txt$',
+                                     'extract_files': False,
+                                     'decrypt_openpgp': True,
+                                     'gpg_home': self._make_ring(),
+                                     'openpgp_passphrase': 'test',
+                                     }, allowed_error_count=1)
+        self.assertLogMatches("Could not decrypt")
+        self.assertOutputQueueLen(0)
 
 
 if __name__ == '__main__':  # pragma: no cover

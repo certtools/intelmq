@@ -33,3 +33,15 @@ License:   AGPL-3.0-or-later
 Files:     docs/_static/n6/data-flow.png docs/_static/n6/n6-schemat2.png
 Copyright: CERT.pl <n6@cert.pl>
 License:   AGPL-3.0-only
+
+Files:  intelmq/tests/bots/collectors/mail/gpg_attachment.eml
+Copyright: 2025 Edvard Rejthar, CSIRT.cz <edvard.rejthar+intelmq@nic.cz>
+License: AGPL-3.0-or-later
+
+Files: intelmq/tests/bots/collectors/mail/gpg_wrong_attachment.eml
+Copyright: 2025 Edvard Rejthar, CSIRT.cz <edvard.rejthar+intelmq@nic.cz>
+License: AGPL-3.0-or-later
+
+Files: intelmq/tests/bots/collectors/mail/gpg_ring/**
+Copyright: 2025 Edvard Rejthar, CSIRT.cz <edvard.rejthar+intelmq@nic.cz>
+License: AGPL-3.0-or-later

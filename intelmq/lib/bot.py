@@ -40,7 +40,7 @@ from intelmq import (DEFAULT_LOGGING_PATH,
 from intelmq.lib import cache, exceptions, utils
 from intelmq.lib.pipeline import PipelineFactory, Pipeline
 from intelmq.lib.utils import RewindableFileHandle, base64_decode
-from intelmq.lib.datatypes import BotType, Dict39
+from intelmq.lib.datatypes import BotType
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot', 'OutputBot', 'ExpertBot']
 ALLOWED_SYSTEM_PARAMETERS = {'enabled', 'run_mode', 'group', 'description', 'module', 'name'}
@@ -56,7 +56,7 @@ class Bot:
     __stats_cache: cache.Cache = None
     __source_pipeline = None
     __destination_pipeline = None
-    __log_buffer: List[tuple] = []
+    __log_buffer: list[tuple] = []
     # runtime_file
     __runtime_settings: Optional[dict] = None
     # settings provided via parameter
@@ -612,7 +612,7 @@ class Bot:
                 print(level.upper(), '-', message)
         self.__log_buffer = []
 
-    def __check_bot_id(self, name: str) -> Tuple[str, str, str]:
+    def __check_bot_id(self, name: str) -> tuple[str, str, str]:
         res = re.fullmatch(r'([0-9a-zA-Z\-]+)(\.[0-9]+)?', name)
         if res:
             if not (res.group(2) and threading.current_thread() == threading.main_thread()):
@@ -975,7 +975,7 @@ class Bot:
         self.http_header['User-agent'] = self.http_user_agent
 
     @staticmethod
-    def check(parameters: dict) -> Optional[List[List[str]]]:
+    def check(parameters: dict) -> Optional[list[list[str]]]:
         """
         The bot's own check function can perform individual checks on it's
         parameters.
@@ -1526,8 +1526,8 @@ class Parameters:
     pass
 
 
-BotLibSettings = Dict39({'logging_path': None,
-                         'source_pipeline_broker': 'Pythonlistsimple',
-                         'destination_pipeline_broker': 'Pythonlistsimple',
-                         'destination_queues': {'_default': 'output',
-                                                '_on_error': 'error'}})
+BotLibSettings = {'logging_path': None,
+                  'source_pipeline_broker': 'Pythonlistsimple',
+                  'destination_pipeline_broker': 'Pythonlistsimple',
+                  'destination_queues': {'_default': 'output',
+                                         '_on_error': 'error'}}

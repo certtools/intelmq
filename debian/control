@@ -22,8 +22,10 @@ Build-Depends: debhelper (>= 4.1.16),
                quilt,
                rsync,
                safe-rm,
-               python3-pytest-cov
-X-Python3-Version: >= 3.7
+               python3-pytest-cov,
+               findutils,
+               sed
+X-Python3-Version: >= 3.9
 Standards-Version: 3.9.6
 Homepage: https://github.com/certtools/intelmq/
 
@@ -32,7 +34,31 @@ Architecture: all
 Depends: bash-completion,
          cron,
          jq,
-         python3-dateutil (>= 2.5),
+         python3-intelmq,
+         redis-server,
+         systemd,
+         ${misc:Depends}
+Recommends: intelmq-contrib
+Description: Solution for IT security teams for collecting and processing security feeds
+ IntelMQ is a solution for IT security teams (CERTs, CSIRTs, abuse
+ departments,...) for collecting and processing security feeds (such as log
+ files) using a message queuing protocol. It's a community driven initiative
+ called IHAP (Incident Handling Automation Project) which was conceptually
+ designed by European CERTs/CSIRTs during several InfoSec events. Its main goal
+ is to give to incident responders an easy way to collect & process threat
+ intelligence thus improving the incident handling processes of CERTs.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+
+Package: python3-intelmq
+Architecture: all
+Depends: python3-dateutil (>= 2.5),
          python3-dnspython (>= 2.0.0),
          python3-openssl,
          python3-psutil (>= 1.2.1),
@@ -42,10 +68,6 @@ Depends: bash-completion,
          python3-termstyle (>= 0.1.10),
          python3-tz,
          python3-importlib-metadata,
-         redis-server,
-         systemd,
-         ${misc:Depends},
-         ${sphinxdoc:Depends},
          ${python3:Depends}
 Suggests: python3-geoip2 (>= 2.2.0),
           python3-imbox (>= 0.8),
@@ -55,14 +77,42 @@ Suggests: python3-geoip2 (>= 2.2.0),
           python3-sleekxmpp (>= 1.3.1),
           python3-stomp (>= 4.1.12),
           python3-pendulum
-Description: Solution for IT security teams for collecting and processing security feeds
- IntelMQ is a solution for IT security teams (CERTs, CSIRTs, abuse
- departments,...) for collecting and processing security feeds (such as log
- files) using a message queuing protocol. It's a community driven initiative
- called IHAP (Incident Handling Automation Project) which was conceptually
- designed by European CERTs/CSIRTs during several InfoSec events. Its main goal
- is to give to incident responders an easy way to collect & process threat
- intelligence thus improving the incident handling processes of CERTs.
+Description: Python Data of IntelMQ
+ Contains the Python Libraries and Executables for IntelMQ
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+
+Package: intelmq-contrib
+Architecture: all
+Depends: intelmq,
+         ${misc:Depends},
+         ${python3:Depends}
+Suggests:
+Description: Contributed scripts for IntelMQ
+ Extensions, scripts, additional programs and examples
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+
+Package: intelmq-autostart
+Architecture: all
+Depends: intelmq,
+         ${misc:Depends},
+         ${python3:Depends}
+Suggests:
+Description: Automatic start for all IntelMQ bots
+ FIXME
  .
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

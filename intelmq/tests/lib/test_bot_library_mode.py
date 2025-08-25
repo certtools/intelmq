@@ -18,11 +18,11 @@ import intelmq.tests.bots.experts.domain_suffix.test_expert as domain_suffix_exp
 from intelmq.bots.experts.domain_suffix.expert import DomainSuffixExpertBot
 from intelmq.bots.experts.taxonomy.expert import TaxonomyExpertBot
 from intelmq.bots.experts.url.expert import URLExpertBot
-from intelmq.lib.bot import BotLibSettings, Dict39, ExpertBot
+from intelmq.lib.bot import BotLibSettings, ExpertBot
 from intelmq.lib.message import Message, MessageFactory
 from intelmq.tests.lib import test_parser_bot
 
-EXAMPLE_DATA_URL = Dict39({'source.url': 'http://example.com/'})
+EXAMPLE_DATA_URL = {'source.url': 'http://example.com/'}
 EXAMPLE_DATA_URL_OUT = EXAMPLE_DATA_URL | {'source.fqdn': 'example.com',
                                            'source.port': 80,
                                            'source.urlpath': '/',
@@ -110,7 +110,7 @@ def test_url_and_taxonomy():
     message = queues_url['output'][0]
     taxonomy_expert = TaxonomyExpertBot('taxonomy', settings=BotLibSettings)
     queues = taxonomy_expert.process_message(message)
-    assert queues['output'] == [Dict39(EXAMPLE_DATA_URL_OUT) | {'classification.taxonomy': 'other', 'classification.type': 'undetermined'}]
+    assert queues['output'] == [EXAMPLE_DATA_URL_OUT | {'classification.taxonomy': 'other', 'classification.type': 'undetermined'}]
 
 
 def test_bot_exception_init():

@@ -11,7 +11,7 @@ import os
 import requests_mock
 
 import intelmq.lib.test as test
-from intelmq.bots.experts.trusted_introducer_lookup.expert import TrustedIntroducerLookupExpertBot
+from intelmq.bots.experts.trusted_introducer_lookup.expert import TrustedIntroducerLookupExpertBot, TI_DATABASE_URL
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.url": "http://nic.versicherung/something/index.php",
@@ -40,7 +40,7 @@ EXAMPLE_OUTPUT3['source.abuse_contact'] = 'cert@aco.net'
 
 def prepare_mocker(mocker):
     with open(os.path.join(os.path.dirname(__file__), 'test_data', 'teams.json'), 'rb') as f:
-        mocker.get('https://www.trusted-introducer.org/directory/teams.json', content=f.read())
+        mocker.get(TI_DATABASE_URL, content=f.read())
 
 @test.skip_internet()
 @requests_mock.Mocker()

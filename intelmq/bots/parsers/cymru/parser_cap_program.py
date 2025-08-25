@@ -36,6 +36,8 @@ MAPPING_STATIC = {'bot': {
     'conficker': {'classification.type': 'infected-system',
                   'classification.identifier': 'conficker',
                   'malware.name': 'conficker'},
+    'tor': {'classification.type': 'tor',
+            'classification.identifier': 'tor'},
 }
 PROTOCOL_MAPPING = {  # TODO: use `getent protocols <number>`, maybe in harmonization
     '1': 'icmp',
@@ -43,6 +45,7 @@ PROTOCOL_MAPPING = {  # TODO: use `getent protocols <number>`, maybe in harmoniz
     '11': 'nvp-ii',
     '17': 'udp',
     '47': 'gre',
+    '58': 'ipv6-icmp',
     '59': 'ipv6-nonxt',
 }
 BOGUS_HOSTNAME_PORT = re.compile('hostname: ([^:]+)port: ([0-9]+)')

@@ -6,7 +6,8 @@
 """
 Uses the common mail iteration method from the lib file.
 """
-from typing import Union, Iterable
+from typing import Union
+from collections.abc import Iterable
 
 from ._lib import MailCollectorBot
 

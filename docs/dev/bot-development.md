@@ -477,14 +477,15 @@ Additionally, Python's type hints/annotations are used, see PEP484.
 
 ## Testing Pre-releases
 
-### Installation
+The installation procedures is slightly different for the pre-releases.
 
-The installation procedures need to be adapted only a little bit.
+### Installation with packages
 
-For native packages, you can find the unstable packages of the next version
-here: [Installation Unstable Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq%3Aunstable&package=intelmq)
-. The unstable only has a limited set of packages, so enabling the stable repository can be activated in parallel. For
-CentOS 8 unstable, the stable repository is required.
+For native packages, you can find the unstable packages of the next version here:
+[Installation Unstable Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq%3Aunstable&package=intelmq).
+The unstable repository only has a limited set of packages, so enable the stable repository in parallel.
+
+### Installation with pip
 
 For the installation with pip, use the `--pre` parameter as shown here following command:
 
@@ -492,5 +493,7 @@ For the installation with pip, use the `--pre` parameter as shown here following
 pip3 install --pre intelmq
 ```
 
-All other steps are not different. Please report any issues you find in
-our [Issue Tracker](https://github.com/certtools/intelmq/issues/new).
+### Testing
+
+All other steps are not different per installation variant.
+Please report any issues you find in our [Issue Tracker](https://github.com/certtools/intelmq/issues/new).

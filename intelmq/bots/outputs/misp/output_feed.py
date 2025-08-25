@@ -9,6 +9,7 @@ from pathlib import Path
 from uuid import uuid4
 import re
 
+from intelmq import VAR_STATE_PATH
 from intelmq.lib.bot import OutputBot
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.utils import parse_relative
@@ -34,7 +35,7 @@ class MISPFeedOutputBot(OutputBot):
     interval_event: str = "1 hour"
     misp_org_name = None
     misp_org_uuid = None
-    output_dir: str = "/opt/intelmq/var/lib/bots/mispfeed-output"  # TODO: should be path
+    output_dir: str = f"{VAR_STATE_PATH}mispfeed-output"  # TODO: should be path
     _is_multithreadable: bool = False
 
     @staticmethod

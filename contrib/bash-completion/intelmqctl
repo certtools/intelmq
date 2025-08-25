@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2018 Sebastian Wagner
+# SPDX-FileCopyrightText: 2018-2020 nic.at GmbH, 2025 Institute for Common Good Technology
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # bash completion for intelmqctl                            -*- shell-script -*-
@@ -18,6 +18,9 @@ _intelmqctl ()
         return 0
     fi
 
+    which yq >& /dev/null
+    misses_yq=$?
+
     #echo "posice: $COMP_CWORD $COMP_WORDS";
     case $COMP_CWORD in
         1)
@@ -26,19 +29,20 @@ _intelmqctl ()
             return 0
         ;;
         2)
-            pipeline='/opt/intelmq/etc/pipeline.conf';
-            [ -f ${pipeline} ] || pipeline='/etc/intelmq/pipeline.conf';
+            runtime='/opt/intelmq/etc/runtime.yaml';
+		    [ -f ${runtime} ] || runtime='/etc/intelmq/runtime.yaml';
             case "${COMP_WORDS[1]}" in
                 start | stop | restart | status | reload | log | run | enable | disable)
-                    runtime='/opt/intelmq/etc/runtime.conf';
-		    [ -f ${runtime} ] || runtime='/etc/intelmq/runtime.conf';
-                    local bots=$(jq 'keys[]' $runtime);
+                    [[ "$misses_yq" -eq 1 ]] && return 0
+                    local bots=$(yq 'keys[]' $runtime | grep -v '^global$');
                     COMPREPLY=($(compgen -W "${bots}" -- ${cur}));
                     return 0
                 ;;
                 clear)
-                    local bots=$(jq '.[] | .["source-queue"]' $pipeline | grep -v '^null$'; jq '.[] | .["destination-queues"]'  $pipeline | grep -v '^null$' | jq '.[]');
-                    COMPREPLY=($(compgen -W "${bots}" -- ${cur}));
+                    [[ "$misses_yq" -eq 1 ]] && return 0
+                    local destination_queues=$(yq '.[] | .["parameters"] | .["destination_queues"] | .[] | .[]' $runtime);
+                    local source_queues=$(yq 'keys[]' $runtime | grep -v '^global$' | while read line; do echo "$line-queue"; done)
+                    COMPREPLY=($(compgen -W "${source_queues} ${destination_queues}" -- ${cur}));
                     return 0
                 ;;
                 list)

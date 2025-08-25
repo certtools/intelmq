@@ -35,8 +35,8 @@ import textwrap
 import traceback
 import zipfile
 from sys import version_info
-from typing import (Any, Callable, Dict, Generator, Iterator, Optional,
-                    Sequence, Union)
+from typing import (Any, Callable, Dict, Optional, Union)
+from collections.abc import Generator, Iterator, Sequence
 
 import dateutil.parser
 import dns.resolver
@@ -188,7 +188,7 @@ def base64_encode(value: Union[bytes, str]) -> str:
     return decode(base64.b64encode(encode(value, force=True)), force=True)
 
 
-def flatten_queues(queues: Union[list, Dict]) -> Iterator[str]:
+def flatten_queues(queues: Union[list, dict]) -> Iterator[str]:
     """
     Assure that output value will be a flattened.
 
@@ -648,7 +648,7 @@ class RewindableFileHandle:
         return self.current_line
 
 
-def object_pair_hook_bots(*args, **kwargs) -> Dict:
+def object_pair_hook_bots(*args, **kwargs) -> dict:
     """
     A object_pair_hook function for the BOTS file to be used in the json's dump functions.
 
@@ -913,7 +913,7 @@ def list_all_bots() -> dict:
                 name = name.replace(bot_type, '')
 
             bots[module_name.split('.')[2].capitalize()[:-1]][name] = {
-                "module": mod.__name__,
+                "module": bot.name,
                 "description": "Missing description" if not getattr(mod.BOT, '__doc__', None) else textwrap.dedent(mod.BOT.__doc__).strip(),
                 "parameters": keys,
             }

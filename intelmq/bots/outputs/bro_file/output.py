@@ -10,6 +10,7 @@ import os
 from collections import defaultdict
 from pathlib import Path
 
+from intelmq import VAR_STATE_PATH
 from intelmq.lib.bot import OutputBot
 
 BRO_INDICATOR_MAP = {
@@ -24,7 +25,7 @@ BRO_HEADER = "#fields\tindicator\tindicator_type\tmeta.desc\tmeta.cif_confidence
 class BroFileOutputBot(OutputBot):
     _file = None
     encoding_errors_mode = 'strict'
-    file: str = "/opt/intelmq/var/lib/bots/file-output/bro"
+    file: str = f"{VAR_STATE_PATH}file-output/bro"
     format_filename: bool = False
     hierarchical_output: bool = False
     keep_raw_field: bool = False

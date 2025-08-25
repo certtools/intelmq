@@ -11,6 +11,7 @@ import sys
 import pathlib
 import requests
 
+from intelmq import VAR_STATE_PATH
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import get_bots_settings, create_request_session
 from intelmq.bin.intelmqctl import IntelMQController
@@ -18,7 +19,7 @@ from intelmq.bin.intelmqctl import IntelMQController
 
 class TorExpertBot(ExpertBot):
     """Check if the IP address is a Tor Exit Node based on a local database of TOR nodes"""
-    database: str = "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"  # TODO: pathlib.Path
+    database: str = f"{VAR_STATE_PATH}tor_nodes/tor_nodes.dat"  # TODO: pathlib.Path
     overwrite: bool = False
     autoupdate_cached_database: bool = True  # Activate/deactivate update-database functionality
 

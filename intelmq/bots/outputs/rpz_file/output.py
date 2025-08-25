@@ -10,6 +10,7 @@ import os
 from collections import defaultdict
 from pathlib import Path
 
+from intelmq import VAR_STATE_PATH
 from intelmq.lib.bot import OutputBot
 
 RPZ_INDICATOR_MAP = {
@@ -30,7 +31,7 @@ class RpzFileOutputBot(OutputBot):
     _is_multithreadable = False
 
     encoding_errors_mode = 'strict'
-    file: str = "/opt/intelmq/var/lib/bots/file-output/rpz"
+    file: str = f"{VAR_STATE_PATH}file-output/rpz"
 
     cname: str = ""
     organization_name: str = ''

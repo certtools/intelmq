@@ -244,11 +244,17 @@ EVENTS = [{'time.source': '2019-03-22T11:18:52+00:00',
      'source.fqdn': '21-0-16-172.example.tld',
      'source.geolocation.cc': 'AT',
      },
+     {
+     'time.source': '2025-07-06T00:15:03+00:00',
+      'classification.type': 'tor',
+      'classification.identifier': 'tor',
+      'source.port': 36004,
+     },
 ]
 
 # The number of events a single line in the raw data produces
 NUM_EVENTS = (1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              1, 1, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+              1, 1, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 RAWS = []
 for i, line in enumerate(RAW_LINES[3:]):
     for count in range(NUM_EVENTS[i]):

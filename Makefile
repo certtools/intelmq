@@ -1,7 +1,7 @@
-# SPDX-FileCopyrightText: 2023 Filip Pokorný
+# SPDX-FileCopyrightText: 2023-2025 Filip Pokorný, Sebastian Wagner
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-.PHONY: coverage docs clean
+.PHONY: coverage docs clean test codespell codestyle
 
 coverage:
 	python -m pytest --cov=intelmq -v
@@ -19,3 +19,9 @@ codespell:
 
 test:
 	pytest --no-cov -v intelmq/tests/ && echo "Success!"
+
+codestyle:
+	pycodestyle intelmq/{bots,lib,bin}
+
+licenses:
+	reuse lint

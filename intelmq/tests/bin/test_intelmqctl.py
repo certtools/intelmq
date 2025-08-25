@@ -7,6 +7,7 @@ import os
 import unittest
 from tempfile import TemporaryDirectory
 from unittest import mock
+from pathlib import Path
 
 from pkg_resources import resource_filename
 
@@ -136,6 +137,28 @@ class TestIntelMQController(unittest.TestCase):
             self.intelmqctl.check(no_connections=True, check_executables=False)
 
         import_mock.assert_called_once_with("mocked-module")
+
+    def test_intelmqctl_log(self):
+        path = Path(__file__).absolute().parent / '../assets/'
+        self.intelmqctl._parameters.logging_path = path
+        retval, error_log = self.intelmqctl.read_bot_log('test-bot', 'ERROR', 10)
+        assert retval == 0 and len(error_log) == 1
+        assert error_log[0]['extended_message'].startswith('Traceback')
+        del error_log[0]['extended_message']
+        assert error_log[0] == {'date': '2025-04-23T23:17:52.240000',
+                                'bot_id': 'test-bot', 'thread_id': None, 'log_level': 'ERROR',
+                                'message': 'Bot initialization failed.'}
+        for level, allowed_levels, number_messages in (
+            ('DEBUG', ('DEBUG', 'INFO', 'WARNING', 'ERROR'), 26),
+            ('INFO', ('INFO', 'WARNING', 'ERROR'), 9),
+            ('WARNING', ('WARNING', 'ERROR'), 2),
+            ('ERROR', ('ERROR', ), 1),
+            ('CRITICAL', ('CRITICAL', ), 0),
+        ):
+            retval, log_messages = self.intelmqctl.read_bot_log('test-bot', level, 30)
+            assert retval == 0 and len(log_messages) == number_messages
+            for log_message in log_messages:
+                assert log_message['log_level'] in allowed_levels
 
 
 if __name__ == '__main__':  # pragma: nocover

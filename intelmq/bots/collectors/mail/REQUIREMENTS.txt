@@ -2,3 +2,4 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 imbox>=0.8.5
+python-gnupg>=0.5

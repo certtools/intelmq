@@ -1,14 +1,14 @@
-# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+# SPDX-FileCopyrightText: 2016 nic.at GmbH, 2025 Institute for Common Good Technology - Sebastian Wagner
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 from collections import OrderedDict
-from datetime import datetime
 from xml.etree import ElementTree
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import ConfigurationError
+from intelmq.lib.harmonization import DateTime
 
 PHISHING = OrderedDict([
     ("line", "__IGNORE__"),
@@ -140,7 +140,7 @@ class CleanMXParserBot(ParserBot):
 
                 if key == "time.source":
                     try:
-                        value = (datetime.utcfromtimestamp(int(value)).isoformat() + " UTC")
+                        value = DateTime.from_timestamp(value)
                     except TypeError as e:
                         self.logger.warning(
                             'No valid "first" field epoch time found, skipping '

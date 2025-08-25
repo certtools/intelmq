@@ -24,7 +24,7 @@ def itemgetter_tuple(*items):
 
 
 class SQLOutputBot(OutputBot, SQLMixin):
-    """Send events to a PostgreSQL or SQLite database"""
+    """Send events to an SQL database"""
     autocommit = True
     database = "intelmq-events"
     engine = None
@@ -43,9 +43,7 @@ class SQLOutputBot(OutputBot, SQLMixin):
     def process(self):
         event = self.receive_message().to_dict(jsondict_as_string=self.jsondict_as_string)
 
-        key_names = self.fields
-        if key_names is None:
-            key_names = event.keys()
+        key_names = self.fields or event.keys()
         valid_keys = [key for key in key_names if key in event]
         keys = '", "'.join(valid_keys)
         values = self.prepare_values(itemgetter_tuple(*valid_keys)(event))

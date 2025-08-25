@@ -82,14 +82,14 @@ class TestConf(unittest.TestCase):
                 self.assertGreater(value['length'], 0)
             getattr(harmonization, value['type'])
 
+    # Line wrapping behaves differently since ruamel.yaml version 0.18.13. Additionally it adds spaces at the end of continued lines.
+    # https://sourceforge.net/p/ruamel-yaml/code/ci/375c4db4c7c5fad61e149fc0690e50229df23ab3/
+    # So just test now that the file is parseable
     def test_runtime_syntax(self):
-        """ Test if runtime.yaml has correct syntax. """
+        """ Test if runtime.yaml has correct syntax (parseable). """
         with open(CONF_FILES['runtime']) as fhandle:
             fcontent = fhandle.read()
         interpreted = yaml.load(fcontent)
-        buf = io.BytesIO()
-        yaml.dump(interpreted, buf)
-        self.assertEqual(buf.getvalue().decode(), fcontent)
 
 
 class CerberusTests(unittest.TestCase):

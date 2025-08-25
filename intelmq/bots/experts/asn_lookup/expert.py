@@ -8,9 +8,11 @@ import io
 import re
 import sys
 import bz2
-import pathlib
 import requests
+from datetime import datetime, timedelta
+from pathlib import Path
 
+from intelmq import VAR_STATE_PATH
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import MissingDependencyError
 from intelmq.lib.utils import get_bots_settings, create_request_session
@@ -25,7 +27,7 @@ except ImportError:
 
 class ASNLookupExpertBot(ExpertBot):
     """Add ASN and netmask information from a local BGP dump"""
-    database = None  # TODO: should be pathlib.Path
+    database: str = f'{VAR_STATE_PATH}asn_lookup/ipasn.dat'  # TODO: should be pathlib.Path
     autoupdate_cached_database: bool = True  # Activate/deactivate update-database functionality
 
     def init(self):
@@ -35,11 +37,11 @@ class ASNLookupExpertBot(ExpertBot):
         try:
             self._database = pyasn.pyasn(self.database)
         except OSError:
-            self.logger.error("pyasn data file does not exist or could not be "
-                              "accessed in %r.", self.database)
-            self.logger.error("Read 'bots/experts/asn_lookup/README' and "
-                              "follow the procedure.")
+            raise ValueError(f"pyasn data file does not exist or could not be accessed in {self.database!r}. ",
+                             "Please see https://docs.intelmq.org/latest/user/bots/#asn-lookup")
             self.stop()
+        if not Path(self.database).is_file():
+            raise ValueError('Database file does not exist or is not a file.')
 
     def process(self):
         event = self.receive_message()
@@ -66,12 +68,20 @@ class ASNLookupExpertBot(ExpertBot):
 
     @staticmethod
     def check(parameters):
-        if not os.path.exists(parameters.get('database', '')):
-            return [["error", "File given as parameter 'database' does not exist."]]
+        database_path = Path(parameters.get('database', ''))
+        if not database_path.exists():
+            return [["warning", f"File given as parameter 'database' ({database_path!s}) does not exist. You may need to trigger first downloading manually. See: https://docs.intelmq.org/latest/user/bots/#asn-lookup."]]
+        elif not database_path.is_file():
+            return [["error", f"Parameter 'database' ({database_path!s}) exists, but is not a file."]]
         try:
             pyasn.pyasn(parameters['database'])
         except Exception as exc:
-            return [["error", "Error reading database: %r." % exc]]
+            return [["error", f"Error reading database ({database_path!s}): {exc!r}."]]
+
+        # Check the age of the database file
+        # use local time zone for both time operations
+        if datetime.now() - datetime.fromtimestamp(database_path.stat().st_mtime) > timedelta(weeks=1):
+            return [["warning", f"Database ({database_path!s}) is older than one week. Check the auto update, see: https://docs.intelmq.org/latest/user/bots/#asn-lookup."]]
 
     @classmethod
     def run(cls, parsed_args=None):
@@ -112,6 +122,12 @@ class ASNLookupExpertBot(ExpertBot):
         if pyasn is None:
             raise MissingDependencyError("pyasn")
 
+        for database_path in set(bots.values()):
+            if not Path(database_path).is_file():
+                raise ValueError('Database file does not exist or is not a file.')
+            elif not os.access(database_path, os.W_OK):
+                raise ValueError('Database file is not writeable.')
+
         try:
             if verbose:
                 print("Searching for the latest database update...")
@@ -133,7 +149,8 @@ class ASNLookupExpertBot(ExpertBot):
                 pattern = re.compile(r"href=\"(rib\.\d{8}\.\d{4}\.bz2)\"")
                 days = pattern.findall(response.text)
                 days.sort(reverse=True)
-                print(url)
+                if verbose:
+                    print(url)
                 if days:
                     break
 
@@ -158,7 +175,7 @@ class ASNLookupExpertBot(ExpertBot):
             prefixes = pyasn.mrtx.parse_mrt_file(archive, print_progress=False, skip_record_on_error=True)
 
         for database_path in set(bots.values()):
-            database_dir = pathlib.Path(database_path).parent
+            database_dir = Path(database_path).parent
             database_dir.mkdir(parents=True, exist_ok=True)
             pyasn.mrtx.dump_prefixes_to_file(prefixes, database_path)
 

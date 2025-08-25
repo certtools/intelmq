@@ -8,6 +8,7 @@ import os
 from collections import defaultdict
 from pathlib import Path
 
+from intelmq import VAR_STATE_PATH
 from intelmq.lib.bot import OutputBot
 
 
@@ -15,7 +16,7 @@ class FileOutputBot(OutputBot):
     """Write events to a file"""
     _file = None
     encoding_errors_mode = 'strict'
-    file: str = "/opt/intelmq/var/lib/bots/file-output/events.txt"  # TODO: should be pathlib.Path
+    file: str = f"{VAR_STATE_PATH}file-output/events.txt"  # TODO: should be pathlib.Path
     format_filename: bool = False
     hierarchical_output: bool = False
     keep_raw_field: bool = False
