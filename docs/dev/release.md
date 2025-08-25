@@ -106,9 +106,8 @@ Releasing a new Docker image is very easy.
 
 ## Announcements
 
-Announce the new version at the mailinglists intelmq-users, intelmq-dev.
-For bigger releases, probably also at IHAP, Twitter, etc. Ask your
-favorite social media consultant.
+Announce the new version at the mailinglists [intelmq-users](https://lists.cert.at/mailman3/hyperkitty/list/intelmq-users@lists.cert.at/), [intelmq-dev](https://lists.cert.at/mailman3/hyperkitty/list/intelmq-dev@lists.cert.at/) and on [ossbase.org](https://ossbase.org/).
+For bigger releases, also at IHAP, X, etc.
 
 ## Prepare new version
 

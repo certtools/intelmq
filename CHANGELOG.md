@@ -14,11 +14,14 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 --------------------------------
 
 ### Configuration
+- New parameter `stop_retry_limit` (PR#2598 by Lukas Heindl).
 
 ### Core
 - Drop support for Python 3.8 (fixes #2616, PR#2617 by Sebastian Wagner).
 - `intelmq.lib.splitreports`: Handle bot parameter `chunk_size` values empty string, due to missing parameter typing checks (PR#2604 by Sebastian Wagner).
 - `intelmq.lib.mixins.sql` Add Support for MySQL (PR#2625 by Karl-Johan Karlsson).
+- New parameter `stop_retry_limit` to gracefully handle stopping bots which take longer to shutdown (PR#2598 by Lukas Heindl, fixes #2595).
+- `intelmq.lib.datatypes`: Remove unneeded Dict39 alias (PR#2639 by Nakul Rajpal, fixes #2635)
 
 ### Development
 
@@ -27,9 +30,11 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 ### Bots
 #### Collectors
 - `intelmq.bots.collectors.shodan.collector_alert`: Added a new collector to query the Shodan Alert API (PR#2618 by Sebastian Wagner and Malawi CERT).
+- Remove `intelmq.bots.collectors.blueliv` as it uses an unmaintained library, does not work any more and breaks other CI tests (fixes #2593, PR#2632 by Sebastian Wagner).
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Add mapping for TOR and ipv6-icmp protocol (PR#2621 by Mikk Margus Möll).
+- Remove `intelmq.bots.collectors.blueliv` as it is obsolete with the removed collector (PR#2632 by Sebastian Wagner).
 
 #### Experts
 - `intelmq.bots.experts.asn_lookup.expert`:
@@ -40,6 +45,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
   - Use database path matching to installation type (PR#2606 by Sebastian Wagner).
   - Add new mode `random_single_value` (PR#2601 by Sebastian Wagner).
 - `intelmq.bots.experts.sieve.expert`: Test for textX dependency in self-check (PR#2605 by Sebastian Wagner).
+- `intelmq.bots.experts.trusted_introducer_lookup.expert`: Change to new TI database URL (fixes #2620, PR#2633 by Sebastian Wagner).
 
 #### Outputs
 - `intelmq.bots.outputs.smtp_batch.output`:
@@ -56,6 +62,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 ### Packaging
 - Replace `/opt/intelmq` example paths in bots with variable `VAR_STATE_PATH` for correct paths in LSB-path setups like with packages (PR#2587 by Sebastian Wagner).
 - New deb-package `intelmq-contrib` with all `contrib/` scripts and documentation (PR#2614 by Sebastian Wagner).
+- New deb-package `intelmq-autostart` containing systemd services and timers to start all enabled IntelMQ bots at boot and periodically (PR#2638 by Sebastian Wagner).
 
 ### Tests
 - `intelmq.tests.lib.test_pipeline.TestAmqp.test_acknowledge`: Skip on all Python versions when running on CI (PR#2602 by Sebastian Wagner).
@@ -67,8 +74,10 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 - `intelmq.bin.intelmq_psql_initdb`: Use `JSONB` type by default, Postgres supports it since version 9 (PR#2597 by Sebastian Wagner).
 - `intelmq.bin.rewrite_config_files`: Removed obsolete JSON configuration file rewriter (PR#2613 by Sebastian Wagner).
 - `intelmq/lib/bot_debugger.py`: Fix overwriting the runtime logging level by command line parameter (PR#2603 by Sebastian Wagner, fixes #2563).
+- `intelmq.bin.intelmqctl`: Fix bot log level filtering (PR#2607 by Sebastian Wagner, fixes #2596).
 
 ### Contrib
+- Bash Completion: Adapt to YAML-style runtime configuration (PR#2642 by Sebastian Wagner, fixes #2094).
 
 ### Known issues
 

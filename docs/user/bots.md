@@ -1073,34 +1073,6 @@ input. If you intend to link two IntelMQ instance via TCP, have a look at the TC
 
 ---
 
-### Blueliv Crimeserver <div id="intelmq.bots.collectors.blueliv.collector_crimeserver" />
-
-Collects report messages from Blueliv API.
-
-For more information visit <https://github.com/Blueliv/api-python-sdk>
-
-**Module:** `intelmq.bots.collectors.blueliv.collector_crimeserver`
-
-**Requirements**
-
-Install the required library:
-
-```bash
-pip3 install -r intelmq/bots/collectors/blueliv/REQUIREMENTS.txt
-```
-
-**Parameters (also expects [feed parameters](#feed-parameters)):**
-
-**`api_key`**
-
-(required, string) location of information resource, see <https://map.blueliv.com/?redirect=get-started#signup>
-
-**`api_url`**
-
-(optional, string) The optional API endpoint. Defaults to `https://freeapi.blueliv.com`.
-
----
-
 ### Calidog Certstream <div id="intelmq.bots.collectors.calidog.collector_certstream" />
 
 A Bot to collect data from the Certificate Transparency Log (CTL). This bot works based on certstream library
@@ -1411,16 +1383,6 @@ No additional parameters.
 Parses data from Blocklist.de feeds.
 
 **Module:** `intelmq.bots.parsers.blocklistde.parser`
-
-No additional parameters.
-
----
-
-### Blueliv Crimeserver <div id="intelmq.bots.parsers.blueliv.parser_crimeserver" />
-
-Parses data from Blueliv Crimeserver feed.
-
-**Module:** `intelmq.bots.parsers.blueliv.parser_crimeserver`
 
 No additional parameters.
 
