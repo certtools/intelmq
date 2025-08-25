@@ -486,6 +486,18 @@ The fields can be used by parsers to identify the feed and are not automatically
 
 (optional, boolean) Whether to extract compress files from the attachment. Defaults to true.
 
+**`decrypt_openpgp`**
+
+(optional, boolean) Whether to decrypt the attachment with GPG. Defaults to false.
+
+**`openpgp_passphrase`**
+
+(optional, string) The OpenPGP private key passhrase.
+
+**`gpg_home`**
+
+(optional, string) Change the GPG home directory.
+
 **`sent_from`**
 
 (optional, string) Only process messages sent from this address. Defaults to null (any sender).

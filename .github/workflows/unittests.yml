@@ -72,7 +72,8 @@ jobs:
     - name: Run basic testsuite
       if: ${{ matrix.type == 'basic' }}
       run: pytest --cov intelmq/ --cov-report=xml --cov-branch intelmq/
-
+    - name: Assure permissions
+      run: chmod -R u=rwX,go= intelmq/tests/bots/collectors/mail/gpg_ring/
     - name: Run full testsuite
       if: ${{ matrix.type == 'full' }}
       run: pytest --cov intelmq/ --cov-report=xml --cov-branch intelmq/ contrib/
@@ -81,3 +82,4 @@ jobs:
         INTELMQ_TEST_DATABASES: 1
         INTELMQ_TEST_EXOTIC: 1
         INTELMQ_TEST_INSTALLATION: 1
+        GPG_RING_PATH: intelmq/tests/bots/collectors/mail/gpg_ring/
