@@ -137,6 +137,3 @@ class TimeFormat(str):
                                   expected=conversion_name)
 
         return conversion, format_string
-
-
-Dict39 = dict

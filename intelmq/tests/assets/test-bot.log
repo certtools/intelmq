@@ -1,0 +1,37 @@
+2025-04-23 23:17:52,212 - test-bot - INFO - ASNLookupExpertBot initialized with id asn-expert and intelmq 3.4.1.alpha1 and python 3.13.2 (main, Feb 05 2025, 09:57:44) [GCC] as process 257689. Standalone mode: True.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Library path: '/home/sebastianw/dev/intelmq/intelmq/lib/bot.py'.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Loading runtime configuration from '/etc/intelmq/runtime.yaml'.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Defaults configuration: parameter 'autoupdate_cached_database' loaded with value False.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Defaults configuration: parameter 'destination_pipeline_broker' loaded with value 'redis'.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Defaults configuration: parameter 'process_manager' loaded with value 'intelmq'.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Defaults configuration: parameter 'source_pipeline_broker' loaded with value 'redis'.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Defaults configuration: parameter 'ssl_ca_certificate' loaded with value None.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Defaults configuration: parameter 'statistics_database' loaded with value 3.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Defaults configuration: parameter 'statistics_host' loaded with value '127.0.0.1'.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Defaults configuration: parameter 'statistics_password' loaded with value 'HIDDEN'.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Defaults configuration: parameter 'statistics_port' loaded with value 6379.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - System configuration: parameter 'module' loaded with value 'intelmq.bots.experts.asn_lookup.expert'.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Runtime configuration: parameter 'database' loaded with value '/etc/resolv.conf'.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Runtime configuration: parameter 'autoupdate_cached_database' loaded with value True.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Environment configuration: parameter 'paths_no_opt' loaded with value 1.
+2025-04-23 23:17:52,212 - test-bot - INFO - Bot is starting.
+2025-04-23 23:17:52,212 - test-bot - DEBUG - Loading Harmonization configuration from '/etc/intelmq/harmonization.conf'.
+2025-04-23 23:17:52,239 - test-bot - INFO - Loading source pipeline and queue 'asn-expert-queue'.
+2025-04-23 23:17:52,240 - test-bot - INFO - Connected to source queue.
+2025-04-23 23:17:52,240 - test-bot - WARNING - Something is abnormal.
+2025-04-23 23:17:52,240 - test-bot - INFO - No destination queues to load.
+2025-04-23 23:17:52,240 - test-bot - ERROR - Bot initialization failed.
+Traceback (most recent call last):
+  File "/home/sebastianw/dev/intelmq/intelmq/lib/bot.py", line 241, in __init__
+    self.init()
+    ~~~~~~~~~^^
+  File "/home/sebastianw/dev/intelmq/intelmq/bots/experts/asn_lookup/expert.py", line 37, in init
+    self._database = pyasn.pyasn(self.database)
+                     ~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.13/site-packages/pyasn/__init__.py", line 71, in __init__
+    self._records = self.radix.load_ipasndb(ipasn_file, "")
+                    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+RuntimeError: Error while parsing/adding IPASN database (record: 1)!
+2025-04-23 23:17:52,241 - test-bot - DEBUG - Disconnected from source pipeline.
+2025-04-23 23:17:52,241 - test-bot - INFO - Bot stopped.
+2025-04-23 23:17:52,241 - test-bot - INFO - Bot stopped.

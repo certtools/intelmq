@@ -304,7 +304,6 @@ class BotTestCase:
             self.assertNotEqual(check[0].upper(), 'ERROR',
                                 '%s.check returned the error %r.'
                                 '' % (self.bot_name, check[1]))
-        raise ValueError(f'checks is {checks!r}')
 
     def run_bot(self, iterations: int = 1, error_on_pipeline: bool = False,
                 prepare=True, parameters={},
@@ -387,9 +386,9 @@ class BotTestCase:
             self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
 
         allowed_error_count = max(allowed_error_count, self.allowed_error_count)
-        self.assertLessEqual(len(re.findall(' - ERROR - ', self.loglines_buffer)), allowed_error_count)
+        self.assertLessEqual(len(re.findall(' - ERROR - ', self.loglines_buffer)), allowed_error_count, "\n".join(re.findall(' - ERROR - [^\n]*', self.loglines_buffer)))
         allowed_warning_count = max(allowed_warning_count, self.allowed_warning_count)
-        self.assertLessEqual(len(re.findall(' - WARNING - ', self.loglines_buffer)), allowed_warning_count)
+        self.assertLessEqual(len(re.findall(' - WARNING - ', self.loglines_buffer)), allowed_warning_count, "\n".join(re.findall(' - WARNING - [^\n]*', self.loglines_buffer)))
         self.assertNotRegexpMatchesLog("CRITICAL")
         """ If no error happened (incl. tracebacks) we can check for formatting """
         if not self.allowed_error_count:

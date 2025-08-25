@@ -151,7 +151,7 @@ def generate_reports(report_template: Report, infile: BinaryIO, chunk_size: Opti
     Yields:
         report: a Report object holding the chunk in the raw field
     """
-    if chunk_size is None:
+    if not chunk_size:  # None, empty string or False
         report = report_template.copy()
         data = infile.read()
         if data:

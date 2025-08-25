@@ -40,7 +40,7 @@ from intelmq import (DEFAULT_LOGGING_PATH,
 from intelmq.lib import cache, exceptions, utils
 from intelmq.lib.pipeline import PipelineFactory, Pipeline
 from intelmq.lib.utils import RewindableFileHandle, base64_decode
-from intelmq.lib.datatypes import BotType, Dict39
+from intelmq.lib.datatypes import BotType
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot', 'OutputBot', 'ExpertBot']
 ALLOWED_SYSTEM_PARAMETERS = {'enabled', 'run_mode', 'group', 'description', 'module', 'name'}
@@ -1526,8 +1526,8 @@ class Parameters:
     pass
 
 
-BotLibSettings = Dict39({'logging_path': None,
-                         'source_pipeline_broker': 'Pythonlistsimple',
-                         'destination_pipeline_broker': 'Pythonlistsimple',
-                         'destination_queues': {'_default': 'output',
-                                                '_on_error': 'error'}})
+BotLibSettings = {'logging_path': None,
+                  'source_pipeline_broker': 'Pythonlistsimple',
+                  'destination_pipeline_broker': 'Pythonlistsimple',
+                  'destination_queues': {'_default': 'output',
+                                         '_on_error': 'error'}}

@@ -8,11 +8,12 @@ import os
 import sys
 from tempfile import NamedTemporaryFile
 import time
-from typing import Any, Optional
+from typing import Any, Iterable, Optional, Dict, List
 import zipfile
 from base64 import b64decode
 from collections import OrderedDict
 from io import StringIO
+from hashlib import sha256
 
 from redis.exceptions import TimeoutError
 
@@ -25,6 +26,23 @@ try:
 except ImportError:
     Envelope = None
 
+try:
+    import jinja2
+    jinja_env = jinja2.Environment()
+except ImportError:
+    jinja2 = None
+
+
+def hash_arbitrary(value: Any) -> bytes:
+    value_bytes = None
+    if isinstance(value, str):
+        value_bytes = value.encode("utf-8")
+    elif isinstance(value, int):
+        value_bytes = bytes(value)
+    else:
+        value_bytes = json.dumps(value, sort_keys=True).encode("utf-8")
+    return sha256(value_bytes).digest()
+
 
 @dataclass
 class Mail:
@@ -32,10 +50,13 @@ class Mail:
     to: str
     path: str
     count: int
+    template_data: Dict[str, Any]
 
 
 class SMTPBatchOutputBot(Bot):
     # configurable parameters
+    additional_grouping_keys: Optional[list] = []  # refers to the event directly
+    templating: Optional[Dict[str, bool]] = {'subject': False, 'body': False, 'attachment': False}
     alternative_mails: Optional[str] = None
     bcc: Optional[list] = None
     email_from: str = ""
@@ -75,7 +96,20 @@ class SMTPBatchOutputBot(Bot):
         if "source.abuse_contact" in message:
             field = message["source.abuse_contact"]
             for mail in (field if isinstance(field, list) else [field]):
-                self.cache.redis.rpush(f"{self.key}{mail}", message.to_json())
+                # - Each event goes into one bucket (equivalent to group-by)
+                # - The id of each bucket is calculated by hashing all the keys that should be grouped for
+                # - Hashing ensures the redis-key does not grow indefinitely.
+                # - In order to avoid collisions, each value is hashed before
+                #   appending to the input for the redis-key-hash
+                #   (could also be solved by special separator which would need
+                #    to be escaped or prepending the length of the value).
+                h = sha256()
+                h.update(sha256(mail.encode("utf-8")).digest())
+                for i in self.additional_grouping_keys:
+                    if i not in message:
+                        continue
+                    h.update(hash_arbitrary(message[i]))
+                self.cache.redis.rpush(f"{self.key}{h.hexdigest()}", message.to_json())
 
         self.acknowledge_message()
 
@@ -90,6 +124,8 @@ class SMTPBatchOutputBot(Bot):
     def init(self):
         if Envelope is None:
             raise MissingDependencyError('envelope', '>=2.0.0')
+        if jinja2 is None:
+            self.logger.warning("No jinja2 installed. Thus, the templating is deactivated.")
         self.set_cache()
         self.key = f"{self._Bot__bot_id}:"
 
@@ -213,7 +249,7 @@ class SMTPBatchOutputBot(Bot):
         print("\nWhat e-mail should I use?")
         self.testing_to = input()
 
-    def send_mails_to_tester(self, mails):
+    def send_mails_to_tester(self, mails: List[Mail]):
         """
             These mails are going to tester's address. Then prints out their count.
         :param mails: list
@@ -222,7 +258,7 @@ class SMTPBatchOutputBot(Bot):
         count = sum([1 for mail in mails if self.build_mail(mail, send=True, override_to=self.testing_to)])
         print(f"{count}× mail sent to: {self.testing_to}\n")
 
-    def prepare_mails(self):
+    def prepare_mails(self) -> Iterable[Mail]:
         """ Generates Mail objects """
 
         for mail_record in self.cache.redis.keys(f"{self.key}*")[slice(self.limit_results)]:
@@ -254,7 +290,11 @@ class SMTPBatchOutputBot(Bot):
             # TODO: worthy to generate on the fly https://github.com/certtools/intelmq/pull/2253#discussion_r1172779620
             fieldnames = set()
             rows_output = []
+            src_abuse_contact = None
             for row in lines:
+                # obtain this field only once as it is the same for all lines here
+                if not src_abuse_contact:
+                    src_abuse_contact = row["source.abuse_contact"]
                 try:
                     if threshold and row["time.observation"][:19] < threshold.isoformat()[:19]:
                         continue
@@ -283,31 +323,45 @@ class SMTPBatchOutputBot(Bot):
             dict_writer.writerow(dict(zip(ordered_fieldnames, ordered_fieldnames)))
             dict_writer.writerows(rows_output)
 
-            email_to = str(mail_record[len(self.key):], encoding="utf-8")
             count = len(rows_output)
-            if not count:
-                path = None
-            else:
-                filename = f'{time.strftime("%y%m%d")}_{count}_events'
-                path = NamedTemporaryFile().name
+            if not count or count == 0:
+                # send no mail if no events are present
+                continue
 
-                with zipfile.ZipFile(path, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
-                    try:
-                        zf.writestr(filename + ".csv", output.getvalue())
-                    except Exception:
-                        self.logger.error("Error: Cannot zip mail: %r", mail_record)
-                        continue
+            # collect all data which must be the same for all events of the
+            # bucket and thus can be used for templating
+            template_keys = ['source.abuse_contact']
+            # only collect if templating is enabled (save the memory otherwise)+
+            if jinja2 and self.templating and any(self.templating.values()):
+                template_keys.extend(self.additional_grouping_keys)
 
-                if email_to in self.alternative_mail:
-                    print(f"Alternative: instead of {email_to} we use {self.alternative_mail[email_to]}")
-                    email_to = self.alternative_mail[email_to]
+            template_data = {
+                k.replace(".", "_"): lines[0][k]
+                for k in template_keys
+                if k in lines[0]
+            }
 
-            mail = Mail(mail_record, email_to, path, count)
+            email_to = template_data["source_abuse_contact"]
+            filename = f'{time.strftime("%y%m%d")}_{count}_events'
+            path = NamedTemporaryFile().name
+
+            with zipfile.ZipFile(path, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
+                try:
+                    zf.writestr(filename + ".csv", output.getvalue())
+                except Exception:
+                    self.logger.error("Error: Cannot zip mail: %r", mail_record)
+                    continue
+
+            if email_to in self.alternative_mail:
+                print(f"Alternative: instead of {email_to} we use {self.alternative_mail[email_to]}")
+                email_to = self.alternative_mail[email_to]
+
+            mail = Mail(mail_record, email_to, path, count, template_data)
+            # build_mail only used to output metadata of the mail -> send=False -> return None
             self.build_mail(mail, send=False)
-            if count:
-                yield mail
+            yield mail
 
-    def build_mail(self, mail, send=False, override_to=None):
+    def build_mail(self, mail: Mail, send=False, override_to=None):
         """ creates a MIME message
         :param mail: Mail object
         :param send: True to send through SMTP, False for just printing the information
@@ -322,15 +376,32 @@ class SMTPBatchOutputBot(Bot):
             intended_to = None
             email_to = mail.to
         email_from = self.email_from
+
+        template_data = mail.template_data
+
         text = self.mail_contents
-        try:
-            subject = time.strftime(self.subject)
-        except ValueError:
-            subject = self.subject
-        try:
-            attachment_name = time.strftime(self.attachment_name)
-        except ValueError:
-            attachment_name = self.attachment_name
+        if jinja2 and self.templating and self.templating.get('body', False):
+            jinja_tmpl = jinja_env.from_string(text)
+            text = jinja_tmpl.render(current_time=datetime.datetime.now(), **template_data)
+
+        if jinja2 and self.templating and self.templating.get('subject', False):
+            jinja_tmpl = jinja_env.from_string(self.subject)
+            subject = jinja_tmpl.render(current_time=datetime.datetime.now(), **template_data)
+        else:
+            try:
+                subject = time.strftime(self.subject)
+            except ValueError:
+                subject = self.subject
+
+        if jinja2 and self.templating and self.templating.get('attachment', False):
+            jinja_tmpl = jinja_env.from_string(self.attachment_name)
+            attachment_name = jinja_tmpl.render(current_time=datetime.datetime.now(), **template_data)
+        else:
+            try:
+                attachment_name = time.strftime(self.attachment_name)
+            except ValueError:
+                attachment_name = self.attachment_name
+
         if intended_to:
             subject += f" (intended for {intended_to})"
         else:

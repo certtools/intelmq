@@ -83,6 +83,9 @@ class SieveExpertBot(ExpertBot):
 
             metamodel = None
 
+            if metamodel_from_file is None:
+                raise MissingDependencyError("textx")
+
             try:
                 metamodel = metamodel_from_file(grammarfile)
             except TextXError as e:

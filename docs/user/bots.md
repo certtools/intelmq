@@ -1016,6 +1016,10 @@ Requires the shodan library to be installed:
 
 Only the proxy is used (requires `shodan-python > 1.8.1`). Certificate is always verified.
 
+**`api_key`**
+
+Your Shodan API Key.
+
 **`countries`**
 
 () A list of countries to query for. If it is a string, it will be spit by `,`.
@@ -1030,6 +1034,30 @@ number of consecutive connection fails does not reach the parameter
 logging messages. The consecutive connection fails are reset if a data line has been successfully transferred. If the
 consecutive connection fails reaches the parameter `error_max_retries`, an exception will be thrown and `rate_limit`
 applies, if not null.
+
+---
+
+### Shodan Alert <div id="intelmq.bots.collectors.shodan.collector_alert" />
+
+Queries the Shodan Alert Streaming API.
+
+Configure Alerts in the Shodan Interface (Website or CLI tool), then receive the data on the alerts via the Streaming service.
+
+Requires the shodan library to be installed:
+
+- <https://github.com/achillean/shodan-python/>
+
+- <https://pypi.org/project/shodan/>
+
+**Module:** `intelmq.bots.collectors.shodan.collector_alert`
+
+**Parameters (also expects [feed parameters](#feed-parameters) and [HTTP parameters](#http-parameters)):**
+
+Of the generic HTTP parameters, only the proxy is used (requires `shodan-python > 1.8.1`). The API endpoint certificate is always verified.
+
+**`api_key`**
+
+Your Shodan API Key.
 
 ---
 
@@ -1054,34 +1082,6 @@ input. If you intend to link two IntelMQ instance via TCP, have a look at the TC
 **`port`**
 
 (required, integer) Port of destination server.
-
----
-
-### Blueliv Crimeserver <div id="intelmq.bots.collectors.blueliv.collector_crimeserver" />
-
-Collects report messages from Blueliv API.
-
-For more information visit <https://github.com/Blueliv/api-python-sdk>
-
-**Module:** `intelmq.bots.collectors.blueliv.collector_crimeserver`
-
-**Requirements**
-
-Install the required library:
-
-```bash
-pip3 install -r intelmq/bots/collectors/blueliv/REQUIREMENTS.txt
-```
-
-**Parameters (also expects [feed parameters](#feed-parameters)):**
-
-**`api_key`**
-
-(required, string) location of information resource, see <https://map.blueliv.com/?redirect=get-started#signup>
-
-**`api_url`**
-
-(optional, string) The optional API endpoint. Defaults to `https://freeapi.blueliv.com`.
 
 ---
 
@@ -1395,16 +1395,6 @@ No additional parameters.
 Parses data from Blocklist.de feeds.
 
 **Module:** `intelmq.bots.parsers.blocklistde.parser`
-
-No additional parameters.
-
----
-
-### Blueliv Crimeserver <div id="intelmq.bots.parsers.blueliv.parser_crimeserver" />
-
-Parses data from Blueliv Crimeserver feed.
-
-**Module:** `intelmq.bots.parsers.blueliv.parser_crimeserver`
 
 No additional parameters.
 
@@ -2698,11 +2688,12 @@ is `$portal_url + '/api/1.0/ripe/contact?cidr=%s'`.
 
 ### Fake <div id="intelmq.bots.experts.fake.expert" />
 
-Adds fake data to events. Currently supports setting the IP address and network.
+Adds fake data to events. It currently supports two operation methods:
 
-For each incoming event, the bots chooses one random IP network range from the configured data file.
-It set's the first IP address of the range as `source.ip` and the network itself as `source.network`.
-To adapt the `source.asn` field accordingly, use the [ASN Lookup Expert](#asn-lookup).
+* Setting the IP address and network
+* For any Event field, set the value to a random item of a user-defined list (mode `random_single_value`)
+
+For a detailed description of the modes, see below.
 
 **Module:** `intelmq.bots.experts.fake.expert`
 
@@ -2710,13 +2701,21 @@ To adapt the `source.asn` field accordingly, use the [ASN Lookup Expert](#asn-lo
 
 **`database`**
 
-(required, string) Path to a JSON file in the following format:
+(required, string) Path to a JSON file in the following format (example):
 ```
 {
     "ip_network": [
         "10.0.0.0/8",
+        "192.168.0.0/16",
         ...
-    ]
+    ],
+    "event_fields": {
+      "extra.severity": {
+        "mode": "random_single_value",
+        "values": ["critical", "high", "medium", "low", "info", "undefined"]
+      },
+      ...
+    }
 }
 ```
 
@@ -2724,8 +2723,19 @@ To adapt the `source.asn` field accordingly, use the [ASN Lookup Expert](#asn-lo
 
 (optional, boolean) Whether to overwrite existing fields. Defaults to false.
 
+### Modes
+
+#### IP Network
+For each incoming event, the bots chooses one random IP network range (IPv4 or IPv6) from the configured data file.
+It set's the first IP address of the range as `source.ip` and the network itself as `source.network`.
+To adapt the `source.asn` field accordingly, use the [ASN Lookup Expert](#asn-lookup).
+
 For data consistency `source.network` will only be set if `source.ip` was set or overridden.
 If overwrite is false, `source.ip` was did not exist before but `source.network` existed before, `source.network` will still be overridden.
+
+#### Event fields
+##### Mode `random_single_value`
+For any possible event field, the bot chooses a random value of the values in the `values` property.
 
 ---
 
@@ -2897,8 +2907,7 @@ Order of operation: `strip -> replace -> split`. These three methods can be comb
 
 ### Generic DB Lookup <div id="intelmq.bots.experts.generic_db_lookup.expert" />
 
-This bot is capable for enriching intelmq events by lookups to a database. Currently only PostgreSQL and SQLite are
-supported.
+This bot is capable for enriching intelmq events by lookups to a database. Currently PostgreSQL, SQLite, MSSQL, and MySQL/MariaDB are supported.
 
 If more than one result is returned, a ValueError is raised.
 
@@ -2910,7 +2919,7 @@ If more than one result is returned, a ValueError is raised.
 
 **`engine`**
 
-(required, string) Allowed values: `postgresql` or `sqlite`.
+(required, string) Allowed values: `postgresql`, `sqlite`, `mssql`, or `mysql`.
 
 **`database`**
 
@@ -2920,23 +2929,25 @@ If more than one result is returned, a ValueError is raised.
 
 (optional, string) Name of the table. Defaults to `contacts`.
 
-*PostgreSQL specific parameters*
+*Database server (i.e. not SQLite) specific parameters*
 
 **`host`**
 
-(optional, string) Hostname of the PostgreSQL server. Defaults to `localhost`.
+(optional, string) Hostname of the database server. Defaults to `localhost`.
 
 **`port`**
 
-(optional, integer) Port of the PostgreSQL server. Defaults to 5432.
+(optional, integer) Port of the database server. Defaults to 5432 (which is the default for PostgreSQL).
 
 **`user`**
 
-(optional, string) Username for accessing PostgreSQL. Defaults to `intelmq`.
+(optional, string) Username for accessing the database server. Defaults to `intelmq`.
 
 **`password`**
 
-(optional, string) Password for accessing PostgreSQL. Defaults to ?.
+(optional, string) Password for accessing the database server. Defaults to ?.
+
+*PostgreSQL specific parameters*
 
 **`sslmode`**
 
@@ -5111,6 +5122,28 @@ original2@email.com,person1@email.com;person2@email.com
 original3@email.com, Mary <person1@example.com>; John <person2@example.com>
 ```
 
+**`additional_grouping_keys`**
+
+(optional, list) By-default events are grouped by the E-Mail-Address into buckets. For each bucket one E-Mail is sent. You may add more fields to group-by here to make potentially more buckets.
+Side-effect: Every field that is included in the group-by is ensured to be unique for all events in the bucket and may thus be used for templating.
+Note: The keys listed here refer to the keys in the events (in contrast to the CSV column names).
+Default: `[]`
+
+**`templating`**
+
+(optional, dict) Defines which strings should be processed by jinja2 templating. For templating only keys which are unique for the complete bucket are available. This always includes the destination address (`source.abuse_contact`) and all keys of `additional_grouping_keys` which are present in the bucket. There is one additional key `current_time` available which holds a `datetime.datetime` object of the current (local) time.
+Note: The keys available for templating refer to the keys defined for the events (in contrast to the CSV column names). Still the keys get transformed: each `'.'` gets replaced to `_` in order to make referencing the key in jinja2 easier.
+Default: `{subject: False, body: False, attachment: False}`
+
+**`allowed_fieldnames`**
+
+(optional, list) Lists the fields which are included in the csv file. Every element should be also included in `fieldnames_translation` to avoid crashes.
+
+**`fieldnames_translation`**
+
+(optional, dict) Maps each the name of each field listed in `allowed_fieldnames` to a different name to be used in the csv header.
+**Warning:** The Bot will crash on sending in case a fieldname is present in an event and in `allowed_fieldnames` but not in `fieldnames_translation`.
+
 **`attachment_name`**
 
 (optional, string)  Attachment file name for the outgoing messages. May contain date formatting like this `%Y-%m-%d`. Example: "events_%Y-%m-%d" will appear as "events_2022-12-01.zip". Defaults to "intelmq_%Y-%m-%d".
@@ -5264,7 +5297,7 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 
 ### SQL <div id="intelmq.bots.outputs.sql.output" />
 
-SQL is the bot responsible to send events to a PostgreSQL, SQLite, or MSSQL Database.
+SQL is the bot responsible to send events to a PostgreSQL, SQLite, MSSQL, or MySQL/MariaDB database.
 
 !!! note
     When activating autocommit, transactions are not used. See: <http://initd.org/psycopg/docs/connection.html#connection.autocommit>
@@ -5281,7 +5314,7 @@ The parameters marked with 'PostgreSQL' will be sent to libpq via psycopg2. Chec
 
 **`engine`**
 
-(required, string) Allowed values are `postgresql`, `sqlite`, or `mssql`.
+(required, string) Allowed values are `postgresql`, `sqlite`, `mssql`, or `mysql`.
 
 **`database`**
 
@@ -5313,7 +5346,7 @@ The parameters marked with 'PostgreSQL' will be sent to libpq via psycopg2. Chec
 
 **`sslmode`**
 
-(optional, string) Database sslmode, Allowed values: `disable`, `allow`, `prefer`, `require`, `verify-ca` or `verify-full`. See: <https://www.postgresql.org/docs/current/static/images/libpq-connect.html#libpq-connect-sslmode>. Defaults to `require`.
+(optional, string, PostgreSQL only) Database sslmode, Allowed values: `disable`, `allow`, `prefer`, `require`, `verify-ca` or `verify-full`. See: <https://www.postgresql.org/docs/current/static/images/libpq-connect.html#libpq-connect-sslmode>. Defaults to `require`.
 
 **`table`**
 

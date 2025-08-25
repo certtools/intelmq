@@ -12,6 +12,7 @@ import intelmq.lib.test as test
 from intelmq.bots.experts.fake.expert import FakeExpertBot
 
 FAKE_DB = pkg_resources.resource_filename('intelmq', 'tests/bots/experts/fake/data.json')
+SEVERITY_DB = pkg_resources.resource_filename('intelmq', 'tests/bots/experts/fake/severity.json')
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com
                  }
@@ -44,6 +45,12 @@ class TestFakeExpertBot(test.BotTestCase, unittest.TestCase):
         msg = json_loads(self.get_output_queue()[0])
         self.assertIn(ip_address(msg['source.ip']), ip_network("10.0.0.0/8"))
         self.assertEqual(msg['source.network'], "10.0.0.0/8")
+
+    def test_random_single_value(self):
+        self.input_message = {"__type": "Event"}
+        self.run_bot(parameters={'database': SEVERITY_DB})
+        msg = json_loads(self.get_output_queue()[0])
+        self.assertIn(msg['extra.severity'], ["critical", "high", "medium", "low", "info", "undefined"])
 
 
 if __name__ == '__main__':  # pragma: no cover

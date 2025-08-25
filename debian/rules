@@ -27,6 +27,8 @@ build:
 	# These tests frequently fail on Ubuntu and Debian systems.
 	# On some systems this command will be executed twice, so -f
 	rm -rf intelmq/tests/bots/collectors/tcp/
+	# remove program not needed for packages
+	rm -f intelmq/bin/intelmqsetup
 
 override_dh_auto_build:
 	dh_auto_build
@@ -48,16 +50,14 @@ override_dh_auto_install: $(BOTDOCS)
 		mkdir -p $(DOCS_DIR)/bots/$$(dirname $$readme); \
 		cp intelmq/bots/$$readme $(DOCS_DIR)/bots/$$(dirname $$readme); \
 	done
-	# remove program not needed for packages
-	rm debian/intelmq/usr/bin/intelmqsetup
 	# create directory layout and empty state file
 	ROOT_DIR=debian/intelmq/ PYTHONPATH=. python3 intelmq/bin/intelmqsetup.py --skip-ownership --state-file debian/intelmq/var/lib/intelmq/state.json --skip-api --skip-manager
 
 override_dh_install:
 	dh_install
-	install -Dm 644 contrib/logcheck/ignore debian/intelmq/etc/logcheck/ignore.d.server/intelmq
-	install -Dm 644 contrib/logcheck/violations debian/intelmq/etc/logcheck/violations.d/intelmq
-	install -Dm 644 contrib/logcheck/logcheck.logfiles debian/intelmq/etc/logcheck/logcheck.logfiles.d/intelmq
+	install -Dm 644 contrib/logcheck/ignore debian/intelmq-contrib/etc/logcheck/ignore.d.server/intelmq
+	install -Dm 644 contrib/logcheck/violations debian/intelmq-contrib/etc/logcheck/violations.d/intelmq
+	install -Dm 644 contrib/logcheck/logcheck.logfiles debian/intelmq-contrib/etc/logcheck/logcheck.logfiles.d/intelmq
 
 override_dh_systemd_start:
 	dh_systemd_start --restart-after-upgrade
