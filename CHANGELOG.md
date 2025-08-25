@@ -29,6 +29,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 ### Bots
 #### Collectors
+- `intelmq.bots.collectors.shodan.collector_alert`: Added a new collector to query the Shodan Alert API (PR#2618 by Sebastian Wagner and Malawi CERT).
 - Remove `intelmq.bots.collectors.blueliv` as it uses an unmaintained library, does not work any more and breaks other CI tests (fixes #2593, PR#2632 by Sebastian Wagner).
 
 #### Parsers

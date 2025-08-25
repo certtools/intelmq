@@ -1004,6 +1004,10 @@ Requires the shodan library to be installed:
 
 Only the proxy is used (requires `shodan-python > 1.8.1`). Certificate is always verified.
 
+**`api_key`**
+
+Your Shodan API Key.
+
 **`countries`**
 
 () A list of countries to query for. If it is a string, it will be spit by `,`.
@@ -1018,6 +1022,30 @@ number of consecutive connection fails does not reach the parameter
 logging messages. The consecutive connection fails are reset if a data line has been successfully transferred. If the
 consecutive connection fails reaches the parameter `error_max_retries`, an exception will be thrown and `rate_limit`
 applies, if not null.
+
+---
+
+### Shodan Alert <div id="intelmq.bots.collectors.shodan.collector_alert" />
+
+Queries the Shodan Alert Streaming API.
+
+Configure Alerts in the Shodan Interface (Website or CLI tool), then receive the data on the alerts via the Streaming service.
+
+Requires the shodan library to be installed:
+
+- <https://github.com/achillean/shodan-python/>
+
+- <https://pypi.org/project/shodan/>
+
+**Module:** `intelmq.bots.collectors.shodan.collector_alert`
+
+**Parameters (also expects [feed parameters](#feed-parameters) and [HTTP parameters](#http-parameters)):**
+
+Of the generic HTTP parameters, only the proxy is used (requires `shodan-python > 1.8.1`). The API endpoint certificate is always verified.
+
+**`api_key`**
+
+Your Shodan API Key.
 
 ---
 
