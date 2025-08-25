@@ -26,7 +26,7 @@ To participate on GitHub, you first need to create an account on the platform.
 ## Mailing list
 
 The most traditional way is to ask your question, make a proposal or discuss a topic on the
-mailing [IntelMQ Users mailing list](https://lists.cert.t/cgi-bin/mailman/listinfo/intelmq-users). You need to subscribe to the mailing list before posting, but the archive is publicly available: [IntelMQ Users Archive](https://lists.cert.at/pipermail/intelmq-users/).
+mailing [IntelMQ Users mailing list](https://lists.cert.at/mailman3/hyperkitty/list/intelmq-users@lists.cert.at/). You need to subscribe to the mailing list before posting, but the archive is publicly available: [IntelMQ Users Archive](https://lists.cert.at/mailman3/hyperkitty/list/intelmq-users@lists.cert.at/latest).
 
 ## Assistance
 

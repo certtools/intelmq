@@ -107,7 +107,7 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
         output['feed.url'] = 'http://localhost/foobar.gz'
         del output['extra.file_name']
         self.assertMessageEqual(0, output)
-        self.assertLogMatches('Report downloaded \(29B\).', 'INFO')
+        self.assertLogMatches(r'Report downloaded \(29B\).', 'INFO')
 
     def test_zip_auto(self, mocker):
         """

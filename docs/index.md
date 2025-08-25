@@ -54,7 +54,7 @@ It follows the following basic meta-guidelines:
 
 ## Contribute
 
-- Subscribe to the [IntelMQ Developers mailing list](https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev) and engage in discussions
+- Subscribe to the [IntelMQ Developers mailing list](https://lists.cert.at/mailman3/hyperkitty/list/intelmq-dev@lists.cert.at/) and engage in discussions
 - Report any errors and suggest improvements via [issues](https://github.com/certtools/intelmq/issues)
 - Read the Developer Guide and open a [pull request](https://github.com/certtools/intelmq/pulls)
 

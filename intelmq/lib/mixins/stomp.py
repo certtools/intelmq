@@ -63,7 +63,7 @@ class StompMixin:
     # Helper methods intended to be used in subclasses
 
     @classmethod
-    def stomp_bot_parameters_check(cls, parameters: dict) -> List[List[str]]:
+    def stomp_bot_parameters_check(cls, parameters: dict) -> list[list[str]]:
         """Intended to be used in bots' `check()` static/class method."""
         logs = []
         cls.__verify_parameters(
@@ -80,7 +80,7 @@ class StompMixin:
             on_error=self.__raise_value_error,
         )
 
-    def prepare_stomp_connection(self) -> Tuple['stomp.Connection', dict]:
+    def prepare_stomp_connection(self) -> tuple['stomp.Connection', dict]:
         """
         Get a `(<STOMP connection>, <STOMP connect arguments>)` pair.
 
@@ -178,7 +178,7 @@ class StompMixin:
     def __raise_value_error(self, msg: str) -> NoReturn:
         raise ValueError(msg)
 
-    def __get_ssl_and_connect_kwargs(self) -> Tuple[dict, dict]:
+    def __get_ssl_and_connect_kwargs(self) -> tuple[dict, dict]:
         # Note: a *non-empty* and *non-None* `ca_certs` argument must
         # always be passed to `set_ssl()`; otherwise the `stomp.py`'s
         # machinery would *not* enable any certificate verification!
@@ -276,7 +276,7 @@ class _StompPyDedicatedSSLProxy:
     #
     # Proxying/substituting `ssl` tools for `stomp.transport` module
 
-    def __dir__(self) -> List[str]:
+    def __dir__(self) -> list[str]:
         return dir(ssl)
 
     def __getattribute__(self, name: str) -> Any:
@@ -379,12 +379,11 @@ class _StompPyDedicatedSSLProxy:
                 cafile = _SYSTEM_DEFAULT_CA_MARKER
             ssl_context.load_verify_locations(cafile, capath, cadata)
 
-            if sys.version_info[:2] >= (3, 8):
-                # Support for OpenSSL 1.1.1 keylog (copied from `Py>=3.8`):
-                if hasattr(ssl_context, 'keylog_filename'):
-                    keylogfile = os.environ.get('SSLKEYLOGFILE')
-                    if keylogfile and not sys.flags.ignore_environment:
-                        ssl_context.keylog_filename = keylogfile
+            # Support for OpenSSL 1.1.1 keylog:
+            if hasattr(ssl_context, 'keylog_filename'):
+                keylogfile = os.environ.get('SSLKEYLOGFILE')
+                if keylogfile and not sys.flags.ignore_environment:
+                    ssl_context.keylog_filename = keylogfile
 
         else:
             ssl_context = ssl.create_default_context(

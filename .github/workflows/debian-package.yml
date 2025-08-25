@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       # Fixes https://github.com/actions/virtual-environments/issues/3080
       STORAGE_OPTS: overlay.mount_program=/usr/bin/fuse-overlayfs

@@ -23,7 +23,8 @@ Parameters:
 import re
 import pkg_resources
 
-from typing import Optional, Iterable
+from typing import Optional
+from collections.abc import Iterable
 
 from intelmq.lib.bot import ParserBot, utils
 from intelmq.lib.exceptions import InvalidArgument

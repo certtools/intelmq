@@ -14,6 +14,7 @@ Please refer to the change log for a full list of changes.
 --------------------------------
 
 ### Requirements
+Python `>=3.9` is now required, which is available on all platforms supported by IntelMQ.
 
 ### Tools
 
@@ -33,6 +34,11 @@ ALTER TABLE events ADD "product.vulnerabilities" text;
 ### Libraries
 
 ### Postgres databases
+To switch to the more efficient data type `jsonb` instead of `json`, use the following SQL statement. Data is preserved. JSONB also has more query and data manipulation features than plain JSON.
+```sql
+ALTER TABLE events
+   ALTER COLUMN "extra" SET DATA TYPE jsonb;
+```
 
 
 3.4.0 Feature release (2025-03-14)

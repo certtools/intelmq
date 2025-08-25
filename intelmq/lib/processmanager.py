@@ -15,7 +15,8 @@ import subprocess
 import sys
 import time
 import xmlrpc.client
-from typing import Union, Iterable
+from typing import Union
+from collections.abc import Iterable
 
 
 from intelmq import (DEFAULT_LOGGING_LEVEL,  # noqa: F401

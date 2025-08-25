@@ -20,6 +20,8 @@ import json
 import sys
 from importlib import import_module
 from os.path import exists
+from typing import Optional, Callable
+from unittest import mock
 
 import time
 
@@ -35,7 +37,6 @@ class BotDebugger:
     EXAMPLE = """\nThe message may look like:
     '{"source.network": "178.72.192.0/18", "time.observation": "2017-05-12T05:23:06+00:00"}' """
 
-    load_configuration = utils.load_configuration
     logging_level = None
     output = []
     instance = None
@@ -65,13 +66,15 @@ class BotDebugger:
             # Set's the bot's default and initial value for the logging_level to the value we want
             bot.logging_level = self.logging_level
 
-        self.instance = bot(bot_id, disable_multithreading=True,
-                            standalone=True,  # instruct the bot to call SystemExit exception at the end or in case of errors
-                            )
+        with mock.patch.object(utils, 'get_runtime', self.generate_get_runtime(self.logging_level)):
+            self.instance = bot(bot_id, disable_multithreading=True,
+                                standalone=True,  # instruct the bot to call SystemExit exception at the end or in case of errors
+                                )
 
     def run(self) -> str:
         if not self.run_subcommand:
-            self.instance.start()
+            with mock.patch.object(utils, 'get_runtime', self.generate_get_runtime(self.logging_level)):
+                self.instance.start()
         else:
             self.instance._Bot__connect_pipelines()
             if self.run_subcommand == "console":
@@ -181,7 +184,6 @@ class BotDebugger:
         return msg
 
     def leverageLogger(self, level):
-        utils.load_configuration = BotDebugger.load_configuration_patch
         self.logging_level = level
         if self.instance:
             self.instance.logger.setLevel(level)
@@ -189,8 +191,7 @@ class BotDebugger:
                 if isinstance(h, StreamHandler):
                     h.setLevel(level)
 
-    @staticmethod
-    def load_configuration_patch(configuration_filepath: str, *args, **kwargs) -> dict:
+    def generate_get_runtime(self, logging_level: Optional[str] = None) -> Callable:
         """
         Mock function for utils.load_configuration which ensures the logging level parameter is set to the value we want.
         If Runtime configuration is detected, the logging_level parameter is
@@ -198,16 +199,18 @@ class BotDebugger:
         - inserted in the global parameters (ex-defaults).
         Maybe not everything is necessary, but we can make sure the logging_level is just everywhere where it might be relevant, also in the future.
         """
-        config = BotDebugger.load_configuration(configuration_filepath=configuration_filepath, *args, **kwargs)
-        if BotDebugger.logging_level and configuration_filepath == RUNTIME_CONF_FILE:
-            for bot_id in config.keys():
-                if bot_id == "global":
-                    config[bot_id]["logging_level"] = BotDebugger.logging_level
-                else:
-                    config[bot_id]['parameters']["logging_level"] = BotDebugger.logging_level
-            if "global" not in config:
-                config["global"] = {"logging_level": BotDebugger.logging_level}
-        return config
+        def new_get_runtime(*args, **kwargs):
+            config = utils.load_configuration(RUNTIME_CONF_FILE, *args, **kwargs)
+            if logging_level:
+                for bot_id in config.keys():
+                    if bot_id == "global":
+                        config[bot_id]["logging_level"] = logging_level
+                    else:
+                        config[bot_id]['parameters']["logging_level"] = logging_level
+                if "global" not in config:
+                    config["global"] = {"logging_level": logging_level}
+            return config
+        return new_get_runtime
 
     def messageWizzard(self, msg):
         self.instance.logger.error(msg)

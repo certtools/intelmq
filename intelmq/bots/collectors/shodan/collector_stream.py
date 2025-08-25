@@ -30,7 +30,7 @@ except ImportError:
 class ShodanStreamCollectorBot(CollectorBot):
     "Collect the Shodan stream from the Shodan API"
     api_key: str = "<INSERT your API key>"
-    countries: List[str] = []
+    countries: list[str] = []
     alert: Optional[str] = None
 
     def init(self):

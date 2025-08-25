@@ -34,7 +34,7 @@ Similarly, if code does not get accepted upstream by the main developers, it is 
 ## Mailing list
 
 There is a separate mailing list for developers to discuss development topics:
-The [IntelMQ-DevArchive](https://lists.cert.at/pipermail/intelmq-dev/) is public as well.
+The [IntelMQ-DevArchive](https://lists.cert.at/mailman3/hyperkitty/list/intelmq-dev@lists.cert.at/) is public as well.
 
 ## GitHub
 

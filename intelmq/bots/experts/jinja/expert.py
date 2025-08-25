@@ -27,8 +27,8 @@ class JinjaExpertBot(ExpertBot):
           extra.somejinjaoutput: file:///etc/intelmq/somejinjatemplate.j2
     """
 
-    fields: Dict[str, str] = {}
-    _templates: Dict[str, Union[str, Template]] = {}
+    fields: dict[str, str] = {}
+    _templates: dict[str, Union[str, Template]] = {}
     overwrite: bool = False
 
     def init(self):

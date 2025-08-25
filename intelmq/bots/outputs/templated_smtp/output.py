@@ -112,7 +112,7 @@ class TemplatedSMTPOutputBot(OutputBot):
     username: Optional[str] = None
     password: Optional[str] = None
     verify_cert: bool = True
-    attachments: List[str] = []
+    attachments: list[str] = []
     mail_from: Optional[str] = None
     mail_to: Optional[str] = None
     subject: str = "IntelMQ event"

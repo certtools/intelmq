@@ -563,12 +563,42 @@ Get some debugging output on the settings and the environment (to be extended):
         for bot_id in bots:
             self.bot_stop(bot_id, getstatus=False)
 
-        retval = 0
-        time.sleep(0.75)
-        for bot_id in bots:
-            botnet_status[bot_id] = self.bot_status(bot_id)[1]
-            if botnet_status[bot_id] not in ['stopped', 'disabled']:
-                retval = 1
+        # shallow copy of the list suffices
+        # only aliasing the list to ease reading the following
+        stopped_but_still_running_bots = bots
+
+        retries = getattr(self._parameters, 'stop_retry_limit', 5)
+
+        # parameters (default):
+        # - sleep 0.75 s with an increment of 0.1
+        # - at most 5 tries
+        # => sleep-ing at most 4.75 seconds
+        sleep_time = 0.75  # in seconds
+        for _ in range(retries):
+            # give the bots some time to terminate
+            time.sleep(sleep_time)
+            # update the botnet_status
+            for bot_id in stopped_but_still_running_bots:
+                botnet_status[bot_id] = self.bot_status(bot_id)[1]
+            # only keep bots in the list which are not stopped already
+            stopped_but_still_running_bots = [
+                bot_id
+                for bot_id in stopped_but_still_running_bots
+                if botnet_status[bot_id] not in ['stopped', 'disabled']
+            ]
+
+            # check if all bots are stopped -> no need to wait further
+            if not stopped_but_still_running_bots:
+                break
+            # the longer the bots need to terminate the longer we wait to check
+            # again to avoid long-term load on the system
+            # but stop at 5 seconds to avoid waiting too long until rechecking
+            # the status
+            sleep_time = min(5, sleep_time + 0.1)
+
+        retval = 1
+        if len(stopped_but_still_running_bots) == 0:
+            retval = 0
 
         self.log_botnet_message('stopped', group)
         return retval, botnet_status
@@ -771,7 +801,8 @@ Get some debugging output on the settings and the environment (to be extended):
             self._logger.exception("Error while clearing queue %s.", queue)
             return 1, 'error'
 
-    def read_bot_log(self, bot_id, log_level, number_of_lines):
+    def read_bot_log(self, bot_id: str, log_level: str, number_of_lines: int):
+        """ Read logs of a bot filtered by logging level """
         if self._parameters.logging_handler == 'file':
             bot_log_path = os.path.join(self._parameters.logging_path,
                                         bot_id + '.log')
@@ -799,13 +830,13 @@ Get some debugging output on the settings and the environment (to be extended):
             if self._parameters.logging_handler == 'syslog':
                 log_message = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
 
-            if type(log_message) is not dict:
+            if not isinstance(log_message, dict):
                 if self._parameters.logging_handler == 'file':
                     message_overflow = '\n'.join([line, message_overflow])
                 continue
             if log_message['bot_id'] != bot_id:
                 continue
-            if LogLevel[log_message['log_level']].value > LogLevel[log_level].value:
+            if LogLevel[log_message['log_level']].value < LogLevel[log_level].value:
                 continue
 
             if message_overflow:
@@ -898,8 +929,8 @@ Get some debugging output on the settings and the environment (to be extended):
                 if orphan_queues:
                     check_logger.warning("Orphaned queues found: '%s'. Possible leftover from past reconfigurations "
                                          "without cleanup. Have a look at the FAQ at "
-                                         "https://docs.intelmq.org/latest/admin/faq/"
-                                         "#orphaned-queues", orphan_queues)
+                                         "https://docs.intelmq.org/latest/admin/management/intelmq/#orphaned-queues",
+                                         orphan_queues)
 
         check_logger.info('Checking harmonization configuration.')
         for event_type, event_type_conf in files[HARMONIZATION_CONF_FILE].items():

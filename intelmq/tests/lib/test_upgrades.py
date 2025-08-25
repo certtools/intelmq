@@ -616,6 +616,15 @@ V340_TWITTER_COLLECTOR_IN = {
         "module": "intelmq.bots.collectors.twitter.collector",
     },
 }
+V341_BLUELIV_REMOVAL = {
+    "global": {},
+    "blueliv-collector": {
+        "module": "intelmq.bots.collectors.blueliv.collector_crimeserver"
+    },
+    "blueliv-parser": {
+        "module": "intelmq.bots.parsers.blueliv.parser_crimeserver"
+    }
+}
 
 
 
@@ -856,6 +865,13 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertIn('twitter-collector', result[0])
         self.assertEqual(V340_TWITTER_COLLECTOR_IN, result[1])
 
+    def test_v341_blueliv_removal(self):
+        """ Test v341_blueliv_removal deprecation warning """
+        result = upgrades.v341_blueliv_removal(V341_BLUELIV_REMOVAL, {}, False)
+        self.assertIn('blueliv-collector', result[0])
+        self.assertIn('blueliv-parser', result[0])
+        self.assertEqual(V341_BLUELIV_REMOVAL, result[1])
+
     def test_v342_new_fields(self):
         """ Test adding new harmonisation fields """
         result = upgrades.v342_new_fields({}, {"event": {"old-field": "must stay"}}, False)
@@ -866,7 +882,6 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertIn("product.vendor", result[2]["event"])
         self.assertIn("product.version", result[2]["event"])
         self.assertIn("product.vulnerabilities", result[2]["event"])
-
 
 for name in upgrades.__all__:
     setattr(TestUpgradeLib, 'test_function_%s' % name,

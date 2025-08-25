@@ -1,0 +1,9 @@
+contrib/eventdb/ /usr/share/intelmq/contrib/
+contrib/example-extension-package/ /usr/share/intelmq/contrib/
+contrib/feeds-config-generator/ /usr/share/intelmq/contrib/
+contrib/logcheck/ /usr/share/intelmq/contrib/
+contrib/logrotate/ /usr/share/intelmq/contrib/
+contrib/malware_name_mapping/ /usr/share/intelmq/contrib/
+contrib/prettyprint/ /usr/share/intelmq/contrib/
+contrib/systemd/ /usr/share/intelmq/contrib/
+contrib/tmpfiles.d/ /usr/share/intelmq/contrib/

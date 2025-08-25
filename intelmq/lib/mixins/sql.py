@@ -16,12 +16,13 @@ class SQLMixin:
     You do not have to bother:
     * connecting database in the self.init() method, just call super().init(), self.cur will be set
     * catching exceptions, just call self.execute() instead of self.cur.execute()
-    * self.format_char will be set to '%s' in PostgreSQL and to '?' in SQLite
+    * self.format_char will be set to '?' in SQLite and '%s' otherwise
     """
 
     POSTGRESQL = "postgresql"
     SQLITE = "sqlite"
     MSSQL = "mssql"
+    MYSQL = "mysql"
     _default_engine = "postgresql"
     engine = None
     # overwrite the default value from the OutputBot
@@ -40,7 +41,8 @@ class SQLMixin:
         self._engine_name = getattr(self, 'engine', self._default_engine).lower()
         engines = {SQLMixin.POSTGRESQL: (self._init_postgresql, "%s"),
                    SQLMixin.SQLITE: (self._init_sqlite, "?"),
-                   SQLMixin.MSSQL: (self._init_mssql, "%s")}
+                   SQLMixin.MSSQL: (self._init_mssql, "%s"),
+                   SQLMixin.MYSQL: (self._init_mysql, "%s")}
         for key, val in engines.items():
             if self._engine_name == key:
                 val[0]()
@@ -109,6 +111,23 @@ class SQLMixin:
                        "as_dict": True
                        },
                       autocommitable=True)
+
+    def _init_mysql(self):
+        try:
+            import pymysql
+        except ImportError:
+            raise exceptions.MissingDependencyError("pymysql")
+
+        self._connect(pymysql,
+                      {"database": self.database,
+                       "user": self.user,
+                       "password": self.password,
+                       "host": self.host,
+                       "port": self.port,
+                       "connect_timeout": getattr(self, 'connect_timeout', 5)
+                       },
+                      autocommitable=True)
+        self.cur.execute("SET sql_mode = CONCAT_WS(',', (SELECT @@sql_mode), 'ANSI_QUOTES')")
 
     def execute(self, query: str, values: tuple, rollback=False):
         try:

@@ -83,7 +83,7 @@ class CIF3OutputBot(OutputBot):
     add_feed_provider_as_tag: bool = False
     cif3_feed_confidence: float = 5
     cif3_static_confidence: bool = False
-    cif3_additional_tags: List[str] = []
+    cif3_additional_tags: list[str] = []
     cif3_token: Optional[str] = None
     cif3_url: Optional[str] = None
     fireball: int = 500

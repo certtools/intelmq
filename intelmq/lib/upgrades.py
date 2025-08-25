@@ -42,6 +42,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v322_url_replacement',
            'v322_removed_feeds_and_bots',
            'v340_deprecations',
+           'v341_blueliv_removal',
            'v342_new_fields'
            ]
 
@@ -975,6 +976,29 @@ def v340_deprecations(configuration, harmonization, dry_run, **kwargs):
     return message or changed, configuration, harmonization
 
 
+def v341_blueliv_removal(configuration, harmonization, dry_run, **kwargs):
+    """
+    Remove blueliv collector and parser
+    """
+    message = None
+    discontinued_bots = []
+    discontinued_bots_modules = (
+        "intelmq.bots.collectors.blueliv.collector_crimeserver",
+        "intelmq.bots.parsers.blueliv.parser_crimeserver",
+    )
+
+    for bot_id, bot in configuration.items():
+        if bot_id == 'global':
+            continue
+        if bot["module"] in discontinued_bots_modules:
+            discontinued_bots.append(bot_id)
+
+    if discontinued_bots:
+        message = f"Found discontinued bots: {', '.join(discontinued_bots)}. Remove the affected bots from the configuration."
+
+    return message, configuration, harmonization
+
+
 def v342_new_fields(configuration, harmonization, dry_run, **kwargs):
     """
     Add new fields to IntelMQ Data Format
@@ -1032,8 +1056,8 @@ UPGRADES = OrderedDict([
     ((3, 3, 0), ()),
     ((3, 3, 1), ()),
     ((3, 4, 0), (v340_deprecations, )),
-    ((3, 4, 2), (v342_new_fields, )),
-
+     ((3, 4, 1), (v341_blueliv_removal, )),
+     ((3, 4, 2), (v342_new_fields, )),
 ])
 
 ALWAYS = (harmonization,)

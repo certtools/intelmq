@@ -83,6 +83,9 @@ class SieveExpertBot(ExpertBot):
 
             metamodel = None
 
+            if metamodel_from_file is None:
+                raise MissingDependencyError("textx")
+
             try:
                 metamodel = metamodel_from_file(grammarfile)
             except TextXError as e:
@@ -173,7 +176,7 @@ class SieveExpertBot(ExpertBot):
 
     _date_op_map = {":before": operator.lt, ":after": operator.gt}
 
-    _cond_map: Dict[
+    _cond_map: dict[
         str,
         Callable[
             [

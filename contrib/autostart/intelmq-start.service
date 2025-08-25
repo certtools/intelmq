@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2025 Institute for Common Good Technology
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+[Unit]
+Description=Start all enabled IntelMQ bots
+After=network.target
+# will be replaced by valkey in next distribution versions
+Requires=redis-server.service
+
+[Service]
+# oneshot does not work as it stops the remaining processes
+Type=simple
+ExecStart=/usr/bin/intelmq-start.sh
+User=intelmq
+Group=intelmq
+RemainAfterExit=yes
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
