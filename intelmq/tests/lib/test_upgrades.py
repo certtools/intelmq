@@ -856,9 +856,9 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertIn('twitter-collector', result[0])
         self.assertEqual(V340_TWITTER_COLLECTOR_IN, result[1])
 
-    def test_v341_new_fields(self):
+    def test_v342_new_fields(self):
         """ Test adding new harmonisation fields """
-        result = upgrades.v341_new_fields({}, {"event": {"old-field": "must stay"}}, False)
+        result = upgrades.v342_new_fields({}, {"event": {"old-field": "must stay"}}, False)
         self.assertTrue(result[0])
         self.assertIn("old-field", result[2]["event"])
         self.assertIn("product.full_name", result[2]["event"])

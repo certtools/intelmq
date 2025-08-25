@@ -42,7 +42,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v322_url_replacement',
            'v322_removed_feeds_and_bots',
            'v340_deprecations',
-           'v341_new_fields'
+           'v342_new_fields'
            ]
 
 
@@ -975,7 +975,7 @@ def v340_deprecations(configuration, harmonization, dry_run, **kwargs):
     return message or changed, configuration, harmonization
 
 
-def v341_new_fields(configuration, harmonization, dry_run, **kwargs):
+def v342_new_fields(configuration, harmonization, dry_run, **kwargs):
     """
     Add new fields to IntelMQ Data Format
     """
@@ -1032,7 +1032,7 @@ UPGRADES = OrderedDict([
     ((3, 3, 0), ()),
     ((3, 3, 1), ()),
     ((3, 4, 0), (v340_deprecations, )),
-    ((3, 4, 1), (v341_new_fields, )),
+    ((3, 4, 2), (v342_new_fields, )),
 
 ])
 
