@@ -43,6 +43,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v322_removed_feeds_and_bots',
            'v340_deprecations',
            'v341_blueliv_removal',
+           'v342_new_fields'
            ]
 
 
@@ -998,6 +999,33 @@ def v341_blueliv_removal(configuration, harmonization, dry_run, **kwargs):
     return message, configuration, harmonization
 
 
+def v342_new_fields(configuration, harmonization, dry_run, **kwargs):
+    """
+    Add new fields to IntelMQ Data Format
+    """
+    changed = None
+    if "event" not in harmonization:
+        return changed, configuration, harmonization
+
+    builtin_harmonisation = load_configuration(
+        resource_filename("intelmq", "etc/harmonization.conf")
+    )
+    for field in [
+        "product.full_name",
+        "product.name",
+        "product.vendor",
+        "product.version",
+        "product.vulnerabilities",
+    ]:
+        if field not in harmonization["event"]:
+            if field not in builtin_harmonisation["event"]:
+                # ensure forward-compatibility if we ever remove something from harmonisation
+                continue
+            harmonization["event"][field] = builtin_harmonisation["event"][field]
+            changed = True
+    return changed, configuration, harmonization
+
+
 UPGRADES = OrderedDict([
     ((1, 0, 0, 'dev7'), (v100_dev7_modify_syntax,)),
     ((1, 1, 0), (v110_shadowserver_feednames, v110_deprecations)),
@@ -1029,6 +1057,7 @@ UPGRADES = OrderedDict([
     ((3, 3, 1), ()),
     ((3, 4, 0), (v340_deprecations, )),
     ((3, 4, 1), (v341_blueliv_removal, )),
+    ((3, 4, 2), (v342_new_fields, )),
 ])
 
 ALWAYS = (harmonization,)
