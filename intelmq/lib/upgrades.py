@@ -1056,8 +1056,8 @@ UPGRADES = OrderedDict([
     ((3, 3, 0), ()),
     ((3, 3, 1), ()),
     ((3, 4, 0), (v340_deprecations, )),
-     ((3, 4, 1), (v341_blueliv_removal, )),
-     ((3, 4, 2), (v342_new_fields, )),
+    ((3, 4, 1), (v341_blueliv_removal, )),
+    ((3, 4, 2), (v342_new_fields, )),
 ])
 
 ALWAYS = (harmonization,)
