@@ -17,6 +17,8 @@ Example response:
 {"ip":{"destinations":[{"source":"portal","name":"Thurner","contacts":[{"email":"test@example.vom"}]}]},"domain":{"destinations":[{"source":"portal","name":"Thurner","contacts":[{"email":"abuse@example.at"}]}]},"suppress":true,"interval":{"unit":"immediate","length":1}}
 """
 
+import requests
+
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.utils import create_request_session, parse_relative
 
@@ -111,7 +113,11 @@ class TuencyExpertBot(ExpertBot):
 
         response = self.session.get(self.url, params=params)
         self.logger.debug("Received response %r.", response.text)
-        response = response.json()
+        try:
+            response = response.json()
+        except requests.exceptions.JSONDecodeError:
+            self.logger.error("Cannot proceed response: '%s'.", response.text)
+            raise  # let IntelMQ handle issues
 
         destinations = (
             response.get("ip", {"destinations": []})["destinations"]
