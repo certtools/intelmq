@@ -225,6 +225,23 @@ class TestHTTPCollectorBotAuthentication(test.BotTestCase, unittest.TestCase):
                             additional_matcher=check_authorization_header)
         self.run_bot()
 
+    def test_auth_only_username_or_password(self, mocker):
+        """
+        Test that no Authorization is set only the username is given and password is missing
+        """
+        def check_authorization_header(request):
+            print(f'check_authorization_header: {request.headers}')  # show the erroneos headers when the test fails
+            return 'Authorization' not in request.headers
+        # generates a mock address if the Authorization header is empty, otherwise the test fails
+        captured = mocker.register_uri('GET', self.sysconfig['http_url'],
+                            text='Foo Bar',
+                            additional_matcher=check_authorization_header)
+        log_line = "Either 'http_username' or 'http_password' are given, but for HTTP Authentication, both must be set\."
+        self.run_bot(parameters={'http_username': 'username'}, allowed_warning_count=1)
+        self.assertLogMatches(log_line, 'WARNING')
+        self.run_bot(parameters={'http_password': 'password'}, allowed_warning_count=1)
+        self.assertLogMatches(log_line, 'WARNING')
+
     def test_auth(self, mocker):
         """
         Test the Authorization header when username and password are set.

@@ -68,7 +68,7 @@ class HttpMixin:
         # auth settings. username or password must exist (if only one, then this is likely an error, but we should try without auth) and not be an empty string
         if self.http_username and self.http_password:
             self.__auth = (self.http_username, self.http_password)
-        elif self.http_username and self.http_password:
+        elif self.http_username or self.http_password:
             # only one, but not both are given
             self.logger.warning("Either 'http_username' or 'http_password' are given, but for HTTP Authentication, both must be set.")
         self.__session.auth = self.__auth
