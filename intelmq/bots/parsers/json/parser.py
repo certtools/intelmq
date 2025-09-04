@@ -17,6 +17,10 @@ class JSONParserBot(ParserBot):
     splitlines: bool = False
     multiple_events: bool = False
 
+    def init(self):
+        if self.multiple_events and self.splitlines:
+            raise ValueError("Modes 'splitlines' and 'multiple_events' are not possible at the same time. Please use either one.")
+
     def process(self):
         report = self.receive_message()
         if self.multiple_events:
