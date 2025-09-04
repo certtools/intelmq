@@ -4520,11 +4520,11 @@ Using 'intelmq' as the `elastic_index`, the following are examples of the genera
 
 **`http_username`**
 
-(optional, string) HTTP basic authentication username.
+(optional, string) HTTP basic authentication username. Also set `http_password`.
 
 **`http_password`**
 
-(optional, string) HTTP basic authentication password.
+(optional, string) HTTP basic authentication password. Also set `http_username`.
 
 **`use_ssl`**
 
