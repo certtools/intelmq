@@ -45,3 +45,7 @@ License: AGPL-3.0-or-later
 Files: intelmq/tests/bots/collectors/mail/gpg_ring/**
 Copyright: 2025 Edvard Rejthar, CSIRT.cz <edvard.rejthar+intelmq@nic.cz>
 License: AGPL-3.0-or-later
+
+Files: intelmq/tests/bots/collectors/mail/text_attachment_empty.eml
+Copyright: 2025 Edvard Rejthar, CSIRT.cz <edvard.rejthar+intelmq@nic.cz>
+License: AGPL-3.0-or-later

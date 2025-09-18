@@ -39,6 +39,9 @@ class MailAttachCollectorBot(MailCollectorBot):
     gpg_home: str = ""
     """ Change the GPG home directory """
 
+    allow_empty: bool = False
+    """ Allow the attachment to be empty. If False, an error is raised and bot stays stopped. """
+
     def init(self):
         super().init()
         if self.attach_regex is None:
@@ -88,6 +91,11 @@ class MailAttachCollectorBot(MailCollectorBot):
                         else:
                             self.logger.error('Could not decrypt attachment %s: %s.', file_name, gpg.status)
                             continue
+
+                    if not raw_report and self.allow_empty:
+                        self.logger.info("Email report read (empty).")
+                        return True
+
                     report = self.new_report()
                     report.add("raw", raw_report)
                     if file_name:

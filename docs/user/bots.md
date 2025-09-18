@@ -494,6 +494,10 @@ The fields can be used by parsers to identify the feed and are not automatically
 
 (optional, string) The OpenPGP private key passhrase.
 
+**`allow_empty`**
+
+(optional, boolean) Allow the attachment to be empty. If False, an error is raised and bot stays stopped.
+
 **`gpg_home`**
 
 (optional, string) Change the GPG home directory.

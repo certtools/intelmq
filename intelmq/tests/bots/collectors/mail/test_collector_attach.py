@@ -16,8 +16,9 @@ import intelmq.lib.test as test
 
 from intelmq.bots.collectors.mail.collector_mail_attach import MailAttachCollectorBot
 from intelmq.lib.utils import base64_encode
+from intelmq.lib.exceptions import PipelineError
 if os.getenv('INTELMQ_TEST_EXOTIC'):
-    from .lib import MockedZipImbox, MockedBadAttachmentImbox, MockedTextAttachmentImbox, MockedGpgAttachmentImbox
+    from .lib import MockedZipImbox, MockedBadAttachmentImbox, MockedTextAttachmentImbox, MockedGpgAttachmentImbox, MockedEmptyTextAttachmentImbox
 
 REPORT_FOOBARZIP = {
                     '__type': 'Report',
@@ -81,6 +82,19 @@ class TestMailAttachCollectorBot(test.BotTestCase, unittest.TestCase):
             self.run_bot(parameters={'attach_regex': '.*.txt$',
                                      'extract_files': False})
         self.assertMessageEqual(0, REPORT_FOOBARTXT)
+
+    def test_text_attachment_empty(self):
+        # without allow_empty, the parsing fails
+        with mock.patch('imbox.Imbox', new=MockedEmptyTextAttachmentImbox), self.assertRaises(PipelineError):
+            self.run_bot(parameters={'attach_regex': '.*.txt$',
+                                     'extract_files': False,
+                                     'allow_empty': False})
+
+        with mock.patch('imbox.Imbox', new=MockedEmptyTextAttachmentImbox):
+            self.run_bot(parameters={'attach_regex': '.*.txt$',
+                                     'extract_files': False,
+                                     'allow_empty': True})
+        self.assertOutputQueueLen(0)
 
 
     def _make_ring(self):
