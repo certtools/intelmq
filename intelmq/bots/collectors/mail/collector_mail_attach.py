@@ -93,7 +93,7 @@ class MailAttachCollectorBot(MailCollectorBot):
                             continue
 
                     if not raw_report and self.allow_empty:
-                        self.logger.info("Email report read (empty).")
+                        self.logger.info("Empty email report ignored.")
                         return True
 
                     report = self.new_report()

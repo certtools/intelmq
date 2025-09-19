@@ -496,7 +496,7 @@ The fields can be used by parsers to identify the feed and are not automatically
 
 **`allow_empty`**
 
-(optional, boolean) Allow the attachment to be empty. If False, an error is raised and bot stays stopped.
+(optional, boolean) Allow the attachment to be empty. If False (default), an error is raised and bot stays stopped.
 
 **`gpg_home`**
 
