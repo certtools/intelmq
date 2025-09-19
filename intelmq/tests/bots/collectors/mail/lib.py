@@ -19,6 +19,7 @@ if os.getenv('INTELMQ_TEST_EXOTIC'):
     EMAIL_FAKE_ATTACHMENT = parse_email((Path(__file__).parent / 'fake_attachment.eml').read_text())
     EMAIL_TEXT_ATTACHMENT = parse_email((Path(__file__).parent / 'text_attachment.eml').read_text())
     EMAIL_GPG_ATTACHMENT = parse_email((Path(__file__).parent / 'gpg_attachment.eml').read_text())
+    EMAIL_TEXT_ATTACHMENT_EMPTY = parse_email((Path(__file__).parent / 'text_attachment_empty.eml').read_text())
 
 
 class MockedImbox():
@@ -59,3 +60,7 @@ class MockedTextAttachmentImbox(MockedImbox):
 class MockedGpgAttachmentImbox(MockedImbox):
     def messages(self, *args, **kwargs):
         yield 0, deepcopy(EMAIL_GPG_ATTACHMENT)
+
+class MockedEmptyTextAttachmentImbox(MockedImbox):
+    def messages(self, *args, **kwargs):
+        yield 0, deepcopy(EMAIL_TEXT_ATTACHMENT_EMPTY)
