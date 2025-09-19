@@ -1,14 +1,40 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2023 Sebastian Wagner, Filip Pokorný
+   SPDX-FileCopyrightText: 2015-2021 nic.at GmbH, 2022-2025 Institute for Common Good Technology
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 
 # Release procedure
 
-General assumption: You are working on branch maintenance, the next
-version is a bug fix release. For feature releases it is slightly
-different.
+## Make a pre-release
+
+Consider whether a pre-release would be necessary or good. A pre-release requires less effort than a stable release. It only needs:
+- Proper version numbers in `setup.py`, e.g. `1.2.3-alpha1` or `1.2.3-rc1`
+- Optional: A git tag and GitHub release (mark it as pre-release)
+- Push to PyPI
+- Proper version numbers in `debian/changelog`, e.g. `1.2.3~alpha1-1` or `1.2.3~rc1-1`
+	- The tilde `~` make sure it is considered older than the final `1.2.3-1`
+### Testing Pre-releases
+
+The installation procedures is slightly different for the pre-releases.
+#### Installation with packages
+
+For native packages, you can find the unstable packages of the next version here:
+[Installation Unstable Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq%3Aunstable&package=intelmq).
+The unstable repository only has a limited set of packages, so enable the stable repository in parallel.
+
+#### Installation with pip
+
+For the installation with pip, use the `--pre` parameter as shown here following command:
+
+```bash
+pip3 install --pre intelmq
+```
+
+#### Testing
+
+All other steps are not different per installation variant.
+Please report any issues you find in our [Issue Tracker](https://github.com/certtools/intelmq/issues/new).
 
 ## Check before
 
@@ -95,7 +121,7 @@ Releasing a new Docker image is very easy.
 -   Clone [IntelMQ Docker Repository](https://github.com/certat/intelmq-docker) with `git clone https://github.com/certat/intelmq-docker.git --recursive` as this repository contains submodules
 -   If the `intelmq-docker` repository is not updated yet, use `git pull --recurse-submodules` to pull the latest changes from their respective repository.
 -   Run `./build.sh`, check your console if the build was successful.
--   Run `./test.sh` - It will run nosetests3 with the exotic flag. All
+-   Run `./test.sh` - It will run all tests with the exotic flag. All
     errors/warnings will be displayed.
 -   Change the `build_version` in `publish.sh` to the new version you
     want to release.

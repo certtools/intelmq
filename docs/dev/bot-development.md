@@ -473,27 +473,3 @@ For doc strings, we are using the
 [sphinx-napoleon-google-type-annotation](http://www.sphinx-doc.org/en/stable/ext/napoleon.html#type-annotations).
 
 Additionally, Python's type hints/annotations are used, see PEP484.
-
-
-## Testing Pre-releases
-
-The installation procedures is slightly different for the pre-releases.
-
-### Installation with packages
-
-For native packages, you can find the unstable packages of the next version here:
-[Installation Unstable Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq%3Aunstable&package=intelmq).
-The unstable repository only has a limited set of packages, so enable the stable repository in parallel.
-
-### Installation with pip
-
-For the installation with pip, use the `--pre` parameter as shown here following command:
-
-```bash
-pip3 install --pre intelmq
-```
-
-### Testing
-
-All other steps are not different per installation variant.
-Please report any issues you find in our [Issue Tracker](https://github.com/certtools/intelmq/issues/new).
