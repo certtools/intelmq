@@ -3,26 +3,18 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
+# Bot Development Guide
 
-# Bot Development
+This guide will show you all the necessary steps to develop a new bot for IntelMQ.
 
-Here you should find everything you need to develop a new bot.
-
-## Steps
-
-1. Create appropriately placed and named python file.
-2. Use correct parent class.
-3. Code the functionality you want (with mixins, inheritance, etc).
-4. Create appropriately placed test file.
-5. Prepare code for testing your bot.
-6. Add documentation for your bot.
-7. Add changelog and news info.
-## Guide
+## Placing and naming
 
 ### Naming your bot class
 
 Class name of the bot (ex: PhishTank Parser) must correspond to the type of the bot (ex: Parser)
 e.g. `PhishTankParserBot`
+
+## Coding
 
 ### Choosing the parent class
 
@@ -139,6 +131,16 @@ and provides the methods:
 - `cache_flush`
 - `cache_get_redis_instance`
 
+#### Cache
+
+Bots can use a Redis database as cache instance. Use the `intelmq.lib.utils.Cache` class to set this up and/or look at existing bots, like the `cymru_whois` expert how the cache can be used. Bots must set a TTL for all keys that are cached to avoid caches growing endless over time. Bots must use the Redis databases >= 10, but not those already used by other bots. Look at `find intelmq -type f -name '*.py' -exec grep -r 'redis_cache_db' {} +` to see which databases are already used.
+
+The databases < 10 are reserved for the IntelMQ core:
+
+- 2: pipeline
+- 3: statistics
+- 4: tests
+
 ### Pipeline Interactions
 
 We can call three methods related to the pipeline:
@@ -219,6 +221,8 @@ self.logger.debug('Connecting to %r.', host)
 ### Error handling
 
 The bot class itself has error handling implemented. The bot itself is allowed to throw exceptions and **intended to fail**! The bot should fail in case of malicious messages, and in case of unavailable but necessary resources. The bot class handles the exception and will restart until the maximum number of tries is reached and fail then. Additionally, the message in question is dumped to the file `/opt/intelmq/var/log/[bot-id].dump` and removed from the queue.
+
+## Configuration and parameter handling
 
 ### Initialization
 
@@ -343,7 +347,9 @@ BOT = MyParserBot
 
 One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multiple values. Use `yield event` for valid Events and `return` in case of a void result (not parsable line, invalid data etc.).
 
-### Tests
+## Tests and documentation
+
+### Unit Tests
 
 In order to do automated tests on the bot, it is necessary to write tests including sample data. Have a look at some existing tests:
 
@@ -389,21 +395,15 @@ When calling the file directly, only the tests in this file for the bot will be 
 
 See the `testing` section about how to run the tests.
 
-### Cache
-
-Bots can use a Redis database as cache instance. Use the `intelmq.lib.utils.Cache` class to set this up and/or look at existing bots, like the `cymru_whois` expert how the cache can be used. Bots must set a TTL for all keys that are cached to avoid caches growing endless over time. Bots must use the Redis databases >= 10, but not those already used by other bots. Look at `find intelmq -type f -name '*.py' -exec grep -r 'redis_cache_db' {} +` to see which databases are already used.
-
-The databases < 10 are reserved for the IntelMQ core:
-
-- 2: pipeline
-- 3: statistics
-- 4: tests
-
 ### Documentation
 
-Please document your added/modified code.
+Documentation is an integral part of the development process.
+
+IntelMQ uses Python's type hints/type annotations where possible.
 
 For doc strings, we are using the
-[sphinx-napoleon-google-type-annotation](http://www.sphinx-doc.org/en/stable/ext/napoleon.html#type-annotations).
+[sphinx-napoleon-google-type-annotation](http://www.sphinx-doc.org/en/stable/ext/napoleon.html#type-annotations) where applicable.
 
-Additionally, Python's type hints/annotations are used, see PEP484.
+## Getting the code upstream
+
+Entry to the change log and news files
