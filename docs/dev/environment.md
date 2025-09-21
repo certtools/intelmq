@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Development Environment
 
 ## Directories
@@ -147,4 +146,3 @@ source .venv/bin/activate # Use for virtual environment installation
 
 intelmqctl start <bot_id>
 ```
-

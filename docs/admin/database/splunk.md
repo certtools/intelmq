@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Sending IntelMQ events to Splunk
 
 1.  Go to Splunk and configure in order to be able to receive

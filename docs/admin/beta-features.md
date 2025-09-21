@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Beta Features
 
 ## Using Supervisor as a Process Manager
@@ -44,7 +43,6 @@ process_manager: supervisor
 
 After this it is possible to manage bots like before with `intelmqctl`
 command.
-
 
 ## Using AMQP Message Broker
 
@@ -183,7 +181,3 @@ However, there are currently a few cavecats:
   queue
 - In the logs, you can see the main thread initializing first, then all of the threads which log with the
   name `[bot-id].[thread-id]`.
-
-
-
-

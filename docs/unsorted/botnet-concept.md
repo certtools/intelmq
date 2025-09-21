@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 #### Botnet Concept
 
 The \"botnet\" represents all currently configured bots which are explicitly enabled. It is, in essence, the graph of

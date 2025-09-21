@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Adding Feeds
 
 Adding a feed doesn't necessarily require any programming experience. There are several collector and parser bots intended for general use. Depending on the data source you are trying to add as a feed, it might be only a matter of creating a working combination of collector bot (such as URL Fetcher) configuration and a parser bot (such as CSV parser) configuration. When you are satisfied with the configurations, add it to the `intelmq/etc/feeds.yaml` file using the following template and open a [pull request](https://github.com/certtools/intelmq/pulls)!

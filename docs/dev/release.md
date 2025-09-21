@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Release procedure
 
 ## Make a pre-release
@@ -14,9 +13,11 @@ Consider whether a pre-release would be necessary or good. A pre-release require
 - Push to PyPI
 - Proper version numbers in `debian/changelog`, e.g. `1.2.3~alpha1-1` or `1.2.3~rc1-1`
 	- The tilde `~` make sure it is considered older than the final `1.2.3-1`
+
 ### Testing Pre-releases
 
 The installation procedures is slightly different for the pre-releases.
+
 #### Installation with packages
 
 For native packages, you can find the unstable packages of the next version here:
@@ -95,7 +96,6 @@ python3 setup.py sdist bdist_wheel
 ```
 
 * Upload the files including signatures to PyPI with e.g. twine: `twine upload -u __token__ -p $APITOKEN dist/intelmq...` (or set the API Token in `.pypirc`).
-
 
 ## Documentation
 

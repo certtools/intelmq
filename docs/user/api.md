@@ -3,14 +3,12 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Using IntelMQ API
 
 !!! bug
     This section of the documentation is currently incomplete and will be added later.
 
 ## Usage from programs
-
 
 The IntelMQ API can also be used from programs, not just browsers. To do
 so, first send a POST-Request with JSON-formatted data to

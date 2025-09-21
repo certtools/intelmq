@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Installation from DockerHub
 
 This guide provides instruction on how to install IntelMQ and it's components using Docker.
@@ -52,8 +51,6 @@ environment variables `INTELMQ_API_USER` for the username and
 
 !!! note
     If you get an **Permission denied** error, you should run `chown -R $USER:$USER example_config`
-
-
 
 ## Docker without docker-compose
 

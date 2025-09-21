@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Installation from PyPI
 
 This guide provides instruction on how to install IntelMQ and it's components using the Python Package Index (PyPI)
@@ -91,7 +90,6 @@ sudo -u intelmq python3 -m venv /opt/intelmq/venv
 sudo -u intelmq /opt/intelmq/venv/bin/pip install intelmq intelmq-api intelmq-manager
 sudo /opt/intelmq/venv/bin/intelmqsetup
 ```
-
 
 ## Installing IntelMQ API (optional)
 

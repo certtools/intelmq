@@ -20,6 +20,7 @@ You have two basic choices to run PostgreSQL:
 ### PostgreSQL Server Version
 
 Any supported version of PostgreSQL should work (v>=13 as of January 2025) [[1]](https://www.postgresql.org/support/versioning/).
+
 ### events table definition (`intelmq_psql_initdb`)
 
 IntelMQ comes with the `intelmq_psql_initdb` command line tool designed to help with creating the
@@ -71,6 +72,7 @@ get to test if the user `intelmq` can authenticate):
 ```bash
 psql -h localhost intelmq-events intelmq < /tmp/initdb.sql
 ```
+
 ## EventDB Utilities
 
 Some scripts related to the EventDB are located in the

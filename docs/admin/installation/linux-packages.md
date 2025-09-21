@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Installation as Linux package
 
 This guide provides instructions on how to install IntelMQ and it's components from Linux distribution's package repository.

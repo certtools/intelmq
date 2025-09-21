@@ -35,5 +35,3 @@ If your organisation is a member of the [CSIRTs Network](https://csirtsnetwork.e
 - [Aaron Kaplan](https://github.com/aaronkaplan/) (founder of IntelMQ)
 - [Institute for Common Good Technology](https://commongoodtechnology.org/) (chairmen Sebastian Wager is an IntelMQ maintainer and developer)
 - [Intevation GmbH](https://intevation.de/) (Develops and maintains several IntelMQ components)
-
-
