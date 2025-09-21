@@ -59,10 +59,6 @@ plugins:
 
   - glightbox # enlarging images
 
-  - redirects:
-      redirect_maps: # TODO add other redirects from old docs
-        'en/latest/dev/data-format.html': 'dev/data-format.md'
-
 extra:
   version:
     provider: mike
