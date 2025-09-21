@@ -17,6 +17,7 @@ REQUIRES = [
     'redis>=2.10',
     'requests>=2.2.0',
     'ruamel.yaml',
+    'packaging',
 ]
 
 TESTS_REQUIRES = [
