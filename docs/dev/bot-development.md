@@ -1,5 +1,5 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2023 Sebastian Wagner, Filip Pokorný
+   SPDX-FileCopyrightText: 2015-2021 nic.at GmbH, 2022-2025 Institute for Common Good Technology
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -17,72 +17,6 @@ Here you should find everything you need to develop a new bot.
 5. Prepare code for testing your bot.
 6. Add documentation for your bot.
 7. Add changelog and news info.
-
-## Layout Rules
-
-```
-intelmq/
-  lib/
-    bot.py
-    cache.py
-    message.py
-    pipeline.py
-    utils.py
-  bots/
-    collector/
-      <bot name>/
-            collector.py
-    parser/
-      <bot name>/
-            parser.py
-    expert/
-      <bot name>/
-            expert.py
-    output/
-      <bot name>/
-            output.py
-  etc/
-    runtime.yaml
-```
-
-Assuming you want to create a bot for a new 'Abuse.ch' feed. It turns out that here it is necessary to create different
-parsers for the respective kind of events (e.g. malicious URLs). Therefore, the usual hierarchy `intelmq/bots/parser/<FEED>/parser.py` would not be suitable because it is necessary to have more parsers for each Abuse.ch Feed. The solution is to use the same hierarchy with an additional "description" in the file name, separated by underscore. Also see the section *Directories and Files naming*.
-
-Example (including the current ones):
-
-```
-/intelmq/bots/parser/abusech/parser_domain.py
-/intelmq/bots/parser/abusech/parser_ip.py
-/intelmq/bots/parser/abusech/parser_ransomware.py
-/intelmq/bots/parser/abusech/parser_malicious_url.py
-```
-
-#### Directories Hierarchy on Default Installation
-
-- Configuration Files Path: `/opt/intelmq/etc/`
-- PID Files Path: `/opt/intelmq/var/run/`
-- Logs Files and dumps Path: `/opt/intelmq/var/log/`
-- Additional Bot Files Path, e.g. templates or databases:
-  `/opt/intelmq/var/lib/bots/[bot-name]/`
-
-#### Directories and Files naming
-
-Any directory and file of IntelMQ has to follow the Directories and Files naming. Any file name or folder name has to:
-
-- be represented with lowercase and in case of the name has multiple words, the spaces between them must be removed or replaced by underscores
-- be self-explaining what the content contains.
-
-In the bot directories name, the name must correspond to the feed provider. If necessary and applicable the feed name can and should be used as postfix for the filename.
-
-Examples:
-
-```
-intelmq/bots/parser/taichung/parser.py
-intelmq/bots/parser/cymru/parser_full_bogons.py
-intelmq/bots/parser/abusech/parser_ransomware.py
-```
-
-
 ## Guide
 
 ### Naming your bot class
