@@ -1,6 +1,6 @@
 #Github Workflow to build Debian packages for intelmq-api
 #
-#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>, 2025 Institute for Common Good Technology
 #SPDX-License-Identifier: AGPL-3.0-or-later
 #
 name: "Build Debian packages"
@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       # Fixes https://github.com/actions/virtual-environments/issues/3080
       STORAGE_OPTS: overlay.mount_program=/usr/bin/fuse-overlayfs
@@ -31,6 +31,9 @@ jobs:
 
     - name: Build package
       run: bash .github/workflows/scripts/debian-package.sh ${{ matrix.codename }}
+
+    - name: Test packages installation
+      run: sudo apt install ~/artifacts/*.deb
 
     - name: Upload artifact
       if: ${{ github.event_name == 'push' }}
