@@ -1721,3 +1721,28 @@ providers:
                 event_description.text: web forum spam
                 event_description.url: https://www.stopforumspam.com/
                 tlp: white
+CERT.PL
+    Hole Domains v2:
+      description: Dangerous websites Warning List
+      documentation: https://cert.pl/en/warning-list/
+      revision: 2025-09-23
+      public: true
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            accuracy: 50
+            rate_limit: 1800
+            http_url: https://hole.cert.pl/domains/v2/domains.csv
+        parser:
+          module: intelmq.bots.parsers.generic.parser_csv
+          parameters:
+            columns: extra.certpl_register,source.fqdn,extra.first_seen,extra.expiration_date
+            default_fields:
+              classification.type: blacklist
+              protocol.application: http
+              protocol.transport: tcp
+              event_description.target: users
+              event_description.text: phishing
+              event_description.url: https://cert.pl/en/warning-list/
+              tlp: white

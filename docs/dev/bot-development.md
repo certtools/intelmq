@@ -404,6 +404,10 @@ IntelMQ uses Python's type hints/type annotations where possible.
 For doc strings, we are using the
 [sphinx-napoleon-google-type-annotation](http://www.sphinx-doc.org/en/stable/ext/napoleon.html#type-annotations) where applicable.
 
+#### Bot documentations
+
+#### Feed documentation
+
 ## Getting the code upstream
 
 Entry to the change log and news files
