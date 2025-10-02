@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 import abc
-import distutils.version
 import getpass
 import http.client
 import inspect
@@ -17,6 +16,7 @@ import time
 import xmlrpc.client
 from typing import Union
 from collections.abc import Iterable
+from packaging.version import Version
 
 
 from intelmq import (DEFAULT_LOGGING_LEVEL,  # noqa: F401
@@ -586,7 +586,7 @@ class SupervisorProcessManager(ProcessManagerInterface):
                 self.__supervisor_xmlrpc.supervisor.getAPIVersion()
             ))
 
-            if distutils.version.StrictVersion(supervisor_version) < distutils.version.StrictVersion("3.2.0"):
+            if Version(supervisor_version) < Version("3.2.0"):
                 self.__logger.warning("Current supervisor version is supported, but reloading bots will not work. "
                                       "Please upgrade supervisor to version 3.2.0 or higher.")
 
