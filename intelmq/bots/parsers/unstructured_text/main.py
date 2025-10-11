@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from dotenv import load_dotenv
 from pydantic_ai import Agent
-from intelmq_types import IntelMQEventList
+from intelmq.lib.basemodel import IntelMQEventModel
 
 load_dotenv()
 
@@ -30,7 +30,7 @@ def extract(text: str, model: str = None, quiet: bool = False) -> list:
     if not quiet:
         print(f'Model: {model}\nAnalyzing {len(text)} chars...\n')
 
-    agent = Agent(model, output_type=IntelMQEventList, system_prompt=SYSTEM_PROMPT)
+    agent = Agent(model, output_type=IntelMQEventModel, system_prompt=SYSTEM_PROMPT)
     result = agent.run_sync(text)
 
     if not quiet:

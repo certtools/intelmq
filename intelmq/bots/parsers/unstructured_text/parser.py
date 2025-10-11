@@ -19,8 +19,7 @@ from pydantic import BaseModel, AfterValidator
 from typing import Annotated, List
 from pydantic_ai import Agent
 
-import intelmq.lib.harmonization as harm
-from intelmq.lib.utils import load_configuration
+from intelmq.lib.basemodel import IntelMQEventModel
 from requests import api
 
 from pprint import pprint
@@ -36,10 +35,8 @@ langfuse = Langfuse(
     host="https://cloud.langfuse.com",
 )
 
-from basemodel import IntelMQEvent
 
-
-def extract_data(text: str, model: str, api_key: str) -> List[IntelMQEvent]:
+def extract_data(text: str, model: str, api_key: str) -> List[IntelMQEventModel]:
     """Use an LLM (part of the config which one) to extract IDF-style events from the raw text.
     We use ai.pydantic.dev for telling the LLM to extract and map all information from the (unstructured) `text` to the IntelMQ Data Format
     (see https://docs.intelmq.org/latest/user/event/) for a description of the IntelMQ Data Format (IDF)
@@ -49,7 +46,7 @@ def extract_data(text: str, model: str, api_key: str) -> List[IntelMQEvent]:
     print(f"Api key: {api_key}...")
     # Initialize Pydantic AI instrumentation
     Agent.instrument_all()
-    agent = Agent(model, output_type=IntelMQEvent)
+    agent = Agent(model, output_type=IntelMQEventModel)
 
     result = agent.run_sync(text)
     print(result.output)
