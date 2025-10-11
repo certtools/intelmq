@@ -1,2 +1,5 @@
+# SPDX-FileCopyrightText: 2025 Aaron Kaplan, Institute for Common Good Technology
+# SPDX-License-Identifier: AGPL-3.0-or-later
 pydantic-ai
 pydantic
+langfuse

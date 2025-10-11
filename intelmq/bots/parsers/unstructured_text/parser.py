@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2025 Aaron Kaplan, Institute for Common Good Technology
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -12,15 +13,13 @@ import os
 
 from intelmq.lib.bot import ParserBot, utils
 from intelmq.lib.exceptions import InvalidArgument
-from intelmq.lib.harmonization import ClassificationType
 from intelmq.lib.exceptions import MissingDependencyError
 
-from pydantic import BaseModel, AfterValidator
-from typing import Annotated, List
+from pydantic import BaseModel, ValidationError
+from typing import List
 from pydantic_ai import Agent
 
 from intelmq.lib.basemodel import IntelMQEventModel
-from requests import api
 
 from pprint import pprint
 
@@ -36,7 +35,7 @@ langfuse = Langfuse(
 )
 
 
-def extract_data(text: str, model: str, api_key: str) -> List[IntelMQEventModel]:
+def extract_data(text: str, model: str, api_key: str, maximum_attempts: int = 5) -> List[IntelMQEventModel]:
     """Use an LLM (part of the config which one) to extract IDF-style events from the raw text.
     We use ai.pydantic.dev for telling the LLM to extract and map all information from the (unstructured) `text` to the IntelMQ Data Format
     (see https://docs.intelmq.org/latest/user/event/) for a description of the IntelMQ Data Format (IDF)
@@ -48,10 +47,15 @@ def extract_data(text: str, model: str, api_key: str) -> List[IntelMQEventModel]
     Agent.instrument_all()
     agent = Agent(model, output_type=IntelMQEventModel)
 
-    result = agent.run_sync(text)
-    print(result.output)
-    print(result.usage())
-    pprint(result)
+    for attempt in range(maximum_attempts):
+        try:
+            result = agent.run_sync(text)
+        except ValidationError as exc:
+            print(f'Got invalid result: ({exc!r}. Trying again ({attempt}/{maximum_attempts}).')
+            pass
+        else:
+            break
+    print(f'Usage: {result.usage()}')
     return [result]
 
 
@@ -85,8 +89,9 @@ BOT = UnstructuredText
 with open("intelmq/bots/parsers/unstructured_text/test_data/sample.txt", "r") as f:
     SAMPLE_CONTENT = f.read()
 
-    result = extract_data(
+    results = extract_data(
         SAMPLE_CONTENT, model="openai:gpt-4o", api_key=os.getenv("OPENAI_API_KEY")
     )
-    for r in result:
-        print(r)
+    for i, result in enumerate(results):
+        print(f'Result {i}:')
+        pprint(result.response.parts[0].args_as_dict())
