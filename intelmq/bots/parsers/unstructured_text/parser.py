@@ -45,7 +45,7 @@ def extract_data(text: str, model: str, api_key: str, maximum_attempts: int = 5)
     print(f"Api key: {api_key}...")
     # Initialize Pydantic AI instrumentation
     Agent.instrument_all()
-    agent = Agent(model, output_type=IntelMQEventModel)
+    agent = Agent(model, output_type=List[IntelMQEventModel])
 
     for attempt in range(maximum_attempts):
         try:
@@ -56,7 +56,7 @@ def extract_data(text: str, model: str, api_key: str, maximum_attempts: int = 5)
         else:
             break
     print(f'Usage: {result.usage()}')
-    return [result]
+    return result
 
 
 class UnstructuredText(ParserBot):
@@ -67,12 +67,13 @@ class UnstructuredText(ParserBot):
         report = self.receive_message()
         text = utils.base64_decode(report["raw"])
         # here we got a list of dicts which contain data which may be mapped to intelmq data format
-        events = extract_data(text, self.model, self.api_key)
+        result = extract_data(text, self.model, self.api_key)
+        events = result.response.parts[0].args_as_dict()['response']
 
         # now we go over all these dicts
         for e in events:
             # make an empty intelmq event
-            event = self.new_event(e)
+            event = self.new_event()
 
             # now map the fields into the intelmq event which map naturally
             event.update(e)
@@ -86,12 +87,12 @@ class UnstructuredText(ParserBot):
 
 BOT = UnstructuredText
 
-with open("intelmq/bots/parsers/unstructured_text/test_data/sample.txt", "r") as f:
-    SAMPLE_CONTENT = f.read()
+if __name__ == '__main__':
+    with open("intelmq/bots/parsers/unstructured_text/test_data/sample.txt", "r") as f:
+        SAMPLE_CONTENT = f.read()
 
-    results = extract_data(
-        SAMPLE_CONTENT, model="openai:gpt-4o", api_key=os.getenv("OPENAI_API_KEY")
-    )
-    for i, result in enumerate(results):
-        print(f'Result {i}:')
-        pprint(result.response.parts[0].args_as_dict())
+        result = extract_data(SAMPLE_CONTENT, model="openai:gpt-4o", api_key=os.getenv("OPENAI_API_KEY"))
+        events = result.response.parts[0].args_as_dict()['response']
+        for i, event in enumerate(events):
+            print(f'Result {i}:')
+            pprint(event)

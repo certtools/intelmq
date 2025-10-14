@@ -29,7 +29,8 @@ def validation_wrapper(func):
 def generate_model_schema(base: dict) -> dict:
     schema = {'__validators__': {}, '__config__': ConfigDict(extra='forbid')}
     for key, value in base.items():
-        schema['__validators__'][f'{key}_validator'] = field_validator(key)(validation_wrapper(getattr(harmonization, value['type']).is_valid))
+        harm_type = getattr(harmonization, value['type'])
+        schema['__validators__'][f'{key}_validator'] = field_validator(key)(validation_wrapper(harm_type.is_valid))
         kwargs = {'default': None}
         if value['type'] in ('String', 'Base64', 'URL', 'FQDN', 'MalwareName', 'ClassificationType', 'LowercaseString', 'UppercaseString',
                              'Registry', 'TLP', 'ClassificationTaxonomy', 'UUID', 'DateTime', 'IPAddress', 'IPNetwork'):
@@ -45,8 +46,9 @@ def generate_model_schema(base: dict) -> dict:
         else:
             raise ValueError('Unknown type %r.' % value['type'])
 
-        kwargs['description'] = value['description']
-        kwargs['max_length'] = value.get('length', None)
+        kwargs['description'] = f"{value['description']}\n\nType description:\n{harm_type.__doc__}"
+        # Prevent pydantic throwing "TypeError: object of type 'int' has no len()" -> "Unable to apply constraint 'max_length' to supplied value [int]"
+        kwargs['max_length'] = value.get('length', None) if fieldtype is str else None
         kwargs['pattern'] = value.get('regex', value.get('iregex', None))
         schema[key] = (fieldtype, Field(**kwargs))
     return schema
@@ -54,10 +56,10 @@ def generate_model_schema(base: dict) -> dict:
 
 # https://docs.pydantic.dev/latest/api/base_model/#pydantic.create_model
 IntelMQReportModel = create_model(
-    "IntelMQ Report",
+    "IntelMQReport",
     **generate_model_schema(report_harmonization)
 )
 IntelMQEventModel = create_model(
-    "IntelMQ Event",
+    "IntelMQEvent",
     **generate_model_schema(event_harmonization)
 )

@@ -9,6 +9,7 @@ import sys
 import json
 from pathlib import Path
 from dotenv import load_dotenv
+from typing import List
 from pydantic_ai import Agent
 from intelmq.lib.basemodel import IntelMQEventModel
 
@@ -26,21 +27,21 @@ RULES:
 7. Be comprehensive - one event per unique IOC"""
 
 
-def extract(text: str, model: str = None, quiet: bool = False) -> list:
+def extract(text: str, model: str = None, quiet: bool = False, maximum_attempts: int = 5) -> list:
     """Extract IntelMQ events from text"""
     model = model or os.getenv('PYDANTIC_AI_MODEL', 'openrouter:google/gemini-2.5-flash')
 
     if not quiet:
         print(f'Model: {model}\nAnalyzing {len(text)} chars...\n')
 
-    agent = Agent(model, output_type=IntelMQEventModel, system_prompt=SYSTEM_PROMPT)
+    agent = Agent(model, output_type=List[IntelMQEventModel], system_prompt=SYSTEM_PROMPT, retries=maximum_attempts)
     result = agent.run_sync(text)
 
     if not quiet:
-        print(f"✅ Extracted {len(result.output.events)} events")
+        print(f"✅ Extracted {len(result.output)} events")
         print(f"📊 Tokens: {result.usage()}\n")
 
-    return result.output.events
+    return result
 
 
 def main():
@@ -59,13 +60,11 @@ def main():
 
     # Extract events
     text = input_file.read_text()
-    events = extract(text)
+    result = extract(text)
+    events = result.response.parts[0].args_as_dict()['response']
 
     # Export to JSON
-    output_file.write_text(json.dumps(
-        [e.model_dump(mode='json', exclude_none=True) for e in events],
-        indent=2
-    ))
+    output_file.write_text(json.dumps(events, indent=2))
 
     print(f"✅ Saved {len(events)} events to {output_file}")
 

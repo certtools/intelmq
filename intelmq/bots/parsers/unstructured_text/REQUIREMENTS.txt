@@ -3,3 +3,4 @@
 pydantic-ai
 pydantic
 langfuse
+dotenv
