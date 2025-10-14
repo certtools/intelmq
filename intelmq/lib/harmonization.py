@@ -1202,6 +1202,7 @@ class TLP(UppercaseString):
     Only valid values: WHITE, GREEN, AMBER, RED.
 
     Accepted for sanitation are different cases and the prefix 'tlp:'.
+    'YELLOW' is rewritten to 'AMBER'.
     """
     enum = ['WHITE', 'GREEN', 'AMBER', 'RED']
     prefix_pattern = re.compile(r'^(TLP:?)?\s*')
@@ -1226,4 +1227,6 @@ class TLP(UppercaseString):
             value = TLP.prefix_pattern.sub('', value)
             if value == 'YELLOW':
                 value = 'AMBER'
+            elif value == 'CLEAR':
+                value = 'WHITE'
             return value
