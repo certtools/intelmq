@@ -35,16 +35,14 @@ langfuse = Langfuse(
 )
 
 
-def extract_data(text: str, model: str, api_key: str, maximum_attempts: int = 5) -> List[IntelMQEventModel]:
+def extract_data(text: str, model: str, api_key: str, logger, maximum_attempts: int = 5) -> List[IntelMQEventModel]:
     """Use an LLM (part of the config which one) to extract IDF-style events from the raw text.
     We use ai.pydantic.dev for telling the LLM to extract and map all information from the (unstructured) `text` to the IntelMQ Data Format
     (see https://docs.intelmq.org/latest/user/event/) for a description of the IntelMQ Data Format (IDF)
     """
     # Initialize the LLM provider
-    print(f"Using model: {model}")
-    print(f"Api key: {api_key}...")
+    logger.info("Using model: %r", model)
     # Initialize Pydantic AI instrumentation
-    Agent.instrument_all()
     agent = Agent(model, output_type=List[IntelMQEventModel])
 
     for attempt in range(maximum_attempts):
@@ -55,7 +53,7 @@ def extract_data(text: str, model: str, api_key: str, maximum_attempts: int = 5)
             pass
         else:
             break
-    print(f'Usage: {result.usage()}')
+    logger.info('Usage: %r', result)
     return result
 
 
@@ -67,7 +65,7 @@ class UnstructuredText(ParserBot):
         report = self.receive_message()
         text = utils.base64_decode(report["raw"])
         # here we got a list of dicts which contain data which may be mapped to intelmq data format
-        result = extract_data(text, self.model, self.api_key)
+        result = extract_data(text, self.model, self.api_key, self.logger)
         events = result.response.parts[0].args_as_dict()['response']
 
         # now we go over all these dicts
