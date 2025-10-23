@@ -92,6 +92,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
 
         self.current_events = {}
         self.current_files = {}
+        self._dirty_events = set()
 
         self.misp_org = MISPOrganisation()
         self.misp_org.name = self.misp_org_name
@@ -147,10 +148,10 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                     self._tagging_objects[key].append(tag)
 
         # Ensure we do generate feed on reload / restart, so awaiting messages won't wait forever
-        if length := self.cache_llen(self.bot_id) and not getattr(self, "testing", False):
-            self.logger.debug(
-                "Found %s awaiting messages. Generating feed.", length
-            )
+        if length := self.cache_llen(self.bot_id) and not getattr(
+            self, "testing", False
+        ):
+            self.logger.debug("Found %s awaiting messages. Generating feed.", length)
             self._generate_misp_feed()
 
     def _load_event(self, file_path: Path, key: str):
@@ -204,7 +205,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
             tags.extend(self._tagging_objects[key])
         self.current_events[key].tags = tags
 
-        info = "IntelMQ event {begin} - {end}" "".format(
+        info = "IntelMQ event {begin} - {end}".format(
             begin=self.min_time_current.isoformat(),
             end=self.max_time_current.isoformat(),
         )
@@ -223,6 +224,8 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                 f.write(str(self.current_files[key]))
             else:
                 json.dump({k: str(v) for k, v in self.current_files.items()}, f)
+
+        self._dirty_events.add(key)
         return self.current_events[key]
 
     def _add_message_to_misp_event(self, message: dict):
@@ -240,10 +243,13 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         else:
             event = self._generate_new_misp_event(key)
 
+        self._dirty_events.add(key)
+
         if not self.flat_events:
             obj = event.add_object(name="intelmq_event")
         else:
             obj = event
+
         # For caching and default mapping, the serialized version is the right format to work on.
         # However, for any custom mapping the Message object is more sufficient as it handles
         # subfields.
@@ -273,8 +279,8 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                 continue
             # Check if the value is a harmonization key or a static value
             if isinstance(value, str) and (
-                value in self.harmonization["event"] or
-                value.split(".", 1)[0] in self.harmonization["event"]
+                value in self.harmonization["event"]
+                or value.split(".", 1)[0] in self.harmonization["event"]
             ):
                 result[parameter] = message.get(value)
             else:
@@ -303,11 +309,15 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
             cached_msg = self.cache_rpop(self.bot_id)
 
         for key, event in self.current_events.items():
+            # Feed generation can be very resource-consuming process
+            if key not in self._dirty_events:
+                continue
             feed_output = event.to_feed(with_meta=False)
             with self.current_files[key].open("w") as f:
                 json.dump(feed_output, f)
 
         feed_meta_generator(self.output_dir)
+        self._dirty_events.clear()
 
     @staticmethod
     def check(parameters):
@@ -343,10 +353,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
 
         sanity_event = Event({})
         grouping_key = parameters.get("grouping_key")
-        if (
-            grouping_key and not
-            sanity_event._Message__is_valid_key(grouping_key)[0]
-        ):
+        if grouping_key and not sanity_event._Message__is_valid_key(grouping_key)[0]:
             results.append(
                 [
                     "error",
@@ -410,8 +417,8 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                         "error",
                         (
                             "Parameter 'tagging' has to be a dictionary with keys as '__all__' "
-                            "or possible 'grouping_key' values. Each dictionary value " +
-                            tagging_error,
+                            "or possible 'grouping_key' values. Each dictionary value "
+                            + tagging_error,
                         ),
                     ]
                 )
