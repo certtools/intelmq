@@ -1,94 +1,20 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2015-2023 Sebastian Wagner, Filip Pokorný
+   SPDX-FileCopyrightText: 2015-2021 nic.at GmbH, 2022-2025 Institute for Common Good Technology
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
+# Bot Development Guide
 
-# Bot Development
+This guide will show you all the necessary steps to develop a new bot for IntelMQ.
 
-Here you should find everything you need to develop a new bot.
-
-## Steps
-
-1. Create appropriately placed and named python file.
-2. Use correct parent class.
-3. Code the functionality you want (with mixins, inheritance, etc).
-4. Create appropriately placed test file.
-5. Prepare code for testing your bot.
-6. Add documentation for your bot.
-7. Add changelog and news info.
-
-## Layout Rules
-
-```
-intelmq/
-  lib/
-    bot.py
-    cache.py
-    message.py
-    pipeline.py
-    utils.py
-  bots/
-    collector/
-      <bot name>/
-            collector.py
-    parser/
-      <bot name>/
-            parser.py
-    expert/
-      <bot name>/
-            expert.py
-    output/
-      <bot name>/
-            output.py
-  etc/
-    runtime.yaml
-```
-
-Assuming you want to create a bot for a new 'Abuse.ch' feed. It turns out that here it is necessary to create different
-parsers for the respective kind of events (e.g. malicious URLs). Therefore, the usual hierarchy `intelmq/bots/parser/<FEED>/parser.py` would not be suitable because it is necessary to have more parsers for each Abuse.ch Feed. The solution is to use the same hierarchy with an additional "description" in the file name, separated by underscore. Also see the section *Directories and Files naming*.
-
-Example (including the current ones):
-
-```
-/intelmq/bots/parser/abusech/parser_domain.py
-/intelmq/bots/parser/abusech/parser_ip.py
-/intelmq/bots/parser/abusech/parser_ransomware.py
-/intelmq/bots/parser/abusech/parser_malicious_url.py
-```
-
-#### Directories Hierarchy on Default Installation
-
-- Configuration Files Path: `/opt/intelmq/etc/`
-- PID Files Path: `/opt/intelmq/var/run/`
-- Logs Files and dumps Path: `/opt/intelmq/var/log/`
-- Additional Bot Files Path, e.g. templates or databases:
-  `/opt/intelmq/var/lib/bots/[bot-name]/`
-
-#### Directories and Files naming
-
-Any directory and file of IntelMQ has to follow the Directories and Files naming. Any file name or folder name has to:
-
-- be represented with lowercase and in case of the name has multiple words, the spaces between them must be removed or replaced by underscores
-- be self-explaining what the content contains.
-
-In the bot directories name, the name must correspond to the feed provider. If necessary and applicable the feed name can and should be used as postfix for the filename.
-
-Examples:
-
-```
-intelmq/bots/parser/taichung/parser.py
-intelmq/bots/parser/cymru/parser_full_bogons.py
-intelmq/bots/parser/abusech/parser_ransomware.py
-```
-
-
-## Guide
+## Placing and naming
 
 ### Naming your bot class
 
 Class name of the bot (ex: PhishTank Parser) must correspond to the type of the bot (ex: Parser)
 e.g. `PhishTankParserBot`
+
+## Coding
 
 ### Choosing the parent class
 
@@ -205,6 +131,16 @@ and provides the methods:
 - `cache_flush`
 - `cache_get_redis_instance`
 
+#### Cache
+
+Bots can use a Redis database as cache instance. Use the `intelmq.lib.utils.Cache` class to set this up and/or look at existing bots, like the `cymru_whois` expert how the cache can be used. Bots must set a TTL for all keys that are cached to avoid caches growing endless over time. Bots must use the Redis databases >= 10, but not those already used by other bots. Look at `find intelmq -type f -name '*.py' -exec grep -r 'redis_cache_db' {} +` to see which databases are already used.
+
+The databases < 10 are reserved for the IntelMQ core:
+
+- 2: pipeline
+- 3: statistics
+- 4: tests
+
 ### Pipeline Interactions
 
 We can call three methods related to the pipeline:
@@ -285,6 +221,8 @@ self.logger.debug('Connecting to %r.', host)
 ### Error handling
 
 The bot class itself has error handling implemented. The bot itself is allowed to throw exceptions and **intended to fail**! The bot should fail in case of malicious messages, and in case of unavailable but necessary resources. The bot class handles the exception and will restart until the maximum number of tries is reached and fail then. Additionally, the message in question is dumped to the file `/opt/intelmq/var/log/[bot-id].dump` and removed from the queue.
+
+## Configuration and parameter handling
 
 ### Initialization
 
@@ -409,7 +347,9 @@ BOT = MyParserBot
 
 One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multiple values. Use `yield event` for valid Events and `return` in case of a void result (not parsable line, invalid data etc.).
 
-### Tests
+## Tests and documentation
+
+### Unit Tests
 
 In order to do automated tests on the bot, it is necessary to write tests including sample data. Have a look at some existing tests:
 
@@ -455,45 +395,19 @@ When calling the file directly, only the tests in this file for the bot will be 
 
 See the `testing` section about how to run the tests.
 
-### Cache
-
-Bots can use a Redis database as cache instance. Use the `intelmq.lib.utils.Cache` class to set this up and/or look at existing bots, like the `cymru_whois` expert how the cache can be used. Bots must set a TTL for all keys that are cached to avoid caches growing endless over time. Bots must use the Redis databases >= 10, but not those already used by other bots. Look at `find intelmq -type f -name '*.py' -exec grep -r 'redis_cache_db' {} +` to see which databases are already used.
-
-The databases < 10 are reserved for the IntelMQ core:
-
-- 2: pipeline
-- 3: statistics
-- 4: tests
-
 ### Documentation
 
-Please document your added/modified code.
+Documentation is an integral part of the development process.
+
+IntelMQ uses Python's type hints/type annotations where possible.
 
 For doc strings, we are using the
-[sphinx-napoleon-google-type-annotation](http://www.sphinx-doc.org/en/stable/ext/napoleon.html#type-annotations).
+[sphinx-napoleon-google-type-annotation](http://www.sphinx-doc.org/en/stable/ext/napoleon.html#type-annotations) where applicable.
 
-Additionally, Python's type hints/annotations are used, see PEP484.
+#### Bot documentations
 
+#### Feed documentation
 
-## Testing Pre-releases
+## Getting the code upstream
 
-The installation procedures is slightly different for the pre-releases.
-
-### Installation with packages
-
-For native packages, you can find the unstable packages of the next version here:
-[Installation Unstable Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq%3Aunstable&package=intelmq).
-The unstable repository only has a limited set of packages, so enable the stable repository in parallel.
-
-### Installation with pip
-
-For the installation with pip, use the `--pre` parameter as shown here following command:
-
-```bash
-pip3 install --pre intelmq
-```
-
-### Testing
-
-All other steps are not different per installation variant.
-Please report any issues you find in our [Issue Tracker](https://github.com/certtools/intelmq/issues/new).
+Entry to the change log and news files

@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Common Problems
 
 ## IntelMQ
@@ -42,7 +41,6 @@ errors.
 
 This section has been moved to the [Management Guide](management/intelmq.md#orphaned-queues).
 
-
 ### Multithreading is not available for this bot
 
 Multithreading is not available for some bots and AMQP broker is
@@ -60,9 +58,7 @@ support Multithreading include:
 
 If you think this mapping is wrong, please report a bug.
 
-
 ## IntelMQ API
-
 
 ### IntelMQCtlError
 

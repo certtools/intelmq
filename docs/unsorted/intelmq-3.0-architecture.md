@@ -46,9 +46,6 @@ See [#1424](https://github.com/certtools/intelmq/issues/1424)
 
 ## UX
 
-
-
-
 ### Devops/ Sysadmin perspective
 
 #### Docker
@@ -81,10 +78,7 @@ _Think about_: shadowserver already created some training material. Build on thi
 
 _Category_: OPTIONAL component, but highly needed.
 
-
 ## Architecture
-
-
 
 ### Message queue
 
@@ -97,7 +91,6 @@ _Think about_: Using [Apache Pulsar](https://pulsar.apache.org/)
 
 _Category_: SHOULD
 
-
 ## Notification settings
 
 _Task_: Keep notification settings per event: Where to (destination mail/host address), how (protocol, authentication (SSL client certificate), etc), how often/time information (intervals etc.)
@@ -108,13 +101,11 @@ See also https://github.com/certtools/intelmq/issues/758
 
 _Category_: this feature should be OPTIONAL but is NEEDED by several users.
 
-
 ## Configuration parameter handling in Bots and a bot's unified documentation
 
 _Task_: Handle bots' configuration parameters by the core, providing type sanitation, checks, default values and documentation.
 
 _Background_: Currently every bot needs to handle these issues itself, but many of these checks could be done centrally in a generic way. At upgrades, new configuration might get introduced and the bots need to provide defaults values although they are available in BOTS. Error handling on parameters must be done for every bot on itself. Documentation is not available to the Bots, not available in BOTS and the Manager. There are 3 places for parameters where the available information is spread: BOTS, `Bots.md` and the bots' code.
-
 
 ## Automatic Monitoring & Management: Handling full load situations
 
@@ -124,7 +115,6 @@ _Background_: If too much data is ingested, collected or enriched, the system ca
 
 See also: https://github.com/certtools/intelmq/issues/709
 
-
 ## Making intelmq plug-able and getting rid of BOTS
 
 _Task_: Allow installation of IntelMQ bots, meaning the deprecation of the centralized BOTS file and a generated documentation.
@@ -133,13 +123,11 @@ _Background_: Adapting IntelMQ to specific needs also means the development of s
 
 See also https://github.com/certtools/intelmq/issues/972
 
-
 ## Exposing a plug-in or hooking API
 
 _Task_: Provide an hooking API for the core classes.
 
 _Background_: Adapting IntelMQ to specific can require adaptions in the Core classes' code. Instead of making the changes/extensions in the core itself, we can provide a hook system allowing to call (or replace?) functions at specific steps. For example custom monitoring.
-
 
 ## Grouping of events
 

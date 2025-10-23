@@ -9,7 +9,6 @@
 
 ![IntelMQ](docs/static/images/Logo_Intel_MQ.svg)
 
-
 # Introduction
 
 **IntelMQ** is a solution for IT security teams (CERTs & CSIRTs, SOCs

@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Configuring IntelMQ API
 
 Depending on your setup you might have to install `sudo` to make it

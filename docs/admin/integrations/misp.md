@@ -48,4 +48,3 @@ Can be used to directly create MISP events in a MISP instance by using
 the [MISP API](https://misp.gitbooks.io/misp-book/content/automation/).
 
 Look at the Bots documentation page for more information.
-

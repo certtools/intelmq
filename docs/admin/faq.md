@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Frequently asked questions
 
 ## How can I improve the speed?
@@ -100,4 +99,3 @@ If you installed manually via pip (note that this also deletes all configuration
 pip3 uninstall intelmq
 rm -r /opt/intelmq
 ```
-

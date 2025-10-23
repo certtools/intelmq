@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Intro
 
 This guide is for developers of IntelMQ. It explains the code architecture, coding guidelines as well as ways you can contribute code or documentation. If you have not done so, please read the

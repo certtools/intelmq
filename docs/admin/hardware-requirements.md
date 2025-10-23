@@ -3,14 +3,12 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Hardware Requirements
 
 Do you ask yourself how much RAM do you need to give your new IntelMQ
 virtual machine?
 
 The honest answer is simple and pointless: It depends ;)
-
 
 ## IntelMQ and the messaging queue (broker)
 

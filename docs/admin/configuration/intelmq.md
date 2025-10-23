@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Configuring IntelMQ
 
 ## Directories
@@ -156,6 +155,7 @@ Some information can as well be found in Python's documentation on the used
 
 If the path `_on_error` exists for a bot, the message is also sent to this queue, instead of (only) dumping the file if
 configured to do so.
+
 ##### Pipeline
 
 **`source_pipeline_broker`**
@@ -204,6 +204,7 @@ configured to do so.
 
 (required, integer) broker database that the bot will use to connect and send messages (requirement from
   redis broker).
+
 ##### Miscellaneous
 
 **`load_balance`**

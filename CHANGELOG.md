@@ -77,6 +77,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 ### Documentation
 - Fix and refresh links to mailing lists (PR#2609 by Kamil Mańkowski)
 - `Aggregate Bot`: Add illustration graphics (PR#2612 by Sebastian Wagner).
+- `scripts/generate-feeds-docs.py`: Remove necessity to specify placeholders for feed name and provider, generate feed code automatically (PR#2653 by Sebastian Wagner).
 
 ### Packaging
 - Replace `/opt/intelmq` example paths in bots with variable `VAR_STATE_PATH` for correct paths in LSB-path setups like with packages (PR#2587 by Sebastian Wagner).

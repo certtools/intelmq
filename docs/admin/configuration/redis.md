@@ -1,4 +1,5 @@
 # Redis Pipeline (Message broker)
+
 <!-- comment
    SPDX-FileCopyrightText: 2025 Sebastian Wagner, Intevation GmbH <sebix@sebix.at>
    SPDX-License-Identifier: AGPL-3.0-or-later

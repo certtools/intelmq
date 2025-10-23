@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# SPDX-FileCopyrightText: 2020 Sebastian Wagner, 2023 Filip Pokorný
+# SPDX-FileCopyrightText: 2020 nic.at GmH, 2023 Filip Pokorný, 2025 Institute for Common Good Technology
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # This script generates the "feeds.md" documentation page.
@@ -9,6 +9,7 @@ import codecs
 import json
 import os.path
 
+from re import compile as re_compile, IGNORECASE
 from ruamel.yaml import YAML
 
 BASEDIR = os.path.join(os.path.dirname(__file__), '../')
@@ -18,7 +19,7 @@ HEADER = """\
 <!-- comment
    SPDX-FileCopyrightText: 2015-2023 Sebastian Wagner, Filip Pokorný
    SPDX-License-Identifier: AGPL-3.0-or-later
-   
+
    This document is automatically generated. To add feeds here you need to edit `intelmq/etc/feeds.yaml`
    file and rebuild the documentation.
 -->
@@ -30,6 +31,8 @@ For each feed the collector and parser that can be used is documented as well as
 To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then rebuild the documentation.
 
 """
+
+FEED_SANITATION_PATTERN = re_compile('[^a-z.]', flags=IGNORECASE)
 
 
 def info(key, value=""):
@@ -73,14 +76,14 @@ def main():
 
                 if bot_info.get('parameters'):
                     output += "parameters:\n"
+
+                    if bot == 'collector':
+                        code = f"{FEED_SANITATION_PATTERN.sub('', provider)}-{FEED_SANITATION_PATTERN.sub('', feed_name)}".lower()
+                        output += f"  provider: {provider}\n"
+                        output += f"  name: {feed_name}\n"
+                        output += f"  code: {code}\n"
+
                     for key, value in sorted(bot_info['parameters'].items(), key=lambda x: x[0]):
-
-                        if value == "__FEED__":
-                            value = feed_name
-
-                        if value == "__PROVIDER__":
-                            value = provider
-
                         # format non-empty lists with double-quotes
                         # single quotes are not conform JSON and not correctly detected/transformed by the manager
                         if isinstance(value, (list, tuple)) and value:

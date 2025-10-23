@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Intro
 
 This guide provides instructions on how to install, configure and manage IntelMQ and it's components.

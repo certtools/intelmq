@@ -4,6 +4,7 @@
 -->
 
 # Using IntelMQ Manager
+
 **IntelMQ Manager** is a graphical interface to manage configurations for IntelMQ. It's goal is to provide an intuitive tool to allow non-programmers to specify the data flow in IntelMQ.
 
 ## Configuration Pages
@@ -59,7 +60,6 @@ Namely, the number of queued messages in the queues that are related to
 that bot and also the last 20 log lines of that single bot.
 
 ![Bot Monitor](../static/images/intelmq-manager/monitor2.png)
-
 
 ## Keyboard Shortcuts
 

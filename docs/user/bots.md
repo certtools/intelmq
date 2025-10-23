@@ -1937,6 +1937,7 @@ If the input data did not contain the field `classification.type`, it is set to 
 Supports multiple different modes:
 
 #### Input data is one event
+
 Example:
 ```json
 { INTELMQ data... }
@@ -1953,6 +1954,7 @@ Configuration:
 * `multiple_events`: False
 
 #### Input data is in JSON stream format
+
 Example:
 ```json
 { INTELMQ data... }
@@ -1965,6 +1967,7 @@ Configuration:
 * `multiple_events`: False
 
 #### Input data is a list of events
+
 Example:
 ```json
 [
@@ -2787,6 +2790,7 @@ For a detailed description of the modes, see below.
 ### Modes
 
 #### IP Network
+
 For each incoming event, the bots chooses one random IP network range (IPv4 or IPv6) from the configured data file.
 It set's the first IP address of the range as `source.ip` and the network itself as `source.network`.
 To adapt the `source.asn` field accordingly, use the [ASN Lookup Expert](#asn-lookup).
@@ -2795,7 +2799,9 @@ For data consistency `source.network` will only be set if `source.ip` was set or
 If overwrite is false, `source.ip` was did not exist before but `source.network` existed before, `source.network` will still be overridden.
 
 #### Event fields
+
 ##### Mode `random_single_value`
+
 For any possible event field, the bot chooses a random value of the values in the `values` property.
 
 ---
@@ -5424,7 +5430,6 @@ The parameters marked with 'PostgreSQL' will be sent to libpq via psycopg2. Chec
 **`fail_on_errors`**
 
 (optional, boolean) Whether an error should cause the bot to fail (raise an exception) or otherwise rollback. If false, the bot eventually waits and re-try (e.g. re-connect) etc. to solve the issue. If true, the bot raises an exception and - depending on the IntelMQ error handling configuration - stops. Defaults to false.
-
 
 ### STOMP
 

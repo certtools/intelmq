@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Upgrade instructions
 
 In order to upgrade your IntelMQ installation it is recommended to follow these five steps:

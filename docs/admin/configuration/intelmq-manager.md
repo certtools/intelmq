@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Configuring IntelMQ Manager
 
 In the file `/usr/share/intelmq-manager/html/js/vars.js` set `ROOT` to the URL of your `intelmq-api` installation - by

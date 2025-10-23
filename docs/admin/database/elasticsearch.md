@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Using Elasticsearch as a database for IntelMQ
 
 If you wish to run IntelMQ with Elasticsearch or full ELK stack (Elasticsearch, Logstash, Kibana) it is entirely

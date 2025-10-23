@@ -3,7 +3,6 @@
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-
 # Abuse-contact look-ups
 
 The right decision whom to contact about a specific incident is vital to get the incident resolved as quick as possible. Different types of events may required different abuse-contact to be selected. For example, issues about a device, e.g. a vulnerability in the operating system or an application, is better sent to the hoster which can inform the server administrator. For website-related issues, like defacements or phishing, the domain owner (maintaining the content of the website) could be the better and more direct contact. Additionally, different CERT's have different approaches and different contact databases. Multiple information sources have different information, and some sources are more accurate than others. IntelMQ can query multiple sources of abuse-contacts and combine them. Internal databases, like a Constituency Portal provide high-quality and first-hand contact information. The RIPE document [Sources of Abuse Contact Information for Abuse Handlers](https://www.ripe.net/publications/docs/ripe-658) contains a good summary of the complex of themes.
