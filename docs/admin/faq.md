@@ -1,10 +1,40 @@
 <!-- comment
-   SPDX-FileCopyrightText: 2014 Tomás Lima <synchroack@gmail.com>, 2016-2021 Sebastian Wagner <wagner@cert.at>, 2023 Filip Pokorný
+   SPDX-FileCopyrightText: 2014 Tomás Lima <synchroack@gmail.com>, 2014-2021 CERT.at <intelmq-team@cert.at>, 2023 Filip Pokorný, 2025 Institute for Common Good Technology
    SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 
 # Frequently asked questions
+
+
+## Pretty-print JSON data
+
+IntelMQ uses JSON for data serialization. To improve the readability, you can use the neat tool `jq`, a *command-line JSON processor*. For example, to format a JSON string:
+
+```sh
+> echo '{"classification.type": "malware-distribution", "extra.category": "redirect-to-malware", "extra.tag": "htaccess-infected-webserver-leads-to-zuponcic", "feed.accuracy": 100.0, "protocol.application": "http", "source.fqdn": "www.example.com", "source.ip": "10.0.0.1", "source.port": 80, "source.urlpath": "/", "time.observation": "2021-08-31T15:57:16+00:00", "time.source": "2021-08-31T00:00:13+00:00"}' | jq .
+{
+  "classification.type": "malware-distribution",
+  "extra.category": "redirect-to-malware",
+  "extra.tag": "htaccess-infected-webserver-leads-to-zuponcic",
+  "feed.accuracy": 100.0,
+  "protocol.application": "http",
+  "source.fqdn": "www.example.com",
+  "source.ip": "10.0.0.1",
+  "source.port": 80,
+  "source.urlpath": "/",
+  "time.observation": "2021-08-31T15:57:16+00:00",
+  "time.source": "2021-08-31T00:00:13+00:00"
+}
+```
+
+The same tool can also format entire files:
+
+```sh
+jq . /var/lib/intelmq/bots/file-output/events.txt | less
+```
+
+The manpage shows more usage options and parameters.
 
 ## How can I improve the speed?
 
@@ -40,7 +70,7 @@ connect to the other's pipeline or use a fast exchange mechanism such
 as the TCP Collector/Output (make sure to secure the network by other
 means).
 
-### Removing raw data for higher performance and less space usage <div id="faq-remove-raw" />
+## Removing raw data for higher performance and less space usage <div id="faq-remove-raw" />
 
 If you do not need the raw data, you can safely remove it. For events
 (after parsers), it keeps the original data, eg. a line of a CSV file.
@@ -89,7 +119,7 @@ also be used instead of the source's time.
 Another way of reducing the `raw`-data from the database is described in
 the EventDB documentation: `eventdb_raws_table`.
 
-### How to Uninstall
+## How to Uninstall
 
 If you installed intelmq with native packages: Use the package management tool to remove the package `intelmq`. These
 tools do not remove configuration by default.
