@@ -28,7 +28,6 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 ### Development
 
 ### Data Format
-
 - Implementing [IEP009](https://github.com/certtools/ieps/tree/main/009) introducing fields to
   identify products and vulnerabilities: `product.full_name`, `product.name`, `product.vendor`,
   `product.version`, `product.vulnerabilities`. To store in existing PostgreSQL instances, a following
@@ -40,6 +39,8 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
   ALTER TABLE events ADD "product.version" text;
   ALTER TABLE events ADD "product.vulnerabilities" text;
   ```
+- added `severity` field to help with triaging received events (PR#2575 by Kamil Mańkowski).
+  To allow saving the field in PostgreSQL database in existing installations, the following schema update is necessary: `ALTER TABLE events ADD severity varchar(10);`.
 
 ### Bots
 #### Collectors

@@ -57,6 +57,7 @@ CREATE TABLE events (
     "raw" text,
     "rtir_id" integer,
     "screenshot_url" text,
+    "severity" varchar(10),
     "source.abuse_contact" text,
     "source.account" text,
     "source.allocated" timestamp with time zone,
