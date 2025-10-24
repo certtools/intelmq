@@ -33,7 +33,7 @@ jobs:
       run: bash .github/workflows/scripts/debian-package.sh ${{ matrix.codename }}
 
     - name: Test packages installation
-      run: sudo apt install ~/artifacts/*.deb
+      run: sudo apt-get update && DEBIAN_FRONTEND="noninteractive" sudo apt-get install ~/artifacts/*.deb
 
     - name: Upload artifact
       if: ${{ github.event_name == 'push' }}
