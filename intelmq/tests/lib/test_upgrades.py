@@ -886,6 +886,7 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertIn("severity", result[2]["event"])
 
 
+
 for name in upgrades.__all__:
     setattr(TestUpgradeLib, 'test_function_%s' % name,
             generate_function(getattr(upgrades, name)))
