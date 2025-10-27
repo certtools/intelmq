@@ -282,7 +282,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         for object_relation, definition in self.attribute_mapping.items():
             if object_relation in message:
                 obj.add_attribute(
-                    object_relation,
+                    definition.get("type") or object_relation,
                     value=message[object_relation],
                     **self._extract_misp_attribute_kwargs(message, definition),
                 )
