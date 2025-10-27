@@ -7,6 +7,7 @@ import datetime
 import json
 import re
 from pathlib import Path
+from typing import Union
 from uuid import uuid4
 
 from intelmq import VAR_STATE_PATH
@@ -69,6 +70,9 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
     #       will add two tags to every event separated by "infostealer", and
     #       one tag to every other event
     tagging: dict = None
+
+    # do not create objects in the MISP events, add data directly as event attributes
+    flat_events: bool = False
 
     # Delaying reloading would delay saving eventually long-awaiting messages
     _sighup_delay = False
@@ -235,7 +239,10 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         else:
             event = self._generate_new_misp_event(key)
 
-        obj = event.add_object(name="intelmq_event")
+        if not self.flat_events:
+            obj = event.add_object(name="intelmq_event")
+        else:
+            obj = event
         # For caching and default mapping, the serialized version is the right format to work on.
         # However, for any custom mapping the Message object is more sufficient as it handles
         # subfields.
@@ -244,7 +251,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         else:
             self._custom_mapping(obj, message_obj)
 
-    def _default_mapping(self, obj: "MISPObject", message: dict):
+    def _default_mapping(self, obj: Union["MISPObject", "MISPEvent"], message: dict):
         for object_relation, value in message.items():
             try:
                 obj.add_attribute(object_relation, value=value)
@@ -270,7 +277,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                 result[parameter] = value
         return result
 
-    def _custom_mapping(self, obj: "MISPObject", message: Message):
+    def _custom_mapping(self, obj: Union["MISPObject", "MISPEvent"], message: Message):
         """Map the IntelMQ event to the MISP Object using the custom mapping definition."""
         for object_relation, definition in self.attribute_mapping.items():
             if object_relation in message:
