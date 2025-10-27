@@ -15,6 +15,7 @@ import json
 import os
 import sys
 import tempfile
+from textwrap import dedent
 
 from intelmq import HARMONIZATION_CONF_FILE
 
@@ -135,7 +136,17 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE, skip_events=False,
              separate_raws=False, partition_key=None, skip_or_replace=False,
              no_jsonb=False):
     FIELDS = {}
-    sql_lines = []
+
+    # ENUM for severity does not only save space, it first and foremost allows for easy sorting by severity (ascending sorting is critical to undefined)
+    sql_lines = dedent("""
+        CREATE TYPE severity_enum AS ENUM (
+            'critical',
+            'high',
+            'medium',
+            'low',
+            'info',
+            'undefined'
+        );""").strip().splitlines()
 
     try:
         print("INFO - Reading %s file" % harmonization_file)
@@ -154,7 +165,9 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE, skip_events=False,
                              'LowercaseString', 'UppercaseString', 'Registry',
                              'TLP', 'ClassificationTaxonomy',
                              ):
-            if 'length' in value:
+            if field == 'severity':
+                dbtype = 'severity_enum'
+            elif 'length' in value:
                 dbtype = 'varchar({})'.format(value['length'])
             else:
                 dbtype = 'text'

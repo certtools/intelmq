@@ -22,6 +22,14 @@ Python `>=3.9` is now required, which is available on all platforms supported by
 To save new fields from IntelMQ Data Format in existing PostgreSQL instances, the following schema
 update is necessary:
 ```sql
+CREATE TYPE severity_enum AS ENUM (
+    'critical',
+    'high',
+    'medium',
+    'low',
+    'info',
+    'undefined'
+);
 ALTER TABLE events ADD "product.full_name" text;
 ALTER TABLE events ADD "product.name" text;
 ALTER TABLE events ADD "product.vendor" text;
@@ -29,6 +37,12 @@ ALTER TABLE events ADD "product.version" text;
 ALTER TABLE events ADD "product.vulnerabilities" text;
 ALTER TABLE events ADD severity varchar(10);
 ALTER TABLE events ADD "constituency" text;
+UPDATE events SET severity = (extra ->> 'severity')::severity_enum;
+```
+
+Optionally remove the severity field from the extra fields in existing entries:
+```sql
+UPDATE events SET extra = extra - 'severity';
 ```
 
 ### Configuration

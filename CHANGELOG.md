@@ -40,7 +40,18 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
   ALTER TABLE events ADD "product.vulnerabilities" text;
   ```
 - added `severity` field to help with triaging received events (PR#2575 by Kamil Mańkowski).
-  To allow saving the field in PostgreSQL database in existing installations, the following schema update is necessary: `ALTER TABLE events ADD severity varchar(10);`.
+  To allow saving the field in PostgreSQL database in existing installations, the following schema update is necessary:
+  ```sql
+  CREATE TYPE severity_enum AS ENUM (
+    'critical',
+    'high',
+    'medium',
+    'low',
+    'info',
+    'undefined'
+  );
+  ALTER TABLE events ADD severity severity_enum;
+  ```
 - Implementing [IEP008](https://github.com/certtools/ieps/tree/main/008) introducing the `constituency` field for easier identification in
   multi-constituency setups. (PR#2573 by Kamil Mańkowski)
   To use in current PostgreSQL installations, a schema update may be

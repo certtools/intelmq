@@ -1,3 +1,11 @@
+CREATE TYPE severity_enum AS ENUM (
+    'critical',
+    'high',
+    'medium',
+    'low',
+    'info',
+    'undefined'
+);
 CREATE TABLE events (
     "id" BIGSERIAL UNIQUE PRIMARY KEY,
     "classification.identifier" text,
@@ -58,7 +66,7 @@ CREATE TABLE events (
     "raw" text,
     "rtir_id" integer,
     "screenshot_url" text,
-    "severity" varchar(10),
+    "severity" severity_enum,
     "source.abuse_contact" text,
     "source.account" text,
     "source.allocated" timestamp with time zone,
