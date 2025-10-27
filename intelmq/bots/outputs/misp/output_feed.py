@@ -267,6 +267,9 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         """Creates the a dict with arguments to create a MISPObjectAttribute."""
         result = {}
         for parameter, value in definition.items():
+            # This is extracted as the first positional argument
+            if parameter == "type":
+                continue
             # Check if the value is a harmonization key or a static value
             if isinstance(value, str) and (
                 value in self.harmonization["event"] or
