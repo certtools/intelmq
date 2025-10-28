@@ -72,11 +72,11 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
             info: str = json.load(f).get("Event", {}).get("info", "")
         assert info.startswith("This is my custom info. IntelMQ event ")
 
-    def test_additional_info_with_separator(self):
+    def test_additional_info_with_grouping_key(self):
         self.run_bot(
             parameters={
-                "additional_info": "Event related to {separator}.",
-                "event_separator": "malware.name",
+                "additional_info": "Event related to {key}.",
+                "grouping_key": "malware.name",
             }
         )
 
@@ -93,6 +93,9 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(iterations=2, parameters={"bulk_save_count": 3})
 
         current_event = open(f"{self.directory.name}/.current").read()
+
+        # bot has to disable delayed reload when accumulating events
+        assert self.bot._sighup_delay is False
 
         # The first event is always immediately dumped to the MISP feed
         # But the second wait until bulk saving size is achieved
@@ -118,8 +121,9 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
 
         # Simulating leftovers in the queue when it's time to generate new event
         Path(f"{self.directory.name}/.current").unlink()
-        self.bot.cache_put(
-            MessageFactory.from_dict(EXAMPLE_EVENT).to_dict(jsondict_as_string=True)
+        self.bot.cache_lpush(
+            self.bot_id,
+            json.dumps(MessageFactory.from_dict(EXAMPLE_EVENT).to_dict(jsondict_as_string=True))
         )
         self.run_bot(parameters={"bulk_save_count": 3})
 
@@ -197,7 +201,7 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         )
         assert source_ip["value"] == "152.166.119.2"
 
-    def test_event_separation(self):
+    def test_events_grouping(self):
         """Tests that based on the value of the given field, incoming messages are put in separated
         MISP events."""
         self.input_message = [
@@ -205,7 +209,7 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
             {**EXAMPLE_EVENT, "malware.name": "another_malware"},
             EXAMPLE_EVENT,
         ]
-        self.run_bot(iterations=3, parameters={"event_separator": "malware.name"})
+        self.run_bot(iterations=3, parameters={"grouping_key": "malware.name"})
 
         current_events = json.loads(open(f"{self.directory.name}/.current").read())
         assert len(current_events) == 2
@@ -230,7 +234,7 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         )
         assert malware_name == "another_malware"
 
-    def test_event_separation_with_extra_and_bulk_save(self):
+    def test_events_grouping_with_extra_and_bulk_save(self):
         self.input_message = [
             {**EXAMPLE_EVENT, "extra.some_key": "another_malware"},
             {**EXAMPLE_EVENT, "extra.some_key": "first_malware"},
@@ -238,7 +242,7 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         ]
         self.run_bot(
             iterations=3,
-            parameters={"event_separator": "extra.some_key", "bulk_save_count": 3},
+            parameters={"grouping_key": "extra.some_key", "bulk_save_count": 3},
         )
 
         # Only the initial event is saved, the rest is cached
@@ -250,7 +254,7 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
 
         self.input_message = {**EXAMPLE_EVENT, "extra.some_key": "first_malware"}
         self.run_bot(
-            parameters={"event_separator": "extra.some_key", "bulk_save_count": 3},
+            parameters={"grouping_key": "extra.some_key", "bulk_save_count": 3},
         )
 
         # Now everything is saved
@@ -285,8 +289,8 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         tlp = next(t for t in tags if t["name"] == "tlp:unclear")
         assert tlp["colour"] == "#7e7eae"
 
-    def test_tagging_and_event_separation(self):
-        """When separating events, it is possible to add different MISP tags to specific MISP
+    def test_tagging_and_events_grouping(self):
+        """When grouping events, it is possible to add different MISP tags to specific MISP
         events."""
         self.input_message = [
             EXAMPLE_EVENT,
@@ -295,7 +299,7 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         self.run_bot(
             iterations=2,
             parameters={
-                "event_separator": "malware.name",
+                "grouping_key": "malware.name",
                 "tagging": {
                     "__all__": [{"name": "source:intelmq"}],
                     "salityp2p": [{"name": "family:salityp2p"}],
@@ -319,6 +323,36 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
         assert next(t for t in tags if t["name"] == "source:intelmq")
         assert next(t for t in tags if t["name"] == "family:malware_2")
 
+    def test_flat_misp_events_structure(self):
+        """In flat mode attributes are set directly to on the event"""
+        self.input_message = [
+            EXAMPLE_EVENT,
+            {**EXAMPLE_EVENT, "source.ip": "1.1.1.1"},
+        ]
+
+        self.run_bot(
+            iterations=2,
+            parameters={
+                "flat_events": True,
+                "tagging": {
+                    "__all__": [{"name": "source:intelmq"}],
+                },
+                "attribute_mapping": {
+                    "source.ip": {"type": "ip-dst", "category": "Network activity"}
+                }
+            },
+        )
+
+        current_event = open(f"{self.directory.name}/.current").read()
+
+        with open(current_event) as f:
+            attributes = json.load(f).get("Event", {}).get("Attribute", [])
+
+        assert len(attributes) == 2
+        assert next(a for a in attributes if a["value"] == "1.1.1.1")
+        assert next(a for a in attributes if a["value"] == "152.166.119.2")
+
+
     def test_parameter_check_correct(self):
         result = self.bot_reference.check(
             {
@@ -329,7 +363,7 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
                     "destination.ip": {"to_ids": False, "comment": "Possible FP"},
                     "malware.name": {"comment": "extra.non_ascii"},
                 },
-                "event_separator": "extra.botnet",
+                "grouping_key": "extra.botnet",
                 "bulk_save_count": 10,
                 "tagging": {
                     "__all__": [{"name": "source:feed", "colour": "#000000"}],
@@ -342,7 +376,9 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
     def test_parameter_check_errors(self):
         cases = [
             {"bulk_save_count": "not-a-number"},
-            {"event_separator": "not-a-field"},
+            # attribute_mapping is required for flat_events
+            {"flat_events": True},
+            {"grouping_key": "not-a-field"},
             {"attribute_mapping": "not-a-dict"},
             {"attribute_mapping": {"not-a-field": {}}},
             {"attribute_mapping": {"source.ip": "not-a-dict"}},
@@ -350,17 +386,17 @@ class TestMISPFeedOutputBot(test.BotTestCase, unittest.TestCase):
                 "tagging": {"not-all": []}
             },  # without event_separator, only __all__ is allowed
             {"tagging": {"__all__": [], "other": []}},
-            {"event_separator": "malware.name", "tagging": ["not", "a", "dict"]},
+            {"grouping_key": "malware.name", "tagging": ["not", "a", "dict"]},
             {
-                "event_separator": "malware.name",
+                "grouping_key": "malware.name",
                 "tagging": {"case": "must-be-list-of-dicts"},
             },
             {
-                "event_separator": "malware.name",
+                "grouping_key": "malware.name",
                 "tagging": {"case": ["must-be-list-of-dicts"]},
             },
             {
-                "event_separator": "malware.name",
+                "grouping_key": "malware.name",
                 "tagging": {"case": [{"must": "have a name"}]},
             },
         ]

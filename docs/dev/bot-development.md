@@ -211,19 +211,18 @@ and following methods to cache objects in a queue:
 - `cache_rpop`
 - `cache_llen`.
 
-Caching key-value pairs and queue caching are two separated mechanisms. The first is designed
- for arbitrary values, the second one is focused on temporary storing messages (but can handle other
- data). You won't see caches from one in the another. For example, if adding a key-value pair using
- `cache_set`, it does not change the value from `cache_llen`, and if adding an element using
- `cache_lpush` you cannot use `check_exists` to look for it.
+Caching key-value pairs and queue caching are two different mechanisms. The functions in the
+ first list are designed for arbitrary values, while the latter ones are primarily for temporarily
+ storing messages, but can also handle other data types. You won't see caches from one in the other.
+ For example, if adding a key-value pair using `cache_set`, it does not change the value from
+ `cache_llen`, and if adding an element using `cache_lpush` you cannot use `check_exists` to look for it.
 
 When using queue-based caching, you have to serialize object to a format accepted by Redis/Valkey
 as the underlying storage. For example, to store a message in a queue using bot ID as key, you can
 use code like:
 
 ```python
-msmessage = self.receive_message().to_dict(jsondict_as_string=True)
-self.cache_lpush(self.bot_id, json.dumps(message))
+self.cache_lpush(self.bot_id, self.receive_message().to_json(jsondict_as_string=True))
 ```
 
 and to retrieve a message from the cache:

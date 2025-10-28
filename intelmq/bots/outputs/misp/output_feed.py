@@ -75,8 +75,6 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
     # do not create objects in the MISP events, add data directly as event attributes
     flat_events: bool = False
 
-    # Delaying reloading would delay saving eventually long-awaiting messages
-    _sighup_delay = False
     _is_multithreadable: bool = False
 
     @staticmethod
@@ -107,6 +105,10 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
             self.timedelta = datetime.timedelta(
                 minutes=parse_relative(self.interval_event)
             )
+
+        if self.bulk_save_count:
+            # Delaying reloading would delay saving eventually long-awaiting messages
+            self._sighup_delay = False
 
         self.min_time_current = datetime.datetime.max
         self.max_time_current = datetime.datetime.min
@@ -403,6 +405,15 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                                         ),
                                     ]
                                 )
+
+        flat_events = parameters.get("flat_events")
+        if flat_events and not attribute_mapping:
+            results.append(
+                [
+                    "error",
+                    "When using flat_events, you have to provide attribute_mapping",
+                ]
+            )
 
         tagging = parameters.get("tagging")
         if tagging:

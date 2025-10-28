@@ -4772,7 +4772,6 @@ hour", string.
 incoming messages until the given number of them. Use it if your bot proceeds a high number of messages
 and constant saving to the disk is a problem. Reloading or restarting bot as well as generating
 a new MISP event based on `interval_event` triggers regenerating MISP feed regardless of the cache size.
-To ensure saving on reload without any delay, you should also set `_sighup_delay` internal variable.
 
 **`attribute_mapping`**
 
@@ -4868,7 +4867,8 @@ tagging:
 
 (optional, bool): instead of creating an object for every incoming IntelMQ message, it will add
 attributes directly to the MISP event. Useful if your want to export just a list of data, e.g.
-C2 domains, without having to group some attributes together. By default set to `False`.
+C2 domains, without having to group some attributes together. When using flat events, you
+have to define custom mapping to ensure the correct attribute types. By default set to `False`.
 
 **Example**
 
@@ -4896,8 +4896,6 @@ parameters:
   tagging:
     __all__:
       - name: tlp:amber
-  # ensure saving on reload
-  _sighup_delay: false
 ```
 
 As a result, you will get MISP feed that creates one event per malware family every day. In the event,

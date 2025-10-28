@@ -74,8 +74,8 @@ class CacheMixin:
     def cache_llen(self, key: str) -> int:
         return self.__redis.llen(key)
 
-    def cache_rpop(self) -> Any:
-        return self.__redis.rpop(self.bot_id)
+    def cache_rpop(self, key: str) -> Any:
+        return self.__redis.rpop(key)
 
     def cache_flush(self):
         """
