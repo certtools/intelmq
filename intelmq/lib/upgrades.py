@@ -42,7 +42,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v322_url_replacement',
            'v322_removed_feeds_and_bots',
            'v340_deprecations',
-           'v350_blueliv_removal',
+           'v350_feed_removals',
            'v350_new_fields',
            ]
 
@@ -723,7 +723,7 @@ def v301_deprecations(configuration, harmonization, dry_run, **kwargs):
             continue
         if bot["module"] == "intelmq.bots.parsers.malwaredomains.parser":
             found_malwaredomainsparser.append(bot_id)
-        if bot["module"] == "intelmq.bots.collectors.http.collector":
+        if bot["module"] == "intelmq.bots.collectors.http.collector_http":
             if "http_url" not in bot["parameters"]:
                 continue
             if bot["parameters"]["http_url"] == 'http://mirror1.malwaredomains.com/files/domains.txt':
@@ -788,7 +788,7 @@ def v310_feed_changes(configuration, harmonization, dry_run, **kwargs):
             continue
         if bot["module"] == "intelmq.bots.parsers.malc0de.parser":
             found_malc0de.append(bot_id)
-        if bot["module"] == "intelmq.bots.collectors.http.collector":
+        if bot["module"] == "intelmq.bots.collectors.http.collector_http":
             http_url = bot["parameters"].get("http_url", "")
             if http_url.startswith("https://malc0de.com/bl"):
                 found_malc0de.append(bot_id)
@@ -876,7 +876,7 @@ def v320_update_turris_greylist_url(configuration, harmonization, dry_run, **kwa
     messages = []
 
     for bot_id, bot in configuration.items():
-        if bot.get("module") == "intelmq.bots.collectors.http.collector":
+        if bot.get("module") == "intelmq.bots.collectors.http.collector_http":
             if bot.get("parameters", {}).get("http_url", "").startswith("https://project.turris.cz/greylist-data/greylist-latest.csv"):
                 bot["parameters"]["http_url"] = "https://view.sentinel.turris.cz/greylist-data/greylist-latest.csv"
                 messages.append("Turris Greylist feed URL updated.")
@@ -937,7 +937,7 @@ def v322_removed_feeds_and_bots(configuration, harmonization, dry_run, **kwargs)
         if bot["module"] in discontinued_bots_modules:
             discontinued_bots.append(bot_id)
 
-        elif bot["module"] == "intelmq.bots.collectors.http.collector":
+        elif bot["module"] == "intelmq.bots.collectors.http.collector_http":
             url: str = bot["parameters"].get("http_url", "")
 
             if url in discontinued_feeds_urls:
@@ -976,27 +976,37 @@ def v340_deprecations(configuration, harmonization, dry_run, **kwargs):
     return message or changed, configuration, harmonization
 
 
-def v350_blueliv_removal(configuration, harmonization, dry_run, **kwargs):
+def v350_feed_removals(configuration, harmonization, dry_run, **kwargs):
     """
     Remove blueliv collector and parser
     """
-    message = None
+    messages = []
     discontinued_bots = []
     discontinued_bots_modules = (
         "intelmq.bots.collectors.blueliv.collector_crimeserver",
         "intelmq.bots.parsers.blueliv.parser_crimeserver",
     )
+    discontinued_feeds = []
 
     for bot_id, bot in configuration.items():
         if bot_id == 'global':
             continue
         if bot["module"] in discontinued_bots_modules:
             discontinued_bots.append(bot_id)
+        elif bot["module"] == "intelmq.bots.collectors.http.collector_http":
+            if bot["parameters"].get("http_url", "") == 'https://tracker.viriback.com/dump.php':
+                discontinued_feeds.append(bot_id)
+
+    if discontinued_feeds:
+        messages.append(f"Found discontinued feeds collected by bots: {', '.join(discontinued_feeds)}")
 
     if discontinued_bots:
-        message = f"Found discontinued bots: {', '.join(discontinued_bots)}. Remove the affected bots from the configuration."
+        messages.append(f"Found discontinued bots: {', '.join(discontinued_bots)}.")
 
-    return message, configuration, harmonization
+    if messages:
+        messages.append("Remove the affected bots from the configuration.")
+
+    return '\n'.join(messages) if messages else None, configuration, harmonization
 
 
 def v350_new_fields(configuration, harmonization, dry_run, **kwargs):
@@ -1058,7 +1068,7 @@ UPGRADES = OrderedDict([
     ((3, 3, 0), ()),
     ((3, 3, 1), ()),
     ((3, 4, 0), (v340_deprecations, )),
-    ((3, 5, 0), (v350_blueliv_removal, v350_new_fields)),
+    ((3, 5, 0), (v350_feed_removals, v350_new_fields)),
 ])
 
 ALWAYS = (harmonization,)

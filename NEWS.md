@@ -18,6 +18,13 @@ Python `>=3.9` is now required, which is available on all platforms supported by
 
 ### Tools
 
+### Bots
+#### Blueliv
+The bots `intelmq.bots.collectors.blueliv` and `intelmq.bots.collectors.blueliv` are removed as they used an unmaintained library and do not work any more.
+
+#### Viriback
+The Feed *Viriback C2 Tracker* is removed as the feed and website are no longer reachable and seem to be discontinued.
+
 ### Data Format
 To save new fields from IntelMQ Data Format in existing PostgreSQL instances, the following schema
 update is necessary:
@@ -63,7 +70,7 @@ ALTER TABLE events
 ### Requirements
 Python 3.8 or newer is required.
 
-## Bots
+### Bots
 #### CIF 3 API Output deprecation
 The CIF 3 API Output bot is not compatible with Python version greater or equal to 3.12 and will be removed in the future due to lack of maintenance.
 See https://lists.cert.at/pipermail/intelmq-users/2024-December/000474.html for more information.
