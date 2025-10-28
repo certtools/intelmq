@@ -4866,7 +4866,7 @@ tagging:
 
 ** `flat_events`
 
-(optional, bool): instead of creating an object for every incomming IntelMQ message, it will add
+(optional, bool): instead of creating an object for every incoming IntelMQ message, it will add
 attributes directly to the MISP event. Useful if your want to export just a list of data, e.g.
 C2 domains, without having to group some attributes together. By default set to `False`.
 

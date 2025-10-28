@@ -279,8 +279,8 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                 continue
             # Check if the value is a harmonization key or a static value
             if isinstance(value, str) and (
-                value in self.harmonization["event"]
-                or value.split(".", 1)[0] in self.harmonization["event"]
+                value in self.harmonization["event"] or
+                value.split(".", 1)[0] in self.harmonization["event"]
             ):
                 result[parameter] = message.get(value)
             else:
@@ -417,8 +417,8 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                         "error",
                         (
                             "Parameter 'tagging' has to be a dictionary with keys as '__all__' "
-                            "or possible 'grouping_key' values. Each dictionary value "
-                            + tagging_error,
+                            "or possible 'grouping_key' values. Each dictionary value " +
+                            tagging_error,
                         ),
                     ]
                 )
