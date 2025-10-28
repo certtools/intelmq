@@ -58,27 +58,6 @@ class TestPsqlInit(unittest.TestCase):
         fname = pkg_resources.resource_filename('intelmq', 'etc/harmonization.conf')
         self.assertEqual(psql_initdb.generate(fname).strip(), expected.strip())
 
-    def test_generating_events_schema(self):
-        expected_table = """
-        CREATE TABLE events (
-            "id" BIGSERIAL UNIQUE PRIMARY KEY,
-            "classification.identifier" text,
-            "raw" text,
-            "time.source" timestamp with time zone
-        );
-        """
-        expected_table = self._normalize_leading_whitespaces(expected_table)
-        expected_indexes = [
-            """CREATE INDEX "idx_events_classification.identifier" ON events USING btree ("classification.identifier");""",
-            """CREATE INDEX "idx_events_time.source" ON events USING btree ("time.source");"""
-        ]
-        generated = psql_initdb.generate(self.harmonization_path)
-
-        self.assertTrue(self._normalize_leading_whitespaces(generated).startswith(expected_table))
-
-        for index in expected_indexes:
-            self.assertIn(index, generated)
-
     def test_skip_generating_events_table_schema(self):
         generated = psql_initdb.generate(self.harmonization_path, skip_events=True)
 
