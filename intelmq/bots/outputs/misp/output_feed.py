@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2019 Sebastian Wagner, 2024 CERT.at GmbH
+# SPDX-FileCopyrightText: 2019 Sebastian Wagner, 2025 CERT.at GmbH
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 

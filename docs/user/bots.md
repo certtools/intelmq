@@ -4772,7 +4772,7 @@ hour", string.
 incoming messages until the given number of them. Use it if your bot proceeds a high number of messages
 and constant saving to the disk is a problem. Reloading or restarting bot as well as generating
 a new MISP event based on `interval_event` triggers regenerating MISP feed regardless of the cache size.
-To ensure saving on reload without any delay, you should also set `_sighup_delay` parameter.
+To ensure saving on reload without any delay, you should also set `_sighup_delay` internal variable.
 
 **`attribute_mapping`**
 
