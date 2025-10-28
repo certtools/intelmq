@@ -516,7 +516,7 @@ V301_MALWAREDOMAINS_IN = {
         }
     },
     "malwaredomains-collector": {
-        "module": "intelmq.bots.collectors.http.collector",
+        "module": "intelmq.bots.collectors.http.collector_http",
         "parameters": {
             "http_url": "http://mirror1.malwaredomains.com/files/domains.txt"
         }
@@ -530,13 +530,13 @@ V310_FEED_CHANGES = {
         }
     },
     "autoshun-collector": {
-        "module": "intelmq.bots.collectors.http.collector",
+        "module": "intelmq.bots.collectors.http.collector_http",
         "parameters": {
             "http_url": "https://www.autoshun.org/download"
         }
     },
     "malc0de-collector": {
-        "module": "intelmq.bots.collectors.http.collector",
+        "module": "intelmq.bots.collectors.http.collector_http",
         "parameters": {
             "http_url": "https://malc0de.com/bl/ZONES"
         }
@@ -586,7 +586,7 @@ V322_DISCONTINUED_BOTS_AND_FEEDS_IN = {
         "module": "intelmq.bots.parsers.netlab_360.parser"
     },
     "sucuri-collector": {
-        "module": "intelmq.bots.collectors.http.collector",
+        "module": "intelmq.bots.collectors.http.collector_http",
         "parameters": {
             "http_url": "http://labs.sucuri.net/?malware"
         }

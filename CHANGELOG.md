@@ -55,7 +55,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 #### Parsers
 - `intelmq.bots.parsers.cymru.parser_cap_program`: Add mapping for TOR and ipv6-icmp protocol (PR#2621 by Mikk Margus Möll).
-- Remove `intelmq.bots.collectors.blueliv` as it is obsolete with the removed collector (PR#2632 by Sebastian Wagner).
+- Remove `intelmq.bots.parsers.blueliv` as it is obsolete with the removed collector (PR#2632 by Sebastian Wagner).
 - `intelmq.bots.parser.json.parser`:
   - Support data containing lists of JSON Events (PR#2545 by Tim de Boer).
   - Add default `classification.type` with value `undetermined` if input data has now classification itself (PR#2545 by Sebastian Wagner).
