@@ -207,15 +207,37 @@ and provides the methods to cache key-value pairs:
 
 and following methods to cache objects in a queue:
 
-- `cache_put`
-- `cache_pop`
-- `cache_length`.
+- `cache_lpush`
+- `cache_rpop`
+- `cache_llen`.
 
 Caching key-value pairs and queue caching are two separated mechanisms. The first is designed
  for arbitrary values, the second one is focused on temporary storing messages (but can handle other
  data). You won't see caches from one in the another. For example, if adding a key-value pair using
- `cache_set`, it does not change the value from `cache_length`, and if adding an element using
- `cache_put` you cannot use `check_exists` to look for it.
+ `cache_set`, it does not change the value from `cache_llen`, and if adding an element using
+ `cache_lpush` you cannot use `check_exists` to look for it.
+
+When using queue-based caching, you have to serialize object to a format accepted by Redis/Valkey
+as the underlying storage. For example, to store a message in a queue using bot ID as key, you can
+use code like:
+
+```python
+msmessage = self.receive_message().to_dict(jsondict_as_string=True)
+self.cache_lpush(self.bot_id, json.dumps(message))
+```
+
+and to retrieve a message from the cache:
+
+```python
+data = self.cache_pop()
+if data is None:
+    return # handle empty cache
+message = json.loads(data)
+# to use it as Message object
+message_obj = MessageFactory.from_dict(
+    message, harmonization=self.harmonization, default_type="Event"
+)
+```
 
 ### Pipeline Interactions
 

@@ -21,9 +21,9 @@ class CacheMixin:
         cache_set
 
     To store dict elements in a cache queue named after bot id, use methods:
-        cache_put
-        cache_pop
-        cache_length
+        cache_lpush
+        cache_rpop
+        cache_llen
     """
 
     __redis: redis.Redis = None
@@ -67,19 +67,15 @@ class CacheMixin:
         if self.redis_cache_ttl:
             self.__redis.expire(key, self.redis_cache_ttl)
 
-    def cache_put(self, value: dict) -> int:
+    def cache_lpush(self, key: str, value: Any) -> int:
         # Returns the length of the list after pushing
-        size = self.__redis.lpush(self.bot_id, json.dumps(value))
-        return size
+        return self.__redis.lpush(key, value)
 
-    def cache_length(self) -> int:
-        return self.__redis.llen(self.bot_id)
+    def cache_llen(self, key: str) -> int:
+        return self.__redis.llen(key)
 
-    def cache_pop(self) -> dict:
-        data = self.__redis.rpop(self.bot_id)
-        if data is None:
-            return None
-        return json.loads(data)
+    def cache_rpop(self) -> Any:
+        return self.__redis.rpop(self.bot_id)
 
     def cache_flush(self):
         """

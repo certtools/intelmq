@@ -48,9 +48,10 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
     additional_info: str = None
 
     # An optional field used to create multiple MISP events from incoming messages
-    event_separator: str = None
+    grouping_key: str = None
 
     # Optional non-standard mapping of message fields to MISP object attributes
+    # You can overwrite the attribute type by providing the 'type' argument
     # The structure is like:
     # {<IDF_field_name = MIPS_object_relation>: {<dict of additional parameters for MISPObjectAttribute>}}
     # For example:
@@ -60,7 +61,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
     attribute_mapping: dict = None
 
     # Optional definition to add tags to the MISP event. It should be a dict where keys are
-    # '__all__' (to add tags for every event) or, if the event_separator is used, the separator
+    # '__all__' (to add tags for every event) or, if the grouping_key is used, the key
     # values. For each key, there should be a list of dicts defining parameters for the MISPTag
     # object, but only the "name" is required to set.
     # For example:
@@ -114,7 +115,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                 with (self.output_dir / ".current").open() as f:
                     current = f.read()
 
-                if not self.event_separator:
+                if not self.grouping_key:
                     self.current_files[DEFAULT_KEY] = Path(current)
                 else:
                     self.current_files = {
@@ -146,9 +147,9 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                     self._tagging_objects[key].append(tag)
 
         # Ensure we do generate feed on reload / restart, so awaiting messages won't wait forever
-        if self.cache_length() and not getattr(self, "testing", False):
+        if length := self.cache_llen(self.bot_id) and not getattr(self, "testing", False):
             self.logger.debug(
-                "Found %s awaiting messages. Generating feed.", self.cache_length()
+                "Found %s awaiting messages. Generating feed.", length
             )
             self._generate_misp_feed()
 
@@ -181,7 +182,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
 
         cache_size = None
         if self.bulk_save_count:
-            cache_size = self.cache_put(event)
+            cache_size = self.cache_lpush(self.bot_id, json.dumps(event))
 
         if cache_size is None:
             self._generate_misp_feed(event)
@@ -208,7 +209,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
             end=self.max_time_current.isoformat(),
         )
         if self.additional_info:
-            info = f"{self.additional_info.format(separator=key)} {info}"
+            info = f"{self.additional_info.format(key=key)} {info}"
 
         self.current_events[key].info = info
         self.current_events[key].set_date(datetime.date.today())
@@ -218,7 +219,7 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
             self.output_dir / f"{self.current_events[key].uuid}.json"
         )
         with (self.output_dir / ".current").open("w") as f:
-            if not self.event_separator:
+            if not self.grouping_key:
                 f.write(str(self.current_files[key]))
             else:
                 json.dump({k: str(v) for k, v in self.current_files.items()}, f)
@@ -229,10 +230,10 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         message_obj = MessageFactory.from_dict(
             message, harmonization=self.harmonization, default_type="Event"
         )
-        if not self.event_separator:
+        if not self.grouping_key:
             key = DEFAULT_KEY
         else:
-            key = message_obj.get(self.event_separator) or DEFAULT_KEY
+            key = message_obj.get(self.grouping_key) or DEFAULT_KEY
 
         if key in self.current_events:
             event = self.current_events[key]
@@ -295,10 +296,11 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
         if message:
             self._add_message_to_misp_event(message)
 
-        message = self.cache_pop()
-        while message:
+        cached_msg = self.cache_rpop(self.bot_id)
+        while cached_msg:
+            message = json.loads(cached_msg)
             self._add_message_to_misp_event(message)
-            message = self.cache_pop()
+            cached_msg = self.cache_rpop(self.bot_id)
 
         for key, event in self.current_events.items():
             feed_output = event.to_feed(with_meta=False)
@@ -340,15 +342,15 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
             )
 
         sanity_event = Event({})
-        event_separator = parameters.get("event_separator")
+        grouping_key = parameters.get("grouping_key")
         if (
-            event_separator and not
-            sanity_event._Message__is_valid_key(event_separator)[0]
+            grouping_key and not
+            sanity_event._Message__is_valid_key(grouping_key)[0]
         ):
             results.append(
                 [
                     "error",
-                    f"Value {event_separator} in 'event_separator' is not a valid event key.",
+                    f"Value {grouping_key} in 'grouping_key' is not a valid event key.",
                 ]
             )
 
@@ -408,20 +410,20 @@ class MISPFeedOutputBot(OutputBot, CacheMixin):
                         "error",
                         (
                             "Parameter 'tagging' has to be a dictionary with keys as '__all__' "
-                            "or possible 'event_separator' values. Each dictionary value " +
+                            "or possible 'grouping_key' values. Each dictionary value " +
                             tagging_error,
                         ),
                     ]
                 )
             else:
-                if not event_separator and (
+                if not grouping_key and (
                     "__all__" not in tagging or len(tagging.keys()) > 1
                 ):
                     results.append(
                         [
                             "error",
                             (
-                                "Tagging configuration expects custom values, but the 'event_separator'"
+                                "Tagging configuration expects custom values, but the 'grouping_key'"
                                 " parameter is not set. If you want to just tag all events, use only"
                                 " the '__all__' key."
                             ),

@@ -4772,6 +4772,7 @@ hour", string.
 incoming messages until the given number of them. Use it if your bot proceeds a high number of messages
 and constant saving to the disk is a problem. Reloading or restarting bot as well as generating
 a new MISP event based on `interval_event` triggers regenerating MISP feed regardless of the cache size.
+To ensure saving on reload without any delay, you should also set `_sighup_delay` parameter.
 
 **`attribute_mapping`**
 
@@ -4790,7 +4791,7 @@ For example:
 
 ```yaml
 attribute_mapping:
-  source.ip:
+  source.ip: {}
   feed.name:
     comment: event_description.text
   destination.ip:
@@ -4800,9 +4801,9 @@ attribute_mapping:
 would create a MISP object with three attributes `source.ip`, `feed.name` and `destination.ip`
 and set their values as in the IntelMQ event. In addition, the `feed.name` would have a comment
 as given in the `event_description.text` from IntelMQ event, and `destination.ip` would be set
-as not usable for IDS.
+as not usable for IDS. You can use `type` key to overwrite the attribute type.
 
-**`event_separator`
+**`grouping_key`
 
 (optional, string): If set to a field name from IntelMQ event, the bot will work in parallel on a few
 events instead of saving all incoming messages to a one. Each unique value from the field will
@@ -4814,8 +4815,8 @@ use the same MISP Event as long as it's allowed by the `interval_event`.
 
 (optional, string): If set, the generated MISP Event will use it in the `info` field of the event,
 in addition to the standard IntelMQ description with the time frame (you cannot remove it as the bot
-depends of datetimes saved there). If you use `event_separator`, you may want to use `{separator}`
-placeholder which will be then replaced with the value of the separator.
+depends of datetimes saved there). If you use `grouping_key`, you may want to use `{key}`
+placeholder which will be then replaced with the value of the grouping key.
 
 For example, the following configuration can be used to create MISP Feed with IPs of C2 servers
 of different botnets, having each botnet in a separated MISP Events with an appropriate description.
@@ -4823,8 +4824,8 @@ Each MISP Event will contain objects with the `source.ip` field only, and the ev
 like *C2 Servers for botnet-1. IntelMQ event 2024-07-09T14:51:10.825123 - 2024-07-10T14:51:10.825123*
 
 ```yaml
-event_separator: malware.name
-additional_info: C2 Servers for {separator}.
+grouping_key: malware.name
+additional_info: C2 Servers for {key}.
 attribute_mapping:
   source.ip:
 ```
@@ -4862,6 +4863,48 @@ tagging:
   njrat:
     - name: njrat
 ```
+
+** `flat_events`
+
+(optional, bool): instead of creating an object for every incomming IntelMQ message, it will add
+attributes directly to the MISP event. Useful if your want to export just a list of data, e.g.
+C2 domains, without having to group some attributes together. By default set to `False`.
+
+**Example**
+
+For example, if you have a source that sends C2 domains for multiple malware families,
+you can use the following bot's configuration:
+
+```yaml
+parameters:
+  destination_queues: {}
+  # you have to configure your webserver to expose this path for MISP
+  output_dir: "/var/lib/intelmq/bots/your_feed/"
+  misp_org_name: My Organisation
+  misp_org_uuid: Your-Org-UUID
+  interval_event: 1 day
+  grouping_key: "malware.name"
+  bulk_save_count: 100
+  additional_info: "{key} - "
+  flat_events: true
+  attribute_mapping:
+    source.fqdn:
+      comment: malware.name
+      type: domain
+      category: "Network activity"
+      to_ids: true
+  tagging:
+    __all__:
+      - name: tlp:amber
+  # ensure saving on reload
+  _sighup_delay: false
+```
+
+As a result, you will get MISP feed that creates one event per malware family every day. In the event,
+there will be just C2 domains with the IDS flag set and the malware name as comment. In addition, all
+events will be tagged with `tlp:amber` and also have the malware name in the comment, together with
+the information about the time period. The MISP Feed will be saved to disk after accumulating 100 C2
+domains or on reload/restart.
 
 **Usage in MISP**
 
