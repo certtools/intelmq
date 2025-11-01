@@ -10,8 +10,8 @@ This file lists all changes between IntelMQ releases.
 Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect on the administration of IntelMQ and contains steps that you need to be aware off for the upgrade.
 
 
-3.4.1 Patch release (unreleased)
---------------------------------
+3.5.0 Feature release (2025-11-01)
+----------------------------------
 
 ### Configuration
 - New parameter `stop_retry_limit` (PR#2598 by Lukas Heindl).
@@ -26,8 +26,6 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 - `intelmq.lib.message.Message.from_dict`: Do not modify the dict parameter by adding the `__type` field and raise an error when type is not determinable (PR#2545 by Sebastian Wagner).
 - `intelmq.lib.mixins.cache.CacheMixin` was extended to support temporary storing messages in a cache queue
   (PR#2509 by Kamil Mankowski).
-
-### Development
 
 ### Data Format
 - Implementing [IEP009](https://github.com/certtools/ieps/tree/main/009) introducing fields to
@@ -118,6 +116,21 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 - Remove `prettyprint` script, use `jq` instead (PR#2551 by Sebastian Wagner).
 
 ### Known issues
+This is short list of the most important known issues. The full list can be retrieved from [GitHub](https://github.com/certtools/intelmq/labels/bug?page=2&q=is%3Aopen+label%3Abug).
+- stomp.py 8.2.0+ breaks the version check in stomp bots (#2600).
+- Traceback when calling intelmqdump without write access to the log file (#2529).
+- pyyaml PendingDeprecationWarning: you should no longer specify 'unsafe' -> test failure (#2489).
+- `intelmq.parsers.html_table` may not process invalid URLs in patched Python version due to changes in `urllib` (#2382).
+- Breaking changes in 'rt' 3.0 library (#2367).
+- Type error with SQL output bot's `prepare_values` returning list instead of tuple (#2255).
+- `intelmq_psql_initdb` does not work for SQLite (#2202).
+- intelmqsetup: should install a default state file (#2175).
+- Misp Expert - Crash if misp event already exist (#2170).
+- Spamhaus CERT parser uses wrong field (#2165).
+- Custom headers ignored in HTTPCollectorBot (#2150).
+- intelmqctl log: parsing syslog does not work (#2097).
+- Bots started with IntelMQ-API/Manager stop when the webserver is restarted (#952).
+- Corrupt dump files when interrupted during writing (#870).
 
 
 3.4.0 Feature release (2025-03-14)

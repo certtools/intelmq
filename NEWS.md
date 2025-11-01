@@ -10,13 +10,11 @@ This file lists all changes which have an affect on the administration of IntelM
 Please refer to the change log for a full list of changes.
 
 
-3.4.1 Patch release (unreleased)
---------------------------------
+3.5.0 Feature release (2025-11-01)
+----------------------------------
 
 ### Requirements
 Python `>=3.9` is now required, which is available on all platforms supported by IntelMQ.
-
-### Tools
 
 ### Data Format
 To save new fields from IntelMQ Data Format in existing PostgreSQL instances, the following schema
@@ -44,10 +42,6 @@ Optionally remove the severity field from the extra fields in existing entries:
 ```sql
 UPDATE events SET extra = extra - 'severity';
 ```
-
-### Configuration
-
-### Libraries
 
 ### Postgres databases
 To switch to the more efficient data type `jsonb` instead of `json`, use the following SQL statement. Data is preserved. JSONB also has more query and data manipulation features than plain JSON.
