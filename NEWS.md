@@ -18,13 +18,6 @@ Python `>=3.9` is now required, which is available on all platforms supported by
 
 ### Tools
 
-### Bots
-#### Blueliv
-The bots `intelmq.bots.collectors.blueliv` and `intelmq.bots.collectors.blueliv` are removed as they used an unmaintained library and do not work any more.
-
-#### Viriback
-The Feed *Viriback C2 Tracker* is removed as the feed and website are no longer reachable and seem to be discontinued.
-
 ### Data Format
 To save new fields from IntelMQ Data Format in existing PostgreSQL instances, the following schema
 update is necessary:

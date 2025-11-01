@@ -616,21 +616,16 @@ V340_TWITTER_COLLECTOR_IN = {
         "module": "intelmq.bots.collectors.twitter.collector",
     },
 }
-V350_FEED_REMOVAL = {
+V350_BLUELIV_REMOVAL = {
     "global": {},
     "blueliv-collector": {
         "module": "intelmq.bots.collectors.blueliv.collector_crimeserver"
     },
     "blueliv-parser": {
         "module": "intelmq.bots.parsers.blueliv.parser_crimeserver"
-    },
-    "viriback-collector": {
-        "module": "intelmq.bots.collectors.http.collector_http",
-        "parameters": {
-            "http_url": "https://tracker.viriback.com/dump.php"
-        }
     }
 }
+
 
 
 def generate_function(function):
@@ -870,13 +865,12 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertIn('twitter-collector', result[0])
         self.assertEqual(V340_TWITTER_COLLECTOR_IN, result[1])
 
-    def test_v350_feed(self):
-        """ Test v350_feed_removals deprecation warning """
-        result = upgrades.v350_feed_removals(V350_FEED_REMOVAL, {}, False)
+    def test_v350_blueliv_removal(self):
+        """ Test v350_blueliv_removal deprecation warning """
+        result = upgrades.v350_blueliv_removal(V350_BLUELIV_REMOVAL, {}, False)
         self.assertIn('blueliv-collector', result[0])
         self.assertIn('blueliv-parser', result[0])
-        self.assertIn('viriback-collector', result[0])
-        self.assertEqual(V350_FEED_REMOVAL, result[1])
+        self.assertEqual(V350_BLUELIV_REMOVAL, result[1])
 
     def test_v350_new_fields(self):
         """ Test adding new harmonisation fields """
@@ -890,6 +884,7 @@ class TestUpgradeLib(unittest.TestCase):
         self.assertIn("product.vulnerabilities", result[2]["event"])
         self.assertIn("old-field", result[2]["event"])
         self.assertIn("severity", result[2]["event"])
+
 
 
 for name in upgrades.__all__:
