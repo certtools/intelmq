@@ -206,6 +206,9 @@ Make a backup of your configuration first, also including bot's configuration fi
 Get some debugging output on the settings and the environment (to be extended):
     intelmqctl debug --get-paths
     intelmqctl debug --get-environment-variables
+
+Looking for help from the community?
+Find IntelMQ's support channels at https://docs.intelmq.org/latest/help/
 '''
 
         self._processmanagertype = getattr(self._parameters, 'process_manager', 'intelmq')
