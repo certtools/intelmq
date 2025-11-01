@@ -42,7 +42,7 @@ __all__ = ['v100_dev7_modify_syntax',
            'v322_url_replacement',
            'v322_removed_feeds_and_bots',
            'v340_deprecations',
-           'v350_feed_removals',
+           'v350_blueliv_removal',
            'v350_new_fields',
            ]
 
@@ -976,37 +976,27 @@ def v340_deprecations(configuration, harmonization, dry_run, **kwargs):
     return message or changed, configuration, harmonization
 
 
-def v350_feed_removals(configuration, harmonization, dry_run, **kwargs):
+def v350_blueliv_removal(configuration, harmonization, dry_run, **kwargs):
     """
     Remove blueliv collector and parser
     """
-    messages = []
+    message = None
     discontinued_bots = []
     discontinued_bots_modules = (
         "intelmq.bots.collectors.blueliv.collector_crimeserver",
         "intelmq.bots.parsers.blueliv.parser_crimeserver",
     )
-    discontinued_feeds = []
 
     for bot_id, bot in configuration.items():
         if bot_id == 'global':
             continue
         if bot["module"] in discontinued_bots_modules:
             discontinued_bots.append(bot_id)
-        elif bot["module"] == "intelmq.bots.collectors.http.collector_http":
-            if bot["parameters"].get("http_url", "") == 'https://tracker.viriback.com/dump.php':
-                discontinued_feeds.append(bot_id)
-
-    if discontinued_feeds:
-        messages.append(f"Found discontinued feeds collected by bots: {', '.join(discontinued_feeds)}")
 
     if discontinued_bots:
-        messages.append(f"Found discontinued bots: {', '.join(discontinued_bots)}.")
+        message = f"Found discontinued bots: {', '.join(discontinued_bots)}. Remove the affected bots from the configuration."
 
-    if messages:
-        messages.append("Remove the affected bots from the configuration.")
-
-    return '\n'.join(messages) if messages else None, configuration, harmonization
+    return message, configuration, harmonization
 
 
 def v350_new_fields(configuration, harmonization, dry_run, **kwargs):
@@ -1068,7 +1058,7 @@ UPGRADES = OrderedDict([
     ((3, 3, 0), ()),
     ((3, 3, 1), ()),
     ((3, 4, 0), (v340_deprecations, )),
-    ((3, 5, 0), (v350_feed_removals, v350_new_fields)),
+    ((3, 5, 0), (v350_blueliv_removal, v350_new_fields)),
 ])
 
 ALWAYS = (harmonization,)
