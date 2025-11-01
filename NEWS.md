@@ -10,6 +10,22 @@ This file lists all changes which have an affect on the administration of IntelM
 Please refer to the change log for a full list of changes.
 
 
+3.5.1 Patch release (unreleased)
+--------------------------------
+
+### Requirements
+
+### Tools
+
+### Data Format
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
 3.5.0 Feature release (2025-11-01)
 ----------------------------------
 
