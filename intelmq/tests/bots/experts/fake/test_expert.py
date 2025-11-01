@@ -50,7 +50,7 @@ class TestFakeExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = {"__type": "Event"}
         self.run_bot(parameters={'database': SEVERITY_DB})
         msg = json_loads(self.get_output_queue()[0])
-        self.assertIn(msg['extra.severity'], ["critical", "high", "medium", "low", "info", "undefined"])
+        self.assertIn(msg['severity'], ["critical", "high", "medium", "low", "info", "undefined"])
 
 
 if __name__ == '__main__':  # pragma: no cover
