@@ -35,6 +35,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 ### Packaging
 
 ### Tests
+- `intelmq.tests.bots.parsers.openphish.test_parser_commercial`: Replace dummy key with more obvious dummy key, generate raw from input (PR#2665 by Sebastian Wagner, fixes #2663).
 
 ### Tools
 
