@@ -65,6 +65,8 @@ class TestIntelMQController(unittest.TestCase):
     def setUp(self):
         super().setUp()
 
+        utils.drop_privileges()
+
         self.tmp_config_dir = TemporaryDirectory()
 
         self.tmp_runtime = f"{self.tmp_config_dir.name}/runtime.yaml"
