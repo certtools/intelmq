@@ -2784,9 +2784,9 @@ For a detailed description of the modes, see below.
 
 (optional, boolean) Whether to overwrite existing fields. Defaults to false.
 
-### Modes
+#### Modes
 
-#### IP Network
+##### IP Network
 For each incoming event, the bots chooses one random IP network range (IPv4 or IPv6) from the configured data file.
 It set's the first IP address of the range as `source.ip` and the network itself as `source.network`.
 To adapt the `source.asn` field accordingly, use the [ASN Lookup Expert](#asn-lookup).
@@ -2794,8 +2794,8 @@ To adapt the `source.asn` field accordingly, use the [ASN Lookup Expert](#asn-lo
 For data consistency `source.network` will only be set if `source.ip` was set or overridden.
 If overwrite is false, `source.ip` was did not exist before but `source.network` existed before, `source.network` will still be overridden.
 
-#### Event fields
-##### Mode `random_single_value`
+##### Event fields
+###### Mode `random_single_value`
 For any possible event field, the bot chooses a random value of the values in the `values` property.
 
 ---
@@ -2911,7 +2911,9 @@ String method operations on column values.
 
 **Parameters:**
 
-*Parameters for stripping chars*
+Order of operation: `strip -> replace -> split`. These three methods can be combined such as first strip and then split.
+
+#### Parameters for stripping chars
 
 **`strip_columns`**
 (optional, string/array of strings) A list of strings or a string of comma-separated values with field names. The names
@@ -2920,7 +2922,7 @@ must match the IntelMQ Data Format field names.
 For example:
 
 ```yaml
-columns:
+strip_columns:
   - malware.name
   - extra.tags
 ```
@@ -2928,14 +2930,14 @@ columns:
 is equivalent to:
 
 ```yaml
-columns: "malware.name,extra.tags"
+strip_columns: "malware.name,extra.tags"
 ```
 
 **`strip_chars`**
 
 (optional, string) Set of characters to remove as leading/trailing characters. Defaults to space.
 
-*Parameters for replacing chars*
+#### Parameters for replacing chars
 
 **`replace_column`**
 
@@ -2952,7 +2954,7 @@ columns: "malware.name,extra.tags"
 **`replace_count`**
 () number specifying how many occurrences of the old value you want to replace(default: [1])
 
-*Parameters for splitting string to list of string*
+#### Parameters for splitting string to list of string
 
 **`split_column`**
 
@@ -2961,8 +2963,6 @@ columns: "malware.name,extra.tags"
 **`split_separator`**
 
 () specifies the separator to use when splitting the string(default: `,`)
-
-Order of operation: `strip -> replace -> split`. These three methods can be combined such as first strip and then split.
 
 ---
 
