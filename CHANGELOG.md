@@ -37,6 +37,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 ### Tests
 
 ### Tools
+- `intelmq.lib.bot_debugger`:  Optionally read input messages from stdin instead of parameter value (PR#2678 by Sebastian Wager).
 
 ### Contrib
 
