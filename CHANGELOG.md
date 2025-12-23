@@ -31,6 +31,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 #### Outputs
 
 ### Documentation
+- Updates to Contrib and Overview pages (PR#2672 by Sebastian Wagner).
 
 ### Packaging
 
