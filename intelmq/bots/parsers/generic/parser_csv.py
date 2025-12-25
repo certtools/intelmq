@@ -68,7 +68,7 @@ class GenericCsvParserBot(ParserBot):
                                   expected=("blacklist", "whitelist"),
                                   docs=DOCS)
 
-        if self.columns_required is None:
+        if self.columns_required in [None, '']:
             self.columns_required = [True for _ in self.columns]
         if len(self.columns) != len(self.columns_required):
             raise ValueError("Length of parameters 'columns' (%d) and 'columns_required' (%d) "

@@ -105,6 +105,12 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                                  'delimiter': ','})
         self.assertMessageEqual(0, COMPOSE_EVENT)
 
+    def test_empty_required_colums(self):
+        """ #2679 """
+        self.run_bot(parameters={'columns_required': ''})
+        self.assertMessageEqual(0, EXAMPLE_EVENT)
+        self.run_bot(parameters={'columns_required': None})
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
