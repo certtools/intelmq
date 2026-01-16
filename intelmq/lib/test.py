@@ -171,7 +171,7 @@ class BotTestCase:
                                          'time.observation': '2016-01-01T00:00:00+00:00'}
         elif cls.bot_type != 'collector' and cls.default_input_message == '':
             cls.default_input_message = {'__type': 'Event'}
-        if type(cls.default_input_message) is dict:
+        if isinstance(cls.default_input_message, dict):
             cls.default_input_message = \
                 utils.decode(json.dumps(cls.default_input_message))
 
@@ -268,9 +268,9 @@ class BotTestCase:
                 self.input_message = [self.input_message]
             self.input_queue = []
             for msg in self.input_message:
-                if type(msg) is dict:
+                if isinstance(msg, dict):
                     self.input_queue.append(json.dumps(msg))
-                elif issubclass(type(msg), message.Message):
+                elif isinstance(msg, message.Message):
                     self.input_queue.append(msg.serialize())
                 else:
                     self.input_queue.append(msg)
