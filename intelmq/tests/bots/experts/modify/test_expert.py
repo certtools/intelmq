@@ -144,6 +144,22 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
         del out['classification.identifier']
         self.assertMessageEqual(0, out)
 
+def test_modify_regex_without_parentheses_matches_same_as_with_parentheses():
+    import re
+    from intelmq.bots.experts.modify.expert import ModifyExpertBot
+    from intelmq.lib.message import Event
+
+    bot = ModifyExpertBot.__new__(ModifyExpertBot)
+
+    event = Event()
+    event.add("extra.test", "12.3")
+
+    cond_no_parens = {"extra.test": re.compile(r"^12\.[34]")}
+    cond_with_parens = {"extra.test": re.compile(r"^(12\.[34])")}
+
+    assert bot.matches("no-parens", event, cond_no_parens) is not None
+    assert bot.matches("with-parens", event, cond_with_parens) is not None
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
