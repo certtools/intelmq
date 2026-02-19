@@ -11,6 +11,7 @@ from setuptools import find_packages, setup
 
 REQUIRES = [
     'dnspython>=2.0.0',
+    'mininterface[basic]<2',
     'psutil>=1.2.1',
     'python-dateutil>=2.5',
     'python-termstyle>=0.1.10',

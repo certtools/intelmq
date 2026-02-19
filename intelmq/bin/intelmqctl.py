@@ -29,7 +29,10 @@ from intelmq.lib import utils
 from intelmq.lib.datatypes import ReturnType, MESSAGES, LogLevel
 from intelmq.lib.processmanager import *
 from intelmq.lib.pipeline import PipelineFactory
+from intelmq.lib.cli import get_parser, run_handler
 import intelmq.lib.upgrades as upgrades
+
+from mininterface import run as mrun
 
 yaml = YAML(typ="safe", pure=True)
 
@@ -213,167 +216,9 @@ Get some debugging output on the settings and the environment (to be extended):
             self.abort('Invalid process manager given: %r, should be one of %r.' '' % (self._processmanagertype, list(process_managers().keys())))
 
         if self._interactive:
-            parser = argparse.ArgumentParser(
-                prog=APPNAME,
-                description=DESCRIPTION,
-                epilog=EPILOG,
-                formatter_class=argparse.RawDescriptionHelpFormatter,
-            )
-
-            parser.add_argument('--version', '-v', action='version', version=VERSION)
-            parser.add_argument('--type', '-t', choices=[i.name.lower() for i in ReturnType], default='text', help='choose if it should return regular text or other machine-readable')
-            parser.add_argument('--quiet', '-q', action='store_true', help='Quiet mode, useful for reloads initiated scripts like logrotate')
-
-            subparsers = parser.add_subparsers(title='subcommands')
-
-            parser_list = subparsers.add_parser('list', help='Listing bots or queues')
-            parser_list.add_argument('kind', choices=['bots', 'queues', 'queues-and-status'])
-            parser_list.add_argument('--non-zero', '--quiet', '-q', action='store_true',
-                                     help='Only list non-empty queues '
-                                          'or the IDs of enabled bots.')
-            parser_list.add_argument('--count', '--sum', '-s', action='store_true',
-                                     help='Only show the total '
-                                          'number of messages in queues. '
-                                          'Only valid for listing queues.')
-            parser_list.add_argument('--configured', '-c', action='store_true',
-                                     help='Only show configured bots')
-            parser_list.set_defaults(func=self.list)
-
-            parser_clear = subparsers.add_parser('clear', help='Clear a queue')
-            parser_clear.add_argument('queue', help='queue name')
-            parser_clear.set_defaults(func=self.clear_queue)
-
-            parser_log = subparsers.add_parser('log', help='Get last log lines of a bot')
-            parser_log.add_argument('bot_id', help='bot id', choices=self._configured_bots_list())
-            parser_log.add_argument('number_of_lines', help='number of lines',
-                                    default=10, type=int, nargs='?')
-            parser_log.add_argument('log_level', help='logging level', choices=[i.name for i in LogLevel], default='INFO', nargs='?')
-            parser_log.set_defaults(func=self.read_bot_log)
-
-            parser_run = subparsers.add_parser('run', help='Run a bot interactively')
-            parser_run.add_argument('bot_id', choices=self._configured_bots_list())
-            parser_run.add_argument('--loglevel', '-l', nargs='?', default=None, choices=[i.name for i in LogLevel])
-            parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')
-
-            parser_run_console = parser_run_subparsers.add_parser('console', help='Get a ipdb live console.')
-            parser_run_console.add_argument('console_type', nargs='?',
-                                            help='You may specify which console should be run. Default is ipdb (if installed)'
-                                                 ' or pudb (if installed) or pdb but you may want to use another one.')
-            parser_run_console.set_defaults(run_subcommand="console")
-
-            parser_run_message = parser_run_subparsers.add_parser('message',
-                                                                  help='Debug bot\'s pipelines. Get the message in the'
-                                                                       ' input pipeline, pop it (cut it) and display it, or'
-                                                                       ' send the message directly to bot\'s output pipeline(s).')
-            parser_run_message.add_argument('message_action_kind',
-                                            choices=["get", "pop", "send"],
-                                            help='get: show the next message in the source pipeline. '
-                                                 'pop: show and delete the next message in the source pipeline '
-                                                 'send: Send the given message to the destination pipeline(s).')
-            parser_run_message.add_argument('msg', nargs='?', help='If send was chosen, put here the message in JSON.')
-            parser_run_message.set_defaults(run_subcommand="message")
-
-            parser_run_process = parser_run_subparsers.add_parser('process', help='Single run of bot\'s process() method.')
-            parser_run_process.add_argument('--show-sent', '-s', action='store_true',
-                                            help='If message is sent through, displays it.')
-            parser_run_process.add_argument('--dryrun', '-d', action='store_true',
-                                            help='Never really pop the message from the input pipeline '
-                                                 'nor send to output pipeline.')
-            parser_run_process.add_argument('--msg', '-m',
-                                            help='Trick the bot to process this JSON '
-                                                 'instead of the Message in its pipeline.')
-            parser_run_process.set_defaults(run_subcommand="process")
-            parser_run.set_defaults(func=self.bot_run)
-
-            parser_check = subparsers.add_parser('check',
-                                                 help='Check installation and configuration')
-            parser_check.add_argument('--quiet', '-q', action='store_true',
-                                      help='Only print warnings and errors.')
-            parser_check.add_argument('--no-connections', '-C', action='store_true',
-                                      help='Do not test the connections to services like redis.')
-            parser_check.set_defaults(func=self.check)
-
-            parser_help = subparsers.add_parser('help',
-                                                help='Show the help')
-            parser_help.set_defaults(func=parser.print_help)
-
-            parser_start = subparsers.add_parser('start', help='Start a bot or botnet')
-            parser_start.add_argument('bot_id', nargs='?',
-                                      choices=self._configured_bots_list())
-            parser_start.add_argument('--group', help='Start a group of bots',
-                                      choices=BOT_GROUP.keys())
-            parser_start.set_defaults(func=self.bot_start)
-
-            parser_stop = subparsers.add_parser('stop', help='Stop a bot or botnet')
-            parser_stop.add_argument('bot_id', nargs='?',
-                                     choices=self._configured_bots_list())
-            parser_stop.add_argument('--group', help='Stop a group of bots',
-                                     choices=BOT_GROUP.keys())
-            parser_stop.set_defaults(func=self.bot_stop)
-
-            parser_restart = subparsers.add_parser('restart', help='Restart a bot or botnet')
-            parser_restart.add_argument('bot_id', nargs='?',
-                                        choices=self._configured_bots_list())
-            parser_restart.add_argument('--group', help='Restart a group of bots',
-                                        choices=BOT_GROUP.keys())
-            parser_restart.set_defaults(func=self.bot_restart)
-
-            parser_reload = subparsers.add_parser('reload', help='Reload a bot or botnet')
-            parser_reload.add_argument('bot_id', nargs='?',
-                                       choices=self._configured_bots_list())
-            parser_reload.add_argument('--group', help='Reload a group of bots',
-                                       choices=BOT_GROUP.keys())
-            parser_reload.set_defaults(func=self.bot_reload)
-
-            parser_status = subparsers.add_parser('status', help='Status of a bot or botnet')
-            parser_status.add_argument('bot_id', nargs='?',
-                                       choices=self._configured_bots_list())
-            parser_status.add_argument('--group', help='Get status of a group of bots',
-                                       choices=BOT_GROUP.keys())
-            parser_status.set_defaults(func=self.bot_status)
-
-            parser_status = subparsers.add_parser('enable', help='Enable a bot')
-            parser_status.add_argument('bot_id',
-                                       choices=self._configured_bots_list())
-            parser_status.set_defaults(func=self.bot_enable)
-
-            parser_status = subparsers.add_parser('disable', help='Disable a bot')
-            parser_status.add_argument('bot_id',
-                                       choices=self._configured_bots_list())
-            parser_status.set_defaults(func=self.bot_disable)
-
-            parser_upgrade_conf = subparsers.add_parser('upgrade-config',
-                                                        help='Upgrade IntelMQ configuration to a newer version.')
-            parser_upgrade_conf.add_argument('-p', '--previous',
-                                             help='Use this version as the previous one.')
-            parser_upgrade_conf.add_argument('-d', '--dry-run',
-                                             action='store_true', default=False,
-                                             help='Do not write any files.')
-            parser_upgrade_conf.add_argument('-u', '--function',
-                                             help='Run this upgrade function.',
-                                             choices=upgrades.__all__)
-            parser_upgrade_conf.add_argument('-f', '--force',
-                                             action='store_true',
-                                             help='Force running the upgrade procedure.')
-            parser_upgrade_conf.add_argument('--state-file',
-                                             help='The state file location to use.',
-                                             default=STATE_FILE_PATH)
-            parser_upgrade_conf.add_argument('--no-backup',
-                                             help='Do not create backups of state and configuration files.',
-                                             action='store_true')
-            parser_upgrade_conf.set_defaults(func=self.upgrade_conf)
-
-            parser_debug = subparsers.add_parser('debug', help='Get debugging output.')
-            parser_debug.add_argument('--get-paths', help='Give all paths',
-                                      action='append_const', dest='sections',
-                                      const='paths')
-            parser_debug.add_argument('--get-environment-variables',
-                                      help='Give environment variables',
-                                      action='append_const', dest='sections',
-                                      const='environment_variables')
-            parser_debug.set_defaults(func=self.debug)
-
-            self.parser = parser
+            self.parser = mrun(get_parser(self, self._configured_bots_list(), BOT_GROUP.keys(), upgrades.__all__),
+                                prog=APPNAME, description=DESCRIPTION, epilog=EPILOG,
+                                add_version=VERSION)
         else:
             self._processmanager = process_managers()[self._processmanagertype](
                 self._interactive,
@@ -404,15 +249,11 @@ Get some debugging output on the settings and the environment (to be extended):
             setattr(self._parameters, option, value)
 
     def run(self):
-        results = None
-        args = self.parser.parse_args()
-        if 'func' not in args:
-            sys.exit(self.parser.print_help())
-        args_dict = vars(args).copy()
+        m =self.parser
+        args = m.env
 
         self._quiet = args.quiet
-        self._returntype = ReturnType[args.type.upper()]
-        del args_dict['type'], args_dict['quiet'], args_dict['func']
+        self._returntype = args.type
 
         self._logging_level = 'WARNING' if self._quiet else 'INFO'
         self._logger.setLevel(self._logging_level)
@@ -427,7 +268,7 @@ Get some debugging output on the settings and the environment (to be extended):
             self._quiet
         )
 
-        retval, results = args.func(**args_dict)
+        retval, results = run_handler(args.command)
 
         if self._returntype is ReturnType.JSON:
             print(json.dumps(results, indent=4))
@@ -438,6 +279,14 @@ Get some debugging output on the settings and the environment (to be extended):
         # the bot_run method is special in that it mixes plain text
         # and json in its output, therefore it is printed here
         # and not in the calling `run` method.
+
+        # Adapt to newer interface. NOTE we should rather refactor the _processmanager.bot_run to accept these parameters.
+        subc = kwargs["subcommand"]
+        del kwargs["subcommand"]
+        if kwargs["loglevel"]:
+            kwargs["loglevel"] = kwargs["loglevel"].value
+        kwargs = {**kwargs, **subc}
+
         retval, results = self._processmanager.bot_run(**kwargs)
         print(results)
         return retval, None

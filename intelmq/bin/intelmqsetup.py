@@ -17,7 +17,6 @@ Reasoning:
 Pip does not (and cannot) create `/opt/intelmq`/user-given ROOT_DIR, as described in
 https://github.com/certtools/intelmq/issues/819
 """
-import argparse
 import os
 import shutil
 import stat
@@ -30,6 +29,8 @@ from pwd import getpwnam
 from subprocess import run, CalledProcessError
 from tempfile import NamedTemporaryFile
 from typing import Optional
+
+from mininterface import run as mrun
 
 try:
     import intelmq_api
@@ -53,6 +54,7 @@ from termstyle import red
 from intelmq import (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
                      VAR_STATE_PATH, STATE_FILE_PATH)
 from intelmq.bin.intelmqctl import IntelMQController
+from intelmq.lib.setup_cli import SetupConfig
 
 
 FILE_OUTPUT_PATH = Path(VAR_STATE_PATH) / 'file-output/'
@@ -298,31 +300,12 @@ def intelmqsetup_manager_generate():
 
 
 def main():
-    parser = argparse.ArgumentParser("Set's up directories and example "
-                                     "configurations for IntelMQ.")
-    parser.add_argument('--skip-ownership', action='store_true',
-                        help='Skip setting file ownership')
-    parser.add_argument('--state-file',
-                        help='The state file location to use.',
-                        default=STATE_FILE_PATH)
-    parser.add_argument('--webserver-user',
-                        help='The webserver to use instead of auto-detection.')
-    parser.add_argument('--webserver-configuration-directory',
-                        help='The webserver configuration directory to use instead of auto-detection.')
-    parser.add_argument('--skip-api',
-                        help='Skip set-up of intelmq-api.',
-                        action='store_true')
-    parser.add_argument('--skip-webserver',
-                        help='Skip all operations on the webserver configuration, affects the API and Manager.',
-                        action='store_true')
-    parser.add_argument('--skip-manager',
-                        help='Skip set-up of intelmq-manager.',
-                        action='store_true')
-    args = parser.parse_args()
+    m = mrun(SetupConfig, ask_on_empty_cli=True)
+    args = m.env
 
     basic_checks(skip_ownership=args.skip_ownership)
     intelmqsetup_core(ownership=not args.skip_ownership,
-                      state_file=args.state_file)
+                      state_file=str(args.state_file))
     if intelmq_api and not args.skip_api:
         print(f'Running setup for intelmq-api (version {intelmq_api.version.__version__}).')
         intelmqsetup_api(ownership=not args.skip_ownership,
