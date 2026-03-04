@@ -136,7 +136,7 @@ class SMTPBatchOutputBot(Bot):
 
         if parsed_args.cli:
             instance = cls(parsed_args.bot_id)
-            [setattr(instance, k, v) for k, v in vars(parsed_args).items()]
+            [setattr(instance, k, v) for k, v in vars(parsed_args).items() if k != "bot_id"]
             instance.cli_run()
         else:
             super().run(parsed_args=parsed_args)
