@@ -150,6 +150,7 @@ nav:
       - Release: 'dev/release.md'
 
   - Changelog: 'changelog.md'
+  - News: 'NEWS.md'
   - Security: 'security.md'
   - Community: 'community.md'
   - Help: 'help.md'
