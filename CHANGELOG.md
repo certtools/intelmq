@@ -27,6 +27,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 #### Parsers
 - `intelmq.bots.parsers.microsoft.parser_ctip`: Use the new field `serverity` instead of `extra.severity` (PR#2662 by Sebastian Wagner).
+- `intelmq.bots.parsers.generic_csv.parser_csv`: Handle empty string parameter `columns_required` as unset (PR#2680 by Sebastian Wagner, fixes #2679).
 
 #### Experts
 
