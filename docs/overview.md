@@ -47,15 +47,13 @@ A web-based interface to ingest CSV data into IntelMQ with on-line validation an
 
 This interface allows inserting "one-shot" data feeds into IntelMQ without the need to configure bots in IntelMQ.
 
-Developed and maintained by [CERT.at](https://cert.at).
-
 → [Repository: intelmq-webinput-csv](https://github.com/certat/intelmq-webinput-csv)
 
 ![IntelMQ Webinput CSV Preview page](https://raw.githubusercontent.com/certat/intelmq-webinput-csv/c20413a401c2077140dd17fb7651db1132fde648/docs/images/screenshot.png)
 
 ### IntelMQ Mailgen
 
-A solution allowing an IntelMQ setup with a complex contact database, managed by a web interface and sending out aggregated email reports. In different words: To send grouped notifications to network owners using SMTP.
+A solution allowing an IntelMQ setup with a sophisticated contact database, managed by a web interface and sending out aggregated email reports. In different words: To send grouped notifications to network owners using SMTP.
 
 Developed and maintained by [Intevation](https://intevation.de), initially funded by [BSI](https://bsi.bund.de/).
 
@@ -65,13 +63,16 @@ It consists of the following three components, which can also be used on their o
 
 The certbund-contact consists of two IntelMQ expert bots, which fetch and process the information from the contact database, and scripts to import RIPE data into the contact database. Based on user-defined rules, the experts determine to which contact the event is to be sent to, and which e-mail template and attachment format to use.
 
+The contact database handles contact information for Autonomous systems (AS), Network ranges (CIDR) and single IP addresses, and domains.
+The component also includes scripts to import network information and contact data directly from RIPE.
+
 → [Repository: intelmq-certbund-contact](https://github.com/Intevation/intelmq-certbund-contact)
 
 #### IntelMQ Fody
 
 Fody is a web based interface for Mailgen. It allows to read and edit contacts, query sent mails (tickets) and call up data from the PostgreSQL database.
 
-It can also be used to just query the database without using Mailgen.
+It can also be used to just query the IntelMQ Event database without using Mailgen.
 
 ![IntelMQ Fody Dashboard](https://raw.githubusercontent.com/Intevation/intelmq-fody/6e41b836d0a2c350a5f2c5c95a4b3be4d3f46027/docs/images/landing_page.png)
 
@@ -82,8 +83,10 @@ intelmq-fody-backend](https://github.com/Intevation/intelmq-fody-backend)
 
 #### intelmq-mailgen
 
-Sends emails with grouped event data to the contacts determined by the certbund-contact. Mails can be encrypted with
-PGP.
+Sends emails with grouped event data to the contacts determined by the certbund-contact
+Mails can be encrypted with OpenPGP.
+
+Formatting scripts and templates define how the e-mails are created, their content and the included data.
 
 → [Repository:
 intelmq-mailgen](https://github.com/Intevation/intelmq-mailgen)
@@ -98,21 +101,9 @@ If features organizational hierarchies, contact roles, self-administration and n
 
 → [Repository: tuency](https://gitlab.com/Intevation/tuency/tuency)
 
-### "Constituency Portal" do-portal (deprecated)
-
-!!! warning
-    The *do-portal* is deprecated and succeeded by *tuency*.
-
-A contact portal with organizational hierarchies, role functionality and network objects based on RIPE, allows
-self-administration by the contacts. Can be queried from IntelMQ and integrates the stats-portal.
-
-Originally developed by [CERT-EU](https://cert.europa.eu/), then adapted by [CERT.at](https://cert.at).
-
-→ [Repository: do-portal](https://github.com/certat/do-portal)
-
 ### Stats Portal
 
-A Grafana-based statistics portal for the `eventdb`{.interpreted-text role="doc"}. Can be integrated into do-portal. It uses aggregated data to serve statistical data quickly.
+A Grafana-based statistics portal for the `eventdb`{.interpreted-text role="doc"}. It uses aggregated data to serve statistical data quickly.
 
 ![Stats Portal Architecture](https://raw.githubusercontent.com/certtools/stats-portal/38515266aabdf661a0b4becd8e921b03f32429fa/architecture-overview-stats-portal-screen.png)
 
