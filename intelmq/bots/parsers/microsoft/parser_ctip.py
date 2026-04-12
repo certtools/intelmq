@@ -83,7 +83,7 @@ INTERFLOW = {"additionalmetadata": "extra.additionalmetadata",
              "networksourceasn": "source.asn",
              "hostname": "destination.fqdn",
              "useragent": "extra.user_agent",
-             "severity": "extra.severity",
+             "severity": "severity",
              "tags": "extra.tags",
              }
 AZURE = {
