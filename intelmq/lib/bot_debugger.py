@@ -173,6 +173,10 @@ class BotDebugger:
 
     def arg2msg(self, msg):
         default_type = "Report" if (self.runtime_configuration.get("group", None) == "Parser" or isinstance(self.instance, ParserBot)) else "Event"
+        if msg == '-':
+            print('Reading message from stdin (one line):')
+            msg = input()
+
         try:
             msg = MessageFactory.unserialize(msg, default_type=default_type)
         except (Exception, KeyError, TypeError, ValueError) as exc:

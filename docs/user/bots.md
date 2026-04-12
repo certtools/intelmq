@@ -321,6 +321,14 @@ This requires the [python-gnupg](https://pypi.org/project/python-gnupg/) library
 (optional, string) If specified, the string represents path to keyring file. Otherwise the PGP keyring file of the
 current `intelmq` user is used.
 
+**Chunking**
+
+For line-based inputs the bot can split up large reports into smaller chunks. This is particularly important for setups
+that use Redis as a message queue which has a per-message size limitation of 512 MB. To configure chunking,
+set `chunk_size` to a value in bytes. `chunk_replicate_header` determines whether the header line should be repeated for
+each chunk that is passed on to a parser bot. Specifically, to configure a large file input to work around Redis size
+limitation set `chunk_size` to something like 384000000 (~384 MB).
+
 ---
 
 ### Generic URL Stream Fetcher <div id="intelmq.bots.collectors.http.collector_http_stream" />
@@ -2784,9 +2792,9 @@ For a detailed description of the modes, see below.
 
 (optional, boolean) Whether to overwrite existing fields. Defaults to false.
 
-### Modes
+#### Modes
 
-#### IP Network
+##### IP Network
 For each incoming event, the bots chooses one random IP network range (IPv4 or IPv6) from the configured data file.
 It set's the first IP address of the range as `source.ip` and the network itself as `source.network`.
 To adapt the `source.asn` field accordingly, use the [ASN Lookup Expert](#asn-lookup).
@@ -2794,8 +2802,8 @@ To adapt the `source.asn` field accordingly, use the [ASN Lookup Expert](#asn-lo
 For data consistency `source.network` will only be set if `source.ip` was set or overridden.
 If overwrite is false, `source.ip` was did not exist before but `source.network` existed before, `source.network` will still be overridden.
 
-#### Event fields
-##### Mode `random_single_value`
+##### Event fields
+###### Mode `random_single_value`
 For any possible event field, the bot chooses a random value of the values in the `values` property.
 
 ---
@@ -2911,7 +2919,9 @@ String method operations on column values.
 
 **Parameters:**
 
-*Parameters for stripping chars*
+Order of operation: `strip -> replace -> split`. These three methods can be combined such as first strip and then split.
+
+#### Parameters for stripping chars
 
 **`strip_columns`**
 (optional, string/array of strings) A list of strings or a string of comma-separated values with field names. The names
@@ -2920,7 +2930,7 @@ must match the IntelMQ Data Format field names.
 For example:
 
 ```yaml
-columns:
+strip_columns:
   - malware.name
   - extra.tags
 ```
@@ -2928,14 +2938,14 @@ columns:
 is equivalent to:
 
 ```yaml
-columns: "malware.name,extra.tags"
+strip_columns: "malware.name,extra.tags"
 ```
 
 **`strip_chars`**
 
 (optional, string) Set of characters to remove as leading/trailing characters. Defaults to space.
 
-*Parameters for replacing chars*
+#### Parameters for replacing chars
 
 **`replace_column`**
 
@@ -2952,7 +2962,7 @@ columns: "malware.name,extra.tags"
 **`replace_count`**
 () number specifying how many occurrences of the old value you want to replace(default: [1])
 
-*Parameters for splitting string to list of string*
+#### Parameters for splitting string to list of string
 
 **`split_column`**
 
@@ -2961,8 +2971,6 @@ columns: "malware.name,extra.tags"
 **`split_separator`**
 
 () specifies the separator to use when splitting the string(default: `,`)
-
-Order of operation: `strip -> replace -> split`. These three methods can be combined such as first strip and then split.
 
 ---
 
