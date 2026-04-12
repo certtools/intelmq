@@ -53,7 +53,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install setuptools for pkg_resources for Python 3.12+, #2569
-      if: ${{ matrix.python-version >= '3.12' }}
+      if: ${{ contains(fromJSON('["3.12", "3.13"]'), matrix.python-version) }}
       run: pip install 'setuptools<82'
 
     - name: Install dependencies for full run
