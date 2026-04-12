@@ -21,7 +21,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.fqdn": "iana.org",
                   "destination.fqdn": "nic.at",
                   "source.ip": "192.0.43.8",
-                  "destination.ip": "198.251.90.127",
+                  "destination.ip": "131.130.249.233",
                   "time.observation": "2015-01-01T00:00:00+00:00"
                   }
 NONEXISTING_INPUT = {"__type": "Event",
