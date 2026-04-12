@@ -40,6 +40,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 - `intelmq.tests.bots.parsers.openphish.test_parser_commercial`: Replace dummy key with more obvious dummy key, generate raw from input (PR#2665 by Sebastian Wagner, fixes #2663).
 
 ### Tools
+- `intelmq.lib.bot_debugger`:  Optionally read input messages from stdin instead of parameter value (PR#2678 by Sebastian Wager).
 
 ### Contrib
 
