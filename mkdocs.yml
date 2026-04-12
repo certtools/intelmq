@@ -115,6 +115,7 @@ nav:
           - IntelMQ API: 'admin/configuration/intelmq-api.md'
           - IntelMQ Manager: 'admin/configuration/intelmq-manager.md'
           - Redis: 'admin/configuration/redis.md'
+          - Connecting Instances: 'admin/configuration/connecting-instances.md'
       - Management:
           - IntelMQ: 'admin/management/intelmq.md'
           - IntelMQ API: 'admin/management/intelmq-api.md'
