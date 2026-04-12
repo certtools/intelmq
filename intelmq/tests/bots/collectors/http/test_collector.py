@@ -195,6 +195,20 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
         self.assertLogMatches("Response headers: {'some': 'header'}.", 'DEBUG')
         self.assertLogMatches("Response body: 'Should be in logs'.", 'DEBUG')
 
+    def test_chunking(self, mocker):
+        """
+        Test file chunking
+        """
+        prepare_mocker(mocker)
+        self.run_bot(allowed_error_count=1,
+                     parameters={
+                        'http_url': 'http://localhost/multiline.txt',
+                        'chunk_size': 3,
+                        'chunk_replicate_header': False,
+                        'extract_files': None,
+                        })
+        self.assertOutputQueueLen(4)
+
 
 @requests_mock.Mocker()
 class TestHTTPCollectorBotAuthentication(test.BotTestCase, unittest.TestCase):

@@ -321,6 +321,14 @@ This requires the [python-gnupg](https://pypi.org/project/python-gnupg/) library
 (optional, string) If specified, the string represents path to keyring file. Otherwise the PGP keyring file of the
 current `intelmq` user is used.
 
+**Chunking**
+
+For line-based inputs the bot can split up large reports into smaller chunks. This is particularly important for setups
+that use Redis as a message queue which has a per-message size limitation of 512 MB. To configure chunking,
+set `chunk_size` to a value in bytes. `chunk_replicate_header` determines whether the header line should be repeated for
+each chunk that is passed on to a parser bot. Specifically, to configure a large file input to work around Redis size
+limitation set `chunk_size` to something like 384000000 (~384 MB).
+
 ---
 
 ### Generic URL Stream Fetcher <div id="intelmq.bots.collectors.http.collector_http_stream" />
