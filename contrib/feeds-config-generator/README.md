@@ -4,7 +4,10 @@ SPDX-FileCopyrightText: 2018 SYNchroACK
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# Feeds Configuration Generator
+# Feeds Configuration Generator (outdated)
+
+**Note: This tool is outdated is no longer useful and generates the configuration in the wrong format.**
+https://github.com/certtools/intelmq/issues/2677
 
 Quickly generate feeds configurations (runtime and pipeline configs).
 
@@ -29,7 +32,9 @@ optional arguments:
                         /tmp/pipeline.conf
 
 ```
+
 ### Generate a bot configuration
+
 ```
 ./intelmq_gen_feeds_conf --feeds-file=../../intelmq/etc/feeds.yaml 
 ```

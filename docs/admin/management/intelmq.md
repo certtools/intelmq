@@ -349,9 +349,20 @@ file-output:  * Message from cli will be used when processing.
 ...
 ```
 
+You can also read the message from stdin (one line):
+
+```bash
+> intelmqctl run file-output process -m -
+...
+Reading message from stdin (one line):
+{"source.ip":"10.2.3.4"}
+file-output:  * Message from cli will be used when processing.
+...
+```
+
 If you wish to display the processed message as well, you the
 **--show-sent|-s** flag. Then, if sent through (either with
-`--dryrun` or without), the message gets displayed as well.
+`--dryrun` or without), the resulting message gets displayed as well.
 
 ### disable
 

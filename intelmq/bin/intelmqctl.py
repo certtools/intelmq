@@ -143,7 +143,7 @@ class IntelMQController():
         intelmqctl list [bots|queues|queues-and-status]
         intelmqctl log bot-id [number-of-lines [log-level]]
         intelmqctl run bot-id message [get|pop|send]
-        intelmqctl run bot-id process [--msg|--dryrun]
+        intelmqctl run bot-id process [--msg|--dryrun|--show-sent]
         intelmqctl run bot-id console
         intelmqctl clear queue-id
         intelmqctl check
@@ -206,6 +206,9 @@ Make a backup of your configuration first, also including bot's configuration fi
 Get some debugging output on the settings and the environment (to be extended):
     intelmqctl debug --get-paths
     intelmqctl debug --get-environment-variables
+
+Looking for help from the community?
+Find IntelMQ's support channels at https://docs.intelmq.org/latest/help/
 '''
 
         self._processmanagertype = getattr(self._parameters, 'process_manager', 'intelmq')
@@ -280,8 +283,8 @@ Get some debugging output on the settings and the environment (to be extended):
                                             help='Never really pop the message from the input pipeline '
                                                  'nor send to output pipeline.')
             parser_run_process.add_argument('--msg', '-m',
-                                            help='Trick the bot to process this JSON '
-                                                 'instead of the Message in its pipeline.')
+                                            help='Trick the bot to process this JSON message from the parameter '
+                                                 "instead of the Message in its pipeline. Read from stdin (one line) with '-'.")
             parser_run_process.set_defaults(run_subcommand="process")
             parser_run.set_defaults(func=self.bot_run)
 

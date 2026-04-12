@@ -27,11 +27,14 @@ Parameters:
     gpg_keyring: none (defaults to user's GPG keyring) or string (path to keyring file)
 """
 from datetime import datetime, timedelta
+from typing import Optional
+from io import BytesIO
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.mixins import HttpMixin
 from intelmq.lib.utils import unzip
 from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.splitreports import generate_reports
 
 try:
     import gnupg
@@ -64,6 +67,9 @@ class HTTPCollectorBot(CollectorBot, HttpMixin):
     signature_url_formatting: bool = False
     ssl_client_certificate: str = None  # TODO: pathlib.Path
     verify_pgp_signatures: bool = False
+    # splitreports
+    chunk_replicate_header: bool = True
+    chunk_size: Optional[int] = None
 
     def init(self):
         self.use_gpg = self.verify_pgp_signatures
@@ -119,7 +125,7 @@ class HTTPCollectorBot(CollectorBot, HttpMixin):
                                           try_tar=False, logger=self.logger,
                                           return_names=True))
             except ValueError:
-                raw_reports.append((None, resp.text))
+                raw_reports.append((None, resp.content))
             else:
                 self.logger.info('Extracting files: '
                                  "'%s'.", "', '".join([file_name
@@ -130,12 +136,14 @@ class HTTPCollectorBot(CollectorBot, HttpMixin):
                                 return_names=True, logger=self.logger)
 
         for file_name, raw_report in raw_reports:
-            report = self.new_report()
-            report.add("raw", raw_report)
-            report.add("feed.url", http_url)
+            template = self.new_report()
+            template.add("feed.url", http_url)
             if file_name:
-                report.add("extra.file_name", file_name)
-            self.send_message(report)
+                template.add("extra.file_name", file_name)
+            for report in generate_reports(template, BytesIO(raw_report),
+                                           self.chunk_size,
+                                           self.chunk_replicate_header):
+                self.send_message(report)
 
     def format_url(self, url: str, formatting) -> str:
         try:
