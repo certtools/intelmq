@@ -108,6 +108,7 @@ nav:
           - Linux Package: 'admin/installation/linux-packages.md'
           - PyPI: 'admin/installation/pypi.md'
           - DockerHub: 'admin/installation/dockerhub.md'
+          - Combined All in One Setup: 'admin/installation/combined.md'
       - Upgrade: 'admin/upgrade.md'
       - Hardware Requirements: 'admin/hardware-requirements.md'
       - Configuration:

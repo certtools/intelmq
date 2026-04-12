@@ -38,6 +38,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 ### Documentation
 - Updates to Contrib and Overview pages (PR#2672 by Sebastian Wagner).
+- Add a combined setup documentation for all IntelMQ tools including the CERTBund workflow (PR#2698).
 
 ### Packaging
 
