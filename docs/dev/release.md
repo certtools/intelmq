@@ -23,7 +23,7 @@ different.
 
 These apply to all projects:
 
-- CHANGELOG.MD and NEWS.MD: Update the latest header, fix the order, remove empty sections and (re)group the entries if necessary.
+- `CHANGELOG.MD` and `NEWS.MD`: Update the latest header, fix the order, remove empty sections and (re)group the entries if necessary.
 - debian/changelog: Insert a new section for the new version with the tool `dch` or update the version of the existing last item if yet unreleased. Don't forget the revision after the version number!
 
 ### IntelMQ
@@ -68,12 +68,7 @@ rm -r build/
 python3 setup.py sdist bdist_wheel
 ```
 
-* Upload the files including signatures to PyPI with e.g. twine: `twine upload -u __token__ -p $APITOKEN dist/intelmq...` (or set the API Token in `.pypirc`).
-
-
-## Documentation
-
-Since using mkdocs (see https://docs.intelmq.org) nothing needs to be done anymore.
+* Upload the files including signatures to PyPI with e.g. twine: `twine upload dist/intelmq...` (set the API Token in `~/.pypirc`).
 
 ## Packages
 
