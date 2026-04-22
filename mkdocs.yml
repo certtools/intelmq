@@ -75,6 +75,9 @@ extra:
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/u/certat
 
+extra_javascript:
+  - https://unpkg.com/mermaid/dist/mermaid.min.js
+
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
@@ -85,7 +88,11 @@ markdown_extensions:
   - pymdownx.snippets
   - admonition
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.keys # keyboard keys
   - tables
   - footnotes
