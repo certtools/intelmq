@@ -1,19 +1,20 @@
 # SPDX-FileCopyrightText: 2022 CSIRT.cz <https://csirt.cz>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 import csv
-from dataclasses import dataclass
 import datetime
 import json
 import os
 import sys
-from tempfile import NamedTemporaryFile
 import time
-from typing import Any, Iterable, Optional, Dict, List
 import zipfile
+from argparse import Namespace
 from base64 import b64decode
 from collections import OrderedDict
-from io import StringIO
+from dataclasses import dataclass
 from hashlib import sha256
+from io import StringIO
+from tempfile import NamedTemporaryFile
+from typing import Any, Dict, Iterable, List, Optional
 
 from redis.exceptions import TimeoutError
 
@@ -132,7 +133,9 @@ class SMTPBatchOutputBot(Bot):
     @classmethod
     def run(cls, parsed_args=None):
         if not parsed_args:
-            parsed_args = cls._create_argparser().parse_args()
+            # filter out None values as to not rewrite the defaults
+            namespace = cls._create_argparser().parse_args()
+            parsed_args = Namespace(**{k: v for k, v in vars(namespace).items() if v is not None})
 
         if parsed_args.cli:
             instance = cls(parsed_args.bot_id)
