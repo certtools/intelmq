@@ -32,7 +32,9 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 #### Experts
 
 #### Outputs
-- `intelmq.bots.outputs.smtp_batch.output`: Ignore parameter `bot_id` for parsing parameters (PR#2692 by Lukas Heindl, fixes #2666).
+- `intelmq.bots.outputs.smtp_batch.output`:
+  - Ignore parameter `bot_id` for parsing parameters (PR#2692 by Lukas Heindl, fixes #2666).
+  - Fix CLI overwriting params over the defaults (PR#2699 by Edvard Rejthar).
 
 ### Documentation
 - Updates to Contrib and Overview pages (PR#2672 by Sebastian Wagner).
