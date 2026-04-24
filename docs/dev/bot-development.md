@@ -488,6 +488,14 @@ When calling the file directly, only the tests in this file for the bot will be 
 
 See the `testing` section about how to run the tests.
 
+#### Regular expression matching
+
+The comparison message (variable `assertMessageEqual` in the example above) can contain regular expressions using `re.compile`.
+See `intelmq/tests/bots/experts/cymru_whois/test_expert.py` for an example.
+The pattern is used with `re.search`.
+To match a full string, use a pattern in the form of `^begintoend$` using `^` for the start of the line and `$` for the end.
+
+
 ### Cache
 
 Bots can use a Redis database as cache instance. Use the `intelmq.lib.utils.Cache` class to set this up and/or look at existing bots, like the `cymru_whois` expert how the cache can be used. Bots must set a TTL for all keys that are cached to avoid caches growing endless over time. Bots must use the Redis databases >= 10, but not those already used by other bots. Look at `find intelmq -type f -name '*.py' -exec grep -r 'redis_cache_db' {} +` to see which databases are already used.
