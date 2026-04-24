@@ -587,8 +587,29 @@ class BotTestCase:
             event_dict['output'] = json.loads(event_dict['output'])
         if 'output' in expected:
             expected['output'] = json.loads(expected['output'])
+        self.assertDictRegexEqual(expected=expected, actual=event_dict)
 
-        self.assertDictEqual(expected, event_dict)
+    def assertDictRegexEqual(self, expected, actual, msg=None):
+        """
+        works the same way as self.assertDictEqual but supports regular expressions
+        Only works on flat dictinaries (messages)
+        if the value in the exprected dict is a re.Pattern object, it is matched with re.search
+
+        Examples:
+        >>> assertDictRegexEqual({'text': 'basic', 'other': re.compile('RIPE')},
+                                 {'text': 'basic', 'other': 'AFRINIC'})
+        False
+        >>> assertDictRegexEqual({'number': re.compile('4')},
+                                 {'number': 140})
+        True
+        """
+        self.assertEqual(set(expected.keys()), set(actual.keys()), msg=msg)
+        for key, exp_val in expected.items():
+            act_val = actual[key]
+            if isinstance(exp_val, re.Pattern):
+                self.assertRegex(str(act_val), exp_val, msg=msg)
+            else:
+                self.assertEqual(exp_val, act_val, msg=msg)
 
     def tearDown(self):
         """

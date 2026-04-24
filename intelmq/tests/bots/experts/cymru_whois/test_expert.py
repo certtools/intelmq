@@ -1,10 +1,12 @@
-# SPDX-FileCopyrightText: 2015 Sebastian Wagner
+# SPDX-FileCopyrightText: 2015-2021 CERT.at GmbH, 2015-2017, 2019 agesic.gub.uy, Tomás Lima, 2023 Aaron Kaplan, 2023 CERT.ee, 2024-2026 Institute for Common Good Technology
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
 import json
 import unittest
+
+from re import compile as re_compile, IGNORECASE as re_IGNORECASE
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.cymru_whois.expert import CymruExpertBot
@@ -20,7 +22,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.network": "78.104.0.0/16",
                   "source.allocated": "2007-06-07T00:00:00+00:00",
                   "source.asn": 1853,
-                  "source.as_name": "ACONET ACOnet Backbone, AT",
+                  "source.as_name": re_compile("ACONET", flags=re_IGNORECASE),
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
@@ -31,7 +33,7 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "destination.ip": "2001:500:88:200::8",  # iana.org
                    "destination.registry": "ARIN",
                    "destination.allocated": "2010-02-18T00:00:00+00:00",
-                   "destination.as_name": "ICANN-DC, US",
+                   "destination.as_name": re_compile("ICANN", flags=re_IGNORECASE),
                    "destination.geolocation.cc": "US",
                    "time.observation": "2015-01-01T00:00:00+00:00",
                    "destination.asn": 16876,
@@ -52,7 +54,7 @@ OVERWRITE_OUT = {"__type": "Event",
                   "source.network": "78.104.0.0/16",
                   "source.allocated": "2007-06-07T00:00:00+00:00",
                   "source.asn": 1853,
-                  "source.as_name": "ACONET ACOnet Backbone, AT",
+                  "source.as_name": re_compile("ACONET", flags=re_IGNORECASE),
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 UNEXPECTED_UNICODE = {"__type": "Event",

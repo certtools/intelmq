@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2016 Sebastian Wagner
+# SPDX-FileCopyrightText: 2016-2021 CERT.at GmbH, 2024-2026 Institute for Common Good Technology
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -8,6 +8,8 @@ Testing GethostbynameExpertBot.
 """
 
 import unittest
+
+from re import compile as re_compile, IGNORECASE as re_IGNORECASE
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.gethostbyname.expert import GethostbynameExpertBot
@@ -20,8 +22,9 @@ EXAMPLE_INPUT = {"__type": "Event",
 EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.fqdn": "iana.org",
                   "destination.fqdn": "nic.at",
-                  "source.ip": "192.0.43.8",
-                  "destination.ip": "131.130.249.233",
+                  # the addresses change frequently, just test there is anything here. Syntax is checked by harmonization.
+                  "source.ip": re_compile("^[0-9.]+$"),
+                  "destination.ip": re_compile("^[0-9.]+$"),
                   "time.observation": "2015-01-01T00:00:00+00:00"
                   }
 NONEXISTING_INPUT = {"__type": "Event",
@@ -34,7 +37,7 @@ EXAMPLE_URL_INPUT = {"__type": "Event",
                      }
 EXAMPLE_URL_OUTPUT = {"__type": "Event",
                       "source.url": "http://iana.org",
-                      "source.ip": "192.0.43.8",
+                      "source.ip": re_compile("^[0-9.]+$"),
                       }
 EXISITNG_INPUT = {"__type": "Event",
                   "source.fqdn": "iana.org",
