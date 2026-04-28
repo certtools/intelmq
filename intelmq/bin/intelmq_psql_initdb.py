@@ -138,15 +138,20 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE, skip_events=False,
     FIELDS = {}
 
     # ENUM for severity does not only save space, it first and foremost allows for easy sorting by severity (ascending sorting is critical to undefined)
+    # PostgreSQL has no CREATE TYPE IF NOT EXISTS, so we use a DO block as workaround
     sql_lines = dedent("""
-        CREATE TYPE severity_enum AS ENUM (
-            'critical',
-            'high',
-            'medium',
-            'low',
-            'info',
-            'undefined'
-        );""").strip().splitlines()
+        DO $$ BEGIN
+            CREATE TYPE severity_enum AS ENUM (
+                'critical',
+                'high',
+                'medium',
+                'low',
+                'info',
+                'undefined'
+            );
+        EXCEPTION
+            WHEN duplicate_object THEN NULL;
+        END $$;""").strip().splitlines()
 
     try:
         print("INFO - Reading %s file" % harmonization_file)

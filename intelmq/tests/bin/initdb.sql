@@ -1,11 +1,15 @@
-CREATE TYPE severity_enum AS ENUM (
-    'critical',
-    'high',
-    'medium',
-    'low',
-    'info',
-    'undefined'
-);
+DO $$ BEGIN
+    CREATE TYPE severity_enum AS ENUM (
+        'critical',
+        'high',
+        'medium',
+        'low',
+        'info',
+        'undefined'
+    );
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 CREATE TABLE events (
     "id" BIGSERIAL UNIQUE PRIMARY KEY,
     "classification.identifier" text,
