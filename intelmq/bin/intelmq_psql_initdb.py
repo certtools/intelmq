@@ -12,9 +12,7 @@ exists.
 """
 import argparse
 import json
-import os
 import sys
-import tempfile
 from textwrap import dedent
 
 from intelmq import HARMONIZATION_CONF_FILE
@@ -138,23 +136,28 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE, skip_events=False,
     FIELDS = {}
 
     # ENUM for severity does not only save space, it first and foremost allows for easy sorting by severity (ascending sorting is critical to undefined)
+    # PostgreSQL has no CREATE TYPE IF NOT EXISTS, so we use a DO block as workaround
     sql_lines = dedent("""
-        CREATE TYPE severity_enum AS ENUM (
-            'critical',
-            'high',
-            'medium',
-            'low',
-            'info',
-            'undefined'
-        );""").strip().splitlines()
+        DO $$ BEGIN
+            CREATE TYPE severity_enum AS ENUM (
+                'critical',
+                'high',
+                'medium',
+                'low',
+                'info',
+                'undefined'
+            );
+        EXCEPTION
+            WHEN duplicate_object THEN NULL;
+        END $$;""").strip().splitlines()
 
     try:
-        print("INFO - Reading %s file" % harmonization_file)
+        print(f"INFO - Reading {harmonization_file} file", file=sys.stderr)
         with open(harmonization_file) as fp:
             DATA = json.load(fp)['event']
     except OSError:
-        print("ERROR - Could not find %s" % harmonization_file)
-        print("ERROR - Make sure that you have intelmq installed.")
+        print(f"ERROR - Could not find {harmonization_file}", file=sys.stderr)
+        print("ERROR - Make sure that you have intelmq installed.", file=sys.stderr)
         sys.exit(2)
 
     for field in DATA.keys():
@@ -210,8 +213,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument('-o', '--outputfile',
-                        help='Defines the Ouputfile',
-                        default='/tmp/initdb.sql'
+                        help='Defines the Outputfile',
+                        default='/tmp/initdb.sql',
+                        type=argparse.FileType('w')
                         )
     parser.add_argument("--no-events", action="store_true", default=False,
                         help="Skip generating the events table schema")
@@ -230,16 +234,7 @@ def main():
                         help="Do not use JSONB but JSON type to represent dictionary fields")
     args = parser.parse_args()
 
-    OUTPUTFILE = args.outputfile
-    fp = None
-    try:
-        if os.path.exists(OUTPUTFILE):
-            print(f'INFO - File {OUTPUTFILE} exists, generating temporary file.')
-            os_fp, OUTPUTFILE = tempfile.mkstemp(suffix='.initdb.sql',
-                                                 text=True)
-            fp = os.fdopen(os_fp, 'wt')
-        else:
-            fp = open(OUTPUTFILE, 'w')
+    with args.outputfile as fp:
         psql = generate(args.harmonization,
                         skip_events=args.no_events,
                         separate_raws=args.separate_raws,
@@ -247,11 +242,8 @@ def main():
                         skip_or_replace=args.skip_or_replace,
                         no_jsonb=args.no_jsonb,
                         )
-        print("INFO - Writing %s file" % OUTPUTFILE)
+        print(f"INFO - Writing {fp.name} file", file=sys.stderr)
         fp.write(psql)
-    finally:
-        if fp:
-            fp.close()
 
 
 if __name__ == '__main__':  # pragma: no cover

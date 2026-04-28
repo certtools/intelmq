@@ -48,6 +48,9 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 ### Tools
 - `intelmq.lib.bot_debugger`:  Optionally read input messages from stdin instead of parameter value (PR#2678 by Sebastian Wager).
+- `intelmq.bin.intelmq_psql_initdb`:
+  - Create the custom type `severity_enum` only when it does not yet exists, allows easy re-execution.
+  - Use `argparse.FileType` and support stdout and file overwriting for predictable output file naming (PR#2701 by Sebastian Wagner).
 
 ### Contrib
 
