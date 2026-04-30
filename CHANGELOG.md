@@ -38,9 +38,10 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 ### Documentation
 - Updates to Contrib and Overview pages (PR#2672 by Sebastian Wagner).
-- Add new documentation pages (PR#2698):
+- Add new documentation (PR#2698):
   - A combined setup documentation for all IntelMQ tools including the CERTBund workflow.
   - How to connect multiple IntelMQ instances.
+  - Abuse contacts: document models and tooling suites.
 
 ### Packaging
 
