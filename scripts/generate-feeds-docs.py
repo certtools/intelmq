@@ -18,7 +18,7 @@ HEADER = """\
 <!-- comment
    SPDX-FileCopyrightText: 2015-2023 Sebastian Wagner, Filip Pokorný
    SPDX-License-Identifier: AGPL-3.0-or-later
-   
+
    This document is automatically generated. To add feeds here you need to edit `intelmq/etc/feeds.yaml`
    file and rebuild the documentation.
 -->
@@ -83,7 +83,7 @@ def main():
 
                         # format non-empty lists with double-quotes
                         # single quotes are not conform JSON and not correctly detected/transformed by the manager
-                        if isinstance(value, (list, tuple)) and value:
+                        if isinstance(value, (list, tuple, dict)) and value:
                             value = json.dumps(value)
 
                         output += f"  {key}: {value}\n"
