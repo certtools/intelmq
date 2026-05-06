@@ -94,6 +94,7 @@ import smtplib
 import ssl
 from typing import List, Optional
 from email.message import EmailMessage
+from email import policy
 try:
     from jinja2 import Template
 except:
@@ -190,7 +191,7 @@ class TemplatedSMTPOutputBot(OutputBot):
             if self.smtp_authentication:
                 smtp.login(user=self.username, password=self.password)
 
-            msg = EmailMessage()
+            msg = EmailMessage(policy=policy.SMTPUTF8)
             msg['Subject'] = self.templates["subject"].render(event=event)
             msg['From'] = self.templates["from"].render(event=event)
             msg['To'] = self.templates["to"].render(event=event)
