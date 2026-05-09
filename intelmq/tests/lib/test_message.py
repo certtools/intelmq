@@ -90,14 +90,12 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_type(self):
         """ Test if MessageFactory returns a Report. """
         report = self.new_report()
-        self.assertEqual(type(report),
-                         message.Report)
+        self.assertIsInstance(report, message.Report)
 
     def test_event_type(self):
         """ Test if MessageFactory returns a Event. """
         event = self.new_event()
-        self.assertEqual(type(event),
-                         message.Event)
+        self.assertIsInstance(event, message.Event)
 
     def test_report_init_auto(self):
         """ Test if serialize does pass auto=True """
@@ -171,7 +169,6 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidKey) as cm:
             report.add('invalid', 0)
         self.assertIn('not allowed', cm.exception.args[0])
-
 
     def test_report_add_raw(self):
         """ Test if report can add raw value. """
