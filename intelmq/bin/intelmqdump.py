@@ -191,6 +191,7 @@ def main(argv=None):
     try:
         defaults = utils.get_global_settings()
     except Exception:
+        defaults = {}
         log_level = DEFAULT_LOGGING_LEVEL
 
     try:
@@ -207,7 +208,6 @@ def main(argv=None):
     readline.parse_and_bind("tab: complete")
     readline.set_completer_delims('')
 
-    defaults = utils.get_global_settings()
     runtime_config = utils.get_runtime()
     pipeline_pipes = {}
     logging_paths = {defaults.get('logging_path', DEFAULT_LOGGING_PATH)}
