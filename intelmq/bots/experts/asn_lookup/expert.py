@@ -123,9 +123,10 @@ class ASNLookupExpertBot(ExpertBot):
             raise MissingDependencyError("pyasn")
 
         for database_path in set(bots.values()):
-            if not Path(database_path).is_file():
+            database_path = Path(database_path)
+            if database_path.exists() and not database_path.is_file():
                 raise ValueError('Database file does not exist or is not a file.')
-            elif not os.access(database_path, os.W_OK):
+            elif database_path.exists() and not os.access(database_path, os.W_OK):
                 raise ValueError('Database file is not writeable.')
 
         try:
