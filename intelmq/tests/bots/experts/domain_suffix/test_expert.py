@@ -4,9 +4,14 @@
 
 # -*- coding: utf-8 -*-
 import os.path
+import tempfile
 import unittest
+from pathlib import Path
+from types import SimpleNamespace
+from unittest import mock
 
 import intelmq.lib.test as test
+from intelmq.bots.experts.domain_suffix import expert as domain_suffix_expert
 from intelmq.bots.experts.domain_suffix.expert import DomainSuffixExpertBot
 
 
@@ -91,6 +96,32 @@ class TestDomainSuffixExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = WILDCARD_INPUT
         self.run_bot()
         self.assertMessageEqual(0, WILDCARD_OUTPUT)
+
+
+class TestDomainSuffixDatabaseUpdate(unittest.TestCase):
+    def test_update_database_uses_default_suffix_file(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            suffix_file = Path(tmp_dir) / "domain_suffix" / "public_suffix_list.dat"
+            session = SimpleNamespace(get=mock.Mock(return_value=SimpleNamespace(
+                content=b"// public suffix list\ncom\n",
+                ok=True,
+                status_code=200,
+                url="https://publicsuffix.org/list/public_suffix_list.dat",
+            )))
+
+            with mock.patch.object(DomainSuffixExpertBot, "suffix_file", str(suffix_file)), \
+                    mock.patch.object(domain_suffix_expert, "get_bots_settings", return_value={
+                        "domain-suffix": {
+                            "module": "intelmq.bots.experts.domain_suffix.expert",
+                            "parameters": {},
+                        }
+                    }), \
+                    mock.patch.object(domain_suffix_expert, "create_request_session", return_value=session), \
+                    mock.patch.object(domain_suffix_expert, "IntelMQController") as controller:
+                DomainSuffixExpertBot.update_database()
+
+            self.assertEqual(suffix_file.read_bytes(), b"// public suffix list\ncom\n")
+            controller.return_value.bot_reload.assert_called_once_with("domain-suffix")
 
 
 if __name__ == '__main__':  # pragma: no cover

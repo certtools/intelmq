@@ -14,6 +14,7 @@ import sys
 
 import requests.exceptions
 
+from intelmq import VAR_STATE_PATH
 from intelmq.lib.bot import ExpertBot
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.utils import get_bots_settings, create_request_session
@@ -31,7 +32,7 @@ ALLOWED_FIELDS = ['fqdn', 'reverse_dns']
 class DomainSuffixExpertBot(ExpertBot):
     """Extract the domain suffix from a domain and save it in the the domain_suffix field. Requires a local file with valid domain suffixes"""
     field: str = None
-    suffix_file: str = None  # TODO: should be pathlib.Path
+    suffix_file: str = f'{VAR_STATE_PATH}domain_suffix/public_suffix_list.dat'  # TODO: should be pathlib.Path
     autoupdate_cached_database: bool = True  # Activate/deactivate update-database functionality
 
     def init(self):
@@ -53,10 +54,11 @@ class DomainSuffixExpertBot(ExpertBot):
 
     @staticmethod
     def check(parameters):
-        if not os.path.exists(parameters.get('suffix_file', '')):
+        suffix_file = parameters.get('suffix_file', DomainSuffixExpertBot.suffix_file)
+        if not os.path.exists(suffix_file):
             return [["error", "File given as parameter 'suffix_file' does not exist."]]
         try:
-            with codecs.open(parameters['suffix_file'], encoding='UTF-8') as database:
+            with codecs.open(suffix_file, encoding='UTF-8') as database:
                 PublicSuffixList(source=database, only_icann=True)
         except Exception as exc:
             return [["error", "Error reading database: %r." % exc]]
@@ -86,7 +88,7 @@ class DomainSuffixExpertBot(ExpertBot):
         try:
             for bot in runtime_conf:
                 if runtime_conf[bot]["module"] == __name__ and runtime_conf[bot]['parameters'].get('autoupdate_cached_database', True):
-                    bots[bot] = runtime_conf[bot]["parameters"]["suffix_file"]
+                    bots[bot] = runtime_conf[bot]["parameters"].get("suffix_file", cls.suffix_file)
 
         except KeyError as e:
             sys.exit(f"Database update failed. Your configuration of {bot} is missing key {e}.")
