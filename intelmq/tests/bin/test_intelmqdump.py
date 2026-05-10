@@ -110,6 +110,18 @@ class TestIntelMQDump(unittest.TestCase):
 
     @skip_installation()
     @mock.patch.object(intelmqdump, "input", return_value='q')
+    def test_list_dumps_when_defaults_cannot_be_loaded(self, _):
+        self._prepare_empty_dump('test-1')
+
+        intelmqdump.utils.get_global_settings.side_effect = OSError("missing runtime")
+
+        with mock.patch.object(intelmqdump, "DEFAULT_LOGGING_PATH", self.tmp_log_dir.name):
+            output = self._run_main([])
+
+        self.assertIn("0: test-1 empty file", output[1])
+
+    @skip_installation()
+    @mock.patch.object(intelmqdump, "input", return_value='q')
     def test_list_dumps_for_all_bots_from_custom_locations(self, _):
         self.global_config = {"logging_path": self.tmp_log_dir.name}
         self._prepare_empty_dump('bot-1/test-1')
