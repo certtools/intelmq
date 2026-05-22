@@ -17,7 +17,6 @@ import textwrap
 import traceback
 import time
 
-import pkg_resources
 from ruamel.yaml import YAML
 
 from intelmq import (DEFAULT_LOGGING_LEVEL,  # noqa: F401
@@ -127,8 +126,8 @@ class IntelMQController():
 
         APPNAME = "intelmqctl"
         try:
-            VERSION = pkg_resources.get_distribution("intelmq").version
-        except pkg_resources.DistributionNotFound:  # pragma: no cover
+            VERSION = utils.package_version("intelmq")
+        except utils.PackageNotFoundError:  # pragma: no cover
             # can only happen in interactive mode
             self._logger.error('No valid IntelMQ installation found: DistributionNotFound')
             sys.exit(1)

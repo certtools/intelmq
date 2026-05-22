@@ -7,11 +7,11 @@
 Testing RF Risk node lookup
 """
 import unittest
-import pkg_resources
 import intelmq.lib.test as test
+from intelmq.lib.utils import package_resource_path
 from intelmq.bots.experts.recordedfuture_iprisk.expert import RecordedFutureIPRiskExpertBot
 
-RFR_DB = pkg_resources.resource_filename('intelmq', 'tests/bots/experts/recordedfuture_iprisk/iprisk.dat')
+RFR_DB = package_resource_path('intelmq', 'tests/bots/experts/recordedfuture_iprisk/iprisk.dat')
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "192.168.0.1",
                  "destination.ip": "192.0.43.8",

@@ -20,6 +20,7 @@ import collections
 import grp
 import gzip
 import importlib
+from importlib import resources
 import inspect
 import io
 import json
@@ -52,9 +53,9 @@ from intelmq import RUNTIME_CONF_FILE
 from intelmq.lib.exceptions import DecodingError
 
 try:
-    from importlib.metadata import entry_points
+    from importlib.metadata import PackageNotFoundError, entry_points, version as package_version
 except ImportError:
-    from importlib_metadata import entry_points
+    from importlib_metadata import PackageNotFoundError, entry_points, version as package_version
 
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
@@ -62,7 +63,8 @@ __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'reverse_readline', 'error_message_from_exc', 'parse_relative',
            'RewindableFileHandle',
            'file_name_from_response',
-           'list_all_bots', 'get_global_settings',
+           'list_all_bots', 'get_global_settings', 'package_resource_path',
+           'package_version',
            ]
 
 # Used loglines format
@@ -228,6 +230,17 @@ def load_configuration(configuration_filepath: str) -> dict:
     else:
         raise ValueError('File not found: %r.' % configuration_filepath)
     return config
+
+
+def package_resource_path(package: str, resource: str = '') -> str:
+    """
+    Return a filesystem path for a resource bundled in an installed package.
+    """
+    resource_path = resources.files(package)
+    for part in resource.split('/'):
+        if part:
+            resource_path = resource_path.joinpath(part)
+    return str(resource_path)
 
 
 def write_configuration(configuration_filepath: str,

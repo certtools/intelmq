@@ -4,11 +4,10 @@
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
 from collections import OrderedDict
-from pkg_resources import resource_filename
 from pathlib import Path
 from intelmq import CONFIG_DIR
 
-from intelmq.lib.utils import load_configuration, write_configuration
+from intelmq.lib.utils import load_configuration, package_resource_path, write_configuration
 
 __all__ = ['v100_dev7_modify_syntax',
            'v110_shadowserver_feednames',
@@ -380,8 +379,8 @@ def harmonization(configuration, harmonization, dry_run, **kwargs):
     Checks if all harmonization fields and types are correct
     """
     changed = None
-    original = load_configuration(resource_filename('intelmq',
-                                                    'etc/harmonization.conf'))
+    original = load_configuration(package_resource_path('intelmq',
+                                                       'etc/harmonization.conf'))
     for msg_type, msg in original.items():
         if msg_type not in harmonization:
             harmonization[msg_type] = msg
@@ -1008,7 +1007,7 @@ def v350_new_fields(configuration, harmonization, dry_run, **kwargs):
         return changed, configuration, harmonization
 
     builtin_harmonisation = load_configuration(
-        resource_filename("intelmq", "etc/harmonization.conf")
+        package_resource_path("intelmq", "etc/harmonization.conf")
     )
     for field in [
         "severity",

@@ -3,11 +3,12 @@ SPDX-FileCopyrightText: 2025 Institute for Common Good Technology & Malawi CERT
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-from pkg_resources import get_distribution
 from json import dumps as json_dumps
 from typing import Optional
 
-from intelmq.lib.bot import CollectorBot
+from packaging.version import parse as parse_version
+
+from intelmq.lib.bot import CollectorBot, utils
 
 try:
     from shodan import Shodan
@@ -32,7 +33,7 @@ class ShodanAlertCollectorBot(CollectorBot):
                        'https': self.https_proxy}
                       if self.https_proxy
                       else {})
-        if tuple(int(v) for v in get_distribution("shodan").version.split('.')) <= (1, 8, 1):
+        if parse_version(utils.package_version("shodan")) <= parse_version("1.8.1"):
             if self.proxy:
                 raise ValueError('Proxies are given but shodan-python > 1.8.1 is needed for proxy support.')
             else:
@@ -59,8 +60,8 @@ class ShodanAlertCollectorBot(CollectorBot):
             else:
                 messages.append(["error", "Library 'shodan' is needed but not installed."])
         else:
-            shodan_version = tuple(int(v) for v in get_distribution("shodan").version.split('.'))
-            if 'https_proxy' in parameters and shodan_version <= (1, 8, 1):
+            shodan_version = parse_version(utils.package_version("shodan"))
+            if 'https_proxy' in parameters and shodan_version <= parse_version("1.8.1"):
                 messages.append(["error", "Library 'shodan' needs to be updated. At least version 1.8.1 is required for HTTPS Proxy support."])
 
         return messages

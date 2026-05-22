@@ -17,14 +17,13 @@ import re
 import unittest
 
 import cerberus
-import pkg_resources
 from ruamel.yaml import YAML
 
 import intelmq.bots
 import intelmq.lib.harmonization as harmonization
 
 
-from intelmq.lib.utils import lazy_int
+from intelmq.lib.utils import lazy_int, package_resource_path
 
 yaml = YAML(typ="safe", pure=True)
 yaml.default_flow_style = False # This makes the configuration more readable, diff-friendly and consistent.
@@ -46,8 +45,8 @@ def to_unsorted_json(obj):
                       separators=(',', ': ')) + '\n'
 
 
-CONF_FILES = {'harmonization': pkg_resources.resource_filename('intelmq', 'etc/harmonization.conf'),
-              'runtime': pkg_resources.resource_filename('intelmq', 'etc/runtime.yaml')}
+CONF_FILES = {'harmonization': package_resource_path('intelmq', 'etc/harmonization.conf'),
+              'runtime': package_resource_path('intelmq', 'etc/runtime.yaml')}
 
 
 class TestConf(unittest.TestCase):
@@ -113,8 +112,7 @@ class CerberusTests(unittest.TestCase):
     def test_feeds(self):
         with open(os.path.join(os.path.dirname(__file__), 'assets/feeds.schema.json')) as handle:
             schema = json.loads(self.convert_cerberus_schema(handle.read()))
-        with open(pkg_resources.resource_filename('intelmq',
-                                                  'etc/feeds.yaml'), encoding='UTF-8') as handle:
+        with open(package_resource_path('intelmq', 'etc/feeds.yaml'), encoding='UTF-8') as handle:
             feeds = yaml.load(handle)
 
         v = cerberus.Validator(schema)

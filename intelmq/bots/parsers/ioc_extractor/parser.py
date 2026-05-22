@@ -21,7 +21,6 @@ Parameters:
     classification_type : string with a valid classificationtype
 """
 import re
-import pkg_resources
 
 from typing import Optional
 from collections.abc import Iterable
@@ -30,6 +29,7 @@ from intelmq.lib.bot import ParserBot, utils
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import ClassificationType
 from intelmq.lib.exceptions import MissingDependencyError
+from packaging.version import parse as parse_version
 
 try:
     from url_normalize import url_normalize
@@ -57,8 +57,8 @@ class IocExtractorParserBot(ParserBot):
     def init(self):
         if url_normalize is None:
             raise MissingDependencyError("url-normalize")
-        url_version = pkg_resources.get_distribution("url-normalize").version
-        if tuple(int(v) for v in url_version.split('.')) < (1, 4, 1) and self.default_scheme is not None:
+        url_version = utils.package_version("url-normalize")
+        if parse_version(url_version) < parse_version("1.4.1") and self.default_scheme is not None:
             raise ValueError("Parameter 'default_scheme' given but 'url-normalize' version %r does not support it. "
                              "Get at least version '1.4.1'." % url_version)
         if get_tld is None:

@@ -22,7 +22,6 @@ import os
 import shutil
 import stat
 import sys
-import pkg_resources
 
 from grp import getgrnam
 from pathlib import Path
@@ -53,6 +52,7 @@ from termstyle import red
 from intelmq import (CONFIG_DIR, DEFAULT_LOGGING_PATH, ROOT_DIR, VAR_RUN_PATH,
                      VAR_STATE_PATH, STATE_FILE_PATH)
 from intelmq.bin.intelmqctl import IntelMQController
+from intelmq.lib.utils import package_resource_path, package_version
 
 
 FILE_OUTPUT_PATH = Path(VAR_STATE_PATH) / 'file-output/'
@@ -157,7 +157,7 @@ def intelmqsetup_core(ownership=True, state_file=STATE_FILE_PATH):
     create_directory(DEFAULT_LOGGING_PATH, 0o40755)
     create_directory(CONFIG_DIR, 0o40775)
 
-    example_path = Path(pkg_resources.resource_filename('intelmq', 'etc'))
+    example_path = Path(package_resource_path('intelmq', 'etc'))
     example_confs = [example_path / 'runtime.yaml', example_path / 'harmonization.conf']
     for example_conf in example_confs:
         fname = Path(example_conf).name
@@ -200,7 +200,7 @@ def intelmqsetup_api(ownership: bool = True, webserver_user: Optional[str] = Non
     if ownership:
         change_owner(ETC_INTELMQ_MANAGER, group='intelmq')
 
-    base = Path(pkg_resources.resource_filename('intelmq_api', '')).parent
+    base = Path(package_resource_path('intelmq_api')).parent
     api_config = base / 'etc/intelmq/api-config.json'
     etc_intelmq_config = ETC_INTELMQ / 'api-config.json'
     api_sudoers = base / 'etc/intelmq/api-sudoers.conf'
@@ -249,7 +249,7 @@ def intelmqsetup_api(ownership: bool = True, webserver_user: Optional[str] = Non
 
 def intelmqsetup_api_webserver_configuration(webserver_configuration_directory: Optional[str] = None):
     webserver_configuration_dir = webserver_configuration_directory or find_webserver_configuration_directory()
-    api_config = Path(pkg_resources.resource_filename('intelmq_api', '')).parent / 'etc/intelmq/api-apache.conf'
+    api_config = Path(package_resource_path('intelmq_api')).parent / 'etc/intelmq/api-apache.conf'
     apache_api_config = webserver_configuration_dir / 'api-apache.conf'
     if api_config.exists() and not apache_api_config.exists():
         shutil.copy(api_config, apache_api_config)
@@ -266,9 +266,9 @@ def intelmqsetup_api_webserver_configuration(webserver_configuration_directory: 
 
 def intelmqsetup_manager_webserver_configuration(webserver_configuration_directory: Optional[str] = None):
     webserver_configuration_dir = webserver_configuration_directory or find_webserver_configuration_directory()
-    manager_config_1 = Path(pkg_resources.resource_filename('intelmq_manager', '')).parent / 'etc/intelmq/manager-apache.conf'
+    manager_config_1 = Path(package_resource_path('intelmq_manager')).parent / 'etc/intelmq/manager-apache.conf'
     # IntelMQ Manager >= 3.1.0
-    manager_config_2 = Path(pkg_resources.resource_filename('intelmq_manager', '')) / 'manager-apache.conf'
+    manager_config_2 = Path(package_resource_path('intelmq_manager')) / 'manager-apache.conf'
     manager_config = manager_config_2 if manager_config_2.exists() else manager_config_1
     apache_manager_config = webserver_configuration_dir / 'manager-apache.conf'
     if manager_config.exists() and not apache_manager_config.exists():
@@ -287,7 +287,7 @@ def intelmqsetup_manager_generate():
         print('Unable to build intelmq-manager files. Installed version of intelmq-manager is too old, at least version 3.1.0 is required.',
               file=sys.stderr)
         return
-    src_dir = Path(pkg_resources.resource_filename('intelmq_manager', ''))
+    src_dir = Path(package_resource_path('intelmq_manager'))
     html_dir_destination = Path('/usr/share/intelmq_manager/html')
 
     if not src_dir.as_posix().startswith('/usr/'):
@@ -338,7 +338,7 @@ def main():
     else:
         print('Skipping intelmq-manager configuration.')
     if intelmq_manager and not args.skip_manager:
-        manager_version = pkg_resources.get_distribution('intelmq-manager').version
+        manager_version = package_version('intelmq-manager')
         print(f'Generate and save intelmq-manager (version {manager_version}) static files.')
         intelmqsetup_manager_generate()
 

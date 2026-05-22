@@ -6,11 +6,10 @@
 Tests the upgrade functions.
 """
 import unittest
-import pkg_resources
 from copy import deepcopy
 
 import intelmq.lib.upgrades as upgrades
-from intelmq.lib.utils import load_configuration
+from intelmq.lib.utils import load_configuration, package_resource_path
 
 
 V202 = {"global": {},
@@ -261,8 +260,8 @@ V220_HTTP_VERIFY_FALSE = {
         "module": "intelmq.bots.collectors.misp.collector",
         "parameters": {
             "http_verify_cert": False}}}
-HARM = load_configuration(pkg_resources.resource_filename('intelmq',
-                                                          'etc/harmonization.conf'))
+HARM = load_configuration(package_resource_path('intelmq',
+                                               'etc/harmonization.conf'))
 V210_HARM = deepcopy(HARM)
 del V210_HARM['report']['extra']
 MISSING_REPORT = deepcopy(HARM)

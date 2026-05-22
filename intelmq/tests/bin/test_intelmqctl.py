@@ -9,8 +9,6 @@ from tempfile import TemporaryDirectory
 from unittest import mock
 from pathlib import Path
 
-from pkg_resources import resource_filename
-
 import intelmq.bin.intelmqctl as ctl
 import intelmq.lib.utils as utils
 from intelmq.lib.test import skip_installation
@@ -90,13 +88,15 @@ class TestIntelMQController(unittest.TestCase):
         utils.write_configuration(path, config, backup=False, useyaml=useyaml)
 
     def _load_default_harmonization(self):
-        default = utils.load_configuration(resource_filename('intelmq',
-                                                             'etc/harmonization.conf'))
+        default = utils.load_configuration(
+            utils.package_resource_path('intelmq', 'etc/harmonization.conf')
+        )
         self._extend_config(self.tmp_harmonization, default, useyaml=False)
 
     def _load_default_runtime(self):
-        default = utils.load_configuration(resource_filename('intelmq',
-                                                             'etc/runtime.yaml'))
+        default = utils.load_configuration(
+            utils.package_resource_path('intelmq', 'etc/runtime.yaml')
+        )
         self._extend_config(self.tmp_runtime, default)
 
     def tearDown(self):
