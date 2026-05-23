@@ -55,11 +55,11 @@ class HTMLTableParserBot(ParserBot):
             raise MissingDependencyError("beautifulsoup4")
 
         # convert columns to an array
-        if type(self.columns) is str:
+        if isinstance(self.columns, str):
             self.columns = [column.strip() for column in self.columns.split(",")]
         if self.ignore_values is None:
             self.ignore_values = len(self.columns) * ['']
-        if type(self.ignore_values) is str:
+        if isinstance(self.ignore_values, str):
             self.ignore_values = [value.strip() for value in self.ignore_values.split(",")]
 
         if len(self.columns) != len(self.ignore_values):

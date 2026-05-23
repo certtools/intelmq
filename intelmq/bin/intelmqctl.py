@@ -1118,7 +1118,7 @@ Find IntelMQ's support channels at https://docs.intelmq.org/latest/help/
                 result['traceback'] = traceback.format_exc()
                 result['success'] = False
             else:
-                if type(retval) is str:
+                if isinstance(retval, str):
                     self._logger.error('Upgrade %r failed: %s', function, retval)
                     result['message'] = retval
                     result['success'] = False
@@ -1210,7 +1210,7 @@ Find IntelMQ's support channels at https://docs.intelmq.org/latest/help/
                         result['traceback'] = traceback.format_exc()
                         result['success'] = False
                     else:
-                        if type(retval) is str:
+                        if isinstance(retval, str):
                             self._logger.error('%s: Upgrade failed: %s', docstring, retval)
                             result['message'] = retval
                             result['success'] = False
