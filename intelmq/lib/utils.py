@@ -236,7 +236,8 @@ def package_resource_path(package: str, resource: str = '') -> str:
     """
     Return a filesystem path for a resource bundled in an installed package.
     """
-    resource_path = resources.files(package)
+    package_reference = sys.modules.get(package, package)
+    resource_path = resources.files(package_reference)
     for part in resource.split('/'):
         if part:
             resource_path = resource_path.joinpath(part)

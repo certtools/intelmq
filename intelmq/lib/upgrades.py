@@ -379,8 +379,9 @@ def harmonization(configuration, harmonization, dry_run, **kwargs):
     Checks if all harmonization fields and types are correct
     """
     changed = None
-    original = load_configuration(package_resource_path('intelmq',
-                                                       'etc/harmonization.conf'))
+    original = load_configuration(
+        package_resource_path('intelmq', 'etc/harmonization.conf')
+    )
     for msg_type, msg in original.items():
         if msg_type not in harmonization:
             harmonization[msg_type] = msg
