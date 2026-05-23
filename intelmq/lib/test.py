@@ -18,7 +18,6 @@ import unittest
 import unittest.mock as mock
 from itertools import chain
 
-import pkg_resources
 import redis
 
 import intelmq.lib.message as message
@@ -66,8 +65,7 @@ def mocked_config(bot_id='test-bot', sysconfig={}, group=None, module=None):
                              }}
         elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
-            fname = pkg_resources.resource_filename('intelmq',
-                                                    confname)
+            fname = utils.package_resource_path('intelmq', confname)
             with open(fname) as fpconfig:
                 return json.load(fpconfig)
         else:
@@ -187,8 +185,9 @@ class BotTestCase:
         elif cls.use_cache and os.environ.get('INTELMQ_SKIP_REDIS'):
             cls.skipTest(cls, 'Requested cache requires deactivated Redis.')
 
-    harmonization = utils.load_configuration(pkg_resources.resource_filename('intelmq',
-                                                                             'etc/harmonization.conf'))
+    harmonization = utils.load_configuration(
+        utils.package_resource_path('intelmq', 'etc/harmonization.conf')
+    )
 
     def new_report(self, auto=False, examples=False):
         return message.Report(harmonization=self.harmonization, auto=auto)

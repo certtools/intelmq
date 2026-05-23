@@ -6,13 +6,12 @@ import unittest
 from json import loads as json_loads
 from ipaddress import ip_network, ip_address
 
-import pkg_resources
-
 import intelmq.lib.test as test
+from intelmq.lib.utils import package_resource_path
 from intelmq.bots.experts.fake.expert import FakeExpertBot
 
-FAKE_DB = pkg_resources.resource_filename('intelmq', 'tests/bots/experts/fake/data.json')
-SEVERITY_DB = pkg_resources.resource_filename('intelmq', 'tests/bots/experts/fake/severity.json')
+FAKE_DB = package_resource_path('intelmq', 'tests/bots/experts/fake/data.json')
+SEVERITY_DB = package_resource_path('intelmq', 'tests/bots/experts/fake/severity.json')
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com
                  }

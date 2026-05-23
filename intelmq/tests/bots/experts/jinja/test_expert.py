@@ -8,8 +8,6 @@ Testing jinja expert
 import unittest
 import os
 
-import pkg_resources
-
 import intelmq.lib.test as test
 from intelmq.bots.experts.jinja.expert import JinjaExpertBot
 

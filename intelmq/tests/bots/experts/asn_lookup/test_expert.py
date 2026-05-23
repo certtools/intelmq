@@ -9,12 +9,11 @@ Testing asn_lookup with a faked local database
 
 import unittest
 
-import pkg_resources
-
 import intelmq.lib.test as test
+from intelmq.lib.utils import package_resource_path
 from intelmq.bots.experts.asn_lookup.expert import ASNLookupExpertBot
 
-ASN_DB = pkg_resources.resource_filename('intelmq', 'tests/bots/experts/asn_lookup/ipasn.dat')
+ASN_DB = package_resource_path('intelmq', 'tests/bots/experts/asn_lookup/ipasn.dat')
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com
                  "destination.ip": "192.0.43.8",  # iana.org

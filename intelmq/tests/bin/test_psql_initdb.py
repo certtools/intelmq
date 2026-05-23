@@ -14,9 +14,8 @@ import re
 import tempfile
 import unittest
 
-import pkg_resources
-
 import intelmq.bin.intelmq_psql_initdb as psql_initdb
+from intelmq.lib.utils import package_resource_path
 
 
 class TestPsqlInit(unittest.TestCase):
@@ -55,7 +54,7 @@ class TestPsqlInit(unittest.TestCase):
         with open(os.path.join(os.path.dirname(__file__),
                                'initdb.sql')) as handle:
             expected = handle.read()
-        fname = pkg_resources.resource_filename('intelmq', 'etc/harmonization.conf')
+        fname = package_resource_path('intelmq', 'etc/harmonization.conf')
         self.assertEqual(psql_initdb.generate(fname).strip(), expected.strip())
 
     def test_skip_generating_events_table_schema(self):

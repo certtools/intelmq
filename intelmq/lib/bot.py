@@ -30,7 +30,6 @@ from collections import defaultdict
 from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import Any, List, Optional, Union, Tuple
-from pkg_resources import resource_filename
 
 import intelmq.lib.message as libmessage
 from intelmq import (DEFAULT_LOGGING_PATH,
@@ -929,7 +928,9 @@ class Bot:
             if self._standalone:
                 raise
             else:
-                self._harmonization = utils.load_configuration(resource_filename('intelmq', 'etc/harmonization.conf'))
+                self._harmonization = utils.load_configuration(
+                    utils.package_resource_path('intelmq', 'etc/harmonization.conf')
+                )
 
     def new_event(self, *args, **kwargs):
         return libmessage.Event(*args, harmonization=self.harmonization, **kwargs)

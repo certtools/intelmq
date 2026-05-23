@@ -9,12 +9,11 @@ Testing tor node lookup
 
 import unittest
 
-import pkg_resources
-
 import intelmq.lib.test as test
+from intelmq.lib.utils import package_resource_path
 from intelmq.bots.experts.tor_nodes.expert import TorExpertBot
 
-TOR_DB = pkg_resources.resource_filename('intelmq', 'tests/bots/experts/tor_nodes/tor_nodes.dat')
+TOR_DB = package_resource_path('intelmq', 'tests/bots/experts/tor_nodes/tor_nodes.dat')
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "192.168.0.1",
                  "destination.ip": "192.0.43.8",

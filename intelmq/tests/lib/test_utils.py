@@ -22,7 +22,6 @@ import unittest.mock
 
 import cerberus
 import dns.resolver
-import pkg_resources
 import requests
 import termstyle
 from ruamel.yaml.scanner import ScannerError
@@ -51,7 +50,7 @@ SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
 
 
 def new_get_runtime() -> dict:
-    runtime_conf = utils.load_configuration(pkg_resources.resource_filename('intelmq', 'etc/runtime.yaml'))
+    runtime_conf = utils.load_configuration(utils.package_resource_path('intelmq', 'etc/runtime.yaml'))
     if 'global' not in runtime_conf:
         runtime_conf['global'] = {}
     runtime_conf['global']['http_proxy'] = 'http://localhost:8080'

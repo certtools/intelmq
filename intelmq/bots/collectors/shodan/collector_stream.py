@@ -11,14 +11,14 @@ Selectors:
 * countries: A list of strings or a comma separated list with country codes
 * alert: An alert ID from monitor.shodan.io
 """
-import pkg_resources
 from http.client import IncompleteRead
 from urllib3.exceptions import ProtocolError, ReadTimeoutError
 
+from packaging.version import parse as parse_version
 from requests.exceptions import ChunkedEncodingError, ConnectionError
 from typing import List, Optional
 
-from intelmq.lib.bot import CollectorBot
+from intelmq.lib.bot import CollectorBot, utils
 
 try:
     import shodan
@@ -38,7 +38,7 @@ class ShodanStreamCollectorBot(CollectorBot):
             raise ValueError("Library 'shodan' is needed but not installed.")
 
         self.set_request_parameters()
-        if tuple(int(v) for v in pkg_resources.get_distribution("shodan").version.split('.')) <= (1, 8, 1):
+        if parse_version(utils.package_version("shodan")) <= parse_version("1.8.1"):
             if self.proxy:
                 raise ValueError('Proxies are given but shodan-python > 1.8.1 is needed for proxy support.')
             else:

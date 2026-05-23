@@ -9,10 +9,8 @@ Testing modify expert bot.
 
 import unittest
 
-from pkg_resources import resource_filename
-
 import intelmq.lib.test as test
-from intelmq.lib.utils import load_configuration
+from intelmq.lib.utils import load_configuration, package_resource_path
 from intelmq.bots.experts.modify.expert import ModifyExpertBot
 
 EVENT_TEMPL = {"__type": "Event",
@@ -78,8 +76,8 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = ModifyExpertBot
-        config_path = resource_filename('intelmq',
-                                        'bots/experts/modify/examples/default.conf')
+        config_path = package_resource_path('intelmq',
+                                            'bots/experts/modify/examples/default.conf')
         cls.sysconfig = {'configuration_path': config_path
                          }
 
@@ -96,8 +94,8 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
         """
         boolean, int etc
         """
-        config_path = resource_filename('intelmq',
-                                        'tests/bots/experts/modify/types.conf')
+        config_path = package_resource_path('intelmq',
+                                            'tests/bots/experts/modify/types.conf')
         parameters = {'configuration_path': config_path,
                       'overwrite': True}
         self.input_message = INPUT[8:14]
@@ -110,8 +108,8 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
         """
         test if bot overwrites by default
         """
-        config_path = resource_filename('intelmq',
-                                        'tests/bots/experts/modify/overwrite.conf')
+        config_path = package_resource_path('intelmq',
+                                            'tests/bots/experts/modify/overwrite.conf')
         self.input_message = INPUT[7]
         self.allowed_warning_count = 1
         self.run_bot(parameters={'configuration_path': config_path})
@@ -121,8 +119,8 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
         """
         test if bot does not overwrites if parameter is set
         """
-        config_path = resource_filename('intelmq',
-                                        'tests/bots/experts/modify/overwrite.conf')
+        config_path = package_resource_path('intelmq',
+                                            'tests/bots/experts/modify/overwrite.conf')
         self.input_message = EVENT_TEMPL
         self.run_bot(parameters={'configuration_path': config_path,
                                  'overwrite': False})

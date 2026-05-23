@@ -8,13 +8,12 @@ Data is from the HIBP Documentation
 """
 import json
 import unittest
-import pkg_resources
 
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.parsers.hibp.parser_callback import HIBPCallbackParserBot
 
-BREACHREQUEST = json.load(open(pkg_resources.resource_filename('intelmq', 'tests/bots/parsers/hibp/breach_callbacktest.json')))
+BREACHREQUEST = json.load(open(utils.package_resource_path('intelmq', 'tests/bots/parsers/hibp/breach_callbacktest.json')))
 BREACHRAW = utils.base64_encode(json.dumps(BREACHREQUEST, sort_keys=True))
 BR_REP = {"feed.name": "HIBP Enterprise",
           "time.observation": "2019-03-01T01:01:01+00:00",
@@ -34,7 +33,7 @@ BR_EV = {"feed.name": "HIBP Enterprise",
          "__type": "Event"
          }
 
-PASTEREQUEST = json.load(open(pkg_resources.resource_filename('intelmq', 'tests/bots/parsers/hibp/paste_callbacktest.json')))
+PASTEREQUEST = json.load(open(utils.package_resource_path('intelmq', 'tests/bots/parsers/hibp/paste_callbacktest.json')))
 PASTERAW = utils.base64_encode(json.dumps(PASTEREQUEST, sort_keys=True))
 PA_REP = {"feed.name": "HIBP Enterprise",
           "time.observation": "2019-03-01T01:01:01+00:00",
@@ -55,7 +54,7 @@ PA_EV = {"feed.name": "HIBP Enterprise",
          }
 
 
-BREACHREALREQUEST = json.load(open(pkg_resources.resource_filename('intelmq', 'tests/bots/parsers/hibp/breach_real.json')))
+BREACHREALREQUEST = json.load(open(utils.package_resource_path('intelmq', 'tests/bots/parsers/hibp/breach_real.json')))
 BREACHREALRAW = utils.base64_encode(json.dumps(BREACHREALREQUEST, sort_keys=True))
 BR_REAL_REP = {"feed.name": "HIBP Enterprise",
                "time.observation": "2019-03-01T01:01:01+00:00",

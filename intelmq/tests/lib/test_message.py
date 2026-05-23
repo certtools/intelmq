@@ -13,14 +13,12 @@ but has a valid Harmonization configuration.
 import json
 import unittest
 
-import pkg_resources
-
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.message as message  # noqa
-from intelmq.lib.utils import load_configuration
+from intelmq.lib.utils import load_configuration, package_resource_path
 
-HARM = load_configuration(pkg_resources.resource_filename('intelmq',
-                                                          'etc/harmonization.conf'))
+HARM = load_configuration(package_resource_path('intelmq',
+                                               'etc/harmonization.conf'))
 
 LOREM_BASE64 = 'bG9yZW0gaXBzdW0='
 DOLOR_BASE64 = 'ZG9sb3Igc2l0IGFtZXQ='
