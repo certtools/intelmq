@@ -71,18 +71,10 @@ class ModifyExpertBot(ExpertBot):
             if name not in event:
                 return None
             if is_re_pattern(rule):
-                if isinstance(event[name], (int, float)):
                     match = rule.search(str(event[name]))
                     if match is None:
                         return None
-                    else:
-                        matches[name] = match
-                else:
-                    match = rule.search(event[name])
-                    if match is None:
-                        return None
-                    else:
-                        matches[name] = match
+                    matches[name] = match
             else:  # rule is boolean, int, float, etc
                 if event[name] != rule:
                     return None
