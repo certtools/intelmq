@@ -4669,6 +4669,18 @@ If the field used in the format string is not defined, `None` will be used as fa
 
 (optional, boolean) Whether the resulting dictionary should be hierarchical (field names split by a dot). Defaults to false.
 
+**`keep_raw_field`**
+
+(optional, boolean) Whether to keep the `raw` field or not. Defaults to false.
+
+**`message_jsondict_as_string`**
+
+(optional, boolean) Whether to convert JSON fields (`extra`) to string. Defaults to false.
+
+**`message_with_type`**
+
+(optional, boolean) Whether to include the type in the output message. Defaults to false.
+
 **`single_key`**
 
 (optional, string) Output only a single specified key. In case of `raw` key the data is base64 decoded. Defaults to null (output the whole message).
@@ -4698,6 +4710,18 @@ This bot outputs each message to a separate file.
 **`hierarchical_output`**
 
 (optional, boolean) Whether the resulting dictionary should be hierarchical (field names split by a dot). Defaults to false.
+
+**`keep_raw_field`**
+
+(optional, boolean) Whether to keep the `raw` field or not. Defaults to false.
+
+**`message_jsondict_as_string`**
+
+(optional, boolean) Whether to convert JSON fields (`extra`) to string. Defaults to false.
+
+**`message_with_type`**
+
+(optional, boolean) Whether to include the type in the output message. Defaults to false.
 
 **`single_key`**
 
