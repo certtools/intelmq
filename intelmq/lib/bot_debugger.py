@@ -210,7 +210,10 @@ class BotDebugger:
                     if bot_id == "global":
                         config[bot_id]["logging_level"] = logging_level
                     else:
-                        config[bot_id]['parameters']["logging_level"] = logging_level
+                        parameters = config[bot_id].get('parameters')
+                        if parameters is None:
+                            parameters = config[bot_id]['parameters'] = {}
+                        parameters["logging_level"] = logging_level
                 if "global" not in config:
                     config["global"] = {"logging_level": logging_level}
             return config
