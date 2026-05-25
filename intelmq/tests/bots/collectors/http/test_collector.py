@@ -250,7 +250,7 @@ class TestHTTPCollectorBotAuthentication(test.BotTestCase, unittest.TestCase):
         captured = mocker.register_uri('GET', self.sysconfig['http_url'],
                             text='Foo Bar',
                             additional_matcher=check_authorization_header)
-        log_line = "Either 'http_username' or 'http_password' are given, but for HTTP Authentication, both must be set\."
+        log_line = r"Either 'http_username' or 'http_password' are given, but for HTTP Authentication, both must be set\."
         self.run_bot(parameters={'http_username': 'username'}, allowed_warning_count=1)
         self.assertLogMatches(log_line, 'WARNING')
         self.run_bot(parameters={'http_password': 'password'}, allowed_warning_count=1)
