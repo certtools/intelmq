@@ -4306,13 +4306,29 @@ The whois request will be for `theguardian.co.uk`
 
 ### Wait <div id="intelmq.bots.experts.wait.expert" />
 
-Waits for a some time or until a queue size is lower than a given number.
+Waits for some time or until a queue size is not greater than a configured threshold.
 
 Only one of the two modes is possible. If a queue name is given, the queue mode is active. If the sleep_time is a
 number, sleep mode is active. Otherwise the dummy mode is active, the events are just passed without an additional
 delay.
 
 Note that SIGHUPs and reloads interrupt the sleeping.
+
+#### Using queue mode for backpressure
+
+Queue mode can be used to slow down one part of the botnet when a later queue already has a backlog. Put the Wait
+expert before the slow bot or output and set `queue_name` to the downstream queue which should be watched. For every
+event, the bot polls the Redis list length of `queue_name` and only forwards the event when the queue length is less
+than or equal to `queue_size`.
+
+Use `intelmqctl list queues` to check the queue names. For example, these runtime parameters wait until
+`slow-output-queue` contains at most 1000 events before forwarding the next event:
+
+```yaml
+queue_name: slow-output-queue
+queue_size: 1000
+queue_polling_interval: 1
+```
 
 **Module:** `intelmq.bots.experts.wait.expert`
 
@@ -4336,7 +4352,7 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 
 **`queue_polling_interval`**
 
-(required, float) Interval to poll the list length in seconds. Defaults to ?.
+(optional, float) Interval to poll the list length in seconds. Defaults to 0.05.
 
 **`queue_port`**
 
