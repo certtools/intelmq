@@ -64,6 +64,25 @@ class TestPsqlInit(unittest.TestCase):
         self.assertNotIn("CREATE TABLE events", generated)
         self.assertNotIn("CREATE INDEX", generated)
 
+    def test_asn_fields_use_bigint(self):
+        simple_harmonization = {
+            "event": {
+                "source.asn": {
+                    "type": "ASN"
+                },
+                "source.port": {
+                    "type": "Integer"
+                }
+            }
+        }
+        with open(self.harmonization_path, "w+") as f:
+            json.dump(simple_harmonization, f)
+
+        generated = psql_initdb.generate(self.harmonization_path)
+
+        self.assertIn('"source.asn" bigint', generated)
+        self.assertIn('"source.port" integer', generated)
+
     def test_separated_raws_view_schema(self):
         expected_view = """
         CREATE VIEW public.v_events AS

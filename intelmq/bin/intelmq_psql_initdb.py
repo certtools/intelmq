@@ -177,8 +177,10 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE, skip_events=False,
             dbtype = 'timestamp with time zone'
         elif value['type'] == 'Boolean':
             dbtype = 'boolean'
-        elif value['type'] in ('Integer', 'ASN'):
+        elif value['type'] == 'Integer':
             dbtype = 'integer'
+        elif value['type'] == 'ASN':
+            dbtype = 'bigint'
         elif value['type'] in ('Float', 'Accuracy'):
             dbtype = 'real'
         elif value['type'] == 'UUID':
