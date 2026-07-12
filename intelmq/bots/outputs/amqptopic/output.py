@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2016 Pedro Reis
+# SPDX-FileCopyrightText: 2016 Pedro Reis, 2016-2021 nic.at GmbH
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 

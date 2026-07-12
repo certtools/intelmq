@@ -212,7 +212,7 @@ pipeline. Requires the [pika](https://pypi.org/project/pika/) library, minimum v
 
 **`connection_vhost`**
 
-(optional, string) Virtual host to connect, on an HTTP(S) connection would be <http:/IP/><your virtual host>.
+(optional, string) Virtual host to connect, on an HTTP(S) connection would be `<http:/IP/><your virtual host>`.
 
 **`expect_intelmq_message`**
 
@@ -240,8 +240,9 @@ Defaults to false.
 
 ### API <div id="intelmq.bots.collectors.api.collector" />
 
-This bot collects data from HTTP or Socket REST API. The API is available at `/intelmq/push` when the HTTP interface is
-used. Requires the [tornado](https://pypi.org/project/tornado/) library.
+This bot collects data from HTTP or Socket REST API.
+The API is available at `/intelmq/push` when the HTTP interface is used.
+Requires the [tornado](https://pypi.org/project/tornado/) library.
 
 **Module:** `intelmq.bots.collectors.api.collector`
 
@@ -1945,6 +1946,7 @@ If the input data did not contain the field `classification.type`, it is set to 
 Supports multiple different modes:
 
 #### Input data is one event
+
 Example:
 ```json
 { INTELMQ data... }
@@ -1961,6 +1963,7 @@ Configuration:
 * `multiple_events`: False
 
 #### Input data is in JSON stream format
+
 Example:
 ```json
 { INTELMQ data... }
@@ -1973,6 +1976,7 @@ Configuration:
 * `multiple_events`: False
 
 #### Input data is a list of events
+
 Example:
 ```json
 [
@@ -2883,7 +2887,7 @@ Both parameters accept string values describing absolute or relative time:
 (optional, string) Taken from the event will be compared to this value to decide the filter behavior.
 
 - relative
-- accepted string formatted like this "<integer> <epoch>", where epoch could be any of following strings (could
+- accepted string formatted like this `<integer> <epoch>`, where epoch could be any of following strings (could
   optionally end with trailing 's'): hour, day, week, month, year
 - time.source taken from the event will be compared to the value (now - relative) to decide the filter behavior
 
@@ -3822,7 +3826,7 @@ if extra.hostnames :subsetof ['ns1.example.com', 'ns2.example.com'] { ... }
 if extra.tags :supersetof ['iot', 'vulnerable'] { ... }
 ```
 
-* `:before` tests if the date value occurred before given time ago. The time might be absolute (basically anything parseable by pendulum parser, eg. “2015-09-12T06:22:11+00:00”) or relative (accepted string formatted like this “<integer> <epoch>”, where epoch could be any of following strings (could optionally end with trailing ‘s’): hour, day, week, month, year)
+* `:before` tests if the date value occurred before given time ago. The time might be absolute (basically anything parseable by pendulum parser, eg. “2015-09-12T06:22:11+00:00”) or relative (accepted string formatted like this `<integer> <epoch>`, where epoch could be any of following strings (could optionally end with trailing ‘s’): hour, day, week, month, year)
 
 ```
 if time.observation :before '1 week' { ... }
@@ -4407,6 +4411,17 @@ Requires the [pika python library](https://pypi.org/project/pika/).
 **`exchange_type`**
 
 (optional, string) Type of the exchange, e.g. `topic`, `fanout` etc.
+
+**`format_routing_key`**
+
+(optional, boolean) Whether the routing key should be formatted with the event data. Defaults to false.
+
+Uses Python formatted strings. See: <https://docs.python.org/3/library/string.html#formatstrings>
+
+In the routing key, the event is accessible with the name `ev`.
+Example: The routing key `{event[source.geolocation.cc]}` will be (for example) `BR`.
+
+If the field used in the format string is not defined, `None` will be used as fallback.
 
 **`keep_raw_field`**
 
@@ -5185,7 +5200,7 @@ REST API is the bot responsible to send events to a REST API listener through PO
 
 **Module:** `intelmq.bots.outputs.restapi.output`
 
-**Parameters:**
+**Parameters (also accepts [HTTP parameters](#http-parameters)):**
 
 **`host`**
 
@@ -5193,23 +5208,23 @@ REST API is the bot responsible to send events to a REST API listener through PO
 
 **`auth_type`**
 
-(required, string) Allowed values: `http_basic_auth` or `http_header`. Type of authentication to use.
+(optional, string) Allowed values: `http_basic_auth` or `http_header` or empty/null. Type of authentication to use.
 
 **`auth_token`**
 
-(required, string) Username or HTTP header key.
+(optional, string) Password or HTTP header value. Required if `auth_type` is set.
 
 **`auth_token_name`**
 
-(required, string) Password or HTTP header value.
+(optional, string) Username or HTTP header key. Required if `auth_type` is set.
 
 **`hierarchical_output`**
 
-(optional, boolean) Whether the resulting dictionary should be hierarchical (field names split by a dot). Defaults to false.
+(optional, boolean) Whether the resulting dictionary should be hierarchical (field names split by a dot). Defaults to false. Set to `true` to keep the IntelMQ data format.
 
 **`use_json`**
 
-(optional, boolean) Whether to use JSON. Defaults to true.
+(optional, boolean) Whether to use JSON as HTTP Content Type (`application/json)`. Defaults to true.
 
 ---
 
@@ -5576,7 +5591,6 @@ The parameters marked with 'PostgreSQL' will be sent to libpq via psycopg2. Chec
 **`fail_on_errors`**
 
 (optional, boolean) Whether an error should cause the bot to fail (raise an exception) or otherwise rollback. If false, the bot eventually waits and re-try (e.g. re-connect) etc. to solve the issue. If true, the bot raises an exception and - depending on the IntelMQ error handling configuration - stops. Defaults to false.
-
 
 ### STOMP
 

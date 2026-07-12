@@ -75,6 +75,9 @@ extra:
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/u/certat
 
+extra_javascript:
+  - https://unpkg.com/mermaid/dist/mermaid.min.js
+
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
@@ -85,7 +88,11 @@ markdown_extensions:
   - pymdownx.snippets
   - admonition
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.keys # keyboard keys
   - tables
   - footnotes
@@ -108,6 +115,7 @@ nav:
           - Linux Package: 'admin/installation/linux-packages.md'
           - PyPI: 'admin/installation/pypi.md'
           - DockerHub: 'admin/installation/dockerhub.md'
+          - Combined All in One Setup: 'admin/installation/combined.md'
       - Upgrade: 'admin/upgrade.md'
       - Hardware Requirements: 'admin/hardware-requirements.md'
       - Configuration:
@@ -115,6 +123,7 @@ nav:
           - IntelMQ API: 'admin/configuration/intelmq-api.md'
           - IntelMQ Manager: 'admin/configuration/intelmq-manager.md'
           - Redis: 'admin/configuration/redis.md'
+          - Connecting Instances: 'admin/configuration/connecting-instances.md'
       - Management:
           - IntelMQ: 'admin/management/intelmq.md'
           - IntelMQ API: 'admin/management/intelmq-api.md'
@@ -150,6 +159,7 @@ nav:
       - Release: 'dev/release.md'
 
   - Changelog: 'changelog.md'
+  - News: 'NEWS.md'
   - Security: 'security.md'
   - Community: 'community.md'
   - Help: 'help.md'

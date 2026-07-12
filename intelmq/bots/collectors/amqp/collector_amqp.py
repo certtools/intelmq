@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2019 Sebastian Wagner
+# SPDX-FileCopyrightText: 2019 nic.at GmbH
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 

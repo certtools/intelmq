@@ -38,6 +38,10 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 ### Documentation
 - Updates to Contrib and Overview pages (PR#2672 by Sebastian Wagner).
+- Add new documentation (PR#2698):
+  - A combined setup documentation for all IntelMQ tools including the CERTBund workflow.
+  - How to connect multiple IntelMQ instances.
+  - Abuse contacts: document models and tooling suites.
 
 ### Packaging
 
@@ -1501,7 +1505,7 @@ IntelMQ no longer supports Python 3.5 (and thus Debian 9 and Ubuntu 16.04), the 
 Dropped support for Python 3.4.
 
 ### Core
-- `__init__`: Changes to the path-handling, see [User Guide, section _/opt and LSB paths_](docs/User-Guide.md#opt-and-lsb-paths) for more information
+- `__init__`: Changes to the path-handling, see [User Guide, section _/opt and LSB paths_](admin/configuration/intelmq.md#directories) for more information
   - The environment variable `INTELMQ_ROOT_DIR` can be used to set custom root directories instead of `/opt/intelmq/` (#805) in case of non LSB-path installations.
   - The environment variable `ROOT_DIR` can be used to set custom root directories instead of `/` (#805) in case of LSB-path installations.
 - `intelmq.lib.exceptions`: Added `MissingDependencyError` for show error messages about a missing library and how to install it (#1471).
