@@ -40,7 +40,7 @@ For a minimal system, these requirements suffice:
 **Depending on your data input, you will need the twentiethfold of the
 input data size as memory for processing.**
 
-When using [Redis persistence](http://redis.io/topics/persistence), you
+When using [Redis persistence](https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/), you
 will additionally need twice as much memory for Redis.
 
 ### Disk space

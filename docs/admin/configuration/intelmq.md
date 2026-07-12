@@ -162,7 +162,7 @@ configured to do so.
 
 (optional, string) Allowed values are `redis` and `amqp`. Selects the message broker IntelMQ should use. As this parameter can be overridden by each bot, this allows usage of different broker systems and hosts, as well as switching between them on the same IntelMQ instance. Defaults to `redis`.
 
-  - **redis** - Please note that persistence has to be [manually activated](http://redis.io/topics/persistence).
+  - **redis** - Please note that persistence has to be [manually activated](https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/).
   - **amqp** - [Using the AMQP broker](../beta-features.md#using-amqp-message-broker) is currently beta but there are no known issues. A popular AMQP broker is [RabbitMQ](https://www.rabbitmq.com/).
 
 **`destination_pipeline_broker`**
