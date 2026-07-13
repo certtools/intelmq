@@ -30,6 +30,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 - `intelmq.bots.parsers.generic_csv.parser_csv`: Handle empty string parameter `columns_required` as unset (PR#2680 by Sebastian Wagner, fixes #2679).
 
 #### Experts
+- `intelmq.bots.experts.asn_lookup.expert`: Allow `--update-database` to create a missing database file (fixes #2689 by Haitao Zheng).
 
 #### Outputs
 - `intelmq.bots.outputs.smtp_batch.output`:
