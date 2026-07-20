@@ -8,6 +8,8 @@ import enum
 import os
 import ssl
 import sys
+from importlib.metadata import PackageNotFoundError, version
+from packaging.version import Version
 from typing import (
     Any,
     Callable,
@@ -25,6 +27,16 @@ else:
     import stomp.transport
 
 from intelmq.lib.exceptions import MissingDependencyError
+
+
+def stomp_version() -> Version:
+    try:
+        return Version(version("stomp.py"))
+    except PackageNotFoundError:
+        stomp_module_version = stomp.__version__
+        if isinstance(stomp_module_version, tuple):
+            stomp_module_version = ".".join(str(part) for part in stomp_module_version)
+        return Version(stomp_module_version)
 
 
 class StompMixin:
@@ -121,9 +133,10 @@ class StompMixin:
         if stomp is None:
             raise MissingDependencyError('stomp',
                                          additional_text=cls._DEPENDENCY_NAME_REMARK)
-        if stomp.__version__ < (4, 1, 12):
+        installed_version = stomp_version()
+        if installed_version < Version("4.1.12"):
             raise MissingDependencyError('stomp', version="4.1.12",
-                                         installed=stomp.__version__,
+                                         installed=str(installed_version),
                                          additional_text=cls._DEPENDENCY_NAME_REMARK)
 
     @classmethod

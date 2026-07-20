@@ -8,9 +8,10 @@ try:
     import stomp
 except ImportError:
     stomp = None
+from packaging.version import Version
 
 from intelmq.lib.bot import OutputBot
-from intelmq.lib.mixins import StompMixin
+from intelmq.lib.mixins.stomp import StompMixin, stomp_version
 
 
 class StompOutputBot(OutputBot, StompMixin):
@@ -62,7 +63,7 @@ class StompOutputBot(OutputBot, StompMixin):
         self.logger.debug('Connecting.')
         # based on the documentation at:
         # https://github.com/jasonrbriggs/stomp.py/wiki/Simple-Example
-        if stomp.__version__ < (4, 1, 20):
+        if stomp_version() < Version("4.1.20"):
             self._conn.start()
         self._conn.connect(**self._connect_kwargs)
         self.logger.debug('Connected.')

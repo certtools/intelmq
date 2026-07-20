@@ -10,9 +10,10 @@ except ImportError:
     stomp = None
 else:
     import stomp.exception
+from packaging.version import Version
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.mixins import StompMixin
+from intelmq.lib.mixins.stomp import StompMixin, stomp_version
 
 
 if stomp is not None:
@@ -28,7 +29,7 @@ if stomp is not None:
             self.connect_kwargs = connect_kwargs
             self.destination = destination
             super().__init__()
-            if stomp.__version__ >= (5, 0, 0):
+            if stomp_version() >= Version("5.0.0"):
                 # set the function directly, as the argument print_to_log logs to the generic logger
                 self._PrintingListener__print = n6stompcollector.logger.debug
 
@@ -112,13 +113,14 @@ class StompCollectorBot(CollectorBot, StompMixin):
         self.stomp_bot_runtime_initial_check()
 
         # (note: older versions of `stomp.py` do not play well with reconnects)
-        self._auto_reconnect = (stomp.__version__ >= (4, 1, 21))
+        installed_version = stomp_version()
+        self._auto_reconnect = (installed_version >= Version("4.1.21"))
 
         self.__conn, connect_kwargs = self.prepare_stomp_connection()
         self.__conn.set_listener('', StompListener(self, self.__conn, self.exchange,
                                                    connect_kwargs=connect_kwargs))
         connect_and_subscribe(self.__conn, self.logger, self.exchange,
-                              start=stomp.__version__ < (4, 1, 20),
+                              start=installed_version < Version("4.1.20"),
                               connect_kwargs=connect_kwargs)
 
     def shutdown(self):
