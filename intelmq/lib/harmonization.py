@@ -101,7 +101,7 @@ class String(GenericType):
         if not GenericType.is_valid(value):
             return False
 
-        if type(value) is not str:
+        if not isinstance(value, str):
             return False
 
         if len(value) == 0:

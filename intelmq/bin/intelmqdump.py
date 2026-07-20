@@ -131,7 +131,7 @@ def save_file(handle, content):
 def load_meta(dump):
     retval = []
     for key, value in dump.items():
-        if type(value['traceback']) is not list:
+        if not isinstance(value['traceback'], list):
             error = value['traceback'].splitlines()[-1]
         else:
             error = value['traceback'][-1].strip()
@@ -410,7 +410,7 @@ def main(argv=None):
                                     len(value['message']['raw']) > args.truncate):
                                 value['message']['raw'] = value['message'][
                                     'raw'][:args.truncate] + '...[truncated]'
-                    if type(value['traceback']) is not list:
+                    if not isinstance(value['traceback'], list):
                         value['traceback'] = value['traceback'].splitlines()
                     pprint.pprint(value)
             elif answer[0] == 'e':
