@@ -537,6 +537,11 @@ class SieveExpertBot(ExpertBot):
             if type not in valid_types:
                 raise TextXSemanticError(f"Incompatible type: {type}.", **position)
         except KeyError:
+            if any(
+                num_match.key.startswith(f"{key}.") and value["type"] == "JSONDict"
+                for key, value in SieveExpertBot._harmonization.items()
+            ):
+                return
             raise TextXSemanticError(f"Invalid key: {num_match.key}.", **position)
 
     @staticmethod

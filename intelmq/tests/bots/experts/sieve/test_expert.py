@@ -585,6 +585,21 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         exception = context.exception
         self.assertRegex(str(exception), r".*Incompatible type: FQDN\.$")
 
+    def test_numeric_extra_jsondict_match(self):
+        """Test numeric match for dynamic extra.* fields."""
+        self.sysconfig["file"] = os.path.join(
+            os.path.dirname(__file__),
+            "test_sieve_files/test_numeric_extra_jsondict.sieve",
+        )
+
+        event = EXAMPLE_INPUT.copy()
+        event["extra.min_amplification"] = 6
+        expected = event.copy()
+        expected["comment"] = "matched extra numeric field"
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
     def test_exists_match(self):
         """Test :exists match"""
         self.sysconfig["file"] = os.path.join(
