@@ -199,8 +199,8 @@ def flatten_queues(queues: Union[list, dict]) -> Iterator[str]:
     Returns:
         flattened_queues: queues without dictionaries as values, just lists with the values
     """
-    return (item for sublist in (queues.values() if type(queues) is dict else queues) for item in
-            (sublist if type(sublist) is list else [sublist]))
+    return (item for sublist in (queues.values() if isinstance(queues, dict) else queues) for item in
+            (sublist if isinstance(sublist, list) else [sublist]))
 
 
 def load_configuration(configuration_filepath: str) -> dict:
@@ -395,7 +395,7 @@ def log(name: str, log_path: Union[str, bool] = intelmq.DEFAULT_LOGGING_PATH,
         handler.setLevel(log_level)
         handler.setFormatter(logging.Formatter(LOG_FORMAT))
     elif syslog:
-        if type(syslog) is tuple or type(syslog) is list:
+        if isinstance(syslog, (tuple, list)):
             handler = logging.handlers.SysLogHandler(address=tuple(syslog))
         else:
             handler = logging.handlers.SysLogHandler(address=syslog)

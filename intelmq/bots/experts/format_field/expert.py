@@ -18,7 +18,7 @@ class FormatFieldExpertBot(ExpertBot):
     split_column    = None
 
     def init(self):
-        if type(self.strip_columns) is str:
+        if isinstance(self.strip_columns, str):
             self.strip_columns = [column.strip() for column in self.strip_columns.split(",")]
 
     def process(self):
