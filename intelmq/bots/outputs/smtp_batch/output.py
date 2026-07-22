@@ -21,6 +21,7 @@ from redis.exceptions import TimeoutError
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
 from intelmq.lib.exceptions import MissingDependencyError
+from intelmq.lib.utils import sanitize_csv_value
 
 try:
     from envelope import Envelope
@@ -61,6 +62,7 @@ class SMTPBatchOutputBot(Bot):
     alternative_mails: Optional[str] = None
     bcc: Optional[list] = None
     email_from: str = ""
+    escape_csv_injection: bool = True
     gpg_key: Optional[str] = None
     gpg_pass: Optional[str] = None
     mail_template: str = ""
@@ -313,7 +315,12 @@ class SMTPBatchOutputBot(Bot):
                     row["raw"] = b64decode(row["raw"]).decode("utf-8").strip().replace("\n", r"\n").replace("\r", r"\r")
                 except (ValueError, KeyError):  # not all events have to contain the "raw" field
                     pass
-                rows_output.append(OrderedDict({self.fieldnames_translation[k]: row[k] for k in ordered_keys}))
+                rows_output.append(OrderedDict({
+                    self.fieldnames_translation[k]: (
+                        sanitize_csv_value(row[k]) if self.escape_csv_injection else row[k]
+                    )
+                    for k in ordered_keys
+                }))
 
             # prepare headers for csv attachment
             ordered_fieldnames = []

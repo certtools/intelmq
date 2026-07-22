@@ -88,6 +88,37 @@ class TestSMTPOutputBot(test.BotTestCase, unittest.TestCase):
         self.assertIn(('Content-Type', 'text/plain; charset="us-ascii"'),
                       SENT_MESSAGE[0].get_payload()[0]._headers)
 
+    def test_csv_injection_is_escaped_by_default(self):
+        self.input_message = {
+            **EVENT,
+            'event_description.text': '=HYPERLINK("https://example.invalid")',
+        }
+        with unittest.mock.patch('smtplib.SMTP.send_message', new=send_message):
+            with unittest.mock.patch('smtplib.SMTP.close'):
+                self.run_bot(parameters={'fieldnames': 'event_description.text'})
+
+        self.assertEqual(
+            'event_description.text\n"\'=HYPERLINK(""https://example.invalid"")"\n',
+            SENT_MESSAGE[0].get_payload()[1].get_payload(),
+        )
+
+    def test_csv_injection_escape_can_be_disabled(self):
+        self.input_message = {
+            **EVENT,
+            'event_description.text': '=1+1',
+        }
+        with unittest.mock.patch('smtplib.SMTP.send_message', new=send_message):
+            with unittest.mock.patch('smtplib.SMTP.close'):
+                self.run_bot(parameters={
+                    'escape_csv_injection': False,
+                    'fieldnames': 'event_description.text',
+                })
+
+        self.assertEqual(
+            'event_description.text\n=1+1\n',
+            SENT_MESSAGE[0].get_payload()[1].get_payload(),
+        )
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

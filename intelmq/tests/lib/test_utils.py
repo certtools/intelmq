@@ -62,6 +62,16 @@ def new_get_runtime() -> dict:
 
 class TestUtils(unittest.TestCase):
 
+    def test_sanitize_csv_value(self):
+        for prefix in ('=', '+', '-', '@', '\t', '\r', '\n'):
+            value = prefix + 'formula'
+            with self.subTest(prefix=repr(prefix)):
+                self.assertEqual("'" + value, utils.sanitize_csv_value(value))
+
+        for value in ('text', ' =formula', "'=formula", '', 42, None):
+            with self.subTest(value=value):
+                self.assertIs(value, utils.sanitize_csv_value(value))
+
     def test_decode_byte(self):
         """Tests if the decode can handle bytes."""
         self.assertEqual(SAMPLES['normal'][1],
