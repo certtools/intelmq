@@ -6,12 +6,14 @@
 import csv
 import io
 from intelmq.lib.bot import ExpertBot
+from intelmq.lib.utils import sanitize_csv_value
 
 
 class CSVConverterExpertBot(ExpertBot):
     """Convert data to CSV"""
     fieldnames: str = "time.source,classification.type,source.ip"  # TODO: could maybe be List[str]
     delimiter: str = ','
+    escape_csv_injection: bool = True
 
     def init(self):
         self.fieldnames = self.fieldnames.split(',')
@@ -23,7 +25,10 @@ class CSVConverterExpertBot(ExpertBot):
         writer = csv.writer(out, delimiter=self.delimiter)
         row = []
         for field in self.fieldnames:
-            row.append(event[field])
+            value = event[field]
+            if self.escape_csv_injection:
+                value = sanitize_csv_value(value)
+            row.append(value)
         writer.writerow(row)
         event['output'] = out.getvalue().rstrip()
 

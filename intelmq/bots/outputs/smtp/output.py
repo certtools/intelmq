@@ -11,12 +11,14 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from intelmq.lib.bot import OutputBot
+from intelmq.lib.utils import sanitize_csv_value
 from typing import Optional
 
 
 class SMTPOutputBot(OutputBot):
     """Send single events as CSV attachment in dynamically formatted e-mails via SMTP"""
     fieldnames: str = "classification.taxonomy,classification.type,classification.identifier,source.ip,source.asn,source.port"
+    escape_csv_injection: bool = True
     mail_from: str = "cert@localhost"
     mail_to: str = "{ev[source.abuse_contact]}"
     smtp_host: str = "localhost"
@@ -53,7 +55,10 @@ class SMTPOutputBot(OutputBot):
                                     quoting=csv.QUOTE_MINIMAL, delimiter=";",
                                     extrasaction='ignore', lineterminator='\n')
             writer.writeheader()
-            writer.writerow(event)
+            row = event
+            if self.escape_csv_injection:
+                row = {field: sanitize_csv_value(event[field]) for field in self.fieldnames}
+            writer.writerow(row)
             attachment = csvfile.getvalue()
 
         with self.smtp_class(self.smtp_host, self.smtp_port, **self.kwargs) as smtp:

@@ -2519,6 +2519,10 @@ parameter `single_key` of the output bot and set it to `output`.
 
 (optional, string) Defaults to `,`.
 
+**`escape_csv_injection`**
+
+(optional, boolean) Prefix values starting with spreadsheet formula characters with a single quote. Defaults to `true`.
+
 **`fieldnames`**
 
 (required, string) Comma-separated list of field names, e.g. `"time.source,classification.type,source.ip"`.
@@ -5369,6 +5373,10 @@ Default: `{subject: False, body: False, attachment: False}`
 
 (required, string) Sender's e-mail of the outgoing messages.
 
+**`escape_csv_injection`**
+
+(optional, boolean) Prefix values starting with spreadsheet formula characters with a single quote. Defaults to `true`.
+
 
 **`gpg_key`**
 
@@ -5448,6 +5456,10 @@ Sends a MIME Multipart message containing the text and the event as CSV for ever
 **`fieldnames`**
 
 (optional, string/array of strings) Array of field names (or comma-separated list) to be included in the email. If empty, no attachment is sent - this can be useful if the actual data is already in the body (parameter `text`) or the `subject`.
+
+**`escape_csv_injection`**
+
+(optional, boolean) Prefix values starting with spreadsheet formula characters with a single quote. Defaults to `true`.
 
 **`mail_from`**
 

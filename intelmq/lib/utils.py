@@ -14,6 +14,7 @@ load_configuration
 log
 reverse_readline
 parse_logline
+sanitize_csv_value
 """
 import base64
 import collections
@@ -62,7 +63,7 @@ __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'reverse_readline', 'error_message_from_exc', 'parse_relative',
            'RewindableFileHandle',
            'file_name_from_response',
-           'list_all_bots', 'get_global_settings',
+           'list_all_bots', 'get_global_settings', 'sanitize_csv_value',
            ]
 
 # Used loglines format
@@ -82,10 +83,23 @@ SYSLOG_REGEX = (r'^(?P<date>\w{3} \d{2} \d{2}:\d{2}:\d{2}) (?P<hostname>[-\.\w]+
                 r'(?P<thread_id>\.[0-9]+)?'
                 r': (?P<log_level>[A-Z]+) (?P<message>.+)$')
 RESPONSE_FILENAME = re.compile("filename=(.+)")
+CSV_FORMULA_PREFIXES = ('=', '+', '-', '@', '\t', '\r', '\n')
 
 
 class Parameters:
     pass
+
+
+def sanitize_csv_value(value: Any) -> Any:
+    """Neutralize strings which spreadsheet programs may treat as formulas.
+
+    The value is escaped only when it starts with a known formula trigger.
+    Non-string values are returned unchanged so CSV writers retain their
+    existing number and ``None`` handling.
+    """
+    if isinstance(value, str) and value.startswith(CSV_FORMULA_PREFIXES):
+        return "'" + value
+    return value
 
 
 def decode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8",),
