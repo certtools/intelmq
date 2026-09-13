@@ -34,6 +34,14 @@ override_dh_auto_build:
 	dh_auto_build
 	# $(MAKE) docs
 
+override_dh_auto_test:
+	# https://github.com/certtools/intelmq/issues/2675
+	# on Debian 13's pybuild-driven dh_auto_test, the package's installed metadata (entry points / distribution info) isn't visible to the test run, since it happens against a build-dir copy without the source tree's egg-info on PYTHONPATH.
+	# make sure the build directory (which does contain the generated egg-info) is importable, fixing distribution/entry-point discovery
+	PYBUILD_SYSTEM=custom \
+	PYBUILD_TEST_ARGS="cd {build_dir}; PYTHONPATH={build_dir} python{version} -m pytest --no-cov intelmq/tests/" \
+	dh_auto_test
+
 override_dh_auto_install: $(BOTDOCS)
 	sed -i -e '/#!\/usr\/bin\//d' intelmq/bin/*.py
 	sed -i -f debian/sedfile intelmq/etc/* setup.py contrib/logrotate/intelmq contrib/logcheck/logcheck.logfiles
