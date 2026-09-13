@@ -16,6 +16,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 ### Configuration
 
 ### Core
+- `intelmq.bin.intelmqctl`: Use `importlib.metadata` instead of deprecated `pkg_resources` to determine the installed version, fixing bot module discovery failing on Debian 13 (PR#2721 by Sebastian Wagner, fixes #2648).
 
 ### Development
 
@@ -40,6 +41,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 - Updates to Contrib and Overview pages (PR#2672 by Sebastian Wagner).
 
 ### Packaging
+- `debian/rules`: Run tests with `PYTHONPATH` pointing to the pybuild build directory, fixing the intelmq distribution not being detected during `dh_auto_test` on Debian 13 (PR#2721 by Sebastian Wagner, fixes #2675).
 
 ### Tests
 - `intelmq.tests.bots.parsers.openphish.test_parser_commercial`: Replace dummy key with more obvious dummy key, generate raw from input (PR#2665 by Sebastian Wagner, fixes #2663).

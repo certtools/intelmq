@@ -17,8 +17,12 @@ import textwrap
 import traceback
 import time
 
-import pkg_resources
 from ruamel.yaml import YAML
+
+try:
+    from importlib.metadata import version as _pkg_version, PackageNotFoundError
+except ImportError:  # pragma: no cover
+    from importlib_metadata import version as _pkg_version, PackageNotFoundError
 
 from intelmq import (DEFAULT_LOGGING_LEVEL,  # noqa: F401
                      HARMONIZATION_CONF_FILE,
@@ -127,10 +131,10 @@ class IntelMQController():
 
         APPNAME = "intelmqctl"
         try:
-            VERSION = pkg_resources.get_distribution("intelmq").version
-        except pkg_resources.DistributionNotFound:  # pragma: no cover
+            VERSION = _pkg_version("intelmq")
+        except PackageNotFoundError:  # pragma: no cover
             # can only happen in interactive mode
-            self._logger.error('No valid IntelMQ installation found: DistributionNotFound')
+            self._logger.error('No valid IntelMQ installation found: PackageNotFoundError')
             sys.exit(1)
         DESCRIPTION = """
         description: intelmqctl is the tool to control intelmq system.
