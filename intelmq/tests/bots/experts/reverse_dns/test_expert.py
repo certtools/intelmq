@@ -25,12 +25,12 @@ EXAMPLE_INPUT6 = {"__type": "Event",
                   "source.ip": "2001:500:88:200::8",  # iana.org
                   "source.reverse_dns": "example.com",
                   "time.observation": "2015-01-01T00:00:00+00:00",
-                  "destination.ip": "2001:500:88:200::7",  # has no reverse record, certtools/intelmq#2394
+                  "destination.ip": "2001:db8::1",  # has no reverse record
                   }
 EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "source.ip": "2001:500:88:200::8",
                    "source.reverse_dns": "iana.org",
-                   "destination.ip": "2001:500:88:200::7",
+                   "destination.ip": "2001:db8::1",
                    "time.observation": "2015-01-01T00:00:00+00:00",
                    }
 INVALID_PTR_INP2 = {"__type": "Event",
