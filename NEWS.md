@@ -16,6 +16,7 @@ Please refer to the change log for a full list of changes.
 ### Requirements
 
 ### Tools
+- `intelmq.bots.experts.asn_lookup.expert --update-database` now creates the configured database file if it does not exist yet.
 
 ### Data Format
 
