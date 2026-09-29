@@ -1085,6 +1085,15 @@ class URL(String):
     """
 
     @staticmethod
+    def _has_netloc(value: str) -> bool:
+        try:
+            result = parse.urlsplit(value)
+        except ValueError:
+            match = re.match(r'^[A-Za-z][A-Za-z0-9+.-]*://([^/?#]+)', value)
+            return bool(match and match.group(1))
+        return result.netloc != ""
+
+    @staticmethod
     def is_valid(value: str, sanitize: bool = False) -> bool:
         if sanitize:
             value = URL.sanitize(value)
@@ -1095,8 +1104,7 @@ class URL(String):
         if value[0] in string.whitespace:
             return False
 
-        result = parse.urlsplit(value)
-        if result.netloc == "":
+        if not URL._has_netloc(value):
             return False
 
         return True
@@ -1110,15 +1118,18 @@ class URL(String):
         value = value.replace('hxxp://', 'http://')
         value = value.replace('hxxps://', 'https://')
 
-        result = parse.urlsplit(value)
-        if result.scheme == "file" and result.netloc == '':
-            # add localhost as netloc
-            result_split = list(result)
-            result_split[1] = 'localhost'
-            value = parse.urlunsplit(result_split)
+        try:
             result = parse.urlsplit(value)
+        except ValueError:
+            return value if URL._has_netloc(value) else None
+        else:
+            if result.scheme == "file" and result.netloc == '':
+                # add localhost as netloc
+                result_split = list(result)
+                result_split[1] = 'localhost'
+                value = parse.urlunsplit(result_split)
 
-        if result.netloc != "":
+        if URL._has_netloc(value):
             return value
 
     @staticmethod

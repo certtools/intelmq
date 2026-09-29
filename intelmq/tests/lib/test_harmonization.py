@@ -407,6 +407,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.URL.is_valid('http://example.com'))
         self.assertTrue(harmonization.URL.is_valid('http://example.com/foo'))
         self.assertTrue(harmonization.URL.is_valid('file://localhost/etc/hosts'))
+        self.assertTrue(harmonization.URL.is_valid('http://[D] example.com/foo'))
 
     def test_url_invalid(self):
         """ Test URL.is_valid with invalid arguments. """
@@ -426,6 +427,8 @@ class TestHarmonization(unittest.TestCase):
                                                    sanitize=True))
         self.assertEqual(harmonization.URL.sanitize(' http://example.com'),
                          'http://example.com')
+        self.assertEqual(harmonization.URL.sanitize('http://[D] example.com/foo'),
+                         'http://[D] example.com/foo')
 
     def test_url_sanitize_invalid(self):
         """ Test URL.is_valid with valid arguments. """
