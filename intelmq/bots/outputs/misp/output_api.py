@@ -151,8 +151,11 @@ class MISPAPIOutputBot(OutputBot):
 
     def _update_misp_event(self, misp_event, intelmq_event):
         """Update timestamp on a found MISPEvent if it matches closely."""
+        misp_objects = misp_event.get_objects_by_name(MISPOBJECT_NAME)
+        if not misp_objects:
+            return
         # As we insert only one MISPObject, we only examine the first one
-        misp_o = misp_event.get_objects_by_name(MISPOBJECT_NAME)[0]
+        misp_o = misp_objects[0]
 
         all_found = True
         for field in ['feed.provider'] + self.significant_fields:

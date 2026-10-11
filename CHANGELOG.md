@@ -32,6 +32,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 #### Experts
 
 #### Outputs
+- `intelmq.bots.outputs.misp.output_api`: Ignore matching MISP events without an `intelmq_event` object when updating timestamps, avoiding an `IndexError`.
 - `intelmq.bots.outputs.smtp_batch.output`:
   - Ignore parameter `bot_id` for parsing parameters (PR#2692 by Lukas Heindl, fixes #2666).
   - Fix CLI overwriting params over the defaults (PR#2699 by Edvard Rejthar).
