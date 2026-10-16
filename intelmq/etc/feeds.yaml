@@ -1840,3 +1840,50 @@ providers:
               - true
               - false
               - true
+  NetAPI:
+    Compromised Domains:
+      description: Domains seen in public threat feeds (malware, phishing, compromised websites)
+        within the last 24 hours, aggregated by NetAPI.
+      additional_information: Free, no account or token needed, CC BY 4.0. Plain text, one domain
+        per line, no header. Updated daily.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://netapi.com/zf-api/f/compromised/domains/live/
+            rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.generic.parser_csv
+          parameters:
+            columns:
+              - source.fqdn
+            defaults_fields:
+              classification.type: compromised
+      revision: 2026-10-16
+      documentation: https://netapi.com/compromised-urls/
+      public: true
+    Compromised IPs:
+      description: IPv4 and IPv6 addresses seen in public threat feeds (malware, phishing, attacks)
+        within the last 24 hours, aggregated by NetAPI.
+      additional_information: Free, no account or token needed, CC BY 4.0. Plain text, one address
+        per line, no header. Updated daily.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://netapi.com/zf-api/f/compromised/ip/live/
+            rate_limit: 86400
+            name: __FEED__
+            provider: __PROVIDER__
+        parser:
+          module: intelmq.bots.parsers.generic.parser_csv
+          parameters:
+            columns:
+              - source.ip
+            defaults_fields:
+              classification.type: compromised
+      revision: 2026-10-16
+      documentation: https://netapi.com/compromised-ips/
+      public: true
