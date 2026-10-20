@@ -205,6 +205,30 @@ class TestIntelMQDump(unittest.TestCase):
 
     @skip_installation()
     @mock.patch.object(intelmqdump, "input", return_value='q')
+    def test_incomplete_setup_does_not_raise_nameerror(self, _):
+        """If loading the global settings fails (e.g. incomplete setup, missing
+        runtime config), the fallback to defaults={} must not itself crash with
+        a NameError on 'defaults'. A later, unrelated failure (e.g. get_runtime()
+        also failing because the setup is genuinely incomplete) is still expected
+        and is not what this test guards against."""
+        with mock.patch.object(
+            intelmqdump.utils, "get_global_settings",
+            side_effect=FileNotFoundError("no runtime configuration"),
+        ):
+            with mock.patch.object(intelmqdump, "DEFAULT_LOGGING_PATH", self.tmp_log_dir.name):
+                try:
+                    intelmqdump.main([])
+                except NameError:
+                    self.fail("main() raised NameError instead of falling back to defaults={}")
+                except SystemExit:
+                    pass
+                except Exception:
+                    # Expected: the underlying FileNotFoundError legitimately
+                    # propagates later on, once the setup is genuinely incomplete.
+                    pass
+
+    @skip_installation()
+    @mock.patch.object(intelmqdump, "input", return_value='q')
     def test_get_dump_for_one_bot(self, _):
         self._prepare_empty_dump("bot/bot-1")
         self.global_config = {"logging_path": self.tmp_log_dir.name}

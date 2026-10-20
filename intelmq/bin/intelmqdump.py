@@ -191,6 +191,7 @@ def main(argv=None):
     try:
         defaults = utils.get_global_settings()
     except Exception:
+        defaults = {}
         log_level = DEFAULT_LOGGING_LEVEL
 
     try:
