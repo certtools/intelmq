@@ -7,7 +7,10 @@
 Testing asn_lookup with a faked local database
 """
 
+import tempfile
 import unittest
+from pathlib import Path
+from unittest import mock
 
 import pkg_resources
 
@@ -60,6 +63,66 @@ class TestASNLookupExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EXAMPLE_INPUT6
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
+
+
+class TestASNLookupUpdateDatabase(unittest.TestCase):
+    """
+    update_database() must not reject a database file that doesn't exist yet
+    (first-time setup): the file is created by the update itself, only an
+    existing-but-unwritable file (or a path that isn't a plain file) should
+    be rejected.
+    """
+
+    def _run_with_fake_bots(self, database_path):
+        settings = {
+            'bot-1': {
+                'module': 'intelmq.bots.experts.asn_lookup.expert',
+                'parameters': {'database': str(database_path)},
+            }
+        }
+        with mock.patch(
+            'intelmq.bots.experts.asn_lookup.expert.get_bots_settings',
+            return_value=settings,
+        ):
+            with mock.patch(
+                'intelmq.bots.experts.asn_lookup.expert.pyasn',
+                new=mock.Mock(),
+            ):
+                with mock.patch(
+                    'intelmq.bots.experts.asn_lookup.expert.create_request_session',
+                    side_effect=RuntimeError('reached the network step'),
+                ):
+                    with self.assertRaises((RuntimeError, SystemExit)) as ctx:
+                        ASNLookupExpertBot.update_database(verbose=False)
+        return ctx.exception
+
+    def test_missing_database_file_is_allowed(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_path = Path(tmp_dir) / 'does-not-exist-yet' / 'ipasn.dat'
+            exc = self._run_with_fake_bots(database_path)
+        # Got past the file check and reached the (mocked) network step,
+        # instead of raising ValueError('Database file does not exist...').
+        self.assertIsInstance(exc, RuntimeError)
+
+    def test_existing_unwritable_database_file_still_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_path = Path(tmp_dir) / 'ipasn.dat'
+            database_path.touch()
+            database_path.chmod(0o400)
+            try:
+                with self.assertRaises(ValueError) as ctx:
+                    self._run_with_fake_bots(database_path)
+                self.assertIn('not writeable', str(ctx.exception))
+            finally:
+                database_path.chmod(0o600)
+
+    def test_existing_directory_as_database_path_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_path = Path(tmp_dir) / 'ipasn.dat'
+            database_path.mkdir()
+            with self.assertRaises(ValueError) as ctx:
+                self._run_with_fake_bots(database_path)
+            self.assertIn('not a file', str(ctx.exception))
 
 
 if __name__ == '__main__':  # pragma: no cover
