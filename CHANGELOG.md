@@ -48,6 +48,7 @@ Please refer to the [NEWS](NEWS.md) for a list of changes which have an affect o
 
 ### Tools
 - `intelmq.lib.bot_debugger`:  Optionally read input messages from stdin instead of parameter value (PR#2678 by Sebastian Wager).
+- `intelmq.bin.intelmqdump`: Fix `NameError` when loading the global settings fails, which hid the underlying error (PR#2723 by Cristian Chiriac, fixes #2702).
 
 ### Contrib
 
